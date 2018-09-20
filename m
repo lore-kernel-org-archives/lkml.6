@@ -2,190 +2,345 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED972ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD87C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FE8121529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38CF32152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:02:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gZnAUhiq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE8121529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rzndi5l/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ECt0+6la"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CF32152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732650AbeITSoL (ORCPT
+        id S2387739AbeITSpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:44:11 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43487 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbeITSoK (ORCPT
+        Thu, 20 Sep 2018 14:45:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49294 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbeITSpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:44:10 -0400
-Received: by mail-io1-f66.google.com with SMTP id y10-v6so7279210ioa.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 06:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=F7ylZP04Ezwpet7+9Y99+NrK/KlDpd6vZT0LpGBgl4A=;
-        b=gZnAUhiqpu97dYHHcmhTadknCGoAoQXLbgHS4GUUG7/fVcz67BXdbP9ouNNPRylGzB
-         R5DwfgLiv8uySfrV9G81DpwfJRqLlZRWbdIvBrqw6/UPTgr1SHyKajrst+hDnmmtIUFi
-         NcwG5tCCud480SnXA9Jgt8aiwAMO6Izw+xcKCr/kxFeXGOuaRETHbk9mVt2p6QhLdwrR
-         uQn9SCNqF4MfMFFA5jSCbejzpkcXFMj5EyD6eFM3hZ46NrMtPcKY1BJrsfJ9bAksxaFD
-         8j3x/Zt0NtDJmCg5hMVfHH2IbDQWj0Dt/V1k6WSCqE7LFuD1RiTjDPrHIEr82IIGS3+K
-         sCpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=F7ylZP04Ezwpet7+9Y99+NrK/KlDpd6vZT0LpGBgl4A=;
-        b=KAcapnfIGF4I/IcDI2VxgxpNAhwz15NR7sVHdpN8CuW0Gk7AcF6wd1Hw91Qiwz4s7M
-         o1Y750n8ub0WQAMxjnB/Ni0RLiwpCIoA7/OGsr1d06zH3MHWbXH89YBxCTz+G2juKGFV
-         CTOXj99pM0j0HVzP+nctaHDkEvcAMfjRUVIs5QZapZf428G7dAXCphhTqRXalx/T/ypP
-         0QJM4LSrdeP6i+IIe0PhpeFpIi13GBL0HwzIVp9YQi/maQ26edRWStnlXII5oL/ckWSK
-         ZSMZvoKzoBJLR++qe1+NdMU8RYmf/Zgjz+hqsPJ+n6xtIU2wqttshg7mHTxZFwiYft+1
-         Zoyg==
-X-Gm-Message-State: APzg51BzpS0U09Y3iBs6N3WQss7LAgnKw53wUSjLNNjAmiCxB9VlH5TN
-        j5lQXbZmRRmkZayq+nWh4J/feS2rqXpT+4ify4+eQw==
-X-Google-Smtp-Source: ANB0VdY41lMjS1E+K/bpomY0lV5/mocw3uvifMfnIK97HtuzpoOcsITHbMl9+GPycDEA3jkD8c+w/OXtrQf3p+qrDx4=
-X-Received: by 2002:a5e:8d07:: with SMTP id m7-v6mr32331623ioj.258.1537448445793;
- Thu, 20 Sep 2018 06:00:45 -0700 (PDT)
+        Thu, 20 Sep 2018 14:45:34 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E47D6601A8; Thu, 20 Sep 2018 13:02:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537448528;
+        bh=aYtBMarrJq+keQCtXJXu9rfkxc1d8NmNWkDhS9QStbY=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=Rzndi5l/vlNiWt/ROKjJdz9ZxOdxlenc39zXaKilInOiC8otwqaJYv9oY3keGy8HZ
+         qE5VDoAi3HjpT8zyWeghyzcuXQ+sMd9i5albwxrNg9/pJNpjaCAfuqslv2eYCeoK3X
+         VLFAObsKtPmHJPkVaGJTuxEfv+7er3QdTMYSyQ34=
+Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8249B601A8;
+        Thu, 20 Sep 2018 13:01:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537448525;
+        bh=aYtBMarrJq+keQCtXJXu9rfkxc1d8NmNWkDhS9QStbY=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=ECt0+6laZ9+55nvw5ldZzjyObhNkCcL8ZX4EQqACMvU/7u8kk7+UpGaHTHmZViwwT
+         jcETCb87C5jcX91zKmckoIoyv0y1hIV/VrJfmGpnj0vTanDxRtxqBWMSRxx4H5osI0
+         +0HvQfmRrdymi5yvsNcSfmxN+y48CkHcuwqXNyR0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8249B601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH V12 00/14] Krait clocks + Krait CPUfreq
+To:     Craig <ctatlor97@gmail.com>, mark.rutland@arm.com, robh@kernel.org,
+        sudeep.holla@arm.com, linux@arm.linux.org.uk, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+        linux@armlinux.org.uk, thierry.escande@linaro.org,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        niklas.cassel@linaro.org
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+ <2ae96741-94c0-ba4c-fc19-05d33179683c@codeaurora.org>
+ <d682580d-5070-0271-197f-29d988172937@codeaurora.org>
+ <D8FC68C0-2572-4A86-81D9-D0099D314A45@gmail.com>
+ <F5A89365-C613-4FE2-AD32-DC0AC6DF380B@gmail.com>
+From:   Sricharan R <sricharan@codeaurora.org>
+Message-ID: <d6d3a76c-43eb-4a37-55eb-a407b5267aa4@codeaurora.org>
+Date:   Thu, 20 Sep 2018 18:31:57 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 06:00:45
- -0700 (PDT)
-In-Reply-To: <20180827090651.25062-1-brgl@bgdev.pl>
-References: <20180827090651.25062-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 20 Sep 2018 15:00:45 +0200
-Message-ID: <CAMRc=McWre+5PRuozF69YKONvzy4X31=MzZim-QjhaAZ9iAVTw@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 0/3] sh: make early_platform code SuperH-specific
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <F5A89365-C613-4FE2-AD32-DC0AC6DF380B@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-27 11:06 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> I recently started a discussion about the need for a proper early device
-> probing mechanism[1]. One that would be based on real platform drivers
-> and support both platform data and device tree.
->
-> While we're far from reaching any consensus on the implementation, Arnd
-> suggested that I start off by moving the SuperH-specific early platform
-> drivers implementation to arch/sh[2].
->
-> This series is the first attempt at making way for a new, less hacky
-> implementation.
->
-> The first patch removes the last instance of a non-sh driver using the
-> early_platform API. It can be removed since ARM no longer probes early
-> drivers.
->
-> The second patch moves all the early_platform code to arch/sh.
->
-> The last patch prefixes all early_platform symbols with 'sh_'.
->
-> [1] https://lkml.org/lkml/2018/4/26/657
-> [2] https://lkml.org/lkml/2018/4/27/239
->
-> v1 -> v2:
-> - certain drivers are compiled for arm/mach-shmobile too - we need to
->   add ifdefs for CONFIG_SUPERH around early_platform calls
->
-> v2 -> v3:
-> - added a stub for is_early_platform_device() which always returns false
->   on non-SuperH architectures
->
-> RESEND: rebased on top of v4.18-rc1 and verified that there are no build
-> failures.
->
-> RESEND AGAIN: rebased on top of v4.19-rc1 and verified builds again.
->
-> Bartosz Golaszewski (3):
->   clocksource: timer-ti-dm: remove the early platform driver
->     registration
->   platform: move the early platform device support to arch/sh
->   sh: add the sh_ prefix to early platform symbols
->
->  arch/sh/drivers/Makefile               |   2 +-
->  arch/sh/drivers/platform_early.c       | 347 +++++++++++++++++++++++++
->  arch/sh/include/asm/platform_early.h   |  61 +++++
->  arch/sh/kernel/cpu/sh2/setup-sh7619.c  |   3 +-
->  arch/sh/kernel/cpu/sh2a/setup-mxg.c    |   3 +-
->  arch/sh/kernel/cpu/sh2a/setup-sh7201.c |   3 +-
->  arch/sh/kernel/cpu/sh2a/setup-sh7203.c |   3 +-
->  arch/sh/kernel/cpu/sh2a/setup-sh7206.c |   3 +-
->  arch/sh/kernel/cpu/sh2a/setup-sh7264.c |   3 +-
->  arch/sh/kernel/cpu/sh2a/setup-sh7269.c |   3 +-
->  arch/sh/kernel/cpu/sh3/setup-sh3.c     |   1 +
->  arch/sh/kernel/cpu/sh3/setup-sh7705.c  |   3 +-
->  arch/sh/kernel/cpu/sh3/setup-sh770x.c  |   3 +-
->  arch/sh/kernel/cpu/sh3/setup-sh7710.c  |   3 +-
->  arch/sh/kernel/cpu/sh3/setup-sh7720.c  |   3 +-
->  arch/sh/kernel/cpu/sh4/setup-sh4-202.c |   3 +-
->  arch/sh/kernel/cpu/sh4/setup-sh7750.c  |   9 +-
->  arch/sh/kernel/cpu/sh4/setup-sh7760.c  |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7343.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7366.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7722.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7723.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7724.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7734.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7757.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7763.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7770.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7780.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7785.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-sh7786.c |   3 +-
->  arch/sh/kernel/cpu/sh4a/setup-shx3.c   |   3 +-
->  arch/sh/kernel/cpu/sh5/setup-sh5.c     |   3 +-
->  arch/sh/kernel/setup.c                 |   3 +-
->  arch/sh/kernel/time.c                  |   5 +-
->  drivers/base/platform.c                | 288 --------------------
->  drivers/clocksource/sh_cmt.c           |  13 +-
->  drivers/clocksource/sh_mtu2.c          |  13 +-
->  drivers/clocksource/sh_tmu.c           |  14 +-
->  drivers/clocksource/timer-ti-dm.c      |   1 -
->  drivers/tty/serial/sh-sci.c            |  11 +-
->  include/linux/platform_device.h        |  64 +----
->  41 files changed, 525 insertions(+), 388 deletions(-)
->  create mode 100644 arch/sh/drivers/platform_early.c
->  create mode 100644 arch/sh/include/asm/platform_early.h
->
-> --
-> 2.18.0
->
 
-Ping for 4.20. This is the third release cycle I'm trying to get this
-merged and there never were any objections.
 
-Bart
+On 9/20/2018 1:54 AM, Craig wrote:
+> Yup, this patch seems to have fixed the higher frequencies from the quick test I did.
+> 
+  Thanks !!. Can i take that as Craig Tatlor <ctatlor97@gmail.com> ?
+
+Regards,
+ Sricharan
+
+       tested-by: 
+> On 7 September 2018 15:28:53 BST, Craig Tatlor <ctatlor97@gmail.com> wrote:
+>>
+>>
+>> On 7 September 2018 10:57:34 BST, Sricharan R
+>> <sricharan@codeaurora.org> wrote:
+>>> Hi Craig,
+>>>
+>>>
+>>>>> [v12]
+>>>>>   * Added my signed-off that was missing in some patches.
+>>>>>   * Added Bjorn's acked that i missed earlier.
+>>>>>
+>>>>
+>>>>   Can you give this a try on your 8974 device and check if the
+>>>>   pvs version reporting, scaling for higher frequencies are fine ?
+>>>>   Sorry, i could not get hold of a 8974 device. So in-case if you
+>>> still
+>>>>   have the issues with higher frequencies, can you give a quick
+>> debug
+>>>>   and report. That would be of great help.
+>>>>
+>>>   Ping on this ..
+>>
+>> Hi, didn't see your last message,
+>>
+>> Will have a try on mine in the weekend and report back.
+>>>
+>>> Regards,
+>>> Sricharan
+>>>
+>>>> Regards,
+>>>>  Sricharan
+>>>>
+>>>>
+>>>>> [v11]
+>>>>>   * Dropped patch 13 and 14 from v10 and
+>>>>>     merged the qcom-cpufreq-krait driver to the existing
+>>> qcom-cpufreq-kryo.c
+>>>>>   * Rebased on top of clk-next
+>>>>>   * Fixed a bug while populating the pvs version for krait.
+>>>>>
+>>>>> [v10]
+>>>>>   * Addressed Stephen's comments to add clocks bindings properties
+>>>>>     to the newly introduced nodes.
+>>>>>   * Added a change to include opp-supported-hw to qcom-cpufreq.c
+>>>>>   * Rebased on top of clk-next
+>>>>>   * Although there were minor changes to bindings and the driver
+>>>>>     retained the acked-by tags from Rob and Viresh respectively.   
+>>
+>>>>>
+>>>>> [v9]
+>>>>>   * Fixed a rebase issue in Makefile and added Tag from Robh.
+>>>>>
+>>>>> [v8]
+>>>>>   * Fixed a bug in path#14 pointed out by Viresh and also added
+>>> tags.
+>>>>>     No change in any other patch.
+>>>>>
+>>>>> [v7]
+>>>>>   * Fixed comments from Viresh for cleaning up the error handling
+>>>>>     in qcom-cpufreq.c. Also changed the init function to lateinit
+>>>>>     call. This is required because nvmem which gets initialised
+>> with
+>>>>>     module_init needs to go first.
+>>>>>   * Fixed Rob's comments for bindings documentation
+>>>>>   * Fixed kbuild build issue in clk-lpc32xx.c
+>>>>>   * Rebased on top of clk-next
+>>>>>
+>>>>> [v6]
+>>>>>   * Adrressed comments from Viresh for patch #14 in v5 [5]
+>>>>>   * Introduced a new binding operating-points-v2-krait-cpu
+>>>>>     as per discussion with Rob
+>>>>>   * Added Review tags
+>>>>>
+>>>>> [v5]
+>>>>>   * Addressed comments from Rob for bindings
+>>>>>   * Addressed comments from Viresh to use dev_pm_opp_set_prop_name,
+>>> accordingly
+>>>>>     dropped patch #12 and corrected patch #11 from previous patch
+>>> set in [4]
+>>>>>   * Converted to use #spdx tags for newly introduced files
+>>>>>
+>>>>> Mostly a resend of the v3 posted by Stephen quite some time back
+>> [1]
+>>>>> except for few changes.
+>>>>>   Based on reading some feedback from list,
+>>>>>   * Dropped the patch "clk: Add safe switch hook" from v3 [2].
+>>>>>     Now this is taken care by patch#10 in this series only for
+>>> Krait.
+>>>>>   * Dropped the path "clk: Avoid sending high rates to downstream
+>>>>> 		      clocks during set_rate" from v3 [3].
+>>>>>   * Rebased on top of clk-next.
+>>>>>   * Dropped the DT update from the series. Will send separately
+>>>>>   * Now with cpufreq-dt+opp supporting voltage scaling, registering
+>>> the
+>>>>>     krait cpu supplies in DT should be sufficient. But one issue
+>> is,
+>>>>>     the qcom-cpufreq drivers reads the efuse and based on that
+>>> registers
+>>>>>     the opp data and then registers the cpufreq-dt device. So when
+>>>>>     cpufreq-dt driver probes and registers the regulator to the OPP
+>>> framework,
+>>>>>     it expects that the opp data for the device should not be
+>>> registered before
+>>>>>     the regulator. Will send a RFC patch removing that check, to
+>>> find out the
+>>>>>     right way of doing it.
+>>>>>
+>>>>> These patches provide cpufreq scaling on devices with Krait CPUs.
+>>>>> In Krait CPU designs there's one PLL and two muxes per CPU,
+>> allowing
+>>>>> us to switch CPU frequencies independently.
+>>>>>
+>>>>> 				 secondary
+>>>>> 	 +-----+                    +
+>>>>> 	 | QSB |-------+------------|\
+>>>>> 	 +-----+       |            | |-+
+>>>>> 		       |    +-------|/  |
+>>>>> 		       |    |       +   |
+>>>>> 	 +-----+       |    |           |
+>>>>> 	 | PLL |----+-------+           |   primary
+>>>>> 	 +-----+    |  |                |     +
+>>>>> 		    |  |                +-----|\       +------+
+>>>>> 	 +-------+  |  |                      | \      |      |
+>>>>> 	 | HFPLL |----------+-----------------|  |-----| CPU0 |
+>>>>> 	 +-------+  |  |    |                 |  |     |      |
+>>>>> 		    |  |    | +-----+         | /      +------+
+>>>>> 		    |  |    +-| / 2 |---------|/
+>>>>> 		    |  |      +-----+         +
+>>>>> 		    |  |         secondary
+>>>>> 		    |  |            +
+>>>>> 		    |  +------------|\
+>>>>> 		    |               | |-+
+>>>>> 		    +---------------|/  |   primary
+>>>>> 				    +   |     +
+>>>>> 					+-----|\       +------+
+>>>>> 	 +-------+                            | \      |      |
+>>>>> 	 | HFPLL |----------------------------|  |-----| CPU1 |
+>>>>> 	 +-------+          |                 |  |     |      |
+>>>>> 			    | +-----+         | /      +------+
+>>>>> 			    +-| / 2 |---------|/
+>>>>> 			      +-----+         +
+>>>>>
+>>>>> To support this in the common clock framework we model the muxes,
+>>>>> dividers, and PLLs as different clocks. CPUfreq only interacts
+>>>>> with the primary mux (farthest right in the diagram). When CPUfreq
+>>>>> sets a rate, the mux code finds the best parent that can provide
+>> the
+>>> rate.
+>>>>> Due to the design, QSB and the top PLL are always a fixed rate and
+>>> thus
+>>>>> only support one frequency each. These sources provide the lowest
+>>>>> frequencies for the CPUs. The HFPLLs are where we can make the CPU
+>>> go
+>>>>> faster (GHz range). Sometimes we need to run the HFPLL twice as
+>>>>> fast and divide it by two to get a particular frequency.
+>>>>>
+>>>>> When switching rates we can't leave the CPU clocked by the HFPLL
+>>> because
+>>>>> we need to turn off the output of the PLL when changing its
+>>> frequency.
+>>>>> This means we have to switch over to the secondary mux and use one
+>>> of the
+>>>>> fixed sources. This is why we need something like the safe parent
+>>> patch.
+>>>>>
+>>>>> [1]
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332607.html
+>>>>> [2]
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332615.html
+>>>>> [3]
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2015-March/332608.html
+>>>>> [4] https://lwn.net/Articles/740994/ 
+>>>>> [5] https://lkml.org/lkml/2017/12/19/537
+>>>>>
+>>>>>
+>>>>> Sricharan R (3):
+>>>>>   clk: qcom: Add safe switch hook for krait mux clocks
+>>>>>   cpufreq: qcom: Re-organise kryo cpufreq to use it for other nvmem
+>>>>>     based qcom socs
+>>>>>   cpufreq: qcom: Add support for krait based socs
+>>>>>
+>>>>> Stephen Boyd (11):
+>>>>>   ARM: Add Krait L2 register accessor functions
+>>>>>   clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+>>>>>   clk: qcom: Add HFPLL driver
+>>>>>   dt-bindings: clock: Document qcom,hfpll
+>>>>>   clk: qcom: Add MSM8960/APQ8064's HFPLLs
+>>>>>   clk: qcom: Add IPQ806X's HFPLLs
+>>>>>   clk: qcom: Add support for Krait clocks
+>>>>>   clk: qcom: Add KPSS ACC/GCC driver
+>>>>>   dt-bindings: arm: Document qcom,kpss-gcc
+>>>>>   clk: qcom: Add Krait clock controller driver
+>>>>>   dt-bindings: clock: Document qcom,krait-cc
+>>>>>
+>>>>>  .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  |  19 +
+>>>>>  .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  |  44 +++
+>>>>>  .../devicetree/bindings/clock/qcom,hfpll.txt       |  60 ++++
+>>>>>  .../devicetree/bindings/clock/qcom,krait-cc.txt    |  34 ++
+>>>>>  .../{kryo-cpufreq.txt => qcom-nvmem-cpufreq.txt}   |   7 +-
+>>>>>  arch/arm/common/Kconfig                            |   3 +
+>>>>>  arch/arm/common/Makefile                           |   1 +
+>>>>>  arch/arm/common/krait-l2-accessors.c               |  48 +++
+>>>>>  arch/arm/include/asm/krait-l2-accessors.h          |   9 +
+>>>>>  drivers/clk/qcom/Kconfig                           |  28 ++
+>>>>>  drivers/clk/qcom/Makefile                          |   5 +
+>>>>>  drivers/clk/qcom/clk-hfpll.c                       | 244
+>>> +++++++++++++
+>>>>>  drivers/clk/qcom/clk-hfpll.h                       |  44 +++
+>>>>>  drivers/clk/qcom/clk-krait.c                       | 126 +++++++
+>>>>>  drivers/clk/qcom/clk-krait.h                       |  40 +++
+>>>>>  drivers/clk/qcom/gcc-ipq806x.c                     |  82 +++++
+>>>>>  drivers/clk/qcom/gcc-msm8960.c                     | 172 +++++++++
+>>>>>  drivers/clk/qcom/hfpll.c                           |  96 +++++
+>>>>>  drivers/clk/qcom/kpss-xcc.c                        |  87 +++++
+>>>>>  drivers/clk/qcom/krait-cc.c                        | 397
+>>> +++++++++++++++++++++
+>>>>>  drivers/cpufreq/Kconfig.arm                        |   6 +-
+>>>>>  drivers/cpufreq/Makefile                           |   2 +-
+>>>>>  drivers/cpufreq/cpufreq-dt-platdev.c               |   5 +
+>>>>>  drivers/cpufreq/qcom-cpufreq-kryo.c                | 232
+>>> ------------
+>>>>>  drivers/cpufreq/qcom-cpufreq-nvmem.c               | 387
+>>> ++++++++++++++++++++
+>>>>>  include/dt-bindings/clock/qcom,gcc-msm8960.h       |   2 +
+>>>>>  26 files changed, 1941 insertions(+), 239 deletions(-)
+>>>>>  create mode 100644
+>>> Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>>>>>  create mode 100644
+>>> Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+>>>>>  create mode 100644
+>>> Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+>>>>>  rename Documentation/devicetree/bindings/opp/{kryo-cpufreq.txt =>
+>>> qcom-nvmem-cpufreq.txt} (98%)
+>>>>>  create mode 100644 arch/arm/common/krait-l2-accessors.c
+>>>>>  create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+>>>>>  create mode 100644 drivers/clk/qcom/clk-hfpll.c
+>>>>>  create mode 100644 drivers/clk/qcom/clk-hfpll.h
+>>>>>  create mode 100644 drivers/clk/qcom/clk-krait.c
+>>>>>  create mode 100644 drivers/clk/qcom/clk-krait.h
+>>>>>  create mode 100644 drivers/clk/qcom/hfpll.c
+>>>>>  create mode 100644 drivers/clk/qcom/kpss-xcc.c
+>>>>>  create mode 100644 drivers/clk/qcom/krait-cc.c
+>>>>>  delete mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+>>>>>  create mode 100644 drivers/cpufreq/qcom-cpufreq-nvmem.c
+>>>>>
+>>>>
+> 
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
