@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13455ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5760C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E4221535
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ABEC21531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uWF+VHcD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E4221535
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wm9PColh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ABEC21531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388118AbeITXIK (ORCPT
+        id S2388139AbeITXIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:08:10 -0400
-Received: from mail-wm1-f54.google.com ([209.85.128.54]:36715 "EHLO
-        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbeITXIJ (ORCPT
+        Thu, 20 Sep 2018 19:08:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44024 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732794AbeITXIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:08:09 -0400
-Received: by mail-wm1-f54.google.com with SMTP id j192-v6so361207wmj.1;
-        Thu, 20 Sep 2018 10:23:38 -0700 (PDT)
+        Thu, 20 Sep 2018 19:08:13 -0400
+Received: by mail-wr1-f66.google.com with SMTP id k5-v6so10196989wre.10;
+        Thu, 20 Sep 2018 10:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OlvTLHPATLzvPvQ7mfFI3Yc5QOC2M/uMcBZ3tLM5/xU=;
-        b=uWF+VHcDMKQTEDn0EX8oFzhiWfwrMuJq1/36VhW3GXLzTmFbRjmNp/3XGvJuabWpC6
-         A6QpkVVejUnHIm0GkfP8w6YCyRUfT24CRdDi5Nv5w50RXZHfW5WTYCOIBzwYQi3Z9ohS
-         zAfIUmhnIHzo/6L0pT1pNISEk/nZBpSMOwzxgkLh7TyG5bKxEpqBc1yRtKLLJZn8LGli
-         iPnn88f/61dLgX7zJNCypU4h64hqboC43JcqJCUWzzXsqTtocxWXMIOtZTjTTZ9ajkQh
-         NDIZrtBCTaOfW6QjLztzV2V9c5MhzFhE0aAJ+9L5A0Bp36L4qhBFwKdrBxZItM3e3Nof
-         Y5WA==
+        bh=+3J6L7h/sEn5CncGiCzMXe2W5FPwQDjmK1q81IjlWiU=;
+        b=Wm9PColhFrOz4RV32gXm1loYa4k8jnr1YsSZUSKunLS7oNcmlChMIi67t/cNvqUDu6
+         pQDF9jzqrBW2wX5R8yMqzYrnREQCWhXLhe/k3dMROyfsz0uCL3RVNgQAVPuo/She14bn
+         jHpFneo0IeU03rrK0qMPYYWKKa3eAQjLWtSkIocJeH1MiKTrmHD3M1EF9oqcqULsE1hD
+         yMEmf+G3aljK6TpfoELbFr850gTrZ9qkvA7e5sng79mz2A1FbsjMOzDrO8pv3xzGMcs5
+         Tvy/jj/P5TZSG4sS6CpDn+kFfQxKV8maitnFgqA3PTy2uDvscNAaZ6lDCWmu1iBE0k/E
+         W9Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OlvTLHPATLzvPvQ7mfFI3Yc5QOC2M/uMcBZ3tLM5/xU=;
-        b=CyEgYjm7VKSzhRlGPN1qc5ESFYY38s3vruDcleofGR4x7Zga1yhJb8CG8Ntvf2ZC21
-         uTx+7EH8aFwSRBvbKrEwZlqtDn1vxu/XpY7bAbvDyoSrkyKE5gStagpxW7AYBf7Q8pTI
-         bbIdImM1+nOnUncFmUdy7Nb5p2/Bs/1HxAhsA+ta0ZhL0ZBBz69OiuNkrfBKA10kNXqp
-         1YJUqwCWGjfUxG0pjlR3huGXmbcGfdmVfe4wNaC0uTSBrJO9cwMgyToMR0FCZ9K3LnkA
-         g7Bj6Xb/tZjrbKoSszjH7vXSskS4/Mig9OkV/Sm8A5wpr3o19jwWM5d6s40bDzNDl9/D
-         XB7g==
-X-Gm-Message-State: APzg51DODMulXZqvefmVa9pppojJlvet8cB/+qlznQYYwx4Ed4FHIc4G
-        MhVIbjb7CuY4SYA1FU10rIv9y2HGzr4=
-X-Google-Smtp-Source: ANB0VdYJSl2WZ6jGPdpGpfc2OLlImmnWzmsdD94LlzGUb5v5V/Cy7v0DLTIfvI3QZmRYLpX0YB63LQ==
-X-Received: by 2002:a1c:3d07:: with SMTP id k7-v6mr3938145wma.146.1537464217504;
-        Thu, 20 Sep 2018 10:23:37 -0700 (PDT)
+        bh=+3J6L7h/sEn5CncGiCzMXe2W5FPwQDjmK1q81IjlWiU=;
+        b=DDj1P5Fz0oMPg72yRvbRNT/6DOI1qEKAhrr6wURjV3lBjgUTRhSMoYddnGWw28dEsZ
+         I8j/lpsbDR9Laa6Th596EswlAhyAsYutM3v/uxdl5tvMdkBB4BWbNwKBrzh9txQRitaY
+         2yr0A3srFchtfdv024TX1W3lAWTNBJyfhgvz6rMm4L6clPQhErYC2HdlezIKaPOv/59L
+         86cbWyO/w1MT/pBciD4UuZ2+jOaTSOhgP/udY6KHVAa73C3c5NVrsT37xZ98nI5k/LN/
+         TKqi8h1Was55IFsL4D37WzJgTMgHrHkgFhB7zcPv0z0Rrnw3S/4H8IzW2LEgqujYz1iG
+         GhgQ==
+X-Gm-Message-State: APzg51DRdnuvUSNa8n+/sHjNDhu6OvBgAepMraddSnpzetDwGsWcPtlP
+        S23QcZZjBuo9HZVH6bGXf8w=
+X-Google-Smtp-Source: ANB0VdZJwXFX2HiJwO4YDTcGI8p9jybt5IMb4nZGDkX3uwjShn0jVZFVVvihNZlH7IrJYUvbeG+j8g==
+X-Received: by 2002:adf:fe06:: with SMTP id n6-v6mr35098498wrr.171.1537464221923;
+        Thu, 20 Sep 2018 10:23:41 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.35
+        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:23:37 -0700 (PDT)
+        Thu, 20 Sep 2018 10:23:41 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -97,9 +97,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 06/15] Compiler Attributes: add missing SPDX ID in compiler_types.h
-Date:   Thu, 20 Sep 2018 19:22:52 +0200
-Message-Id: <20180920172301.21868-7-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v5 08/15] Compiler Attributes: KENTRY used twice the "used" attribute
+Date:   Thu, 20 Sep 2018 19:22:54 +0200
+Message-Id: <20180920172301.21868-9-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -111,17 +111,21 @@ Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler_types.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/compiler.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index a3eceb3ad1b3..ed7c0e4a180e 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- #ifndef __LINUX_COMPILER_TYPES_H
- #define __LINUX_COMPILER_TYPES_H
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 4030a2940d6b..17ee9165ca51 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -146,7 +146,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 	extern typeof(sym) sym;					\
+ 	static const unsigned long __kentry_##sym		\
+ 	__used							\
+-	__attribute__((__section__("___kentry" "+" #sym ), used))	\
++	__attribute__((__section__("___kentry" "+" #sym )))	\
+ 	= (unsigned long)&sym;
+ #endif
  
 -- 
 2.17.1
