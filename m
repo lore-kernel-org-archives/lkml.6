@@ -2,123 +2,222 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_12_24,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB83C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB24ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CD6221526
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CD6221526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4645521526
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4645521526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732863AbeITTuj (ORCPT
+        id S1732924AbeITTuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 15:50:39 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:31660 "EHLO pegase1.c-s.fr"
+        Thu, 20 Sep 2018 15:50:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36320 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731463AbeITTuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 15:50:39 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42GJSg68nqz9ttRj;
-        Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id i9POh7THBRyS; Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42GJSg5Xrtz9ttRd;
-        Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 215A58B86A;
-        Thu, 20 Sep 2018 16:07:00 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id RNcyVHW_9iUG; Thu, 20 Sep 2018 16:07:00 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 845468B77F;
-        Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
-Subject: Re: Checkpatch bad Warning (Re: [PATCH] powerpc/kgdb: add
- kgdb_arch_set/remove_breakpoint())
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>, paul.burton@mips.com,
-        ralf@linux-mips.org, jhogan@kernel.org
-Cc:     Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
-References: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
- <2f5f572a-a28c-9d17-844b-9e1961febf64@c-s.fr>
- <595c96f5adcccd7eab9dc95eb48618981af66d3c.camel@perches.com>
- <87worgia60.fsf@concordia.ellerman.id.au>
- <f9ad7501-4d07-ddc2-6236-a7eb61283378@c-s.fr>
-Message-ID: <d31bd0cb-b9da-6f1b-4f93-da71644668d6@c-s.fr>
-Date:   Thu, 20 Sep 2018 01:23:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1731416AbeITTuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 15:50:46 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 432A8C065F8D;
+        Thu, 20 Sep 2018 14:07:07 +0000 (UTC)
+Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 157CC600C8;
+        Thu, 20 Sep 2018 14:07:03 +0000 (UTC)
+Subject: Re: [PATCH v5 11/18] kvm: arm64: Dynamic configuration of VTTBR mask
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-12-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <15830d79-cfc3-964a-c232-a508758ba1b9@redhat.com>
+Date:   Thu, 20 Sep 2018 16:07:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <f9ad7501-4d07-ddc2-6236-a7eb61283378@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180917104144.19188-12-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 20 Sep 2018 14:07:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding MIPS arch in the loop
+Hi Suzuki,
+On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
+> On arm64 VTTBR_EL2:BADDR holds the base address for the stage2
+> translation table. The Arm ARM mandates that the bits BADDR[x-1:0]
+> should be 0, where 'x' is defined for a given IPA Size and the
+> number of levels for a translation granule size. It is defined
+> using some magical constants. This patch is a reverse engineered
+> implementation to calculate the 'x' at runtime for a given ipa and
+> number of page table levels. See patch for more details.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-On 09/20/2018 01:19 PM, Christophe LEROY wrote:
+> ---
+> Changes since V3:
+>  - Update reference to latest ARM ARM and improve commentary
+> ---
+>  arch/arm64/include/asm/kvm_arm.h | 63 +++++++++++++++++++++++++++++---
+>  arch/arm64/include/asm/kvm_mmu.h | 25 ++++++++++++-
+>  2 files changed, 81 insertions(+), 7 deletions(-)
 > 
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index 14317b3a1820..3fb1d440be6e 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -123,7 +123,6 @@
+>  #define VTCR_EL2_SL0_MASK	(3 << VTCR_EL2_SL0_SHIFT)
+>  #define VTCR_EL2_SL0_LVL1	(1 << VTCR_EL2_SL0_SHIFT)
+>  #define VTCR_EL2_T0SZ_MASK	0x3f
+> -#define VTCR_EL2_T0SZ_40B	24
+>  #define VTCR_EL2_VS_SHIFT	19
+>  #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
+>  #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
+> @@ -140,11 +139,8 @@
+>   * Note that when using 4K pages, we concatenate two first level page tables
+>   * together. With 16K pages, we concatenate 16 first level page tables.
+>   *
+> - * The magic numbers used for VTTBR_X in this patch can be found in Tables
+> - * D4-23 and D4-25 in ARM DDI 0487A.b.
+>   */
+>  
+> -#define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
+>  #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
+>  				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
+>  
+> @@ -175,9 +171,64 @@
+>  #endif
+>  
+>  #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
+> -#define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
+> +/*
+> + * ARM VMSAv8-64 defines an algorithm for finding the translation table
+> + * descriptors in section D4.2.8 in ARM DDI 0487C.a.
+> + *
+> + * The algorithm defines the expectations on the BaseAddress (for the page
+> + * table) bits resolved at each level based on the page size, entry level
+> + * and T0SZ. The variable "x" in the algorithm also affects the VTTBR:BADDR
+> + * for stage2 page table.
+> + *
+> + * The value of "x" is calculated as :
+> + *	x = Magic_N - T0SZ
+
+What is not crystal clear to me is the "if SL0b,c = n" case where x get
+a value not based on Magic_N. Please could you explain why it is not
+relevant?
+
+Thanks
+
+Eric
+> + *
+> + * where Magic_N is an integer depending on the page size and the entry
+> + * level of the page table as below:
+> + *
+> + *	--------------------------------------------
+> + *	| Entry level		|  4K    16K   64K |
+> + *	--------------------------------------------
+> + *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
+> + *	--------------------------------------------
+> + *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
+> + *	--------------------------------------------
+> + *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
+> + *	--------------------------------------------
+> + *	| Level: 3 (1 level)	| -    | 53  | 51  |
+> + *	--------------------------------------------
+> + *
+> + * We have a magic formula for the Magic_N below:
+> + *
+> + *  Magic_N(PAGE_SIZE, Level) = 64 - ((PAGE_SHIFT - 3) * Number_of_levels)
+> + *
+> + * where Number_of_levels = (4 - Level). We are only interested in the
+> + * value for Entry_Level for the stage2 page table.
+> + *
+> + * So, given that T0SZ = (64 - IPA_SHIFT), we can compute 'x' as follows:
+> + *
+> + *	x = (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - IPA_SHIFT)
+> + *	  = IPA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
+> + *
+> + * Here is one way to explain the Magic Formula:
+> + *
+> + *  x = log2(Size_of_Entry_Level_Table)
+> + *
+> + * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
+> + * PAGE_SHIFT bits in the PTE, we have :
+> + *
+> + *  Bits_Entry_level = IPA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_SHIFT)
+> + *		     = IPA_SHIFT - (PAGE_SHIFT - 3) * n - 3
+> + *  where n = number of levels, and since each pointer is 8bytes, we have:
+> + *
+> + *  x = Bits_Entry_Level + 3
+> + *    = IPA_SHIFT - (PAGE_SHIFT - 3) * n
+> + *
+> + * The only constraint here is that, we have to find the number of page table
+> + * levels for a given IPA size (which we do, see stage2_pt_levels())
+> + */
+> +#define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
+>  
+> -#define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) << VTTBR_X)
+>  #define VTTBR_VMID_SHIFT  (UL(48))
+>  #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SHIFT)
+>  
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 7342d2c51773..ac3ca9690bad 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -145,7 +145,6 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
+>  #define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
+>  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
+>  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
+> -#define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
+>  
+>  static inline bool kvm_page_empty(void *ptr)
+>  {
+> @@ -520,5 +519,29 @@ static inline int hyp_map_aux_data(void)
+>  
+>  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+>  
+> +/*
+> + * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
+> + * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
+> + * 52bit IPS.
+> + */
+> +static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
+> +{
+> +	int x = ARM64_VTTBR_X(ipa_shift, levels);
+> +
+> +	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
+> +}
+> +
+> +static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
+> +{
+> +	unsigned int x = arm64_vttbr_x(ipa_shift, levels);
+> +
+> +	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
+> +}
+> +
+> +static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
+> +{
+> +	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
+> +}
+> +
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* __ARM64_KVM_MMU_H__ */
 > 
-> Le 20/09/2018 à 15:13, Michael Ellerman a écrit :
->> Joe Perches <joe@perches.com> writes:
->>
->>> On Tue, 2018-09-18 at 09:33 +0000, Christophe Leroy wrote:
->>>> On the below patch, checkpatch reports
->>>>
->>>> WARNING: struct kgdb_arch should normally be const
->>>> #127: FILE: arch/powerpc/kernel/kgdb.c:480:
->>>> +struct kgdb_arch arch_kgdb_ops;
->>>>
->>>> But when I add 'const', I get compilation failure
->>>
->>> So don't add const.
->>>
->>> checkpatch is stupid.  You are not.
->>>
->>> _Always_ take checkpatch bleats with very
->>> large grains of salt.
->>>
->>> Perhaps send a patch to remove kgbd_arch
->>> from scripts/const_structs.checkpatch as
->>> it seems not ever to be const.
->>
->> I think it could/should be const though, it just requires updating all
->> arches.
->>
-> 
-> Yes I was thinking about doing it, but first thing is to change the way 
-> MIPS initialises it:
-> 
-> 
-> struct kgdb_arch arch_kgdb_ops;
-> 
-> int kgdb_arch_init(void)
-> {
->      union mips_instruction insn = {
->          .r_format = {
->              .opcode = spec_op,
->              .func    = break_op,
->          }
->      };
->      memcpy(arch_kgdb_ops.gdb_bpt_instr, insn.byte, BREAK_INSTR_SIZE);
-> 
-> 
-> Can this be done staticaly ?
-> 
-> Christophe
