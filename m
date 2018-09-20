@@ -5,75 +5,103 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45701C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C501ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE76A21526
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:39:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE76A21526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C369421523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C369421523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732017AbeITPWJ (ORCPT
+        id S1732091AbeITPWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:22:09 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:35445 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731343AbeITPWJ (ORCPT
+        Thu, 20 Sep 2018 11:22:17 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41921 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbeITPWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:22:09 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g2vQb-00035q-Qv; Thu, 20 Sep 2018 11:39:17 +0200
-Date:   Thu, 20 Sep 2018 11:39:17 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pu Wen <puwen@hygon.cn>
-cc:     Rong Chen <rong.a.chen@intel.com>, bp@alien8.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, thomas.lendacky@amd.com,
-        helgaas@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-pci@vger.kernel.org, lkp@01.org
-Subject: Re: [LKP] [x86/pci] 7ffb31888c: PANIC:early_exception
-In-Reply-To: <7e9e862a-e890-775f-ed92-74c591c7deb6@hygon.cn>
-Message-ID: <alpine.DEB.2.21.1809201138230.3243@nanos.tec.linutronix.de>
-References: <20180919031923.GC8820@shao2-debian> <4f5166f8-97b8-a58f-3e5d-19d1751a4601@hygon.cn> <dfc09a36-cfc5-0479-a862-696c224f9a19@intel.com> <7e9e862a-e890-775f-ed92-74c591c7deb6@hygon.cn>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 20 Sep 2018 11:22:16 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1g2vQv-0007NM-EJ; Thu, 20 Sep 2018 11:39:37 +0200
+Message-ID: <1537436376.3362.159.camel@pengutronix.de>
+Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for the last tail
+ data
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Robin Gong <yibin.gong@nxp.com>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Andy Duan <fugang.duan@nxp.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "jslaby@suse.com" <jslaby@suse.com>
+Date:   Thu, 20 Sep 2018 11:39:36 +0200
+In-Reply-To: <VI1PR04MB45432291716B64380C1B90DD89130@VI1PR04MB4543.eurprd04.prod.outlook.com>
+References: <1537457160-10792-1-git-send-email-yibin.gong@nxp.com>
+         <20180920075513.6jqfbrrjax3sp4cn@pengutronix.de>
+         <VI1PR04MB45432291716B64380C1B90DD89130@VI1PR04MB4543.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Sep 2018, Pu Wen wrote:
-> On 2018/9/20 8:26, Rong Chen wrote:
-> > On 09/19/2018 09:53 PM, Pu Wen wrote:
-> > > I cannot reproduce this panic on Hygon Dhyana platform. I tired lkp-tests
-> > > both in Ubuntu 16.04 (with gcc-5) and Ubuntu 18.04 (with gcc-7).
-> > > What kind of host do you use to run the qemu? A Intel one or AMD one?
-> > It's a Intel one,
+Am Donnerstag, den 20.09.2018, 08:39 +0000 schrieb Robin Gong:
+> > -----Original Message-----
+> > From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > Sent: 2018年9月20日 15:55
+> > To: Robin Gong <yibin.gong@nxp.com>
+> > Cc: jslaby@suse.com; Andy Duan <fugang.duan@nxp.com>;
+> > linux-serial@vger.kernel.org; linux-kernel@vger.kernel.org; dl-
+> > linux-imx
+> > <linux-imx@nxp.com>; kernel@pengutronix.de
+> > Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for the
+> > last tail data
 > > 
-> > model: Nehalem-EX
-> > memory: 224G
-> > nr_node: 4
-> > nr_cpu: 64
-> > nr_socket: 4
-> > brand: Intel(R) Xeon(R) CPU X7560 @ 2.27GHz
+> > Hello,
+> > 
+> > On Thu, Sep 20, 2018 at 11:26:00PM +0800, Robin Gong wrote:
+> > > enable IDDMAEN in UCR4 to let sdma script has the chance to
+> > > detect the
+> > > idle status and transfer the last tail data with the interrupt
+> > > notifying uart driver.Otherwise, the last dma done interrupt of
+> > > the
+> > > tail data in rxfifo whose size is less than watermark may never
+> > > be
+> > > received by uart driver.
+> > 
+> > Is this a theoretic issue? Or does it fix a real problem?
+> > 
+> > If the former I'd say UCR1_ATDMAEN being set should prevent this
+> > stall.
 > 
-> I reproduced the PANIC by running lkp-tests with a Intel machine.
-> 
-> The reason is that the function early_is_amd_nb is called even if
-> running on Intel machine. At this case the misc_ids is NULL so the
-> PANIC occur.
-> 
-> I'll rework a patch to solve this problem, either restore the default
-> value of misc_ids with the original AMD one or not call early_is_amd_nb
-> on Intel platform.
+> It's a real fix, you will see 'timeout We read 0 byte' with the
+> attached stress test
+> running on i.mx7d or i.mx6 if no this patch applied. 
+> ' while [ 1 ]; do /unit_tests/UART/mxc_uart_stress_test.out
+> /dev/ttymxc5 2000000 D L 100 100 L; done &'
+> Please make sure dma enabled on ttymxcX for your test, and sdma
+> firmware setup in your rootfs 
+> /lib/firmware/imx/sdma/sdma-imx6q.bin or /lib/firmware/imx/sdma/sdma-
+> imx7d.bin.
+> You can get sdma firmware from below:
+> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-
+> firmware.git/tree/imx/sdma
 
-Return when !AMD and !HYGON is the right thing to do. No point in checking
-device ids which cannot happen in the first place.
+Please see commit 905c0decad28402aa166975023fb88c8f62f93c8 on why using
+the idle detect together with with SDMA is wrong. We don't want to re-
+introduce the broken behavior.
 
-Thanks,
-
-	tglx
+Regards,
+Lucas
