@@ -2,202 +2,128 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F34ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F333DECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5202021525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:03:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k21blh7h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5202021525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B32582150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:05:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B32582150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387858AbeITXsK (ORCPT
+        id S2387971AbeITXtj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:48:10 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35373 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732340AbeITXsJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:48:09 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g2-v6so4710929plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 11:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nMypszJCM6rR4MByZFa6dYUd8t3+l7c4ueckXilTbvg=;
-        b=k21blh7hy8Ce5BlXDiDzSdusVN1AiqzVrcdC1jGG4IAAFjnt8lYAXtmWIkh0B8qhyu
-         VdrAt61irlrJmYsmopGLHIPj93jwwd+bkica3d8V4dl+Mg9qISOQShW/izUZyjkahU46
-         1ZH0dFP4a28/hoiTGhDlCw/jjDdQbWQ8kZjBo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nMypszJCM6rR4MByZFa6dYUd8t3+l7c4ueckXilTbvg=;
-        b=hVuJQ0FiSzjhtaQ+kg0CwxtkOYCl7xlbosZLz+r/3QlLdZbhoaPRGFIHaYZGYopTpb
-         CPkmf3DO6eQxMuLhy/J48X1DaHFpQqGVzGgUqBpa5acbzheFyYTnH6Y4PudMjbpELdBU
-         M3mGMaHHpvxj71Z+j2I4/jZ1YUHssJEcP0RRDgZhLg3be7bkVFNXbNZ2iKuc9Plh39bu
-         /xq6aiDsx2CwronRhpP5HS6v1TFqEtEqAKRVm/3xI70WfSrTenpA16El0Qm6jO/nrN17
-         jmKxlTMAJmX3CkiMg2HE8bHNOKmJmTEI6CKjv6WyZVIDdXgULfA9vfB9U1+IwdMlBhp5
-         I+Fw==
-X-Gm-Message-State: APzg51BnBMbJU0BD9rH5MVj5EtZihQG29yNh3s3dWJU3lVQ6Ni41ZAV8
-        J0/mRGlm8ENdxkVUicqkV67VBeb2PYU=
-X-Google-Smtp-Source: ANB0VdY59cZA5M0ZMrtIih4RSdE1OjiZe51IkOKItIyYNNGWKgnIhAbEHqoZavaz5c/6kEKvFSGhmg==
-X-Received: by 2002:a17:902:3fa5:: with SMTP id a34-v6mr40709689pld.244.1537466608974;
-        Thu, 20 Sep 2018 11:03:28 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id h124-v6sm2941874pfg.112.2018.09.20.11.03.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 11:03:28 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>
-Subject: [PATCH v2 2/2] i2c: i2c-qcom-geni: Simplify tx/rx functions
-Date:   Thu, 20 Sep 2018 11:03:23 -0700
-Message-Id: <20180920180323.217377-3-swboyd@chromium.org>
-X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
-In-Reply-To: <20180920180323.217377-1-swboyd@chromium.org>
-References: <20180920180323.217377-1-swboyd@chromium.org>
+        Thu, 20 Sep 2018 19:49:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10210 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732340AbeITXti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 19:49:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 11:04:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
+   d="scan'208";a="92300130"
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga001.jf.intel.com with ESMTP; 20 Sep 2018 11:04:54 -0700
+Subject: Re: [PATCH v8 0/3] powerpc: Detection and scheduler optimization for
+ POWER9 bigcore
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>
+References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <133c7bca-5720-81de-7956-b93870a1bab8@intel.com>
+Date:   Thu, 20 Sep 2018 11:04:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We never really look at the 'ret' local variable in these functions, so
-let's remove it to make way for shorter and simpler code. Furthermore,
-we can shorten some lines by adding two local variables for the SE and
-the message length so that everything fits in 80 columns. And kernel
-style is to leave the return statement by itself, detached from the rest
-of the function.
+On 09/20/2018 10:22 AM, Gautham R. Shenoy wrote:
+>  	   -------------------------
+> 	   |  	    L1 Cache       |
+>        ----------------------------------
+>        |L2|     |     |     |      |
+>        |  |  0  |  2  |  4  |  6   |Small Core0
+>        |C |     |     |     |      |
+> Big    |a --------------------------
+> Core   |c |     |     |     |      |
+>        |h |  1  |  3  |  5  |  7   | Small Core1
+>        |e |     |     |     |      |
+>        -----------------------------
+> 	  |  	    L1 Cache       |
+> 	  --------------------------
 
-Cc: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-Cc: Sagar Dharia <sdharia@codeaurora.org>
-Cc: Girish Mahadevan <girishm@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/i2c/busses/i2c-qcom-geni.c | 54 ++++++++++++++----------------
- 1 file changed, 25 insertions(+), 29 deletions(-)
+The scheduler already knows about shared caches.  Could you elaborate on
+how this is different from the situation today where we have multiple
+cores sharing an L2/L3?
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index 9f2eb02481d3..1215bb21c9f1 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -368,6 +368,8 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	enum geni_se_xfer_mode mode;
- 	unsigned long time_left = XFER_TIMEOUT;
- 	void *dma_buf;
-+	struct geni_se *se = &gi2c->se;
-+	size_t len = msg->len;
- 
- 	gi2c->cur = msg;
- 	mode = GENI_SE_FIFO;
-@@ -375,19 +377,14 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	if (dma_buf)
- 		mode = GENI_SE_DMA;
- 
--	geni_se_select_mode(&gi2c->se, mode);
--	writel_relaxed(msg->len, gi2c->se.base + SE_I2C_RX_TRANS_LEN);
--	geni_se_setup_m_cmd(&gi2c->se, I2C_READ, m_param);
--	if (mode == GENI_SE_DMA) {
--		int ret;
--
--		ret = geni_se_rx_dma_prep(&gi2c->se, dma_buf, msg->len,
--								&rx_dma);
--		if (ret) {
--			mode = GENI_SE_FIFO;
--			geni_se_select_mode(&gi2c->se, mode);
--			i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
--		}
-+	geni_se_select_mode(se, mode);
-+	writel_relaxed(len, se->base + SE_I2C_RX_TRANS_LEN);
-+	geni_se_setup_m_cmd(se, I2C_READ, m_param);
-+
-+	if (dma_buf && geni_se_rx_dma_prep(se, dma_buf, len, &rx_dma)) {
-+		mode = GENI_SE_FIFO;
-+		geni_se_select_mode(se, mode);
-+		i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
- 	}
- 
- 	time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-@@ -398,9 +395,10 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	if (mode == GENI_SE_DMA) {
- 		if (gi2c->err)
- 			geni_i2c_rx_fsm_rst(gi2c);
--		geni_se_rx_dma_unprep(&gi2c->se, rx_dma, msg->len);
-+		geni_se_rx_dma_unprep(se, rx_dma, len);
- 		i2c_put_dma_safe_msg_buf(dma_buf, msg, !gi2c->err);
- 	}
-+
- 	return gi2c->err;
- }
- 
-@@ -411,6 +409,8 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	enum geni_se_xfer_mode mode;
- 	unsigned long time_left;
- 	void *dma_buf;
-+	struct geni_se *se = &gi2c->se;
-+	size_t len = msg->len;
- 
- 	gi2c->cur = msg;
- 	mode = GENI_SE_FIFO;
-@@ -418,23 +418,18 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	if (dma_buf)
- 		mode = GENI_SE_DMA;
- 
--	geni_se_select_mode(&gi2c->se, mode);
--	writel_relaxed(msg->len, gi2c->se.base + SE_I2C_TX_TRANS_LEN);
--	geni_se_setup_m_cmd(&gi2c->se, I2C_WRITE, m_param);
--	if (mode == GENI_SE_DMA) {
--		int ret;
--
--		ret = geni_se_tx_dma_prep(&gi2c->se, dma_buf, msg->len,
--								&tx_dma);
--		if (ret) {
--			mode = GENI_SE_FIFO;
--			geni_se_select_mode(&gi2c->se, mode);
--			i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
--		}
-+	geni_se_select_mode(se, mode);
-+	writel_relaxed(len, se->base + SE_I2C_TX_TRANS_LEN);
-+	geni_se_setup_m_cmd(se, I2C_WRITE, m_param);
-+
-+	if (dma_buf && geni_se_tx_dma_prep(se, dma_buf, len, &tx_dma)) {
-+		mode = GENI_SE_FIFO;
-+		geni_se_select_mode(se, mode);
-+		i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
- 	}
- 
- 	if (mode == GENI_SE_FIFO) /* Get FIFO IRQ */
--		writel_relaxed(1, gi2c->se.base + SE_GENI_TX_WATERMARK_REG);
-+		writel_relaxed(1, se->base + SE_GENI_TX_WATERMARK_REG);
- 
- 	time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
- 	if (!time_left)
-@@ -444,9 +439,10 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	if (mode == GENI_SE_DMA) {
- 		if (gi2c->err)
- 			geni_i2c_tx_fsm_rst(gi2c);
--		geni_se_tx_dma_unprep(&gi2c->se, tx_dma, msg->len);
-+		geni_se_tx_dma_unprep(se, tx_dma, len);
- 		i2c_put_dma_safe_msg_buf(dma_buf, msg, !gi2c->err);
- 	}
-+
- 	return gi2c->err;
- }
- 
--- 
-Sent by a computer through tubes
-
+Adding the new sysfs stuff seems like overkill if that's all that you
+are trying to do.
