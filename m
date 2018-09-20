@@ -2,172 +2,149 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BDDC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F31C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3833B206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:39:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3833B206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 090BE2154B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:41:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 090BE2154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388920AbeIUHZ7 (ORCPT
+        id S2388905AbeIUH1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 03:25:59 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38534 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbeIUHZ7 (ORCPT
+        Fri, 21 Sep 2018 03:27:35 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49212 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbeIUH1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 03:25:59 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[10.8.192.6])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1g3APp-0006RY-VI; Fri, 21 Sep 2018 01:39:30 +0000
-Subject: Re: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
- ordered initialization
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180920162338.21060-1-keescook@chromium.org>
- <20180920162338.21060-27-keescook@chromium.org>
- <a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
- <CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
- <7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <6c899d9e-45aa-8159-c402-b3c4d1936112@canonical.com>
-Date:   Thu, 20 Sep 2018 18:39:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 03:27:35 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 7FCF4263AB0
+Received: by earth.universe (Postfix, from userid 1000)
+        id 0A8C53C092C; Thu, 20 Sep 2018 23:42:05 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 23:42:05 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Craig <ctatlor97@gmail.com>
+Cc:     Baolin Wang <baolin.wang@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/4] dt-bindings: power: supply: qcom_bms: Add bindings
+Message-ID: <20180920214204.vse2qz25dbl5vqpr@earth.universe>
+References: <20180407135934.26122-1-ctatlor97@gmail.com>
+ <20180614151435.6471-1-ctatlor97@gmail.com>
+ <20180614151435.6471-3-ctatlor97@gmail.com>
+ <20180916121045.aptj6nciwskfg4st@earth.universe>
+ <4BBA3F28-A769-4F09-86DC-1E3906C53B26@gmail.com>
+ <20180920165847.6xqzeoqzqkyotshx@earth.universe>
+ <5039A15E-E604-4D03-AFEF-4B139EB18A30@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kbc3zhnwdmybmfig"
+Content-Disposition: inline
+In-Reply-To: <5039A15E-E604-4D03-AFEF-4B139EB18A30@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/20/2018 06:10 PM, Casey Schaufler wrote:
-> On 9/20/2018 5:45 PM, Kees Cook wrote:
->> On Thu, Sep 20, 2018 at 5:25 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 9/20/2018 9:23 AM, Kees Cook wrote:
->>>>  config LSM_ORDER
->>>>       string "Default initialization order of builtin LSMs"
->>>> -     default "yama,loadpin,integrity"
->>>> +     default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
->>> If I want to compile all the major modules into my kernel and use
->>> AppArmor by default would I use
->>>
->>>         default "yama,loadpin,integrity,apparmor,selinux,smack,tomoyo"
->>>
->>> or
->>>
->>>         default "yama,loadpin,integrity,apparmor"
->> I was expecting the former, but the latter will have the same result.
 
-t find having the two be equivalent violates expectations. At least
-when considering the end goal of full/extreme stacking, its trivially
-the same with current major lsms being exclusive
+--kbc3zhnwdmybmfig
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>
->>> When we have "blob-sharing" how could I compile in tomoyo,
->>> but exclude it without a boot line option?
->> Ooh, yes, this series has no way to do that. Perhaps
->> CONFIG_LSM_DISABLE in the same form as CONFIG_LSM_ORDER? I would
->> totally remove LoadPin's CONFIG for this in favor it.
-> 
-> I would generally prefer an optional CONFIG_LSM_ENABLE to
-> CONFIG_LSM_DISABLE, but I understand the logic behind your
-> approach. I would be looking for something like
-> 
-+1 on the CONFIG_LSM_ENABLE ove DISABLE
+On Thu, Sep 20, 2018 at 08:13:52PM +0100, Craig wrote:
+> On 20 September 2018 17:58:47 BST, Sebastian Reichel <sebastian.reichel@c=
+ollabora.com> wrote:
+> >[Dropped a couple of people from CC, added Baolin]
+> >
+> >Hi Craig, Baolin and Rob,
+> >
+> >On Thu, Sep 20, 2018 at 03:32:29PM +0100, Craig wrote:
+> >> On 16 September 2018 13:10:45 BST, Sebastian Reichel
+> ><sebastian.reichel@collabora.com> wrote:
+> >> >Sorry for my long delay in reviewing this. I like the binding,
+> >> >but the "qcom," specific properties should become common properties
+> >> >in
+> >> >
+> >> >Documentation/devicetree/bindings/power/supply/battery.txt
+> >> >and referenced via monitored-battery.
+> >
+> >> Thanks for the review, what bindings for ocv would you prefer? The
+> >> spreadtrum ones or mine?
+> >
+> >Most importantly I want to see only one generic binding supporting
+> >both use cases. As far as I can see there are two major differences:
+> >
+> >1. Qcom uses legend properties and SC27XX embedds this into data
+> >2. Qcom supports temperature based mapping
+> >
+> >The second point is easy: Not having temperature information can
+> >be a subset of the data with temperature info. The main thing to
+> >discuss are the legend properties. I suppose we have these
+> >proposals:
+> >
+> >Proposal A (from Qcom BMS binding):
+> >
+> >ocv-capacity-legend =3D /bits/ 8 <100 95 90 85 80 75 70 65 60 55 50 45
+> >...>;
+> >ocv-temp-legend-celsius =3D /bits/ 8 <(-10) 0 25 50 65>;
+> >ocv-lut-microvolt =3D <43050000 43050000 43030000 42990000
+> >
+> >Proposal B (from SC27XX binding):
+> >
+> >ocv-cap-table =3D <4185 100>, <4113 95>, <4066 90>, <4022 85> ...;
+> >
+> >I prefer the second binding (with mV -> uV), but I think it becomes
+> >messy when temperature is added. What do you think about the
+> >following proposal (derived from pinctrl style):
+> >
+> >Proposal C:
+> >
+> >ocv-capacity-table-temperatures =3D <(-10) 0 10>;
+> >ocv-capacity-table-0 =3D <4185000 100>, <4113000 95>, <4066000 90>, ...;
+> >ocv-capacity-table-1 =3D <4200000 100>, <4185000 95>, <4113000 90>, ...;
+> >ocv-capacity-table-2 =3D <4250000 100>, <4200000 95>, <4185000 90>, ...;
+> >
+> >-- Sebastian
+>=20
+> C looks good to me however I do kinda think it should be
+> millivolts as I don't think any hardware reads in microvolts and
+> the zeroes make it look quite ugly
 
-> CONFIG LSM_ENABLE
-> 	string "Default set of enabled LSMs"
-> 	default ""
-> 
-> as opposed to
-> 
-> CONFIG LSM_DISABLE
-> 	string "Default set of disabled LSMs"
-> 	default ""
-> 
-> where an empty string is interpreted as "use 'em all" 
-> in either case.
-> 
->>> When we have full stacking, how could I compile in selinux
->>> but exclude it?
->> Yup, same problem. Same suggested solution?
->>
->> Should lsm.enable/disable= also become a comma-separated list, or
->> should I leave it as a multi-instance thing like I have it?
-> 
-> I prefer the multi-instance
-> 	lsm.disable=selinux lsm.disable=yama
-> to the list
-> 	lsm.disable=selinux,yama
-> 
-> but at this point I don't really care all that much.
-> 
+I agree, that it looks a bit ugly in the table. Nevertheless I think we
+should use microvolts, since that is being used by all other properties.
 
-the comma separated list however is consistent with what is being
-done for default order
+-- Sebastian
 
+--kbc3zhnwdmybmfig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlukFCkACgkQ2O7X88g7
++poOZRAAp0oYgcoLWxjJSqdpOJQzaWc1QV0GkGyqrcu0Q1zCx7UBvmkfOToFez3o
+lXxeefw3hU3JIOsF9jzYJbTAfQM+IAUd01aC0EGsrGfCEzRo6cFMeKdA5EtdjixB
+r2iU2F8i4VlqYuzbiitvOHxs9ylw5i71Xk2TeT1c4Lgmie09Wou/wOjy72+uFap2
+9Pj7jq0zPIauvUY44U8QRi5T9kkF3a7ZGmrsF48noDrGHQ9qj3Zn3a5X0lAbjuiI
+A43xqlQi0eQMJHEdaY6dHVdYkGKSHUFq1l4w4qx2zuNRqr9uWHOJX38jx7wEPDAw
+FSUwHQdhNx8kW9XxvxhCkvLuMcSsx1SP7Bdu7Q7p2Wo9ZKAH3J6TZ8i7JRK98UoQ
+Lys/0TW85u5RBWmo/gn3A6UJ5XsfB3OODLQ1vWPNqsznQ72QtD0Iu3A3xINKaBTE
+B4AXnhbSXk50nAwN2FcdMTW4oFaUURdUTUil+65pX9BgGIIGspxtTAwZYITPzmDs
+sj2c9XfaKeaVIl+3xlsrkIyXqujRdAj6kylR7A96gVcR9LaN6Y3BRBkMh75AO7Fi
+qxVY2v5WdBlStQIQXD6uR1slTeVYPECPnBJZX1hnMzPec6nwlQ5Jwqtaxa7BJSNe
+onevmo07tKefSNCsm/2fGp1fADveF/OI20i5WSkbY5Iawko1bl8=
+=nP87
+-----END PGP SIGNATURE-----
+
+--kbc3zhnwdmybmfig--
