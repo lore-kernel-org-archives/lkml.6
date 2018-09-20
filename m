@@ -6,98 +6,81 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD491ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF19ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8C021522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:04:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8C021522
+	by mail.kernel.org (Postfix) with ESMTP id EEA7021522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:05:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA7021522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388735AbeIUDu3 (ORCPT
+        id S2388754AbeIUDun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 23:50:29 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55749 "EHLO
+        Thu, 20 Sep 2018 23:50:43 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55776 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeIUDu2 (ORCPT
+        with ESMTP id S1727171AbeIUDun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 23:50:28 -0400
+        Thu, 20 Sep 2018 23:50:43 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id DE2558075A; Fri, 21 Sep 2018 00:04:49 +0200 (CEST)
-Date:   Fri, 21 Sep 2018 00:04:49 +0200
+        id A4E1C80749; Fri, 21 Sep 2018 00:05:03 +0200 (CEST)
+Date:   Fri, 21 Sep 2018 00:05:02 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Daniel Golle <daniel@makrotopia.org>
-Cc:     Aditya Prayoga <aditya@kobol.io>, linux-ide@vger.kernel.org,
-        linux-leds@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 1/2] libata: add ledtrig support
-Message-ID: <20180920220449.GC27468@xo-6d-61-c0.localdomain>
-References: <1537328730-9156-1-git-send-email-aditya@kobol.io>
- <1537328730-9156-2-git-send-email-aditya@kobol.io>
- <20180920072354.GA20392@amd>
- <20180920082425.GB20006@makrotopia.org>
+To:     Chen Yu <yu.c.chen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Len Brown <len.brown@intel.com>,
+        Zhimin Gu <kookoo.gu@intel.com>
+Subject: Re: [PATCH 01/12][RFC v3] x86, hibernate: Fix nosave_regions setup
+ for hibernation
+Message-ID: <20180920220502.GD27468@xo-6d-61-c0.localdomain>
+References: <cover.1537275915.git.yu.c.chen@intel.com>
+ <9df6959bc2f3776eb512b7964a94bd02639e65eb.1537275915.git.yu.c.chen@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180920082425.GB20006@makrotopia.org>
+In-Reply-To: <9df6959bc2f3776eb512b7964a94bd02639e65eb.1537275915.git.yu.c.chen@intel.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-
-> > > +#ifdef CONFIG_ATA_LEDS
-> > > +	/* register LED triggers for all ports */
-> > > +	for (i = 0; i < host->n_ports; i++) {
-> > > +		if (unlikely(!host->ports[i]->ledtrig))
-> > > +			continue;
-> > > +
-> > > +		snprintf(host->ports[i]->ledtrig_name,
-> > > +			sizeof(host->ports[i]->ledtrig_name), "ata%u",
-> > > +			host->ports[i]->print_id);
-> > 
-> > > +		host->ports[i]->ledtrig->name = host->ports[i]->ledtrig_name;
-> > > +
-> > > +		if (led_trigger_register(host->ports[i]->ledtrig)) {
-> > > +			kfree(host->ports[i]->ledtrig);
-> > > +			host->ports[i]->ledtrig = NULL;
-> > > +		}
-> > > +	}
-> > > +#endif
-> > 
-> > No, we don't want you to register multiple triggers. We want one
-> > trigger, than has parameter "which port to watch". (Number of triggers
-> > is limited as by sysfs limitations).
+On Wed 2018-09-19 15:37:15, Chen Yu wrote:
+> From: Zhimin Gu <kookoo.gu@intel.com>
 > 
-> Back then I implemented it that way to be able to define the
-> default trigger for each LED in device tree and "trigger-sources"
-> didn't exist yet (it was introduced for USB ports and isn't yet used
-> for anything other than that)
+> On 32bit systems, nosave_regions(non RAM areas) located between
+> max_low_pfn and max_pfn are not excluded from hibernation snapshot
+> currently, which may result in a machine check exception when
+> trying to access these unsafe regions during hibernation:
+> 
+> [  612.800453] Disabling lock debugging due to kernel taint
+> [  612.805786] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 6: fe00000000801136
+> [  612.814344] mce: [Hardware Error]: RIP !INEXACT! 60:<00000000d90be566> {swsusp_save+0x436/0x560}
+> [  612.823167] mce: [Hardware Error]: TSC 1f5939fe276 ADDR dd000000 MISC 30e0000086
+> [  612.830677] mce: [Hardware Error]: PROCESSOR 0:306c3 TIME 1529487426 SOCKET 0 APIC 0 microcode 24
+> [  612.839581] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+> [  612.846394] mce: [Hardware Error]: Machine check: Processor context corrupt
+> [  612.853380] Kernel panic - not syncing: Fatal machine check
+> [  612.858978] Kernel Offset: 0x18000000 from 0xc1000000 (relocation range: 0xc0000000-0xf7ffdfff)
+> 
+> This is because on 32bit systems, pages above max_low_pfn are regarded
+> as high memeory, and accessing unsafe pages might cause expected MCE.
+> On the problematic 32bit system, there are reserved memory above low
+> memory, which triggered the MCE:
+> 
+> Fix this problem by changing pfn limit from max_low_pfn to max_pfn.
+> This fix does not impact 64bit system because on 64bit max_low_pfn
+> is the same as max_pfn.
+> 
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-I see why you did it... BUt I believe we still want single trigger solution...
+Thanks.
 
-> However, the problem till today is also that ATA ports are often not
-> individual device-tree objects we can refer to, see for example
-> marvell,armada-370-sata which appears as one opaque controller. Ie.
-> all SATA drivers have to be converted to expose individual ports on
-> device-tree before the trigger-sources approach can be applied...
-
-Yep, well... something to do in SATA then.
-
-Perhaps this should also have an option for single LED for _any_ SATA activity,
-and 90% devices will be happy with that?
-
+I think this is nasty enough to add Cc: stable.
 									Pavel
-
 -- 
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
