@@ -6,412 +6,126 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA039ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44935C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42EFB2152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:03:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42EFB2152A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 067762152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 067762152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbeITRrB (ORCPT
+        id S1732666AbeITRrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 13:47:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37213 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727986AbeITRrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 13:47:01 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3AD0130027B1;
-        Thu, 20 Sep 2018 12:03:51 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B6B1308BDAF;
-        Thu, 20 Sep 2018 12:03:51 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id CA7AB181A12D;
-        Thu, 20 Sep 2018 12:03:50 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 08:03:50 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, kwolf@redhat.com,
-        jack@suse.cz, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        riel@surriel.com, niteshnarayanlal@hotmail.com, mst@redhat.com,
-        ross zwisler <ross.zwisler@intel.com>, lcapitulino@redhat.com,
-        hch@infradead.org, stefanha@redhat.com, imammedo@redhat.com,
-        pbonzini@redhat.com, dan j williams <dan.j.williams@intel.com>,
-        nilal@redhat.com
-Message-ID: <855855433.14658336.1537445030434.JavaMail.zimbra@redhat.com>
-In-Reply-To: <2721c3ee-88d1-a8e9-1f1e-ffc3eef1d1ca@redhat.com>
-References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-5-pagupta@redhat.com> <2721c3ee-88d1-a8e9-1f1e-ffc3eef1d1ca@redhat.com>
-Subject: Re: [Qemu-devel] [PATCH] qemu: Add virtio pmem device
+        Thu, 20 Sep 2018 13:47:55 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12639 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732580AbeITRry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 13:47:54 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8E8FA2BD2C40F;
+        Thu, 20 Sep 2018 20:04:40 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
+ 20:04:41 +0800
+Subject: Re: [PATCH -next] serial: imx: remove set but not used variable
+ 'rtsirq'
+To:     Andy Duan <fugang.duan@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "jslaby@suse.cz" <jslaby@suse.cz>
+References: <1537408725-196364-1-git-send-email-yuehaibing@huawei.com>
+ <3b23675a-f537-868f-2432-b7f8a0c8c466@suse.cz>
+ <96170d620618804d49ad19323d3cdee853070c72.camel@nxp.com>
+ <VI1PR0402MB3600A7368D538E3B6D044C5FFF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "A.s. Dong" <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Bough Chen <haibo.chen@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>, Han Xu <han.xu@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>,
+        "Leo Zhang" <leo.zhang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Peter Chen <peter.chen@nxp.com>,
+        Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        Shenwei Wang <shenwei.wang@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Zening Wang <zening.wang@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <1884583f-5eec-7499-b987-b2e53b15b30e@huawei.com>
+Date:   Thu, 20 Sep 2018 20:04:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.181, 10.4.195.3]
-Thread-Topic: qemu: Add virtio pmem device
-Thread-Index: pvFmR2SdJU6kL0flOMbEz71SH/Ekfw==
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 20 Sep 2018 12:03:51 +0000 (UTC)
+In-Reply-To: <VI1PR0402MB3600A7368D538E3B6D044C5FFF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018/9/20 17:41, Andy Duan wrote:
+> From: Leonard Crestez Sent: 2018年9月20日 16:51
+>> On Thu, 2018-09-20 at 08:45 +0200, Jiri Slaby wrote:
+>>> On 09/20/2018, 03:58 AM, YueHaibing wrote:
+>>>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>>>
+>>>> drivers/tty/serial/imx.c: In function 'imx_uart_probe':
+>>>> drivers/tty/serial/imx.c:2198:20: warning:
+>>>>  variable 'rtsirq' set but not used [-Wunused-but-set-variable]
+>>>>
+>>>> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c @@
+>>>> -2220,7 +2220,6 @@ static int imx_uart_probe(struct
+>> platform_device
+>>>> *pdev)
+>>>>
+>>>>  	rxirq = platform_get_irq(pdev, 0);
+>>>>  	txirq = platform_get_irq(pdev, 1);
+>>>> -	rtsirq = platform_get_irq(pdev, 2);
+>>>
+>>> I am not sure this is correct. platform_get_irq has side effects (like
+>>> enabling the IRQ). Are you sure this won't change the behaviour (this
+>>> is question mostly to IMX fellows)?
+>>
+>> As far as I can tell there was a request_irq call for rtsirq which was
+>> removed by mistake in commit afe9cbb1a6ad ("serial: imx: drop support
+>> for IRDA"):
+>>
+>> -               /* do not use RTS IRQ on IrDA */
+>> -               if (!USE_IRDA(sport)) {
+>> -                       ret = devm_request_irq(&pdev->dev, rtsirq,
+>> -                                              imx_rtsint, 0,
+>> -
+>> dev_name(&pdev->dev), sport);
+>> -                       if (ret)
+>> -                               return ret;
+>> -               }
+>>
+>> This should have just removed the IRDA check and request rtsirq
+>> unconditionally. Nobody noticed this by testing RTS on imx1, this is an old
+>> chip and later variants have a single combined irq.
+>>
+>> The correct fix for the warning would be to restore that request_irq.
+>>
+>> --
+>> Regards,
+>> Leonard
+> 
+> Yes, your explain is very correct! Thanks for your comment.
+> We should restore rtsirq request that for i.MX1.
+
+Ok, I will post a new fix patch as Leonard and suggested.
 
 > 
-> > @@ -0,0 +1,241 @@
-> > +/*
-> > + * Virtio pmem device
-> > + *
-> > + * Copyright (C) 2018 Red Hat, Inc.
-> > + * Copyright (C) 2018 Pankaj Gupta <pagupta@redhat.com>
-> > + *
-> > + * This work is licensed under the terms of the GNU GPL, version 2.
-> > + * See the COPYING file in the top-level directory.
-> > + *
-> > + */
-> > +
-> > +#include "qemu/osdep.h"
-> > +#include "qapi/error.h"
-> > +#include "qemu-common.h"
-> > +#include "qemu/error-report.h"
-> > +#include "hw/virtio/virtio-access.h"
-> > +#include "hw/virtio/virtio-pmem.h"
-> > +#include "hw/mem/memory-device.h"
-> > +#include "block/aio.h"
-> > +#include "block/thread-pool.h"
-> > +
-> > +typedef struct VirtIOPMEMresp {
-> > +    int ret;
-> > +} VirtIOPMEMResp;
-> > +
-> > +typedef struct VirtIODeviceRequest {
-> > +    VirtQueueElement elem;
-> > +    int fd;
-> > +    VirtIOPMEM *pmem;
-> > +    VirtIOPMEMResp resp;
-> > +} VirtIODeviceRequest;
+> Regards,
+> Andy Duan
 > 
-> Both, response and request have to go to a linux header (and a header
-> sync patch).
 
-Sure.
-
-> 
-> Also, you are using the same request for host<->guest handling and
-> internal purposes. The fd or pmem pointer definitely don't belong here.
-> Use a separate struct for internal handling purposes. (passing to worker_cb)
-
-o.k. will add another struct for internal handling.
-
-> 
-> > +
-> > +static int worker_cb(void *opaque)
-> > +{
-> > +    VirtIODeviceRequest *req = opaque;
-> > +    int err = 0;
-> > +
-> > +    /* flush raw backing image */
-> > +    err = fsync(req->fd);
-> > +    if (err != 0) {
-> > +        err = EIO;
-> > +    }
-> > +    req->resp.ret = err;
-> > +
-> > +    return 0;
-> > +}
-> > +
-> > +static void done_cb(void *opaque, int ret)
-> > +{
-> > +    VirtIODeviceRequest *req = opaque;
-> > +    int len = iov_from_buf(req->elem.in_sg, req->elem.in_num, 0,
-> > +                              &req->resp, sizeof(VirtIOPMEMResp));
-> > +
-> > +    /* Callbacks are serialized, so no need to use atomic ops.  */
-> > +    virtqueue_push(req->pmem->rq_vq, &req->elem, len);
-> > +    virtio_notify((VirtIODevice *)req->pmem, req->pmem->rq_vq);
-> > +    g_free(req);
-> > +}
-> > +
-> > +static void virtio_pmem_flush(VirtIODevice *vdev, VirtQueue *vq)
-> > +{
-> > +    VirtIODeviceRequest *req;
-> > +    VirtIOPMEM *pmem = VIRTIO_PMEM(vdev);
-> > +    HostMemoryBackend *backend = MEMORY_BACKEND(pmem->memdev);
-> > +    ThreadPool *pool = aio_get_thread_pool(qemu_get_aio_context());
-> > +
-> > +    req = virtqueue_pop(vq, sizeof(VirtIODeviceRequest));
-> > +    if (!req) {
-> > +        virtio_error(vdev, "virtio-pmem missing request data");
-> > +        return;
-> > +    }
-> > +
-> > +    if (req->elem.out_num < 1 || req->elem.in_num < 1) {
-> > +        virtio_error(vdev, "virtio-pmem request not proper");
-> > +        g_free(req);
-> > +        return;
-> > +    }
-> > +    req->fd = memory_region_get_fd(&backend->mr);
-> > +    req->pmem = pmem;
-> > +    thread_pool_submit_aio(pool, worker_cb, req, done_cb, req);
-> > +}
-> > +
-> > +static void virtio_pmem_get_config(VirtIODevice *vdev, uint8_t *config)
-> > +{
-> > +    VirtIOPMEM *pmem = VIRTIO_PMEM(vdev);
-> > +    struct virtio_pmem_config *pmemcfg = (struct virtio_pmem_config *)
-> > config;
-> > +
-> > +    virtio_stq_p(vdev, &pmemcfg->start, pmem->start);
-> > +    virtio_stq_p(vdev, &pmemcfg->size, pmem->size);
-> > +}
-> > +
-> > +static uint64_t virtio_pmem_get_features(VirtIODevice *vdev, uint64_t
-> > features,
-> > +                                        Error **errp)
-> > +{
-> > +    return features;
-> > +}
-> > +
-> > +static void virtio_pmem_realize(DeviceState *dev, Error **errp)
-> > +{
-> > +    VirtIODevice   *vdev   = VIRTIO_DEVICE(dev);
-> > +    VirtIOPMEM     *pmem   = VIRTIO_PMEM(dev);
-> > +    MachineState   *ms     = MACHINE(qdev_get_machine());
-> > +    uint64_t align;
-> > +    Error *local_err = NULL;
-> > +    MemoryRegion *mr;
-> > +
-> > +    if (!pmem->memdev) {
-> > +        error_setg(errp, "virtio-pmem memdev not set");
-> > +        return;
-> > +    }
-> > +
-> > +    mr  = host_memory_backend_get_memory(pmem->memdev);
-> > +    align = memory_region_get_alignment(mr);
-> > +    pmem->size = QEMU_ALIGN_DOWN(memory_region_size(mr), align);
-> > +    pmem->start = memory_device_get_free_addr(ms, NULL, align, pmem->size,
-> > +
-> > &local_err);
-> > +    if (local_err) {
-> > +        error_setg(errp, "Can't get free address in mem device");
-> > +        return;
-> > +    }
-> > +    memory_region_init_alias(&pmem->mr, OBJECT(pmem),
-> > +                             "virtio_pmem-memory", mr, 0, pmem->size);
-> > +    memory_device_plug_region(ms, &pmem->mr, pmem->start);
-> > +
-> > +    host_memory_backend_set_mapped(pmem->memdev, true);
-> > +    virtio_init(vdev, TYPE_VIRTIO_PMEM, VIRTIO_ID_PMEM,
-> > +                                          sizeof(struct
-> > virtio_pmem_config));
-> > +    pmem->rq_vq = virtio_add_queue(vdev, 128, virtio_pmem_flush);
-> > +}
-> > +
-> > +static void virtio_mem_check_memdev(Object *obj, const char *name, Object
-> > *val,
-> > +                                    Error **errp)
-> > +{
-> > +    if (host_memory_backend_is_mapped(MEMORY_BACKEND(val))) {
-> > +        char *path = object_get_canonical_path_component(val);
-> > +        error_setg(errp, "Can't use already busy memdev: %s", path);
-> > +        g_free(path);
-> > +        return;
-> > +    }
-> > +
-> > +    qdev_prop_allow_set_link_before_realize(obj, name, val, errp);
-> > +}
-> > +
-> > +static const char *virtio_pmem_get_device_id(VirtIOPMEM *vm)
-> > +{
-> > +    Object *obj = OBJECT(vm);
-> > +    DeviceState *parent_dev;
-> > +
-> > +    /* always use the ID of the proxy device */
-> > +    if (obj->parent && object_dynamic_cast(obj->parent, TYPE_DEVICE)) {
-> > +        parent_dev = DEVICE(obj->parent);
-> > +        return parent_dev->id;
-> > +    }
-> > +    return NULL;
-> > +}
-> > +
-> > +static void virtio_pmem_md_fill_device_info(const MemoryDeviceState *md,
-> > +                                           MemoryDeviceInfo *info)
-> > +{
-> > +    VirtioPMemDeviceInfo *vi = g_new0(VirtioPMemDeviceInfo, 1);
-> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> > +    const char *id = virtio_pmem_get_device_id(vm);
-> > +
-> > +    if (id) {
-> > +        vi->has_id = true;
-> > +        vi->id = g_strdup(id);
-> > +    }
-> > +
-> > +    vi->start = vm->start;
-> > +    vi->size = vm->size;
-> > +    vi->memdev = object_get_canonical_path(OBJECT(vm->memdev));
-> > +
-> > +    info->u.virtio_pmem.data = vi;
-> > +    info->type = MEMORY_DEVICE_INFO_KIND_VIRTIO_PMEM;
-> > +}
-> > +
-> > +static uint64_t virtio_pmem_md_get_addr(const MemoryDeviceState *md)
-> > +{
-> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> > +
-> > +    return vm->start;
-> > +}
-> > +
-> > +static uint64_t virtio_pmem_md_get_plugged_size(const MemoryDeviceState
-> > *md)
-> > +{
-> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> > +
-> > +    return vm->size;
-> > +}
-> > +
-> > +static uint64_t virtio_pmem_md_get_region_size(const MemoryDeviceState
-> > *md)
-> > +{
-> > +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> > +
-> > +    return vm->size;
-> > +}
-> > +
-> > +static void virtio_pmem_instance_init(Object *obj)
-> > +{
-> > +    VirtIOPMEM *vm = VIRTIO_PMEM(obj);
-> > +    object_property_add_link(obj, "memdev", TYPE_MEMORY_BACKEND,
-> > +                                (Object **)&vm->memdev,
-> > +                                (void *) virtio_mem_check_memdev,
-> > +                                OBJ_PROP_LINK_STRONG,
-> > +                                &error_abort);
-> > +}
-> > +
-> > +
-> > +static void virtio_pmem_class_init(ObjectClass *klass, void *data)
-> > +{
-> > +    VirtioDeviceClass *vdc = VIRTIO_DEVICE_CLASS(klass);
-> > +    MemoryDeviceClass *mdc = MEMORY_DEVICE_CLASS(klass);
-> > +
-> > +    vdc->realize      =  virtio_pmem_realize;
-> > +    vdc->get_config   =  virtio_pmem_get_config;
-> > +    vdc->get_features =  virtio_pmem_get_features;
-> > +
-> > +    mdc->get_addr         = virtio_pmem_md_get_addr;
-> > +    mdc->get_plugged_size = virtio_pmem_md_get_plugged_size;
-> > +    mdc->get_region_size  = virtio_pmem_md_get_region_size;
-> > +    mdc->fill_device_info = virtio_pmem_md_fill_device_info;
-> > +}
-> > +
-> > +static TypeInfo virtio_pmem_info = {
-> > +    .name          = TYPE_VIRTIO_PMEM,
-> > +    .parent        = TYPE_VIRTIO_DEVICE,
-> > +    .class_init    = virtio_pmem_class_init,
-> > +    .instance_size = sizeof(VirtIOPMEM),
-> > +    .instance_init = virtio_pmem_instance_init,
-> > +    .interfaces = (InterfaceInfo[]) {
-> > +        { TYPE_MEMORY_DEVICE },
-> > +        { }
-> > +  },
-> > +};
-> > +
-> > +static void virtio_register_types(void)
-> > +{
-> > +    type_register_static(&virtio_pmem_info);
-> > +}
-> > +
-> > +type_init(virtio_register_types)
-> > diff --git a/include/hw/pci/pci.h b/include/hw/pci/pci.h
-> > index 990d6fcbde..28829b6437 100644
-> > --- a/include/hw/pci/pci.h
-> > +++ b/include/hw/pci/pci.h
-> > @@ -85,6 +85,7 @@ extern bool pci_available;
-> >  #define PCI_DEVICE_ID_VIRTIO_RNG         0x1005
-> >  #define PCI_DEVICE_ID_VIRTIO_9P          0x1009
-> >  #define PCI_DEVICE_ID_VIRTIO_VSOCK       0x1012
-> > +#define PCI_DEVICE_ID_VIRTIO_PMEM        0x1013
-> >  
-> >  #define PCI_VENDOR_ID_REDHAT             0x1b36
-> >  #define PCI_DEVICE_ID_REDHAT_BRIDGE      0x0001
-> > diff --git a/include/hw/virtio/virtio-pmem.h
-> > b/include/hw/virtio/virtio-pmem.h
-> > new file mode 100644
-> > index 0000000000..fda3ee691c
-> > --- /dev/null
-> > +++ b/include/hw/virtio/virtio-pmem.h
-> > @@ -0,0 +1,42 @@
-> > +/*
-> > + * Virtio pmem Device
-> > + *
-> > + * Copyright Red Hat, Inc. 2018
-> > + * Copyright Pankaj Gupta <pagupta@redhat.com>
-> > + *
-> > + * This work is licensed under the terms of the GNU GPL, version 2 or
-> > + * (at your option) any later version.  See the COPYING file in the
-> > + * top-level directory.
-> > + */
-> > +
-> > +#ifndef QEMU_VIRTIO_PMEM_H
-> > +#define QEMU_VIRTIO_PMEM_H
-> > +
-> > +#include "hw/virtio/virtio.h"
-> > +#include "exec/memory.h"
-> > +#include "sysemu/hostmem.h"
-> > +#include "standard-headers/linux/virtio_ids.h"
-> > +#include "hw/boards.h"
-> > +#include "hw/i386/pc.h"
-> > +
-> > +#define TYPE_VIRTIO_PMEM "virtio-pmem"
-> > +
-> > +#define VIRTIO_PMEM(obj) \
-> > +        OBJECT_CHECK(VirtIOPMEM, (obj), TYPE_VIRTIO_PMEM)
-> > +
-> > +/* VirtIOPMEM device structure */
-> > +typedef struct VirtIOPMEM {
-> > +    VirtIODevice parent_obj;
-> > +
-> > +    VirtQueue *rq_vq;
-> > +    uint64_t start;
-> > +    uint64_t size;
-> > +    MemoryRegion mr;
-> > +    HostMemoryBackend *memdev;
-> > +} VirtIOPMEM;
-> > +
-> > +struct virtio_pmem_config {
-> > +    uint64_t start;
-> > +    uint64_t size;
-> > +};
-> > +#endif
-> > diff --git a/include/standard-headers/linux/virtio_ids.h
-> > b/include/standard-headers/linux/virtio_ids.h
-> > index 6d5c3b2d4f..346389565a 100644
-> > --- a/include/standard-headers/linux/virtio_ids.h
-> > +++ b/include/standard-headers/linux/virtio_ids.h
-> > @@ -43,5 +43,6 @@
-> >  #define VIRTIO_ID_INPUT        18 /* virtio input */
-> >  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
-> >  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
-> > +#define VIRTIO_ID_PMEM         25 /* virtio pmem */
-> 
-> This should be moved to a linux header sync patch.
-
-Sure.
-
-Thanks,
-Pankaj
-> 
-> 
-> 
-> 
-> --
-> 
-> Thanks,
-> 
-> David / dhildenb
-> 
-> 
