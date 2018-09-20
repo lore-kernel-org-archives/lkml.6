@@ -2,82 +2,81 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 493ACC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9BFECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DECFA2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:19:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="vIM8XUue"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DECFA2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id C7CE021524
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:19:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7CE021524
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731458AbeITNBJ (ORCPT
+        id S1731665AbeITNBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:01:09 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33812 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeITNBJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:01:09 -0400
-Received: by mail-vs1-f65.google.com with SMTP id m10-v6so2654702vsk.1;
-        Thu, 20 Sep 2018 00:19:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5ip7ztdLQEbhkH4RVaBNDwLNN0T5jYSwsrNVa1j8iKI=;
-        b=vIM8XUue4f50wqVyHlrkCmB77mTL+wXIavcLkpO6veStK4Z8aGlpC1U9j9LCMfeyD2
-         qRUPi3G9y27Alfv2Eh36tNFOABfYk5S5bwfbbS+GWfmsXG/fF/7KGDEfI01ZlFhuFMTn
-         pMYpBjEk/LvgPNlyH8bqisPjk9vC1BgBVZ9j0HYPTpLMVz73VJewbmkRefTM/NS2UcGy
-         SS52XSwvoPK8mtwR4rDmTC/IdhSHin1VEyBlhC1RWLd2PtzU3QpsrjT4DGY2eottUpKf
-         nLt5TOxeLv7wif5QNZpL3Qej9sO4qAt3+f5OcSm2j+ipD/Da1tDvG5gB+ZzW2ycB1lPS
-         2Biw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5ip7ztdLQEbhkH4RVaBNDwLNN0T5jYSwsrNVa1j8iKI=;
-        b=JUwcbVERA1CfV+UJ99z4lO/dZIW372c+cN/HO8j8yW7koSwKMTa9w5bzIP+OBgYp6S
-         WvFOj7fhkR6HdSWYcYSD4NJHsO3UUpUP+dgf+X+ldAlYk0DXtBWQoLI0Jew6m+pjf/df
-         2YAEZQBKiXCkgYECg+NKaNzJY75bnGusy1wReb3qVaRn/yRFGR5O4IEcSGv73jJ+RwrK
-         25XMAYvqllDywx0gKJcCI2llYqheTaaLp1XhDgCewtlnci9lkgxlee9NEP/y8v5G0mGd
-         4KivVQxaJzF4sn/u8oa94SFJsHYiqH7gfntnJNaBhfdsX5yc+yTkxFs+vNbgYEApxdKU
-         GaAQ==
-X-Gm-Message-State: APzg51D9QWeDiwLkiAEs+/FFep3yf19lvbc1u93DEsZRDPP4PvRgKFRX
-        o9GuyAQwIid0XFgsiNIDOkeWFBrYOw7cUTdr/HhVNyPmVUk=
-X-Google-Smtp-Source: ANB0VdZocW/RyDhROM0eiJaMrDU1iMM6VlMY6pHSvVNbV/zSCLa9/eBlQZDxaDIJPBMb8unA9mMZeAv5/sPvlbyzREc=
-X-Received: by 2002:a67:1644:: with SMTP id 65-v6mr11684362vsw.103.1537427947663;
- Thu, 20 Sep 2018 00:19:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180919231402.4482-1-cgzones@googlemail.com> <75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
-In-Reply-To: <75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
-From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date:   Thu, 20 Sep 2018 09:18:56 +0200
-Message-ID: <CAJ2a_Ddd19txwUiKkOwpdWUSq9+VWFSR6Cqe4zgXKggWUPi4hw@mail.gmail.com>
-Subject: Re: [PATCH] netfilter: nf_tables: add SECMARK support
-To:     casey@schaufler-ca.com
-Cc:     pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        davem@davemloft.net, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, jmorris@namei.org,
-        serge@hallyn.com, selinux <selinux@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 20 Sep 2018 09:01:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59510 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726014AbeITNBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 09:01:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 404F0B049;
+        Thu, 20 Sep 2018 07:19:13 +0000 (UTC)
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+To:     "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH] scsi: sd: don't crash the host on invalid commands
+Date:   Thu, 20 Sep 2018 09:19:07 +0200
+Message-Id: <20180920071907.10102-1-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I've only had a cursory look at your patch, but how is it
-> different from what's in xt_SECMARK.c ?
+When sd_init_command() get's a with a unknown req_op() it crashes the
+system via BUG().
 
-xt_SEXMARK.c is for xtables, use-able in iptables; this is for nftables (nft)
+This makes debugging the actual reason for the broken request
+cmd_flags pretty hard as the system is down before it's able to write
+out debugging data on the serial console or the trace buffer.
+
+Change the BUG() to a WARN_ON() and return BLKPREP_KILL to fail
+gracefully and return an I/O error to the producer of the request.
+
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Hannes Reinecke <hare@suse.de>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Christoph Hellwig <hch@lst.de>
+---
+Fixed Typo in Bart's mail, sorry for this.
+
+ drivers/scsi/sd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index b79b366a94f7..19f28962d65b 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1276,7 +1276,8 @@ static int sd_init_command(struct scsi_cmnd *cmd)
+ 	case REQ_OP_ZONE_RESET:
+ 		return sd_zbc_setup_reset_cmnd(cmd);
+ 	default:
+-		BUG();
++		WARN_ON(1);
++		return BLKPREP_KILL;
+ 	}
+ }
+ 
+-- 
+2.16.4
+
