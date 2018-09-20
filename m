@@ -2,934 +2,2026 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4FFECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B942BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7061F21531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:57:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7061F21531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id D1AE621531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:58:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="DHGgxJrp";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="QVld4Gh1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1AE621531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387437AbeITUlA (ORCPT
+        id S1733140AbeITUmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 16:41:00 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:37431 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeITUk7 (ORCPT
+        Thu, 20 Sep 2018 16:42:20 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:49856 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732302AbeITUmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 16:40:59 -0400
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 78D6424000E;
-        Thu, 20 Sep 2018 14:57:00 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 16:56:58 +0200
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Discussion of the development of and with GStreamer 
-        <gstreamer-devel@lists.freedesktop.org>,
-        linux-media@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-Message-ID: <20180920145658.GE16851@w540>
-References: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
+        Thu, 20 Sep 2018 16:42:19 -0400
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8KEsejL031597;
+        Thu, 20 Sep 2018 07:56:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=proofpoint;
+ bh=hjL0HcJlrHS+QHQ9gpcTxXY+m/wkl6HxzYfeVuu+FlM=;
+ b=DHGgxJrpd5CVLnWV64Mr3IeRnQLY3rEDhrZmefod9vsMOUQrvKf7Jb24QCjdt7WKoWeK
+ fo49nrkoQ+vEundeqxws+EwsgzyEPeD0z4Uj9kS3ntaZBmSrKkBWDb8ePxRKf+X/+Kqz
+ VG000oPoTGdOwB5FNTprFQ+nQa3mTJjHEZIFaNUVRs6l1KUUpyDaiPQHdw/Xko30Fi/7
+ 0q9tUTH4imxzmRaTmeL7S33TZAyaIF8LzCpRnutA2GxmJ6VneRSti2cpVUuWJVvf/0AX
+ J9eCMIBFnkXf8We2YT/fdSWDBYka7H8IHyRxlVBu4O/ov6eJ0NcJ6BPo5lKXrMNskOjL 7A== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=dkos@cadence.com
+Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp0052.outbound.protection.outlook.com [216.32.181.52])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2mgwnvk5t9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 20 Sep 2018 07:56:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hjL0HcJlrHS+QHQ9gpcTxXY+m/wkl6HxzYfeVuu+FlM=;
+ b=QVld4Gh12OsNErX6pcR8ZdtMr6vF3gcXKbEDdAxGhCwbzvx+XTtHVa0lqlXAZ6ye+G/3vvyAFcuWbQdKilZbk5RxghO2O38OhIa+aDZoOjUMBiKuciL3PnnebvW4VQTQqs2WJt+8Kf3CnQFGPSjzMl547RSp4oq5o0nIzXXKDYo=
+Received: from BYAPR07CA0002.namprd07.prod.outlook.com (2603:10b6:a02:bc::15)
+ by DM5PR07MB2953.namprd07.prod.outlook.com (2603:10b6:3:a::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.17; Thu, 20 Sep 2018 14:56:02 +0000
+Received: from CO1NAM05FT031.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e50::209) by BYAPR07CA0002.outlook.office365.com
+ (2603:10b6:a02:bc::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1122.16 via Frontend
+ Transport; Thu, 20 Sep 2018 14:56:02 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 158.140.1.28 as permitted sender)
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ CO1NAM05FT031.mail.protection.outlook.com (10.152.96.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.20.1185.5 via Frontend Transport; Thu, 20 Sep 2018 14:56:01 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w8KEtsWS002306
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 20 Sep 2018 07:56:00 -0700
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Thu, 20 Sep 2018 16:56:04 +0200
+Received: from lvloginb.cadence.com (10.165.177.11) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Thu, 20 Sep 2018 16:56:03 +0200
+Received: from lvloginb.cadence.com (localhost [127.0.0.1])
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id w8KEttUG022372;
+        Thu, 20 Sep 2018 15:55:55 +0100
+Received: (from dkos@localhost)
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id w8KEtswp022357;
+        Thu, 20 Sep 2018 15:55:54 +0100
+From:   Damian Kos <dkos@cadence.com>
+To:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>
+CC:     <dkos@cadence.com>, <pgaj@cadence.com>, <ltyrala@cadence.com>,
+        <stelford@cadence.com>, <jartur@cadence.com>, <piotrs@cadence.com>,
+        <quentin.schulz@bootlin.com>, <jbergsagel@ti.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v4 5/5] drm: bridge: add support for Cadence MHDP DPI/DP bridge
+Date:   Thu, 20 Sep 2018 15:54:40 +0100
+Message-ID: <1537455288-20223-6-git-send-email-dkos@cadence.com>
+X-Mailer: git-send-email 1.9.0
+In-Reply-To: <1537455288-20223-1-git-send-email-dkos@cadence.com>
+References: <1537455288-20223-1-git-send-email-dkos@cadence.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Or8LRHETumScJgaM"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZAMjCKv1BtLnobRZUzp=9Xu1gY5+R3Zi-JuobAJZQrXxg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(396003)(39860400002)(2980300002)(36092001)(199004)(189003)(246002)(50466002)(36756003)(76176011)(305945005)(7636002)(48376002)(105596002)(7416002)(5024004)(14444005)(478600001)(53946003)(106466001)(2906002)(51416003)(8676002)(5660300001)(50226002)(356003)(26826003)(8936002)(6666003)(476003)(86362001)(575784001)(4326008)(47776003)(186003)(486006)(87636003)(26005)(42186006)(16586007)(126002)(2201001)(54906003)(110136005)(11346002)(336012)(446003)(316002)(426003)(2616005)(921003)(83996005)(2101003)(1121003)(559001)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR07MB2953;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT031;1:EvX8pAjsF8kZrOnVmDiKddYjqgtz5dolS+G6tELrhAVIYddbRNfjhBwTW/zgNMSyHMNoeWu0COH3qjLp9jxILDggB06iDEc5isl/jUHH25DVK5skJebVBUjHcMzh42h7
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 72a73840-43f5-46bd-36ab-08d61f092ee1
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:DM5PR07MB2953;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;3:HZGyUCNyfHm/YSFSZXDsS2v6smslkGT510tgYd9qtu5mXI5W/p/60Bk+xmuhTaBniW2i3VVd7q6pcQVIVdyYIUynxt5Ha1haz3dko0vQT9NR/yzktaGvLGntyMYBQhY5Tt23sMbZX27+vPIKje6X61txXwEvV8OLJE/FBt+jq0zAwMLqeKC/lzqDzq8t4dAct0dmRESPgyiuABWyYEKOTLI3vY2wfes+AVKsshs8F+6wtFShiWuYA7T2+ns7jRnfMn5M3/Eo+ukYTwMadsTG+kB7K4IMQFQQ5UymfMc4RzyxMVjc3SJbnAPslFz565smSGiqcfkJQzblXdM+OhybjAvCO+EELZt62WbKDoRFAQ4=;25:XE9D/Gs1wxdtDBH42msbmuzOm9UIr6e3lx6nRg1I06n5jyNIQxlkb2Ohw+AiRk342ulUMi0wiEQtW6i5vIz/ClbDFWl/YueZo6rq9IDxWjV1pwVdieK7S85fZdhkMeDEdc914tjWvnDhas2r0QvQZ6gpOLxqwU64X4Jbwu7b2iBoWGdTAuXnFjfaNT8I3d1rXS7rIV/d9/gLflX/pU69K14Ns7PmHc22F9FxnL2CzPO2vMmI96qlfPjmJQyVGY7Ubz2XwPEo4xu4B1PXTKWsPDGaqdOfJThEiPeUG3MzW4JvT38pBcLa1Zppjr1AsRf5/c+GAIjne+LRL10neyzQcw==
+X-MS-TrafficTypeDiagnostic: DM5PR07MB2953:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;31:bj9Ao7pH9GnWAEJ2QMJwHQ4DnW/dnv2S/je8XQt0ScBxe3lHzcWtqqn7TByNV/zbaVIOye7L5LFFASB5e62EvG4Z/BRYqkgx4RsQyD+7K97UH9uf9dBETsFTqHNXgC5nPMKlWBc4qucBARmtnJc9UkL45jZplAOd+Ialwu95QdmoMwMI7H+VhB8pT5JQGb2dfAhy+WI5AeV2wAOaADMI/GEZeorx6J0i/sNt5F8cHIk=;20:8z4dKThwEmyFmSBJciDWlv7jLilpxSsbOJJ3RyH3+tRQvHwNUFvSn1pXMy5v8F4BUnCi+mVeKGEhdDyNPcmPE0nXijQLycaDamYjL6wbZiaob0lu52WceR69agzLMvO7R0XJi5CPiaRN9pYqdHC5k/xMWZG3lvLXLhMUB7h4UF3akPehOhA9lK9E71xc4JYrz4hhE1dFC6SjKv99PNDzOP4DO8sh13dJfRxR/LfYDM2PdFKXSQMlieHGXMKa4+4vgXfVxMX/lL0ptYFkEwQ46q6rKqgDkxVcNeogRtBUJinmaQbI9y2Od62yvm8o8wqFYkY9P/YtNZpr/qtk/sTsoUwVc9FWPfzGQHjktdFvm6FxDZBeqZKuc5ixmH1EadXlu2vSIUndNLSgtjyo9Of0o1ABrwOGvI7iZ/Wo+DXD9L/lTOsvqEOzuLORiEQiF/hxcUJWHLyJa5+y3H2W5Se7a/gd6aMpGTS8zcGMODcT2ylVsZOTG6SoVNPGKf243mhT
+X-Microsoft-Antispam-PRVS: <DM5PR07MB2953B9AA7EB2002796AFA92DCD130@DM5PR07MB2953.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(58145275503218)(72806322054110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93003095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:DM5PR07MB2953;BCL:0;PCL:0;RULEID:;SRVR:DM5PR07MB2953;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;4:GJrNPUfrQ06igoYlQq/DOFyKRGHM5cD1/Yll5G9zhNSEHHwnBv8WFPvdtGjR1TZv2kGY6DiGhI4PJ16+aP+YcqYta4zKL3M2cLi+RMtCiu3jSjMWZg/G9Bg3BY/hjk8R5JT8Jdsw9sp9pZ+dxtkaJf0hiYCuTwt2lsta3mvy7MJyGVWUWVxM0PA7/MMQrDQbCLCXs5qQg17Yhkq9qLRMvKEoYRY6nGgscGmtwOWu76lNzPgkJGxfu4RsY+xiC9QfmyQN0pppiup8QLNdq55cnt+HQb+o3U4XLSi+YDf8LUJ0quSmIl49AFG+cNfY1MTn46JaVzyzrKuPpdlrnkoE05FYLAywZ/xldln7miOEMVk=
+X-Forefront-PRVS: 0801F2E62B
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR07MB2953;23:popEjJkZTv3IHKyICCet2JPOHVfi76T3NW7krSv+D?=
+ =?us-ascii?Q?XbauyCfM6wXnwr64C7wPkCO680tjh7DksZCxWqr1O4+ohotTtSwn9gAwl6Y6?=
+ =?us-ascii?Q?Vmj7cQlvbIbpN6JrrpSsEiVleDGR9xNHKXs10oFfMJQPyQ9PZVCY+B+k6ysC?=
+ =?us-ascii?Q?SUwB3s4fY1LJmtTd1Ht6rFHMlmleN0pXvRWIJYuX8OKJwQHZGZBsqT7EzSJ4?=
+ =?us-ascii?Q?t2Tj1XMt8HVDbLaPien0+0yne36bZH19DA+MGEPVNYsbrrDnOsRMFsFlE36r?=
+ =?us-ascii?Q?8KSj/faygMmHIDHBPTbSsLENeFIF7p11Jdk8rHHL1C7TB39uaV4IJGmnOAXe?=
+ =?us-ascii?Q?tK0zyTG+/jbAmN1CSHLf+m7VGTi1hqYDtiXxdhw03HKf2eUizJK3ScY+eOYy?=
+ =?us-ascii?Q?hSwOJlujdG8A/RRYoTZgh22hun0T2sYh5oGUWQe+UDCzhxC78LzNExLhEEQb?=
+ =?us-ascii?Q?ZaKF8JsEI5UwaGP5ywVhHpBUSFkY2dYRilEyRaelGeOjnjPbNC6NoLBMRbVH?=
+ =?us-ascii?Q?iG03+Xrq16o5V/eysrE80VXWW2yvpBN1aUXf/sH/q0rbYd5dbXG0BRXdGDxk?=
+ =?us-ascii?Q?w7wob1NPqkYwkuBCfdmEIHZ/TnNHeag2Qfw569XINlbJfRCYGnpOaDhFoPvf?=
+ =?us-ascii?Q?YuUg+tMr7v+BJL4Fw0Xx58vVzeQT8DOebhexegwIdYO/vbZaLHrLUFD5QM5e?=
+ =?us-ascii?Q?kWQy9HJd4OMouijlJDD6+ucYQwteznCDwwhdMZSTAdpEMIHAngezTeW2lYv8?=
+ =?us-ascii?Q?XbG7f7dwdryasBpiXcOBNG8amDgOjy9vljresglG2RGb1nW06X1Ii5QtU8Jk?=
+ =?us-ascii?Q?aTnaYBHid3jpTCBCtyJ+kzZFHSLUPCoEpgsYMCEgHM26+oCLeBBjuleIEaBe?=
+ =?us-ascii?Q?B/TrMyswAmKN/QziRMrQrw4bHBztFBs8v7GfbYlEWLY5fUQWQlDK7YCSYijb?=
+ =?us-ascii?Q?eQhcTwECiFNEiWjwv7o4p+k5UN7YkSIG5aQvtqPeHBVbbYMf599fa8kMzDka?=
+ =?us-ascii?Q?9aOP3H2elGCyUp5uUnzCp8i2Nq27aOVw8A5QHYqPS+4YLSFgHaEpJow6zBpL?=
+ =?us-ascii?Q?5SSg9Se0hqi+3vns8NU2d32wsvj4UJIh9kdI5OPddYEG90xfhfpYPeimzkgN?=
+ =?us-ascii?Q?5xl5cvouZWaYBpFf1LA1Fu0zhuKcuMxzTcscJWt/uneFvAebLgts/r6uUVWQ?=
+ =?us-ascii?Q?TKUPD/QGXJxe0vJohXjXwUvWM2qDQNBokSTlMbiRlDXU7PmLGTR2I+o1VG2k?=
+ =?us-ascii?Q?yLYnnUmNppUQm3oUq63y5FhPsEuDjBBSDgH2kmB?=
+X-Microsoft-Antispam-Message-Info: AsogwvbDfvqwmP0aQvm7S8xOmDDpTKeysngSQDZxu92H8RUUybqqGI6qmCQjMhHkiVwBpor3MxN3KFZjHZnKMKZic2VOU8qG/WlAVBdeCYMBMCQ5fCGR0l6F8w5+hQOyz0D8zb5Y7u0vaglbl/aSaBj3IaKdsW+cEUYBodQ7rok1+1FH7vHQcZXyF30Iv4kNlk6S7/4onLLTvA32Q4KJAKyJYpQFMuVQrZBoVpLW5jMN0c7PE1loguLJCfmnhVRt27Gc/2Jel1SHB985MJzbL523Sa8njGuqPs6biLDALkwpVxZObNg6xHvGHOJzNsgph/v/Lu8VEzEmx19wKugqg/wtBvElbtn/w/+9aYGzIlTv1BdvzUiCzmr6PKp89BTEASWZwKTAPvlkrkvp/dqCLw==
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;6:q1QTf99KooEWi02FLE68jL+D47UfjOtjL4/xsMy3K+klhcD4UVaOC2MS89/sNqiVimI77tZDgkHM1AUZD6YRgwyHgu3q7DmwPSd7EpjgHszMbB8OAtBthpIKlKXXDRcphT7yJl+nBsCs7tR6DF9eqLalA9hkQT020JfVzkn4q588GeOTXdEbRwKOMcbH9HP0QiEPTKQoft7XQZlXr5x4dRwwTAtp9NUBZRJ2icR3WyiEUyM1njFSzIrYSafdkOhszCzVCiEnzzfnt9kZw8WDQ2u9ytw5zi965nZXER7cKi3IZJefpSE2fvu06FWAvj57tpkjg4HTTjGbTNJzcnU4CaW3nnMNgdEM1WWbFXHm6nismyVIL5rxR87uSIDe+74wRlwYanQG25WIIfNHqYOVa1h/R5jQ5MIJbGv6L/5vUVzvBmJuRU6M+DpEW4puo1Dp+Ls9e/GG2SXWOpPrZLuSgw==;5:t7P0c/LWVZxNwOZ7SlscDiIsHqQittLKiYP67NI6cUyKNRPm9jUXxdxUciwo70dNL1CImz84Yy5nVI6w8x01j9d9MJSPlvUklOQM37/ojUn+XkoJHT3Q/iNjHqkj5kY78of2eX7Rmq4jlO1UG1MnCmPLVpoPEpmvYnjLn2LX94U=;7:RMyEV4PhRfSqasqtXXZM38if2DScBVc6w6xuZUnpACtUIg2GBxUw0FJIX4VwN2EgCZBireUyi05yYjYPzT3KzpDV2FS+pVRhf0qwxi/k6E99Mzi60YAZOEXqpUYpgLv+5FBMptL5/e59iGikeKajwnB9X+PsfDKaSbB2BnYHN6bH7bjOnzDnq0XoPth5mkBKLExQ+9hOPT9FdmvINuyB58OFd5rplDUojfPktc9sO3r5xirxxUbgbxlylSI1I1tt
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;20:N2W7t8kNXdTwexQGd9tsrAsSlZOKCPNDjIDq2K+KfwBA5/BVl7/yxHaZAb7mpcKlR3MbeDW2TSbeAL8DZjh5yDCYS3vbq67pp4Ko5en4WP7Lt3iVsq0fatgUnnVax7bigMApfeLU6B21oQVUYXxK8t9e2yaQjB3VgfNJ6y+UpKrjP/FVs0P15Y0ROO3UeSFTsgD3BW8uA7WHwVEziqyGqgPqbqYN6IigErqgIAVEVBw4e61wW3hcyRUeRrWKlyFP
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2018 14:56:01.5244
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72a73840-43f5-46bd-36ab-08d61f092ee1
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR07MB2953
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
+ a:mx-sanjose5.Cadence.COM include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1809200148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
 
---Or8LRHETumScJgaM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+This adds basic support for Cadence MHDP DPI to DP bridge.
 
-Hi imx6 people,
+Basically, it takes a DPI stream as input and output it encoded in DP
+format. It's missing proper HPD, HDCP and currently supports only
+SST mode.
 
-On Thu, May 31, 2018 at 08:39:20PM +0530, Jagan Teki wrote:
-> Hi All,
->
-> I'm trying to verify MIPI-CSI2 OV5640 camera on i.MX6 platform with
-> Mainline Linux.
+Changes made in the low level driver (cdn-dp-reg.*):
+- moved it to from drivers/gpu/drm/rockchip to
+  drivers/gpu/drm/bridge/cdns-mhdp-common.*
+- functions for sending/receiving commands are now public
+- added functions for reading registers and link training
+  adjustment
 
-Sorry to resurect this, but before diving deep into details, do anyone
-of you verified JPEG capture with ov5640 and i.MX6 platforms, and has
-maybe a pipeline configuration to share :) ?
+Changes made in RK's driver (cdn-dp-core.*):
+- Moved audio_info and audio_pdev fields from cdn_dp_device to
+  cdns_mhdp_device structure.
 
-Thanks
-   j
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Damian Kos <dkos@cadence.com>
+---
+ drivers/gpu/drm/bridge/Kconfig                |    9 +
+ drivers/gpu/drm/bridge/Makefile               |    3 +
+ .../cdns-mhdp-common.c}                       |  137 +-
+ .../cdns-mhdp-common.h}                       |   21 +-
+ drivers/gpu/drm/bridge/cdns-mhdp.c            | 1308 +++++++++++++++++
+ drivers/gpu/drm/rockchip/Kconfig              |    4 +-
+ drivers/gpu/drm/rockchip/Makefile             |    4 +-
+ drivers/gpu/drm/rockchip/cdn-dp-core.c        |   16 +-
+ drivers/gpu/drm/rockchip/cdn-dp-core.h        |    4 +-
+ 9 files changed, 1486 insertions(+), 20 deletions(-)
+ rename drivers/gpu/drm/{rockchip/cdn-dp-reg.c => bridge/cdns-mhdp-common.c} (87%)
+ rename drivers/gpu/drm/{rockchip/cdn-dp-reg.h => bridge/cdns-mhdp-common.h} (95%)
+ create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp.c
 
->
-> I've followed these[1] instructions to configure MC links and pads
-> based on the probing details from dmesg and trying to capture
-> ipu1_ic_prpenc capture (/dev/video1) but it's not working.
->
-> Can anyone help me to verify whether I configured all the details
-> properly if not please suggest.
->
-> I'm pasting full log here, so-that anyone can comment in line and dt
-> changes are at [2]
->
-> Log:
-> -----
->
-> [    1.211866] etnaviv-gpu 2204000.gpu: Ignoring GPU with VG and FE2.0
-> [    1.220211] [drm] Initialized etnaviv 1.2.0 20151214 for etnaviv on minor 0
-> [    1.230344] imx-ipuv3 2400000.ipu: IPUv3H probed
-> [    1.237170] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-> [    1.243920] [drm] No driver support for vblank timestamp query.
-> [    1.250831] imx-drm display-subsystem: bound imx-ipuv3-crtc.2 (ops
-> ipu_crtc_ops)
-> [    1.258503] imx-drm display-subsystem: bound imx-ipuv3-crtc.3 (ops
-> ipu_crtc_ops)
-> [    1.266293] imx-drm display-subsystem: bound imx-ipuv3-crtc.6 (ops
-> ipu_crtc_ops)
-> [    1.274027] imx-drm display-subsystem: bound imx-ipuv3-crtc.7 (ops
-> ipu_crtc_ops)
-> [    1.282304] dwhdmi-imx 120000.hdmi: Detected HDMI TX controller
-> v1.30a with HDCP (DWC HDMI 3D TX PHY)
-> [    1.295722] imx-drm display-subsystem: bound 120000.hdmi (ops
-> dw_hdmi_imx_ops)
-> [    1.373615] Console: switching to colour frame buffer device 128x48
-> [    1.396495] imx-drm display-subsystem: fb0:  frame buffer device
-> [    1.404620] [drm] Initialized imx-drm 1.0.0 20120507 for
-> display-subsystem on minor 1
-> [    1.412763] imx-ipuv3 2800000.ipu: IPUv3H probed
-> [    1.439673] brd: module loaded
-> [    1.469099] loop: module loaded
-> [    1.480324] nand: No NAND device found
-> [    1.487768] libphy: Fixed MDIO Bus: probed
-> [    1.493034] CAN device driver interface
-> [    1.499057] fec 2188000.ethernet: 2188000.ethernet supply phy not
-> found, using dummy regulator
-> [    1.511633] pps pps0: new PPS source ptp0
-> [    1.516928] fec 2188000.ethernet (unnamed net_device)
-> (uninitialized): Invalid MAC address: 00:00:00:00:00:00
-> [    1.527177] fec 2188000.ethernet (unnamed net_device)
-> (uninitialized): Using random MAC address: f2:5a:6d:a6:90:74
-> [    1.543567] libphy: fec_enet_mii_bus: probed
-> [    1.549138] fec 2188000.ethernet eth0: registered PHC device 0
-> [    1.556499] usbcore: registered new interface driver asix
-> [    1.562066] usbcore: registered new interface driver ax88179_178a
-> [    1.568259] usbcore: registered new interface driver cdc_ether
-> [    1.574276] usbcore: registered new interface driver net1080
-> [    1.580097] usbcore: registered new interface driver cdc_subset
-> [    1.586144] usbcore: registered new interface driver zaurus
-> [    1.591910] usbcore: registered new interface driver cdc_ncm
-> [    1.597589] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-> [    1.604209] ehci-pci: EHCI PCI platform driver
-> [    1.608760] ehci-mxc: Freescale On-Chip EHCI Host driver
-> [    1.614851] usbcore: registered new interface driver usb-storage
-> [    1.629947] ci_hdrc ci_hdrc.0: EHCI Host Controller
-> [    1.635066] ci_hdrc ci_hdrc.0: new USB bus registered, assigned bus number 1
-> [    1.669473] ci_hdrc ci_hdrc.0: USB 2.0 started, EHCI 1.00
-> [    1.677809] hub 1-0:1.0: USB hub found
-> [    1.681902] hub 1-0:1.0: 1 port detected
-> [    1.692839] ci_hdrc ci_hdrc.1: EHCI Host Controller
-> [    1.697791] ci_hdrc ci_hdrc.1: new USB bus registered, assigned bus number 2
-> [    1.729537] ci_hdrc ci_hdrc.1: USB 2.0 started, EHCI 1.00
-> [    1.736740] hub 2-0:1.0: USB hub found
-> [    1.740655] hub 2-0:1.0: 1 port detected
-> [    1.753468] snvs_rtc 20cc000.snvs:snvs-rtc-lp: rtc core: registered
-> 20cc000.snvs:snvs-rtc-lp as rtc0
-> [    1.762976] i2c /dev entries driver
-> [    1.811339] imx2-wdt 20bc000.wdog: timeout 60 sec (nowayout=0)
-> [    1.817865] Bluetooth: HCI UART driver ver 2.3
-> [    1.822460] Bluetooth: HCI UART protocol H4 registered
-> [    1.828297] Bluetooth: HCI UART protocol LL registered
-> [    1.834774] sdhci: Secure Digital Host Controller Interface driver
-> [    1.841059] sdhci: Copyright(c) Pierre Ossman
-> [    1.845437] sdhci-pltfm: SDHCI platform and OF driver helper
-> [    1.852834] sdhci-esdhc-imx 2190000.usdhc: Got CD GPIO
-> [    1.893497] mmc0: SDHCI controller on 2190000.usdhc [2190000.usdhc]
-> using ADMA
-> [    1.937500] mmc1: SDHCI controller on 2198000.usdhc [2198000.usdhc]
-> using ADMA
-> [    1.945049] mmc0: host does not support reading read-only switch,
-> assuming write-enable
-> [    1.959799] mmc0: new high speed SDHC card at address 1234
-> [    1.968363] mmcblk0: mmc0:1234 SA04G 3.71 GiB
-> [    1.977984] caam 2100000.caam: Entropy delay = 3200
-> [    2.043796] caam 2100000.caam: Instantiated RNG4 SH0
-> [    2.104558] caam 2100000.caam: Instantiated RNG4 SH1
-> [    2.109596] caam 2100000.caam: device ID = 0x0a16010000000000 (Era 4)
-> [    2.116060] caam 2100000.caam: job rings = 2, qi = 0, dpaa2 = no
-> [    2.139266] caam algorithms registered in /proc/crypto
-> [    2.139341]  mmcblk0: p1 p2
-> [    2.150910] caam_jr 2101000.jr0: registering rng-caam
-> [    2.157327] usbcore: registered new interface driver usbhid
-> [    2.163103] usbhid: USB HID core driver
-> [    2.171149] imx-media: subdev ov5640 2-003c bound
-> [    2.176631] imx-media: subdev ipu1_vdic bound
-> [    2.181640] imx-media: subdev ipu2_vdic bound
-> [    2.183831] mmc1: new high speed MMC card at address 0001
-> [    2.186357] imx-media: subdev ipu1_ic_prp bound
-> [    2.193649] mmcblk1: mmc1:0001 M62704 3.53 GiB
-> [    2.197342] ipu1_ic_prpenc: Registered ipu1_ic_prpenc capture as /dev/video0
-> [    2.202620] mmcblk1boot0: mmc1:0001 M62704 partition 1 2.00 MiB
-> [    2.208083] imx-media: subdev ipu1_ic_prpenc bound
-> [    2.215764] mmcblk1boot1: mmc1:0001 M62704 partition 2 2.00 MiB
-> [    2.219512] ipu1_ic_prpvf: Registered ipu1_ic_prpvf capture as /dev/video1
-> [    2.231868] imx-media: subdev ipu1_ic_prpvf bound
-> [    2.232186] mmcblk1rpmb: mmc1:0001 M62704 partition 3 512 KiB,
-> chardev (244:0)
-> [    2.236748] imx-media: subdev ipu2_ic_prp bound
-> [    2.245958]  mmcblk1: p1 p2
-> [    2.251569] ipu2_ic_prpenc: Registered ipu2_ic_prpenc capture as /dev/video2
-> [    2.258696] imx-media: subdev ipu2_ic_prpenc bound
-> [    2.264108] ipu2_ic_prpvf: Registered ipu2_ic_prpvf capture as /dev/video3
-> [    2.271119] imx-media: subdev ipu2_ic_prpvf bound
-> [    2.277042] ipu1_csi0: Registered ipu1_csi0 capture as /dev/video4
-> [    2.283312] imx-media: subdev ipu1_csi0 bound
-> [    2.288312] ipu1_csi1: Registered ipu1_csi1 capture as /dev/video5
-> [    2.294583] imx-media: subdev ipu1_csi1 bound
-> [    2.299694] ipu2_csi0: Registered ipu2_csi0 capture as /dev/video6
-> [    2.305902] imx-media: subdev ipu2_csi0 bound
-> [    2.310953] ipu2_csi1: Registered ipu2_csi1 capture as /dev/video7
-> [    2.317162] imx-media: subdev ipu2_csi1 bound
-> [    2.322293] imx-media: subdev imx6-mipi-csi2 bound
-> [    2.336025] sgtl5000 2-000a: Error reading chip id -6
-> [    2.346932] fsl-ssi-dai 2028000.ssi: No cache defaults, reading back from HW
-> [    2.360345] NET: Registered protocol family 10
-> [    2.367761] Segment Routing with IPv6
-> [    2.371704] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
-> [    2.379180] NET: Registered protocol family 17
-> [    2.383872] can: controller area network core (rev 20170425 abi 9)
-> [    2.390281] NET: Registered protocol family 29
-> [    2.394756] can: raw protocol (rev 20170425)
-> [    2.399126] can: broadcast manager protocol (rev 20170425 t)
-> [    2.404869] can: netlink gateway (rev 20170425) max_hops=1
-> [    2.410989] Key type dns_resolver registered
-> [    2.420041] Registering SWP/SWPB emulation handler
-> [    2.426337] Loading compiled-in X.509 certificates
-> [    2.505422] imx-media: subdev ipu1_csi0_mux bound
-> [    2.511142] imx-media: subdev ipu2_csi1_mux bound
-> [    2.515930] imx-media: imx6-mipi-csi2:4 -> ipu2_csi1_mux:0
-> [    2.518384] random: fast init done
-> [    2.521600] imx-media: imx6-mipi-csi2:1 -> ipu1_csi0_mux:0
-> [    2.530561] imx-media: ov5640 2-003c:0 -> imx6-mipi-csi2:0
-> [    2.536094] imx-media: ipu2_csi1:1 -> ipu2_ic_prp:0
-> [    2.541052] imx-media: ipu2_csi1:1 -> ipu2_vdic:0
-> [    2.545801] imx-media: ipu2_csi1_mux:2 -> ipu2_csi1:0
-> [    2.550932] imx-media: ipu2_csi0:1 -> ipu2_ic_prp:0
-> [    2.555837] imx-media: ipu2_csi0:1 -> ipu2_vdic:0
-> [    2.560629] imx-media: imx6-mipi-csi2:3 -> ipu2_csi0:0
-> [    2.565800] imx-media: ipu1_csi1:1 -> ipu1_ic_prp:0
-> [    2.570750] imx-media: ipu1_csi1:1 -> ipu1_vdic:0
-> [    2.575497] imx-media: imx6-mipi-csi2:2 -> ipu1_csi1:0
-> [    2.580716] imx-media: ipu1_csi0:1 -> ipu1_ic_prp:0
-> [    2.585623] imx-media: ipu1_csi0:1 -> ipu1_vdic:0
-> [    2.590411] imx-media: ipu1_csi0_mux:2 -> ipu1_csi0:0
-> [    2.595499] imx-media: ipu2_ic_prp:1 -> ipu2_ic_prpenc:0
-> [    2.600901] imx-media: ipu2_ic_prp:2 -> ipu2_ic_prpvf:0
-> [    2.606159] imx-media: ipu1_ic_prp:1 -> ipu1_ic_prpenc:0
-> [    2.611548] imx-media: ipu1_ic_prp:2 -> ipu1_ic_prpvf:0
-> [    2.616803] imx-media: ipu2_vdic:2 -> ipu2_ic_prp:0
-> [    2.621754] imx-media: ipu1_vdic:2 -> ipu1_ic_prp:0
-> [    2.637015] imx_thermal tempmon: Industrial CPU temperature grade -
-> max:105C critical:100C passive:95C
-> [    2.650475] snvs_rtc 20cc000.snvs:snvs-rtc-lp: setting system clock
-> to 1970-01-01 00:00:00 UTC (0)
-> [    2.659880] cfg80211: Loading compiled-in X.509 certificates for
-> regulatory database
-> [    2.674031] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-> [    2.682013] platform regulatory.0: Direct firmware load for
-> regulatory.db failed with error -2
-> [    2.690851] cfg80211: failed to load regulatory.db
-> [    2.695737] ALSA device list:
-> [    2.698762]   No soundcards found.
-> [    3.592224] EXT4-fs (mmcblk0p2): recovery complete
-> [    3.602020] EXT4-fs (mmcblk0p2): mounted filesystem with ordered
-> data mode. Opts: (null)
-> [    3.610371] VFS: Mounted root (ext4 filesystem) on device 179:2.
-> [    3.618708] devtmpfs: mounted
-> [    3.624665] Freeing unused kernel memory: 1024K
-> [    3.743951] EXT4-fs (mmcblk0p2): re-mounted. Opts: (null)
-> Starting logging: OK
-> Initializing random number generator... [    3.897748] random: dd:
-> uninitialized urandom read (512 bytes read)
-> done.
-> Starting network: OK
->
-> Welcome to Engicam i.CoreM6 Quad/Dual/DualLite/Solo
-> buildroot login: root
-> # media-ctl -l "'ov5640 2-003c':0 -> 'imx6-mipi-csi2':0[1]"
-> # media-ctl -l "'imx6-mipi-csi2':2 -> 'ipu1_csi1':0[1]"
-> # media-ctl -l "'ipu1_csi1':1 -> 'ipu1_ic_prp':0[1]"
-> # media-ctl -l "'ipu1_ic_prp':1 -> 'ipu1_ic_prpenc':0[1]"
-> # media-ctl -l "'ipu1_ic_prpenc':1 -> 'ipu1_ic_prpenc capture':0[1]"
-> # media-ctl -V "'ov5640 2-003c':0 [fmt:UYVY2X8/640x480 field:none]"
-> # media-ctl -V "'imx6-mipi-csi2':2 [fmt:UYVY2X8/640x480 field:none]"
-> # media-ctl -V "'ipu1_csi1':1 [fmt:AYUV32/640x480 field:none]"
-> # media-ctl -V "'ipu1_ic_prp':1 [fmt:AYUV32/640x480 field:none]"
-> # media-ctl -V "'ipu1_ic_prpenc':1 [fmt:AYUV32/640x480 field:none]"
-> # med# media-ctl -p
-> Media controller API version 4.17.0
->
-> Media device information
-> ------------------------
-> driver          imx-media
-> model           imx-media
-> serial
-> bus info
-> hw revision     0x0
-> driver version  4.17.0
->
-> Device topology
-> - entity 1: ov5640 2-003c (1 pad, 1 link)
->             type V4L2 subdev subtype Sensor flags 0
->             device node name /dev/v4l-subdev0
-> pad0: Source
-> [fmt:UYVY8_2X8/640x480 field:none]
-> -> "imx6-mipi-csi2":0 [ENABLED]
->
-> - entity 3: ipu1_vdic (3 pads, 3 links)
->             type V4L2 subdev subtype Unknown flags 0
->             device node name /dev/v4l-subdev1
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu1_csi0":1 []
-> <- "ipu1_csi1":1 []
-> pad1: Sink
-> [fmt:UYVY8_2X8/640x480 field:none]
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_ic_prp":0 []
->
-> - entity 7: ipu2_vdic (3 pads, 3 links)
->             type V4L2 subdev subtype Unknown flags 0
->             device node name /dev/v4l-subdev2
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu2_csi0":1 []
-> <- "ipu2_csi1":1 []
-> pad1: Sink
-> [fmt:UYVY8_2X8/640x480 field:none]
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_ic_prp":0 []
->
-> - entity 11: ipu1_ic_prp (3 pads, 5 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev3
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu1_vdic":2 []
-> <- "ipu1_csi0":1 []
-> <- "ipu1_csi1":1 [ENABLED]
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_ic_prpenc":0 [ENABLED]
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_ic_prpvf":0 []
->
-> - entity 15: ipu1_ic_prpenc (2 pads, 2 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev4
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu1_ic_prp":1 [ENABLED]
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_ic_prpenc capture":0 [ENABLED]
->
-> - entity 18: ipu1_ic_prpenc capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video0
-> pad0: Sink
-> <- "ipu1_ic_prpenc":1 [ENABLED]
->
-> - entity 24: ipu1_ic_prpvf (2 pads, 2 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev5
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu1_ic_prp":2 []
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_ic_prpvf capture":0 []
->
-> - entity 27: ipu1_ic_prpvf capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video1
-> pad0: Sink
-> <- "ipu1_ic_prpvf":1 []
->
-> - entity 33: ipu2_ic_prp (3 pads, 5 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev6
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu2_vdic":2 []
-> <- "ipu2_csi0":1 []
-> <- "ipu2_csi1":1 []
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_ic_prpenc":0 []
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_ic_prpvf":0 []
->
-> - entity 37: ipu2_ic_prpenc (2 pads, 2 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev7
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu2_ic_prp":1 []
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_ic_prpenc capture":0 []
->
-> - entity 40: ipu2_ic_prpenc capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video2
-> pad0: Sink
-> <- "ipu2_ic_prpenc":1 []
->
-> - entity 46: ipu2_ic_prpvf (2 pads, 2 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev8
-> pad0: Sink
-> [fmt:AYUV8_1X32/640x480 field:none]
-> <- "ipu2_ic_prp":2 []
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_ic_prpvf capture":0 []
->
-> - entity 49: ipu2_ic_prpvf capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video3
-> pad0: Sink
-> <- "ipu2_ic_prpvf":1 []
->
-> - entity 55: ipu1_csi0 (3 pads, 4 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev9
-> pad0: Sink
-> [fmt:UYVY8_2X8/640x480 field:none
-> crop.bounds:(0,0)/640x480
-> crop:(0,0)/640x480
-> compose.bounds:(0,0)/640x480
-> compose:(0,0)/640x480]
-> <- "ipu1_csi0_mux":2 []
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_ic_prp":0 []
-> -> "ipu1_vdic":0 []
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_csi0 capture":0 []
->
-> - entity 59: ipu1_csi0 capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video4
-> pad0: Sink
-> <- "ipu1_csi0":2 []
->
-> - entity 65: ipu1_csi1 (3 pads, 4 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev10
-> pad0: Sink
-> [fmt:UYVY8_2X8/640x480 field:none
-> crop.bounds:(0,0)/640x480
-> crop:(0,0)/640x480
-> compose.bounds:(0,0)/640x480
-> compose:(0,0)/640x480]
-> <- "imx6-mipi-csi2":2 [ENABLED]
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_ic_prp":0 [ENABLED]
-> -> "ipu1_vdic":0 []
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu1_csi1 capture":0 []
->
-> - entity 69: ipu1_csi1 capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video5
-> pad0: Sink
-> <- "ipu1_csi1":2 []
->
-> - entity 75: ipu2_csi0 (3 pads, 4 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev11
-> pad0: Sink
-> [fmt:UYVY8_2X8/640x480 field:none
-> crop.bounds:(0,0)/640x480
-> crop:(0,0)/640x480
-> compose.bounds:(0,0)/640x480
-> compose:(0,0)/640x480]
-> <- "imx6-mipi-csi2":3 []
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_ic_prp":0 []
-> -> "ipu2_vdic":0 []
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_csi0 capture":0 []
->
-> - entity 79: ipu2_csi0 capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video6
-> pad0: Sink
-> <- "ipu2_csi0":2 []
->
-> - entity 85: ipu2_csi1 (3 pads, 4 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev12
-> pad0: Sink
-> [fmt:UYVY8_2X8/640x480 field:none
-> crop.bounds:(0,0)/640x480
-> crop:(0,0)/640x480
-> compose.bounds:(0,0)/640x480
-> compose:(0,0)/640x480]
-> <- "ipu2_csi1_mux":2 []
-> pad1: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_ic_prp":0 []
-> -> "ipu2_vdic":0 []
-> pad2: Source
-> [fmt:AYUV8_1X32/640x480 field:none]
-> -> "ipu2_csi1 capture":0 []
->
-> - entity 89: ipu2_csi1 capture (1 pad, 1 link)
->              type Node subtype V4L flags 0
->              device node name /dev/video7
-> pad0: Sink
-> <- "ipu2_csi1":2 []
->
-> - entity 95: imx6-mipi-csi2 (5 pads, 5 links)
->              type V4L2 subdev subtype Unknown flags 0
->              device node name /dev/v4l-subdev13
-> pad0: Sink
-> [fmt:UYVY8_2X8/640x480 field:none]
-> <- "ov5640 2-003c":0 [ENABLED]
-> pad1: Source
-> [fmt:UYVY8_2X8/640x480 field:none]
-> -> "ipu1_csi0_mux":0 []
-> pad2: Source
-> [fmt:UYVY8_2X8/640x480 field:none]
-> -> "ipu1_csi1":0 [ENABLED]
-> pad3: Source
-> [fmt:UYVY8_2X8/640x480 field:none]
-> -> "ipu2_csi0":0 []
-> pad4: Source
-> [fmt:UYVY8_2X8/640x480 field:none]
-> -> "ipu2_csi1_mux":0 []
->
-> - entity 101: ipu1_csi0_mux (3 pads, 2 links)
->               type V4L2 subdev subtype Unknown flags 0
->               device node name /dev/v4l-subdev14
-> pad0: Sink
-> [fmt:unknown/0x0]
-> <- "imx6-mipi-csi2":1 []
-> pad1: Sink
-> [fmt:unknown/0x0]
-> pad2: Source
-> [fmt:unknown/0x0]
-> -> "ipu1_csi0":0 []
->
-> - entity 105: ipu2_csi1_mux (3 pads, 2 links)
->               type V4L2 subdev subtype Unknown flags 0
->               device node name /dev/v4l-subdev15
-> pad0: Sink
-> [fmt:unknown/0x0]
-> <- "imx6-mipi-csi2":4 []
-> pad1: Sink
-> [fmt:unknown/0x0]
-> pad2: Source
-> [fmt:unknown/0x0]
-> -> "ipu2_csi1":0 []
->
-> # GST_DEBUG="v4l2*:5" gst-launch-1.0 -v v4l2src device=/dev/video1 ! \
-> > autovideosink
-> 0:00:01.086281666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l1
-> 0:00:01.087369666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l5
-> 0:00:01.088496000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l.
-> 0:00:01.089540333   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lR
-> 0:00:01.090494666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lH
-> 0:00:01.091657666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l4
-> 0:00:01.092745000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l
-> 0:00:01.093703333   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l
-> 0:00:01.094854000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l
-> 0:00:01.095815000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l
-> 0:00:01.096818666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lB
-> 0:00:01.097819000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l8
-> 0:00:01.098771000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l
-> 0:00:01.099798666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l1
-> 0:00:01.100776666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lV
-> 0:00:01.101755333   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lY
-> 0:00:01.102771666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lP
-> 0:00:01.103712000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l4
-> 0:00:01.104720000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lO
-> 0:00:01.105697000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4lP
-> 0:00:01.106629666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l4
-> 0:00:01.107681666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l4
-> 0:00:01.108660666   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l2
-> 0:00:01.442437333   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l0
-> 0:00:01.444673333   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l2
-> 0:00:01.446842000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l2
-> 0:00:01.449084000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:1487:gst_v4l2_object_v4l4
-> Setting pipeline to PAUSED ...
-> 0:00:01.680823000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:524:gst_v4l2_open:<v4l2src01
-> 0:00:01.681953333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:69:gst_v4l2_get_capabilities
-> 0:00:01.683098666   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:140:gst_v4l2_fill_lists:<v4s
-> 0:00:01.684056666   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:143:gst_v4l2_fill_lists:<v4s
-> 0:00:01.685201000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:215:gst_v4l2_fill_lists:<v4s
-> 0:00:01.686159333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.687207666   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4C
-> 0:00:01.688183666   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.689155333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4M
-> 0:00:01.690142000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.691114000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4P
-> 0:00:01.692080000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.693073000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4R
-> 0:00:01.694043000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.695760000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4L
-> 0:00:01.696736333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.697708000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4G
-> 0:00:01.698699000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.699667000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4H
-> 0:00:01.700633000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.701623666   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4I
-> 0:00:01.702591000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.703554333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4K
-> 0:00:01.704604000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:01.705576666   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4M
-> 0:00:01.706567000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:02.040204667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4B
-> 0:00:02.042194667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:02.044190000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4G
-> 0:00:02.046338333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:02.048327667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4H
-> 0:00:02.050296000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:02.052385000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4K
-> 0:00:02.054376000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:02.056461333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4L
-> 0:00:02.058434000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:247:gst_v4l2_fill_lists:<v41
-> 0:00:02.060423667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:257:gst_v4l2_fill_lists:<v4c
-> 0:00:02.062382667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:263:gst_v4l2_fill_lists:<v4s
-> 0:00:02.064291333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:283:gst_v4l2_fill_lists:<v40
-> 0:00:02.066224667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:292:gst_v4l2_fill_lists:<v4.
-> 0:00:02.067190333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:283:gst_v4l2_fill_lists:<v40
-> 0:00:02.068174333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:300:gst_v4l2_fill_lists:<v40
-> 0:00:02.069141000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:283:gst_v4l2_fill_lists:<v40
-> 0:00:02.070113000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:305:gst_v4l2_fill_lists:<v4d
-> 0:00:02.071088333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:456:gst_v4l2_fill_lists:<v4e
-> 0:00:02.072040000   185  0x1dce880 INFO                    v4l2
-> v4l2_calls.c:592:gst_v4l2_open:<v4l2src0y
-> 0:00:02.073017333   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:804:gst_v4l2_set_default)
-> 0:00:02.074010667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:740:gst_v4l2_get_norm:<v4l2m
-> 0:00:02.075021000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:754:gst_v4l2_get_norm: Fail1
-> 0:00:02.076012000   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:1027:gst_v4l2_get_input:<v4t
-> Pipeline is live and does not need PREROLL ...
-> 0:00:02.080105333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:1109:gst_v4l2_object_fil.
-> <v4l2src0> getting src format enumerations
-> 0:00:02.412981333   185  0x1ec39b0 INFO              New clock: GstSystemClock
->       v4l2 gstv4l2object.c:1146:gst_v4l2_object_fill_format_list:<v4l2src0>
-> got 7 format(s):
-> 0:00:02.415407667   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:1152:gst_v4l2_object_filV
-> 0:00:02.417531667   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:1152:gst_v4l2_object_filY
-> 0:00:02.419703667   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:1152:gst_v4l2_object_filP
-> 0:00:02.421860000   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:1152:gst_v4l2_object_fil2
-> 0:00:02.424022667   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:1152:gst_v4l2_object_fil2
-> 0:00:02.426295000   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:1152:gst_v4l2_object_fil6
-> 0:00:02.428481333   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:1152:gst_v4l2_object_fil2
-> 0:00:02.430728333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2564:gst_v4l2_object_proV
-> 0:00:02.432985333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2691:gst_v4l2_object_pro)
-> 0:00:02.436117000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2564:gst_v4l2_object_proY
-> 0:00:02.437252333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2691:gst_v4l2_object_pro)
-> 0:00:02.438579000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2564:gst_v4l2_object_proP
-> 0:00:02.439656000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2691:gst_v4l2_object_pro)
-> 0:00:02.441016667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2564:gst_v4l2_object_pro2
-> 0:00:02.442092333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2691:gst_v4l2_object_pro)
-> 0:00:02.443443333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2564:gst_v4l2_object_pro2
-> 0:00:02.444626667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2691:gst_v4l2_object_pro)
-> 0:00:02.445990667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2564:gst_v4l2_object_pro6
-> 0:00:02.447063667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2691:gst_v4l2_object_pro)
-> 0:00:02.448410333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2564:gst_v4l2_object_pro2
-> 0:00:02.782148333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2691:gst_v4l2_object_pro)
-> 0:00:02.785264333   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:3967:gst_v4l2_object_get}
-> 0:00:02.788800000   185  0x1ec39b0 DEBUG                v4l2src
-> gstv4l2src.c:300:gst_v4l2src_negotiate:<}
-> 0:00:02.792207000   185  0x1ec39b0 DEBUG                v4l2src
-> gstv4l2src.c:308:gst_v4l2src_negotiate:<]
-> 0:00:02.795419000   185  0x1ec39b0 DEBUG                v4l2src
-> gstv4l2src.c:316:gst_v4l2src_negotiate:<}
-> 0:00:03.132052667   185  0x1ec39b0 DEBUG                v4l2src
-> gstv4l2src.c:256:gst_v4l2src_fixate:<v4l}
-> 0:00:03.134399667   185  0x1ec39b0 DEBUG                v4l2src
-> gstv4l2src.c:282:gst_v4l2src_fixate:<v4l}
-> 0:00:03.136800667   185  0x1ec39b0 DEBUG                v4l2src
-> gstv4l2src.c:367:gst_v4l2src_negotiate:<1
-> 0:00:03.139067333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3887:gst_v4l2_object_stog
-> 0:00:03.141452000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3176:gst_v4l2_object_seto
-> 0:00:03.143608667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3310:gst_v4l2_object_set0
-> 0:00:03.146025333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3361:gst_v4l2_object_set1
-> 0:00:03.148229000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3370:gst_v4l2_object_set0
-> 0:00:03.150373667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3404:gst_v4l2_object_set1
-> 0:00:03.152589667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3414:gst_v4l2_object_set0
-> 0:00:03.155250667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3455:gst_v4l2_object_set1
-> 0:00:03.156584667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3472:gst_v4l2_object_set1
-> 0:00:03.157659333   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:3504:gst_v4l2_object_set1
-> 0:00:03.491432000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2960:gst_v4l2_object_ext0
-> 0:00:03.493645333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3071:gst_v4l2_object_sav0
-> 0:00:03.496027333   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:2843:gst_v4l2_object_setm
-> 0:00:03.498180000   185  0x1ec39b0 INFO                    v4l2
-> gstv4l2object.c:2867:gst_v4l2_object_set2
-> 0:00:03.502772000   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:509:gst_v4l2_buffer_;
-> 0:00:03.505283333   185  0x1ec39b0 INFO          v4l2bufferpool
-> gstv4l2bufferpool.c:557:gst_v4l2_buffer_2
-> 0:00:03.507120000   185  0x1ec39b0 INFO          v4l2bufferpool
-> gstv4l2bufferpool.c:570:gst_v4l2_buffer_2
-> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0.GstPad:src: caps =
-> video/x-raw, format=(string)YUY2, width=(i1
-> /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0.GstGhostPad:sink.GstProxyPad:proxypad0:
-> caps = vi1
-> /GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0/GstKMSSink:autovideosink0-actual-sink-kms.GstPad:1
-> 0:00:03/GstPipeline:pipeline0/GstAutoVideoSink:autovideosink0.GstGhostPad:sink:
-> caps = video/x-raw, form1
-> .512440000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:3985:gst_v4l2_object_decide_alln
-> 0:00:03.513556667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:4011:gst_v4l2_object_dec>
-> 0:00:03.514745667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:4069:gst_v4l2_object_dec>
-> 0:00:03.515889000   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:4134:gst_v4l2_object_deca
-> 0:00:03.516969667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:4143:gst_v4l2_object_dec;
-> 0:00:03.851350333   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:509:gst_v4l2_buffer_2
-> ams)NULL, options=(string)< GstBufferPoolOptionVideoMeta >;
-> 0:00:03.853620333   185  0x1ec39b0 INFO          v4l2bufferpool
-> gstv4l2bufferpool.c:570:gst_v4l2_buffer_2
-> 0:00:03.855780667   185  0x1ec39b0 DEBUG                   v4l2
-> gstv4l2object.c:4150:gst_v4l2_object_dec;
-> 0:00:03.858430000   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:509:gst_v4l2_buffer_;
-> 0:00:03.861572333   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:707:gst_v4l2_buffer_l
-> 0:00:03.863468333   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:737:gst_v4l2_buffer_s
-> 0:00:03.918861000   185  0x1ec39b0 DEBUG          v4l2allocator
-> gstv4l2allocator.c:706:gst_v4l2_allocatod
-> 0:00:03.943783333   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:1389:gst_v4l2_buffer8
-> 0:00:03.946129333   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:1389:gst_v4l2_buffer8
-> 0:00:03.948065000   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:1389:gst_v4l2_buffer8
-> 0:00:03.950006000   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:952:gst_v4l2_buffer_g
-> 0:00:03.996241333   185  0x1ec39b0 ERROR         v4l2bufferpool
-> gstv4l2bufferpool.c:641:gst_v4l2_buffer_)
-> 0:00:03.998199667   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:1311:gst_v4l2_buffere
-> 0:00:04.000463000   185  0x1ec39b0 WARN          v4l2bufferpool
-> gstv4l2bufferpool.c:1064:gst_v4l2_buffer)
-> 0:00:04.004649333   185  0x1ec39b0 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:1283:gst_v4l2_bufferr
-> 0:00:04.005853333   185  0x1ec39b0 WARN                 v4l2src
-> gstv4l2src.c:866:gst_v4l2src_create:<v4lr
-> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
-> not read from resource.
-> Additional debug info:
-> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
-> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
-> poll error 1: Resource temporarily unavailable (11)
-> Execution ended after 0:00:01.606871334
-> Setting pipeline to PAUSED ...
-> 0:00:04.022385000   185  0x1dce880 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:931:gst_v4l2_buffer_g
-> Setting pipeline to READY ...
-> 0:00:04.024850667   185  0x1dce880 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:879:gst_v4l2_buffer_l
-> 0:00:04.026764000   185  0x1dce880 DEBUG          v4l2allocator
-> gstv4l2allocator.c:757:gst_v4l2_allocator
-> 0:00:04.028598333   185  0x1dce880 DEBUG          v4l2allocator
-> gstv4l2allocator.c:765:gst_v4l2_allocatoe
-> 0:00:04.362785667   185  0x1dce880 WARN          v4l2bufferpool
-> gstv4l2bufferpool.c:918:gst_v4l2_buffer_g
-> 0:00:04.364712333   185  0x1dce880 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:952:gst_v4l2_buffer_g
-> 0:00:04.366504333   185  0x1dce880 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:629:gst_v4l2_buffer_g
-> 0:00:04.368607000   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:3887:gst_v4l2_object_stog
-> 0:00:04.370713333   185  0x1dce880 DEBUG                   v4l2
-> gstv4l2object.c:3895:gst_v4l2_object_stol
-> 0:00:04.372809333   185  0x1dce880 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:931:gst_v4l2_buffer_g
-> 0:00:04.374732000   185  0x1dce880 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:879:gst_v4l2_buffer_l
-> 0:00:04.376541000   185  0x1dce880 DEBUG         v4l2bufferpool
-> gstv4l2bufferpool.c:663:gst_v4l2_buffer_g
-> 0:00:04.378334000   185  0x1dce880 DEBUG          v4l2allocator
-> gstv4l2allocator.c:757:gst_v4l2_allocator
-> Setting pipeline to NULL ...
-> 0:00:04.394764333   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:716:gst_v4l2_close:<v4l2src1
-> 0:00:04.395897667   185  0x1dce880 DEBUG                   v4l2
-> v4l2_calls.c:464:gst_v4l2_empty_lists:<vs
-> Freeing pipeline ...
->
-> [1] https://linuxtv.org/downloads/v4l-dvb-apis/v4l-drivers/imx.html#sabresd-with-mipi-csi-2-ov5640
-> [2] https://paste.ubuntu.com/p/CTvFqdbyMW/
->
-> Jagan.
->
-> --
-> Jagan Teki
-> Senior Linux Kernel Engineer | Amarula Solutions
-> U-Boot, Linux | Upstream Maintainer
-> Hyderabad, India.
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 9eeb8ef0b174..90a4810a8c96 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -35,6 +35,15 @@ config DRM_CDNS_DSI
+ 	  Support Cadence DPI to DSI bridge. This is an internal
+ 	  bridge and is meant to be directly embedded in a SoC.
+ 
++config DRM_CDNS_MHDP
++	tristate "Cadence DPI/DP bridge"
++	select DRM_KMS_HELPER
++	select DRM_PANEL_BRIDGE
++	depends on OF
++	help
++	  Support Cadence DPI to DP bridge. This is an internal
++	  bridge and is meant to be directly embedded in a SoC.
++
+ config DRM_DUMB_VGA_DAC
+ 	tristate "Dumb VGA DAC Bridge support"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index 4934fcf5a6f8..e802fdb85750 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -16,4 +16,7 @@ obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
+ obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
+ obj-$(CONFIG_DRM_TI_SN65DSI86) += ti-sn65dsi86.o
+ obj-$(CONFIG_DRM_TI_TFP410) += ti-tfp410.o
++obj-$(CONFIG_DRM_CDNS_MHDP) += mhdp8546.o
+ obj-y += synopsys/
++
++mhdp8546-objs := cdns-mhdp-common.o cdns-mhdp.o
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/bridge/cdns-mhdp-common.c
+similarity index 87%
+rename from drivers/gpu/drm/rockchip/cdn-dp-reg.c
+rename to drivers/gpu/drm/bridge/cdns-mhdp-common.c
+index c1a76e6fff88..88cb248b9de4 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
++++ b/drivers/gpu/drm/bridge/cdns-mhdp-common.c
+@@ -19,8 +19,10 @@
+ #include <linux/iopoll.h>
+ #include <linux/reset.h>
+ 
+-#include "cdn-dp-core.h"
+-#include "cdn-dp-reg.h"
++#include <drm/drm_print.h>
++#include <drm/drm_modes.h>
++
++#include "cdns-mhdp-common.h"
+ 
+ #define CDNS_DP_SPDIF_CLK		200000000
+ #define FW_ALIVE_TIMEOUT_US		1000000
+@@ -33,6 +35,7 @@ void cdns_mhdp_set_fw_clk(struct cdns_mhdp_device *mhdp, unsigned long clk)
+ {
+ 	writel(clk / 1000000, mhdp->regs + SW_CLK_H);
+ }
++EXPORT_SYMBOL(cdns_mhdp_set_fw_clk);
+ 
+ void cdns_mhdp_clock_reset(struct cdns_mhdp_device *mhdp)
+ {
+@@ -82,6 +85,7 @@ void cdns_mhdp_clock_reset(struct cdns_mhdp_device *mhdp)
+ 	/* enable Mailbox and PIF interrupt */
+ 	writel(0, mhdp->regs + APB_INT_MASK);
+ }
++EXPORT_SYMBOL(cdns_mhdp_clock_reset);
+ 
+ static int cdns_mhdp_mailbox_read(struct cdns_mhdp_device *mhdp)
+ {
+@@ -189,7 +193,56 @@ static int cdns_mhdp_mailbox_send(struct cdns_mhdp_device *mhdp, u8 module_id,
+ 	return 0;
+ }
+ 
+-static int cdns_mhdp_reg_write(struct cdns_mhdp_device *mhdp, u16 addr, u32 val)
++int cdns_mhdp_reg_read(struct cdns_mhdp_device *mhdp, u32 addr, u32 *value)
++{
++	u8 msg[4], resp[8];
++	int ret;
++
++	if (addr == 0) {
++		ret = -EINVAL;
++		goto err_reg_read;
++	}
++
++	msg[0] = (u8)(addr >> 24);
++	msg[1] = (u8)(addr >> 16);
++	msg[2] = (u8)(addr >> 8);
++	msg[3] = (u8)addr;
++
++	ret = cdns_mhdp_mailbox_send(mhdp, MB_MODULE_ID_GENERAL,
++				     GENERAL_REGISTER_READ,
++				     sizeof(msg), msg);
++	if (ret)
++		goto err_reg_read;
++
++	ret = cdns_mhdp_mailbox_validate_receive(mhdp, MB_MODULE_ID_GENERAL,
++						 GENERAL_REGISTER_READ,
++						 sizeof(resp));
++	if (ret)
++		goto err_reg_read;
++
++	ret = cdns_mhdp_mailbox_read_receive(mhdp, resp, sizeof(resp));
++	if (ret)
++		goto err_reg_read;
++
++	/* Returned address value should be the same as requested */
++	if (memcmp(msg, resp, sizeof(msg))) {
++		ret = -EINVAL;
++		goto err_reg_read;
++	}
++
++	*value = (resp[4] << 24) | (resp[5] << 16) | (resp[6] << 8) | resp[7];
++
++err_reg_read:
++	if (ret) {
++		DRM_DEV_ERROR(mhdp->dev, "Failed to read register.\n");
++		*value = 0;
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(cdns_mhdp_reg_read);
++
++int cdns_mhdp_reg_write(struct cdns_mhdp_device *mhdp, u16 addr, u32 val)
+ {
+ 	u8 msg[6];
+ 
+@@ -202,8 +255,9 @@ static int cdns_mhdp_reg_write(struct cdns_mhdp_device *mhdp, u16 addr, u32 val)
+ 	return cdns_mhdp_mailbox_send(mhdp, MB_MODULE_ID_DP_TX,
+ 				      DPTX_WRITE_REGISTER, sizeof(msg), msg);
+ }
++EXPORT_SYMBOL(cdns_mhdp_reg_write);
+ 
+-static int cdns_mhdp_reg_write_bit(struct cdns_mhdp_device *mhdp, u16 addr,
++int cdns_mhdp_reg_write_bit(struct cdns_mhdp_device *mhdp, u16 addr,
+ 				   u8 start_bit, u8 bits_no, u32 val)
+ {
+ 	u8 field[8];
+@@ -220,6 +274,7 @@ static int cdns_mhdp_reg_write_bit(struct cdns_mhdp_device *mhdp, u16 addr,
+ 	return cdns_mhdp_mailbox_send(mhdp, MB_MODULE_ID_DP_TX,
+ 				      DPTX_WRITE_FIELD, sizeof(field), field);
+ }
++EXPORT_SYMBOL(cdns_mhdp_reg_write_bit);
+ 
+ int cdns_mhdp_dpcd_read(struct cdns_mhdp_device *mhdp,
+ 			u32 addr, u8 *data, u16 len)
+@@ -252,6 +307,7 @@ int cdns_mhdp_dpcd_read(struct cdns_mhdp_device *mhdp,
+ err_dpcd_read:
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_dpcd_read);
+ 
+ int cdns_mhdp_dpcd_write(struct cdns_mhdp_device *mhdp, u32 addr, u8 value)
+ {
+@@ -286,6 +342,7 @@ int cdns_mhdp_dpcd_write(struct cdns_mhdp_device *mhdp, u32 addr, u8 value)
+ 		DRM_DEV_ERROR(mhdp->dev, "dpcd write failed: %d\n", ret);
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_dpcd_write);
+ 
+ int cdns_mhdp_load_firmware(struct cdns_mhdp_device *mhdp, const u32 *i_mem,
+ 			    u32 i_size, const u32 *d_mem, u32 d_size)
+@@ -328,6 +385,7 @@ int cdns_mhdp_load_firmware(struct cdns_mhdp_device *mhdp, const u32 *i_mem,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(cdns_mhdp_load_firmware);
+ 
+ int cdns_mhdp_set_firmware_active(struct cdns_mhdp_device *mhdp, bool enable)
+ {
+@@ -362,6 +420,7 @@ int cdns_mhdp_set_firmware_active(struct cdns_mhdp_device *mhdp, bool enable)
+ 		DRM_DEV_ERROR(mhdp->dev, "set firmware active failed\n");
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_set_firmware_active);
+ 
+ int cdns_mhdp_set_host_cap(struct cdns_mhdp_device *mhdp, u8 lanes, bool flip)
+ {
+@@ -391,6 +450,7 @@ int cdns_mhdp_set_host_cap(struct cdns_mhdp_device *mhdp, u8 lanes, bool flip)
+ 		DRM_DEV_ERROR(mhdp->dev, "set host cap failed: %d\n", ret);
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_set_host_cap);
+ 
+ int cdns_mhdp_event_config(struct cdns_mhdp_device *mhdp)
+ {
+@@ -408,11 +468,13 @@ int cdns_mhdp_event_config(struct cdns_mhdp_device *mhdp)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_event_config);
+ 
+ u32 cdns_mhdp_get_event(struct cdns_mhdp_device *mhdp)
+ {
+ 	return readl(mhdp->regs + SW_EVENTS0);
+ }
++EXPORT_SYMBOL(cdns_mhdp_get_event);
+ 
+ int cdns_mhdp_get_hpd_status(struct cdns_mhdp_device *mhdp)
+ {
+@@ -440,6 +502,7 @@ int cdns_mhdp_get_hpd_status(struct cdns_mhdp_device *mhdp)
+ 	DRM_DEV_ERROR(mhdp->dev, "get hpd status failed: %d\n", ret);
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_get_hpd_status);
+ 
+ int cdns_mhdp_get_edid_block(void *data, u8 *edid,
+ 			  unsigned int block, size_t length)
+@@ -482,6 +545,7 @@ int cdns_mhdp_get_edid_block(void *data, u8 *edid,
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_get_edid_block);
+ 
+ static int cdns_mhdp_training_start(struct cdns_mhdp_device *mhdp)
+ {
+@@ -580,6 +644,7 @@ int cdns_mhdp_train_link(struct cdns_mhdp_device *mhdp)
+ 			  mhdp->link.num_lanes);
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_train_link);
+ 
+ int cdns_mhdp_set_video_status(struct cdns_mhdp_device *mhdp, int active)
+ {
+@@ -595,6 +660,7 @@ int cdns_mhdp_set_video_status(struct cdns_mhdp_device *mhdp, int active)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_set_video_status);
+ 
+ static int cdns_mhdp_get_msa_misc(struct video_info *video,
+ 				  struct drm_display_mode *mode)
+@@ -797,6 +863,7 @@ int cdns_mhdp_config_video(struct cdns_mhdp_device *mhdp)
+ 		DRM_DEV_ERROR(mhdp->dev, "config video failed: %d\n", ret);
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_config_video);
+ 
+ int cdns_mhdp_audio_stop(struct cdns_mhdp_device *mhdp,
+ 			 struct audio_info *audio)
+@@ -831,6 +898,7 @@ int cdns_mhdp_audio_stop(struct cdns_mhdp_device *mhdp,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(cdns_mhdp_audio_stop);
+ 
+ int cdns_mhdp_audio_mute(struct cdns_mhdp_device *mhdp, bool enable)
+ {
+@@ -842,6 +910,7 @@ int cdns_mhdp_audio_mute(struct cdns_mhdp_device *mhdp, bool enable)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_audio_mute);
+ 
+ static void cdns_mhdp_audio_config_i2s(struct cdns_mhdp_device *mhdp,
+ 				       struct audio_info *audio)
+@@ -977,3 +1046,63 @@ int cdns_mhdp_audio_config(struct cdns_mhdp_device *mhdp,
+ 		DRM_DEV_ERROR(mhdp->dev, "audio config failed: %d\n", ret);
+ 	return ret;
+ }
++EXPORT_SYMBOL(cdns_mhdp_audio_config);
++
++int cdns_mhdp_adjust_lt(struct cdns_mhdp_device *mhdp,
++			u8 nlanes, u16 udelay, u8 *lanes_data, u8 *dpcd)
++{
++	u8 payload[7];
++	u8 hdr[5]; /* For DPCD read response header */
++	u32 addr;
++	u8 const nregs = 6; /* Registers 0x202-0x207 */
++	int ret;
++
++	if (nlanes != 4 && nlanes != 2 && nlanes != 1) {
++		DRM_DEV_ERROR(mhdp->dev, "invalid number of lanes: %d\n",
++			      nlanes);
++		ret = -EINVAL;
++		goto err_adjust_lt;
++	}
++
++	payload[0] = nlanes;
++	payload[1] = (u8)(udelay >> 8);
++	payload[2] = (u8)udelay;
++
++	payload[3] = lanes_data[0];
++	if (nlanes > 1)
++		payload[4] = lanes_data[1];
++	if (nlanes > 2) {
++		payload[5] = lanes_data[2];
++		payload[6] = lanes_data[3];
++	}
++
++	ret = cdns_mhdp_mailbox_send(mhdp, MB_MODULE_ID_DP_TX,
++				     DPTX_ADJUST_LT,
++				     sizeof(payload), payload);
++	if (ret)
++		goto err_adjust_lt;
++
++	/* Yes, read the DPCD read command response */
++	ret = cdns_mhdp_mailbox_validate_receive(mhdp, MB_MODULE_ID_DP_TX,
++						 DPTX_READ_DPCD,
++						 sizeof(hdr) + nregs);
++	if (ret)
++		goto err_adjust_lt;
++
++	ret = cdns_mhdp_mailbox_read_receive(mhdp, hdr, sizeof(hdr));
++	if (ret)
++		goto err_adjust_lt;
++
++	addr = (hdr[2] << 24) | (hdr[3] << 8) | hdr[4];
++	if (addr != DP_LANE0_1_STATUS)
++		goto err_adjust_lt;
++
++	ret = cdns_mhdp_mailbox_read_receive(mhdp, dpcd, nregs);
++
++err_adjust_lt:
++	if (ret)
++		DRM_DEV_ERROR(mhdp->dev, "Failed to adjust Link Training.\n");
++
++	return ret;
++}
++EXPORT_SYMBOL(cdns_mhdp_adjust_lt);
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/bridge/cdns-mhdp-common.h
+similarity index 95%
+rename from drivers/gpu/drm/rockchip/cdn-dp-reg.h
+rename to drivers/gpu/drm/bridge/cdns-mhdp-common.h
+index 3cb40d719515..c5a5c4fa7fc4 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
++++ b/drivers/gpu/drm/bridge/cdns-mhdp-common.h
+@@ -12,10 +12,13 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#ifndef _CDN_DP_REG_H
+-#define _CDN_DP_REG_H
++#ifndef CDNS_MHDP_COMMON_H_
++#define CDNS_MHDP_COMMON_H_
+ 
+ #include <linux/bitops.h>
++#include <drm/drm_dp_helper.h>
++#include <drm/drm_connector.h>
++#include <drm/drm_bridge.h>
+ 
+ #define ADDR_IMEM		0x10000
+ #define ADDR_DMEM		0x20000
+@@ -327,6 +330,7 @@
+ #define GENERAL_TEST_ECHO               0x02
+ #define GENERAL_BUS_SETTINGS            0x03
+ #define GENERAL_TEST_ACCESS             0x04
++#define GENERAL_REGISTER_READ           0x07
+ 
+ #define DPTX_SET_POWER_MNG			0x00
+ #define DPTX_SET_HOST_CAPABILITIES		0x01
+@@ -346,6 +350,7 @@
+ #define DPTX_SET_LINK_BREAK_POINT		0x0f
+ #define DPTX_FORCE_LANES			0x10
+ #define DPTX_HPD_STATE				0x11
++#define DPTX_ADJUST_LT				0x12
+ 
+ #define FW_STANDBY				0
+ #define FW_ACTIVE				1
+@@ -517,6 +522,9 @@ struct cdns_mhdp_device {
+ 	struct clk		*spdif_clk;
+ 	struct reset_control	*spdif_rst;
+ 
++	struct platform_device	*audio_pdev;
++	struct audio_info	audio_info;
++
+ 	struct drm_dp_aux	aux;
+ 	struct cdns_mhdp_host	host;
+ 	struct cdns_mhdp_sink	sink;
+@@ -551,4 +559,11 @@ int cdns_mhdp_audio_stop(struct cdns_mhdp_device *mhdp,
+ int cdns_mhdp_audio_mute(struct cdns_mhdp_device *mhdp, bool enable);
+ int cdns_mhdp_audio_config(struct cdns_mhdp_device *mhdp,
+ 			   struct audio_info *audio);
+-#endif /* _CDN_DP_REG_H */
++int cdns_mhdp_reg_read(struct cdns_mhdp_device *mhdp, u32 addr, u32 *value);
++int cdns_mhdp_reg_write(struct cdns_mhdp_device *mhdp, u16 addr, u32 val);
++int cdns_mhdp_reg_write_bit(struct cdns_mhdp_device *mhdp, u16 addr,
++				   u8 start_bit, u8 bits_no, u32 val);
++int cdns_mhdp_adjust_lt(struct cdns_mhdp_device *mhdp, u8 nlanes,
++			u16 udelay, u8 *lanes_data,
++			u8 *dpcd);
++#endif /* CDNS_MHDP_COMMON_H_ */
+diff --git a/drivers/gpu/drm/bridge/cdns-mhdp.c b/drivers/gpu/drm/bridge/cdns-mhdp.c
+new file mode 100644
+index 000000000000..24e8fee3d79a
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/cdns-mhdp.c
+@@ -0,0 +1,1308 @@
++// SPDX-License-Identifier: GPL v2
++/*
++ * Cadence MHDP DP bridge driver.
++ *
++ * Copyright: 2018 Cadence Design Systems, Inc.
++ *
++ * Author: Quentin Schulz <quentin.schulz@free-electrons.com>
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/firmware.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include <drm/drm_atomic_helper.h>
++#include <drm/drm_bridge.h>
++#include <drm/drm_connector.h>
++#include <drm/drm_crtc_helper.h>
++#include <drm/drm_dp_helper.h>
++#include <drm/drm_modeset_helper_vtables.h>
++
++#include <sound/hdmi-codec.h>
++
++#include "cdns-mhdp-common.h"
++
++#define DEBUG_MSG
++
++#define FW_NAME					"cadence/mhdp8546.bin"
++
++#define CDNS_APB_CFG				0x00000
++#define CDNS_APB_CTRL				(CDNS_APB_CFG + 0x00)
++#define CDNS_MAILBOX_FULL			(CDNS_APB_CFG + 0x08)
++#define CDNS_MAILBOX_EMPTY			(CDNS_APB_CFG + 0x0c)
++#define CDNS_MAILBOX_TX_DATA			(CDNS_APB_CFG + 0x10)
++#define CDNS_MAILBOX_RX_DATA			(CDNS_APB_CFG + 0x14)
++#define CDNS_KEEP_ALIVE				(CDNS_APB_CFG + 0x18)
++#define CDNS_KEEP_ALIVE_MASK			GENMASK(7, 0)
++
++#define CDNS_SW_CLK_L				(CDNS_APB_CFG + 0x3c)
++#define CDNS_SW_CLK_H				(CDNS_APB_CFG + 0x40)
++#define CDNS_SW_EVENT0				(CDNS_APB_CFG + 0x44)
++#define CDNS_DPTX_HPD				BIT(0)
++
++#define CDNS_SW_EVENT1				(CDNS_APB_CFG + 0x48)
++#define CDNS_SW_EVENT2				(CDNS_APB_CFG + 0x4c)
++#define CDNS_SW_EVENT3				(CDNS_APB_CFG + 0x50)
++
++#define CDNS_DPTX_CAR				(CDNS_APB_CFG + 0x904)
++#define CDNS_VIF_CLK_EN				BIT(0)
++#define CDNS_VIF_CLK_RSTN			BIT(1)
++
++#define CDNS_SOURCE_VIDEO_INTERFACE		0x00b00
++#define CDNS_BND_HSYNC2VSYNC			(CDNS_SOURCE_VIDEO_INTERFACE + \
++						 0x00)
++#define CDNS_IP_DTCT_WIN			GENMASK(11, 0)
++#define CDNS_IP_DET_INTERLACE_FORMAT		BIT(12)
++#define CDNS_IP_BYPASS_V_INTERFACE		BIT(13)
++
++#define CDNS_HSYNC2VSYNC_POL_CTRL		(CDNS_SOURCE_VIDEO_INTERFACE + \
++						 0x10)
++#define CDNS_H2V_HSYNC_POL_ACTIVE_LOW		BIT(1)
++#define CDNS_H2V_VSYNC_POL_ACTIVE_LOW		BIT(2)
++
++#define CDNS_DPTX_PHY_CONFIG			0x02000
++#define CDNS_PHY_TRAINING_EN			BIT(0)
++#define CDNS_PHY_TRAINING_TYPE(x)		(((x) & GENMASK(3, 0)) << 1)
++#define CDNS_PHY_SCRAMBLER_BYPASS		BIT(5)
++#define CDNS_PHY_ENCODER_BYPASS			BIT(6)
++#define CDNS_PHY_SKEW_BYPASS			BIT(7)
++#define CDNS_PHY_TRAINING_AUTO			BIT(8)
++#define CDNS_PHY_LANE0_SKEW(x)			(((x) & GENMASK(2, 0)) << 9)
++#define CDNS_PHY_LANE1_SKEW(x)			(((x) & GENMASK(2, 0)) << 12)
++#define CDNS_PHY_LANE2_SKEW(x)			(((x) & GENMASK(2, 0)) << 15)
++#define CDNS_PHY_LANE3_SKEW(x)			(((x) & GENMASK(2, 0)) << 18)
++#define CDNS_PHY_COMMON_CONFIG			(CDNS_PHY_LANE1_SKEW(1) | \
++						CDNS_PHY_LANE2_SKEW(2) |  \
++						CDNS_PHY_LANE3_SKEW(3))
++#define CDNS_PHY_10BIT_EN			BIT(21)
++
++#define CDNS_DPTX_FRAMER			0x02200
++#define CDNS_DP_FRAMER_GLOBAL_CONFIG		(CDNS_DPTX_FRAMER + 0x00)
++#define CDNS_DP_NUM_LANES(x)			(x - 1)
++#define CDNS_DP_FRAMER_EN			BIT(3)
++#define CDNS_DP_RATE_GOVERNOR_EN		BIT(4)
++#define CDNS_DP_NO_VIDEO_MODE			BIT(5)
++#define CDNS_DP_DISABLE_PHY_RST			BIT(6)
++#define CDNS_DP_WR_FAILING_EDGE_VSYNC		BIT(7)
++
++#define CDNS_DP_SW_RESET			(CDNS_DPTX_FRAMER + 0x04)
++#define CDNS_DP_FRAMER_TU			(CDNS_DPTX_FRAMER + 0x08)
++#define CDNS_DP_FRAMER_TU_SIZE(x)		(((x) & GENMASK(6, 0)) << 8)
++#define CDNS_DP_FRAMER_TU_VS(x)			((x) & GENMASK(5, 0))
++#define CDNS_DP_FRAMER_TU_CNT_RST_EN		BIT(15)
++
++#define CDNS_DPTX_STREAM			0x03000
++#define CDNS_DP_MSA_HORIZONTAL_0		(CDNS_DPTX_STREAM + 0x00)
++#define CDNS_DP_MSAH0_H_TOTAL(x)		(x)
++#define CDNS_DP_MSAH0_HSYNC_START(x)		((x) << 16)
++
++#define CDNS_DP_MSA_HORIZONTAL_1		(CDNS_DPTX_STREAM + 0x04)
++#define CDNS_DP_MSAH1_HSYNC_WIDTH(x)		(x)
++#define CDNS_DP_MSAH1_HSYNC_POL_LOW		BIT(15)
++#define CDNS_DP_MSAH1_HDISP_WIDTH(x)		((x) << 16)
++
++#define CDNS_DP_MSA_VERTICAL_0			(CDNS_DPTX_STREAM + 0x08)
++#define CDNS_DP_MSAV0_V_TOTAL(x)		(x)
++#define CDNS_DP_MSAV0_VSYNC_START(x)		((x) << 16)
++
++#define CDNS_DP_MSA_VERTICAL_1			(CDNS_DPTX_STREAM + 0x0c)
++#define CDNS_DP_MSAV1_VSYNC_WIDTH(x)		(x)
++#define CDNS_DP_MSAV1_VSYNC_POL_LOW		BIT(15)
++#define CDNS_DP_MSAV1_VDISP_WIDTH(x)		((x) << 16)
++
++#define CDNS_DP_MSA_MISC			(CDNS_DPTX_STREAM + 0x10)
++#define CDNS_DP_STREAM_CONFIG			(CDNS_DPTX_STREAM + 0x14)
++#define CDNS_DP_RATE_GOVERNOR_STATUS		(CDNS_DPTX_STREAM + 0x2c)
++#define CDNS_DP_RG_TU_VS_DIFF(x)		((x) << 8)
++
++#define CDNS_DP_HORIZONTAL			(CDNS_DPTX_STREAM + 0x30)
++#define CDNS_DP_H_HSYNC_WIDTH(x)		(x)
++#define CDNS_DP_H_H_TOTAL(x)			((x) << 16)
++
++#define CDNS_DP_VERTICAL_0			(CDNS_DPTX_STREAM + 0x34)
++#define CDNS_DP_V0_VHEIGHT(x)			(x)
++#define CDNS_DP_V0_VSTART(x)			((x) << 16)
++
++#define CDNS_DP_VERTICAL_1			(CDNS_DPTX_STREAM + 0x38)
++#define CDNS_DP_V1_VTOTAL(x)			(x)
++#define CDNS_DP_V1_VTOTAL_EVEN			BIT(16)
++
++#define CDNS_DP_FRAMER_PXL_REPR			(CDNS_DPTX_STREAM + 0x4c)
++#define CDNS_DP_FRAMER_6_BPC			BIT(0)
++#define CDNS_DP_FRAMER_8_BPC			BIT(1)
++#define CDNS_DP_FRAMER_10_BPC			BIT(2)
++#define CDNS_DP_FRAMER_12_BPC			BIT(3)
++#define CDNS_DP_FRAMER_16_BPC			BIT(4)
++#define CDNS_DP_FRAMER_PXL_FORMAT		0x8
++#define CDNS_DP_FRAMER_RGB			BIT(0)
++#define CDNS_DP_FRAMER_YCBCR444			BIT(1)
++#define CDNS_DP_FRAMER_YCBCR422			BIT(2)
++#define CDNS_DP_FRAMER_YCBCR420			BIT(3)
++#define CDNS_DP_FRAMER_Y_ONLY			BIT(4)
++
++#define CDNS_DP_FRAMER_SP			(CDNS_DPTX_STREAM + 0x10)
++#define CDNS_DP_FRAMER_VSYNC_POL_LOW		BIT(0)
++#define CDNS_DP_FRAMER_HSYNC_POL_LOW		BIT(1)
++#define CDNS_DP_FRAMER_INTERLACE		BIT(2)
++
++#define CDNS_DP_LINE_THRESH			(CDNS_DPTX_STREAM + 0x64)
++#define CDNS_DP_VB_ID				(CDNS_DPTX_STREAM + 0x68)
++#define CDNS_DP_VB_ID_INTERLACED		BIT(2)
++
++#define CDNS_DP_FRONT_BACK_PORCH		(CDNS_DPTX_STREAM + 0x78)
++#define CDNS_DP_BACK_PORCH(x)			(x)
++#define CDNS_DP_FRONT_PORCH(x)			((x) << 16)
++
++#define CDNS_DP_BYTE_COUNT			(CDNS_DPTX_STREAM + 0x7c)
++
++#define CDNS_DPTX_GLOBAL			0x02300
++#define CDNS_DP_LANE_EN				(CDNS_DPTX_GLOBAL + 0x00)
++#define CDNS_DP_LANE_EN_LANES(x)		GENMASK(x - 1, 0)
++#define CDNS_DP_ENHNCD				(CDNS_DPTX_GLOBAL + 0x04)
++
++#define CDNS_MHDP_IMEM				0x10000
++#define CDNS_MHDP_DMEM				0x20000
++
++#define CDNS_DP_TRAINING_PATTERN_4		0x7
++
++/* 3min delay because of EDID mb being VERY slow */
++/* FIXME: should be >615000 when upstreaming */
++#define CDNS_TIMEOUT_MAILBOX			(1000 * 1000 * 60 * 3)
++
++/* FIXME: Should be 2000 */
++#define CDNS_KEEP_ALIVE_TIMEOUT			40000
++#define CDNS_SW_EVENT0_TIMEOUT			40000
++
++static const struct of_device_id mhdp_ids[] = {
++	{ .compatible = "cdns,mhdp8546", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, mhdp_ids);
++
++#define CDNS_LANE_1				BIT(0)
++#define CDNS_LANE_2				BIT(1)
++#define CDNS_LANE_4				BIT(2)
++#define CDNS_SSC				BIT(3)
++#define CDNS_SCRAMBLER				BIT(4)
++
++#define CDNS_VOLT_SWING(x)			((x) & GENMASK(1, 0))
++#define CDNS_FORCE_VOLT_SWING			BIT(2)
++
++#define CDNS_PRE_EMPHASIS(x)			((x) & GENMASK(1, 0))
++#define CDNS_FORCE_PRE_EMPHASIS			BIT(2)
++
++#define CDNS_SUPPORT_TPS(x)			BIT((x) - 1)
++
++#define CDNS_FAST_LINK_TRAINING			BIT(0)
++
++#define CDNS_LANE_MAPPING_TYPE_C_LANE_0(x)	((x) & GENMASK(1, 0))
++#define CDNS_LANE_MAPPING_TYPE_C_LANE_1(x)	((x) & GENMASK(3, 2))
++#define CDNS_LANE_MAPPING_TYPE_C_LANE_2(x)	((x) & GENMASK(5, 4))
++#define CDNS_LANE_MAPPING_TYPE_C_LANE_3(x)	((x) & GENMASK(7, 6))
++#define CDNS_LANE_MAPPING_NORMAL		0xe4
++#define CDNS_LANE_MAPPING_FLIPPED		0x1b
++
++#define CDNS_DP_MAX_NUM_LANES			4
++#define CDNS_DP_TEST_VSC_SDP			(1 << 6) /* 1.3+ */
++#define CDNS_DP_TEST_COLOR_FORMAT_RAW_Y_ONLY	(1 << 7)
++
++static inline struct cdns_mhdp_device *connector_to_mhdp(
++	struct drm_connector *conn)
++{
++	return container_of(conn, struct cdns_mhdp_device, connector);
++}
++
++static inline struct cdns_mhdp_device *bridge_to_mhdp(
++	struct drm_bridge *bridge)
++{
++	return container_of(bridge, struct cdns_mhdp_device, bridge);
++}
++
++static unsigned int max_link_rate(struct cdns_mhdp_host host,
++				  struct cdns_mhdp_sink sink)
++{
++	return min(host.link_rate, sink.link_rate);
++}
++
++static u8 eq_training_pattern_supported(struct cdns_mhdp_host host,
++					struct cdns_mhdp_sink sink)
++{
++	return fls(host.pattern_supp & sink.pattern_supp);
++}
++
++static ssize_t mhdp_transfer(struct drm_dp_aux *aux,
++			     struct drm_dp_aux_msg *msg)
++{
++	struct cdns_mhdp_device *mhdp = dev_get_drvdata(aux->dev);
++	int ret;
++
++	if (msg->request != DP_AUX_NATIVE_WRITE &&
++	    msg->request != DP_AUX_NATIVE_READ)
++		return -ENOTSUPP;
++
++	if (msg->request == DP_AUX_NATIVE_WRITE) {
++		int i;
++
++		for (i = 0; i < msg->size; ++i) {
++			ret = cdns_mhdp_dpcd_write(mhdp,
++						   msg->address + i,
++						   *((u8 *)msg->buffer + i));
++			if (!ret)
++				continue;
++
++			DRM_DEV_ERROR(mhdp->dev, "Failed to write DPCD\n");
++
++			return i;
++		}
++	} else {
++		ret = cdns_mhdp_dpcd_read(mhdp, msg->address,
++					  msg->buffer, msg->size);
++		if (ret) {
++			DRM_DEV_ERROR(mhdp->dev, "Failed to read DPCD\n");
++			return 0;
++		}
++	}
++
++	return msg->size;
++}
++
++static int cdns_mhdp_get_modes(struct drm_connector *connector)
++{
++	struct cdns_mhdp_device *mhdp = connector_to_mhdp(connector);
++	struct edid *edid;
++	int num_modes;
++
++	edid = drm_do_get_edid(connector, cdns_mhdp_get_edid_block, mhdp);
++
++	drm_connector_update_edid_property(connector, edid);
++
++	num_modes = drm_add_edid_modes(connector, edid);
++
++	return num_modes;
++}
++
++static const struct drm_connector_helper_funcs cdns_mhdp_conn_helper_funcs = {
++	.get_modes = cdns_mhdp_get_modes,
++};
++
++static enum drm_connector_status cdns_mhdp_detect(struct drm_connector *conn,
++						  bool force)
++{
++	struct cdns_mhdp_device *mhdp = connector_to_mhdp(conn);
++	enum drm_connector_status status = connector_status_disconnected;
++	int ret;
++
++	ret = cdns_mhdp_get_hpd_status(mhdp);
++	if (ret > 0)
++		status = connector_status_connected;
++	else if (ret < 0)
++		dev_err(mhdp->dev, "Failed to obtain HPD state\n");
++
++	return status;
++}
++
++static const struct drm_connector_funcs cdns_mhdp_conn_funcs = {
++	.fill_modes = drm_helper_probe_single_connector_modes,
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
++	.reset = drm_atomic_helper_connector_reset,
++	.destroy = drm_connector_cleanup,
++	.dpms = drm_helper_connector_dpms,
++	.detect = cdns_mhdp_detect,
++};
++
++static int cdns_mhdp_attach(struct drm_bridge *bridge)
++{
++	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
++	struct drm_connector *conn = &mhdp->connector;
++	int ret;
++
++	conn->polled = DRM_CONNECTOR_POLL_CONNECT |
++		DRM_CONNECTOR_POLL_DISCONNECT;
++
++	ret = drm_connector_init(bridge->dev, conn, &cdns_mhdp_conn_funcs,
++				 DRM_MODE_CONNECTOR_DisplayPort);
++	if (ret) {
++		dev_err(mhdp->dev, "failed to init connector\n");
++		return ret;
++	}
++
++	drm_connector_helper_add(conn, &cdns_mhdp_conn_helper_funcs);
++
++	ret = drm_connector_attach_encoder(conn, bridge->encoder);
++	if (ret) {
++		dev_err(mhdp->dev, "failed to attach connector to encoder\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++enum pixel_format {
++	PIXEL_FORMAT_RGB = 1,
++	PIXEL_FORMAT_YCBCR_444 = 2,
++	PIXEL_FORMAT_YCBCR_422 = 4,
++	PIXEL_FORMAT_YCBCR_420 = 8,
++	PIXEL_FORMAT_Y_ONLY = 16,
++};
++
++static void mhdp_link_training_init(struct cdns_mhdp_device *mhdp)
++{
++	u32 reg32;
++
++	drm_dp_dpcd_writeb(&mhdp->aux, DP_TRAINING_PATTERN_SET,
++			   DP_TRAINING_PATTERN_DISABLE);
++
++	/* Reset PHY configuration */
++	reg32 = CDNS_PHY_COMMON_CONFIG | CDNS_PHY_TRAINING_TYPE(1);
++	if (!(mhdp->host.lanes_cnt & CDNS_SCRAMBLER))
++		reg32 |= CDNS_PHY_SCRAMBLER_BYPASS;
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_PHY_CONFIG, reg32);
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_ENHNCD,
++			    mhdp->sink.enhanced & mhdp->host.enhanced);
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_LANE_EN,
++			    CDNS_DP_LANE_EN_LANES(mhdp->link.num_lanes));
++
++	drm_dp_link_configure(&mhdp->aux, &mhdp->link);
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_PHY_CONFIG,
++			    CDNS_PHY_COMMON_CONFIG |
++			    CDNS_PHY_TRAINING_EN |
++			    CDNS_PHY_TRAINING_TYPE(1) |
++			    CDNS_PHY_SCRAMBLER_BYPASS);
++
++	drm_dp_dpcd_writeb(&mhdp->aux, DP_TRAINING_PATTERN_SET,
++			   DP_TRAINING_PATTERN_1 | DP_LINK_SCRAMBLING_DISABLE);
++}
++
++static void mhdp_get_adjust_train(struct cdns_mhdp_device *mhdp,
++				  u8 link_status[DP_LINK_STATUS_SIZE],
++				  u8 lanes_data[CDNS_DP_MAX_NUM_LANES])
++{
++	unsigned int i;
++	u8 adjust, max_pre_emphasis, max_volt_swing;
++
++	max_pre_emphasis = CDNS_PRE_EMPHASIS(mhdp->host.pre_emphasis)
++		<< DP_TRAIN_PRE_EMPHASIS_SHIFT;
++	max_volt_swing = CDNS_VOLT_SWING(mhdp->host.volt_swing);
++
++	for (i = 0; i < mhdp->link.num_lanes; i++) {
++		adjust = drm_dp_get_adjust_request_voltage(link_status, i);
++		lanes_data[i] = min_t(u8, adjust, max_volt_swing);
++		if (lanes_data[i] != adjust)
++			lanes_data[i] |= DP_TRAIN_MAX_SWING_REACHED;
++
++		adjust = drm_dp_get_adjust_request_pre_emphasis(link_status, i);
++		lanes_data[i] |= min_t(u8, adjust, max_pre_emphasis);
++		if ((lanes_data[i] >> DP_TRAIN_PRE_EMPHASIS_SHIFT) != adjust)
++			lanes_data[i] |= DP_TRAIN_MAX_PRE_EMPHASIS_REACHED;
++	}
++}
++
++static void mhdp_set_adjust_request_voltage(
++	u8 link_status[DP_LINK_STATUS_SIZE], int lane, u8 volt)
++{
++	int i = DP_ADJUST_REQUEST_LANE0_1 + (lane >> 1);
++	int s = ((lane & 1) ?
++		 DP_ADJUST_VOLTAGE_SWING_LANE1_SHIFT :
++		 DP_ADJUST_VOLTAGE_SWING_LANE0_SHIFT);
++	int idx = i - DP_LANE0_1_STATUS;
++
++	link_status[idx] &= ~(DP_ADJUST_VOLTAGE_SWING_LANE0_MASK << s);
++	link_status[idx] |= volt << s;
++}
++
++static void mhdp_set_adjust_request_pre_emphasis(
++	u8 link_status[DP_LINK_STATUS_SIZE], int lane, u8 pre_emphasis)
++{
++	int i = DP_ADJUST_REQUEST_LANE0_1 + (lane >> 1);
++	int s = ((lane & 1) ?
++		 DP_ADJUST_PRE_EMPHASIS_LANE1_SHIFT :
++		 DP_ADJUST_PRE_EMPHASIS_LANE0_SHIFT);
++	int idx = i - DP_LANE0_1_STATUS;
++
++	link_status[idx] &= ~(DP_ADJUST_PRE_EMPHASIS_LANE0_MASK << s);
++	link_status[idx] |= pre_emphasis << s;
++}
++
++static void mhdp_adjust_requested_eq(struct cdns_mhdp_device *mhdp,
++				     u8 link_status[DP_LINK_STATUS_SIZE])
++{
++	unsigned int i;
++	u8 pre, volt, max_pre = CDNS_VOLT_SWING(mhdp->host.volt_swing),
++	   max_volt = CDNS_PRE_EMPHASIS(mhdp->host.pre_emphasis);
++
++	for (i = 0; i < mhdp->link.num_lanes; i++) {
++		volt = drm_dp_get_adjust_request_voltage(link_status, i);
++		pre = drm_dp_get_adjust_request_pre_emphasis(link_status, i);
++		if (volt + pre > 3)
++			mhdp_set_adjust_request_voltage(link_status, i,
++							3 - pre);
++		if (mhdp->host.volt_swing & CDNS_FORCE_VOLT_SWING)
++			mhdp_set_adjust_request_voltage(link_status, i,
++							max_volt);
++		if (mhdp->host.pre_emphasis & CDNS_FORCE_PRE_EMPHASIS)
++			mhdp_set_adjust_request_pre_emphasis(link_status, i,
++							     max_pre);
++	}
++}
++
++static bool mhdp_link_training_channel_eq(struct cdns_mhdp_device *mhdp,
++					  u8 eq_tps,
++					  unsigned int training_interval)
++{
++	u8 lanes_data[CDNS_DP_MAX_NUM_LANES], fail_counter_short = 0;
++	u8 dpcd[DP_LINK_STATUS_SIZE];
++	u32 reg32;
++
++	dev_dbg(mhdp->dev, "Link training - Starting EQ phase\n");
++
++	/* Enable link training TPS[eq_tps] in PHY */
++	reg32 = CDNS_PHY_COMMON_CONFIG | CDNS_PHY_TRAINING_EN |
++		CDNS_PHY_TRAINING_TYPE(eq_tps);
++	if (eq_tps != 4)
++		reg32 |= CDNS_PHY_SCRAMBLER_BYPASS;
++	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_PHY_CONFIG, reg32);
++
++	drm_dp_dpcd_writeb(&mhdp->aux, DP_TRAINING_PATTERN_SET,
++			   (eq_tps != 4) ? eq_tps | DP_LINK_SCRAMBLING_DISABLE :
++			   CDNS_DP_TRAINING_PATTERN_4);
++
++	drm_dp_dpcd_read_link_status(&mhdp->aux, dpcd);
++
++	do {
++		mhdp_get_adjust_train(mhdp, dpcd, lanes_data);
++
++		cdns_mhdp_adjust_lt(mhdp, mhdp->link.num_lanes,
++				    training_interval, lanes_data, dpcd);
++
++		if (!drm_dp_clock_recovery_ok(dpcd, mhdp->link.num_lanes))
++			goto err;
++
++		if (drm_dp_channel_eq_ok(dpcd, mhdp->link.num_lanes)) {
++			dev_dbg(mhdp->dev,
++				"Link training: EQ phase succeeded\n");
++			return true;
++		}
++
++		fail_counter_short++;
++
++		mhdp_adjust_requested_eq(mhdp, dpcd);
++	} while (fail_counter_short < 5);
++
++err:
++	dev_dbg(mhdp->dev,
++		"Link training - EQ phase failed for %d lanes and %d rate\n",
++		mhdp->link.num_lanes, mhdp->link.rate);
++
++	return false;
++}
++
++static void mhdp_adjust_requested_cr(struct cdns_mhdp_device *mhdp,
++				     u8 link_status[DP_LINK_STATUS_SIZE],
++				     u8 *req_volt, u8 *req_pre)
++{
++	unsigned int i, max_volt = CDNS_VOLT_SWING(mhdp->host.volt_swing),
++		     max_pre = CDNS_PRE_EMPHASIS(mhdp->host.pre_emphasis);
++
++	for (i = 0; i < mhdp->link.num_lanes; i++) {
++		if (mhdp->host.volt_swing & CDNS_FORCE_VOLT_SWING)
++			mhdp_set_adjust_request_voltage(link_status, i,
++							max_volt);
++		else
++			mhdp_set_adjust_request_voltage(link_status, i,
++							req_volt[i]);
++
++		if (mhdp->host.pre_emphasis & CDNS_FORCE_PRE_EMPHASIS)
++			mhdp_set_adjust_request_pre_emphasis(link_status, i,
++							     max_pre);
++		else
++			mhdp_set_adjust_request_pre_emphasis(link_status, i,
++							     req_pre[i]);
++	}
++}
++
++static void mhdp_validate_cr(struct cdns_mhdp_device *mhdp, bool *cr_done,
++			     bool *same_before_adjust, bool *max_swing_reached,
++			     u8 before_cr[DP_LINK_STATUS_SIZE],
++			     u8 after_cr[DP_LINK_STATUS_SIZE], u8 *req_volt,
++			     u8 *req_pre)
++{
++	unsigned int i;
++	u8 tmp, max_volt = CDNS_VOLT_SWING(mhdp->host.volt_swing),
++	   max_pre = CDNS_PRE_EMPHASIS(mhdp->host.pre_emphasis), lane_status;
++	bool same_pre, same_volt;
++
++	*same_before_adjust = false;
++	*max_swing_reached = false;
++	*cr_done = true;
++
++	for (i = 0; i < mhdp->link.num_lanes; i++) {
++		tmp = drm_dp_get_adjust_request_voltage(after_cr, i);
++		req_volt[i] = min_t(u8, tmp, max_volt);
++
++		tmp = drm_dp_get_adjust_request_pre_emphasis(after_cr, i) >>
++			DP_TRAIN_PRE_EMPHASIS_SHIFT;
++		req_pre[i] = min_t(u8, tmp, max_pre);
++
++		same_pre = (before_cr[i] & DP_TRAIN_PRE_EMPHASIS_MASK) ==
++			(req_pre[i] << DP_TRAIN_PRE_EMPHASIS_SHIFT);
++		same_volt = (before_cr[i] & DP_TRAIN_VOLTAGE_SWING_MASK) ==
++			req_volt[i];
++		if (same_pre && same_volt)
++			*same_before_adjust = true;
++
++		lane_status = drm_dp_get_lane_status(after_cr, i);
++		if (!(lane_status & DP_LANE_CR_DONE)) {
++			*cr_done = false;
++			/* 3.1.5.2 in DP Standard v1.4. Table 3-1 */
++			if (req_volt[i] + req_pre[i] >= 3) {
++				*max_swing_reached = true;
++				return;
++			}
++		}
++	}
++}
++
++static bool mhdp_link_training_clock_recovery(struct cdns_mhdp_device *mhdp)
++{
++	u8 lanes_data[CDNS_DP_MAX_NUM_LANES], fail_counter_short = 0,
++	   fail_counter_cr_long = 0;
++	u8 dpcd[DP_LINK_STATUS_SIZE];
++	bool cr_done;
++
++	dev_dbg(mhdp->dev, "Link training starting CR phase\n");
++
++	mhdp_link_training_init(mhdp);
++
++	drm_dp_dpcd_read_link_status(&mhdp->aux, dpcd);
++
++	do {
++		u8 requested_adjust_volt_swing[CDNS_DP_MAX_NUM_LANES] = {},
++		   requested_adjust_pre_emphasis[CDNS_DP_MAX_NUM_LANES] = {};
++		bool same_before_adjust, max_swing_reached;
++
++		mhdp_get_adjust_train(mhdp, dpcd, lanes_data);
++
++		cdns_mhdp_adjust_lt(mhdp, mhdp->link.num_lanes, 100,
++				    lanes_data, dpcd);
++
++		mhdp_validate_cr(mhdp, &cr_done, &same_before_adjust,
++				 &max_swing_reached, lanes_data, dpcd,
++				 requested_adjust_volt_swing,
++				 requested_adjust_pre_emphasis);
++
++		if (max_swing_reached)
++			goto err;
++
++		if (cr_done) {
++			dev_dbg(mhdp->dev,
++				"Link training: CR phase succeeded\n");
++			return true;
++		}
++
++		/* Not all CR_DONE bits set */
++		fail_counter_cr_long++;
++
++		if (same_before_adjust) {
++			fail_counter_short++;
++			continue;
++		}
++
++		fail_counter_short = 0;
++		/*
++		 * Voltage swing/pre-emphasis adjust requested
++		 * during CR phase
++		 */
++		mhdp_adjust_requested_cr(mhdp, dpcd,
++					 requested_adjust_volt_swing,
++					 requested_adjust_pre_emphasis);
++	} while (fail_counter_short < 5 && fail_counter_cr_long < 10);
++
++err:
++	dev_dbg(mhdp->dev,
++		"Link training: CR phase failed for %d lanes and %d rate\n",
++		mhdp->link.num_lanes, mhdp->link.rate);
++
++	return false;
++}
++
++static void lower_link_rate(struct drm_dp_link *link)
++{
++	switch (drm_dp_link_rate_to_bw_code(link->rate)) {
++	case DP_LINK_BW_2_7:
++		link->rate = drm_dp_bw_code_to_link_rate(DP_LINK_BW_1_62);
++		break;
++	case DP_LINK_BW_5_4:
++		link->rate = drm_dp_bw_code_to_link_rate(DP_LINK_BW_2_7);
++		break;
++	case DP_LINK_BW_8_1:
++		link->rate = drm_dp_bw_code_to_link_rate(DP_LINK_BW_5_4);
++		break;
++	}
++}
++
++static int mhdp_link_training(struct cdns_mhdp_device *mhdp,
++			      unsigned int video_mode,
++			      unsigned int training_interval)
++{
++	u32 reg32;
++	u8 eq_tps = eq_training_pattern_supported(mhdp->host, mhdp->sink);
++
++	while (1) {
++		if (!mhdp_link_training_clock_recovery(mhdp)) {
++			if (drm_dp_link_rate_to_bw_code(mhdp->link.rate) !=
++			    DP_LINK_BW_1_62) {
++				dev_dbg(mhdp->dev,
++					"Reducing link rate during CR phase\n");
++				lower_link_rate(&mhdp->link);
++				drm_dp_link_configure(&mhdp->aux, &mhdp->link);
++
++				continue;
++			} else if (mhdp->link.num_lanes > 1) {
++				dev_dbg(mhdp->dev,
++					"Reducing lanes number during CR phase\n");
++				mhdp->link.num_lanes >>= 1;
++				mhdp->link.rate = max_link_rate(mhdp->host,
++								mhdp->sink);
++				drm_dp_link_configure(&mhdp->aux, &mhdp->link);
++
++				continue;
++			}
++
++			dev_dbg(mhdp->dev,
++				"Link training failed during CR phase\n");
++			goto err;
++		}
++
++		if (mhdp_link_training_channel_eq(mhdp, eq_tps,
++						  training_interval))
++			break;
++
++		if (mhdp->link.num_lanes > 1) {
++			dev_dbg(mhdp->dev,
++				"Reducing lanes number during EQ phase\n");
++			mhdp->link.num_lanes >>= 1;
++			drm_dp_link_configure(&mhdp->aux, &mhdp->link);
++
++			continue;
++		} else if (drm_dp_link_rate_to_bw_code(mhdp->link.rate) !=
++			   DP_LINK_BW_1_62) {
++			dev_dbg(mhdp->dev,
++				"Reducing link rate during EQ phase\n");
++			lower_link_rate(&mhdp->link);
++			drm_dp_link_configure(&mhdp->aux, &mhdp->link);
++
++			continue;
++		}
++
++		dev_dbg(mhdp->dev, "Link training failed during EQ phase\n");
++		goto err;
++	}
++
++	dev_dbg(mhdp->dev, "Link training successful\n");
++
++	drm_dp_dpcd_writeb(&mhdp->aux, DP_TRAINING_PATTERN_SET,
++			   (mhdp->host.lanes_cnt & CDNS_SCRAMBLER) ? 0 :
++			   DP_LINK_SCRAMBLING_DISABLE);
++
++	/* SW reset DPTX framer */
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_SW_RESET, 1);
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_SW_RESET, 0);
++
++	/* Enable framer */
++	/* FIXME: update when MST supported, BIT(2) */
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG,
++			    CDNS_DP_FRAMER_EN |
++			    CDNS_DP_NUM_LANES(mhdp->link.num_lanes) |
++			    CDNS_DP_DISABLE_PHY_RST |
++			    CDNS_DP_WR_FAILING_EDGE_VSYNC |
++			    (!video_mode ? CDNS_DP_NO_VIDEO_MODE : 0));
++
++	/* Reset PHY config */
++	reg32 = CDNS_PHY_COMMON_CONFIG | CDNS_PHY_TRAINING_TYPE(1);
++	if (!(mhdp->host.lanes_cnt & CDNS_SCRAMBLER))
++		reg32 |= CDNS_PHY_SCRAMBLER_BYPASS;
++	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_PHY_CONFIG, reg32);
++
++	return 0;
++err:
++	/* Reset PHY config */
++	reg32 = CDNS_PHY_COMMON_CONFIG | CDNS_PHY_TRAINING_TYPE(1);
++	if (!(mhdp->host.lanes_cnt & CDNS_SCRAMBLER))
++		reg32 |= CDNS_PHY_SCRAMBLER_BYPASS;
++	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_PHY_CONFIG, reg32);
++
++	drm_dp_dpcd_writeb(&mhdp->aux, DP_TRAINING_PATTERN_SET,
++			   DP_TRAINING_PATTERN_DISABLE);
++
++	return -EIO;
++}
++
++static void cdns_mhdp_disable(struct drm_bridge *bridge)
++{
++	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
++
++	cdns_mhdp_set_video_status(mhdp, 0);
++
++	drm_dp_link_power_down(&mhdp->aux, &mhdp->link);
++}
++
++static void cdns_mhdp_enable(struct drm_bridge *bridge)
++{
++	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
++	struct drm_display_mode *mode;
++	struct drm_display_info *disp_info = &mhdp->connector.display_info;
++	enum pixel_format pxlfmt;
++	int pxlclock;
++	unsigned int rate, tu_size = 30, vs, vs_f, bpp, required_bandwidth,
++		     available_bandwidth, dp_framer_sp = 0, msa_horizontal_1,
++		     msa_vertical_1, bnd_hsync2vsync, hsync2vsync_pol_ctrl,
++		     misc0 = 0, misc1 = 0, line_thresh = 0, pxl_repr,
++		     front_porch, back_porch, msa_h0, msa_v0, hsync, vsync,
++		     dp_vertical_1, line_thresh1, line_thresh2;
++	u32 resp;
++
++	unsigned int size = DP_RECEIVER_CAP_SIZE, dp_framer_global_config,
++		     video_mode, training_interval_us;
++	u8 reg0[size], reg8, amp[2];
++
++	mode = &bridge->encoder->crtc->state->adjusted_mode;
++	pxlclock = mode->crtc_clock;
++
++	/*
++	 * Upon power-on reset/device disconnection: [2:0] bits should be 0b001
++	 * and [7:5] bits 0b000.
++	 */
++	drm_dp_dpcd_writeb(&mhdp->aux, DP_SET_POWER, 1);
++
++	drm_dp_link_probe(&mhdp->aux, &mhdp->link);
++
++	dev_dbg(mhdp->dev, "Set sink device power state via DPCD\n");
++	drm_dp_link_power_up(&mhdp->aux, &mhdp->link);
++	/* FIXME (CDNS): do we have to wait for 100ms before going on? */
++	mdelay(100);
++
++	mhdp->sink.link_rate = mhdp->link.rate;
++	mhdp->sink.lanes_cnt = mhdp->link.num_lanes;
++	mhdp->sink.enhanced = !!(mhdp->link.capabilities &
++				 DP_LINK_CAP_ENHANCED_FRAMING);
++
++	drm_dp_dpcd_read(&mhdp->aux, DP_DPCD_REV, reg0, size);
++
++	mhdp->sink.pattern_supp = CDNS_SUPPORT_TPS(1) | CDNS_SUPPORT_TPS(2);
++	if (drm_dp_tps3_supported(reg0))
++		mhdp->sink.pattern_supp |= CDNS_SUPPORT_TPS(3);
++	if (drm_dp_tps4_supported(reg0))
++		mhdp->sink.pattern_supp |= CDNS_SUPPORT_TPS(4);
++
++	mhdp->sink.fast_link = !!(reg0[DP_MAX_DOWNSPREAD] &
++				  DP_NO_AUX_HANDSHAKE_LINK_TRAINING);
++
++	mhdp->link.rate = max_link_rate(mhdp->host, mhdp->sink);
++	mhdp->link.num_lanes = min_t(u8, mhdp->sink.lanes_cnt,
++				     mhdp->host.lanes_cnt & GENMASK(2, 0));
++
++	reg8 = reg0[DP_TRAINING_AUX_RD_INTERVAL] &
++		DP_TRAINING_AUX_RD_MASK;
++	switch (reg8) {
++	case 0:
++		training_interval_us = 400;
++		break;
++	case 1:
++	case 2:
++	case 3:
++	case 4:
++		training_interval_us = 4000 << (reg8 - 1);
++		break;
++	default:
++		dev_err(mhdp->dev,
++			"wrong training interval returned by DPCD: %d\n", reg8);
++		return;
++	}
++
++	cdns_mhdp_reg_read(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG, &resp);
++
++	dp_framer_global_config = be32_to_cpu(resp);
++
++	video_mode = !(dp_framer_global_config & CDNS_DP_NO_VIDEO_MODE);
++
++	if (dp_framer_global_config & CDNS_DP_FRAMER_EN)
++		cdns_mhdp_reg_write(mhdp, CDNS_DP_FRAMER_GLOBAL_CONFIG,
++				    dp_framer_global_config &
++				    ~CDNS_DP_FRAMER_EN);
++
++	/* Spread AMP if required, enable 8b/10b coding */
++	amp[0] = (mhdp->host.lanes_cnt & CDNS_SSC) ? DP_SPREAD_AMP_0_5 : 0;
++	amp[1] = DP_SET_ANSI_8B10B;
++	drm_dp_dpcd_write(&mhdp->aux, DP_DOWNSPREAD_CTRL, amp, 2);
++
++	if (mhdp->host.fast_link & mhdp->sink.fast_link) {
++		/* FIXME: implement fastlink */
++		dev_dbg(mhdp->dev, "fastlink\n");
++	} else {
++		if (mhdp_link_training(mhdp, video_mode,
++				       training_interval_us)) {
++			dev_err(mhdp->dev, "Link training failed. Exiting.\n");
++			return;
++		}
++	}
++
++	rate = mhdp->link.rate / 1000;
++
++	/* FIXME: what about Y_ONLY? how is it handled in the kernel? */
++	if (disp_info->color_formats & DRM_COLOR_FORMAT_YCRCB444)
++		pxlfmt = PIXEL_FORMAT_YCBCR_444;
++	else if (disp_info->color_formats & DRM_COLOR_FORMAT_YCRCB422)
++		pxlfmt = PIXEL_FORMAT_YCBCR_422;
++	else if (disp_info->color_formats & DRM_COLOR_FORMAT_YCRCB420)
++		pxlfmt = PIXEL_FORMAT_YCBCR_420;
++	else
++		pxlfmt = PIXEL_FORMAT_RGB;
++
++	/* if YCBCR supported and stream not SD, use ITU709 */
++	/* FIXME: handle ITU version with YCBCR420 when supported */
++	if ((pxlfmt == PIXEL_FORMAT_YCBCR_444 ||
++	     pxlfmt == PIXEL_FORMAT_YCBCR_422) && mode->crtc_vdisplay >= 720)
++		misc0 = DP_YCBCR_COEFFICIENTS_ITU709;
++
++	switch (pxlfmt) {
++	case PIXEL_FORMAT_RGB:
++		bpp = disp_info->bpc * 3;
++		pxl_repr = CDNS_DP_FRAMER_RGB << CDNS_DP_FRAMER_PXL_FORMAT;
++		misc0 |= DP_COLOR_FORMAT_RGB;
++		break;
++	case PIXEL_FORMAT_YCBCR_444:
++		bpp = disp_info->bpc * 3;
++		pxl_repr = CDNS_DP_FRAMER_YCBCR444 << CDNS_DP_FRAMER_PXL_FORMAT;
++		misc0 |= DP_COLOR_FORMAT_YCbCr444 | DP_TEST_DYNAMIC_RANGE_CEA;
++		break;
++	case PIXEL_FORMAT_YCBCR_422:
++		bpp = disp_info->bpc * 2;
++		pxl_repr = CDNS_DP_FRAMER_YCBCR422 << CDNS_DP_FRAMER_PXL_FORMAT;
++		misc0 |= DP_COLOR_FORMAT_YCbCr422 | DP_TEST_DYNAMIC_RANGE_CEA;
++		break;
++	case PIXEL_FORMAT_YCBCR_420:
++		bpp = disp_info->bpc * 3 / 2;
++		pxl_repr = CDNS_DP_FRAMER_YCBCR420 << CDNS_DP_FRAMER_PXL_FORMAT;
++		break;
++	default:
++		bpp = disp_info->bpc;
++		pxl_repr = CDNS_DP_FRAMER_Y_ONLY << CDNS_DP_FRAMER_PXL_FORMAT;
++	}
++
++	switch (disp_info->bpc) {
++	case 6:
++		misc0 |= DP_TEST_BIT_DEPTH_6;
++		pxl_repr |= CDNS_DP_FRAMER_6_BPC;
++		break;
++	case 8:
++		misc0 |= DP_TEST_BIT_DEPTH_8;
++		pxl_repr |= CDNS_DP_FRAMER_8_BPC;
++		break;
++	case 10:
++		misc0 |= DP_TEST_BIT_DEPTH_10;
++		pxl_repr |= CDNS_DP_FRAMER_10_BPC;
++		break;
++	case 12:
++		misc0 |= DP_TEST_BIT_DEPTH_12;
++		pxl_repr |= CDNS_DP_FRAMER_12_BPC;
++		break;
++	case 16:
++		misc0 |= DP_TEST_BIT_DEPTH_16;
++		pxl_repr |= CDNS_DP_FRAMER_16_BPC;
++		break;
++	}
++
++	/* find optimal tu_size */
++	required_bandwidth = pxlclock * bpp / 8;
++	available_bandwidth = mhdp->link.num_lanes * rate;
++	do {
++		tu_size += 2;
++
++		vs_f = tu_size * required_bandwidth / available_bandwidth;
++		vs = vs_f / 1000;
++		vs_f = vs_f % 1000;
++		/*
++		 * FIXME (CDNS): downspreading?
++		 * It's unused is what I've been told.
++		 */
++	} while ((vs == 1 || ((vs_f > 850 || vs_f < 100) && vs_f != 0) ||
++		  tu_size - vs < 2) && tu_size < 64);
++
++	if (vs > 64)
++		return;
++
++	bnd_hsync2vsync = CDNS_IP_BYPASS_V_INTERFACE;
++	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
++		bnd_hsync2vsync |= CDNS_IP_DET_INTERLACE_FORMAT;
++
++	cdns_mhdp_reg_write(mhdp, CDNS_BND_HSYNC2VSYNC, bnd_hsync2vsync);
++
++	if (mode->flags & DRM_MODE_FLAG_INTERLACE &&
++	    mode->flags & DRM_MODE_FLAG_PHSYNC)
++		hsync2vsync_pol_ctrl = CDNS_H2V_HSYNC_POL_ACTIVE_LOW |
++			CDNS_H2V_VSYNC_POL_ACTIVE_LOW;
++	else
++		hsync2vsync_pol_ctrl = 0;
++
++	cdns_mhdp_reg_write(mhdp, CDNS_HSYNC2VSYNC_POL_CTRL,
++			    hsync2vsync_pol_ctrl);
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_FRAMER_TU,
++			    CDNS_DP_FRAMER_TU_VS(vs) |
++			    CDNS_DP_FRAMER_TU_SIZE(tu_size) |
++			    CDNS_DP_FRAMER_TU_CNT_RST_EN);
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_FRAMER_PXL_REPR, pxl_repr);
++
++	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
++		dp_framer_sp |= CDNS_DP_FRAMER_INTERLACE;
++	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++		dp_framer_sp |= CDNS_DP_FRAMER_HSYNC_POL_LOW;
++	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++		dp_framer_sp |= CDNS_DP_FRAMER_VSYNC_POL_LOW;
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_FRAMER_SP, dp_framer_sp);
++
++	front_porch = mode->crtc_hsync_start - mode->crtc_hdisplay;
++	back_porch = mode->crtc_htotal - mode->crtc_hsync_end;
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_FRONT_BACK_PORCH,
++			    CDNS_DP_FRONT_PORCH(front_porch) |
++			    CDNS_DP_BACK_PORCH(back_porch));
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_BYTE_COUNT,
++			    mode->crtc_hdisplay * bpp / 8);
++
++	msa_h0 = mode->crtc_htotal - mode->crtc_hsync_start;
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_MSA_HORIZONTAL_0,
++			    CDNS_DP_MSAH0_H_TOTAL(mode->crtc_htotal) |
++			    CDNS_DP_MSAH0_HSYNC_START(msa_h0));
++
++	hsync = mode->crtc_hsync_end - mode->crtc_hsync_start;
++	msa_horizontal_1 = CDNS_DP_MSAH1_HSYNC_WIDTH(hsync) |
++		CDNS_DP_MSAH1_HDISP_WIDTH(mode->crtc_hdisplay);
++	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
++		msa_horizontal_1 |= CDNS_DP_MSAH1_HSYNC_POL_LOW;
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_MSA_HORIZONTAL_1,
++			    msa_horizontal_1);
++
++	msa_v0 = mode->crtc_vtotal - mode->crtc_vsync_start;
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_MSA_VERTICAL_0,
++			    CDNS_DP_MSAV0_V_TOTAL(mode->crtc_vtotal) |
++			    CDNS_DP_MSAV0_VSYNC_START(msa_v0));
++
++	vsync = mode->crtc_vsync_end - mode->crtc_vsync_start;
++	msa_vertical_1 = CDNS_DP_MSAV1_VSYNC_WIDTH(vsync) |
++		CDNS_DP_MSAV1_VDISP_WIDTH(mode->crtc_vdisplay);
++	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
++		msa_vertical_1 |= CDNS_DP_MSAV1_VSYNC_POL_LOW;
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_MSA_VERTICAL_1, msa_vertical_1);
++
++	if ((mode->flags & DRM_MODE_FLAG_INTERLACE) &&
++	    mode->crtc_vtotal % 2 == 0)
++		misc1 = DP_TEST_INTERLACED;
++	if (pxlfmt == PIXEL_FORMAT_Y_ONLY)
++		misc1 |= CDNS_DP_TEST_COLOR_FORMAT_RAW_Y_ONLY;
++	/* FIXME: use VSC SDP for Y420 */
++	/* FIXME: (CDNS) no code for Y420 in bare metal test */
++	if (pxlfmt == PIXEL_FORMAT_YCBCR_420)
++		misc1 = CDNS_DP_TEST_VSC_SDP;
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_MSA_MISC, misc0 | (misc1 << 8));
++
++	/* FIXME: to be changed if MST mode */
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_STREAM_CONFIG, 1);
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_HORIZONTAL,
++			    CDNS_DP_H_HSYNC_WIDTH(hsync) |
++			    CDNS_DP_H_H_TOTAL(mode->crtc_hdisplay));
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_VERTICAL_0,
++			    CDNS_DP_V0_VHEIGHT(mode->crtc_vdisplay) |
++			    CDNS_DP_V0_VSTART(msa_v0));
++
++	dp_vertical_1 = CDNS_DP_V1_VTOTAL(mode->crtc_vtotal);
++	if ((mode->flags & DRM_MODE_FLAG_INTERLACE) &&
++	    mode->crtc_vtotal % 2 == 0)
++		dp_vertical_1 |= CDNS_DP_V1_VTOTAL_EVEN;
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_VERTICAL_1, dp_vertical_1);
++
++	cdns_mhdp_reg_write_bit(mhdp, CDNS_DP_VB_ID, 2, 1,
++				(mode->flags & DRM_MODE_FLAG_INTERLACE) ?
++				CDNS_DP_VB_ID_INTERLACED : 0);
++
++	line_thresh1 = ((vs + 1) << 5) * 8 / bpp;
++	line_thresh2 = (pxlclock << 5) / 1000 / rate * (vs + 1) - (1 << 5);
++	line_thresh = line_thresh1 - line_thresh2 / mhdp->link.num_lanes;
++	line_thresh = (line_thresh >> 5) + 2;
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_LINE_THRESH,
++			    line_thresh & GENMASK(5, 0));
++
++	cdns_mhdp_reg_write(mhdp, CDNS_DP_RATE_GOVERNOR_STATUS,
++			    CDNS_DP_RG_TU_VS_DIFF((tu_size - vs > 3) ?
++						       0 : tu_size - vs));
++
++	cdns_mhdp_set_video_status(mhdp, 1);
++}
++
++static const struct drm_bridge_funcs cdns_mhdp_bridge_funcs = {
++	.enable = cdns_mhdp_enable,
++	.disable = cdns_mhdp_disable,
++	.attach = cdns_mhdp_attach,
++};
++
++static int load_firmware(struct cdns_mhdp_device *mhdp, const char *name,
++			 unsigned int addr)
++{
++	const struct firmware *fw;
++	int ret;
++
++	ret = request_firmware(&fw, name, mhdp->dev);
++	if (ret) {
++		dev_err(mhdp->dev, "failed to load firmware (%s), ret: %d\n",
++			name, ret);
++		return ret;
++	}
++
++	memcpy_toio(mhdp->regs + addr, fw->data, fw->size);
++
++	release_firmware(fw);
++
++	return 0;
++}
++
++static int cdns_mhdp_audio_hw_params(struct device *dev, void *data,
++				     struct hdmi_codec_daifmt *daifmt,
++				     struct hdmi_codec_params *params)
++{
++	struct cdns_mhdp_device *mhdp = dev_get_drvdata(dev);
++	struct audio_info audio = {
++		.sample_width = params->sample_width,
++		.sample_rate = params->sample_rate,
++		.channels = params->channels,
++	};
++	int ret;
++
++	if (daifmt->fmt != HDMI_I2S) {
++		DRM_DEV_ERROR(dev, "Invalid format %d\n", daifmt->fmt);
++		return -EINVAL;
++	}
++
++	audio.format = AFMT_I2S;
++
++	ret = cdns_mhdp_audio_config(mhdp, &audio);
++	if (!ret)
++		mhdp->audio_info = audio;
++
++	return 0;
++}
++
++static void cdns_mhdp_audio_shutdown(struct device *dev, void *data)
++{
++	struct cdns_mhdp_device *mhdp = dev_get_drvdata(dev);
++	int ret;
++
++	ret = cdns_mhdp_audio_stop(mhdp, &mhdp->audio_info);
++	if (!ret)
++		mhdp->audio_info.format = AFMT_UNUSED;
++}
++
++static int cdns_mhdp_audio_digital_mute(struct device *dev, void *data,
++					bool enable)
++{
++	struct cdns_mhdp_device *mhdp = dev_get_drvdata(dev);
++
++	return cdns_mhdp_audio_mute(mhdp, enable);
++}
++
++static int cdns_mhdp_audio_get_eld(struct device *dev, void *data,
++				   u8 *buf, size_t len)
++{
++	struct cdns_mhdp_device *mhdp = dev_get_drvdata(dev);
++
++	memcpy(buf, mhdp->connector.eld,
++	       min(sizeof(mhdp->connector.eld), len));
++
++	return 0;
++}
++
++static const struct hdmi_codec_ops audio_codec_ops = {
++	.hw_params = cdns_mhdp_audio_hw_params,
++	.audio_shutdown = cdns_mhdp_audio_shutdown,
++	.digital_mute = cdns_mhdp_audio_digital_mute,
++	.get_eld = cdns_mhdp_audio_get_eld,
++};
++
++static int mhdp_probe(struct platform_device *pdev)
++{
++	struct resource *regs;
++	struct cdns_mhdp_device *mhdp;
++	struct clk *clk;
++	int ret;
++	unsigned int reg;
++	unsigned long rate;
++	u32 resp;
++
++	struct hdmi_codec_pdata codec_data = {
++		.i2s = 1,
++		.max_i2s_channels = 8,
++		.ops = &audio_codec_ops,
++	};
++
++	mhdp = devm_kzalloc(&pdev->dev, sizeof(struct cdns_mhdp_device),
++			    GFP_KERNEL);
++	if (!mhdp)
++		return -ENOMEM;
++
++	clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(clk)) {
++		dev_err(&pdev->dev, "couldn't get clk: %ld\n", PTR_ERR(clk));
++		return PTR_ERR(clk);
++	}
++
++	mhdp->dev = &pdev->dev;
++	dev_set_drvdata(&pdev->dev, mhdp);
++
++	drm_dp_aux_init(&mhdp->aux);
++	mhdp->aux.dev = &pdev->dev;
++	mhdp->aux.transfer = mhdp_transfer;
++
++	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	mhdp->regs = devm_ioremap_resource(&pdev->dev, regs);
++	if (IS_ERR(mhdp->regs))
++		return PTR_ERR(mhdp->regs);
++
++	platform_set_drvdata(pdev, mhdp);
++
++	ret = load_firmware(mhdp, FW_NAME, CDNS_MHDP_IMEM);
++	if (ret)
++		return ret;
++
++	rate = clk_get_rate(clk);
++	writel(rate % 1000000, mhdp->regs + CDNS_SW_CLK_L);
++	writel(rate / 1000000, mhdp->regs + CDNS_SW_CLK_H);
++
++	/* Leave debug mode */
++	writel(0, mhdp->regs + CDNS_APB_CTRL);
++
++	/*
++	 * Wait for the KEEP_ALIVE "message" on the first 8 bits.
++	 * Updated each sched "tick" (~2ms)
++	 */
++	ret = readl_poll_timeout(mhdp->regs + CDNS_KEEP_ALIVE, reg,
++				 reg & CDNS_KEEP_ALIVE_MASK, 500,
++				 CDNS_KEEP_ALIVE_TIMEOUT);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"device didn't give any life sign: reg %d\n", reg);
++		return -EIO;
++	}
++
++	/*
++	 * FIXME (CDNS): how are the characteristics/features of the host
++	 * defined? Will they be always hardcoded?
++	 */
++	/* FIXME: link rate 2.7; num_lanes = 2,	 */
++	/* FIXME: read capabilities from PHY */
++	mhdp->host.link_rate = drm_dp_bw_code_to_link_rate(DP_LINK_BW_5_4);
++	mhdp->host.lanes_cnt = CDNS_LANE_4 | CDNS_SCRAMBLER;
++	mhdp->host.volt_swing = CDNS_VOLT_SWING(3);
++	mhdp->host.pre_emphasis = CDNS_PRE_EMPHASIS(2);
++	mhdp->host.pattern_supp = CDNS_SUPPORT_TPS(1) |
++		CDNS_SUPPORT_TPS(2) | CDNS_SUPPORT_TPS(3) |
++		CDNS_SUPPORT_TPS(4);
++	mhdp->host.fast_link = 0;
++	mhdp->host.lane_mapping = CDNS_LANE_MAPPING_FLIPPED;
++	mhdp->host.enhanced = true;
++
++	mhdp->bridge.of_node = pdev->dev.of_node;
++	mhdp->bridge.funcs = &cdns_mhdp_bridge_funcs;
++
++	/* Init events to 0 as it's not cleared by FW at boot but on read */
++	readl(mhdp->regs + CDNS_SW_EVENT0);
++	readl(mhdp->regs + CDNS_SW_EVENT1);
++	readl(mhdp->regs + CDNS_SW_EVENT2);
++	readl(mhdp->regs + CDNS_SW_EVENT3);
++
++	/* Activate uCPU */
++	ret = cdns_mhdp_set_firmware_active(mhdp, true);
++	if (ret) {
++		dev_err(mhdp->dev, "Failed to activate DP\n");
++		return ret;
++	}
++
++	mhdp->audio_pdev = platform_device_register_data(
++			   mhdp->dev, HDMI_CODEC_DRV_NAME, PLATFORM_DEVID_AUTO,
++			   &codec_data, sizeof(codec_data));
++
++	/* Enable VIF clock for stream 0 */
++	cdns_mhdp_reg_read(mhdp, CDNS_DPTX_CAR, &resp);
++	cdns_mhdp_reg_write(mhdp, CDNS_DPTX_CAR,
++			    resp | CDNS_VIF_CLK_EN | CDNS_VIF_CLK_RSTN);
++
++	/* Loop over HDP change */
++	/*
++	 * FIXME: does not work when put in mhdp_bridge_enable.
++	 * Where should we put it?
++	 */
++	/* Is it still needed with use of mb message HPD STATUS? */
++	ret = readl_poll_timeout(mhdp->regs + CDNS_SW_EVENT0, reg,
++				 reg & CDNS_DPTX_HPD, 500,
++				 CDNS_SW_EVENT0_TIMEOUT);
++	if (ret) {
++		dev_err(mhdp->dev, "no HPD received %d\n", reg);
++		return -ENODEV;
++	}
++
++	drm_bridge_add(&mhdp->bridge);
++
++	return 0;
++}
++
++MODULE_FIRMWARE(FW_NAME);
++
++static int mhdp_remove(struct platform_device *pdev)
++{
++	struct cdns_mhdp_device *mhdp = dev_get_drvdata(&pdev->dev);
++	int ret;
++
++	platform_device_unregister(mhdp->audio_pdev);
++
++	drm_bridge_remove(&mhdp->bridge);
++
++	ret = cdns_mhdp_set_firmware_active(mhdp, false);
++	if (ret) {
++		dev_err(mhdp->dev, "Failed to de-activate DP\n");
++		return ret;
++	}
++
++	/* FIXME: check for missing functions */
++
++	return 0;
++}
++
++static struct platform_driver mhdp_driver = {
++	.driver	= {
++		.name		= "cdns-mhdp",
++		.of_match_table	= of_match_ptr(mhdp_ids),
++	},
++	.probe	= mhdp_probe,
++	.remove	= mhdp_remove,
++};
++module_platform_driver(mhdp_driver);
++
++MODULE_AUTHOR("Quentin Schulz <quentin.schulz@free-electrons.com>");
++MODULE_DESCRIPTION("Cadence MHDP DP bridge driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:cdns-mhdp");
+diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+index 0ccc76217ee4..129b0529f3e1 100644
+--- a/drivers/gpu/drm/rockchip/Kconfig
++++ b/drivers/gpu/drm/rockchip/Kconfig
+@@ -27,7 +27,9 @@ config ROCKCHIP_ANALOGIX_DP
+ 
+ config ROCKCHIP_CDN_DP
+         bool "Rockchip cdn DP"
+-	depends on EXTCON=y || (EXTCON=m && DRM_ROCKCHIP=m)
++	depends on DRM_ROCKCHIP=m
++	select EXTCON
++	select DRM_CDNS_MHDP
+         help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the cdn DP driver. If you want to enable Dp on
+diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
+index a314e2109e76..16ba61ffca39 100644
+--- a/drivers/gpu/drm/rockchip/Makefile
++++ b/drivers/gpu/drm/rockchip/Makefile
+@@ -3,13 +3,15 @@
+ # Makefile for the drm device driver.  This driver provides support for the
+ # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
+ 
++ccflags-y += -I$(src)/../bridge
++
+ rockchipdrm-y := rockchip_drm_drv.o rockchip_drm_fb.o \
+ 		rockchip_drm_gem.o rockchip_drm_psr.o \
+ 		rockchip_drm_vop.o rockchip_vop_reg.o
+ rockchipdrm-$(CONFIG_DRM_FBDEV_EMULATION) += rockchip_drm_fbdev.o
+ 
+ rockchipdrm-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
+-rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) += cdn-dp-core.o cdn-dp-reg.o
++rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) += cdn-dp-core.o
+ rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI) += dw_hdmi-rockchip.o
+ rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) += dw-mipi-dsi.o
+ rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) += inno_hdmi.o
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index bf7e206326f0..343f381e3440 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -816,7 +816,7 @@ static int cdn_dp_audio_hw_params(struct device *dev,  void *data,
+ 
+ 	ret = cdns_mhdp_audio_config(&dp->mhdp, &audio);
+ 	if (!ret)
+-		dp->audio_info = audio;
++		dp->mhdp.audio_info = audio;
+ 
+ out:
+ 	mutex_unlock(&dp->lock);
+@@ -832,9 +832,9 @@ static void cdn_dp_audio_shutdown(struct device *dev, void *data)
+ 	if (!dp->active)
+ 		goto out;
+ 
+-	ret = cdns_mhdp_audio_stop(&dp->mhdp, &dp->audio_info);
++	ret = cdns_mhdp_audio_stop(&dp->mhdp, &dp->mhdp.audio_info);
+ 	if (!ret)
+-		dp->audio_info.format = AFMT_UNUSED;
++		dp->mhdp.audio_info.format = AFMT_UNUSED;
+ out:
+ 	mutex_unlock(&dp->lock);
+ }
+@@ -886,11 +886,11 @@ static int cdn_dp_audio_codec_init(struct cdn_dp_device *dp,
+ 		.max_i2s_channels = 8,
+ 	};
+ 
+-	dp->audio_pdev = platform_device_register_data(
+-			 dev, HDMI_CODEC_DRV_NAME, PLATFORM_DEVID_AUTO,
+-			 &codec_data, sizeof(codec_data));
++	dp->mhdp.audio_pdev = platform_device_register_data(
++			      dev, HDMI_CODEC_DRV_NAME, PLATFORM_DEVID_AUTO,
++			      &codec_data, sizeof(codec_data));
+ 
+-	return PTR_ERR_OR_ZERO(dp->audio_pdev);
++	return PTR_ERR_OR_ZERO(dp->mhdp.audio_pdev);
+ }
+ 
+ static int cdn_dp_request_firmware(struct cdn_dp_device *dp)
+@@ -1217,7 +1217,7 @@ static int cdn_dp_remove(struct platform_device *pdev)
+ {
+ 	struct cdn_dp_device *dp = platform_get_drvdata(pdev);
+ 
+-	platform_device_unregister(dp->audio_pdev);
++	platform_device_unregister(dp->mhdp.audio_pdev);
+ 	cdn_dp_suspend(dp->mhdp.dev);
+ 	component_del(&pdev->dev, &cdn_dp_component_ops);
+ 
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+index bad65c2fe610..5ce5ad19c028 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+@@ -20,7 +20,7 @@
+ #include <drm/drm_dp_helper.h>
+ #include <drm/drm_panel.h>
+ #include "rockchip_drm_drv.h"
+-#include "cdn-dp-reg.h"
++#include "cdns-mhdp-common.h"
+ 
+ #define MAX_PHY		2
+ 
+@@ -45,7 +45,6 @@ struct cdn_dp_device {
+ 	struct cdns_mhdp_device mhdp;
+ 	struct drm_device *drm_dev;
+ 	struct drm_encoder encoder;
+-	struct platform_device *audio_pdev;
+ 	struct work_struct event_work;
+ 	struct edid *edid;
+ 
+@@ -64,7 +63,6 @@ struct cdn_dp_device {
+ 	struct reset_control *dptx_rst;
+ 	struct reset_control *apb_rst;
+ 	struct reset_control *core_rst;
+-	struct audio_info audio_info;
+ 	struct cdn_dp_port *port[MAX_PHY];
+ 	u8 ports;
+ 	u8 lanes;
+-- 
+2.17.1
 
---Or8LRHETumScJgaM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJbo7U6AAoJEHI0Bo8WoVY8px0P+wTaW+2C2/gq53LCSK2JvGth
-8YMQsktqKZo08fpG3phzbrc2YL0uS+IGvLGM5DLaLjsDDKir18e4ag7HEVDfbHVI
-WUFUclbW6Sn92r09yg3ytPq1j7V/R1VAm9+tPuUsEvFYzApIKpTvtGDwYprEI9nv
-Tq/LcKcGYDpLk/iZZhzIzvL98dvxG/bItSxX/+H9Nm20acwb1P0RhNwdEdK/9tkc
-Q96B0aEO1j4rXkCRRq0awrJ3NaxTXFBfWgZS1G13oiBzj10bSEbedvsOlWqA1zVB
-exrt5bQeXVvwKaDZw/VCBTsAeYpoklWiOA0ew1l84j09srxj8o8qI115Ky3cfLTC
-FOScnnkayCiHcsrgpmavq8TwfmU+AQNvXK1UF61XQ+E7NMZwe7yrXfNpwCbIM7in
-vRa+bZ586T772FUFegGaV/5/EnjNSX4VBlz2kYaBSp5HSTGTtBXMZL3uavOoWGCM
-MPUNw0p6R26dyesQAc7XajyboNvTIE+nx2LrdDhFTkB9lcgmRp6nYTremn4n3xY/
-3k6bLEe3wT2ijFp1K8GLqVe5zZdhuIkYJ4aEYHYuon6BWdvTudA1squUOBwD4mCi
-UC2dNQpu2kpNfy25aZ9FIYegnPicB7og2uecjReWA941VUkPKbgphjrrQ8unEgcn
-pVN1sk9x7KYVxWg7CFKU
-=LYmD
------END PGP SIGNATURE-----
-
---Or8LRHETumScJgaM--
