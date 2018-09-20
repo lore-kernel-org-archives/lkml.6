@@ -7,364 +7,178 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B34ECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0743ECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6172150E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29EA921521
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:30:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iMjvtx60"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6172150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="kCKxNXlu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29EA921521
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731731AbeITIAD (ORCPT
+        id S1732381AbeITILs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:00:03 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42841 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbeITIAD (ORCPT
+        Thu, 20 Sep 2018 04:11:48 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37707 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbeITILr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:00:03 -0400
-Received: by mail-io1-f68.google.com with SMTP id n18-v6so6154589ioa.9
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 19:19:13 -0700 (PDT)
+        Thu, 20 Sep 2018 04:11:47 -0400
+Received: by mail-qk1-f195.google.com with SMTP id c13-v6so3989992qkm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 19:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3TiVAVMkw0T+kKR+mzSFt5oEgh576sFdxF7wx/cMnmQ=;
-        b=iMjvtx60uBq/4/ENAnbhc5GyloItTk33igwbGEiX1DdXqM/EKb69H2ZwkJ/nBInCic
-         gP86TZO53f/Hm4eS6xwp0dqglUpsjGhTjhd+ipoEB6jZ2tGDvdQCdlVSzvAL35HN2vg4
-         gEGw2vzkSCOh/W1zuyRd4tO68U8WtaqIyByI4=
+        bh=zAdUMdq2SvVUUOBqjyOgckIpaCcoyxrO+2VQHD4AZCE=;
+        b=kCKxNXluZYdKIktG7BO3OtbrzEOjLCjeqMH7gT/U+78iVLC1VOEGHepm3RfJ+7g1++
+         kZbXunD5qTbTpv7WlSE+Hk3Ifff9eFABfPz+KgVxbcGGKUr7RtrIwSfOj5i4G4TYSQbR
+         VCVHyHNme9zd3sZzeXLfk92YHAMelyRsL7uv4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3TiVAVMkw0T+kKR+mzSFt5oEgh576sFdxF7wx/cMnmQ=;
-        b=X0JICXct0xB7L2sLio0ecIra4+UhFTYijlD8U49N6tvo8cOGAs/ofnjmHl2ucs4L6E
-         RahlG4lFkKwxjG5+EKTD16jNYgMYO75qHS/tZ77jgarFkcVc2jAwmcQVeIp9plqzJeHJ
-         LENzKdwsG9HQwVm0I+CjMgTRxQqs5eAtQJcA9GQetfBTgQKUCpbtYUogAPWTj8xyPpIG
-         FyVx3+jWMKI1vlHyDK+i0NiImEDQ33TAOYCBQl+KHfxTti6mgJr7cdwr/49sCbNGoIj/
-         DMZrMy9sueuZR5iV03U2RlxkCwLLr3WQMX1v1K3B9gTP6zGnW3GfnWNXHcFkvAK/JwBK
-         kNeA==
-X-Gm-Message-State: ABuFfojTs33VR6B5uu0xfThoZiTkjOoDnQx9jEvqPe9mfN0txjxW9tE0
-        AejYRZ04Ff47ypq75p5zFqGxr5dPpcpPsoxpiVmvBA==
-X-Google-Smtp-Source: ACcGV63ZHpYVwGYO3o3gK1fXORWG0tlUftLpg4xrEtUyFsT1pR1CP3siPpKbKWelYv8biWKjNN1gE6uPIZha31GTWWI=
-X-Received: by 2002:a6b:3787:: with SMTP id e129-v6mr839916ioa.60.1537409952784;
- Wed, 19 Sep 2018 19:19:12 -0700 (PDT)
+        bh=zAdUMdq2SvVUUOBqjyOgckIpaCcoyxrO+2VQHD4AZCE=;
+        b=Gq2IGTiYCX97vpcTSiNGWGtEaG3ii9LXKvjAgxnc4GlE1mLD3+kLWglmp6FnZZ0/II
+         3UidlzZPiocPpL8k/32QNt7pN9NFDNfb/THF/4jtyX0mYubWIfHptarJBtrPUOOk0M9H
+         9ID5V0f59oZvbqUIgPt5UycmKwzOnJ/k0AoIIS5jc9zMKYETF1MVBseRq2ETwvNsjFMM
+         T7XNIfDL/TS+10LDDJlP64LCEFrzJOmf7BBHWLqsJwAcBkMCdFgQQbl6399H3oKvS1qv
+         L+nb0MU4vWkRcEX9QuOgWq8mX1syvaXz0a6IgiPK/74xy4G0R1MjXdh8ukR3UuPnLq+d
+         /0OQ==
+X-Gm-Message-State: ABuFfog9KNl4TPZoqpDcqGYMFupvsb3iqvH4ny3Dd9hlMbGZzP3OBd0R
+        9HiooEpa2MmT4pIfWgYK7mggiuC5k2AlGF67DSg=
+X-Google-Smtp-Source: ANB0VdbCPsJT8ZQxkRPJ9gCarBfFbAm9kAYsezbqcPD2K+1p3xtedmp8o5m5uvjSPGtCCtuSDq0a40kkXXmvaOIAbBo=
+X-Received: by 2002:a37:d7c5:: with SMTP id t66-v6mr1733969qkt.336.1537410652558;
+ Wed, 19 Sep 2018 19:30:52 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:2848:0:0:0:0:0 with HTTP; Wed, 19 Sep 2018 19:19:12
- -0700 (PDT)
-In-Reply-To: <1537367527-20773-5-git-send-email-jim2101024@gmail.com>
-References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com> <1537367527-20773-5-git-send-email-jim2101024@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 19 Sep 2018 19:19:12 -0700
-Message-ID: <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
-Subject: Re: [PATCH v5 04/12] PCI: brcmstb: add dma-range mapping for inbound traffic
-To:     Jim Quinlan <jim2101024@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20180916215735.31393-1-richard@nod.at>
+In-Reply-To: <20180916215735.31393-1-richard@nod.at>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Thu, 20 Sep 2018 12:00:41 +0930
+Message-ID: <CACPK8Xd_fNNEYbtY6HEnB6kOnqTWBC5stPVUbc2gMHpne4J6jQ@mail.gmail.com>
+Subject: Re: [PATCH] Revert "ubifs: xattr: Don't operate on deleted inodes"
+To:     Richard Weinberger <richard@nod.at>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-mtd@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        koen.vandeputte@ncentric.com, Eddie James <eajames.ibm@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 September 2018 at 07:31, Jim Quinlan <jim2101024@gmail.com> wrote:
-> The Broadcom STB PCIe host controller is intimately related to the
-> memory subsystem.  This close relationship adds complexity to how cpu
-> system memory is mapped to PCIe memory.  Ideally, this mapping is an
-> identity mapping, or an identity mapping off by a constant.  Not so in
-> this case.
+On Mon, 17 Sep 2018 at 07:30, Richard Weinberger <richard@nod.at> wrote:
 >
-> Consider the Broadcom reference board BCM97445LCC_4X8 which has 6 GB
-> of system memory.  Here is how the PCIe controller maps the
-> system memory to PCIe memory:
+> This reverts commit 11a6fc3dc743e22fb50f2196ec55bee5140d3c52.
+> UBIFS wants to assert that xattr operations are only issued on files
+> with positive link count. The said patch made this operations return
+> -ENOENT for unlinked files such that the asserts will no longer trigger.
+> This was wrong since xattr operations are perfectly fine on unlinked
+> files.
+> Instead the assertions need to be fixed/removed.
 >
->   memc0-a@[        0....3fffffff] <=> pci@[        0....3fffffff]
->   memc0-b@[100000000...13fffffff] <=> pci@[ 40000000....7fffffff]
->   memc1-a@[ 40000000....7fffffff] <=> pci@[ 80000000....bfffffff]
->   memc1-b@[300000000...33fffffff] <=> pci@[ c0000000....ffffffff]
->   memc2-a@[ 80000000....bfffffff] <=> pci@[100000000...13fffffff]
->   memc2-b@[c00000000...c3fffffff] <=> pci@[140000000...17fffffff]
->
+> Cc: <stable@vger.kernel.org>
+> Fixes: 11a6fc3dc743 ("ubifs: xattr: Don't operate on deleted inodes")
+> Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+> Signed-off-by: Richard Weinberger <richard@nod.at>
 
-So is describing this as
+The bad commit 11a6fc3dc743 was included in 4.18.7, and broke our
+systems which use overlayfs on top of ubifs.
 
-dma-ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>,
-             <0x0 0x40000000 0x1 0x0 0x0 0x40000000>,
-             <0x0 0x80000000 0x0 0x40000000 0x0 0x40000000>,
-             <0x0 0xc0000000 0x3 0x0 0x0 0x40000000>,
-             <0x1 0x0 0x0 0x80000000 0x0 0x40000000>,
-             <0x1 0x40000000 0x0 0xc0000000 0x0 0x40000000>;
+This patch didn't apply cleanly for me to 4.18.8 (an encoding issue?),
+but I did a revert of the offending commit which did the trick.
 
-not working for you? I haven't tried this myself, but since DT permits
-describing the inbound mappings this way, we should fix the code if it
-doesn't work at the moment.
+Tested-by: Joel Stanley <joel@jms.id.au>
+
+Cheers,
+
+Joel
 
 
-> Although there are some "gaps" that can be added between the
-> individual mappings by software, the permutation of memory regions for
-> the most part is fixed by HW.  The solution of having something close
-> to an identity mapping is not possible.
->
-> The idea behind this HW design is that the same PCIe module can
-> act as an RC or EP, and if it acts as an EP it concatenates all
-> of system memory into a BAR so anything can be accessed.  Unfortunately,
-> when the PCIe block is in the role of an RC it also presents this
-> "BAR" to downstream PCIe devices, rather than offering an identity map
-> between its system memory and PCIe space.
->
-> Suppose that an endpoint driver allocs some DMA memory.  Suppose this
-> memory is located at 0x6000_0000, which is in the middle of memc1-a.
-> The driver wants a dma_addr_t value that it can pass on to the EP to
-> use.  Without doing any custom mapping, the EP will use this value for
-> DMA: the driver will get a dma_addr_t equal to 0x6000_0000.  But this
-> won't work; the device needs a dma_addr_t that reflects the PCIe space
-> address, namely 0xa000_0000.
->
-> So, essentially the solution to this problem must modify the
-> dma_addr_t returned by the DMA routines routines.  The method to do
-> this is to redefine the __dma_to_phys() and __phys_to_dma() functions
-> of the ARM, ARM64, and MIPS architectures.  This commit sets up the
-> infrastructure in the Brcm PCIe controller to prepare for this, while
-> there is three other subsequent commits to implement/redefine these
-> two functions for the three target architectures.
->
-> Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
 > ---
->  drivers/pci/controller/pcie-brcmstb.c | 130 ++++++++++++++++++++++++++++++----
->  include/soc/brcmstb/common.h          |  16 +++++
->  2 files changed, 133 insertions(+), 13 deletions(-)
+>  fs/ubifs/xattr.c | 24 ------------------------
+>  1 file changed, 24 deletions(-)
 >
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 9c87d10..abfa429 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -21,6 +21,7 @@
->  #include <linux/printk.h>
->  #include <linux/sizes.h>
->  #include <linux/slab.h>
-> +#include <soc/brcmstb/common.h>
->  #include <soc/brcmstb/memory_api.h>
->  #include <linux/string.h>
->  #include <linux/types.h>
-> @@ -321,6 +322,7 @@ static void __iomem *brcm_pcie_map_conf(struct pci_bus *bus, unsigned int devfn,
->         (((val) & ~reg##_##field##_MASK) | \
->          (reg##_##field##_MASK & (field_val << reg##_##field##_SHIFT)))
+> diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+> index 61afdfee4b28..f5ad1ede7990 100644
+> --- a/fs/ubifs/xattr.c
+> +++ b/fs/ubifs/xattr.c
+> @@ -152,12 +152,6 @@ static int create_xattr(struct ubifs_info *c, struct inode *host,
+>         ui->data_len = size;
 >
-> +static struct of_pci_range *brcm_dma_ranges;
->  static phys_addr_t scb_size[BRCM_MAX_SCB];
->  static int num_memc;
->  static int num_pcie;
-> @@ -599,6 +601,79 @@ static inline void brcm_pcie_perst_set(struct brcm_pcie *pcie,
->                 WR_FLD_RB(pcie->base, PCIE_MISC_PCIE_CTRL, PCIE_PERSTB, !val);
->  }
->
-> +static int brcm_pcie_parse_map_dma_ranges(struct brcm_pcie *pcie)
-> +{
-> +       int i;
-> +       struct of_pci_range_parser parser;
-> +       struct device_node *dn = pcie->dn;
-> +
-> +       /*
-> +        * Parse dma-ranges property if present.  If there are multiple
-> +        * PCIe controllers, we only have to parse from one of them since
-> +        * the others will have an identical mapping.
-> +        */
-> +       if (!of_pci_dma_range_parser_init(&parser, dn)) {
-> +               struct of_pci_range *p;
-> +               unsigned int max_ranges = (parser.end - parser.range)
-> +                       / parser.np;
-> +
-> +               /* Add a null entry to indicate the end of the array */
-> +               brcm_dma_ranges = kcalloc(max_ranges + 1,
-> +                                         sizeof(struct of_pci_range),
-> +                                         GFP_KERNEL);
-> +               if (!brcm_dma_ranges)
-> +                       return -ENOMEM;
-> +
-> +               p = brcm_dma_ranges;
-> +               while (of_pci_range_parser_one(&parser, p))
-> +                       p++;
-> +       }
-> +
-> +       for (i = 0, num_memc = 0; i < BRCM_MAX_SCB; i++) {
-> +               u64 size = brcmstb_memory_memc_size(i);
-> +
-> +               if (size == (u64)-1) {
-> +                       dev_err(pcie->dev, "cannot get memc%d size", i);
-> +                       return -EINVAL;
-> +               } else if (size) {
-> +                       scb_size[i] = roundup_pow_of_two_64(size);
-> +                       num_memc++;
-> +               } else {
-> +                       break;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +dma_addr_t brcm_phys_to_dma(struct device *dev, phys_addr_t paddr)
-> +{
-> +       struct of_pci_range *p;
-> +
-> +       if (!dev || !dev_is_pci(dev))
-> +               return (dma_addr_t)paddr;
-> +       for (p = brcm_dma_ranges; p && p->size; p++)
-> +               if (paddr >= p->cpu_addr && paddr < (p->cpu_addr + p->size))
-> +                       return (dma_addr_t)(paddr - p->cpu_addr + p->pci_addr);
-> +
-> +       return (dma_addr_t)paddr;
-> +}
-> +
-> +phys_addr_t brcm_dma_to_phys(struct device *dev, dma_addr_t dev_addr)
-> +{
-> +       struct of_pci_range *p;
-> +
-> +       if (!dev || !dev_is_pci(dev))
-> +               return (phys_addr_t)dev_addr;
-> +       for (p = brcm_dma_ranges; p && p->size; p++)
-> +               if (dev_addr >= p->pci_addr
-> +                   && dev_addr < (p->pci_addr + p->size))
-> +                       return (phys_addr_t)
-> +                               (dev_addr - p->pci_addr + p->cpu_addr);
-> +
-> +       return (phys_addr_t)dev_addr;
-> +}
-> +
->  static int brcm_pcie_add_controller(struct brcm_pcie *pcie)
->  {
->         int i, ret = 0;
-> @@ -610,6 +685,10 @@ static int brcm_pcie_add_controller(struct brcm_pcie *pcie)
->                 goto done;
->         }
->
-> +       ret = brcm_pcie_parse_map_dma_ranges(pcie);
-> +       if (ret)
-> +               goto done;
-> +
->         /* Determine num_memc and their sizes */
->         for (i = 0, num_memc = 0; i < BRCM_MAX_SCB; i++) {
->                 u64 size = brcmstb_memory_memc_size(i);
-> @@ -639,8 +718,13 @@ static int brcm_pcie_add_controller(struct brcm_pcie *pcie)
->  static void brcm_pcie_remove_controller(struct brcm_pcie *pcie)
->  {
->         mutex_lock(&brcm_pcie_lock);
-> -       if (--num_pcie == 0)
-> -               num_memc = 0;
-> +       if (--num_pcie > 0)
-> +               goto out;
-> +
-> +       kfree(brcm_dma_ranges);
-> +       brcm_dma_ranges = NULL;
-> +       num_memc = 0;
-> +out:
->         mutex_unlock(&brcm_pcie_lock);
->  }
->
-> @@ -747,11 +831,37 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
->          */
->         rc_bar2_size = roundup_pow_of_two_64(total_mem_size);
->
-> -       /*
-> -        * Set simple configuration based on memory sizes
-> -        * only.  We always start the viewport at address 0.
-> -        */
-> -       rc_bar2_offset = 0;
-> +       if (brcm_dma_ranges) {
-> +               /*
-> +                * The best-case scenario is to place the inbound
-> +                * region in the first 4GB of pcie-space, as some
-> +                * legacy devices can only address 32bits.
-> +                * We would also like to put the MSI under 4GB
-> +                * as well, since some devices require a 32bit
-> +                * MSI target address.
-> +                */
-> +               if (total_mem_size <= 0xc0000000ULL &&
-> +                   rc_bar2_size <= 0x100000000ULL) {
-> +                       rc_bar2_offset = 0;
-> +               } else {
-> +                       /*
-> +                        * The system memory is 4GB or larger so we
-> +                        * cannot start the inbound region at location
-> +                        * 0 (since we have to allow some space for
-> +                        * outbound memory @ 3GB).  So instead we
-> +                        * start it at the 1x multiple of its size
-> +                        */
-> +                       rc_bar2_offset = rc_bar2_size;
-> +               }
-> +
-> +       } else {
-> +               /*
-> +                * Set simple configuration based on memory sizes
-> +                * only.  We always start the viewport at address 0,
-> +                * and set the MSI target address accordingly.
-> +                */
-> +               rc_bar2_offset = 0;
-> +       }
->
->         tmp = lower_32_bits(rc_bar2_offset);
->         tmp = INSERT_FIELD(tmp, PCIE_MISC_RC_BAR2_CONFIG_LO, SIZE,
-> @@ -969,7 +1079,6 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->         struct brcm_pcie *pcie;
->         struct resource *res;
->         void __iomem *base;
-> -       u32 tmp;
->         struct pci_host_bridge *bridge;
->         struct pci_bus *child;
->
-> @@ -986,11 +1095,6 @@ static int brcm_pcie_probe(struct platform_device *pdev)
->                 return -EINVAL;
->         }
->
-> -       if (of_property_read_u32(dn, "dma-ranges", &tmp) == 0) {
-> -               dev_err(&pdev->dev, "cannot yet handle dma-ranges\n");
-> -               return -EINVAL;
+>         mutex_lock(&host_ui->ui_mutex);
+> -
+> -       if (!host->i_nlink) {
+> -               err = -ENOENT;
+> -               goto out_noent;
 > -       }
 > -
->         data = of_id->data;
->         pcie->reg_offsets = data->offsets;
->         pcie->reg_field_info = data->reg_field_info;
-> diff --git a/include/soc/brcmstb/common.h b/include/soc/brcmstb/common.h
-> index cfb5335..a7f19e0 100644
-> --- a/include/soc/brcmstb/common.h
-> +++ b/include/soc/brcmstb/common.h
-> @@ -12,4 +12,20 @@
+>         host->i_ctime = current_time(host);
+>         host_ui->xattr_cnt += 1;
+>         host_ui->xattr_size += CALC_DENT_SIZE(fname_len(nm));
+> @@ -190,7 +184,6 @@ static int create_xattr(struct ubifs_info *c, struct inode *host,
+>         host_ui->xattr_size -= CALC_XATTR_BYTES(size);
+>         host_ui->xattr_names -= fname_len(nm);
+>         host_ui->flags &= ~UBIFS_CRYPT_FL;
+> -out_noent:
+>         mutex_unlock(&host_ui->ui_mutex);
+>  out_free:
+>         make_bad_inode(inode);
+> @@ -242,12 +235,6 @@ static int change_xattr(struct ubifs_info *c, struct inode *host,
+>         mutex_unlock(&ui->ui_mutex);
 >
->  bool soc_is_brcmstb(void);
+>         mutex_lock(&host_ui->ui_mutex);
+> -
+> -       if (!host->i_nlink) {
+> -               err = -ENOENT;
+> -               goto out_noent;
+> -       }
+> -
+>         host->i_ctime = current_time(host);
+>         host_ui->xattr_size -= CALC_XATTR_BYTES(old_size);
+>         host_ui->xattr_size += CALC_XATTR_BYTES(size);
+> @@ -269,7 +256,6 @@ static int change_xattr(struct ubifs_info *c, struct inode *host,
+>  out_cancel:
+>         host_ui->xattr_size -= CALC_XATTR_BYTES(size);
+>         host_ui->xattr_size += CALC_XATTR_BYTES(old_size);
+> -out_noent:
+>         mutex_unlock(&host_ui->ui_mutex);
+>         make_bad_inode(inode);
+>  out_free:
+> @@ -496,12 +482,6 @@ static int remove_xattr(struct ubifs_info *c, struct inode *host,
+>                 return err;
 >
-> +#if defined(CONFIG_PCIE_BRCMSTB)
-> +dma_addr_t brcm_phys_to_dma(struct device *dev, phys_addr_t paddr);
-> +phys_addr_t brcm_dma_to_phys(struct device *dev, dma_addr_t dev_addr);
-> +#else
-> +static inline dma_addr_t brcm_phys_to_dma(struct device *dev, phys_addr_t paddr)
-> +{
-> +       return (dma_addr_t)paddr;
-> +}
-> +
-> +static inline phys_addr_t brcm_dma_to_phys(struct device *dev,
-> +                                          dma_addr_t dev_addr)
-> +{
-> +       return (phys_addr_t)dev_addr;
-> +}
-> +#endif
-> +
->  #endif /* __SOC_BRCMSTB_COMMON_H__ */
+>         mutex_lock(&host_ui->ui_mutex);
+> -
+> -       if (!host->i_nlink) {
+> -               err = -ENOENT;
+> -               goto out_noent;
+> -       }
+> -
+>         host->i_ctime = current_time(host);
+>         host_ui->xattr_cnt -= 1;
+>         host_ui->xattr_size -= CALC_DENT_SIZE(fname_len(nm));
+> @@ -521,7 +501,6 @@ static int remove_xattr(struct ubifs_info *c, struct inode *host,
+>         host_ui->xattr_size += CALC_DENT_SIZE(fname_len(nm));
+>         host_ui->xattr_size += CALC_XATTR_BYTES(ui->data_len);
+>         host_ui->xattr_names += fname_len(nm);
+> -out_noent:
+>         mutex_unlock(&host_ui->ui_mutex);
+>         ubifs_release_budget(c, &req);
+>         make_bad_inode(inode);
+> @@ -561,9 +540,6 @@ static int ubifs_xattr_remove(struct inode *host, const char *name)
+>
+>         ubifs_assert(c, inode_is_locked(host));
+>
+> -       if (!host->i_nlink)
+> -               return -ENOENT;
+> -
+>         if (fname_len(&nm) > UBIFS_MAX_NLEN)
+>                 return -ENAMETOOLONG;
+>
 > --
-> 1.9.0.138.g2de3478
+> 2.19.0
 >
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
