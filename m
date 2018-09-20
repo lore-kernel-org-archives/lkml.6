@@ -2,159 +2,96 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42050C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD64EECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E138821524
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:09:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E138821524
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 92A0921522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:10:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92A0921522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732719AbeITFt3 (ORCPT
+        id S1732905AbeITFvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 01:49:29 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41580 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbeITFt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 01:49:29 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 7AF3A26B9CE
-Received: by earth.universe (Postfix, from userid 1000)
-        id D880F3C0A85; Thu, 20 Sep 2018 02:09:01 +0200 (CEST)
-Date:   Thu, 20 Sep 2018 02:09:01 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     kbuild test robot <fengguang.wu@intel.com>
-Cc:     "Angus Ainslie (Purism)" <angus@akkea.ca>, kbuild-all@01.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: bq25890_charger: fix semicolon.cocci
- warnings
-Message-ID: <20180920000901.45mhrxwhqfuzxjp7@earth.universe>
-References: <201809171037.IF98pmY7%fengguang.wu@intel.com>
- <20180917022320.GA43295@lkp-ib04.lkp.intel.com>
+        Thu, 20 Sep 2018 01:51:05 -0400
+Received: from nautica.notk.org ([91.121.71.147]:38469 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725784AbeITFvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 01:51:05 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 40570C01B; Thu, 20 Sep 2018 02:10:39 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 02:10:24 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
+Message-ID: <20180920001024.GD20280@nautica>
+References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
+ <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com>
+ <20180918173428.GA21591@kroah.com>
+ <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
+ <20180919211458.GA8757@kroah.com>
+ <20180919230504.GA20280@nautica>
+ <CANiq72=C==Us7YjkzwVW7QHXnuGxHTowriYjX3Wsff19JO=uHw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xerj56hofwpl3dfm"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180917022320.GA43295@lkp-ib04.lkp.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CANiq72=C==Us7YjkzwVW7QHXnuGxHTowriYjX3Wsff19JO=uHw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Miguel Ojeda wrote on Thu, Sep 20, 2018:
+> > I've not followed so closely, in particular I'm not sure if it's the
+> > only problem with arm32 right now, but that is a regression - the
+> > general serie is meant as an improvement, but these two patches fix
+> > 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually
+> > exclusive") which was taken in 4.19-rc1
+> >
+> > (Miguel, perhaps a Fixes: tag might help remember that?)
+> 
+> The commit is mentioned in the commit message, although not with the
+> Fixes: syntax -- is something now automatically parsing that? I guess
+> it is also easier for humans to parse :)
 
---xerj56hofwpl3dfm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As far as I'm aware, the backport to stable stuff parse these to know up
+till how far back they should backport, but it still requires explicit
+Cc to the stable@vger list... (not needed here as the "bad" commit never
+made it to stable)
+I'm not aware of anything else, but as you said, while I now see you
+naming the commit now, I managed to miss it earlier and I was somewhat
+following this so it's probably also easier on humans :)
 
-Hi,
+> > (If no-one in Cc has anything included in -next I could take them in my
+> > 9p branch, but that is quite a bit out of scope from what I advertised
+> > this branch as so I think it would be confusing ; I think it might
+> > almost be best if Miguel will keep maintaining these in the future to do
+> > his own request to inclusion in -next?)
+> 
+> I can ask for my auxdisplay tree (or better, a new one) to be in -next
+> and use that (are non-kernel.org trees allowed to be in -next, by the
+> way?).
 
-On Mon, Sep 17, 2018 at 10:23:20AM +0800, kbuild test robot wrote:
-> From: kbuild test robot <fengguang.wu@intel.com>
->=20
-> drivers/power/supply/bq25890_charger.c:614:2-3: Unneeded semicolon
-> drivers/power/supply/bq25890_charger.c:621:2-3: Unneeded semicolon
-> drivers/power/supply/bq25890_charger.c:630:3-4: Unneeded semicolon
-> drivers/power/supply/bq25890_charger.c:638:2-3: Unneeded semicolon
-> drivers/power/supply/bq25890_charger.c:644:2-3: Unneeded semicolon
->=20
->=20
->  Remove unneeded semicolon.
->=20
-> Generated by: scripts/coccinelle/misc/semicolon.cocci
->=20
-> Fixes: 9d9ae3414d1b ("power: supply: bq25890_charger: Add debugging outpu=
-t of failed initialization")
-> CC: Angus Ainslie (Purism) <angus@akkea.ca>
-> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
-> ---
+I think a new one would be great, yes.
+(my branch is on github, so Stephen does not appear to mind
+non-kernel.org trees)
 
-Thanks, queued.
-
--- Sebastian
-
->=20
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-s=
-upply.git for-next
-> head:   cb90a2c6f77fe9b43d1e3f759bb2f13fe7fa1811
-> commit: 9d9ae3414d1bb655d8db7079e56b0f51e7cd07f0 [4/13] power: supply: bq=
-25890_charger: Add debugging output of failed initialization
->=20
->  bq25890_charger.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->=20
-> --- a/drivers/power/supply/bq25890_charger.c
-> +++ b/drivers/power/supply/bq25890_charger.c
-> @@ -611,14 +611,14 @@ static int bq25890_hw_init(struct bq2589
->  	if (ret < 0) {
->  		dev_dbg(bq->dev, "Reset failed %d\n", ret);
->  		return ret;
-> -	};
-> +	}
-> =20
->  	/* disable watchdog */
->  	ret =3D bq25890_field_write(bq, F_WD, 0);
->  	if (ret < 0) {
->  		dev_dbg(bq->dev, "Disabling watchdog failed %d\n", ret);
->  		return ret;
-> -	};
-> +	}
-> =20
->  	/* initialize currents/voltages and other parameters */
->  	for (i =3D 0; i < ARRAY_SIZE(init_data); i++) {
-> @@ -627,7 +627,7 @@ static int bq25890_hw_init(struct bq2589
->  		if (ret < 0) {
->  			dev_dbg(bq->dev, "Writing init data failed %d\n", ret);
->  			return ret;
-> -		};
-> +		}
->  	}
-> =20
->  	/* Configure ADC for continuous conversions. This does not enable it. */
-> @@ -635,13 +635,13 @@ static int bq25890_hw_init(struct bq2589
->  	if (ret < 0) {
->  		dev_dbg(bq->dev, "Config ADC failed %d\n", ret);
->  		return ret;
-> -	};
-> +	}
-> =20
->  	ret =3D bq25890_get_chip_state(bq, &state);
->  	if (ret < 0) {
->  		dev_dbg(bq->dev, "Get state failed %d\n", ret);
->  		return ret;
-> -	};
-> +	}
-> =20
->  	mutex_lock(&bq->lock);
->  	bq->state =3D state;
-
---xerj56hofwpl3dfm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlui5RoACgkQ2O7X88g7
-+pqlRw//XUNf6eElbVHGqYwMCeFrc2TWGADGEodv8TSPKU2GTEhfKEWVawCZfKBj
-l+E/Sz/W/msVfI90Gyvu7XJc8X2X1p3JgdOTJcPnxZrbyaEXnZN9gblZ9wt87zdo
-Kodv1rvzc4TbWZCWavwXektxQvjPKMgUm1vs/41iZYtqhNUtN4VhtIShwGdqY4jn
-gCjsYinkTTwuHwArlPNh9C67vWJBxk4XaxBBPU9ZO1MeHQ54mX/miQDagKRXYggS
-5Ri275G3IlDKcTJM3lRv93UOoDdWFhiqTWkNGnm4vMUgCgBPrQ9jIZdMs8wayHit
-699IcmEHQuRyppZ30TgvzWOcOVZ9TPAH+W+sveRs3j1tJKkzZKqayQunt939SSoo
-Yc6iFJXSq2WuE+aYQBlRZ3L77+lDglt0WJTwSgQkGEiEZhDiKpC86bkiB8xh1DKz
-n2vvGUsD+Hgoc/G4+FqTZwWFbtweaOGDpMwI8JwQyI1xzcIUCG8AbrMYGq75+gYr
-ZJQk6glNki7ehvB/Smz5vffHcpKhi0FyVf3+nzBE1l6ox+QgaDhR/oSQ4STAiB3s
-1p2RtPjwR4apSjnM/9lU5I2mPZFaSjgLY0dNNtvBuQmCrWTH8O1BiHW/WRs6ibYT
-tFqvfTHN5CSpgRcrRVwfB1WTOebTiBlmoXLmyAdVFJau8YQthPI=
-=SHah
------END PGP SIGNATURE-----
-
---xerj56hofwpl3dfm--
+-- 
+Dominique Matinet
