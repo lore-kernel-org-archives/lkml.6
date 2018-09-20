@@ -2,98 +2,510 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7F2C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FCFC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E14B821523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:02:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MYSxP4i2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14B821523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6224121532
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:02:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6224121532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388248AbeIUArk (ORCPT
+        id S2388302AbeIUArt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:47:40 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43332 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388121AbeIUArk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:47:40 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 38-v6so4778572plc.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d/ds6XXVbU7LG6V22VtK+bCzTdiW/in0CTxPfsTzDls=;
-        b=MYSxP4i2o+/P5LRi7vjnhAOaMOdvZv44lU7uijk50J0ynTIPtHTByYqgWIYPoBOYAF
-         Ep0UzQ0Ajr0aKOh9g9rBISH0fh3kRLZ4wgmoQIC4Ed7/1ZchCINOCDjv6LwaEevB/LDa
-         LPB4GHLaNg/d+J5F1YGCJDCqVlT/HYOBUaI0o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d/ds6XXVbU7LG6V22VtK+bCzTdiW/in0CTxPfsTzDls=;
-        b=S8uG5AINkq8Voudw2h1RJXLoAZKFDlO+taMNZwTpFZSyherSkqxP3Li5mJuDckpQ02
-         x26JwQL3+/WDHXPA21f/mT/Aq47xo+6JbBpfVYZs93NTU5eomHDQq6M+nWOwO+0Zkazw
-         FwXbicLnWNYIykxgJR/ARnaM0yt+Tttbl8Dgme86GWknx/59WVwkBUfyVRbPnEs5Hgo6
-         UDNVlX77Xis4xBrP0vmNby4lHrjXFsH7yqUGeFNsQUx1n8e3o4WDvAdsrwi2qntNnUIV
-         sbBDcuSgKml3dqNX34VgbH5L34UyvLrpAaIOAMiMWhwxQFbWYXMgYyDhxaYKJ9icEcQf
-         /T7A==
-X-Gm-Message-State: APzg51Be2n+Had5ZlN1bsQCNI6wyOFcFr+EzyaPiL5ElEz9nFRxnsxO/
-        cxgKzI5In6pJtwlSS8/TxIlQhQ==
-X-Google-Smtp-Source: ANB0VdavZD6bgET78GG3Tb9bA3fHqgBm4RoCGQ0L/zwy/yGsoTSXoXOvHmXM7R2EuCMzrbUmq11W2A==
-X-Received: by 2002:a17:902:47c2:: with SMTP id d2-v6mr41236445plh.317.1537470165422;
-        Thu, 20 Sep 2018 12:02:45 -0700 (PDT)
-Received: from localhost ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm29832300pgf.52.2018.09.20.12.02.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 12:02:44 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 12:02:43 -0700
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, smohanad@codeaurora.org,
-        dianders@chromium.org, mka@chromium.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Subject: Re: [PATCH v3 00/16] Another round of tsens cleanups
-Message-ID: <20180920190243.GF19253@hector.localdomain>
-References: <cover.1536744310.git.amit.kucheria@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1536744310.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+        Thu, 20 Sep 2018 20:47:49 -0400
+Received: from mga01.intel.com ([192.55.52.88]:22397 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732554AbeIUArt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 20:47:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 12:02:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
+   d="scan'208";a="234608990"
+Received: from rchatre-s.jf.intel.com ([10.54.70.76])
+  by orsmga004.jf.intel.com with ESMTP; 20 Sep 2018 12:02:54 -0700
+From:   Reinette Chatre <reinette.chatre@intel.com>
+To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        peterz@infradead.org, mingo@redhat.com, acme@kernel.org
+Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
+        dave.hansen@intel.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>
+Subject: [PATCH V6 5/6] x86/intel_rdt: Use perf infrastructure for measurements
+Date:   Thu, 20 Sep 2018 12:02:11 -0700
+Message-Id: <fc24e728b446404f42c78573c506e98cd0599873.1537468643.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <d31d652432a62e770fc971d3e6fe59faa9e65413.1537377064.git.reinette.chatre@intel.com>
+References: <d31d652432a62e770fc971d3e6fe59faa9e65413.1537377064.git.reinette.chatre@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 03:22:45PM +0530, Amit Kucheria wrote:
-> This is another series of tsens cleanups before we add interrupt support. This applies on top of 4.19-rc2.
-> 
-> Patches [1-6] can directly be applied by Eduardo.
-> Patches [9-16] can directly be applied by Andy.
+The success of a cache pseudo-locked region is measured using
+performance monitoring events that are programmed directly at the time
+the user requests a measurement.
 
-Eduardo,
+Modifying the performance event registers directly is not appropriate
+since it circumvents the in-kernel perf infrastructure that exists to
+manage these resources and provide resource arbitration to the
+performance monitoring hardware.
 
-I ACKed the DTS patches for this.  Can you take 9-16 along with the 1-6 through
-your tree?
+The cache pseudo-locking measurements are modified to use the in-kernel
+perf infrastructure. Performance events are created and validated with
+the appropriate perf API. The performance counters are still read as
+directly as possible to avoid the additional cache hits. This is
+done safely by first ensuring with the perf API that the counters have
+been programmed correctly and only accessing the counters in an
+interrupt disabled section where they are not able to be moved.
 
-Thanks,
+As part of the transition to the in-kernel perf infrastructure the L2
+and L3 measurements are split into two separate measurements that can
+be triggered independently. This separation prevents additional cache
+misses incurred during the extra testing code used to decide if a
+L2 and/or L3 measurement should be made.
 
-Andy
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+V6:
+ - Replace an expanded minimum check with min(). Thanks to Peter for
+   noticing this.
+
+ Documentation/x86/intel_rdt_ui.txt          |  22 +-
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 304 ++++++++++++--------
+ 2 files changed, 203 insertions(+), 123 deletions(-)
+
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index f662d3c530e5..52b10945ff75 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -520,18 +520,24 @@ the pseudo-locked region:
+ 2) Cache hit and miss measurements using model specific precision counters if
+    available. Depending on the levels of cache on the system the pseudo_lock_l2
+    and pseudo_lock_l3 tracepoints are available.
+-   WARNING: triggering this  measurement uses from two (for just L2
+-   measurements) to four (for L2 and L3 measurements) precision counters on
+-   the system, if any other measurements are in progress the counters and
+-   their corresponding event registers will be clobbered.
+ 
+ When a pseudo-locked region is created a new debugfs directory is created for
+ it in debugfs as /sys/kernel/debug/resctrl/<newdir>. A single
+ write-only file, pseudo_lock_measure, is present in this directory. The
+-measurement on the pseudo-locked region depends on the number, 1 or 2,
+-written to this debugfs file. Since the measurements are recorded with the
+-tracing infrastructure the relevant tracepoints need to be enabled before the
+-measurement is triggered.
++measurement of the pseudo-locked region depends on the number written to this
++debugfs file:
++1 -  writing "1" to the pseudo_lock_measure file will trigger the latency
++     measurement captured in the pseudo_lock_mem_latency tracepoint. See
++     example below.
++2 -  writing "2" to the pseudo_lock_measure file will trigger the L2 cache
++     residency (cache hits and misses) measurement captured in the
++     pseudo_lock_l2 tracepoint. See example below.
++3 -  writing "3" to the pseudo_lock_measure file will trigger the L3 cache
++     residency (cache hits and misses) measurement captured in the
++     pseudo_lock_l3 tracepoint.
++
++All measurements are recorded with the tracing infrastructure. This requires
++the relevant tracepoints to be enabled before the measurement is triggered.
+ 
+ Example of latency debugging interface:
+ In this example a pseudo-locked region named "newlock" was created. Here is
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 33d7968f152a..d68836139cf9 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -27,6 +27,7 @@
+ #include <asm/intel_rdt_sched.h>
+ #include <asm/perf_event.h>
+ 
++#include "../../events/perf_event.h" /* For X86_CONFIG() */
+ #include "intel_rdt.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -107,16 +108,6 @@ static u64 get_prefetch_disable_bits(void)
+ 	return 0;
+ }
+ 
+-/*
+- * Helper to write 64bit value to MSR without tracing. Used when
+- * use of the cache should be restricted and use of registers used
+- * for local variables avoided.
+- */
+-static inline void pseudo_wrmsrl_notrace(unsigned int msr, u64 val)
+-{
+-	__wrmsr(msr, (u32)(val & 0xffffffffULL), (u32)(val >> 32));
+-}
+-
+ /**
+  * pseudo_lock_minor_get - Obtain available minor number
+  * @minor: Pointer to where new minor number will be stored
+@@ -925,7 +916,7 @@ static int measure_cycles_lat_fn(void *_plr)
+  * The actual configuration of the event is set right before use in order
+  * to use the X86_CONFIG macro.
+  */
+-static struct perf_event_attr __attribute__((unused)) perf_miss_attr = {
++static struct perf_event_attr perf_miss_attr = {
+ 	.type		= PERF_TYPE_RAW,
+ 	.size		= sizeof(struct perf_event_attr),
+ 	.pinned		= 1,
+@@ -933,7 +924,7 @@ static struct perf_event_attr __attribute__((unused)) perf_miss_attr = {
+ 	.exclude_user	= 1,
+ };
+ 
+-static struct perf_event_attr __attribute__((unused)) perf_hit_attr = {
++static struct perf_event_attr perf_hit_attr = {
+ 	.type		= PERF_TYPE_RAW,
+ 	.size		= sizeof(struct perf_event_attr),
+ 	.pinned		= 1,
+@@ -941,139 +932,215 @@ static struct perf_event_attr __attribute__((unused)) perf_hit_attr = {
+ 	.exclude_user	= 1,
+ };
+ 
+-static int measure_cycles_perf_fn(void *_plr)
++struct residency_counts {
++	u64 miss_before, hits_before;
++	u64 miss_after,  hits_after;
++};
++
++static int measure_residency_fn(struct perf_event_attr *miss_attr,
++				struct perf_event_attr *hit_attr,
++				struct pseudo_lock_region *plr,
++				struct residency_counts *counts)
+ {
+-	unsigned long long l3_hits = 0, l3_miss = 0;
+-	u64 l3_hit_bits = 0, l3_miss_bits = 0;
+-	struct pseudo_lock_region *plr = _plr;
+-	unsigned long long l2_hits, l2_miss;
+-	u64 l2_hit_bits, l2_miss_bits;
++	u64 hits_before = 0, hits_after = 0, miss_before = 0, miss_after = 0;
++	struct perf_event *miss_event, *hit_event;
++	int hit_pmcnum, miss_pmcnum;
+ 	unsigned int line_size;
+ 	unsigned int size;
+ 	unsigned long i;
+ 	void *mem_r;
++	u64 tmp;
+ 
+-	/*
+-	 * Non-architectural event for the Goldmont Microarchitecture
+-	 * from Intel x86 Architecture Software Developer Manual (SDM):
+-	 * MEM_LOAD_UOPS_RETIRED D1H (event number)
+-	 * Umask values:
+-	 *     L1_HIT   01H
+-	 *     L2_HIT   02H
+-	 *     L1_MISS  08H
+-	 *     L2_MISS  10H
+-	 *
+-	 * On Broadwell Microarchitecture the MEM_LOAD_UOPS_RETIRED event
+-	 * has two "no fix" errata associated with it: BDM35 and BDM100. On
+-	 * this platform we use the following events instead:
+-	 *  L2_RQSTS 24H (Documented in https://download.01.org/perfmon/BDW/)
+-	 *       REFERENCES FFH
+-	 *       MISS       3FH
+-	 *  LONGEST_LAT_CACHE 2EH (Documented in SDM)
+-	 *       REFERENCE 4FH
+-	 *       MISS      41H
+-	 */
++	miss_event = perf_event_create_kernel_counter(miss_attr, plr->cpu,
++						      NULL, NULL, NULL);
++	if (IS_ERR(miss_event))
++		goto out;
+ 
++	hit_event = perf_event_create_kernel_counter(hit_attr, plr->cpu,
++						     NULL, NULL, NULL);
++	if (IS_ERR(hit_event))
++		goto out_miss;
++
++	local_irq_disable();
+ 	/*
+-	 * Start by setting flags for IA32_PERFEVTSELx:
+-	 *     OS  (Operating system mode)  0x2
+-	 *     INT (APIC interrupt enable)  0x10
+-	 *     EN  (Enable counter)         0x40
+-	 *
+-	 * Then add the Umask value and event number to select performance
+-	 * event.
++	 * Check any possible error state of events used by performing
++	 * one local read.
+ 	 */
+-
+-	switch (boot_cpu_data.x86_model) {
+-	case INTEL_FAM6_ATOM_GOLDMONT:
+-	case INTEL_FAM6_ATOM_GEMINI_LAKE:
+-		l2_hit_bits = (0x52ULL << 16) | (0x2 << 8) | 0xd1;
+-		l2_miss_bits = (0x52ULL << 16) | (0x10 << 8) | 0xd1;
+-		break;
+-	case INTEL_FAM6_BROADWELL_X:
+-		/* On BDW the l2_hit_bits count references, not hits */
+-		l2_hit_bits = (0x52ULL << 16) | (0xff << 8) | 0x24;
+-		l2_miss_bits = (0x52ULL << 16) | (0x3f << 8) | 0x24;
+-		/* On BDW the l3_hit_bits count references, not hits */
+-		l3_hit_bits = (0x52ULL << 16) | (0x4f << 8) | 0x2e;
+-		l3_miss_bits = (0x52ULL << 16) | (0x41 << 8) | 0x2e;
+-		break;
+-	default:
+-		goto out;
++	if (perf_event_read_local(miss_event, &tmp, NULL, NULL)) {
++		local_irq_enable();
++		goto out_hit;
++	}
++	if (perf_event_read_local(hit_event, &tmp, NULL, NULL)) {
++		local_irq_enable();
++		goto out_hit;
+ 	}
+ 
+-	local_irq_disable();
+ 	/*
+ 	 * Disable hardware prefetchers.
+ 	 */
+ 	wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
+-	/* Disable events and reset counters */
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, 0x0);
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, 0x0);
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0, 0x0);
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 1, 0x0);
+-	if (l3_hit_bits > 0) {
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2, 0x0);
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3, 0x0);
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 2, 0x0);
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_PERFCTR0 + 3, 0x0);
+-	}
+-	/* Set and enable the L2 counters */
++
++	/* Initialize rest of local variables */
++	/*
++	 * Performance event has been validated right before this with
++	 * interrupts disabled - it is thus safe to read the counter index.
++	 */
++	miss_pmcnum = x86_perf_rdpmc_index(miss_event);
++	hit_pmcnum = x86_perf_rdpmc_index(hit_event);
++	line_size = READ_ONCE(plr->line_size);
+ 	mem_r = READ_ONCE(plr->kmem);
+ 	size = READ_ONCE(plr->size);
+-	line_size = READ_ONCE(plr->line_size);
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0, l2_hit_bits);
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1, l2_miss_bits);
+-	if (l3_hit_bits > 0) {
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2,
+-				      l3_hit_bits);
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3,
+-				      l3_miss_bits);
+-	}
++
++	/*
++	 * Read counter variables twice - first to load the instructions
++	 * used in L1 cache, second to capture accurate value that does not
++	 * include cache misses incurred because of instruction loads.
++	 */
++	rdpmcl(hit_pmcnum, hits_before);
++	rdpmcl(miss_pmcnum, miss_before);
++	/*
++	 * From SDM: Performing back-to-back fast reads are not guaranteed
++	 * to be monotonic.
++	 * Use LFENCE to ensure all previous instructions are retired
++	 * before proceeding.
++	 */
++	rmb();
++	rdpmcl(hit_pmcnum, hits_before);
++	rdpmcl(miss_pmcnum, miss_before);
++	/*
++	 * Use LFENCE to ensure all previous instructions are retired
++	 * before proceeding.
++	 */
++	rmb();
+ 	for (i = 0; i < size; i += line_size) {
++		/*
++		 * Add a barrier to prevent speculative execution of this
++		 * loop reading beyond the end of the buffer.
++		 */
++		rmb();
+ 		asm volatile("mov (%0,%1,1), %%eax\n\t"
+ 			     :
+ 			     : "r" (mem_r), "r" (i)
+ 			     : "%eax", "memory");
+ 	}
+ 	/*
+-	 * Call wrmsr directly (no tracing) to not influence
+-	 * the cache access counters as they are disabled.
++	 * Use LFENCE to ensure all previous instructions are retired
++	 * before proceeding.
+ 	 */
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0,
+-			      l2_hit_bits & ~(0x40ULL << 16));
+-	pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 1,
+-			      l2_miss_bits & ~(0x40ULL << 16));
+-	if (l3_hit_bits > 0) {
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 2,
+-				      l3_hit_bits & ~(0x40ULL << 16));
+-		pseudo_wrmsrl_notrace(MSR_ARCH_PERFMON_EVENTSEL0 + 3,
+-				      l3_miss_bits & ~(0x40ULL << 16));
+-	}
+-	l2_hits = native_read_pmc(0);
+-	l2_miss = native_read_pmc(1);
+-	if (l3_hit_bits > 0) {
+-		l3_hits = native_read_pmc(2);
+-		l3_miss = native_read_pmc(3);
+-	}
++	rmb();
++	rdpmcl(hit_pmcnum, hits_after);
++	rdpmcl(miss_pmcnum, miss_after);
++	/*
++	 * Use LFENCE to ensure all previous instructions are retired
++	 * before proceeding.
++	 */
++	rmb();
++	/* Re-enable hardware prefetchers */
+ 	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
+ 	local_irq_enable();
++out_hit:
++	perf_event_release_kernel(hit_event);
++out_miss:
++	perf_event_release_kernel(miss_event);
++out:
++	/*
++	 * All counts will be zero on failure.
++	 */
++	counts->miss_before = miss_before;
++	counts->hits_before = hits_before;
++	counts->miss_after  = miss_after;
++	counts->hits_after  = hits_after;
++	return 0;
++}
++
++static int measure_l2_residency(void *_plr)
++{
++	struct pseudo_lock_region *plr = _plr;
++	struct residency_counts counts = {0};
++
++	/*
++	 * Non-architectural event for the Goldmont Microarchitecture
++	 * from Intel x86 Architecture Software Developer Manual (SDM):
++	 * MEM_LOAD_UOPS_RETIRED D1H (event number)
++	 * Umask values:
++	 *     L2_HIT   02H
++	 *     L2_MISS  10H
++	 */
++	switch (boot_cpu_data.x86_model) {
++	case INTEL_FAM6_ATOM_GOLDMONT:
++	case INTEL_FAM6_ATOM_GEMINI_LAKE:
++		perf_miss_attr.config = X86_CONFIG(.event = 0xd1,
++						   .umask = 0x10);
++		perf_hit_attr.config = X86_CONFIG(.event = 0xd1,
++						  .umask = 0x2);
++		break;
++	default:
++		goto out;
++	}
++
++	measure_residency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
++	/*
++	 * If a failure prevented the measurements from succeeding
++	 * tracepoints will still be written and all counts will be zero.
++	 */
++	trace_pseudo_lock_l2(counts.hits_after - counts.hits_before,
++			     counts.miss_after - counts.miss_before);
++out:
++	plr->thread_done = 1;
++	wake_up_interruptible(&plr->lock_thread_wq);
++	return 0;
++}
++
++static int measure_l3_residency(void *_plr)
++{
++	struct pseudo_lock_region *plr = _plr;
++	struct residency_counts counts = {0};
++
+ 	/*
+-	 * On BDW we count references and misses, need to adjust. Sometimes
+-	 * the "hits" counter is a bit more than the references, for
+-	 * example, x references but x + 1 hits. To not report invalid
+-	 * hit values in this case we treat that as misses eaqual to
+-	 * references.
++	 * On Broadwell Microarchitecture the MEM_LOAD_UOPS_RETIRED event
++	 * has two "no fix" errata associated with it: BDM35 and BDM100. On
++	 * this platform the following events are used instead:
++	 * LONGEST_LAT_CACHE 2EH (Documented in SDM)
++	 *       REFERENCE 4FH
++	 *       MISS      41H
+ 	 */
+-	if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X)
+-		l2_hits -= (l2_miss > l2_hits ? l2_hits : l2_miss);
+-	trace_pseudo_lock_l2(l2_hits, l2_miss);
+-	if (l3_hit_bits > 0) {
+-		if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X)
+-			l3_hits -= (l3_miss > l3_hits ? l3_hits : l3_miss);
+-		trace_pseudo_lock_l3(l3_hits, l3_miss);
++
++	switch (boot_cpu_data.x86_model) {
++	case INTEL_FAM6_BROADWELL_X:
++		/* On BDW the hit event counts references, not hits */
++		perf_hit_attr.config = X86_CONFIG(.event = 0x2e,
++						  .umask = 0x4f);
++		perf_miss_attr.config = X86_CONFIG(.event = 0x2e,
++						   .umask = 0x41);
++		break;
++	default:
++		goto out;
++	}
++
++	measure_residency_fn(&perf_miss_attr, &perf_hit_attr, plr, &counts);
++	/*
++	 * If a failure prevented the measurements from succeeding
++	 * tracepoints will still be written and all counts will be zero.
++	 */
++
++	counts.miss_after -= counts.miss_before;
++	if (boot_cpu_data.x86_model == INTEL_FAM6_BROADWELL_X) {
++		/*
++		 * On BDW references and misses are counted, need to adjust.
++		 * Sometimes the "hits" counter is a bit more than the
++		 * references, for example, x references but x + 1 hits.
++		 * To not report invalid hit values in this case we treat
++		 * that as misses equal to references.
++		 */
++		/* First compute the number of cache references measured */
++		counts.hits_after -= counts.hits_before;
++		/* Next convert references to cache hits */
++		counts.hits_after -= min(counts.miss_after, counts.hits_after);
++	} else {
++		counts.hits_after -= counts.hits_before;
+ 	}
+ 
++	trace_pseudo_lock_l3(counts.hits_after, counts.miss_after);
+ out:
+ 	plr->thread_done = 1;
+ 	wake_up_interruptible(&plr->lock_thread_wq);
+@@ -1112,13 +1179,20 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 		goto out;
+ 	}
+ 
++	plr->cpu = cpu;
++
+ 	if (sel == 1)
+ 		thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
+ 						cpu_to_node(cpu),
+ 						"pseudo_lock_measure/%u",
+ 						cpu);
+ 	else if (sel == 2)
+-		thread = kthread_create_on_node(measure_cycles_perf_fn, plr,
++		thread = kthread_create_on_node(measure_l2_residency, plr,
++						cpu_to_node(cpu),
++						"pseudo_lock_measure/%u",
++						cpu);
++	else if (sel == 3)
++		thread = kthread_create_on_node(measure_l3_residency, plr,
+ 						cpu_to_node(cpu),
+ 						"pseudo_lock_measure/%u",
+ 						cpu);
+-- 
+2.17.0
+
