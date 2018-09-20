@@ -2,132 +2,177 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62871C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FF3C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26EA621523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26EA621523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1288C21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1288C21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388211AbeIUB7f (ORCPT
+        id S2388288AbeIUCAB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:59:35 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53407 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbeIUB7f (ORCPT
+        Thu, 20 Sep 2018 22:00:01 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:48901 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbeIUCAB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:59:35 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id AFAE38071C; Thu, 20 Sep 2018 22:14:21 +0200 (CEST)
-Date:   Thu, 20 Sep 2018 22:14:20 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2 2/4] [media] ad5820: Add support for enable pin
-Message-ID: <20180920201420.GA28766@amd>
-References: <20180920161912.17063-2-ricardo.ribalda@gmail.com>
- <20180920184552.4919-1-ricardo.ribalda@gmail.com>
- <20180920185405.GA26589@amd>
- <CAPybu_2hjrq=r+kpAHKxX59gOXfbqGf9CUPh9CNqv7WGqJsrQQ@mail.gmail.com>
- <20180920190855.GC26589@amd>
- <CAPybu_2mNE7Jmfm2n60Z9Hk_iO+-zLgtu4xn72pJUSXBitVg=g@mail.gmail.com>
+        Thu, 20 Sep 2018 22:00:01 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id D96DB3B284C;
+        Thu, 20 Sep 2018 22:14:46 +0200 (CEST)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH security-next v2 00/26] LSM: Explict LSM ordering
+Date:   Thu, 20 Sep 2018 22:14:46 +0200
+Message-ID: <1898403.NNy4ELVaME@merkaba>
+In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
+References: <20180920162338.21060-1-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Content-Disposition: inline
-In-Reply-To: <CAPybu_2mNE7Jmfm2n60Z9Hk_iO+-zLgtu4xn72pJUSXBitVg=g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Kees Cook - 20.09.18, 18:23:
+> v2:
+> - add "lsm.order=" and CONFIG_LSM_ORDER instead of overloading
+> "security=" - reorganize introduction of ordering logic code
+> 
+> Updated cover letter:
+> 
+> This refactors the LSM registration and initialization infrastructure
+> to more centrally support different LSM types. What was considered a
+> "major" LSM is kept for legacy use of the "security=" boot parameter,
+> and now overlaps with the new class of "exclusive" LSMs for the future
+> blob sharing (to be added later). The "minor" LSMs become more well
+> defined as a result of the refactoring.
+> 
+> Instead of continuing to (somewhat improperly) overload the kernel's
+> initcall system, this changes the LSM infrastructure to store a
+> registration structure (struct lsm_info) table instead, where metadata
+> about each LSM can be recorded (name, flags, order, enable flag, init
+> function). This can be extended in the future to include things like
+> required blob size for the coming "blob sharing" LSMs.
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I read the cover letter and still don´t know what this is about. Now I 
+am certainly not engaged deeply with LSM. I bet my main missing piece 
+is: What is a "blob sharing" LSM.
 
-On Thu 2018-09-20 21:12:44, Ricardo Ribalda Delgado wrote:
-> On Thu, Sep 20, 2018 at 9:08 PM Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> > On Thu 2018-09-20 21:06:16, Ricardo Ribalda Delgado wrote:
-> > > Hi Pavel
-> > >
-> > > On Thu, Sep 20, 2018 at 8:54 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > > >
-> > > > On Thu 2018-09-20 20:45:52, Ricardo Ribalda Delgado wrote:
-> > > > > This patch adds support for a programmable enable pin. It can be =
-used in
-> > > > > situations where the ANA-vcc is not configurable (dummy-regulator=
-), or
-> > > > > just to have a more fine control of the power saving.
-> > > > >
-> > > > > The use of the enable pin is optional.
-> > > > >
-> > > > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > > >
-> > > > Do we really want to do that?
-> > > >
-> > > > Would it make more sense to add gpio-regulator and connect ad5820 to
-> > > > it in such case?
-> > > >
-> > >
-> > > My board (based on db820c)  has both:
-> > >
-> > > ad5820: dac@0c {
-> > >    compatible =3D "adi,ad5820";
-> > >    reg =3D <0x0c>;
-> > >
-> > >    VANA-supply =3D <&pm8994_l23>;
-> > >    enable-gpios =3D <&msmgpio 26 GPIO_ACTIVE_HIGH>;
-> > > };
-> >
-> > Well, I'm sure you could have gpio-based regulator powered from
-> > pm8994_l23, and outputting to ad5820.
-> >
-> > Does ad5820 chip have a gpio input for enable?
->=20
-> xshutdown pin:
-> http://www.analog.com/media/en/technical-documentation/data-sheets/AD5821=
-=2Epdf
->=20
-> (AD5820,AD5821, and AD5823 are compatibles, or at least that is waht
-> the module manufacturer says :)
+I think it would improve the cover letter greatly if it explains briefly 
+what is a major LSM, what is a minor LSM and what is a "blob sharing" 
+LSM.
 
-Aha, sorry for the noise.
+Why those are all needed? What is the actual security or end user 
+benefit of this work? The questions are not to question your work. I bet 
+it makes all perfect sense. I just did not understand its sense from 
+reading the cover letter.
 
-2,3: Acked-by: Pavel Machek <pavel@ucw.cz>
+> The "major" LSMs had to individually negotiate which of them should be
+> enabled. This didn't provide a way to negotiate combinations of other
+> LSMs (as will be needed for "blob sharing" LSMs). This is solved by
+> providing the LSM infrastructure with all the details needed to make
+> the choice (exposing the per-LSM "enabled" flag, if used, the LSM
+> characteristics, and ordering expectations).
+> 
+> As a result of the refactoring, the "minor" LSMs are able to remove
+> the open-coded security_add_hooks() calls for "capability", "yama",
+> and "loadpin", and to redefine "integrity" properly as a general LSM.
+> (Note that "integrity" actually defined _no_ hooks, but needs the
+> early initialization).
+> 
+> With all LSMs being proessed centrally, it was possible to implement
+> a new boot parameter "lsm.order=" to provide explicit ordering, which
+> is helpful for the future "blob sharing" LSMs. Matching this is the
+> new CONFIG_LSM_ORDER, which replaces CONFIG_DEFAULT_SECURITY, as it
+> provides a higher granularity of control.
+> 
+> To better show LSMs activation some debug reporting was added (enabled
+> with the "lsm.debug" boot commandline option).
+> 
+> Finally, I added a WARN() around LSM initialization failures, which
+> appear to have always been silently ignored. (Realistically any LSM
+> init failures would have only been due to catastrophic kernel issues
+> that would render a system unworkable anyway, but it'd be better to
+> expose the problem as early as possible.)
+> 
+> -Kees
+> 
+> Kees Cook (26):
+>   LSM: Correctly announce start of LSM initialization
+>   vmlinux.lds.h: Avoid copy/paste of security_init section
+>   LSM: Rename .security_initcall section to .lsm_info
+>   LSM: Remove initcall tracing
+>   LSM: Convert from initcall to struct lsm_info
+>   vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
+>   LSM: Convert security_initcall() into DEFINE_LSM()
+>   LSM: Record LSM name in struct lsm_info
+>   LSM: Provide init debugging infrastructure
+>   LSM: Don't ignore initialization failures
+>   LSM: Introduce LSM_FLAG_LEGACY_MAJOR
+>   LSM: Provide separate ordered initialization
+>   LSM: Plumb visibility into optional "enabled" state
+>   LSM: Lift LSM selection out of individual LSMs
+>   LSM: Introduce lsm.enable= and lsm.disable=
+>   LSM: Prepare for reorganizing "security=" logic
+>   LSM: Refactor "security=" in terms of enable/disable
+>   LSM: Build ordered list of ordered LSMs for init
+>   LSM: Introduce CONFIG_LSM_ORDER
+>   LSM: Introduce "lsm.order=" for boottime ordering
+>   LoadPin: Initialize as ordered LSM
+>   Yama: Initialize as ordered LSM
+>   LSM: Introduce enum lsm_order
+>   capability: Mark as LSM_ORDER_FIRST
+>   LSM: Separate idea of "major" LSM from "exclusive" LSM
+>   LSM: Add all exclusive LSMs to ordered initialization
+> 
+>  .../admin-guide/kernel-parameters.txt         |   7 +
+>  arch/arc/kernel/vmlinux.lds.S                 |   1 -
+>  arch/arm/kernel/vmlinux-xip.lds.S             |   1 -
+>  arch/arm64/kernel/vmlinux.lds.S               |   1 -
+>  arch/h8300/kernel/vmlinux.lds.S               |   1 -
+>  arch/microblaze/kernel/vmlinux.lds.S          |   2 -
+>  arch/powerpc/kernel/vmlinux.lds.S             |   2 -
+>  arch/um/include/asm/common.lds.S              |   2 -
+>  arch/xtensa/kernel/vmlinux.lds.S              |   1 -
+>  include/asm-generic/vmlinux.lds.h             |  25 +-
+>  include/linux/init.h                          |   2 -
+>  include/linux/lsm_hooks.h                     |  43 ++-
+>  include/linux/module.h                        |   1 -
+>  security/Kconfig                              |  42 +--
+>  security/apparmor/lsm.c                       |  16 +-
+>  security/commoncap.c                          |   8 +-
+>  security/integrity/iint.c                     |   5 +-
+>  security/loadpin/loadpin.c                    |  10 +-
+>  security/security.c                           | 304
+> ++++++++++++++---- security/selinux/hooks.c                      | 
+> 16 +-
+>  security/smack/smack_lsm.c                    |   8 +-
+>  security/tomoyo/tomoyo.c                      |   7 +-
+>  security/yama/yama_lsm.c                      |   7 +-
+>  23 files changed, 348 insertions(+), 164 deletions(-)
 
-Thanks,
-								Pavel
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+-- 
+Martin
 
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluj/5wACgkQMOfwapXb+vLWCQCePWD+ay3G+of16Itk/4RyVzzv
-auMAn3Lj14BEIoJDo8pHFjDoPnZnx4GI
-=VFDe
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
