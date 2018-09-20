@@ -6,82 +6,102 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467EAC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC7CC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEABF20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:09:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEABF20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A1AA3206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1AA3206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731640AbeITPw1 (ORCPT
+        id S1732238AbeITPw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:52:27 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12656 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730984AbeITPw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:52:27 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A5958C6369CED;
-        Thu, 20 Sep 2018 18:09:39 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 18:09:38 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC:     <harsh@chelsio.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] crypto : chtls: remove redundant null pointer check before kfree_skb
-Date:   Thu, 20 Sep 2018 17:57:16 +0800
-Message-ID: <1537437436-43088-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        Thu, 20 Sep 2018 11:52:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50087 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731145AbeITPw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 11:52:56 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1071D20795; Thu, 20 Sep 2018 12:10:11 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D16A3208F5;
+        Thu, 20 Sep 2018 12:10:00 +0200 (CEST)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
+        quentin.schulz@bootlin.com, allan.nielsen@microchip.com
+Subject: [PATCH net] net: mscc: fix the frame extraction into the skb
+Date:   Thu, 20 Sep 2018 12:08:54 +0200
+Message-Id: <20180920100854.19044-1-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kfree_skb has taken the null pointer into account. hence it is safe
-to remove the redundant null pointer check before kfree_skb.
+When extracting frames from the Ocelot switch, the frame check sequence
+(FCS) is present at the end of the data extracted. The FCS was put into
+the sk buffer which introduced some issues (as length related ones), as
+the FCS shouldn't be part of an Rx sk buffer.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+This patch fixes the Ocelot switch extraction behaviour by discarding
+the FCS.
+
+Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/crypto/chelsio/chtls/chtls_cm.c   | 3 +--
- drivers/crypto/chelsio/chtls/chtls_main.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
-index 0997e16..fd2ae1e 100644
---- a/drivers/crypto/chelsio/chtls/chtls_cm.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
-@@ -234,8 +234,7 @@ static void chtls_send_reset(struct sock *sk, int mode, struct sk_buff *skb)
+Hi all,
+
+Once this patch will be accepted and net merged into net-next, I'll
+probably send another patch to fill skb->csum with the FCS based on
+NETIF_F_RXFCS.
+
+Thanks!
+Antoine
+
+ drivers/net/ethernet/mscc/ocelot_board.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/mscc/ocelot_board.c b/drivers/net/ethernet/mscc/ocelot_board.c
+index 26bb3b18f3be..3cdf63e35b53 100644
+--- a/drivers/net/ethernet/mscc/ocelot_board.c
++++ b/drivers/net/ethernet/mscc/ocelot_board.c
+@@ -91,7 +91,7 @@ static irqreturn_t ocelot_xtr_irq_handler(int irq, void *arg)
+ 		struct sk_buff *skb;
+ 		struct net_device *dev;
+ 		u32 *buf;
+-		int sz, len;
++		int sz, len, buf_len;
+ 		u32 ifh[4];
+ 		u32 val;
+ 		struct frame_info info;
+@@ -116,14 +116,20 @@ static irqreturn_t ocelot_xtr_irq_handler(int irq, void *arg)
+ 			err = -ENOMEM;
+ 			break;
+ 		}
+-		buf = (u32 *)skb_put(skb, info.len);
++		buf_len = info.len - ETH_FCS_LEN;
++		buf = (u32 *)skb_put(skb, buf_len);
  
- 	return;
- out:
--	if (skb)
--		kfree_skb(skb);
-+	kfree_skb(skb);
- }
+ 		len = 0;
+ 		do {
+ 			sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
+ 			*buf++ = val;
+ 			len += sz;
+-		} while ((sz == 4) && (len < info.len));
++		} while (len < buf_len);
++
++		/* Read the FCS and discard it */
++		sz = ocelot_rx_frame_word(ocelot, grp, false, &val);
++		/* Update the statistics if part of the FCS was read before */
++		len -= ETH_FCS_LEN - sz;
  
- static void release_tcp_port(struct sock *sk)
-diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
-index f59b044..f472c51 100644
---- a/drivers/crypto/chelsio/chtls/chtls_main.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_main.c
-@@ -272,8 +272,7 @@ static void chtls_free_uld(struct chtls_dev *cdev)
- 	for (i = 0; i < (1 << RSPQ_HASH_BITS); i++)
- 		kfree_skb(cdev->rspq_skb_cache[i]);
- 	kfree(cdev->lldi);
--	if (cdev->askb)
--		kfree_skb(cdev->askb);
-+	kfree_skb(cdev->askb);
- 	kfree(cdev);
- }
- 
+ 		if (sz < 0) {
+ 			err = sz;
 -- 
-1.7.12.4
+2.17.1
 
