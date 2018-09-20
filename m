@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCB2C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52804ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23ABB21529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23ABB21529
+	by mail.kernel.org (Postfix) with ESMTP id 18FE62152C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18FE62152C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388283AbeITScH (ORCPT
+        id S2388308AbeITScK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:32:07 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52453 "EHLO huawei.com"
+        Thu, 20 Sep 2018 14:32:10 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12647 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387764AbeITScG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:32:06 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 38E2C466E40A;
-        Thu, 20 Sep 2018 20:48:40 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
- 20:48:35 +0800
+        id S2387764AbeITScJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:32:09 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 29139C8200FF3;
+        Thu, 20 Sep 2018 20:48:45 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
+ 20:48:38 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <davem@davemloft.net>, <dmitry.tarnyagin@lockless.no>,
         <wg@grandegger.com>, <mkl@pengutronix.de>,
@@ -49,9 +49,9 @@ CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
         <devel@linuxdriverproject.org>, <linux-usb@vger.kernel.org>,
         <xen-devel@lists.xenproject.org>, <dev@openvswitch.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next 14/22] net: caif: fix return type of ndo_start_xmit function
-Date:   Thu, 20 Sep 2018 20:32:58 +0800
-Message-ID: <20180920123306.14772-15-yuehaibing@huawei.com>
+Subject: [PATCH net-next 15/22] net: hamradio: fix return type of ndo_start_xmit function
+Date:   Thu, 20 Sep 2018 20:32:59 +0800
+Message-ID: <20180920123306.14772-16-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20180920123306.14772-1-yuehaibing@huawei.com>
 References: <20180920123306.14772-1-yuehaibing@huawei.com>
@@ -73,142 +73,46 @@ Found by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/caif/caif_hsi.c    | 10 +++++-----
- drivers/net/caif/caif_serial.c |  7 +++++--
- drivers/net/caif/caif_spi.c    |  6 +++---
- drivers/net/caif/caif_virtio.c |  2 +-
- net/caif/chnl_net.c            |  3 ++-
- 5 files changed, 16 insertions(+), 12 deletions(-)
+ drivers/net/hamradio/baycom_epp.c | 3 ++-
+ drivers/net/hamradio/dmascc.c     | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/caif/caif_hsi.c b/drivers/net/caif/caif_hsi.c
-index 433a14b..70c449e 100644
---- a/drivers/net/caif/caif_hsi.c
-+++ b/drivers/net/caif/caif_hsi.c
-@@ -1006,7 +1006,7 @@ static void cfhsi_aggregation_tout(struct timer_list *t)
- 	cfhsi_start_tx(cfhsi);
- }
+diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
+index 1e62d00..f4ceccf 100644
+--- a/drivers/net/hamradio/baycom_epp.c
++++ b/drivers/net/hamradio/baycom_epp.c
+@@ -772,7 +772,8 @@ static void epp_bh(struct work_struct *work)
+  * ===================== network driver interface =========================
+  */
  
--static int cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct cfhsi *cfhsi = NULL;
- 	int start_xfer = 0;
-@@ -1014,7 +1014,7 @@ static int cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
- 	int prio;
- 
- 	if (!dev)
--		return -EINVAL;
-+		return NETDEV_TX_BUSY;
- 
- 	cfhsi = netdev_priv(dev);
- 
-@@ -1048,7 +1048,7 @@ static int cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
- 	if (WARN_ON(test_bit(CFHSI_SHUTDOWN, &cfhsi->bits))) {
- 		spin_unlock_bh(&cfhsi->lock);
- 		cfhsi_abort_tx(cfhsi);
--		return -EINVAL;
-+		return NETDEV_TX_BUSY;
- 	}
- 
- 	/* Send flow off if number of packets is above high water mark. */
-@@ -1072,7 +1072,7 @@ static int cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
- 		spin_unlock_bh(&cfhsi->lock);
- 		if (aggregate_ready)
- 			cfhsi_start_tx(cfhsi);
--		return 0;
-+		return NETDEV_TX_OK;
- 	}
- 
- 	/* Delete inactivity timer if started. */
-@@ -1102,7 +1102,7 @@ static int cfhsi_xmit(struct sk_buff *skb, struct net_device *dev)
- 			queue_work(cfhsi->wq, &cfhsi->wake_up_work);
- 	}
- 
--	return 0;
-+	return NETDEV_TX_OK;
- }
- 
- static const struct net_device_ops cfhsi_netdevops;
-diff --git a/drivers/net/caif/caif_serial.c b/drivers/net/caif/caif_serial.c
-index a0f954f..acb3264 100644
---- a/drivers/net/caif/caif_serial.c
-+++ b/drivers/net/caif/caif_serial.c
-@@ -275,7 +275,7 @@ static int handle_tx(struct ser_device *ser)
- 	return tty_wr;
- }
- 
--static int caif_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t caif_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct ser_device *ser;
- 
-@@ -290,7 +290,10 @@ static int caif_xmit(struct sk_buff *skb, struct net_device *dev)
- 		ser->common.flowctrl(ser->dev, OFF);
- 
- 	skb_queue_tail(&ser->head, skb);
--	return handle_tx(ser);
-+	if (handle_tx(ser))
-+		return NETDEV_TX_BUSY;
-+
-+	return NETDEV_TX_OK;
- }
- 
- 
-diff --git a/drivers/net/caif/caif_spi.c b/drivers/net/caif/caif_spi.c
-index d28a139..9040658 100644
---- a/drivers/net/caif/caif_spi.c
-+++ b/drivers/net/caif/caif_spi.c
-@@ -486,12 +486,12 @@ static void cfspi_xfer_done_cb(struct cfspi_ifc *ifc)
- 	complete(&cfspi->comp);
- }
- 
--static int cfspi_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t cfspi_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct cfspi *cfspi = NULL;
- 	unsigned long flags;
- 	if (!dev)
--		return -EINVAL;
-+		return NETDEV_TX_BUSY;
- 
- 	cfspi = netdev_priv(dev);
- 
-@@ -512,7 +512,7 @@ static int cfspi_xmit(struct sk_buff *skb, struct net_device *dev)
- 		cfspi->cfdev.flowctrl(cfspi->ndev, 0);
- 	}
- 
--	return 0;
-+	return NETDEV_TX_OK;
- }
- 
- int cfspi_rxfrm(struct cfspi *cfspi, u8 *buf, size_t len)
-diff --git a/drivers/net/caif/caif_virtio.c b/drivers/net/caif/caif_virtio.c
-index 2814e0d..f5507db 100644
---- a/drivers/net/caif/caif_virtio.c
-+++ b/drivers/net/caif/caif_virtio.c
-@@ -519,7 +519,7 @@ static struct buf_info *cfv_alloc_and_copy_to_shm(struct cfv_info *cfv,
- }
- 
- /* Put the CAIF packet on the virtio ring and kick the receiver */
--static int cfv_netdev_tx(struct sk_buff *skb, struct net_device *netdev)
-+static netdev_tx_t cfv_netdev_tx(struct sk_buff *skb, struct net_device *netdev)
- {
- 	struct cfv_info *cfv = netdev_priv(netdev);
- 	struct buf_info *buf_info;
-diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
-index 13e2ae6..30be426 100644
---- a/net/caif/chnl_net.c
-+++ b/net/caif/chnl_net.c
-@@ -211,7 +211,8 @@ static void chnl_flowctrl_cb(struct cflayer *layr, enum caif_ctrlcmd flow,
- 	}
- }
- 
--static int chnl_net_start_xmit(struct sk_buff *skb, struct net_device *dev)
+-static int baycom_send_packet(struct sk_buff *skb, struct net_device *dev)
 +static netdev_tx_t
-+chnl_net_start_xmit(struct sk_buff *skb, struct net_device *dev)
++baycom_send_packet(struct sk_buff *skb, struct net_device *dev)
  {
- 	struct chnl_net *priv;
- 	struct cfpkt *pkt = NULL;
+ 	struct baycom_state *bc = netdev_priv(dev);
+ 
+diff --git a/drivers/net/hamradio/dmascc.c b/drivers/net/hamradio/dmascc.c
+index cde4120..2798870 100644
+--- a/drivers/net/hamradio/dmascc.c
++++ b/drivers/net/hamradio/dmascc.c
+@@ -239,7 +239,7 @@ struct scc_info {
+ static int scc_open(struct net_device *dev);
+ static int scc_close(struct net_device *dev);
+ static int scc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd);
+-static int scc_send_packet(struct sk_buff *skb, struct net_device *dev);
++static netdev_tx_t scc_send_packet(struct sk_buff *skb, struct net_device *dev);
+ static int scc_set_mac_address(struct net_device *dev, void *sa);
+ 
+ static inline void tx_on(struct scc_priv *priv);
+@@ -921,7 +921,7 @@ static int scc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ }
+ 
+ 
+-static int scc_send_packet(struct sk_buff *skb, struct net_device *dev)
++static netdev_tx_t scc_send_packet(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct scc_priv *priv = dev->ml_priv;
+ 	unsigned long flags;
 -- 
 1.8.3.1
 
