@@ -7,130 +7,139 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7733EECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2199CC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27FF121521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB86821521
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:50:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EvZMp6qK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27FF121521
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="cn7zJcZ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB86821521
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388511AbeITIa5 (ORCPT
+        id S2388527AbeITIbA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:30:57 -0400
-Received: from mail-dm3nam03on0120.outbound.protection.outlook.com ([104.47.41.120]:36173
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        Thu, 20 Sep 2018 04:31:00 -0400
+Received: from mail-bl2nam02on0120.outbound.protection.outlook.com ([104.47.38.120]:37182
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387736AbeITIal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:30:41 -0400
+        id S2387736AbeITIa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:30:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Grt3hlirwTRAOjLYJzEgvqesLcdjo4RC9xaCntxZ1VE=;
- b=EvZMp6qKUYS3sdzS7zLBXrbF0Olq1OSxIQ5cenD0NKvfx+LUDRx+prg6ORcs/scghgOTqfkPipxGX5MiiZ8MRwUJBQUsyw/DHjC/GMnkYBjFCSWHEnXKnf5KeRj2y/ztWMjsEMvXT6sydc6V7i0/2V/4SHDvquvm2TsjfeotbWU=
+ bh=67uS9o7G90Xj6Lko/cKTTJbp5GcVATLDU1JOkVM6kBg=;
+ b=cn7zJcZ9hh43doxzV+epykyzJYqmqDG5HlalSNhRbxBHU7CPe17nxxQfIycrrAbujlMQdXZ3792Li+ftIA8c5QKeyjflkA7yoz7sKPnUV2XiJt4TFVqUr/yBOaCwFJEZKLWH0IXTMrEo6ep3qZw1Ko55331PgS4TixyIW6LCHBU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0119.namprd21.prod.outlook.com (10.173.189.13) with Microsoft SMTP
+ CY4PR21MB0469.namprd21.prod.outlook.com (10.172.121.147) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Thu, 20 Sep 2018 02:49:11 +0000
+ 15.20.1185.9; Thu, 20 Sep 2018 02:49:55 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 02:49:11 +0000
+ 02:49:55 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Huazhong Tan <tanhuazhong@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
+CC:     Rex Zhu <Rex.Zhu@amd.com>, Hang Zhou <hang.zhou@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 09/25] net: hns: fix length and page_offset
- overflow when CONFIG_ARM64_64K_PAGES
-Thread-Topic: [PATCH AUTOSEL 4.14 09/25] net: hns: fix length and page_offset
- overflow when CONFIG_ARM64_64K_PAGES
-Thread-Index: AQHUUIxkkTifi7gaTUGqiafAAIqMfA==
-Date:   Thu, 20 Sep 2018 02:48:20 +0000
-Message-ID: <20180920024810.58594-9-alexander.levin@microsoft.com>
-References: <20180920024810.58594-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180920024810.58594-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.9 10/14] drm/amdgpu: Enable/disable gfx PG feature
+ in rlc safe mode
+Thread-Topic: [PATCH AUTOSEL 4.9 10/14] drm/amdgpu: Enable/disable gfx PG
+ feature in rlc safe mode
+Thread-Index: AQHUUIx0T8aXHHFsLUiJrltv+dsaYA==
+Date:   Thu, 20 Sep 2018 02:48:48 +0000
+Message-ID: <20180920024838.58666-10-alexander.levin@microsoft.com>
+References: <20180920024838.58666-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180920024838.58666-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0119;6:Cnt1OhnnlC8VhpTdzcyS6H13Kq9OWvFPggxAFU9g/z5N70WzokDTcvmqmLKOVDUF+QyVLQvfZzMyJLcVa4C/k3nVC254+GvhVS/+NGgg19XiYtThc5mb/EozuGIzd589x/0cOotK8LGkt9y3SP48ojLwJARfRnhdm7PcSV6Mp+KOx6llVZ3SOzc4uw4boPDnXCBUjgRCjMrzRGQ7JhjvVPodz1PzidJ1W4G7Y8PK4rwr+HgJuHFs/KV8v6ttBdwcPtpB6wuLke+JkBOBLjnA/5V4diqZJJZ7p6VSWmrxZG8JDz/NxZ8SdQkshAriEiaSZGtX93VyBPVub/QKYmPE/snR3h/078YwVUtDUhlPhwJ2P93vaNV7J1trV9cmLoYbmCuTPQw7HvKBIGY6rBuq1VCsasXqZ6HR72ryNDfaM4rYiioEwzFqQMdLRgEaRB0DURWymoeKmkpR3HmFmyzGPw==;5:w3tzcAGbQLGtQHMLT32vSeqVpXvMTQKp5qxLcKOfzkBCLZANNBKorvXSZELGm2cu+FPpPhQqT7j/krvTL6GzaUGHtB+o+UQGwg7/2NhZjevY8AKbHgSwd9SiaIHGvYCo3tMJc55Dh6WWDRJ0pYrR9rwZA85EsnixrPo0bY68JPQ=;7:B8XfvzWtgp4BLiLmWu9K1frSP2qK8yh0nrl6dUylbd3cIXFpzPPIopgDZdCZEJOw1JQhs6lY1qqgL0iXcTbbWoLcH9p0oEGGfK1ISQgPw4q7NhmjedxR5pnhQisSRZRSMbHaHD6nUFQpN9I5BFXeLsAJPL2OIu8VzpfJBsCfgM36fMWKmzZwlSTa0l4cGf8tZYwkBsHevAhAP8ffJS8A0OfGBeFYbi32M8VXluK4k4ax/bwwKLW5C0hv3h+oQlq8
-x-ms-office365-filtering-correlation-id: b6c06694-652d-4617-94bc-08d61ea3a50a
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0469;6:sO4heqk2+6aGDsd7eHqIGMrUu77vifEi01q25azzaJ5JQdAt21hKzSM5S+hcoss3bLiLnff6RRqQhQMM9R3veLJux0lxtKha6cYrgWtuGE3Sif+575eVkmewwnHibGjs2xkQjL+EoAvAneMRtYwyO3EqkNcxps82kZhHkQbNA3cT9VTP6cdLNBmvMmLb3bpv2XvpUoqz3HwwODSWI1MIL5JVmfBVErPmxZ6fhLST6bQzKjDKj/5Dps9tMV0OsdpdSqGV53DTNkAd9JGAPoKnIrIzR6V2nZtsNudqNJCsqGPXRDx4d/ThkjS4fHGphB+ojwBYz3AUg0CdflZmeXhLBR8uaOizzB2qlx+HY7wx2sJFJ1gGwqhDfg1Tj/Yb00KLBtTnYzF/8+3RoqbPUg3JEN6LwJbTUcYGibXVL0ABxYa30tyruR9iOPgCkN46vNYgIk0uVIGaux05/T7QA7TTzA==;5:sj2DRkEwWcNGpYqxKszHLRhM5yTuOrC1YYjEoPOP2eXZf/nMI1u04gi9DJ9uVbvBtXJZitJNfW73aWvjQZOnycP7jqUhlLF1F4OG8kONUNhjUoKkW9fi9sVsnlReNjNslmMnDO8j3HDJ+sXWSg1Nw8P++REmNwJRfeBcFnyRyO4=;7:G8vicsm1xOoR6xwXmk46fFBattvC+F7n2VemA/wnWbLPadFyBYZaP6G3b5xFGNVePt5RnA+x+zVUY/JwP6ZEmAoh+aViVwgvcAfYqLlKeMWPMRKKC9AtuxzZ29k9aroHVLZ41dD0BLmgOIkBWYGyUhq8sQKAH8YeXsLHpGwjj0txjifRjc3Ue46MNXnp3+Sv8SkOWGJkdM+Qb/VxKzfs9Fd6j61dmKZIpu5WTrH1tvmAImqKO+woR23CMjV3AolT
+x-ms-office365-filtering-correlation-id: 2b3c3716-a92a-453d-3bb4-08d61ea3bee0
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0119;
-x-ms-traffictypediagnostic: CY4PR21MB0119:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB011947F6C62E1207346520EDFB130@CY4PR21MB0119.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(50582790962513)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0469;
+x-ms-traffictypediagnostic: CY4PR21MB0469:
+x-microsoft-antispam-prvs: <CY4PR21MB046972F232A1D63302C96FA5FB130@CY4PR21MB0469.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(767451399110)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0119;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0119;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0469;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0469;
 x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(136003)(39860400002)(189003)(199004)(5660300001)(54906003)(1076002)(478600001)(10090500001)(72206003)(22452003)(107886003)(110136005)(316002)(68736007)(4326008)(76176011)(3846002)(6116002)(25786009)(14454004)(106356001)(15760500003)(99286004)(6666003)(105586002)(102836004)(6506007)(5250100002)(186003)(2501003)(26005)(6486002)(6436002)(53936002)(6512007)(66066001)(486006)(476003)(2616005)(10290500003)(11346002)(446003)(97736004)(36756003)(2900100001)(2906002)(8936002)(305945005)(575784001)(217873002)(7736002)(86362001)(8676002)(86612001)(256004)(71200400001)(71190400001)(81156014)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0119;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(136003)(39860400002)(346002)(199004)(189003)(6506007)(53936002)(2906002)(10290500003)(6512007)(478600001)(97736004)(8676002)(2501003)(68736007)(305945005)(99286004)(14454004)(81166006)(106356001)(7736002)(36756003)(76176011)(186003)(5250100002)(105586002)(476003)(8936002)(72206003)(486006)(2616005)(11346002)(6486002)(6436002)(446003)(6346003)(81156014)(26005)(102836004)(86362001)(54906003)(22452003)(86612001)(6666003)(3846002)(6116002)(25786009)(4326008)(5660300001)(316002)(10090500001)(107886003)(14444005)(1076002)(66066001)(217873002)(2900100001)(256004)(110136005)(71190400001)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0469;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: fhX9ihxy2JqkoV3Uqu2z9WJsH1q52/YwfGVTIA0jTwLg8/dlMVDS6bitDo4k4L/XBqf6o++/C5myhCuqTO/ty36fFVftXGq939IiSlLPvOQ+SiRs6u9+2Dm+w4ZhTi5bj61T2dpHYCLqrG+IMiDlvfwcJGjHXXW0PET28HSkmoc53t2FEf+fgSVKuiVM8tTXjUaJoCVZC44oYUUbIaDRwf298qCgOO5CnT5kMaQngcw8ot+lMPFPW3wsyQGJ7ZhuEnHlrGHu1oidt4vJOq21GSZSFTYjke+4w7/2A6gl3hFWLNvXanIHc56FGFBMKtA5XdiYHY5l3qB2iN6x72EnRI8R3DHQs3zoYiysBjKsjKs=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: JgO+dZ+TozJbhH6JA8ON67np09p/6+LnHnjBr9VtvBurx+L5y0kDZmVJEKUJb9R8MoATcuMFLeDNHF62NTIB/8xbnGCa3sJfeuXDgwxS4IcyQdHLETI6UrGbXV+/4yOED1a666DFzwqfd69ckPFAMSlkv292l9SyTqQyYfSwnzX8G8jAt0G0bF6UR82SrwoNbRYwY0b9XRHv1Qt3hc7nrWReF7KceiKCtFQoK8znlepZiUVLiA4q4zizMTDlLZxs3QdxsgFvGxC0KcsBQqMbHiSz5iDdMHHwzTPEmiWrROiIsg7Hn6CpMeizjcVFYTDpV5como+wPVdjjnBbpQ9+BfWzXDk2Dh47x+MtVJV+Ez4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6c06694-652d-4617-94bc-08d61ea3a50a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:20.9759
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b3c3716-a92a-453d-3bb4-08d61ea3bee0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:48.6005
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0119
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0469
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-[ Upstream commit 3ed614dce3ca9912d22be215ff0f11104b69fe62 ]
+[ Upstream commit 8ef23364b654d44244400d79988e677e504b21ba ]
 
-When enable the config item "CONFIG_ARM64_64K_PAGES", the size of PAGE_SIZE
-is 65536(64K). But the  type of length and page_offset are u16, they will
-overflow. So change them to u32.
+This is required by gfx hw and can fix the rlc hang when
+do s3 stree test on Cz/St.
 
-Fixes: 6fe6611ff275 ("net: add Hisilicon Network Subsystem hnae framework s=
-upport")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Hang Zhou <hang.zhou@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/hisilicon/hns/hnae.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hnae.h b/drivers/net/ethern=
-et/hisilicon/hns/hnae.h
-index fa5b30f547f6..cad52bd331f7 100644
---- a/drivers/net/ethernet/hisilicon/hns/hnae.h
-+++ b/drivers/net/ethernet/hisilicon/hns/hnae.h
-@@ -220,10 +220,10 @@ struct hnae_desc_cb {
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/am=
+dgpu/gfx_v8_0.c
+index 564362e8b486..c8a5cf5365a9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -5551,6 +5551,11 @@ static int gfx_v8_0_set_powergating_state(void *hand=
+le,
+ 	if (!(adev->pg_flags & AMD_PG_SUPPORT_GFX_PG))
+ 		return 0;
 =20
- 	/* priv data for the desc, e.g. skb when use with ip stack*/
- 	void *priv;
--	u16 page_offset;
--	u16 reuse_flag;
-+	u32 page_offset;
-+	u32 length;     /* length of the buffer */
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->enter_safe_mode(adev);
+ 	switch (adev->asic_type) {
+ 	case CHIP_CARRIZO:
+ 	case CHIP_STONEY:
+@@ -5586,7 +5591,11 @@ static int gfx_v8_0_set_powergating_state(void *hand=
+le,
+ 	default:
+ 		break;
+ 	}
+-
++	if (adev->pg_flags & (AMD_PG_SUPPORT_GFX_SMG |
++				AMD_PG_SUPPORT_RLC_SMU_HS |
++				AMD_PG_SUPPORT_CP |
++				AMD_PG_SUPPORT_GFX_DMG))
++		adev->gfx.rlc.funcs->exit_safe_mode(adev);
+ 	return 0;
+ }
 =20
--	u16 length;     /* length of the buffer */
-+	u16 reuse_flag;
-=20
-        /* desc type, used by the ring user to mark the type of the priv da=
-ta */
- 	u16 type;
 --=20
 2.17.1
