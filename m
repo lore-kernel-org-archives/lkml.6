@@ -2,163 +2,127 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C07C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199A2ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694CF21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:24:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2ZhvrhH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694CF21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CD49020673
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:25:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD49020673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387728AbeITXJF (ORCPT
+        id S2387424AbeITXKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:09:05 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52814 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388127AbeITXIQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:08:16 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y139-v6so329357wmc.2;
-        Thu, 20 Sep 2018 10:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K89/ZdMSWc7JgU6GCLZqVVq7BWypCFFZoB8/hY3YhVU=;
-        b=Y2ZhvrhHPdJeaczsY7+ovNMcpSm/7lppnlE3QgGblcyx0x8YBESNfN1QbNTonJTLmB
-         +PLcfIjBDUouB/AJbQy9iWD9zRFSbJzfqrS1tq6LlG3PcXNgdW69dUvdRg3ueK4Xo07P
-         LyQh3ljbTh73hi4aZJAlIQMvnHQuJ5Wt418kGJgbxMDJGSwAc1tqbnKuxtHa83N71e0V
-         llKoETG0Mgs7D8HXEYJI0IpiKw+2NMYarRE50CAUOB1ndgmVmmeIN2NeCT05k6ZBQ07s
-         5oWuvxIMzhQPizHkIAyMbrEduW+Duiyn61sKyygTSBzpArkD56Z9eEAi99nR9HDMGqxB
-         o5Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=K89/ZdMSWc7JgU6GCLZqVVq7BWypCFFZoB8/hY3YhVU=;
-        b=VulQkBZyVdLO8juFys5S9nDhJJiRQQxJuf4thubj8Qf1HPMExW6MHh7nHaNkHSlKTA
-         KCTRqcXziqvB0w9rW2v8l4mkABAH8VWUHN6R/SyuDOGBEJCfmNqaI+CwsTj36SQJE/98
-         4wflyWVzr4iwk/ROtYJI99YXXvPN/lNQWuZfax/WyX/UnBNjRRi6uzsuVghRB6XoSB/6
-         kpu+cuMdooKgU/khZ8PzcqJrlLOrAi33hUrmrRzyce8z284isPdcjnfhkfdHsc+D6f2G
-         qWOpMevEtWrzfvwS4+Kb1eG7R43NDojl4HGPkOH7WNg731CRdwClR5cCiGAVGqjKZgWd
-         oU6w==
-X-Gm-Message-State: APzg51BKqbpJHxzUF+AldfPrnTKZk5TjSi5VtEoAV1GsX9GFivRtuEFK
-        HZOzjPNmIus1/oXUE2Pp+mQ=
-X-Google-Smtp-Source: ANB0VdZu0WA2jxcUbGBJ7PSLO513Kyr2rNqJmnuP7LBS4AVrDFKZWWmuk2pUu4hfVra+L85gBEDPiw==
-X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr3891601wmf.154.1537464224190;
-        Thu, 20 Sep 2018 10:23:44 -0700 (PDT)
-Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:23:43 -0700 (PDT)
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Olof Johansson <olof@lxom.net>,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
-        Martin Sebor <msebor@gmail.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 09/15] Compiler Attributes: remove uses of __attribute__ from compiler.h
-Date:   Thu, 20 Sep 2018 19:22:55 +0200
-Message-Id: <20180920172301.21868-10-miguel.ojeda.sandonis@gmail.com>
-In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
-References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
+        Thu, 20 Sep 2018 19:10:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50388 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731448AbeITXKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 19:10:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 099871596;
+        Thu, 20 Sep 2018 10:25:33 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.Emea.Arm.com [10.4.12.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A994F3F557;
+        Thu, 20 Sep 2018 10:25:31 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 18:25:29 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Chintan Pandya <cpandya@codeaurora.org>
+Cc:     will.deacon@arm.com, mark.rutland@arm.com,
+        akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+        toshi.kani@hpe.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 3/3] arm64: Implement page table free interfaces
+Message-ID: <20180920172527.GB18934@arrakis.emea.arm.com>
+References: <1528268481-19299-1-git-send-email-cpandya@codeaurora.org>
+ <1528268481-19299-4-git-send-email-cpandya@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528268481-19299-4-git-send-email-cpandya@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
----
- include/linux/compiler.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Hi Chintan,
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 17ee9165ca51..b5fb034fa6fa 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -23,8 +23,8 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- #define __branch_check__(x, expect, is_constant) ({			\
- 			long ______r;					\
- 			static struct ftrace_likely_data		\
--				__attribute__((__aligned__(4)))		\
--				__attribute__((__section__("_ftrace_annotated_branch"))) \
-+				__aligned(4)				\
-+				__section("_ftrace_annotated_branch")	\
- 				______f = {				\
- 				.data.func = __func__,			\
- 				.data.file = __FILE__,			\
-@@ -59,8 +59,8 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 	({								\
- 		int ______r;						\
- 		static struct ftrace_branch_data			\
--			__attribute__((__aligned__(4)))			\
--			__attribute__((__section__("_ftrace_branch")))	\
-+			__aligned(4)					\
-+			__section("_ftrace_branch")			\
- 			______f = {					\
- 				.func = __func__,			\
- 				.file = __FILE__,			\
-@@ -146,7 +146,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 	extern typeof(sym) sym;					\
- 	static const unsigned long __kentry_##sym		\
- 	__used							\
--	__attribute__((__section__("___kentry" "+" #sym )))	\
-+	__section("___kentry" "+" #sym )			\
- 	= (unsigned long)&sym;
- #endif
- 
-@@ -287,7 +287,7 @@ unsigned long read_word_at_a_time(const void *addr)
-  * visible to the compiler.
-  */
- #define __ADDRESSABLE(sym) \
--	static void * __attribute__((__section__(".discard.addressable"), used)) \
-+	static void * __section(".discard.addressable") __used \
- 		__PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
- 
- /**
--- 
-2.17.1
+On Wed, Jun 06, 2018 at 12:31:21PM +0530, Chintan Pandya wrote:
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 8ae5d7a..65f8627 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -45,6 +45,7 @@
+>  #include <asm/memblock.h>
+>  #include <asm/mmu_context.h>
+>  #include <asm/ptdump.h>
+> +#include <asm/tlbflush.h>
+>  
+>  #define NO_BLOCK_MAPPINGS	BIT(0)
+>  #define NO_CONT_MAPPINGS	BIT(1)
+> @@ -977,12 +978,51 @@ int pmd_clear_huge(pmd_t *pmdp)
+>  	return 1;
+>  }
+>  
+> -int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+> +int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+>  {
+> -	return pud_none(*pud);
+> +	pte_t *table;
+> +	pmd_t pmd;
+> +
+> +	pmd = READ_ONCE(*pmdp);
+> +
+> +	/* No-op for empty entry and WARN_ON for valid entry */
+> +	if (!pmd_present(pmd) || !pmd_table(pmd)) {
+> +		VM_WARN_ON(!pmd_table(pmd));
+> +		return 1;
+> +	}
 
+What's this VM_WARN_ON supposed to do here? If the pmd is 0, we trigger
+it all the time. Did you actually mean something like:
+
+		VM_WARN_ON(!pmd_none(pmd));
+
+or pmd_present(pmd)?
+
+Since the comment mentions empty entry, I'd rather make it explicit:
+
+	if (pmd_none(pmd) || !pmd_table(pmd))
+		VM_WARN_ON(!pmd_none(pmd));
+		return 1;
+	}
+
+Similarly for the pud_free_pmd_page():
+
+----------8<--------------------------
+
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 65f86271f02b..2662937ef879 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -986,8 +986,8 @@ int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+ 	pmd = READ_ONCE(*pmdp);
+ 
+ 	/* No-op for empty entry and WARN_ON for valid entry */
+-	if (!pmd_present(pmd) || !pmd_table(pmd)) {
+-		VM_WARN_ON(!pmd_table(pmd));
++	if (pmd_none(pmd) || !pmd_table(pmd)) {
++		VM_WARN_ON(!pmd_none(pmd));
+ 		return 1;
+ 	}
+ 
+@@ -1008,8 +1008,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ 	pud = READ_ONCE(*pudp);
+ 
+ 	/* No-op for empty entry and WARN_ON for valid entry */
+-	if (!pud_present(pud) || !pud_table(pud)) {
+-		VM_WARN_ON(!pud_table(pud));
++	if (pud_none(pud) || !pud_table(pud)) {
++		VM_WARN_ON(!pud_none(pud));
+ 		return 1;
+ 	}
+ 
