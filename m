@@ -2,264 +2,294 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC1BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 718B5C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88F0E21531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:51:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vTrxoxdu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F0E21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 10E652152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:54:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E652152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387502AbeITRek (ORCPT
+        id S1732456AbeITRh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 13:34:40 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:33570 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeITRek (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 13:34:40 -0400
-Received: by mail-vk1-f193.google.com with SMTP id m125-v6so1825485vka.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 04:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hwpdATpvxWQMxRdtNtDgfrk1I10H2ji0HEqs0CTYLOY=;
-        b=vTrxoxduBydy2hQhAD/bSvhbUJPdPLcrcQ6WXc3HPgFnS70wfnaR3R3lcziMNPeeKO
-         IwhZ7Y9EvcEZUVsoWI66Oy7n6NwC0GRWLD5104wPSErfwObNFgaXoyorvt26nDKyYoZy
-         Q/vPRkNaMBQTUlpC5qbO2rlJWOT/vHjVy15dWUz/GQSyFmvGP/JCLRji636HsFWxchZd
-         a9RqCGueFA/IqZVtGmxpsSQhYuLpWhqqCjd22D40ITEQh3gFmFq5D4dI+XdTqTegXHSi
-         Qf/O1TrvtCeDsk4Ps7/JZzRWk6cI8FgTSULSVQ2CC8oa+wiyAcSzz4RUQ1/bZ6O2Jexr
-         UePw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hwpdATpvxWQMxRdtNtDgfrk1I10H2ji0HEqs0CTYLOY=;
-        b=IkLNfKYAK4Wq2Qwsyk4viZuqAFrF3UQrNOxQcu/SVnzqnzjt/DmRnIDR0yrsyImH0+
-         d7sLdEFNB37QZVBXoS4S5wqikIPPLo4E/lLORgn0yeZKRm5YIAJbhyrZAaRZZrHxzPz4
-         Imh8/kwofp1UvCI7WMJuNbxDwqR54XHwHD2/JH+06oHWrHZmkcXmsSFMyBLNfo8AUwMi
-         3hKkWWj/VYLbp5OwpC8f/eDz2H+D0sKgpf+QtlVe/Su2xTk7VaapDjPqKa5fdrP4Br3M
-         Gk2R9BPAs/Chx5F8V+I/CpnJeKJ3QkWZIhat/IkRxl48i1iE5LifnOzFX6T+d8TTVy3w
-         M3VA==
-X-Gm-Message-State: APzg51Asjm37XAaSiLoZf6xz56elVJvmGWSRT8qLvABKpfXxVrFcmflA
-        B+KOxIxWraMk/u6nZmRSIhOLPAbxtkahTANVVOU=
-X-Google-Smtp-Source: ANB0VdYMzFEH/avoHMXBgd49wqxEhQwgRxTEXap5ZRoQqIhOjDjPMHjUehnIRZvaaqlDlPIOdtWaPzNw5k5RHGsP2I4=
-X-Received: by 2002:a1f:b989:: with SMTP id j131-v6mr10303458vkf.69.1537444291925;
- Thu, 20 Sep 2018 04:51:31 -0700 (PDT)
+        Thu, 20 Sep 2018 13:37:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44570 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726607AbeITRh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 13:37:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 828A180D;
+        Thu, 20 Sep 2018 04:54:50 -0700 (PDT)
+Received: from [10.4.12.131] (e110467-lin.Emea.Arm.com [10.4.12.131])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 190763F5BD;
+        Thu, 20 Sep 2018 04:54:47 -0700 (PDT)
+Subject: Re: [PATCH 04/13] iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB mode
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Daniel Kurtz <djkurtz@google.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, arnd@arndb.de,
+        yingjoe.chen@mediatek.com
+References: <1535954502-30646-1-git-send-email-yong.wu@mediatek.com>
+ <1535954502-30646-5-git-send-email-yong.wu@mediatek.com>
+ <1537422870.17684.1.camel@mhfsdcap03>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <36caefde-066b-1e37-2251-d932a6a15a9a@arm.com>
+Date:   Thu, 20 Sep 2018 12:54:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
- <20180916153237.GC15699@rapoport-lnx> <CAOuPNLj0HyC+yzwTpN-EWpzHTJ58u7pBfOja1MyweF4pbct1eQ@mail.gmail.com>
- <20180917043724.GA12866@rapoport-lnx> <CAOuPNLidXFHgkBmwOPj_xFkU_OpLaXbpJg04Le7MPxu8cYg_RQ@mail.gmail.com>
- <CAOuPNLj+4pMnEy5EyZmzDWszqMb_PQb3q7t_hvG_50BTz1He2Q@mail.gmail.com> <20180917145936.GA20945@rapoport-lnx>
-In-Reply-To: <20180917145936.GA20945@rapoport-lnx>
-From:   Pintu Kumar <pintu.ping@gmail.com>
-Date:   Thu, 20 Sep 2018 17:21:20 +0530
-Message-ID: <CAOuPNLiqntJspBgAyP4OSEiajbg1mWmeFBb6j4akPp-OULQpUw@mail.gmail.com>
-Subject: Re: KSM not working in 4.9 Kernel
-To:     rppt@linux.vnet.ibm.com
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1537422870.17684.1.camel@mhfsdcap03>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 20/09/18 06:54, Yong Wu wrote:
+> Hi Robin,
+> 
+>     Could you help take a look at this patch since I changed the v7s
+> here?
+>     Thanks.
 
-Thank you so much for all your reply so far.
-I have few more doubts to understand the output from ksm sysfs.
-Device: Hikey620 - ARM64 - Linux 4.9.20
-With HUGE page enabled:
-CONFIG_TRANSPARENT_HUGEPAGE=y
-CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=y
-# CONFIG_TRANSPARENT_HUGEPAGE_MADVISE is not set
-
-Currently, I get this output, when I run below program with ksm:
-
-~ # grep -H '' /sys/kernel/mm/ksm/*
-/sys/kernel/mm/ksm/full_scans:29
-/sys/kernel/mm/ksm/page_comparisons:39584
-/sys/kernel/mm/ksm/pages_hashed:11672
-/sys/kernel/mm/ksm/pages_scanned:21766
-/sys/kernel/mm/ksm/pages_shared:3
-/sys/kernel/mm/ksm/pages_sharing:10097
-/sys/kernel/mm/ksm/pages_to_scan:200
-/sys/kernel/mm/ksm/pages_unshared:53
-/sys/kernel/mm/ksm/pages_volatile:1
-/sys/kernel/mm/ksm/run:0
-/sys/kernel/mm/ksm/sleep_millisecs:1000
----------------------------
-
-int main(int argc, char *argv[])
-{
-        int i, n, size, ret;
-        char *buffer;
-        void *addr;
-
-        n = 100;
-        size = 100 * getpagesize();
-        for (i = 0; i < n; i++) {
-                buffer = (char *)malloc(size);
-                memset(buffer, 0xff, size);
-                madvise(buffer, size, MADV_MERGEABLE);
-                if (ret < 0) {
-                        fprintf(stderr, "malloc madvise failed: ret:
-%d, reason: %s\n", ret, strerror(errno));
-                }
-                usleep(500);
-        }
-        printf("Done....press ^C\n");
-        pause();
-        return 0;
-}
-Note: madvise() system call is not failing here, as mentioned earlier.
-I guess the page is aligned with getpagesize().
-Then I do this to invoke ksm:
-# echo 1 > /sys/kernel/mm/ksm/run
-# ./malloc-test.out &
-# sleep 5
-# echo 0 > /sys/kernel/mm/ksm/run
-#
-
-Also, the anon pages in the system shows like this:
-BEFORE:
--------------
-~ # cat /proc/meminfo | grep -i anon
-Active(anon):      40740 kB
-Inactive(anon):        0 kB
-AnonPages:         40760 kB
-AnonHugePages:         0 kB
-
-AFTER MERGING:
---------------------------
-~ # cat /proc/meminfo | grep -i anon
-Active(anon):        440 kB
-Inactive(anon):        0 kB
-AnonPages:           188 kB
-AnonHugePages:         0 kB
-
-I want to understand the KSM output w.r.t to the above program, and
-cross-check if the output is correct.
-Can someone help me to understand it?
-
-As of now, what I understood is that:
-- I am allocating around 400KB of memory 100 times. That is: 100 * 100
-* 4K = 10000 pages (which are all with similar content).
-- Output says: 10097 page_sharing happened.
-- Pages currently shared is: 3
-- So total pages are: 10097 + 3 = 10100
-
-I could not understand from where the additional 100 pages came from?
-Also, why some pages are shown as: pages_unshared ?
-What can I interpret from this?
-And, what does it mean by: pages_volatile:1 ?
-
-Basically, I wanted to understand, is there any problem with the above
-output, or it is fine.
-If it is fine, how to prove it?
-
-
+Sorry, I did have a very quick skim through this series when it landed 
+in my inbox but I've not yet found the chance to go through it properly. 
+Since I am actually back doing io-pgtable stuff right now, I'll take a 
+look shortly.
 
 Thanks,
-Pintu
+Robin.
 
-On Mon, Sep 17, 2018 at 8:29 PM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
->
-> On Mon, Sep 17, 2018 at 05:25:27PM +0530, Pintu Kumar wrote:
-> > On Mon, Sep 17, 2018 at 11:46 AM Pintu Kumar <pintu.ping@gmail.com> wrote:
-> > > > > But still no effect.
-> > > > > And I checked LTP test cases. It almost doing the same thing.
-> > > > >
-> > > > > I observed that [ksmd] thread is not waking up at all.
-> > > > > I gave some print inside it, but I could never saw that prints coming.
-> > > > > I could not find it running either in top command during the operation.
-> > > > > Is there anything needs to be done, to wakw up ksmd?
-> > > > > I already set: echo 1 > /sys/kernel/mm/ksm.
-> > > >
-> > > > It should be echo 1 > /sys/kernel/mm/ksm/run
-> > > >
-> > >
-> > > Oh yes, sorry for the typo.
-> > > I tried the same, but still ksm is not getting invoked.
-> > > Could someone confirm if KSM was working in 4.9 kernel?
-> > >
-> >
-> > Ok, it's working now. I have to explicitly stop the ksm thread to see
-> > the statistics.
-> > Also there was some internal patch that was setting vm_flags to
-> > VM_MERGABLE thus causing ksm_advise call to return.
-> >
-> > # echo 1 > /sys/kernel/mm/ksm/run
-> > # ./malloc-test.out &
-> > # echo 0 > /sys/kernel/mm/ksm/run
-> >
-> > ~ # grep -H '' /sys/kernel/mm/ksm/*
-> > /sys/kernel/mm/ksm/full_scans:105
-> > /sys/kernel/mm/ksm/pages_shared:1
-> > /sys/kernel/mm/ksm/pages_sharing:999
-> > /sys/kernel/mm/ksm/pages_to_scan:100
-> > /sys/kernel/mm/ksm/pages_unshared:0
-> > /sys/kernel/mm/ksm/pages_volatile:0
-> > /sys/kernel/mm/ksm/run:0
-> > /sys/kernel/mm/ksm/sleep_millisecs:20
-> >
-> >
-> > However, I have one doubt.
-> > Is the above data correct, for the below program?
->
-> You have 1 shared page and 999 additional references to that page
->
-> > int main(int argc, char *argv[])
-> > {
-> >         int i, n, size, ret;
-> >         char *buffer;
-> >         void *addr;
-> >
-> >         n = 10;
-> >         size = 100 * getpagesize();
-> >         for (i = 0; i < n; i++) {
-> >                 buffer = (char *)malloc(size);
-> >                 memset(buffer, 0xff, size);
-> >                 madvise(buffer, size, MADV_MERGEABLE);o
->
-> This madvise() call should fail because buffer won't be page aligned
->
-> >                 addr =  mmap(NULL, size,
-> >                            PROT_READ | PROT_EXEC | PROT_WRITE,
-> > MAP_PRIVATE | MAP_ANONYMOUS,
-> >                            -1, 0);
-> >                 memset(addr, 0xff, size);
-> >                 ret = madvise(addr, size, MADV_MERGEABLE);
-> >                 if (ret < 0) {
-> >                         fprintf(stderr, "madvise failed: ret: %d,
-> > reason: %s\n", ret, strerror(errno));
-> >                 }
-> >                 usleep(500);
-> >         }
-> >         printf("Done....press ^C\n");
-> >
-> >         pause();
-> >
-> >         return 0;
-> > }
-> >
-> >
-> > Thanks,
-> > Pintu
-> >
->
-> --
-> Sincerely yours,
-> Mike.
->
+> On Mon, 2018-09-03 at 14:01 +0800, Yong Wu wrote:
+>> MediaTek extend the arm v7s descriptor to support the dram over 4GB.
+>>
+>> In the mt2712 and mt8173, it's called "4GB mode", the physical address
+>> is from 0x4000_0000 to 0x1_3fff_ffff, but from EMI point of view, it
+>> is remapped to high address from 0x1_0000_0000 to 0x1_ffff_ffff, the
+>> bit32 is always enabled. thus, in the M4U, we always enable the bit9
+>> for all PTEs which means to enable bit32 of physical address.
+>>
+>> but in mt8183, M4U support the dram from 0x4000_0000 to 0x3_ffff_ffff
+>> which isn't remaped. We extend the PTEs: the bit9 represent bit32 of
+>> PA and the bit4 represent bit33 of PA. Meanwhile the iova still is
+>> 32bits.
+>>
+>> In order to unify code, in the "4GB mode", we add the bit32 for the
+>> physical address manually in our driver.
+>>
+>> Correspondingly, Adding bit32 and bit33 for the PA in the iova_to_phys
+>> has to been moved into v7s.
+>>
+>> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+>> ---
+>> In mt8183, the PA is from 0x4000_0000 to 0x3_ffff_ffff while the iova
+>> still is 32bits. Acturally, our HW extend the v7s pgtable. currently
+>> the lvl1 pgtable is 16KB, our HW double it. but 32bit iova is enough
+>> for us currently, thus we don't change it.
+>> ---
+>>   drivers/iommu/io-pgtable-arm-v7s.c | 38 ++++++++++++++++++++++++++++++--------
+>>   drivers/iommu/io-pgtable.h         |  8 ++++----
+>>   drivers/iommu/mtk_iommu.c          | 15 +++++++++------
+>>   drivers/iommu/mtk_iommu.h          |  1 +
+>>   4 files changed, 44 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+>> index b5948ba..47538dd 100644
+>> --- a/drivers/iommu/io-pgtable-arm-v7s.c
+>> +++ b/drivers/iommu/io-pgtable-arm-v7s.c
+>> @@ -124,7 +124,9 @@
+>>   #define ARM_V7S_TEX_MASK		0x7
+>>   #define ARM_V7S_ATTR_TEX(val)		(((val) & ARM_V7S_TEX_MASK) << ARM_V7S_TEX_SHIFT)
+>>   
+>> -#define ARM_V7S_ATTR_MTK_4GB		BIT(9) /* MTK extend it for 4GB mode */
+>> +/* MTK extend the two bits below for over 4GB mode */
+>> +#define ARM_V7S_ATTR_MTK_PA_BIT32	BIT(9)
+>> +#define ARM_V7S_ATTR_MTK_PA_BIT33	BIT(4)
+>>   
+>>   /* *well, except for TEX on level 2 large pages, of course :( */
+>>   #define ARM_V7S_CONT_PAGE_TEX_SHIFT	6
+>> @@ -268,7 +270,8 @@ static void __arm_v7s_set_pte(arm_v7s_iopte *ptep, arm_v7s_iopte pte,
+>>   }
+>>   
+>>   static arm_v7s_iopte arm_v7s_prot_to_pte(int prot, int lvl,
+>> -					 struct io_pgtable_cfg *cfg)
+>> +					 struct io_pgtable_cfg *cfg,
+>> +					 phys_addr_t paddr) /* Only for MTK */
+>>   {
+>>   	bool ap = !(cfg->quirks & IO_PGTABLE_QUIRK_NO_PERMS);
+>>   	arm_v7s_iopte pte = ARM_V7S_ATTR_NG | ARM_V7S_ATTR_S;
+>> @@ -295,8 +298,12 @@ static arm_v7s_iopte arm_v7s_prot_to_pte(int prot, int lvl,
+>>   	if (lvl == 1 && (cfg->quirks & IO_PGTABLE_QUIRK_ARM_NS))
+>>   		pte |= ARM_V7S_ATTR_NS_SECTION;
+>>   
+>> -	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB)
+>> -		pte |= ARM_V7S_ATTR_MTK_4GB;
+>> +	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB) {
+>> +		if (paddr & BIT_ULL(32))
+>> +			pte |= ARM_V7S_ATTR_MTK_PA_BIT32;
+>> +		if (paddr & BIT_ULL(33))
+>> +			pte |= ARM_V7S_ATTR_MTK_PA_BIT33;
+>> +	}
+>>   
+>>   	return pte;
+>>   }
+>> @@ -392,7 +399,7 @@ static int arm_v7s_init_pte(struct arm_v7s_io_pgtable *data,
+>>   			return -EEXIST;
+>>   		}
+>>   
+>> -	pte = arm_v7s_prot_to_pte(prot, lvl, cfg);
+>> +	pte = arm_v7s_prot_to_pte(prot, lvl, cfg, paddr);
+>>   	if (num_entries > 1)
+>>   		pte = arm_v7s_pte_to_cont(pte, lvl);
+>>   
+>> @@ -484,7 +491,11 @@ static int arm_v7s_map(struct io_pgtable_ops *ops, unsigned long iova,
+>>   	if (!(prot & (IOMMU_READ | IOMMU_WRITE)))
+>>   		return 0;
+>>   
+>> -	if (WARN_ON(upper_32_bits(iova) || upper_32_bits(paddr)))
+>> +	if (WARN_ON(upper_32_bits(iova)))
+>> +		return -ERANGE;
+>> +
+>> +	if (WARN_ON(upper_32_bits(paddr) &&
+>> +		    !(iop->cfg.quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB)))
+>>   		return -ERANGE;
+>>   
+>>   	ret = __arm_v7s_map(data, iova, paddr, size, prot, 1, data->pgd);
+>> @@ -563,7 +574,7 @@ static size_t arm_v7s_split_blk_unmap(struct arm_v7s_io_pgtable *data,
+>>   	num_entries = size >> ARM_V7S_LVL_SHIFT(2);
+>>   	unmap_idx = ARM_V7S_LVL_IDX(iova, 2);
+>>   
+>> -	pte = arm_v7s_prot_to_pte(arm_v7s_pte_to_prot(blk_pte, 1), 2, cfg);
+>> +	pte = arm_v7s_prot_to_pte(arm_v7s_pte_to_prot(blk_pte, 1), 2, cfg, 0);
+>>   	if (num_entries > 1)
+>>   		pte = arm_v7s_pte_to_cont(pte, 2);
+>>   
+>> @@ -677,7 +688,9 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
+>>   					unsigned long iova)
+>>   {
+>>   	struct arm_v7s_io_pgtable *data = io_pgtable_ops_to_data(ops);
+>> +	struct io_pgtable_cfg *cfg = &data->iop.cfg;
+>>   	arm_v7s_iopte *ptep = data->pgd, pte;
+>> +	phys_addr_t paddr;
+>>   	int lvl = 0;
+>>   	u32 mask;
+>>   
+>> @@ -693,7 +706,16 @@ static phys_addr_t arm_v7s_iova_to_phys(struct io_pgtable_ops *ops,
+>>   	mask = ARM_V7S_LVL_MASK(lvl);
+>>   	if (arm_v7s_pte_is_cont(pte, lvl))
+>>   		mask *= ARM_V7S_CONT_PAGES;
+>> -	return (pte & mask) | (iova & ~mask);
+>> +	paddr = (pte & mask) | (iova & ~mask);
+>> +
+>> +	if (IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT) &&
+>> +	    cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB) {
+>> +		if (pte & ARM_V7S_ATTR_MTK_PA_BIT32)
+>> +			paddr |= BIT_ULL(32);
+>> +		if (pte & ARM_V7S_ATTR_MTK_PA_BIT33)
+>> +			paddr |= BIT_ULL(33);
+>> +	}
+>> +	return paddr;
+>>   }
+>>   
+>>   static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
+>> diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
+>> index 2df7909..0eeed94 100644
+>> --- a/drivers/iommu/io-pgtable.h
+>> +++ b/drivers/iommu/io-pgtable.h
+>> @@ -62,10 +62,10 @@ struct io_pgtable_cfg {
+>>   	 *	(unmapped) entries but the hardware might do so anyway, perform
+>>   	 *	TLB maintenance when mapping as well as when unmapping.
+>>   	 *
+>> -	 * IO_PGTABLE_QUIRK_ARM_MTK_4GB: (ARM v7s format) Set bit 9 in all
+>> -	 *	PTEs, for Mediatek IOMMUs which treat it as a 33rd address bit
+>> -	 *	when the SoC is in "4GB mode" and they can only access the high
+>> -	 *	remap of DRAM (0x1_00000000 to 0x1_ffffffff).
+>> +	 * IO_PGTABLE_QUIRK_ARM_MTK_4GB: (ARM v7s format) Set bit 4 and 9 in all
+>> +	 *	PTEs, for Mediatek IOMMUs which treat it as the 33rd and 32rd
+>> +	 *	address bit when the SoC dram is over 4GB and they can access
+>> +	 *	the physical address from 0x4000_0000 to 0x3_ffff_ffff.
+>>   	 *
+>>   	 * IO_PGTABLE_QUIRK_NO_DMA: Guarantees that the tables will only ever
+>>   	 *	be accessed by a fully cache-coherent IOMMU or CPU (e.g. for a
+>> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+>> index c0e2da5..86bf647 100644
+>> --- a/drivers/iommu/mtk_iommu.c
+>> +++ b/drivers/iommu/mtk_iommu.c
+>> @@ -367,12 +367,17 @@ static int mtk_iommu_map(struct iommu_domain *domain, unsigned long iova,
+>>   			 phys_addr_t paddr, size_t size, int prot)
+>>   {
+>>   	struct mtk_iommu_domain *dom = to_mtk_domain(domain);
+>> +	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
+>>   	unsigned long flags;
+>>   	int ret;
+>>   
+>> +	if (IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT) &&
+>> +	    data->plat_data->has_4gb_mode &&
+>> +	    data->enable_4GB)
+>> +		paddr |= BIT_ULL(32);
+>> +
+>>   	spin_lock_irqsave(&dom->pgtlock, flags);
+>> -	ret = dom->iop->map(dom->iop, iova, paddr & DMA_BIT_MASK(32),
+>> -			    size, prot);
+>> +	ret = dom->iop->map(dom->iop, iova, paddr, size, prot);
+>>   	spin_unlock_irqrestore(&dom->pgtlock, flags);
+>>   
+>>   	return ret;
+>> @@ -401,7 +406,6 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
+>>   					  dma_addr_t iova)
+>>   {
+>>   	struct mtk_iommu_domain *dom = to_mtk_domain(domain);
+>> -	struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
+>>   	unsigned long flags;
+>>   	phys_addr_t pa;
+>>   
+>> @@ -409,9 +413,6 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct iommu_domain *domain,
+>>   	pa = dom->iop->iova_to_phys(dom->iop, iova);
+>>   	spin_unlock_irqrestore(&dom->pgtlock, flags);
+>>   
+>> -	if (data->enable_4GB)
+>> -		pa |= BIT_ULL(32);
+>> -
+>>   	return pa;
+>>   }
+>>   
+>> @@ -735,10 +736,12 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
+>>   
+>>   static const struct mtk_iommu_plat_data mt2712_data = {
+>>   	.m4u_plat = M4U_MT2712,
+>> +	.has_4gb_mode = true,
+>>   };
+>>   
+>>   static const struct mtk_iommu_plat_data mt8173_data = {
+>>   	.m4u_plat = M4U_MT8173,
+>> +	.has_4gb_mode = true,
+>>   };
+>>   
+>>   static const struct of_device_id mtk_iommu_of_ids[] = {
+>> diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
+>> index 333a0ef..a243047 100644
+>> --- a/drivers/iommu/mtk_iommu.h
+>> +++ b/drivers/iommu/mtk_iommu.h
+>> @@ -43,6 +43,7 @@ enum mtk_iommu_plat {
+>>   
+>>   struct mtk_iommu_plat_data {
+>>   	enum mtk_iommu_plat m4u_plat;
+>> +	bool has_4gb_mode;
+>>   };
+>>   
+>>   struct mtk_iommu_domain;
+> 
+> 
