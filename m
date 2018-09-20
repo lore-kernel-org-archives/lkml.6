@@ -2,267 +2,131 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1CEC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F5BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC01221522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:57:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC01221522
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 1402421523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:00:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="lkOd2vwO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1402421523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731624AbeITLjg (ORCPT
+        id S1731603AbeITLmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:39:36 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59619 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730172AbeITLjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:39:35 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 803D286FAB9AD;
-        Thu, 20 Sep 2018 13:57:50 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 20 Sep
- 2018 13:57:42 +0800
-Date:   Thu, 20 Sep 2018 13:55:43 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joerg Roedel <joro@8bytes.org>, <linux-doc@vger.kernel.org>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>,
-        "Hao Fang" <fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <iommu@lists.linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        <linux-crypto@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180920055543.GG207969@Turing-Arch-b>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180917014244.GA27596@redhat.com>
- <20180917083940.GE207969@Turing-Arch-b>
- <20180917123744.GA3605@redhat.com>
- <20180918060014.GF207969@Turing-Arch-b>
- <20180918130314.GA3500@redhat.com>
+        Thu, 20 Sep 2018 07:42:22 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:33962 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731240AbeITLmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 07:42:21 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 9D62F5C00AC;
+        Thu, 20 Sep 2018 08:00:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1537423237;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Yss7WDeE6N1JOpb05H6mEzme9tKsi5DrbdtsDlW0LMU=;
+        b=lkOd2vwO+pYMMeEm/grWR1HCxQhTuO0bUSWqUVHKbPaNNwxC6bM8lijxmJvzsGj4/COy5d
+        qPeeQsbnlxED6FmQTP6rPRTCuXrMJV+01nui8xsuVcB72Q+ttoJ6/TeJapL51KdwjsSGj3
+        qLS+ZyTaRXTxGWjS7FeiV08cZcNWq8Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180918130314.GA3500@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 19 Sep 2018 23:00:37 -0700
+From:   Stefan Agner <stefan@agner.ch>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
+In-Reply-To: <CANiq72kS_w7p3Xe9cDCjCA9j1u-zQ1-C4ZX7N8G+AbP4u7SG8w@mail.gmail.com>
+References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
+ <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com>
+ <20180918173428.GA21591@kroah.com>
+ <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
+ <20180919211458.GA8757@kroah.com>
+ <CANiq72kS_w7p3Xe9cDCjCA9j1u-zQ1-C4ZX7N8G+AbP4u7SG8w@mail.gmail.com>
+Message-ID: <6837090afde15cd5ee155dbfabb0d556@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 09:03:14AM -0400, Jerome Glisse wrote:
-> Date: Tue, 18 Sep 2018 09:03:14 -0400
-> From: Jerome Glisse <jglisse@redhat.com>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Kenneth Lee <nek.in.cn@gmail.com>, Alex Williamson
->  <alex.williamson@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>,
->  kvm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman
->  <gregkh@linuxfoundation.org>, Joerg Roedel <joro@8bytes.org>,
->  linux-doc@vger.kernel.org, Sanjay Kumar <sanjay.k.kumar@intel.com>, Hao
->  Fang <fanghao11@huawei.com>, linux-kernel@vger.kernel.org,
->  linuxarm@huawei.com, iommu@lists.linux-foundation.org, "David S . Miller"
->  <davem@davemloft.net>, linux-crypto@vger.kernel.org, Zhou Wang
->  <wangzhou1@hisilicon.com>, Philippe Ombredanne <pombredanne@nexb.com>,
->  Thomas Gleixner <tglx@linutronix.de>, Zaibo Xu <xuzaibo@huawei.com>,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>
-> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> User-Agent: Mutt/1.10.1 (2018-07-13)
-> Message-ID: <20180918130314.GA3500@redhat.com>
-> 
-> On Tue, Sep 18, 2018 at 02:00:14PM +0800, Kenneth Lee wrote:
-> > On Mon, Sep 17, 2018 at 08:37:45AM -0400, Jerome Glisse wrote:
-> > > On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
-> > > > On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
-> > > > > So i want to summarize issues i have as this threads have dig deep into
-> > > > > details. For this i would like to differentiate two cases first the easy
-> > > > > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
-> > > > 
-> > > > Thank you very much for the summary.
-> > > > 
-> > > > > In both cases your objectives as i understand them:
-> > > > > 
-> > > > > [R1]- expose a common user space API that make it easy to share boiler
-> > > > >       plate code accross many devices (discovering devices, opening
-> > > > >       device, creating context, creating command queue ...).
-> > > > > [R2]- try to share the device as much as possible up to device limits
-> > > > >       (number of independant queues the device has)
-> > > > > [R3]- minimize syscall by allowing user space to directly schedule on the
-> > > > >       device queue without a round trip to the kernel
-> > > > > 
-> > > > > I don't think i missed any.
-> > > > > 
-> > > > > 
-> > > > > (1) Device with SVA/SVM
-> > > > > 
-> > > > > For that case it is easy, you do not need to be in VFIO or part of any
-> > > > > thing specific in the kernel. There is no security risk (modulo bug in
-> > > > > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
-> > > > > to a device is just couple dozen lines of code.
-> > > > > 
-> > > > 
-> > > > This is right...logically. But the kernel has no clear definition about "Device
-> > > > with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
-> > > > boiler plate.
-> > > > 
-> > > > VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
-> > > > one. If we add that support within VFIO, which solve most of the problem of
-> > > > SVA/SVM, it will save a lot of work in the future.
-> > > 
-> > > You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
-> > > all do the SVA/SVM setup in couple dozen lines and i failed to see how it
-> > > would require any more than that in your case.
-> > > 
-> > > 
-> > > > I think this is the key confliction between us. So could Alex please say
-> > > > something here? If the VFIO is going to take this into its scope, we can try
-> > > > together to solve all the problem on the way. If it it is not, it is also
-> > > > simple, we can just go to another way to fulfill this part of requirements even
-> > > > we have to duplicate most of the code.
-> > > > 
-> > > > Another point I need to emphasis here: because we have to replace the hardware
-> > > > queue when fork, so it won't be very simple even in SVA/SVM case.
-> > > 
-> > > I am assuming hardware queue can only be setup by the kernel and thus
-> > > you are totaly safe forkwise as the queue is setup against a PASID and
-> > > the child does not bind to any PASID and you use VM_DONTCOPY on the
-> > > mmap of the hardware MMIO queue because you should really use that flag
-> > > for that.
-> > > 
-> > > 
-> > > > > (2) Device does not have SVA/SVM (or it is disabled)
-> > > > > 
-> > > > > You want to still allow device to be part of your framework. However
-> > > > > here i see fundamentals securities issues and you move the burden of
-> > > > > being careful to user space which i think is a bad idea. We should
-> > > > > never trus the userspace from kernel space.
-> > > > > 
-> > > > > To keep the same API for the user space code you want a 1:1 mapping
-> > > > > between device physical address and process virtual address (ie if
-> > > > > device access device physical address A it is accessing the same
-> > > > > memory as what is backing the virtual address A in the process.
-> > > > > 
-> > > > > Security issues are on two things:
-> > > > > [I1]- fork/exec, a process who opened any such device and created an
-> > > > >       active queue can transfer without its knowledge control of its
-> > > > >       commands queue through COW. The parent map some anonymous region
-> > > > >       to the device as a command queue buffer but because of COW the
-> > > > >       parent can be the first to copy on write and thus the child can
-> > > > >       inherit the original pages that are mapped to the hardware.
-> > > > >       Here parent lose control and child gain it.
-> > > > 
-> > > > This is indeed an issue. But it remains an issue only if you continue to use the
-> > > > queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
-> > > > user space.
-> > > 
-> > > Trusting user space is a no go from my point of view.
-> > 
-> > Can we dive deeper on this? Maybe we have different understanding on "Trusting
-> > user space". As my understanding, "trusting user space" means "no matter what
-> > the user process does, it should only hurt itself and anything give to it, no
-> > the kernel and the other process".
-> > 
-> > In our case, we create a channel between a process and the hardware. The process
-> > can do whateven it like to its own memory the channel itself. It won't hurt the
-> > other process and the kernel. And if the process fork a child and give the
-> > channel to the child, it should the freedom on those resource remain within the
-> > parent and the child. We are not trust another else.
-> > 
-> > So do you refer to something else here?
-> > 
-> 
-> I am refering to COW giving control to the child on to what happens
-> in the parent from device point of view. A process hurting itself is
-> fine, but if process now has to do special steps to protect from
-> its child ie make sure that its childs can not hurt it, then i see
-> that as a kernel bug. We can not ask user space process to know about
-> all the thousands things that needs to be done to avoid issues with
-> each device driver that the process may use (process can be totaly
-> ignorant it is using a device if that device is use by a library it
-> links to).
-> 
-> 
-> Maybe what needs to happen will explain it better. So if userspace
-> wants to be secure and protect itself from its child taking over the
-> device through COW:
-> 
->     - parent opened a device and is using it
-> 
->     ... when parent wants to fork/exec it must:
-> 
->     - parent _must_ flush device command queue and wait for the
->       device to finish all pending jobs
-> 
->     - parent _must_ unmap all range mapped to the device
-> 
->     - parent should first close device file (unless you force set
->       the CLOEXEC flag in the kernel)/it could also just flush
->       but if you are not mapping the device command queue with
->       VM_DONTCOPY then you should really be closing the device
-> 
->     - now parent can fork/exec
-> 
->     - parent must force COW ie write at least one byte to _all_
->       pages in the range it wants to use with the device
-> 
->     - parent re-open the device and re-initialize everything
-> 
-> 
-> So this is putting quite a burden on a number of steps the parent
-> _must_ do in order to keep control of memory exposed to the device.
-> Not doing so can potentialy lead (it depends on who does the COW
-> first) to the child taking control of memory use by the device,
-> memory which was mapped by the parent before the child was created.
-> 
-> Forcing CLOEXEC and VM_DONTCOPY somewhat help to simplify this,
-> but you still need to stop, flush, unmap, before fork/exec and then
-> re-init everything after.
-> 
-> 
-> This is only when not using SVA/SVM, SVA/SVM is totaly fine from
-> that point of view, no issues whatsoever.
-> 
-> The solution i outlined in previous email do not have that above
-> issue either, no need to rely on user space doing that dance.
+On 19.09.2018 16:00, Miguel Ojeda wrote:
+> On Wed, Sep 19, 2018 at 11:14 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>> On Tue, Sep 18, 2018 at 08:56:04PM +0200, Miguel Ojeda wrote:
+>>> Hi Greg,
+>>>
+>>
+>>> Since Linus/Andrew/you
+>>> didn't comment on whether you wanted or not this for 4.19, we are
+>>> assuming they would go in for 4.20. However, Stefan/Nick/... wanted
+>>> this for 4.19 instead, they asked me to extract these patches two
+>>> separately for 4.19. I let them comment further on the status of Clang
+>>> on arm32.
+>>
+>> If these do not fix a regression, I don't see how they would be ready
+>> for 4.19-final.
 
-Thank you. I get the point. I'm now trying to see if I can solve the problem by
-seting the vma to VM_SHARED when the portiong is "shared to the hardware".
+Clang on arm32 worked with v4.18 when using multi_v7_defconfig -CONFIG_EFI.
 
+With 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually
+exclusive") it broke on v4.19-rc1. IMHO this is a regression and we should
+consider this two patches as a fix for it.
+
+
+> 
+> Ok, I will wait a bit to send v5 until this is sorted out.
+> 
+> [CC'd Nick, Stefan, Arnd: I just noticed the Reviewed-by/... lines
+> were not picked as CC].
+
+Oh yeah thanks, really did not notice the discussion around v2 until
+you CC'd me now.
+
+--
+Stefan
+
+> 
+>>
+>>> I am going to send a v5 of the entire series without these two
+>>> patches, based on -rc4 (or -next, which one do you prefer? I would say
+>>> these patches should be applied early in the -next branches, so that
+>>> everyone is ready for the change, given it "touches" every translation
+>>> unit).
+>>
+>> That's up to whomever takes these into their tree for linux-next
+>> inclusion.  If you are about to break everything, then you might
+>> consider changing your patches so they do not do that :)
+>>
+> 
+> Well, the series shouldn't break anything (famous last words :), even
+> if everyone includes those headers. So, in theory, they *could* be
+> applied anywhere, anytime; but given they are global changes...
 > 
 > Cheers,
-> Jérôme
-
--- 
-			-Kenneth(Hisilicon)
-
-================================================================================
-本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
-止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
-的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
-This e-mail and its attachments contain confidential information from HUAWEI,
-which is intended only for the person or entity whose address is listed above.
-Any use of the 
-information contained herein in any way (including, but not limited to, total or
-partial disclosure, reproduction, or dissemination) by persons other than the
-intended 
-recipient(s) is prohibited. If you receive this e-mail in error, please notify
-the sender by phone or email immediately and delete it!
-
+> Miguel
