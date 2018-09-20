@@ -2,114 +2,120 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92051ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2D9ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A4A21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F306C21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:18:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jOekZOYr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A4A21525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FGYfmzvF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F306C21525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725901AbeIUEC7 (ORCPT
+        id S1726023AbeIUEDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:02:59 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35843 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725759AbeIUEC7 (ORCPT
+        Fri, 21 Sep 2018 00:03:52 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46236 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUEDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:02:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e1-v6so10933704wrt.3;
-        Thu, 20 Sep 2018 15:17:18 -0700 (PDT)
+        Fri, 21 Sep 2018 00:03:51 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u24-v6so4994542pfn.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:18:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4tAnAbHRm0su3LRGAwzwYznQMEOxM6N+/bf16rgWa8Y=;
-        b=jOekZOYr0z9bJB8IvmrLK8yGO/Ax7MX7GqBHhSoj3Sm3sTQ2FXmCaSBv2MspRDZIFY
-         rgMlc9BOvX8cwHg0nD+9OOPmZeBUVY7b9NJdAKn415h7gbKbXDELjmVreX2gB3OHtr4n
-         Y1SE9zlbI/40T+JAjz6Xp/OZaLwrGiVMf5HHauiioz5KfY/fE9XoizAmIbxBbXgvAe2B
-         XxA2Roudgmj37fm4sG0TiDmwthfCjSNxrmik1PCaY5FovSVi3qbz0uPRgAl67bjVdNnH
-         VMKRZfPRmFa5j974Timi0qFQvddYEr0YdYg9XqTCe7FyWGl3gRJSop4hFI/7gduKgqtb
-         NwtQ==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=xun1qhtcz3roZQ5ZYvX/52eo5NgWPzZ45l7HSlcN5aU=;
+        b=FGYfmzvFy9DgkCWfRyKRrD6HQl2IvJ3Qa2tvE2OcldLACoyyu1GnNlicrUhSL0zYDf
+         /gt9w//ZGwizr+ySZu/+96C9zCHUmfj8TZNcXOuBY6cGxFH+oItruelXKbCYBqJ3GSNm
+         ENzFP6aaoXfcFsda/ZkoM070eyvLyn0iN2b6E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4tAnAbHRm0su3LRGAwzwYznQMEOxM6N+/bf16rgWa8Y=;
-        b=d1T6o/VWgMq/B4LT3QGirpK8ebkoP3rQz8t+M0xAVVoFGBI0O7P47u+Ip9aIT0i+Gw
-         T9jY7/C6NAsj9/XGWTlcDgWb+m1l5v9yy4T9a47AXOLcK6pEs0dO86ctGX0qxYjU2K9G
-         6Zp5gpQYGlNAhubofIyPxEWQ72dl7QHL/G3BAbs9oif7rZgPXAV5p7SF5Yy6HA6fKzfK
-         elkg12rWwKpAnglhgTNMr+TWVkaAM/WLO4iB+aXreN0yPzm0tgHACC58A73xzzMSBb0r
-         ZTkTKEVlnoMUeNGP9y8Zy9Qny+5VYotNUcoHHsRVlsbu8QErD2mjZGPyCr+8g71hr3eT
-         B3hA==
-X-Gm-Message-State: APzg51A7t5kFyuM6UfkjZaz0Flizj7fdnomCNurgyYjvsZawNwa3sOPb
-        Ai66HqgAvCf5sK5Iuo857sY=
-X-Google-Smtp-Source: ANB0VdazF3X8Fzrx9q5ZNG9r3oHxZgvVgZ++hXJgoz/i7hn5tQ1JxlVI2KhVvgQnbDtIBZT29ub9YA==
-X-Received: by 2002:adf:ba12:: with SMTP id o18-v6mr34552029wrg.249.1537481837532;
-        Thu, 20 Sep 2018 15:17:17 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id k34-v6sm32839167wre.18.2018.09.20.15.17.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 15:17:16 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     qla2xxx-upstream@qlogic.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: qla2xxx: Remove unnecessary self assignment
-Date:   Thu, 20 Sep 2018 15:17:06 -0700
-Message-Id: <20180920221706.4948-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=xun1qhtcz3roZQ5ZYvX/52eo5NgWPzZ45l7HSlcN5aU=;
+        b=Dguz5P/pwpx+Ad5uWdr4kJ5u1wm43d9IKpsmvh2+9H59d4+MB7vg6fl43hecIVCUIz
+         WLJZ/7yriVvbMr/1BbqX8ufwjkXpZI71p26TNKBOcD6scamFTpclon9lFyLidIDgJ/fi
+         /0AbNqB/+X5FBvgjiXLQDSWvIqhxIg8n6fHlFDEdbqamKkUx4WdcwqCqD6pXGe8js7dL
+         gX0gwvCMBx+Z5SSPJFtOoX6wKiZKWoHQQ+cV1s51k63pu4+EgUPfsJvEKozgWwZEDD4J
+         NocBXpX9u9wVDpo36A8p5HP9QKme6AeK5MqhPPE9B7kalHbX0qZedr2UULSNCLkJwpuY
+         QRvQ==
+X-Gm-Message-State: APzg51D5beDTr+M39RWNhw5/5glRKlMaUGTE5wP0hkfKDgaxsWuPY4ub
+        hdzpbpXyeRFoiC6YfR4ntsV3iV7lBzQ=
+X-Google-Smtp-Source: ANB0VdbV2j8hofSRq9FP6qLdKAhDCINx0khgbh5O3FGwUzFnUnT7pED/tOqNFF1AGPv/LUI4/HD3MA==
+X-Received: by 2002:a63:c046:: with SMTP id z6-v6mr38775962pgi.114.1537481890799;
+        Thu, 20 Sep 2018 15:18:10 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id j187-v6sm3949294pfg.108.2018.09.20.15.18.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 15:18:09 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     Doug Anderson <dianders@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <CAD=FV=U=r0nkT+JO2j4WUHF03ZiJcmaVrzL6dsauDHV=a2m3tQ@mail.gmail.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Girish Mahadevan <girishm@codeaurora.org>
+References: <20180920180323.217377-1-swboyd@chromium.org>
+ <20180920180323.217377-3-swboyd@chromium.org>
+ <CAD=FV=U=r0nkT+JO2j4WUHF03ZiJcmaVrzL6dsauDHV=a2m3tQ@mail.gmail.com>
+Message-ID: <153748188889.119890.3818754688788845202@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 2/2] i2c: i2c-qcom-geni: Simplify tx/rx functions
+Date:   Thu, 20 Sep 2018 15:18:08 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when a variable is assigned to itself.
+Quoting Doug Anderson (2018-09-20 13:22:37)
+> Hi,
+> On Thu, Sep 20, 2018 at 11:03 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > We never really look at the 'ret' local variable in these functions, so
+> > let's remove it to make way for shorter and simpler code. Furthermore,
+> > we can shorten some lines by adding two local variables for the SE and
+> > the message length so that everything fits in 80 columns. And kernel
+> > style is to leave the return statement by itself, detached from the rest
+> > of the function.
+> >
+> > Cc: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
+> > Cc: Sagar Dharia <sdharia@codeaurora.org>
+> > Cc: Girish Mahadevan <girishm@codeaurora.org>
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> > ---
+> >  drivers/i2c/busses/i2c-qcom-geni.c | 54 ++++++++++++++----------------
+> >  1 file changed, 25 insertions(+), 29 deletions(-)
+> =
 
-drivers/scsi/qla2xxx/qla_mbx.c:1514:4: warning: explicitly assigning
-value of variable of type 'uint64_t' (aka 'unsigned long long') to
-itself [-Wself-assign]
-        l = l;
-        ~ ^ ~
-1 warning generated.
+> I didn't hate the old code, but you're right that this looks a little bet=
+ter.
+> =
 
-This construct is usually used to avoid unused variable warnings, which
-I assume is the case here. -Wunused-parameter is hidden behind -Wextra
-with GCC 4.6, which is the minimum version to compile the kernel as of
-commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6").
-Just remove this line to silence Clang.
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> =
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/83
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/scsi/qla2xxx/qla_mbx.c | 1 -
- 1 file changed, 1 deletion(-)
+> NOTE: now that you're cleaning it up, I'd personally go even further
+> and totally get rid of the "mode" local variable.  Basically, just:
+> =
 
-diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
-index e016ee9c6d8e..f801aae84cef 100644
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -1511,7 +1511,6 @@ qla2x00_abort_target(struct fc_port *fcport, uint64_t l, int tag)
- 	struct req_que *req;
- 	struct rsp_que *rsp;
- 
--	l = l;
- 	vha = fcport->vha;
- 
- 	ql_dbg(ql_dbg_mbx + ql_dbg_verbose, vha, 0x103e,
--- 
-2.19.0
+> dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
+> if (dma_buf)
+>   geni_se_select_mode(se, GENI_SE_DMA);
+> else
+>   geni_se_select_mode(se, GENI_SE_FIFO);
+
+Sure that's fine. I'll resend this one patch with that squashed in.
 
