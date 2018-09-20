@@ -2,120 +2,87 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5794BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F81DECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A9921524
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:59:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A9921524
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9040D21521
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:09:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9040D21521
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732816AbeITHkH (ORCPT
+        id S1732784AbeITHun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 03:40:07 -0400
-Received: from mga03.intel.com ([134.134.136.65]:33655 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbeITHkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 03:40:07 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 18:59:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,396,1531810800"; 
-   d="scan'208";a="265074941"
-Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Sep 2018 18:59:18 -0700
-Date:   Thu, 20 Sep 2018 09:56:44 +0800
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        chao.p.peng@intel.com, chao.gao@intel.com,
-        isaku.yamahata@intel.com, michael.h.kelly@microsoft.com,
-        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: Re: [PATCH v1 2/3] locking/pvqspinlock, hv: Enable PV qspinlock for
- Hyper-V
-Message-ID: <20180920015644.GE11769@yi.y.sun>
-References: <1536830005-37260-1-git-send-email-yi.y.sun@linux.intel.com>
- <1536830005-37260-3-git-send-email-yi.y.sun@linux.intel.com>
- <alpine.DEB.2.21.1809131307110.1473@nanos.tec.linutronix.de>
- <20180914090440.GB11769@yi.y.sun>
- <alpine.DEB.2.21.1809141232260.1473@nanos.tec.linutronix.de>
- <20180917125452.GC11769@yi.y.sun>
+        Thu, 20 Sep 2018 03:50:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12215 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725914AbeITHum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 03:50:42 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3641D244FBED3;
+        Thu, 20 Sep 2018 10:09:50 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 20 Sep 2018 10:08:26 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <mpe@ellerman.id.au>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: toshiba: remove a redundant local variable 'index_specified'
+Date:   Thu, 20 Sep 2018 09:56:05 +0800
+Message-ID: <1537408565-22315-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180917125452.GC11769@yi.y.sun>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, 
+The local variable 'index_specified' is never used after being assigned.
+hence it should be redundant adn can be removed.
 
-On 18-09-17 20:54:52, Yi Sun wrote:
-> On 18-09-14 12:42:33, Thomas Gleixner wrote:
-> > On Fri, 14 Sep 2018, Yi Sun wrote:
-> > > > > +static void hv_notify_long_spin_wait(void)
-> > > > > +{
-> > > > > +	u64 input = spin_wait_info | 0x00000000ffffffff;
-> > > > 
-> > > > What? The result is always 0x00000000ffffffff .....
-> > > > 
-> > > Oh, sorry for such error.
-> > > 
-> > > > > +	spin_wait_info++;
-> > > > > +	hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT, input);
-> > > > > +}
-> > > > > +
-> > > > > +static void hv_qlock_kick(int cpu)
-> > > > > +{
-> > > > > +	spin_wait_info--;
-> > > > 
-> > > > Looking at the above this is completely pointless and I have no idea what
-> > > > that variable is supposed to do.
-> > > > 
-> > > Per Microsoft Hypervisor Top Level Functional Specification, the input
-> > > parameter of HVCALL_NOTIFY_LONG_SPIN_WAIT is defined as below:
-> > > 
-> > > SpinwaitInfo – Specifies the accumulated count the guest was spinning.
-> > > 
-> > > So, it is increased when guest is spinning and reduced when spinlock is
-> > > released.
-> > 
-> > But that's a global variable, so it might be incremented and decremented by
-> > several CPUs at once. I don't have the spec and have no time to study it
-> > either, but global does not make any sense to me. The spin wait info comes
-> > from a single guest CPU and the wakeup is targeted at that guest CPU as
-> > well. So why global? It might be defined that way, but then you really want
-> > to explain it proper.
-> > 
-> > Thanks,
-> > 
-> > 	tglx
-> > 
-> Let me check this more. Will reply to you later. Thanks!
-> 
-> BRs,
-> Yi Sun
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/net/ethernet/toshiba/ps3_gelic_wireless.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-I have got the details from Microsoft.
+diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c b/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c
+index 302079e..00ab417 100644
+--- a/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c
++++ b/drivers/net/ethernet/toshiba/ps3_gelic_wireless.c
+@@ -1094,7 +1094,7 @@ static int gelic_wl_get_encode(struct net_device *netdev,
+ 	struct gelic_wl_info *wl = port_wl(netdev_priv(netdev));
+ 	struct iw_point *enc = &data->encoding;
+ 	unsigned long irqflag;
+-	unsigned int key_index, index_specified;
++	unsigned int key_index;
+ 	int ret = 0;
+ 
+ 	pr_debug("%s: <-\n", __func__);
+@@ -1105,13 +1105,10 @@ static int gelic_wl_get_encode(struct net_device *netdev,
+ 		return -EINVAL;
+ 
+ 	spin_lock_irqsave(&wl->lock, irqflag);
+-	if (key_index) {
+-		index_specified = 1;
++	if (key_index)
+ 		key_index--;
+-	} else {
+-		index_specified = 0;
++	else
+ 		key_index = wl->current_key;
+-	}
+ 
+ 	if (wl->group_cipher_method == GELIC_WL_CIPHER_WEP) {
+ 		switch (wl->auth_method) {
+-- 
+1.7.12.4
 
-Notify_Long_Spin_Wait hypercall should be called after a specific times
-spinning which can be got through CPUID. When hypervisor receives this,
-it will try to ensure that all vcpus are scheduled. 
-
-Notify_Long_Spin_Wait is a standalone feature which should be split out
-as a new patch set.
-
-So I would like split it into a new patch set and submit it after PV
-Hyper-V Spinlock patch set merged.
