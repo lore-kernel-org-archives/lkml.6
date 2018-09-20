@@ -2,105 +2,234 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C00C5C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B694ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C8D21524
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:14:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C8D21524
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 996A02146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:16:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 996A02146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbeITL4V (ORCPT
+        id S1731851AbeITL6S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:56:21 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59089 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725725AbeITL4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:56:21 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A91996B067AA4;
-        Thu, 20 Sep 2018 14:14:28 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
- 14:14:26 +0800
-Subject: Re: [f2fs-dev] [PATCH 1/2 v2] f2fs: report ENOENT correct in
- f2fs_rename
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180918021805.85032-1-jaegeuk@kernel.org>
- <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <740d4c02-0fdd-d9bb-2079-2cb0947bf581@huawei.com>
-Date:   Thu, 20 Sep 2018 14:14:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        Thu, 20 Sep 2018 07:58:18 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:43435 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725725AbeITL6S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 07:58:18 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2F896C000D;
+        Thu, 20 Sep 2018 06:16:22 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v7 11/11] hugetlb: Introduce generic version of huge_ptep_get
+Date:   Thu, 20 Sep 2018 06:03:58 +0000
+Message-Id: <20180920060358.16606-12-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180920060358.16606-1-alex@ghiti.fr>
+References: <20180920060358.16606-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/20 6:50, Jaegeuk Kim wrote:
-> This fixes wrong error report in f2fs_rename.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
-> Change log from v1:
->  - cover rename2 case
-> 
->  fs/f2fs/namei.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 98d3ab7c3ce6..48f919469151 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -833,7 +833,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	struct f2fs_dir_entry *old_entry;
->  	struct f2fs_dir_entry *new_entry;
->  	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
-> -	int err = -ENOENT;
-> +	int err;
->  
->  	if (unlikely(f2fs_cp_error(sbi)))
->  		return -EIO;
-> @@ -854,6 +854,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	if (err)
->  		goto out;
->  
-> +	err = -ENOENT;
+ia64, mips, parisc, powerpc, sh, sparc, x86 architectures use the
+same version of huge_ptep_get, so move this generic implementation into
+asm-generic/hugetlb.h.
 
-It should be assigned after dquot_initialize(), otherwise, err's value can
-still be reset to 0 due to dquot_initialize().
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Tested-by: Helge Deller <deller@gmx.de> # parisc
+Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
+Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
+Acked-by: Ingo Molnar <mingo@kernel.org> # x86
+Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ arch/arm/include/asm/hugetlb-3level.h | 1 +
+ arch/arm64/include/asm/hugetlb.h      | 1 +
+ arch/ia64/include/asm/hugetlb.h       | 5 -----
+ arch/mips/include/asm/hugetlb.h       | 5 -----
+ arch/parisc/include/asm/hugetlb.h     | 5 -----
+ arch/powerpc/include/asm/hugetlb.h    | 5 -----
+ arch/sh/include/asm/hugetlb.h         | 5 -----
+ arch/sparc/include/asm/hugetlb.h      | 5 -----
+ arch/x86/include/asm/hugetlb.h        | 5 -----
+ include/asm-generic/hugetlb.h         | 7 +++++++
+ 10 files changed, 9 insertions(+), 35 deletions(-)
 
->  	if (new_inode) {
->  		err = dquot_initialize(new_inode);
->  		if (err)
-> @@ -1049,6 +1050,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	if (err)
->  		goto out;
->  
-> +	err = -ENOENT;
-
-We can remove err initialization like f2fs_rename()
-
-int err;
-
-Thanks,
-
->  	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
->  	if (!old_entry) {
->  		if (IS_ERR(old_page))
-> 
+diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
+index 54e4b097b1f5..0d9f3918fa7e 100644
+--- a/arch/arm/include/asm/hugetlb-3level.h
++++ b/arch/arm/include/asm/hugetlb-3level.h
+@@ -29,6 +29,7 @@
+  * ptes.
+  * (The valid bit is automatically cleared by set_pte_at for PROT_NONE ptes).
+  */
++#define __HAVE_ARCH_HUGE_PTEP_GET
+ static inline pte_t huge_ptep_get(pte_t *ptep)
+ {
+ 	pte_t retval = *ptep;
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 80887abcef7f..fb6609875455 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -20,6 +20,7 @@
+ 
+ #include <asm/page.h>
+ 
++#define __HAVE_ARCH_HUGE_PTEP_GET
+ static inline pte_t huge_ptep_get(pte_t *ptep)
+ {
+ 	return READ_ONCE(*ptep);
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index e9b42750fdf5..36cc0396b214 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -27,11 +27,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ {
+ }
+ 
+-static inline pte_t huge_ptep_get(pte_t *ptep)
+-{
+-	return *ptep;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index 120adc3b2ffd..425bb6fc3bda 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -82,11 +82,6 @@ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 	return changed;
+ }
+ 
+-static inline pte_t huge_ptep_get(pte_t *ptep)
+-{
+-	return *ptep;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index 165b4e5a6f32..7cb595dcb7d7 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -48,11 +48,6 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 					     unsigned long addr, pte_t *ptep,
+ 					     pte_t pte, int dirty);
+ 
+-static inline pte_t huge_ptep_get(pte_t *ptep)
+-{
+-	return *ptep;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index d4d9cf6cb846..383da1ab9e23 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -139,11 +139,6 @@ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 				      unsigned long addr, pte_t *ptep,
+ 				      pte_t pte, int dirty);
+ 
+-static inline pte_t huge_ptep_get(pte_t *ptep)
+-{
+-	return *ptep;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index c87195ae0cfa..6f025fe18146 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -32,11 +32,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ {
+ }
+ 
+-static inline pte_t huge_ptep_get(pte_t *ptep)
+-{
+-	return *ptep;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ 	clear_bit(PG_dcache_clean, &page->flags);
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index 028a1465fbe7..3963f80d1cb3 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -53,11 +53,6 @@ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ 	return changed;
+ }
+ 
+-static inline pte_t huge_ptep_get(pte_t *ptep)
+-{
+-	return *ptep;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 574d42eb081e..7469d321f072 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -13,11 +13,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
+-static inline pte_t huge_ptep_get(pte_t *ptep)
+-{
+-	return *ptep;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ }
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index f3c99a03ee83..71d7b77eea50 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -119,4 +119,11 @@ static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_HUGE_PTEP_GET
++static inline pte_t huge_ptep_get(pte_t *ptep)
++{
++	return *ptep;
++}
++#endif
++
+ #endif /* _ASM_GENERIC_HUGETLB_H */
+-- 
+2.16.2
 
