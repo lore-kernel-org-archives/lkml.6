@@ -3,183 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A19ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60207ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7144021529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:50:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7144021529
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 23CFB20858
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:50:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23CFB20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733299AbeITVe5 (ORCPT
+        id S2387791AbeITVfD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:34:57 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731135AbeITVe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:34:57 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C8587317C412;
-        Thu, 20 Sep 2018 15:50:50 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A19418A4C;
-        Thu, 20 Sep 2018 15:50:44 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 17:50:41 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v10 05/26] s390: vfio-ap: register matrix device with
- VFIO mdev framework
-Message-ID: <20180920175041.57ad867e.cohuck@redhat.com>
-In-Reply-To: <1536781396-13601-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1536781396-13601-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        Thu, 20 Sep 2018 17:35:03 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:45372 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731135AbeITVfC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 17:35:02 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8KFnbki021748;
+        Thu, 20 Sep 2018 17:50:36 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mgryfhccc-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 20 Sep 2018 17:50:36 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3D95D3A;
+        Thu, 20 Sep 2018 15:50:35 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E3DF75497;
+        Thu, 20 Sep 2018 15:50:34 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.47) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 20 Sep
+ 2018 17:50:34 +0200
+Subject: Re: [PATCH] ARM: dts: stm32: update SPI6 dmas property on stm32mp157c
+To:     Amelie Delaunay <amelie.delaunay@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1537171487-15191-1-git-send-email-amelie.delaunay@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <1efc3bad-cea0-95c4-078d-67463f2b9e6d@st.com>
+Date:   Thu, 20 Sep 2018 17:50:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 20 Sep 2018 15:50:51 +0000 (UTC)
+In-Reply-To: <1537171487-15191-1-git-send-email-amelie.delaunay@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_09:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018 15:42:55 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+Hi Amélie
 
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
+On 09/17/2018 10:04 AM, Amelie Delaunay wrote:
+> Remove unused parameter from SPI6 dmas property on stm32mp157c SoC.
 > 
-> Registers the matrix device created by the VFIO AP device
-> driver with the VFIO mediated device framework.
-> Registering the matrix device will create the sysfs
-> structures needed to create mediated matrix devices
-> each of which will be used to configure the AP matrix
-> for a guest and connect it to the VFIO AP device driver.
-> 
-> Registering the matrix device with the VFIO mediated device
-> framework will create the following sysfs structures:
-> 
-> /sys/devices/vfio_ap/matrix/
-> ...... [mdev_supported_types]
-> ......... [vfio_ap-passthrough]
-> ............ create
-> 
-> To create a mediated device for the AP matrix device, write a UUID
-> to the create file:
-> 
-> 	uuidgen > create
-> 
-> A symbolic link to the mediated device's directory will be created in the
-> devices subdirectory named after the generated $uuid:
-> 
-> /sys/devices/vfio_ap/matrix/
-> ...... [mdev_supported_types]
-> ......... [vfio_ap-passthrough]
-> ............ [devices]
-> ............... [$uuid]
-> 
-> A symbolic link to the mediated device will also be created
-> in the vfio_ap matrix's directory:
-> 
-> /sys/devices/vfio_ap/matrix/[$uuid]
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> Fixes: dc3f8c86c10d ("ARM: dts: stm32: add SPI support on stm32mp157c")
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
 > ---
->  MAINTAINERS                           |    1 +
->  drivers/s390/crypto/Makefile          |    2 +-
->  drivers/s390/crypto/vfio_ap_drv.c     |   19 +++++
->  drivers/s390/crypto/vfio_ap_ops.c     |  126 +++++++++++++++++++++++++++++++++
->  drivers/s390/crypto/vfio_ap_private.h |   49 +++++++++++++
->  include/uapi/linux/vfio.h             |    1 +
->  6 files changed, 197 insertions(+), 1 deletions(-)
->  create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+>   arch/arm/boot/dts/stm32mp157c.dtsi | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+> index 661be94..185541a 100644
+> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> @@ -1078,8 +1078,8 @@
+>   			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+>   			clocks = <&rcc SPI6_K>;
+>   			resets = <&rcc SPI6_R>;
+> -			dmas = <&mdma1 34 0x0 0x40008 0x0 0x0 0>,
+> -			       <&mdma1 35 0x0 0x40002 0x0 0x0 0>;
+> +			dmas = <&mdma1 34 0x0 0x40008 0x0 0x0>,
+> +			       <&mdma1 35 0x0 0x40002 0x0 0x0>;
+>   			dma-names = "rx", "tx";
+>   			status = "disabled";
+>   		};
+> 
 
-(...)
+Applied on stm32-next.
 
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> index 3e635f0..75f8bdc 100644
-> --- a/drivers/s390/crypto/vfio_ap_drv.c
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -76,6 +76,16 @@ static int vfio_ap_matrix_dev_create(void)
->  		goto matrix_alloc_err;
->  	}
->  
-> +	/* Test if PQAP(QCI) instruction is available */
-
-/* Fill in config info via PQAP(QCI), if available */
-
-?
-
-> +	if (test_facility(12)) {
-> +		ret = ap_qci(&matrix_dev->info);
-> +		if (ret)
-> +			goto matrix_alloc_err;
-> +	}
-> +
-> +	mutex_init(&matrix_dev->lock);
-> +	INIT_LIST_HEAD(&matrix_dev->mdev_list);
-> +
->  	matrix_dev->device.type = &vfio_ap_dev_type;
->  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
->  	matrix_dev->device.parent = root_device;
-
-(...)
-
-> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-> index 6141420..a2eab78 100644
-> --- a/drivers/s390/crypto/vfio_ap_private.h
-> +++ b/drivers/s390/crypto/vfio_ap_private.h
-> @@ -3,6 +3,7 @@
->   * Private data and functions for adjunct processor VFIO matrix driver.
->   *
->   * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
-> + *	      Halil Pasic <pasic@linux.ibm.com>
->   *
->   * Copyright IBM Corp. 2018
->   */
-> @@ -24,11 +25,59 @@
->  /**
->   * ap_matrix_dev - the AP matrix device structure
->   * @device:	generic device structure associated with the AP matrix device
-> + * @available_instances: number of mediated matrix devices that can be created
-> + * @info:	the struct containing the output from the PQAP(TAPQ) instruction
-
-Hm, isn't that rather PQAP(QCI)?
-
-> + * mdev_list:	the list of mediated matrix devices created
-> + * lock:	mutex for locking the AP matrix device. This lock will be
-> + *		taken every time we fiddle with state managed by the vfio_ap
-> + *		driver, be it using @mdev_list or writing the state of a
-> + *		single ap_matrix_mdev device. It's quite coarse but we don't
-> + *		expect much contention.
->   */
->  struct ap_matrix_dev {
->  	struct device device;
-> +	atomic_t available_instances;
-> +	struct ap_config_info info;
-> +	struct list_head mdev_list;
-> +	struct mutex lock;
->  };
-
-Otherwise:
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Thanks.
+Alex
