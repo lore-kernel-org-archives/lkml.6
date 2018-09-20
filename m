@@ -2,223 +2,202 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23E7C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DF9ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F12320867
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8316620867
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:46:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="isHTpC/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F12320867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vUFl2wqa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8316620867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeITWaB (ORCPT
+        id S1731025AbeITWad (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:30:01 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:39974 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeITWaB (ORCPT
+        Thu, 20 Sep 2018 18:30:33 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37171 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeITWad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:30:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Mime-Version:Content-Type:References:
-        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cfHgislyCRJac/3F096w3h4aLT/iM3DkHW2izwLZezg=; b=isHTpC/uN1BYjZfPtbIqg+e+K
-        rUc2y5eakyDlaImGsSALwEGwKz//HKjhji3mpoSvsVPJgPBCeyRIzPM8Q/d/D8Q1GkO1uoc56PxS4
-        eU43gDysbuZA/wbe3wG33N2K6vSE+yTb3Kgz51i+ndvwbti97sIBoVyp0GsPCHGwYcUtU6nIzSeu5
-        pMUvbRpB0XkPc58E00dMBvb2iwgp075xm33pK9NVcaBDukc8DwTOukZroU1Ap8PiFROlV7COGIBgm
-        l7DwBhpxm7A4WxvBqD+QJ8L3qhV8Tna/FrLpFR0UZl0easKU05UjCMB+G+mwAV+zp+pcn6uHUsH9x
-        ZbEtmv6NQ==;
-Received: from [2001:8b0:10b:1:4a2a:e3ff:fe14:8625] (helo=u3832b3a9db3152.ant.amazon.com)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g3252-00043o-2D; Thu, 20 Sep 2018 16:45:28 +0000
-Message-ID: <219367882d33fda9705485aa4a40b2ef55f3992f.camel@infradead.org>
-Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Denis Kenzior <denkenz@gmail.com>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Thu, 20 Sep 2018 17:45:26 +0100
-In-Reply-To: <58F37819-78E2-45C8-8F04-4F21DDFB640E@holtmann.org>
-References: <c33c759d-9243-8885-7c5f-667681b759c2@gmail.com>
-         <14f91823-474e-1b46-d305-12229dac8967@gmail.com>
-         <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
-         <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
-         <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-         <1537253993.20009.62.camel@infradead.org>
-         <14067.1537285833@warthog.procyon.org.uk>
-         <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
-         <19247.1537288419@warthog.procyon.org.uk>
-         <23698.1537289705@warthog.procyon.org.uk>
-         <20622.1537291117@warthog.procyon.org.uk>
-         <58F37819-78E2-45C8-8F04-4F21DDFB640E@holtmann.org>
-Content-Type: multipart/signed; micalg="sha-256";
-        protocol="application/x-pkcs7-signature";
-        boundary="=-lQWF0r78//mPkSC2/Bsz"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by merlin.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 20 Sep 2018 18:30:33 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v9-v6so9033615ljk.4;
+        Thu, 20 Sep 2018 09:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=FannyPCOO+Uw3DlLzM6HQREOdTuPz8oxsCBRIzs0tDA=;
+        b=vUFl2wqaRLWSt26onLzYh68ZeVR9ZDJkZDv94F4j7TZvjkbhLrS2A3q5UpbfFPDVd8
+         HzXwmsQ/B5v0TeoxNjDAct6Dq2HcZOg8D2SS8722hDvrcPQJRF1Ztw4o4TDDJZMrq8Di
+         wx1ayv5j9rQAPP1TTsczX0DuOacj+uIXxIsIWDewpEUDi7yzgGCaLxTRNaPRltx8pGic
+         UllxaRuhXtAgbPL5uR1GU02GCP2H8XeWOCLIIwK4dqB8346lsnPprYg+Jdrq+nF2b+cL
+         7L+7Z2PwcC+AoysRsfg+zPajF1+4OhnAL2GJ9dCu/JpFgxyABQqA0ioU1iWzMIX32PZF
+         EvAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FannyPCOO+Uw3DlLzM6HQREOdTuPz8oxsCBRIzs0tDA=;
+        b=LJdfx05KCs54RHyleeMQevOaxc5VNEl0ZVG0M9HCTRc+5uP3Q3BRVyEr0f95+XD0XN
+         1ko4UlXOrI6j+V9a1FSnTC2Ed2sXlBR2UiDwfHcrGAzoQVMfFwCe5z4Zb+iBUMg/aUNG
+         Ea3SaZWr77dDX+XfoFky7E8h2GfhjmLIhB5nQM/1Rxspbq84HmzVW+Qt7t1IT3yomrq9
+         4F3KvvD6Tigsh+WZr8G0xuhh2eaw7uK/XpJYx9Ig7jaCNQUmUXNBNmARDj+EKizVrPtk
+         uZqiBKFUxsvxOrxlDBEKrlEyM5EY12HgXvRyvg4W7428VuUvLNM94BGMNRYw61DuJc8G
+         Cd2w==
+X-Gm-Message-State: APzg51BwL9EgFt1QY5bRU8KC+UcOBW5TWHL3N27gA1bNPkdsLEEGGyE+
+        C12/v/el14twdtY5d2NRd16aiNPa
+X-Google-Smtp-Source: ANB0VdYzt/ey5f0/241EDjCw6mJmbwjHofCRh5u4eojoZVXaK3bZL1hvBkybH5Zvho++Unh7ywPWEQ==
+X-Received: by 2002:a2e:9e17:: with SMTP id e23-v6mr15474555ljk.14.1537461968960;
+        Thu, 20 Sep 2018 09:46:08 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id p65-v6sm4523215lja.44.2018.09.20.09.46.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 09:46:07 -0700 (PDT)
+Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for
+ display planes
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-media@vger.kernel.org
+References: <20180807172202.1961-1-digetx@gmail.com>
+ <20180807172202.1961-2-digetx@gmail.com> <7041537.TPdt8DIvGD@avalon>
+ <20180814103833.GN21634@phenom.ffwll.local>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <38a5e2cd-83a5-816d-9ad7-3119dc294af0@gmail.com>
+Date:   Thu, 20 Sep 2018 19:46:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180814103833.GN21634@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 8/14/18 1:38 PM, Daniel Vetter wrote:
+> On Tue, Aug 14, 2018 at 12:48:08PM +0300, Laurent Pinchart wrote:
+>> Hi Dmitry,
+>>
+>> Thank you for the patch.
+>>
+>> On Tuesday, 7 August 2018 20:22:01 EEST Dmitry Osipenko wrote:
+>>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>>
+>>> Color keying is the action of replacing pixels matching a given color
+>>> (or range of colors) with transparent pixels in an overlay when
+>>> performing blitting. Depending on the hardware capabilities, the
+>>> matching pixel can either become fully transparent or gain adjustment
+>>> of the pixels component values.
+>>>
+>>> Color keying is found in a large number of devices whose capabilities
+>>> often differ, but they still have enough common features in range to
+>>> standardize color key properties. This commit adds new generic DRM plane
+>>> properties related to the color keying, providing initial color keying
+>>> support.
+>>>
+>>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>   drivers/gpu/drm/drm_atomic.c |  20 +++++
+>>>   drivers/gpu/drm/drm_blend.c  | 150 +++++++++++++++++++++++++++++++++++
+>>>   include/drm/drm_blend.h      |   3 +
+>>>   include/drm/drm_plane.h      |  91 +++++++++++++++++++++
+>>>   4 files changed, 264 insertions(+)
+>>
+>> [snip]
+>>
+>>> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+>>> index a16a74d7e15e..13c61dd0d9b7 100644
+>>> --- a/drivers/gpu/drm/drm_blend.c
+>>> +++ b/drivers/gpu/drm/drm_blend.c
+>>> @@ -107,6 +107,11 @@
+>>>    *	planes. Without this property the primary plane is always below the
+>>> cursor *	plane, and ordering between all other planes is undefined.
+>>>    *
+>>> + * colorkey:
+>>> + *	Color keying is set up with drm_plane_create_colorkey_properties().
+>>> + *	It adds support for actions like replacing a range of colors with a
+>>> + *	transparent color in the plane. Color keying is disabled by default.
+>>> + *
+>>>    * Note that all the property extensions described here apply either to the
+>>> * plane or the CRTC (e.g. for the background color, which currently is not
+>>> * exposed and assumed to be black).
+>>> @@ -448,3 +453,148 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+>>>   	return 0;
+>>>   }
+>>>   EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+>>> +
+>>> +static const char * const plane_colorkey_mode_name[] = {
+>>> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
+>>> +	[DRM_PLANE_COLORKEY_MODE_TRANSPARENT] = "transparent",
+>>> +};
+>>> +
+>>> +/**
+>>> + * drm_plane_create_colorkey_properties - create colorkey properties
+>>> + * @plane: drm plane
+>>> + * @supported_modes: bitmask of supported color keying modes
+>>> + *
+>>> + * This function creates the generic color keying properties and attaches
+>>> them
+>>> + * to the @plane to enable color keying control for blending operations.
+>>> + *
+>>> + * Glossary:
+>>> + *
+>>> + * Destination plane:
+>>> + *	Plane to which color keying properties are applied, this planes takes
+>>> + *	the effect of color keying operation. The effect is determined by a
+>>> + *	given color keying mode.
+>>> + *
+>>> + * Source plane:
+>>> + *	Pixels of this plane are the source for color key matching operation.
+>>> + *
+>>> + * Color keying is controlled by these properties:
+>>> + *
+>>> + * colorkey.plane_mask:
+>>> + *	The mask property specifies which planes participate in color key
+>>> + *	matching process, these planes are the color key sources.
+>>> + *
+>>> + *	Drivers return an error from their plane atomic check if plane can't be
+>>> + *	handled.
+>>
+>> This seems fragile to me. We don't document how userspace determines which
+>> planes need to be specified here, and we don't document what happens if a
+>> plane underneath the destination plane is not specified in the mask. More
+>> precise documentation is needed if we want to use such a property.
+>>
+>> It also seems quite complex. Is an explicit plane mask really the best option
+>> ? What's the reason why planes couldn't be handled ? How do drivers determine
+>> that ?
+> 
+> General comment: This is why we need the reference userspace. I also
+> think that any feature throwing up so many tricky questions should come
+> with a full set of igt testcases.
 
---=-lQWF0r78//mPkSC2/Bsz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+At best I can write couple simple tests, simply because Tegra can't do more than 
+that.
 
-On Thu, 2018-09-20 at 09:26 +0200, Marcel Holtmann wrote:
-> Hi David,
->=20
-> > > > Yes.  It shouldn't be much code, either.  You still have to check f=
-or X.509
-> > > > DER since the kernel currently supports that.
-> > >=20
-> > > For reasons of backward compatibility, correct?  The kernel also has
-> > > mscode.asn1 which we would need to support as well.  Since we can't b=
-reak
-> > > compatibility then perhaps this doesn't buy us a whole lot in the end=
-.
-> >=20
-> > Don't worry about mscode - that's not an asymmetric key parser.  That's=
- only
-> > ever used directly from verify_pefile_signature().
-> >=20
-> > Currently, we have to retain support for DER-encoded X.509.
-> >=20
-> > But there's no reason we can't have a PEM parser that decodes the PEM a=
-nd
-> > selects X.509, PKCS#8 or TPM based on the ascii header in that.  PKCS#8=
- and
-> > TPM don't need to take DER directly.
->=20
-> since we have to support DER-encoded anyway, can we get the current
-> patches merged (with fixes to the commit messages for the openssl
-> examples if needed) and then work on PEM support inside the kernel.
-> For me these seems to be two independent features. And in the current
-> form the patches have been tested and used.
->=20
-> Or let me ask this differently, are there any objections to merging
-> these patches with just DER support?
+  Since the reference userspace cannot
+> answer how the new uapi should work in all corner-cases (failures and
+> stuff like that).
 
-Let me rephrase that question slightly: Are we happy to have to make
-inferences from the ASN.1 structure, and in particular that a bare
-OCTET-STRING is a TPMv1 blob? I believe James ended up doing something
-somewhat more sensible for the TPMv2 blob so that might end up being
-OK...?
-
-
---=-lQWF0r78//mPkSC2/Bsz
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA5MjAxNjQ1MjZaMC8GCSqG
-SIb3DQEJBDEiBCBPksXORWyvhAlwzxVVIQ5ChlGz9mIb2r1Xkw730LOmVzCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAERlsBwCUP7g
-adAaqIdQNCW9FLryJXgGxSV/jaBz6fe8E/CtNomxM7xXsSF9KPF4Qp4/c4q3+l1v5idFhfyb1plg
-MvoAcUANxi/XbRU0YJnYUv4FEhvP4p7LsweX74GJBCAsjgAH/W3WLHVbEH2wo/+ETqLEpGikPqIw
-AFNtsfC2C5rgmhZfaOi9Mwv3m+sNS4DkTh61v8k8cJJ+sW+yrXfJLnkJgMT/n+rRBFc4OHpQgb36
-HUACvu/KREhUMLKndbB7H3MEcCCf1ORcw33ImZjjha2zvyilJhbMfe3KxftFmORAM0pLRBig+3Ty
-Z8aqfLsmAbisG6d+huFesD5kMWQAAAAAAAA=
-
-
---=-lQWF0r78//mPkSC2/Bsz--
-
+Okay.
