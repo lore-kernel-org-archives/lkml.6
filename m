@@ -2,80 +2,63 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6372FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30272ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07EBA2152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:18:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="g787H4E0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07EBA2152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id DD2CB2152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:19:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2CB2152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387721AbeITTCH (ORCPT
+        id S1732526AbeITTCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 15:02:07 -0400
-Received: from m50-138.163.com ([123.125.50.138]:46174 "EHLO m50-138.163.com"
+        Thu, 20 Sep 2018 15:02:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:45830 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387616AbeITTCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 15:02:07 -0400
-X-Greylist: delayed 1829 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Sep 2018 15:02:02 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=KkhB6
-        OrIx8OmN/jNwfGz/KcRRauwGHQsgupddJFODsY=; b=g787H4E04NUTGmJ2b6s7W
-        wMJuCK5n4+ycvu+kZAr0MZmM8gsKClExiSGKQTE+95e/WYQ5Yw5475EcuXnQ1JnQ
-        3lu8mJ1w2GovRnt7c8CdciSQKnCxoLx/6HajmQEVk/c6NQd4gzSJZwEheWxKtp2g
-        4R8WDHf2B0/DiFqx0GZ7tY=
-Received: from [192.168.43.190] (unknown [112.86.218.14])
-        by smtp1 (Coremail) with SMTP id C9GowADnJOnVkqNbhZmPAA--.6S2;
-        Thu, 20 Sep 2018 20:30:18 +0800 (CST)
-Subject: Re: [RFC PATCH] irq/affinity: Mark the pre/post vectors as regular
- interrupts
-To:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>, ming.lei@redhat.com,
-        Christoph Hellwig <hch@lst.de>, douly.fnst@cn.fujitsu.com,
-        Bjorn Helgaas <bhelgaas@google.com>
-References: <20180913031011.17376-1-dou_liyang@163.com>
- <alpine.DEB.2.21.1809131135540.1473@nanos.tec.linutronix.de>
- <e725ccd00a98bb4b4541315017a16584@mail.gmail.com>
-From:   Dou Liyang <dou_liyang@163.com>
-Message-ID: <8f5b0455-7f43-851b-849b-10cbba5e0fab@163.com>
-Date:   Thu, 20 Sep 2018 20:30:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <e725ccd00a98bb4b4541315017a16584@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: C9GowADnJOnVkqNbhZmPAA--.6S2
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUq7UUUUUUU
-X-Originating-IP: [112.86.218.14]
-X-CM-SenderInfo: pgrxszxl1d0wi6rwjhhfrp/1tbiLg-HolSIcad5PwAAsI
+        id S1726177AbeITTCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 15:02:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C12917A9;
+        Thu, 20 Sep 2018 06:19:15 -0700 (PDT)
+Received: from sugar.kfn.arm.com (E110176.Emea.Arm.com [10.50.4.176])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 555DF3F5BD;
+        Thu, 20 Sep 2018 06:19:14 -0700 (PDT)
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     ofir.drang@arm.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] crypto: OFB and tests
+Date:   Thu, 20 Sep 2018 14:18:37 +0100
+Message-Id: <1537449521-16182-1-git-send-email-gilad@benyossef.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kashyap,
+Add OFB mode generic implementation and more SM4 tests
 
-On 2018/9/20 16:39, Kashyap Desai worte:
-> Dou -  Do you want me to test your patch or shall I wait for next version
-> ?
+Gilad Ben-Yossef (3):
+  crypto: testmgr: update sm4 test vectors
+  crypto: add output feedback mode
+  crypto: tcrypt: add OFB functional tests
 
-I'm sorry, please wait for the next version.
+ crypto/Kconfig   |  12 +++
+ crypto/Makefile  |   1 +
+ crypto/ofb.c     | 225 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ crypto/tcrypt.c  |  17 +++++
+ crypto/tcrypt.h  |   1 +
+ crypto/testmgr.c |  12 +++
+ crypto/testmgr.h | 122 ++++++++++++++++++++++++++++--
+ 7 files changed, 383 insertions(+), 7 deletions(-)
+ create mode 100644 crypto/ofb.c
 
-Thanks,
-	dou
+-- 
+2.7.4
 
