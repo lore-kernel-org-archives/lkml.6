@@ -2,68 +2,101 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4209ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA45ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A98F2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:21:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A98F2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D94F2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:22:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oVISmaLe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D94F2147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbeITWFP (ORCPT
+        id S1728547AbeITWGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:05:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48244 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725876AbeITWFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:05:15 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CE535285B1;
-        Thu, 20 Sep 2018 16:21:00 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 89C3581C1A;
-        Thu, 20 Sep 2018 16:20:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <875zz0jvfs.fsf@concordia.ellerman.id.au>
-References: <875zz0jvfs.fsf@concordia.ellerman.id.au> <20180919094847.2103082b@canb.auug.org.au> <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au> <15925.1537309041@warthog.procyon.org.uk> <3565.1537336860@warthog.procyon.org.uk> <20180919163102.1a0adefb@canb.auug.org.au>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs tree
+        Thu, 20 Sep 2018 18:06:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49926 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbeITWGi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 18:06:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xJ3yBp77MqWtiwJKjICMtjEDV065Wj+aVcTDyX7S1Jw=; b=oVISmaLe+PC7Tx6igS7AEJIpQ
+        EPZv249C2/S9XO2QI73yhkjLdzPylL6AfU/SaXTCm9+HtZSqQ9KZLNCj7VqmO726Mci3iFHi6hSxE
+        L81aKJw/2vI9L0YrWo/WZL2TIsdeh53JIDhlWzs7zloJPl32iti/2Q2uJ9vGDAY9/L9hZaQrvSDXX
+        GmNqMSlg9WoxU7SJ3ePZtej1oS1PRd23azyl6Fm6ADL4Bq+wI2xfwzGHY9lOLDsmDemP97kJv4Pny
+        wxxnlDXdJVzedWcWIUiZbBsvmYmlN/3NAP2dHvNrDrQG9Ei/NamM9koO2rfhSluo1St+0ZoRT5JO4
+        KSS4TtdTA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g31ie-0008HS-Kz; Thu, 20 Sep 2018 16:22:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0D0902024E44B; Thu, 20 Sep 2018 18:22:17 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 18:22:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mingo@kernel.org,
+        boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
+        catalin.marinas@arm.com
+Subject: Re: [PATCH 02/10] locking/qspinlock: Remove unbounded cmpxchg loop
+ from locking slowpath
+Message-ID: <20180920162216.GR24142@hirez.programming.kicks-ass.net>
+References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
+ <1522947547-24081-3-git-send-email-will.deacon@arm.com>
+ <dc5f5e43-a60a-05f2-16fb-46960c40459e@redhat.com>
+ <20180409105835.GC23134@arm.com>
+ <20180409145409.GA9661@arm.com>
+ <20180409155420.GB4082@hirez.programming.kicks-ass.net>
+ <20180409171959.GB9661@arm.com>
+ <20180920160832.GZ24124@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <31224.1537460458.1@warthog.procyon.org.uk>
-Date:   Thu, 20 Sep 2018 17:20:58 +0100
-Message-ID: <31225.1537460458@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 20 Sep 2018 16:21:01 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920160832.GZ24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Ellerman <mpe@ellerman.id.au> wrote:
+On Thu, Sep 20, 2018 at 06:08:32PM +0200, Peter Zijlstra wrote:
+> Another approach might be to use something like:
+> 
+> 	val = xchg_relaxed(&lock->locked_pending, _Q_PENDING_VAL | _Q_LOCKED_VAL);
+> 	val |= atomic_read_acquire(&lock->val) & _Q_TAIL_MASK;
+> 
+> combined with something like:
+> 
+> 	/* 0,0,0 -> 0,1,1 - we won trylock */
+> 	if (!(val & _Q_LOCKED_MASK)) {
 
-> I realise these are in samples rather than selftests, but what most of
-> the selftests do is just #define the syscall number if it's not defined,
-> so that you're not dependent on getting the headers.
+That one doesn't actually work... let me think about this more.
 
-The reason I don't want to do that is that syscall numbers aren't consistent
-across arches - they aren't even consistent within arches.
-
-I've made the VFS samples contingent on X86 in Kconfig for the moment.
-
-David
+> 		clear_pending(lock);
+> 		return;
+> 	}
+> 
+> 	/* 0,0,1 -> 0,1,1 - we won pending */
+> 	if (!(val & ~_Q_LOCKED_MASK)) {
+> 		...
+> 	}
+> 
+> 	/* *,0,1 -> *,1,1 - we won pending, but there's queueing */
+> 	if (!(val & _Q_PENDING_VAL))
+> 		clear_pending(lock);
+> 
+> 	...
+> 
+> 
+> Hmmm?
