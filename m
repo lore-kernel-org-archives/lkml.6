@@ -2,78 +2,101 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9428C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB006C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11DE21529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:54:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A11DE21529
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E4B321529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:54:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4B321529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387813AbeITShY (ORCPT
+        id S2387882AbeITSh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:37:24 -0400
-Received: from mga11.intel.com ([192.55.52.93]:21086 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387424AbeITShY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:37:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 05:54:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,398,1531810800"; 
-   d="scan'208";a="74826652"
-Received: from unknown (HELO [10.239.13.3]) ([10.239.13.3])
-  by orsmga008.jf.intel.com with ESMTP; 20 Sep 2018 05:53:26 -0700
-Message-ID: <5BA39968.8030309@intel.com>
-Date:   Thu, 20 Sep 2018 20:58:16 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Thu, 20 Sep 2018 14:37:28 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30087 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387828AbeITSh1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:37:27 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8KCmaiG030263;
+        Thu, 20 Sep 2018 14:53:41 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mgquteepr-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 20 Sep 2018 14:53:41 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9238742;
+        Thu, 20 Sep 2018 12:53:40 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2D73F4F9E;
+        Thu, 20 Sep 2018 12:53:40 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.45) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 20 Sep
+ 2018 14:53:39 +0200
+Subject: Re: [PATCH] ARM: dts: stm32: update rtc st,syscfg property on
+ stm32h743
+To:     Amelie Delaunay <amelie.delaunay@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1534931139-19817-1-git-send-email-amelie.delaunay@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <b7cadb6f-d17f-3be7-38f4-1104026ea745@st.com>
+Date:   Thu, 20 Sep 2018 14:53:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com
-Subject: Re: [PATCH v3 5/5] KVM/x86/lbr: lazy save the guest lbr stack
-References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com> <1537437959-8751-6-git-send-email-wei.w.wang@intel.com> <20180920123753.GT24124@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180920123753.GT24124@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1534931139-19817-1-git-send-email-amelie.delaunay@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/20/2018 08:37 PM, Peter Zijlstra wrote:
-> On Thu, Sep 20, 2018 at 06:05:59PM +0800, Wei Wang wrote:
->>   /**
->> + * lbr_select_user_callstack - check if the user callstack mode is set
->> + *
->> + * @lbr_select: the lbr select msr
->> + *
->> + * Returns: true if the msr is configured to the user callstack mode.
->> + * Otherwise, false.
->> + *
->> + */
->> +bool lbr_select_user_callstack(u64 lbr_select)
->> +{
->> +	return !!(lbr_select & LBR_USER_CALLSTACK);
->> +}
->> +EXPORT_SYMBOL_GPL(lbr_select_user_callstack);
-> That function is pure and tiny, wth is that an exported symbol and not
-> an inline?
-Thanks Peter for the comments.
+Hi Amélie
 
-Because this function uses the LBR_ macros which are defined in this 
-lbr.c file.
-Do you think it would be OK to move all the above LBR_ macros to 
-asm/perf_event.h?
+On 08/22/2018 11:45 AM, Amelie Delaunay wrote:
+> To fit with latest rtc driver updates, rtc st,syscfg property must contain
+> the control register offset of pwrcfg and the mask corresponding to the
+> DBP (Disable Backup Protection) bit.
+> 
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> ---
+>   arch/arm/boot/dts/stm32h743.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32h743.dtsi b/arch/arm/boot/dts/stm32h743.dtsi
+> index 637beff..cbdd69c 100644
+> --- a/arch/arm/boot/dts/stm32h743.dtsi
+> +++ b/arch/arm/boot/dts/stm32h743.dtsi
+> @@ -472,7 +472,7 @@
+>   			interrupt-parent = <&exti>;
+>   			interrupts = <17 IRQ_TYPE_EDGE_RISING>;
+>   			interrupt-names = "alarm";
+> -			st,syscfg = <&pwrcfg>;
+> +			st,syscfg = <&pwrcfg 0x00 0x100>;
+>   			status = "disabled";
+>   		};
+>   
+> 
 
-Best,
-Wei
+Applied on stm32-next.
+
+Thanks.
+Alex
