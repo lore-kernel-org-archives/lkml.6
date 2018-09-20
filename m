@@ -3,216 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B72C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAE2C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 956952150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956952150F
+	by mail.kernel.org (Postfix) with ESMTP id 5F4162087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F4162087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388326AbeITXRj (ORCPT
+        id S2388302AbeITXRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 20 Sep 2018 19:17:39 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:8434 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727667AbeITXQZ (ORCPT
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:19626 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732757AbeITXQZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Sep 2018 19:16:25 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Thu, 20 Sep 2018 10:31:47 -0700
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Thu, 20 Sep 2018 10:31:20 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id DF8BD4069E;
-        Thu, 20 Sep 2018 10:31:47 -0700 (PDT)
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 1A92640691;
+        Thu, 20 Sep 2018 10:31:48 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Arnd Bergmann <arnd@arndb.de>
 CC:     <linux-kernel@vger.kernel.org>,
         Xavier Deguillard <xdeguillard@vmware.com>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH v2 04/20] vmw_balloon: simplifying batch access
-Date:   Thu, 20 Sep 2018 10:30:10 -0700
-Message-ID: <20180920173026.141333-5-namit@vmware.com>
+Subject: [PATCH v2 08/20] vmw_balloon: rename VMW_BALLOON_2M_SHIFT to VMW_BALLOON_2M_ORDER
+Date:   Thu, 20 Sep 2018 10:30:14 -0700
+Message-ID: <20180920173026.141333-9-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920173026.141333-1-namit@vmware.com>
 References: <20180920173026.141333-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The use of accessors for batch entries complicates the code and makes it
-less readable. Remove it an instead use bit-fields.
+The name of the macro'd VMW_BALLOON_2M_SHIFT is misleading. The value
+reflects 2M huge-page order. Unfortunately, we cannot use
+HPAGE_PMD_ORDER, since it is not defined when transparent huge-pages are
+off, so we need to define our own one.
 
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Rename it to VMW_BALLOON_2M_ORDER. No functional change.
+
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 81 ++++++++++++++------------------------
- 1 file changed, 30 insertions(+), 51 deletions(-)
+ drivers/misc/vmw_balloon.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 5e5f61f207f4..7af70fc988b9 100644
+index 4e067d269706..626abe65eddb 100644
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -121,24 +121,6 @@ enum vmwballoon_capabilities {
+@@ -77,7 +77,7 @@ enum vmwballoon_capabilities {
+ 					| VMW_BALLOON_BATCHED_2M_CMDS \
+ 					| VMW_BALLOON_SIGNALLED_WAKEUP_CMD)
  
- #define VMW_BALLOON_SUCCESS_WITH_CAPABILITIES	(0x03000000)
- 
--/* Batch page description */
--
--/*
-- * Layout of a page in the batch page:
-- *
-- * +-------------+----------+--------+
-- * |             |          |        |
-- * | Page number | Reserved | Status |
-- * |             |          |        |
-- * +-------------+----------+--------+
-- * 64  PAGE_SHIFT          6         0
-- *
-- * The reserved field should be set to 0.
-- */
--#define VMW_BALLOON_BATCH_MAX_PAGES	(PAGE_SIZE / sizeof(u64))
--#define VMW_BALLOON_BATCH_STATUS_MASK	((1UL << 5) - 1)
--#define VMW_BALLOON_BATCH_PAGE_MASK	(~((1UL << PAGE_SHIFT) - 1))
--
- #define VMW_BALLOON_CMD_WITH_TARGET_MASK			\
- 	((1UL << VMW_BALLOON_CMD_GET_TARGET)		|	\
- 	 (1UL << VMW_BALLOON_CMD_LOCK)			|	\
-@@ -161,27 +143,6 @@ static const char * const vmballoon_cmd_names[] = {
- 	[VMW_BALLOON_CMD_VMCI_DOORBELL_SET]	= "doorbellSet"
- };
- 
--struct vmballoon_batch_page {
--	u64 pages[VMW_BALLOON_BATCH_MAX_PAGES];
--};
--
--static u64 vmballoon_batch_get_pa(struct vmballoon_batch_page *batch, int idx)
--{
--	return batch->pages[idx] & VMW_BALLOON_BATCH_PAGE_MASK;
--}
--
--static int vmballoon_batch_get_status(struct vmballoon_batch_page *batch,
--				int idx)
--{
--	return (int)(batch->pages[idx] & VMW_BALLOON_BATCH_STATUS_MASK);
--}
--
--static void vmballoon_batch_set_pa(struct vmballoon_batch_page *batch, int idx,
--				u64 pa)
--{
--	batch->pages[idx] = pa;
--}
--
- #ifdef CONFIG_DEBUG_FS
- struct vmballoon_stats {
- 	unsigned int timer;
-@@ -225,6 +186,19 @@ struct vmballoon_page_size {
- 	unsigned int n_refused_pages;
- };
- 
-+/**
-+ * struct vmballoon_batch_entry - a batch entry for lock or unlock.
-+ *
-+ * @status: the status of the operation, which is written by the hypervisor.
-+ * @reserved: reserved for future use. Must be set to zero.
-+ * @pfn: the physical frame number of the page to be locked or unlocked.
-+ */
-+struct vmballoon_batch_entry {
-+	u64 status : 5;
-+	u64 reserved : PAGE_SHIFT - 5;
-+	u64 pfn : 52;
-+} __packed;
-+
- struct vmballoon {
- 	struct vmballoon_page_size page_sizes[VMW_BALLOON_NUM_PAGE_SIZES];
- 
-@@ -240,7 +214,14 @@ struct vmballoon {
- 
- 	unsigned long capabilities;
- 
--	struct vmballoon_batch_page *batch_page;
-+	/**
-+	 * @batch_page: pointer to communication batch page.
-+	 *
-+	 * When batching is used, batch_page points to a page, which holds up to
-+	 * %VMW_BALLOON_BATCH_MAX_PAGES entries for locking or unlocking.
-+	 */
-+	struct vmballoon_batch_entry *batch_page;
-+
- 	unsigned int batch_max_pages;
- 	struct page *page;
- 
-@@ -568,8 +549,7 @@ static int vmballoon_lock_batched_page(struct vmballoon *b,
- 
- 	if (locked > 0) {
- 		for (i = 0; i < num_pages; i++) {
--			u64 pa = vmballoon_batch_get_pa(b->batch_page, i);
--			struct page *p = pfn_to_page(pa >> PAGE_SHIFT);
-+			struct page *p = pfn_to_page(b->batch_page[i].pfn);
- 
- 			vmballoon_free_page(p, is_2m_pages);
- 		}
-@@ -578,12 +558,11 @@ static int vmballoon_lock_batched_page(struct vmballoon *b,
- 	}
- 
- 	for (i = 0; i < num_pages; i++) {
--		u64 pa = vmballoon_batch_get_pa(b->batch_page, i);
--		struct page *p = pfn_to_page(pa >> PAGE_SHIFT);
-+		struct page *p = pfn_to_page(b->batch_page[i].pfn);
- 		struct vmballoon_page_size *page_size =
- 				&b->page_sizes[is_2m_pages];
- 
--		locked = vmballoon_batch_get_status(b->batch_page, i);
-+		locked = b->batch_page[i].status;
- 
- 		switch (locked) {
- 		case VMW_BALLOON_SUCCESS:
-@@ -656,12 +635,11 @@ static int vmballoon_unlock_batched_page(struct vmballoon *b,
- 		ret = -EIO;
- 
- 	for (i = 0; i < num_pages; i++) {
--		u64 pa = vmballoon_batch_get_pa(b->batch_page, i);
--		struct page *p = pfn_to_page(pa >> PAGE_SHIFT);
-+		struct page *p = pfn_to_page(b->batch_page[i].pfn);
- 		struct vmballoon_page_size *page_size =
- 				&b->page_sizes[is_2m_pages];
- 
--		locked = vmballoon_batch_get_status(b->batch_page, i);
-+		locked = b->batch_page[i].status;
- 		if (!hv_success || locked != VMW_BALLOON_SUCCESS) {
- 			/*
- 			 * That page wasn't successfully unlocked by the
-@@ -710,8 +688,8 @@ static void vmballoon_add_page(struct vmballoon *b, int idx, struct page *p)
- static void vmballoon_add_batched_page(struct vmballoon *b, int idx,
- 				struct page *p)
- {
--	vmballoon_batch_set_pa(b->batch_page, idx,
--			(u64)page_to_pfn(p) << PAGE_SHIFT);
-+	b->batch_page[idx] = (struct vmballoon_batch_entry)
-+					{ .pfn = page_to_pfn(p) };
- }
+-#define VMW_BALLOON_2M_SHIFT		(9)
++#define VMW_BALLOON_2M_ORDER		(PMD_SHIFT - PAGE_SHIFT)
+ #define VMW_BALLOON_NUM_PAGE_SIZES	(2)
  
  /*
-@@ -967,7 +945,8 @@ static void vmballoon_reset(struct vmballoon *b)
+@@ -348,7 +348,7 @@ static bool vmballoon_send_guest_id(struct vmballoon *b)
+ static u16 vmballoon_page_size(bool is_2m_page)
+ {
+ 	if (is_2m_page)
+-		return 1 << VMW_BALLOON_2M_SHIFT;
++		return 1 << VMW_BALLOON_2M_ORDER;
  
- 	if ((b->capabilities & VMW_BALLOON_BATCHED_CMDS) != 0) {
- 		b->ops = &vmballoon_batched_ops;
--		b->batch_max_pages = VMW_BALLOON_BATCH_MAX_PAGES;
-+		b->batch_max_pages = PAGE_SIZE / sizeof(struct
-+							vmballoon_batch_entry);
- 		if (!vmballoon_init_batching(b)) {
- 			/*
- 			 * We failed to initialize batching, inform the monitor
+ 	return 1;
+ }
+@@ -387,7 +387,7 @@ static struct page *vmballoon_alloc_page(bool is_2m_page)
+ {
+ 	if (is_2m_page)
+ 		return alloc_pages(VMW_HUGE_PAGE_ALLOC_FLAGS,
+-				   VMW_BALLOON_2M_SHIFT);
++				   VMW_BALLOON_2M_ORDER);
+ 
+ 	return alloc_page(VMW_PAGE_ALLOC_FLAGS);
+ }
+@@ -395,7 +395,7 @@ static struct page *vmballoon_alloc_page(bool is_2m_page)
+ static void vmballoon_free_page(struct page *page, bool is_2m_page)
+ {
+ 	if (is_2m_page)
+-		__free_pages(page, VMW_BALLOON_2M_SHIFT);
++		__free_pages(page, VMW_BALLOON_2M_ORDER);
+ 	else
+ 		__free_page(page);
+ }
 -- 
 2.17.1
 
