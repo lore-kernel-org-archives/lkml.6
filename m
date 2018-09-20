@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34E8ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BD5ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA472150E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F38E92150E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="AZb6DY7y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA472150E
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PchEoz7W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F38E92150E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387447AbeITGAp (ORCPT
+        id S2387481AbeITGAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 02:00:45 -0400
-Received: from sonic304-18.consmr.mail.bf2.yahoo.com ([74.6.128.41]:36059 "EHLO
-        sonic304-18.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726123AbeITGAo (ORCPT
+        Thu, 20 Sep 2018 02:00:53 -0400
+Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:46344 "EHLO
+        sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727632AbeITGAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 02:00:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402817; bh=dO1/+wA5zis+nu9FqdfY7SWRB5KrboIptvARcoyPSMM=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=AZb6DY7yY56/FIiqr0hRpdBjqbPubs15ZndaXBB8H5VU4Lz2cwPRQIBfr5c26+omJ1fJiMbltb7UCYYAXdKQWZqKXOU9Iftzaer6p2tpHAJ52lSHTDivqQBbr7loEBVfXnQpW6XTLNG4yJt11TcLU+qdI0r4JFswqRYNWztA9HTlADACfvlJ/+467bxtLHUQJL0RMRxt/HQQGbWI3uS1rbcaD2DladhBBxhnoCIYTfp6crOjmFU/CfuJvmOGKYsjryMVV2HfBu7dnP9l9wLeBMt8bttMv+nh2UzQQtXkPA2Ie0AUtSyFzzozDYWTNGbZO8pkeFhJXSV0dlpfZIRuPQ==
-X-YMail-OSG: rEFxVKwVM1l68iYLRP.KU247ZpYCpqOGB3TVFwtx0Hvn_LK8ZEjPxRk2w97h8Cq
- LwQzmqHlPRLDbigySYVUp_sKpdH5z3ySG9yfoMX48ttqIELlGEetOs3_mI34SG2XXOmCgJBzEELM
- RMrTwG8mJNyWq8xWAhj8uljAYl5NazpSwrlK4v4TzrJXWd0gvnH2nAnH27pNoRpOT6brAJHCWqSa
- Glhyo5jggSmEVL7gohgnucCZR_cRo8cwt4JYqY3xGiHG.bh9gnR28H8bvl12hDGUwopw3iA4K5D5
- kiJDL1dpR0pefBY47GNhieC4Xnfqh4YYKvKfsez4L7gWScXTf9hjaOLA9gVKzc4cHpkMdpHDl2wV
- OFF6FL3fpY6Tq6qwocvTcXpYzKhrWJur_w36mgnfKxfKLsHs7Zp0cL0egNmmeiuDkA4dXwgL79Yj
- Phhn86ND_CDt5XjCVOBar.inGL0jteqDZ5v712OrQ7dU6j7eDmaxRz2MFzZQe41zHbxlVmGBQHsS
- hl6ukfnaKw4NLDgWRXNual.qDZju_rTQ9sdQAF3YZELg.1MQgmCcN3Nrc5spOFnoO2CXmZDiDHIw
- FvXn1G4pKIyO455yUPGqGer47.nBgpaS.nninKE17MotacsIotK.OHBCujHmHVKQhhtMkCsvMusA
- oFTZDzJ9TIKkzOXV937T8Ed7x1ajlPxkeEpTO_kmG.ADp_SQqhVxfF87UMbkZYJwubJEtUIE8FHc
- HPNTj7UF5EcpmCwWB.7e_6Cw39P7TzDSvv4ya.OH2zabSuO2bcT6Z8amyRC770E0hLOOP_ZfKV.M
- ieXC071vClVNUJc1KGfvV_gOfMH.TqVbsmSij7AKks84fkkGK1vacc47OCNLm87ilhOdnXv7P345
- OQIaOHvcRySfrqjZrUHmPRHNA7eHTVIqtalhGjyJR19bqnHAbJBxF43blPkxQoYlQ9PK0UCKMQqT
- rQnDnOOEwYmE6ugnknf9qbuk8vq39JDaYgZh.h..lqDeTkjb4Ru32DdUFUb3CMI8TkRJM5onSybm
- cs73IAchreUfzHApGaSiaB.P.C5uRil8-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:17 +0000
+        Thu, 20 Sep 2018 02:00:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402825; bh=tW98kW7ydoNWqgAJkvlmczWEOzk/bW3JvbuBz1eIV90=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=PchEoz7Wm3QEQwqzRHgYQ+hGUrXqpCOMO8A/f3N6IK8v/4bsKec4nWxhBk3a+WQjZuirjOGIA05McHfnGSPtjL6giIkc3PoLKzVw8daR3joLmRn+xG22QI6CKMnI2ACbJ49rVefJGifc/TsvJBJ4C0KaKjGkupA18O3IkNChd7EJIetwo4Mt/DrwDNeIGIW4Dpz1i1+/ClKaJL8hVRKjdzt+lWTMX0q4JP3rAVsjHRKze0Mt0cR0v9iG+4tmxGws6chZWbigJB5+TK921Qyab4ZxLWQEbflg+7mu4xkcNC5lx57aJu6sYQ+dz3gqqyGyCpHfiR6rwkJGEhzTb3fxEQ==
+X-YMail-OSG: 0CAhtPwVM1mEe.NS_d65L5bvbWz1hNlEQEbcLDEKpfPLbpoyO5b9nICyjoUJCdG
+ mQACUaZgDxR2xBMlOnyPY9F4QB00WUw2.gSlVgaumd9gs.NLCuJlN2P1nBTVsjZ5eSXGOTEoaZ0_
+ wy6R6NHb_iVfh6oleKG5QNyI.qf9rivXqeIyr562TJFnzf.OupbYkJ8F.PIFni_Ljus9_.0YnN6Y
+ 8ZWG5dS0J_jI8X2ZSGxzs2vdxgC6Co1Gjz.taAw0M7PSJtO0IIqqJkQCZluBqVH_DYXOUn5ECUIT
+ OR..sM24E.CT71lJxJlPGSFOb59ou.I6GKkI.obmykJMq3Aty3YKn4M3u7rImFJeyCMFFoNbpZyU
+ GIlr5PC4vjZyhIJpb01Pjc_uZKdZ1mnuckvs0TRB69JCRw5vxxxYwO5GTz6pK9oUkAVDjnqvf6N1
+ nDWKnXq.axcD8OhnKT9xV3OuWiK8S3Qa42MTGDAY96.f_ZCED9lhTe6jkI8vA.IBdSSRFpbOcpsA
+ l9CXiY494zB82eSF0NNIyG3cimkl5SQ2th69wAp9DKDe8WJjfnbJDxaP0oX5.qB3iYmSqpl1sFuL
+ E6mMgR4u2lpNG1PFpOFehNftA76UB5B2PeSw.Zwog20_tben0iKvbvuxnnj2CLb_4zGV5uozpNYP
+ jpfFya7HEIkl0WNW0ho.qZJQIOefcqw4kuL2_JPie2pBGSLTmWCVhgLyI4JyltPvhg7Ra51PPGhm
+ 7C48rj5dbsI3dWBhXroXtvgJWCQS3sWH92vOqKhaBaFbl_T5xIicCSnLfP6CT6UYUA1QzlNV6JFJ
+ XzqWz4crF8Qwb.wEvIN8hxzZntWl_WtfJi4qEJHhxR1c6cSlwUab9VGHnfplbbrfTSSuNth_D6Gx
+ .cmUXgckCf7gw35oDe8iON7EeAovqNRf2y0Gjdr3N381VqfNTxEH_YZnsdyWjFQ80d8tggknMTtL
+ d04bNQGdRzu_xSBDl8N9wi6xE1IvLHW._CB4eff8xT7oMhaZw6FeWmRJ01TcUuj9fJ3wsSnpcmnw
+ rNcXIFog-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:25 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp408.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 66b637ae1be03f5963ba7d610a945ce8;
-          Thu, 20 Sep 2018 00:20:13 +0000 (UTC)
-Subject: [PATCH v3 04/16] SELinux: Remove cred security blob poisoning
+          by smtp429.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 007b3a714951275b603f755216446471;
+          Thu, 20 Sep 2018 00:20:24 +0000 (UTC)
+Subject: [PATCH v3 05/16] SELinux: Remove unused selinux_is_enabled
 To:     LSM <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         SE Linux <selinux@tycho.nsa.gov>,
@@ -61,8 +61,8 @@ To:     LSM <linux-security-module@vger.kernel.org>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <de3681aa-3e2e-a3dc-bc1d-9c7edb2f12a6@schaufler-ca.com>
-Date:   Wed, 19 Sep 2018 17:20:10 -0700
+Message-ID: <bc0785c2-604b-2204-9103-ac9e70d18b8a@schaufler-ca.com>
+Date:   Wed, 19 Sep 2018 17:20:21 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -75,62 +75,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SELinux: Remove cred security blob poisoning
+SELinux: Remove unused selinux_is_enabled
 
-The SELinux specific credential poisioning only makes sense
-if SELinux is managing the credentials. As the intent of this
-patch set is to move the blob management out of the modules
-and into the infrastructure, the SELinux specific code has
-to go. The poisioning could be introduced into the infrastructure
-at some later date.
+There are no longer users of selinux_is_enabled().
+Remove it. As selinux_is_enabled() is the only reason
+for include/linux/selinux.h remove that as well.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- kernel/cred.c            | 13 -------------
- security/selinux/hooks.c |  6 ------
- 2 files changed, 19 deletions(-)
+ include/linux/cred.h             |  1 -
+ include/linux/selinux.h          | 35 --------------------------------
+ security/selinux/Makefile        |  2 +-
+ security/selinux/exports.c       | 23 ---------------------
+ security/selinux/hooks.c         |  1 -
+ security/selinux/include/audit.h |  3 ---
+ security/selinux/ss/services.c   |  1 -
+ 7 files changed, 1 insertion(+), 65 deletions(-)
+ delete mode 100644 include/linux/selinux.h
+ delete mode 100644 security/selinux/exports.c
 
-diff --git a/kernel/cred.c b/kernel/cred.c
-index ecf03657e71c..fa2061ee4955 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -704,19 +704,6 @@ bool creds_are_invalid(const struct cred *cred)
- {
- 	if (cred->magic != CRED_MAGIC)
- 		return true;
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 7eed6101c791..2e715e202e6a 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -15,7 +15,6 @@
+ #include <linux/capability.h>
+ #include <linux/init.h>
+ #include <linux/key.h>
+-#include <linux/selinux.h>
+ #include <linux/atomic.h>
+ #include <linux/uidgid.h>
+ #include <linux/sched.h>
+diff --git a/include/linux/selinux.h b/include/linux/selinux.h
+deleted file mode 100644
+index 44f459612690..000000000000
+--- a/include/linux/selinux.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * SELinux services exported to the rest of the kernel.
+- *
+- * Author: James Morris <jmorris@redhat.com>
+- *
+- * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
+- * Copyright (C) 2006 Trusted Computer Solutions, Inc. <dgoeddel@trustedcs.com>
+- * Copyright (C) 2006 IBM Corporation, Timothy R. Chavez <tinytim@us.ibm.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2,
+- * as published by the Free Software Foundation.
+- */
+-#ifndef _LINUX_SELINUX_H
+-#define _LINUX_SELINUX_H
+-
+-struct selinux_audit_rule;
+-struct audit_context;
+-struct kern_ipc_perm;
+-
 -#ifdef CONFIG_SECURITY_SELINUX
--	/*
--	 * cred->security == NULL if security_cred_alloc_blank() or
--	 * security_prepare_creds() returned an error.
--	 */
--	if (selinux_is_enabled() && cred->security) {
--		if ((unsigned long) cred->security < PAGE_SIZE)
--			return true;
--		if ((*(u32 *)cred->security & 0xffffff00) ==
--		    (POISON_FREE << 24 | POISON_FREE << 16 | POISON_FREE << 8))
--			return true;
--	}
--#endif
- 	return false;
- }
- EXPORT_SYMBOL(creds_are_invalid);
+-
+-/**
+- * selinux_is_enabled - is SELinux enabled?
+- */
+-bool selinux_is_enabled(void);
+-#else
+-
+-static inline bool selinux_is_enabled(void)
+-{
+-	return false;
+-}
+-#endif	/* CONFIG_SECURITY_SELINUX */
+-
+-#endif /* _LINUX_SELINUX_H */
+diff --git a/security/selinux/Makefile b/security/selinux/Makefile
+index c7161f8792b2..ccf950409384 100644
+--- a/security/selinux/Makefile
++++ b/security/selinux/Makefile
+@@ -6,7 +6,7 @@
+ obj-$(CONFIG_SECURITY_SELINUX) := selinux.o
+ 
+ selinux-y := avc.o hooks.o selinuxfs.o netlink.o nlmsgtab.o netif.o \
+-	     netnode.o netport.o ibpkey.o exports.o \
++	     netnode.o netport.o ibpkey.o \
+ 	     ss/ebitmap.o ss/hashtab.o ss/symtab.o ss/sidtab.o ss/avtab.o \
+ 	     ss/policydb.o ss/services.o ss/conditional.o ss/mls.o ss/status.o
+ 
+diff --git a/security/selinux/exports.c b/security/selinux/exports.c
+deleted file mode 100644
+index e75dd94e2d2b..000000000000
+--- a/security/selinux/exports.c
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/*
+- * SELinux services exported to the rest of the kernel.
+- *
+- * Author: James Morris <jmorris@redhat.com>
+- *
+- * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
+- * Copyright (C) 2006 Trusted Computer Solutions, Inc. <dgoeddel@trustedcs.com>
+- * Copyright (C) 2006 IBM Corporation, Timothy R. Chavez <tinytim@us.ibm.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2,
+- * as published by the Free Software Foundation.
+- */
+-#include <linux/module.h>
+-#include <linux/selinux.h>
+-
+-#include "security.h"
+-
+-bool selinux_is_enabled(void)
+-{
+-	return selinux_enabled;
+-}
+-EXPORT_SYMBOL_GPL(selinux_is_enabled);
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 9d6cdd21acb6..80614ca25a2b 100644
+index 80614ca25a2b..82b28ee878c4 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -3920,12 +3920,6 @@ static void selinux_cred_free(struct cred *cred)
- {
- 	struct task_security_struct *tsec = selinux_cred(cred);
- 
--	/*
--	 * cred->security == NULL if security_cred_alloc_blank() or
--	 * security_prepare_creds() returned an error.
--	 */
--	BUG_ON(cred->security && (unsigned long) cred->security < PAGE_SIZE);
--	cred->security = (void *) 0x7UL;
- 	kfree(tsec);
- }
- 
+@@ -79,7 +79,6 @@
+ #include <linux/personality.h>
+ #include <linux/audit.h>
+ #include <linux/string.h>
+-#include <linux/selinux.h>
+ #include <linux/mutex.h>
+ #include <linux/posix-timers.h>
+ #include <linux/syslog.h>
+diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
+index 1bdf973433cc..36e1d44c0209 100644
+--- a/security/selinux/include/audit.h
++++ b/security/selinux/include/audit.h
+@@ -1,9 +1,6 @@
+ /*
+  * SELinux support for the Audit LSM hooks
+  *
+- * Most of below header was moved from include/linux/selinux.h which
+- * is released under below copyrights:
+- *
+  * Author: James Morris <jmorris@redhat.com>
+  *
+  * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index f3def298a90e..e2235f1a99aa 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -49,7 +49,6 @@
+ #include <linux/sched.h>
+ #include <linux/audit.h>
+ #include <linux/mutex.h>
+-#include <linux/selinux.h>
+ #include <linux/flex_array.h>
+ #include <linux/vmalloc.h>
+ #include <net/netlabel.h>
 -- 
 2.17.1
 
