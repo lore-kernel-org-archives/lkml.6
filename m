@@ -2,120 +2,184 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A856C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A19ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9722152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:49:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XBkkj9kB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B9722152A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7144021529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:50:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7144021529
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387690AbeITVdY (ORCPT
+        id S1733299AbeITVe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:33:24 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38635 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730758AbeITVdX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:33:23 -0400
-Received: by mail-io1-f66.google.com with SMTP id y3-v6so7803640ioc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 08:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VLScAZUucBAJe+mPRClQyep3NXXhLY9Un4hpVlWMTcw=;
-        b=XBkkj9kBjoOnzbKxWGlCcJxWOJb4hf8ElWm4LesYUz/DY7HFm+tN6iEjR0Q3Z1d1gW
-         O0phjGfbiaWoaGkFJxpzkwEeApCU2wUOwDAJI0Yui1vyCFG/S0HIURdA4dM5M4pjbK9o
-         7krIPrNoRFHXnc6VGwZix9/d6X9SEEnEDdSZ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VLScAZUucBAJe+mPRClQyep3NXXhLY9Un4hpVlWMTcw=;
-        b=CCxJxqZxnPPDwpjQe2BVQpw+TPDSi2xq8Lnl9F1rN97nj2Hpl1TnX9Yd+m+w4GRqPK
-         qG4D5aXKJcY7GCc4GY1py8YSpx/YJ0XCrcLSkEM4Mlf0s8AiCXEmrrsrE1qJEPQL3UKs
-         5JAWUpYdis/Sp3nABLGrdleSdKVhLlZkUXc4Qy25gpm/ixTPcK0sBOPNUbFU+bmJLeUn
-         AR7aX/TOElzhSLW4mCkKcwfEhaa5DmE1I1XmgxczqiaOA2lfDFm4hTxges6D1sEq0UP9
-         sDuwjzzoWozbk3hHUMYbmwzVSymWUNloze8bfkEIZv0WUYkpCZnDLLhB9LIYtbcReMLK
-         s1GQ==
-X-Gm-Message-State: APzg51AQu40uiEZWZrCpasoe0KEyQw2bwwhimDJURHxlbVjsrzqxenUo
-        anopPqppkWHz8vQGLRim+T3GCCrEofgZXcNfL6vDKg==
-X-Google-Smtp-Source: ANB0VdYTDgdY1RsiUxiB4yUyidfGZoUl0IzQb/REjA1hoRBXyj3X1XtiDKua4QPJ1dyuHn/nQcOoAAbWn7nFOM/ZVyc=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr33165533iof.304.1537458557495;
- Thu, 20 Sep 2018 08:49:17 -0700 (PDT)
+        Thu, 20 Sep 2018 17:34:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54136 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731135AbeITVe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 17:34:57 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C8587317C412;
+        Thu, 20 Sep 2018 15:50:50 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A19418A4C;
+        Thu, 20 Sep 2018 15:50:44 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 17:50:41 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v10 05/26] s390: vfio-ap: register matrix device with
+ VFIO mdev framework
+Message-ID: <20180920175041.57ad867e.cohuck@redhat.com>
+In-Reply-To: <1536781396-13601-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1536781396-13601-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <20180831225616.29221-1-jmkrzyszt@gmail.com> <20180902120144.6855-1-jmkrzyszt@gmail.com>
- <CGME20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f@eucas1p2.samsung.com>
- <20180902120144.6855-5-jmkrzyszt@gmail.com> <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
-In-Reply-To: <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 20 Sep 2018 08:49:04 -0700
-Message-ID: <CACRpkdZD+kFsyvSKBm1JpCOd1is_TBRJGx3Yvd=kshoH5iPhXA@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in get/set array
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg KH <gregkh@linuxfoundation.org>, kishon@ti.com,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-serial@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Rojhalat Ibrahim <imr@rtschenk.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        ext Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 20 Sep 2018 15:50:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 3:11 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
+On Wed, 12 Sep 2018 15:42:55 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-> I've just noticed that this patch landed in today's linux-next. Sadly it
-> breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
-> device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Registers the matrix device created by the VFIO AP device
+> driver with the VFIO mediated device framework.
+> Registering the matrix device will create the sysfs
+> structures needed to create mediated matrix devices
+> each of which will be used to configure the AP matrix
+> for a guest and connect it to the VFIO AP device driver.
+> 
+> Registering the matrix device with the VFIO mediated device
+> framework will create the following sysfs structures:
+> 
+> /sys/devices/vfio_ap/matrix/
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ create
+> 
+> To create a mediated device for the AP matrix device, write a UUID
+> to the create file:
+> 
+> 	uuidgen > create
+> 
+> A symbolic link to the mediated device's directory will be created in the
+> devices subdirectory named after the generated $uuid:
+> 
+> /sys/devices/vfio_ap/matrix/
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ [devices]
+> ............... [$uuid]
+> 
+> A symbolic link to the mediated device will also be created
+> in the vfio_ap matrix's directory:
+> 
+> /sys/devices/vfio_ap/matrix/[$uuid]
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  MAINTAINERS                           |    1 +
+>  drivers/s390/crypto/Makefile          |    2 +-
+>  drivers/s390/crypto/vfio_ap_drv.c     |   19 +++++
+>  drivers/s390/crypto/vfio_ap_ops.c     |  126 +++++++++++++++++++++++++++++++++
+>  drivers/s390/crypto/vfio_ap_private.h |   49 +++++++++++++
+>  include/uapi/linux/vfio.h             |    1 +
+>  6 files changed, 197 insertions(+), 1 deletions(-)
+>  create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
 
-Thanks for testing on this platform!
+(...)
 
-> Booting hangs after detecting MMC cards. Reverting this patch fixes the
-> boot. I will try later to add some debugs and investigate it further what
-> really happens when booting hangs.
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+> index 3e635f0..75f8bdc 100644
+> --- a/drivers/s390/crypto/vfio_ap_drv.c
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -76,6 +76,16 @@ static int vfio_ap_matrix_dev_create(void)
+>  		goto matrix_alloc_err;
+>  	}
+>  
+> +	/* Test if PQAP(QCI) instruction is available */
 
-How typical. I hope we can fix it, because this should mean speedups
-for your platform.
+/* Fill in config info via PQAP(QCI), if available */
 
-Yours,
-Linus Walleij
+?
+
+> +	if (test_facility(12)) {
+> +		ret = ap_qci(&matrix_dev->info);
+> +		if (ret)
+> +			goto matrix_alloc_err;
+> +	}
+> +
+> +	mutex_init(&matrix_dev->lock);
+> +	INIT_LIST_HEAD(&matrix_dev->mdev_list);
+> +
+>  	matrix_dev->device.type = &vfio_ap_dev_type;
+>  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
+>  	matrix_dev->device.parent = root_device;
+
+(...)
+
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index 6141420..a2eab78 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -3,6 +3,7 @@
+>   * Private data and functions for adjunct processor VFIO matrix driver.
+>   *
+>   * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
+> + *	      Halil Pasic <pasic@linux.ibm.com>
+>   *
+>   * Copyright IBM Corp. 2018
+>   */
+> @@ -24,11 +25,59 @@
+>  /**
+>   * ap_matrix_dev - the AP matrix device structure
+>   * @device:	generic device structure associated with the AP matrix device
+> + * @available_instances: number of mediated matrix devices that can be created
+> + * @info:	the struct containing the output from the PQAP(TAPQ) instruction
+
+Hm, isn't that rather PQAP(QCI)?
+
+> + * mdev_list:	the list of mediated matrix devices created
+> + * lock:	mutex for locking the AP matrix device. This lock will be
+> + *		taken every time we fiddle with state managed by the vfio_ap
+> + *		driver, be it using @mdev_list or writing the state of a
+> + *		single ap_matrix_mdev device. It's quite coarse but we don't
+> + *		expect much contention.
+>   */
+>  struct ap_matrix_dev {
+>  	struct device device;
+> +	atomic_t available_instances;
+> +	struct ap_config_info info;
+> +	struct list_head mdev_list;
+> +	struct mutex lock;
+>  };
+
+Otherwise:
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
