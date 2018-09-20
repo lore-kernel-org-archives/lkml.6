@@ -2,112 +2,121 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55BFC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93191C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E1521533
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:24:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E1521533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 35D982147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:25:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6PF2w0u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D982147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725898AbeIUEKC (ORCPT
+        id S1726160AbeIUELJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:10:02 -0400
-Received: from mga17.intel.com ([192.55.52.151]:14406 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbeIUEKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:10:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 15:24:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,282,1534834800"; 
-   d="scan'208";a="85285084"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
-  by orsmga003.jf.intel.com with ESMTP; 20 Sep 2018 15:24:10 -0700
-Subject: [PATCH v4 0/5] Address issues slowing persistent memory
- initialization
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
-        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
-Date:   Thu, 20 Sep 2018 15:24:09 -0700
-Message-ID: <20180920215824.19464.8884.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        Fri, 21 Sep 2018 00:11:09 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40208 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeIUELJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 00:11:09 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 207-v6so1102854wme.5;
+        Thu, 20 Sep 2018 15:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xz1ojDlbk5c1+6N64TtVDkYUYOmlExGBv1LSVHIi5Nw=;
+        b=m6PF2w0uwdwEfvx1RzuFWSwsDR/eXiia7AwQLJBRqr3RDUYBNXBVVpln7dszSV64L9
+         7JfLtnZGMPceL7lXytm5YZKAZmHRCLQlrzhK9vMU49BFRHjhc0BeTS4sBFIfwADT1Uxz
+         BZysVSDwlat7eyBFXMHbVH1Sd2XoLNjcpY3Y9PdiMymwluEs4qOSp1IJviijo8BTldNl
+         K1aHMugny0b9u+VA7OQtPcJAHy5/sGLfA7hQ4YJmfZRt09TJObIs87iK4XBeYOZtN2u8
+         afDx0NbblHn/3iLnYPYn1kpXUVKAFELT+t+pGbGcjyZQ8LgYsJalB8f2KaWgNdwSSOMi
+         jADw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xz1ojDlbk5c1+6N64TtVDkYUYOmlExGBv1LSVHIi5Nw=;
+        b=FIPWuiKoWFtJnTPmHNuj3wwQnqeQOLK0j3YtnR93LadCW2gLvI4KPNEGsgjEw/8nm1
+         dSFOZwzez+6qyz8iQbryCFBt9riSx98SLJsn/2+Q8QI6WU6AmodmN0knOO/hAR4MKakk
+         juIM7o0ePGds6akjTnGmg2Z2/IEQGLGXCv/ARJLJu6sfWFvO1oVr4h4P6L/TimJG0Kir
+         46kVkV+snQT7v5XM7BHSMzTrumyyJ2tXstfDa35hIVGVGAv6HzCmNL+k88RrFwsxLJD7
+         EhzE59Py1dYopP/JpXmZDXvmqRzD7e7eV67CzhIyQlK/PHb7U4RqRcWRuonRF/OrX3Xx
+         2D0g==
+X-Gm-Message-State: APzg51CbPTRE5N1OqH7g9mzuAiTm3BuadiLlDiddY4b5XCC7n7jtlh1d
+        XaREvC4ptfVr3QOHhTpij5Hd0h9M+ARjow==
+X-Google-Smtp-Source: ANB0Vdb/bmG4Q0Phg5RjtNOV94eRBnGzpr1rQF+rN9CltZm6gP+A7kHWhDqRGL8NjOf1ww4MQ8F83Q==
+X-Received: by 2002:a1c:1182:: with SMTP id 124-v6mr4772493wmr.75.1537482325691;
+        Thu, 20 Sep 2018 15:25:25 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id r13-v6sm2170698wmf.34.2018.09.20.15.25.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 15:25:24 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Rasesh Mody <rasesh.mody@cavium.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@cavium.com>,
+        Dept-GELinuxNICDev@cavium.com,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] bna: Remove unnecessary self assignment
+Date:   Thu, 20 Sep 2018 15:24:59 -0700
+Message-Id: <20180920222458.9475-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set is meant to be a v4 to my earlier patch set "Address issues
-slowing memory init"[1], and a follow-up to my earlier patch set "Address
-issues slowing persistent memory initialization"[2].
+Clang warns when a variable is assigned to itself.
 
-Excluding any gains seen from using the vm_debug option to disable page
-init poisoning I see a total reduction in file-system init time of about
-two and a half minutes, or 65%, for a system initializing btrfs on a 12TB
-block of persistent memory split evenly over 4 NUMA nodes.
+drivers/net/ethernet/brocade/bna/bna_enet.c:1800:9: warning: explicitly
+assigning value of variable of type 'int' to itself [-Wself-assign]
+        for (i = i; i < (bna->ioceth.attr.num_ucmac * 2); i++)
+             ~ ^ ~
+drivers/net/ethernet/brocade/bna/bna_enet.c:1835:9: warning: explicitly
+assigning value of variable of type 'int' to itself [-Wself-assign]
+        for (i = i; i < (bna->ioceth.attr.num_mcmac * 2); i++)
+             ~ ^ ~
+2 warnings generated.
 
-Since the last patch set I have reworked the first patch to provide a more
-generic disable implementation that can be extended in the future.
-
-I tweaked the commit message for the second patch slightly to reflect why
-we might want to use a non-atomic __set_bit versus the atomic set_bit.
-
-I have modified the third patch to make it so that it can merge onto either
-the linux git tree or the linux-next git tree. The patch set that Dan
-Williams has outstanding may end up conflicting with this patch depending
-on the merge order. If his are merged first I believe the code I changed
-in mm/hmm.c could be dropped entirely.
-
-The fourth patch has been split into two and focused more on the async
-scheduling portion of the nvdimm code. The result is much cleaner than the
-original approach in that instead of having two threads running we are now
-getting the thread running where we wanted it to be.
-
-The last change for all patches is that I have updated my email address to
-alexander.h.duyck@linux.intel.com to reflect the fact that I have changed
-teams within Intel. I will be trying to use that for correspondence going
-forward instead of my gmail account.
-
-[1]: https://lkml.org/lkml/2018/9/5/924
-[2]: https://lkml.org/lkml/2018/9/11/10
-[3]: https://lkml.org/lkml/2018/9/13/104
-
+Link: https://github.com/ClangBuiltLinux/linux/issues/110
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
+ drivers/net/ethernet/brocade/bna/bna_enet.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Alexander Duyck (5):
-      mm: Provide kernel parameter to allow disabling page init poisoning
-      mm: Create non-atomic version of SetPageReserved for init use
-      mm: Defer ZONE_DEVICE page initialization to the point where we init pgmap
-      async: Add support for queueing on specific node
-      nvdimm: Schedule device registration on node local to the device
+diff --git a/drivers/net/ethernet/brocade/bna/bna_enet.c b/drivers/net/ethernet/brocade/bna/bna_enet.c
+index bba81735ce87..6d2d4527357c 100644
+--- a/drivers/net/ethernet/brocade/bna/bna_enet.c
++++ b/drivers/net/ethernet/brocade/bna/bna_enet.c
+@@ -1797,7 +1797,7 @@ bna_ucam_mod_init(struct bna_ucam_mod *ucam_mod, struct bna *bna,
+ 
+ 	/* A separate queue to allow synchronous setting of a list of MACs */
+ 	INIT_LIST_HEAD(&ucam_mod->del_q);
+-	for (i = i; i < (bna->ioceth.attr.num_ucmac * 2); i++)
++	for (; i < (bna->ioceth.attr.num_ucmac * 2); i++)
+ 		list_add_tail(&ucam_mod->ucmac[i].qe, &ucam_mod->del_q);
+ 
+ 	ucam_mod->bna = bna;
+@@ -1832,7 +1832,7 @@ bna_mcam_mod_init(struct bna_mcam_mod *mcam_mod, struct bna *bna,
+ 
+ 	/* A separate queue to allow synchronous setting of a list of MACs */
+ 	INIT_LIST_HEAD(&mcam_mod->del_q);
+-	for (i = i; i < (bna->ioceth.attr.num_mcmac * 2); i++)
++	for (; i < (bna->ioceth.attr.num_mcmac * 2); i++)
+ 		list_add_tail(&mcam_mod->mcmac[i].qe, &mcam_mod->del_q);
+ 
+ 	mcam_mod->bna = bna;
+-- 
+2.19.0
 
-
- Documentation/admin-guide/kernel-parameters.txt |   12 +++
- drivers/nvdimm/bus.c                            |   19 ++++
- include/linux/async.h                           |   20 ++++-
- include/linux/mm.h                              |    2 
- include/linux/page-flags.h                      |    9 ++
- kernel/async.c                                  |   36 ++++++--
- kernel/memremap.c                               |   24 ++---
- mm/debug.c                                      |   46 ++++++++++
- mm/hmm.c                                        |   12 ++-
- mm/memblock.c                                   |    5 -
- mm/page_alloc.c                                 |  101 ++++++++++++++++++++++-
- mm/sparse.c                                     |    4 -
- 12 files changed, 243 insertions(+), 47 deletions(-)
-
---
