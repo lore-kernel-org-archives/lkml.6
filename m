@@ -2,225 +2,312 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2DBC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8704ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A7862152C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:19:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="XHBXiStt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A7862152C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BE2521525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:22:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE2521525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731900AbeITQBy (ORCPT
+        id S1731526AbeITQE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 12:01:54 -0400
-Received: from mail-eopbgr40044.outbound.protection.outlook.com ([40.107.4.44]:32230
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726177AbeITQBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 12:01:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G1p4615XIrnEMlYXcc1rsbRkTr3/mb7XZRriNF3CRUA=;
- b=XHBXiSttxEZgn+pxIfL0//l/wW6L7tf1/MdjDW7GweWIrk4chxwNz+v14+MNEyaOxTbRkr6I/AlT1k2rCe+ShP5s49jggbvo34iSp2NuLm6mg4US7YVrKkxdo40hePfjnKVnZZfYXeUHISzBow4VYU0xtngumsbLg86sC7ISb8o=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Alexandru-Cosmin.Gheorghe@arm.com; 
-Received: from localhost (217.140.106.53) by
- DB6PR0802MB2551.eurprd08.prod.outlook.com (2603:10a6:4:a1::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Thu, 20 Sep 2018 10:19:06 +0000
-Date:   Thu, 20 Sep 2018 11:19:04 +0100
-From:   Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        Sean Paul <sean@poorly.run>, nd@arm.com
-Subject: Re: [PATCH 1/2] drm/atomic: Initialise planes with opaque alpha
- values
-Message-ID: <20180920101904.GA28394@e114479-lin.cambridge.arm.com>
-References: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com>
- <20180919155700.10342-2-kieran.bingham+renesas@ideasonboard.com>
- <20180919161545.GH5565@intel.com>
- <20180919164347.GA21403@e114479-lin.cambridge.arm.com>
- <007554b7-8aa4-3ecd-354a-c63ec6fa39f8@ideasonboard.com>
+        Thu, 20 Sep 2018 12:04:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42516 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbeITQEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 12:04:55 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 69EDB81106;
+        Thu, 20 Sep 2018 10:22:09 +0000 (UTC)
+Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 625797D64C;
+        Thu, 20 Sep 2018 10:22:06 +0000 (UTC)
+Subject: Re: [PATCH v5 07/18] kvm: arm64: Configure VTCR_EL2 per VM
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-8-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <3c4d3139-1b8b-12fd-bd41-10a21b86e7b5@redhat.com>
+Date:   Thu, 20 Sep 2018 12:21:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <007554b7-8aa4-3ecd-354a-c63ec6fa39f8@ideasonboard.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [217.140.106.53]
-X-ClientProxiedBy: VI1PR0701CA0035.eurprd07.prod.outlook.com
- (2603:10a6:800:90::21) To DB6PR0802MB2551.eurprd08.prod.outlook.com
- (2603:10a6:4:a1::21)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1d052958-24c4-435d-c393-08d61ee27f4a
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0802MB2551;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0802MB2551;3:t6OjAt2XU8Rv/TfTxPNLVae8+C7yXRUXoeIfn+JiREhGdnYmJ3UiDgHhzSv4CGg6K7nkptP61+gKo78hZ4W7tMDAvv6nkjGzLSagAP3CuUA2Mtl8/gMWibqmHLl9svCiO4I/MuP3AUd2EJsMt3csCRL8Fee2H1/yPk3ot7Pl8mu81ph4uuR8GuCfEON0lHWXwGwynq6s4kHcCxHExr/3+eEa581pxH9m5nOJ1WT0VLnFlvyU+Y0IiMOzNE3KJG6e;25:rYJDYInZGMvIk2GP7wHwuwbpwpH1bIolprV76tIgaMTY70NnuAADFhDMpHAyPAwKzfytF9EsV7sfY09yvJtCQxcDokrdlvg81ZD+29XWp02iCivQiKeEUXLSBg+C1lYhkVLv2BUR2qy6P3aHWzAke4XzsgCwnLvZo+FDOQLjvDQXEYpt2uQg0LjBFV+Tde//yf5dV6hMD/rhBFZVGYN6VaRNNJOvxbrZAwkc5cNUvNJi9ORhLbux+Vf/Dj6mzfn1yFqNPuVD0DooIR5NMV6dkP+RdaHsgqMGurpYfxLVL1si3oCF/1OlM/ssMTLRkktsT68jurr0UtibvKkQ1IwAFg==;31:c29DGkeX38nFrkReAJnxUukr+4wRzWdMB1p75E5DXUv1qVhIwGBES3v6ou5eI8PX0dbn1bcPAgZvR6SOYnOqLvqADBP43j4q9GNBbrB2eWgb7PlHcH5Vxfv4EpcukmDmglagi3div/8LcYEYwUy6CuL6OatUmcFMdUw1bqJdqrmx/t272QGNVfW3qBEoCxitTnnoPUX+9LtM9HIHk3zsPA74euM5HA6LjJQSl9gl1MY=
-X-MS-TrafficTypeDiagnostic: DB6PR0802MB2551:
-NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0802MB2551;20:X0qWHWSGNm4OFP/UO7KZaZhB7wR8/50wTg/E+95I3G71Li+I0isOevRqGs9hRdy3AKwiAmuzf+TOms+H2xmZjeJC2qmoyDLgEp4r21CVLQbbMYaJ0pa54Af6sSHf4Ml9Oi//sM6o2fgXkKj7J8UOqOg0Qf28etf/2DcwozZpZKvmdkdzlMqKvaAaUP0IMwtlVWM0kaLEdjTUMBaBUGEjFRpoNHWWJHZKY9n+PNDJL0a/3nz7GJeRvTVLt46oe2X5sd1wTayPv8C9R4i2vsIwYzKSSrzJ1FaV7PV7hA3BltOj3mDV0oC7damFRrs3rMSGRisGMFoWvQgV3i3AszAhRmGVGEuOY7vOy3rrTSdyN8Ip0OAZgOH8kn/0OfGOjCSvDXIdNNAF9QCEfLC8MD/J6glKh8Nt89m/TLQlc2fWu4M=;4:tyazk/7mKc7wASDKmgzPyrglgZ2R70ogxSRQycSU6Lm5UXOqlPWMNqxzTlb7z1tR2Ea32+dS/H44b+CEY0fRxjz9siRNeLjpD9rW6gmpDW/gc79/jeVbW9BsV4yr3n3EyC2rzwLfKC6JfRkwpi9OWGzt18tKwcj9zAWeIj/egCp79/qAU1fBPZmX8+kYR1tWGN68pYl/tIk+Cs/E82vkox7kfA43pTYn9N4t8gN1yMjU6q89pneJyz0KoioeYGSoBjLhMgQGK+wTFduNKfzfLzI+OTq75vzioPAIDR0a35KX5vRrShMTZC/ZpX8OoUKnwqVtFp3lbIvJQAYvUjMdJbjT9M/tSFgkT5OiW5XjYWL6nRg1ojKT+foAkIbSBYPB
-X-Microsoft-Antispam-PRVS: <DB6PR0802MB255101FA55AEDBB698522183BC130@DB6PR0802MB2551.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(217544274631240)(228905959029699);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699051);SRVR:DB6PR0802MB2551;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0802MB2551;
-X-Forefront-PRVS: 0801F2E62B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(346002)(376002)(366004)(136003)(39860400002)(396003)(54094003)(189003)(199004)(53936002)(478600001)(6246003)(305945005)(53546011)(54906003)(16526019)(386003)(76176011)(52116002)(50466002)(26005)(11346002)(93886005)(446003)(2870700001)(316002)(966005)(476003)(25786009)(4326008)(956004)(186003)(486006)(2906002)(58126008)(72206003)(6496006)(6306002)(33656002)(1076002)(8936002)(76506005)(23756003)(229853002)(81156014)(7736002)(14444005)(86362001)(8676002)(6116002)(6486002)(3846002)(106356001)(81166006)(47776003)(66066001)(105586002)(68736007)(5660300001)(97736004)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0802MB2551;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?iso-8859-1?Q?1;DB6PR0802MB2551;23:uZOrDjR8jE+g8PB7XKJSQnbAR0BvTSJh67Wtd?=
- =?iso-8859-1?Q?uLD/eZ9HkwrDpCl/STrJkfd4dVFh+wERx/NZQEVA+dV1ZAdsYtEDv8bnBw?=
- =?iso-8859-1?Q?XdSnnLUD3DiYDwd3kBi4SLb2FGEUR49818aShA7Ufv525Ngf8uBScFwRFy?=
- =?iso-8859-1?Q?/yUqlVy8uRdL6bHxsM0raIbr87I7H1DqBM9RvEP5E2M7xN/0Oe83DMzo7L?=
- =?iso-8859-1?Q?IcAeynN9xg8AhjJKwu63qrhUfmN4XV+7dy4/oToWBznk94+2fIx+nUSJ0N?=
- =?iso-8859-1?Q?C31VRdr8s9oXVkliuQsRFoyRTZxA/ozoWYIykyaYU2iKWz+3Tf1DCYebop?=
- =?iso-8859-1?Q?jprAAFI0f7Q6N7AarRBCklV/SUKwNsAeaW3JUemVrlrR91LrEk/tvoXGLx?=
- =?iso-8859-1?Q?C824YcUzBd2MAUIXcFtLRdhZJRnE1RIb8JRMqucv1w93McRYmOVTNWesUA?=
- =?iso-8859-1?Q?DmsvUBeVgrSmFixTbeX5yg3EzS/TOFbBqDchnRiiTx5DnM1f5Kl3IYandD?=
- =?iso-8859-1?Q?IrufOrNiEpaQ1fsE1lhSYCKxtCL+ntedpvDmfRAcH/6+3GTWFDo9x6AHrB?=
- =?iso-8859-1?Q?63Pgv5GPxvTANX8g0if8H014iiQXirzdzIh9KDWHUjFhSRnQlX4FVHcvif?=
- =?iso-8859-1?Q?WUmHz7HpIM5NM2nchl0OS9Z/fYWvZPTuJu2+JxaZ1PIJUC/5USMZ00KTAl?=
- =?iso-8859-1?Q?53c8HxbQ9M/hPxxpCS4VhKumoCKZBxhqdSp7tcC+tQIkgD8L/Z0w3EeGU4?=
- =?iso-8859-1?Q?ehb6gbIKnis/m8tpjs9qXj6S2B3eV77ZMbjnoQ1Syl03KfRDj3BSEtn1Fk?=
- =?iso-8859-1?Q?60GnX2pdq4Im89fX84rSoLB13IegyefdJI54SYx7o7d7uDPfNpj0J3gumE?=
- =?iso-8859-1?Q?0ECHv//9pEoh9liw/ZCvtPjHl1Swu3IPNWbifTgBBcPrV+CiGALPTtAMVS?=
- =?iso-8859-1?Q?o+/RtfRti61M1jD341RQElV2ezd03hBMiUckcM+7Rw9Yz1/HwRD32pmxko?=
- =?iso-8859-1?Q?cXO/zejQNS9vI4CzPBNIfrNwhCKEmQmQJmzcNUoVLJ5U4lX7KhDHJILgpu?=
- =?iso-8859-1?Q?W8kt1pRVa3hga4xqbAiNkz1hfu1sPg9i6sCU/1zTrtcWAsxKb8N+AutMXh?=
- =?iso-8859-1?Q?nSAG8w6FRY2BIsXCyMQ7ucofzhOfV3ZUwMILhsG/zSKVNVJpYsnZQZhLCd?=
- =?iso-8859-1?Q?J7q5ZI9VD2VJnh3WYAOK0I5S3EBUPzpuRhRshSZxdPS+entdJF2KaUbLyU?=
- =?iso-8859-1?Q?nQafHRgaGh3xUzNez1rGpMX0BhXuRVgmrX0MhF05k5P/P+OFBtnY5g/cT5?=
- =?iso-8859-1?Q?APifQ5f1C1R7D38j6db9N5zmQHrGYmgChAA6o6VAEMAg6EWQcd+Q6dyqBL?=
- =?iso-8859-1?Q?v8oBcndgo9nlAiZNLB+M0hXWC0j56U/5+L9oDj1kABy62Cqutkkkw=3D?=
- =?iso-8859-1?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: mFoo2kjbCJlSKeVfcnxWJutMjHr2C3l5C98bw7tzXdtHvOoD/8hvsrBWt+/9fUgnj8oCJd/KaMhKs25lFzhpcpL75vOqiVlNLnWQGS3NfcL0eLkVlrri8SNJUFKj+JZKyNfW5J7K/S2s6Ng/af5Voo3qADevIPoP97uL3TUZ4W2tvgQXubaShmXeODFsz4MaJ3vnNnB7Kb/vR19oErTIRhUOw90G7F+PlLbzWeze4ZSiUst62UF5AJHrj/Yay/FUF3hHZp+arEnLaAV09hnzTVyuBZv29oUzhTHbZO6upGSAR2iph7bFHqrkYINSxc0NWOTQRThb/H8xDUp4+26LR632nQatiCGHKgqKhKCERx4=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0802MB2551;6:fojqelt/BQRhYd84EBmaVOqstt745za++7VFitTpj+YWw5wA5+AXwIcReIKpPw6ymhxrMA+aTTsSiZhjUvCfArXIXkgIUfEvS6YH+yozf/z7/52OnF/qQBNA8Iw0xJSVsHRQRdGmHpn4b0tkArSApNh5vKDeArKTkNaeLHTmURct69BnqcG5QITU5JljJLcVnP8p/geq8+9OjIShL9XM/D2d+2n/am3GcFXWLpDc6eHchRUZuUOAHxw/1Na8N3ytw1eksgSMnRwai2deUgf2Wf2OYIo2ctoZaMNwL7ySpWJZa6xNqxlLI8/I9LLxlnupeKyIDWwDKs7I/OmHcF6+9dw+ytllW+lMHuxp1tdtX4W8yjnNfs2VoB0pqn8QX1MJ0PAESEKGKxI2WjUeriJKShTOpv33P7kGsvtS7NyAfpAQ2Kmw6lmqm/FXx1X27bsITaUWPD1SHtzQ7jmi1Kop7g==;5:z6arNyDJLogqKgBtqE1kecBUQH4dEGO6Q/W4BpiBnB4LPEvFxj8Sno5zQJdZG4eXLNkVIQki1q7NnvMgA0mjXmA370LWJTOknA2zzPjbFHivKUbw0R3XRAq3CHXCwDdutSTKTmjNq5v7z3/ZNivqYb6l5VnjxnqrsCBDD2q7ex8=;7:zZhrvXrwi7DbFRT92lPP6RmXV6dhCKePwujNO0C+vTB4DCIOpdpkW7qjlymTG3yJP7a20CuN9iM0wGt1WvPn6lv1uroBHvDMg+9eB1qAKYfObtzXVLU4tXoGqr38P9Mz1FYOIfIzP13npI0wYncbrf19dyT34M5QtYp2lnTBmEvQG7qD/3i6LtU8IqFezld/gfYtaHs77mjeASUXsRWJ/51qlIUhVy0kqLWZ4uaJXyazpHKDLiwOhbu4IF6pDQHx
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2018 10:19:06.5141 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d052958-24c4-435d-c393-08d61ee27f4a
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2551
+In-Reply-To: <20180917104144.19188-8-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Sep 2018 10:22:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 11:03:12AM +0100, Kieran Bingham wrote:
-> Hi Alexandru,
-> 
-> On 19/09/18 17:43, Alexandru-Cosmin Gheorghe wrote:
-> > Hi Kieran,
-> > 
-> > 
-> > On Wed, Sep 19, 2018 at 07:15:45PM +0300, Ville Syrjälä wrote:
-> >> On Wed, Sep 19, 2018 at 04:56:58PM +0100, Kieran Bingham wrote:
-> >>> Planes without an alpha property, using __drm_atomic_helper_plane_reset
-> >>> will have their plane state alpha initialised as zero, which represents
-> >>> a transparent alpha.
-> >>>
-> >>> If this value is then used for the plane, it may not be visible by
-> >>> default, and thus doesn't represent a good initialisation state.
-> >>>
-> >>> Update the default state->alpha value to DRM_BLEND_ALPHA_OPAQUE
-> >>> unconditionally when the plane is reset.
-> >>>
-> >>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>> ---
-> >>>  drivers/gpu/drm/drm_atomic_helper.c | 4 +---
-> >>>  1 file changed, 1 insertion(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> >>> index 3cf1aa132778..e49b22381048 100644
-> >>> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> >>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> >>> @@ -3569,9 +3569,7 @@ void __drm_atomic_helper_plane_reset(struct drm_plane *plane,
-> >>>  	state->plane = plane;
-> >>>  	state->rotation = DRM_MODE_ROTATE_0;
-> >>>  
-> >>> -	/* Reset the alpha value to fully opaque if it matters */
-> >>> -	if (plane->alpha_property)
-> >>> -		state->alpha = plane->alpha_property->values[1];
-> >>> +	state->alpha = DRM_BLEND_ALPHA_OPAQUE;
-> >>
-> >> I can't come up with a solid excuse for not initializing it always.
-> >>
-> >> Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > 
-> > Neither do I, so:
-> > Reviewed-by: Alexandru Gheorghe <alexandru-cosmin.gheorghe@arm.com>
-> > 
-> > And thanks again.
-> > 
-> > I plan to push it tomorrow to drm-misc-next.
-> > 
-> > Now, I've seen the plane_reset patches in the pull request for drm-next
-> > 4.20, I wonder if someone could tell me what should I do to get this
-> > patch on that train.
-> 
-> I've submitted a separate patch for the rcar-du which enables the alpha
-> property for the primary plane - and it incorporates a "Fixes:
-> 161ad653d6c9 ("drm: rcar-du: Use __drm_atomic_helper_plane_reset
-> instead of copying the logic")" tag.
-> 
-> Technically that should be sufficient to get that fix into v4.19 I
-> believe ...
+Hi Suzuki,
 
-plane_reset patches are not in v4.19, but in drm-next which as far as
-I know will be sent for v4.20
-
+On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
+> Add support for setting the VTCR_EL2 per VM, rather than hard
+> coding a value at boot time per CPU. This would allow us to tune
+> the stage2 page table parameters per VM in the later changes.
 > 
-> But if you feel that this patch should also be included - we could add
-> the same tag to this patch, and get it queued up for v4.19 fixes?
-
-Looking here 
-https://01.org/linuxgraphics/gfx-docs/maintainer-tools/repositories.html#drm-misc-next
-It seems that the last pull request for v4.20 of drm-misc-next will be
-sent around rc6, so I think putting it in drm-misc-next will be enough
-to get this with the rest of the plane_reset patch in v4.20,  but just
-to make sure I will double check with Sean on IRC.
-
-
+> We compute the VTCR fields based on the system wide sanitised
+> feature registers, except for the hardware management of Access
+> Flags (VTCR_EL2.HA). It is fine to run a system with a mix of
+> CPUs that may or may not update the page table Access Flags.
+> Since the bit is RES0 on CPUs that don't support it, the bit
+> should be ignored on them.
 > 
-> --
-> Regards
+> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
+> Acked-by: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  arch/arm64/include/asm/kvm_arm.h  |  3 +-
+>  arch/arm64/include/asm/kvm_asm.h  |  2 -
+>  arch/arm64/include/asm/kvm_host.h | 12 ++++--
+>  arch/arm64/include/asm/kvm_hyp.h  |  1 +
+>  arch/arm64/kvm/hyp/Makefile       |  1 -
+>  arch/arm64/kvm/hyp/s2-setup.c     | 72 -------------------------------
+>  arch/arm64/kvm/reset.c            | 30 +++++++++++++
+>  7 files changed, 40 insertions(+), 81 deletions(-)
+>  delete mode 100644 arch/arm64/kvm/hyp/s2-setup.c
 > 
-> Kieran
-> 
-> 
-> > 
-> >>
-> >>>  	state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
-> >>>  
-> >>>  	plane->state = state;
-> >>> -- 
-> >>> 2.17.1
-> >>>
-> >>> _______________________________________________
-> >>> dri-devel mailing list
-> >>> dri-devel@lists.freedesktop.org
-> >>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >>
-> >> -- 
-> >> Ville Syrjälä
-> >> Intel
-> > 
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index 5f807b680a5f..14317b3a1820 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -135,8 +135,7 @@
+>   * 40 bits wide (T0SZ = 24).  Systems with a PARange smaller than 40 bits are
+>   * not known to exist and will break with this configuration.
+>   *
+> - * VTCR_EL2.PS is extracted from ID_AA64MMFR0_EL1.PARange at boot time
+> - * (see hyp-init.S).
+> + * The VTCR_EL2 is configured per VM and is initialised in kvm_arm_config_vm().
+>   *
+>   * Note that when using 4K pages, we concatenate two first level page tables
+>   * together. With 16K pages, we concatenate 16 first level page tables.
+> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+> index 102b5a5c47b6..0b53c72e7591 100644
+> --- a/arch/arm64/include/asm/kvm_asm.h
+> +++ b/arch/arm64/include/asm/kvm_asm.h
+> @@ -72,8 +72,6 @@ extern void __vgic_v3_init_lrs(void);
+>  
+>  extern u32 __kvm_get_mdcr_el2(void);
+>  
+> -extern u32 __init_stage2_translation(void);
+> -
+>  /* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
+>  #define __hyp_this_cpu_ptr(sym)						\
+>  	({								\
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index b04280ae1be0..5ecd457bce7d 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -61,11 +61,13 @@ struct kvm_arch {
+>  	u64    vmid_gen;
+>  	u32    vmid;
+>  
+> -	/* 1-level 2nd stage table, protected by kvm->mmu_lock */
+> +	/* stage2 entry level table */
+>  	pgd_t *pgd;
+>  
+>  	/* VTTBR value associated with above pgd and vmid */
+>  	u64    vttbr;
+> +	/* VTCR_EL2 value for this VM */
+> +	u64    vtcr;
+>  
+>  	/* The last vcpu id that ran on each physical CPU */
+>  	int __percpu *last_vcpu_ran;
+> @@ -442,10 +444,12 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
+>  
+>  static inline void __cpu_init_stage2(void)
+>  {
+> -	u32 parange = kvm_call_hyp(__init_stage2_translation);
+> +	u32 ps;
+>  
+> -	WARN_ONCE(parange < 40,
+> -		  "PARange is %d bits, unsupported configuration!", parange);
+> +	/* Sanity check for minimum IPA size support */
+> +	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1) & 0x7);
+> +	WARN_ONCE(ps < 40,
+> +		  "PARange is %d bits, unsupported configuration!", ps);
+>  }
+>  
+>  /* Guest/host FPSIMD coordination helpers */
+> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
+> index d1bd1e0f14d7..23aca66767f9 100644
+> --- a/arch/arm64/include/asm/kvm_hyp.h
+> +++ b/arch/arm64/include/asm/kvm_hyp.h
+> @@ -161,6 +161,7 @@ void __noreturn __hyp_do_panic(unsigned long, ...);
+>   */
+>  static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
+>  {
+> +	write_sysreg(kvm->arch.vtcr, vtcr_el2);
+>  	write_sysreg(kvm->arch.vttbr, vttbr_el2);
+>  }
+>  
+> diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
+> index 2fabc2dc1966..82d1904328ad 100644
+> --- a/arch/arm64/kvm/hyp/Makefile
+> +++ b/arch/arm64/kvm/hyp/Makefile
+> @@ -19,7 +19,6 @@ obj-$(CONFIG_KVM_ARM_HOST) += switch.o
+>  obj-$(CONFIG_KVM_ARM_HOST) += fpsimd.o
+>  obj-$(CONFIG_KVM_ARM_HOST) += tlb.o
+>  obj-$(CONFIG_KVM_ARM_HOST) += hyp-entry.o
+> -obj-$(CONFIG_KVM_ARM_HOST) += s2-setup.o
+>  
+>  # KVM code is run at a different exception code with a different map, so
+>  # compiler instrumentation that inserts callbacks or checks into the code may
+> diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
+> deleted file mode 100644
+> index e1ca672e937a..000000000000
+> --- a/arch/arm64/kvm/hyp/s2-setup.c
+> +++ /dev/null
+> @@ -1,72 +0,0 @@
+> -/*
+> - * Copyright (C) 2016 - ARM Ltd
+> - * Author: Marc Zyngier <marc.zyngier@arm.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> - */
+> -
+> -#include <linux/types.h>
+> -#include <asm/kvm_arm.h>
+> -#include <asm/kvm_asm.h>
+> -#include <asm/kvm_hyp.h>
+> -#include <asm/cpufeature.h>
+> -
+> -u32 __hyp_text __init_stage2_translation(void)
+> -{
+> -	u64 val = VTCR_EL2_FLAGS;
+> -	u64 parange;
+> -	u32 phys_shift;
+> -	u64 tmp;
+> -
+> -	/*
+> -	 * Read the PARange bits from ID_AA64MMFR0_EL1 and set the PS
+> -	 * bits in VTCR_EL2. Amusingly, the PARange is 4 bits, but the
+> -	 * allocated values are limited to 3bits.
+> -	 */
+> -	parange = read_sysreg(id_aa64mmfr0_el1) & 7;
+> -	if (parange > ID_AA64MMFR0_PARANGE_MAX)
+> -		parange = ID_AA64MMFR0_PARANGE_MAX;
+> -	val |= parange << VTCR_EL2_PS_SHIFT;
+> -
+> -	/* Compute the actual PARange... */
+> -	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
+> -
+> -	/*
+> -	 * ... and clamp it to 40 bits, unless we have some braindead
+> -	 * HW that implements less than that. In all cases, we'll
+> -	 * return that value for the rest of the kernel to decide what
+> -	 * to do.
+> -	 */
+> -	val |= VTCR_EL2_T0SZ(phys_shift > 40 ? 40 : phys_shift);
+> -
+> -	/*
+> -	 * Check the availability of Hardware Access Flag / Dirty Bit
+> -	 * Management in ID_AA64MMFR1_EL1 and enable the feature in VTCR_EL2.
+> -	 */
+> -	tmp = (read_sysreg(id_aa64mmfr1_el1) >> ID_AA64MMFR1_HADBS_SHIFT) & 0xf;
+> -	if (tmp)
+> -		val |= VTCR_EL2_HA;
+> -
+> -	/*
+> -	 * Read the VMIDBits bits from ID_AA64MMFR1_EL1 and set the VS
+> -	 * bit in VTCR_EL2.
+> -	 */
+> -	tmp = (read_sysreg(id_aa64mmfr1_el1) >> ID_AA64MMFR1_VMIDBITS_SHIFT) & 0xf;
+> -	val |= (tmp == ID_AA64MMFR1_VMIDBITS_16) ?
+> -			VTCR_EL2_VS_16BIT :
+> -			VTCR_EL2_VS_8BIT;
+> -
+> -	write_sysreg(val, vtcr_el2);
+> -
+> -	return phys_shift;
+> -}
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index b0c07dab5cb3..e0c49377b771 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -26,6 +26,7 @@
+>  
+>  #include <kvm/arm_arch_timer.h>
+>  
+> +#include <asm/cpufeature.h>
+>  #include <asm/cputype.h>
+>  #include <asm/ptrace.h>
+>  #include <asm/kvm_arm.h>
+> @@ -134,9 +135,38 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
+>  	return kvm_timer_vcpu_reset(vcpu);
+>  }
+>  
+> +/*
+> + * Configure the VTCR_EL2 for this VM. The VTCR value is common
+> + * across all the physical CPUs on the system. We use system wide
+> + * sanitised values to fill in different fields, except for Hardware
+> + * Management of Access Flags. HA Flag is set unconditionally on
+> + * all CPUs, as it is safe to run with or without the feature and
+> + * the bit is RES0 on CPUs that don't support it.
+> + */
+>  int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
+>  {
+> +	u64 vtcr = VTCR_EL2_FLAGS;
+#define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
 
--- 
-Cheers,
-Alex G
+in include/asm/kvm_arm.h
+
+I don't see T0SZ=24 encoded there and I don't see it set either in the
+code below? For bisection purpose.
+
+Thanks
+
+Eric
+> +	u64 parange;
+> +
+>  	if (type)
+>  		return -EINVAL;
+> +
+> +	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
+> +	if (parange > ID_AA64MMFR0_PARANGE_MAX)
+> +		parange = ID_AA64MMFR0_PARANGE_MAX;
+> +	vtcr |= parange << VTCR_EL2_PS_SHIFT;
+> +
+> +	/*
+> +	 * Enable the Hardware Access Flag management, unconditionally
+> +	 * on all CPUs. The features is RES0 on CPUs without the support
+> +	 * and must be ignored by the CPUs.
+> +	 */
+> +	vtcr |= VTCR_EL2_HA;
+> +
+> +	/* Set the vmid bits */
+> +	vtcr |= (kvm_get_vmid_bits() == 16) ?
+> +		VTCR_EL2_VS_16BIT :
+> +		VTCR_EL2_VS_8BIT;
+> +	kvm->arch.vtcr = vtcr;
+>  	return 0;
+>  }
+> 
