@@ -2,140 +2,111 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB252ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6233BECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6164B21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BD1C20833
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRKfAs8a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6164B21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BZuxA/u3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD1C20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbeIUBzW (ORCPT
+        id S1733291AbeIUBzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:55:22 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38740 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbeIUBzW (ORCPT
+        Thu, 20 Sep 2018 21:55:23 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36184 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbeIUBzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Sep 2018 21:55:22 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j8-v6so6914893wrw.5;
-        Thu, 20 Sep 2018 13:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+BsPXTjXx0/hErE0HcAlphN83P4XztM0OJLvpKXlb5c=;
-        b=YRKfAs8aszhmsJOg5kbT5xjXNYG84th4w/aRJafb3kRPaFm8Z1OqGuDvu9piNjfRUD
-         cEWQoSL4E5vvbkolL7HDSZAcHn87aK+07MohY1GkiSkMqgzMvCZZ1gZi2yCO0XlfSLfs
-         Uwq30mf2HibtLXoCysfOwyDJRjB1bOYxE0VxRyJq1mE88vECpKJL4RS+camduzB6BhTl
-         KDA7QgMIbpuUTzXvKLF0dcJYf2THUjX4mYxjtyEAGqIe3ckVQ4IBRi4O3vIRqb31mYsh
-         KMyWpU36FRpPycaNXRq1IOtFty73/B+W4l5k1og69ZDwnNYDn4tTLYtCp0de2zgN7y1C
-         s2dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+BsPXTjXx0/hErE0HcAlphN83P4XztM0OJLvpKXlb5c=;
-        b=D3qF3b+Mh/reJRrC7mv/0rSHTlI9j91vg/JzdaOMXvAHPtg5rcgKcw4U7TBlXGZD9V
-         csvNkioWLnjrSehBjdTMyBj77R7Mg+giRzqqxO/MAgU5jOW0AV3Wmx0zNOTgxpPCdo42
-         qOiGzIt5f7XCOgBUN74RWwmwxMaSQxETQ6IV25lKv+hx84rkgvESHRqE8jgmO/aVFNF0
-         4fUDrHhgk8B6wuQq3uOdFgm0XxY0iQbgN2+lo3cvXEHRbp+QsAA31jdnlXbKDSmXCaMC
-         No1HbA3niMA9EGcsplpb05cZV8Isa6cmKg7MFMGUNI92O1RIBx2ly5nIzulN3/gSnFWK
-         fTnQ==
-X-Gm-Message-State: APzg51D2BHMYB55IBcjQ9ZrhVnYCOANvqp6b5+5CAHct2KkASlhQURd2
-        Z/ig+YE7yrLJx2F62UuJhNM=
-X-Google-Smtp-Source: ANB0Vda0WYHoY2rSkvP4LkfJ9QYVZzX4g6f+NH0o8xH6zv6AgKeCC6Whj8/Hhxlu5H9xAgswysTCag==
-X-Received: by 2002:adf:a4dc:: with SMTP id h28-v6mr23349152wrb.167.1537474209902;
-        Thu, 20 Sep 2018 13:10:09 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id u7-v6sm3106126wmd.46.2018.09.20.13.10.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 13:10:08 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: mpt3sas: Remove unnecessary parentheses and simplify null checks
-Date:   Thu, 20 Sep 2018 13:10:02 -0700
-Message-Id: <20180920201002.23979-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 200941C86;
+        Thu, 20 Sep 2018 22:10:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1537474211;
+        bh=vrKR2wwYt8Vkjhf+0JGRlOjotHwFj7i7LYAtpL+XxNw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BZuxA/u3VWgFXMrfcSw7fsciBF1EdIylHbVFh5ziclRbbx3tKXwqHs7gXN6H1gI+A
+         uB7PaIgps04+UxMlLDsDvCE6XDMy8ju3keXnaYocYaBIIwTUhNm52xOgO6f2KKYT0M
+         rO5dFXDGT1p7Y/axhhWUmSOJpeP7NboLmgZ0XoBE=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Subject: Re: [PATCH v2 4/4] [media] ad5820: Add support for of-autoload
+Date:   Thu, 20 Sep 2018 23:10:23 +0300
+Message-ID: <2401971.XiI38RXFgU@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180920183151.2933-1-ricardo.ribalda@gmail.com>
+References: <20180920161912.17063-4-ricardo.ribalda@gmail.com> <20180920183151.2933-1-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when multiple pairs of parentheses are used for a single
-conditional statement.
+Hi Ricardo,
 
-drivers/scsi/mpt3sas/mpt3sas_base.c:535:11: warning: equality comparison
-with extraneous parentheses [-Wparentheses-equality]
-        if ((ioc == NULL))
-             ~~~~^~~~~~~
-drivers/scsi/mpt3sas/mpt3sas_base.c:535:11: note: remove extraneous
-parentheses around the comparison to silence this warning
-        if ((ioc == NULL))
-            ~    ^      ~
-drivers/scsi/mpt3sas/mpt3sas_base.c:535:11: note: use '=' to turn this
-equality comparison into an assignment
-        if ((ioc == NULL))
-                 ^~
-                 =
-drivers/scsi/mpt3sas/mpt3sas_base.c:539:12: warning: equality comparison
-with extraneous parentheses [-Wparentheses-equality]
-        if ((pdev == NULL))
-             ~~~~~^~~~~~~
-drivers/scsi/mpt3sas/mpt3sas_base.c:539:12: note: remove extraneous
-parentheses around the comparison to silence this warning
-        if ((pdev == NULL))
-            ~     ^      ~
-drivers/scsi/mpt3sas/mpt3sas_base.c:539:12: note: use '=' to turn this
-equality comparison into an assignment
-        if ((pdev == NULL))
-                  ^~
-                  =
-2 warnings generated.
+Thank you for the patch.
 
-Remove them and while we're at it, simplify the NULL checks as '!var' is
-used more than 'var == NULL'.
+On Thursday, 20 September 2018 21:31:51 EEST Ricardo Ribalda Delgado wrote:
+> Since kernel 4.16, i2c devices with DT compatible tag are modprobed
+> using their DT modalias.
+> Without this patch, if this driver is build as module it would never
+> be autoprobed.
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>  drivers/media/i2c/ad5820.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
+> index 20931217e3b1..75b9b8aa5533 100644
+> --- a/drivers/media/i2c/ad5820.c
+> +++ b/drivers/media/i2c/ad5820.c
+> @@ -375,12 +375,19 @@ static const struct i2c_device_id ad5820_id_table[] =
+> { };
+>  MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
+> 
+> +static const struct of_device_id ad5820_of_table[] = {
+> +	{ .compatible = "adi,"AD5820_NAME },
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'd spell this out explicitly, to make it easier to grep for the compatible 
+string.
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 59d7844ee022..a49f16fed4c8 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -532,11 +532,11 @@ static int mpt3sas_remove_dead_ioc_func(void *arg)
- 	struct MPT3SAS_ADAPTER *ioc = (struct MPT3SAS_ADAPTER *)arg;
- 	struct pci_dev *pdev;
- 
--	if ((ioc == NULL))
-+	if (!ioc)
- 		return -1;
- 
- 	pdev = ioc->pdev;
--	if ((pdev == NULL))
-+	if (!pdev)
- 		return -1;
- 	pci_stop_and_remove_bus_device_locked(pdev);
- 	return 0;
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, ad5820_of_table);
+> +
+>  static SIMPLE_DEV_PM_OPS(ad5820_pm, ad5820_suspend, ad5820_resume);
+> 
+>  static struct i2c_driver ad5820_i2c_driver = {
+>  	.driver		= {
+>  		.name	= AD5820_NAME,
+>  		.pm	= &ad5820_pm,
+> +		.of_match_table = ad5820_of_table,
+
+As the driver doesn't depend on CONFIG_OF, would it make sense to use 
+of_config_ptr() (and to compile the of table conditionally on CONFIG_OF) ?
+
+>  	},
+>  	.probe		= ad5820_probe,
+>  	.remove		= ad5820_remove,
+
 -- 
-2.19.0
+Regards,
+
+Laurent Pinchart
+
+
 
