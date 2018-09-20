@@ -2,145 +2,116 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5589EC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C48DECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1474721523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31C9721531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgEtHDfH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1474721523
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJWq5XsU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C9721531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388250AbeIUA65 (ORCPT
+        id S2388199AbeIUBCN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:58:57 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35812 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeIUA64 (ORCPT
+        Thu, 20 Sep 2018 21:02:13 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42110 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387773AbeIUBCN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:58:56 -0400
-Received: by mail-wm1-f66.google.com with SMTP id o18-v6so689961wmc.0;
-        Thu, 20 Sep 2018 12:13:57 -0700 (PDT)
+        Thu, 20 Sep 2018 21:02:13 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y4-v6so4873623pgp.9;
+        Thu, 20 Sep 2018 12:17:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=7UZffiZbIMv5K7TvvhuvQ/1USYMYxFet6EpiUX4mTJ0=;
-        b=MgEtHDfHBZSxOy/uZGxIyCzrws1+NCNVIgZaS5+44s//UBWBLAzvYeCZV53I02J+Li
-         uc8XLGeNz8oAJys1Lrr5vqrsNZdtFmU5iXIGNKF9tVSKwZeUnPYDJbrAMlMYXwCE9GI8
-         x0RXfeRovzpg/zv4j65dPfjWOKQMjypbVkG5A6D7Lxaocuy7F1ckE0K8X7fWLmQsaGxP
-         HjHk7Nm4Jkt/HnsWZpJZR8a+Xso+sqW7oe1T1aBq6T09Bfw4T4V1K/lA5A0mVugff5eP
-         Tvnylv0cKck+rrpdqeDUEMUWnYXlT8CtHd1/h/wLgtG074haSE02SQyNt2Yox2itgBHe
-         BxlQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=NYKCzosd2yHyg482oEwQQtyC0evqIAxtkiG0dvXHqBo=;
+        b=WJWq5XsU3acBwxl9t8IVcQIBiXLrcxGzduRWOepCZKQd5fvg+Fi1ePa/YmwWjYeVyV
+         3AdweaEeQ+LiqhVt4I51LjsYxaPDvg+PREgdht3zxwlVFh1VFRnuq0owoPSo/QVElQjY
+         NtFw+H2qlQVAabbrCasxm72W4fcgOCVTsyTREWkX6YJ8gAZK7YOkZu9ght4gACf3nnKq
+         odUjRmg5cMA1vXLzvmEJj1UmaHfjoBO/Qp/NfdFRkw5mgZVtCkRBV2mDzaV8pdhkwSqW
+         7gOS1vNYbOKfyqoIFyQ2dTafIOGlRvgv4C73gMBkH+54TTPjvXd7zZkDsOJU2CbVKeRW
+         2/Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=7UZffiZbIMv5K7TvvhuvQ/1USYMYxFet6EpiUX4mTJ0=;
-        b=av9R1RewBxLJ9av45gWzC+f7xaUFfkHSLWOTY3+IWtqKih5NNwlv5DRwaX1IKKD1uh
-         3F1KzmVcJZjSCkZd+3d0eyM2Tpy4slCG1SwCFxtbGV5pBBGYJHZBulSA9zHhSlRfZ6bU
-         xCdVbGJtJPSwuC0j8s+NTI0yMYwqvZvFoa1ynexgpzbrna83kS/wJPTXTHVa/AQFKL3L
-         wNDkB1khjET/CKq9CIAdAR33QxZVMX/Fhz/XpaHLOf10xGktz+VkypU3ZzJGcEWLhhc+
-         gZKlAJpqfcfgB+BNvJQPK1k1NO7yHb5bvmY+3c310YjohLX+0vjpxy8YrKKy6fHmp0j3
-         GPRg==
-X-Gm-Message-State: APzg51DaSHbHcPSUIE+v2y8eGMXRpcbRxiANSQH4G4mLQcbZjFa7Bxxn
-        YrSrNRngCVbdqy03WuXA2A==
-X-Google-Smtp-Source: ANB0VdZ9MZlj4oiqayfkgWiENJt6hipq/72dHXCit6r4hT/BIu2HG6kzYkn0ox/Xp4PAnPuPhoy7Hg==
-X-Received: by 2002:a1c:9b91:: with SMTP id d139-v6mr4312891wme.50.1537470836933;
-        Thu, 20 Sep 2018 12:13:56 -0700 (PDT)
-Received: from android-dhcp-8-1-0-d4-38-9c-a2-1f-05.home (host86-147-9-252.range86-147.btcentralplus.com. [86.147.9.252])
-        by smtp.gmail.com with ESMTPSA id j133-v6sm3671386wmd.12.2018.09.20.12.13.56
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NYKCzosd2yHyg482oEwQQtyC0evqIAxtkiG0dvXHqBo=;
+        b=be+ifr84EYKxe8qyY/v7fGcKBl0/t0EBFM+yXElRkzcbwFyAvDr85khkRfqK1BG0Hv
+         LSg1JdOpLsBDGJgQItkzd/y0Fef5/+/MlvnClJxolTvBQh0n6d5k9AFP13HexQV7QNyg
+         6AYIo7aJNBNDUFWnvMKjZc8QC1tq1Dw5NfNuzwggEe/SKRmNia1gKNWNlbxoOCQkcA51
+         HFVJujiDTw7tMB/Yuibo9sfYhb7f4zm+mrRwSYoXErsX4xkzMSohnzwhLNwrkftAbHYr
+         d6EsIktBD83s8FQHM6t2RjeQuVFB25Aa67Ecj264CeaKM7qanO5RFXF97q1rB/PMRzJ9
+         ljDg==
+X-Gm-Message-State: APzg51Dn5u3bbW3RXsNJ2x1wqcLfKGIsUSgfi3eLvYS6m/ZnNCcpl9et
+        YSJt5+znb1yt+PkhCQkcTAKnCmlw
+X-Google-Smtp-Source: ANB0VdZSg0z56OKX8esTNibk0c3V6nY/zXJxghDGth/7nypRx8qtWk4A+lTGK9bt+NJJIvSfZBY+JQ==
+X-Received: by 2002:a63:e116:: with SMTP id z22-v6mr38006275pgh.89.1537471033865;
+        Thu, 20 Sep 2018 12:17:13 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 12:13:56 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 20:13:52 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180920165847.6xqzeoqzqkyotshx@earth.universe>
-References: <20180407135934.26122-1-ctatlor97@gmail.com> <20180614151435.6471-1-ctatlor97@gmail.com> <20180614151435.6471-3-ctatlor97@gmail.com> <20180916121045.aptj6nciwskfg4st@earth.universe> <4BBA3F28-A769-4F09-86DC-1E3906C53B26@gmail.com> <20180920165847.6xqzeoqzqkyotshx@earth.universe>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 3/4] dt-bindings: power: supply: qcom_bms: Add bindings
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Craig <ctatlor97@gmail.com>
-Message-ID: <5039A15E-E604-4D03-AFEF-4B139EB18A30@gmail.com>
+        Thu, 20 Sep 2018 12:17:12 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Ray Jui <ray.jui@broadcom.com>, Tejun Heo <tj@kernel.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-ide@vger.kernel.org (open list:LIBATA SUBSYSTEM (Serial and
+        Parallel ATA drivers)),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH 0/9] AHCI and SATA PHY support for BCM63138
+Date:   Thu, 20 Sep 2018 12:16:34 -0700
+Message-Id: <20180920191646.18198-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kishon, Tejun,
 
+This patch series adds support for the SATA AHCI and PHY found on the
+ARM-basd BCM63138 DSL SoCs.
 
-On 20 September 2018 17:58:47 BST, Sebastian Reichel <sebastian=2Ereichel@=
-collabora=2Ecom> wrote:
->[Dropped a couple of people from CC, added Baolin]
->
->Hi Craig, Baolin and Rob,
->
->On Thu, Sep 20, 2018 at 03:32:29PM +0100, Craig wrote:
->> On 16 September 2018 13:10:45 BST, Sebastian Reichel
-><sebastian=2Ereichel@collabora=2Ecom> wrote:
->> >Sorry for my long delay in reviewing this=2E I like the binding,
->> >but the "qcom," specific properties should become common properties
->> >in
->> >
->> >Documentation/devicetree/bindings/power/supply/battery=2Etxt
->> >and referenced via monitored-battery=2E
->
->> Thanks for the review, what bindings for ocv would you prefer? The
->> spreadtrum ones or mine?
->
->Most importantly I want to see only one generic binding supporting
->both use cases=2E As far as I can see there are two major differences:
->
->1=2E Qcom uses legend properties and SC27XX embedds this into data
->2=2E Qcom supports temperature based mapping
->
->The second point is easy: Not having temperature information can
->be a subset of the data with temperature info=2E The main thing to
->discuss are the legend properties=2E I suppose we have these
->proposals:
->
->Proposal A (from Qcom BMS binding):
->
->ocv-capacity-legend =3D /bits/ 8 <100 95 90 85 80 75 70 65 60 55 50 45
->=2E=2E=2E>;
->ocv-temp-legend-celsius =3D /bits/ 8 <(-10) 0 25 50 65>;
->ocv-lut-microvolt =3D <43050000 43050000 43030000 42990000
->
->Proposal B (from SC27XX binding):
->
->ocv-cap-table =3D <4185 100>, <4113 95>, <4066 90>, <4022 85> =2E=2E=2E;
->
->I prefer the second binding (with mV -> uV), but I think it becomes
->messy when temperature is added=2E What do you think about the
->following proposal (derived from pinctrl style):
->
->Proposal C:
->
->ocv-capacity-table-temperatures =3D <(-10) 0 10>;
->ocv-capacity-table-0 =3D <4185000 100>, <4113000 95>, <4066000 90>, =2E=
-=2E=2E;
->ocv-capacity-table-1 =3D <4200000 100>, <4185000 95>, <4113000 90>, =2E=
-=2E=2E;
->ocv-capacity-table-2 =3D <4250000 100>, <4200000 95>, <4185000 90>, =2E=
-=2E=2E;
->
->-- Sebastian
+It would probably make sense for patches 1-3 to go through Kishon's
+tree, patches 4-7 through Tejun's tree, and I would be merging the last
+two patches through the Broadcom ARM-SoC tree.
 
-C looks good to me however I do kinda think it should be millivolts as I d=
-on't think any hardware reads in microvolts and the zeroes make it look qui=
-te ugly
+Let me know if this is not a workable plan, thank you very much!
+
+Florian Fainelli (9):
+  dt-bindings: phy: Document BCM63138 compatible string
+  phy: brcm-sata: allow PHY_BRCM_SATA driver to be built for DSL SoCs
+  phy: brcm-sata: Add BCM63138 (DSL) PHY init sequence
+  dt-bindings: ata: Document BCM63138 compatible string
+  ata: ahci_brcm: Allow optional reset controller to be used
+  ata: ahci_brcm: Match BCM63138 compatible strings
+  ata: ahci_brcm: Allow using driver or DSL SoCs
+  ARM: dts: BCM63xx: enable SATA PHY and AHCI controller
+  ARM: bcm63138: Enable SATA AHCI and PHY
+
+ .../bindings/ata/brcm,sata-brcm.txt           |  1 +
+ .../devicetree/bindings/phy/brcm-sata-phy.txt |  1 +
+ arch/arm/boot/dts/bcm63138.dtsi               | 30 ++++++++
+ arch/arm/boot/dts/bcm963138dvt.dts            |  8 +++
+ drivers/ata/Kconfig                           |  3 +-
+ drivers/ata/ahci_brcm.c                       | 10 +++
+ drivers/phy/broadcom/Kconfig                  |  3 +-
+ drivers/phy/broadcom/phy-brcm-sata.c          | 70 +++++++++++++++++++
+ 8 files changed, 124 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
