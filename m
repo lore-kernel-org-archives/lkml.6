@@ -2,138 +2,116 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C95BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C99ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6C921534
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:28:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6C921534
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2C72020877
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:28:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMc5Q5bY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C72020877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388014AbeIUCN5 (ORCPT
+        id S2388251AbeIUCOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:13:57 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53712 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbeIUCN5 (ORCPT
+        Thu, 20 Sep 2018 22:14:03 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36702 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeIUCOC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:13:57 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1BED180642; Thu, 20 Sep 2018 22:28:41 +0200 (CEST)
-Date:   Thu, 20 Sep 2018 22:28:40 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] [media] ad5820: DT new optional field enable-gpios
-Message-ID: <20180920202840.GA31044@amd>
-References: <20180920161912.17063-1-ricardo.ribalda@gmail.com>
- <20180920161912.17063-3-ricardo.ribalda@gmail.com>
- <1939782.bRt5jKDIiS@avalon>
- <2983018.WjSXnZMEY4@avalon>
- <CAPybu_2Ke7qAx=3LRX6aEbGSD56Z+RhWKX=gEXR6WCgyOegxEw@mail.gmail.com>
+        Thu, 20 Sep 2018 22:14:02 -0400
+Received: by mail-wm1-f67.google.com with SMTP id j192-v6so885768wmj.1;
+        Thu, 20 Sep 2018 13:28:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yNn4v0/RQJnn/jjCb6qmWqjFKUoVQPryB4wy16zI1hE=;
+        b=lMc5Q5bYmdvcbjIxzI5usSe7HCpjVrJ7vMp3cwZFX/vVAlE18ReFWsz/th3A/leBor
+         I2ubzIwTopWccAIPuXM6Lkg/QNYGz+DZDLpDD5xpET13wzjPfzPNEbsrDGZMRUwoMYHl
+         1GfKMUTp+HtrUWRqYeQ+aS0UFwdYUXFfw3eQxAYjgskKnEDAdDXTazBOU6x4umBFlyyB
+         DZQCh5sMq3PsZhCO2x274ukvn+jyCVATixdZDvoCxkIY7L9/O6ECAylq/ny8hLZtCWbC
+         jukBr1O5U2bY7Ymvf3p6hAlDMWHSRQwMpAiHV+yup4zzvR+vxIcImdQN6vmMUMRCX6NO
+         0FUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yNn4v0/RQJnn/jjCb6qmWqjFKUoVQPryB4wy16zI1hE=;
+        b=h04JHOc0fqJj3Y7gE2f4aNHemYXP+tFyGrndNJZYZHNstPxCTwk2NaGbeTF6mdOdX7
+         o9+xImQ8jrwdKbp5qFpzTTE1d2ZBymteg48zovMtKvbiHCmwR5c+0zlRWSAhfoi9tPfG
+         mIAZNsactLkOLCgwnlQE2z851+VSA/F5JA5VdWcQwd+q12V4aKuP8EbF6IYXIbHscdiF
+         WPcaj7/mNbGu/vJ31YU+CN+Ld0MhVRwJygRUIMCExCGlGpWQy+7uCHM1zNqx3JAzhF1a
+         viZnCZb9QnTruf1PHbOjUMHpHDl7HPsXVjqfE1170seert1+vvgN2e8wXKSg5Kq7uUm2
+         TIUA==
+X-Gm-Message-State: APzg51CuDs/rdIMKb52enCFh+T8yINvuupyP8e4+Q+ofKnYGqwfTNuKK
+        B9VCxLU7UywyAuO/5TwWQx4=
+X-Google-Smtp-Source: ANB0VdZAOPGHzcemujCIrzDjMDJrpqEzhLzmlgFR6YwmcElFwxMrV5dpeaCMQ0qdu1LDAvmJUTnXUw==
+X-Received: by 2002:a1c:8c0b:: with SMTP id o11-v6mr4480158wmd.11.1537475325568;
+        Thu, 20 Sep 2018 13:28:45 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id r66-v6sm4007968wmb.37.2018.09.20.13.28.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 13:28:44 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] usb: gadget: udc: Remove unnecessary parentheses
+Date:   Thu, 20 Sep 2018 13:28:13 -0700
+Message-Id: <20180920202812.29158-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Content-Disposition: inline
-In-Reply-To: <CAPybu_2Ke7qAx=3LRX6aEbGSD56Z+RhWKX=gEXR6WCgyOegxEw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Clang warns when multiple pairs of parentheses are used for a single
+conditional statement.
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/usb/gadget/udc/mv_udc_core.c:188:33: warning: equality
+comparison with extraneous parentheses [-Wparentheses-equality]
+        while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
+                ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+drivers/usb/gadget/udc/mv_udc_core.c:188:33: note: remove extraneous
+parentheses around the comparison to silence this warning
+        while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
+               ~                       ^                  ~
+drivers/usb/gadget/udc/mv_udc_core.c:188:33: note: use '=' to turn this
+equality comparison into an assignment
+        while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
+                                       ^~
+                                       =
+1 warning generated.
 
-On Thu 2018-09-20 22:25:54, Ricardo Ribalda Delgado wrote:
-> Hi
-> On Thu, Sep 20, 2018 at 10:23 PM Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> >
-> > On Thursday, 20 September 2018 23:21:28 EEST Laurent Pinchart wrote:
-> > > Hi Ricardo,
-> > >
-> > > Thank you for the patch.
-> > >
-> > > On Thursday, 20 September 2018 19:19:11 EEST Ricardo Ribalda Delgado =
-wrote:
-> > > > Document new enable-gpio field. It can be used to disable the part
-> > > > without turning down its regulator.
-> > > >
-> > > > Cc: devicetree@vger.kernel.org
-> > > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > > > ---
-> > > >
-> > > >  Documentation/devicetree/bindings/media/i2c/ad5820.txt | 6 ++++++
-> > > >  1 file changed, 6 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> > > > b/Documentation/devicetree/bindings/media/i2c/ad5820.txt index
-> > > > 5940ca11c021..07d577bb37f7 100644
-> > > > --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> > > > +++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> > > >
-> > > > @@ -8,6 +8,11 @@ Required Properties:
-> > > >    - VANA-supply: supply of voltage for VANA pin
-> > > >
-> > > > +Optional properties:
-> > > > +
-> > > > +   - enable-gpios : GPIO spec for the XSHUTDOWN pin.
-> > >
-> > > xshutdown is active-low, so enable is active-high. Should this be doc=
-umented
-> > > explicitly, to avoid polarity errors ? Maybe something along the line=
-s of
-> > >
-> > > - enable-gpios: GPIO spec for the XSHUTDOWN pin. Note that the polari=
-ty of
-> > > the enable GPIO is the opposite of the XSHUTDOWN pin (asserting the e=
-nable
-> > > GPIO deasserts the XSHUTDOWN signal and vice versa).
->=20
-> Agreed
->=20
-> >
-> > Or alternatively you could name the property xshutdown-gpios, as explai=
-ned in
-> > my (incorrect) review of 2/4.
->=20
-> I have double negatives :). If there is no other option I will rename
-> it xshutdown, but I want to give it a try to enable.
+Link: https://github.com/ClangBuiltLinux/linux/issues/120
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/usb/gadget/udc/mv_udc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think enable is fine.
+diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
+index 95f52232493b..cafde053788b 100644
+--- a/drivers/usb/gadget/udc/mv_udc_core.c
++++ b/drivers/usb/gadget/udc/mv_udc_core.c
+@@ -185,7 +185,7 @@ static int process_ep_req(struct mv_udc *udc, int index,
+ 	else
+ 		bit_pos = 1 << (16 + curr_req->ep->ep_num);
+ 
+-	while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
++	while (curr_dqh->curr_dtd_ptr == curr_dtd->td_dma) {
+ 		if (curr_dtd->dtd_next == EP_QUEUE_HEAD_NEXT_TERMINATE) {
+ 			while (readl(&udc->op_regs->epstatus) & bit_pos)
+ 				udelay(1);
+-- 
+2.19.0
 
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlukAvgACgkQMOfwapXb+vKwZgCeM/O6ef+EQUJCEEyJ6OnPsaC+
-3p4AniB7FLELDJ+pEh3iebiI5PzkLqwc
-=+ulO
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
