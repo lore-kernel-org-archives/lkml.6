@@ -2,290 +2,119 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817F4ECE561
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F2CC04AB8
 	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B13C206B5
+	by mail.kernel.org (Postfix) with ESMTP id 71E4721524
 	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B13C206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzOgWTw8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E4721524
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbeITMvn (ORCPT
+        id S1731663AbeITMvo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 08:51:43 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:18944 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbeITMvm (ORCPT
+        Thu, 20 Sep 2018 08:51:44 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36062 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731521AbeITMvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Sep 2018 08:51:42 -0400
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 20 Sep 2018
- 15:10:05 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 2/2] arm64: dts: meson-g12a: add initial g12a s905d2 SoC DT support
-Date:   Thu, 20 Sep 2018 15:09:27 +0800
-Message-ID: <1537427368-11104-3-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1537427368-11104-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1537427368-11104-1-git-send-email-jianxin.pan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+Received: by mail-ed1-f66.google.com with SMTP id f4-v6so6952639edq.3;
+        Thu, 20 Sep 2018 00:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=EVXqG9TFNSdJftDH674RRhhZn1hGyeYCHYEDOQJMmWQ=;
+        b=AzOgWTw8UE+69eJ7p81dhasLqs3sLqOb5Jj0TnQz9ePi48WLkqb79A2swjiwf2kMpe
+         mAJxVtG8QBw7I6e1lQlFbJDxsPWkMAJTU/GfF+7K7xG4BgyqtYXwt3incVdczK3z+HYS
+         idew4NiIDwwFU5KxZQxoLbRMDrRjwGE+3lCNCdkybn8DG9I1HQRd/VODojb8yG+cCP3E
+         3UFxBxv640elBYRHHHdEQqIK5cJ3gVbd2ZgEp38gnae/tKwSlNl4eUQiyKnrNLkfyAEp
+         ZEu4GzCwxeDxFplEX3W1+6LyG97f8qasB9obw2AiZAGt/ZR3ppeWkxASRhzod8S8dB9P
+         3gGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=EVXqG9TFNSdJftDH674RRhhZn1hGyeYCHYEDOQJMmWQ=;
+        b=YfwJLI36PEAFYypSGG9Vi6dwsMw7N7VGNWLKKFZE96YMk6yBoHJ1npy3U+NS+GqYoM
+         o2SyI13K4O1dP9rotE7Q6EaQH0WozLPMJU5kY3EQcOhd4AloZNHNhFwMPcmPKIwUMQcd
+         dUykH7rrgSGhEWIv2c5T92xhiv9GNzc55UV2uNqeEnJKP0oeF4X+XGRO0WZBI6gQtNil
+         n/iRCjKfKF4EyY7E535wKZMQVqL3Kqo0ds8Q648cjbTd11cTuZq1nd4cjhvMokxPmkvN
+         xqa4unDfbvHobRuQ+jr5mgQvZoF5mFwUelNFAUN62+jhCA+AnrGK3kp/35osddnu8IW2
+         tfjw==
+X-Gm-Message-State: APzg51C79VwV/Ph8NwwzOrknCU4sBS4eDY9jmHbfhZpzLt8C9iz+0BIX
+        Gm9vbrg6xLbHHl0CZk+LOwZkeCneyJU=
+X-Google-Smtp-Source: ANB0VdZSyKA1ToXAgD4fD6EXaV0pxM31aANwKJG70Ur2RF5zi7rs4beDAZ5ZOnd10EaTdcURDT8+/A==
+X-Received: by 2002:a50:cc0a:: with SMTP id m10-v6mr2452622edi.81.1537427382352;
+        Thu, 20 Sep 2018 00:09:42 -0700 (PDT)
+Received: from localhost (84-199-88-153.iFiber.telenet-ops.be. [84.199.88.153])
+        by smtp.gmail.com with ESMTPSA id c15-v6sm563198edm.21.2018.09.20.00.09.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 00:09:41 -0700 (PDT)
+From:   AceLan Kao <acelan.kao@canonical.com>
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Joe Perches <joe@perches.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: core: disable USB2 LPM when suspending
+Date:   Thu, 20 Sep 2018 15:09:40 +0800
+Message-Id: <20180920070940.14773-1-acelan.kao@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
-which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
-Timer, UART. It's capable of booting up into the serial console.
+We found a S5 current leakage issue on Dell DW1820 WiFi/BT combo card
+which uses Qualcomm QCA6174 SoC. It also comes with WiFi and BT failure
+when encountered current leakage issue.
+   1. Power on, both WiFi and BT work.
+   2. Power off and found a current leakage issue(consumes ~0.5W)
+   3. Power on, no WiFi and BT devices can be found in lspci and lsusb.
+   4. Power off, there is no current leakage issue at S5.
+   5. continue to 1.
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+From Qualcomm's report:
+Based on the USB sniffer log, the difference between Linux and Windows
+is USB LPM setting(no LPM transaction on Windows) which may leads to
+the voltage leakage on Linux S5 state.
+
+After checked the LPM related code and found, when system is going to
+enter S5, it resumes the USB devices from runtime suspend and enables
+USB2 LPM, and then it calls usb_dev_poweroff() -> usb_suspend(), and
+leave USB2 LPM stays enabled.
+
+Disable USB2 LPM in usb_suspend() fixes the issue mentioned above,
+and try 30 times of s2idle, S3 and S5, the USB devices keep working
+well. Disable USB2 LPM seems do no harm to the system.
+
+Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
 ---
- arch/arm64/boot/dts/amlogic/Makefile            |   1 +
- arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 172 ++++++++++++++++++++++++
- 3 files changed, 195 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+ drivers/usb/core/driver.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index a97c0e2..c31f29d6 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nanopi-k2.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nexbox-a95x.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-odroidc2.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-new file mode 100644
-index 0000000..d267a37
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ */
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index e76e95f62f76..ac5e60d7104f 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -1463,6 +1463,9 @@ int usb_suspend(struct device *dev, pm_message_t msg)
+ 	struct usb_device	*udev = to_usb_device(dev);
+ 	int r;
+ 
++	if (udev->usb2_hw_lpm_enabled == 1)
++		usb_set_usb2_hardware_lpm(udev, 0);
 +
-+/dts-v1/;
-+
-+#include "meson-g12a.dtsi"
-+
-+/ {
-+	compatible = "amlogic,u200", "amlogic,g12a";
-+	model = "Amlogic Meson G12A U200 Development Board";
-+
-+	aliases {
-+		serial0 = &uart_AO;
-+	};
-+};
-+
-+&uart_AO {
-+	status = "okay";
-+};
-+
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-new file mode 100644
-index 0000000..3b82a97
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -0,0 +1,172 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "amlogic,g12a";
-+
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <0x2>;
-+		#size-cells = <0x0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x2>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0x0 0x3>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		l2: l2-cache0 {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* 3 MiB reserved for ARM Trusted Firmware (BL31) */
-+		secmon_reserved: secmon@5000000 {
-+			reg = <0x0 0x05000000 0x0 0x300000>;
-+			no-map;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		periphs: periphs@ff634000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff634000 0x0 0x2000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff634000 0x0 0x2000>;
-+		};
-+
-+		hiubus: bus@ff63c000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff63c000 0x0 0x1c00>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
-+		};
-+
-+		aobus: bus@ff800000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xff800000 0x0 0x100000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xff800000 0x0 0x100000>;
-+
-+			uart_AO: serial@3000 {
-+				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
-+				reg = <0x0 0x3000 0x0 0x18>;
-+				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>, <&xtal>, <&xtal>;
-+				clock-names = "xtal", "pclk", "baud";
-+				status = "disabled";
-+			};
-+
-+			uart_AO_B: serial@4000 {
-+				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
-+				reg = <0x0 0x4000 0x0 0x18>;
-+				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
-+				clocks = <&xtal>, <&xtal>, <&xtal>;
-+				clock-names = "xtal", "pclk", "baud";
-+				status = "disabled";
-+			};
-+		};
-+
-+		gic: interrupt-controller@ffc01000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x0 0xffc01000 0 0x1000>,
-+			      <0x0 0xffc02000 0 0x2000>,
-+			      <0x0 0xffc04000 0 0x2000>,
-+			      <0x0 0xffc06000 0 0x2000>;
-+			interrupt-controller;
-+			interrupts = <GIC_PPI 9
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+		};
-+
-+		cbus: bus@ffd00000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xffd00000 0x0 0x25000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xffd00000 0x0 0x25000>;
-+		};
-+
-+		apb: apb@ffe00000 {
-+			compatible = "simple-bus";
-+			reg = <0x0 0xffe00000 0x0 0x200000>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges = <0x0 0x0 0x0 0xffe00000 0x0 0x200000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	xtal: xtal-clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "xtal";
-+		#clock-cells = <0>;
-+	};
-+
-+};
+ 	unbind_no_pm_drivers_interfaces(udev);
+ 
+ 	/* From now on we are sure all drivers support suspend/resume
 -- 
-1.9.1
+2.17.1
 
