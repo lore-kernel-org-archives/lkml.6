@@ -2,509 +2,376 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06001C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B06ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5C9206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D146B20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:11:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cFLRjM+c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F5C9206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kFt4zHW7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D146B20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732340AbeITPxM (ORCPT
+        id S1732380AbeITPyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:53:12 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41268 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731145AbeITPxM (ORCPT
+        Thu, 20 Sep 2018 11:54:41 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36130 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730654AbeITPyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:53:12 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8KAAIAX083994;
-        Thu, 20 Sep 2018 05:10:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537438218;
-        bh=mNxHNG1wzBxs/VtZBPuzePIZQUkwDrq0J52ITQ5qoN0=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=cFLRjM+ccDzGNukTRoW+B4jEZnHlnqfZQXJBfAUWPuSQIpVu3qNRPJ7/oa8dryc2a
-         +XwKPDqBEImXz0XQQ2wnSzSa43daChZYpvpzIidGqGQJ38qmoixyaFYlw8fZ2EVRCc
-         uRPbUiqijyK/p7ibYZCMT0VneJYUI9oqVTTV1n1Q=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8KAAIu8007820;
-        Thu, 20 Sep 2018 05:10:18 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 20
- Sep 2018 05:10:18 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 20 Sep 2018 05:10:18 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8KAAF2q013525;
-        Thu, 20 Sep 2018 05:10:16 -0500
-Subject: Re: [RFC PATCH v2 2/2] phy: cadence: Add driver for Sierra PHY
-To:     Alan Douglas <adouglas@cadence.com>,
-        <linux-kernel@vger.kernel.org>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>
-References: <1536244971-26714-1-git-send-email-adouglas@cadence.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <80328703-d99d-599f-956f-ed13cb8313a7@ti.com>
-Date:   Thu, 20 Sep 2018 15:40:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 20 Sep 2018 11:54:40 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180920101152euoutp010457bc98d92ffbe703de76b9b7839c69~WE--4QO6U2734727347euoutp01D;
+        Thu, 20 Sep 2018 10:11:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180920101152euoutp010457bc98d92ffbe703de76b9b7839c69~WE--4QO6U2734727347euoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1537438313;
+        bh=LYsSsWEcX3WHp2Zq9VGbfROhSvgXLYxvgEYp4yDqPTk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=kFt4zHW7Y3imGpKibTe5U599q09/vJEx2a76pJAcj7mDFFBj9avfBK65peIEKj+lj
+         kXtg9d7fdF77MxMQpE7O0T+p8lKnxn9DOOxm0nAzL80m5dOfWWIrS8Dc9V+uJsnj4p
+         0GONTP0y75xvrQnUWhuk34xHs4p0YUZ/ux7LcRwc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180920101152eucas1p27e318127ea2aa3dd4320f2ff494329e5~WE--dhXdE2798827988eucas1p2D;
+        Thu, 20 Sep 2018 10:11:52 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 13.72.04441.86273AB5; Thu, 20
+        Sep 2018 11:11:52 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27;
+        Thu, 20 Sep 2018 10:11:51 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180920101151eusmtrp192e5ae69fb9e1e25744475debda081d8~WE-_JdTNv2843728437eusmtrp1m;
+        Thu, 20 Sep 2018 10:11:51 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-81-5ba3726850ae
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F6.8D.04128.66273AB5; Thu, 20
+        Sep 2018 11:11:50 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180920101149eusmtip21605f6331196a5660e7652fccb785d77~WE-8tUUOZ0891008910eusmtip2M;
+        Thu, 20 Sep 2018 10:11:49 +0000 (GMT)
+Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in
+ get/set array
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Rojhalat Ibrahim <imr@rtschenk.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Thu, 20 Sep 2018 12:11:48 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1536244971-26714-1-git-send-email-adouglas@cadence.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <20180902120144.6855-5-jmkrzyszt@gmail.com>
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTZxTee9/bey9lJZfixhtxI2mm22SDkczsLJpFM7LcLWT6Z7jZZXrF
+        OyDyYVphaLKsASNIIFAggJdq68qCok7mRweVD22RbiKW4geTjcUhTNMBFid1Kwy0XLfx7znP
+        Oc95zvMmL4e1IWY5l5W7WzLkitk6Rk07ev+++nqmwa5/o/+4CrwjLgxjF0oQWLz7aOi4EmIh
+        NNXDwu/DnRQU208xUPnDJILbRS0UXHfIGGpbAxQMjJcz4FyYwOD1trLQVGNVQe1cMwVH9jfR
+        cMY6h6D0n4cIDvdM0XDNaWGgZ6ESQYO3i4Ir9goWbPsCKrh3Nw6q3GdYuFU/wUKv7XnodFkR
+        3HD00zDr7GVhsNJMwXjnEA3d1z+An801CDwnN4PHakEQ/OM3Zv3LQl99Nxb8NzYI1276sBCc
+        qaaFuguNrNB5soERzh67RQkD7ZHCr11uWmiXR1ghMP2ZMF5VwwqnWw4wwi83OxjB5S5FQveh
+        E+ymuC3qdTuk7KwCyZD0zjZ1prn4OLPrcEqhaW6VCZ1fU4YiOMK/SfyXTGwZUnNa/igiNp8V
+        K8VDRK5OVz/t/InI6NCJJwW3KPHdXq/wzYhMHB19qriPSH/FEB3eG8OnkbvBkUW8jP+YtDab
+        Focw74wkR2wTqnCD4ZNJ2WQZE8Y0v5K0jwVUYYfn+E/JrHNtmNbw0eTHg2N0mI7ggdw5pw/T
+        mI8n309asIJjyfCYlQqvJ/xwBBms7cCKtoAcaJ3GSs4UIh900QqOIX7PWVbBK0hfTTmtiIsR
+        KWmQWaUoR+ScpY1RptYSt8e3eBzmXyWnnEkKvYHMOOco5VWiyE+T0cpBUaTaUY8VWkNK92uV
+        6VVE9nz7n+3FgUFchXTykpTykmjykmjy/742RLegWCnfmJMhGZNzpS8SjWKOMT83IzE9L+c0
+        evIj+uY9D9rQzOB2F+I5pHtWc6/oa71WJRYY9+S4EOGwbplmQbTrtZod4p69kiFvqyE/WzK6
+        UBxH62I1Uas/12v5DHG3tFOSdkmGf7sUF7HchA7tfPuTSH3TK9w3FVH6wo+yZurSZt8K9u/d
+        fDmtO2nErkqLiZ9PeNS20cWl+n3rgnnvnh91f+jdEleBk2fbEzQliYHSFHbja0Oh6VDgfmHj
+        sDm10XzpqzXqVF26f1PXgy/VCc+8oGl+33U5Or3OOv9o6qXvikwxL975K9ER/57Ib9+qo42Z
+        YvJqbDCKjwGrYeFBDQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUwTdxjH87s77q5ik1vF8RvqXi4RjWaFK1QeFIk6kp1LNBqNTiviTW6g
+        Ukp6RcXErAJxrLAVhAlWpCiiEzVWYShMCikIGjVVKxidOokwiVLCkkkUO5GKS/jvk3yfz/OS
+        PCypKaQj2G2ZFtmcKWXw9BTq+tuux19+b64xRLsG48H7yENCX9uPCCq9+RRcvjHKwOhQBwN/
+        P2ghIK/mHA32q34ET3LrCLjb6CChzDVMwK3+IhqaxwZJ8HpdDBwvdYZAWeAkAUf3H6eg3hlA
+        UPDfvwiqOoYo8DVX0tAxZkdQ4XUTcKPmZwaq84dDYODZDChur2fgfvkgA53VH0OLx4mgu/Em
+        BW+aOxm4Yy8hoL/lHgWtd7+BP0tKEXSdXQ9dzkoEIy966SVzxOvlraT4vHup6Ou5TYojLw9Q
+        4sG2w4zYcraCFhtO3SfEW02h4mN3OyU2OR4x4vA/m8X+4lJGvFD3Ey0+7LlMi572AiS2HjnD
+        rJqxUZtgNmVb5M/TTYplMW8QQKcV4kGri43XCjFxyQt1ej4qMSFVzti2UzZHJW7Rppfknaaz
+        qpJ2WwORVvSH3oZYFnOx+PaTJTakYjVcLcLd+7cHGXMz8bWD1pAJnoYDPTbahqaM1/gRtvsP
+        UMFgGrcO541aySCHcd/i38qLiCCTXFsoPtO+YkIoQ9jv+osOBjQnYJvf9p7VXCJ+XVXEBJni
+        ZuOmvuH306Zzm/CV0vwPNR/ha4f6qOCiKg7w098NE/0X4Kr6XnKCP8MX/ZUfOBw/6HMSxUjj
+        mGQ7JimOSYpjklKNqDoUJmcrxjSjotMqklHJzkzTbjUZL6DxR2zsfN1wCdmG1ngQxyJ+qnog
+        95hBEyLtVHKMHoRZkg9Tj0k1Bo06VcrZI5tNKebsDFnxIP34bSVkxPStpvG3zrSkCHohDuKF
+        uJi4mAXAh6u90TkbNVyaZJF3yHKWbP7fI1hVhBV56PN0weibyNodi6SvYmd9MXBiTe8ve327
+        TEhV+GtsSujihlcrH2Ytyuh019K+5E/uRbkjRtgBw4hcsdedu1YovhKp+BwFqu7lc338wvD0
+        6NTqCns9mbRU/2kCvz4p2jA79eQG0zLXkfmmq63JaF9gtVF357uoOf2+Hwq/fpqXtYynlHRJ
+        mEeaFekdy/up3Z4DAAA=
+Message-Id: <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
+X-CMS-MailID: 20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f
+References: <20180831225616.29221-1-jmkrzyszt@gmail.com>
+        <20180902120144.6855-1-jmkrzyszt@gmail.com>
+        <20180902120144.6855-5-jmkrzyszt@gmail.com>
+        <CGME20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi All,
 
-On Thursday 06 September 2018 08:12 PM, Alan Douglas wrote:
-> Add a Sierra PHY driver with PCIe and USB support.
-> 
-> The PHY has multiple lanes, which can be configured into
-> groups, and a generic PHY device is created for each group.
-> 
-> There are two resets controlling the overall PHY block, one
-> to enable the APB interface for programming registers, and
-> another to enable the PHY itself.  Additionally there are
-> resets for each PHY lane.
-> 
-> The PHY can be configured in hardware to read register
-> settings from ROM, or they can be written by the driver.
-> 
-> The sequence of operation on startup is to enable the APB
-> bus, write the PHY registers (if required)  for each lane
-> group, and then enable the PHY.  Each group of lanes
-> can then be individually controlled using the power_on()/
-> power_off() function for that generic PHY
-> 
-> Signed-off-by: Alan Douglas <adouglas@cadence.com>
+On 2018-09-02 14:01, Janusz Krzysztofik wrote:
+> Certain GPIO descriptor arrays returned by gpio_get_array() may contain
+> information on direct mapping of array members to pins of a single GPIO
+> chip in hardware order.  In such cases, bitmaps of values can be passed
+> directly from/to the chip's .get/set_multiple() callbacks without
+> wasting time on iterations.
+>
+> Add respective code to gpiod_get/set_array_bitmap_complex() functions.
+> Pins not applicable for fast path are processed as before, skipping
+> over the 'fast' ones.
+>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+
+I've just noticed that this patch landed in today's linux-next. Sadly it
+breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
+device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
+
+Booting hangs after detecting MMC cards. Reverting this patch fixes the
+boot. I will try later to add some debugs and investigate it further what
+really happens when booting hangs.
+
 > ---
->  drivers/phy/Kconfig               |   1 +
->  drivers/phy/Makefile              |   1 +
->  drivers/phy/cadence/Kconfig       |   9 +
->  drivers/phy/cadence/Makefile      |   2 +
->  drivers/phy/cadence/cdns-sierra.c | 385 ++++++++++++++++++++++++++++++++++++++
->  5 files changed, 398 insertions(+)
->  create mode 100644 drivers/phy/cadence/Kconfig
->  create mode 100644 drivers/phy/cadence/Makefile
->  create mode 100644 drivers/phy/cadence/cdns-sierra.c
-> 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 5c8d452..cc47f85 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -43,6 +43,7 @@ config PHY_XGENE
->  source "drivers/phy/allwinner/Kconfig"
->  source "drivers/phy/amlogic/Kconfig"
->  source "drivers/phy/broadcom/Kconfig"
-> +source "drivers/phy/cadence/Kconfig"
->  source "drivers/phy/hisilicon/Kconfig"
->  source "drivers/phy/lantiq/Kconfig"
->  source "drivers/phy/marvell/Kconfig"
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index 84e3bd9..ba48acd 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -15,6 +15,7 @@ obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
->  obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
->  obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
->  obj-y					+= broadcom/	\
-> +					   cadence/	\
->  					   hisilicon/	\
->  					   marvell/	\
->  					   motorola/	\
-> diff --git a/drivers/phy/cadence/Kconfig b/drivers/phy/cadence/Kconfig
-> new file mode 100644
-> index 0000000..098df0f
-> --- /dev/null
-> +++ b/drivers/phy/cadence/Kconfig
-> @@ -0,0 +1,9 @@
-> +#
-> +# Phy drivers for Cadence PHYs
-> +#
-> +config CDNS_SIERRA_PHY
-> +	tristate "Cadence Sierra PHY Driver"
-> +	depends on OF && HAS_IOMEM && RESET_CONTROLLER
-> +	select GENERIC_PHY
-> +	help
-> +	  Enable this to support the Cadence Sierra PHY driver
-> diff --git a/drivers/phy/cadence/Makefile b/drivers/phy/cadence/Makefile
-> new file mode 100644
-> index 0000000..c396c69
-> --- /dev/null
-> +++ b/drivers/phy/cadence/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_CDNS_SIERRA_PHY)		+= cdns-sierra.o
-> diff --git a/drivers/phy/cadence/cdns-sierra.c b/drivers/phy/cadence/cdns-sierra.c
-> new file mode 100644
-> index 0000000..83568b4
-> --- /dev/null
-> +++ b/drivers/phy/cadence/cdns-sierra.c
-> @@ -0,0 +1,385 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Cadence Sierra PHY Driver
-> + *
-> + * Copyright (c) 2018 Cadence Design Systems
-> + * Author: Alan Douglas <adouglas@cadence.com>
-> + *
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <dt-bindings/phy/phy.h>
+>   Documentation/driver-api/gpio/board.rst    | 15 ++++++
+>   Documentation/driver-api/gpio/consumer.rst |  8 +++
+>   drivers/gpio/gpiolib.c                     | 87 ++++++++++++++++++++++++++++--
+>   3 files changed, 105 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
+> index 2c112553df84..c66821e033c2 100644
+> --- a/Documentation/driver-api/gpio/board.rst
+> +++ b/Documentation/driver-api/gpio/board.rst
+> @@ -193,3 +193,18 @@ And the table can be added to the board code as follows::
+>   
+>   The line will be hogged as soon as the gpiochip is created or - in case the
+>   chip was created earlier - when the hog table is registered.
 > +
-> +/* PHY register offsets */
-> +#define SIERRA_PHY_PLL_CFG		(0xc00e << 2)
-> +#define SIERRA_DET_STANDEC_A		(0x4000 << 2)
-> +#define SIERRA_DET_STANDEC_B		(0x4001 << 2)
-> +#define SIERRA_DET_STANDEC_C		(0x4002 << 2)
-> +#define SIERRA_DET_STANDEC_D		(0x4003 << 2)
-> +#define SIERRA_DET_STANDEC_E		(0x4004 << 2)
-> +#define SIERRA_PSM_LANECAL		(0x4008 << 2)
-> +#define SIERRA_PSM_DIAG			(0x4015 << 2)
-> +#define SIERRA_PSC_TX_A0		(0x4028 << 2)
-> +#define SIERRA_PSC_TX_A1		(0x4029 << 2)
-> +#define SIERRA_PSC_TX_A2		(0x402A << 2)
-> +#define SIERRA_PSC_TX_A3		(0x402B << 2)
-> +#define SIERRA_PSC_RX_A0		(0x4030 << 2)
-> +#define SIERRA_PSC_RX_A1		(0x4031 << 2)
-> +#define SIERRA_PSC_RX_A2		(0x4032 << 2)
-> +#define SIERRA_PSC_RX_A3		(0x4033 << 2)
-> +#define SIERRA_PLLCTRL_SUBRATE		(0x403A << 2)
-> +#define SIERRA_PLLCTRL_GEN_D		(0x403E << 2)
-> +#define SIERRA_DRVCTRL_ATTEN		(0x406A << 2)
-> +#define SIERRA_CLKPATHCTRL_TMR		(0x4081 << 2)
-> +#define SIERRA_RX_CREQ_FLTR_A_MODE1	(0x4087 << 2)
-> +#define SIERRA_RX_CREQ_FLTR_A_MODE0	(0x4088 << 2)
-> +#define SIERRA_CREQ_CCLKDET_MODE01	(0x408E << 2)
-> +#define SIERRA_RX_CTLE_MAINTENANCE	(0x4091 << 2)
-> +#define SIERRA_CREQ_FSMCLK_SEL		(0x4092 << 2)
-> +#define SIERRA_CTLELUT_CTRL		(0x4098 << 2)
-> +#define SIERRA_DFE_ECMP_RATESEL		(0x40C0 << 2)
-> +#define SIERRA_DFE_SMP_RATESEL		(0x40C1 << 2)
-> +#define SIERRA_DEQ_VGATUNE_CTRL		(0x40E1 << 2)
-> +#define SIERRA_TMRVAL_MODE3		(0x416E << 2)
-> +#define SIERRA_TMRVAL_MODE2		(0x416F << 2)
-> +#define SIERRA_TMRVAL_MODE1		(0x4170 << 2)
-> +#define SIERRA_TMRVAL_MODE0		(0x4171 << 2)
-> +#define SIERRA_PICNT_MODE1		(0x4174 << 2)
-> +#define SIERRA_CPI_OUTBUF_RATESEL	(0x417C << 2)
-> +#define SIERRA_LFPSFILT_NS		(0x418A << 2)
-> +#define SIERRA_LFPSFILT_RD		(0x418B << 2)
-> +#define SIERRA_LFPSFILT_MP		(0x418C << 2)
-> +#define SIERRA_SDFILT_H2L_A		(0x4191 << 2)
+> +Arrays of pins
+> +--------------
+> +In addition to requesting pins belonging to a function one by one, a device may
+> +also request an array of pins assigned to the function.  The way those pins are
+> +mapped to the device determines if the array qualifies for fast bitmap
+> +processing.  If yes, a bitmap is passed over get/set array functions directly
+> +between a caller and a respective .get/set_multiple() callback of a GPIO chip.
 > +
-> +#define SIERRA_MACRO_ID			0x00007364
-> +#define SIERRA_MAX_LANES		4
+> +In order to qualify for fast bitmap processing, the pin mapping must meet the
+> +following requirements:
+> +- it must belong to the same chip as other 'fast' pins of the function,
+> +- its index within the function must match its hardware number within the chip.
 > +
-> +struct cdns_sierra_inst {
-> +	struct phy *phy;
-> +	u32 phy_type;
-> +	u32 num_lanes;
-> +	u32 mlane;
-> +	struct reset_control *lnk_rst;
-> +};
+> +Open drain and open source pins are excluded from fast bitmap output processing.
+> diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
+> index 0afd95a12b10..cf992e5ab976 100644
+> --- a/Documentation/driver-api/gpio/consumer.rst
+> +++ b/Documentation/driver-api/gpio/consumer.rst
+> @@ -388,6 +388,14 @@ array_info should be set to NULL.
+>   Note that for optimal performance GPIOs belonging to the same chip should be
+>   contiguous within the array of descriptors.
+>   
+> +Still better performance may be achieved if array indexes of the descriptors
+> +match hardware pin numbers of a single chip.  If an array passed to a get/set
+> +array function matches the one obtained from gpiod_get_array() and array_info
+> +associated with the array is also passed, the function may take a fast bitmap
+> +processing path, passing the value_bitmap argument directly to the respective
+> +.get/set_multiple() callback of the chip.  That allows for utilization of GPIO
+> +banks as data I/O ports without much loss of performance.
 > +
-> +struct cdns_reg_pairs {
-> +	u16 val;
-> +	u32 off;
-> +};
+>   The return value of gpiod_get_array_value() and its variants is 0 on success
+>   or negative on error. Note the difference to gpiod_get_value(), which returns
+>   0 or 1 on success to convey the GPIO value. With the array functions, the GPIO
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index cef6ee31fe05..b9d083fb13ee 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2789,7 +2789,36 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   				  struct gpio_array *array_info,
+>   				  unsigned long *value_bitmap)
+>   {
+> -	int i = 0;
+> +	int err, i = 0;
 > +
-> +struct cdns_sierra_data {
-> +		u32 id_value;
-> +		u32 pcie_regs;
-> +		u32 usb_regs;
-> +		struct cdns_reg_pairs *pcie_vals;
-> +		struct cdns_reg_pairs  *usb_vals;
-> +};
-> +
-> +struct cdns_sierra_phy {
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	struct cdns_sierra_data *init_data;
-> +	struct cdns_sierra_inst phys[SIERRA_MAX_LANES];
-> +	struct reset_control *phy_rst;
-> +	struct reset_control *apb_rst;
-> +	struct clk *clk;
-> +	struct phy *pcie_phy;
-> +	bool autoconf;
-> +};
-> +
-> +static void cdns_sierra_phy_init(struct phy *gphy)
-> +{
-> +	struct cdns_sierra_inst *ins = phy_get_drvdata(gphy);
-> +	struct cdns_sierra_phy *phy = dev_get_drvdata(gphy->dev.parent);
-> +	int i, j;
-> +	struct cdns_reg_pairs *vals;
-> +	u32 num_regs;
-> +
-> +	if (ins->phy_type == PHY_TYPE_PCIE) {
-> +		num_regs = phy->init_data->pcie_regs;
-> +		vals = phy->init_data->pcie_vals;
-> +	} else if (ins->phy_type == PHY_TYPE_USB3) {
-> +		num_regs = phy->init_data->usb_regs;
-> +		vals = phy->init_data->usb_vals;
-> +	} else {
-> +		return;
-> +	}
-> +	for (i = 0; i < ins->num_lanes; i++)
-> +		for (j = 0; j < num_regs ; j++)
-> +			writel(vals[j].val, phy->base +
-> +				vals[j].off + (i + ins->mlane) * 0x800);
-> +}
-> +
-> +static int cdns_sierra_phy_on(struct phy *gphy)
-> +{
-> +	struct cdns_sierra_inst *ins = phy_get_drvdata(gphy);
-> +	int ret;
-> +
-> +	/* Take the PHY out of reset */
-> +	ret = reset_control_deassert(ins->lnk_rst);
-> +
-> +	if (ret)
-
-This check is unncessary.
-> +		return ret;
-> +
-> +	return ret;
-> +}
-> +
-> +static int cdns_sierra_phy_off(struct phy *gphy)
-> +{
-> +	struct cdns_sierra_inst *ins = phy_get_drvdata(gphy);
-> +
-> +	reset_control_assert(ins->lnk_rst);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops ops = {
-> +	.power_on	= cdns_sierra_phy_on,
-> +	.power_off	= cdns_sierra_phy_off,
-> +	.owner		= THIS_MODULE,
-> +};
-> +
-> +static int cdns_sierra_get_optional(struct cdns_sierra_inst *inst,
-> +				    struct device_node *child)
-> +{
-> +	if (of_property_read_u32(child, "reg", &inst->mlane))
-> +		return -EINVAL;
-> +
-> +	if (of_property_read_u32(child, "cdns,num-lanes", &inst->num_lanes))
-> +		return -EINVAL;
-> +
-> +	if (of_property_read_u32(child, "cdns,phy-type", &inst->phy_type))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id cdns_sierra_id_table[];
-> +
-> +static int cdns_sierra_phy_probe(struct platform_device *pdev)
-> +{
-> +	struct cdns_sierra_phy *sp;
-> +	struct phy_provider *phy_provider;
-> +	struct device *dev = &pdev->dev;
-> +	const struct of_device_id *match;
-> +	struct resource *res;
-> +	int ret, node = 0;
-> +	struct device_node *dn = dev->of_node, *child;
-> +
-> +	if (of_get_child_count(dn) == 0)
-> +		return -ENODEV;
-> +
-> +	sp = devm_kzalloc(dev, sizeof(*sp), GFP_KERNEL);
-> +	if (!sp)
-> +		return -ENOMEM;
-> +	dev_set_drvdata(dev, sp);
-> +	sp->dev = dev;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "reg");
-> +	sp->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(sp->base)) {
-> +		dev_err(dev, "missing \"reg\"\n");
-> +		return PTR_ERR(sp->base);
-> +	}
-> +
-> +	/* Get init data for this PHY */
-> +	match = of_match_device(cdns_sierra_id_table, dev);
-> +	if (!match)
-> +		return -EINVAL;
-> +	sp->init_data = (struct cdns_sierra_data *)match->data;
-> +
-> +	platform_set_drvdata(pdev, sp);
-> +
-> +	sp->clk = devm_clk_get(dev, "phy_clk");
-> +	if (IS_ERR(sp->clk)) {
-> +		dev_err(dev, "failed to get clock phy_clk\n");
-> +		return PTR_ERR(sp->clk);
-> +	}
-> +
-> +	sp->phy_rst = devm_reset_control_get(dev, "sierra_reset");
-> +	if (IS_ERR(sp->phy_rst)) {
-> +		dev_err(dev, "failed to get reset\n");
-> +		return PTR_ERR(sp->phy_rst);
-> +	}
-> +
-> +	sp->apb_rst = devm_reset_control_get(dev, "sierra_apb");
-> +	if (IS_ERR(sp->apb_rst)) {
-> +		dev_err(dev, "failed to get apb reset\n");
-> +		return PTR_ERR(sp->apb_rst);
-> +	}
-> +
-> +	ret = clk_prepare_enable(sp->clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable APB */
-> +	reset_control_deassert(sp->apb_rst);
-> +
-> +	/* Check that PHY is present */
-> +	if  (sp->init_data->id_value != readl(sp->base)) {
-> +		goto clk_disable;
-> +		return -EINVAL;
-> +	}
-> +
-> +	sp->autoconf = of_property_read_bool(dn, "cdns,autoconf");
-> +
-> +	for_each_available_child_of_node(dn, child) {
-> +		struct phy *gphy;
-> +
-> +		if (IS_ERR(sp->phys[node].lnk_rst)) {
-> +			dev_err(dev, "failed to get reset %s\n", child->name);
-> +			return PTR_ERR(sp->phys[node].lnk_rst);
-> +		}
-> +		sp->phys[node].lnk_rst =
-> +				devm_reset_control_get(dev, child->name);
-> +
-> +		if (!sp->autoconf) {
-> +			ret = cdns_sierra_get_optional(&sp->phys[node], child);
-> +			if (ret) {
-> +				dev_err(dev, "missing property in node %s\n",
-> +					child->name);
-> +				goto put_child;
-> +			}
-> +		}
-> +
-> +		gphy = devm_phy_create(dev, child, &ops);
-> +
-> +		if (IS_ERR(gphy)) {
-> +			ret = PTR_ERR(gphy);
-> +			goto put_child;
-> +		}
-> +		sp->phys[node].phy = gphy;
-> +		phy_set_drvdata(gphy, &sp->phys[node]);
-> +
-> +		/* Initialise the PHY registers, unless auto configured */
-> +		if (!sp->autoconf)
-> +			cdns_sierra_phy_init(gphy);
-> +
-> +		node++;
-> +	}
-> +
-> +	/* If more than one subnode, configure the PHY as multilink */
-> +	if (!sp->autoconf && of_get_child_count(dn) > 1)
-> +		writel(2, sp->base + SIERRA_PHY_PLL_CFG);
-> +
-> +	pm_runtime_enable(dev);
-> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +	reset_control_deassert(sp->phy_rst);
-> +	return PTR_ERR_OR_ZERO(phy_provider);
-> +put_child:
-> +	of_node_put(child);
-> +clk_disable:
-> +	clk_disable_unprepare(sp->clk);
-> +	reset_control_assert(sp->apb_rst);
-> +	return ret;
-> +}
-> +
-> +static int cdns_sierra_phy_remove(struct platform_device *pdev)
-> +{
-> +	struct cdns_sierra_phy *phy = dev_get_drvdata(pdev->dev.parent);
-> +
-> +	reset_control_assert(phy->phy_rst);
-> +	reset_control_assert(phy->apb_rst);
-> +	pm_runtime_disable(&pdev->dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct cdns_reg_pairs cdns_usb_regs[] = {
 > +	/*
-> +	 * Write USB configuration parameters to the PHY.
-> +	 * These values are specific to this specific hardware
-> +	 * configuration.
-
-Your intention is to have different arrays for different hardware configurations?
+> +	 * Validate array_info against desc_array and its size.
+> +	 * It should immediately follow desc_array if both
+> +	 * have been obtained from the same gpiod_get_array() call.
 > +	 */
-> +	{0xFE0A, SIERRA_DET_STANDEC_A},
-> +	{0x000F, SIERRA_DET_STANDEC_B},
-> +	{0x55A5, SIERRA_DET_STANDEC_C},
-> +	{0x69AD, SIERRA_DET_STANDEC_D},
-> +	{0x0241, SIERRA_DET_STANDEC_E},
-> +	{0x0110, SIERRA_PSM_LANECAL},
-> +	{0xCF00, SIERRA_PSM_DIAG},
-> +	{0x001F, SIERRA_PSC_TX_A0},
-> +	{0x0007, SIERRA_PSC_TX_A1},
-> +	{0x0003, SIERRA_PSC_TX_A2},
-> +	{0x0003, SIERRA_PSC_TX_A3},
-> +	{0x0FFF, SIERRA_PSC_RX_A0},
-> +	{0x0003, SIERRA_PSC_RX_A1},
-> +	{0x0003, SIERRA_PSC_RX_A2},
-> +	{0x0001, SIERRA_PSC_RX_A3},
-> +	{0x0001, SIERRA_PLLCTRL_SUBRATE},
-> +	{0x0406, SIERRA_PLLCTRL_GEN_D},
-> +	{0x0000, SIERRA_DRVCTRL_ATTEN},
-> +	{0x823E, SIERRA_CLKPATHCTRL_TMR},
-> +	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE1},
-> +	{0x078F, SIERRA_RX_CREQ_FLTR_A_MODE0},
-> +	{0x7B3C, SIERRA_CREQ_CCLKDET_MODE01},
-> +	{0x023C, SIERRA_RX_CTLE_MAINTENANCE},
-> +	{0x3232, SIERRA_CREQ_FSMCLK_SEL},
-> +	{0x8452, SIERRA_CTLELUT_CTRL},
-> +	{0x4121, SIERRA_DFE_ECMP_RATESEL},
-> +	{0x4121, SIERRA_DFE_SMP_RATESEL},
-> +	{0x9999, SIERRA_DEQ_VGATUNE_CTRL},
-> +	{0x0330, SIERRA_TMRVAL_MODE0},
-> +	{0x01FF, SIERRA_PICNT_MODE1},
-> +	{0x0009, SIERRA_CPI_OUTBUF_RATESEL},
-> +	{0x000F, SIERRA_LFPSFILT_NS},
-> +	{0x0009, SIERRA_LFPSFILT_RD},
-> +	{0x0001, SIERRA_LFPSFILT_MP},
-> +	{0x8013, SIERRA_SDFILT_H2L_A},
-> +	{0x0400, SIERRA_TMRVAL_MODE1},
+> +	if (array_info && array_info->desc == desc_array &&
+> +	    array_size <= array_info->size &&
+> +	    (void *)array_info == desc_array + array_info->size) {
+> +		if (!can_sleep)
+> +			WARN_ON(array_info->chip->can_sleep);
+> +
+> +		err = gpio_chip_get_multiple(array_info->chip,
+> +					     array_info->get_mask,
+> +					     value_bitmap);
+> +		if (err)
+> +			return err;
+> +
+> +		if (!raw && !bitmap_empty(array_info->invert_mask, array_size))
+> +			bitmap_xor(value_bitmap, value_bitmap,
+> +				   array_info->invert_mask, array_size);
+> +
+> +		if (bitmap_full(array_info->get_mask, array_size))
+> +			return 0;
+> +
+> +		i = find_first_zero_bit(array_info->get_mask, array_size);
+> +	} else {
+> +		array_info = NULL;
+> +	}
+>   
+>   	while (i < array_size) {
+>   		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+> @@ -2820,7 +2849,12 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   			int hwgpio = gpio_chip_hwgpio(desc);
+>   
+>   			__set_bit(hwgpio, mask);
+> -			i++;
+> +
+> +			if (array_info)
+> +				find_next_zero_bit(array_info->get_mask,
+> +						   array_size, i);
+> +			else
+> +				i++;
+>   		} while ((i < array_size) &&
+>   			 (desc_array[i]->gdev->chip == chip));
+>   
+> @@ -2831,7 +2865,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   			return ret;
+>   		}
+>   
+> -		for (j = first; j < i; j++) {
+> +		for (j = first; j < i; ) {
+>   			const struct gpio_desc *desc = desc_array[j];
+>   			int hwgpio = gpio_chip_hwgpio(desc);
+>   			int value = test_bit(hwgpio, bits);
+> @@ -2840,6 +2874,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>   				value = !value;
+>   			__assign_bit(j, value_bitmap, value);
+>   			trace_gpio_value(desc_to_gpio(desc), 1, value);
+> +
+> +			if (array_info)
+> +				find_next_zero_bit(array_info->get_mask, i, j);
+> +			else
+> +				j++;
+>   		}
+>   
+>   		if (mask != fastpath)
+> @@ -3041,6 +3080,32 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>   {
+>   	int i = 0;
+>   
+> +	/*
+> +	 * Validate array_info against desc_array and its size.
+> +	 * It should immediately follow desc_array if both
+> +	 * have been obtained from the same gpiod_get_array() call.
+> +	 */
+> +	if (array_info && array_info->desc == desc_array &&
+> +	    array_size <= array_info->size &&
+> +	    (void *)array_info == desc_array + array_info->size) {
+> +		if (!can_sleep)
+> +			WARN_ON(array_info->chip->can_sleep);
+> +
+> +		if (!raw && !bitmap_empty(array_info->invert_mask, array_size))
+> +			bitmap_xor(value_bitmap, value_bitmap,
+> +				   array_info->invert_mask, array_size);
+> +
+> +		gpio_chip_set_multiple(array_info->chip, array_info->set_mask,
+> +				       value_bitmap);
+> +
+> +		if (bitmap_full(array_info->set_mask, array_size))
+> +			return 0;
+> +
+> +		i = find_first_zero_bit(array_info->set_mask, array_size);
+> +	} else {
+> +		array_info = NULL;
+> +	}
+> +
+>   	while (i < array_size) {
+>   		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+>   		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
+> @@ -3068,7 +3133,14 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>   			int hwgpio = gpio_chip_hwgpio(desc);
+>   			int value = test_bit(i, value_bitmap);
+>   
+> -			if (!raw && test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+> +			/*
+> +			 * Pins applicable for fast input but not for
+> +			 * fast output processing may have been already
+> +			 * inverted inside the fast path, skip them.
+> +			 */
+> +			if (!raw && !(array_info &&
+> +			    test_bit(i, array_info->invert_mask)) &&
+> +			    test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+>   				value = !value;
+>   			trace_gpio_value(desc_to_gpio(desc), 0, value);
+>   			/*
+> @@ -3087,7 +3159,12 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>   					__clear_bit(hwgpio, bits);
+>   				count++;
+>   			}
+> -			i++;
+> +
+> +			if (array_info)
+> +				find_next_zero_bit(array_info->set_mask,
+> +						   array_size, i);
+> +			else
+> +				i++;
+>   		} while ((i < array_size) &&
+>   			 (desc_array[i]->gdev->chip == chip));
+>   		/* push collected bits to outputs */
+>
 
-Are all of them 16 bit value fields? Or some of them coalesced to form 16 bit
-values?
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Thanks
-Kishon
