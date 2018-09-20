@@ -2,162 +2,304 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F1FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77278C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CF0221529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:25:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18CE621529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:26:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="f3DS8B3p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF0221529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QVdni8NH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZGMQVCSP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18CE621529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387511AbeITRIs (ORCPT
+        id S2387585AbeITRJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 13:08:48 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46226 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727029AbeITRIs (ORCPT
+        Thu, 20 Sep 2018 13:09:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34550 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727029AbeITRJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 13:08:48 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t20-v6so768623ply.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 04:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D0Kw1I77Y0l6xXuP9N5z5PHtctpMF/iQTka3d0Nvzpo=;
-        b=f3DS8B3pYUaNAz6SOyaSWXHhDsBCNqgFKOA6L3ENamt5p7QsIUPesQjfq8G/RCNQyL
-         ruHHjH8NwuZuyWnmR6umbQOU2JngK1JXPaWtywEIH+i/IgygBLRjOVKupVs8RsvlCU4H
-         piAC0FQPeiRigPOPlw+ui5uvUPi3tzM3l0JBCLvMb0psIogxZ9h85jul0mfyfyVr6XoU
-         DW5MeyPuYVm4UpdTY3sDiX/0qCm9XhwYIqc4lE+VfQWtn6TtE3grDv6LWBUXglu6XYcF
-         o9z7zi+lYp9CW1EDo6cDPl56zzQRdbMWeVYqiHGebnQJBKMNvCqM9ZOt2/ylBvl7LR36
-         fPLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D0Kw1I77Y0l6xXuP9N5z5PHtctpMF/iQTka3d0Nvzpo=;
-        b=CM2GcVqu9+Gia4omwdCukOfHDWsdLmD6/BtqSGUByDFKc9J5JHjoElZUBv488XHfQc
-         4IGtgfhF1ibn5IwGwnIIlXNNvETj7da7Y8d+yLmFjUiWTIAKyW8DQPBQlnRDjZp2esHH
-         EOwASutjkXKDqbvFgwlRHf2E4/ojVrI/6w/ZYwJRHsUk1QhB9RGgmolsS59oBVw8sM9H
-         ggE/Li5Im4dV59wButNEFm0tjUw2LPKqlVozNyzeIVhUaIQiYlg5iIQuunihK8wcxyvJ
-         Hpu/ZxNbPGjz4QALjmvsSmqtA9CtvzIR+xTVzn3CiyklEfRmX+xcJeJnj5cPPn8g4veK
-         aKQA==
-X-Gm-Message-State: APzg51A+emXybYxAenmIZ6OAnR3aDiI13VEsn6BSE51zx+c8Fz2NsPdQ
-        hgjZUHTJZxyZ1b7Tg+VVd7H9u+L44EMA6w==
-X-Google-Smtp-Source: ANB0VdZ6MxPDPt1R7vaDdW/yjmsMKRfruBlRh9Ml1IfSU/TK+maq+Ih1Dl5nuizVz5BvV3ny1zAJrw==
-X-Received: by 2002:a17:902:bcc6:: with SMTP id o6-v6mr39142115pls.117.1537442746247;
-        Thu, 20 Sep 2018 04:25:46 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
-        by smtp.gmail.com with ESMTPSA id j184-v6sm31229454pge.77.2018.09.20.04.25.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 04:25:45 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 50D8E300527; Thu, 20 Sep 2018 14:25:37 +0300 (+03)
-Date:   Thu, 20 Sep 2018 14:25:37 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     akpm@linux-foundation.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Recheck page table entry with page table lock held
-Message-ID: <20180920112536.52jpx4sptrvbnyul@kshutemo-mobl1>
-References: <20180920092408.9128-1-aneesh.kumar@linux.ibm.com>
- <20180920110538.rlcpw75eabkqudkl@kshutemo-mobl1>
- <a22a21d6-c872-63e9-77ec-8071bac9bfc9@linux.ibm.com>
+        Thu, 20 Sep 2018 13:09:05 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 03AB460BE3; Thu, 20 Sep 2018 11:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537442763;
+        bh=epLscoG7rq+zZH/sJ4zCDm6oCn28ve9kZs7YOtq/trs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QVdni8NHLKoNFBSjiW8SGZhBm/9c2SQA54F2rNdyEXNOZh8yMGS/UGEoYVmQPVSEU
+         vAOIvElLpKqCn3cc0Igm5fXVT935tvubo8fDEk5oe1a0pxi71C1ov0gHtKjiWwuAUM
+         wkQD94DFhFE78Ud3BFfjLpt7IkbVI783sPfWXnnk=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8B83960BE3;
+        Thu, 20 Sep 2018 11:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537442761;
+        bh=epLscoG7rq+zZH/sJ4zCDm6oCn28ve9kZs7YOtq/trs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZGMQVCSPT3uGrTef5BEkb5r1lfUOuSk66e94qadnnZL5/Gqxyh3+XcA5GEDeBnhmV
+         +V4BuFR2v933gKHqqxrVYN1Lz4L2grYXK/JOdVg1r7iX5g91Ouv35RgiDiXQvVfmjc
+         RkpO/a65uXRUak1PD10uwSvVyPjAF2pFeRuDuPAU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B83960BE3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Thu, 20 Sep 2018 16:55:55 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: allow out-place-update for direct IO
+ in LFS mode
+Message-ID: <20180920112555.GI22939@codeaurora.org>
+References: <20180920085718.66966-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a22a21d6-c872-63e9-77ec-8071bac9bfc9@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20180920085718.66966-1-yuchao0@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 04:41:59PM +0530, Aneesh Kumar K.V wrote:
-> On 9/20/18 4:35 PM, Kirill A. Shutemov wrote:
-> > On Thu, Sep 20, 2018 at 02:54:08PM +0530, Aneesh Kumar K.V wrote:
-> > > We clear the pte temporarily during read/modify/write update of the pte. If we
-> > > take a page fault while the pte is cleared, the application can get SIGBUS. One
-> > > such case is with remap_pfn_range without a backing vm_ops->fault callback.
-> > > do_fault will return SIGBUS in that case.
-> > 
-> > It would be nice to show the path that clears pte temporarily.
-> > 
-> > > Fix this by taking page table lock and rechecking for pte_none.
+On Thu, Sep 20, 2018 at 04:57:18PM +0800, Chao Yu wrote:
+> Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
+> allow triggering any in-place-update writes, so we fallback direct
+> write to buffered write, result in bad performance of large size
+> write.
 > 
+> This patch adds to support triggering out-place-update for direct IO
+> to enhance its performance.
 > 
-> we do that in the ptep_modify_prot_start/ptep_modify_prot_commit. Also in
-> hugetlb_change_protection. The hugetlb case many not be relevant because
-> that cannot be backed by a vma without vma->vm_ops.
+> Note that it needs to exclude direct read IO during direct write,
+> since new data writing to new block address will no be valid until
+> write finished.
 > 
-> What will hit this will be mprotect of a remap_pfn_range address?
+> storage: zram
+> 
+> time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
+> 
+> Before:
+> real	0m13.061s
+> user	0m0.327s
+> sys	0m12.486s
+> 
+> After:
+> real	0m6.448s
+> user	0m0.228s
+> sys	0m6.212s
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+> v2:
+> - don't use direct IO for block zoned device.
+>  fs/f2fs/data.c | 41 +++++++++++++++++++++++++++++++++--------
+>  fs/f2fs/f2fs.h | 45 +++++++++++++++++++++++++++++++++++++++++----
+>  fs/f2fs/file.c |  3 ++-
+>  3 files changed, 76 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index b96f8588d565..e709f0fbb7a8 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
+>  
+>  	dn->data_blkaddr = datablock_addr(dn->inode,
+>  				dn->node_page, dn->ofs_in_node);
+> -	if (dn->data_blkaddr == NEW_ADDR)
+> +	if (dn->data_blkaddr != NULL_ADDR)
+>  		goto alloc;
+>  
+>  	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
+> @@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+>  
+>  	if (direct_io) {
+>  		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
+> -		flag = f2fs_force_buffered_io(inode, WRITE) ?
+> +		flag = f2fs_force_buffered_io(inode, iocb, from) ?
+>  					F2FS_GET_BLOCK_PRE_AIO :
+>  					F2FS_GET_BLOCK_PRE_DIO;
+>  		goto map_blocks;
+> @@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  		goto sync_out;
+>  	}
+>  
+> -	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
+> +	if (is_valid_data_blkaddr(sbi, blkaddr)) {
+> +		/* use out-place-update for driect IO under LFS mode */
+> +		if (test_opt(sbi, LFS) && create &&
+> +				flag == F2FS_GET_BLOCK_DEFAULT) {
+> +			err = __allocate_data_block(&dn, map->m_seg_type);
+> +			if (!err)
+> +				set_inode_flag(inode, FI_APPEND_WRITE);
+> +		}
+> +	} else {
+>  		if (create) {
+>  			if (unlikely(f2fs_cp_error(sbi))) {
+>  				err = -EIO;
+> @@ -2493,36 +2501,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
+>  	struct inode *inode = mapping->host;
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct f2fs_inode_info *fi = F2FS_I(inode);
+>  	size_t count = iov_iter_count(iter);
+>  	loff_t offset = iocb->ki_pos;
+>  	int rw = iov_iter_rw(iter);
+>  	int err;
+>  	enum rw_hint hint = iocb->ki_hint;
+>  	int whint_mode = F2FS_OPTION(sbi).whint_mode;
+> +	bool lock_read;
+>  
+>  	err = check_direct_IO(inode, iter, offset);
+>  	if (err)
+>  		return err < 0 ? err : 0;
+>  
+> -	if (f2fs_force_buffered_io(inode, rw))
+> +	if (f2fs_force_buffered_io(inode, iocb, iter))
+>  		return 0;
+>  
+> +	lock_read = allow_outplace_dio(inode, iocb, iter);
+> +
+>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+>  
+>  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
+>  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
+>  
+> -	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
+> -		if (iocb->ki_flags & IOCB_NOWAIT) {
+> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> +		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
+> +			iocb->ki_hint = hint;
+> +			err = -EAGAIN;
+> +			goto out;
+> +		}
+> +		if (lock_read && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
+> +			up_read(&fi->i_gc_rwsem[rw]);
+>  			iocb->ki_hint = hint;
+>  			err = -EAGAIN;
+>  			goto out;
+>  		}
+> -		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
+> +	} else {
+> +		down_read(&fi->i_gc_rwsem[rw]);
+> +		if (lock_read)
+> +			down_read(&fi->i_gc_rwsem[READ]);
+>  	}
+>  
+>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
+> -	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
+> +
+> +	if (lock_read)
+> +		up_read(&fi->i_gc_rwsem[READ]);
+> +
+> +	up_read(&fi->i_gc_rwsem[rw]);
+>  
+>  	if (rw == WRITE) {
 
-Sounds right. Please update commit message.
-> 
-> > > 
-> > > Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> > > ---
-> > >   mm/memory.c | 31 +++++++++++++++++++++++++++----
-> > >   1 file changed, 27 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index c467102a5cbc..c2f933184303 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -3745,10 +3745,33 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
-> > >   	struct vm_area_struct *vma = vmf->vma;
-> > >   	vm_fault_t ret;
-> > > -	/* The VMA was not fully populated on mmap() or missing VM_DONTEXPAND */
-> > > -	if (!vma->vm_ops->fault)
-> > > -		ret = VM_FAULT_SIGBUS;
-> > > -	else if (!(vmf->flags & FAULT_FLAG_WRITE))
-> > > +	/*
-> > > +	 * The VMA was not fully populated on mmap() or missing VM_DONTEXPAND
-> > > +	 */
-> > > +	if (!vma->vm_ops->fault) {
-> > > +
-> > > +		/*
-> > > +		 * pmd entries won't be marked none during a R/M/W cycle.
-> > > +		 */
-> > > +		if (unlikely(pmd_none(*vmf->pmd)))
-> > > +			ret = VM_FAULT_SIGBUS;
-> > > +		else {
-> > > +			vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
-> > > +			/*
-> > > +			 * Make sure this is not a temporary clearing of pte
-> > > +			 * by holding ptl and checking again. A R/M/W update
-> > > +			 * of pte involves: take ptl, clearing the pte so that
-> > > +			 * we don't have concurrent modification by hardware
-> > > +			 * followed by an update.
-> > > +			 */
-> > > +			spin_lock(vmf->ptl);
-> > > +			if (unlikely(pte_none(*vmf->pte)))
-> > > +				ret = VM_FAULT_SIGBUS;
-> > > +			else
-> > > +				ret = VM_FAULT_NOPAGE;
-> > 
-> > We return 0 if we did nothing in fault path.
-> > 
-> 
-> I didn't get that. If we find the pte not none, we return so that we retry
-> the access. Are you suggesting VM_FAULT_NOPAGE is not the right return for
-> that?
+The current code is setting the FI_UPDATE_WRITE inode flag in the success case
+in this if block. I think it needs to be removed as it is over-writing the
+the flag FI_APPEND_WRITE that this patch now sets in f2fs_map_blocks() and it
+now supports out-of-place updates.
 
-We usually use VM_FAULT_NOPAGE to indicate that ->fault() installed the
-pte and we don't need to do anything. We don't touch pte in this page
-fault.
-
-It doesn't make difference in this particular case, nobody cares upper by
-stack. Just a nitpick.
+>  		if (whint_mode == WHINT_MODE_OFF)
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 63fffd5b105d..39d0b15f2816 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -8,6 +8,7 @@
+>  #ifndef _LINUX_F2FS_H
+>  #define _LINUX_F2FS_H
+>  
+> +#include <linux/uio.h>
+>  #include <linux/types.h>
+>  #include <linux/page-flags.h>
+>  #include <linux/buffer_head.h>
+> @@ -3461,11 +3462,47 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
+>  #endif
+>  }
+>  
+> -static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
+> +static inline int block_unaligned_IO(struct inode *inode,
+> +				struct kiocb *iocb, struct iov_iter *iter)
+>  {
+> -	return (f2fs_post_read_required(inode) ||
+> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
+> -			F2FS_I_SB(inode)->s_ndevs);
+> +	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
+> +	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
+> +	loff_t offset = iocb->ki_pos;
+> +	unsigned long align = offset | iov_iter_alignment(iter);
+> +
+> +	return align & blocksize_mask;
+> +}
+> +
+> +static inline int allow_outplace_dio(struct inode *inode,
+> +				struct kiocb *iocb, struct iov_iter *iter)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	int rw = iov_iter_rw(iter);
+> +
+> +	return (test_opt(sbi, LFS) && (rw == WRITE) &&
+> +				!block_unaligned_IO(inode, iocb, iter));
+> +}
+> +
+> +static inline bool f2fs_force_buffered_io(struct inode *inode,
+> +				struct kiocb *iocb, struct iov_iter *iter)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	int rw = iov_iter_rw(iter);
+> +
+> +	if (f2fs_post_read_required(inode))
+> +		return true;
+> +	if (sbi->s_ndevs)
+> +		return true;
+> +	/*
+> +	 * for blkzoned device, fallback direct IO to buffered IO, so
+> +	 * all IOs can be serialized by log-structured write.
+> +	 */
+> +	if (f2fs_sb_has_blkzoned(sbi))
+> +		return true;
+> +	if (test_opt(sbi, LFS) && (rw == WRITE) &&
+> +				block_unaligned_IO(inode, iocb, iter))
+> +		return true;
+> +	return false;
+>  }
+>  
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 428e7398bd89..70491631e040 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -3018,7 +3018,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
+>  						iov_iter_count(from)) ||
+>  					f2fs_has_inline_data(inode) ||
+> -					f2fs_force_buffered_io(inode, WRITE)) {
+> +					f2fs_force_buffered_io(inode,
+> +							iocb, from)) {
+>  						clear_inode_flag(inode,
+>  								FI_NO_PREALLOC);
+>  						inode_unlock(inode);
+> -- 
+> 2.18.0.rc1
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 -- 
- Kirill A. Shutemov
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
