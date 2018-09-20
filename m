@@ -2,61 +2,164 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D0FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B70C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC5021532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC5021532
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anw.at
+	by mail.kernel.org (Postfix) with ESMTP id 64C8C20833
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:35:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C8C20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387823AbeITURX (ORCPT
+        id S1732857AbeITUTa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 16:17:23 -0400
-Received: from smtp.anw.at ([195.234.102.72]:33840 "EHLO smtp.anw.at"
+        Thu, 20 Sep 2018 16:19:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58467 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387798AbeITURW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 16:17:22 -0400
-X-Greylist: delayed 440 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Sep 2018 16:17:21 EDT
-Received: from [93.92.162.70] (I62-7O.static.anw.at [93.92.162.70])
-        by smtp.anw.at (8.14.4/8.14.4/Debian-4.1ubuntu1) with ESMTP id w8KEQ6JZ013811
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 20 Sep 2018 16:26:07 +0200
-Subject: Re: [PATCH] media: ddbridge: remove some duplicated include file
-To:     zhong jiang <zhongjiang@huawei.com>, mchehab@kernel.org
-Cc:     d.scheller@gmx.net, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1537419396-29799-1-git-send-email-zhongjiang@huawei.com>
-From:   "Jasmin J." <jasmin@anw.at>
-Message-ID: <71432b31-90e1-4b51-8501-4361395870a8@anw.at>
-Date:   Thu, 20 Sep 2018 16:26:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726990AbeITUT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 16:19:29 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0363F207D4; Thu, 20 Sep 2018 16:35:41 +0200 (CEST)
+Received: from localhost (unknown [15.65.243.10])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 40B5420379;
+        Thu, 20 Sep 2018 16:35:30 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] rtc: ds1307: use rtc_add_group
+Date:   Thu, 20 Sep 2018 16:35:26 +0200
+Message-Id: <20180920143526.18704-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <1537419396-29799-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Antivirus: checked in 0.016sec at smtp.anw.at ([195.234.102.72])
-        by smf-clamd v1.2.1 - http://smfs.sf.net/
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Zhong!
+Register frequency test using rtc_add_group to avoid a possible race
+condition and simplify the code.
 
-Daniel is no longer maintaining the DD driver. In fact the driver is currently
-unmaintained.
+This also moves the attribute to its proper location under the rtc device
+instead of the i2c parent device.
 
-I have no time to check this in detail, but I guess you checked it already.
-I give my ACK now, so that Mauro can merge it:
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-ds1307.c | 53 +++++++++++-----------------------------
+ 1 file changed, 14 insertions(+), 39 deletions(-)
 
-  Acked-by: Jasmin Jessich <jasmin@anw.at>
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index edccd0c0da25..982503a168d0 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -1050,11 +1050,11 @@ static int m41txx_rtc_set_offset(struct device *dev, long offset)
+ 				  ctrl_reg);
+ }
+ 
+-static ssize_t frequency_test_enable_store(struct device *dev,
+-					   struct device_attribute *attr,
+-					   const char *buf, size_t count)
++static ssize_t frequency_test_store(struct device *dev,
++				    struct device_attribute *attr,
++				    const char *buf, size_t count)
+ {
+-	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	struct ds1307 *ds1307 = dev_get_drvdata(dev->parent);
+ 	bool freq_test_en;
+ 	int ret;
+ 
+@@ -1070,11 +1070,11 @@ static ssize_t frequency_test_enable_store(struct device *dev,
+ 	return count;
+ }
+ 
+-static ssize_t frequency_test_enable_show(struct device *dev,
+-					  struct device_attribute *attr,
+-					  char *buf)
++static ssize_t frequency_test_show(struct device *dev,
++				   struct device_attribute *attr,
++				   char *buf)
+ {
+-	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	struct ds1307 *ds1307 = dev_get_drvdata(dev->parent);
+ 	unsigned int ctrl_reg;
+ 
+ 	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
+@@ -1083,10 +1083,10 @@ static ssize_t frequency_test_enable_show(struct device *dev,
+ 			"off\n");
+ }
+ 
+-static DEVICE_ATTR_RW(frequency_test_enable);
++static DEVICE_ATTR_RW(frequency_test);
+ 
+ static struct attribute *rtc_freq_test_attrs[] = {
+-	&dev_attr_frequency_test_enable.attr,
++	&dev_attr_frequency_test.attr,
+ 	NULL,
+ };
+ 
+@@ -1094,13 +1094,6 @@ static const struct attribute_group rtc_freq_test_attr_group = {
+ 	.attrs		= rtc_freq_test_attrs,
+ };
+ 
+-static void rtc_calib_remove_sysfs_group(void *_dev)
+-{
+-	struct device *dev = _dev;
+-
+-	sysfs_remove_group(&dev->kobj, &rtc_freq_test_attr_group);
+-}
+-
+ static int ds1307_add_frequency_test(struct ds1307 *ds1307)
+ {
+ 	int err;
+@@ -1109,27 +1102,9 @@ static int ds1307_add_frequency_test(struct ds1307 *ds1307)
+ 	case m41t0:
+ 	case m41t00:
+ 	case m41t11:
+-		/* Export sysfs entries */
+-		err = sysfs_create_group(&(ds1307->dev)->kobj,
+-					 &rtc_freq_test_attr_group);
+-		if (err) {
+-			dev_err(ds1307->dev,
+-				"Failed to create sysfs group: %d\n",
+-				err);
+-			return err;
+-		}
+-
+-		err = devm_add_action_or_reset(ds1307->dev,
+-					       rtc_calib_remove_sysfs_group,
+-					       ds1307->dev);
+-		if (err) {
+-			dev_err(ds1307->dev,
+-				"Failed to add sysfs cleanup action: %d\n",
+-				err);
+-			sysfs_remove_group(&(ds1307->dev)->kobj,
+-					   &rtc_freq_test_attr_group);
++		err = rtc_add_group(ds1307->rtc, &rtc_freq_test_attr_group);
++		if (err)
+ 			return err;
+-		}
+ 		break;
+ 	default:
+ 		break;
+@@ -1876,11 +1851,11 @@ static int ds1307_probe(struct i2c_client *client,
+ 	}
+ 
+ 	ds1307->rtc->ops = chip->rtc_ops ?: &ds13xx_rtc_ops;
+-	err = rtc_register_device(ds1307->rtc);
++	err = ds1307_add_frequency_test(ds1307);
+ 	if (err)
+ 		return err;
+ 
+-	err = ds1307_add_frequency_test(ds1307);
++	err = rtc_register_device(ds1307->rtc);
+ 	if (err)
+ 		return err;
+ 
+-- 
+2.19.0
 
-BR,
-   Jasmin
