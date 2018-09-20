@@ -2,240 +2,140 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C153C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF71C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C9921522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9C9921522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A4C921521
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:53:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="XF0cbKoN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A4C921521
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388520AbeITIel (ORCPT
+        id S2388645AbeITIez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:34:41 -0400
-Received: from mga17.intel.com ([192.55.52.151]:2128 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728111AbeITIel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:34:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 19:53:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,396,1531810800"; 
-   d="scan'208";a="74446841"
-Received: from shbuild888.sh.intel.com ([10.239.146.239])
-  by orsmga007.jf.intel.com with ESMTP; 19 Sep 2018 19:53:23 -0700
-From:   Feng Tang <feng.tang@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        H Peter Anvin <hpa@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>
-Cc:     Feng Tang <feng.tang@intel.com>
-Subject: [PATCH v4] x86/mm: Expand static page table for fixmap space
-Date:   Thu, 20 Sep 2018 10:58:28 +0800
-Message-Id: <20180920025828.23699-1-feng.tang@intel.com>
-X-Mailer: git-send-email 2.14.1
+        Thu, 20 Sep 2018 04:34:55 -0400
+Received: from mail-bl2nam02on0090.outbound.protection.outlook.com ([104.47.38.90]:36192
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388294AbeITIa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:30:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j9uHqCLr/ekC2MejX7CFS6uEY9HkJ/6SWY+kVYJVvs4=;
+ b=XF0cbKoNv1yIOtt7I+JhleKlAmPmnVB+/PdsOGZRfvCUm0IhqYjfmq+YNwIpqJ4ZWNumL9JptASjeni6ssIKvCvv5nwgrDvGgISSs1zQWI3w1lIO0gsgSym/6GA/6awM7j/ZmJqFkcIigVOgcDwOzg8kE2LohidpFQ5aKuxrWU4=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.6; Thu, 20 Sep 2018 02:49:18 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
+ 02:49:18 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     James Smart <jsmart2021@gmail.com>,
+        James Smart <james.smart@broadcom.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 20/25] nvme-fcloop: Fix dropped LS's to removed
+ target port
+Thread-Topic: [PATCH AUTOSEL 4.14 20/25] nvme-fcloop: Fix dropped LS's to
+ removed target port
+Thread-Index: AQHUUIxpYWE/IyJockis7Le6kfGkMw==
+Date:   Thu, 20 Sep 2018 02:48:29 +0000
+Message-ID: <20180920024810.58594-20-alexander.levin@microsoft.com>
+References: <20180920024810.58594-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180920024810.58594-1-alexander.levin@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:CtNmZ95BmuAepG1r1irywpgiqzI0quCx34U3g2bjtZUVql5MmZF4+zTOO6+KgASHh3NzqLP1RhUXHIfwhxNBJ1hbzF0yaHQPKwudNsWIFJ4V2TYVqYqlqiNKCVhyuDP28hof6ITIeef6ppHSlUdgdrJzOo2lKC+sL52CFQdK/keocnF2B89nniNbQ2XI4fjgp3Q+H6AGibAA2HayPg5eTzStxemNGKxkaT5N4qBehNB7lQ2i26qGQfoVdMJViNROwbGDDdfA1cA1EJpe0HEolAhQHsIXEiGPUDXE3tAGiyS/WYXSsZdbYwR8aLhkMKCSSvI5BaUdN/7QB6y2ycRL6icbYLjztTwzrlNmokXdvgJ/GoRhQLLrvIu8wGZt6PPALzM5quOZJsJ3ACTNNc+HKkXMjCEznJHuwAYsWypVoEcqHEyfBdiUUJ/c+Qt0oBqaFrM21Y4jRuR/75IGtmSwVw==;5:mfZgU6G4MUx3YjB4N8Tmw9KP4eRBiy2knJ4fNGqMomKII1qK1o6nxsFjY85ToaULxmnhFN9bN2Mcvg+uOOu8QQf2yFFpSk15LXQKMgLOYA0jFHiu04uJl2+JgugSVmexP3g/X0YjXriLLw0DU0y3tDDEo5mzDJDggsLY1ErY6lA=;7:HLidXFGXW7tq51lA63eGzIhMXfT4T8tfacRrGJ64gMRToxFti1iWSnKraw8iOQoacO4LHgRlugVrLrAjh6cckzI2ecz1gh2z2+/s22uFJkPYzYpi0J0rnjIB78ST7NwvJdNjDsHeCPfJCF+97nSU0TcmPfg4cJLOQqI8lugUTDji54y1rdH2ItxrEP1w9+T4vEz+E8EJYBODw1zw6VLetmSanmedhtjb2xwu1S4z4otC9RUkQ4NfWxx7+nmQVQZ6
+x-ms-office365-filtering-correlation-id: ebfbf50d-fce6-4a81-eeda-08d61ea3a8d4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
+x-ms-traffictypediagnostic: CY4PR21MB0744:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-prvs: <CY4PR21MB07447F9A42B4F04CCC5F3F3FFB130@CY4PR21MB0744.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158)(208715162771679)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
+x-forefront-prvs: 0801F2E62B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(376002)(346002)(136003)(189003)(199004)(8936002)(6436002)(10090500001)(110136005)(217873002)(54906003)(6512007)(53936002)(68736007)(5660300001)(14444005)(256004)(6666003)(71190400001)(6486002)(316002)(39060400002)(446003)(11346002)(105586002)(476003)(106356001)(478600001)(2616005)(2906002)(186003)(25786009)(10290500003)(486006)(71200400001)(72206003)(66066001)(4326008)(14454004)(22452003)(36756003)(102836004)(86612001)(97736004)(8676002)(305945005)(7736002)(1076002)(86362001)(575784001)(81156014)(26005)(76176011)(6506007)(5250100002)(107886003)(2900100001)(99286004)(3846002)(2501003)(81166006)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: yxg2XFoDE3u3qlxLPixWBeqCOAmKsIpB8AYFl9xBJ/syPEmuDsVBmDL9UtrcFIttG/WEwWmilkHUD6CY5vtozm9GbbnvONhD2FkEBBZQ05jdSvzLAwkUzyCbDTTYkxV5+9KB00JZGosJ+hC7XIywRIXKs6D6OvAaZqKL1ePxqqpEfYytAO7FZX7o0Y9ZSBpEHVUnRdVmhq+yMHxbC7oEEkGuSWRLKkz6uD9NgALh7rTbZjE/dUL41F4araEnD/1rHti70xFsqqFGPNuda2M/vKFou56HXvYKH2ijSL1zIgPIYxlns2w195q4M44EOIVhNxWbgideSacwB0u3G2wMgkPRznqYiHXu2yL7H5O4txI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebfbf50d-fce6-4a81-eeda-08d61ea3a8d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:29.6789
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We met a kernel panic when enabling earlycon, which is due to the fixmap
-address of earlycon is not statically setup.
+From: James Smart <jsmart2021@gmail.com>
 
-Currently the static fixmap setup in head_64.S only covers 2M virtual
-address space, while it actually could be in 4M space with different
-kernel configurations.
+[ Upstream commit afd299ca996929f4f98ac20da0044c0cdc124879 ]
 
-So increase the static space to 4M for now by defining FIXMAP_PMD_NUM to 2,
-and add a build time check to ensure that the fixmap is covered by the
-initial static page tables.
+When a targetport is removed from the config, fcloop will avoid calling
+the LS done() routine thinking the targetport is gone. This leaves the
+initiator reset/reconnect hanging as it waits for a status on the
+Create_Association LS for the reconnect.
 
-[ tglx: s/PTRS_PER_PMD/PTRS_PER_PTE/ and add the missing brackets ]
+Change the filter in the LS callback path. If tport null (set when
+failed validation before "sending to remote port"), be sure to call
+done. This was the main bug. But, continue the logic that only calls
+done if tport was set but there is no remoteport (e.g. case where
+remoteport has been removed, thus host doesn't expect a completion).
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Feng Tang <feng.tang@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com> (Xen parts)
-Tested-by: kernel test robot <rong.a.chen@intel.com>
-Cc: H Peter Anvin <hpa@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Yinghai Lu <yinghai@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
-Changelog:
-v4:
- - fix a boot test failure found by LKP 0day test
-v3/v2:
- - address comments about xen parts from Juergen Gross  
+ drivers/nvme/target/fcloop.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- arch/x86/include/asm/fixmap.h     | 10 ++++++++++
- arch/x86/include/asm/pgtable_64.h |  3 ++-
- arch/x86/kernel/head64.c          |  4 +++-
- arch/x86/kernel/head_64.S         | 16 ++++++++++++----
- arch/x86/mm/pgtable.c             |  9 +++++++++
- arch/x86/xen/mmu_pv.c             |  8 ++++++--
- 6 files changed, 42 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
-index e203169931c7..6390bd8c141b 100644
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -14,6 +14,16 @@
- #ifndef _ASM_X86_FIXMAP_H
- #define _ASM_X86_FIXMAP_H
- 
-+/*
-+ * Exposed to assembly code for setting up initial page tables. Cannot be
-+ * calculated in assembly code (fixmap entries are an enum), but is sanity
-+ * checked in the actual fixmap C code to make sure that the fixmap is
-+ * covered fully.
-+ */
-+#define FIXMAP_PMD_NUM	2
-+/* fixmap starts downwards from the 507th entry in level2_fixmap_pgt */
-+#define FIXMAP_PMD_TOP	507
-+
- #ifndef __ASSEMBLY__
- #include <linux/kernel.h>
- #include <asm/acpi.h>
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index ce2b59047cb8..9c85b54bf03c 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -14,6 +14,7 @@
- #include <asm/processor.h>
- #include <linux/bitops.h>
- #include <linux/threads.h>
-+#include <asm/fixmap.h>
- 
- extern p4d_t level4_kernel_pgt[512];
- extern p4d_t level4_ident_pgt[512];
-@@ -22,7 +23,7 @@ extern pud_t level3_ident_pgt[512];
- extern pmd_t level2_kernel_pgt[512];
- extern pmd_t level2_fixmap_pgt[512];
- extern pmd_t level2_ident_pgt[512];
--extern pte_t level1_fixmap_pgt[512];
-+extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
- extern pgd_t init_top_pgt[];
- 
- #define swapper_pg_dir init_top_pgt
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 8047379e575a..11455200ae66 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -35,6 +35,7 @@
- #include <asm/bootparam_utils.h>
- #include <asm/microcode.h>
- #include <asm/kasan.h>
-+#include <asm/fixmap.h>
- 
- /*
-  * Manage page tables very early on.
-@@ -165,7 +166,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 	pud[511] += load_delta;
- 
- 	pmd = fixup_pointer(level2_fixmap_pgt, physaddr);
--	pmd[506] += load_delta;
-+	for (i = FIXMAP_PMD_TOP; i > FIXMAP_PMD_TOP - FIXMAP_PMD_NUM; i--)
-+		pmd[i] += load_delta;
- 
- 	/*
- 	 * Set up the identity mapping for the switchover.  These
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 15ebc2fc166e..a3618cf04cf6 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -24,6 +24,7 @@
- #include "../entry/calling.h"
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
-+#include <asm/fixmap.h>
- 
- #ifdef CONFIG_PARAVIRT
- #include <asm/asm-offsets.h>
-@@ -445,13 +446,20 @@ NEXT_PAGE(level2_kernel_pgt)
- 		KERNEL_IMAGE_SIZE/PMD_SIZE)
- 
- NEXT_PAGE(level2_fixmap_pgt)
--	.fill	506,8,0
--	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
--	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
--	.fill	5,8,0
-+	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
-+	pgtno = 0
-+	.rept (FIXMAP_PMD_NUM)
-+	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
-+		+ _PAGE_TABLE_NOENC;
-+	pgtno = pgtno + 1
-+	.endr
-+	/* 6 MB reserved space + a 2MB hole */
-+	.fill	4,8,0
- 
- NEXT_PAGE(level1_fixmap_pgt)
-+	.rept (FIXMAP_PMD_NUM)
- 	.fill	512,8,0
-+	.endr
- 
- #undef PMDS
- 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ae394552fb94..089e78c4effd 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -637,6 +637,15 @@ void __native_set_fixmap(enum fixed_addresses idx, pte_t pte)
- {
- 	unsigned long address = __fix_to_virt(idx);
- 
-+#ifdef CONFIG_X86_64
-+       /*
-+	* Ensure that the static initial page tables are covering the
-+	* fixmap completely.
-+	*/
-+	BUILD_BUG_ON(__end_of_permanent_fixed_addresses >
-+		     (FIXMAP_PMD_NUM * PTRS_PER_PTE));
-+#endif
-+
- 	if (idx >= __end_of_fixed_addresses) {
- 		BUG();
- 		return;
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 2fe5c9b1816b..dd461c0167ef 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1907,7 +1907,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	/* L3_k[511] -> level2_fixmap_pgt */
- 	convert_pfn_mfn(level3_kernel_pgt);
- 
--	/* L3_k[511][506] -> level1_fixmap_pgt */
-+	/* L3_k[511][508-FIXMAP_PMD_NUM ... 507] -> level1_fixmap_pgt */
- 	convert_pfn_mfn(level2_fixmap_pgt);
- 
- 	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
-@@ -1952,7 +1952,11 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
- 	set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
- 	set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
--	set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
-+
-+	for (i = 0; i < FIXMAP_PMD_NUM; i++) {
-+		set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
-+			      PAGE_KERNEL_RO);
-+	}
- 
- 	/* Pin down new L4 */
- 	pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
--- 
-2.14.1
-
+diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
+index c0080f6ab2f5..0b0a4825b3eb 100644
+--- a/drivers/nvme/target/fcloop.c
++++ b/drivers/nvme/target/fcloop.c
+@@ -300,7 +300,7 @@ fcloop_tgt_lsrqst_done_work(struct work_struct *work)
+ 	struct fcloop_tport *tport =3D tls_req->tport;
+ 	struct nvmefc_ls_req *lsreq =3D tls_req->lsreq;
+=20
+-	if (tport->remoteport)
++	if (!tport || tport->remoteport)
+ 		lsreq->done(lsreq, tls_req->status);
+ }
+=20
+@@ -318,6 +318,7 @@ fcloop_ls_req(struct nvme_fc_local_port *localport,
+=20
+ 	if (!rport->targetport) {
+ 		tls_req->status =3D -ECONNREFUSED;
++		tls_req->tport =3D NULL;
+ 		schedule_work(&tls_req->work);
+ 		return ret;
+ 	}
+--=20
+2.17.1
