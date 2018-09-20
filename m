@@ -2,135 +2,130 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A02ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B466ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B93A42150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:57:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ThksK5fQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93A42150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 19A052150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:58:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A052150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731713AbeITWlb (ORCPT
+        id S1730955AbeITWnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:41:31 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58020 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728997AbeITWlb (ORCPT
+        Thu, 20 Sep 2018 18:43:16 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46780 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbeITWnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:41:31 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8KGup50068027;
-        Thu, 20 Sep 2018 16:57:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=eIy7UB6S9zT7R0OAlVK0xFN7k6OWgjeyqiuAhnneR0U=;
- b=ThksK5fQjb1wVKQ8Q53Qem6RTRzTv63PnmmjEKg+TZQKc68sCVnjpXKNJy9FaLaIuNlV
- js5Xp0wLlpLPl2fWqdGDxi/+LM5P4XySex6nTrnIO0jf0JabVIxI7J1MlHFb2rvOq3e+
- xsVbWm4oRkn80+zLBhoAHGA1QKLdWcTh92miMVBXX6yzSFSrI4eoyrKReeM3uGjKxT3P
- iDjWWkwwwd8arNs0aLWjaYePCxWGlbZHmR0BIZwtHj03Ohr/R/pRdm8RbJWBsqXPY3w9
- 2cBzrZUHcJeTz3UT7dBw9oxXfyNJ5kbuNN7lq2yet2SSBwlzSRx55mS21Zt9syErCIHV /Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2mgsgu44jb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Sep 2018 16:57:02 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8KGv2FN007393
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Sep 2018 16:57:02 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8KGv283007754;
-        Thu, 20 Sep 2018 16:57:02 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Sep 2018 09:57:01 -0700
-Subject: Re: [PATCH v2] xen: issue warning message when out of grant maptrack
- entries
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20180919134233.3040-1-jgross@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <13fdab96-d9d7-8a2f-f0a1-58595424797b@oracle.com>
-Date:   Thu, 20 Sep 2018 12:58:32 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 20 Sep 2018 18:43:16 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 6990A260C44
+Received: by earth.universe (Postfix, from userid 1000)
+        id 6337F3C092C; Thu, 20 Sep 2018 18:58:47 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 18:58:47 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Craig <ctatlor97@gmail.com>, Baolin Wang <baolin.wang@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/4] dt-bindings: power: supply: qcom_bms: Add bindings
+Message-ID: <20180920165847.6xqzeoqzqkyotshx@earth.universe>
+References: <20180407135934.26122-1-ctatlor97@gmail.com>
+ <20180614151435.6471-1-ctatlor97@gmail.com>
+ <20180614151435.6471-3-ctatlor97@gmail.com>
+ <20180916121045.aptj6nciwskfg4st@earth.universe>
+ <4BBA3F28-A769-4F09-86DC-1E3906C53B26@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180919134233.3040-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9022 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=920
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809200163
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="s2im6fa4l5wivfec"
+Content-Disposition: inline
+In-Reply-To: <4BBA3F28-A769-4F09-86DC-1E3906C53B26@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/19/18 9:42 AM, Juergen Gross wrote:
-> When a driver domain (e.g. dom0) is running out of maptrack entries it
-> can't map any more foreign domain pages. Instead of silently stalling
-> the affected domUs issue a rate limited warning in this case in order
-> to make it easier to detect that situation.
->
-> Signed-off-by: Juergen Gross <jgross@suse.com>
->
 
+--s2im6fa4l5wivfec
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied to for-linus-4.19d.
+[Dropped a couple of people from CC, added Baolin]
 
--boris
+Hi Craig, Baolin and Rob,
+
+On Thu, Sep 20, 2018 at 03:32:29PM +0100, Craig wrote:
+> On 16 September 2018 13:10:45 BST, Sebastian Reichel <sebastian.reichel@collabora.com> wrote:
+> >Sorry for my long delay in reviewing this. I like the binding,
+> >but the "qcom," specific properties should become common properties
+> >in
+> >
+> >Documentation/devicetree/bindings/power/supply/battery.txt
+> >and referenced via monitored-battery.
+
+> Thanks for the review, what bindings for ocv would you prefer? The
+> spreadtrum ones or mine?
+
+Most importantly I want to see only one generic binding supporting
+both use cases. As far as I can see there are two major differences:
+
+1. Qcom uses legend properties and SC27XX embedds this into data
+2. Qcom supports temperature based mapping
+
+The second point is easy: Not having temperature information can
+be a subset of the data with temperature info. The main thing to
+discuss are the legend properties. I suppose we have these
+proposals:
+
+Proposal A (from Qcom BMS binding):
+
+ocv-capacity-legend = /bits/ 8 <100 95 90 85 80 75 70 65 60 55 50 45 ...>;
+ocv-temp-legend-celsius = /bits/ 8 <(-10) 0 25 50 65>;
+ocv-lut-microvolt = <43050000 43050000 43030000 42990000
+
+Proposal B (from SC27XX binding):
+
+ocv-cap-table = <4185 100>, <4113 95>, <4066 90>, <4022 85> ...;
+
+I prefer the second binding (with mV -> uV), but I think it becomes
+messy when temperature is added. What do you think about the
+following proposal (derived from pinctrl style):
+
+Proposal C:
+
+ocv-capacity-table-temperatures = <(-10) 0 10>;
+ocv-capacity-table-0 = <4185000 100>, <4113000 95>, <4066000 90>, ...;
+ocv-capacity-table-1 = <4200000 100>, <4185000 95>, <4113000 90>, ...;
+ocv-capacity-table-2 = <4250000 100>, <4200000 95>, <4185000 90>, ...;
+
+-- Sebastian
+
+--s2im6fa4l5wivfec
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAluj0b8ACgkQ2O7X88g7
++prcyg//SsMRNfaAnkvK4BqXeDhuk1A8QHu2iJLMyfQacPLpt9p5/QVXbmdxsTf1
+X2EjvKJVtOs/tP+saYD7NPK1ShhX4Shryf7LbyzpGz8HFLar1TKqA3C+8g53bWZ2
+unPCWezkLy5IjFTi7To36byC8/woOUZu00jMZhaRFQ9I1bnT9Wf1iMYUqBasXB9b
+34aOH0oaNJcRWqfBhyqkWmoM1xgetRy2vJD6Ef+ct2GA/OscI+l9Og1tF8xKQwR+
+I2BiFYPiIJmc6yVLWXva5wO2KHHUUh8MBaRLz4mQvx7vawz7sBos1VG7hCIVki1u
+rkEVksvHjLTo5OK1wDdjSM66LjwFmTC84AWWG+jiALwgZa/7ohKHtRu/25rb3KsE
+0VUW3ckKRM/UKsFtwASPzCmVZcBmQrGAKEqE5ep45ZXHHnWEoS23DZdEQDHnw+gz
+NbnI1gqrwjtxedraJS/0j0B8kEbEiIotvRdChUI+fyUSO9fESnRf9sMhARy89Pl0
+1ZgkN3+8Fk/YgOauvQY3QZVkuCpiZ55OVzmZZ8sUxzOPfKEu3kBtFEwi5bJst1E9
+OAgC8wwaCIj/0i1e3XLApuPKKfLyX4xXg77/CaGl5GPw6O6+0zw6a2rRdvcnp3H+
+sidDINWz/DuygOtYwlb2t6aVedLMG+4thQLhjJuDiQeK61l0lDE=
+=5hQf
+-----END PGP SIGNATURE-----
+
+--s2im6fa4l5wivfec--
