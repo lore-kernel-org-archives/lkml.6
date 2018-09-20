@@ -1,197 +1,139 @@
 Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA7CECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76071C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA18921525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:24:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA18921525
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 39A7D21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:25:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A7D21525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731917AbeITPH3 (ORCPT
+        id S1731977AbeITPH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:07:29 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:37844 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726903AbeITPH2 (ORCPT
+        Thu, 20 Sep 2018 11:07:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50032 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727986AbeITPHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:07:28 -0400
-Received: by mail-ua1-f65.google.com with SMTP id y10-v6so4205854uao.4;
-        Thu, 20 Sep 2018 02:24:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ahIXtgAN0+/9cIv49MGD/59SWZIyZq4dbp7h1UzbCXM=;
-        b=hSjABS+Km1KSd3CWxlpdWTCdTe+ciShU7iwBTwKelp9ok3ycas1RZNcyeLpDp831Hi
-         sQyLQnw38SgY9z3ZA6Qv90JOo7XO+1f/7URHn026O/5aDlcNSTSI86BDsmUPuGegIVO+
-         ombQ+k0PmUlgXIxvX1Qh0rwEFNV7ucr3CLTXHGsodLGC8k8UoNE8nX5cHcLBnGJfpveL
-         PGYsFJQQgJCLx4UMtSZciz5Fpz1MPaHzsAdQxd4jE2tXhN8GJbWFsY3yv8NbhQ6SOFCZ
-         p5T2nCKxITlt+1pYmg1y7flSvlNyIdW2kfOYRuAOHYkaRN1vJhVNwezKb81A65C42diG
-         u66g==
-X-Gm-Message-State: APzg51BXn8Uv9569I5/7FRht8TcmkdHALfs+bGrZXUAZ8UHCUmSGjsO7
-        vG8TWJQw/wHFVHQx5sAV+1c94cdmuNDxG7Jb5IU=
-X-Google-Smtp-Source: ANB0VdZUp+fXo/AfULu/LPu581CTSrCasWP4ftmuTiQrWznEC+eRgoJz4R3aRdQbpany206TIQRxEOflpdQgtB5xBs8=
-X-Received: by 2002:ab0:60ae:: with SMTP id f14-v6mr11288313uam.153.1537435495639;
- Thu, 20 Sep 2018 02:24:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <1533791723-3882-1-git-send-email-firoz.khan@linaro.org>
- <1533791723-3882-3-git-send-email-firoz.khan@linaro.org> <CAMuHMdVR+GKwT8WwjZy+=8j=ndWJ0s0sVnCGFGtsyvPAY9jnHQ@mail.gmail.com>
- <CALxhOnheD75br1X_A7h5cNYWdjrDn4ciPc++mYd-_oZJApJyZg@mail.gmail.com>
- <CAMuHMdUcg-73DNNGuG3Kn9oQ9R+LpYxpWYV_1tmzN-EzBFUXVQ@mail.gmail.com> <CALxhOnjLKU8BCHFoc35P_tTh=6+NRbCrO6oB3Gar=uBMqYU4iw@mail.gmail.com>
-In-Reply-To: <CALxhOnjLKU8BCHFoc35P_tTh=6+NRbCrO6oB3Gar=uBMqYU4iw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 20 Sep 2018 11:24:44 +0200
-Message-ID: <CAMuHMdWMxEfVKkohmv6ZAUPKYdZiFK6YoE6Y_L40j7YU-OtY0A@mail.gmail.com>
-Subject: Re: [PATCH 2/4] m68k: Replace NR_syscalls macro from asm/unistd.h
-To:     firoz.khan@linaro.org
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        marcin.juszkiewicz@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 20 Sep 2018 11:07:55 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8K9J8Op127744
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 05:25:24 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mm535sume-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 05:25:23 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Thu, 20 Sep 2018 05:25:22 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Sep 2018 05:25:21 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8K9PK5M27525130
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Sep 2018 09:25:20 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4EA3CAC05F;
+        Thu, 20 Sep 2018 05:24:54 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 520F3AC059;
+        Thu, 20 Sep 2018 05:24:52 -0400 (EDT)
+Received: from skywalker.ibmuc.com (unknown [9.85.86.4])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Sep 2018 05:24:51 -0400 (EDT)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     akpm@linux-foundation.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH] mm: Recheck page table entry with page table lock held
+Date:   Thu, 20 Sep 2018 14:54:08 +0530
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 18092009-0060-0000-0000-000002B3009F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009739; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01090986; UDB=6.00563664; IPR=6.00871009;
+ MB=3.00023408; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-20 09:25:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092009-0061-0000-0000-0000469302D3
+Message-Id: <20180920092408.9128-1-aneesh.kumar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=878 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809200096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Firoz,
+We clear the pte temporarily during read/modify/write update of the pte. If we
+take a page fault while the pte is cleared, the application can get SIGBUS. One
+such case is with remap_pfn_range without a backing vm_ops->fault callback.
+do_fault will return SIGBUS in that case.
 
-On Thu, Sep 20, 2018 at 10:12 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> On 18 September 2018 at 15:34, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Sep 18, 2018 at 9:16 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> >> On 9 August 2018 at 13:00, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> >> > One first comment below...
-> >> >
-> >> > On Thu, Aug 9, 2018 at 7:16 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> >> >> NR_syscalls macro holds the number of system call exist in m68k
-> >> >> architecture. This macro is currently the part of asm/unistd.h file.
-> >> >> We have to change the value of NR_syscalls, if we add or delete a
-> >> >> system call.
-> >> >>
-> >> >> One of patch in this patch series has a script which will generate
-> >> >> a uapi header based on syscall.tbl file. The syscall.tbl file
-> >> >> contains the number of system call information. So we have two
-> >> >> option to update NR_syscalls value.
-> >> >>
-> >> >> 1. Update NR_syscalls in asm/unistd.h manually by counting the
-> >> >>    no.of system calls. No need to update NR_syscalls untill
-> >> >>    we either add a new system call or delete an existing system
-> >> >>    call.
-> >> >>
-> >> >> 2. We can keep this feature it above mentioned script, that'll
-> >> >>    count the number of syscalls and keep it in a generated file.
-> >> >>    In this case we don't need to explicitly update NR_syscalls
-> >> >>    in asm/unistd.h file.
-> >> >>
-> >> >> The 2nd option will be the recommended one. For that, I moved the
-> >> >> NR_syscalls macro from asm/unistd.h to uapi/asm/unistd.h. The macro
-> >> >> name also changed form NR_syscalls to __NR_syscalls for making the
-> >> >> name convention same across all architecture. While __NR_syscalls
-> >> >> isn't strictly part of the uapi, having it as part of the generated
-> >> >> header to simplifies the implementation.
-> >> >
-> >> > It can indeed not be part of the UAPI, as UAPI definitions can never change,
-> >> > while new syscalls will be added in the future, increasing the number ;-)
-> >>
-> >> Thanks for your reply :)
-> >> Sorry for the delayed response :(
-> >>
-> >> I would like to keep __NR_syscalls macro to uapi header in order to simplify
-> >> the system call table generation script. Otherwise the __NR_syscalls
-> >> macro need to update manually. That become a problem.
-> >>
-> >> Please check the below implementation in uapi file make sense?
-> >> It is an easy workaround to leave __NR_syscalls macro in uapi/asm/unistd.h
-> >> and enclose it in #ifdef __KERNEL__
-> >>
-> >> ...
-> >> ...
-> >> #define __NR_pwritev2  378
-> >> #define __NR_statx      379
-> >>
-> >> #ifdef __KERNEL__
-> >> #define __NR_syscalls   380
-> >> #endif
-> >> ...
-> >> ...
-> >
-> > #ifdef __KERNEL__ sounds fine to me.
->
-> I posted similar script for 10 different architectures. I got few good review
-> from the maintainers and it will be applicable for all the
-> architectures including
-> m68k. There are few area which I identified need to improve. This will take
-> couple of days.
->
-> But it will be very helpful if you can perform the boot test on the
-> actual platform
-> and share the result.
+Fix this by taking page table lock and rechecking for pte_none.
 
-Builds and boots fine on ARAnyM (virtual Atari).
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+---
+ mm/memory.c | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
-So for the full series:
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-However, I noticed the following effective difference between the old
-arch/m68k/include/uapi/asm/unistd.h and the new generated
-arch/m68k/include/generated/uapi/asm/unistd_32.h:
-
--/*#define __NR_break            17*/
--/*#define __NR_stty             31*/
--/*#define __NR_gtty             32*/
--/*#define __NR_ftime            35*/
--/*#define __NR_prof             44*/
--/*#define __NR_lock             53*/
--/*#define __NR_mpx              56*/
--/*#define __NR_ulimit           58*/
--/*#define __NR_oldolduname      59*/
--/*#define __NR_profil           98*/
--/*#define __NR_ioperm          101*/
--/*#define __NR_olduname                109*/
--/*#define __NR_iopl            110*/ /* not supported */
--/*#define __NR_idle            112*/ /* Obsolete */
--/*#define __NR_vm86            113*/ /* not supported */
--/*#define __NR_afs_syscall     137*/ /* Syscall for Andrew File System */
--/*#define __NR_vserver         278*/
-+#define __NR_break     17
-+#define __NR_stty      31
-+#define __NR_gtty      32
-+#define __NR_ftime     35
-+#define __NR_prof      44
-+#define __NR_lock      53
-+#define __NR_mpx       56
-+#define __NR_ulimit    58
-+#define __NR_oldolduname       59
-+#define __NR_profil    98
-+#define __NR_ioperm    101
-+#define __NR_olduname  109
-+#define __NR_iopl      110
-+#define __NR_idle      112
-+#define __NR_vm86      113
-+#define __NR_afs_syscall       137
-+#define __NR_vserver   278
-
-Given userspace code may contain checks for the presence of these
-defines, I think they should not be present.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/mm/memory.c b/mm/memory.c
+index c467102a5cbc..c2f933184303 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3745,10 +3745,33 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	vm_fault_t ret;
+ 
+-	/* The VMA was not fully populated on mmap() or missing VM_DONTEXPAND */
+-	if (!vma->vm_ops->fault)
+-		ret = VM_FAULT_SIGBUS;
+-	else if (!(vmf->flags & FAULT_FLAG_WRITE))
++	/*
++	 * The VMA was not fully populated on mmap() or missing VM_DONTEXPAND
++	 */
++	if (!vma->vm_ops->fault) {
++
++		/*
++		 * pmd entries won't be marked none during a R/M/W cycle.
++		 */
++		if (unlikely(pmd_none(*vmf->pmd)))
++			ret = VM_FAULT_SIGBUS;
++		else {
++			vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
++			/*
++			 * Make sure this is not a temporary clearing of pte
++			 * by holding ptl and checking again. A R/M/W update
++			 * of pte involves: take ptl, clearing the pte so that
++			 * we don't have concurrent modification by hardware
++			 * followed by an update.
++			 */
++			spin_lock(vmf->ptl);
++			if (unlikely(pte_none(*vmf->pte)))
++				ret = VM_FAULT_SIGBUS;
++			else
++				ret = VM_FAULT_NOPAGE;
++			spin_unlock(vmf->ptl);
++		}
++	} else if (!(vmf->flags & FAULT_FLAG_WRITE))
+ 		ret = do_read_fault(vmf);
+ 	else if (!(vma->vm_flags & VM_SHARED))
+ 		ret = do_cow_fault(vmf);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
