@@ -2,746 +2,138 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DF8ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1577BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC5221522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B575521522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:44:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hp1/vt9s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC5221522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CzDcdiZU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B575521522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388620AbeIUE2i (ORCPT
+        id S2388648AbeIUE3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:28:38 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45501 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388523AbeIUE2g (ORCPT
+        Fri, 21 Sep 2018 00:29:47 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46885 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeIUE3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:28:36 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t70-v6so285423pgd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:42:50 -0700 (PDT)
+        Fri, 21 Sep 2018 00:29:46 -0400
+Received: by mail-io1-f67.google.com with SMTP id y12-v6so10130230ioj.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Pu393NPisfZ8tFus+OX/uG112JO2CCAGlLtNWqrvwSU=;
-        b=Hp1/vt9stPjKvI4A7vnmvx2ww8+xF6qiIsY4EE3skcr1kq2SKS/zhn2qbiBs+eGWGT
-         qm2bmFp7FAdALbzX/CySvTMyx/ufCTregvptWb4LB0SH36M17I9c2Portdj343rcqX4N
-         56qLCYDsaKRSC/sVMenRC57WDIP1kuomNBeps=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FHBMzyPVooT0K4jfAi0xUUuEwdC0fjEtDr2esA8PRPQ=;
+        b=CzDcdiZU2VV0pA2siNvNj5IExiuC9FgLGCc72D/zBlN5+MJIzyNgwVg5j6GS6IyFA/
+         3K2zydkGupDHtuaXNZVXtbyuiPdHNRxYv9J2Ze1i1IXAdg2p8UZEzt/T+A2gBMGsybgp
+         egI5nxCVvOQ8IG4Oa4tP2YZtR9uR/SXVJQzDc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Pu393NPisfZ8tFus+OX/uG112JO2CCAGlLtNWqrvwSU=;
-        b=gfZiBVq25gxjO4qAL3D6dQ6a7J1ijLgCPWb5mS6SwANygE/hwgIVLXB8mo41SteVwe
-         smpOc5xUjdR4UCPYP3vpzUqwnuYThfP6AWCR+gA3VLf2LSlUPIf5/e2HBjO1gnJ+RvR4
-         HbaAHSVYfJ08bCoHi4sAp6TKHJ+2Nub7Z6tvuuyAFy+HPj6PjzBVH8gKdMgxqZkiC/LS
-         rvuHtJv72pf93w5u0Vihn3TdF69QO0mrFOXDcLJLFWoUejHkRI8aCqwARtWXRyR8FpME
-         4YlTEfOHNKmq7wFS9IcDTMKY+nVlsKsjXuu8bwGhHu463tvX/sZRS4sqD3jfhQ8yEKn3
-         L1VQ==
-X-Gm-Message-State: APzg51B7J8Xvw7qLSE3Wers8ytt+f05tgRJZqotdQjnEjYYDEoMvZ3Qp
-        lgfnTyB09HSOYYI/LHpVqhuiPw==
-X-Google-Smtp-Source: ANB0VdbQHzSJEYvAR4yFkvfshQ3Xb5nhIHlsgrBby13d7SSxKXzvqPyfAoEZb7NabhGnUh4pVBhXSw==
-X-Received: by 2002:a62:2e02:: with SMTP id u2-v6mr43755777pfu.134.1537483369701;
-        Thu, 20 Sep 2018 15:42:49 -0700 (PDT)
-Received: from ryandcase.mtv.corp.google.com ([2620:15c:202:201:ed1c:3d1c:9d92:99cb])
-        by smtp.gmail.com with ESMTPSA id t15-v6sm38704730pfa.158.2018.09.20.15.42.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 15:42:48 -0700 (PDT)
-From:   Ryan Case <ryandcase@chromium.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: [PATCH v2 2/2] spi: Introduce new driver for Qualcomm QuadSPI controller
-Date:   Thu, 20 Sep 2018 15:40:55 -0700
-Message-Id: <20180920224055.164856-2-ryandcase@chromium.org>
-X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
-In-Reply-To: <20180920224055.164856-1-ryandcase@chromium.org>
-References: <20180920224055.164856-1-ryandcase@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FHBMzyPVooT0K4jfAi0xUUuEwdC0fjEtDr2esA8PRPQ=;
+        b=XNZgZSfLSrFsVoMwb+dHysoB+KuaNfkjhoXYw8e6Q7xg5ytcKRIaEyKBPZaeWAYVB2
+         dZWurGWquIZPdbnzQGWAsNexd+KwjgIlCAp4GprqTdmexwJU8Afy5wNtdIg7dOVaYZ9Y
+         ln9eeGO++/hvNM6ApF9QjRNzZdFnJWdQusdtZa940Fd4uMJBSkzfjUU2lTtk2Vm2LqMI
+         Tv7SK5eCQ5xrGJ9SjVld3KmxJxevOJW3de0gCBl7Vbc+BTnUC3At5FuBxJhqvJlszCfL
+         TuoMmcZIOTKUOSr1268q8cAGPZX4vLQfHGsLIO/sQzc7g1E7htlrUwuUHRyMyRXffpfs
+         Kaow==
+X-Gm-Message-State: APzg51Aig18doZExbtp5yJ6pdKvcEvkjq68EQ/242yGM1YNgksGFZ7b5
+        Bu1TJ7bM3rVhpBTrY8p1E3Y8/7Lx0OicKlLUT/g8D09f
+X-Google-Smtp-Source: ANB0VdZsgzOWcAzaO2OBYt7nC/2cydeMahvBF1TDTErmmJBaJ9U9I2CdQwGgoecDScheVwX9Jo6YPqwjaTdWHDOAL2g=
+X-Received: by 2002:a02:5916:: with SMTP id p22-v6mr36728350jab.113.1537483439749;
+ Thu, 20 Sep 2018 15:43:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
+ <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
+ <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com>
+ <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org> <CAPybu_39xtDfoHVo2dv2GZcU5hCQYjBpU7tW2hf3vfUwbUK1mQ@mail.gmail.com>
+ <015715f7-64bc-aca6-77fe-68ddb6c938a8@kernel.org> <CAPybu_2ovB3T1fOD2gP9rM46z37WVuOuzu5FyKamfyMWoVg=yw@mail.gmail.com>
+In-Reply-To: <CAPybu_2ovB3T1fOD2gP9rM46z37WVuOuzu5FyKamfyMWoVg=yw@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 20 Sep 2018 15:43:46 -0700
+Message-ID: <CACRpkdYHJT+C+M3wBr-zR=O9DYM4uVMqprCW8gXSiTMPJhzFnQ@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Timur Tabi <timur@tabi.org>, Stephen Boyd <swboyd@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Girish Mahadevan <girishm@codeaurora.org>
+On Thu, Sep 20, 2018 at 7:14 AM Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> On Thu, Sep 20, 2018 at 2:20 PM Timur Tabi <timur@tabi.org> wrote:
 
-New driver for Qualcomm QuadSPI(QSPI) controller that is used to
-communicate with slaves such flash memory devices. The QSPI controller
-can operate in 2 or 4 wire mode but only supports SPI Mode 0 and SPI
-Mode 3. The controller can also operate in Single or Dual data rate modes.
+> > Users are expected to program the direction for every GPIO they want to
+> > use, regardless of whatever it's set to before they open it.
+>
+> I do not agree that the user should program the direction of a GPIO
+> which direction cannot be used.
+>
+> Also I am not talking about programming a gpio, I am talking about an
+> technician  connecting portA to portB and burning something because
+> the system provided erroneous information
 
-Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
-Signed-off-by: Ryan Case <ryandcase@chromium.org>
----
+So what is clear is that your need, I guess in userspace, reliable
+information about the direction of the GPIOs at boot.
 
-Changes in v2:
-- Addressed formatting feedback
-- Squashed bug fixes and features from Doug
-- Now uses transfer_one_message instead of mem_ops
-- Fixed suspend/resume
-- Added spinlocks
+> > Because calling that API before properly claiming the GPIO is a
+> > programming error.
+>
+> Is there a place where this API is defined?. Which functions require
+> to be defined.? What is the correct order.?
 
- drivers/spi/Kconfig         |   6 +
- drivers/spi/Makefile        |   1 +
- drivers/spi/spi-qcom-qspi.c | 608 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 615 insertions(+)
- create mode 100644 drivers/spi/spi-qcom-qspi.c
+There is nothing like such. We would have to establish semantics.
+I don't see a point in it, the APIs are for using and understanding,
+not for discussing API contracts. I would avoid trying to etch this
+API in stone.
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index de03d67bcd2b..36922e12c3b0 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -549,6 +549,12 @@ config SPI_RSPI
- 	help
- 	  SPI driver for Renesas RSPI and QSPI blocks.
- 
-+config SPI_QCOM_QSPI
-+	tristate "QTI QPSPI controller"
-+	depends on ARCH_QCOM
-+	help
-+	  QSPI(Quad SPI) driver for Qualcomm QSPI controller.
-+
- config SPI_QUP
- 	tristate "Qualcomm SPI controller with QUP interface"
- 	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index 876f8690fc47..f997c49255a6 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -112,3 +112,4 @@ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
- # SPI slave protocol handlers
- obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
- obj-$(CONFIG_SPI_SLAVE_SYSTEM_CONTROL)	+= spi-slave-system-control.o
-+obj-$(CONFIG_SPI_QCOM_QSPI)		+= spi-qcom-qspi.o
-diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
-new file mode 100644
-index 000000000000..1bf2720a7b6f
---- /dev/null
-+++ b/drivers/spi/spi-qcom-qspi.c
-@@ -0,0 +1,608 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2017-2018, The Linux foundation. All rights reserved.
-+
-+#include <linux/clk.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+
-+#include <asm/unaligned.h>
-+
-+#define AHB_MIN_HZ		9600000UL
-+#define QSPI_NUM_CS		2
-+#define QSPI_BYTES_PER_WORD	4
-+#define MSTR_CONFIG		0x0000
-+#define AHB_MASTER_CFG		0x0004
-+#define MSTR_INT_EN		0x000C
-+#define MSTR_INT_STATUS		0x0010
-+#define PIO_XFER_CTRL		0x0014
-+#define PIO_XFER_CFG		0x0018
-+#define PIO_XFER_STATUS		0x001c
-+#define PIO_DATAOUT_1B		0x0020
-+#define PIO_DATAOUT_4B		0x0024
-+#define RD_FIFO_CFG		0x0028
-+#define RD_FIFO_STATUS		0x002c
-+#define RD_FIFO_RESET		0x0030
-+#define CUR_MEM_ADDR		0x0048
-+#define HW_VERSION		0x004c
-+#define RD_FIFO			0x0050
-+#define SAMPLING_CLK_CFG	0x0090
-+#define SAMPLING_CLK_STATUS	0x0094
-+
-+/* Macros to help set/get fields in MSTR_CONFIG register */
-+#define	FULL_CYCLE_MODE		BIT(3)
-+#define	FB_CLK_EN		BIT(4)
-+#define	PIN_HOLDN		BIT(6)
-+#define	PIN_WPN			BIT(7)
-+#define	DMA_ENABLE		BIT(8)
-+#define	BIG_ENDIAN_MODE		BIT(9)
-+#define	SPI_MODE_MSK		0xc00
-+#define	SPI_MODE_SHFT		10
-+#define	CHIP_SELECT_NUM		BIT(12)
-+#define	SBL_EN			BIT(13)
-+#define	LPA_BASE_MSK		0x3c000
-+#define	LPA_BASE_SHFT		14
-+#define	TX_DATA_DELAY_MSK	0xc0000
-+#define	TX_DATA_DELAY_SHFT	18
-+#define	TX_CLK_DELAY_MSK	0x300000
-+#define	TX_CLK_DELAY_SHFT	20
-+#define	TX_CS_N_DELAY_MSK	0xc00000
-+#define	TX_CS_N_DELAY_SHFT	22
-+#define	TX_DATA_OE_DELAY_MSK	0x3000000
-+#define	TX_DATA_OE_DELAY_SHFT	24
-+
-+/* Macros to help set/get fields in AHB_MSTR_CFG register */
-+#define	HMEM_TYPE_START_MID_TRANS_MSK		0x7
-+#define	HMEM_TYPE_START_MID_TRANS_SHFT		0
-+#define	HMEM_TYPE_LAST_TRANS_MSK		0x38
-+#define	HMEM_TYPE_LAST_TRANS_SHFT		3
-+#define	USE_HMEMTYPE_LAST_ON_DESC_OR_CHAIN_MSK	0xc0
-+#define	USE_HMEMTYPE_LAST_ON_DESC_OR_CHAIN_SHFT	6
-+#define	HMEMTYPE_READ_TRANS_MSK			0x700
-+#define	HMEMTYPE_READ_TRANS_SHFT		8
-+#define	HSHARED					BIT(11)
-+#define	HINNERSHARED				BIT(12)
-+
-+/* Macros to help set/get fields in MSTR_INT_EN/MSTR_INT_STATUS registers */
-+#define	RESP_FIFO_UNDERRUN	BIT(0)
-+#define	RESP_FIFO_NOT_EMPTY	BIT(1)
-+#define	RESP_FIFO_RDY		BIT(2)
-+#define	HRESP_FROM_NOC_ERR	BIT(3)
-+#define	WR_FIFO_EMPTY		BIT(9)
-+#define	WR_FIFO_FULL		BIT(10)
-+#define	WR_FIFO_OVERRUN		BIT(11)
-+#define	TRANSACTION_DONE	BIT(16)
-+#define QSPI_ERR_IRQS		(RESP_FIFO_UNDERRUN | HRESP_FROM_NOC_ERR | \
-+				 WR_FIFO_OVERRUN)
-+#define	QSPI_ALL_IRQS		(QSPI_ERR_IRQS | RESP_FIFO_RDY | \
-+				 WR_FIFO_EMPTY | WR_FIFO_FULL | \
-+				 TRANSACTION_DONE)
-+
-+/* Macros to help set/get fields in RD_FIFO_CONFIG register */
-+#define	CONTINUOUS_MODE		BIT(0)
-+
-+/* Macros to help set/get fields in RD_FIFO_RESET register */
-+#define	RESET_FIFO		BIT(0)
-+
-+/* Macros to help set/get fields in PIO_TRANSFER_CONFIG register */
-+#define	TRANSFER_DIRECTION	BIT(0)
-+#define	MULTI_IO_MODE_MSK	0xe
-+#define	MULTI_IO_MODE_SHFT	1
-+#define	TRANSFER_FRAGMENT	BIT(8)
-+
-+/* Macros to help set/get fields in PIO_TRANSFER_CONTROL register */
-+#define	REQUEST_COUNT_MSK	0xffff
-+
-+/* Macros to help set/get fields in PIO_TRANSFER_STATUS register */
-+#define	WR_FIFO_BYTES_MSK	0xffff0000
-+#define	WR_FIFO_BYTES_SHFT	16
-+
-+/* Macros to help set/get fields in RD_FIFO_STATUS register */
-+#define	FIFO_EMPTY	BIT(11)
-+#define	WR_CNTS_MSK	0x7f0
-+#define	WR_CNTS_SHFT	4
-+#define	RDY_64BYTE	BIT(3)
-+#define	RDY_32BYTE	BIT(2)
-+#define	RDY_16BYTE	BIT(1)
-+#define	FIFO_RDY	BIT(0)
-+
-+/*
-+ * The Mode transfer macros, the values are programmed to the HW registers
-+ * when doing PIO mode of transfers.
-+ */
-+#define	SDR_1BIT	1
-+#define	SDR_2BIT	2
-+#define	SDR_4BIT	3
-+#define	DDR_1BIT	5
-+#define	DDR_2BIT	6
-+#define	DDR_4BIT	7
-+
-+/* The Mode transfer macros when setting up DMA descriptors */
-+#define	DMA_DESC_SINGLE_SPI	1
-+#define	DMA_DESC_DUAL_SPI	2
-+#define	DMA_DESC_QUAD_SPI	3
-+
-+enum qspi_dir {
-+	QSPI_READ,
-+	QSPI_WRITE,
-+};
-+
-+struct qspi_xfer {
-+	union {
-+		const void *tx_buf;
-+		void *rx_buf;
-+	};
-+	unsigned int rem_bytes;
-+	int buswidth;
-+	enum qspi_dir dir;
-+	bool is_last;
-+};
-+
-+enum qspi_clocks {
-+	QSPI_CLK_CORE,
-+	QSPI_CLK_IFACE,
-+	QSPI_NUM_CLKS
-+};
-+
-+struct qcom_qspi {
-+	void __iomem *base;
-+	struct device *dev;
-+	struct clk_bulk_data clks[QSPI_NUM_CLKS];
-+	struct qspi_xfer xfer;
-+	spinlock_t lock;
-+};
-+
-+static int qspi_buswidth_to_iomode(struct qcom_qspi *ctrl, int buswidth)
-+{
-+	switch (buswidth) {
-+	case 1:
-+		return SDR_1BIT;
-+	case 2:
-+		return SDR_2BIT;
-+	case 4:
-+		return SDR_4BIT;
-+	default:
-+		dev_warn_once(ctrl->dev,
-+				"Unexpected bus width: %d\n", buswidth);
-+		return SDR_1BIT;
-+	}
-+}
-+
-+static void qcom_qspi_pio_xfer_cfg(struct qcom_qspi *ctrl)
-+{
-+	u32 pio_xfer_cfg = 0;
-+	struct qspi_xfer *xfer;
-+
-+	xfer = &ctrl->xfer;
-+	pio_xfer_cfg = readl(ctrl->base + PIO_XFER_CFG);
-+	pio_xfer_cfg &= ~TRANSFER_DIRECTION;
-+	pio_xfer_cfg |= xfer->dir;
-+	if (xfer->is_last)
-+		pio_xfer_cfg &= ~TRANSFER_FRAGMENT;
-+	else
-+		pio_xfer_cfg |= TRANSFER_FRAGMENT;
-+	pio_xfer_cfg &= ~MULTI_IO_MODE_MSK;
-+	pio_xfer_cfg |= qspi_buswidth_to_iomode(ctrl, xfer->buswidth) <<
-+			MULTI_IO_MODE_SHFT;
-+
-+	writel(pio_xfer_cfg, ctrl->base + PIO_XFER_CFG);
-+}
-+
-+static void qcom_qspi_pio_xfer_ctrl(struct qcom_qspi *ctrl)
-+{
-+	u32 pio_xfer_ctrl;
-+
-+	pio_xfer_ctrl = readl(ctrl->base + PIO_XFER_CTRL);
-+	pio_xfer_ctrl &= ~REQUEST_COUNT_MSK;
-+	pio_xfer_ctrl |= ctrl->xfer.rem_bytes;
-+	writel(pio_xfer_ctrl, ctrl->base + PIO_XFER_CTRL);
-+}
-+
-+static void qcom_qspi_pio_xfer(struct qcom_qspi *ctrl)
-+{
-+	u32 ints;
-+
-+	qcom_qspi_pio_xfer_cfg(ctrl);
-+
-+	/* Ack any previous interrupts that might be hanging around */
-+	writel(QSPI_ALL_IRQS, ctrl->base + MSTR_INT_STATUS);
-+
-+	/* Setup new interrupts */
-+	if (ctrl->xfer.dir == QSPI_WRITE)
-+		ints = QSPI_ERR_IRQS | WR_FIFO_EMPTY;
-+	else
-+		ints = QSPI_ERR_IRQS | RESP_FIFO_RDY;
-+	writel(ints, ctrl->base + MSTR_INT_EN);
-+
-+	/* Kick off the transfer */
-+	qcom_qspi_pio_xfer_ctrl(ctrl);
-+}
-+
-+static void qcom_qspi_handle_err(struct spi_master *master,
-+				 struct spi_message *msg)
-+{
-+	struct qcom_qspi *ctrl = spi_master_get_devdata(master);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ctrl->lock, flags);
-+	writel(0, ctrl->base + MSTR_INT_EN);
-+	ctrl->xfer.rem_bytes = 0;
-+	spin_unlock_irqrestore(&ctrl->lock, flags);
-+}
-+
-+static int qcom_qspi_transfer_one(struct spi_master *master,
-+				  struct spi_device *slv,
-+				  struct spi_transfer *xfer)
-+{
-+	struct qcom_qspi *ctrl = spi_master_get_devdata(master);
-+	int ret;
-+	unsigned long speed_hz;
-+	unsigned long flags;
-+
-+	speed_hz = slv->max_speed_hz;
-+	if (xfer->speed_hz)
-+		speed_hz = xfer->speed_hz;
-+
-+	ret = clk_set_rate(ctrl->clks[QSPI_CLK_CORE].clk, speed_hz * 4);
-+	if (ret) {
-+		dev_err(ctrl->dev, "Failed to set core clk %d\n", ret);
-+		return ret;
-+	}
-+
-+	spin_lock_irqsave(&ctrl->lock, flags);
-+
-+	/* We are half duplex, so either rx or tx will be set */
-+	if (xfer->rx_buf) {
-+		ctrl->xfer.dir = QSPI_READ;
-+		ctrl->xfer.buswidth = xfer->rx_nbits;
-+		ctrl->xfer.rx_buf = xfer->rx_buf;
-+	} else {
-+		ctrl->xfer.dir = QSPI_WRITE;
-+		ctrl->xfer.buswidth = xfer->tx_nbits;
-+		ctrl->xfer.tx_buf = xfer->tx_buf;
-+	}
-+	ctrl->xfer.is_last = list_is_last(&xfer->transfer_list,
-+					  &master->cur_msg->transfers);
-+	ctrl->xfer.rem_bytes = xfer->len;
-+	qcom_qspi_pio_xfer(ctrl);
-+
-+	spin_unlock_irqrestore(&ctrl->lock, flags);
-+
-+	/* We'll call spi_finalize_current_transfer() when done */
-+	return 1;
-+}
-+
-+static int qcom_qspi_setup(struct spi_device *spi)
-+{
-+	u32 mstr_cfg;
-+	struct qcom_qspi *ctrl;
-+	int tx_data_oe_delay = 1;
-+	int tx_data_delay = 1;
-+	int ret;
-+
-+	ctrl = spi_master_get_devdata(spi->master);
-+	ret = pm_runtime_get_sync(ctrl->dev);
-+	if (ret) {
-+		dev_err(ctrl->dev, "Runtime PM get failed in setup: %d\n", ret);
-+		pm_runtime_put(ctrl->dev);
-+		return ret;
-+	}
-+
-+	mstr_cfg = readl(ctrl->base + MSTR_CONFIG);
-+	mstr_cfg &= ~CHIP_SELECT_NUM;
-+	if (spi->chip_select)
-+		mstr_cfg |= CHIP_SELECT_NUM;
-+
-+	mstr_cfg = (mstr_cfg & ~SPI_MODE_MSK) | (spi->mode << SPI_MODE_SHFT);
-+	mstr_cfg |= FB_CLK_EN | PIN_WPN | PIN_HOLDN | SBL_EN | FULL_CYCLE_MODE;
-+	mstr_cfg |= (mstr_cfg & ~TX_DATA_OE_DELAY_MSK) |
-+				(tx_data_oe_delay << TX_DATA_OE_DELAY_SHFT);
-+	mstr_cfg |= (mstr_cfg & ~TX_DATA_DELAY_MSK) |
-+				(tx_data_delay << TX_DATA_DELAY_SHFT);
-+	mstr_cfg &= ~DMA_ENABLE;
-+
-+	writel(mstr_cfg, ctrl->base + MSTR_CONFIG);
-+
-+	/*
-+	 * Ensure that the configuration goes through by reading back
-+	 * a register from the IO space.
-+	 */
-+	mstr_cfg = readl(ctrl->base + MSTR_CONFIG);
-+
-+	pm_runtime_put(ctrl->dev);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t pio_read(struct qcom_qspi *ctrl)
-+{
-+	u32 rd_fifo_status;
-+	u32 rd_fifo;
-+	unsigned int wr_cnts;
-+	unsigned int bytes_to_read;
-+	unsigned int words_to_read;
-+	u32 *word_buf;
-+	u8 *byte_buf;
-+	int i;
-+
-+	rd_fifo_status = readl(ctrl->base + RD_FIFO_STATUS);
-+
-+	if (!(rd_fifo_status & FIFO_RDY)) {
-+		dev_dbg(ctrl->dev, "Spurious IRQ %#x\n", rd_fifo_status);
-+		return IRQ_NONE;
-+	}
-+
-+	wr_cnts = (rd_fifo_status & WR_CNTS_MSK) >> WR_CNTS_SHFT;
-+
-+	if (wr_cnts > ctrl->xfer.rem_bytes)
-+		wr_cnts = ctrl->xfer.rem_bytes;
-+
-+	words_to_read = wr_cnts / QSPI_BYTES_PER_WORD;
-+	bytes_to_read = wr_cnts % QSPI_BYTES_PER_WORD;
-+
-+	if (words_to_read) {
-+		word_buf = ctrl->xfer.rx_buf;
-+		ctrl->xfer.rem_bytes -= words_to_read * QSPI_BYTES_PER_WORD;
-+		for (i = 0; i < words_to_read; i++) {
-+			rd_fifo = readl(ctrl->base + RD_FIFO);
-+			put_unaligned(rd_fifo, word_buf++);
-+		}
-+		ctrl->xfer.rx_buf = word_buf;
-+	}
-+
-+	if (bytes_to_read) {
-+		byte_buf = ctrl->xfer.rx_buf;
-+		rd_fifo = readl(ctrl->base + RD_FIFO);
-+		ctrl->xfer.rem_bytes -= bytes_to_read;
-+		for (i = 0; i < bytes_to_read; i++)
-+			*byte_buf++ = rd_fifo >> (i * BITS_PER_BYTE);
-+		ctrl->xfer.rx_buf = byte_buf;
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t pio_write(struct qcom_qspi *ctrl)
-+{
-+	const void *xfer_buf = ctrl->xfer.tx_buf;
-+	const int *word_buf;
-+	const char *byte_buf;
-+	unsigned int wr_fifo_bytes;
-+	unsigned int wr_fifo_words;
-+	unsigned int wr_size;
-+	unsigned int rem_words;
-+
-+	wr_fifo_bytes = readl(ctrl->base + PIO_XFER_STATUS)
-+				>> WR_FIFO_BYTES_SHFT;
-+
-+	if (ctrl->xfer.rem_bytes < QSPI_BYTES_PER_WORD) {
-+		/* Process the last 1-3 bytes */
-+		wr_size = min(wr_fifo_bytes, ctrl->xfer.rem_bytes);
-+		ctrl->xfer.rem_bytes -= wr_size;
-+
-+		byte_buf = xfer_buf;
-+		while (wr_size--)
-+			writel(*byte_buf++,
-+			       ctrl->base + PIO_DATAOUT_1B);
-+		ctrl->xfer.tx_buf = byte_buf;
-+	} else {
-+		/*
-+		 * Process all the whole words; to keep things simple we'll
-+		 * just wait for the next interrupt to handle the last 1-3
-+		 * bytes if we don't have an even number of words.
-+		 */
-+		rem_words = ctrl->xfer.rem_bytes / QSPI_BYTES_PER_WORD;
-+		wr_fifo_words = wr_fifo_bytes / QSPI_BYTES_PER_WORD;
-+
-+		wr_size = min(rem_words, wr_fifo_words);
-+		ctrl->xfer.rem_bytes -= wr_size * QSPI_BYTES_PER_WORD;
-+
-+		word_buf = xfer_buf;
-+		while (wr_size--)
-+			writel(get_unaligned(word_buf++),
-+			       ctrl->base + PIO_DATAOUT_4B);
-+		ctrl->xfer.tx_buf = word_buf;
-+
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t qcom_qspi_irq(int irq, void *dev_id)
-+{
-+	u32 int_status;
-+	struct qcom_qspi *ctrl = dev_id;
-+	irqreturn_t ret;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&ctrl->lock, flags);
-+
-+	int_status = readl(ctrl->base + MSTR_INT_STATUS);
-+	writel(int_status, ctrl->base + MSTR_INT_STATUS);
-+
-+	if (ctrl->xfer.dir == QSPI_WRITE) {
-+		if (int_status & WR_FIFO_EMPTY)
-+			ret = pio_write(ctrl);
-+	} else {
-+		if (int_status & RESP_FIFO_RDY)
-+			ret = pio_read(ctrl);
-+	}
-+
-+	if (!ctrl->xfer.rem_bytes) {
-+		writel(0, ctrl->base + MSTR_INT_EN);
-+		spi_finalize_current_transfer(dev_get_drvdata(ctrl->dev));
-+	}
-+
-+	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	return ret;
-+}
-+
-+static int qcom_qspi_probe(struct platform_device *pdev)
-+{
-+	int ret = 0;
-+	struct device *dev;
-+	struct resource *res;
-+	struct spi_master *master;
-+	struct qcom_qspi *ctrl;
-+
-+	dev = &pdev->dev;
-+
-+	master = spi_alloc_master(dev, sizeof(struct qcom_qspi));
-+	if (!master) {
-+		dev_err(dev, "Failed to alloc spi master\n");
-+		return -ENOMEM;
-+	}
-+	platform_set_drvdata(pdev, master);
-+
-+	ctrl = spi_master_get_devdata(master);
-+
-+	spin_lock_init(&ctrl->lock);
-+	ctrl->dev = dev;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	ctrl->base = devm_ioremap(dev, res->start, resource_size(res));
-+	if (IS_ERR(ctrl->base)) {
-+		ret = PTR_ERR(ctrl->base);
-+		dev_err(dev, "Failed to get base addr %d\n", ret);
-+		goto exit_probe_master_put;
-+	}
-+
-+	ctrl->clks[QSPI_CLK_CORE].id = "core";
-+	ctrl->clks[QSPI_CLK_IFACE].id = "iface";
-+	ret = devm_clk_bulk_get(dev, QSPI_NUM_CLKS, ctrl->clks);
-+	if (ret)
-+		goto exit_probe_master_put;
-+
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to get irq %d\n", ret);
-+		goto exit_probe_master_put;
-+	}
-+	ret = devm_request_irq(dev, ret, qcom_qspi_irq,
-+			IRQF_TRIGGER_HIGH, dev_name(dev), ctrl);
-+	if (ret) {
-+		dev_err(dev, "Failed to request irq %d\n", ret);
-+		goto exit_probe_master_put;
-+	}
-+
-+	master->max_speed_hz = 300000000;
-+	master->num_chipselect = QSPI_NUM_CS;
-+	master->bus_num = pdev->id;
-+	master->dev.of_node = pdev->dev.of_node;
-+	master->mode_bits = SPI_MODE_0 |
-+			    SPI_TX_DUAL | SPI_RX_DUAL |
-+			    SPI_TX_QUAD | SPI_RX_QUAD;
-+	master->flags = SPI_MASTER_HALF_DUPLEX;
-+	master->setup = qcom_qspi_setup;
-+	master->transfer_one = qcom_qspi_transfer_one;
-+	master->handle_err = qcom_qspi_handle_err;
-+	master->auto_runtime_pm = true;
-+
-+	pm_runtime_enable(dev);
-+
-+	ret = spi_register_master(master);
-+	if (ret)
-+		goto exit_probe_runtime_disable;
-+
-+	return 0;
-+
-+exit_probe_runtime_disable:
-+	pm_runtime_disable(dev);
-+
-+exit_probe_master_put:
-+	spi_master_put(master);
-+
-+	return ret;
-+}
-+
-+static int qcom_qspi_remove(struct platform_device *pdev)
-+{
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+
-+	/* Unregister _before_ disabling pm_runtime() so we stop transfers */
-+	spi_unregister_master(master);
-+
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused qcom_qspi_runtime_suspend(struct device *dev)
-+{
-+	struct spi_master *master = dev_get_drvdata(dev);
-+	struct qcom_qspi *ctrl = spi_master_get_devdata(master);
-+
-+	clk_bulk_disable_unprepare(QSPI_NUM_CLKS, ctrl->clks);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused qcom_qspi_runtime_resume(struct device *dev)
-+{
-+	struct spi_master *master = dev_get_drvdata(dev);
-+	struct qcom_qspi *ctrl = spi_master_get_devdata(master);
-+
-+	return clk_bulk_prepare_enable(QSPI_NUM_CLKS, ctrl->clks);
-+}
-+
-+static int qcom_qspi_suspend(struct device *dev)
-+{
-+	struct spi_master *master = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = spi_master_suspend(master);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_force_suspend(dev);
-+	if (ret)
-+		spi_master_resume(master);
-+
-+	return ret;
-+}
-+
-+static int qcom_qspi_resume(struct device *dev)
-+{
-+	struct spi_master *master = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = pm_runtime_force_resume(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = spi_master_resume(master);
-+	if (ret)
-+		pm_runtime_force_suspend(dev);
-+
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops qcom_qspi_dev_pm_ops = {
-+	SET_RUNTIME_PM_OPS(qcom_qspi_runtime_suspend,
-+			   qcom_qspi_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(qcom_qspi_suspend, qcom_qspi_resume)
-+};
-+
-+static const struct of_device_id qcom_qspi_dt_match[] = {
-+	{ .compatible = "qcom,sdm845-qspi", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_qspi_dt_match);
-+
-+static struct platform_driver qcom_qspi_driver = {
-+	.driver = {
-+		.name		= "qcom_qspi",
-+		.pm		= &qcom_qspi_dev_pm_ops,
-+		.of_match_table = qcom_qspi_dt_match,
-+	},
-+	.probe = qcom_qspi_probe,
-+	.remove = qcom_qspi_remove,
-+};
-+module_platform_driver(qcom_qspi_driver);
-+
-+MODULE_DESCRIPTION("SPI driver for QSPI cores");
-+MODULE_LICENSE("GPL v2");
--- 
-2.19.0.444.g18242da7ef-goog
+> > The reason why the Qualcomm driver is impacted the most is because on
+> > ACPI platforms, the GPIO map is "sparse".  That is, not every GPIO
+> > between 0 and n-1 actually exists.  So reading a GPIO that doesn't exist
+> > is invalid.
+>
+> Why are we adding GPIOs that are invalid?
+> If you can figure out that a GPIO is invalid when the user claims a
+> gpio, you can also figure it out when the user asks the direction.
 
+Right and that is what the (later introduced) valid_mask
+can do.
+
+Any time we call into any of the callbacks that take an offset
+we should (theoretically) check the .valid_mask if active.
+
+Since we normally check it when requesting the GPIO, we
+can't request invalid GPIOs and normally the other callbacks
+would only get called after that, so we are fine.
+
+> > I'm not sure how to properly fix this, but I wonder if we need some kind
+> > of late-stage initialization where gpiolib scans all the GPIOs by
+> > claiming them first, reading the directions, and then releasing them.
+>
+> That sounds like a good compromise. Or returning
+> -unconfigured / unknown
+>
+> is also an option.
+
+I would just skip over anything asked off in the valid_mask.
+
+I feel positive of a version of this patch that respect valid_mask
+some way, as that should be safe for Qualcomms usecase.
+
+Rough consensus and running code.
+
+Yours,
+Linus Walleij
