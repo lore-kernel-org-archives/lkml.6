@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A27C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE08ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3302147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:02:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D3302147D
+	by mail.kernel.org (Postfix) with ESMTP id C25A52147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:02:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25A52147D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388295AbeIUBsC (ORCPT
+        id S2388424AbeIUBsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:48:02 -0400
+        Thu, 20 Sep 2018 21:48:04 -0400
 Received: from mga17.intel.com ([192.55.52.151]:62935 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731832AbeIUBsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:48:02 -0400
+        id S2388340AbeIUBsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 21:48:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 13:02:53 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 13:02:54 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
-   d="scan'208";a="264386351"
+   d="scan'208";a="264386366"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.44])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Sep 2018 13:02:03 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 20 Sep 2018 13:02:05 -0700
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kirill Shutemov <kirill.shutemov@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv2 1/7] mm/gup_benchmark: Time put_page
-Date:   Thu, 20 Sep 2018 14:03:52 -0600
-Message-Id: <20180920200358.31680-2-keith.busch@intel.com>
+Subject: [PATCHv2 5/7] tools/gup_benchmark: Add parameter for hugetlb
+Date:   Thu, 20 Sep 2018 14:03:56 -0600
+Message-Id: <20180920200358.31680-6-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180920200358.31680-1-keith.busch@intel.com>
 References: <20180920200358.31680-1-keith.busch@intel.com>
@@ -48,78 +48,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We'd like to measure time to unpin user pages, so this adds a second
-benchmark timer on put_page, separate from get_page.
-
-Adding the field will breaks this ioctl ABI, but should be okay since
-this an in-tree kernel selftest.
-
 Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- mm/gup_benchmark.c                         | 8 ++++++--
- tools/testing/selftests/vm/gup_benchmark.c | 6 ++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ tools/testing/selftests/vm/gup_benchmark.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-index 6a473709e9b6..76cd35e477af 100644
---- a/mm/gup_benchmark.c
-+++ b/mm/gup_benchmark.c
-@@ -8,7 +8,8 @@
- #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
- 
- struct gup_benchmark {
--	__u64 delta_usec;
-+	__u64 get_delta_usec;
-+	__u64 put_delta_usec;
- 	__u64 addr;
- 	__u64 size;
- 	__u32 nr_pages_per_call;
-@@ -47,14 +48,17 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
- 	}
- 	end_time = ktime_get();
- 
--	gup->delta_usec = ktime_us_delta(end_time, start_time);
-+	gup->get_delta_usec = ktime_us_delta(end_time, start_time);
- 	gup->size = addr - gup->addr;
- 
-+	start_time = ktime_get();
- 	for (i = 0; i < nr_pages; i++) {
- 		if (!pages[i])
- 			break;
- 		put_page(pages[i]);
- 	}
-+	end_time = ktime_get();
-+	gup->put_delta_usec = ktime_us_delta(end_time, start_time);
- 
- 	kvfree(pages);
- 	return 0;
 diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
-index 36df55132036..bdcb97acd0ac 100644
+index f2c99e2436f8..5d96e2b3d2f1 100644
 --- a/tools/testing/selftests/vm/gup_benchmark.c
 +++ b/tools/testing/selftests/vm/gup_benchmark.c
-@@ -17,7 +17,8 @@
- #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
+@@ -38,7 +38,7 @@ int main(int argc, char **argv)
+ 	char *file = NULL;
+ 	char *p;
  
- struct gup_benchmark {
--	__u64 delta_usec;
-+	__u64 get_delta_usec;
-+	__u64 put_delta_usec;
- 	__u64 addr;
- 	__u64 size;
- 	__u32 nr_pages_per_call;
-@@ -81,7 +82,8 @@ int main(int argc, char **argv)
- 		if (ioctl(fd, GUP_FAST_BENCHMARK, &gup))
- 			perror("ioctl"), exit(1);
- 
--		printf("Time: %lld us", gup.delta_usec);
-+		printf("Time: get:%lld put:%lld us", gup.get_delta_usec,
-+			gup.put_delta_usec);
- 		if (gup.size != size)
- 			printf(", truncated (size: %lld)", gup.size);
- 		printf("\n");
+-	while ((opt = getopt(argc, argv, "m:r:n:f:tTLU")) != -1) {
++	while ((opt = getopt(argc, argv, "m:r:n:f:tTLUH")) != -1) {
+ 		switch (opt) {
+ 		case 'm':
+ 			size = atoi(optarg) * MB;
+@@ -64,6 +64,9 @@ int main(int argc, char **argv)
+ 		case 'w':
+ 			write = 1;
+ 			break;
++		case 'H':
++			flags |= MAP_HUGETLB;
++			break;
+ 		case 'f':
+ 			file = optarg;
+ 			flags &= ~(MAP_PRIVATE | MAP_ANONYMOUS);
 -- 
 2.14.4
 
