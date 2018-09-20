@@ -2,98 +2,97 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F481C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590A3C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B31E20833
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:26:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L7Wj2Awl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B31E20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0BE6120833
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE6120833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbeITVKi (ORCPT
+        id S2387802AbeITVNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:10:38 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33864 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbeITVKi (ORCPT
+        Thu, 20 Sep 2018 17:13:47 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43512 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387697AbeITVNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:10:38 -0400
-Received: by mail-io1-f65.google.com with SMTP id c22-v6so7736297iob.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 08:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ueYwWp9hOt4ubExEkrr5fI9g24XfOKpvzRXjVeuX2wk=;
-        b=L7Wj2AwlEo5PGQi0CWQgTcVvPFHT6d8zL/e4PsSt6dReSpXfBaJBAfdGK0skifCB72
-         I0OXtYhbxC5xcU5hVUprXg3hA41Zb9XEVkpAlNFxdmlX+Ole0H23FgFbSCMaDydHEh3T
-         5PoPq/NUjKFbKAVJAFtuA5mlB+mlD/45SZSrw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ueYwWp9hOt4ubExEkrr5fI9g24XfOKpvzRXjVeuX2wk=;
-        b=dUzDwN9KJAJMvRkEyCQ6Ps+SUJYYlHQ8GUEhB3nLoNf54kVAyo7oVEneMuJqeekaNM
-         Q57OF0HpP8/FHLI4v4wUgt9fiJ8gghzRT3HRe/mUSsgSOu1mZTDx2aBofoB64s29zSVx
-         VWsvUyCaHhm4NFkZFoFYVirbJxjqs5ROpRQp3hF7j6VBzm18ado7nBG/1UzhFf8mJQ8S
-         2uzZ65omlsi3L1Y1Xv73zBMnb5xvO3cpsbXBo0F+lbFbI8hSJT64sbTHRFlV3CGeG+e7
-         cuv7TlCy9pAU06OQkddRMvELgI1y3MbDV0hmTMDtLG7v6gTy4zJEh4G1i2oU9dYtoERc
-         mjVg==
-X-Gm-Message-State: APzg51A5gEZkQQzdOiSDWX0uHQUnG3dPFXmqWbDuTshi2rdwY8da/gMf
-        OAeWSVStuyiBONlkouPQ97uUDrkW6OeJeBZBd8W4Z7OA
-X-Google-Smtp-Source: ANB0VdYpnMZn6VeKPMaYx4cHT5M+/p5Obd9DMysQNm+zgalAvBgo9RPyMh1peqweQzu3+/B6//hIdWtlnyCcdOAWwvI=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr33067327iof.304.1537457198194;
- Thu, 20 Sep 2018 08:26:38 -0700 (PDT)
+        Thu, 20 Sep 2018 17:13:46 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8KFP4Ed004194;
+        Thu, 20 Sep 2018 17:29:20 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mgryfh97r-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 20 Sep 2018 17:29:20 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 558EA3A;
+        Thu, 20 Sep 2018 15:29:19 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0269953F0;
+        Thu, 20 Sep 2018 15:29:19 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.46) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 20 Sep
+ 2018 17:29:18 +0200
+Subject: Re: [PATCH v2] ARM: multi_v7_defconfig: enable STM32 SPI
+To:     Amelie Delaunay <amelie.delaunay@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1534934989-22292-1-git-send-email-amelie.delaunay@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <eb5a90e1-d3d6-fef7-7595-29f3ae38af55@st.com>
+Date:   Thu, 20 Sep 2018 17:29:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
-In-Reply-To: <20180918153621.71984-1-mika.westerberg@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 20 Sep 2018 08:26:25 -0700
-Message-ID: <CACRpkdYhpBYEY0OJA0A15Q7OOM31ogGxeaUbNNqSMpJ9af4hOA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: intel: Do pin translation in other GPIO
- operations as well
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        rajatja@google.com, casey.g.bowman@intel.com,
-        matthew.s.atwood@intel.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1534934989-22292-1-git-send-email-amelie.delaunay@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_09:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 8:36 AM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
+Hi Amélie
 
-> For some reason I thought GPIOLIB handles translation from GPIO ranges
-> to pinctrl pins but it turns out not to be the case. This means that
-> when GPIOs operations are performed for a pin controller having a custom
-> GPIO base such as Cannon Lake and Ice Lake incorrect pin number gets
-> used internally.
->
-> Fix this in the same way we did for lock/unlock IRQ operations and
-> translate the GPIO number to pin before using it.
->
-> Fixes: a60eac3239f0 ("pinctrl: intel: Allow custom GPIO base for pad groups")
-> Reported-by: Rajat Jain <rajatja@google.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On 08/22/2018 12:49 PM, Amelie Delaunay wrote:
+> Enable the STM32 SPI driver, implemented on STM32MP1 SoC.
+> 
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> ---
+>   arch/arm/configs/multi_v7_defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> index b749d1e..4cdb622 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -417,6 +417,7 @@ CONFIG_SPI_S3C64XX=m
+>   CONFIG_SPI_SH_MSIOF=m
+>   CONFIG_SPI_SH_HSPI=y
+>   CONFIG_SPI_SIRF=y
+> +CONFIG_SPI_STM32=m
+>   CONFIG_SPI_SUN4I=y
+>   CONFIG_SPI_SUN6I=y
+>   CONFIG_SPI_TEGRA114=y
+> 
 
-I applied this for fixes.
+Applied on stm32-next.
 
-However when merging with devel I get some a merge conflict,
-probably due to some cleanups from Andy.
-
-I tried to fix it up (just use your code) but please check the
-result.
-
-Yours,
-Linus Walleij
+Thanks.
+Alex
