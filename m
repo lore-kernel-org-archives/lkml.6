@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD20C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DA1ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C94121532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC3221531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+J2Lg8a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C94121532
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ol6KQSWw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC3221531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388163AbeITXIQ (ORCPT
+        id S2388189AbeITXIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:08:16 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41684 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388094AbeITXIO (ORCPT
+        Thu, 20 Sep 2018 19:08:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35991 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388146AbeITXIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:08:14 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j15-v6so6132942wrt.8;
-        Thu, 20 Sep 2018 10:23:40 -0700 (PDT)
+        Thu, 20 Sep 2018 19:08:18 -0400
+Received: by mail-wm1-f65.google.com with SMTP id j192-v6so361818wmj.1;
+        Thu, 20 Sep 2018 10:23:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K1CVcAaNXj5oc4WzmdHKJM60S0Sge3MdPV4usUlgfNc=;
-        b=k+J2Lg8a1yndg0NGLhkZEnHzQBphKfMFzXKnv+S3bhbAUgXPTkAKRXEkd/JGoOvQQF
-         sTJUUICy1mUqfxJbXLjJOBcX1qcs2MilXJYax5/mgJmM/B0IHayDnk5oH9Oh25FUBI8o
-         UpAuxKf0O7aLZuWsdUXGBY7d8hdhYmBCbhOElt/cxNKrrmfefsGdFlUq9CzbrpMN/afM
-         9ca9CGa61Ye9e6A3TlTAnMHsOrtnWK7u6TFQXqHK3UH4LFtSgdfrJ8pl9B8f7a+M5Mm4
-         q2bqV77mbgWGOixDFkjKIAeCW6YyC4SCm0Yz11bg4znjvPY+kW6kQdYb2TFllXyyHPAe
-         7p4Q==
+        bh=twtedPeeZz5KoysBQfVb1d5EctHONCIBWFDY7XlqfhI=;
+        b=Ol6KQSWwqMxHMW2MGqYxwKMBZm7Reg5Kt+juHiMq2fr/oMpj+P2D1f0Ni2rNfAiKrG
+         vjCI0EymqDtrplAJF2kOUWMKzLtbb3wXTtLHb6RiSn/DmsqphXqRZdfwEgQyFVXmkHJn
+         MQL33oRe1OpABvhCBuH3ckMIibCCrVjPhvfQeOCpQm6a6q3mDsXj1I7ZreBpPPHeysRl
+         ThKCSonsCXsjnz4FkAkt6nm/ig8qQ/zJA1L8Ludb51eySowy0M/9703DlqMieClzoDzu
+         mUlalCmHfzfMIQ8dH04wi6TyMriIcQuJt3pMF5cmsvGMf+vZ4cdsS/bQP9RtK19oe9E+
+         CB0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K1CVcAaNXj5oc4WzmdHKJM60S0Sge3MdPV4usUlgfNc=;
-        b=KfHGagaHdefJFfsGFS6xz4VZGVaU6EOIaAtZS3SYgkRivZg7nyVT7vWwzo1IyCNRXR
-         h63p1P9+YYRApOm3L0tkrwZCZ6Kgm7DoV0vwZfK1alEjQPuNTtOdjulUc1dfKIsakPMe
-         Op8Lwoh1p78ABHt79XtwyU0M1qBztJePzLeJXDhpfELW/VScLge2Y+HOMl5qgtg+ADag
-         Hjd7YgAk5BSVMzE2Mc+Vy2Fd2p+2nTXaVKUfJgvugXhm8ZwbfiVJb5C8c1hcTzfxVIYJ
-         nGLu4TdhFSzi9u/8V94D8yNqLd/TkxZSNxlUpuPr6VqcOt1j+9TNgsdg6sQiO7b9lASH
-         ZA+Q==
-X-Gm-Message-State: APzg51DcIvDfE0xJjWCYuetFwl1IEP4oOMqlvIvXqI42tiMWLMYXpPVw
-        XrNFlH4hewG818tCiCg5S9g=
-X-Google-Smtp-Source: ANB0VdZZna0740pGUa8Pj0FS7BsC9qSjZ+mb7pcL36j3qHVvpliz5hmZAX43UO3Mc5+Q28JU0zUNdw==
-X-Received: by 2002:adf:b357:: with SMTP id k23-v6mr34708724wrd.207.1537464219707;
-        Thu, 20 Sep 2018 10:23:39 -0700 (PDT)
+        bh=twtedPeeZz5KoysBQfVb1d5EctHONCIBWFDY7XlqfhI=;
+        b=joSfW0GS35oaL+djOgr5DimHJQuEP/Ra6owLDq4DhVBZ9v86wmLhlDN+2ewHVfv78z
+         XhTX86Lz03E4NSnw6iFYpOOb0/uW3r+mtY8KlUV5ffgVRgSSha2pWOgiVHhZqaGR8OsM
+         FwFVt1ooJWz6gnepSVcJMlBRUTQyyQ9Gl3jPSEeAI2AXHr+r3SvlABJhbUdDARayIaWK
+         yXy6l81IDmnTJFsefzoRWv0ZEfJ1hXENmWv8ypyVNd7CUcvLNoWhowur7rBKYR3bGAx6
+         tIzNUeLvvk+NmfS6ymFYG2Uyk348GaakcykDBFfQ8aOvPIWg7WA/sBWR7tb2suKUBixM
+         AyRQ==
+X-Gm-Message-State: APzg51ClTSPL9M0DEl+ynmztQFWwNL3Zj+pw/EgTRiClO8Dsee8DuKEP
+        eqavtwoIeQhi6N/dPDRDONg=
+X-Google-Smtp-Source: ACcGV62jh5I3d0SxFnA3UY6WCKlfBUKZh/iZ3//O8F1vh1odvSENoZlxyzoI2PON3pJIksQWNhU1Tg==
+X-Received: by 2002:a1c:cf8a:: with SMTP id f132-v6mr3820080wmg.0.1537464226338;
+        Thu, 20 Sep 2018 10:23:46 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.37
+        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:23:39 -0700 (PDT)
+        Thu, 20 Sep 2018 10:23:45 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -97,9 +97,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 07/15] Compiler Attributes: use feature checks instead of version checks
-Date:   Thu, 20 Sep 2018 19:22:53 +0200
-Message-Id: <20180920172301.21868-8-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v5 10/15] Compiler Attributes: add Doc/process/programming-language.rst
+Date:   Thu, 20 Sep 2018 19:22:56 +0200
+Message-Id: <20180920172301.21868-11-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -107,542 +107,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using version checks per-compiler to define (or not)
-each attribute, use __has_attribute to test for them, following
-the cleanup started with commit 815f0ddb346c
-("include/linux/compiler*.h: make compiler-*.h mutually exclusive"),
-which is supported on gcc >= 5, clang >= 2.9 and icc >= 17.
-In the meantime, to support 4.6 <= gcc < 5, we implement
-__has_attribute by hand.
-
-All the attributes that can be unconditionally defined and directly
-map to compiler attribute(s) (even if optional) have been moved
-to a new file include/linux/compiler_attributes.h
-
-In an effort to make the file as regular as possible, comments
-stating the purpose of attributes have been removed. Instead,
-links to the compiler docs have been added (i.e. to gcc and,
-if available, to clang as well). In addition, they have been sorted.
-
-Finally, if an attribute is optional (i.e. if it is guarded
-by __has_attribute), the reason has been stated for future reference.
-
 Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-clang.h      |   4 -
- include/linux/compiler-gcc.h        |  51 ------
- include/linux/compiler-intel.h      |   6 -
- include/linux/compiler_attributes.h | 244 ++++++++++++++++++++++++++++
- include/linux/compiler_types.h      |  74 ++-------
- 5 files changed, 254 insertions(+), 125 deletions(-)
- create mode 100644 include/linux/compiler_attributes.h
+ Documentation/process/index.rst               |  1 +
+ .../process/programming-language.rst          | 45 +++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 Documentation/process/programming-language.rst
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index fa9532f8d885..3e7dafb3ea80 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -21,8 +21,6 @@
- #define __SANITIZE_ADDRESS__
- #endif
- 
--#define __no_sanitize_address __attribute__((__no_sanitize__("address")))
--
- /*
-  * Not all versions of clang implement the the type-generic versions
-  * of the builtin overflow checkers. Fortunately, clang implements
-@@ -41,5 +39,3 @@
-  * compilers, like ICC.
-  */
- #define barrier() __asm__ __volatile__("" : : : "memory")
--#define __assume_aligned(a, ...)	\
--	__attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 1ca6a51cfaa9..cfac027e1625 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -108,9 +108,6 @@
- 		__builtin_unreachable();	\
- 	} while (0)
- 
--/* Mark a function definition as prohibited from being cloned. */
--#define __noclone	__attribute__((__noclone__, __optimize__("no-tracer")))
--
- #if defined(RANDSTRUCT_PLUGIN) && !defined(__CHECKER__)
- #define __randomize_layout __attribute__((randomize_layout))
- #define __no_randomize_layout __attribute__((no_randomize_layout))
-@@ -119,32 +116,6 @@
- #define randomized_struct_fields_end	} __randomize_layout;
- #endif
- 
--/*
-- * When used with Link Time Optimization, gcc can optimize away C functions or
-- * variables which are referenced only from assembly code.  __visible tells the
-- * optimizer that something else uses this function or variable, thus preventing
-- * this.
-- */
--#define __visible	__attribute__((__externally_visible__))
--
--/* gcc version specific checks */
--
--#if GCC_VERSION >= 40900
--/*
-- * __assume_aligned(n, k): Tell the optimizer that the returned
-- * pointer can be assumed to be k modulo n. The second argument is
-- * optional (default 0), so we use a variadic macro to make the
-- * shorthand.
-- *
-- * Beware: Do not apply this to functions which may return
-- * ERR_PTRs. Also, it is probably unwise to apply it to functions
-- * returning extra information in the low bits (but in that case the
-- * compiler should see some alignment anyway, when the return value is
-- * massaged by 'flags = ptr & 3; ptr &= ~3;').
-- */
--#define __assume_aligned(a, ...) __attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
--#endif
--
- /*
-  * GCC 'asm goto' miscompiles certain code sequences:
-  *
-@@ -176,32 +147,10 @@
- #define KASAN_ABI_VERSION 3
- #endif
- 
--#if GCC_VERSION >= 40902
--/*
-- * Tell the compiler that address safety instrumentation (KASAN)
-- * should not be applied to that function.
-- * Conflicts with inlining: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
-- */
--#define __no_sanitize_address __attribute__((__no_sanitize_address__))
--#endif
--
- #if GCC_VERSION >= 50100
--/*
-- * Mark structures as requiring designated initializers.
-- * https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
-- */
--#define __designated_init __attribute__((__designated_init__))
- #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
- #endif
- 
--#if !defined(__noclone)
--#define __noclone	/* not needed */
--#endif
--
--#if !defined(__no_sanitize_address)
--#define __no_sanitize_address
--#endif
--
- /*
-  * Turn individual warnings and errors on and off locally, depending
-  * on version.
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index 6004b4588bd4..517bd14e1222 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -34,9 +34,3 @@
- /* icc has this, but it's called _bswap16 */
- #define __HAVE_BUILTIN_BSWAP16__
- #define __builtin_bswap16 _bswap16
--
--/* The following are for compatibility with GCC, from compiler-gcc.h,
-- * and may be redefined here because they should not be shared with other
-- * compilers, like clang.
-- */
--#define __visible	__attribute__((__externally_visible__))
-diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+diff --git a/Documentation/process/index.rst b/Documentation/process/index.rst
+index 9ae3e317bddf..00558b6d2649 100644
+--- a/Documentation/process/index.rst
++++ b/Documentation/process/index.rst
+@@ -23,6 +23,7 @@ Below are the essential guides that every developer should read.
+    code-of-conduct
+    development-process
+    submitting-patches
++   programming-language
+    coding-style
+    maintainer-pgp-guide
+    email-clients
+diff --git a/Documentation/process/programming-language.rst b/Documentation/process/programming-language.rst
 new file mode 100644
-index 000000000000..f0f9fc398440
+index 000000000000..e5f5f065dc24
 --- /dev/null
-+++ b/include/linux/compiler_attributes.h
-@@ -0,0 +1,244 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_COMPILER_ATTRIBUTES_H
-+#define __LINUX_COMPILER_ATTRIBUTES_H
++++ b/Documentation/process/programming-language.rst
+@@ -0,0 +1,45 @@
++.. _programming_language:
 +
-+/*
-+ * The attributes in this file are unconditionally defined and they directly
-+ * map to compiler attribute(s) -- except those that are optional.
-+ *
-+ * Any other "attributes" (i.e. those that depend on a configuration option,
-+ * on a compiler, on an architecture, on plugins, on other attributes...)
-+ * should be defined elsewhere (e.g. compiler_types.h or compiler-*.h).
-+ *
-+ * This file is meant to be sorted (by actual attribute name,
-+ * not by #define identifier). Use the __attribute__((__name__)) syntax
-+ * (i.e. with underscores) to avoid future collisions with other macros.
-+ * If an attribute is optional, state the reason in the comment.
-+ */
++Programming Language
++====================
 +
-+/*
-+ * To check for optional attributes, we use __has_attribute, which is supported
-+ * on gcc >= 5, clang >= 2.9 and icc >= 17. In the meantime, to support
-+ * 4.6 <= gcc < 5, we implement __has_attribute by hand.
-+ *
-+ * sparse does not support __has_attribute (yet) and defines __GNUC_MINOR__
-+ * depending on the compiler used to build it; however, these attributes have
-+ * no semantic effects for sparse, so it does not matter. Also note that,
-+ * in order to avoid sparse's warnings, even the unsupported ones must be
-+ * defined to 0.
-+ */
-+#ifndef __has_attribute
-+# define __has_attribute(x) __GCC4_has_attribute_##x
-+# define __GCC4_has_attribute___assume_aligned__      (__GNUC_MINOR__ >= 9)
-+# define __GCC4_has_attribute___designated_init__     0
-+# define __GCC4_has_attribute___externally_visible__  1
-+# define __GCC4_has_attribute___noclone__             1
-+# define __GCC4_has_attribute___optimize__            1
-+# define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >= 8)
-+#endif
++The kernel is written in the C programming language [c-language]_.
++More precisely, the kernel is typically compiled with ``gcc`` [gcc]_
++under ``-std=gnu89`` [gcc-c-dialect-options]_: the GNU dialect of ISO C90
++(including some C99 features).
 +
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-alias-function-attribute
-+ */
-+#define __alias(symbol)                 __attribute__((__alias__(#symbol)))
++This dialect contains many extensions to the language [gnu-extensions]_,
++and many of them are used within the kernel as a matter of course.
 +
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-aligned-function-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-aligned-type-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-aligned-variable-attribute
-+ */
-+#define __aligned(x)                    __attribute__((__aligned__(x)))
-+#define __aligned_largest               __attribute__((__aligned__))
++There is some support for compiling the kernel with ``clang`` [clang]_
++and ``icc`` [icc]_ for several of the architectures, although at the time
++of writing it is not completed, requiring third-party patches.
 +
-+/*
-+ * Note: users of __always_inline currently do not write "inline" themselves,
-+ * which seems to be required by gcc to apply the attribute according
-+ * to its docs (and also "warning: always_inline function might not be
-+ * inlinable [-Wattributes]" is emitted).
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-always_005finline-function-attribute
-+ * clang: mentioned
-+ */
-+#define __always_inline                 inline __attribute__((__always_inline__))
++Attributes
++----------
 +
-+/*
-+ * The second argument is optional (default 0), so we use a variadic macro
-+ * to make the shorthand.
-+ *
-+ * Beware: Do not apply this to functions which may return
-+ * ERR_PTRs. Also, it is probably unwise to apply it to functions
-+ * returning extra information in the low bits (but in that case the
-+ * compiler should see some alignment anyway, when the return value is
-+ * massaged by 'flags = ptr & 3; ptr &= ~3;').
-+ *
-+ * Optional: only supported since gcc >= 4.9
-+ * Optional: not supported by icc
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-assume_005faligned-function-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#assume-aligned
-+ */
-+#if __has_attribute(__assume_aligned__)
-+# define __assume_aligned(a, ...)       __attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-+#else
-+# define __assume_aligned(a, ...)
-+#endif
++One of the common extensions used throughout the kernel are attributes
++[gcc-attribute-syntax]_. Attributes allow to introduce
++implementation-defined semantics to language entities (like variables,
++functions or types) without having to make significant syntactic changes
++to the language (e.g. adding a new keyword) [n2049]_.
 +
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-cold-function-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Label-Attributes.html#index-cold-label-attribute
-+ */
-+#define __cold                          __attribute__((__cold__))
++In some cases, attributes are optional (i.e. a compiler not supporting them
++should still produce proper code, even if it is slower or does not perform
++as many compile-time checks/diagnostics).
 +
-+/*
-+ * Note the long name.
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-const-function-attribute
-+ */
-+#define __attribute_const__             __attribute__((__const__))
++The kernel defines pseudo-keywords (e.g. ``__pure``) instead of using
++directly the GNU attribute syntax (e.g. ``__attribute__((__pure__))``)
++in order to feature detect which ones can be used and/or to shorten the code.
 +
-+/*
-+ * Don't. Just don't. See commit 771c035372a0 ("deprecate the '__deprecated'
-+ * attribute warnings entirely and for good") for more information.
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-deprecated-function-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-deprecated-type-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-deprecated-variable-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Enumerator-Attributes.html#index-deprecated-enumerator-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#deprecated
-+ */
-+#define __deprecated
++Please refer to ``include/linux/compiler_attributes.h`` for more information.
 +
-+/*
-+ * Optional: only supported since gcc >= 5.1
-+ * Optional: not supported by clang
-+ * Optional: not supported by icc
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-designated_005finit-type-attribute
-+ */
-+#if __has_attribute(__designated_init__)
-+# define __designated_init              __attribute__((__designated_init__))
-+#else
-+# define __designated_init
-+#endif
++.. [c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
++.. [gcc] https://gcc.gnu.org
++.. [clang] https://clang.llvm.org
++.. [icc] https://software.intel.com/en-us/c-compilers
++.. [gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
++.. [gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
++.. [gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
++.. [n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
 +
-+/*
-+ * Optional: not supported by clang
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-externally_005fvisible-function-attribute
-+ */
-+#if __has_attribute(__externally_visible__)
-+# define __visible                      __attribute__((__externally_visible__))
-+#else
-+# define __visible
-+#endif
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-format-function-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#format
-+ */
-+#define __printf(a, b)                  __attribute__((__format__(printf, a, b)))
-+#define __scanf(a, b)                   __attribute__((__format__(scanf, a, b)))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-gnu_005finline-function-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#gnu-inline
-+ */
-+#define __gnu_inline                    __attribute__((__gnu_inline__))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute
-+ */
-+#define __malloc                        __attribute__((__malloc__))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-mode-type-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-mode-variable-attribute
-+ */
-+#define __mode(x)                       __attribute__((__mode__(x)))
-+
-+/*
-+ * Optional: not supported by clang
-+ * Note: icc does not recognize gcc's no-tracer
-+ *
-+ *  gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noclone-function-attribute
-+ *  gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-optimize-function-attribute
-+ */
-+#if __has_attribute(__noclone__)
-+# if __has_attribute(__optimize__)
-+#  define __noclone                     __attribute__((__noclone__, __optimize__("no-tracer")))
-+# else
-+#  define __noclone                     __attribute__((__noclone__))
-+# endif
-+#else
-+# define __noclone
-+#endif
-+
-+/*
-+ * Note the missing underscores.
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noinline-function-attribute
-+ * clang: mentioned
-+ */
-+#define   noinline                      __attribute__((__noinline__))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noreturn-function-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#noreturn
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#id1
-+ */
-+#define __noreturn                      __attribute__((__noreturn__))
-+
-+/*
-+ * Optional: only supported since gcc >= 4.8
-+ * Optional: not supported by icc
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fsanitize_005faddress-function-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#no-sanitize-address-no-address-safety-analysis
-+ */
-+#if __has_attribute(__no_sanitize_address__)
-+# define __no_sanitize_address          __attribute__((__no_sanitize_address__))
-+#else
-+# define __no_sanitize_address
-+#endif
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-packed-type-attribute
-+ * clang: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-packed-variable-attribute
-+ */
-+#define __packed                        __attribute__((__packed__))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-pure-function-attribute
-+ */
-+#define __pure                          __attribute__((__pure__))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-section-function-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-section-variable-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#section-declspec-allocate
-+ */
-+#define __section(S)                    __attribute__((__section__(#S)))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-unused-function-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Type-Attributes.html#index-unused-type-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-unused-variable-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Label-Attributes.html#index-unused-label-attribute
-+ * clang: https://clang.llvm.org/docs/AttributeReference.html#maybe-unused-unused
-+ */
-+#define __always_unused                 __attribute__((__unused__))
-+#define __maybe_unused                  __attribute__((__unused__))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-used-function-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-used-variable-attribute
-+ */
-+#define __used                          __attribute__((__used__))
-+
-+/*
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-weak-function-attribute
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-weak-variable-attribute
-+ */
-+#define __weak                          __attribute__((__weak__))
-+
-+#endif /* __LINUX_COMPILER_ATTRIBUTES_H */
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index ed7c0e4a180e..3439d7d0249a 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -55,6 +55,9 @@ extern void __chk_io_ptr(const volatile void __iomem *);
- 
- #ifdef __KERNEL__
- 
-+/* Attributes */
-+#include <linux/compiler_attributes.h>
-+
- /* Compiler specific macros. */
- #ifdef __clang__
- #include <linux/compiler-clang.h>
-@@ -79,12 +82,6 @@ extern void __chk_io_ptr(const volatile void __iomem *);
- #include <asm/compiler.h>
- #endif
- 
--/*
-- * Generic compiler-independent macros required for kernel
-- * build go below this comment. Actual compiler/compiler version
-- * specific implementations come from the above header files
-- */
--
- struct ftrace_branch_data {
- 	const char *func;
- 	const char *file;
-@@ -107,9 +104,6 @@ struct ftrace_likely_data {
- 	unsigned long			constant;
- };
- 
--/* Don't. Just don't. */
--#define __deprecated
--
- #endif /* __KERNEL__ */
- 
- #endif /* __ASSEMBLY__ */
-@@ -119,10 +113,6 @@ struct ftrace_likely_data {
-  * compilers. We don't consider that to be an error, so set them to nothing.
-  * For example, some of them are for compiler specific plugins.
-  */
--#ifndef __designated_init
--# define __designated_init
--#endif
--
- #ifndef __latent_entropy
- # define __latent_entropy
- #endif
-@@ -140,17 +130,6 @@ struct ftrace_likely_data {
- # define randomized_struct_fields_end
- #endif
- 
--#ifndef __visible
--#define __visible
--#endif
--
--/*
-- * Assume alignment of return value.
-- */
--#ifndef __assume_aligned
--#define __assume_aligned(a, ...)
--#endif
--
- /* Are two types/vars the same type (ignoring qualifiers)? */
- #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
- 
-@@ -159,10 +138,6 @@ struct ftrace_likely_data {
- 	(sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
- 	 sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
- 
--#ifndef __noclone
--#define __noclone
--#endif
--
- /* Helpers for emitting diagnostics in pragmas. */
- #ifndef __diag
- #define __diag(string)
-@@ -182,37 +157,6 @@ struct ftrace_likely_data {
- #define __diag_error(compiler, version, option, comment) \
- 	__diag_ ## compiler(version, error, option)
- 
--/*
-- * From the GCC manual:
-- *
-- * Many functions have no effects except the return value and their
-- * return value depends only on the parameters and/or global
-- * variables.  Such a function can be subject to common subexpression
-- * elimination and loop optimization just as an arithmetic operator
-- * would be.
-- * [...]
-- */
--#define __pure			__attribute__((__pure__))
--#define __attribute_const__	__attribute__((__const__))
--#define __aligned(x)		__attribute__((__aligned__(x)))
--#define __aligned_largest	__attribute__((__aligned__))
--#define __printf(a, b)		__attribute__((__format__(printf, a, b)))
--#define __scanf(a, b)		__attribute__((__format__(scanf, a, b)))
--#define __maybe_unused		__attribute__((__unused__))
--#define __always_unused		__attribute__((__unused__))
--#define __mode(x)		__attribute__((__mode__(x)))
--#define __malloc		__attribute__((__malloc__))
--#define __used			__attribute__((__used__))
--#define __noreturn		__attribute__((__noreturn__))
--#define __packed		__attribute__((__packed__))
--#define __weak			__attribute__((__weak__))
--#define __alias(symbol)		__attribute__((__alias__(#symbol)))
--#define __cold			__attribute__((__cold__))
--#define __section(S)		__attribute__((__section__(#S)))
--#define __always_inline		inline __attribute__((__always_inline__))
--#define __gnu_inline		__attribute__((__gnu_inline__))
--
--
- #ifdef CONFIG_ENABLE_MUST_CHECK
- #define __must_check		__attribute__((__warn_unused_result__))
- #else
-@@ -246,18 +190,20 @@ struct ftrace_likely_data {
-  * semantics rather than c99. This prevents multiple symbol definition errors
-  * of extern inline functions at link time.
-  * A lot of inline functions can cause havoc with function tracing.
-+ * Do not use __always_inline here, since currently it expands to inline again
-+ * (which would break users of __always_inline).
-  */
- #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
- 	!defined(CONFIG_OPTIMIZE_INLINING)
--#define inline \
--	inline __attribute__((__always_inline__, __unused__)) notrace __gnu_inline
-+#define inline inline __attribute__((__always_inline__)) __gnu_inline \
-+	__maybe_unused notrace
- #else
--#define inline inline	__attribute__((__unused__)) notrace __gnu_inline
-+#define inline inline                                    __gnu_inline \
-+	__maybe_unused notrace
- #endif
- 
- #define __inline__ inline
--#define __inline inline
--#define noinline	__attribute__((__noinline__))
-+#define __inline   inline
- 
- /*
-  * Rather then using noinline to prevent stack consumption, use
 -- 
 2.17.1
 
