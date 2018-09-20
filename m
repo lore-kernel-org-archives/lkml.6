@@ -8,112 +8,97 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D831C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C201ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8EBD2147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC7FC2154E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:47:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqgneG4B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EBD2147C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFhc/zMC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC7FC2154E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388596AbeIUCb3 (ORCPT
+        id S2388362AbeIUCdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:31:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39361 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbeIUCb2 (ORCPT
+        Thu, 20 Sep 2018 22:33:15 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36956 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeIUCdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:31:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s14-v6so10721937wrw.6;
-        Thu, 20 Sep 2018 13:46:09 -0700 (PDT)
+        Thu, 20 Sep 2018 22:33:15 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v9-v6so9666058ljk.4;
+        Thu, 20 Sep 2018 13:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7wg3egDLkTXuLTmRbPM21TNn5lPaqSV8GqOsjDMyEWo=;
-        b=DqgneG4Bn0XouVsEzbYhv+noJJFW3n49NIz3oYhw+KdaHY3iGz+Z3x/f3/Fzjadm3S
-         6qDb4fD/soil0xUMcFiBWklbiovuepqnoL3z5DBqkllN7P6cp6e1lRT9o4ieZVmARHC5
-         QRoZMsFC9FO6JQgJ1Z5lO52n5g2T2oIE34sC2ZMk21SMeCAXyqSiJi8Bzq3YOP3FArqq
-         G6Tf1ycUzIB10ntWNORuOA6kUFhmKvUz580mC2lAENBVogcN/48ALRrWPl5QCSucagcE
-         TBWTaDOr8bjNTPYSU0bJR5gWykrdqoJk7Fb/zmzfedWf4r0kiXX0zenZ8hZCZkeeg4OU
-         xSAQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=WuzDVPY+DoNH0O4J3mOJwZElcAPkKwuc0RDsRb9BLGw=;
+        b=TFhc/zMCr8WG62hTVa0+O9yXAFt6zBPZbQ+34Q3n4idMOXuLTHh0ewq5+zIHO3RiZz
+         J99wY0h/gYSotcia/YfDrO3a7bo0nivfjId3/nJAI0k6WunoXYyG2iEMxOSzK41kBO/4
+         Nd6tHSHK9Pu1cxQkz2riphEP9sPbAUZ3O6vBCQhQvIYSVJC0hzLerZbaQoG2awtVBQDv
+         n5qI/OhD9FKAQ1cyutfkDwA3wTsLoqkqmFbWwXOdaUJO0fTLsTVkaXWEDphOKeVhQZcT
+         2Qo8wqCQzlb9cmm7OQz4DWEGm27MJv3tKAaJrOh3xrI0cudDeGb8yxuQm40seyFHrgOZ
+         2ohQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7wg3egDLkTXuLTmRbPM21TNn5lPaqSV8GqOsjDMyEWo=;
-        b=r4QgUUkn0eZvDuwPKrRHO161JPLH7wvLnskfg5exwiZ9/RWKjzL/BdgfnQZdDsqs8J
-         RPaDhVSHL+8vuXVQsTFK8yRcuW0QDqFoJxeUI1IIe0q5rsG0F3Ubk/Ecag+yohYOM34Z
-         /2R6C4LLs5gSyRhOmOqzXcZX6wwQtSHWdcZN3b5DK0CBjzgQZjbvIMnL2uR+9VVkL1sX
-         BBMlpgbeY3R0rc+h9y6UIMcGuikU3e0uk3T0L92mRUSxHADbPdgNpuEtyaMiQOGulGkN
-         Aggk0OAdeaR0CPvcZW1B7YsxX4lRYZUd+RSMVZjePN6Pqm7HfjqtUGKMaIbLfhWaQlO2
-         e3Yg==
-X-Gm-Message-State: APzg51CXenK0GUAa6ReYHVNvIRb7ZRGIdL6G3PnWI45viHJkGx+fCQkU
-        C1N//zBxO0pWrG5TuOnmdE8=
-X-Google-Smtp-Source: ANB0VdYRLJU61nx8AFgskEYM2aUZF89e4BbRyCq6KWtYg0v1uoR4QsM9/FNYuDQZGkNwwuIeN+y6Zw==
-X-Received: by 2002:a5d:6a0e:: with SMTP id m14-v6mr35696191wru.192.1537476368127;
-        Thu, 20 Sep 2018 13:46:08 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id h206-v6sm3845903wmf.25.2018.09.20.13.46.07
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WuzDVPY+DoNH0O4J3mOJwZElcAPkKwuc0RDsRb9BLGw=;
+        b=s2dVClk9aW6LaFxnIlosRg7QZjQv7bJcZY9i8M06L7fapkyH17BS7BhpE1Fd0wuo9y
+         Bbb4EhC9+IiTYaWrlBbHmSsUkmI17bds98A7TebuTCtUFAtSLgz+gwPnZJhZa7x1WAQ5
+         kLV/UKP+Yjlof2iVUofJTf13Tigtbed1j5wKicyLLOL+87zQWxt/fhx0rAGysaSMGFAo
+         /b+USyERdLgPYxIW4FkjZz1/TPbF0EUExnQOmyBJSIh3LXJEVjPhzD4ui4it/aeDPBK/
+         wGAPC6ThV0827teg0lqTSPS+774YNv5AOC3fb+zcTCo4WHQy6K56P4EMUR1t928ki6nz
+         trrA==
+X-Gm-Message-State: APzg51B9sJn8Lg0cGvmcFSrXPnfXbTRLoSZQMLuwwRh9sOx82G0TtbRQ
+        2eX48g83g6mHQUoos+mVvJbiz+Rejmc=
+X-Google-Smtp-Source: ANB0VdYWTRPNEBnZBlwbPbpbAOv7Fba3l4GCR66B1d1UTISuFv2Dgsy7Fksy8pYGX7qCf+oaT64Mfw==
+X-Received: by 2002:a2e:982:: with SMTP id 124-v6mr26209673ljj.24.1537476474169;
+        Thu, 20 Sep 2018 13:47:54 -0700 (PDT)
+Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
+        by smtp.gmail.com with ESMTPSA id p4-v6sm1821609lfj.49.2018.09.20.13.47.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 13:46:07 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Stanislav Yakovlev <stas.yakovlev@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] wireless: ipw2x00: Remove unnecessary parentheses
-Date:   Thu, 20 Sep 2018 13:45:49 -0700
-Message-Id: <20180920204548.2405-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 20 Sep 2018 13:47:53 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v4 1/7] [media] ad5820: Define entity function
+Date:   Thu, 20 Sep 2018 22:47:45 +0200
+Message-Id: <20180920204751.29117-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when multiple pairs of parentheses are used for a single
-conditional statement.
+Without this patch, media_device_register_entity throws a warning:
 
-drivers/net/wireless/intel/ipw2x00/ipw2200.c:5655:28: warning: equality
-comparison with extraneous parentheses [-Wparentheses-equality]
-                if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
-                     ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
-drivers/net/wireless/intel/ipw2x00/ipw2200.c:5655:28: note: remove
-extraneous parentheses around the comparison to silence this warning
-                if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
-                    ~                    ^               ~
-drivers/net/wireless/intel/ipw2x00/ipw2200.c:5655:28: note: use '=' to
-turn this equality comparison into an assignment
-                if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
-                                         ^~
-                                         =
-1 warning generated.
+dev_warn(mdev->dev,
+	 "Entity type for entity %s was not initialized!\n",
+	 entity->name);
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/134
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ad5820.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index 9644e7b93645..bbdca13c5a9f 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -5652,7 +5652,7 @@ static void ipw_merge_adhoc_network(struct work_struct *work)
- 		}
+diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
+index 907323f0ca3b..22759aaa2dba 100644
+--- a/drivers/media/i2c/ad5820.c
++++ b/drivers/media/i2c/ad5820.c
+@@ -317,6 +317,7 @@ static int ad5820_probe(struct i2c_client *client,
+ 	v4l2_i2c_subdev_init(&coil->subdev, client, &ad5820_ops);
+ 	coil->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+ 	coil->subdev.internal_ops = &ad5820_internal_ops;
++	coil->subdev.entity.function = MEDIA_ENT_F_LENS;
+ 	strscpy(coil->subdev.name, "ad5820 focus", sizeof(coil->subdev.name));
  
- 		mutex_lock(&priv->mutex);
--		if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
-+		if (priv->ieee->iw_mode == IW_MODE_ADHOC) {
- 			IPW_DEBUG_MERGE("remove network %*pE\n",
- 					priv->essid_len, priv->essid);
- 			ipw_remove_current_network(priv);
+ 	ret = media_entity_pads_init(&coil->subdev.entity, 0, NULL);
 -- 
-2.19.0
+2.18.0
 
