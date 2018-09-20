@@ -2,69 +2,190 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3138AC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED972ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5BA521529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:00:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BA521529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8FE8121529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:00:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gZnAUhiq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FE8121529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387892AbeITSna (ORCPT
+        id S1732650AbeITSoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:43:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44466 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387659AbeITSna (ORCPT
+        Thu, 20 Sep 2018 14:44:11 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43487 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbeITSoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:43:30 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 831D4EC6;
-        Thu, 20 Sep 2018 13:00:05 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 15:00:00 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [QUEUED v20180920 15/16] lib: Add memcat_p(): paste 2 pointer
- arrays together
-Message-ID: <20180920130000.GB17692@kroah.com>
-References: <20180920124553.56978-1-alexander.shishkin@linux.intel.com>
- <20180920124553.56978-16-alexander.shishkin@linux.intel.com>
+        Thu, 20 Sep 2018 14:44:10 -0400
+Received: by mail-io1-f66.google.com with SMTP id y10-v6so7279210ioa.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 06:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=F7ylZP04Ezwpet7+9Y99+NrK/KlDpd6vZT0LpGBgl4A=;
+        b=gZnAUhiqpu97dYHHcmhTadknCGoAoQXLbgHS4GUUG7/fVcz67BXdbP9ouNNPRylGzB
+         R5DwfgLiv8uySfrV9G81DpwfJRqLlZRWbdIvBrqw6/UPTgr1SHyKajrst+hDnmmtIUFi
+         NcwG5tCCud480SnXA9Jgt8aiwAMO6Izw+xcKCr/kxFeXGOuaRETHbk9mVt2p6QhLdwrR
+         uQn9SCNqF4MfMFFA5jSCbejzpkcXFMj5EyD6eFM3hZ46NrMtPcKY1BJrsfJ9bAksxaFD
+         8j3x/Zt0NtDJmCg5hMVfHH2IbDQWj0Dt/V1k6WSCqE7LFuD1RiTjDPrHIEr82IIGS3+K
+         sCpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=F7ylZP04Ezwpet7+9Y99+NrK/KlDpd6vZT0LpGBgl4A=;
+        b=KAcapnfIGF4I/IcDI2VxgxpNAhwz15NR7sVHdpN8CuW0Gk7AcF6wd1Hw91Qiwz4s7M
+         o1Y750n8ub0WQAMxjnB/Ni0RLiwpCIoA7/OGsr1d06zH3MHWbXH89YBxCTz+G2juKGFV
+         CTOXj99pM0j0HVzP+nctaHDkEvcAMfjRUVIs5QZapZf428G7dAXCphhTqRXalx/T/ypP
+         0QJM4LSrdeP6i+IIe0PhpeFpIi13GBL0HwzIVp9YQi/maQ26edRWStnlXII5oL/ckWSK
+         ZSMZvoKzoBJLR++qe1+NdMU8RYmf/Zgjz+hqsPJ+n6xtIU2wqttshg7mHTxZFwiYft+1
+         Zoyg==
+X-Gm-Message-State: APzg51BzpS0U09Y3iBs6N3WQss7LAgnKw53wUSjLNNjAmiCxB9VlH5TN
+        j5lQXbZmRRmkZayq+nWh4J/feS2rqXpT+4ify4+eQw==
+X-Google-Smtp-Source: ANB0VdY41lMjS1E+K/bpomY0lV5/mocw3uvifMfnIK97HtuzpoOcsITHbMl9+GPycDEA3jkD8c+w/OXtrQf3p+qrDx4=
+X-Received: by 2002:a5e:8d07:: with SMTP id m7-v6mr32331623ioj.258.1537448445793;
+ Thu, 20 Sep 2018 06:00:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920124553.56978-16-alexander.shishkin@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 06:00:45
+ -0700 (PDT)
+In-Reply-To: <20180827090651.25062-1-brgl@bgdev.pl>
+References: <20180827090651.25062-1-brgl@bgdev.pl>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 20 Sep 2018 15:00:45 +0200
+Message-ID: <CAMRc=McWre+5PRuozF69YKONvzy4X31=MzZim-QjhaAZ9iAVTw@mail.gmail.com>
+Subject: Re: [RESEND PATCH v3 0/3] sh: make early_platform code SuperH-specific
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 03:45:52PM +0300, Alexander Shishkin wrote:
-> This adds a helper to paste 2 pointer arrays together, useful for merging
-> various types of attribute arrays. There are a few places in the kernel
-> tree where this is open coded, and I just added one more in the STM class.
-> 
-> The naming is inspired by memset_p() and memcat(), and partial credit for
-> it goes to Andy Shevchenko.
-> 
-> This patch adds the function wrapped in a type-enforcing macro and a test
-> module.
-> 
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+2018-08-27 11:06 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> I recently started a discussion about the need for a proper early device
+> probing mechanism[1]. One that would be based on real platform drivers
+> and support both platform data and device tree.
+>
+> While we're far from reaching any consensus on the implementation, Arnd
+> suggested that I start off by moving the SuperH-specific early platform
+> drivers implementation to arch/sh[2].
+>
+> This series is the first attempt at making way for a new, less hacky
+> implementation.
+>
+> The first patch removes the last instance of a non-sh driver using the
+> early_platform API. It can be removed since ARM no longer probes early
+> drivers.
+>
+> The second patch moves all the early_platform code to arch/sh.
+>
+> The last patch prefixes all early_platform symbols with 'sh_'.
+>
+> [1] https://lkml.org/lkml/2018/4/26/657
+> [2] https://lkml.org/lkml/2018/4/27/239
+>
+> v1 -> v2:
+> - certain drivers are compiled for arm/mach-shmobile too - we need to
+>   add ifdefs for CONFIG_SUPERH around early_platform calls
+>
+> v2 -> v3:
+> - added a stub for is_early_platform_device() which always returns false
+>   on non-SuperH architectures
+>
+> RESEND: rebased on top of v4.18-rc1 and verified that there are no build
+> failures.
+>
+> RESEND AGAIN: rebased on top of v4.19-rc1 and verified builds again.
+>
+> Bartosz Golaszewski (3):
+>   clocksource: timer-ti-dm: remove the early platform driver
+>     registration
+>   platform: move the early platform device support to arch/sh
+>   sh: add the sh_ prefix to early platform symbols
+>
+>  arch/sh/drivers/Makefile               |   2 +-
+>  arch/sh/drivers/platform_early.c       | 347 +++++++++++++++++++++++++
+>  arch/sh/include/asm/platform_early.h   |  61 +++++
+>  arch/sh/kernel/cpu/sh2/setup-sh7619.c  |   3 +-
+>  arch/sh/kernel/cpu/sh2a/setup-mxg.c    |   3 +-
+>  arch/sh/kernel/cpu/sh2a/setup-sh7201.c |   3 +-
+>  arch/sh/kernel/cpu/sh2a/setup-sh7203.c |   3 +-
+>  arch/sh/kernel/cpu/sh2a/setup-sh7206.c |   3 +-
+>  arch/sh/kernel/cpu/sh2a/setup-sh7264.c |   3 +-
+>  arch/sh/kernel/cpu/sh2a/setup-sh7269.c |   3 +-
+>  arch/sh/kernel/cpu/sh3/setup-sh3.c     |   1 +
+>  arch/sh/kernel/cpu/sh3/setup-sh7705.c  |   3 +-
+>  arch/sh/kernel/cpu/sh3/setup-sh770x.c  |   3 +-
+>  arch/sh/kernel/cpu/sh3/setup-sh7710.c  |   3 +-
+>  arch/sh/kernel/cpu/sh3/setup-sh7720.c  |   3 +-
+>  arch/sh/kernel/cpu/sh4/setup-sh4-202.c |   3 +-
+>  arch/sh/kernel/cpu/sh4/setup-sh7750.c  |   9 +-
+>  arch/sh/kernel/cpu/sh4/setup-sh7760.c  |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7343.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7366.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7722.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7723.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7724.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7734.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7757.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7763.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7770.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7780.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7785.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-sh7786.c |   3 +-
+>  arch/sh/kernel/cpu/sh4a/setup-shx3.c   |   3 +-
+>  arch/sh/kernel/cpu/sh5/setup-sh5.c     |   3 +-
+>  arch/sh/kernel/setup.c                 |   3 +-
+>  arch/sh/kernel/time.c                  |   5 +-
+>  drivers/base/platform.c                | 288 --------------------
+>  drivers/clocksource/sh_cmt.c           |  13 +-
+>  drivers/clocksource/sh_mtu2.c          |  13 +-
+>  drivers/clocksource/sh_tmu.c           |  14 +-
+>  drivers/clocksource/timer-ti-dm.c      |   1 -
+>  drivers/tty/serial/sh-sci.c            |  11 +-
+>  include/linux/platform_device.h        |  64 +----
+>  41 files changed, 525 insertions(+), 388 deletions(-)
+>  create mode 100644 arch/sh/drivers/platform_early.c
+>  create mode 100644 arch/sh/include/asm/platform_early.h
+>
+> --
+> 2.18.0
+>
 
-It would be good to get someone else to review/ack a core function like
-this, to verify nothing is incorrect.  Especially given the fun of
-off-by-one issues in C we have had over the years...
+Ping for 4.20. This is the third release cycle I'm trying to get this
+merged and there never were any objections.
 
-thanks,
-
-greg k-h
+Bart
