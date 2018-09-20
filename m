@@ -2,149 +2,102 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8956FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92016ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4332A21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BEB32150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:58:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LFuyo+qe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4332A21525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tGq5bJfh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BEB32150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387485AbeITXlO (ORCPT
+        id S1731448AbeITXnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:41:14 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:37562 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732340AbeITXlN (ORCPT
+        Thu, 20 Sep 2018 19:43:23 -0400
+Received: from mail-pg1-f174.google.com ([209.85.215.174]:33689 "EHLO
+        mail-pg1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbeITXnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:41:13 -0400
-Received: by mail-yb1-f194.google.com with SMTP id b3-v6so3241715yba.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:56:34 -0700 (PDT)
+        Thu, 20 Sep 2018 19:43:22 -0400
+Received: by mail-pg1-f174.google.com with SMTP id y18-v6so1484923pge.0;
+        Thu, 20 Sep 2018 10:58:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=kn50+P8/uP7dtkuW3PKZfNCNCBS/4I7LKjfU27Vk4I4=;
-        b=LFuyo+qeViShYCLyi4wjbO9y3+EGDm+r2zHR9S6ztMhgLksrUwvI8zT7dqyiLn/ASh
-         v8qu2nGR7r/FbU+s4koDRoF8/1USHyiAA2+3nv9qxXa9WF5AaAHiueQoKjQ3fqZNiVaK
-         gaYqnB3qaO6mUGMGGLJcTMiqjSKsxfQubd7Bg=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HyWERppOT+dY5sIQg5xrHJOi8fgr0viDyMcOe/mBKtY=;
+        b=tGq5bJfhQln5YVazIUS+nFJB/3+lA6QWdvuMP8Y0HnTnsHUx5O/jlC+bkDUXO6eupr
+         VYJP7TxxHjCZu1AxeLVXECCSikIH9zci+hWP7iakVtp4dci9WnZjwUzS+SzmCyhQwslP
+         Cl2OJE1GjGb2teQznRB29+WdMwgLT4+M6Vpel1TTYvjXanwbM2AXXXLRthalhVhVAAm6
+         27NV2M2OO+EFigfR8qld1L2yX8Dx1kYajGYoDwi3Xx0YcxnipDY4kruXUCRtPPxTKYP6
+         ta5KO1tYZ9u8Bay+ZVDRGf+VuOHjV35bzQBXnOV/xvDhoSlq3wGnTA8IsYkBeHVapGMz
+         vlVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=kn50+P8/uP7dtkuW3PKZfNCNCBS/4I7LKjfU27Vk4I4=;
-        b=GPiq/nVRybVbAstj8tISjThQYTJoSh8WZ2ZvaG1uIdtD2Mrl15gfngvqM7Fzwfy8Rx
-         R5v4f853unSewT761j2njTvhAOUUs2YwVrhC3bLC29npx8K1BCfVLUN2v3iP7rYOfKqH
-         PhXiHM/gIa8os1WLq4PuyvgHdYEB8FUVbKR+7aXYAAzZvxhKl5BaE1VNsq+drvWN4R5A
-         B2To7XixO2mUagyHV3T9JTcxGTGOnO0IBwZqI2i9aEdgWZHLcn2XpZ38Z+NsDddAvvhZ
-         DTxJUVlO1BGuUzVZaQhWerkDw9KfIPLq/4bH1i/K2aN8/9MNWqUstfI+m1/NiSNtooWj
-         ESCw==
-X-Gm-Message-State: APzg51DBaRflTKh8x74YFY5svksfIuKq8z5XuWM9i50+kjkUmcc9XV6j
-        5kB/A81EJWcy2PJ+ug+34JqlOIKSYYc=
-X-Google-Smtp-Source: ANB0Vda9f2wG8bKIt+gjCmdfcNCek6zcgHNcRUpXv9ycXThSaODlM2suZNfrl81cQVu7zk9G0UgHOA==
-X-Received: by 2002:a25:5507:: with SMTP id j7-v6mr13541362ybb.133.1537466193550;
-        Thu, 20 Sep 2018 10:56:33 -0700 (PDT)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id z193-v6sm4479396ywd.90.2018.09.20.10.56.30
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HyWERppOT+dY5sIQg5xrHJOi8fgr0viDyMcOe/mBKtY=;
+        b=r6XGxbAiERUke5Lm4lsyzfJdXa+9TzETTf2C5GSl1neYe+oKxfANbrCcQ2keb8UbOG
+         2Wem4e3L18zGbB1/8k3bNSO2zaSXZMUXGvqkwN4vEQmr0yHR+7F2D6UHuIJ0WEchNL98
+         VEViEFa+qfnEbCskfobfP0xO3gm55jWcV6zZ0QY0pDjQHmh0xk6gLpigdoUfVluVxXmw
+         9a/4Q/prrZ0ivetMfRig16VbzrJRqVeDXqqa4ob5nB22v/+oTwlrWM7YdeXZ8QwwtbWD
+         vFT06fjX2iux3wCozaSWV6EpFNVEXx2A/m/xNneOLdYymiI1F0WOU60VcAMqqe22PBZ1
+         7+jw==
+X-Gm-Message-State: APzg51DEg/s1WeaOkjwhg/laoLrBCsFDZreLXKu3G3dtrr70EVKPTx2g
+        Fk32fe0ITsYkBMUHeVQxo6k=
+X-Google-Smtp-Source: ANB0Vda7Z8K2AFKZDh2v1p393FxOBD7tD1Ngp8cG0MfQTFH4EWf6pYS0BpEiUFmLWATz+ekxZJ4n/A==
+X-Received: by 2002:a63:f14d:: with SMTP id o13-v6mr37566409pgk.236.1537466323103;
+        Thu, 20 Sep 2018 10:58:43 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.159])
+        by smtp.gmail.com with ESMTPSA id n29-v6sm29963555pgl.30.2018.09.20.10.58.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:56:31 -0700 (PDT)
-Received: by mail-yw1-f43.google.com with SMTP id l9-v6so4105057ywc.11
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:56:30 -0700 (PDT)
-X-Received: by 2002:a81:2288:: with SMTP id i130-v6mr2763603ywi.288.1537466190637;
- Thu, 20 Sep 2018 10:56:30 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 10:56:30
- -0700 (PDT)
-In-Reply-To: <8ef63a94-c7b6-226d-2d60-a05f79406819@schaufler-ca.com>
-References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com> <8ef63a94-c7b6-226d-2d60-a05f79406819@schaufler-ca.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 20 Sep 2018 10:56:30 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+aWyiQ_aGCkeoyvYC7Aj2hfuvKei+SAOMrfOWyfpP8xw@mail.gmail.com>
-Message-ID: <CAGXu5j+aWyiQ_aGCkeoyvYC7Aj2hfuvKei+SAOMrfOWyfpP8xw@mail.gmail.com>
-Subject: Re: [PATCH v3 16/16] LSM: Blob sharing support for S.A.R.A and LandLock
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 20 Sep 2018 10:58:42 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: [PATCHv3 0/7] Add support for UHS-I on Exynos5422 odroid boards
+Date:   Thu, 20 Sep 2018 17:58:19 +0000
+Message-Id: <20180920175826.1284-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 5:21 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 8f3b809d7c26..0156ffea7f8c 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3475,18 +3475,16 @@ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
->  {
->         struct smack_known *skp = smk_of_task_struct(p);
->         char *cp;
-> -       int slen;
->
-> -       if (strcmp(name, "current") != 0)
-> +       if (strcmp(name, "current") == 0) {
-> +               cp = kstrdup(skp->smk_known, GFP_KERNEL);
-> +               if (cp == NULL)
-> +                       return -ENOMEM;
-> +       } else
->                 return -EINVAL;
->
-> -       cp = kstrdup(skp->smk_known, GFP_KERNEL);
-> -       if (cp == NULL)
-> -               return -ENOMEM;
-> -
-> -       slen = strlen(cp);
->         *value = cp;
-> -       return slen;
-> +       return strlen(cp);
->  }
+This is series v3 since my previous patches we incomplete with driver
+changes missing.
 
-This should be separate: it looks like unrelated refactoring? (I
-mentioned this before, I think?)
+These changes add UHS-I tuning for dw_mmc-exynos driver.
+Some new patches are added to enhance the performace.
 
-> diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-> index 0110bebe86e2..f386f92c57c5 100644
-> --- a/security/tomoyo/common.h
-> +++ b/security/tomoyo/common.h
-> @@ -1216,8 +1221,13 @@ static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
->   */
->  static inline struct tomoyo_domain_info *tomoyo_domain(void)
->  {
-> -       struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
-> +       const struct cred *cred = current_cred();
-> +       struct tomoyo_domain_info **blob;
-> +
-> +       if (cred->security == NULL)
-> +               return NULL;
->
-> +       blob = tomoyo_cred(cred);
->         return *blob;
->  }
+Anand Moon (7):
+  ARM: dts: exynos5422: Added UHS-I bus speed support
+  ARM: dts: exynos5422: fix regulator min values of LDO13 for Odroid
+    XU3/XU4
+  ARM: dts: exynos5422: update maximum frequency for sdcard to 200MHz
+  ARM: dts: exynos5422: use cd-gpio method to detect sd-card
+  ARM: dts: exynos5422: use wp-gpio method to detect sd-card
+  ARM: dts: exynos5422: update maximum frequency for emmc to 200MHz
+  mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
 
-I think this is another lost hunk?
-
--Kees
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 +++++++-
+ arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
+ drivers/mmc/host/dw_mmc-exynos.c                   | 11 +++++++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
 
 -- 
-Kees Cook
-Pixel Security
+2.17.1
+
