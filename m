@@ -2,119 +2,78 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B96ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7920FECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 286A02146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:05:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFf9VpzY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 286A02146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C01B20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:13:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C01B20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387596AbeITJqx (ORCPT
+        id S1727770AbeITJzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 05:46:53 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39105 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeITJqx (ORCPT
+        Thu, 20 Sep 2018 05:55:05 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:34220 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeITJzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 05:46:53 -0400
-Received: by mail-wr1-f66.google.com with SMTP id s14-v6so7831450wrw.6;
-        Wed, 19 Sep 2018 21:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zNmWobYggymmqpmgdb6SxrIz+4HVMyxn1KeF/THy9mo=;
-        b=DFf9VpzYlCfZeXhT7TdZNmss+mrC+uHUjxviLd3dCO9Nv3iNDMEnqNSFadDxU3PUEg
-         7IpAlLi0VMEks9q9ubFv/QyieLCY1pBk4F5TOidntvUBI2g7pJvc6id4V1JO8QF1LZJf
-         K+x5uzZrObmseFDzDj/7fkCGW/LF5roaxATTZt0CkSuat0fytBs8FtHKy0IDqBtZ3+q7
-         z3+jTMGdjxlDUtbUbhSwbpCyOKtabmNg9F2K/2XDdmaqCYrghw++4kQ4+7tL5twII2bq
-         IzHqLzzEoQJxEK+SN+2neSjt2tJmbZJoyGRRNhte8SDMm/kjn3ZSZTuTDaEMWmfmCmXi
-         1hhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zNmWobYggymmqpmgdb6SxrIz+4HVMyxn1KeF/THy9mo=;
-        b=GlVZWs+upUTYHNGqW7jObgIHx6180TeB7d5j94louFPq9FJlfjDwQLTPM8D6xfgi2q
-         DTylNJ7wPUR673WRYltCdc/zACCF8HBEx3sOX9ZWiLlnbREh4/WFLvaXUxQKXs0dLSAI
-         GzLer4lHYvxtV4kLyA3VJEODU9jgtRYZ8L9zM37IdMqssxIw+D4bIdj2OThNeUreYpj3
-         9IZ5oGmbPWAIMQWSSev7Ffrp+lMqhCzP02ra5n/tCjKPJjxwP+RF/c2SwaH9BIt9kOWw
-         LW1TzKgGofx9Q1JoHKChiBkgo27ni5yB63oCCuczHdstX8NnWcWFYFi4OyaMC8PGkYE8
-         g8aw==
-X-Gm-Message-State: APzg51BSAvIix6XvvuO65IZowgfvTmqg41hKSDtbzCfNzM+6Vc+O/wNM
-        KIINQMLHbHVnCpFeUh2VjwY=
-X-Google-Smtp-Source: ANB0VdYHEPGm6EWVXqGHy23ijek9Zskht3AtN/GZkXy/brHI8vr90wMtKUmcC7wb0Te7wTGFGoj8FQ==
-X-Received: by 2002:adf:c64e:: with SMTP id u14-v6mr11732674wrg.177.1537416334132;
-        Wed, 19 Sep 2018 21:05:34 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id 144-v6sm615182wma.19.2018.09.19.21.05.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 21:05:32 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Karsten Keil <isdn@linux-pingi.de>,
-        "David S. Miller" <davem@davemloft.net>
+        Thu, 20 Sep 2018 05:55:05 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E946510903027;
+        Wed, 19 Sep 2018 21:13:45 -0700 (PDT)
+Date:   Wed, 19 Sep 2018 21:13:45 -0700 (PDT)
+Message-Id: <20180919.211345.499002396520654228.davem@davemloft.net>
+To:     antoine.tenart@bootlin.com
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] isdn/hisax: Remove unnecessary parenthesis
-Date:   Wed, 19 Sep 2018 21:05:23 -0700
-Message-Id: <20180920040523.21671-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 00/12] net: mvpp2: improve the interrupt usage
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180919092711.22296-1-antoine.tenart@bootlin.com>
+References: <20180919092711.22296-1-antoine.tenart@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 19 Sep 2018 21:13:46 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when more than one set of parentheses are used for single
-conditional statements:
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Date: Wed, 19 Sep 2018 11:26:59 +0200
 
-drivers/isdn/hisax/w6692.c:627:30: warning: equality comparison with
-extraneous parentheses [-Wparentheses-equality]
-                if ((cs->dc.w6692.ph_state == W_L1IND_DRD)) {
-                     ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-drivers/isdn/hisax/w6692.c:627:30: note: remove extraneous parentheses
-around the comparison to silence this warning
-                if ((cs->dc.w6692.ph_state == W_L1IND_DRD)) {
-                    ~                      ^             ~
-drivers/isdn/hisax/w6692.c:627:30: note: use '=' to turn this equality
-comparison into an assignment
-                if ((cs->dc.w6692.ph_state == W_L1IND_DRD)) {
-                                           ^~
-                                           =
-1 warning generated.
+> This series aims to improve the interrupts descriptions and usage in the
+> Marvell PPv2 driver.
+> 
+> - Before the series interrupts were named after their s/w usage,
+>   which in fact can be configured. The series rename all those
+>   interrupts and add a description of the ones left over.
+> 
+> - In PPv2 the interrupts are mapped to vectors. Those vectors were
+>   directly mapped to a given CPU, and per-cpu accesses were done. While
+>   this worked on our cases, the registers accesses mapped to the vectors
+>   are not actually linked to a given CPU. They instead are linked to
+>   what is called a "s/w thread". The series modify this so that the s/w
+>   threads are used instead of the CPU numbers, by adding an indirection.
+>   This means we now can have systems with more CPUs than s/w threads.
+> 
+> This is based on today's net-next, and was tested on various boards
+> using both versions of the PPv2 engine.
+> 
+> Two more patches will be coming, to update the device trees describing a
+> PPv2 engine. The patches are ready, but will go through a different
+> tree. I'll send them once this series will be accepted. This is not an
+> issue as the PPv2 driver keeps the dt bindings backward compatibility.
 
-Remove the parentheses to silence this warning.
-
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/isdn/hisax/w6692.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/isdn/hisax/w6692.c b/drivers/isdn/hisax/w6692.c
-index c4be1644f5bb..bb8e4b7e34ea 100644
---- a/drivers/isdn/hisax/w6692.c
-+++ b/drivers/isdn/hisax/w6692.c
-@@ -624,7 +624,7 @@ W6692_l1hw(struct PStack *st, int pr, void *arg)
- 		break;
- 	case (HW_RESET | REQUEST):
- 		spin_lock_irqsave(&cs->lock, flags);
--		if ((cs->dc.w6692.ph_state == W_L1IND_DRD)) {
-+		if (cs->dc.w6692.ph_state == W_L1IND_DRD) {
- 			ph_command(cs, W_L1CMD_ECK);
- 			spin_unlock_irqrestore(&cs->lock, flags);
- 		} else {
--- 
-2.19.0
-
+Series applied, thanks Antoine.
