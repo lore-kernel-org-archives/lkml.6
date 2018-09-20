@@ -2,141 +2,107 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0780ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B2CC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BAE21526
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:07:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3BAE21526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FAD121529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:07:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ay1bv2lJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FAD121529
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387992AbeITUvE (ORCPT
+        id S2388016AbeITUvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 20 Sep 2018 16:51:07 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38681 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387971AbeITUvE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Sep 2018 16:51:04 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:47942 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387869AbeITUvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 16:51:03 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 510A41A00A5;
-        Thu, 20 Sep 2018 17:07:08 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4499A1A00A0;
-        Thu, 20 Sep 2018 17:07:08 +0200 (CEST)
-Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D374220618;
-        Thu, 20 Sep 2018 17:07:07 +0200 (CEST)
-From:   Madalin Bucur <madalin.bucur@nxp.com>
-To:     leoyang.li@nxp.com
-Cc:     roy.pledge@nxp.com, claudiu.manoil@nxp.com,
-        catalin.marinas@arm.com, oss@buserror.net,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Madalin Bucur <madalin.bucur@nxp.com>
-Subject: [PATCH 4/4] soc/fsl_qbman: export coalesce change API
-Date:   Thu, 20 Sep 2018 18:06:51 +0300
-Message-Id: <1537456011-10769-5-git-send-email-madalin.bucur@nxp.com>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1537456011-10769-1-git-send-email-madalin.bucur@nxp.com>
-References: <1537456011-10769-1-git-send-email-madalin.bucur@nxp.com>
-Reply-to: madalin.bucur@nxp.com
-X-Virus-Scanned: ClamAV using ClamSMTP
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so4514706pfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 08:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=b7XES3pVDyKMb278bmG0nPev8a+WvFLHfK478xOeOjg=;
+        b=Ay1bv2lJYEgF9XilsiFdNboG5HRVJrj57TyTjfPCKIWIfMFhJakuRIB3PSn/z6gp+Q
+         jozVCiIag9vk7ULAnGaX++EmdR6AIqcQ5LbIBwT4dZG/GcOdl/70ibqZO5yo7pvahYF2
+         betknv3j6EsiX/+MB711r9d6R91LsCo9+whkM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=b7XES3pVDyKMb278bmG0nPev8a+WvFLHfK478xOeOjg=;
+        b=gOFHzZcO/Am8/bR6i+vqmLtPADcFHpQCzXdsye4mTeFl+wsmwqKWFi7JSC+tt2B3lD
+         zPTTJ2J6dGUe6h674Et4tALsH/7S34mPIIh2kNEusxMysbr7Wxfnjel0Pw+4Uu279Kc3
+         LDFW3rMuuYvETBHbPNQ1eupLWHmXUJku6C5o0iagHVfEGaKqWvLIYGf3Zwm/AKu+m/pc
+         2yur5gJvr0t40yZgK/pQ8RgxXfKBUS7UI3aLT5PELx/N3Hl9srEDaMhs7nNtFaMkhWOX
+         rNGdvKyRUl6WFpjaGU6eDQwEiklQtXtYmWimj0SI1CZJz5oDW2obSv1nt7r2jfmko7sW
+         rOwg==
+X-Gm-Message-State: APzg51DplrvdbllU83IRgWKLwIA9NBlnGvAi2sAHRDyT75Fw5ePMpksz
+        sPvrAVH+hqQUaFS8TZ072sHXTQ==
+X-Google-Smtp-Source: ANB0VdZJDwFc+k+MN6HpSotu9JwqWgfJ8B6o2F49oQ2a/5zcGyQ+LJxIVeOc71HqA5HkdEcrugaWww==
+X-Received: by 2002:a63:ca09:: with SMTP id n9-v6mr37191235pgi.287.1537456029607;
+        Thu, 20 Sep 2018 08:07:09 -0700 (PDT)
+Received: from qualcomm-HP-ZBook-14-G2.domain.name ([106.51.107.142])
+        by smtp.gmail.com with ESMTPSA id k64-v6sm36222991pfg.141.2018.09.20.08.07.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 20 Sep 2018 08:07:09 -0700 (PDT)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v2 5/5] m68k: added __IGNORE* entries in asm/unistd.h
+Date:   Thu, 20 Sep 2018 20:36:13 +0530
+Message-Id: <1537455973-12468-6-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org>
+References: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow changing the QMan portal interrupt coalescing settings.
+Added few __IGNORE* entries for seccomp, pkey_mprotect,
+pkey_alloc, pkey_free, io_pgetevents and rseq in the file
+asm/unistd.h as it is correct to keep __IGNORE* entry in
+non uapi header asm/unistd.h while uapi/asm/unistd.h must
+hold information only useful for user space applications.
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- drivers/soc/fsl/qbman/qman.c | 31 +++++++++++++++++++++++++++++++
- include/soc/fsl/qman.h       | 27 +++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
+ arch/m68k/include/asm/unistd.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
-index 7f4c57999e08..c270471a6e47 100644
---- a/drivers/soc/fsl/qbman/qman.c
-+++ b/drivers/soc/fsl/qbman/qman.c
-@@ -1011,6 +1011,37 @@ static inline void put_affine_portal(void)
+diff --git a/arch/m68k/include/asm/unistd.h b/arch/m68k/include/asm/unistd.h
+index 5072e94..cc5f640 100644
+--- a/arch/m68k/include/asm/unistd.h
++++ b/arch/m68k/include/asm/unistd.h
+@@ -31,4 +31,11 @@
+ #define __ARCH_WANT_SYS_FORK
+ #define __ARCH_WANT_SYS_VFORK
  
- static struct workqueue_struct *qm_portal_wq;
- 
-+void qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh)
-+{
-+	if (!portal)
-+		return;
++#define __IGNORE_seccomp
++#define __IGNORE_pkey_mprotect
++#define __IGNORE_pkey_alloc
++#define __IGNORE_pkey_free
++#define __IGNORE_io_pgetevents
++#define __IGNORE_rseq
 +
-+	qm_dqrr_set_ithresh(&portal->p, ithresh);
-+	portal->p.dqrr.ithresh = ithresh;
-+}
-+EXPORT_SYMBOL(qman_dqrr_set_ithresh);
-+
-+void qman_dqrr_get_ithresh(struct qman_portal *portal, u8 *ithresh)
-+{
-+	if (portal && ithresh)
-+		*ithresh = portal->p.dqrr.ithresh;
-+}
-+EXPORT_SYMBOL(qman_dqrr_get_ithresh);
-+
-+void qman_portal_get_iperiod(struct qman_portal *portal, u32 *iperiod)
-+{
-+	if (portal && iperiod)
-+		*iperiod = qm_in(&portal->p, QM_REG_ITPR);
-+}
-+EXPORT_SYMBOL(qman_portal_get_iperiod);
-+
-+void qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod)
-+{
-+	if (portal)
-+		qm_out(&portal->p, QM_REG_ITPR, iperiod);
-+}
-+EXPORT_SYMBOL(qman_portal_set_iperiod);
-+
- int qman_wq_alloc(void)
- {
- 	qm_portal_wq = alloc_workqueue("qman_portal_wq", 0, 1);
-diff --git a/include/soc/fsl/qman.h b/include/soc/fsl/qman.h
-index d4dfefdee6c1..42f50eb51529 100644
---- a/include/soc/fsl/qman.h
-+++ b/include/soc/fsl/qman.h
-@@ -1186,4 +1186,31 @@ int qman_alloc_cgrid_range(u32 *result, u32 count);
-  */
- int qman_release_cgrid(u32 id);
- 
-+/**
-+ * qman_dqrr_get_ithresh - Get coalesce interrupt threshold
-+ * @portal: portal to get the value for
-+ * @ithresh: threshold pointer
-+ */
-+void qman_dqrr_get_ithresh(struct qman_portal *portal, u8 *ithresh);
-+
-+/**
-+ * qman_dqrr_set_ithresh - Set coalesce interrupt threshold
-+ * @portal: portal to set the new value on
-+ * @ithresh: new threshold value
-+ */
-+void qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh);
-+
-+/**
-+ * qman_dqrr_get_iperiod - Get coalesce interrupt period
-+ * @portal: portal to get the value for
-+ * @iperiod: period pointer
-+ */
-+void qman_portal_get_iperiod(struct qman_portal *portal, u32 *iperiod);
-+/*
-+ * qman_dqrr_set_iperiod - Set coalesce interrupt period
-+ * @portal: portal to set the new value on
-+ * @ithresh: new period value
-+ */
-+void qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod);
-+
- #endif	/* __FSL_QMAN_H */
+ #endif /* _ASM_M68K_UNISTD_H_ */
 -- 
-2.1.0
+1.9.1
 
