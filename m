@@ -2,96 +2,166 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C80BECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EAEC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DBBC21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 252AA2152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:59:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D0CGTrOc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DBBC21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="RrvuHAdQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 252AA2152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388362AbeIUAn4 (ORCPT
+        id S2388376AbeIUAoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:43:56 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:47009 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387920AbeIUAnz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:43:55 -0400
-Received: by mail-pl1-f195.google.com with SMTP id t20-v6so1335265ply.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 11:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7fD6Vg7mINt4+L+n806WJ/52MHN2Q3cbMiTXXilOWak=;
-        b=D0CGTrOcw4zP1xQeYH05qDhT0fr1I+kdSIVs+wsSoQQRliHXT9pFqUq0/htvq9rE1m
-         ut8u/K86NfdH/3DXEgBMGpGtvZQ/bZ8sMMC8n5psqP8zDkzmcpznHIvJjhSFgthwubv0
-         cc1rP7UHuVR/br6+2AM6PnU+qI494NRXEVuc0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7fD6Vg7mINt4+L+n806WJ/52MHN2Q3cbMiTXXilOWak=;
-        b=Nuo5BTjFq2e/ieYb9mnOrZHPsXbCFJRscmBQAn2iR9fh/VvhA+0ZcS/lGnj7JZysCw
-         VLW9pnFwJ5cR75D5P3l2vikB89oUZL4Mp3XheL8M3K81mZmVi1KMeTbK4acQCRVuxSX9
-         IB4/xRtpWTAL4ZQHNTuo5SPbKoRrwxsMcw9BVmGIFDqtP9YIx2M5zw+pUnhJO67juK56
-         Bq9FMm3wp7xJ6fZuOlyDH1eml64jItxXc5W+78GzQM3uu0M7L76nVXXcZcKPUEwEtjMy
-         kdzm55O8mUDcapNhUt9WAzdktBD8jTxWQ0EtKoWo5Oe2ndCOYttLZFSdJXm5zguyXTje
-         0/Tg==
-X-Gm-Message-State: APzg51CiawEGEQDDTTdEGM+H6KAIZPTHQrBpVOoUi2fxMSDZOezL9qKY
-        lHjs6FJKkTi24cHHdr3CZVSSPg==
-X-Google-Smtp-Source: ANB0VdaqP+sF8dcw2ed/P1tUeh6YAFVDWyCwmiNRWK4RBnp88uXgIKVvqM3nsDzqzGiDk1La++7MQA==
-X-Received: by 2002:a17:902:b68d:: with SMTP id c13-v6mr40530817pls.139.1537469941788;
-        Thu, 20 Sep 2018 11:59:01 -0700 (PDT)
-Received: from localhost ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id m15-v6sm75365520pfk.149.2018.09.20.11.59.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 11:59:00 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 11:59:00 -0700
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, smohanad@codeaurora.org,
-        dianders@chromium.org, mka@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 14/16] arm64: dts: msm8916: Add gpu thermal zone
-Message-ID: <20180920185900.GC19253@hector.localdomain>
-References: <cover.1536744310.git.amit.kucheria@linaro.org>
- <ffefc578b5cb9298e33f0ea480b3d521f34afd54.1536744310.git.amit.kucheria@linaro.org>
+        Thu, 20 Sep 2018 20:44:09 -0400
+Received: from ned.t-8ch.de ([212.47.237.191]:55120 "EHLO ned.t-8ch.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727241AbeIUAoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 20:44:09 -0400
+From:   =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=weissschuh.net;
+        s=mail; t=1537469950;
+        bh=0o/45yM+Eb14/1daEP+Aq3odELgSpHRK/o4tBf07UlE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RrvuHAdQIm3lrXRYh3vnQ1V9FjMPT9J6FA1vh5NumjVegrcpxXchf01/sZ/p5CokD
+         m1+iLo8w+mkUoWt+3C+E4CpBaXyBBOHpa/sf/QcmcC3UAQ4ZWPIy6nDFu+o87Fzd1A
+         Hr72PXeN/Ag3ot7RrtjseUggk39eafDgBYXGdKeQ=
+To:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH] staging: erofs: fix undeclared symbols
+Date:   Thu, 20 Sep 2018 20:58:56 +0200
+Message-Id: <20180920185856.14322-1-linux@weissschuh.net>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ffefc578b5cb9298e33f0ea480b3d521f34afd54.1536744310.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 03:22:59PM +0530, Amit Kucheria wrote:
-> Initialise the gpu thermal zone to export temperature to userspace.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> index be27d8dc9e6b..62f079ae9ba3 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+Move all internal symbols to the internal header file and add a missing
+"static" declaration.
+This fixes the sparse warnings like the following:
 
-Acked-by: Andy Gross <andy.gross@linaro.org>
+drivers/staging/erofs/unzip_lz4.c:230:5: warning: symbol 'z_erofs_unzip_lz4' was not declared. Should it be static?
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/staging/erofs/data.c          |  5 -----
+ drivers/staging/erofs/internal.h      | 14 ++++++++++++++
+ drivers/staging/erofs/super.c         |  5 -----
+ drivers/staging/erofs/unzip_vle.c     |  2 +-
+ drivers/staging/erofs/unzip_vle_lz4.c |  2 --
+ drivers/staging/erofs/utils.c         |  2 --
+ 6 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
+index ac263a180253..9bfcc549bbf0 100644
+--- a/drivers/staging/erofs/data.c
++++ b/drivers/staging/erofs/data.c
+@@ -137,11 +137,6 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_EROFS_FS_ZIP
+-extern int z_erofs_map_blocks_iter(struct inode *,
+-	struct erofs_map_blocks *, struct page **, int);
+-#endif
+-
+ int erofs_map_blocks_iter(struct inode *inode,
+ 	struct erofs_map_blocks *map,
+ 	struct page **mpage_ret, int flags)
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index 367b39fe46e5..d4c4c87bcd35 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -547,6 +547,20 @@ extern unsigned long erofs_shrink_count(struct shrinker *shrink,
+ 	struct shrink_control *sc);
+ extern unsigned long erofs_shrink_scan(struct shrinker *shrink,
+ 	struct shrink_control *sc);
++extern void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
++
++#ifdef CONFIG_EROFS_FS_ZIP
++/* super.c */
++extern int z_erofs_init_zip_subsystem(void);
++extern void z_erofs_exit_zip_subsystem(void);
++
++/* unzip_vle.c */
++extern int z_erofs_map_blocks_iter(struct inode *,
++	struct erofs_map_blocks *, struct page **, int);
++
++/* unzip_lz4.c */
++extern int z_erofs_unzip_lz4(void *in, void *out, size_t inlen, size_t outlen);
++#endif
+ 
+ #ifndef lru_to_page
+ #define lru_to_page(head) (list_entry((head)->prev, struct page, lru))
+diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
+index 2df9768edac9..c41d92e0cb3c 100644
+--- a/drivers/staging/erofs/super.c
++++ b/drivers/staging/erofs/super.c
+@@ -521,11 +521,6 @@ static struct file_system_type erofs_fs_type = {
+ };
+ MODULE_ALIAS_FS("erofs");
+ 
+-#ifdef CONFIG_EROFS_FS_ZIP
+-extern int z_erofs_init_zip_subsystem(void);
+-extern void z_erofs_exit_zip_subsystem(void);
+-#endif
+-
+ static int __init erofs_module_init(void)
+ {
+ 	int err;
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 8721f0a41d15..a0d6c620051f 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -517,7 +517,7 @@ static void __z_erofs_vle_work_release(struct z_erofs_vle_workgroup *grp,
+ 	erofs_workgroup_put(&grp->obj);
+ }
+ 
+-void z_erofs_vle_work_release(struct z_erofs_vle_work *work)
++static void z_erofs_vle_work_release(struct z_erofs_vle_work *work)
+ {
+ 	struct z_erofs_vle_workgroup *grp =
+ 		z_erofs_vle_work_workgroup(work, true);
+diff --git a/drivers/staging/erofs/unzip_vle_lz4.c b/drivers/staging/erofs/unzip_vle_lz4.c
+index f5b665f15be5..e30e6e2ef05b 100644
+--- a/drivers/staging/erofs/unzip_vle_lz4.c
++++ b/drivers/staging/erofs/unzip_vle_lz4.c
+@@ -99,8 +99,6 @@ int z_erofs_vle_plain_copy(struct page **compressed_pages,
+ 	return 0;
+ }
+ 
+-extern int z_erofs_unzip_lz4(void *in, void *out, size_t inlen, size_t outlen);
+-
+ int z_erofs_vle_unzip_fast_percpu(struct page **compressed_pages,
+ 				  unsigned clusterpages,
+ 				  struct page **pages,
+diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
+index 595cf90af9bb..26b9f97f258a 100644
+--- a/drivers/staging/erofs/utils.c
++++ b/drivers/staging/erofs/utils.c
+@@ -99,8 +99,6 @@ int erofs_register_workgroup(struct super_block *sb,
+ 	return err;
+ }
+ 
+-extern void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
+-
+ int erofs_workgroup_put(struct erofs_workgroup *grp)
+ {
+ 	int count = atomic_dec_return(&grp->refcount);
+-- 
+2.19.0
+
