@@ -2,101 +2,123 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B53C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB83C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CAC02152C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:02:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpnMUsNc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CAC02152C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CD6221526
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CD6221526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732857AbeITTqW (ORCPT
+        id S1732863AbeITTuj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 15:46:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44112 "EHLO mail.kernel.org"
+        Thu, 20 Sep 2018 15:50:39 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:31660 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727633AbeITTqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 15:46:22 -0400
-Received: from mail-qt0-f173.google.com (mail-qt0-f173.google.com [209.85.216.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93E3B2152C;
-        Thu, 20 Sep 2018 14:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537452163;
-        bh=YGjU15eXMdilnSA0dyG6zeQKwZsroa52XLiW6yptB8c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=cpnMUsNciyj/k/mgTurCZ4JQKWw+vxRR9agEujDbhCSTKwRjHtWEGklzsFlSNZftu
-         QxKE+09DdIgYK2kJbvcQ6fyQ5aeKmsj6PM5ljI1LBGFg9HOrH2A20HOHS7+ahrZ4Pb
-         vpQBXD8U4e8QRa+Oh/D0fYtpdseKCBx21PtuM1e0=
-Received: by mail-qt0-f173.google.com with SMTP id o15-v6so8554032qtk.6;
-        Thu, 20 Sep 2018 07:02:43 -0700 (PDT)
-X-Gm-Message-State: APzg51CtAlMpdVOYgXNjyL9bm9abkQB/yboepafrTWPfXdMAqJYKR/8U
-        Uqr5OvYcOQg+EVm896aNZRNkazr7ajJKbKtpFA==
-X-Google-Smtp-Source: ANB0VdarLgjThbibYZRDaqc+K3uOmk2ps2dj+NDy8SwixaRBD3SqOLrnIdU/xrv0st2gBXoCv6ZSECwss/FpkPU0Kss=
-X-Received: by 2002:a0c:e9ce:: with SMTP id q14-v6mr28709351qvo.106.1537452162723;
- Thu, 20 Sep 2018 07:02:42 -0700 (PDT)
+        id S1731463AbeITTuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 15:50:39 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42GJSg68nqz9ttRj;
+        Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id i9POh7THBRyS; Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42GJSg5Xrtz9ttRd;
+        Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 215A58B86A;
+        Thu, 20 Sep 2018 16:07:00 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id RNcyVHW_9iUG; Thu, 20 Sep 2018 16:07:00 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 845468B77F;
+        Thu, 20 Sep 2018 16:06:59 +0200 (CEST)
+Subject: Re: Checkpatch bad Warning (Re: [PATCH] powerpc/kgdb: add
+ kgdb_arch_set/remove_breakpoint())
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, paul.burton@mips.com,
+        ralf@linux-mips.org, jhogan@kernel.org
+Cc:     Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+References: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
+ <2f5f572a-a28c-9d17-844b-9e1961febf64@c-s.fr>
+ <595c96f5adcccd7eab9dc95eb48618981af66d3c.camel@perches.com>
+ <87worgia60.fsf@concordia.ellerman.id.au>
+ <f9ad7501-4d07-ddc2-6236-a7eb61283378@c-s.fr>
+Message-ID: <d31bd0cb-b9da-6f1b-4f93-da71644668d6@c-s.fr>
+Date:   Thu, 20 Sep 2018 01:23:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180920151243.5524c6ca@canb.auug.org.au> <87d0t8jvym.fsf@concordia.ellerman.id.au>
- <20180920210711.4561abee@canb.auug.org.au> <20180920211755.1fabd744@canb.auug.org.au>
-In-Reply-To: <20180920211755.1fabd744@canb.auug.org.au>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 20 Sep 2018 07:02:30 -0700
-X-Gmail-Original-Message-ID: <CAL_JsqLRRCdOWABiTYHp7jupdiLfPRv95OSKWVB-HX=cevdQMg@mail.gmail.com>
-Message-ID: <CAL_JsqLRRCdOWABiTYHp7jupdiLfPRv95OSKWVB-HX=cevdQMg@mail.gmail.com>
-Subject: Re: linux-next: Tree for Sep 20
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        linux-next <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <f9ad7501-4d07-ddc2-6236-a7eb61283378@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 4:18 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Michael,
->
-> On Thu, 20 Sep 2018 21:10:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Thu, 20 Sep 2018 20:37:37 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
-> > >
-> > > Oodles of:
-> > >
-> > >   # < make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-  allnoconfig
-> > >   # make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-
-> > >   /bin/sh: 1: pkg-config: not found
->       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->
-> > don't have it installed on my build machine either ...  do we have
-> > pkg-config installed in the build images?
->
-> Duh! ;-)
->
-> According to the commit message we gained a kconfig dependency on
-> pkg-config in 4.18.  I wonder what else depends on it.
->
-> Ah:
->
-> "pkg-config
-> ----------
->
-> The build system, as of 4.18, requires pkg-config to check for installed
-> kconfig tools and to determine flags settings for use in
-> 'make {g,x}config'.  Previously pkg-config was being used but not
-> verified or documented."
+Adding MIPS arch in the loop
 
-Looks like until a recent commit, this also included nconfig and
-menuconfig, but those were dropped after some complaints. I'll rework
-this to make things work with pkg-config.
-
-Rob
+On 09/20/2018 01:19 PM, Christophe LEROY wrote:
+> 
+> 
+> Le 20/09/2018 à 15:13, Michael Ellerman a écrit :
+>> Joe Perches <joe@perches.com> writes:
+>>
+>>> On Tue, 2018-09-18 at 09:33 +0000, Christophe Leroy wrote:
+>>>> On the below patch, checkpatch reports
+>>>>
+>>>> WARNING: struct kgdb_arch should normally be const
+>>>> #127: FILE: arch/powerpc/kernel/kgdb.c:480:
+>>>> +struct kgdb_arch arch_kgdb_ops;
+>>>>
+>>>> But when I add 'const', I get compilation failure
+>>>
+>>> So don't add const.
+>>>
+>>> checkpatch is stupid.  You are not.
+>>>
+>>> _Always_ take checkpatch bleats with very
+>>> large grains of salt.
+>>>
+>>> Perhaps send a patch to remove kgbd_arch
+>>> from scripts/const_structs.checkpatch as
+>>> it seems not ever to be const.
+>>
+>> I think it could/should be const though, it just requires updating all
+>> arches.
+>>
+> 
+> Yes I was thinking about doing it, but first thing is to change the way 
+> MIPS initialises it:
+> 
+> 
+> struct kgdb_arch arch_kgdb_ops;
+> 
+> int kgdb_arch_init(void)
+> {
+>      union mips_instruction insn = {
+>          .r_format = {
+>              .opcode = spec_op,
+>              .func    = break_op,
+>          }
+>      };
+>      memcpy(arch_kgdb_ops.gdb_bpt_instr, insn.byte, BREAK_INSTR_SIZE);
+> 
+> 
+> Can this be done staticaly ?
+> 
+> Christophe
