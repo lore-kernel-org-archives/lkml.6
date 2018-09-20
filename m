@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54321ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF45AECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C2F21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7D521525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BD4VPE9M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C2F21525
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ex4nqgXf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7D521525
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388491AbeIUBC1 (ORCPT
+        id S2388509AbeIUBC3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:02:27 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37881 "EHLO
+        Thu, 20 Sep 2018 21:02:29 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44648 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388353AbeIUBC0 (ORCPT
+        with ESMTP id S2388353AbeIUBC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:02:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 2-v6so4883237pgo.4;
-        Thu, 20 Sep 2018 12:17:28 -0700 (PDT)
+        Thu, 20 Sep 2018 21:02:28 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so4867801pgp.11;
+        Thu, 20 Sep 2018 12:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=193CNgmBH8R6+te4PJDyCo0NhXQlORas2WPVssI+RmU=;
-        b=BD4VPE9MBHJ5KCiGB96FCye83mYYAHHP3hiJRCadwU0qTDp/AYAnsjp+rHus/VYGDM
-         Ki/aMO11sAST+jJocevW3PaP3TDY8XWRrgTkCVkuSdLrgfgoiqie9jX+vxOk1YLKwLJj
-         UDOstZQRhswoSxwnhXrmCkOPFeLbWSmG43wsf+AU/ClXwMiv5JE/hs/7LQNlCcIddgxN
-         7LFZOqdkZpZkAOZ7ID7cVJvaj0f6IK1Q2gHg6rETgTdzobIbCPxxFmlnlyiLUGYmYihQ
-         QO2SE+frf00F183Xl+m8r1TAu3XlMJfG+51ZVN3FAjELEdUvZ+tdBAfj+UqBxD/wWx7g
-         TcAw==
+        bh=GQe8dWaIWFtV1ZNvAEkJWOMwhon4VpCEGr9xrv2EmUc=;
+        b=ex4nqgXf/iI06i8uU2fw4bsYXqYZrm9Z5zhO18h4tYfAtTEe6P9UupMimAnjdcJ/sR
+         bkUu0JusAxKaC/FQgdODP8KSsg83CN2LMOoZ6b7/sxEJXIHITppu5SQes9jXpR3al7U4
+         SguKsEMR5m5c+9GL9mo0hwBaJMPEJrA4kDTFVVGo1K2ewGF3BtCy7qibDJfF15NPCFML
+         yENobKV3KyTZXyrkCf02btd4QSVuNg9EwuNOKsDtLkLqWndw1Va8SW7vHElZ0oIA/Ftm
+         PtQtUN82MQwLNTikCWrXiA6UReB3HTVW+BAW23dCZHgfRdJsmEICUXUTIGCd8rubZghu
+         aqXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=193CNgmBH8R6+te4PJDyCo0NhXQlORas2WPVssI+RmU=;
-        b=PX2BRVedyejCa0+2j/NydmKL0Za7WrkfLYxxfSSDwskH5b3OiGE2kF79is543LYIeF
-         zOJKDUz/q/NddF84dayOseQglgZG/XjdQ07O4fvWguqGt5lwaAnsRhCisAM/nJydeEos
-         IAltGRtsCF/uj48R5ViNyjs4kagrzNvar9FUsP3UfXUv8zZO2wuVEIxIyvKhaALLZFjs
-         dSNn168peGWiSX9Z13dlpu5+R29uRmvYmpT2CAX/Ia8hMXY2tKxdYnJBgqg7I8uDxuMi
-         LAWGEFA3PwaI+6HyOieZumSSORcqFVDzTWv/aeMxjLiLv3db5iPouYT6K88etAUALBss
-         S36A==
-X-Gm-Message-State: APzg51AYIoRe6a5FFGoWCwvugEecJQoZCjNIlzVFoAiAI8V1wbRRl0s6
-        O+E8eDtxSmE1rt81OBkKUSNgEFjO
-X-Google-Smtp-Source: ANB0VdbhD0ekh4ynw/FKxjy1M7hUtncBM+C9KFmKo9m/lkmnjGiK/sAE/AvSgpFoALRhv2V1jiYYpw==
-X-Received: by 2002:a63:c046:: with SMTP id z6-v6mr38322495pgi.114.1537471047560;
-        Thu, 20 Sep 2018 12:17:27 -0700 (PDT)
+        bh=GQe8dWaIWFtV1ZNvAEkJWOMwhon4VpCEGr9xrv2EmUc=;
+        b=DKuX3uKfSPstpiEDjIqz2Km8ekaY6UogMCZ30gMgWyKN8cxMaLDgGZK5HNA1pRrzof
+         WTtX5oU6xFC6EXu1KLShq2mkf1kWRawWNzZIH205IreCa6Xnr5+s3mVRiOlEzHwl0bGo
+         x8RJo3ivbcffXOnIOdC3QThzCqOUNL2lGTMmHo48lS7EYEZitbiu2sHH/0sRKv15opLR
+         sCm7BuCjIEz9Oyisnd8IT4ubuW43TUV9EXh73Zod7DeUeNuBlC+bkZ1fsDfVnEnlAdnZ
+         arW3UsuI0OtK41iCaJshWJbbFpztZODCQ4OT15dyhRmG3aw9zhS/V6h26uJAAPGeZvUo
+         dU+A==
+X-Gm-Message-State: APzg51DniiKTmihki5qKrdiODqnc7enpWwl7N9jfPnWzuKtUJqY17kgo
+        nqlt5DbVGiNLsuX9x3MMprCjrxmR
+X-Google-Smtp-Source: ANB0VdbdH/o985ceDzsPLDud++0tWcqCqUqEU378lfIBReKLiTZQVRRtoZf1D/HF/6J//DOfcrXxkg==
+X-Received: by 2002:a63:d34f:: with SMTP id u15-v6mr8696031pgi.325.1537471049509;
+        Thu, 20 Sep 2018 12:17:29 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.25
+        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 12:17:26 -0700 (PDT)
+        Thu, 20 Sep 2018 12:17:28 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -72,9 +72,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Parallel ATA drivers)),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH 5/9] ata: sata_brcmstb: Allow optional reset controller to be used
-Date:   Thu, 20 Sep 2018 12:16:41 -0700
-Message-Id: <20180920191646.18198-8-f.fainelli@gmail.com>
+Subject: [PATCH 6/9] ata: ahci_brcm: Match BCM63138 compatible strings
+Date:   Thu, 20 Sep 2018 12:16:42 -0700
+Message-Id: <20180920191646.18198-9-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920191646.18198-1-f.fainelli@gmail.com>
 References: <20180920191646.18198-1-f.fainelli@gmail.com>
@@ -83,55 +83,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On BCM63138, we need to reset the AHCI core prior to start utilizing it,
-grab the reset controller device cookie and do that.
+Match the "brcm,bcm63138-ahci" compatible string in order to allow this
+driver to probe on such platforms.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/ata/ahci_brcm.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/ata/ahci_brcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
-index f3d557777d82..d535e87151dc 100644
+index d535e87151dc..43f4e4fe4742 100644
 --- a/drivers/ata/ahci_brcm.c
 +++ b/drivers/ata/ahci_brcm.c
-@@ -25,6 +25,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- #include <linux/string.h>
- 
- #include "ahci.h"
-@@ -94,6 +95,7 @@ struct brcm_ahci_priv {
- 	u32 port_mask;
- 	u32 quirks;
- 	enum brcm_ahci_version version;
-+	struct reset_control *rcdev;
+@@ -383,6 +383,7 @@ static struct scsi_host_template ahci_platform_sht = {
+ static const struct of_device_id ahci_of_match[] = {
+ 	{.compatible = "brcm,bcm7425-ahci", .data = (void *)BRCM_SATA_BCM7425},
+ 	{.compatible = "brcm,bcm7445-ahci", .data = (void *)BRCM_SATA_BCM7445},
++	{.compatible = "brcm,bcm63138-ahci", .data = (void *)BRCM_SATA_BCM7445},
+ 	{.compatible = "brcm,bcm-nsp-ahci", .data = (void *)BRCM_SATA_NSP},
+ 	{},
  };
- 
- static inline u32 brcm_sata_readreg(void __iomem *addr)
-@@ -411,6 +413,10 @@ static int brcm_ahci_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->top_ctrl))
- 		return PTR_ERR(priv->top_ctrl);
- 
-+	priv->rcdev = of_reset_control_get(pdev->dev.of_node, NULL);
-+	if (!IS_ERR(priv->rcdev))
-+		reset_control_deassert(priv->rcdev);
-+
- 	if ((priv->version == BRCM_SATA_BCM7425) ||
- 		(priv->version == BRCM_SATA_NSP)) {
- 		priv->quirks |= BRCM_AHCI_QUIRK_NO_NCQ;
-@@ -464,6 +470,9 @@ static int brcm_ahci_remove(struct platform_device *pdev)
- 
- 	brcm_sata_phys_disable(priv);
- 
-+	if (!IS_ERR(priv->rcdev))
-+		reset_control_assert(priv->rcdev);
-+
- 	return 0;
- }
- 
 -- 
 2.17.1
 
