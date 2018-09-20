@@ -2,57 +2,57 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6252C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48445ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9742121523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9742121523
+	by mail.kernel.org (Postfix) with ESMTP id E4BB121531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:22:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4BB121531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732818AbeITXHY (ORCPT
+        id S2387485AbeITXH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:07:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38648 "EHLO
+        Thu, 20 Sep 2018 19:07:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59471 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726990AbeITXHY (ORCPT
+        by vger.kernel.org with ESMTP id S1727990AbeITXHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:07:24 -0400
+        Thu, 20 Sep 2018 19:07:25 -0400
 Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8KHHoEl086739
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:26:23 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mmf5s24cj-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8KHHovd086715
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:26:24 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mmf5s24d8-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:26:22 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:26:23 -0400
 Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Thu, 20 Sep 2018 11:22:52 -0600
+        Thu, 20 Sep 2018 11:22:53 -0600
 Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Thu, 20 Sep 2018 11:22:50 -0600
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8KHMnRh26935542
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8KHMn3H26935544
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Thu, 20 Sep 2018 10:22:49 -0700
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 587FB13605D;
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 874997805F;
         Thu, 20 Sep 2018 11:22:49 -0600 (MDT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F2FA4136051;
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E78EB7805C;
         Thu, 20 Sep 2018 11:22:48 -0600 (MDT)
 Received: from sofia.ibm.com (unknown [9.124.212.176])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
         Thu, 20 Sep 2018 11:22:48 -0600 (MDT)
 Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 47A7F2E2DA7; Thu, 20 Sep 2018 22:52:45 +0530 (IST)
+        id 3372A2E2D92; Thu, 20 Sep 2018 22:52:45 +0530 (IST)
 From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
@@ -68,20 +68,18 @@ To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
         Anton Blanchard <anton@samba.org>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH v8 2/3] powerpc: Use cpu_smallcore_sibling_mask at SMT level on bigcores
-Date:   Thu, 20 Sep 2018 22:52:38 +0530
+Subject: [PATCH v8 0/3] powerpc: Detection and scheduler optimization for POWER9 bigcore
+Date:   Thu, 20 Sep 2018 22:52:36 +0530
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18092017-0012-0000-0000-000016B8446C
+x-cbid: 18092017-0016-0000-0000-000009314598
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009741; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01091142; UDB=6.00563758; IPR=6.00871165;
- MB=3.00023416; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-20 17:22:52
+ MB=3.00023416; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-20 17:22:53
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092017-0013-0000-0000-00005479101F
-Message-Id: <1537464159-25919-3-git-send-email-ego@linux.vnet.ibm.com>
+x-cbparentid: 18092017-0017-0000-0000-0000406C11FD
+Message-Id: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -96,21 +94,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
 
-Each of the SMT4 cores forming a big-core are more or less independent
-units. Thus when multiple tasks are scheduled to run on the big-core,
-we get the best performance when the tasks are spread across the pair of
-SMT4 cores.
+Hi,
 
-This patch achieves this by setting the SMT level mask to correspond to
-the smallcore sibling mask on big-core systems. This patch also the
-CACHE level sched-domain corresponding to the big-core is created on
-big-core systems.
+This is the eight iteration of the patchset to add support for
+big-core on POWER9. This patch also optimizes the task placement on
+such big-core systems.
 
-With this patch, the SMT sched-domain with SMT=8,4,2 on big-core
-systems are as follows:
+The previous versions can be found here:
 
-1) ppc64_cpu --smt=8
+v7: https://lkml.org/lkml/2018/8/20/52
+v6: https://lkml.org/lkml/2018/8/9/119
+v5: https://lkml.org/lkml/2018/8/6/587
+v4: https://lkml.org/lkml/2018/7/24/79
+v3: https://lkml.org/lkml/2018/7/6/255
+v2: https://lkml.org/lkml/2018/7/3/401
+v1: https://lkml.org/lkml/2018/5/11/245
 
+Changes :
+
+v7 --> v8:
+   - Reorganized the patch series into three patches :
+
+     	- First one discovers the big-cores and initializes a per-cpu
+     	  cpumask with its small-core siblings.
+
+        - The second patch uses the small-core siblings at the SMT
+     	  level sched-domains on the big-core systems and also
+     	  activates the CACHE domain that corresponds to the big-core
+     	  where all the threads share L2 cache.
+
+	- The third patch creates a pair of sysfs attributes named
+	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings
+	  and
+	  /sys/devices/system/cpu/cpuN/topology/smallcore_thread_siblings_list
+
+   - The third patch addresses Michael Neuling's review comment for
+     the previous iteration.
+
+Description:
+~~~~~~~~~~~~~~~~~~~~
+A pair of IBM POWER9 SMT4 cores can be fused together to form a
+big-core with 8 SMT threads. This can be discovered via the
+"ibm,thread-groups" CPU property in the device tree which will
+indicate which group of threads that share the L1 cache, translation
+cache and instruction data flow.  If there are multiple such group of
+threads, then the core is a big-core. Furthermore, on POWER9 the thread-ids of
+such a big-core is obtained by interleaving the thread-ids of the
+component SMT4 cores.
+
+Eg: Threads in the pair of component SMT4 cores of an interleaved
+big-core are numbered {0,2,4,6} and {1,3,5,7} respectively.
+
+ 	   -------------------------
+	   |  	    L1 Cache       |
+       ----------------------------------
+       |L2|     |     |     |      |
+       |  |  0  |  2  |  4  |  6   |Small Core0
+       |C |     |     |     |      |
+Big    |a --------------------------
+Core   |c |     |     |     |      |
+       |h |  1  |  3  |  5  |  7   | Small Core1
+       |e |     |     |     |      |
+       -----------------------------
+	  |  	    L1 Cache       |
+	  --------------------------
+
+On such a big-core system, when multiple tasks are scheduled to run on
+the big-core, we get the best performance when the tasks are spread
+across the pair of SMT4 cores.
+
+Eg: Suppose there 4 tasks {p1, p2, p3, p4} are run on a big core, then
+
+An Example of Optimal Task placement:
+	   --------------------------
+           |     |     |     |      |
+           |  0  |  2  |  4  |  6   |   Small Core0
+           | (p1)| (p2)|     |      |
+Big Core   --------------------------
+           |     |     |     |      |
+           |  1  |  3  |  5  |  7   |   Small Core1
+           |     | (p3)|     | (p4) |
+           --------------------------
+
+An example of Suboptimal Task placement:
+	   --------------------------
+           |     |     |     |      |
+           |  0  |  2  |  4  |  6   |   Small Core0
+           | (p1)| (p2)|     |  (p4)|
+Big Core   --------------------------
+           |     |     |     |      |
+           |  1  |  3  |  5  |  7   |   Small Core1
+           |     | (p3)|     |      |
+           --------------------------
+
+In order to achieve optimal task placement, on big-core systems, we
+define the SMT level sched-domain to consist of the threads belonging
+to the small cores. The CACHE level sched domain will consist of all
+the threads belonging to the big-core. With this, the Linux Kernel
+load-balancer will ensure that the tasks are spread across all the
+component small cores in the system, thereby yielding optimum
+performance.
+
+Furthermore, this solution works correctly across all SMT modes
+(8,4,2), as the interleaved thread-ids ensures that when we go to
+lower SMT modes (4,2) the threads are offlined in a descending order,
+thereby leaving equal number of threads from the component small cores
+online as illustrated below.
+
+With Patches: (ppc64_cpu --smt=on) : SMT domain
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  CPU0 attaching sched-domain(s):
   domain-0: span=0,2,4,6 level=SMT
    groups: 0:{ span=0 cap=294 }, 2:{ span=2 cap=294 },
@@ -120,8 +212,19 @@ systems are as follows:
    groups: 1:{ span=1 cap=294 }, 3:{ span=3 cap=294 },
            5:{ span=5 cap=294 }, 7:{ span=7 cap=294 }
 
-2) ppc64_cpu --smt=4
+            Optimal Task placement (SMT 8)
+	   --------------------------
+           |     |     |     |      |
+           |  0  |  2  |  4  |  6   |   Small Core0
+           | (p1)| (p2)|     |      |
+Big Core   --------------------------
+           |     |     |     |      |
+           |  1  |  3  |  5  |  7   |   Small Core1
+           |     | (p3)|     | (p4) |
+           --------------------------
 
+With Patches : (ppc64_cpu --smt=4) : SMT domain
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  CPU0 attaching sched-domain(s):
   domain-0: span=0,2 level=SMT
    groups: 0:{ span=0 cap=589 }, 2:{ span=2 cap=589 }
@@ -129,71 +232,155 @@ systems are as follows:
   domain-0: span=1,3 level=SMT
    groups: 1:{ span=1 cap=589 }, 3:{ span=3 cap=589 }
 
-3) ppc64_cpu --smt=2
-   SMT domain is a trivial domain consisting of just
-   1 CPU. Hence this domain gets collapsed leaving only CACHE, DIE and
-   NUMA domains.
+            Optimal Task placement (SMT 4)
+	   --------------------------
+           |     |     |     |      |
+           |  0  |  2  |  4  |  6   |   Small Core0
+           | (p1)| (p2)| Off | Off  |
+Big Core   --------------------------
+           |     |     |     |      |
+           |  1  |  3  |  5  |  7   |   Small Core1
+           | (p4)| (p3)| Off | Off  |
+           --------------------------
 
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- arch/powerpc/kernel/smp.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+With Patches : (ppc64_cpu --smt=2) : SMT domain ceases to exist.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            Optimal Task placement (SMT 2)
+	   --------------------------
+           | (p2)|     |     |      |
+           |  0  |  2  |  4  |  6   |   Small Core0
+           | (p1)| Off | Off | Off  |
+Big Core   --------------------------
+           | (p3)|     |     |      |
+           |  1  |  3  |  5  |  7   |   Small Core1
+           | (p4)| Off | Off | Off  |
+           --------------------------
 
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 15095110..5cdcf44 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -1265,6 +1265,7 @@ static void add_cpu_to_masks(int cpu)
- void start_secondary(void *unused)
- {
- 	unsigned int cpu = smp_processor_id();
-+	struct cpumask *(*sibling_mask)(int) = cpu_sibling_mask;
- 
- 	mmgrab(&init_mm);
- 	current->active_mm = &init_mm;
-@@ -1290,11 +1291,13 @@ void start_secondary(void *unused)
- 	/* Update topology CPU masks */
- 	add_cpu_to_masks(cpu);
- 
-+	if (has_big_cores)
-+		sibling_mask = cpu_smallcore_mask;
- 	/*
- 	 * Check for any shared caches. Note that this must be done on a
- 	 * per-core basis because one core in the pair might be disabled.
- 	 */
--	if (!cpumask_equal(cpu_l2_cache_mask(cpu), cpu_sibling_mask(cpu)))
-+	if (!cpumask_equal(cpu_l2_cache_mask(cpu), sibling_mask(cpu)))
- 		shared_caches = true;
- 
- 	set_numa_node(numa_cpu_lookup_table[cpu]);
-@@ -1361,6 +1364,13 @@ static const struct cpumask *shared_cache_mask(int cpu)
- 	return cpu_l2_cache_mask(cpu);
- }
- 
-+#ifdef CONFIG_SCHED_SMT
-+static const struct cpumask *smallcore_smt_mask(int cpu)
-+{
-+	return cpu_smallcore_mask(cpu);
-+}
-+#endif
-+
- static struct sched_domain_topology_level power9_topology[] = {
- #ifdef CONFIG_SCHED_SMT
- 	{ cpu_smt_mask, powerpc_smt_flags, SD_INIT_NAME(SMT) },
-@@ -1388,6 +1398,13 @@ void __init smp_cpus_done(unsigned int max_cpus)
- 	shared_proc_topology_init();
- 	dump_numa_cpu_topology();
- 
-+#ifdef CONFIG_SCHED_SMT
-+	if (has_big_cores) {
-+		pr_info("Using small cores at SMT level\n");
-+		power9_topology[0].mask = smallcore_smt_mask;
-+		powerpc_topology[0].mask = smallcore_smt_mask;
-+	}
-+#endif
- 	/*
- 	 * If any CPU detects that it's sharing a cache with another CPU then
- 	 * use the deeper topology that is aware of this sharing.
+Thus, as an added advantage in SMT=2 mode, we will only have 3 levels
+in the sched-domain topology (CACHE, DIE and NUMA).
+
+The SMT levels, without the patches are as follows.
+
+Without Patches: (ppc64_cpu --smt=on) : SMT domain
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0-7 level=SMT
+   groups: 0:{ span=0 cap=147 }, 1:{ span=1 cap=147 },
+           2:{ span=2 cap=147 }, 3:{ span=3 cap=147 },
+           4:{ span=4 cap=147 }, 5:{ span=5 cap=147 },
+	   6:{ span=6 cap=147 }, 7:{ span=7 cap=147 }
+ CPU1 attaching sched-domain(s):
+  domain-0: span=0-7 level=SMT
+   groups: 1:{ span=1 cap=147 }, 2:{ span=2 cap=147 },
+           3:{ span=3 cap=147 }, 4:{ span=4 cap=147 },
+	   5:{ span=5 cap=147 }, 6:{ span=6 cap=147 },
+	   7:{ span=7 cap=147 }, 0:{ span=0 cap=147 }
+
+Without Patches: (ppc64_cpu --smt=4) : SMT domain
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0-3 level=SMT
+   groups: 0:{ span=0 cap=294 }, 1:{ span=1 cap=294 },
+           2:{ span=2 cap=294 }, 3:{ span=3 cap=294 },
+ CPU1 attaching sched-domain(s):
+  domain-0: span=0-3 level=SMT
+   groups: 1:{ span=1 cap=294 }, 2:{ span=2 cap=294 },
+           3:{ span=3 cap=294 }, 0:{ span=0 cap=294 }
+
+Without Patches: (ppc64_cpu --smt=2) : SMT domain
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ CPU0 attaching sched-domain(s):
+  domain-0: span=0-1 level=SMT
+   groups: 0:{ span=0 cap=589 }, 1:{ span=1 cap=589 },
+
+ CPU1 attaching sched-domain(s):
+  domain-0: span=0-1 level=SMT
+   groups: 1:{ span=1 cap=589 }, 0:{ span=0 cap=589 },
+
+This patchset contains two patches which on detecting the presence of
+big-cores, defines the SMT level sched domain to correspond to the
+threads of the small cores.
+
+Patch 1: adds support to detect the presence of
+big-cores and reports the small-core siblings of each CPU X
+via the sysfs file "/sys/devices/system/cpu/cpuX/small_core_siblings".
+
+Patch 2: Defines the SMT level sched domain to correspond to the
+threads of the small cores.
+
+Results:
+~~~~~~~~~~~~~~~~~
+1) 2 thread ebizzy
+~~~~~~~~~~~~~~~~~~~~~~
+Experimental results for ebizzy with 2 threads, bound to a single big-core
+show a marked improvement with this patchset over the 4.19-rc4 vanilla
+kernel.
+
+The result of 100 such runs for 4.19-rc4 kernel and the
+4.19-rc4 + big-core-smt-patches are as follows
+
+4.19.0-rc4 vanilla
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        records/s    :  # samples  : Histogram
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0000000 - 1000000]  :      0      : #
+[1000000 - 2000000]  :      1      : #
+[2000000 - 3000000]  :      2      : #
+[3000000 - 4000000]  :      17     : ####
+[4000000 - 5000000]  :      9      : ##
+[5000000 - 6000000]  :      5      : ##
+[6000000 - 7000000]  :      66     : ##############
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4.19-rc4 + big-core-patches
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        records/s    :  # samples  : Histogram
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0000000 - 1000000]  :      0      : #
+[1000000 - 2000000]  :      0      : #
+[2000000 - 3000000]  :      5      : ##
+[3000000 - 4000000]  :      9      : ##
+[4000000 - 5000000]  :      0      : #
+[5000000 - 6000000]  :      2      : #
+[6000000 - 7000000]  :      84     : #################
+=================================================
+
+2) Hackbench (perf bench sched pipe)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+500 iterations of the hackbench run both on 4.19-rc4 vanilla kernel
+and v4.19-rc4 + big-core-smt-patches. There isn't a significant
+difference between the two.
+
+The values for Min, Max, Median, Avg below are in seconds. Lower the
+better.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			4.19-rc4 vanilla
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    N           Min           Max        Median           Avg        Stddev
+  500         4.603         9.438         6.165      5.921446    0.47448034
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			4.19-rc4 + big-core-patches
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    N           Min           Max        Median           Avg        Stddev
+  500         4.532         6.476         6.224      5.982098    0.43021891
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Gautham R. Shenoy (3):
+  powerpc: Detect the presence of big-cores via "ibm,thread-groups"
+  powerpc: Use cpu_smallcore_sibling_mask at SMT level on bigcores
+  powerpc/sysfs: Add topology/smallcore_thread_siblings[_list]
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |  14 ++
+ arch/powerpc/include/asm/cputhreads.h              |   2 +
+ arch/powerpc/include/asm/smp.h                     |   6 +
+ arch/powerpc/kernel/smp.c                          | 240 ++++++++++++++++++++-
+ arch/powerpc/kernel/sysfs.c                        |  88 ++++++++
+ 5 files changed, 349 insertions(+), 1 deletion(-)
+
 -- 
 1.9.4
 
