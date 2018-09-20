@@ -2,63 +2,63 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0124FECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C741C46470
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59E320880
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59E320880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kobol.io
+	by mail.kernel.org (Postfix) with ESMTP id 0AD6B20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:58:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD6B20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731936AbeITPgT (ORCPT
+        id S1732221AbeITPkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:36:19 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:57379 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727087AbeITPgT (ORCPT
+        Thu, 20 Sep 2018 11:40:42 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:33415 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731145AbeITPkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:36:19 -0400
-X-Originating-IP: 209.85.216.179
-Received: from mail-qt0-f179.google.com (mail-qt0-f179.google.com [209.85.216.179])
-        (Authenticated sender: aditya@kobol.io)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 5405820004;
-        Thu, 20 Sep 2018 09:53:38 +0000 (UTC)
-Received: by mail-qt0-f179.google.com with SMTP id z8-v6so7860722qto.9;
-        Thu, 20 Sep 2018 02:53:38 -0700 (PDT)
-X-Gm-Message-State: APzg51ACUIEg2saR+Q2ckxCP2AVVSgd8QgbDdmANmpDfb638JA1glar7
-        ylaV95jt6GjO2+sn+Rht3A4GP4uJZOexzh2a73U=
-X-Google-Smtp-Source: ANB0VdYyQ3+0/f6F708ng4xPvBMpqFpxkXvO63sM1ISEpcvZ1KR6sEue3E6UTMYdbAEx3dEd02ivKtxy9FZt7F0Sm9g=
-X-Received: by 2002:a0c:d8a4:: with SMTP id q33-v6mr27999474qvj.240.1537437217130;
- Thu, 20 Sep 2018 02:53:37 -0700 (PDT)
+        Thu, 20 Sep 2018 11:40:42 -0400
+X-UUID: 46a1f75c92244a1c97a5caaae670bd5c-20180920
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1387126779; Thu, 20 Sep 2018 17:57:57 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 20 Sep 2018 17:57:49 +0800
+Received: from mtkslt210.mediatek.inc (10.21.14.14) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 20 Sep 2018 17:57:49 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v1 0/3] update Mediatek MT2712 clock 
+Date:   Thu, 20 Sep 2018 17:57:23 +0800
+Message-ID: <20180920095727.11868-1-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 MIME-Version: 1.0
-References: <1537328730-9156-1-git-send-email-aditya@kobol.io>
- <1537328730-9156-2-git-send-email-aditya@kobol.io> <20180919130104.GD26940@lunn.ch>
-In-Reply-To: <20180919130104.GD26940@lunn.ch>
-From:   Aditya Prayoga <aditya@kobol.io>
-Date:   Thu, 20 Sep 2018 16:53:26 +0700
-X-Gmail-Original-Message-ID: <CAFTRUBdcGqroAfiG__e0nwP2GqK3Xh9PVOGQsk9Jj_jkrcU9ag@mail.gmail.com>
-Message-ID: <CAFTRUBdcGqroAfiG__e0nwP2GqK3Xh9PVOGQsk9Jj_jkrcU9ag@mail.gmail.com>
-Subject: Re: [PATCH 1/2] libata: add ledtrig support
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-ide@vger.kernel.org, linux-leds@vger.kernel.org,
-        jason@lakedaemon.net, gregory.clement@bootlin.com,
-        sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk,
-        axboe@kernel.dk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz, Daniel Golle <daniel@makrotopia.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 961B71B8F55DB3E8C879FAD3B1A03223C781ED5A0DA364C48F6349910A35CBDB2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+This series is based on v4.19-rc1.
+Basically, it's for the 3rd ECO design change of MT2712.
+And also add support for switching pll reference source
+for some MT2712 projects.
 
-thank you for your feedback. It seem i also need to resolve the issue
-reported by kbuild test robot.
-
-Aditya
