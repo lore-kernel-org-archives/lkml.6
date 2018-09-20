@@ -2,133 +2,436 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EACC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF47ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C1DE21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D6521525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:42:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CZ41naqv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C1DE21525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="1bHtqjXK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D6521525
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387845AbeIUF1U (ORCPT
+        id S2388605AbeIUF2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:27:20 -0400
-Received: from mail-eopbgr690126.outbound.protection.outlook.com ([40.107.69.126]:35050
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725783AbeIUF1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:27:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BKfhkEP0Bcr6c5P25NADuXUt0At86yiUGMZqXjgfDT4=;
- b=CZ41naqvFCq3yKmQ8d/oNIwFSLngTnJJYtvRsp5DWU4jrEBnlkrKH3PRjAExpwOZBwIrM/UmQsyfq+nwUT7+/Ds2Zc9Jmkd1kEbJpPwBlkF3V+3wN6kmxsR618C+vQVmMXmMbWV2GTNjg6Dhtsl/QV/296i0W6EjJnQTCXyTC3o=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0779.namprd21.prod.outlook.com (10.173.172.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Thu, 20 Sep 2018 23:40:39 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::88e6:fdc:1d8e:71f5]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::88e6:fdc:1d8e:71f5%4]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 23:40:39 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     Oscar Salvador <osalvador@techadventures.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC:     "mhocko@suse.com" <mhocko@suse.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
-        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
-        "malat@debian.org" <malat@debian.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 3/5] mm/memory_hotplug: Tidy up node_states_clear_node
-Thread-Topic: [PATCH 3/5] mm/memory_hotplug: Tidy up node_states_clear_node
-Thread-Index: AQHUUAC/M+i0kRkOSEiF45xse2nJ6KT51qiA
-Date:   Thu, 20 Sep 2018 23:40:39 +0000
-Message-ID: <73bf94f3-d53b-0123-0b1e-86fd00f66694@microsoft.com>
-References: <20180919100819.25518-1-osalvador@techadventures.net>
- <20180919100819.25518-4-osalvador@techadventures.net>
-In-Reply-To: <20180919100819.25518-4-osalvador@techadventures.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.117.57.82]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0779;6:+mgprQuKV+WXe1BEX4MMBMCjYgFrlvQkwZe/j0902p5bCAwrk3Z3dna1/UqEBPaQHpFR4vIFXM4ly67U1UOb6Cr1+0tNL/caR1vKmgeK75/Sw+LHJDx05bsddzBot0XJGNCgrUD0uE86qZmQBRH4QW19wPkcaueTJzLmGuP2TxSzId6Nn9WlhrTN5ufOtT2jhhsblG0/FctIV+pY4yMiBFfu+xk7yJjEwYSVN7S5hlRK0eJkkAo0GTrZc8uLgYYyeFh9m8Jk8957/r+a6V13aznX+j9Frl8E8XUDl/3qNZ6xKPYPqjd7dFd2cw43fzmYAY+jGQ85OPge1qsFYfNA014JGkuUJo1cfYh3ScTHdFOq4KPfKru/Lw97ymNF85CWq+NmR+HdCWnyU5h/ef5+ko2oRcUTRUTwRBrbHYEnCm3IVev2ATOo7OfWlxNHFmnU7l74oXfE9O1xt2SwXHZDfg==;5:R7Dw53gP+sW9GSkxBUW8tA/7KoKEEMnXveCsxzc1LfQDMStMcsvB4ZnTP7tP6xLxsq5P04hrsssngwYtH+DZ372gncauxT+rcVqFl23xvfEtXVkUqOcCOGwNCMR99X/OJwoN+UC3skcT+1yoWq/r66NjohIAWR+YPlaDJaue3q0=;7:q7PHUM4DQ53nkoukoUeAsrSn4w1hGRiHh9pUYbQiFCeK2NldEYERWKcjwB93tIvL1NqaytZ0wWatYL0Lc+XlE0bIiSikCSme839HafzNdFtp+jwHm6Uu5a77NjMSKKXAYZ4ibhZUizf+6IKKYOhOAvumE44yZYgXQ8T/zWsw5ac1c5B9yYIj8OX8hDYiXhRjYXXOnUB8emCxq5WhWnOcHrf+z2xQd7a7Gzn7AcDLBsHPLFMmVGZfG7E3i6L3bz0u
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 619b75fd-26a0-46ba-ccbf-08d61f5278ea
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0779;
-x-ms-traffictypediagnostic: DM5PR21MB0779:
-x-microsoft-antispam-prvs: <DM5PR21MB0779A25752D736E2B0EE4ABE9D130@DM5PR21MB0779.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(219752817060721)(189930954265078)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:DM5PR21MB0779;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0779;
-x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(136003)(396003)(39860400002)(346002)(189003)(199004)(7416002)(6512007)(53936002)(8936002)(99286004)(22452003)(6306002)(316002)(4326008)(6346003)(25786009)(102836004)(2906002)(2900100001)(36756003)(6116002)(5250100002)(3846002)(110136005)(54906003)(5660300001)(71200400001)(68736007)(14454004)(8676002)(6486002)(71190400001)(966005)(575784001)(97736004)(81156014)(31696002)(81166006)(53546011)(6506007)(31686004)(2501003)(86362001)(10090500001)(2616005)(476003)(7736002)(105586002)(10290500003)(486006)(11346002)(446003)(86612001)(106356001)(72206003)(6436002)(305945005)(478600001)(6246003)(186003)(26005)(39060400002)(229853002)(76176011)(66066001)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0779;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-message-info: LJJLBHQ/OcqtONb5x7FNG8Y5kN2dSPI4Q6VyloW7gsgQg11LiuhMObp4bIAdBX9xzVta9B8rAv1ozWYFTPEydvTeRN2RfhngxtBF5DNycHd/qVhVuiaLNif9Z3PRNWfAkvD0va2hfv8jYr6NH7ifNhuOcCj2F4YpNqGUD6SDtf0oB1kudzJ/3uLlwfig3EdM4k4t/rKZbKJy7Pwn6BZ7S5WQ7cfDbunbwNZre9HwE5TaHxa56ucPEDDn6G2E1ScWXdfvzC7vFpr9ksImMHtNMOTlgA6u7Ry82oDSJviMvP/RQfSCftGfo7WRMqmkzONu+Rh+0Z/26ZkwAt7AqoVvXe5/twAGlaxH6rxvkvuWRWI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <185D7EE10A691F46BD40E305BEFC8A01@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 21 Sep 2018 01:28:48 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43524 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeIUF2s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 01:28:48 -0400
+Received: by mail-wr1-f65.google.com with SMTP id k5-v6so11033646wre.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 16:42:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=dpIOOV+Mtr5VfamdhOMnuHxZkJT+62YBqVkdnKLU620=;
+        b=1bHtqjXKfmwbcpf3x4YIyOn2GRcGPVYPLqGegFjFeydt+coECwYmu0n07S6TIG4GdI
+         I5i5uRIG1B9ysNkaY4/DfLn4Z6KEP34O6nKnlgcQ2hvokm01tPi0nDsPaqCC0b73AkDA
+         qoB+ZCxxyUf+y6RfGDJ0lAMs+ls7am531w7MtnpGT07zkU9bfIh+7yCVExVGg5VPlVp2
+         xMG8AItzhCAoI0RGXgraDhbB8v5n00G5uNHB48L75tgTQxLRlYgdV847H3xmD+6W9Cq7
+         iP/UK++QqN1l8EJGHphTavVmuiKWqOqNV2ZOQa2+JrDBt7K/UfuyV2aSsR06dOsQB1M+
+         YCZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=dpIOOV+Mtr5VfamdhOMnuHxZkJT+62YBqVkdnKLU620=;
+        b=IeiPTHavHh3+BXJ0eDSlI5Ze8MryvlB2jsUptLU+OjU8FtsHKbUWB0G8kOOzIeo4j6
+         S6bBNSF8lSYjBqBwm7b6wh3/FNHBo9mq3hXU6lJoVSyTQuTZKS+IXA3pcLy2OrimLmdz
+         o7fXg5Xc19xruHpNi36TnKjQOdeEqxLW71lmQkdNXw8Zfp9f1GRICvP5qq748KdX9M9t
+         2FWjSddfIZVG12LU+QRxXuTSzcObPt69XBgriiecUzGKRO5k+p7X/WBJ+hDN1NDIca8C
+         KQgsuV0zpzHevcsETunkpBqKW70xPTHO69H+t1NkezCTuF9tYNxM8bWjI33KGF5YpZmG
+         jvMA==
+X-Gm-Message-State: APzg51Do+Aezt73/biozfNWPy6zXaYzyFxQw7DEZ4hQeQirLclTaI9PU
+        WmZxxcb6I9CqueMPx0J4UyQibA==
+X-Google-Smtp-Source: ANB0VdZqf0AkDiO4CL6HxMlbCLzQyue+Y9JBqF/KZdf+xK4eaSQDtVm4w780yRj++MMF5sBMLIGXfA==
+X-Received: by 2002:a5d:610b:: with SMTP id v11-v6mr10799781wrt.265.1537486966458;
+        Thu, 20 Sep 2018 16:42:46 -0700 (PDT)
+Received: from cisco ([173.38.220.55])
+        by smtp.gmail.com with ESMTPSA id c15-v6sm2131759wmb.2.2018.09.20.16.42.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 16:42:45 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 17:42:40 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v6 4/5] seccomp: add support for passing fds via
+ USER_NOTIF
+Message-ID: <20180920234240.GR4672@cisco>
+References: <20180906152859.7810-1-tycho@tycho.ws>
+ <20180906152859.7810-5-tycho@tycho.ws>
+ <CALCETrWZmN4FeCSwemfMeayupBmQ-NqpVWQuqSU34CLvzdx8gw@mail.gmail.com>
+ <20180919095536.GM4672@cisco>
+ <C1406292-7496-459F-A76A-20C9EFBB12D6@amacapital.net>
+ <20180919143842.GN4672@cisco>
+ <CALCETrVuP0nQ5B01-iWrcQ87hisz7=jA08-Uisqud_r+zc74NQ@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 619b75fd-26a0-46ba-ccbf-08d61f5278ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 23:40:39.4755
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0779
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrVuP0nQ5B01-iWrcQ87hisz7=jA08-Uisqud_r+zc74NQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDkvMTkvMTggNjowOCBBTSwgT3NjYXIgU2FsdmFkb3Igd3JvdGU6DQo+IEZyb206IE9z
-Y2FyIFNhbHZhZG9yIDxvc2FsdmFkb3JAc3VzZS5kZT4NCj4gDQo+IG5vZGVfc3RhdGVzX2NsZWFy
-IGhhcyB0aGUgZm9sbG93aW5nIGlmIHN0YXRlbWVudHM6DQo+IA0KPiBpZiAoKE5fTUVNT1JZICE9
-IE5fTk9STUFMX01FTU9SWSkgJiYNCj4gICAgIChhcmctPnN0YXR1c19jaGFuZ2VfbmlkX2hpZ2gg
-Pj0gMCkpDQo+ICAgICAgICAgLi4uDQo+IA0KPiBpZiAoKE5fTUVNT1JZICE9IE5fSElHSF9NRU1P
-UlkpICYmDQo+ICAgICAoYXJnLT5zdGF0dXNfY2hhbmdlX25pZCA+PSAwKSkNCj4gICAgICAgICAu
-Li4NCj4gDQo+IE5fTUVNT1JZIGNhbiBuZXZlciBiZSBlcXVhbCB0byBuZWl0aGVyIE5fTk9STUFM
-X01FTU9SWSBub3INCj4gTl9ISUdIX01FTU9SWS4NCj4gDQo+IFNpbWlsYXIgcHJvYmxlbSB3YXMg
-Zm91bmQgaW4gWzFdLg0KPiBTaW5jZSB0aGlzIGlzIHdyb25nLCBsZXQgdXMgZ2V0IHJpZCBvZiBp
-dC4NCj4gDQo+IFsxXSBodHRwczovL25hMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5j
-b20vP3VybD1odHRwcyUzQSUyRiUyRnBhdGNod29yay5rZXJuZWwub3JnJTJGcGF0Y2glMkYxMDU3
-OTE1NSUyRiZhbXA7ZGF0YT0wMiU3QzAxJTdDUGF2ZWwuVGF0YXNoaW4lNDBtaWNyb3NvZnQuY29t
-JTdDMWUzMWU2YTVjODc1NGFiZTBiNDYwOGQ2MWUxN2UwMWMlN0M3MmY5ODhiZjg2ZjE0MWFmOTFh
-YjJkN2NkMDExZGI0NyU3QzElN0MwJTdDNjM2NzI5NDg1MjQxMzY3NTg0JmFtcDtzZGF0YT16dGtQ
-TnlSSXYyYzBqNWxydWp3R00lMkZyRDVpbjZHN0F2dmRxeFZYQ3p3R3MlM0QmYW1wO3Jlc2VydmVk
-PTANCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9zY2FyIFNhbHZhZG9yIDxvc2FsdmFkb3JAc3VzZS5k
-ZT4NCg0KUmV2aWV3ZWQtYnk6IFBhdmVsIFRhdGFzaGluIDxwYXZlbC50YXRhc2hpbkBtaWNyb3Nv
-ZnQuY29tPg0KDQo+IC0tLQ0KPiAgbW0vbWVtb3J5X2hvdHBsdWcuYyB8IDYgKystLS0tDQo+ICAx
-IGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL21tL21lbW9yeV9ob3RwbHVnLmMgYi9tbS9tZW1vcnlfaG90cGx1Zy5jDQo+IGlu
-ZGV4IGMyYzczNTliZDBhNy4uMTMxYzA4MTA2ZDU0IDEwMDY0NA0KPiAtLS0gYS9tbS9tZW1vcnlf
-aG90cGx1Zy5jDQo+ICsrKyBiL21tL21lbW9yeV9ob3RwbHVnLmMNCj4gQEAgLTE1OTAsMTIgKzE1
-OTAsMTAgQEAgc3RhdGljIHZvaWQgbm9kZV9zdGF0ZXNfY2xlYXJfbm9kZShpbnQgbm9kZSwgc3Ry
-dWN0IG1lbW9yeV9ub3RpZnkgKmFyZykNCj4gIAlpZiAoYXJnLT5zdGF0dXNfY2hhbmdlX25pZF9u
-b3JtYWwgPj0gMCkNCj4gIAkJbm9kZV9jbGVhcl9zdGF0ZShub2RlLCBOX05PUk1BTF9NRU1PUlkp
-Ow0KPiAgDQo+IC0JaWYgKChOX01FTU9SWSAhPSBOX05PUk1BTF9NRU1PUlkpICYmDQo+IC0JICAg
-IChhcmctPnN0YXR1c19jaGFuZ2VfbmlkX2hpZ2ggPj0gMCkpDQo+ICsJaWYgKGFyZy0+c3RhdHVz
-X2NoYW5nZV9uaWRfaGlnaCA+PSAwKQ0KPiAgCQlub2RlX2NsZWFyX3N0YXRlKG5vZGUsIE5fSElH
-SF9NRU1PUlkpOw0KPiAgDQo+IC0JaWYgKChOX01FTU9SWSAhPSBOX0hJR0hfTUVNT1JZKSAmJg0K
-PiAtCSAgICAoYXJnLT5zdGF0dXNfY2hhbmdlX25pZCA+PSAwKSkNCj4gKwlpZiAoYXJnLT5zdGF0
-dXNfY2hhbmdlX25pZCA+PSAwKQ0KPiAgCQlub2RlX2NsZWFyX3N0YXRlKG5vZGUsIE5fTUVNT1JZ
-KTsNCj4gIH0NCj4gIA0KPiA=
+On Wed, Sep 19, 2018 at 12:58:20PM -0700, Andy Lutomirski wrote:
+> On Wed, Sep 19, 2018 at 7:38 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > On Wed, Sep 19, 2018 at 07:19:56AM -0700, Andy Lutomirski wrote:
+> >>
+> >>
+> >> > On Sep 19, 2018, at 2:55 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> >> >
+> >> >> On Wed, Sep 12, 2018 at 04:52:38PM -0700, Andy Lutomirski wrote:
+> >> >>> On Thu, Sep 6, 2018 at 8:28 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> >> >>> The idea here is that the userspace handler should be able to pass an fd
+> >> >>> back to the trapped task, for example so it can be returned from socket().
+> >> >>>
+> >> >>> I've proposed one API here, but I'm open to other options. In particular,
+> >> >>> this only lets you return an fd from a syscall, which may not be enough in
+> >> >>> all cases. For example, if an fd is written to an output parameter instead
+> >> >>> of returned, the current API can't handle this. Another case is that
+> >> >>> netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
+> >> >>> ever decides to install an fd and output it, we wouldn't be able to handle
+> >> >>> this either.
+> >> >>
+> >> >> An alternative could be to have an API (an ioctl on the listener,
+> >> >> perhaps) that just copies an fd into the tracee.  There would be the
+> >> >> obvious set of options: do we replace an existing fd or allocate a new
+> >> >> one, and is it CLOEXEC.  Then the tracer could add an fd and then
+> >> >> return it just like it's a regular number.
+> >> >>
+> >> >> I feel like this would be more flexible and conceptually simpler, but
+> >> >> maybe a little slower for the common cases.  What do you think?
+> >> >
+> >> > I'm just implementing this now, and there's one question: when do we
+> >> > actually do the fd install? Should we do it when the user calls
+> >> > SECCOMP_NOTIF_PUT_FD, or when the actual response is sent? It feels
+> >> > like we should do it when the response is sent, instead of doing it
+> >> > right when SECCOMP_NOTIF_PUT_FD is called, since if there's a
+> >> > subsequent signal and the tracer decides to discard the response,
+> >> > we'll have to implement some delete mechanism to delete the fd, but it
+> >> > would have already been visible to the process, etc. So I'll go
+> >> > forward with this unless there are strong objections, but I thought
+> >> > I'd point it out just to avoid another round trip.
+> >> >
+> >> >
+> >>
+> >> Can you do that non-racily?  That is, you need to commit to an fd *number* right away, but what if another thread uses the number before you actually install the fd?
+> >
+> > I was thinking we could just do an __alloc_fd() and then do the
+> > fd_install() when the response is sent or clean up the case that the
+> > listener or task dies. I haven't actually tried to run the code yet,
+> > so it's possible the locking won't work :)
+> 
+> I would be very surprised if the locking works.  How can you run a
+> thread in a process when another thread has allocated but not
+> installed an fd and is blocked for an arbitrarily long time?
+
+I think the trick is that there's no actual locking required (except
+for a brief locking of task->files). I've run the patch below and it
+seems to work. But perhaps that's abusing __alloc_fd a little too
+hard, I don't really know.
+
+> >
+> >> Do we really allow non-“kill” signals to interrupt the whole process?  It might be the case that we don’t really need to clean up from signals if there’s a guarantee that the thread dies.
+> >
+> > Yes, we do, because of this: https://lkml.org/lkml/2018/3/15/1122
+> >
+> 
+> I'm still not sure I see the problem.  Suppose I'm implementing a user
+> notifier for a nasty syscall like recvmsg().  If I'm the tracer, by
+> the time I decide to install an fd, I've committed to returning
+> something other than -EINTR, even if a non-fatal signal is sent before
+> I finish.  No rollback should be necessary.
+
+I don't understand why this is true. Surely you could stop a handler
+on receipt of a new signal, and have it do something else entirely?
+
+> In the (unlikely?) event that some tracer needs to be able to rollback
+> an fd installation to return -EINTR, a SECCOMP_NOTIF_CLOSE_FD
+> operation should be good enough, I think.  Or maybe PUT_FD can put -1
+> to delete an fd.
+
+Yes, I think even with something like what I did below we'd need some
+sort of REMOVE_FD option, because otherwise there's no way to change
+your mind and send -EINTR without the fd you just PUT_FD'd.
+
+Tycho
+
+
+From bfca7337cb53791aca74b595eb45e9afa3babac2 Mon Sep 17 00:00:00 2001
+From: Tycho Andersen <tycho@tycho.ws>
+Date: Thu, 20 Sep 2018 06:49:49 -0600
+Subject: [PATCH] implement SECCOMP_NOTIF_PUT_FD ioctl
+
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ include/uapi/linux/seccomp.h                  |  8 ++
+ kernel/seccomp.c                              | 74 ++++++++++++-------
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 24 +++++-
+ 3 files changed, 77 insertions(+), 29 deletions(-)
+
+diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+index 8fb2c024c0a1..62e474c372d4 100644
+--- a/include/uapi/linux/seccomp.h
++++ b/include/uapi/linux/seccomp.h
+@@ -80,6 +80,12 @@ struct seccomp_notif_resp {
+ 	__u32 fd_flags;
+ };
+ 
++struct seccomp_notif_put_fd {
++	__u64 id;
++	__s32 fd;
++	__u32 fd_flags;
++};
++
+ #define SECCOMP_IOC_MAGIC		0xF7
+ 
+ /* Flags for seccomp notification fd ioctl. */
+@@ -89,5 +95,7 @@ struct seccomp_notif_resp {
+ 					struct seccomp_notif_resp)
+ #define SECCOMP_NOTIF_ID_VALID	_IOR(SECCOMP_IOC_MAGIC, 2,	\
+ 					__u64)
++#define SECCOMP_NOTIF_PUT_FD	_IOR(SECCOMP_IOC_MAGIC, 3,	\
++					struct seccomp_notif_put_fd)
+ 
+ #endif /* _UAPI_LINUX_SECCOMP_H */
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 21b24cc07237..6bdf413863ca 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -41,6 +41,7 @@
+ #include <linux/tracehook.h>
+ #include <linux/uaccess.h>
+ #include <linux/anon_inodes.h>
++#include <linux/fdtable.h>
+ #include <net/cls_cgroup.h>
+ 
+ enum notify_state {
+@@ -51,6 +52,7 @@ enum notify_state {
+ 
+ struct seccomp_knotif {
+ 	/* The struct pid of the task whose filter triggered the notification */
++	struct task_struct *task;
+ 	struct pid *pid;
+ 
+ 	/* The "cookie" for this request; this is unique for this filter. */
+@@ -80,7 +82,7 @@ struct seccomp_knotif {
+ 	int error;
+ 	long val;
+ 	struct file *file;
+-	unsigned int flags;
++	int fd;
+ 
+ 	/* Signals when this has entered SECCOMP_NOTIFY_REPLIED */
+ 	struct completion ready;
+@@ -748,9 +750,11 @@ static void seccomp_do_user_notification(int this_syscall,
+ 	if (!match->notif)
+ 		goto out;
+ 
++	n.task = current;
+ 	n.pid = task_pid(current);
+ 	n.state = SECCOMP_NOTIFY_INIT;
+ 	n.data = sd;
++	n.fd = -1;
+ 	n.id = seccomp_next_notify_id(match);
+ 	init_completion(&n.ready);
+ 
+@@ -786,16 +790,8 @@ static void seccomp_do_user_notification(int this_syscall,
+ 	}
+ 
+ 	if (n.file) {
+-		int fd;
+ 		struct socket *sock;
+ 
+-		fd = get_unused_fd_flags(n.flags);
+-		if (fd < 0) {
+-			err = fd;
+-			ret = -1;
+-			goto remove_list;
+-		}
+-
+ 		/*
+ 		 * Similar to what SCM_RIGHTS does, let's re-set the cgroup
+ 		 * data to point ot the tracee's cgroups instead of the
+@@ -807,21 +803,20 @@ static void seccomp_do_user_notification(int this_syscall,
+ 			sock_update_classid(&sock->sk->sk_cgrp_data);
+ 		}
+ 
+-		ret = fd;
+-		err = 0;
+-
+-		fd_install(fd, n.file);
++		fd_install(n.fd, n.file);
+ 		/* Don't fput, since fd has a reference now */
+ 		n.file = NULL;
+-	} else {
+-		ret = n.val;
+-		err = n.error;
++		n.fd = -1;
+ 	}
+ 
++	ret = n.val;
++	err = n.error;
+ 
+ remove_list:
+ 	if (n.file)
+ 		fput(n.file);
++	if (n.fd >= 0)
++		put_unused_fd(n.fd);
+ 
+ 	list_del(&n.list);
+ out:
+@@ -1683,15 +1678,6 @@ static long seccomp_notify_send(struct seccomp_filter *filter,
+ 		goto out;
+ 	}
+ 
+-	if (resp.return_fd) {
+-		knotif->flags = resp.fd_flags;
+-		knotif->file = fget(resp.fd);
+-		if (!knotif->file) {
+-			ret = -EBADF;
+-			goto out;
+-		}
+-	}
+-
+ 	ret = size;
+ 	knotif->state = SECCOMP_NOTIFY_REPLIED;
+ 	knotif->error = resp.error;
+@@ -1731,6 +1717,42 @@ static long seccomp_notify_id_valid(struct seccomp_filter *filter,
+ 	return ret;
+ }
+ 
++static long seccomp_notify_put_fd(struct seccomp_filter *filter,
++				  unsigned long arg)
++{
++	struct seccomp_notif_put_fd req;
++	void __user *buf = (void __user *)arg;
++	struct seccomp_knotif *knotif = NULL;
++	long ret;
++
++	if (copy_from_user(&req, buf, sizeof(req)))
++		return -EFAULT;
++
++	ret = mutex_lock_interruptible(&filter->notify_lock);
++	if (ret < 0)
++		return ret;
++
++	ret = -ENOENT;
++	list_for_each_entry(knotif, &filter->notif->notifications, list) {
++		unsigned long max_files;
++
++		if (knotif->id != req.id)
++			continue;
++
++		max_files = task_rlimit(knotif->task, RLIMIT_NOFILE);
++
++		knotif->file = fget(req.fd);
++		knotif->fd = __alloc_fd(knotif->task->files, 0, max_files,
++					req.fd_flags);
++
++		ret = knotif->fd;
++		break;
++	}
++
++	mutex_unlock(&filter->notify_lock);
++	return ret;
++}
++
+ static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
+ 				 unsigned long arg)
+ {
+@@ -1743,6 +1765,8 @@ static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
+ 		return seccomp_notify_send(filter, arg);
+ 	case SECCOMP_NOTIF_ID_VALID:
+ 		return seccomp_notify_id_valid(filter, arg);
++	case SECCOMP_NOTIF_PUT_FD:
++		return seccomp_notify_put_fd(filter, arg);
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 3dec856717a7..ae8daf992231 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -169,6 +169,9 @@ struct seccomp_metadata {
+ 					struct seccomp_notif_resp)
+ #define SECCOMP_NOTIF_ID_VALID	_IOR(SECCOMP_IOC_MAGIC, 2,	\
+ 					__u64)
++#define SECCOMP_NOTIF_PUT_FD	_IOR(SECCOMP_IOC_MAGIC, 3,	\
++					struct seccomp_notif_put_fd)
++
+ struct seccomp_notif {
+ 	__u16 len;
+ 	__u64 id;
+@@ -186,6 +189,12 @@ struct seccomp_notif_resp {
+ 	__u32 fd;
+ 	__u32 fd_flags;
+ };
++
++struct seccomp_notif_put_fd {
++	__u64 id;
++	__s32 fd;
++	__u32 fd_flags;
++};
+ #endif
+ 
+ #ifndef seccomp
+@@ -3239,11 +3248,12 @@ TEST(get_user_notification_ptrace)
+ TEST(user_notification_pass_fd)
+ {
+ 	pid_t pid;
+-	int status, listener;
++	int status, listener, fd;
+ 	int sk_pair[2];
+ 	char c;
+ 	struct seccomp_notif req = {};
+ 	struct seccomp_notif_resp resp = {};
++	struct seccomp_notif_put_fd putfd = {};
+ 	long ret;
+ 
+ 	ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
+@@ -3295,9 +3305,15 @@ TEST(user_notification_pass_fd)
+ 
+ 	resp.len = sizeof(resp);
+ 	resp.id = req.id;
+-	resp.return_fd = 1;
+-	resp.fd = sk_pair[1];
+-	resp.fd_flags = 0;
++
++	putfd.id = req.id;
++	putfd.fd = sk_pair[1];
++	putfd.fd_flags = 0;
++
++	fd = ioctl(listener, SECCOMP_NOTIF_PUT_FD, &putfd);
++	EXPECT_GE(fd, 0);
++	resp.val = fd;
++
+ 	EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
+ 	close(sk_pair[1]);
+ 
+-- 
+2.17.1
+
