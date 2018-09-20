@@ -2,169 +2,143 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1D5ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7956DC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270CB21528
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270CB21528
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id 3CFAD20671
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CFAD20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732186AbeITOd0 (ORCPT
+        id S1732114AbeITOd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 20 Sep 2018 10:33:26 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:36206 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731946AbeITOdZ (ORCPT
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:47261 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeITOdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Sep 2018 10:33:25 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1g2ufg-00023X-JI; Thu, 20 Sep 2018 10:50:48 +0200
-Date:   Thu, 20 Sep 2018 10:50:48 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Christian =?iso-8859-15?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        davem@davemloft.net, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com,
-        sds@tycho.nsa.gov, eparis@parisplace.org, jmorris@namei.org,
-        serge@hallyn.com, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] netfilter: nf_tables: add SECMARK support
-Message-ID: <20180920085048.tps2v4jkko7zjav4@breakpoint.cc>
-References: <20180919231402.4482-1-cgzones@googlemail.com>
- <75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
+Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 20 Sep 2018
+ 16:51:23 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>
+CC:     Liang Yang <liang.yang@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 1/2] dt-bindings: nand: meson: add Amlogic NAND controller driver
+Date:   Thu, 20 Sep 2018 16:50:48 +0800
+Message-ID: <1537433449-65213-2-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1537433449-65213-1-git-send-email-jianxin.pan@amlogic.com>
+References: <1537433449-65213-1-git-send-email-jianxin.pan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 9/19/2018 4:14 PM, Christian Göttsche wrote:
-> > Add the ability to set the security context of packets within the nf_tables framework.
-> > Add a nft_object for holding security contexts in the kernel and manipulating packets on the wire.
-> > The contexts are kept as strings and are evaluated to security identifiers at runtime (packet arrival),
-> > so that the nft_objects do not need to be refreshed after security changes.
-> > The maximum security context length is set to 256.
-> >
-> > Based on v4.18.6
-> >
-> > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> 
-> I've only had a cursory look at your patch, but how is it
-> different from what's in xt_SECMARK.c ?
+From: Liang Yang <liang.yang@amlogic.com>
 
-this change is supposed to make secmark labeling accessible from
-nftables.
+Add Amlogic NAND controller dt-bindings for Meson SoC,
+Current this driver support GXBB/GXL/AXG platform.
 
-The advantage is that its now possible to use
-maps to assign secmarks from a single rule instead of using
-several rules:
+Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ .../devicetree/bindings/mtd/amlogic,meson-nand.txt | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
 
-nft add rule meta secmark set tcp dport map { 22 : tag-ssh, 80 :
-	tag-http }
+diff --git a/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+new file mode 100644
+index 0000000..803df2a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+@@ -0,0 +1,60 @@
++Amlogic NAND Flash Controller (NFC) for GXBB/GXL/AXG family SoCs
++
++This file documents the properties in addition to those available in
++the MTD NAND bindings.
++
++Required properties:
++- compatible : contains one of:
++  - "amlogic,meson-gxl-nfc"
++  - "amlogic,meson-axg-nfc"
++- clocks     :
++	A list of phandle + clock-specifier pairs for the clocks listed
++	in clock-names.
++
++- clock-names: Should contain the following:
++	"core" - NFC module gate clock
++	"device" - device clock from eMMC sub clock controller
++
++- amlogic,mmc-syscon	: Required for NAND clocks, it's shared with SD/eMMC
++				controller port C
++
++Optional children nodes:
++Children nodes represent the available nand chips.
++
++Other properties:
++see Documentation/devicetree/bindings/mtd/nand.txt for generic bindings.
++
++Example demonstrate on AXG SoC:
++
++	sd_emmc_c_clkc: mmc@7000 {
++		compatible = "amlogic,meson-axg-mmc-clkc", "syscon";
++		reg = <0x0 0x7000 0x0 0x800>;
++		status = "okay";
++	};
++
++	nand: nfc@7800 {
++		compatible = "amlogic,meson-axg-nfc";
++		reg = <0x0 0x7800 0x0 0x100>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
++		status = "disabled";
++
++		clocks = <&clkc CLKID_SD_EMMC_C>,
++			<&sd_emmc_c_clkc CLKID_MMC_DIV>;
++		clock-names = "core", "device";
++		amlogic,mmc-syscon = <&sd_emmc_c_clkc>;
++
++		status = "okay";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&nand_pins>;
++
++		nand@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			nand-on-flash-bbt;
++		};
++	};
+-- 
+1.9.1
 
-and so on.
-
-> > +	for (i = 0; i < ARRAY_SIZE(nft_basic_objects); i++) {
-> > +		err = nft_register_obj(nft_basic_objects[i]);
-> > +		if (err)
-> > +			goto err;
-> > +	}
-> >  
-> > -	for (i = 0; i < ARRAY_SIZE(nft_basic_types); i++) {
-> > -		err = nft_register_expr(nft_basic_types[i]);
-> > +	for (j = 0; j < ARRAY_SIZE(nft_basic_types); j++) {
-> > +		err = nft_register_expr(nft_basic_types[j]);
-> >  		if (err)
-> >  			goto err;
-> >  	}
-> > @@ -248,8 +260,12 @@ int __init nf_tables_core_module_init(void)
-> >  	return 0;
-> >  
-> >  err:
-> > +	while (j-- > 0)
-> > +		nft_unregister_expr(nft_basic_types[j]);
-> > +
-> >  	while (i-- > 0)
-> > -		nft_unregister_expr(nft_basic_types[i]);
-> > +		nft_unregister_obj(nft_basic_objects[i]);
-> > +
-> >  	return err;
-
-Do I read this right in that this is a error unroll bug fix?
-If so, could you please submit this as indepentent patch?
-
-Fixes should go into nf.git whereas feature goes to nf-next.git.
-
-> > +struct nft_secmark {
-> > +	char ctx[NFT_SECMARK_CTX_MAXLEN];
-> > +	int len;
-> > +};
-> > +
-> > +static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
-> > +	[NFTA_SECMARK_CTX]     = { .type = NLA_STRING, .len = NFT_SECMARK_CTX_MAXLEN },
-> > +};
-> > +
-> > +static void nft_secmark_obj_eval(struct nft_object *obj, struct nft_regs *regs, const struct nft_pktinfo *pkt)
-> > +{
-> > +	const struct nft_secmark *priv = nft_obj_data(obj);
-> > +	struct sk_buff *skb = pkt->skb;
-> > +	int err;
-> > +	u32 secid = 0;
-> > +
-> > +	/* skip if packet has already a secmark */
-> > +	if (skb->secmark)
-> > +		return;
-
-xt_SECMARK doesn't do this and will allow relabeling.
-What do the LSM experts think?
-
-> > +	err = security_secctx_to_secid(priv->ctx, priv->len, &secid);
-
-Could someone familiar with how LSMs work clarify if this has to be
-called per-packet?
-
-xt_SECMARK.c does this ctx -> secid mapping once, when the iptables rule
-gets added, whereas this patch does it once for each packet.
-
-Is the ctx -> secid mapping stable?
-
-If yes, the code above should be moved to the ->init() hook, otherwise
-we'll need to fix xt_SECMARK.c.
-
-> > +	if (err) {
-> > +		if (err == -EINVAL)
-> > +			pr_notice_ratelimited("invalid security context \'%s\'\n", priv->ctx);
-> > +		else
-> > +			pr_notice_ratelimited("unable to convert security context \'%s\': %d\n", priv->ctx, -err);
-> > +		return;
-> > +	}
-
-Please remove these printks(), they do not really help as user can't
-take any action anyway.
-
-> > +	err = security_secmark_relabel_packet(secid);
-
-Hmm, this function uses current() to check permissions of calling
-task, so this function canot be used in ->eval() path.
-
-Network stack causes random results of "current()", as network
-processing can "steal" cpu from some arbitrary task when
-softinterrupt kicks in.
-
-->init() is fine, as its in process context and current will be the task
-installing the nftables rule.
