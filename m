@@ -2,124 +2,119 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7B7C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B92A8ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3740420877
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691F220877
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:23:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NS8BDwoC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3740420877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="usbS7rAY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691F220877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388447AbeIUCIF (ORCPT
+        id S2388229AbeIUCIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:08:05 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:36090 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387971AbeIUCIE (ORCPT
+        Thu, 20 Sep 2018 22:08:45 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36308 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeIUCIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:08:04 -0400
-Received: by mail-vs1-f65.google.com with SMTP id z19-v6so3614238vso.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k0UHkrMeqzjGAB7Qhv9NjOQHsZUZ6DsGCn2pk/SeNP4=;
-        b=NS8BDwoCYEzhIo+uBJXh9pFMzPwBhK+lyn3Iu1SjJAiUjh/CjhLejmCtPjyJJGm72p
-         jgLwb8nesVl8cobGALXIyc9VjuKeFx3Gdzx4++mNOfZH+VXCEyhm5dgV2H0Pk8sedS+W
-         XiVBc7IfomU4yJbnpUkuj+2tKOnV88SPN7ILE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k0UHkrMeqzjGAB7Qhv9NjOQHsZUZ6DsGCn2pk/SeNP4=;
-        b=QLxbLTFv76nGaVXfHXv+VrYYNtPdnbIliqxQqDE8qoUjmckRGY5tfZgpj/VRXdYJGu
-         Y71CuGubrWaznJsXJTvCKWuYzFWFz33fEXcJZi1tmHBHGYHRPhfIX14BLcoRkWFCQNna
-         Bt4PLLcd1TC1TZJGVav+XmrAdZQ0MYPlefe23gSQpjMlEoROsGChwRK+4HEOqXqq+eRH
-         Ayqeqex1XgSlLu5oLFBZfV1CruQNvRF8Uc+zFC8X5TUvhNlpK/Xbd+EmswiRnOWDD7Ai
-         DK3gDnQy/bbojbdeJ29jhNBQLbiQP1MzobElK7IumeeQ+fs3xntpGTHMP8XIID5hbkG2
-         qEuA==
-X-Gm-Message-State: APzg51DfehvomLMQpznf50yekeg3X4ZiJGlwm62UbLNDbP8y8SmuOL6y
-        Rqwvxio3vl8AXFVBBaPvcluqU35U5jI=
-X-Google-Smtp-Source: ANB0VdbyIMOHt6z4NC2u1sZCLlk4yLdjzds+W+QvODQJ35Y91UVGs7rsEfpTW26yoAxH19plBtV4EA==
-X-Received: by 2002:a67:4690:: with SMTP id a16-v6mr12743322vsg.35.1537474970821;
-        Thu, 20 Sep 2018 13:22:50 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id a20-v6sm2219470vsi.3.2018.09.20.13.22.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 13:22:50 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id w7-v6so5049784uan.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:22:49 -0700 (PDT)
-X-Received: by 2002:a9f:35ec:: with SMTP id u41-v6mr13697372uad.86.1537474969478;
- Thu, 20 Sep 2018 13:22:49 -0700 (PDT)
+        Thu, 20 Sep 2018 22:08:44 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 052AF1C86;
+        Thu, 20 Sep 2018 22:23:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1537475010;
+        bh=0xwDsFarEVhG7mFsvaNxI1p1QTZHrZ1+SYSh8xu5CjU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=usbS7rAYKTRmcbi4EdIq0dZlipH7ZA0c97e0sUYqnxiaJQLnJ6kRpmbQGl9RRU8sB
+         S90ZoxTYuxAxZqsMo49XA3TfcCmPW3BqDegjmV1qo/KTeSl662qHUrL88t1+ZzDaXi
+         YJ7apVgxNz0nC7+oGjUMJQ9pHAkgYSTHq2SnYbWw=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] [media] ad5820: DT new optional field enable-gpios
+Date:   Thu, 20 Sep 2018 23:23:43 +0300
+Message-ID: <2983018.WjSXnZMEY4@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1939782.bRt5jKDIiS@avalon>
+References: <20180920161912.17063-1-ricardo.ribalda@gmail.com> <20180920161912.17063-3-ricardo.ribalda@gmail.com> <1939782.bRt5jKDIiS@avalon>
 MIME-Version: 1.0
-References: <20180920180323.217377-1-swboyd@chromium.org> <20180920180323.217377-3-swboyd@chromium.org>
-In-Reply-To: <20180920180323.217377-3-swboyd@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 20 Sep 2018 13:22:37 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U=r0nkT+JO2j4WUHF03ZiJcmaVrzL6dsauDHV=a2m3tQ@mail.gmail.com>
-Message-ID: <CAD=FV=U=r0nkT+JO2j4WUHF03ZiJcmaVrzL6dsauDHV=a2m3tQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] i2c: i2c-qcom-geni: Simplify tx/rx functions
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        LKML <linux-kernel@vger.kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Thu, Sep 20, 2018 at 11:03 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> We never really look at the 'ret' local variable in these functions, so
-> let's remove it to make way for shorter and simpler code. Furthermore,
-> we can shorten some lines by adding two local variables for the SE and
-> the message length so that everything fits in 80 columns. And kernel
-> style is to leave the return statement by itself, detached from the rest
-> of the function.
->
-> Cc: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-> Cc: Sagar Dharia <sdharia@codeaurora.org>
-> Cc: Girish Mahadevan <girishm@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/i2c/busses/i2c-qcom-geni.c | 54 ++++++++++++++----------------
->  1 file changed, 25 insertions(+), 29 deletions(-)
+On Thursday, 20 September 2018 23:21:28 EEST Laurent Pinchart wrote:
+> Hi Ricardo,
+> 
+> Thank you for the patch.
+> 
+> On Thursday, 20 September 2018 19:19:11 EEST Ricardo Ribalda Delgado wrote:
+> > Document new enable-gpio field. It can be used to disable the part
+> > without turning down its regulator.
+> > 
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> > ---
+> > 
+> >  Documentation/devicetree/bindings/media/i2c/ad5820.txt | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> > b/Documentation/devicetree/bindings/media/i2c/ad5820.txt index
+> > 5940ca11c021..07d577bb37f7 100644
+> > --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> > +++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> > 
+> > @@ -8,6 +8,11 @@ Required Properties:
+> >    - VANA-supply: supply of voltage for VANA pin
+> > 
+> > +Optional properties:
+> > +
+> > +   - enable-gpios : GPIO spec for the XSHUTDOWN pin.
+> 
+> xshutdown is active-low, so enable is active-high. Should this be documented
+> explicitly, to avoid polarity errors ? Maybe something along the lines of
+> 
+> - enable-gpios: GPIO spec for the XSHUTDOWN pin. Note that the polarity of
+> the enable GPIO is the opposite of the XSHUTDOWN pin (asserting the enable
+> GPIO deasserts the XSHUTDOWN signal and vice versa).
 
-I didn't hate the old code, but you're right that this looks a little better.
+Or alternatively you could name the property xshutdown-gpios, as explained in 
+my (incorrect) review of 2/4.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> > If specified, it will be
+> > +     asserted when VANA-supply is enabled.
+> 
+> That documents a driver behaviour, is it needed in DT ?
+> 
+> >  Example:
+> >         ad5820: coil@c {
+> > 
+> > @@ -15,5 +20,6 @@ Example:
+> >                 reg = <0x0c>;
+> >                 VANA-supply = <&vaux4>;
+> > 
+> > +               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+> >         };
 
-NOTE: now that you're cleaning it up, I'd personally go even further
-and totally get rid of the "mode" local variable.  Basically, just:
 
-dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-if (dma_buf)
-  geni_se_select_mode(se, GENI_SE_DMA);
-else
-  geni_se_select_mode(se, GENI_SE_FIFO);
+-- 
+Regards,
 
-...elsewhere just continue to use "dma_buf" being NULL to mean FIFO if
-you have to fall back to the FIFO case you set dma_buf to NULL after
-calling i2c_put_dma_safe_msg_buf() to indicate to later code that
-you're in FIFO mode.
+Laurent Pinchart
 
-I prototyped this up and the net-net is one fewer line of code and
-also the nice consistency that you never hold dma_buf in a pointer
-after you've freed it.
 
--Doug
+
