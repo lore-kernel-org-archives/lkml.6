@@ -2,189 +2,166 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD3FECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15F4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 083A321532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:54:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 083A321532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 61C0C21532
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:55:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u7gP02vn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C0C21532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388554AbeIUCjl (ORCPT
+        id S2388575AbeIUCkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:39:41 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:39377 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731592AbeIUCj1 (ORCPT
+        Thu, 20 Sep 2018 22:40:46 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42164 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeIUCkp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:39:27 -0400
-Received: by mail-io1-f72.google.com with SMTP id x5-v6so14573130ioa.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:54:05 -0700 (PDT)
+        Thu, 20 Sep 2018 22:40:45 -0400
+Received: by mail-ed1-f66.google.com with SMTP id l5so8979504edw.9;
+        Thu, 20 Sep 2018 13:55:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=u+69YXqmB2tOqbA5GoBpI+Qm6lh7scrPQmnqYXaqKNs=;
+        b=u7gP02vnKN8Pm1+M9tOpeZeV3qB/ON9iyzJzhiDyYzieno5bDDXpFk3bQjQZYNRp0k
+         fF6rZ2DxjU9WeZzUrmPQYDCypezNnj5V3B6XywjcVqNGkqNe58x2Bd+jZ3dZQEBEsdJf
+         yUk3riJNq26rSGIz5O8Qsjnl1g3FKpYDG6XPQ7mCrWKct1bgALrzXcYkWEbpwoUiTJe3
+         hn34aX3ov8YjQpFrtxPN+NIGy5j2mOSIZrS8xPJe0CdAbatCdgYpc6tT5NdOreka2CgQ
+         JhEbd98M5dMVLBowqwzi64UF7kUBmfgXDatSeXQdhIT2MYXMfCplGvfWcZhXFpb7eHml
+         E0sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=L9qkR99/BRSpeplLlkK35liIGIWQ8GUgqNyPHl2kDBw=;
-        b=X1+MJ+G0vq7Be7DuMG3QdcoiqBAHkxKMScG/l9qY0lKR0nXCnzobXLSosIshn8K0MZ
-         zqlIwf1CEsYl3+S3eltUPb/dUYXk5ONUEhcErb6+MMpthNsRWa6TnH9sMXbagsykblP9
-         H9XKg5rQdNU06mR0w8NK4/zWQXFWVW5ATZXe/WmbQeScEAPJ4chOb5/vQK+NHL24LOJ6
-         tuCXSQiaqTGR5mCLg4cSdm4uwqwInqoNrVJv3riseploZ1yJQBS//np5Le4tkol810LQ
-         qfIdkARyj8GBB4TrA6vlkg8VGzs/js8EqHf5AcNMO76A1UL154PLSiVG6G5h/dfM/UjR
-         ChcQ==
-X-Gm-Message-State: APzg51AWhGzxzblxnA6ndwk9bwls+ZXDeINscuTP+1Ykt/W7NSdfrgiL
-        yIFvkw0biOkpR+lu70xVnmVjJ+OzLeQ3NBIdlADj1U+lPfPk
-X-Google-Smtp-Source: ANB0VdaiWA1RRIg3bkfbcZOrFlM1cReNmcD7lw6aM/xlBFaq6l6oTUJs5SixI4pIyHS+5Z51s3CF8jMSnY3bZkg5HHbhnuK91ACQ
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=u+69YXqmB2tOqbA5GoBpI+Qm6lh7scrPQmnqYXaqKNs=;
+        b=U6Dr7GRHatrcyEYdVa0fxkScN+mIOTdAwkCYWSLXzDm6vDXHVrJiSvDLxNTb7PH6ny
+         0GBz9fJomY5mGEEbGnrVrkoNvn1VHOqX2eU5zKhbmEgG67tDYbsDJpdRReQoDCl524Lw
+         874F09oR2uiPp7/y8ycUBoDqj3KoC5G4OenVgpg6E+pJ2DpeKbuJt+VtjHz8RmAlDiGg
+         I8UW8qmKntV+lXzIRcqe8WjwtwSe6WdccRMe74a3wVA41azCwBDaSA1AJzUjt0wlLlWo
+         NuKlZKVhlNkLGpa5cnF+dgK9O5DgN9fIZM2FpANtKs/3BzsxVtSKpsdK0ZQAODw+yllB
+         paSg==
+X-Gm-Message-State: APzg51BCtJ/YVUb9pSyEqjidXu2ffyZj0BfQ+wUpYHIXjAlLbopBMXC9
+        UYF7T2iCYh1o7PkF1C2/xK8=
+X-Google-Smtp-Source: ACcGV62UXHMhff57nS+UktiYv/FZyqst9PZ739qQaiAYpT+tUmV2WQQhu3Fh8sOvQnsRsr4lR38Jnw==
+X-Received: by 2002:a50:de8e:: with SMTP id c14-v6mr365869edl.196.1537476921810;
+        Thu, 20 Sep 2018 13:55:21 -0700 (PDT)
+Received: from [10.67.50.87] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id n44-v6sm1254347edd.15.2018.09.20.13.55.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 13:55:20 -0700 (PDT)
+Subject: Re: [PATCH v5 04/12] PCI: brcmstb: add dma-range mapping for inbound
+ traffic
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jim Quinlan <jim2101024@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
+ <1537367527-20773-5-git-send-email-jim2101024@gmail.com>
+ <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <7fa897cf-4d58-c63f-afdd-a3ec5a6a56bf@gmail.com>
+Date:   Thu, 20 Sep 2018 13:55:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:a2d0:: with SMTP id l199-v6mr32700401ioe.129.1537476845066;
- Thu, 20 Sep 2018 13:54:05 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 13:54:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000336563057653b9aa@google.com>
-Subject: KMSAN: uninit-value in IP6_ECN_decapsulate
-From:   syzbot <syzbot+bf7e6250c7ce248f3ec9@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 09/19/2018 07:19 PM, Ard Biesheuvel wrote:
+> On 19 September 2018 at 07:31, Jim Quinlan <jim2101024@gmail.com> wrote:
+>> The Broadcom STB PCIe host controller is intimately related to the
+>> memory subsystem.  This close relationship adds complexity to how cpu
+>> system memory is mapped to PCIe memory.  Ideally, this mapping is an
+>> identity mapping, or an identity mapping off by a constant.  Not so in
+>> this case.
+>>
+>> Consider the Broadcom reference board BCM97445LCC_4X8 which has 6 GB
+>> of system memory.  Here is how the PCIe controller maps the
+>> system memory to PCIe memory:
+>>
+>>   memc0-a@[        0....3fffffff] <=> pci@[        0....3fffffff]
+>>   memc0-b@[100000000...13fffffff] <=> pci@[ 40000000....7fffffff]
+>>   memc1-a@[ 40000000....7fffffff] <=> pci@[ 80000000....bfffffff]
+>>   memc1-b@[300000000...33fffffff] <=> pci@[ c0000000....ffffffff]
+>>   memc2-a@[ 80000000....bfffffff] <=> pci@[100000000...13fffffff]
+>>   memc2-b@[c00000000...c3fffffff] <=> pci@[140000000...17fffffff]
+>>
+> 
+> So is describing this as
+> 
+> dma-ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>,
+>              <0x0 0x40000000 0x1 0x0 0x0 0x40000000>,
+>              <0x0 0x80000000 0x0 0x40000000 0x0 0x40000000>,
+>              <0x0 0xc0000000 0x3 0x0 0x0 0x40000000>,
+>              <0x1 0x0 0x0 0x80000000 0x0 0x40000000>,
+>              <0x1 0x40000000 0x0 0xc0000000 0x0 0x40000000>;
+> 
+> not working for you? I haven't tried this myself, but since DT permits
+> describing the inbound mappings this way, we should fix the code if it
+> doesn't work at the moment.
 
-syzbot found the following crash on:
-
-HEAD commit:    88e0e95b30f1 kmsan: add a newline before "Uninit was creat..
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=146dfccf800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=848e40757852af3e
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf7e6250c7ce248f3ec9
-compiler:       clang version 7.0.0 (trunk 334104)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177a9ce4400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f68bd8400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bf7e6250c7ce248f3ec9@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KMSAN: uninit-value in INET_ECN_decapsulate include/net/inet_ecn.h:189  
-[inline]
-BUG: KMSAN: uninit-value in IP6_ECN_decapsulate+0x421/0x970  
-include/net/inet_ecn.h:234
-CPU: 0 PID: 4515 Comm: syz-executor162 Not tainted 4.17.0+ #8
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1122
-  __msan_warning_32+0x70/0xc0 mm/kmsan/kmsan_instr.c:620
-  INET_ECN_decapsulate include/net/inet_ecn.h:189 [inline]
-  IP6_ECN_decapsulate+0x421/0x970 include/net/inet_ecn.h:234
-  ip6ip6_dscp_ecn_decapsulate+0x1e0/0x250 net/ipv6/ip6_tunnel.c:719
-  __ip6_tnl_rcv+0xff9/0x1a10 net/ipv6/ip6_tunnel.c:829
-  ip6_tnl_rcv+0xe6/0x110 net/ipv6/ip6_tunnel.c:868
-  gre_rcv+0x1661/0x1a90 net/ipv6/ip6_gre.c:534
-  ip6_input_finish+0x1353/0x2260 net/ipv6/ip6_input.c:284
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip6_input+0x294/0x320 net/ipv6/ip6_input.c:327
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x498/0x6e0 net/ipv6/ip6_input.c:71
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ipv6_rcv+0x1d6b/0x2360 net/ipv6/ip6_input.c:208
-  __netif_receive_skb_core+0x47f3/0x4aa0 net/core/dev.c:4592
-  __netif_receive_skb net/core/dev.c:4657 [inline]
-  process_backlog+0x62d/0xe20 net/core/dev.c:5337
-  napi_poll net/core/dev.c:5735 [inline]
-  net_rx_action+0x766/0x1a80 net/core/dev.c:5801
-  __do_softirq+0x592/0x979 kernel/softirq.c:285
-  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
-  </IRQ>
-  do_softirq kernel/softirq.c:329 [inline]
-  __local_bh_enable_ip+0x114/0x140 kernel/softirq.c:182
-  local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
-  rcu_read_unlock_bh include/linux/rcupdate.h:728 [inline]
-  ip6_finish_output2+0x1ce8/0x2100 net/ipv6/ip6_output.c:121
-  ip6_finish_output+0xaf0/0xbb0 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
-  ip6_output+0x597/0x6c0 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:444 [inline]
-  ip6_local_out+0x164/0x1d0 net/ipv6/output_core.c:176
-  ip6_send_skb net/ipv6/ip6_output.c:1703 [inline]
-  ip6_push_pending_frames+0x218/0x4d0 net/ipv6/ip6_output.c:1723
-  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
-  rawv6_sendmsg+0x4254/0x4fc0 net/ipv6/raw.c:935
-  inet_sendmsg+0x3fc/0x760 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg net/socket.c:639 [inline]
-  sock_write_iter+0x3bc/0x470 net/socket.c:908
-  call_write_iter include/linux/fs.h:1784 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x808/0x9f0 fs/read_write.c:487
-  vfs_write+0x467/0x8c0 fs/read_write.c:549
-  ksys_write fs/read_write.c:598 [inline]
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x1bf/0x3e0 fs/read_write.c:607
-  do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x441199
-RSP: 002b:00007fff83b55688 EFLAGS: 00000217 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441199
-RDX: 0000000000000004 RSI: 00000000200001c0 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004020a0
-R13: 0000000000402130 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
-  kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
-  slab_post_alloc_hook mm/slab.h:446 [inline]
-  slab_alloc_node mm/slub.c:2753 [inline]
-  __kmalloc_node_track_caller+0xb35/0x11b0 mm/slub.c:4395
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:988 [inline]
-  __ip6_append_data+0x364d/0x4fb0 net/ipv6/ip6_output.c:1434
-  ip6_append_data+0x40e/0x6b0 net/ipv6/ip6_output.c:1597
-  rawv6_sendmsg+0x2756/0x4fc0 net/ipv6/raw.c:928
-  inet_sendmsg+0x3fc/0x760 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg net/socket.c:639 [inline]
-  sock_write_iter+0x3bc/0x470 net/socket.c:908
-  call_write_iter include/linux/fs.h:1784 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x808/0x9f0 fs/read_write.c:487
-  vfs_write+0x467/0x8c0 fs/read_write.c:549
-  ksys_write fs/read_write.c:598 [inline]
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x1bf/0x3e0 fs/read_write.c:607
-  do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+You mean encoding the memory controller index in the first cell? If that
+works, that's indeed a much cleaner solution, though is it standard
+compliant in any form?
+-- 
+Florian
