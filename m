@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EDAECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AD6ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32DEB21522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:21:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449602152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:21:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jkIPWYzi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32DEB21522
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YjKjLkFT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449602152A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387619AbeITGBZ (ORCPT
+        id S2387574AbeITGBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 02:01:25 -0400
-Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:42234 "EHLO
-        sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387580AbeITGBX (ORCPT
+        Thu, 20 Sep 2018 02:01:21 -0400
+Received: from sonic304-18.consmr.mail.bf2.yahoo.com ([74.6.128.41]:46034 "EHLO
+        sonic304-18.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726013AbeITGBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 02:01:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402856; bh=gKbwLTBVM0jyPC0paoRS3Gf0k70rl6eD/ZhSMTnRwu8=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=jkIPWYzi/XapWZihuF7vk75bfOCT1GhBS8DhM/d/dCitRyeeheav5kRxFoR68V71GZsRiYDYHDFmOq7eZ0uWBHVBvYW49ZKJ1HAqICXa1NfZ/H4mOsnyKJ0+UB0/Nh8PAgPdRgMoYf2QXl8t5ekg61pAMIwmC13973Wrqd/K3T7pm5IGWcMqfUfTKAT/DHq6O9wJr+8E3C7+eoTM9IJDzAkYMfN1JJcT5xzVAp7EbzvNxvGwP5mI5aEHYIsZvny7mPWZlXe9QhDxhldqLmwOj807NZaw+B+O4zfNfBfzeL1QRd9YuyMx+1lqtN1C3pHzDX0k1fVXsWLoedxwLhmrCA==
-X-YMail-OSG: X84erKAVM1leh6XmFSUXftQEHiliJrgrC1_FefJXzhxWle5l5u.1X6fkWjmPTnD
- ZTJEfvkNEBDSqSLboGYJGGw3AiTFYsnGD_KYdUsuI_2PCXBQE8w1l2nJdf.wQS9B6LHSvMIXOMsM
- 9gidiObf57mwKDYRTa5QIK1AWg6KrOFFvbbjoSxLiHgns1XxllhGT38n8Hk0fVC..zOojvA0R3TG
- cKQlU6cLBFqy2YVj0d_6BQIIR6qKFIjzraiozWcUz7AJnYocC7a_y3xICa_wVL4iBVzumrh9srcy
- Ph.9OFg6uY_n255XTONSuuOiRw5ba9L8Nnx6P_ET5kLV7MnyyzVln8I0aaHUN4dz4RYsTxCGSsBG
- UbQwlKR7Mfqv4br9CsVJPnFUbYfX6guds1J0CrNz1yMUF8HqG0KELCkwzkZ1mzW2yZk6_JSAT3Ms
- oSnmwtvXEGlhIt.o8fc4_sodXqbVNXKTCWK4KCPHr7pd2gM6EPNInAnA.j50v1OyaPvjkutZnEFj
- K1fqyF_j5bE4Pq.d.iUTjcOeFfM517H7rQSC6Q6f1dYdSrNFZW0EdQQiQtpUefeothejgCLURzFx
- MiC6U3.JFFh15EvR1PKwRroffZhs9lFqztCMo0NW5TPaFPCukzUqp.QybBixPkTnxeizhbKMXgfB
- vhNxEHPnbvSrLPbA19KPvVNSpyllAG4PjuMci__lU0c37dksIAv8q_XdN30ij0zA7mH7P0cZpijv
- 2uT0r9jIzZeo0rs9qL6WmWR69d7h3o3KTMZ_s1ShpR0jn.webT.ObGngJ2.CPVddHuF2Wdti.1LL
- 5gYdVIeUJwQ6mJ9gujI1Yuhb5K4cyG.ed1lpEjGUuWB48zwbqFAmU.p1rYwddKtipdsXhsOzIYDm
- FR2IUqyrM3tZOMn2d31Dbv1c9N0rrC9498bAXPd9KSK1.z5ZEvn2F8O66kbAp7mP8dpFM0ziPOqL
- 5zZ4dDf2ebU_zydGaHdVBFWnN5WWwYUJp6eKp5jDRsYreax2UUiqzDG9LJvhv1eZsZj6u3rRu.jj
- cZzZ9vQjcj_xy3z2mw_lx_98i8KRg3ckgfoVpQM_pDQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:56 +0000
+        Thu, 20 Sep 2018 02:01:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402853; bh=63zMDkCGiN/Cue+xLhmzc4sjwheDuCpACLUPTkKzgr0=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=YjKjLkFTZv0ymwCLxVERz7nxvklonICl0hqT2WZ3vIRhqBoc5ltsWHMU0bnYhmgD2yhj6hkbyFal7UvRPCYi6hYCj4X4W7J2PPXaU1dJ33lWOTRxTrUoYeMG4aF3sfufRPd2QaEjW6z9CcnMcbK7wRZCFykkbTf41vHnXYccdJe5zJ3cE+S50CF9B8hI786jRyyO+dfQfbqF9kck7tsyo+BKTpQwAqB8Ob++6/gjvJ5auMhVyY5ddb1XZb7EpLAjLAgikXdJ0meu/E5tsIodNg7MnyCDdZ27FudmyLDNXFJfKriC25BnYwwSvoAhsUoWT/zs0994Gn0e+KPBtpzEYw==
+X-YMail-OSG: EEsGYqsVM1mkJ9toeXG0pgKi2AM_upvWEo6XC.E7ru831jyoKgKcqsXDhFv4d8C
+ j.3Qk1GfPqaPZjKZqXS2kcnvnLkWEJ14Hkl03YQ5TTPV7Na9fx8lWSJtjAMWi3mm2OVLLA3VY5Nw
+ uV8MA_V4o6GFCioHUVodlePceIzXjeCLYNz6Fl7NLAOxN.shA5dIZe08Lho.rZdshPUaS4hHEh3T
+ bjMuxXcPaoSxeIAhMPSST9GLvNvQxGyo1RX.P8W.hhbmvnGzPX72kXri7roJ7Gf7tcf5r4JyVGsk
+ MSrz1TLoA5UOSM1DOoG9OCGBEdMiiXxtFzoTzODMCDmgVp..F0dP2C0oRpc4KUgmTtjMFjucJV7Q
+ 9f3Yj.xb9LzwKtF1aw.ak1BrlhtIj81HNzhZVpZP506vX070DoPua.thRmJXT_X2nLEp8mArVub.
+ EzBgn6HBfwORN7Oe_ik9rfrFjXLwV9m_f_9_ZmtPcWkYQ64WrqDhVFGhAG3JAW.vsGW7WJOCg6q.
+ HM.ZbPL3SQokyldNtwFkvoxJzDOgbX1hVBH.EchE8p9AEZnHBOZ8qjPdtPBX0Sx2Jz5_nViL06vb
+ kyJ7AST17Xjo4.eDGwU6rKnV44tycbAqIIYcl.tIBLBFskdUtNXTBMnbh4_e3xipZHt3VXE0r0Ej
+ 6n70MUpKSBsIaLLEpLUj8L6ul5jBxqPJEYk5OxyRw3VVtmBMsQRTWVdUFTY6vGINb.X8j7Hj.sEc
+ LaCojh4Kooet0IBXqfaVff1TAI1OCsvKgXmPNJ.KeC1rfraKw8XfZwWzhaweXqyXAl5CsUS3miPg
+ 4ViByucbV9Z.oD_XrFD5YzNujGV_y8tIowl2xMqS1.FinI0BdK_C957.K9M0bKOF52ee3JLU.aNZ
+ KqbvuIaLAkNhObP6PfcvAPlEIUuM2oubFd2gIqy2l4OwtOrwS5.Hgsl7N283USNeB3GJtGc1PLuy
+ tGJS9NknpK.ZlBO9MA4Oj._ZJuQQXUnLTnG3wVLWJhHOtxPRRw3En6wu9pYUeyWVQoVutS7DaicG
+ eiI4S3hylu5Z.8XW71gOeeRs5LPJKJw3BK7_LfSxV1A--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:53 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp408.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3c0b56d500b44c109d5ca8877838dc44;
-          Thu, 20 Sep 2018 00:20:55 +0000 (UTC)
-Subject: [PATCH v3 09/16] SELinux: Abstract use of file security blob
+          by smtp417.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7ce36f9ba6dc94867b03d0bc567514d6;
+          Thu, 20 Sep 2018 00:20:48 +0000 (UTC)
+Subject: [PATCH v3 08/16] LSM: Infrastructure management of the cred security
+ blob
 To:     LSM <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         SE Linux <selinux@tycho.nsa.gov>,
@@ -62,8 +63,8 @@ To:     LSM <linux-security-module@vger.kernel.org>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <14db9a22-9f31-88fb-dbc1-8bc4ade74bf6@schaufler-ca.com>
-Date:   Wed, 19 Sep 2018 17:20:52 -0700
+Message-ID: <8a71b231-4284-f6d3-e3f2-7420cb96e6e2@schaufler-ca.com>
+Date:   Wed, 19 Sep 2018 17:20:45 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -76,116 +77,644 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SELinux: Abstract use of file security blob
+LSM: Infrastructure management of the cred security blob
 
-Don't use the file->f_security pointer directly.
-Provide a helper function that provides the security blob pointer.
+Move management of the cred security blob out of the
+security modules and into the security infrastructre.
+Instead of allocating and freeing space the security
+modules tell the infrastructure how much space they
+require.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/selinux/hooks.c          | 18 +++++++++---------
- security/selinux/include/objsec.h |  5 +++++
- 2 files changed, 14 insertions(+), 9 deletions(-)
+ include/linux/lsm_hooks.h         |  14 ++++
+ security/Kconfig                  |  11 ++++
+ security/apparmor/lsm.c           |  18 +++++
+ security/security.c               | 106 +++++++++++++++++++++++++++++-
+ security/selinux/hooks.c          |  58 +++++-----------
+ security/selinux/include/objsec.h |   2 +
+ security/smack/smack_lsm.c        |  85 +++++++++---------------
+ security/tomoyo/common.h          |   2 +-
+ security/tomoyo/tomoyo.c          |  17 ++++-
+ 9 files changed, 213 insertions(+), 100 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index b629cc302088..641a8ce726ff 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -396,7 +396,7 @@ static int file_alloc_security(struct file *file)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 97a020c616ad..0bef312efd45 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2024,6 +2024,13 @@ struct security_hook_list {
+ 	char				*lsm;
+ } __randomize_layout;
  
- static void file_free_security(struct file *file)
- {
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	file->f_security = NULL;
- 	kmem_cache_free(file_security_cache, fsec);
++/*
++ * Security blob size or offset data.
++ */
++struct lsm_blob_sizes {
++	int	lbs_cred;
++};
++
+ /*
+  * Initializing a security_hook_list structure takes
+  * up a lot of space in a source file. This macro takes
+@@ -2036,6 +2043,7 @@ struct security_hook_list {
+ extern struct security_hook_heads security_hook_heads;
+ extern char *lsm_names;
+ 
++extern void security_add_blobs(struct lsm_blob_sizes *needed);
+ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm);
+ 
+@@ -2082,4 +2090,10 @@ void __init loadpin_add_hooks(void);
+ static inline void loadpin_add_hooks(void) { };
+ #endif
+ 
++extern int lsm_cred_alloc(struct cred *cred, gfp_t gfp);
++
++#ifdef CONFIG_SECURITY
++void lsm_early_cred(struct cred *cred);
++#endif
++
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/Kconfig b/security/Kconfig
+index 27d8b2688f75..22f7664c4977 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -36,6 +36,17 @@ config SECURITY_WRITABLE_HOOKS
+ 	bool
+ 	default n
+ 
++config SECURITY_LSM_DEBUG
++	bool "Enable debugging of the LSM infrastructure"
++	depends on SECURITY
++	help
++	  This allows you to choose debug messages related to
++	  security modules configured into your kernel. These
++	  messages may be helpful in determining how a security
++	  module is using security blobs.
++
++	  If you are unsure how to answer this question, answer N.
++
+ config SECURITYFS
+ 	bool "Enable the securityfs filesystem"
+ 	help
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 4f51705c3c71..c2566aaa138e 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1126,6 +1126,13 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
+ 		ctx->label = aa_get_current_label();
  }
-@@ -1879,7 +1879,7 @@ static int file_has_perm(const struct cred *cred,
- 			 struct file *file,
- 			 u32 av)
+ 
++/*
++ * The cred blob is a pointer to, not an instance of, an aa_task_ctx.
++ */
++struct lsm_blob_sizes apparmor_blob_sizes = {
++	.lbs_cred = sizeof(struct aa_task_ctx *),
++};
++
+ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, apparmor_ptrace_traceme),
+@@ -1455,6 +1462,7 @@ static int __init set_init_ctx(void)
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
++	lsm_early_cred(cred);
+ 	set_cred_label(cred, aa_get_label(ns_unconfined(root_ns)));
+ 	task_ctx(current) = ctx;
+ 
+@@ -1540,8 +1548,18 @@ static inline int apparmor_init_sysctl(void)
+ 
+ static int __init apparmor_init(void)
  {
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct inode *inode = file_inode(file);
- 	struct common_audit_data ad;
- 	u32 sid = cred_sid(cred);
-@@ -2223,7 +2223,7 @@ static int selinux_binder_transfer_file(struct task_struct *from,
- 					struct file *file)
- {
- 	u32 sid = task_sid(to);
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct dentry *dentry = file->f_path.dentry;
- 	struct inode_security_struct *isec;
- 	struct common_audit_data ad;
-@@ -3535,7 +3535,7 @@ static int selinux_revalidate_file_permission(struct file *file, int mask)
- static int selinux_file_permission(struct file *file, int mask)
- {
- 	struct inode *inode = file_inode(file);
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct inode_security_struct *isec;
- 	u32 sid = current_sid();
++	static int finish;
+ 	int error;
  
-@@ -3570,7 +3570,7 @@ static int ioctl_has_perm(const struct cred *cred, struct file *file,
- 		u32 requested, u16 cmd)
- {
- 	struct common_audit_data ad;
--	struct file_security_struct *fsec = file->f_security;
-+	struct file_security_struct *fsec = selinux_file(file);
- 	struct inode *inode = file_inode(file);
- 	struct inode_security_struct *isec;
- 	struct lsm_ioctlop_audit ioctl;
-@@ -3822,7 +3822,7 @@ static void selinux_file_set_fowner(struct file *file)
- {
- 	struct file_security_struct *fsec;
++	if (!finish) {
++		if (apparmor_enabled && security_module_enable("apparmor"))
++			security_add_blobs(&apparmor_blob_sizes);
++		else
++			apparmor_enabled = false;
++		finish = 1;
++		return 0;
++	}
++
+ 	if (!apparmor_enabled || !security_module_enable("apparmor")) {
+ 		aa_info_message("AppArmor disabled by boot time parameter");
+ 		apparmor_enabled = false;
+diff --git a/security/security.c b/security/security.c
+index 3dfe75d0d373..ff7df14f6db1 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -41,6 +41,8 @@ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
  
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
- 	fsec->fown_sid = current_sid();
- }
+ char *lsm_names;
++static struct lsm_blob_sizes blob_sizes;
++
+ /* Boot-time LSM user choice */
+ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+ 	CONFIG_DEFAULT_SECURITY;
+@@ -85,10 +87,22 @@ int __init security_init(void)
+ 	loadpin_add_hooks();
  
-@@ -3837,7 +3837,7 @@ static int selinux_file_send_sigiotask(struct task_struct *tsk,
- 	/* struct fown_struct is never outside the context of a struct file */
- 	file = container_of(fown, struct file, f_owner);
- 
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
- 
- 	if (!signum)
- 		perm = signal_to_av(SIGIO); /* as per send_sigio_to_task */
-@@ -3861,7 +3861,7 @@ static int selinux_file_open(struct file *file)
- 	struct file_security_struct *fsec;
- 	struct inode_security_struct *isec;
- 
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
- 	isec = inode_security(file_inode(file));
  	/*
- 	 * Save inode label and policy sequence number
-@@ -4000,7 +4000,7 @@ static int selinux_kernel_module_from_file(struct file *file)
- 	ad.type = LSM_AUDIT_DATA_FILE;
- 	ad.u.file = file;
+-	 * Load all the remaining security modules.
++	 * The first call to a module specific init function
++	 * updates the blob size requirements.
++	 */
++	do_security_initcalls();
++
++	/*
++	 * The second call to a module specific init function
++	 * adds hooks to the hook lists and does any other early
++	 * initializations required.
+ 	 */
+ 	do_security_initcalls();
  
--	fsec = file->f_security;
-+	fsec = selinux_file(file);
- 	if (sid != fsec->sid) {
- 		rc = avc_has_perm(&selinux_state,
- 				  sid, fsec->sid, SECCLASS_FD, FD__USE, &ad);
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index ad511c3d2eb7..cad8b765f6dd 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -165,4 +165,9 @@ static inline struct task_security_struct *selinux_cred(const struct cred *cred)
- 	return cred->security;
++#ifdef CONFIG_SECURITY_LSM_DEBUG
++	pr_info("LSM: cred blob size       = %d\n", blob_sizes.lbs_cred);
++#endif
++
+ 	return 0;
  }
  
-+static inline struct file_security_struct *selinux_file(const struct file *file)
+@@ -198,6 +212,73 @@ int unregister_lsm_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL(unregister_lsm_notifier);
+ 
++/**
++ * lsm_cred_alloc - allocate a composite cred blob
++ * @cred: the cred that needs a blob
++ * @gfp: allocation type
++ *
++ * Allocate the cred blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
 +{
-+	return file->f_security;
++	if (blob_sizes.lbs_cred == 0) {
++		cred->security = NULL;
++		return 0;
++	}
++
++	cred->security = kzalloc(blob_sizes.lbs_cred, gfp);
++	if (cred->security == NULL)
++		return -ENOMEM;
++	return 0;
 +}
 +
- #endif /* _SELINUX_OBJSEC_H_ */
++/**
++ * lsm_early_cred - during initialization allocate a composite cred blob
++ * @cred: the cred that needs a blob
++ *
++ * Allocate the cred blob for all the modules if it's not already there
++ */
++void lsm_early_cred(struct cred *cred)
++{
++	int rc;
++
++	if (cred == NULL)
++		panic("%s: NULL cred.\n", __func__);
++	if (cred->security != NULL)
++		return;
++	rc = lsm_cred_alloc(cred, GFP_KERNEL);
++	if (rc)
++		panic("%s: Early cred alloc failed.\n", __func__);
++}
++
++static void __init lsm_set_size(int *need, int *lbs)
++{
++	int offset;
++
++	if (*need > 0) {
++		offset = *lbs;
++		*lbs += *need;
++		*need = offset;
++	}
++}
++
++/**
++ * security_add_blobs - Report blob sizes
++ * @needed: the size of blobs needed by the module
++ *
++ * Each LSM has to register its blobs with the infrastructure.
++ * The "needed" data tells the infrastructure how much memory
++ * the module requires for each of its blobs. On return the
++ * structure is filled with the offset that module should use
++ * from the blob pointer.
++ */
++void __init security_add_blobs(struct lsm_blob_sizes *needed)
++{
++	lsm_set_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
++}
++
+ /*
+  * Hook list operation macros.
+  *
+@@ -998,17 +1079,36 @@ void security_task_free(struct task_struct *task)
+ 
+ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+ {
+-	return call_int_hook(cred_alloc_blank, 0, cred, gfp);
++	int rc = lsm_cred_alloc(cred, gfp);
++
++	if (rc)
++		return rc;
++
++	rc = call_int_hook(cred_alloc_blank, 0, cred, gfp);
++	if (rc)
++		security_cred_free(cred);
++	return rc;
+ }
+ 
+ void security_cred_free(struct cred *cred)
+ {
+ 	call_void_hook(cred_free, cred);
++
++	kfree(cred->security);
++	cred->security = NULL;
+ }
+ 
+ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp)
+ {
+-	return call_int_hook(cred_prepare, 0, new, old, gfp);
++	int rc = lsm_cred_alloc(new, gfp);
++
++	if (rc)
++		return rc;
++
++	rc = call_int_hook(cred_prepare, 0, new, old, gfp);
++	if (rc)
++		security_cred_free(new);
++	return rc;
+ }
+ 
+ void security_transfer_creds(struct cred *new, const struct cred *old)
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 82b28ee878c4..b629cc302088 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -212,12 +212,9 @@ static void cred_init_security(void)
+ 	struct cred *cred = (struct cred *) current->real_cred;
+ 	struct task_security_struct *tsec;
+ 
+-	tsec = kzalloc(sizeof(struct task_security_struct), GFP_KERNEL);
+-	if (!tsec)
+-		panic("SELinux:  Failed to initialize initial task.\n");
+-
++	lsm_early_cred(cred);
++	tsec = selinux_cred(cred);
+ 	tsec->osid = tsec->sid = SECINITSID_KERNEL;
+-	cred->security = tsec;
+ }
+ 
+ /*
+@@ -3897,47 +3894,16 @@ static int selinux_task_alloc(struct task_struct *task,
+ 			    sid, sid, SECCLASS_PROCESS, PROCESS__FORK, NULL);
+ }
+ 
+-/*
+- * allocate the SELinux part of blank credentials
+- */
+-static int selinux_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+-{
+-	struct task_security_struct *tsec;
+-
+-	tsec = kzalloc(sizeof(struct task_security_struct), gfp);
+-	if (!tsec)
+-		return -ENOMEM;
+-
+-	cred->security = tsec;
+-	return 0;
+-}
+-
+-/*
+- * detach and free the LSM part of a set of credentials
+- */
+-static void selinux_cred_free(struct cred *cred)
+-{
+-	struct task_security_struct *tsec = selinux_cred(cred);
+-
+-	kfree(tsec);
+-}
+-
+ /*
+  * prepare a new set of credentials for modification
+  */
+ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
+ 				gfp_t gfp)
+ {
+-	const struct task_security_struct *old_tsec;
+-	struct task_security_struct *tsec;
+-
+-	old_tsec = selinux_cred(old);
+-
+-	tsec = kmemdup(old_tsec, sizeof(struct task_security_struct), gfp);
+-	if (!tsec)
+-		return -ENOMEM;
++	const struct task_security_struct *old_tsec = selinux_cred(old);
++	struct task_security_struct *tsec = selinux_cred(new);
+ 
+-	new->security = tsec;
++	*tsec = *old_tsec;
+ 	return 0;
+ }
+ 
+@@ -6887,6 +6853,10 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
+ }
+ #endif
+ 
++struct lsm_blob_sizes selinux_blob_sizes = {
++	.lbs_cred = sizeof(struct task_security_struct),
++};
++
+ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(binder_set_context_mgr, selinux_binder_set_context_mgr),
+ 	LSM_HOOK_INIT(binder_transaction, selinux_binder_transaction),
+@@ -6969,8 +6939,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(file_open, selinux_file_open),
+ 
+ 	LSM_HOOK_INIT(task_alloc, selinux_task_alloc),
+-	LSM_HOOK_INIT(cred_alloc_blank, selinux_cred_alloc_blank),
+-	LSM_HOOK_INIT(cred_free, selinux_cred_free),
+ 	LSM_HOOK_INIT(cred_prepare, selinux_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, selinux_cred_transfer),
+ 	LSM_HOOK_INIT(cred_getsecid, selinux_cred_getsecid),
+@@ -7126,11 +7094,19 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 
+ static __init int selinux_init(void)
+ {
++	static int finish;
++
+ 	if (!security_module_enable("selinux")) {
+ 		selinux_enabled = 0;
+ 		return 0;
+ 	}
+ 
++	if (!finish) {
++		security_add_blobs(&selinux_blob_sizes);
++		finish = 1;
++		return 0;
++	}
++
+ 	if (!selinux_enabled) {
+ 		pr_info("SELinux:  Disabled at boot.\n");
+ 		return 0;
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index 734b6833bdff..ad511c3d2eb7 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -25,6 +25,7 @@
+ #include <linux/binfmts.h>
+ #include <linux/in.h>
+ #include <linux/spinlock.h>
++#include <linux/lsm_hooks.h>
+ #include <net/net_namespace.h>
+ #include "flask.h"
+ #include "avc.h"
+@@ -158,6 +159,7 @@ struct bpf_security_struct {
+ 	u32 sid;  /*SID of bpf obj creater*/
+ };
+ 
++extern struct lsm_blob_sizes selinux_blob_sizes;
+ static inline struct task_security_struct *selinux_cred(const struct cred *cred)
+ {
+ 	return cred->security;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 68ee3ae8f25c..a06ea8aa89c4 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -309,29 +309,20 @@ static struct inode_smack *new_inode_smack(struct smack_known *skp)
+ }
+ 
+ /**
+- * new_task_smack - allocate a task security blob
++ * init_task_smack - initialize a task security blob
++ * @tsp: blob to initialize
+  * @task: a pointer to the Smack label for the running task
+  * @forked: a pointer to the Smack label for the forked task
+- * @gfp: type of the memory for the allocation
+  *
+- * Returns the new blob or NULL if there's no memory available
+  */
+-static struct task_smack *new_task_smack(struct smack_known *task,
+-					struct smack_known *forked, gfp_t gfp)
++static void init_task_smack(struct task_smack *tsp, struct smack_known *task,
++					struct smack_known *forked)
+ {
+-	struct task_smack *tsp;
+-
+-	tsp = kzalloc(sizeof(struct task_smack), gfp);
+-	if (tsp == NULL)
+-		return NULL;
+-
+ 	tsp->smk_task = task;
+ 	tsp->smk_forked = forked;
+ 	INIT_LIST_HEAD(&tsp->smk_rules);
+ 	INIT_LIST_HEAD(&tsp->smk_relabel);
+ 	mutex_init(&tsp->smk_rules_lock);
+-
+-	return tsp;
+ }
+ 
+ /**
+@@ -1958,14 +1949,7 @@ static int smack_file_open(struct file *file)
+  */
+ static int smack_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+ {
+-	struct task_smack *tsp;
+-
+-	tsp = new_task_smack(NULL, NULL, gfp);
+-	if (tsp == NULL)
+-		return -ENOMEM;
+-
+-	cred->security = tsp;
+-
++	init_task_smack(smack_cred(cred), NULL, NULL);
+ 	return 0;
+ }
+ 
+@@ -1982,10 +1966,6 @@ static void smack_cred_free(struct cred *cred)
+ 	struct list_head *l;
+ 	struct list_head *n;
+ 
+-	if (tsp == NULL)
+-		return;
+-	cred->security = NULL;
+-
+ 	smk_destroy_label_list(&tsp->smk_relabel);
+ 
+ 	list_for_each_safe(l, n, &tsp->smk_rules) {
+@@ -1993,7 +1973,6 @@ static void smack_cred_free(struct cred *cred)
+ 		list_del(&rp->list);
+ 		kfree(rp);
+ 	}
+-	kfree(tsp);
+ }
+ 
+ /**
+@@ -2008,14 +1987,10 @@ static int smack_cred_prepare(struct cred *new, const struct cred *old,
+ 			      gfp_t gfp)
+ {
+ 	struct task_smack *old_tsp = smack_cred(old);
+-	struct task_smack *new_tsp;
++	struct task_smack *new_tsp = smack_cred(new);
+ 	int rc;
+ 
+-	new_tsp = new_task_smack(old_tsp->smk_task, old_tsp->smk_task, gfp);
+-	if (new_tsp == NULL)
+-		return -ENOMEM;
+-
+-	new->security = new_tsp;
++	init_task_smack(new_tsp, old_tsp->smk_task, old_tsp->smk_task);
+ 
+ 	rc = smk_copy_rules(&new_tsp->smk_rules, &old_tsp->smk_rules, gfp);
+ 	if (rc != 0)
+@@ -2023,10 +1998,7 @@ static int smack_cred_prepare(struct cred *new, const struct cred *old,
+ 
+ 	rc = smk_copy_relabel(&new_tsp->smk_relabel, &old_tsp->smk_relabel,
+ 				gfp);
+-	if (rc != 0)
+-		return rc;
+-
+-	return 0;
++	return rc;
+ }
+ 
+ /**
+@@ -4652,6 +4624,10 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ 	return 0;
+ }
+ 
++struct lsm_blob_sizes smack_blob_sizes = {
++	.lbs_cred = sizeof(struct task_smack),
++};
++
+ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_access_check, smack_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+@@ -4830,23 +4806,35 @@ static __init void init_smack_known_list(void)
+  */
+ static __init int smack_init(void)
+ {
+-	struct cred *cred;
++	static int finish;
++	struct cred *cred = (struct cred *) current->cred;
+ 	struct task_smack *tsp;
+ 
+ 	if (!security_module_enable("smack"))
+ 		return 0;
+ 
++	if (!finish) {
++		security_add_blobs(&smack_blob_sizes);
++		finish = 1;
++		return 0;
++	}
++
+ 	smack_inode_cache = KMEM_CACHE(inode_smack, 0);
+ 	if (!smack_inode_cache)
+ 		return -ENOMEM;
+ 
+-	tsp = new_task_smack(&smack_known_floor, &smack_known_floor,
+-				GFP_KERNEL);
+-	if (tsp == NULL) {
+-		kmem_cache_destroy(smack_inode_cache);
+-		return -ENOMEM;
+-	}
++	lsm_early_cred(cred);
+ 
++	/*
++	 * Set the security state for the initial task.
++	 */
++	tsp = smack_cred(cred);
++	init_task_smack(tsp, &smack_known_floor, &smack_known_floor);
++
++	/*
++	 * Register with LSM
++	 */
++	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
+ 	smack_enabled = 1;
+ 
+ 	pr_info("Smack:  Initializing.\n");
+@@ -4860,20 +4848,9 @@ static __init int smack_init(void)
+ 	pr_info("Smack:  IPv6 Netfilter enabled.\n");
+ #endif
+ 
+-	/*
+-	 * Set the security state for the initial task.
+-	 */
+-	cred = (struct cred *) current->cred;
+-	cred->security = tsp;
+-
+ 	/* initialize the smack_known_list */
+ 	init_smack_known_list();
+ 
+-	/*
+-	 * Register with LSM
+-	 */
+-	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
+-
+ 	return 0;
+ }
+ 
+diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+index c9d8c49e3210..0110bebe86e2 100644
+--- a/security/tomoyo/common.h
++++ b/security/tomoyo/common.h
+@@ -1206,7 +1206,7 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
+  */
+ static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
+ {
+-	return (struct tomoyo_domain_info **)&cred->security;
++	return cred->security;
+ }
+ 
+ /**
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 622ffa74a124..bb84e6ec3886 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -509,6 +509,10 @@ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	return tomoyo_socket_sendmsg_permission(sock, msg, size);
+ }
+ 
++struct lsm_blob_sizes tomoyo_blob_sizes = {
++	.lbs_cred = sizeof(struct tomoyo_domain_info *),
++};
++
+ /*
+  * tomoyo_security_ops is a "struct security_operations" which is used for
+  * registering TOMOYO.
+@@ -556,15 +560,26 @@ bool tomoyo_enabled;
+  */
+ static int __init tomoyo_init(void)
+ {
++	static int finish;
+ 	struct cred *cred = (struct cred *) current_cred();
+ 	struct tomoyo_domain_info **blob;
+ 
+-	if (!security_module_enable("tomoyo"))
++	if (!security_module_enable("tomoyo")) {
++		tomoyo_enabled = false;
++		return 0;
++	}
++	tomoyo_enabled = true;
++
++	if (!finish) {
++		security_add_blobs(&tomoyo_blob_sizes);
++		finish = 1;
+ 		return 0;
++	}
+ 
+ 	/* register ourselves with the security framework */
+ 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
+ 	printk(KERN_INFO "TOMOYO Linux initialized\n");
++	lsm_early_cred(cred);
+ 	blob = tomoyo_cred(cred);
+ 	*blob = &tomoyo_kernel_domain;
+ 	tomoyo_mm_init();
 -- 
 2.17.1
 
