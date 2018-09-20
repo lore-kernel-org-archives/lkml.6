@@ -2,31 +2,31 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48680C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C718C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F084F21522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:40:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F084F21522
+	by mail.kernel.org (Postfix) with ESMTP id CE1C221522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1C221522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731562AbeITLVg (ORCPT
+        id S1731667AbeITLVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:21:36 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:34745 "EHLO
+        Thu, 20 Sep 2018 07:21:48 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:60110 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731455AbeITLVg (ORCPT
+        by vger.kernel.org with ESMTP id S1726994AbeITLVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:21:36 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437635|-1;CH=green;FP=12582270344555859194|1|1|1|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CtGzYt0_1537421988;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CtGzYt0_1537421988)
-          by smtp.aliyun-inc.com(10.147.41.158);
-          Thu, 20 Sep 2018 13:39:49 +0800
+        Thu, 20 Sep 2018 07:21:48 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1004978|-1;CH=green;FP=3410651511292485117|1|1|1|0|-1|-1|-1;HT=e01l07423;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.CtH3bxm_1537421976;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CtH3bxm_1537421976)
+          by smtp.aliyun-inc.com(10.147.41.178);
+          Thu, 20 Sep 2018 13:39:36 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de,
@@ -35,261 +35,52 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arch@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
         gnu-csky@mentor.com, green.hu@gmail.com,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V8 5/6] clocksource: add C-SKY SMP timer
-Date:   Thu, 20 Sep 2018 13:39:31 +0800
-Message-Id: <81ffeff6131882989652a0050e5a947ffc9a327c.1537417413.git.ren_guo@c-sky.com>
+Subject: [PATCH V8 0/6] C-SKY(csky) Linux Kernel Port
+Date:   Thu, 20 Sep 2018 13:39:26 +0800
+Message-Id: <cover.1537417413.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1537417413.git.ren_guo@c-sky.com>
-References: <cover.1537417413.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1537417413.git.ren_guo@c-sky.com>
-References: <cover.1537417413.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This timer is used by SMP system and use mfcr/mtcr instruction
-to access the regs.
+Because I've sent to Stephen Roth with the linux-4.19-rc3 git-tree for
+linux-next, I shouldn't rebase any more.
+https://github.com/c-sky/csky-linux.git#linux-next
 
-Changelog:
- - Add CPUHP_AP_CSKY_TIMER_STARTING in cpuhotplug.h
- - Support csky mp timer alpha version.
- - Just use low-counter with 32bit width as clocksource.
- - Coding convention with upstream feed-back.
+This patchset include mptimer and mpintc drivers and fixup:
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- drivers/clocksource/Kconfig        |   8 ++
- drivers/clocksource/Makefile       |   1 +
- drivers/clocksource/csky_mptimer.c | 178 +++++++++++++++++++++++++++++++++++++
- include/linux/cpuhotplug.h         |   1 +
- 4 files changed, 188 insertions(+)
+ - Fixup smp IPI's problems found by Marc Zyngier
+ - Add irq-csky-mpintc.c patch in this patchset
+ - Add mptimer.c patch in this patchset 
+ - Fixup dma_sync_for_cpu/device in dma-mapping.c
+
+Guo Ren (6):
+  csky/dma: bugfix dma_sync_for_cpu/device
+  csky: remove irq_mapping from smp.c
+  irqchip: add C-SKY SMP interrupt controller
+  dt-bindings: interrupt-controller: C-SKY SMP intc
+  clocksource: add C-SKY SMP timer
+  dt-bindings: timer: C-SKY Multi-processor timer
+
+ .../bindings/interrupt-controller/csky,mpintc.txt  |  40 +++++
+ .../devicetree/bindings/timer/csky,mptimer.txt     |  46 +++++
+ arch/csky/include/asm/smp.h                        |   4 +-
+ arch/csky/kernel/smp.c                             |  27 ++-
+ arch/csky/mm/dma-mapping.c                         |   5 +-
+ drivers/clocksource/Kconfig                        |   8 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/csky_mptimer.c                 | 178 +++++++++++++++++++
+ drivers/irqchip/Kconfig                            |   8 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-csky-mpintc.c                  | 195 +++++++++++++++++++++
+ include/linux/cpuhotplug.h                         |   1 +
+ 12 files changed, 503 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/csky,mptimer.txt
  create mode 100644 drivers/clocksource/csky_mptimer.c
+ create mode 100644 drivers/irqchip/irq-csky-mpintc.c
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index a11f4ba..51286be 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -609,6 +609,14 @@ config ATCPIT100_TIMER
- 	help
- 	  This option enables support for the Andestech ATCPIT100 timers.
- 
-+config CSKY_MPTIMER
-+	bool "C-SKY Multi Processor Timer"
-+	depends on CSKY
-+	select TIMER_OF
-+	help
-+	  Say yes here to enable C-SKY SMP timer driver used for C-SKY SMP
-+	  system.
-+
- config RISCV_TIMER
- 	bool "Timer for the RISC-V platform"
- 	depends on RISCV
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index db51b24..848c676 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -79,3 +79,4 @@ obj-$(CONFIG_CLKSRC_ST_LPC)		+= clksrc_st_lpc.o
- obj-$(CONFIG_X86_NUMACHIP)		+= numachip.o
- obj-$(CONFIG_ATCPIT100_TIMER)		+= timer-atcpit100.o
- obj-$(CONFIG_RISCV_TIMER)		+= riscv_timer.o
-+obj-$(CONFIG_CSKY_MPTIMER)		+= csky_mptimer.o
-diff --git a/drivers/clocksource/csky_mptimer.c b/drivers/clocksource/csky_mptimer.c
-new file mode 100644
-index 0000000..c6d5db1
---- /dev/null
-+++ b/drivers/clocksource/csky_mptimer.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/sched_clock.h>
-+#include <linux/cpu.h>
-+#include <asm/reg_ops.h>
-+
-+#include "timer-of.h"
-+
-+#define PTIM_CCVR	"cr<3, 14>"
-+#define PTIM_CTLR	"cr<0, 14>"
-+#define PTIM_LVR	"cr<6, 14>"
-+#define PTIM_TSR	"cr<1, 14>"
-+
-+static int csky_mptimer_set_next_event(unsigned long delta, struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_LVR, delta);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_shutdown(struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_CTLR, 0);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_oneshot(struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_CTLR, 1);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_oneshot_stopped(struct clock_event_device *ce)
-+{
-+	mtcr(PTIM_CTLR, 0);
-+
-+	return 0;
-+}
-+
-+static DEFINE_PER_CPU(struct timer_of, csky_to) = {
-+	.flags					= TIMER_OF_CLOCK,
-+	.clkevt = {
-+		.rating				= 300,
-+		.features			= CLOCK_EVT_FEAT_PERCPU |
-+						  CLOCK_EVT_FEAT_ONESHOT,
-+		.set_state_shutdown		= csky_mptimer_shutdown,
-+		.set_state_oneshot		= csky_mptimer_oneshot,
-+		.set_state_oneshot_stopped	= csky_mptimer_oneshot_stopped,
-+		.set_next_event			= csky_mptimer_set_next_event,
-+	},
-+	.of_irq = {
-+		.flags				= IRQF_TIMER,
-+		.percpu				= 1,
-+	},
-+};
-+
-+static irqreturn_t timer_interrupt(int irq, void *dev)
-+{
-+	struct timer_of *to = this_cpu_ptr(&csky_to);
-+
-+	mtcr(PTIM_TSR, 0);
-+
-+	to->clkevt.event_handler(&to->clkevt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * clock event for percpu
-+ */
-+static int csky_mptimer_starting_cpu(unsigned int cpu)
-+{
-+	struct timer_of *to = per_cpu_ptr(&csky_to, cpu);
-+
-+	to->clkevt.cpumask = cpumask_of(cpu);
-+
-+	clockevents_config_and_register(&to->clkevt, timer_of_rate(to), 2, ULONG_MAX);
-+
-+	enable_percpu_irq(timer_of_irq(to), 0);
-+
-+	return 0;
-+}
-+
-+static int csky_mptimer_dying_cpu(unsigned int cpu)
-+{
-+	struct timer_of *to = per_cpu_ptr(&csky_to, cpu);
-+
-+	disable_percpu_irq(timer_of_irq(to));
-+
-+	return 0;
-+}
-+
-+/*
-+ * clock source
-+ */
-+static u64 sched_clock_read(void)
-+{
-+	return (u64) mfcr(PTIM_CCVR);
-+}
-+
-+static u64 clksrc_read(struct clocksource *c)
-+{
-+	return (u64) mfcr(PTIM_CCVR);
-+}
-+
-+struct clocksource csky_clocksource = {
-+	.name	= "csky",
-+	.rating	= 400,
-+	.mask	= CLOCKSOURCE_MASK(32),
-+	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
-+	.read	= clksrc_read,
-+};
-+
-+#define CPUHP_AP_CSKY_TIMER_STARTING CPUHP_AP_RISCV_TIMER_STARTING
-+
-+static int __init csky_mptimer_init(struct device_node *np)
-+{
-+	int ret, cpu;
-+	struct timer_of *to;
-+	int rate = 0;
-+	int irq	 = 0;
-+
-+	/*
-+	 * Csky_mptimer is designed for C-SKY SMP multi-processors and
-+	 * every core has it's own private irq and regs for clkevt and
-+	 * clksrc.
-+	 *
-+	 * The regs is accessed by cpu instruction: mfcr/mtcr instead of
-+	 * mmio map style. So we needn't mmio-address in dts, but we still
-+	 * need to give clk and irq number.
-+	 *
-+	 * We use private irq for the mptimer and irq number is the same
-+	 * for every core. So we use request_percpu_irq() in timer_of_init.
-+	 */
-+
-+	for_each_possible_cpu(cpu) {
-+		to = per_cpu_ptr(&csky_to, cpu);
-+
-+		if (cpu == 0) {
-+			to->flags	  |= TIMER_OF_IRQ;
-+			to->of_irq.handler = timer_interrupt;
-+
-+			ret = timer_of_init(np, to);
-+			if (ret)
-+				return ret;
-+
-+			rate	= timer_of_rate(to);
-+			irq	= to->of_irq.irq;
-+		} else {
-+			ret = timer_of_init(np, to);
-+			if (ret)
-+				return ret;
-+
-+			to->of_clk.rate	= rate;
-+			to->of_irq.irq	= irq;
-+		}
-+	}
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_CSKY_TIMER_STARTING,
-+				"clockevents/csky/timer:starting",
-+				csky_mptimer_starting_cpu,
-+				csky_mptimer_dying_cpu);
-+	if (ret) {
-+		pr_err("%s: Failed to cpuhp_setup_state.\n", __func__);
-+		return ret;
-+	}
-+
-+	clocksource_register_hz(&csky_clocksource, rate);
-+	sched_clock_register(sched_clock_read, 32, rate);
-+
-+	return 0;
-+}
-+TIMER_OF_DECLARE(csky_mptimer, "csky,mptimer", csky_mptimer_init);
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index caf40ad..e0cd2ba 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -126,6 +126,7 @@ enum cpuhp_state {
- 	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
- 	CPUHP_AP_ARC_TIMER_STARTING,
- 	CPUHP_AP_RISCV_TIMER_STARTING,
-+	CPUHP_AP_CSKY_TIMER_STARTING,
- 	CPUHP_AP_KVM_STARTING,
- 	CPUHP_AP_KVM_ARM_VGIC_INIT_STARTING,
- 	CPUHP_AP_KVM_ARM_VGIC_STARTING,
 -- 
 2.7.4
 
