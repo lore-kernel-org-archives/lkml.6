@@ -2,137 +2,98 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EB9C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C59C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A77921534
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D692621525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:57:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItIQdkYI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A77921534
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=cantab.net header.i=@cantab.net header.b="vrQh3Hq1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D692621525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cantab.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbeIUEji (ORCPT
+        id S2388165AbeIUEnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:39:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33514 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeIUEji (ORCPT
+        Fri, 21 Sep 2018 00:43:09 -0400
+Received: from mta01.prd.rdg.aluminati.org ([94.76.243.214]:56098 "EHLO
+        mta01.prd.rdg.aluminati.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725861AbeIUEnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:39:38 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v90-v6so10996219wrc.0;
-        Thu, 20 Sep 2018 15:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mq90HwvCcR9EVjXZXa7ItQrOkCJ+edai/jAxJZm1SJs=;
-        b=ItIQdkYI52ag7DyEE0/c9WeqQ7edUY/mHfYZMk+cd/kECU/fxNtUBlZAKjL0Pn0P6a
-         3fquE/VaT3OxVw1JAPlt8OJQqDwg/ZaCGEJ5+JomdKfTAZWT3GMDrlUEmcYjGXmZcs0s
-         lrAbrKO5KtX4ke9m+jKsGKeDnaHZvujy1zY6af7p12nwHqBLL1yMZUsmBNMfPePKiIz+
-         9bE1iwcLhuMrKx5AZdR5j8ToyHsNu2AOHctiAaGMkd5Z24L/UTR+0c5vSgMRsaqAEPyI
-         TT5MeEUQmsqme5loS2s5FMi9b9BzXn8e7TQXMvXbCXN3Q1prAfVlJsH9YeK3Ajaj0L/8
-         FAHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mq90HwvCcR9EVjXZXa7ItQrOkCJ+edai/jAxJZm1SJs=;
-        b=SRF8k4J3jx4eIpa4r2+iGWk55KOZuv0zgb2Bo0Gl2b7ZAQGwshrk76pUbF1UCB1Fmp
-         qNfqKs4auWn46ggBFrbtRYRbEHqzTjBHglVKPRcov8lf1ZEPKDah1aSBe9p9CYDco/dc
-         MSFtN9LdPhgM+CvY34IMqeZOx2/7U5VXt7cHv2ARGnxxFwf9OOX0AusXkSR9tDHdiz98
-         UXlqNQtEQRuWK9TGCpQSxpuQe0G71lEKxE93ix8RqIe8IDo+kpunxaA4+nnLgUWxJh+P
-         YjvQSFsKVn8Gc5mtlr/WUvspaXdvo6H/WVGRG6asCqJG9HxFaVU2p6QkF5thyQQ/62nP
-         Qvwg==
-X-Gm-Message-State: APzg51AWFvpQiYQrYXp3pqVgYIO5rTJhew9TFjHa86kW4DsM9mb/n1Kl
-        EDvazxQ/e9+qyY183FJ+mTkruASnv+nRQQ==
-X-Google-Smtp-Source: ANB0VdbhBLIGJrBFKfHGLOFx6Ow50HTTv/Pe135IAJFOFhC7IsD60QGIHWIS2Ioxau6ofvS6+WD6lg==
-X-Received: by 2002:adf:a35e:: with SMTP id d30-v6mr9155005wrb.31.1537484028452;
-        Thu, 20 Sep 2018 15:53:48 -0700 (PDT)
-Received: from AQ-THINKPAD.home ([2a00:23c5:c200:5b00:5de9:20bb:eecf:e05c])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm3949602wmf.28.2018.09.20.15.53.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 15:53:47 -0700 (PDT)
-From:   Aymen Qader <qader.aymen@gmail.com>
-Cc:     Aymen Qader <qader.aymen@gmail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: sm750fb: Fix typo frambuffer->framebuffer
-Date:   Thu, 20 Sep 2018 23:53:21 +0100
-Message-Id: <20180920225321.18180-1-qader.aymen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 21 Sep 2018 00:43:09 -0400
+Received: from mta01.prd.rdg.aluminati.org (localhost [127.0.0.1])
+        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTP id B96C720BDC;
+        Thu, 20 Sep 2018 23:57:18 +0100 (BST)
+Received: from localhost (localhost [127.0.0.1])
+        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTP id AEE6120BBB;
+        Thu, 20 Sep 2018 23:57:18 +0100 (BST)
+Authentication-Results: mta01.prd.rdg.aluminati.org (amavisd-new);
+        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
+        header.d=cantab.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cantab.net; h=
+        content-transfer-encoding:content-language:in-reply-to
+        :mime-version:user-agent:date:date:message-id:from:from
+        :references:subject:subject:received:received; s=dkim; t=
+        1537484237; bh=adwNq1Sh98igLw7ZBuuQcw+9ySXX+yM9DJhQegBuQFM=; b=v
+        rQh3Hq1ibUH8eZAm957wZtSI8tuja+B7TmGXls+Niv56JEAyh3DJqbX79K1yCz+5
+        2Td1L4Soa086y0P7h5VEUq/3yoI0bH9J+SpTTEPtAgZZ4OIpj+8a37wSf4lX2b25
+        SIYswn875wBVOM95gLHnzFH/ByhTX7dD+u0SjMAexCEle+UCV61xtLaFOZt8e+iV
+        3V9VUIA95ftIVhw5YjE3FeSE6KCJ5lLcE6jdLN857fJSkb1X4gs77Me6rjNGjiPj
+        wBTQVgOnmIOO8olNcFWK9faIEN9oQsypqYrb2i+O0bPdDW07vVAoaCzihshF7r0a
+        uJufLEB2oi/JJfGev9wAQ==
+X-Quarantine-ID: <S2R4u8QB89eg>
+X-Virus-Scanned: Debian amavisd-new at mta01.prd.rdg.aluminati.org
+Received: from mta.aluminati.local ([127.0.0.1])
+        by localhost (mta01.prd.rdg.aluminati.org [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id S2R4u8QB89eg; Thu, 20 Sep 2018 23:57:17 +0100 (BST)
+Received: from [192.168.0.2] (cpc92884-cmbg20-2-0-cust324.5-4.cable.virginm.net [80.1.217.69])
+        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTPSA id 4139162FD9;
+        Thu, 20 Sep 2018 23:57:15 +0100 (BST)
+Subject: Re: Code of Conduct: Let's revamp it.
+To:     unconditionedwitness@redchan.it
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net>
+ <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <20180920041846.GA4418@1wt.eu> <206423b0a199c1f12e61364d6e687e09@redchan.it>
+From:   Edward Cree <ec429@cantab.net>
+Message-ID: <a9db544f-db9d-d6c4-67d8-43db2eb591fc@cantab.net>
+Date:   Thu, 20 Sep 2018 23:57:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
+MIME-Version: 1.0
+In-Reply-To: <206423b0a199c1f12e61364d6e687e09@redchan.it>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch corrects a typo (frambuffer->framebuffer) in the
-sm750fb_fram(e)buffer_release and sm750fb_fram(e)buffer_alloc function
-names.
+On 20/09/18 10:27, unconditionedwitness@redchan.it wrote:
+> Contributors can, at any time, rescind the license grant regarding their
+> property via written notice to those whom they are rescinding the grant
+> from (regarding their property (code)).
 
-Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
----
- drivers/staging/sm750fb/sm750.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+I know others have already said it, but:
+This is legally nonsense.  The only way I can revoke someone's rights to
+ my code under the GPL is if they violate the terms of the GPL.  If I
+ were to do so otherwise, then _I_ would be in violation for having
+ distributed derived works of the kernel without a GPL, not to mention
+ the obvious reliance/estoppel problems.
 
-diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
-index 846d7d243994..e9f10c2669ea 100644
---- a/drivers/staging/sm750fb/sm750.c
-+++ b/drivers/staging/sm750fb/sm750.c
-@@ -1007,7 +1007,7 @@ static void sm750fb_setup(struct sm750_dev *sm750_dev, char *src)
- 	}
- }
- 
--static void sm750fb_frambuffer_release(struct sm750_dev *sm750_dev)
-+static void sm750fb_framebuffer_release(struct sm750_dev *sm750_dev)
- {
- 	struct fb_info *fb_info;
- 
-@@ -1019,7 +1019,7 @@ static void sm750fb_frambuffer_release(struct sm750_dev *sm750_dev)
- 	}
- }
- 
--static int sm750fb_frambuffer_alloc(struct sm750_dev *sm750_dev, int fbidx)
-+static int sm750fb_framebuffer_alloc(struct sm750_dev *sm750_dev, int fbidx)
- {
- 	struct fb_info *fb_info;
- 	struct lynxfb_par *par;
-@@ -1137,7 +1137,7 @@ static int lynxfb_pci_probe(struct pci_dev *pdev,
- 	/* allocate frame buffer info structures according to g_dualview */
- 	max_fb = g_dualview ? 2 : 1;
- 	for (fbidx = 0; fbidx < max_fb; fbidx++) {
--		err = sm750fb_frambuffer_alloc(sm750_dev, fbidx);
-+		err = sm750fb_framebuffer_alloc(sm750_dev, fbidx);
- 		if (err)
- 			goto release_fb;
- 	}
-@@ -1145,7 +1145,7 @@ static int lynxfb_pci_probe(struct pci_dev *pdev,
- 	return 0;
- 
- release_fb:
--	sm750fb_frambuffer_release(sm750_dev);
-+	sm750fb_framebuffer_release(sm750_dev);
- 	return err;
- }
- 
-@@ -1155,7 +1155,7 @@ static void lynxfb_pci_remove(struct pci_dev *pdev)
- 
- 	sm750_dev = pci_get_drvdata(pdev);
- 
--	sm750fb_frambuffer_release(sm750_dev);
-+	sm750fb_framebuffer_release(sm750_dev);
- 	arch_phys_wc_del(sm750_dev->mtrr.vram);
- 
- 	iounmap(sm750_dev->pvReg);
--- 
-2.17.1
+Moreover, even if I _could_ revoke the license, I wouldn't want to do
+ so; it would be ridiculously petty in itself and the precedent it would
+ set would be destructive to the entire open-source community, about
+ which I care deeply.  It is _because_ Linux and other open-source
+ projects are so important to humanity that I spoke up about what I
+ perceive as a threat to it.
 
+In short, "unconditionedwitness", please shut up.  You're not helping.
