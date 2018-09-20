@@ -2,104 +2,78 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6173EECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45701C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C5E321523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:38:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C5E321523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id EE76A21526
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:39:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE76A21526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387437AbeITPU7 (ORCPT
+        id S1732017AbeITPWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:20:59 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44290 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731343AbeITPU6 (ORCPT
+        Thu, 20 Sep 2018 11:22:09 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35445 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731343AbeITPWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:20:58 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 05995263B3F
-Received: by earth.universe (Postfix, from userid 1000)
-        id 1D59C3C0A85; Thu, 20 Sep 2018 11:38:18 +0200 (CEST)
-Date:   Thu, 20 Sep 2018 11:38:18 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Liu Xiang <liu.xiang6@zte.com.cn>, pali.rohar@gmail.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liuxiang_1999@126.com
-Subject: Re: [PATCH] power: supply: bq27xxx: Add support for BQ27411
-Message-ID: <20180920093818.y366exb5vxdkz22y@earth.universe>
-References: <1532266436-20182-1-git-send-email-liu.xiang6@zte.com.cn>
- <20180916113523.fq4n7nsasigy3wyg@earth.universe>
- <3da8eff1-3d4a-4515-c855-34aececc4d71@ti.com>
+        Thu, 20 Sep 2018 11:22:09 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g2vQb-00035q-Qv; Thu, 20 Sep 2018 11:39:17 +0200
+Date:   Thu, 20 Sep 2018 11:39:17 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pu Wen <puwen@hygon.cn>
+cc:     Rong Chen <rong.a.chen@intel.com>, bp@alien8.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, thomas.lendacky@amd.com,
+        helgaas@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-pci@vger.kernel.org, lkp@01.org
+Subject: Re: [LKP] [x86/pci] 7ffb31888c: PANIC:early_exception
+In-Reply-To: <7e9e862a-e890-775f-ed92-74c591c7deb6@hygon.cn>
+Message-ID: <alpine.DEB.2.21.1809201138230.3243@nanos.tec.linutronix.de>
+References: <20180919031923.GC8820@shao2-debian> <4f5166f8-97b8-a58f-3e5d-19d1751a4601@hygon.cn> <dfc09a36-cfc5-0479-a862-696c224f9a19@intel.com> <7e9e862a-e890-775f-ed92-74c591c7deb6@hygon.cn>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zoueqmltw5wajpxe"
-Content-Disposition: inline
-In-Reply-To: <3da8eff1-3d4a-4515-c855-34aececc4d71@ti.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 20 Sep 2018, Pu Wen wrote:
+> On 2018/9/20 8:26, Rong Chen wrote:
+> > On 09/19/2018 09:53 PM, Pu Wen wrote:
+> > > I cannot reproduce this panic on Hygon Dhyana platform. I tired lkp-tests
+> > > both in Ubuntu 16.04 (with gcc-5) and Ubuntu 18.04 (with gcc-7).
+> > > What kind of host do you use to run the qemu? A Intel one or AMD one?
+> > It's a Intel one,
+> > 
+> > model: Nehalem-EX
+> > memory: 224G
+> > nr_node: 4
+> > nr_cpu: 64
+> > nr_socket: 4
+> > brand: Intel(R) Xeon(R) CPU X7560 @ 2.27GHz
+> 
+> I reproduced the PANIC by running lkp-tests with a Intel machine.
+> 
+> The reason is that the function early_is_amd_nb is called even if
+> running on Intel machine. At this case the misc_ids is NULL so the
+> PANIC occur.
+> 
+> I'll rework a patch to solve this problem, either restore the default
+> value of misc_ids with the original AMD one or not call early_is_amd_nb
+> on Intel platform.
 
---zoueqmltw5wajpxe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Return when !AMD and !HYGON is the right thing to do. No point in checking
+device ids which cannot happen in the first place.
 
-Hi,
+Thanks,
 
-On Mon, Sep 17, 2018 at 03:37:18PM -0500, Andrew F. Davis wrote:
-> On 09/16/2018 06:35 AM, Sebastian Reichel wrote:
-> > Hi,
-> >=20
-> > On Sun, Jul 22, 2018 at 09:33:56PM +0800, Liu Xiang wrote:
-> >> According to the datasheet, bq27411 is similar to bq27421.
-> >>
-> >> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
-> >> ---
-> >=20
-> > Looks good to me. Do you plan to test/review this Andrew, or
-> > should I proceed with merging this patch?
-> >=20
->=20
->=20
-> I do not have this particular hardware for testing, but the patch does
-> look correct,
->=20
-> Reviewed-by: Andrew F. Davis <afd@ti.com>
-
-Thanks, queued.
-
--- Sebastian
-
---zoueqmltw5wajpxe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlujaoYACgkQ2O7X88g7
-+pqa/w/+JnUDYDp0GGxwPC/roCyfLHtK7pZH2EQEvoUOc4Nn2MZ7hpGyIORlMW3h
-Q3HF67rxvClJaAC3mbMy1YrFfwmn3gj6AVLq5g/RGXD2sbwW8gMgjnBXybeIqnMn
-XTsi8mKYO0Zx/BREMnzsESrXL0zvWSJwSr04777dNO+jLN5NNUVih61EtrfgGK+/
-64iHp3EfkqfDEdI2qpPWTD70fejDO3Y2RTaENiZLBLdyt0jJV4zQYCikOu2Iobyj
-/2nTkRN+zgP9u5Y4vGNu0G5M7DmKlydBqwLduQ+u2TeIQPPTsiPTXiFvVpijCviE
-tYgQM3lWCBP1VchAbcd8G1CY+TVV3N+xXs4nW3qO+HBrRhi34APGkaJtJDAACcme
-6g6mXSZROQuud5EAqeaQIivBv9Sb8fUOAp7VcQc9oKRirbPkAHvFuHh3a7R9JGMp
-D4z/hqwCOEfipHRp5/3yTCj5T1tdy5WObCy6Dgx7qUspBdlkP3feddqir1dKqM1w
-HnoTuEUpJUKbcqhfrf2qBILT+oYgKO0GYn0d8e0jjVXxU5F3xucOOT+oZCuKY4Bq
-KXgHdkr6R9fAYT+9OALuwSrjosOWJIR2HKnfNQ7P+941yPGpAzjWZntgHN9C+n9/
-5kAW+tlU8jp/PVNQuy2kOigzteOQNd86BnVzh0/hVKcMsN+O+vA=
-=ieU6
------END PGP SIGNATURE-----
-
---zoueqmltw5wajpxe--
+	tglx
