@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DA1ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B24C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC3221531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B76121531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ol6KQSWw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC3221531
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxtQg47D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B76121531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388189AbeITXIT (ORCPT
+        id S2388215AbeITXIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:08:19 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35991 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388146AbeITXIS (ORCPT
+        Thu, 20 Sep 2018 19:08:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40155 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbeITXIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:08:18 -0400
-Received: by mail-wm1-f65.google.com with SMTP id j192-v6so361818wmj.1;
-        Thu, 20 Sep 2018 10:23:46 -0700 (PDT)
+        Thu, 20 Sep 2018 19:08:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y8-v6so6562880wrh.7;
+        Thu, 20 Sep 2018 10:23:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=twtedPeeZz5KoysBQfVb1d5EctHONCIBWFDY7XlqfhI=;
-        b=Ol6KQSWwqMxHMW2MGqYxwKMBZm7Reg5Kt+juHiMq2fr/oMpj+P2D1f0Ni2rNfAiKrG
-         vjCI0EymqDtrplAJF2kOUWMKzLtbb3wXTtLHb6RiSn/DmsqphXqRZdfwEgQyFVXmkHJn
-         MQL33oRe1OpABvhCBuH3ckMIibCCrVjPhvfQeOCpQm6a6q3mDsXj1I7ZreBpPPHeysRl
-         ThKCSonsCXsjnz4FkAkt6nm/ig8qQ/zJA1L8Ludb51eySowy0M/9703DlqMieClzoDzu
-         mUlalCmHfzfMIQ8dH04wi6TyMriIcQuJt3pMF5cmsvGMf+vZ4cdsS/bQP9RtK19oe9E+
-         CB0g==
+        bh=GNvSaAuN8ua66sOY4or0/D1FlscDvCeOL0lZIZxxVVY=;
+        b=ZxtQg47DfgTZWX+3aESPFzEFNa+YSp+x4lCfZoBf60il26qhOBGTWjiEsEbaF+xdr2
+         4AywgAjMnBnuxTQ4s8ueVm2zxeVU7zZ11SUrIPpgpZde5kxpv0X39WZcSB4+/hVJS22Z
+         0FYg7E/rODGjTnj8pgzvUhzQJN2J/xh4on32Q/YrfXHlFD2X+c4XdAS1A1/F+A8ejXgL
+         6xcNAhMoVtWFnsQ2tOJvsMfFDEbgkwAXzv0GpihoXwwT8124GN3nSx+1G7HiUCMzA4Op
+         oZoN5qPN8Z79TcktlU1IYXHQCH8JZ4Pt7Hchb3Uz3sKziqctX7W/IwfRoj2gxBe+Sse6
+         21cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=twtedPeeZz5KoysBQfVb1d5EctHONCIBWFDY7XlqfhI=;
-        b=joSfW0GS35oaL+djOgr5DimHJQuEP/Ra6owLDq4DhVBZ9v86wmLhlDN+2ewHVfv78z
-         XhTX86Lz03E4NSnw6iFYpOOb0/uW3r+mtY8KlUV5ffgVRgSSha2pWOgiVHhZqaGR8OsM
-         FwFVt1ooJWz6gnepSVcJMlBRUTQyyQ9Gl3jPSEeAI2AXHr+r3SvlABJhbUdDARayIaWK
-         yXy6l81IDmnTJFsefzoRWv0ZEfJ1hXENmWv8ypyVNd7CUcvLNoWhowur7rBKYR3bGAx6
-         tIzNUeLvvk+NmfS6ymFYG2Uyk348GaakcykDBFfQ8aOvPIWg7WA/sBWR7tb2suKUBixM
-         AyRQ==
-X-Gm-Message-State: APzg51ClTSPL9M0DEl+ynmztQFWwNL3Zj+pw/EgTRiClO8Dsee8DuKEP
-        eqavtwoIeQhi6N/dPDRDONg=
-X-Google-Smtp-Source: ACcGV62jh5I3d0SxFnA3UY6WCKlfBUKZh/iZ3//O8F1vh1odvSENoZlxyzoI2PON3pJIksQWNhU1Tg==
-X-Received: by 2002:a1c:cf8a:: with SMTP id f132-v6mr3820080wmg.0.1537464226338;
-        Thu, 20 Sep 2018 10:23:46 -0700 (PDT)
+        bh=GNvSaAuN8ua66sOY4or0/D1FlscDvCeOL0lZIZxxVVY=;
+        b=Aqw3cE/Gaw4vQM02plZEsqjU7doFbpnYsyWPeCyqI/h/R71iVkxN4LUWz2m8Coj5fP
+         EVTaAOMz3Qn1unxazXNK7uUdNPjHf/hjdnAZEBJA4jl031xOFZTDRzPFjgftiDZOsbBV
+         fWFNMHCMvNmfSQO/rvjoQHr876j6SVx7Taf3cx/i1S2NAtp9kQ9ivyyoNMXHkEJyVc9s
+         piaQ1rk4TMW6in2f2zIbLehsPRvX+VUWgSJ9W2hqouNEQz7NCit9gt5R8Qz+4+JBWr3T
+         DYSVQH6eqoG212UmpdfKbYRb4OrgzNrQUbtGKwvfUH/pxuu1AMPR7i6sGOukPX3is0gJ
+         udKQ==
+X-Gm-Message-State: ABuFfoisG8+8KNSDZxd+DYQ1W4smYTKwv7f2zEqX24Mg76lGsichYCAA
+        qffCkND6PrQWfuaqfs/Xns4=
+X-Google-Smtp-Source: ACcGV63BK/cnjGFvECOBoAjjxVvAO91wUVlT/95+RZ58uKyVECjaFS6PmXQCKhN/CJhtw1rlbHjUJg==
+X-Received: by 2002:adf:f7c8:: with SMTP id a8-v6mr4418106wrq.86.1537464228572;
+        Thu, 20 Sep 2018 10:23:48 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.44
+        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:23:45 -0700 (PDT)
+        Thu, 20 Sep 2018 10:23:48 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -97,9 +97,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 10/15] Compiler Attributes: add Doc/process/programming-language.rst
-Date:   Thu, 20 Sep 2018 19:22:56 +0200
-Message-Id: <20180920172301.21868-11-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v5 11/15] Compiler Attributes: add MAINTAINERS entry
+Date:   Thu, 20 Sep 2018 19:22:57 +0200
+Message-Id: <20180920172301.21868-12-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -111,74 +111,25 @@ Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- Documentation/process/index.rst               |  1 +
- .../process/programming-language.rst          | 45 +++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 Documentation/process/programming-language.rst
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/process/index.rst b/Documentation/process/index.rst
-index 9ae3e317bddf..00558b6d2649 100644
---- a/Documentation/process/index.rst
-+++ b/Documentation/process/index.rst
-@@ -23,6 +23,7 @@ Below are the essential guides that every developer should read.
-    code-of-conduct
-    development-process
-    submitting-patches
-+   programming-language
-    coding-style
-    maintainer-pgp-guide
-    email-clients
-diff --git a/Documentation/process/programming-language.rst b/Documentation/process/programming-language.rst
-new file mode 100644
-index 000000000000..e5f5f065dc24
---- /dev/null
-+++ b/Documentation/process/programming-language.rst
-@@ -0,0 +1,45 @@
-+.. _programming_language:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e993064637ca..74419b8d00ac 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3722,6 +3722,11 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/platform/x86/compal-laptop.c
+ 
++COMPILER ATTRIBUTES
++M:	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
++S:	Maintained
++F:	include/linux/compiler_attributes.h
 +
-+Programming Language
-+====================
-+
-+The kernel is written in the C programming language [c-language]_.
-+More precisely, the kernel is typically compiled with ``gcc`` [gcc]_
-+under ``-std=gnu89`` [gcc-c-dialect-options]_: the GNU dialect of ISO C90
-+(including some C99 features).
-+
-+This dialect contains many extensions to the language [gnu-extensions]_,
-+and many of them are used within the kernel as a matter of course.
-+
-+There is some support for compiling the kernel with ``clang`` [clang]_
-+and ``icc`` [icc]_ for several of the architectures, although at the time
-+of writing it is not completed, requiring third-party patches.
-+
-+Attributes
-+----------
-+
-+One of the common extensions used throughout the kernel are attributes
-+[gcc-attribute-syntax]_. Attributes allow to introduce
-+implementation-defined semantics to language entities (like variables,
-+functions or types) without having to make significant syntactic changes
-+to the language (e.g. adding a new keyword) [n2049]_.
-+
-+In some cases, attributes are optional (i.e. a compiler not supporting them
-+should still produce proper code, even if it is slower or does not perform
-+as many compile-time checks/diagnostics).
-+
-+The kernel defines pseudo-keywords (e.g. ``__pure``) instead of using
-+directly the GNU attribute syntax (e.g. ``__attribute__((__pure__))``)
-+in order to feature detect which ones can be used and/or to shorten the code.
-+
-+Please refer to ``include/linux/compiler_attributes.h`` for more information.
-+
-+.. [c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
-+.. [gcc] https://gcc.gnu.org
-+.. [clang] https://clang.llvm.org
-+.. [icc] https://software.intel.com/en-us/c-compilers
-+.. [gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
-+.. [gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
-+.. [gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
-+.. [n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
-+
+ CONEXANT ACCESSRUNNER USB DRIVER
+ L:	accessrunner-general@lists.sourceforge.net
+ W:	http://accessrunner.sourceforge.net/
 -- 
 2.17.1
 
