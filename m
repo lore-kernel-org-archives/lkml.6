@@ -2,113 +2,95 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1355AC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C689C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBBE521523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:22:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBBE521523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 15E9D21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:22:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="dphLURQ2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E9D21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbeITNEL (ORCPT
+        id S1731613AbeITNEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:04:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47816 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbeITNEL (ORCPT
+        Thu, 20 Sep 2018 09:04:33 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35698 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeITNEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:04:11 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37083D6E;
-        Thu, 20 Sep 2018 07:22:08 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 09:22:05 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-sparse@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
-Message-ID: <20180920072205.GC11963@kroah.com>
-References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
- <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com>
- <20180918173428.GA21591@kroah.com>
- <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
- <20180919211458.GA8757@kroah.com>
- <20180919230504.GA20280@nautica>
- <CANiq72=C==Us7YjkzwVW7QHXnuGxHTowriYjX3Wsff19JO=uHw@mail.gmail.com>
- <20180920001024.GD20280@nautica>
+        Thu, 20 Sep 2018 09:04:32 -0400
+Received: by mail-qk1-f193.google.com with SMTP id f62-v6so4479917qke.2;
+        Thu, 20 Sep 2018 00:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y9HnB3Xz9tWx+W3geoEGbxF4Ybh4HxALwKnevxX/LSs=;
+        b=dphLURQ2Wo2mLk7iOHtDR5wMAoVnwazkhILGtLs93KYACBjntsVbZ7wC7piqNy9ggC
+         HbEYrneM9bHbmDh+7NjbV9EFMhFWh/FlQmi4SStAk+mDytjrI+wD1cpn/66hexhNOo22
+         pmkKB+y7SBsGEZxne9h55+MkH44rX36bJ2dwI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y9HnB3Xz9tWx+W3geoEGbxF4Ybh4HxALwKnevxX/LSs=;
+        b=eS6ulyn6tEgEDWaqVhzFjRLdYS4x13YlghwAhhQpBSqBSndi6cChnCRLBetJydzeM+
+         keD1LicffhrIR/IxXzM3v5kkdFJ9M1ziFv4FNlBZhtXhnUn6kJjwEXhn5Q/ww2533Sie
+         EyuMW92JiGBeYEp4OF3YyD3RxDa6goTaVfqB3B3EBc7Ma2c62Zrz3f7vHnzqAidLPZKn
+         ZAdmRXV7SDLLKjeaSb6TRIa0/RpSvQRGOTMjsl8oWg30uWkQiI7mqHa9a7/T7tY0niXz
+         hy28IN2udAjjmxmfRCGqS9i7O9lTOIEhUv8fQgqFnUTxf7C1kSZm+rDXGsi1bNliVyqp
+         GWjw==
+X-Gm-Message-State: APzg51Co/ty4Z3VAk7mnHwnUVqFCxaasHQIbgI4RGqwwQ9OGzRI4Jzyw
+        9203PhP+oDlPABDgmhadjugB8w+Eh/o2eXyll6A=
+X-Google-Smtp-Source: ANB0Vdb7nUdAyz8b5JHCrnq0eMOYg25CG0+vT8YnS8c5p5JxNnX5OU0gJYAbgL1Ty8QsYe+WVEIjgGSI3Fa/9q7566s=
+X-Received: by 2002:a37:9bc9:: with SMTP id d192-v6mr27236274qke.127.1537428150079;
+ Thu, 20 Sep 2018 00:22:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920001024.GD20280@nautica>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180918234110.1908926-1-vijaykhemka@fb.com>
+In-Reply-To: <20180918234110.1908926-1-vijaykhemka@fb.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Thu, 20 Sep 2018 16:52:18 +0930
+Message-ID: <CACPK8Xd_ZKrQa3b98Bpb=wy_P3=FDUjPDfBSHx5Wx_NHk6Y5og@mail.gmail.com>
+Subject: Re: [PATCH v3] ARM: dts: aspeed: Adding Facebook TiogaPass BMC
+To:     vijaykhemka@fb.com
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 02:10:24AM +0200, Dominique Martinet wrote:
-> Miguel Ojeda wrote on Thu, Sep 20, 2018:
-> > > I've not followed so closely, in particular I'm not sure if it's the
-> > > only problem with arm32 right now, but that is a regression - the
-> > > general serie is meant as an improvement, but these two patches fix
-> > > 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually
-> > > exclusive") which was taken in 4.19-rc1
-> > >
-> > > (Miguel, perhaps a Fixes: tag might help remember that?)
-> > 
-> > The commit is mentioned in the commit message, although not with the
-> > Fixes: syntax -- is something now automatically parsing that? I guess
-> > it is also easier for humans to parse :)
-> 
-> As far as I'm aware, the backport to stable stuff parse these to know up
-> till how far back they should backport, but it still requires explicit
-> Cc to the stable@vger list... (not needed here as the "bad" commit never
-> made it to stable)
-> I'm not aware of anything else, but as you said, while I now see you
-> naming the commit now, I managed to miss it earlier and I was somewhat
-> following this so it's probably also easier on humans :)
+Hello Vijay,
 
-"Fixes:" is not just for stable, we use it wherever we have a patch that
-we know fixes a problem introduced in another patch.
+On Wed, 19 Sep 2018 at 09:11, Vijay Khemka <vijaykhemka@fb.com> wrote:
+> Initial introduction of Facebook TiogaPass family equipped with
+> Aspeed 2500 BMC SoC. TiogaPass is a x86 server development kit
+> with a ASPEED ast2500 BMC manufactured by Facebook.
+> Specifically, This adds the tiogapass platform device tree file
+> including the flash layout used by the tiogapass BMC machines.
+>
+> This also adds an entry of tiogapass device tree file in Makefile
+>
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
 
-For this instance, I think we should just revert the offending patch,
-which should resolve the issue for everyone and then you can try to redo
-your series to get it right the next time.
+It looks like you've addressed the concerns from previous reviews. If
+any comments come up please address them in follow up patches.
 
-Sound good?
+I made some minor whitespace fixes and applied this to the aspeed
+v4.20 device tree branch.
 
-> > > (If no-one in Cc has anything included in -next I could take them in my
-> > > 9p branch, but that is quite a bit out of scope from what I advertised
-> > > this branch as so I think it would be confusing ; I think it might
-> > > almost be best if Miguel will keep maintaining these in the future to do
-> > > his own request to inclusion in -next?)
-> > 
-> > I can ask for my auxdisplay tree (or better, a new one) to be in -next
-> > and use that (are non-kernel.org trees allowed to be in -next, by the
-> > way?).
-> 
-> I think a new one would be great, yes.
-> (my branch is on github, so Stephen does not appear to mind
-> non-kernel.org trees)
+Cheers,
 
-Why not just route these through Andrew?  He takes lots of stuff like
-this for this very reason.
-
-thanks,
-
-greg k-h
+Joel
