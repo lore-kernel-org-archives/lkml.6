@@ -2,152 +2,129 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C48C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA2EECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52D9021535
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:30:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y/dz1OLI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52D9021535
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id BCC41214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:30:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCC41214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387805AbeITWOg (ORCPT
+        id S2388031AbeITWOl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:14:36 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44536 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732441AbeITWNy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:13:54 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1-v6so4668865pgp.11
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:29:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qtAuKUKVjVollDKfCkucnLwtQ83jnd8R7dPZQ4Yx9Xk=;
-        b=Y/dz1OLIolEb2yZ/e8y7bqda98lTHMigYL4o5XmwNCukanc6I/xD6dvGOcYMCBAQn0
-         0gnTguygwUoAmP96B4iGq+ZqPMOBjBxpSoZEa2oTLIUfocU+XiqDNXO2/cK1XdEo6w0I
-         z5aeq2Ttwocv6sLByapNAVvAE6abLwK025S2c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=qtAuKUKVjVollDKfCkucnLwtQ83jnd8R7dPZQ4Yx9Xk=;
-        b=T11XX6VqhTW6HiGIMNgcGH0w7KPm9PrtUUQd3OReBEwjqQPi//OQcBij6vK3I7OR3Y
-         paEY3Kbp6TuGAc3qionEqGx/EiEXYPZPr1j7o4rp0jCG/zrTsnk0zELSruRU3ysaQDlX
-         RPBVlGKhdZT/HICreCW/4lCL21wN2li6PWkEE92EW/C0y7fP8OiLMf6olxP5EdgSuevd
-         tf6LH4wZJ/WF6CyFuoCTJJEaKzFltLN/vEvQLN0gaqP0DHym/ff9hvAEiarv92fUWuQ/
-         OeMSHMqhj8JlrF5oqEqQ2+ybPHKOJvVSFHSjUJfQ+C+oTXzGL8kPinKqpojWtZpS8Py1
-         P0YQ==
-X-Gm-Message-State: APzg51C78QLYRyp9mh9dIFR8Jp7ZSG+0w7MhsGHnm2OwENIddxN5Xwfl
-        4gE6oNg/l9xSzNpHJwYA4g7qNA==
-X-Google-Smtp-Source: ANB0VdZ3DjqbQL4SiegUnmSvSUpZA09BYO98YxujOVdd5ePez2sS5ydCwIw2FRWCH/RJZFe0SWdE5A==
-X-Received: by 2002:a63:720f:: with SMTP id n15-v6mr2299368pgc.193.1537460977198;
-        Thu, 20 Sep 2018 09:29:37 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id j184-v6sm32087992pge.77.2018.09.20.09.29.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 09:29:34 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     James Morris <jmorris@namei.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v2 22/26] Yama: Initialize as ordered LSM
-Date:   Thu, 20 Sep 2018 09:23:34 -0700
-Message-Id: <20180920162338.21060-23-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
-References: <20180920162338.21060-1-keescook@chromium.org>
+        Thu, 20 Sep 2018 18:14:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730950AbeITWOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 18:14:41 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CA06183F3E;
+        Thu, 20 Sep 2018 16:30:23 +0000 (UTC)
+Received: from [10.36.117.122] (ovpn-117-122.ams2.redhat.com [10.36.117.122])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D3E281062241;
+        Thu, 20 Sep 2018 16:30:19 +0000 (UTC)
+Subject: Re: [PATCH] KVM: x86: fix failure of injecting exceptions in
+ x86_emulate_instruction
+To:     Yi Wang <wang.yi59@zte.com.cn>
+Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        xu.xi8@zte.com.cn
+References: <1536220964-8412-1-git-send-email-wang.yi59@zte.com.cn>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9835d255-dd9a-222b-f4a2-93611175b326@redhat.com>
+Date:   Thu, 20 Sep 2018 18:30:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1536220964-8412-1-git-send-email-wang.yi59@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 20 Sep 2018 16:30:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts Yama from being a direct "minor" LSM into an ordered LSM.
+On 06/09/2018 10:02, Yi Wang wrote:
+> In order to fix a page table walk issue, commit 6ea6e84309ca
+> ("KVM: x86: inject exceptions produced by x86_decode_insn") check
+> if variable ctxt->have_exception true and inject the exception.
+> Unfortunately, ctxt->have_exception is set to true only in function
+> x86_emulate_insn(), which won't be called before invoking
+> inject_emulated_exception() in the 6ea6e84309ca.
+> This patch fix this issue.
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> Reviewed-by: Xi Xu <xu.xi8@zte.com.cn>
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/lsm_hooks.h | 5 -----
- security/Kconfig          | 2 +-
- security/security.c       | 1 -
- security/yama/yama_lsm.c  | 7 ++++++-
- 4 files changed, 7 insertions(+), 8 deletions(-)
+Queued, thanks.  Do you have a testcase for this?
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 7a38ffdd690f..d75a42eb3ddd 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2092,10 +2092,5 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
- 
- extern void __init capability_add_hooks(void);
--#ifdef CONFIG_SECURITY_YAMA
--extern void __init yama_add_hooks(void);
--#else
--static inline void __init yama_add_hooks(void) { }
--#endif
- 
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/Kconfig b/security/Kconfig
-index f2003bd03ef6..33c9ac3cb759 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -278,7 +278,7 @@ config DEFAULT_SECURITY
- 
- config LSM_ORDER
- 	string "Default initialization order of builtin LSMs"
--	default "loadpin,integrity"
-+	default "yama,loadpin,integrity"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list will be link-order initialized
-diff --git a/security/security.c b/security/security.c
-index 9ffb76b7655b..3fba28de789b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -245,7 +245,6 @@ int __init security_init(void)
- 	 * Load minor LSMs, with the capability module always first.
- 	 */
- 	capability_add_hooks();
--	yama_add_hooks();
- 
- 	/* Load LSMs in specified order. */
- 	prepare_lsm_order();
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index ffda91a4a1aa..f2b1f47f98e8 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -477,9 +477,14 @@ static void __init yama_init_sysctl(void)
- static inline void yama_init_sysctl(void) { }
- #endif /* CONFIG_SYSCTL */
- 
--void __init yama_add_hooks(void)
-+static int __init yama_init(void)
- {
- 	pr_info("Yama: becoming mindful.\n");
- 	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
- 	yama_init_sysctl();
-+	return 0;
- }
-+
-+DEFINE_LSM(yama)
-+	.init = yama_init,
-+END_LSM;
--- 
-2.17.1
+> ---
+>  arch/x86/kvm/emulate.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+> index 106482d..aecf9a72 100644
+> --- a/arch/x86/kvm/emulate.c
+> +++ b/arch/x86/kvm/emulate.c
+> @@ -5105,8 +5105,11 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
+>  		memcpy(ctxt->fetch.data, insn, insn_len);
+>  	else {
+>  		rc = __do_insn_fetch_bytes(ctxt, 1);
+> -		if (rc != X86EMUL_CONTINUE)
+> +		if (rc != X86EMUL_CONTINUE) {
+> +			if (rc == X86EMUL_PROPAGATE_FAULT)
+> +				ctxt->have_exception = true;
+>  			return rc;
+> +		}
+>  	}
+>  
+>  	switch (mode) {
+> 
 
