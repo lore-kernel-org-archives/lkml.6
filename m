@@ -2,148 +2,108 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F54ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F86C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280DD21522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:22:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZtrsDh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280DD21522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D47F2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:28:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D47F2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387774AbeITGDM (ORCPT
+        id S1726963AbeITGIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 02:03:12 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:32970 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbeITGDM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 02:03:12 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r1-v6so99945wmh.0;
-        Wed, 19 Sep 2018 17:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1iH4r24q2VoAOZUVlC84dyq2wSG0D5BgRBNdUuooiqI=;
-        b=HZtrsDh41iU+Z4rxtQonhWFhSHYFlwmaYZGVwlYY5d+XKLut9hgvNSttecMOKpJxP5
-         EakV3zo2VilPQ61hs0OHrwCmOTTs2UKQV3rWGqHrsvhII0Pr2INib++cCTOJ3K1LvQh5
-         uBkf4zqyBT40ETUBZVB6vDuGaDh1OfKc3G8nkc40Fbyf5ftQ0RhYSJFgegE8ptKEf941
-         hLXqKDRxxOtynXf/gqBr3LfkQCwhI/lMRbBwi0qCvSifpf6DEA3WVfgLV7WBrrQftdOA
-         8iu/YH2Gqb5ssnyVq3sJLay4iRT6YGiNF88nLW5NP2GoESKRxfBWTObFJe8gk84gv/vQ
-         Zx/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1iH4r24q2VoAOZUVlC84dyq2wSG0D5BgRBNdUuooiqI=;
-        b=KjqGveEtMfXnCvocjp45qYIkv2BVhlAySkJxlADYBytopH8NYpBG4OeNOyYqv/BayI
-         W+QFS1iexoTygFUNYwj7fbOGhnEfFIstNoH3g/yqGMD20HsN9hM0VorP1IpXZqXY5O8K
-         ADar/62B7ucfvOGYeLz5xwkjRmWKa+jVk6GU5TmpgS4D/szx6zBW/l1pcT4A3OcZgu21
-         4fTgiCnM78UqN/VbWCYBg2EH0KPyOgwljj9LML9tUssIcPAGbguIY3t3LOV0nEOOUMlV
-         ufFJTsNO4kSFzGhm9IvKVn2eDmsy2qcpMDPSwJyMAE38wDZpjNyW6WrMp9lIEvYg1mJy
-         CW9A==
-X-Gm-Message-State: APzg51CiF+ygLAn42YffcM6klrNXIkUCEAMMoGLyuwus5QpfTzrXALXK
-        2/5/9ANcNUecebX8qrqITN4=
-X-Google-Smtp-Source: ACcGV60FNZw36/CDXtcKIATh3x1TkLqZd1aEbiwyaePlxaVesngQCz9DiyGNzuLYoJ5xAR/D1zYuXg==
-X-Received: by 2002:a1c:ac07:: with SMTP id v7-v6mr249001wme.110.1537402964281;
-        Wed, 19 Sep 2018 17:22:44 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id r13-v6sm201317wmf.35.2018.09.19.17.22.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 17:22:43 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ilia Lin <ilia.lin@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v3] cpufreq: qcom-kryo: Fix section annotations
-Date:   Wed, 19 Sep 2018 17:22:21 -0700
-Message-Id: <20180920002220.16644-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Thu, 20 Sep 2018 02:08:55 -0400
+Received: from mga17.intel.com ([192.55.52.151]:53273 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbeITGIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 02:08:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 17:28:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,396,1531810800"; 
+   d="scan'208";a="93235674"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.4]) ([10.239.13.4])
+  by orsmga002.jf.intel.com with ESMTP; 19 Sep 2018 17:26:08 -0700
+Subject: Re: [LKP] [x86/pci] 7ffb31888c: PANIC:early_exception
+To:     Pu Wen <puwen@hygon.cn>
+Cc:     bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, helgaas@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-pci@vger.kernel.org, lkp@01.org
+References: <20180919031923.GC8820@shao2-debian>
+ <4f5166f8-97b8-a58f-3e5d-19d1751a4601@hygon.cn>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <dfc09a36-cfc5-0479-a862-696c224f9a19@intel.com>
+Date:   Thu, 20 Sep 2018 08:26:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f5166f8-97b8-a58f-3e5d-19d1751a4601@hygon.cn>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is currently a warning when building the Kryo cpufreq driver into
-the kernel image:
 
-WARNING: vmlinux.o(.text+0x8aa424): Section mismatch in reference from
-the function qcom_cpufreq_kryo_probe() to the function
-.init.text:qcom_cpufreq_kryo_get_msm_id()
-The function qcom_cpufreq_kryo_probe() references
-the function __init qcom_cpufreq_kryo_get_msm_id().
-This is often because qcom_cpufreq_kryo_probe lacks a __init
-annotation or the annotation of qcom_cpufreq_kryo_get_msm_id is wrong.
 
-Remove the '__init' annotation from qcom_cpufreq_kryo_get_msm_id
-so that there is no more mismatch warning.
+On 09/19/2018 09:53 PM, Pu Wen wrote:
+> On 2018/9/19 11:19, kernel test robot wrote:
+>> [    0.800215] AGP: No AGP bridge found
+>> PANIC: early exception 0xe3 IP 10:ffffffff8294623f error 0 cr2 0x0
+>> [    0.815262] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc2-00018-g7ffb318 #1
+>> [    0.826860] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+>> [    0.839894] RIP: 0010:early_is_amd_nb+0x30/0x4b
+>> [    0.846986] Code: 15 07 3e c8 ff 0f b7 cf 48 c7 c0 c0 6a 01 82 80 fa 02 74 13 80 fa 09 48 c7 c0 20 69 01 82 ba 00 00 00 00 48 0f 45 c2 c1 ef 10 <8b> 10 85 d2 74 0f 39 ca 75 05 39 78 04 74 09 48 83 c0 20 eb eb 31
+>> [    0.876321] RSP: 0000:ffffffff82403e38 EFLAGS: 00010017 ORIG_RAX: 0000000000000000
+>> [    0.888131] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000000000ffff
+>> [    0.899187] RDX: 0000000000000000 RSI: 000000000000c000 RDI: 000000000000ffff
+>> [    0.910233] RBP: 0000000000000018 R08: 0000000000000002 R09: 0000000000000000
+>> [    0.921388] R10: ffffffff829ecc40 R11: ffffffff82aeed87 R12: 0000000000000000
+>> [    0.932476] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>> [    0.943658] FS:  0000000000000000(0000) GS:ffffffff82909000(0000) knlGS:0000000000000000
+>> [    0.956271] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [    0.965216] CR2: 0000000000000000 CR3: 00000000029a2000 CR4: 00000000000006a0
+>> [    0.976358] Call Trace:
+>> [    0.980238]  ? early_gart_iommu_check+0xef/0x2c5
+>> [    0.987493]  ? setup_arch+0x4fa/0xc67
+>> [    0.993231]  ? printk+0x52/0x6e
+>> [    0.998157]  ? start_kernel+0x6e/0x4dc
+>> [    1.004044]  ? load_ucode_bsp+0x42/0x12e
+>> [    1.010145]  ? secondary_startup_64+0xa4/0xb0
+>> BUG: kernel hang in boot stage
+>>
+>> Elapsed time: 700
+>>
+>> #!/bin/bash
+>>
+>>
+>>
+>> To reproduce:
+>>
+>>           git clone https://github.com/intel/lkp-tests.git
+>>           cd lkp-tests
+>>           bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+> I cannot reproduce this panic on Hygon Dhyana platform. I tired lkp-tests
+> both in Ubuntu 16.04 (with gcc-5) and Ubuntu 18.04 (with gcc-7).
+> What kind of host do you use to run the qemu? A Intel one or AMD one?
+It's a Intel one,
 
-Additionally, Nick noticed that the remove function was marked as
-'__init' when it should really be marked as '__exit'.
+model: Nehalem-EX
+memory: 224G
+nr_node: 4
+nr_cpu: 64
+nr_socket: 4
+brand: Intel(R) Xeon(R) CPU X7560 @ 2.27GHz
 
-Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
-
-v1 -> v2:
-
-Add '__init' to qcom_cpufreq_kryo_probe instead of removing it from
-qcom_cpufreq_kryo_get_msm_id.
-
-v2 -> v3:
-
-Go back to removing '__init' from qcom_cpufreq_kryo_get_msm_id instead
-of adding '__init' to qcom_cpufreq_kryo_probe, which causes another
-mismatch warning and add the '__init' -> '__exit' conversion noticed by
-Nick.
-
-The alternative solution is adding '__init' to qcom_cpufreq_kryo_probe,
-removing the probe definition from qcom_cpufreq_kryo_driver, then
-changing platform_driver_register to platform_driver_probe in
-qcom_cpufreq_kryo_init, like [1]. I don't know how that would perform
-given that I don't have a way to test this device.
-
-[1]: https://lore.kernel.org/lkml/20180919185341.31298-1-natechancellor@gmail.com/
-
- drivers/cpufreq/qcom-cpufreq-kryo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-index a1830fa25fc5..2a3675c24032 100644
---- a/drivers/cpufreq/qcom-cpufreq-kryo.c
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -44,7 +44,7 @@ enum _msm8996_version {
- 
- struct platform_device *cpufreq_dt_pdev, *kryo_cpufreq_pdev;
- 
--static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+static enum _msm8996_version qcom_cpufreq_kryo_get_msm_id(void)
- {
- 	size_t len;
- 	u32 *msm_id;
-@@ -222,7 +222,7 @@ static int __init qcom_cpufreq_kryo_init(void)
- }
- module_init(qcom_cpufreq_kryo_init);
- 
--static void __init qcom_cpufreq_kryo_exit(void)
-+static void __exit qcom_cpufreq_kryo_exit(void)
- {
- 	platform_device_unregister(kryo_cpufreq_pdev);
- 	platform_driver_unregister(&qcom_cpufreq_kryo_driver);
--- 
-2.19.0
-
+Best Regards,
+Rong Chen
