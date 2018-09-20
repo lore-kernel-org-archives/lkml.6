@@ -8,139 +8,112 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29188ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D831C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E1D2147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:46:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8EBD2147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSt8whXM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E1D2147C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqgneG4B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EBD2147C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388539AbeIUCbU (ORCPT
+        id S2388596AbeIUCb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:31:20 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37613 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388488AbeIUCbT (ORCPT
+        Thu, 20 Sep 2018 22:31:29 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39361 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeIUCb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:31:19 -0400
-Received: by mail-lf1-f67.google.com with SMTP id b12-v6so2256622lfa.4;
-        Thu, 20 Sep 2018 13:45:59 -0700 (PDT)
+        Thu, 20 Sep 2018 22:31:28 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s14-v6so10721937wrw.6;
+        Thu, 20 Sep 2018 13:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=B6AmOpAih3BTiUaYr509Y9aCYj38/B8W3eJwNQe4cyQ=;
-        b=XSt8whXMA0NM3vRSduD1Kjbkp9XTYqsBprUF/4FrwzmTJIcS/j/DTcZrU/CJpwvPVL
-         dX4WnC2fzBubHNErqEJPU+FfC0oTKgLWUukJ8/EwRPSG+cwMyXAX/we27ttld1qiQd30
-         GarUlx+5dJDKGFeIRlBT4bTV3+8zdqnMdNn782EW/pAxIe7zEbR7080dEi5I9gZP7QrD
-         rBV2OCCUw0YTqMtQ1kEf5RnF77bWvMY5yUHDHg22ehBC5sGX0RXMHD8yOD9DvICa8ABC
-         TAuvYQ9CN+SH5XeOWEGCEhjrswqJYrB3MAkIGmikgX6xmKkXctT1MaIGFioQ7BIhrqjK
-         H6ug==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7wg3egDLkTXuLTmRbPM21TNn5lPaqSV8GqOsjDMyEWo=;
+        b=DqgneG4Bn0XouVsEzbYhv+noJJFW3n49NIz3oYhw+KdaHY3iGz+Z3x/f3/Fzjadm3S
+         6qDb4fD/soil0xUMcFiBWklbiovuepqnoL3z5DBqkllN7P6cp6e1lRT9o4ieZVmARHC5
+         QRoZMsFC9FO6JQgJ1Z5lO52n5g2T2oIE34sC2ZMk21SMeCAXyqSiJi8Bzq3YOP3FArqq
+         G6Tf1ycUzIB10ntWNORuOA6kUFhmKvUz580mC2lAENBVogcN/48ALRrWPl5QCSucagcE
+         TBWTaDOr8bjNTPYSU0bJR5gWykrdqoJk7Fb/zmzfedWf4r0kiXX0zenZ8hZCZkeeg4OU
+         xSAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=B6AmOpAih3BTiUaYr509Y9aCYj38/B8W3eJwNQe4cyQ=;
-        b=AQLxouCtyUzm2zam705Z9235py6ZvYDRADZvLGHO7jQAzXjS8njwENjemIH/JzRFIi
-         0MU6wt0sK8lFQVhkM5XgYgg7VIyncZP1uxAT9ayQmTfIyhdzCj0z5h6vqq8d94HtfyMn
-         ohXzqKdAEId33MHQ/elgtcWsJ5U7AQ9qEQ3+9vv6shdTRSbeJOqHdQS31F56M5XONdO7
-         ifYcnYlzOVoAHKe4VuYTpMGdkIAFYbvVCSPTIKJfRffXB86P/mdjlhYTsoxAZiEQG4B9
-         SxpJO66DEM9KSZiYbydFINy03RaeFpuTx0bGsHtk49bFXwL3p4/ZbD8T2LYzwlq95xtQ
-         wnKA==
-X-Gm-Message-State: APzg51CH1GvTzdVLTI+ZylyxL+AYMofadYAqVc3K5p4C82gKppT191MC
-        /vttyvwRAHkTLDej2FqqBtM=
-X-Google-Smtp-Source: ANB0Vda9YykxtXaIF9nxPayLVP41TZsbCJaWpXfR03K/BfKVWDLRnvHZNiL4kyK1o7lF7KF05yrjkQ==
-X-Received: by 2002:a19:518a:: with SMTP id g10-v6mr11028978lfl.63.1537476358634;
-        Thu, 20 Sep 2018 13:45:58 -0700 (PDT)
-Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
-        by smtp.gmail.com with ESMTPSA id r23-v6sm4470355ljc.15.2018.09.20.13.45.57
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7wg3egDLkTXuLTmRbPM21TNn5lPaqSV8GqOsjDMyEWo=;
+        b=r4QgUUkn0eZvDuwPKrRHO161JPLH7wvLnskfg5exwiZ9/RWKjzL/BdgfnQZdDsqs8J
+         RPaDhVSHL+8vuXVQsTFK8yRcuW0QDqFoJxeUI1IIe0q5rsG0F3Ubk/Ecag+yohYOM34Z
+         /2R6C4LLs5gSyRhOmOqzXcZX6wwQtSHWdcZN3b5DK0CBjzgQZjbvIMnL2uR+9VVkL1sX
+         BBMlpgbeY3R0rc+h9y6UIMcGuikU3e0uk3T0L92mRUSxHADbPdgNpuEtyaMiQOGulGkN
+         Aggk0OAdeaR0CPvcZW1B7YsxX4lRYZUd+RSMVZjePN6Pqm7HfjqtUGKMaIbLfhWaQlO2
+         e3Yg==
+X-Gm-Message-State: APzg51CXenK0GUAa6ReYHVNvIRb7ZRGIdL6G3PnWI45viHJkGx+fCQkU
+        C1N//zBxO0pWrG5TuOnmdE8=
+X-Google-Smtp-Source: ANB0VdYRLJU61nx8AFgskEYM2aUZF89e4BbRyCq6KWtYg0v1uoR4QsM9/FNYuDQZGkNwwuIeN+y6Zw==
+X-Received: by 2002:a5d:6a0e:: with SMTP id m14-v6mr35696191wru.192.1537476368127;
+        Thu, 20 Sep 2018 13:46:08 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id h206-v6sm3845903wmf.25.2018.09.20.13.46.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 13:45:57 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [[PATCH v3] 5/6] [media] ad5820: Add support for ad5821 and ad5823
-Date:   Thu, 20 Sep 2018 22:45:39 +0200
-Message-Id: <20180920204540.28832-5-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180920204540.28832-1-ricardo.ribalda@gmail.com>
-References: <20180920204540.28832-1-ricardo.ribalda@gmail.com>
+        Thu, 20 Sep 2018 13:46:07 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] wireless: ipw2x00: Remove unnecessary parentheses
+Date:   Thu, 20 Sep 2018 13:45:49 -0700
+Message-Id: <20180920204548.2405-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the datasheet, both AD5821 and AD5820 share a compatible
-register-set:
-http://www.analog.com/media/en/technical-documentation/data-sheets/AD5821.pdf
+Clang warns when multiple pairs of parentheses are used for a single
+conditional statement.
 
-Some camera modules also refer that AD5823 is a replacement of AD5820:
-https://download.kamami.com/p564094-OV8865_DS.pdf
+drivers/net/wireless/intel/ipw2x00/ipw2200.c:5655:28: warning: equality
+comparison with extraneous parentheses [-Wparentheses-equality]
+                if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
+                     ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+drivers/net/wireless/intel/ipw2x00/ipw2200.c:5655:28: note: remove
+extraneous parentheses around the comparison to silence this warning
+                if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
+                    ~                    ^               ~
+drivers/net/wireless/intel/ipw2x00/ipw2200.c:5655:28: note: use '=' to
+turn this equality comparison into an assignment
+                if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
+                                         ^~
+                                         =
+1 warning generated.
 
-Suggested-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/134
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/media/i2c/ad5820.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
-index 5d1185e7f78d..c52af302d516 100644
---- a/drivers/media/i2c/ad5820.c
-+++ b/drivers/media/i2c/ad5820.c
-@@ -34,8 +34,6 @@
- #include <media/v4l2-device.h>
- #include <media/v4l2-subdev.h>
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index 9644e7b93645..bbdca13c5a9f 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -5652,7 +5652,7 @@ static void ipw_merge_adhoc_network(struct work_struct *work)
+ 		}
  
--#define AD5820_NAME		"ad5820"
--
- /* Register definitions */
- #define AD5820_POWER_DOWN		(1 << 15)
- #define AD5820_DAC_SHIFT		4
-@@ -368,7 +366,9 @@ static int ad5820_remove(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id ad5820_id_table[] = {
--	{ AD5820_NAME, 0 },
-+	{ "ad5820", 0 },
-+	{ "ad5821", 0 },
-+	{ "ad5823", 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
-@@ -376,6 +376,8 @@ MODULE_DEVICE_TABLE(i2c, ad5820_id_table);
- #ifdef CONFIG_OF
- static const struct of_device_id ad5820_of_table[] = {
- 	{ .compatible = "adi,ad5820" },
-+	{ .compatible = "adi,ad5821" },
-+	{ .compatible = "adi,ad5823" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ad5820_of_table);
-@@ -384,6 +386,8 @@ MODULE_DEVICE_TABLE(of, ad5820_of_table);
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id ad5820_acpi_ids[] = {
- 	{ "AD5820" },
-+	{ "AD5821" },
-+	{ "AD5823" },
- 	{ }
- };
- 
-@@ -394,7 +398,7 @@ static SIMPLE_DEV_PM_OPS(ad5820_pm, ad5820_suspend, ad5820_resume);
- 
- static struct i2c_driver ad5820_i2c_driver = {
- 	.driver		= {
--		.name	= AD5820_NAME,
-+		.name	= "ad5820",
- 		.pm	= &ad5820_pm,
- 		.of_match_table = of_match_ptr(ad5820_of_table),
- 		.acpi_match_table = ACPI_PTR(ad5820_acpi_ids),
+ 		mutex_lock(&priv->mutex);
+-		if ((priv->ieee->iw_mode == IW_MODE_ADHOC)) {
++		if (priv->ieee->iw_mode == IW_MODE_ADHOC) {
+ 			IPW_DEBUG_MERGE("remove network %*pE\n",
+ 					priv->essid_len, priv->essid);
+ 			ipw_remove_current_network(priv);
 -- 
-2.18.0
+2.19.0
 
