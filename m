@@ -2,129 +2,153 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4CBC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDEDC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6697621529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:41:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="sV0PWLOX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6697621529
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 52B8021529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B8021529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732247AbeITQYI (ORCPT
+        id S1732374AbeITQZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 12:24:08 -0400
-Received: from mail-ua1-f45.google.com ([209.85.222.45]:44209 "EHLO
-        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbeITQYH (ORCPT
+        Thu, 20 Sep 2018 12:25:01 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51465 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbeITQZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 12:24:07 -0400
-Received: by mail-ua1-f45.google.com with SMTP id m11-v6so4283200uao.11
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 03:41:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xaODmu8LJz1bzDD00tbsApu1todrMpQy7HdQ8oFrrLk=;
-        b=sV0PWLOX4+bdsAJ84Ps+WhzPPyf2VCz3f+saaOxaNhYcQKu6HABAPUqxF20Yt6AwaG
-         gfLrOzFckfFXGE7z5wo8t7LWA+xYdXVpfaDpN/12O/uVdMSHICQ28QrFTPWnNMLIuXF/
-         GzGxQXzVEiYsYCYGomB+iLQ42S/8Li3KBoLHFbSe/GnmkeGTzKpzJ37KxBVKBLEOQf0D
-         QdMlpO8p+k0/rtpfddm2/S2JtIWfJEhrPG9ME+i/XUxiK9z+KIltSknZdzNCxxl2MGWo
-         gBM8Z1Tx1Tn1GSEMif9dD5ND+2Do4UYnZqJiQlmuuy6O/n0GWX7TluKvbIVO830FBv24
-         xuoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xaODmu8LJz1bzDD00tbsApu1todrMpQy7HdQ8oFrrLk=;
-        b=fy6VxwAlQGhOO0N3btUjchupzVdlqXDCjghoAeY88W9CK/LAPB5S2z7Ad5QY046ttP
-         qfplrBOyZrvtE/siNEXBhz2OxQycp+4YtXA1nl0IHx6SZzDO7E7e6Mz6BsvngdKQ+EKe
-         UXq4L04OZh/c5UQhxE04aXEgBalGlGtrdTfKi/f0q3gcA7b0IMm75bOq2JVdaD5VTRh1
-         H1F5vjsMRw99geyc7oTZhLEDUdpoGeXmj/Cb1vHF+Wo3a23aIPb8H5Qz55A0J3Hjg7K1
-         x3cbnpZTatKVtQtbAX5IWi4mxlBdTr3aKFbW18kMmgOLw7eQBswpN8O1DPLiAHsF5Ngb
-         bPnw==
-X-Gm-Message-State: APzg51ByYt37yNUkfZdJ8WVVMVhk5vUOqc2bDjrc/LPKKnJFdIUedD4c
-        2z+kaCvVKxbcrbw8AKLOiYLysAyBAV1rJhgXLRA=
-X-Google-Smtp-Source: ANB0Vdbn8zCJ1n7mU+Zt9h4TyBCwRoldkWP3p9cZMT/Cyq+E5iMjyJOXnV5cLL1l/oXX8GO3ic/zgdZEmLZtaz/qLIA=
-X-Received: by 2002:ab0:6352:: with SMTP id f18-v6mr12128525uap.76.1537440075981;
- Thu, 20 Sep 2018 03:41:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <6b4a0cf6fa672938b8ab98acd1dea0a1@redchan.it> <BBFE2346-72C7-47D3-910A-DD720C7637DC@charter.net>
- <24cf6d6095c740903f16b56e22dd137c@redchan.it> <996c99ea4146a247730d87df14dfca1a@redchan.it>
- <E1g2TJn-0006lD-Lm@fencepost.gnu.org> <0bd7fb92f5b2d5f18e67fdc9b3f6e603@redchan.it>
- <77f81bcb07d6a9193992f87dbd040658@redchan.it> <CAMjeLr-qVubez4wJ0AVrjVv2hEk6HjCpA30U=Of0hJEWmwqKyA@mail.gmail.com>
- <CAGmj6qv9k+24qvA9Kxik797cx07=_qJdkxYU-39SFG0tu50HNg@mail.gmail.com>
-In-Reply-To: <CAGmj6qv9k+24qvA9Kxik797cx07=_qJdkxYU-39SFG0tu50HNg@mail.gmail.com>
-From:   Martin Schroeder <mkschreder.uk@googlemail.com>
-Date:   Thu, 20 Sep 2018 12:41:03 +0200
-Message-ID: <CAGmj6qvbBAjthtT8kLaYwjyd9Vqwv9iWj44YbuGk4UQgr_VHdw@mail.gmail.com>
-Subject: Re: Re: Fwd: Re: [DNG] GPL version 2 is a bare license. Recind.
- (Regarding (future) linux Code of Conduct Bannings).
-To:     dreamingforward@gmail.com
-Cc:     observerofaffairs@redchan.it, linux-kernel@vger.kernel.org,
-        dng@lists.dyne.org, debian-user@lists.debian.org
+        Thu, 20 Sep 2018 12:25:01 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1g2wPO-0005ds-N7; Thu, 20 Sep 2018 12:42:06 +0200
+Message-ID: <1537440125.3362.161.camel@pengutronix.de>
+Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for the last tail
+ data
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andy Duan <fugang.duan@nxp.com>, Robin Gong <yibin.gong@nxp.com>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "jslaby@suse.com" <jslaby@suse.com>
+Date:   Thu, 20 Sep 2018 12:42:05 +0200
+In-Reply-To: <VI1PR0402MB36009F89D7E629CE99A7C592FF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+References: <1537457160-10792-1-git-send-email-yibin.gong@nxp.com>
+         <20180920075513.6jqfbrrjax3sp4cn@pengutronix.de>
+         <VI1PR04MB45432291716B64380C1B90DD89130@VI1PR04MB4543.eurprd04.prod.outlook.com>
+         <1537436376.3362.159.camel@pengutronix.de>
+         <VI1PR0402MB36009F89D7E629CE99A7C592FF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rescission of GPL for reasons other than violating the terms of the
-license would be a ridiculous form copyright trolling which, if still
-possible, should definitely be outlawed.
-On Thu, Sep 20, 2018 at 12:15 PM Martin Schroeder
-<mkschreder.uk@googlemail.com> wrote:
->
-> If the license clearly states that permission is granted to any third
-> party to use the code provided that the same rights are granted to
-> everyone else who uses the subsequently distributed versions, wouldn't
-> the original holder who is willing to rescind the license fully also
-> be liable to compensate everyone involved for damages caused by such a
-> rescission?
->
-> It would only sound reasonable to me. You can not first grant
-> something and then revoke that grant and expect that it can be done
-> without consequences. If that becomes possible then there is no point
-> in giving the grant in the first place. It would sound reasonable that
-> there should be plenty of room for a counter lawsuit that would focus
-> on how much damage a complete revocation would cause to everyone who
-> have originally accepted the grant and then went with it. It is
-> crucial I think that rescission of a grant (not just any license) be
-> made close to impossible to accomplish after the grant has been made
-> in the first place and the work has been made public.
-> On Wed, Sep 19, 2018 at 7:22 PM \0xDynamite <dreamingforward@gmail.com> wrote:
-> >
-> > > On 2018-09-19 03:38, Richard Stallman wrote:
-> > >> [[[ To any NSA and FBI agents reading my email: please consider    ]]]
-> > >> [[[ whether defending the US Constitution against all enemies,     ]]]
-> > >> [[[ foreign or domestic, requires you to follow Snowden's example. ]]]
-> > >>
-> > >>   > One is rescission of the license they granted regarding their code,
-> > >> and
-> > >>   > then a lawsuit under copyright if/when the rescission is ignored.
-> > >>   > The others are breach of contract, libel, false light, etc.
-> > >>
-> > >> If "rescission" is really a possibility, it would cause greast trouble
-> > >> for the free software community.  We would need to take steps to make
-> > >> sure it cannot happen.
-> > >>
-> > >> However, that goes against everything I have been told by others.
-> >
-> > This is where copyright differs from IP.  With copyright, you have the
-> > right to derived works if they don't violate Fair Use -- but that
-> > could essentially be violating the GPL.
-> >
-> > The only way to protect the code and spirit of the GPL at that point,
-> > is to accept the legal concept of Intellectual Property.
-> >
-> > The question then, is, is source code released under the GPL
-> > considered "published work"?
-> >
-> > Mark Janssen, JD
+Am Donnerstag, den 20.09.2018, 10:33 +0000 schrieb Andy Duan:
+> From: Lucas Stach <l.stach@pengutronix.de> Sent: 2018年9月20日 17:40
+> > Am Donnerstag, den 20.09.2018, 08:39 +0000 schrieb Robin Gong:
+> > > > -----Original Message-----
+> > > > From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > > > Sent: 2018年9月20日 15:55
+> > > > To: Robin Gong <yibin.gong@nxp.com>
+> > > > Cc: jslaby@suse.com; Andy Duan <fugang.duan@nxp.com>;
+> > > > linux-serial@vger.kernel.org; linux-kernel@vger.kernel.org; dl-
+> > > > linux-imx <linux-imx@nxp.com>; kernel@pengutronix.de
+> > > > Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for
+> > > > the
+> > > > last tail data
+> > > > 
+> > > > Hello,
+> > > > 
+> > > > On Thu, Sep 20, 2018 at 11:26:00PM +0800, Robin Gong wrote:
+> > > > > enable IDDMAEN in UCR4 to let sdma script has the chance to
+> > > > > detect
+> > > > > the idle status and transfer the last tail data with the
+> > > > > interrupt
+> > > > > notifying uart driver.Otherwise, the last dma done interrupt
+> > > > > of
+> > > > > the tail data in rxfifo whose size is less than watermark may
+> > > > > never be received by uart driver.
+> > > > 
+> > > > Is this a theoretic issue? Or does it fix a real problem?
+> > > > 
+> > > > If the former I'd say UCR1_ATDMAEN being set should prevent
+> > > > this
+> > > > stall.
+> > > 
+> > > It's a real fix, you will see 'timeout We read 0 byte' with the
+> > > attached stress test running on i.mx7d or i.mx6 if no this patch
+> > > applied.
+> > > ' while [ 1 ]; do /unit_tests/UART/mxc_uart_stress_test.out
+> > > /dev/ttymxc5 2000000 D L 100 100 L; done &'
+> > > Please make sure dma enabled on ttymxcX for your test, and sdma
+> > > firmware setup in your rootfs /lib/firmware/imx/sdma/sdma-
+> > > imx6q.bin
+> > 
+> > or
+> > > /lib/firmware/imx/sdma/sdma- imx7d.bin.
+> > > You can get sdma firmware from below:
+> > > 
+> > 
+> > https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2F
+> > gi
+> > t
+> > > .kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ffirmware%2Flin
+> > 
+> > ux-&amp
+> > > ;data=02%7C01%7Cfugang.duan%40nxp.com%7C213076f6d1114148b5
+> > 
+> > ce08d61edcfb
+> > > 
+> > 
+> > 88%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C636730331
+> > 814804545&amp
+> > > ;sdata=d0uZMjLc%2FrIae3Wd6PWtX2gEGlvZcUjPBVqKK9550jg%3D&amp
+> > 
+> > ;reserved=0
+> > > firmware.git/tree/imx/sdma
+> > 
+> > Please see commit 905c0decad28402aa166975023fb88c8f62f93c8 on
+> > why using the idle detect together with with SDMA is wrong. We
+> > don't
+> > want to re- introduce the broken behavior.
+> > 
+> 
+> The patch just want to use idle timer to stop SDMA transfer using the
+> new ram script, whose action is not the same as rom script.
+> Sdma rom script how to stop sdma transfer if only one byte in rx FIFO
+> that trigger SDMA request ?
+
+Right, and using the idle detect doesn't work with the ROM script as
+this doesn't read the remaining bytes in the FIFO when the idle detect
+condition is hit.
+
+Instead with the ROM script the aging timer is used to terminate the
+DMA transfer. So if 1 byte is sitting in the FIFO below the watermark
+level, the serial core will trigger a DMA request when the aging time
+is hit. The ROM script checks the aging status and reads the remaining
+bytes from the FIFO, then terminates the transfer. This is all
+documented in the reference manual.
+
+I fail to see why this shouldn't work with the RAM script. If it
+doesn't work with the RAM firmware, this script is violating the
+interface between the serial core and the script in an incompatible way
+and needs fixing.
+
+Regards,
+Lucas
