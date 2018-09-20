@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71433ECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E271FECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF6E21521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FF1720867
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:55:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="i5r0QWP9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF6E21521
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WkpqEJ6N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF1720867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388050AbeITI3e (ORCPT
+        id S2388035AbeITI3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 20 Sep 2018 04:29:34 -0400
-Received: from mail-eopbgr700120.outbound.protection.outlook.com ([40.107.70.120]:3328
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+Received: from mail-dm3nam03on0093.outbound.protection.outlook.com ([104.47.41.93]:53376
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388008AbeITI3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387928AbeITI3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Sep 2018 04:29:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PukHDYk8Oh7HqoLLY9pt/Q8PWJDK8PFxHAWNTvu9y9o=;
- b=i5r0QWP9Ks7LO+qcH2eUXPLiKndhTB/9QoXuZg9ovbbfKKdv+dG/6YNrkJuQmdaCXnXabRkNIk49Y1k7OjVTXRrfEt6GuK6SXHjLFRO05NGuOuGxT6mmJHFf5uVqibqs/JfVJ+vnH9yjbIao9rqUn3SmtllqSPhN7zcHJhyc0Tk=
+ bh=EHS17MiYLZJGuUGLsqP7Atv4DhmpnOvfd/5lWldrVPY=;
+ b=WkpqEJ6NDX0Tmzke3fFM32L4o9KMV4bJ4Pm7EUp8hOI3M531tJpk/j4Bh/sU1Jo2ou1WwTjS0LZfXpXV7WD3MqKKY9izktwmz/R9uQoA6csaEgYyQ/c9NXCp7q5FLVMSB0Y5BQSIj8Sj7dBwqvE9LxAqFgmOImUkXohp5QttxlE=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0119.namprd21.prod.outlook.com (10.173.189.13) with Microsoft SMTP
+ CY4PR21MB0165.namprd21.prod.outlook.com (10.173.192.147) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.4; Thu, 20 Sep 2018 02:48:28 +0000
+ 15.20.1185.6; Thu, 20 Sep 2018 02:48:22 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 02:48:28 +0000
+ 02:48:22 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Rex Zhu <Rex.Zhu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+CC:     Bo Chen <chenbo@pdx.edu>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 47/56] drm/amdgpu: Update power state at the end
- of smu hw_init.
-Thread-Topic: [PATCH AUTOSEL 4.18 47/56] drm/amdgpu: Update power state at the
- end of smu hw_init.
-Thread-Index: AQHUUIxYDJx8G4k5lUeZjTQbEQiB8Q==
-Date:   Thu, 20 Sep 2018 02:48:00 +0000
-Message-ID: <20180920024716.58490-47-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 37/56] e1000: ensure to free old tx/rx rings in
+ set_ringparam()
+Thread-Topic: [PATCH AUTOSEL 4.18 37/56] e1000: ensure to free old tx/rx rings
+ in set_ringparam()
+Thread-Index: AQHUUIxTSWOfIhpCh0ixdCxyUaZd+Q==
+Date:   Thu, 20 Sep 2018 02:47:53 +0000
+Message-ID: <20180920024716.58490-37-alexander.levin@microsoft.com>
 References: <20180920024716.58490-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180920024716.58490-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,77 +60,85 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0119;6:3rmnDHPhYaayTgyBFdfmqlilyRXvyjuEvX1ZDH4mS7Uj2vOEpGfw+Bd0V0zOZ+fh9+zjo+edg5kOzQwJw+22JnCKVXbpcfqoBicPdkEFwOpc3uNehM65tlpTSuJIfmqjnHw0vUMBdY7s03qGg45L0Ni/0jpC7K9q4jkfkbJTK0e1qlVw9/NR3MUbTlkVdNzmgBQTGBsHsqeFGSznRJ1ZHl9/g87SgS2u5oSq184XHMaDrEz4A+OflO0pyuOPP7pHv9wymdHe92guKMRnp5A9SycX0Xo3lWjTIzzzUvOQ1sUT+o3zs+qDk+OBVOM8Z87YFa7h/c1HPN5HiU0TrSaYL07s3QIiP82Q5jix9Js/MNbNQteX4Kl7iz1LioYTbnG4DT8P1RbCKCemhEYz0SfCeMePQuCTmQoOwtQi43K6PRN76pX7EpasKuq/FAIRTXXD5AA9Fp0zVVVYrgtHl0I+5w==;5:Wo0K3MVJ5QlY/sm0KlZY7EPp0d2gVA7Wv1jDfT6eGN9IvxSQs+k2LDt4RbP3nVfDpe7t7Vpe7iHO0UB/YFRLjuc2two1vSloBNYhGwoGCOlqwyhql3xC9WOOYb9Q3V1F8JfxRTUDSLOiUhWBBUJevGy/efSHJcm2QYIl5boDAL0=;7:QPi45vJD3Gl1wkjpw4iNNTr5nsd0NKyRmtUW1SXgPHvWPl+8IIv2KhrkTN7id1Ih3TXdFoNT6eDJ5JSzEbpNguP4N1iKdA2uS8FD/b9RdNxqdmcftUuu6hsykDCmVnUTZ3HKgpnuaep6LEd5JoQc87fb98oCQuouznpj08q1JqgpuP0FajuvAh1l9E65nuAqp+iIGVv2yCefXoZwK7y8a8nY0vQtfp8liqiQJjD2xY2raunYCjDYHw717kMFbJ9l
-x-ms-office365-filtering-correlation-id: 874098fa-0b5c-4eeb-78a7-08d61ea38b1f
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0165;6:/QTth5HlornuPwl7HXL5sGO1iE36SGCyeVjefgm4vnbp3euAbynEgqH5XfZzZHTjudki1tS7JPfbORsMbQ41vA+Xi8e4eTAD3yFPN0F/WW2z+p4YQTG0kyg2MYYg1Hm9E+oZzxSZL5ltaB9tnZBN2yIBFYQisM3fEgWNqzF0VaD5UL2ILfZjoTTZKJnAP1zQ1ULk+dQBYqtcMwx5V/LrajC9Sud1f72ObPapkuy4ulxSgJck8bPGWHqO9mSsCPeLC29eCzLCKxVER2chR8pMMTuUANGNk+d08jfSSu1MpmAUqDfTxaXGgYAKcY5ALNDg4KemK35/G5g9CaRwn0N66rArIU7FLQ+rGR+9fDoF/AETTUquQL9XTON0kYimc71FGwM7xkX/j+5QtF9jH7+2EI8uPSf8ctIAEeeetOB7Gpk1rBe/H+kMUye6WJuxxKQjISrVP6iKi98c+9Bjsn1pvQ==;5:kygpzljSlpp9UvvgfI4OLY041yF3HiVil99RQa3wUH7nf9TS2F97GNt7cMhRtum1/V576ugoywK6FLYJkTDKDnNbjdhpmEaAVMu7rjY54/ScszQmv949DcmgNAwV7XsOfk40zNVZYr5yNfgZ9/pLC6ZJdxyzgsbc3x9tI/04lgA=;7:St2fJYP7eFs/ylPoX0HO5LJ4Xfol03MyfLjQeASKXY7Z0hQVN3Q4yrSW3xatDbaxcdxy1UuDe7WNZZW7VzbBw1FP6Hgl1Ufr4jokq3DOItG7JxAE59uqR0RyEw+abIaaBf3MmKEw9eMVGAwC7zPSsK6RYdaWVQn63zQUqKDpjtkx0ZcnBtdIPnwMSERRrM5l0rx+it/U4bPlv4Iqp1cTR9okSEGd0z+qI3LB7RLQA+g8tuxIokpU2SPdsrZM/aXw
+x-ms-office365-filtering-correlation-id: a5450fab-fa45-48b1-0429-08d61ea387dd
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0119;
-x-ms-traffictypediagnostic: CY4PR21MB0119:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0119C1591A01A7BACB87F51EFB130@CY4PR21MB0119.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(767451399110)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0165;
+x-ms-traffictypediagnostic: CY4PR21MB0165:
+x-microsoft-antispam-prvs: <CY4PR21MB016501496BDA4772746C6474FB130@CY4PR21MB0165.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(240347492878265)(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0119;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0119;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0165;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0165;
 x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(136003)(39860400002)(189003)(199004)(5660300001)(54906003)(1076002)(478600001)(10090500001)(72206003)(22452003)(107886003)(110136005)(316002)(68736007)(4326008)(76176011)(3846002)(6116002)(25786009)(14454004)(106356001)(99286004)(6666003)(105586002)(102836004)(15650500001)(6506007)(5250100002)(186003)(2501003)(26005)(6486002)(6436002)(53936002)(6512007)(66066001)(486006)(476003)(2616005)(10290500003)(11346002)(446003)(97736004)(36756003)(2900100001)(2906002)(8936002)(305945005)(575784001)(217873002)(7736002)(86362001)(8676002)(86612001)(256004)(71200400001)(14444005)(71190400001)(81156014)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0119;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(136003)(376002)(366004)(346002)(189003)(199004)(71190400001)(71200400001)(22452003)(53936002)(66066001)(6436002)(72206003)(97736004)(6512007)(478600001)(1076002)(36756003)(5250100002)(217873002)(10090500001)(6116002)(2501003)(14454004)(3846002)(106356001)(256004)(105586002)(2906002)(99286004)(8676002)(81156014)(81166006)(86362001)(8936002)(316002)(2900100001)(5660300001)(76176011)(7736002)(305945005)(446003)(11346002)(2616005)(486006)(86612001)(476003)(68736007)(102836004)(6506007)(107886003)(10290500003)(6486002)(6666003)(110136005)(54906003)(186003)(6346003)(25786009)(4326008)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0165;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: MC78ZGSs1JX1KjrLXu3vdloGwTiwswyLGTaUd7M0zbiSnx3Un2bVeb94FFhIm0stuQ/+ra8UiPtrI8G/+q+I/5jtP+tq3GO0CwOIV9Bg2yOyWdJffDkhGXd3wOSBbgXiUZ97lGA5obLmEWgruMrs6I0F5PQ36gfH1MsC7BuKFcvhvENHN4sNgdSdampLTL35cZdbtof+q+KiWqTC+xQOCGd5c+6C+1vokAhFU/yBssVJSChAYfdFoaYtptN7a22y363cHx+fdQAdKkTAmWagrJCYxUO56hz+SMWLxShnDlwhYIJeTtu3XUJfPXV0YQJzpEX7Sx3rh/vV8YtVmy1lbwEz7afwTjBHg8EyeUbu3VE=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: zmkIO4kD9qWWvWRwu12p1wMCBF/uG5AO1u26qMth/OClANFGoDni9mQAelXR/03oSw9M5K5LpEMWoLvSQRC7okrSORrEpca6eU94Dp1ze77wIrXYNqy2eeHyEl2WrjFudHCO+5wCV4TI00ZjL8QkmpiY0VZjn3VoM9tXvCm3WNSLbyC8pGcJVPatn3QVLgFoOwWUbH8NX3ja0vnsdDo2kMtdupr1mzJw/9XL7iuyBCPCvW0Y3iTkx5uLGFXDnhBQzK/byOJX6DqsSgxx3XUCaZy+0d+X922cSvnN0ltFyc9++qn/Yc68ZZiBVrgc+dLTuJ7LQKt3BmiQiwyTuPkS6pl95IjOU8PnyMv6o4yc/vw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4F5B9774DA4E504E90E1015D4DF3749D@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 874098fa-0b5c-4eeb-78a7-08d61ea38b1f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:00.9917
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5450fab-fa45-48b1-0429-08d61ea387dd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:53.2731
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0119
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogUmV4IFpodSA8UmV4LlpodUBhbWQuY29tPg0KDQpbIFVwc3RyZWFtIGNvbW1pdCAyYWI0
-ZDBlNzQyNTZmYzQ5YjdiMjcwZjYzYzFkMWU0N2MyNDU1YWJjIF0NCg0KRm9yIFNJL0t2LCB0aGUg
-cG93ZXIgc3RhdGUgaXMgbWFuYWdlZCBieSBmdW5jdGlvbg0KYW1kZ3B1X3BtX2NvbXB1dGVfY2xv
-Y2tzLg0KDQp3aGVuIGRwbSBlbmFibGVkLCB3ZSBzaG91bGQgY2FsbCBhbWRncHVfcG1fY29tcHV0
-ZV9jbG9ja3MNCnRvIHVwZGF0ZSBjdXJyZW50IHBvd2VyIHN0YXRlIGluc3RhbmQgb2Ygc2V0IGJv
-b3Qgc3RhdGUuDQoNCnRoaXMgY2hhbmdlIGNhbiBmaXggdGhlIG9vcHMgd2hlbiBrZmQgZHJpdmVy
-IHdhcyBlbmFibGVkIG9uIEt2Lg0KDQpSZXZpZXdlZC1ieTogQWxleCBEZXVjaGVyIDxhbGV4YW5k
-ZXIuZGV1Y2hlckBhbWQuY29tPg0KVGVzdGVkLWJ5OiBNaWNoZWwgRMOkbnplciA8bWljaGVsLmRh
-ZW56ZXJAYW1kLmNvbT4NClNpZ25lZC1vZmYtYnk6IFJleCBaaHUgPFJleC5aaHVAYW1kLmNvbT4N
-ClNpZ25lZC1vZmYtYnk6IEFsZXggRGV1Y2hlciA8YWxleGFuZGVyLmRldWNoZXJAYW1kLmNvbT4N
-ClNpZ25lZC1vZmYtYnk6IFNhc2hhIExldmluIDxhbGV4YW5kZXIubGV2aW5AbWljcm9zb2Z0LmNv
-bT4NCi0tLQ0KIGRyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2t2X2RwbS5jIHwgNCArLS0tDQog
-ZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvc2lfZHBtLmMgfCAzICstLQ0KIDIgZmlsZXMgY2hh
-bmdlZCwgMiBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2FtZC9hbWRncHUva3ZfZHBtLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
-ZGdwdS9rdl9kcG0uYw0KaW5kZXggN2ExZTc3YzkzYmYxLi5kOGU0NjljNTk0YmIgMTAwNjQ0DQot
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9rdl9kcG0uYw0KKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2FtZC9hbWRncHUva3ZfZHBtLmMNCkBAIC0xMzU0LDggKzEzNTQsNiBAQCBzdGF0aWMg
-aW50IGt2X2RwbV9lbmFibGUoc3RydWN0IGFtZGdwdV9kZXZpY2UgKmFkZXYpDQogCQlyZXR1cm4g
-cmV0Ow0KIAl9DQogDQotCWt2X3VwZGF0ZV9jdXJyZW50X3BzKGFkZXYsIGFkZXYtPnBtLmRwbS5i
-b290X3BzKTsNCi0NCiAJaWYgKGFkZXYtPmlycS5pbnN0YWxsZWQgJiYNCiAJICAgIGFtZGdwdV9p
-c19pbnRlcm5hbF90aGVybWFsX3NlbnNvcihhZGV2LT5wbS5pbnRfdGhlcm1hbF90eXBlKSkgew0K
-IAkJcmV0ID0ga3Zfc2V0X3RoZXJtYWxfdGVtcGVyYXR1cmVfcmFuZ2UoYWRldiwgS1ZfVEVNUF9S
-QU5HRV9NSU4sIEtWX1RFTVBfUkFOR0VfTUFYKTsNCkBAIC0zMDYxLDcgKzMwNTksNyBAQCBzdGF0
-aWMgaW50IGt2X2RwbV9od19pbml0KHZvaWQgKmhhbmRsZSkNCiAJZWxzZQ0KIAkJYWRldi0+cG0u
-ZHBtX2VuYWJsZWQgPSB0cnVlOw0KIAltdXRleF91bmxvY2soJmFkZXYtPnBtLm11dGV4KTsNCi0N
-CisJYW1kZ3B1X3BtX2NvbXB1dGVfY2xvY2tzKGFkZXYpOw0KIAlyZXR1cm4gcmV0Ow0KIH0NCiAN
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9zaV9kcG0uYyBiL2RyaXZl
-cnMvZ3B1L2RybS9hbWQvYW1kZ3B1L3NpX2RwbS5jDQppbmRleCA1Yzk3YTM2NzE3MjYuLjYwNmY0
-NjFkY2U0OSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L3NpX2RwbS5j
-DQorKysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9zaV9kcG0uYw0KQEAgLTY4ODcsNyAr
-Njg4Nyw2IEBAIHN0YXRpYyBpbnQgc2lfZHBtX2VuYWJsZShzdHJ1Y3QgYW1kZ3B1X2RldmljZSAq
-YWRldikNCiANCiAJc2lfZW5hYmxlX2F1dG9fdGhyb3R0bGVfc291cmNlKGFkZXYsIEFNREdQVV9E
-UE1fQVVUT19USFJPVFRMRV9TUkNfVEhFUk1BTCwgdHJ1ZSk7DQogCXNpX3RoZXJtYWxfc3RhcnRf
-dGhlcm1hbF9jb250cm9sbGVyKGFkZXYpOw0KLQluaV91cGRhdGVfY3VycmVudF9wcyhhZGV2LCBi
-b290X3BzKTsNCiANCiAJcmV0dXJuIDA7DQogfQ0KQEAgLTc3NjQsNyArNzc2Myw3IEBAIHN0YXRp
-YyBpbnQgc2lfZHBtX2h3X2luaXQodm9pZCAqaGFuZGxlKQ0KIAllbHNlDQogCQlhZGV2LT5wbS5k
-cG1fZW5hYmxlZCA9IHRydWU7DQogCW11dGV4X3VubG9jaygmYWRldi0+cG0ubXV0ZXgpOw0KLQ0K
-KwlhbWRncHVfcG1fY29tcHV0ZV9jbG9ja3MoYWRldik7DQogCXJldHVybiByZXQ7DQogfQ0KIA0K
-LS0gDQoyLjE3LjENCg==
+From: Bo Chen <chenbo@pdx.edu>
+
+[ Upstream commit ee400a3f1bfe7004a3e14b81c38ccc5583c26295 ]
+
+In 'e1000_set_ringparam()', the tx_ring and rx_ring are updated with new va=
+lue
+and the old tx/rx rings are freed only when the device is up. There are res=
+ource
+leaks on old tx/rx rings when the device is not up. This bug is reported by=
+ COD,
+a tool for testing kernel module binaries I am building.
+
+This patch fixes the bug by always calling 'kfree()' on old tx/rx rings in
+'e1000_set_ringparam()'.
+
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+---
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net=
+/ethernet/intel/e1000/e1000_ethtool.c
+index c1e4e94f100f..2569a168334c 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -624,14 +624,14 @@ static int e1000_set_ringparam(struct net_device *net=
+dev,
+ 		adapter->tx_ring =3D tx_old;
+ 		e1000_free_all_rx_resources(adapter);
+ 		e1000_free_all_tx_resources(adapter);
+-		kfree(tx_old);
+-		kfree(rx_old);
+ 		adapter->rx_ring =3D rxdr;
+ 		adapter->tx_ring =3D txdr;
+ 		err =3D e1000_up(adapter);
+ 		if (err)
+ 			goto err_setup;
+ 	}
++	kfree(tx_old);
++	kfree(rx_old);
+=20
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return 0;
+--=20
+2.17.1
