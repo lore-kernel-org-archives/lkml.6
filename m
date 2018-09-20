@@ -2,131 +2,83 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB2FECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B680C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B1920880
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:55:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B1920880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E082D21524
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:57:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JyS5UCmO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E082D21524
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbeITNhe (ORCPT
+        id S1731562AbeITNjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:37:34 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40439 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeITNhe (ORCPT
+        Thu, 20 Sep 2018 09:39:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46110 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeITNjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:37:34 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1g2tnu-0004fx-RM; Thu, 20 Sep 2018 09:55:14 +0200
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1g2tnt-0008Tg-F6; Thu, 20 Sep 2018 09:55:13 +0200
-Date:   Thu, 20 Sep 2018 09:55:13 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     jslaby@suse.com, fugang.duan@nxp.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for the last tail
- data
-Message-ID: <20180920075513.6jqfbrrjax3sp4cn@pengutronix.de>
-References: <1537457160-10792-1-git-send-email-yibin.gong@nxp.com>
+        Thu, 20 Sep 2018 09:39:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7E0FRItJ2432DffZFxbBE3fsZ6GvjipO9a8Ko3bTbQw=; b=JyS5UCmOyVqOiVJ4acQgghl2F
+        s3tqb5RHjspwqyu0vkLz9OZ9jh3iuidCNq3w7b1+aPeXyFZhVUtNpUVYHoc3MjwZneuz58I2gOu2Z
+        LqD4AUOjwXvXHkc55fdDJq2jRkw6J7iH85STFnhMjXKi+Va1+o+h/m53vnBO0lcE+yntEc+RtYrEh
+        rSDQ/0hWJihJaaR8DbbSpGdm1WHgFe/kkOkkkQJ3r4W1FKia1g4WLF58qhmfBuadYU5ZcohDi31ub
+        C+fvGSgx0ZUNIkmmDHNWF1SopNaYem028fZUPAwKid5Gn2TZL+T/Gh3QUghtM6BGKLs3IjDpwjDKI
+        DbHCwkwUA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g2tpw-0005UE-Rm; Thu, 20 Sep 2018 07:57:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 491ED201EC166; Thu, 20 Sep 2018 09:57:17 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 09:57:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH 2/2] x86/speculation: Provide application property based
+ STIBP protection
+Message-ID: <20180920075717.GL24124@hirez.programming.kicks-ass.net>
+References: <cover.1537392876.git.tim.c.chen@linux.intel.com>
+ <0c55c162a077aadbfd57878e2694e35292c1a29c.1537392876.git.tim.c.chen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1537457160-10792-1-git-send-email-yibin.gong@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <0c55c162a077aadbfd57878e2694e35292c1a29c.1537392876.git.tim.c.chen@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Sep 19, 2018 at 02:35:30PM -0700, Tim Chen wrote:
+> +	if (get_dumpable(tsk->mm) != SUID_DUMP_USER)
+> +		test_and_set_tsk_thread_flag(tsk, TIF_STIBP);
+> +	else
+> +		test_and_clear_tsk_thread_flag(tsk, TIF_STIBP);
+> +}
 
-On Thu, Sep 20, 2018 at 11:26:00PM +0800, Robin Gong wrote:
-> enable IDDMAEN in UCR4 to let sdma script has the chance to detect
-> the idle status and transfer the last tail data with the interrupt
-> notifying uart driver.Otherwise, the last dma done interrupt of the
-> tail data in rxfifo whose size is less than watermark may never be
-> received by uart driver.
-
-Is this a theoretic issue? Or does it fix a real problem?
-
-If the former I'd say UCR1_ATDMAEN being set should prevent this stall.
-
-Also I'd say the SDMA scripts I know don't properly handle the IDDMA
-request.
-
-Best regards
-Uwe
-
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> ---
->  drivers/tty/serial/imx.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> index 239c0fa..bbb1693 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -1278,7 +1278,7 @@ static int imx_uart_dma_init(struct imx_port *sport)
->  
->  static void imx_uart_enable_dma(struct imx_port *sport)
->  {
-> -	u32 ucr1;
-> +	u32 ucr1, ucr4;
->  
->  	imx_uart_setup_ufcr(sport, TXTL_DMA, RXTL_DMA);
->  
-> @@ -1287,18 +1287,26 @@ static void imx_uart_enable_dma(struct imx_port *sport)
->  	ucr1 |= UCR1_RXDMAEN | UCR1_TXDMAEN | UCR1_ATDMAEN;
->  	imx_uart_writel(sport, ucr1, UCR1);
->  
-> +	ucr4 = imx_uart_readl(sport, UCR4);
-> +	ucr4 |= UCR4_IDDMAEN;
-> +	imx_uart_writel(sport, ucr4, UCR4);
-> +
->  	sport->dma_is_enabled = 1;
->  }
->  
->  static void imx_uart_disable_dma(struct imx_port *sport)
->  {
-> -	u32 ucr1;
-> +	u32 ucr1, ucr4;
->  
->  	/* clear UCR1 */
->  	ucr1 = imx_uart_readl(sport, UCR1);
->  	ucr1 &= ~(UCR1_RXDMAEN | UCR1_TXDMAEN | UCR1_ATDMAEN);
->  	imx_uart_writel(sport, ucr1, UCR1);
->  
-> +	ucr4 = imx_uart_readl(sport, UCR4);
-> +	ucr4 &= ~UCR4_IDDMAEN;
-> +	imx_uart_writel(sport, ucr4, UCR4);
-> +
->  	imx_uart_setup_ufcr(sport, TXTL_DEFAULT, RXTL_DEFAULT);
->  
->  	sport->dma_is_enabled = 0;
-> -- 
-> 2.7.4
-> 
-> 
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+s/test_and_//
