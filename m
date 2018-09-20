@@ -2,120 +2,112 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2D9ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55BFC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F306C21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:18:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FGYfmzvF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F306C21525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 26E1521533
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:24:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E1521533
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbeIUEDw (ORCPT
+        id S1725898AbeIUEKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:03:52 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46236 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeIUEDv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:03:51 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u24-v6so4994542pfn.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=xun1qhtcz3roZQ5ZYvX/52eo5NgWPzZ45l7HSlcN5aU=;
-        b=FGYfmzvFy9DgkCWfRyKRrD6HQl2IvJ3Qa2tvE2OcldLACoyyu1GnNlicrUhSL0zYDf
-         /gt9w//ZGwizr+ySZu/+96C9zCHUmfj8TZNcXOuBY6cGxFH+oItruelXKbCYBqJ3GSNm
-         ENzFP6aaoXfcFsda/ZkoM070eyvLyn0iN2b6E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=xun1qhtcz3roZQ5ZYvX/52eo5NgWPzZ45l7HSlcN5aU=;
-        b=Dguz5P/pwpx+Ad5uWdr4kJ5u1wm43d9IKpsmvh2+9H59d4+MB7vg6fl43hecIVCUIz
-         WLJZ/7yriVvbMr/1BbqX8ufwjkXpZI71p26TNKBOcD6scamFTpclon9lFyLidIDgJ/fi
-         /0AbNqB/+X5FBvgjiXLQDSWvIqhxIg8n6fHlFDEdbqamKkUx4WdcwqCqD6pXGe8js7dL
-         gX0gwvCMBx+Z5SSPJFtOoX6wKiZKWoHQQ+cV1s51k63pu4+EgUPfsJvEKozgWwZEDD4J
-         NocBXpX9u9wVDpo36A8p5HP9QKme6AeK5MqhPPE9B7kalHbX0qZedr2UULSNCLkJwpuY
-         QRvQ==
-X-Gm-Message-State: APzg51D5beDTr+M39RWNhw5/5glRKlMaUGTE5wP0hkfKDgaxsWuPY4ub
-        hdzpbpXyeRFoiC6YfR4ntsV3iV7lBzQ=
-X-Google-Smtp-Source: ANB0VdbV2j8hofSRq9FP6qLdKAhDCINx0khgbh5O3FGwUzFnUnT7pED/tOqNFF1AGPv/LUI4/HD3MA==
-X-Received: by 2002:a63:c046:: with SMTP id z6-v6mr38775962pgi.114.1537481890799;
-        Thu, 20 Sep 2018 15:18:10 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id j187-v6sm3949294pfg.108.2018.09.20.15.18.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 15:18:09 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 21 Sep 2018 00:10:02 -0400
+Received: from mga17.intel.com ([192.55.52.151]:14406 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725782AbeIUEKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 00:10:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 15:24:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,282,1534834800"; 
+   d="scan'208";a="85285084"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
+  by orsmga003.jf.intel.com with ESMTP; 20 Sep 2018 15:24:10 -0700
+Subject: [PATCH v4 0/5] Address issues slowing persistent memory
+ initialization
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
+        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
+Date:   Thu, 20 Sep 2018 15:24:09 -0700
+Message-ID: <20180920215824.19464.8884.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Doug Anderson <dianders@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <CAD=FV=U=r0nkT+JO2j4WUHF03ZiJcmaVrzL6dsauDHV=a2m3tQ@mail.gmail.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        LKML <linux-kernel@vger.kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>
-References: <20180920180323.217377-1-swboyd@chromium.org>
- <20180920180323.217377-3-swboyd@chromium.org>
- <CAD=FV=U=r0nkT+JO2j4WUHF03ZiJcmaVrzL6dsauDHV=a2m3tQ@mail.gmail.com>
-Message-ID: <153748188889.119890.3818754688788845202@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 2/2] i2c: i2c-qcom-geni: Simplify tx/rx functions
-Date:   Thu, 20 Sep 2018 15:18:08 -0700
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Doug Anderson (2018-09-20 13:22:37)
-> Hi,
-> On Thu, Sep 20, 2018 at 11:03 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > We never really look at the 'ret' local variable in these functions, so
-> > let's remove it to make way for shorter and simpler code. Furthermore,
-> > we can shorten some lines by adding two local variables for the SE and
-> > the message length so that everything fits in 80 columns. And kernel
-> > style is to leave the return statement by itself, detached from the rest
-> > of the function.
-> >
-> > Cc: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-> > Cc: Sagar Dharia <sdharia@codeaurora.org>
-> > Cc: Girish Mahadevan <girishm@codeaurora.org>
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > ---
-> >  drivers/i2c/busses/i2c-qcom-geni.c | 54 ++++++++++++++----------------
-> >  1 file changed, 25 insertions(+), 29 deletions(-)
-> =
+This patch set is meant to be a v4 to my earlier patch set "Address issues
+slowing memory init"[1], and a follow-up to my earlier patch set "Address
+issues slowing persistent memory initialization"[2].
 
-> I didn't hate the old code, but you're right that this looks a little bet=
-ter.
-> =
+Excluding any gains seen from using the vm_debug option to disable page
+init poisoning I see a total reduction in file-system init time of about
+two and a half minutes, or 65%, for a system initializing btrfs on a 12TB
+block of persistent memory split evenly over 4 NUMA nodes.
 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> =
+Since the last patch set I have reworked the first patch to provide a more
+generic disable implementation that can be extended in the future.
 
-> NOTE: now that you're cleaning it up, I'd personally go even further
-> and totally get rid of the "mode" local variable.  Basically, just:
-> =
+I tweaked the commit message for the second patch slightly to reflect why
+we might want to use a non-atomic __set_bit versus the atomic set_bit.
 
-> dma_buf =3D i2c_get_dma_safe_msg_buf(msg, 32);
-> if (dma_buf)
->   geni_se_select_mode(se, GENI_SE_DMA);
-> else
->   geni_se_select_mode(se, GENI_SE_FIFO);
+I have modified the third patch to make it so that it can merge onto either
+the linux git tree or the linux-next git tree. The patch set that Dan
+Williams has outstanding may end up conflicting with this patch depending
+on the merge order. If his are merged first I believe the code I changed
+in mm/hmm.c could be dropped entirely.
 
-Sure that's fine. I'll resend this one patch with that squashed in.
+The fourth patch has been split into two and focused more on the async
+scheduling portion of the nvdimm code. The result is much cleaner than the
+original approach in that instead of having two threads running we are now
+getting the thread running where we wanted it to be.
 
+The last change for all patches is that I have updated my email address to
+alexander.h.duyck@linux.intel.com to reflect the fact that I have changed
+teams within Intel. I will be trying to use that for correspondence going
+forward instead of my gmail account.
+
+[1]: https://lkml.org/lkml/2018/9/5/924
+[2]: https://lkml.org/lkml/2018/9/11/10
+[3]: https://lkml.org/lkml/2018/9/13/104
+
+---
+
+Alexander Duyck (5):
+      mm: Provide kernel parameter to allow disabling page init poisoning
+      mm: Create non-atomic version of SetPageReserved for init use
+      mm: Defer ZONE_DEVICE page initialization to the point where we init pgmap
+      async: Add support for queueing on specific node
+      nvdimm: Schedule device registration on node local to the device
+
+
+ Documentation/admin-guide/kernel-parameters.txt |   12 +++
+ drivers/nvdimm/bus.c                            |   19 ++++
+ include/linux/async.h                           |   20 ++++-
+ include/linux/mm.h                              |    2 
+ include/linux/page-flags.h                      |    9 ++
+ kernel/async.c                                  |   36 ++++++--
+ kernel/memremap.c                               |   24 ++---
+ mm/debug.c                                      |   46 ++++++++++
+ mm/hmm.c                                        |   12 ++-
+ mm/memblock.c                                   |    5 -
+ mm/page_alloc.c                                 |  101 ++++++++++++++++++++++-
+ mm/sparse.c                                     |    4 -
+ 12 files changed, 243 insertions(+), 47 deletions(-)
+
+--
