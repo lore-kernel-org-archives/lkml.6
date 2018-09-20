@@ -2,116 +2,90 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C99ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B3DC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C72020877
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:28:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMc5Q5bY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C72020877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D87FF20877
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:29:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87FF20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388251AbeIUCOD (ORCPT
+        id S2388331AbeIUCPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:14:03 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36702 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbeIUCOC (ORCPT
+        Thu, 20 Sep 2018 22:15:04 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:42041 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeIUCPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:14:02 -0400
-Received: by mail-wm1-f67.google.com with SMTP id j192-v6so885768wmj.1;
-        Thu, 20 Sep 2018 13:28:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yNn4v0/RQJnn/jjCb6qmWqjFKUoVQPryB4wy16zI1hE=;
-        b=lMc5Q5bYmdvcbjIxzI5usSe7HCpjVrJ7vMp3cwZFX/vVAlE18ReFWsz/th3A/leBor
-         I2ubzIwTopWccAIPuXM6Lkg/QNYGz+DZDLpDD5xpET13wzjPfzPNEbsrDGZMRUwoMYHl
-         1GfKMUTp+HtrUWRqYeQ+aS0UFwdYUXFfw3eQxAYjgskKnEDAdDXTazBOU6x4umBFlyyB
-         DZQCh5sMq3PsZhCO2x274ukvn+jyCVATixdZDvoCxkIY7L9/O6ECAylq/ny8hLZtCWbC
-         jukBr1O5U2bY7Ymvf3p6hAlDMWHSRQwMpAiHV+yup4zzvR+vxIcImdQN6vmMUMRCX6NO
-         0FUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yNn4v0/RQJnn/jjCb6qmWqjFKUoVQPryB4wy16zI1hE=;
-        b=h04JHOc0fqJj3Y7gE2f4aNHemYXP+tFyGrndNJZYZHNstPxCTwk2NaGbeTF6mdOdX7
-         o9+xImQ8jrwdKbp5qFpzTTE1d2ZBymteg48zovMtKvbiHCmwR5c+0zlRWSAhfoi9tPfG
-         mIAZNsactLkOLCgwnlQE2z851+VSA/F5JA5VdWcQwd+q12V4aKuP8EbF6IYXIbHscdiF
-         WPcaj7/mNbGu/vJ31YU+CN+Ld0MhVRwJygRUIMCExCGlGpWQy+7uCHM1zNqx3JAzhF1a
-         viZnCZb9QnTruf1PHbOjUMHpHDl7HPsXVjqfE1170seert1+vvgN2e8wXKSg5Kq7uUm2
-         TIUA==
-X-Gm-Message-State: APzg51CuDs/rdIMKb52enCFh+T8yINvuupyP8e4+Q+ofKnYGqwfTNuKK
-        B9VCxLU7UywyAuO/5TwWQx4=
-X-Google-Smtp-Source: ANB0VdZAOPGHzcemujCIrzDjMDJrpqEzhLzmlgFR6YwmcElFwxMrV5dpeaCMQ0qdu1LDAvmJUTnXUw==
-X-Received: by 2002:a1c:8c0b:: with SMTP id o11-v6mr4480158wmd.11.1537475325568;
-        Thu, 20 Sep 2018 13:28:45 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id r66-v6sm4007968wmb.37.2018.09.20.13.28.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 13:28:44 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] usb: gadget: udc: Remove unnecessary parentheses
-Date:   Thu, 20 Sep 2018 13:28:13 -0700
-Message-Id: <20180920202812.29158-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Thu, 20 Sep 2018 22:15:03 -0400
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g35a7-0006Wv-2U from joseph_myers@mentor.com ; Thu, 20 Sep 2018 13:29:47 -0700
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 20 Sep 2018 21:29:43 +0100
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1g35a3-0005h6-3E; Thu, 20 Sep 2018 20:29:43 +0000
+Date:   Thu, 20 Sep 2018 20:29:43 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [RFC PATCH] glibc: Perform rseq(2) registration at nptl init
+ and thread creation
+In-Reply-To: <381061785.8994.1537473866841.JavaMail.zimbra@efficios.com>
+Message-ID: <alpine.DEB.2.21.1809202028120.17228@digraph.polyomino.org.uk>
+References: <20180919144438.1066-1-mathieu.desnoyers@efficios.com> <alpine.DEB.2.21.1809191630260.26757@digraph.polyomino.org.uk> <381061785.8994.1537473866841.JavaMail.zimbra@efficios.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
+ svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when multiple pairs of parentheses are used for a single
-conditional statement.
+On Thu, 20 Sep 2018, Mathieu Desnoyers wrote:
 
-drivers/usb/gadget/udc/mv_udc_core.c:188:33: warning: equality
-comparison with extraneous parentheses [-Wparentheses-equality]
-        while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
-                ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
-drivers/usb/gadget/udc/mv_udc_core.c:188:33: note: remove extraneous
-parentheses around the comparison to silence this warning
-        while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
-               ~                       ^                  ~
-drivers/usb/gadget/udc/mv_udc_core.c:188:33: note: use '=' to turn this
-equality comparison into an assignment
-        while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
-                                       ^~
-                                       =
-1 warning generated.
+> Something like this in pthreadP.h ?
+> 
+> +#ifdef __NR_rseq
+> +#include <sysdeps/unix/sysv/linux/rseq-internal.h>
+> +#else
+> +#include <sysdeps/nptl/rseq-internal.h>
+> +#endif  /* __NR_rseq.  */
+> 
+> where sysdeps/unix/sysv/linux/rseq-internal.h contains the linux
+> implementation of rseq_register_current_thread () and
+> rseq_unregister_current_thread (), and sysdeps/nptl/rseq-internal.h
+> contains stubs.
+> 
+> Am I on the right track ?
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/120
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/usb/gadget/udc/mv_udc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's hard to define the right abstractions for what goes where given that 
+only Linux uses NPTL since the removal of the NaCl port.  I suppose it 
+does make logical sense for a #include of <linux/rseq.h> to go somewhere 
+under sysdeps/unix/sysv/linux/.
 
-diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
-index 95f52232493b..cafde053788b 100644
---- a/drivers/usb/gadget/udc/mv_udc_core.c
-+++ b/drivers/usb/gadget/udc/mv_udc_core.c
-@@ -185,7 +185,7 @@ static int process_ep_req(struct mv_udc *udc, int index,
- 	else
- 		bit_pos = 1 << (16 + curr_req->ep->ep_num);
- 
--	while ((curr_dqh->curr_dtd_ptr == curr_dtd->td_dma)) {
-+	while (curr_dqh->curr_dtd_ptr == curr_dtd->td_dma) {
- 		if (curr_dtd->dtd_next == EP_QUEUE_HEAD_NEXT_TERMINATE) {
- 			while (readl(&udc->op_regs->epstatus) & bit_pos)
- 				udelay(1);
 -- 
-2.19.0
-
+Joseph S. Myers
+joseph@codesourcery.com
