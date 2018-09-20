@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 265E4ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C07C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8BC321523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 694CF21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:24:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VD1VOOzG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8BC321523
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2ZhvrhH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694CF21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388304AbeITXIa (ORCPT
+        id S2387728AbeITXJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:08:30 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36012 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbeITXI3 (ORCPT
+        Thu, 20 Sep 2018 19:09:05 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52814 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388127AbeITXIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:08:29 -0400
-Received: by mail-wm1-f65.google.com with SMTP id j192-v6so362363wmj.1;
-        Thu, 20 Sep 2018 10:23:57 -0700 (PDT)
+        Thu, 20 Sep 2018 19:08:16 -0400
+Received: by mail-wm1-f66.google.com with SMTP id y139-v6so329357wmc.2;
+        Thu, 20 Sep 2018 10:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vbv1Y/GlhcruRFT8QBdnUxOtMBEpuuFGHW2cNrplv7o=;
-        b=VD1VOOzGehS8sa9shxFULPPYTsNU3Ee7fFmG53lD5PyLy80l70mCcQxwAZJZk2NYl7
-         L/xaZNlQCQrMM0J8B5fDiXZtVZayvCJOFc80AAf7sGsL/5BWo6sdGl5HhEAKd7v9NFFw
-         dxRL7jToUx2EjOlB3qk1L/q7gsjXM5DtWXxywFVMGfXExxcBHc9WCDeLrirhYw3htrjQ
-         rU1BfQfOEm81Dbl3L7gh0Wyz8nNZR4Bb16FE/rV1vXKsAWzMxym2yyQwtEGJerL6vIrW
-         2BfcTvzZuNlRW7UQ82+UdyDXM6ZNhyoEZIbdGNwaIcMpkadOUVMqamZAxecOd71cKYBY
-         05uA==
+        bh=K89/ZdMSWc7JgU6GCLZqVVq7BWypCFFZoB8/hY3YhVU=;
+        b=Y2ZhvrhHPdJeaczsY7+ovNMcpSm/7lppnlE3QgGblcyx0x8YBESNfN1QbNTonJTLmB
+         +PLcfIjBDUouB/AJbQy9iWD9zRFSbJzfqrS1tq6LlG3PcXNgdW69dUvdRg3ueK4Xo07P
+         LyQh3ljbTh73hi4aZJAlIQMvnHQuJ5Wt418kGJgbxMDJGSwAc1tqbnKuxtHa83N71e0V
+         llKoETG0Mgs7D8HXEYJI0IpiKw+2NMYarRE50CAUOB1ndgmVmmeIN2NeCT05k6ZBQ07s
+         5oWuvxIMzhQPizHkIAyMbrEduW+Duiyn61sKyygTSBzpArkD56Z9eEAi99nR9HDMGqxB
+         o5Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=vbv1Y/GlhcruRFT8QBdnUxOtMBEpuuFGHW2cNrplv7o=;
-        b=EQEJc392e014onr0arkWOIhVumOF6/6rlnCcSZSKteUiep/1pgAGaMdA7a2exfV3NG
-         gJ6dncIE1Sjkt+D+Ksqu4YLbYu47L1CVCdCfkpeFRKbaMuA6Gj/JEMkiaUCNFsyH/bqU
-         FaZuOoolFs3moH26kjCJCAorN05YC9fbZARY315Abp2uQggUZo+kA6w35oD3xOKvJjAd
-         j5Q3X2Lm1QKaE5aNGssgQJ6j184AGZ49m0F3b7BL9eni8jm/Dt+c0Iokgg8UboQeb4ZG
-         mnEdAh/NPz4QGwQHDDv/iAM4wQGB5Le+AU1MZKiWaBPg+BHwje55cjRbgxzBVlNDAs7M
-         jmwA==
-X-Gm-Message-State: APzg51DL/wxD4tRw2tjolmNWYROlXmYnSoQOLbo0aaO0cAGlZGuPtUzJ
-        ZcudsfvSLymd1SI5v7WQP8g=
-X-Google-Smtp-Source: ANB0VdasYzls/w9wxWSqLqLIYHgUA/UOrQWws132mWDbYGx7sHWqHHLxq1EqKYphbf6s8dekc165NA==
-X-Received: by 2002:a1c:3d07:: with SMTP id k7-v6mr3939395wma.146.1537464237286;
-        Thu, 20 Sep 2018 10:23:57 -0700 (PDT)
+        bh=K89/ZdMSWc7JgU6GCLZqVVq7BWypCFFZoB8/hY3YhVU=;
+        b=VulQkBZyVdLO8juFys5S9nDhJJiRQQxJuf4thubj8Qf1HPMExW6MHh7nHaNkHSlKTA
+         KCTRqcXziqvB0w9rW2v8l4mkABAH8VWUHN6R/SyuDOGBEJCfmNqaI+CwsTj36SQJE/98
+         4wflyWVzr4iwk/ROtYJI99YXXvPN/lNQWuZfax/WyX/UnBNjRRi6uzsuVghRB6XoSB/6
+         kpu+cuMdooKgU/khZ8PzcqJrlLOrAi33hUrmrRzyce8z284isPdcjnfhkfdHsc+D6f2G
+         qWOpMevEtWrzfvwS4+Kb1eG7R43NDojl4HGPkOH7WNg731CRdwClR5cCiGAVGqjKZgWd
+         oU6w==
+X-Gm-Message-State: APzg51BKqbpJHxzUF+AldfPrnTKZk5TjSi5VtEoAV1GsX9GFivRtuEFK
+        HZOzjPNmIus1/oXUE2Pp+mQ=
+X-Google-Smtp-Source: ANB0VdZu0WA2jxcUbGBJ7PSLO513Kyr2rNqJmnuP7LBS4AVrDFKZWWmuk2pUu4hfVra+L85gBEDPiw==
+X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr3891601wmf.154.1537464224190;
+        Thu, 20 Sep 2018 10:23:44 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.55
+        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:23:56 -0700 (PDT)
+        Thu, 20 Sep 2018 10:23:43 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -97,9 +97,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 15/15] Compiler Attributes: ext4: remove local __nonstring definition
-Date:   Thu, 20 Sep 2018 19:23:01 +0200
-Message-Id: <20180920172301.21868-16-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v5 09/15] Compiler Attributes: remove uses of __attribute__ from compiler.h
+Date:   Thu, 20 Sep 2018 19:22:55 +0200
+Message-Id: <20180920172301.21868-10-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -107,37 +107,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 072ebb3bffe6 ("ext4: add nonstring annotations to ext4.h")
-introduced a local definition of __nonstring to suppress some false
-positives in gcc 8's -Wstringop-truncation.
-
-Since now we support __nonstring for everyone, remove it.
-
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- fs/ext4/ext4.h | 9 ---------
- 1 file changed, 9 deletions(-)
+ include/linux/compiler.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index caff935fbeb8..2acdfdad3d3f 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -45,15 +45,6 @@
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 17ee9165ca51..b5fb034fa6fa 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -23,8 +23,8 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ #define __branch_check__(x, expect, is_constant) ({			\
+ 			long ______r;					\
+ 			static struct ftrace_likely_data		\
+-				__attribute__((__aligned__(4)))		\
+-				__attribute__((__section__("_ftrace_annotated_branch"))) \
++				__aligned(4)				\
++				__section("_ftrace_annotated_branch")	\
+ 				______f = {				\
+ 				.data.func = __func__,			\
+ 				.data.file = __FILE__,			\
+@@ -59,8 +59,8 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 	({								\
+ 		int ______r;						\
+ 		static struct ftrace_branch_data			\
+-			__attribute__((__aligned__(4)))			\
+-			__attribute__((__section__("_ftrace_branch")))	\
++			__aligned(4)					\
++			__section("_ftrace_branch")			\
+ 			______f = {					\
+ 				.func = __func__,			\
+ 				.file = __FILE__,			\
+@@ -146,7 +146,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 	extern typeof(sym) sym;					\
+ 	static const unsigned long __kentry_##sym		\
+ 	__used							\
+-	__attribute__((__section__("___kentry" "+" #sym )))	\
++	__section("___kentry" "+" #sym )			\
+ 	= (unsigned long)&sym;
+ #endif
  
- #include <linux/compiler.h>
- 
--/* Until this gets included into linux/compiler-gcc.h */
--#ifndef __nonstring
--#if defined(GCC_VERSION) && (GCC_VERSION >= 80000)
--#define __nonstring __attribute__((nonstring))
--#else
--#define __nonstring
--#endif
--#endif
--
- /*
-  * The fourth extended filesystem constants/structures
+@@ -287,7 +287,7 @@ unsigned long read_word_at_a_time(const void *addr)
+  * visible to the compiler.
   */
+ #define __ADDRESSABLE(sym) \
+-	static void * __attribute__((__section__(".discard.addressable"), used)) \
++	static void * __section(".discard.addressable") __used \
+ 		__PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
+ 
+ /**
 -- 
 2.17.1
 
