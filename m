@@ -2,119 +2,104 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF99ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45F3C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CBE72150E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:19:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CBE72150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 970E92150E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:19:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QDsoneKF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 970E92150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732763AbeITTCs (ORCPT
+        id S1732833AbeITTCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 15:02:48 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:10747 "EHLO pegase1.c-s.fr"
+        Thu, 20 Sep 2018 15:02:51 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:36031 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbeITTCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 15:02:47 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42GHPc1Tpyz9ttFS;
-        Thu, 20 Sep 2018 15:19:16 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 7lTOW4tI1zDP; Thu, 20 Sep 2018 15:19:16 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42GHPc0z7Bz9ttCB;
-        Thu, 20 Sep 2018 15:19:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4B05F8B77F;
-        Thu, 20 Sep 2018 15:19:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id M-WJmpeYon6p; Thu, 20 Sep 2018 15:19:16 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C5F2F8B867;
-        Thu, 20 Sep 2018 15:19:15 +0200 (CEST)
-Subject: Re: Checkpatch bad Warning (Re: [PATCH] powerpc/kgdb: add
- kgdb_arch_set/remove_breakpoint())
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <872199441fd43b05fc1c7d049098ef7c0e83f4c5.1537262646.git.christophe.leroy@c-s.fr>
- <2f5f572a-a28c-9d17-844b-9e1961febf64@c-s.fr>
- <595c96f5adcccd7eab9dc95eb48618981af66d3c.camel@perches.com>
- <87worgia60.fsf@concordia.ellerman.id.au>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <f9ad7501-4d07-ddc2-6236-a7eb61283378@c-s.fr>
-Date:   Thu, 20 Sep 2018 15:19:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726177AbeITTCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 15:02:49 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 8386023d;
+        Thu, 20 Sep 2018 13:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=NHyiYwi6nEMe5Tx+fPvDHk4MCU8=; b=QDsone
+        KF0pVH4UnGLf4z1hWZED+9kocErWsmVsP68iZ+UVucGKRBG6e6HnjgTjv1UPvgxB
+        QHssaMyRWSoPz972xTzYAhFs1MEXC3gF3DMqawvPo9WzT0+54Z6bR0nSqE1giaqD
+        2qP9SjqWeohpw94BM8Suklnf1Jr7v5itNyx6/ICn/U3ss/JUBxyReFGe1aldEu3g
+        wrhMjtlF9jHyrZAzUJbL2SottPkm8k/tjhg4Ipzo1R+IdXWgrxyNMsBc44g6ltpn
+        y3X5nUrfQLz4AZ1FOFG8XQoPS18hruIWKXX58XPW/FSio6UDvlhxuJ64iWl9NtxD
+        nOM7ygJBHOdKE+4Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5657edc1 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Thu, 20 Sep 2018 13:01:30 +0000 (UTC)
+Received: by mail-ot1-f41.google.com with SMTP id v44-v6so9327083ote.13;
+        Thu, 20 Sep 2018 06:19:18 -0700 (PDT)
+X-Gm-Message-State: APzg51B10gw9Q4aCxWBuKVgUOFqNdL2Fb6RZr2agYNXLCNvYKkX1GiWP
+        H/M37/KrN7cLRHDZNo86tIF6PuufUqSpa48RSnI=
+X-Google-Smtp-Source: ANB0VdalXBPhLl0gOCOE0waNb7VEgcf/CP3YB42L2opNmZcwFQZ+eKU9PxemWIJXtGkvNRRlGCrZ6RKBl4883xVDMM4=
+X-Received: by 2002:a9d:56b6:: with SMTP id o51-v6mr20914677oth.393.1537449558024;
+ Thu, 20 Sep 2018 06:19:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87worgia60.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-7-Jason@zx2c4.com>
+ <20180918202549.ogfyunppxaha7sfu@pburton-laptop>
+In-Reply-To: <20180918202549.ogfyunppxaha7sfu@pburton-laptop>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 20 Sep 2018 15:19:06 +0200
+X-Gmail-Original-Message-ID: <CAHmME9rm9dqa6wtBDLngdXfv+3DCCsgM51z9nbGg3Bb_Q_zdwg@mail.gmail.com>
+Message-ID: <CAHmME9rm9dqa6wtBDLngdXfv+3DCCsgM51z9nbGg3Bb_Q_zdwg@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 06/20] zinc: ChaCha20 MIPS32r2 implementation
+To:     paul.burton@mips.com
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Ren=C3=A9_van_Dorst?= <opensource@vdorst.com>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>, jhogan@kernel.org,
+        linux-mips@linux-mips.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Paul,
 
+Thanks a bunch for the review.
 
-Le 20/09/2018 à 15:13, Michael Ellerman a écrit :
-> Joe Perches <joe@perches.com> writes:
-> 
->> On Tue, 2018-09-18 at 09:33 +0000, Christophe Leroy wrote:
->>> On the below patch, checkpatch reports
->>>
->>> WARNING: struct kgdb_arch should normally be const
->>> #127: FILE: arch/powerpc/kernel/kgdb.c:480:
->>> +struct kgdb_arch arch_kgdb_ops;
->>>
->>> But when I add 'const', I get compilation failure
->>
->> So don't add const.
->>
->> checkpatch is stupid.  You are not.
->>
->> _Always_ take checkpatch bleats with very
->> large grains of salt.
->>
->> Perhaps send a patch to remove kgbd_arch
->> from scripts/const_structs.checkpatch as
->> it seems not ever to be const.
-> 
-> I think it could/should be const though, it just requires updating all
-> arches.
-> 
+On Tue, Sep 18, 2018 at 10:25 PM Paul Burton <paul.burton@mips.com> wrote:
+> Should this be .set reorder?
 
-Yes I was thinking about doing it, but first thing is to change the way 
-MIPS initialises it:
+Nice catch. Fixed here:
+https://git.zx2c4.com/WireGuard/commit/?id=23d97fc333cf85dd07445a9d21a28cbef47c553c
+But then...
 
+> Even better - could we not just place the addiu before the bne & drop
+> the .set noreorder, allowing the assembler to fill the delay slot with
+> the addiu? Likewise in many other places throughout the patch.
+>
+> That would be more future proof - particularly if we ever want to adjust
+> this for use with the nanoMIPS ISA which has no delay slots. It may also
+> allow the assembler the choice to use compact branches (ie. branches
+> without visible delay slots) when targeting MIPS32r6. I know neither of
+> these will currently build this code, but I think avoiding all the
+> noreorder blocks would be a nice cleanup just for the sake of
+> readability anyway.
 
-struct kgdb_arch arch_kgdb_ops;
+Great idea. Rene has committed that here:
+https://git.zx2c4.com/WireGuard/commit/?id=5c153a59ac3aa58a3ff17c69fee63d599e5f2758
 
-int kgdb_arch_init(void)
-{
-	union mips_instruction insn = {
-		.r_format = {
-			.opcode = spec_op,
-			.func	= break_op,
-		}
-	};
-	memcpy(arch_kgdb_ops.gdb_bpt_instr, insn.byte, BREAK_INSTR_SIZE);
+These will be in the v6 patchset whenever that's posted, and it's
+already been merged into the dev tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/linux.git/log/?h=jd/wireguard
 
-
-Can this be done staticaly ?
-
-Christophe
+Regards,
+Jason
