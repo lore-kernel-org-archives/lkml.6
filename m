@@ -2,138 +2,98 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1577BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF79ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B575521522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:44:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DE9721522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CzDcdiZU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B575521522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pu2OvzjK";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fru2pBzi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE9721522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388648AbeIUE3r (ORCPT
+        id S1727430AbeIUEbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:29:47 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46885 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbeIUE3q (ORCPT
+        Fri, 21 Sep 2018 00:31:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56832 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbeIUEbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:29:46 -0400
-Received: by mail-io1-f67.google.com with SMTP id y12-v6so10130230ioj.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FHBMzyPVooT0K4jfAi0xUUuEwdC0fjEtDr2esA8PRPQ=;
-        b=CzDcdiZU2VV0pA2siNvNj5IExiuC9FgLGCc72D/zBlN5+MJIzyNgwVg5j6GS6IyFA/
-         3K2zydkGupDHtuaXNZVXtbyuiPdHNRxYv9J2Ze1i1IXAdg2p8UZEzt/T+A2gBMGsybgp
-         egI5nxCVvOQ8IG4Oa4tP2YZtR9uR/SXVJQzDc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FHBMzyPVooT0K4jfAi0xUUuEwdC0fjEtDr2esA8PRPQ=;
-        b=XNZgZSfLSrFsVoMwb+dHysoB+KuaNfkjhoXYw8e6Q7xg5ytcKRIaEyKBPZaeWAYVB2
-         dZWurGWquIZPdbnzQGWAsNexd+KwjgIlCAp4GprqTdmexwJU8Afy5wNtdIg7dOVaYZ9Y
-         ln9eeGO++/hvNM6ApF9QjRNzZdFnJWdQusdtZa940Fd4uMJBSkzfjUU2lTtk2Vm2LqMI
-         Tv7SK5eCQ5xrGJ9SjVld3KmxJxevOJW3de0gCBl7Vbc+BTnUC3At5FuBxJhqvJlszCfL
-         TuoMmcZIOTKUOSr1268q8cAGPZX4vLQfHGsLIO/sQzc7g1E7htlrUwuUHRyMyRXffpfs
-         Kaow==
-X-Gm-Message-State: APzg51Aig18doZExbtp5yJ6pdKvcEvkjq68EQ/242yGM1YNgksGFZ7b5
-        Bu1TJ7bM3rVhpBTrY8p1E3Y8/7Lx0OicKlLUT/g8D09f
-X-Google-Smtp-Source: ANB0VdZsgzOWcAzaO2OBYt7nC/2cydeMahvBF1TDTErmmJBaJ9U9I2CdQwGgoecDScheVwX9Jo6YPqwjaTdWHDOAL2g=
-X-Received: by 2002:a02:5916:: with SMTP id p22-v6mr36728350jab.113.1537483439749;
- Thu, 20 Sep 2018 15:43:59 -0700 (PDT)
+        Fri, 21 Sep 2018 00:31:49 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4504260C61; Thu, 20 Sep 2018 22:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537483562;
+        bh=tj71YHs95BcB0PwgaNxXFmaEFnuER7g6AjjmrUabc5w=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Pu2OvzjKQknE1zWBlk6WcjZ4WDGRLZ6WKG20NrBHYFGztv0QnCRuGEtV1WVSzPQX3
+         Y0yPFsOvZTx2Fmn1gUMkzH/9ot8IvnY/YIHpP3w4774HytdXGzHwuzVOVsn/fNkKl/
+         J4ifqqeNeNtDRDNxfTLmMhzW0t0tNo0j7iCRUHa0=
+Received: from [10.80.45.152] (unknown [71.69.156.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EB6B960BE3;
+        Thu, 20 Sep 2018 22:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537483561;
+        bh=tj71YHs95BcB0PwgaNxXFmaEFnuER7g6AjjmrUabc5w=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Fru2pBziV09rV6zQhr5RzpGVUQVutxrRegx8cPhe4jClLU91OoFCMwMAU1kF4vjqL
+         fB8Uist6KK99KdvLu5ApCDg4BoMMsP4X935OBwgOI5hMmegDX3OyGTp8g6YrTHBYwV
+         LnRLNVjKk2MPmCtKQzUzEB2mitbvg/fY6jK8WosI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB6B960BE3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
+ (BD_ADDR)
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+References: <20180920223436.202454-1-mka@chromium.org>
+From:   Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
+Date:   Thu, 20 Sep 2018 18:45:58 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
- <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
- <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com>
- <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org> <CAPybu_39xtDfoHVo2dv2GZcU5hCQYjBpU7tW2hf3vfUwbUK1mQ@mail.gmail.com>
- <015715f7-64bc-aca6-77fe-68ddb6c938a8@kernel.org> <CAPybu_2ovB3T1fOD2gP9rM46z37WVuOuzu5FyKamfyMWoVg=yw@mail.gmail.com>
-In-Reply-To: <CAPybu_2ovB3T1fOD2gP9rM46z37WVuOuzu5FyKamfyMWoVg=yw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 20 Sep 2018 15:43:46 -0700
-Message-ID: <CACRpkdYHJT+C+M3wBr-zR=O9DYM4uVMqprCW8gXSiTMPJhzFnQ@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Timur Tabi <timur@tabi.org>, Stephen Boyd <swboyd@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180920223436.202454-1-mka@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 7:14 AM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> On Thu, Sep 20, 2018 at 2:20 PM Timur Tabi <timur@tabi.org> wrote:
+On 9/20/2018 6:34 PM, Matthias Kaehlcke wrote:
+> On some systems the Bluetooth Device Address (BD_ADDR) isn't stored
+> on the Bluetooth chip itself. One way to configure the BD address is
+> through the device tree. The btqcomsmd driver is an example, it can
+> read the BD address from the DT property 'local-bd-address'. It is
+> also planned to extend the hci_qca driver to support setting the BD
+> address through the DT.
+> 
+> To avoid redundant open-coded reading of 'local-bd-address' and error
+> handling this series adds an API to retrieve the BD address of a device
+> and adapts the btqcomsmd driver to use this API.
 
-> > Users are expected to program the direction for every GPIO they want to
-> > use, regardless of whatever it's set to before they open it.
->
-> I do not agree that the user should program the direction of a GPIO
-> which direction cannot be used.
->
-> Also I am not talking about programming a gpio, I am talking about an
-> technician  connecting portA to portB and burning something because
-> the system provided erroneous information
+I don't think you have got enough number of line savings to make this
+code to be folded into property.c
 
-So what is clear is that your need, I guess in userspace, reliable
-information about the direction of the GPIOs at boot.
-
-> > Because calling that API before properly claiming the GPIO is a
-> > programming error.
->
-> Is there a place where this API is defined?. Which functions require
-> to be defined.? What is the correct order.?
-
-There is nothing like such. We would have to establish semantics.
-I don't see a point in it, the APIs are for using and understanding,
-not for discussing API contracts. I would avoid trying to etch this
-API in stone.
-
-> > The reason why the Qualcomm driver is impacted the most is because on
-> > ACPI platforms, the GPIO map is "sparse".  That is, not every GPIO
-> > between 0 and n-1 actually exists.  So reading a GPIO that doesn't exist
-> > is invalid.
->
-> Why are we adding GPIOs that are invalid?
-> If you can figure out that a GPIO is invalid when the user claims a
-> gpio, you can also figure it out when the user asks the direction.
-
-Right and that is what the (later introduced) valid_mask
-can do.
-
-Any time we call into any of the callbacks that take an offset
-we should (theoretically) check the .valid_mask if active.
-
-Since we normally check it when requesting the GPIO, we
-can't request invalid GPIOs and normally the other callbacks
-would only get called after that, so we are fine.
-
-> > I'm not sure how to properly fix this, but I wonder if we need some kind
-> > of late-stage initialization where gpiolib scans all the GPIOs by
-> > claiming them first, reading the directions, and then releasing them.
->
-> That sounds like a good compromise. Or returning
-> -unconfigured / unknown
->
-> is also an option.
-
-I would just skip over anything asked off in the valid_mask.
-
-I feel positive of a version of this patch that respect valid_mask
-some way, as that should be safe for Qualcomms usecase.
-
-Rough consensus and running code.
-
-Yours,
-Linus Walleij
+Not my call but seems redundant IMO.
