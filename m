@@ -2,131 +2,113 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDD9ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A23C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD0A21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:31:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5gsniMQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AD0A21533
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1652E21533
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:31:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1652E21533
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbeIUFQ7 (ORCPT
+        id S1728503AbeIUFRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:16:59 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38104 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeIUFQ7 (ORCPT
+        Fri, 21 Sep 2018 01:17:31 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:39212 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725749AbeIUFRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:16:59 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j8-v6so7298622wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 16:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=b4zzMasUhzULjOvHykhCu4d335VRxunBy2y8A7zIwYU=;
-        b=H5gsniMQuYAMm4Zsz12QZxU0xdElKBnDuxzKgJTqgYfWjUO6XqbFwAl0QiOlqdeheW
-         6S6ynn67mDR3M+aUoMaXP1pYTgKTy124VanQ26Is84O1FPSGptT+M+ae4kN2//D0W66X
-         /C789G5K4I9LLRRxstsPKjqFcxLozIJlbu+UawEwb5B6J/Dh35IgSO3i01+2qTeEAvNa
-         4IHBK9ODBkynGSbvkgTsMFgH+f4qSloSvsfntVXEuijPx6urte4aXxT2y+j0ojzn8HrV
-         pcXL3AbFElhrXb/zvsukFjnhSfIrcupl2z0RquDjiQ6uo2b3qk6ea4lTHBmONhQEJeuu
-         Mujg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=b4zzMasUhzULjOvHykhCu4d335VRxunBy2y8A7zIwYU=;
-        b=TPNfMFNUmJugy7SD5yJJX+nGbHPQvxDcFQ/nDYmNZ9MYJehoPFjv0/FJTiMWC3JXHY
-         selO2VYMCTITpi3fR53nVI+b3gwdx26Ac3QI+gyR90inqoCiBRyXuogJfd6DzXFLmLOX
-         zKzrQakg3iwlc4yBbRhCLXDucorH7dQ38nrpJpCabR03iFt91Xibkxc+42Or4JL2OJrG
-         7qo3I8a0ZdS8pqOPtccMpXdLytdjJTpJsO0+i/QRGFPl/EXdZTYXybDvVHL9E7Ld1WYT
-         wQNOvtepMRnqIbMaTwXdJC1s0JdYiin6z4/6C6+sDX2TJp4v1zwUDi8BTk4doTwBHrew
-         vZuA==
-X-Gm-Message-State: ABuFfoh2MPw82riLvF3nR7SgTHKlyZy753kGRNohwxA+LlUgzbkXzaDD
-        lTQzvPWdErqhg+4ow+IGL+I=
-X-Google-Smtp-Source: ACcGV61hGwztd5wvv5tIqfe6l3ETVHSzoC080k6q2wDQYdJC0ZroeTNv8TLYNZdF4Honw8faPFuK2g==
-X-Received: by 2002:adf:a969:: with SMTP id u96-v6mr5044894wrc.222.1537486260829;
-        Thu, 20 Sep 2018 16:31:00 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id b22-v6sm3037488wme.48.2018.09.20.16.30.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 16:30:59 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] mtd: rawnand: Use proper enum for flctl_dma_fifo0_transfer
-Date:   Thu, 20 Sep 2018 16:30:25 -0700
-Message-Id: <20180920233024.28534-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 01:17:31 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08894381|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l01425;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.CtbYBbe_1537486265;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CtbYBbe_1537486265)
+          by smtp.aliyun-inc.com(10.147.40.200);
+          Fri, 21 Sep 2018 07:31:05 +0800
+Date:   Fri, 21 Sep 2018 07:31:04 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
+        green.hu@gmail.com
+Subject: Re: [PATCH V8 1/2] clocksource: add gx6605s SOC system timer
+Message-ID: <20180920233103.GA8891@guoren-Inspiron-7460>
+References: <cover.1537412072.git.ren_guo@c-sky.com>
+ <4d409a1fdecf1c376e8cc6b55308cd3c522047b0.1537412072.git.ren_guo@c-sky.com>
+ <6c31f9b2-d536-1cee-8024-b52eb862fd9d@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c31f9b2-d536-1cee-8024-b52eb862fd9d@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is converted implicitly to another:
+On Thu, Sep 20, 2018 at 06:06:19PM +0200, Daniel Lezcano wrote:
+> On 20/09/2018 10:03, Guo Ren wrote:
+> > Changelog:
+> >  - Add License and Copyright
+> >  - Use timer-of framework
+> >  - Change name with upstream feedback
+> >  - Use clksource_mmio framework
+> > 
+> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> > ---
+> >  drivers/clocksource/Kconfig         |   8 ++
+> >  drivers/clocksource/Makefile        |   1 +
+> >  drivers/clocksource/timer-gx6605s.c | 150 ++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 159 insertions(+)
+> >  create mode 100644 drivers/clocksource/timer-gx6605s.c
+> > 
+> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> > index a11f4ba..6d0f18d 100644
+> > --- a/drivers/clocksource/Kconfig
+> > +++ b/drivers/clocksource/Kconfig
+> > @@ -620,4 +620,12 @@ config RISCV_TIMER
+> >  	  is accessed via both the SBI and the rdcycle instruction.  This is
+> >  	  required for all RISC-V systems.
+> >  
+> > +config GX6605S_TIMER
+> > +	bool "Gx6605s SOC system timer driver"
+> > +	depends on CSKY
+> > +	select CLKSRC_MMIO
+> > +	select TIMER_OF
+> > +	help
+> > +	  This option enables support for gx6605s SOC's timer.
+> > +
+> >  endmenu
+> 
+> Please make the option not visible as default. There are currently two
+> approaches look at MTK_TIMER and SPRD_TIMER.
+Em ... (ot sure why COMPILE_TEST?):
+	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
+Hmm?
 
-drivers/mtd/nand/raw/sh_flctl.c:483:46: warning: implicit conversion
-from enumeration type 'enum dma_transfer_direction' to different
-enumeration type 'enum dma_data_direction' [-Wenum-conversion]
-                flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_DEV_TO_MEM) > 0)
-                ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-drivers/mtd/nand/raw/sh_flctl.c:542:46: warning: implicit conversion
-from enumeration type 'enum dma_transfer_direction' to different
-enumeration type 'enum dma_data_direction' [-Wenum-conversion]
-                flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_MEM_TO_DEV) > 0)
-                ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-2 warnings generated.
+> > +static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
+> > +{
+> > +	struct clock_event_device *ce = (struct clock_event_device *) dev;
+> 
+> nit: no cast is needed.
+Yes, change to:
+	struct clock_event_device *ce = dev;
 
-Use the proper enums from dma_data_direction to satisfy Clang.
 
-DMA_MEM_TO_DEV = DMA_TO_DEVICE = 1
-DMA_DEV_TO_MEM = DMA_FROM_DEVICE = 2
+> > +static u64 notrace gx6605s_sched_clock_read(void)
+> > +{
+> > +	void __iomem *base;
+> > +
+> > +	base = timer_of_base(&to) + CLKSRC_OFFSET;
+> > +
+> > +	return (u64) readl_relaxed(base + TIMER_VALUE);
+> 
+> nit: extra space after '(u64)'
+Ok
+	return (u64)readl_relaxed(base + TIMER_VALUE);
 
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/mtd/nand/raw/sh_flctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/sh_flctl.c b/drivers/mtd/nand/raw/sh_flctl.c
-index c0c0798f268f..4d20d033de7b 100644
---- a/drivers/mtd/nand/raw/sh_flctl.c
-+++ b/drivers/mtd/nand/raw/sh_flctl.c
-@@ -480,7 +480,7 @@ static void read_fiforeg(struct sh_flctl *flctl, int rlen, int offset)
- 
- 	/* initiate DMA transfer */
- 	if (flctl->chan_fifo0_rx && rlen >= 32 &&
--		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_DEV_TO_MEM) > 0)
-+		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_FROM_DEVICE) > 0)
- 			goto convert;	/* DMA success */
- 
- 	/* do polling transfer */
-@@ -539,7 +539,7 @@ static void write_ec_fiforeg(struct sh_flctl *flctl, int rlen,
- 
- 	/* initiate DMA transfer */
- 	if (flctl->chan_fifo0_tx && rlen >= 32 &&
--		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_MEM_TO_DEV) > 0)
-+		flctl_dma_fifo0_transfer(flctl, buf, rlen, DMA_TO_DEVICE) > 0)
- 			return;	/* DMA success */
- 
- 	/* do polling transfer */
--- 
-2.19.0
-
+Best Regards
+ Guo Ren
