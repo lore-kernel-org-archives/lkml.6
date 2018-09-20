@@ -2,124 +2,169 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDCEC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1D5ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8844920671
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8844920671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 270CB21528
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:51:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270CB21528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731942AbeITOdX (ORCPT
+        id S1732186AbeITOd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 10:33:23 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:47261 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbeITOdX (ORCPT
+        Thu, 20 Sep 2018 10:33:26 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:36206 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731946AbeITOdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 10:33:23 -0400
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 20 Sep 2018
- 16:51:23 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        <linux-mtd@lists.infradead.org>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v4 0/2] mtd: rawnand: meson: add Amlogic NAND driver support
-Date:   Thu, 20 Sep 2018 16:50:47 +0800
-Message-ID: <1537433449-65213-1-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 20 Sep 2018 10:33:25 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1g2ufg-00023X-JI; Thu, 20 Sep 2018 10:50:48 +0200
+Date:   Thu, 20 Sep 2018 10:50:48 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Christian =?iso-8859-15?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
+        davem@davemloft.net, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com,
+        sds@tycho.nsa.gov, eparis@parisplace.org, jmorris@namei.org,
+        serge@hallyn.com, selinux@tycho.nsa.gov,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] netfilter: nf_tables: add SECMARK support
+Message-ID: <20180920085048.tps2v4jkko7zjav4@breakpoint.cc>
+References: <20180919231402.4482-1-cgzones@googlemail.com>
+ <75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  These two patches try to add initial NAND driver support for Amlogic Meson
-SoCs, current it has been tested on GXL(p212) and AXG(s400) platform.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 9/19/2018 4:14 PM, Christian Göttsche wrote:
+> > Add the ability to set the security context of packets within the nf_tables framework.
+> > Add a nft_object for holding security contexts in the kernel and manipulating packets on the wire.
+> > The contexts are kept as strings and are evaluated to security identifiers at runtime (packet arrival),
+> > so that the nft_objects do not need to be refreshed after security changes.
+> > The maximum security context length is set to 256.
+> >
+> > Based on v4.18.6
+> >
+> > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> 
+> I've only had a cursory look at your patch, but how is it
+> different from what's in xt_SECMARK.c ?
 
+this change is supposed to make secmark labeling accessible from
+nftables.
 
-Changes since v3 at [4]:
- - remove partition table and some used props from dt-bindings 
+The advantage is that its now possible to use
+maps to assign secmarks from a single rule instead of using
+several rules:
 
-Changes since v2 at [3]:
- - remove some hardcode time value, like twb
- - use dev wait R/B instead of nand_soft_waitrdy
- - implement nfc ecc init by ecc helper
- - rework nfc buffer init to register the maximun buffer when several chips
- - free nfc buffer when error and cleanup
- - add variable to teack all the already assigned CS lines
- - fix mtd->name use the first cs line only
- - remove dt "nand-enable-scrambler" and use NAND_NEED_SCRAMBLING instead.
- - move setuping ECC fileds after the identification phase
- - use nand_scan() and attach_chip()
- - check one event to return IRQ_NONE
- - delete cast when of_device_get_match_data
- - use nand_controller_init() helper
- - remove nfc driver complains when calling devm_ioremap_resource
- - clear irqs before setting up irq handler
+nft add rule meta secmark set tcp dport map { 22 : tag-ssh, 80 :
+	tag-http }
 
-Changes since v1 at [1]:
-  - adopt property amlogic,nand-enable-scrambler - thanks Martin
-  - drop nand pins in DT
-  - convert clk access to emmc clkc model 
-  - fix regiser field definition alignment
-  - drop nand-user-mode 
-  - parse cs id from DT
-  - rework n2m, m2n function
-  - explain why insert two "IDLE" command
-  - implement exec_op()
-  - drop meson_nfc_get_nand_chip_dts()
-  - release resource once error occur in meson_nfc_nand_chips_init(), 
-  - call nand_cleanup(nand) once mtd_device_register fail
+and so on.
 
-Items not addressed ( or confirmed ) in this version:
-  - convert to ECC conf helper() 
-  - convert to dma coherent API
-  - how to construct mtd->name
+> > +	for (i = 0; i < ARRAY_SIZE(nft_basic_objects); i++) {
+> > +		err = nft_register_obj(nft_basic_objects[i]);
+> > +		if (err)
+> > +			goto err;
+> > +	}
+> >  
+> > -	for (i = 0; i < ARRAY_SIZE(nft_basic_types); i++) {
+> > -		err = nft_register_expr(nft_basic_types[i]);
+> > +	for (j = 0; j < ARRAY_SIZE(nft_basic_types); j++) {
+> > +		err = nft_register_expr(nft_basic_types[j]);
+> >  		if (err)
+> >  			goto err;
+> >  	}
+> > @@ -248,8 +260,12 @@ int __init nf_tables_core_module_init(void)
+> >  	return 0;
+> >  
+> >  err:
+> > +	while (j-- > 0)
+> > +		nft_unregister_expr(nft_basic_types[j]);
+> > +
+> >  	while (i-- > 0)
+> > -		nft_unregister_expr(nft_basic_types[i]);
+> > +		nft_unregister_obj(nft_basic_objects[i]);
+> > +
+> >  	return err;
 
-[1] https://lkml.kernel.org/r/20180613161314.14894-1-yixun.lan@amlogic.com
-[2] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
-[3] https://lkml.kernel.org/r/20180719094612.5833-1-yixun.lan@amlogic.com
-[4] https://lkml.kernel.org/r/1536317831-58056-1-git-send-email-jianxin.pan@amlogic.com/
+Do I read this right in that this is a error unroll bug fix?
+If so, could you please submit this as indepentent patch?
 
-Liang Yang (2):
-  dt-bindings: nand: meson: add Amlogic NAND controller driver
-  mtd: rawnand: meson: add support for Amlogic NAND flash controller
+Fixes should go into nf.git whereas feature goes to nf-next.git.
 
- .../devicetree/bindings/mtd/amlogic,meson-nand.txt |   60 +
- drivers/mtd/nand/raw/Kconfig                       |   10 +
- drivers/mtd/nand/raw/Makefile                      |    1 +
- drivers/mtd/nand/raw/meson_nand.c                  | 1372 ++++++++++++++++++++
- 4 files changed, 1443 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
- create mode 100644 drivers/mtd/nand/raw/meson_nand.c
+> > +struct nft_secmark {
+> > +	char ctx[NFT_SECMARK_CTX_MAXLEN];
+> > +	int len;
+> > +};
+> > +
+> > +static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
+> > +	[NFTA_SECMARK_CTX]     = { .type = NLA_STRING, .len = NFT_SECMARK_CTX_MAXLEN },
+> > +};
+> > +
+> > +static void nft_secmark_obj_eval(struct nft_object *obj, struct nft_regs *regs, const struct nft_pktinfo *pkt)
+> > +{
+> > +	const struct nft_secmark *priv = nft_obj_data(obj);
+> > +	struct sk_buff *skb = pkt->skb;
+> > +	int err;
+> > +	u32 secid = 0;
+> > +
+> > +	/* skip if packet has already a secmark */
+> > +	if (skb->secmark)
+> > +		return;
 
--- 
-1.9.1
+xt_SECMARK doesn't do this and will allow relabeling.
+What do the LSM experts think?
 
+> > +	err = security_secctx_to_secid(priv->ctx, priv->len, &secid);
+
+Could someone familiar with how LSMs work clarify if this has to be
+called per-packet?
+
+xt_SECMARK.c does this ctx -> secid mapping once, when the iptables rule
+gets added, whereas this patch does it once for each packet.
+
+Is the ctx -> secid mapping stable?
+
+If yes, the code above should be moved to the ->init() hook, otherwise
+we'll need to fix xt_SECMARK.c.
+
+> > +	if (err) {
+> > +		if (err == -EINVAL)
+> > +			pr_notice_ratelimited("invalid security context \'%s\'\n", priv->ctx);
+> > +		else
+> > +			pr_notice_ratelimited("unable to convert security context \'%s\': %d\n", priv->ctx, -err);
+> > +		return;
+> > +	}
+
+Please remove these printks(), they do not really help as user can't
+take any action anyway.
+
+> > +	err = security_secmark_relabel_packet(secid);
+
+Hmm, this function uses current() to check permissions of calling
+task, so this function canot be used in ->eval() path.
+
+Network stack causes random results of "current()", as network
+processing can "steal" cpu from some arbitrary task when
+softinterrupt kicks in.
+
+->init() is fine, as its in process context and current will be the task
+installing the nftables rule.
