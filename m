@@ -2,281 +2,105 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28721C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00C5C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C167421524
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:14:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C167421524
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 84C8D21524
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:14:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C8D21524
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731842AbeITL4B (ORCPT
+        id S1731953AbeITL4V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:56:01 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:41839 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725725AbeITL4B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:56:01 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 7F276C000D;
-        Thu, 20 Sep 2018 06:14:06 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v7 09/11] hugetlb: Introduce generic version of huge_ptep_set_wrprotect
-Date:   Thu, 20 Sep 2018 06:03:56 +0000
-Message-Id: <20180920060358.16606-10-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180920060358.16606-1-alex@ghiti.fr>
-References: <20180920060358.16606-1-alex@ghiti.fr>
+        Thu, 20 Sep 2018 07:56:21 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59089 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725725AbeITL4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 07:56:21 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A91996B067AA4;
+        Thu, 20 Sep 2018 14:14:28 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
+ 14:14:26 +0800
+Subject: Re: [f2fs-dev] [PATCH 1/2 v2] f2fs: report ENOENT correct in
+ f2fs_rename
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180918021805.85032-1-jaegeuk@kernel.org>
+ <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <740d4c02-0fdd-d9bb-2079-2cb0947bf581@huawei.com>
+Date:   Thu, 20 Sep 2018 14:14:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180919225037.GC79681@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, ia64, mips, powerpc, sh, x86 architectures use the same version
-of huge_ptep_set_wrprotect, so move this generic implementation into
-asm-generic/hugetlb.h.
+On 2018/9/20 6:50, Jaegeuk Kim wrote:
+> This fixes wrong error report in f2fs_rename.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+> Change log from v1:
+>  - cover rename2 case
+> 
+>  fs/f2fs/namei.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 98d3ab7c3ce6..48f919469151 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -833,7 +833,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  	struct f2fs_dir_entry *old_entry;
+>  	struct f2fs_dir_entry *new_entry;
+>  	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
+> -	int err = -ENOENT;
+> +	int err;
+>  
+>  	if (unlikely(f2fs_cp_error(sbi)))
+>  		return -EIO;
+> @@ -854,6 +854,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  	if (err)
+>  		goto out;
+>  
+> +	err = -ENOENT;
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Tested-by: Helge Deller <deller@gmx.de> # parisc
-Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
-Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
-Acked-by: Ingo Molnar <mingo@kernel.org> # x86
-Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- arch/arm/include/asm/hugetlb-3level.h        | 6 ------
- arch/arm64/include/asm/hugetlb.h             | 1 +
- arch/ia64/include/asm/hugetlb.h              | 6 ------
- arch/mips/include/asm/hugetlb.h              | 6 ------
- arch/parisc/include/asm/hugetlb.h            | 1 +
- arch/powerpc/include/asm/book3s/32/pgtable.h | 6 ------
- arch/powerpc/include/asm/book3s/64/pgtable.h | 1 +
- arch/powerpc/include/asm/nohash/32/pgtable.h | 6 ------
- arch/powerpc/include/asm/nohash/64/pgtable.h | 1 +
- arch/sh/include/asm/hugetlb.h                | 6 ------
- arch/sparc/include/asm/hugetlb.h             | 1 +
- arch/x86/include/asm/hugetlb.h               | 6 ------
- include/asm-generic/hugetlb.h                | 8 ++++++++
- 13 files changed, 13 insertions(+), 42 deletions(-)
+It should be assigned after dquot_initialize(), otherwise, err's value can
+still be reset to 0 due to dquot_initialize().
 
-diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-index b897541520ef..8247cd6a2ac6 100644
---- a/arch/arm/include/asm/hugetlb-3level.h
-+++ b/arch/arm/include/asm/hugetlb-3level.h
-@@ -37,12 +37,6 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return retval;
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 3e7f6e69b28d..f4f69ae5466e 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -48,6 +48,7 @@ extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- #define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
- extern pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 				     unsigned long addr, pte_t *ptep);
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- extern void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 				    unsigned long addr, pte_t *ptep);
- #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index cbe296271030..49d1f7949f3a 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -27,12 +27,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 6ff2531cfb1d..3dcf5debf8c4 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -63,12 +63,6 @@ static inline int huge_pte_none(pte_t pte)
- 	return !val || (val == (unsigned long)invalid_pte_table);
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr,
- 					     pte_t *ptep, pte_t pte,
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index fb7e0fd858a3..9c3950ca2974 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -39,6 +39,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep);
- 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 751cf931bb3f..796d026da37e 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -221,12 +221,6 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- {
- 	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
- }
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- 
- static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
- 					   pte_t *ptep, pte_t entry,
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 13a688fc8cd0..badb56963885 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -461,6 +461,7 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- 		pte_update(mm, addr, ptep, 0, _PAGE_PRIVILEGED, 0);
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index a507a65b0866..6c82b9660c55 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -246,12 +246,6 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- {
- 	pte_update(ptep, (_PAGE_RW | _PAGE_HWWRITE), _PAGE_RO);
- }
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- 
- static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
- 					   pte_t *ptep, pte_t entry,
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index 7cd6809f4d33..68283e632f04 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -239,6 +239,7 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm, unsigned long addr,
- 	pte_update(mm, addr, ptep, _PAGE_RW, 0, 0);
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index f1bbd255ee43..8df4004977b9 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -32,12 +32,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 2101ea217f33..c41754a113f3 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -32,6 +32,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 59c056adb3c9..a3f781f7a264 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -13,12 +13,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
- 	return 0;
- }
- 
--static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
--					   unsigned long addr, pte_t *ptep)
--{
--	ptep_set_wrprotect(mm, addr, ptep);
--}
--
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 6c0c8b0c71e0..9b9039845278 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -102,4 +102,12 @@ static inline int prepare_hugepage_range(struct file *file,
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGE_PTEP_SET_WRPROTECT
-+static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
-+		unsigned long addr, pte_t *ptep)
-+{
-+	ptep_set_wrprotect(mm, addr, ptep);
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
+>  	if (new_inode) {
+>  		err = dquot_initialize(new_inode);
+>  		if (err)
+> @@ -1049,6 +1050,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  	if (err)
+>  		goto out;
+>  
+> +	err = -ENOENT;
+
+We can remove err initialization like f2fs_rename()
+
+int err;
+
+Thanks,
+
+>  	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+>  	if (!old_entry) {
+>  		if (IS_ERR(old_page))
+> 
 
