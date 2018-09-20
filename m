@@ -2,131 +2,145 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FA3ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5589EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD26121523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1474721523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:14:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sjrte2Wp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD26121523
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgEtHDfH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1474721523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388176AbeIUA6A (ORCPT
+        id S2388250AbeIUA65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:58:00 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40237 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbeIUA6A (ORCPT
+        Thu, 20 Sep 2018 20:58:57 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35812 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeIUA64 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:58:00 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j19-v6so9415323ljc.7;
-        Thu, 20 Sep 2018 12:13:01 -0700 (PDT)
+        Thu, 20 Sep 2018 20:58:56 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o18-v6so689961wmc.0;
+        Thu, 20 Sep 2018 12:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VmU7478bXwYjEN1q+kpxKyblHgiBlaxkmj/9Njks/Fo=;
-        b=Sjrte2Wptx6UPGVRb5nDGRUeKv7kWq9+boMzhFBP0Lo8Byxn0OUx6jhvd7QTMDn8Hq
-         0bUXpuQNojmd6PHTLEPdTVtXunmFCCGBmIfueG4GXvs9rbCkDd5z7/jeYJEKMQbrZerU
-         eGE4Q9wb5jWtXMvQ5GT9Rf89rprzsGAUSVeklUvOeXSu7nD007ObIOq4f+RYuKj8pNZS
-         H29cNpRE0hnisxlqx6IcdSKhCQ//Xnu760sgUyTvtRcCQFISwGWvo1T5duofABWlnyRu
-         z2gkZ16AZhMPWjDlMd6xW73ZnK7+5nAu5JTwHJvetS6xg0IhB7oqkK5XOyDRHLZAiGIG
-         WEQA==
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=7UZffiZbIMv5K7TvvhuvQ/1USYMYxFet6EpiUX4mTJ0=;
+        b=MgEtHDfHBZSxOy/uZGxIyCzrws1+NCNVIgZaS5+44s//UBWBLAzvYeCZV53I02J+Li
+         uc8XLGeNz8oAJys1Lrr5vqrsNZdtFmU5iXIGNKF9tVSKwZeUnPYDJbrAMlMYXwCE9GI8
+         x0RXfeRovzpg/zv4j65dPfjWOKQMjypbVkG5A6D7Lxaocuy7F1ckE0K8X7fWLmQsaGxP
+         HjHk7Nm4Jkt/HnsWZpJZR8a+Xso+sqW7oe1T1aBq6T09Bfw4T4V1K/lA5A0mVugff5eP
+         Tvnylv0cKck+rrpdqeDUEMUWnYXlT8CtHd1/h/wLgtG074haSE02SQyNt2Yox2itgBHe
+         BxlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VmU7478bXwYjEN1q+kpxKyblHgiBlaxkmj/9Njks/Fo=;
-        b=EKDybG0BssjniBK61vbsFgtDE0Jy2geyRmaMa6EHvn628WWTAlgss6TzbgYbOzkLVp
-         gBqj1Af4s9BlknXwOmPBGJHXdy+deCjSLOr09Hux+k/IBh1VtXsksYS0/pIORIQ3xOE5
-         w3oxKOG/Rw5c0TkM3sskS23Pz7T4LTX0jXQN+xx3nyBTezV7cHdwhAoad+PpMTJyIdB+
-         fPDME+DGIKdpKDeQcl0H+axQ/li8xr3AYYb4iIo5UaXAv54xylzvqsQu3aIxdHNsEsUE
-         BZHVWThUJBh8zcAQGkMbyDBXedebFlV1LrAi2F7m9OHlgquXOH52jZ51kgFYxlPLIHGk
-         RXlQ==
-X-Gm-Message-State: APzg51DeYzuSw6nfwBJCX9CoSTnIeNiI23JsrAa2Nfwl5nV/zw1mNik1
-        i1L9BmmcdRShJvH+eVAqo8BSLPdREc2h+l2X/sE=
-X-Google-Smtp-Source: ANB0VdbF/+UJGY1nGLWgGJw/Q9jHQSz51piERE4DsplPSpxggYXbh31h0kV1lgddMmTC8JxN1YJQRwov76GvHR0RdXQ=
-X-Received: by 2002:a2e:680a:: with SMTP id c10-v6mr27658698lja.59.1537470780574;
- Thu, 20 Sep 2018 12:13:00 -0700 (PDT)
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=7UZffiZbIMv5K7TvvhuvQ/1USYMYxFet6EpiUX4mTJ0=;
+        b=av9R1RewBxLJ9av45gWzC+f7xaUFfkHSLWOTY3+IWtqKih5NNwlv5DRwaX1IKKD1uh
+         3F1KzmVcJZjSCkZd+3d0eyM2Tpy4slCG1SwCFxtbGV5pBBGYJHZBulSA9zHhSlRfZ6bU
+         xCdVbGJtJPSwuC0j8s+NTI0yMYwqvZvFoa1ynexgpzbrna83kS/wJPTXTHVa/AQFKL3L
+         wNDkB1khjET/CKq9CIAdAR33QxZVMX/Fhz/XpaHLOf10xGktz+VkypU3ZzJGcEWLhhc+
+         gZKlAJpqfcfgB+BNvJQPK1k1NO7yHb5bvmY+3c310YjohLX+0vjpxy8YrKKy6fHmp0j3
+         GPRg==
+X-Gm-Message-State: APzg51DaSHbHcPSUIE+v2y8eGMXRpcbRxiANSQH4G4mLQcbZjFa7Bxxn
+        YrSrNRngCVbdqy03WuXA2A==
+X-Google-Smtp-Source: ANB0VdZ9MZlj4oiqayfkgWiENJt6hipq/72dHXCit6r4hT/BIu2HG6kzYkn0ox/Xp4PAnPuPhoy7Hg==
+X-Received: by 2002:a1c:9b91:: with SMTP id d139-v6mr4312891wme.50.1537470836933;
+        Thu, 20 Sep 2018 12:13:56 -0700 (PDT)
+Received: from android-dhcp-8-1-0-d4-38-9c-a2-1f-05.home (host86-147-9-252.range86-147.btcentralplus.com. [86.147.9.252])
+        by smtp.gmail.com with ESMTPSA id j133-v6sm3671386wmd.12.2018.09.20.12.13.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 12:13:56 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 20:13:52 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180920165847.6xqzeoqzqkyotshx@earth.universe>
+References: <20180407135934.26122-1-ctatlor97@gmail.com> <20180614151435.6471-1-ctatlor97@gmail.com> <20180614151435.6471-3-ctatlor97@gmail.com> <20180916121045.aptj6nciwskfg4st@earth.universe> <4BBA3F28-A769-4F09-86DC-1E3906C53B26@gmail.com> <20180920165847.6xqzeoqzqkyotshx@earth.universe>
 MIME-Version: 1.0
-References: <20180920161912.17063-2-ricardo.ribalda@gmail.com>
- <20180920184552.4919-1-ricardo.ribalda@gmail.com> <20180920185405.GA26589@amd>
- <CAPybu_2hjrq=r+kpAHKxX59gOXfbqGf9CUPh9CNqv7WGqJsrQQ@mail.gmail.com> <20180920190855.GC26589@amd>
-In-Reply-To: <20180920190855.GC26589@amd>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Thu, 20 Sep 2018 21:12:44 +0200
-Message-ID: <CAPybu_2mNE7Jmfm2n60Z9Hk_iO+-zLgtu4xn72pJUSXBitVg=g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] [media] ad5820: Add support for enable pin
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 3/4] dt-bindings: power: supply: qcom_bms: Add bindings
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Craig <ctatlor97@gmail.com>
+Message-ID: <5039A15E-E604-4D03-AFEF-4B139EB18A30@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 9:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+
+
+On 20 September 2018 17:58:47 BST, Sebastian Reichel <sebastian=2Ereichel@=
+collabora=2Ecom> wrote:
+>[Dropped a couple of people from CC, added Baolin]
 >
-> On Thu 2018-09-20 21:06:16, Ricardo Ribalda Delgado wrote:
-> > Hi Pavel
-> >
-> > On Thu, Sep 20, 2018 at 8:54 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > >
-> > > On Thu 2018-09-20 20:45:52, Ricardo Ribalda Delgado wrote:
-> > > > This patch adds support for a programmable enable pin. It can be used in
-> > > > situations where the ANA-vcc is not configurable (dummy-regulator), or
-> > > > just to have a more fine control of the power saving.
-> > > >
-> > > > The use of the enable pin is optional.
-> > > >
-> > > > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > >
-> > > Do we really want to do that?
-> > >
-> > > Would it make more sense to add gpio-regulator and connect ad5820 to
-> > > it in such case?
-> > >
-> >
-> > My board (based on db820c)  has both:
-> >
-> > ad5820: dac@0c {
-> >    compatible = "adi,ad5820";
-> >    reg = <0x0c>;
-> >
-> >    VANA-supply = <&pm8994_l23>;
-> >    enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
-> > };
+>Hi Craig, Baolin and Rob,
 >
-> Well, I'm sure you could have gpio-based regulator powered from
-> pm8994_l23, and outputting to ad5820.
+>On Thu, Sep 20, 2018 at 03:32:29PM +0100, Craig wrote:
+>> On 16 September 2018 13:10:45 BST, Sebastian Reichel
+><sebastian=2Ereichel@collabora=2Ecom> wrote:
+>> >Sorry for my long delay in reviewing this=2E I like the binding,
+>> >but the "qcom," specific properties should become common properties
+>> >in
+>> >
+>> >Documentation/devicetree/bindings/power/supply/battery=2Etxt
+>> >and referenced via monitored-battery=2E
 >
-> Does ad5820 chip have a gpio input for enable?
+>> Thanks for the review, what bindings for ocv would you prefer? The
+>> spreadtrum ones or mine?
+>
+>Most importantly I want to see only one generic binding supporting
+>both use cases=2E As far as I can see there are two major differences:
+>
+>1=2E Qcom uses legend properties and SC27XX embedds this into data
+>2=2E Qcom supports temperature based mapping
+>
+>The second point is easy: Not having temperature information can
+>be a subset of the data with temperature info=2E The main thing to
+>discuss are the legend properties=2E I suppose we have these
+>proposals:
+>
+>Proposal A (from Qcom BMS binding):
+>
+>ocv-capacity-legend =3D /bits/ 8 <100 95 90 85 80 75 70 65 60 55 50 45
+>=2E=2E=2E>;
+>ocv-temp-legend-celsius =3D /bits/ 8 <(-10) 0 25 50 65>;
+>ocv-lut-microvolt =3D <43050000 43050000 43030000 42990000
+>
+>Proposal B (from SC27XX binding):
+>
+>ocv-cap-table =3D <4185 100>, <4113 95>, <4066 90>, <4022 85> =2E=2E=2E;
+>
+>I prefer the second binding (with mV -> uV), but I think it becomes
+>messy when temperature is added=2E What do you think about the
+>following proposal (derived from pinctrl style):
+>
+>Proposal C:
+>
+>ocv-capacity-table-temperatures =3D <(-10) 0 10>;
+>ocv-capacity-table-0 =3D <4185000 100>, <4113000 95>, <4066000 90>, =2E=
+=2E=2E;
+>ocv-capacity-table-1 =3D <4200000 100>, <4185000 95>, <4113000 90>, =2E=
+=2E=2E;
+>ocv-capacity-table-2 =3D <4250000 100>, <4200000 95>, <4185000 90>, =2E=
+=2E=2E;
+>
+>-- Sebastian
 
-xshutdown pin:
-http://www.analog.com/media/en/technical-documentation/data-sheets/AD5821.pdf
-
-(AD5820,AD5821, and AD5823 are compatibles, or at least that is waht
-the module manufacturer says :)
-
-
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-
-
-
---
-Ricardo Ribalda
+C looks good to me however I do kinda think it should be millivolts as I d=
+on't think any hardware reads in microvolts and the zeroes make it look qui=
+te ugly
