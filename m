@@ -2,91 +2,114 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DCFECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA592C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F9820867
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F9820867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id 567EE21532
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:21:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vGpTwZ++"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567EE21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388149AbeIUCFy (ORCPT
+        id S2388251AbeIUCGb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:05:54 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:41276 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbeIUCFx (ORCPT
+        Thu, 20 Sep 2018 22:06:31 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36264 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeIUCGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:05:53 -0400
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1g35RA-0005Ly-MQ from joseph_myers@mentor.com ; Thu, 20 Sep 2018 13:20:32 -0700
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Thu, 20 Sep 2018 21:20:29 +0100
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1g35R6-0005Zu-MR; Thu, 20 Sep 2018 20:20:28 +0000
-Date:   Thu, 20 Sep 2018 20:20:28 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH] glibc: Perform rseq(2) registration at nptl init
- and thread creation
-In-Reply-To: <1619649568.9014.1537474457166.JavaMail.zimbra@efficios.com>
-Message-ID: <alpine.DEB.2.21.1809202016270.17228@digraph.polyomino.org.uk>
-References: <20180919144438.1066-1-mathieu.desnoyers@efficios.com> <alpine.DEB.2.21.1809191630260.26757@digraph.polyomino.org.uk> <67473000.8399.1537375994645.JavaMail.zimbra@efficios.com> <alpine.DEB.2.21.1809191706090.26757@digraph.polyomino.org.uk>
- <1619649568.9014.1537474457166.JavaMail.zimbra@efficios.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 20 Sep 2018 22:06:31 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A2E661C86;
+        Thu, 20 Sep 2018 22:21:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1537474876;
+        bh=skZjKh8hJaHWnEN+2VQvCQPBzit+qp2hRFCU1ZkhgYo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vGpTwZ++JmNhL4gYz0nZ+zWPWBXPzpHPEJTJ0ziHPRD6hYZL85BigbilJu5276ye7
+         qxRfCxetm07jXNk2tgEk179ZWBIuT/E98M3VyFWZ9cOcE68eYcyfEfc8BQ+rsnAUtE
+         VTZMKUzEnBsneR97XN/GONHkeWo0MDYb+isvZt0I=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] [media] ad5820: DT new optional field enable-gpios
+Date:   Thu, 20 Sep 2018 23:21:28 +0300
+Message-ID: <1939782.bRt5jKDIiS@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180920161912.17063-3-ricardo.ribalda@gmail.com>
+References: <20180920161912.17063-1-ricardo.ribalda@gmail.com> <20180920161912.17063-3-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Sep 2018, Mathieu Desnoyers wrote:
+Hi Ricardo,
 
-> Are you saying glibc has an explicit check for the kernel version visible
-> from /proc before using specific features ? If so, how can this work with
-> the variety of feature backports we find in the distribution kernels out
-> there ?
+Thank you for the patch.
 
-See sysdeps/unix/sysv/linux/dl-sysdep.c and 
-sysdeps/unix/sysv/linux/dl-osinfo.h.  As I said, Carlos has proposed 
-removing that check.
+On Thursday, 20 September 2018 19:19:11 EEST Ricardo Ribalda Delgado wrote:
+> Document new enable-gpio field. It can be used to disable the part
+> without turning down its regulator.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/media/i2c/ad5820.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> b/Documentation/devicetree/bindings/media/i2c/ad5820.txt index
+> 5940ca11c021..07d577bb37f7 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> +++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+> @@ -8,6 +8,11 @@ Required Properties:
+> 
+>    - VANA-supply: supply of voltage for VANA pin
+> 
+> +Optional properties:
+> +
+> +   - enable-gpios : GPIO spec for the XSHUTDOWN pin.
 
-> For too-old headers at compile time, one possibility is that we don't event
-> expose the __rseq_abi TLS symbol. OTOH, if we need to keep exposing it anyway
-> for ABI consistency purposes, then we'd leave its cpu_id field at the initial
-> value (-1). But that would require that we copy linux/rseq.h into the glibc
-> source tree.
+xshutdown is active-low, so enable is active-high. Should this be documented 
+explicitly, to avoid polarity errors ? Maybe something along the lines of
 
-The ABI needs to be independent of the kernel headers used.  I don't think 
-you need to copy linux/rseq.h; all you should need is to e.g. define an 
-array of suitable size and alignment with the relevant member initialized 
-and a suitable explanatory comment.
+- enable-gpios: GPIO spec for the XSHUTDOWN pin. Note that the polarity of the 
+enable GPIO is the opposite of the XSHUTDOWN pin (asserting the enable GPIO 
+deasserts the XSHUTDOWN signal and vice versa).
+
+> If specified, it will be
+> +     asserted when VANA-supply is enabled.
+
+That documents a driver behaviour, is it needed in DT ?
+
+
+>  Example:
+> 
+>         ad5820: coil@c {
+> @@ -15,5 +20,6 @@ Example:
+>                 reg = <0x0c>;
+> 
+>                 VANA-supply = <&vaux4>;
+> +               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+>         };
 
 -- 
-Joseph S. Myers
-joseph@codesourcery.com
+Regards,
+
+Laurent Pinchart
+
+
+
