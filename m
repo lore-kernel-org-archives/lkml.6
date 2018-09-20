@@ -2,115 +2,115 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BD1ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BB4ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E263C2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:18:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E263C2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 8EBB82087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:19:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="RdQ4AA1x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EBB82087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730962AbeITWCb (ORCPT
+        id S1729399AbeITWD2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:02:31 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:47742 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbeITWCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:02:31 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8KGH4g4017154
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Thu, 20 Sep 2018 09:17:14 -0700
-Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 20 Sep
- 2018 09:16:53 -0700
-Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len to
- command line
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-CC:     <pmladek@suse.com>, <sergey.senozhatsky@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
- <20180919015030.GA423@jagdpanzerIV>
- <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
- <20180919023932.GA14090@jagdpanzerIV>
- <20180918224312.6e9aef50@vmware.local.home>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
-Date:   Fri, 21 Sep 2018 00:16:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 20 Sep 2018 18:03:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34994 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeITWD2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 18:03:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MphQ0lIyTvDl/Jou746DXEsAZKb85BMJ86NnTswrA/A=; b=RdQ4AA1xkJz4siYlv0Z2a5H7g
+        TC113zOlJHKK1m5AongXpB5ahj8z7J2djqPrjPiCKOn9vPebJwPwdtdBoo8OmMrGk2NWlXYJMCDLC
+        KF+7mOpXBw+aDMem6SiHhz0wOaGQxbG0qrIShDfvaKsyvoqNSWFVJE39VhJDT64bXB2Zo=;
+Received: from [209.82.80.116] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g31fa-000769-LF; Thu, 20 Sep 2018 16:19:10 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 1209C440078; Thu, 20 Sep 2018 17:19:06 +0100 (BST)
+Date:   Thu, 20 Sep 2018 09:19:05 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, ryans.lee@maximintegrated.com,
+        alsa-devel@alsa-project.org, dgreid@chromium.org
+Subject: Re: [PATCH 2/2] ASoC: max98927: Add reset-gpio support
+Message-ID: <20180920161905.GM2471@sirena.org.uk>
+References: <20180912121955.33048-1-cychiang@chromium.org>
+ <20180912121955.33048-2-cychiang@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20180918224312.6e9aef50@vmware.local.home>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.216]
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="VSJGZE3ajDCqFLUt"
+Content-Disposition: inline
+In-Reply-To: <20180912121955.33048-2-cychiang@chromium.org>
+X-Cookie: Universe, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--VSJGZE3ajDCqFLUt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2018年09月19日 10:43, Steven Rostedt wrote:
-> On Wed, 19 Sep 2018 11:39:32 +0900
-> Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
->
->> On (09/19/18 10:27), He Zhe wrote:
->>> On 2018年09月19日 09:50, Sergey Senozhatsky wrote:  
->>>> On (09/19/18 01:17), zhe.he@windriver.com wrote:  
->>>>> @@ -1048,7 +1048,14 @@ static void __init log_buf_len_update(unsigned size)
->>>>>  /* save requested log_buf_len since it's too early to process it */
->>>>>  static int __init log_buf_len_setup(char *str)
->>>>>  {
->>>>> -	unsigned size = memparse(str, &str);
->>>>> +	unsigned size;  
->>>> 	unsigned int size;  
->>> This is in v1 but then Steven suggested that it should be split out
->>> and only keep the pure fix part here.  
->> Ah, I see.
->>
->> Hmm... memparse() returns u64 value. A user *probably* can ask the kernel
->> to allocate log_buf larger than 'unsigned int'.
->>
->> So may be I'd do two fixes here:
->>
->>  First  - switch to u64 size.
->>  Second - check for NULL str.
->>
->>
->> Steven, Petr, what do you think?
->>
-> I think I would switch it around. Check for NULL first, and then switch
-> to u64. It was always an int, do we need to backport converting it to
-> u64 to stable? The NULL check is a definite, the overflow of int
-> shouldn't crash anything.
+On Wed, Sep 12, 2018 at 08:19:55PM +0800, Cheng-Yi Chiang wrote:
 
-To switch to u64, several variables need to be adjusted to new type to aligned
-with new_log_buf_len. And currently new_log_buf_len is passed to
-memblock_virt_alloc(phys_addr_t, phys_addr_t). So we can't simply define
-new_log_buf_len as u64. We need to define it as phys_addr_t tomake it work
-well for both 32bit and 64bit arches, since a 32-bit architecture can set
-ARCH_PHYS_ADDR_T_64BIT if it needs a 64-bit phys_addr_t.
+> +	/*
+> +	 * Release reset GPIO because we are not going to use it.
+> +	 */
+> +	devm_gpiod_put(dev, max98927->reset_gpio);
 
-What do you think?
+There is no need to do this, it's still potentially useful information
+for userspace and it's also going to surprise anyone who tries to modify
+the code to use this function at some other time (eg, when coming out of
+suspend sometimes it's useful to reset the device).
 
-#ifdef CONFIG_PHYS_ADDR_T_64BIT
-typedef u64 phys_addr_t;
-#else
-typedef u32 phys_addr_t;
-#endif
+> @@ -934,6 +1010,8 @@ static int max98927_i2c_probe(struct i2c_client *i2c,
+>  	if (ret < 0)
+>  		dev_err(&i2c->dev, "Failed to register component: %d\n", ret);
+> =20
+> +	list_add(&max98927->list, &reset_list);
+> +
 
-Thanks,
-Zhe
+I'm not seeing any locking of this list.  This also feels like something
+that shouldn't be in this driver but should be pushed up a level - it's
+only going to do the right thing if the reset line is only shared with
+other devices using this driver, if someone does something like put the
+CODEC and an external speaker amp on the same reset pin then it won't
+work.  I'm not sure where the best place to do that is; drivers/reset
+isn't really for this use case but feels right perhaps?
 
+Can you perhaps split the basic reset handling out from this list
+handling as a separate patch?
 
-> -- Steve
->
+--VSJGZE3ajDCqFLUt
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlujyHkACgkQJNaLcl1U
+h9BuFQf/Q5y6HzLzXxcbLIk/wGLLN6BWn65TTUXkpZyWSPWDu5ZTISi6mKO3ahpT
+xlqQXIWuY9T8DPL1tKUch40051dJExbQbd3y6JWUbQN0y0nqpKaCBhiqEYfG0Svj
+CT90BvsEfhHsBvx+gWw6DXWuRLjik9AKjgPBqkNtU3wSB06xWZoDXQpJC/5nCdns
+CmN/Y7UpGa5e5JAYGyYSeDu9Hna1Opb2nG+pDLqbgbmHpiTTo5Slc5etpavVl4rJ
++ivSqktKhd882USl//O6LCP3A32VW+b8eG9LbCAe0PwQxfMaUIwVMm985PzvV5ld
+qtwLIvOYlMpZAZ2VBU4xrTxij2ab2Q==
+=80Zv
+-----END PGP SIGNATURE-----
+
+--VSJGZE3ajDCqFLUt--
