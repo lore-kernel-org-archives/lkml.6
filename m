@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D173AECE567
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91193C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9134E21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5245021525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:19:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SOxHja3K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9134E21533
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YF42dPFh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5245021525
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389148AbeIUBE2 (ORCPT
+        id S2388499AbeIUBEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:04:28 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40019 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389132AbeIUBE1 (ORCPT
+        Thu, 20 Sep 2018 21:04:45 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37763 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388517AbeIUBEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:04:27 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l63-v6so4875993pga.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:19:29 -0700 (PDT)
+        Thu, 20 Sep 2018 21:04:23 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h69-v6so4826867pfd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:19:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dnhE0czpJg+XaiFH4BtekxN9pZR1jCXAxiDs2QAUsmg=;
-        b=SOxHja3KB1sWY9dO4lXhpAwTuwns7vus5Er6PolPLyezj4thRF2NKl4IdI3nLbUrxO
-         99GIXd7NOO9EEPe2j1Ww5pcnow5Y1pB29B5y/rlZRGGSoiFFfFbgUTgH2Fi18wQ1anwT
-         1SdOEZVke2l/pO9NTnRc08LVGOqAx1npStToM=
+        bh=lEojR96MJu4iyHo4Y0qSuQdeRg8I+A050JDTrUQ4dMg=;
+        b=YF42dPFhIvIfWd26UB5GVbVqZ45vldYbKJBXevvUaouVrewwHuwgeqtxmmAvI+VOcw
+         fzhlhy+xBVHfYw4ecZ3i/REwLnbTHVAaZW41OfTgSbGFieWR+PRbudVZx1zSztOh4vHs
+         bzexd3QHt6+/j1C8jxhDR2uOYo8zg7KSTqnH0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=dnhE0czpJg+XaiFH4BtekxN9pZR1jCXAxiDs2QAUsmg=;
-        b=QQ1uA2G3bCncuBBwb5mhZ9h64zXQUReihcbUFZ7wfaW+XYBTl5WtWZdXmsAKvKrey4
-         NlRZeFUKLRl/KzWGHRk2NFBHZFLWkIxrKG8AJj9Yo/2QU/NaXq2dGoM9eBbwDXf3lU+B
-         gC2zTsSih0iXwQ9DSh+q1yTri3D0cofrTha2/u7NFa+KbLx7BYRsz0xhe+nz9/qoAELF
-         hbA4B3X+4QqzG44lTXkYvQmkqOMkN8mLV8rSbc8cqK4n8NQcfVzn7H3laTe9cSdOipIv
-         /zsWs0mICA17LU8dDKpl5yFpiEOEH0NaVEIP0rPc4fr+Un14WZYUdlxLe4A8b0PewU4X
-         Pu1A==
-X-Gm-Message-State: APzg51AgzyEEAbRB6mukHYI3mhpU3ThgKAatCag+lI8LotetVNa5H5f8
-        1IsbRo6miy6skK76I5i1LYwyZg==
-X-Google-Smtp-Source: ANB0VdZqL2OePQbzIR5xdJmRdVwoK6O04aoT03tjm1eUeMoiijoCUPJXQVL2/v1bFWGYkTsLTcxqAw==
-X-Received: by 2002:a63:6d4f:: with SMTP id i76-v6mr37804491pgc.215.1537471168725;
-        Thu, 20 Sep 2018 12:19:28 -0700 (PDT)
+        bh=lEojR96MJu4iyHo4Y0qSuQdeRg8I+A050JDTrUQ4dMg=;
+        b=BTsiEg/7wQR4Q7oOZ0rYsui1vI2sYTHPKPwHRVcX+uT/6TM7yWRkGclPhPH30En5fF
+         OPX3YCi8ucGNM+w32i51MpiWUx8AgglRl879dnN3pDocXV559Y3hlDvc63/qCZKm5sBo
+         U25iYsHd1a3rzOTkvt3QFE/MgV2EnYyR3s64eBfre5Hx09jCRRYaukGVWcHYlDNtxziV
+         RgsPat/GCbUNiYUTAu9TRKP3vAqpTQrKgHIsDf8EZAkNsWghoyToaGBcGJk6+1l+WBMX
+         ay7RJ+DeJ+lEq+ja0T8L0kQ1akhiwykU9ZXkuiuTIn4wYJwqYyXF+NjB1oIyurVowqRQ
+         2PWg==
+X-Gm-Message-State: APzg51A2GiBGsVjVOAyVzoCr6zMLrE7YWPsuTsfbQFBLHU7fusFvqTHc
+        rsgDSh5VUpwDXST0sSHe4nINHEwXdmU=
+X-Google-Smtp-Source: ANB0Vdbhf0VH+bCOb2Ms3ZNHEbPP2VWe9KjTw4Pws6jxRnlz2yoe1LombuMFiWiwbM22qGYkcUCEnQ==
+X-Received: by 2002:a62:4808:: with SMTP id v8-v6mr43044662pfa.89.1537471164307;
+        Thu, 20 Sep 2018 12:19:24 -0700 (PDT)
 Received: from localhost.localdomain ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm4424443pgf.37.2018.09.20.12.19.27
+        by smtp.gmail.com with ESMTPSA id k13-v6sm4424443pgf.37.2018.09.20.12.19.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Sep 2018 12:19:27 -0700 (PDT)
+        Thu, 20 Sep 2018 12:19:23 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 44/44] coresight: Remove redundant null pointer check before of_node_put and put_device
-Date:   Thu, 20 Sep 2018 13:18:19 -0600
-Message-Id: <1537471099-19781-45-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 41/44] coreisght: tmc: Claim device before use
+Date:   Thu, 20 Sep 2018 13:18:16 -0600
+Message-Id: <1537471099-19781-42-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
@@ -69,36 +69,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhong jiang <zhongjiang@huawei.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-of_node_put and put_device has taken the null pointer check into account.
-So it is safe to remove the duplicated check.
+Use CLAIM tags to make sure the device is available for use.
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/of_coresight.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etf.c | 22 +++++++++++++++++++---
+ drivers/hwtracing/coresight/coresight-tmc-etr.c |  4 ++++
+ 2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index da71c975e3f7..89092f83567e 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -219,12 +219,9 @@ static int of_coresight_parse_endpoint(struct device *dev,
- 		ret = 1;
- 	} while (0);
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index 36af23d2c0f8..53fc83b72a49 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -36,6 +36,11 @@ static void __tmc_etb_enable_hw(struct tmc_drvdata *drvdata)
  
--	if (rparent)
--		of_node_put(rparent);
--	if (rep)
--		of_node_put(rep);
--	if (rdev)
--		put_device(rdev);
-+	of_node_put(rparent);
-+	of_node_put(rep);
-+	put_device(rdev);
+ static int tmc_etb_enable_hw(struct tmc_drvdata *drvdata)
+ {
++	int rc = coresight_claim_device(drvdata->base);
++
++	if (rc)
++		return rc;
++
+ 	__tmc_etb_enable_hw(drvdata);
+ 	return 0;
+ }
+@@ -63,7 +68,7 @@ static void tmc_etb_dump_hw(struct tmc_drvdata *drvdata)
+ 	return;
+ }
  
- 	return ret;
+-static void tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
++static void __tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
+ {
+ 	CS_UNLOCK(drvdata->base);
+ 
+@@ -79,6 +84,12 @@ static void tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
+ 	CS_LOCK(drvdata->base);
+ }
+ 
++static void tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
++{
++	coresight_disclaim_device(drvdata);
++	__tmc_etb_disable_hw(drvdata);
++}
++
+ static void __tmc_etf_enable_hw(struct tmc_drvdata *drvdata)
+ {
+ 	CS_UNLOCK(drvdata->base);
+@@ -97,6 +108,11 @@ static void __tmc_etf_enable_hw(struct tmc_drvdata *drvdata)
+ 
+ static int tmc_etf_enable_hw(struct tmc_drvdata *drvdata)
+ {
++	int rc = coresight_claim_device(drvdata->base);
++
++	if (rc)
++		return rc;
++
+ 	__tmc_etf_enable_hw(drvdata);
+ 	return 0;
+ }
+@@ -107,7 +123,7 @@ static void tmc_etf_disable_hw(struct tmc_drvdata *drvdata)
+ 
+ 	tmc_flush_and_stop(drvdata);
+ 	tmc_disable_hw(drvdata);
+-
++	coresight_disclaim_device_unlocked(drvdata->base);
+ 	CS_LOCK(drvdata->base);
+ }
+ 
+@@ -553,7 +569,7 @@ int tmc_read_prepare_etb(struct tmc_drvdata *drvdata)
+ 
+ 	/* Disable the TMC if need be */
+ 	if (drvdata->mode == CS_MODE_SYSFS)
+-		tmc_etb_disable_hw(drvdata);
++		__tmc_etb_disable_hw(drvdata);
+ 
+ 	drvdata->reading = true;
+ out:
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index daad52146140..f684283890d3 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -991,6 +991,9 @@ static int tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
+ 	 * this on.
+ 	 */
+ 	rc = tmc_etr_enable_catu(drvdata, etr_buf);
++	if (rc)
++		return rc;
++	rc = coresight_claim_device(drvdata->base);
+ 	if (!rc) {
+ 		drvdata->etr_buf = etr_buf;
+ 		__tmc_etr_enable_hw(drvdata);
+@@ -1077,6 +1080,7 @@ static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
+ 	__tmc_etr_disable_hw(drvdata);
+ 	/* Disable CATU device if this ETR is connected to one */
+ 	tmc_etr_disable_catu(drvdata);
++	coresight_disclaim_device(drvdata->base);
+ 	/* Reset the ETR buf used by hardware */
+ 	drvdata->etr_buf = NULL;
  }
 -- 
 2.7.4
