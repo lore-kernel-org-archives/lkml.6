@@ -5,60 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0ECECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE03C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECBFC21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CB2B2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:59:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpZYqV5r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECBFC21525
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qlKqqtzR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB2B2150F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387999AbeITXnj (ORCPT
+        id S2388047AbeITXnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:43:39 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45056 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbeITXnj (ORCPT
+        Thu, 20 Sep 2018 19:43:43 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46499 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbeITXnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:43:39 -0400
-Received: by mail-pl1-f195.google.com with SMTP id j8-v6so4684988pll.12;
-        Thu, 20 Sep 2018 10:58:59 -0700 (PDT)
+        Thu, 20 Sep 2018 19:43:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b129-v6so4771327pga.13;
+        Thu, 20 Sep 2018 10:59:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zC+SpiGvDffisRWF4lDh3IrlftlwiMtadKOftk7sQX0=;
-        b=MpZYqV5r3gmwHip6ZIr1mWhg09ryIX98pmEl1hpeY5uHDtyw83hGNtWbAoXElt84R2
-         GXlLjL/3/AU8iPedr87hkx0yNTxghp4MGtHXmaF1YTotM0u9ZNJnfFC4xxnVRkBhnOlA
-         /IK5ISwk06vEAp0awpOazoLSSa2g00RK6Hu/v3EQ3pE+wPdgO4GS1591S5gfCkjRusHr
-         epetFVpLU2166YKU4U1H1qMpp+auUGwKoJ8afZpa2MlKJgIEd5gd9v5nUYusaAUjQI9T
-         urPyfnJcnMb1LGDSi3Pyggfr0uipKoXL0tcmGuCVtmI8geNKQyzx7vRdwkvMVYNoqvm6
-         Dq7Q==
+        bh=eWPgu7ZWUMLA4z1NAFc9hmsjM9hmq408YVjcnpIfOr0=;
+        b=qlKqqtzRdsfr5WZWYDJ4MaPL+e9zgFsYTQGGZs9e0V3qSCQTrwst9r7RR7qcljSwl+
+         jAcXnba+3zP3YtFD1JyMftraStIn5oNRWC1sd+x42bRQREYf56qVuWlBSx5ysgjxTusU
+         a5MFv6GOFHy0oglllHEdhTknneU8eYz4Jfsz9To2jlV0RF1wnsD6souha6m0oith5p/o
+         l+6ckmangIlgv7rg3J4PgJWaE0AAaZkAtoMG/y80VvY/M45Z9pfNpIginKXotJunPZRA
+         c26eHoyohJefO1L+3+LHUjoOrbDIsjQ+Siw1SxBf9gZFdUt+GzhYBOP4cWd0digya0Wm
+         OtkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zC+SpiGvDffisRWF4lDh3IrlftlwiMtadKOftk7sQX0=;
-        b=kuSY2G5WGlF4AXZP3sMqnEHpkrUePBeHrLXESdSZf5Qed6E7Sl/2NlOFka5zm+6NL0
-         8MClCqE9TUpqI4Gp3KbwWEimCxWPnihLqkLKPT46s4LH4/mls4zbfhQSZZ1f0ajU0qE6
-         9dYBC6gyk90nvQQpF7m6HxtPtER7bDKxp6+Gli9WD8tbt0wOtcvZUJcS44grvJJl/Rcj
-         KnNHeXjkdevcv/gT4b9/5lCYIwHEi92n32fAZwQpjsnMN5W4dC++re5m4ePeLwUYe3qe
-         F97f2qNPkQ1TN61vtf7ltRFiGYV3eD8BcmzELwbl51OY9+bzzLzN82PKE333aIkf5Nuv
-         OgVg==
-X-Gm-Message-State: APzg51DrsT1EcOygHZXKVHvX8hPYESWPZFqa8a63LqnSc48iBiA2oxvL
-        cIYT5nh3ez9PbXN5XHX02LE=
-X-Google-Smtp-Source: ANB0VdZvHXptXyhQemKjNhxbpN3FzN830lmnRAZm0LGN1IM3+XKDmHfMomwNUy+rHfSY1nhY+eJR+A==
-X-Received: by 2002:a17:902:d688:: with SMTP id v8-v6mr4407976ply.79.1537466339653;
-        Thu, 20 Sep 2018 10:58:59 -0700 (PDT)
+        bh=eWPgu7ZWUMLA4z1NAFc9hmsjM9hmq408YVjcnpIfOr0=;
+        b=UnFyVm1uHlga+M4GRGuRxhKtMIhyoDQnI3G1Y5ESS5jwrQMQieA61O6DGOKft38pmR
+         FnwX5j6isrC75LVcAuGYOSCUQxJ3cFCCYwry49ecPGz8QfAX7n6jB8jTmkBkjnTAVQFP
+         SkwvLItAlLhxLK185mu6bgJdB5z/obSpkx6RL/BZoVlueAuNDXjy3YamVUE8UUbGZ9LC
+         dJVRJVg1bVyuV/mGlYK2odct2V44LqrLZswRDG4Z9Fn4bJjDOSDl1FWjtmmQSHA/mJ/T
+         +PhFXP2VWkNEw+oc59O3ztcXzYAjivixMQEDGwQ8F703fs22W8nhPUmN945iWOGzEIyl
+         QCUQ==
+X-Gm-Message-State: APzg51Bg+rPuerPzCaA/ToiT10iP2VgJOzdMjUDGH6rsJEcUqTo0d6qy
+        M2tGggvvVoG86g7Hq1vml2J+YSnw
+X-Google-Smtp-Source: ANB0VdY+v35+SvzqbyIkzXhhUYVjb3kJUWTbJdZZzHTe/u0h4VD7xkeTBtmoT7ch/dDe7jMWxutpxQ==
+X-Received: by 2002:a63:8c4:: with SMTP id 187-v6mr4659767pgi.396.1537466343713;
+        Thu, 20 Sep 2018 10:59:03 -0700 (PDT)
 Received: from localhost.localdomain ([103.51.74.159])
-        by smtp.gmail.com with ESMTPSA id n29-v6sm29963555pgl.30.2018.09.20.10.58.55
+        by smtp.gmail.com with ESMTPSA id n29-v6sm29963555pgl.30.2018.09.20.10.58.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:58:59 -0700 (PDT)
+        Thu, 20 Sep 2018 10:59:03 -0700 (PDT)
 From:   Anand Moon <linux.amoon@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -70,9 +69,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org
-Subject: [PATCHv3 4/7] ARM: dts: exynos5422: use cd-gpio method to detect sd-card
-Date:   Thu, 20 Sep 2018 17:58:23 +0000
-Message-Id: <20180920175826.1284-5-linux.amoon@gmail.com>
+Subject: [PATCHv3 5/7] ARM: dts: exynos5422: use wp-gpio method to detect sd-card
+Date:   Thu, 20 Sep 2018 17:58:24 +0000
+Message-Id: <20180920175826.1284-6-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920175826.1284-1-linux.amoon@gmail.com>
 References: <20180920175826.1284-1-linux.amoon@gmail.com>
@@ -81,27 +80,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add the Card Detect GPIO property for sdcard detect, to fix
+add the Write Protect GPIO property for sdcard, to fix
 the warning message during boot time.
-of_get_named_gpiod_flags: can't parse 'cp-gpios' property of node '/soc/mmc@12220000[0]'
+of_get_named_gpiod_flags: can't parse 'wp-gpios' property of node '/soc/mmc@12220000[0]'
 
 Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
-[0] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-October/376261.html
-Fixed the commit message.
+New patch to this series.
+If we keep the wp-gpio GPIO_ACTIVE_LOW sdcard boot into RO mode.
 ---
  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 914ee08c7eb2..03fe02ceae66 100644
+index 03fe02ceae66..475c38bbc99e 100644
 --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
 +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -369,6 +369,7 @@
- 	bus-width = <4>;
+@@ -370,6 +370,7 @@
  	cap-sd-highspeed;
  	max-frequency = <200000000>;
-+	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
+ 	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
++	wp-gpios = <&gpc4 0 GPIO_ACTIVE_HIGH>;
  	vmmc-supply = <&ldo19_reg>;
  	vqmmc-supply = <&ldo13_reg>;
  	sd-uhs-sdr50;
