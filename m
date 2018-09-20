@@ -2,110 +2,91 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_DBL_ABUSE_MALW autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F81C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 581CCECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E132150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:02:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E132150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 028112150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MNKqHUsI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 028112150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeITVqe (ORCPT
+        id S1728295AbeITVq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:46:34 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33202 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbeITVqe (ORCPT
+        Thu, 20 Sep 2018 17:46:57 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39562 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeITVq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:46:34 -0400
-Received: by mail-qt0-f194.google.com with SMTP id r37-v6so9021973qtc.0;
-        Thu, 20 Sep 2018 09:02:25 -0700 (PDT)
+        Thu, 20 Sep 2018 17:46:57 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w14-v6so4559213plp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+4iEeziyhf7QGDfAjGIofnpv3iNGNnVid+o6WaSInbY=;
+        b=MNKqHUsIY5EWpOI4JkgC5DebE4M6D4xCIJ+2SOXwSCeCTlozx4SG+/JfXBPu1DfQg+
+         zeqwYlZXx49Ov6zx8VfTvQ4u0ch2IDAIYi7A7qzswA+z4EQQ3X/UXSi6pATrfztX8WHL
+         PaPsBWBajRJggALko1vgrUw/vP2F/HrP2Q8gU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nytyfi0fTlhxOobRdAPgJCStcxil1PT8fPInJa34k8E=;
-        b=ZMdI7JaSIwpvs1jBhA5QSoFqfBb47fkOGieesF1nil1pSUeUbaoQkuAorGGCSI139/
-         xNQmX1tRqaaD8Fdm+jbUXyRCKzi1wAoVwmoAl0pRkkbSZ6DdgesjtkWeLkdnwr2je0vv
-         B7IoXstwtj9qH9LfJ6OSN4a4WHUy0wi2e6Yj6jQ7w3SH+M5+Bkp3JIyF6BWXNPB40pJs
-         7vNez5dBGcfqbs/9z2T8r9qNKFXBoq2g9ekY2Y68KqofGkmMd3P+Bsl6Qi6HhDcTzitP
-         8Hj7TyaQysESVfalVxv7LYmFTmy/izLP1Ex0oE3FAi8VOy/QDAAP4M+VR7JH1sOh3aKJ
-         ewkA==
-X-Gm-Message-State: APzg51CglTJw8Dn++Rj4YbkwAAYVwI0Ml2KTkg5RK+eQxVbZpbp16ldR
-        22ePopwoWaVX3j08WkBVEoA1qBJuTaTBhucW88I=
-X-Google-Smtp-Source: ANB0VdaexVRvnVlnNnFQvjYzpfiPu94uwIff2F0kSzArFF04oEe8ZLNGOcIsIpxP9KYmuTKtehxhmeuvk892TcMwwiQ=
-X-Received: by 2002:a0c:c171:: with SMTP id i46-v6mr28666936qvh.40.1537459344431;
- Thu, 20 Sep 2018 09:02:24 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+4iEeziyhf7QGDfAjGIofnpv3iNGNnVid+o6WaSInbY=;
+        b=jZJBxFzPXPUf2i+pJGdSk3bhHwnnaV0X5AA9h8Te5bWDnA1pjUMAvbCG89e5OGVZjc
+         z0IJohUcvynKSAWw7y74L48IS5i00oOAAtOztmYP/FKEG+HQKKh6LZTtPgsDcVi8TZBA
+         E6U/hXkvgf3DG38dMsFJTkdKNvO21sdC1t8orwdM739dsvAm3BMre20DAe8MHNyPhKYM
+         AopyRz61B7XnFeH/N+/0bl5UrThOUusXpMxYP4X+b7fMooOuqBpCIpb0SvNsSgNJZmVU
+         UYVYeqBI+dtAV3PtQl8913KXbn1DBTwPv9ZaOzYB5j4G3eSD9mAnYIUD4Qq6vlrJcg7z
+         Mtrg==
+X-Gm-Message-State: APzg51C1QmIPrERUDLRss3u9+bkoseMJPun7Qn6FwhM/ZkWVGS9ClgVa
+        kLK83puCWx3EuZM3IjkJmT4eGQ==
+X-Google-Smtp-Source: ANB0Vdasqjb2LcaycZNZwmHeeYIiejDEXxVisr6DDv2I6pGwjqMneAOEdyFMAW+SpDC6StgHoJ90Xg==
+X-Received: by 2002:a17:902:204:: with SMTP id 4-v6mr36758041plc.281.1537459367709;
+        Thu, 20 Sep 2018 09:02:47 -0700 (PDT)
+Received: from localhost ([209.121.128.187])
+        by smtp.gmail.com with ESMTPSA id e190-v6sm50224229pfc.81.2018.09.20.09.02.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 09:02:46 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 09:02:45 -0700
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     ndesaulniers@google.com, natechancellor@gmail.com,
+        ilia.lin@gmail.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] cpufreq: qcom-kryo: Fix section mismatch warning
+Message-ID: <20180920160245.f4afwfyyz3nd4xvn@vireshk-mac-ubuntu>
+References: <20180919182247.1101-1-natechancellor@gmail.com>
+ <CAKwvOdnW8p4Tj2n+Y4XyMMVdD7W90W4NTLkJHKhZ6604ah4fnw@mail.gmail.com>
+ <20180919215039.mb7prmmfs5jek3aj@vireshk-mac-ubuntu>
+ <20180919215418.y2jsrsj73vy3dudd@vireshk-mac-ubuntu>
+ <CAJZ5v0ipkaudrv7W5VP1_e9LERF6DLZuw+HtTf2Si4p=pbv9bw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-3-Jason@zx2c4.com>
- <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com>
-In-Reply-To: <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 20 Sep 2018 09:02:07 -0700
-Message-ID: <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography library
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>, sneves@dei.uc.pt,
-        Andy Lutomirski <luto@kernel.org>,
-        jeanphilippe.aumasson@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0ipkaudrv7W5VP1_e9LERF6DLZuw+HtTf2Si4p=pbv9bw@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 8:41 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> (+ Arnd, Eric)
->
-> On 18 September 2018 at 09:16, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> ...
->
-> > diff --git a/lib/zinc/Makefile b/lib/zinc/Makefile
-> > new file mode 100644
-> > index 000000000000..83dfd63988c0
-> > --- /dev/null
-> > +++ b/lib/zinc/Makefile
-> > @@ -0,0 +1,4 @@
->
-> Apologies for not spotting these before:
->
-> > +ccflags-y := -O3
->
-> -O3 optimization has been problematic in the past, at least on x86 but
-> I think on other architectures as well. Please stick with -O2.
->
-> > +ccflags-y += -Wframe-larger-than=$(if (CONFIG_KASAN),16384,8192)
->
-> There is no way we can support code in the kernel with that kind of
-> stack space requirements. I will let Arnd comment on what we typically
-> allow, since he deals with such issues on a regular basis.
+On 20-09-18, 00:45, Rafael J. Wysocki wrote:
+> Because __init things go away at one point and calling them from the
+> other sections is a bad idea.  OTOH, __exit things are simply not
+> needed in built-in drivers and they are never there if the driver is
+> built-in, so calling them from the other sections is a bad idea too.
 
-Right, if you hit a stack requirement like this, it's usually the compiler
-doing something bad, not just using too much stack but also generating
-rather slow object code in the process. It's better to fix the bug by
-optimizing the code to not spill registers to the stack.
+I assumed that the driver is calling platform_driver_probe() and so probe() can
+be marked __init. But it doesn't do that to make deferred probing work.
 
-In the long run, I'd like to reduce the stack frame size further, so
-best assume that anything over 1024 bytes (on 32-bit) or 1280 bytes
-(on 64-bit) is a bug in the code, and stay below that.
-
-For prototyping, you can just mark the broken functions individually
-by setting the warning limit for a specific function that is known to
-be misoptimized by the compiler (with a comment about which compiler
-and architectures are affected), but not override the limit for the
-entire file.
-
-       Arnd
+-- 
+viresh
