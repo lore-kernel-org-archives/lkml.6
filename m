@@ -2,80 +2,126 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34396ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3900FC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8E721529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:31:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8E721529
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id ED3B921526
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED3B921526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732963AbeITVP6 (ORCPT
+        id S1733169AbeITVQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:15:58 -0400
-Received: from mga05.intel.com ([192.55.52.43]:54579 "EHLO mga05.intel.com"
+        Thu, 20 Sep 2018 17:16:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46350 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728444AbeITVP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:15:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 08:31:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,398,1531810800"; 
-   d="scan'208";a="71571741"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Sep 2018 08:30:35 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 455C7301A71; Thu, 20 Sep 2018 08:30:35 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 08:30:35 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, kan.liang@intel.com, peterz@infradead.org,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com
-Subject: Re: [PATCH v3 4/5] KVM/x86/vPMU: Add APIs to support host
- save/restore the guest lbr stack
-Message-ID: <20180920153035.GB10360@tassilo.jf.intel.com>
-References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com>
- <1537437959-8751-5-git-send-email-wei.w.wang@intel.com>
+        id S1733024AbeITVQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 17:16:07 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 666AC7F6B3;
+        Thu, 20 Sep 2018 15:32:05 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B60883091327;
+        Thu, 20 Sep 2018 15:31:59 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 17:31:56 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v10 04/26] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+Message-ID: <20180920173156.70299b6c.cohuck@redhat.com>
+In-Reply-To: <1536781396-13601-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1536781396-13601-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537437959-8751-5-git-send-email-wei.w.wang@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 20 Sep 2018 15:32:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +int intel_pmu_enable_save_guest_lbr(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> +	struct perf_event *event;
-> +	struct perf_event_attr attr = {
-> +		.type = PERF_TYPE_RAW,
-> +		.size = sizeof(attr),
-> +		.pinned = true,
-> +		.exclude_host = true,
-> +		.sample_type = PERF_SAMPLE_BRANCH_STACK,
-> +		.branch_sample_type = PERF_SAMPLE_BRANCH_CALL_STACK |
-> +				      PERF_SAMPLE_BRANCH_USER |
-> +				      PERF_SAMPLE_BRANCH_KERNEL,
+On Wed, 12 Sep 2018 15:42:54 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-I think that will allocate an extra perfmon counter, right? 
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Introduces a new AP device driver. This device driver
+> is built on the VFIO mediated device framework. The framework
+> provides sysfs interfaces that facilitate passthrough
+> access by guests to devices installed on the linux host.
+> 
+> The VFIO AP device driver will serve two purposes:
+> 
+> 1. Provide the interfaces to reserve AP devices for exclusive
+>    use by KVM guests. This is accomplished by unbinding the
+>    devices to be reserved for guest usage from the zcrypt
+>    device driver and binding them to the VFIO AP device driver.
+> 
+> 2. Implements the functions, callbacks and sysfs attribute
+>    interfaces required to create one or more VFIO mediated
+>    devices each of which will be used to configure the AP
+>    matrix for a guest and serve as a file descriptor
+>    for facilitating communication between QEMU and the
+>    VFIO AP device driver.
+> 
+> When the VFIO AP device driver is initialized:
+> 
+> * It registers with the AP bus for control of type 10 (CEX4
+>   and newer) AP queue devices. This limitation was imposed
+>   due to:
+> 
+>   1. A desire to keep the code as simple as possible;
+> 
+>   2. Some older models are no longer supported by the kernel
+>      and others are getting close to end of service.
+> 
+>   The probe and remove callbacks will be provided to support
+>   the binding/unbinding of AP queue devices to/from the VFIO
+>   AP device driver.
+> 
+> * Creates a matrix device, /sys/devices/vfio_ap/matrix,
+>   to serve as the parent of the mediated devices created, one
+>   for each guest, and to hold the APQNs of the AP devices bound to
+>   the VFIO AP device driver.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 
-So if the guest wants to use all perfmon counters we would start to 
-multiplex, which would be bad
+Christian's S-o-b looks a bit odd here; OTOH, it's probably him anyway
+who will queue the patches in the end :)
 
-Would need to fix perf core to not allocate a perfmon counter in
-this case, if no period and no event count is requested.
+> ---
+>  MAINTAINERS                           |   10 +++
+>  arch/s390/Kconfig                     |   11 +++
+>  drivers/iommu/Kconfig                 |    8 ++
+>  drivers/s390/crypto/Makefile          |    4 +
+>  drivers/s390/crypto/vfio_ap_drv.c     |  134 +++++++++++++++++++++++++++++++++
+>  drivers/s390/crypto/vfio_ap_private.h |   34 ++++++++
+>  6 files changed, 201 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+>  create mode 100644 drivers/s390/crypto/vfio_ap_private.h
 
--Andi
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
