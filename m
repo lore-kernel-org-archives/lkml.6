@@ -2,152 +2,116 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BED8C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C39ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296BB21535
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B61621525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="IEYgHn87"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296BB21535
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RJPr0zv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B61621525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388739AbeIUEpg (ORCPT
+        id S2388608AbeIUErO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:45:36 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36149 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeIUEpg (ORCPT
+        Fri, 21 Sep 2018 00:47:14 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33542 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbeIUErO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:45:36 -0400
-Received: by mail-ot1-f67.google.com with SMTP id w17-v6so11190249otk.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:59:45 -0700 (PDT)
+        Fri, 21 Sep 2018 00:47:14 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b97-v6so5040420plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 16:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8kEVg4AfF+ri/1ag9LL/dsQqlcNAWtcz0lxcG+tsols=;
-        b=IEYgHn87JPHz2nLAHlDvx5WFxmZojpXDb9K/pa5K+PTjWe+h9ZIwlD47olcKsfdbMQ
-         YyNHw4ZRsF3WEQ5tb2AUcQjiSpcimhwFXX9SJ4t6sQvsnLLDiKGOZLfJd8l14w8LP7ht
-         IpvNDrdvWu1FDYZAwJGOugdmlkLxKm8C7hclHRUvKAQUdOYd3hYx2fdqVLzxI610vqQu
-         Dk+ClNkVHRcw8QeuGHioW/vvg1HvHuWv4pFyFe2g/LCY41kqAdTm+/fK/ZN8l4bWkFct
-         2L3NS32lc1d11TX2kMmqTVmVcodQxwI5DxY9wGH1Vbxbaso9zCBDNH2Wdw7h9gaZpIny
-         Q3jg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XnbSOaS3cXFSRr7RaJlQgCJQp+2/RhzokjFBEA1aXJw=;
+        b=RJPr0zv705fZvYJeTcYQoYl+m4G1Z6F9hTm6q7h6UnUyhkEE0MDByNrt3eTT90nfPw
+         scx/GDEMlnITYLYUzIVYl1Gb3HWmgh4BZQ3EdkGUYSTS1n95mKbegJcPNmmlnOi8bI5+
+         lHMFw452MJXhmQwfRCntrX0sBrEmXfAmPpT5Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8kEVg4AfF+ri/1ag9LL/dsQqlcNAWtcz0lxcG+tsols=;
-        b=ImKB3Wsgp2h7OHSF95Jv+WRDoLFTaAbpyd/+U0vb9iSZ1SJrZ0Nq9zN4bN20Hj8Kah
-         PmJL2Mni9LYq9ul8iTVae6gJ2h/zlEVCKeULZ3JtJAPDHcskqMTjmGUyVn0iTMDOTcGA
-         PHNU4sSyHL9Nyl+nHgFwoRk4EQUj2MyouIa+OkWuuloF/0IgomfCE26M/tt333f7JqUd
-         OBAPRVks8ReQFh1HAA/kmQjkzLdF4sGMAzlQZnYj57geNGbyd/LrmLXM3k0M/xAuDtVK
-         HDukSeY9+myR0AJsjYmsze5t20c5TWzLFVEkndmYoD+E8jk9A3763QV8uttIXKebOUdt
-         89ug==
-X-Gm-Message-State: APzg51B/pj90NTugzBAG6KYahqVqt6663StxogT6mvbwZZn74/uB/Hyd
-        tboXVh2NYAfeE7UAuGMT/1rX8Wowr37ZKEOoYPQ0MA==
-X-Google-Smtp-Source: ANB0VdZxOg2ZeOQ45ckJQsvaw9Kqy5VPyDNxVnPvZpegjDMZJjs82ysLNHtFl97vdfEy2ldWa782YTKdTFP8zQXCuzQ=
-X-Received: by 2002:a9d:50ac:: with SMTP id b44-v6mr24540445oth.267.1537484385582;
- Thu, 20 Sep 2018 15:59:45 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XnbSOaS3cXFSRr7RaJlQgCJQp+2/RhzokjFBEA1aXJw=;
+        b=RxwdadV9UweyexckCBSC9ZMgcYdSuupGxDebBRIKvOaRQtf7wqeAIgxXjtb+iW2Fml
+         azTFqhA0abFbjX65q5zpVWtSOwdEybqD6ffIMQoo5TPWBIEZTjd6Xdpp9nfv06PTIZ9D
+         +FX96LbVU79Ey6cGR2xY2J6UJZ4xYCMks/elWeNQgHyTSL4rMeUycKqXOvvuojiuIoSa
+         KzZ5q6q8t/ZJ+3n6BfkbpJ+CjcuguaiPt3hDlzGc1J3KMDGZK3kCvAZ1yem0jYmPoELR
+         ps3OktT9ALrA/ql3F738cA57XqkeNEMDfA3pjn+lNJGxo9FCLkqnrpCgZ93nfRxznQau
+         w8ZA==
+X-Gm-Message-State: APzg51AEgss/049u2cCVvOR2cJY7zz4hA2CglSlAbDh+1zgsp16PvNwv
+        VMeksMYsIMeTDnKrqx4i7w8aNg==
+X-Google-Smtp-Source: ANB0VdZ+j2v8m4x9lYeW5QwMTAjeVo8BSpBFXhvo2KqoYstzWsqF9NpMrDFjT7SkDYOt9QjmzQV5ig==
+X-Received: by 2002:a17:902:ac86:: with SMTP id h6-v6mr4137818plr.103.1537484483721;
+        Thu, 20 Sep 2018 16:01:23 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id n9-v6sm41038945pfg.21.2018.09.20.16.01.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 16:01:21 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 16:01:21 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Sinan Kaya <okaya@codeaurora.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
+ (BD_ADDR)
+Message-ID: <20180920230121.GT22824@google.com>
+References: <20180920223436.202454-1-mka@chromium.org>
+ <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
 MIME-Version: 1.0
-References: <20180920215824.19464.8884.stgit@localhost.localdomain> <20180920222951.19464.39241.stgit@localhost.localdomain>
-In-Reply-To: <20180920222951.19464.39241.stgit@localhost.localdomain>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 20 Sep 2018 15:59:34 -0700
-Message-ID: <CAPcyv4hAEOUOBU4GENaFOb-xXi33g_ugCexfmY3DrLH27Z6MKg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] nvdimm: Schedule device registration on node local
- to the device
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 3:31 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> This patch is meant to force the device registration for nvdimm devices to
-> be closer to the actual device. This is achieved by using either the NUMA
-> node ID of the region, or of the parent. By doing this we can have
-> everything above the region based on the region, and everything below the
-> region based on the nvdimm bus.
->
-> One additional change I made is that we hold onto a reference to the parent
-> while we are going through registration. By doing this we can guarantee we
-> can complete the registration before we have the parent device removed.
->
-> By guaranteeing NUMA locality I see an improvement of as high as 25% for
-> per-node init of a system with 12TB of persistent memory.
->
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
->  drivers/nvdimm/bus.c |   19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-> index 8aae6dcc839f..ca935296d55e 100644
-> --- a/drivers/nvdimm/bus.c
-> +++ b/drivers/nvdimm/bus.c
-> @@ -487,7 +487,9 @@ static void nd_async_device_register(void *d, async_cookie_t cookie)
->                 dev_err(dev, "%s: failed\n", __func__);
->                 put_device(dev);
->         }
-> +
->         put_device(dev);
-> +       put_device(dev->parent);
+On Thu, Sep 20, 2018 at 06:45:58PM -0400, Sinan Kaya wrote:
+> On 9/20/2018 6:34 PM, Matthias Kaehlcke wrote:
+> > On some systems the Bluetooth Device Address (BD_ADDR) isn't stored
+> > on the Bluetooth chip itself. One way to configure the BD address is
+> > through the device tree. The btqcomsmd driver is an example, it can
+> > read the BD address from the DT property 'local-bd-address'. It is
+> > also planned to extend the hci_qca driver to support setting the BD
+> > address through the DT.
+> > 
+> > To avoid redundant open-coded reading of 'local-bd-address' and error
+> > handling this series adds an API to retrieve the BD address of a device
+> > and adapts the btqcomsmd driver to use this API.
+> 
+> I don't think you have got enough number of line savings to make this
+> code to be folded into property.c
 
-Good catch. The child does not pin the parent until registration, but
-we need to make sure the parent isn't gone while were waiting for the
-registration work to run.
+Most of the new lines are documentation ;-)
 
-Let's break this reference count fix out into its own separate patch,
-because this looks to be covering a gap that may need to be
-recommended for -stable.
+> Not my call but seems redundant IMO.
 
+Certainly true if this was the only driver. However another one will
+follow soon and 'local-bd-address' is the official binding, so it's
+not unlikely there will be more.
 
->
->  static void nd_async_device_unregister(void *d, async_cookie_t cookie)
-> @@ -504,12 +506,25 @@ static void nd_async_device_unregister(void *d, async_cookie_t cookie)
->
->  void __nd_device_register(struct device *dev)
->  {
-> +       int node;
-> +
->         if (!dev)
->                 return;
-> +
->         dev->bus = &nvdimm_bus_type;
-> +       get_device(dev->parent);
->         get_device(dev);
-> -       async_schedule_domain(nd_async_device_register, dev,
-> -                       &nd_async_domain);
-> +
-> +       /*
-> +        * For a region we can break away from the parent node,
-> +        * otherwise for all other devices we just inherit the node from
-> +        * the parent.
-> +        */
-> +       node = is_nd_region(dev) ? to_nd_region(dev)->numa_node :
-> +                                  dev_to_node(dev->parent);
+Also fwnode_get_bd_address() handles the case where the property
+exists but is all zeros which adds a few LOC, which isn't handled by
+the btqcomsmd driver.
 
-Devices already automatically inherit the node of their parent, so I'm
-not understanding why this is needed?
+Cheers
+
+Matthias
