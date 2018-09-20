@@ -2,249 +2,237 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1B8ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D7AC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C02F21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C02F21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D840121523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMTKorav"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D840121523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733229AbeITXH0 (ORCPT
+        id S2387845AbeITXH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:07:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53180 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726990AbeITXHZ (ORCPT
+        Thu, 20 Sep 2018 19:07:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45556 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbeITXH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:07:25 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8KHEM5a018347
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:22:55 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mmenkuk6y-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:22:54 -0400
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Thu, 20 Sep 2018 11:22:54 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 20 Sep 2018 11:22:49 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8KHMmel49741966
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Sep 2018 10:22:48 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D04A178063;
-        Thu, 20 Sep 2018 11:22:48 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7B9FB7805E;
-        Thu, 20 Sep 2018 11:22:48 -0600 (MDT)
-Received: from sofia.ibm.com (unknown [9.124.212.176])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 20 Sep 2018 11:22:48 -0600 (MDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 5805B2E2DAB; Thu, 20 Sep 2018 22:52:45 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH v8 3/3] powerpc/sysfs: Add topology/smallcore_thread_siblings[_list]
-Date:   Thu, 20 Sep 2018 22:52:39 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18092017-8235-0000-0000-00000E03409B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009741; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01091142; UDB=6.00563758; IPR=6.00871165;
- MB=3.00023416; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-20 17:22:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092017-8236-0000-0000-000042B5FE9B
-Message-Id: <1537464159-25919-4-git-send-email-ego@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-20_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809200167
+        Thu, 20 Sep 2018 19:07:57 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 20-v6so10193979wrb.12;
+        Thu, 20 Sep 2018 10:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Mvn36hofEfpPYpcukR+o6LwbHt1GjireKAgB3TC2U50=;
+        b=hMTKoravMYNas+nuIcZfBd5dd7yOKW68Ci71HaOf7X5FZqGyzFaHL4U4PkwlucG+0F
+         z8d2vDzAZnst7Y/zNst4Z1aF2Gm1GX1z6aptkTN02ojcM3UMQ4MpMI5wGtS2LIyJQZ1X
+         T88PzgIHUDZpJIZEsD/Hg//k5jcsv49fj8JrzEeoGU3qihfCltnM4WBnNyCct6V1gYue
+         yWV5oWM/tkl2pUqAct+M7QjvE+o1mBnb4U8QnIITOi51CcsMSDL/5qKTBmmhHvCVqXfp
+         6jgML4mjbIv7iWTj9zBVTbo0gZGeSorm/2LMzUwZvzXDt4uQYQKXuJhgkf+RoE3z13IA
+         syZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Mvn36hofEfpPYpcukR+o6LwbHt1GjireKAgB3TC2U50=;
+        b=WhCAmJi5gzoOK2ZOSWiMFjHVBHB4yyKlTmpB7da0NnNg2fuySq1A6QtUB6uUVkIKh/
+         Y6PEIKzNasZsNN0ya4yq7Uj7Q/36ZnlaEJ+LHEj5gPY45JiHCfhxgncjwmg06VDy+uMR
+         DfahpFohtcDk1Tov8CYMTmCyeGbPw5G2yT9GBzXKs2nxZrtkQ9+IVs+96dCgUGvrqoq6
+         prTFgMjyBKMRomvbFBu80k3gL2N/dRwAhkGjQMiuhvLVgcs361b/W3SbberE4kSWQd8L
+         7qk4d/mBDM1GPzKP9A12S8S/7Ogmj/JfPGK0XE+sMzAZq1+3PZj55NGLSSFWZ/oVbA4A
+         VNLA==
+X-Gm-Message-State: APzg51B9gFrOIUiq80kcmbOEfo2Bx79iRrn4f+c1PUmqrCHaMQgzJGJX
+        IthmPKEYBqrF1ESwsBM+d0U=
+X-Google-Smtp-Source: ANB0VdZhFC9FjghumF/PDWV+mESNjf06HhsJ5PEG9Dye1n9iHSCmq+ocpcAuqGlIDeAgN+6t1YchKw==
+X-Received: by 2002:adf:fe06:: with SMTP id n6-v6mr35097238wrr.171.1537464204115;
+        Thu, 20 Sep 2018 10:23:24 -0700 (PDT)
+Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
+        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 10:23:23 -0700 (PDT)
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Olof Johansson <olof@lxom.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
+        Martin Sebor <msebor@gmail.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: [PATCH v5 00/15] Compiler Attributes
+Date:   Thu, 20 Sep 2018 19:22:46 +0200
+Message-Id: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+The Compiler Attributes series is an effort to disentangle
+the include/linux/compiler*.h headers and bring them up to date.
 
-This patch adds two sysfs attributes named smallcore_thread_siblings
-and smallcore_thread_siblings_list to the "topology" attribute group
-for each CPU device.
+The main idea behind the series is to use feature checking macros
+(i.e. __has_attribute) instead of compiler version checks (e.g. GCC_VERSION),
+which are compiler-agnostic (so they can be shared, reducing the size
+of compiler-specific headers) and version-agnostic.
 
-The read-only attributes
-/sys/device/system/cpu/cpuN/topology/smallcore_thread_siblings and
-/sys/device/system/cpu/cpuN/topology/smallcore_thread_siblings_list
-will the online siblings of CPU N that share the L1 cache with it on
-big-core configurations in cpumask format and cpu-list format
-respectively.
+Other related improvements have been performed in the headers as well,
+which on top of the use of __has_attribute it has amounted to a significant
+simplification of these headers (e.g. GCC_VERSION is now only guarding 4
+non-attribute macros).
 
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- Documentation/ABI/testing/sysfs-devices-system-cpu | 14 ++++
- arch/powerpc/kernel/sysfs.c                        | 88 ++++++++++++++++++++++
- 2 files changed, 102 insertions(+)
+This series should also help the efforts to support compiling the kernel
+with clang and icc. A fair amount of documentation and comments have also
+been added, clarified or removed; and the headers are now more readable,
+which should help kernel developers in general.
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 7331822..2a80dc2 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -511,3 +511,17 @@ Description:	Control Symetric Multi Threading (SMT)
- 
- 			 If control status is "forceoff" or "notsupported" writes
- 			 are rejected.
-+
-+What:		/sys/devices/system/cpu/cpu#/topology/smallcore_thread_siblings
-+		/sys/devices/system/cpu/cpu#/topology/smallcore_thread_siblings_list
-+Date:		Sept 2018
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description: 	CPU topology files that describe the thread siblings of a
-+		logical CPU that share the L1-cache with it on POWER9
-+		big-core configurations.
-+
-+		smallcore_thread_siblings: internal kernel map of
-+		cpu#'s hardware threads that share L1-cache with cpu#.
-+
-+		smallcore_thread_siblings_list: human-readable list of
-+		cpu#'s hardware threads that share L1-cache with cpu#.
-diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
-index 755dc98..f9c7d96 100644
---- a/arch/powerpc/kernel/sysfs.c
-+++ b/arch/powerpc/kernel/sysfs.c
-@@ -18,6 +18,7 @@
- #include <asm/smp.h>
- #include <asm/pmc.h>
- #include <asm/firmware.h>
-+#include <asm/cputhreads.h>
- 
- #include "cacheinfo.h"
- #include "setup.h"
-@@ -714,6 +715,62 @@ static void sysfs_create_dscr_default(void)
- #endif /* HAS_PPC_PMC_PA6T */
- #endif /* HAS_PPC_PMC_CLASSIC */
- 
-+static ssize_t smallcore_thread_siblings_show(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	int cpu = dev->id;
-+
-+	return cpumap_print_to_pagebuf(false, buf, cpu_smallcore_mask(cpu));
-+}
-+static DEVICE_ATTR_RO(smallcore_thread_siblings);
-+
-+static ssize_t smallcore_thread_siblings_list_show(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	int cpu = dev->id;
-+
-+	return cpumap_print_to_pagebuf(true, buf, cpu_smallcore_mask(cpu));
-+}
-+static DEVICE_ATTR_RO(smallcore_thread_siblings_list);
-+
-+static struct attribute *smallcore_attrs[] = {
-+	&dev_attr_smallcore_thread_siblings.attr,
-+	&dev_attr_smallcore_thread_siblings_list.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group smallcore_attr_group = {
-+	.name = "topology",
-+	.attrs = smallcore_attrs
-+};
-+
-+static int smallcore_register_cpu_online(unsigned int cpu)
-+{
-+	int err;
-+	struct device *cpu_dev = get_cpu_device(cpu);
-+
-+	if (!has_big_cores)
-+		return 0;
-+
-+	err = sysfs_merge_group(&cpu_dev->kobj, &smallcore_attr_group);
-+
-+	return err;
-+}
-+
-+static int smallcore_unregister_cpu_online(unsigned int cpu)
-+{
-+	struct device *cpu_dev = get_cpu_device(cpu);
-+
-+	if (!has_big_cores)
-+		return 0;
-+
-+	sysfs_unmerge_group(&cpu_dev->kobj, &smallcore_attr_group);
-+
-+	return 0;
-+}
-+
- static int register_cpu_online(unsigned int cpu)
- {
- 	struct cpu *c = &per_cpu(cpu_devices, cpu);
-@@ -1060,3 +1117,34 @@ static int __init topology_init(void)
- 	return 0;
- }
- subsys_initcall(topology_init);
-+
-+/*
-+ * NOTE: The smallcore_register_cpu_online
-+ *       (resp. smallcore_unregister_cpu_online) callback will merge
-+ *       (resp. unmerge) a couple of additional attributes to the
-+ *       "topology" attribute group of a CPU device when the CPU comes
-+ *       online (resp. goes offline).
-+ *
-+ *       Hence, the registration of these callbacks must happen after
-+ *       topology_sysfs_init() is called so that the topology
-+ *       attribute group is created before these additional attributes
-+ *       can be merged/unmerged. We cannot register these callbacks in
-+ *       topology_init() since this function is called before
-+ *       topology_sysfs_init(). Hence we define the following
-+ *       late_initcall for this purpose.
-+ */
-+static int __init smallcore_topology_init(void)
-+{
-+	int r;
-+
-+	if (!has_big_cores)
-+		return 0;
-+
-+	r = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-+			      "powerpc/topology/smallcore:online",
-+			      smallcore_register_cpu_online,
-+			      smallcore_unregister_cpu_online);
-+	WARN_ON(r < 0);
-+	return 0;
-+}
-+late_initcall(smallcore_topology_init);
+The series was triggered due to the move to gcc >= 4.6. In turn, this series
+has also triggered Sparse to gain the ability to recognize __has_attribute
+on its own.
+
+Finally, the nonstring variable attribute series has been applied on top
+of this one.
+
+You can also fetch it from:
+
+  https://github.com/ojeda/linux/tree/compiler-attributes-v5
+
+Enjoy!
+
+Cheers,
+Miguel
+
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Olof Johansson <olof@lxom.net>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Paul Lawrence <paullawrence@google.com>
+Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Martin Sebor <msebor@gmail.com>
+Cc: Christopher Li <sparse@chrisli.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Joe Perches <joe@perches.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-sparse@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+
+v4 -> v5
+
+  * Removed the 2 __naked patches, since Greg just applied them to master;
+    and rebased on top of that. The only change in the range-diff is in
+    "Compiler Attributes: always use the extra-underscores syntax" due
+    to the move of __naked to compiler_types.h.
+
+  * Applied the nonstring series on top of this one (last 4 patches).
+    Rationale:
+      - the nonstring series would anyway be modified again by this one
+        (so it has been rebased after the general cleanup).
+      - ext4's "local" nonstring was merged
+      - easier to manage (and easier to see the end result)
+
+    The first 2 patches of the last 4 add the warning back at W=1 and
+    add the __nonstring attribute. The other two serve as an example
+    of usage and as a cleanup.
+
+  * Cc lists removed from each commit; using a single list in the cover letter;
+    and a new, revised list of Cc (wider audience).
+
+Miguel Ojeda (15):
+  Compiler Attributes: remove unused attributes
+  Compiler Attributes: always use the extra-underscores syntax
+  Compiler Attributes: remove unneeded tests
+  Compiler Attributes: homogenize __must_be_array
+  Compiler Attributes: remove unneeded sparse (__CHECKER__) tests
+  Compiler Attributes: add missing SPDX ID in compiler_types.h
+  Compiler Attributes: use feature checks instead of version checks
+  Compiler Attributes: KENTRY used twice the "used" attribute
+  Compiler Attributes: remove uses of __attribute__ from compiler.h
+  Compiler Attributes: add Doc/process/programming-language.rst
+  Compiler Attributes: add MAINTAINERS entry
+  Compiler Attributes: add support for __nonstring (gcc >= 8)
+  Compiler Attributes: enable -Wstringop-truncation on W=1 (gcc >= 8)
+  Compiler Attributes: auxdisplay: panel: use __nonstring
+  Compiler Attributes: ext4: remove local __nonstring definition
+
+ Documentation/process/index.rst               |   1 +
+ .../process/programming-language.rst          |  45 +++
+ MAINTAINERS                                   |   5 +
+ drivers/auxdisplay/panel.c                    |   7 +-
+ fs/ext4/ext4.h                                |   9 -
+ include/linux/compiler-clang.h                |   5 -
+ include/linux/compiler-gcc.h                  |  70 +----
+ include/linux/compiler-intel.h                |   9 -
+ include/linux/compiler.h                      |  19 +-
+ include/linux/compiler_attributes.h           | 258 ++++++++++++++++++
+ include/linux/compiler_types.h                | 101 +------
+ scripts/Makefile.extrawarn                    |   1 +
+ 12 files changed, 341 insertions(+), 189 deletions(-)
+ create mode 100644 Documentation/process/programming-language.rst
+ create mode 100644 include/linux/compiler_attributes.h
+
 -- 
-1.9.4
+2.17.1
 
