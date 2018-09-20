@@ -2,436 +2,253 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF47ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3539ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D6521525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:42:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C20521536
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="1bHtqjXK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D6521525
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEEwvZgb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C20521536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388605AbeIUF2s (ORCPT
+        id S2388526AbeIUFcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:28:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43524 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeIUF2s (ORCPT
+        Fri, 21 Sep 2018 01:32:03 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33230 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeIUFcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:28:48 -0400
-Received: by mail-wr1-f65.google.com with SMTP id k5-v6so11033646wre.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 16:42:47 -0700 (PDT)
+        Fri, 21 Sep 2018 01:32:02 -0400
+Received: by mail-wm1-f66.google.com with SMTP id r1-v6so2765252wmh.0;
+        Thu, 20 Sep 2018 16:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dpIOOV+Mtr5VfamdhOMnuHxZkJT+62YBqVkdnKLU620=;
-        b=1bHtqjXKfmwbcpf3x4YIyOn2GRcGPVYPLqGegFjFeydt+coECwYmu0n07S6TIG4GdI
-         I5i5uRIG1B9ysNkaY4/DfLn4Z6KEP34O6nKnlgcQ2hvokm01tPi0nDsPaqCC0b73AkDA
-         qoB+ZCxxyUf+y6RfGDJ0lAMs+ls7am531w7MtnpGT07zkU9bfIh+7yCVExVGg5VPlVp2
-         xMG8AItzhCAoI0RGXgraDhbB8v5n00G5uNHB48L75tgTQxLRlYgdV847H3xmD+6W9Cq7
-         iP/UK++QqN1l8EJGHphTavVmuiKWqOqNV2ZOQa2+JrDBt7K/UfuyV2aSsR06dOsQB1M+
-         YCZQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fvBzpqWj6eyWQI7nSTJ4Wgv5Mn119koKVJY4O9nbZjs=;
+        b=DEEwvZgb2tqjEPVKuGprphJWEHBc0V+JAqgNlvlPTARNngIjLBVHVKK8OZ25AXiC5D
+         G4oBerm9WM0iA/YI8L4W8Bb/iZKm23kkAjjRdDYwo0J+2Coz56BCEKtf0oNKM28BywP1
+         9l1cUM+TNICLPHmO3whVknAiwkUJIjpqq4goUvhNdreJteKowLAwsG6M0I8pEFapLf11
+         hy9DrT9C586jupnVyI7bmrHygNFHlRB6l8pv5i4IrpvpvZHAoj/npA+YiLLAtg4WKVEy
+         TVSfn5Z1u01nBcPTVvqa/ii9/Ae8ahqFmrOMkcPN659uPbwisRzCA3CTcRZk/43MnfQV
+         pzAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dpIOOV+Mtr5VfamdhOMnuHxZkJT+62YBqVkdnKLU620=;
-        b=IeiPTHavHh3+BXJ0eDSlI5Ze8MryvlB2jsUptLU+OjU8FtsHKbUWB0G8kOOzIeo4j6
-         S6bBNSF8lSYjBqBwm7b6wh3/FNHBo9mq3hXU6lJoVSyTQuTZKS+IXA3pcLy2OrimLmdz
-         o7fXg5Xc19xruHpNi36TnKjQOdeEqxLW71lmQkdNXw8Zfp9f1GRICvP5qq748KdX9M9t
-         2FWjSddfIZVG12LU+QRxXuTSzcObPt69XBgriiecUzGKRO5k+p7X/WBJ+hDN1NDIca8C
-         KQgsuV0zpzHevcsETunkpBqKW70xPTHO69H+t1NkezCTuF9tYNxM8bWjI33KGF5YpZmG
-         jvMA==
-X-Gm-Message-State: APzg51Do+Aezt73/biozfNWPy6zXaYzyFxQw7DEZ4hQeQirLclTaI9PU
-        WmZxxcb6I9CqueMPx0J4UyQibA==
-X-Google-Smtp-Source: ANB0VdZqf0AkDiO4CL6HxMlbCLzQyue+Y9JBqF/KZdf+xK4eaSQDtVm4w780yRj++MMF5sBMLIGXfA==
-X-Received: by 2002:a5d:610b:: with SMTP id v11-v6mr10799781wrt.265.1537486966458;
-        Thu, 20 Sep 2018 16:42:46 -0700 (PDT)
-Received: from cisco ([173.38.220.55])
-        by smtp.gmail.com with ESMTPSA id c15-v6sm2131759wmb.2.2018.09.20.16.42.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 16:42:45 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 17:42:40 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v6 4/5] seccomp: add support for passing fds via
- USER_NOTIF
-Message-ID: <20180920234240.GR4672@cisco>
-References: <20180906152859.7810-1-tycho@tycho.ws>
- <20180906152859.7810-5-tycho@tycho.ws>
- <CALCETrWZmN4FeCSwemfMeayupBmQ-NqpVWQuqSU34CLvzdx8gw@mail.gmail.com>
- <20180919095536.GM4672@cisco>
- <C1406292-7496-459F-A76A-20C9EFBB12D6@amacapital.net>
- <20180919143842.GN4672@cisco>
- <CALCETrVuP0nQ5B01-iWrcQ87hisz7=jA08-Uisqud_r+zc74NQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fvBzpqWj6eyWQI7nSTJ4Wgv5Mn119koKVJY4O9nbZjs=;
+        b=Zs5UalhgV+cK3E5IoILlUjNOQKJ74Q4bT3qcEVsCyh4g+3Mm3As0D8Uloq0lW1Xl9H
+         YGGcJxqCqr+NfIMbK0/aEk7N7hMpcxy4mJGzSiTmQS+Yf/9GB37jFwEV3ENlBag27WeC
+         KB2/UOfQYW4aj1R868JUi1VvKi45IFpDqeuwAvp/9AokjJ9m9VkJiQnSbvqVXbLqsXDh
+         EfDl/0LaXE6s7TDKGDK90CfVKwao788+8ka4YQS5hvhGAmcvUEPoVGYUGwA60Z+Sw8cn
+         nk6cPZYwh0eUDcMjJ30S/3xLC8+caPiDHQNCnQKosXs476f5Jy4LjkuSHP6rrQYYQ0lW
+         MAQg==
+X-Gm-Message-State: APzg51CIvy0VP9TwepAyCvMOTinIRRou7c9Kt/sRxByCSpn3dG8lMf8B
+        H90l416G1nIzVS+1XgL7HwIiNWH04X1c7VB88rw=
+X-Google-Smtp-Source: ANB0VdYFo8yduUrsiJo8qNI3X7AZuUG4q9URZFV8k1yN5A1r9PSnvfE8Z/usibxkQEUT/nu7qp3wImxiqTjm4UG+Kkk=
+X-Received: by 2002:a1c:8682:: with SMTP id i124-v6mr1521350wmd.77.1537487160722;
+ Thu, 20 Sep 2018 16:46:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrVuP0nQ5B01-iWrcQ87hisz7=jA08-Uisqud_r+zc74NQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1537438000-20313-1-git-send-email-abel.vesa@nxp.com> <1537438000-20313-3-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1537438000-20313-3-git-send-email-abel.vesa@nxp.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 20 Sep 2018 16:45:49 -0700
+Message-ID: <CAHQ1cqHkp5-XyLAPTWPota6cxM79oaToZEQpa+tewH4CVt9XSA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] clk: imx: add fractional PLL output clock
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Rob Herring <robh@kernel.org>, linux-imx@nxp.com,
+        abelvesa@linux.com, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 12:58:20PM -0700, Andy Lutomirski wrote:
-> On Wed, Sep 19, 2018 at 7:38 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > On Wed, Sep 19, 2018 at 07:19:56AM -0700, Andy Lutomirski wrote:
-> >>
-> >>
-> >> > On Sep 19, 2018, at 2:55 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> >> >
-> >> >> On Wed, Sep 12, 2018 at 04:52:38PM -0700, Andy Lutomirski wrote:
-> >> >>> On Thu, Sep 6, 2018 at 8:28 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> >> >>> The idea here is that the userspace handler should be able to pass an fd
-> >> >>> back to the trapped task, for example so it can be returned from socket().
-> >> >>>
-> >> >>> I've proposed one API here, but I'm open to other options. In particular,
-> >> >>> this only lets you return an fd from a syscall, which may not be enough in
-> >> >>> all cases. For example, if an fd is written to an output parameter instead
-> >> >>> of returned, the current API can't handle this. Another case is that
-> >> >>> netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
-> >> >>> ever decides to install an fd and output it, we wouldn't be able to handle
-> >> >>> this either.
-> >> >>
-> >> >> An alternative could be to have an API (an ioctl on the listener,
-> >> >> perhaps) that just copies an fd into the tracee.  There would be the
-> >> >> obvious set of options: do we replace an existing fd or allocate a new
-> >> >> one, and is it CLOEXEC.  Then the tracer could add an fd and then
-> >> >> return it just like it's a regular number.
-> >> >>
-> >> >> I feel like this would be more flexible and conceptually simpler, but
-> >> >> maybe a little slower for the common cases.  What do you think?
-> >> >
-> >> > I'm just implementing this now, and there's one question: when do we
-> >> > actually do the fd install? Should we do it when the user calls
-> >> > SECCOMP_NOTIF_PUT_FD, or when the actual response is sent? It feels
-> >> > like we should do it when the response is sent, instead of doing it
-> >> > right when SECCOMP_NOTIF_PUT_FD is called, since if there's a
-> >> > subsequent signal and the tracer decides to discard the response,
-> >> > we'll have to implement some delete mechanism to delete the fd, but it
-> >> > would have already been visible to the process, etc. So I'll go
-> >> > forward with this unless there are strong objections, but I thought
-> >> > I'd point it out just to avoid another round trip.
-> >> >
-> >> >
-> >>
-> >> Can you do that non-racily?  That is, you need to commit to an fd *number* right away, but what if another thread uses the number before you actually install the fd?
-> >
-> > I was thinking we could just do an __alloc_fd() and then do the
-> > fd_install() when the response is sent or clean up the case that the
-> > listener or task dies. I haven't actually tried to run the code yet,
-> > so it's possible the locking won't work :)
-> 
-> I would be very surprised if the locking works.  How can you run a
-> thread in a process when another thread has allocated but not
-> installed an fd and is blocked for an arbitrarily long time?
+On Thu, Sep 20, 2018 at 3:07 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+>
+> From: Lucas Stach <l.stach@pengutronix.de>
+>
+> This is a new clock type introduced on i.MX8.
+>
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  drivers/clk/imx/Makefile       |   1 +
+>  drivers/clk/imx/clk-frac-pll.c | 230 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h          |   3 +
+>  3 files changed, 234 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-frac-pll.c
+>
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index 8c3baa7..4893c1f 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -6,6 +6,7 @@ obj-y += \
+>         clk-cpu.o \
+>         clk-fixup-div.o \
+>         clk-fixup-mux.o \
+> +       clk-frac-pll.o \
+>         clk-gate-exclusive.o \
+>         clk-gate2.o \
+>         clk-pllv1.o \
+> diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
+> new file mode 100644
+> index 0000000..c80c6ed
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-frac-pll.c
+> @@ -0,0 +1,230 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2018 NXP.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk.h"
+> +
+> +#define PLL_CFG0               0x0
+> +#define PLL_CFG1               0x4
+> +
+> +#define PLL_LOCK_STATUS                BIT(31)
+> +#define PLL_PD                 19
+> +#define PLL_PD_MASK            BIT(PLL_PD)
+> +#define PLL_BYPASS             14
+> +#define PLL_BYPASS_MASK                BIT(PLL_BYPASS)
+> +#define PLL_NEWDIV_VAL         BIT(12)
+> +#define PLL_NEWDIV_ACK         BIT(11)
+> +#define PLL_FRAC_DIV_MASK      0xffffff
+> +#define PLL_INT_DIV_MASK       0x7f
+> +#define PLL_OUTPUT_DIV_MASK    0x1f
+> +#define PLL_FRAC_DENOM         0x1000000
+> +
+> +struct clk_frac_pll {
+> +       struct clk_hw   hw;
+> +       void __iomem    *base;
+> +};
+> +
+> +#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
+> +
+> +static int clk_wait_lock(struct clk_frac_pll *pll)
+> +{
+> +       unsigned long timeout = jiffies + msecs_to_jiffies(10);
+> +       u32 val;
+> +
+> +       /* Wait for PLL to lock */
+> +       do {
+> +               if (readl_relaxed(pll->base) & PLL_LOCK_STATUS)
+> +                       break;
+> +               if (time_after(jiffies, timeout))
+> +                       break;
+> +       } while (1);
+> +
+> +       return readl_poll_timeout(pll->base, val,
+> +                                       val & PLL_LOCK_STATUS, 0, 1000);
 
-I think the trick is that there's no actual locking required (except
-for a brief locking of task->files). I've run the patch below and it
-seems to work. But perhaps that's abusing __alloc_fd a little too
-hard, I don't really know.
+Is this code intentional? It seems to me those two are almost
+identical wait loops, so it's a bit confusing to see without at least
+a comment why it is done that way. If it is intentional, can the first
+loop be replaced with readx_poll_timeout(readl_relaxed, ...) ?
 
-> >
-> >> Do we really allow non-“kill” signals to interrupt the whole process?  It might be the case that we don’t really need to clean up from signals if there’s a guarantee that the thread dies.
-> >
-> > Yes, we do, because of this: https://lkml.org/lkml/2018/3/15/1122
-> >
-> 
-> I'm still not sure I see the problem.  Suppose I'm implementing a user
-> notifier for a nasty syscall like recvmsg().  If I'm the tracer, by
-> the time I decide to install an fd, I've committed to returning
-> something other than -EINTR, even if a non-fatal signal is sent before
-> I finish.  No rollback should be necessary.
+> +}
+> +
+> +static int clk_wait_ack(struct clk_frac_pll *pll)
+> +{
+> +       unsigned long timeout = jiffies + msecs_to_jiffies(50);
+> +       u32 val;
+> +
+> +       /* return directly if the pll is in powerdown or in bypass */
+> +       if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
+> +               return 0;
+> +
+> +       /* Wait for the pll's divfi and divff to be reloaded */
+> +       do {
+> +               if (readl_relaxed(pll->base) & PLL_NEWDIV_ACK)
+> +                       break;
+> +               if (time_after(jiffies, timeout))
+> +                       break;
+> +       } while (1);
+> +
+> +       return readl_poll_timeout(pll->base, val,
+> +                                       val & PLL_NEWDIV_ACK, 0, 1000);
+> +}
 
-I don't understand why this is true. Surely you could stop a handler
-on receipt of a new signal, and have it do something else entirely?
+Ditto.
 
-> In the (unlikely?) event that some tracer needs to be able to rollback
-> an fd installation to return -EINTR, a SECCOMP_NOTIF_CLOSE_FD
-> operation should be good enough, I think.  Or maybe PUT_FD can put -1
-> to delete an fd.
+> +
+> +static int clk_pll_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
+> +       u32 val;
+> +
+> +       val = readl_relaxed(pll->base + PLL_CFG0);
+> +       val &= ~PLL_PD_MASK;
+> +       writel_relaxed(val, pll->base + PLL_CFG0);
+> +
+> +       return clk_wait_lock(pll);
+> +}
+> +
+> +static void clk_pll_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
+> +       u32 val;
+> +
+> +       val = readl_relaxed(pll->base + PLL_CFG0);
+> +       val |= PLL_PD_MASK;
+> +       writel_relaxed(val, pll->base + PLL_CFG0);
+> +}
+> +
+> +static int clk_pll_is_prepared(struct clk_hw *hw)
+> +{
+> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
+> +       u32 val;
+> +
+> +       val = readl_relaxed(pll->base + PLL_CFG0);
+> +       return (val & PLL_PD_MASK) ? 0 : 1;
+> +}
+> +
+> +static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
+> +       u32 val, divff, divfi, divq;
+> +       u64 temp64;
+> +
+> +       val = readl_relaxed(pll->base + PLL_CFG0);
+> +       divq = ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
+> +       val = readl_relaxed(pll->base + PLL_CFG1);
+> +       divff = (val >> 7) & PLL_FRAC_DIV_MASK;
 
-Yes, I think even with something like what I did below we'd need some
-sort of REMOVE_FD option, because otherwise there's no way to change
-your mind and send -EINTR without the fd you just PUT_FD'd.
+Just as a suggestion you can do:
 
-Tycho
+#define PLL_FRAC_DIV GENMASK(30, 7)
 
+divff = FIELD_GET(PLL_FRAC_DIV, val)
 
-From bfca7337cb53791aca74b595eb45e9afa3babac2 Mon Sep 17 00:00:00 2001
-From: Tycho Andersen <tycho@tycho.ws>
-Date: Thu, 20 Sep 2018 06:49:49 -0600
-Subject: [PATCH] implement SECCOMP_NOTIF_PUT_FD ioctl
+it's a bit nicer (IMHO, of course) because it allows you to avoid
+having to encode shit and mask separately and mask definition can be
+easily verified against the datasheet.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
----
- include/uapi/linux/seccomp.h                  |  8 ++
- kernel/seccomp.c                              | 74 ++++++++++++-------
- tools/testing/selftests/seccomp/seccomp_bpf.c | 24 +++++-
- 3 files changed, 77 insertions(+), 29 deletions(-)
-
-diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-index 8fb2c024c0a1..62e474c372d4 100644
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -80,6 +80,12 @@ struct seccomp_notif_resp {
- 	__u32 fd_flags;
- };
- 
-+struct seccomp_notif_put_fd {
-+	__u64 id;
-+	__s32 fd;
-+	__u32 fd_flags;
-+};
-+
- #define SECCOMP_IOC_MAGIC		0xF7
- 
- /* Flags for seccomp notification fd ioctl. */
-@@ -89,5 +95,7 @@ struct seccomp_notif_resp {
- 					struct seccomp_notif_resp)
- #define SECCOMP_NOTIF_ID_VALID	_IOR(SECCOMP_IOC_MAGIC, 2,	\
- 					__u64)
-+#define SECCOMP_NOTIF_PUT_FD	_IOR(SECCOMP_IOC_MAGIC, 3,	\
-+					struct seccomp_notif_put_fd)
- 
- #endif /* _UAPI_LINUX_SECCOMP_H */
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 21b24cc07237..6bdf413863ca 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -41,6 +41,7 @@
- #include <linux/tracehook.h>
- #include <linux/uaccess.h>
- #include <linux/anon_inodes.h>
-+#include <linux/fdtable.h>
- #include <net/cls_cgroup.h>
- 
- enum notify_state {
-@@ -51,6 +52,7 @@ enum notify_state {
- 
- struct seccomp_knotif {
- 	/* The struct pid of the task whose filter triggered the notification */
-+	struct task_struct *task;
- 	struct pid *pid;
- 
- 	/* The "cookie" for this request; this is unique for this filter. */
-@@ -80,7 +82,7 @@ struct seccomp_knotif {
- 	int error;
- 	long val;
- 	struct file *file;
--	unsigned int flags;
-+	int fd;
- 
- 	/* Signals when this has entered SECCOMP_NOTIFY_REPLIED */
- 	struct completion ready;
-@@ -748,9 +750,11 @@ static void seccomp_do_user_notification(int this_syscall,
- 	if (!match->notif)
- 		goto out;
- 
-+	n.task = current;
- 	n.pid = task_pid(current);
- 	n.state = SECCOMP_NOTIFY_INIT;
- 	n.data = sd;
-+	n.fd = -1;
- 	n.id = seccomp_next_notify_id(match);
- 	init_completion(&n.ready);
- 
-@@ -786,16 +790,8 @@ static void seccomp_do_user_notification(int this_syscall,
- 	}
- 
- 	if (n.file) {
--		int fd;
- 		struct socket *sock;
- 
--		fd = get_unused_fd_flags(n.flags);
--		if (fd < 0) {
--			err = fd;
--			ret = -1;
--			goto remove_list;
--		}
--
- 		/*
- 		 * Similar to what SCM_RIGHTS does, let's re-set the cgroup
- 		 * data to point ot the tracee's cgroups instead of the
-@@ -807,21 +803,20 @@ static void seccomp_do_user_notification(int this_syscall,
- 			sock_update_classid(&sock->sk->sk_cgrp_data);
- 		}
- 
--		ret = fd;
--		err = 0;
--
--		fd_install(fd, n.file);
-+		fd_install(n.fd, n.file);
- 		/* Don't fput, since fd has a reference now */
- 		n.file = NULL;
--	} else {
--		ret = n.val;
--		err = n.error;
-+		n.fd = -1;
- 	}
- 
-+	ret = n.val;
-+	err = n.error;
- 
- remove_list:
- 	if (n.file)
- 		fput(n.file);
-+	if (n.fd >= 0)
-+		put_unused_fd(n.fd);
- 
- 	list_del(&n.list);
- out:
-@@ -1683,15 +1678,6 @@ static long seccomp_notify_send(struct seccomp_filter *filter,
- 		goto out;
- 	}
- 
--	if (resp.return_fd) {
--		knotif->flags = resp.fd_flags;
--		knotif->file = fget(resp.fd);
--		if (!knotif->file) {
--			ret = -EBADF;
--			goto out;
--		}
--	}
--
- 	ret = size;
- 	knotif->state = SECCOMP_NOTIFY_REPLIED;
- 	knotif->error = resp.error;
-@@ -1731,6 +1717,42 @@ static long seccomp_notify_id_valid(struct seccomp_filter *filter,
- 	return ret;
- }
- 
-+static long seccomp_notify_put_fd(struct seccomp_filter *filter,
-+				  unsigned long arg)
-+{
-+	struct seccomp_notif_put_fd req;
-+	void __user *buf = (void __user *)arg;
-+	struct seccomp_knotif *knotif = NULL;
-+	long ret;
-+
-+	if (copy_from_user(&req, buf, sizeof(req)))
-+		return -EFAULT;
-+
-+	ret = mutex_lock_interruptible(&filter->notify_lock);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = -ENOENT;
-+	list_for_each_entry(knotif, &filter->notif->notifications, list) {
-+		unsigned long max_files;
-+
-+		if (knotif->id != req.id)
-+			continue;
-+
-+		max_files = task_rlimit(knotif->task, RLIMIT_NOFILE);
-+
-+		knotif->file = fget(req.fd);
-+		knotif->fd = __alloc_fd(knotif->task->files, 0, max_files,
-+					req.fd_flags);
-+
-+		ret = knotif->fd;
-+		break;
-+	}
-+
-+	mutex_unlock(&filter->notify_lock);
-+	return ret;
-+}
-+
- static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
- 				 unsigned long arg)
- {
-@@ -1743,6 +1765,8 @@ static long seccomp_notify_ioctl(struct file *file, unsigned int cmd,
- 		return seccomp_notify_send(filter, arg);
- 	case SECCOMP_NOTIF_ID_VALID:
- 		return seccomp_notify_id_valid(filter, arg);
-+	case SECCOMP_NOTIF_PUT_FD:
-+		return seccomp_notify_put_fd(filter, arg);
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 3dec856717a7..ae8daf992231 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -169,6 +169,9 @@ struct seccomp_metadata {
- 					struct seccomp_notif_resp)
- #define SECCOMP_NOTIF_ID_VALID	_IOR(SECCOMP_IOC_MAGIC, 2,	\
- 					__u64)
-+#define SECCOMP_NOTIF_PUT_FD	_IOR(SECCOMP_IOC_MAGIC, 3,	\
-+					struct seccomp_notif_put_fd)
-+
- struct seccomp_notif {
- 	__u16 len;
- 	__u64 id;
-@@ -186,6 +189,12 @@ struct seccomp_notif_resp {
- 	__u32 fd;
- 	__u32 fd_flags;
- };
-+
-+struct seccomp_notif_put_fd {
-+	__u64 id;
-+	__s32 fd;
-+	__u32 fd_flags;
-+};
- #endif
- 
- #ifndef seccomp
-@@ -3239,11 +3248,12 @@ TEST(get_user_notification_ptrace)
- TEST(user_notification_pass_fd)
- {
- 	pid_t pid;
--	int status, listener;
-+	int status, listener, fd;
- 	int sk_pair[2];
- 	char c;
- 	struct seccomp_notif req = {};
- 	struct seccomp_notif_resp resp = {};
-+	struct seccomp_notif_put_fd putfd = {};
- 	long ret;
- 
- 	ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
-@@ -3295,9 +3305,15 @@ TEST(user_notification_pass_fd)
- 
- 	resp.len = sizeof(resp);
- 	resp.id = req.id;
--	resp.return_fd = 1;
--	resp.fd = sk_pair[1];
--	resp.fd_flags = 0;
-+
-+	putfd.id = req.id;
-+	putfd.fd = sk_pair[1];
-+	putfd.fd_flags = 0;
-+
-+	fd = ioctl(listener, SECCOMP_NOTIF_PUT_FD, &putfd);
-+	EXPECT_GE(fd, 0);
-+	resp.val = fd;
-+
- 	EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
- 	close(sk_pair[1]);
- 
--- 
-2.17.1
-
+Thanks,
+Andrey Smirnov
