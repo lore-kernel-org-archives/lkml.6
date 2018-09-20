@@ -2,307 +2,91 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E220C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1F8ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBC021525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:02:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BE7D21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:03:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuIvp7I7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBC021525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qu+XhM/U";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="M7QK+0NG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE7D21525
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388716AbeIUEsO (ORCPT
+        id S2388743AbeIUEtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:48:14 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38254 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbeIUEsO (ORCPT
+        Fri, 21 Sep 2018 00:49:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40014 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbeIUEtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:48:14 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t25-v6so1184932wmi.3;
-        Thu, 20 Sep 2018 16:02:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BkPypl0PFbIXh7stE5Dd5kMzzdHa3nmYxj9+3wcehLI=;
-        b=OuIvp7I7eOiITV1dra1PVDVhFdAP9fu0KaXNjcwI5k2gmUod8NF8p6ua4NLLK4iL2W
-         itIF98+yQmbQ1trBorlunRhZk4QWeGPqIRcDP6+I92iaTOk6B3hZ6ctwvTr71tJNadmv
-         jgXsIHVnQLzV4f/NYt5r54J5SulgEL3WWfejZV6Iw4nlwQQSvda/tN7YITEtsYbaodAr
-         yiNjHU5vDS3BPVKMm7YjtTWTXAh8lTTEpnj/3gzPMn3XLqjFXSP8xq8/TNY9NeOzdJhL
-         7B1pPJTgIqMvLHZGpx3GiwRmGRFFNtsH286gs84G8+NeAXqyqjnBNozESDJd1c4Axl0i
-         Ii2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BkPypl0PFbIXh7stE5Dd5kMzzdHa3nmYxj9+3wcehLI=;
-        b=oqNjkhlLJcZWU9eAjENM6+uVhFqJGIHgWh1sU1vhB7VLSAcFXsgHUVr1LdE33VhJ1X
-         7tK3RwKEMpFEgyRZZUtPTbZmKYlC0IJVFuJXTonB5k6oXGm7fWUTDUZuI7XICmKl7umJ
-         S1NEHfSbkYi30RHlXLBYuDScWZvFnEVIjHJsBCdbQWW9NLtXdYp2BMXgo8JQSUk+6LiW
-         8p6pxovcMZ9gJCAP1JexIoe989TkEllw2z7Wad/09fH16ZoPeSOnkxPifw8raUugTgPr
-         8e8R/x7ARunCfMF5QeBPSpqZzMbAlNM3y09eFOgVyhPdZEYpBYNtOWHI1Dz6apc2lKWp
-         wVhg==
-X-Gm-Message-State: APzg51At7GCdNMAhZIjGbFQhiBkowNZPMkIPCgJdmW6XbZUDvXjlP6TW
-        bRfYL/kTGTsV5/FjQDF42HE=
-X-Google-Smtp-Source: ANB0VdaRBRL4rF8/40jFnrVUXxWq0xNNVoYINasYViJsKYv7CKDsHOy+c8Lj+5Fp85cmNT96CR3T6w==
-X-Received: by 2002:a1c:ee57:: with SMTP id m84-v6mr4578481wmh.9.1537484541047;
-        Thu, 20 Sep 2018 16:02:21 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id h206-v6sm4305761wmf.25.2018.09.20.16.02.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 16:02:20 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
-        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: bfa: Remove unused functions
-Date:   Thu, 20 Sep 2018 16:02:12 -0700
-Message-Id: <20180920230212.22227-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 00:49:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 72CE860CEC; Thu, 20 Sep 2018 23:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537484601;
+        bh=DbZMkpzuhJjJ3p0ABBXPcRUjto0sse3KnxUhSBndCYQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Qu+XhM/Uouce/RTEbZ2HKzDVmXJV7630orDu+pivp3p0APDJMn9U1uk7e9RZCPNA2
+         vzL7EhTEETcz0fmnGzXlZxDtVzBuDlOU/3AXe9KyAt5Yg3eUFOsWtJENW0ULR1QfG+
+         To26GgTCW+Sj8kvFRT74jTp8QBRg+7TTBJuxqhCs=
+Received: from [10.80.45.152] (unknown [71.69.156.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B32FE60C61;
+        Thu, 20 Sep 2018 23:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537484598;
+        bh=DbZMkpzuhJjJ3p0ABBXPcRUjto0sse3KnxUhSBndCYQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=M7QK+0NG/xOxCCAk+2Do/aKkt2cyKNwzi9e8wlSIn76TcrtRT/u41nQvzM+42nlPc
+         +/YmjqKVXRKQhczFSE73MncY7aHWDYee/yXoeFc5s5Ixnqd87OVAnr6uQCqVQ7lZRz
+         5pIo9DYc2SEheKCDrv12rXxY7Um9f1sKsqDqdZvo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B32FE60C61
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
+ (BD_ADDR)
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+References: <20180920223436.202454-1-mka@chromium.org>
+ <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
+ <20180920230121.GT22824@google.com>
+From:   Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <36e5d881-a45e-c879-c275-e6e18bc99ed5@codeaurora.org>
+Date:   Thu, 20 Sep 2018 19:03:15 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180920230121.GT22824@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when a variable is assigned to itself.
+On 9/20/2018 7:01 PM, Matthias Kaehlcke wrote:
+> Certainly true if this was the only driver. However another one will
+> follow soon and 'local-bd-address' is the official binding, so it's
+> not unlikely there will be more.
 
-drivers/scsi/bfa/bfa_fcbuild.c:199:6: warning: explicitly assigning
-value of variable of type 'int' to itself [-Wself-assign]
-        len = len;
-        ~~~ ^ ~~~
-drivers/scsi/bfa/bfa_fcbuild.c:838:6: warning: explicitly assigning
-value of variable of type 'int' to itself [-Wself-assign]
-        len = len;
-        ~~~ ^ ~~~
-drivers/scsi/bfa/bfa_fcbuild.c:917:6: warning: explicitly assigning
-value of variable of type 'int' to itself [-Wself-assign]
-        len = len;
-        ~~~ ^ ~~~
-drivers/scsi/bfa/bfa_fcbuild.c:981:6: warning: explicitly assigning
-value of variable of type 'int' to itself [-Wself-assign]
-        len = len;
-        ~~~ ^ ~~~
-drivers/scsi/bfa/bfa_fcbuild.c:1008:6: warning: explicitly assigning
-value of variable of type 'int' to itself [-Wself-assign]
-        len = len;
-        ~~~ ^ ~~~
-5 warnings generated.
-
-This construct is usually used to avoid unused variable warnings, which
-I assume is the case here. -Wunused-parameter is hidden behind -Wextra
-with GCC 4.6, which is the minimum version to compile the kernel as of
-commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6").
-
-However, upon further inspection, these functions aren't actually used
-anywhere; they're just defined. Rather than just removing the self
-assignments, remove all of this dead code.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/148
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/scsi/bfa/bfa_fcbuild.c | 108 ---------------------------------
- drivers/scsi/bfa/bfa_fcbuild.h |   9 ---
- 2 files changed, 117 deletions(-)
-
-diff --git a/drivers/scsi/bfa/bfa_fcbuild.c b/drivers/scsi/bfa/bfa_fcbuild.c
-index d3b00a475aeb..2de5d514e99c 100644
---- a/drivers/scsi/bfa/bfa_fcbuild.c
-+++ b/drivers/scsi/bfa/bfa_fcbuild.c
-@@ -190,27 +190,6 @@ fc_els_rsp_build(struct fchs_s *fchs, u32 d_id, u32 s_id, __be16 ox_id)
- 	fchs->ox_id = ox_id;
- }
- 
--enum fc_parse_status
--fc_els_rsp_parse(struct fchs_s *fchs, int len)
--{
--	struct fc_els_cmd_s *els_cmd = (struct fc_els_cmd_s *) (fchs + 1);
--	struct fc_ls_rjt_s *ls_rjt = (struct fc_ls_rjt_s *) els_cmd;
--
--	len = len;
--
--	switch (els_cmd->els_code) {
--	case FC_ELS_LS_RJT:
--		if (ls_rjt->reason_code == FC_LS_RJT_RSN_LOGICAL_BUSY)
--			return FC_PARSE_BUSY;
--		else
--			return FC_PARSE_FAILURE;
--
--	case FC_ELS_ACC:
--		return FC_PARSE_OK;
--	}
--	return FC_PARSE_OK;
--}
--
- static void
- fc_bls_rsp_build(struct fchs_s *fchs, u32 d_id, u32 s_id, __be16 ox_id)
- {
-@@ -830,18 +809,6 @@ fc_rpsc_acc_build(struct fchs_s *fchs, struct fc_rpsc_acc_s *rpsc_acc,
- 	return sizeof(struct fc_rpsc_acc_s);
- }
- 
--u16
--fc_logo_rsp_parse(struct fchs_s *fchs, int len)
--{
--	struct fc_els_cmd_s *els_cmd = (struct fc_els_cmd_s *) (fchs + 1);
--
--	len = len;
--	if (els_cmd->els_code != FC_ELS_ACC)
--		return FC_PARSE_FAILURE;
--
--	return FC_PARSE_OK;
--}
--
- u16
- fc_pdisc_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
- 	       wwn_t port_name, wwn_t node_name, u16 pdu_size)
-@@ -907,40 +874,6 @@ fc_prlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
- 	return be16_to_cpu(prlo->payload_len);
- }
- 
--u16
--fc_prlo_rsp_parse(struct fchs_s *fchs, int len)
--{
--	struct fc_prlo_acc_s *prlo = (struct fc_prlo_acc_s *) (fchs + 1);
--	int             num_pages = 0;
--	int             page = 0;
--
--	len = len;
--
--	if (prlo->command != FC_ELS_ACC)
--		return FC_PARSE_FAILURE;
--
--	num_pages = ((be16_to_cpu(prlo->payload_len)) - 4) / 16;
--
--	for (page = 0; page < num_pages; page++) {
--		if (prlo->prlo_acc_params[page].type != FC_TYPE_FCP)
--			return FC_PARSE_FAILURE;
--
--		if (prlo->prlo_acc_params[page].opa_valid != 0)
--			return FC_PARSE_FAILURE;
--
--		if (prlo->prlo_acc_params[page].rpa_valid != 0)
--			return FC_PARSE_FAILURE;
--
--		if (prlo->prlo_acc_params[page].orig_process_assc != 0)
--			return FC_PARSE_FAILURE;
--
--		if (prlo->prlo_acc_params[page].resp_process_assc != 0)
--			return FC_PARSE_FAILURE;
--	}
--	return FC_PARSE_OK;
--
--}
--
- u16
- fc_tprlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
- 	       int num_pages, enum fc_tprlo_type tprlo_type, u32 tpr_id)
-@@ -971,47 +904,6 @@ fc_tprlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
- 	return be16_to_cpu(tprlo->payload_len);
- }
- 
--u16
--fc_tprlo_rsp_parse(struct fchs_s *fchs, int len)
--{
--	struct fc_tprlo_acc_s *tprlo = (struct fc_tprlo_acc_s *) (fchs + 1);
--	int             num_pages = 0;
--	int             page = 0;
--
--	len = len;
--
--	if (tprlo->command != FC_ELS_ACC)
--		return FC_PARSE_ACC_INVAL;
--
--	num_pages = (be16_to_cpu(tprlo->payload_len) - 4) / 16;
--
--	for (page = 0; page < num_pages; page++) {
--		if (tprlo->tprlo_acc_params[page].type != FC_TYPE_FCP)
--			return FC_PARSE_NOT_FCP;
--		if (tprlo->tprlo_acc_params[page].opa_valid != 0)
--			return FC_PARSE_OPAFLAG_INVAL;
--		if (tprlo->tprlo_acc_params[page].rpa_valid != 0)
--			return FC_PARSE_RPAFLAG_INVAL;
--		if (tprlo->tprlo_acc_params[page].orig_process_assc != 0)
--			return FC_PARSE_OPA_INVAL;
--		if (tprlo->tprlo_acc_params[page].resp_process_assc != 0)
--			return FC_PARSE_RPA_INVAL;
--	}
--	return FC_PARSE_OK;
--}
--
--enum fc_parse_status
--fc_rrq_rsp_parse(struct fchs_s *fchs, int len)
--{
--	struct fc_els_cmd_s *els_cmd = (struct fc_els_cmd_s *) (fchs + 1);
--
--	len = len;
--	if (els_cmd->els_code != FC_ELS_ACC)
--		return FC_PARSE_FAILURE;
--
--	return FC_PARSE_OK;
--}
--
- u16
- fc_ba_rjt_build(struct fchs_s *fchs, u32 d_id, u32 s_id, __be16 ox_id,
- 		u32 reason_code, u32 reason_expl)
-diff --git a/drivers/scsi/bfa/bfa_fcbuild.h b/drivers/scsi/bfa/bfa_fcbuild.h
-index b109a8813401..ac08d0b5b89a 100644
---- a/drivers/scsi/bfa/bfa_fcbuild.h
-+++ b/drivers/scsi/bfa/bfa_fcbuild.h
-@@ -163,7 +163,6 @@ enum fc_parse_status fc_abts_rsp_parse(struct fchs_s *buf, int len);
- 
- u16        fc_rrq_build(struct fchs_s *buf, struct fc_rrq_s *rrq, u32 d_id,
- 			     u32 s_id, u16 ox_id, u16 rrq_oxid);
--enum fc_parse_status fc_rrq_rsp_parse(struct fchs_s *buf, int len);
- 
- u16        fc_rspnid_build(struct fchs_s *fchs, void *pld, u32 s_id,
- 				u16 ox_id, u8 *name);
-@@ -276,8 +275,6 @@ void		fc_get_fc4type_bitmask(u8 fc4_type, u8 *bit_mask);
- void		fc_els_req_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
- 					 __be16 ox_id);
- 
--enum fc_parse_status	fc_els_rsp_parse(struct fchs_s *fchs, int len);
--
- enum fc_parse_status	fc_plogi_rsp_parse(struct fchs_s *fchs, int len,
- 					wwn_t port_name);
- 
-@@ -297,8 +294,6 @@ u16 fc_tprlo_acc_build(struct fchs_s *fchs, struct fc_tprlo_acc_s *tprlo_acc,
- u16 fc_prlo_acc_build(struct fchs_s *fchs, struct fc_prlo_acc_s *prlo_acc,
- 		u32 d_id, u32 s_id, __be16 ox_id, int num_pages);
- 
--u16 fc_logo_rsp_parse(struct fchs_s *fchs, int len);
--
- u16 fc_pdisc_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
- 		u16 ox_id, wwn_t port_name, wwn_t node_name,
- 		u16 pdu_size);
-@@ -308,14 +303,10 @@ u16 fc_pdisc_rsp_parse(struct fchs_s *fchs, int len, wwn_t port_name);
- u16 fc_prlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
- 		u16 ox_id, int num_pages);
- 
--u16 fc_prlo_rsp_parse(struct fchs_s *fchs, int len);
--
- u16 fc_tprlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
- 		u16 ox_id, int num_pages, enum fc_tprlo_type tprlo_type,
- 		u32 tpr_id);
- 
--u16 fc_tprlo_rsp_parse(struct fchs_s *fchs, int len);
--
- u16 fc_ba_rjt_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
- 		__be16 ox_id, u32 reason_code, u32 reason_expl);
- 
--- 
-2.19.0
-
+I was missing this information.
+Is there a way to convert existing users to this if any as well?
