@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52804ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD836C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18FE62152C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18FE62152C
+	by mail.kernel.org (Postfix) with ESMTP id 71E752152C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:48:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E752152C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388308AbeITScK (ORCPT
+        id S2388323AbeITScN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:32:10 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12647 "EHLO huawei.com"
+        Thu, 20 Sep 2018 14:32:13 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12648 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387764AbeITScJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:32:09 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 29139C8200FF3;
-        Thu, 20 Sep 2018 20:48:45 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
- 20:48:38 +0800
+        id S2387764AbeITScN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:32:13 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 93C8E70D8388E;
+        Thu, 20 Sep 2018 20:48:47 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
+ 20:48:42 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <davem@davemloft.net>, <dmitry.tarnyagin@lockless.no>,
         <wg@grandegger.com>, <mkl@pengutronix.de>,
@@ -49,9 +49,9 @@ CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
         <devel@linuxdriverproject.org>, <linux-usb@vger.kernel.org>,
         <xen-devel@lists.xenproject.org>, <dev@openvswitch.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next 15/22] net: hamradio: fix return type of ndo_start_xmit function
-Date:   Thu, 20 Sep 2018 20:32:59 +0800
-Message-ID: <20180920123306.14772-16-yuehaibing@huawei.com>
+Subject: [PATCH net-next 16/22] usbnet: ipheth: fix return type of ndo_start_xmit function
+Date:   Thu, 20 Sep 2018 20:33:00 +0800
+Message-ID: <20180920123306.14772-17-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20180920123306.14772-1-yuehaibing@huawei.com>
 References: <20180920123306.14772-1-yuehaibing@huawei.com>
@@ -73,46 +73,22 @@ Found by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/hamradio/baycom_epp.c | 3 ++-
- drivers/net/hamradio/dmascc.c     | 4 ++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/usb/ipheth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
-index 1e62d00..f4ceccf 100644
---- a/drivers/net/hamradio/baycom_epp.c
-+++ b/drivers/net/hamradio/baycom_epp.c
-@@ -772,7 +772,8 @@ static void epp_bh(struct work_struct *work)
-  * ===================== network driver interface =========================
-  */
- 
--static int baycom_send_packet(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+baycom_send_packet(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct baycom_state *bc = netdev_priv(dev);
- 
-diff --git a/drivers/net/hamradio/dmascc.c b/drivers/net/hamradio/dmascc.c
-index cde4120..2798870 100644
---- a/drivers/net/hamradio/dmascc.c
-+++ b/drivers/net/hamradio/dmascc.c
-@@ -239,7 +239,7 @@ struct scc_info {
- static int scc_open(struct net_device *dev);
- static int scc_close(struct net_device *dev);
- static int scc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd);
--static int scc_send_packet(struct sk_buff *skb, struct net_device *dev);
-+static netdev_tx_t scc_send_packet(struct sk_buff *skb, struct net_device *dev);
- static int scc_set_mac_address(struct net_device *dev, void *sa);
- 
- static inline void tx_on(struct scc_priv *priv);
-@@ -921,7 +921,7 @@ static int scc_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+diff --git a/drivers/net/usb/ipheth.c b/drivers/net/usb/ipheth.c
+index 7275761..53eab6fb 100644
+--- a/drivers/net/usb/ipheth.c
++++ b/drivers/net/usb/ipheth.c
+@@ -413,7 +413,7 @@ static int ipheth_close(struct net_device *net)
+ 	return 0;
  }
  
- 
--static int scc_send_packet(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t scc_send_packet(struct sk_buff *skb, struct net_device *dev)
+-static int ipheth_tx(struct sk_buff *skb, struct net_device *net)
++static netdev_tx_t ipheth_tx(struct sk_buff *skb, struct net_device *net)
  {
- 	struct scc_priv *priv = dev->ml_priv;
- 	unsigned long flags;
+ 	struct ipheth_device *dev = netdev_priv(net);
+ 	struct usb_device *udev = dev->udev;
 -- 
 1.8.3.1
 
