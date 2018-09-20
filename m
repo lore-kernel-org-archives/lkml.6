@@ -2,164 +2,105 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162D1C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92024ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B40EB21532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:40:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B40EB21532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 3AC9220671
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:45:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbZAeze5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AC9220671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388060AbeIUAZq (ORCPT
+        id S2387985AbeIUAaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:25:46 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:35184 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387865AbeIUAZq (ORCPT
+        Thu, 20 Sep 2018 20:30:04 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35263 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbeIUAaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:25:46 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 4BF6F634C7F;
-        Thu, 20 Sep 2018 21:40:55 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1g33sl-0000T4-1B; Thu, 20 Sep 2018 21:40:55 +0300
-Date:   Thu, 20 Sep 2018 21:40:54 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 2/4] [media] ad5820: Add support for enable pin
-Message-ID: <20180920184054.lbd77a3w56cflfym@valkosipuli.retiisi.org.uk>
-References: <20180920161912.17063-1-ricardo.ribalda@gmail.com>
- <20180920161912.17063-2-ricardo.ribalda@gmail.com>
+        Thu, 20 Sep 2018 20:30:04 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p10-v6so9360881ljg.2;
+        Thu, 20 Sep 2018 11:45:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2ulDKblaPWWY8DPb+24wHflg2KDWL8q/0jFvyU7lySk=;
+        b=JbZAeze5NNz+INoVjfgrubrPDO5vb7l7Z5vn1HyoraJAvH24WuNwGb9qOrQ54gUKR1
+         2HKk6tcaXJczuC/QQAGd1b8O/biu7XAStt2F7EJQB455as17ev1lmKzTRWUlq2Y1zKO6
+         ieJgI0dNbzmwnxTkxTSORLvWB0ZUL5+bYetZpvMx/oUmoiUFiiWPdjTQaLIYRW29Hd1I
+         JfXm3+jkIJmv/Buz2sgwUpiQcGzkktxHcWDujw/1r+BPCzrtS/ieWtdZP8G9aTXp807F
+         YwBIataGLBbpn21BuFPjKkPOV+pMX69HkK19HFIonGgOT4Q9uVwKMKluYEPNuRXazyQT
+         shkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2ulDKblaPWWY8DPb+24wHflg2KDWL8q/0jFvyU7lySk=;
+        b=maSyPC8Sb7v8Gs9Ir0oIfiXUzsU3PBQuAE7vLkAsTQigmeXRU/zWjy5I75asNWGlbD
+         znVYYqTXNE2+sqRASGUz9PPO+qD4CeCLQQhnHZATTp8ywGl5DqSJiyRvYPbSlHMWR3mJ
+         eRX9sCu83qtjUwKU1F91VzKAfxUiuqHPjssmE/+TjsbkdCEZl/hiMVI/ArW2qMuTw4oP
+         GKoFU4zNijkrk/kHRgbaHu4yK0AQ3yu80kagl5w68WW+8NEQ9q8Qddx0CVF4JCr767Ia
+         e6PkELfP+uuIho4HBFGJTUiqPXPS+GhHz5ZFF9nBHh8FfCQ/TWa2xbl97x/OmMYbCGE9
+         WkZw==
+X-Gm-Message-State: APzg51CVAeUiPc7ajad4Slnl/aOLr6kW1bo+0JBM6skftgIlOFMDVIx0
+        4lwUd5tKA6ZoRLQUDbA9yxU=
+X-Google-Smtp-Source: ANB0VdbdvVLLayRkk6SzKP5Qmnk+sudG0R8vvEZmj6h+L3UtpTpDN9zc5eR79emJ0faTzX4QF/Z7mA==
+X-Received: by 2002:a2e:9ec9:: with SMTP id h9-v6mr19987321ljk.133.1537469112123;
+        Thu, 20 Sep 2018 11:45:12 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id q73-v6sm1871066lfi.86.2018.09.20.11.45.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 11:45:10 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 309F1460674; Thu, 20 Sep 2018 21:45:10 +0300 (MSK)
+Date:   Thu, 20 Sep 2018 21:45:10 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [RFC 02/20] timens: Add timens_offsets
+Message-ID: <20180920184510.GC20786@uranus>
+References: <20180919205037.9574-1-dima@arista.com>
+ <20180919205037.9574-3-dima@arista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180920161912.17063-2-ricardo.ribalda@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180919205037.9574-3-dima@arista.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
-
-Thanks for the set! A few comments below...
-
-On Thu, Sep 20, 2018 at 06:19:10PM +0200, Ricardo Ribalda Delgado wrote:
-> This patch adds support for a programmable enable pin. It can be used in
-> situations where the ANA-vcc is not configurable (dummy-regulator), or
-> just to have a more fine control of the power saving.
+On Wed, Sep 19, 2018 at 09:50:19PM +0100, Dmitry Safonov wrote:
+> From: Andrei Vagin <avagin@openvz.org>
 > 
-> The use of the enable pin is optional
-
-Missing period at the end of the sentence.
-
+> Introduce offsets for time namespace. They will contain adjustment
+> needed to convert clocks to/from host's.
 > 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
->  drivers/media/i2c/Kconfig  |  2 +-
->  drivers/media/i2c/ad5820.c | 20 ++++++++++++++++++++
->  2 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index bfdb494686bf..1ba6eaaf58fb 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -321,7 +321,7 @@ config VIDEO_ML86V7667
->  
->  config VIDEO_AD5820
->  	tristate "AD5820 lens voice coil support"
-> -	depends on I2C && VIDEO_V4L2 && MEDIA_CONTROLLER
-> +	depends on GPIOLIB && I2C && VIDEO_V4L2 && MEDIA_CONTROLLER
->  	---help---
->  	  This is a driver for the AD5820 camera lens voice coil.
->  	  It is used for example in Nokia N900 (RX-51).
-> diff --git a/drivers/media/i2c/ad5820.c b/drivers/media/i2c/ad5820.c
-> index 22759aaa2dba..20931217e3b1 100644
-> --- a/drivers/media/i2c/ad5820.c
-> +++ b/drivers/media/i2c/ad5820.c
-> @@ -27,6 +27,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/gpio/consumer.h>
->  
->  #include <media/v4l2-ctrls.h>
->  #include <media/v4l2-device.h>
-> @@ -55,6 +56,8 @@ struct ad5820_device {
->  	u32 focus_ramp_time;
->  	u32 focus_ramp_mode;
->  
-> +	struct gpio_desc *enable_gpio;
-> +
->  	struct mutex power_lock;
->  	int power_count;
->  
-> @@ -122,6 +125,9 @@ static int ad5820_power_off(struct ad5820_device *coil, bool standby)
->  		ret = ad5820_update_hw(coil);
->  	}
->  
-> +	if (coil->enable_gpio)
-> +		gpiod_set_value_cansleep(coil->enable_gpio, 0);
+> Allocate one page for each time namespace that will be premapped into
+> userspace with vvar pages.
 
-gpiod_set_value_cansleep(), as I think most (or all?) similar functions,
-are happy with NULL gpio descriptor. You can thus drop the NULL check here
-and below.
-
-> +
->  	ret2 = regulator_disable(coil->vana);
->  	if (ret)
->  		return ret;
-> @@ -136,6 +142,9 @@ static int ad5820_power_on(struct ad5820_device *coil, bool restore)
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (coil->enable_gpio)
-> +		gpiod_set_value_cansleep(coil->enable_gpio, 1);
-> +
->  	if (restore) {
->  		/* Restore the hardware settings. */
->  		coil->standby = false;
-> @@ -146,6 +155,8 @@ static int ad5820_power_on(struct ad5820_device *coil, bool restore)
->  	return 0;
->  
->  fail:
-> +	if (coil->enable_gpio)
-> +		gpiod_set_value_cansleep(coil->enable_gpio, 0);
->  	coil->standby = true;
->  	regulator_disable(coil->vana);
->  
-> @@ -312,6 +323,15 @@ static int ad5820_probe(struct i2c_client *client,
->  		return ret;
->  	}
->  
-> +	coil->enable_gpio = devm_gpiod_get_optional(&client->dev, "enable",
-> +						    GPIOD_OUT_LOW);
-> +	if (IS_ERR(coil->enable_gpio)) {
-> +		ret = PTR_ERR(coil->enable_gpio);
-> +		if (ret == -EPROBE_DEFER)
-> +			dev_err(&client->dev, "could not get enable gpio\n");
-> +		return ret;
-> +	}
-> +
->  	mutex_init(&coil->power_lock);
->  
->  	v4l2_i2c_subdev_init(&coil->subdev, client, &ad5820_ops);
-
--- 
-Regards,
-
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Is not it too much?! The whole page per each clone(new-time-ns) call.
+Moreover everytime it is get explicitly zeroifyed. Don't get me wrong,
+maybe I miss something obvious, but additional 4K per process, guys :)
