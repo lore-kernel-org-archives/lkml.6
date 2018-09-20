@@ -2,57 +2,56 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC9DECE567
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22333ECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CFA721521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E3721522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QtFvV7oH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFA721521
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="HcJpG3uj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E3721522
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387913AbeITI3I (ORCPT
+        id S2387926AbeITI3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:29:08 -0400
-Received: from mail-eopbgr700094.outbound.protection.outlook.com ([40.107.70.94]:25376
+        Thu, 20 Sep 2018 04:29:18 -0400
+Received: from mail-eopbgr700125.outbound.protection.outlook.com ([40.107.70.125]:48832
         "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387789AbeITI3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:29:07 -0400
+        id S2387539AbeITI3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:29:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MyTj6aPN45lCxH9hlCUqN66enAaeZYkuP7yp293viHM=;
- b=QtFvV7oH0CHku/gOW+FTKZqfgGLaGZXpy7OTjNOzTWS3uHv0MafYFj6z9cfi8k0ZJSaO77KU3uNyV1UltAOPyIQiNDFCFUOIu+iji4zxlAabuf2YKyCVk1Q23e8WF5PxWMNva2rWwjNbGcMs39aUjmeZmkRuIBKxGZooPanJWfc=
+ bh=QDmFpfaboUeA3ZO83ntuSoBqhM3mnBHW4Bj2udnc4XA=;
+ b=HcJpG3ujTTdlLacKE/Qu25KwK1di2DbTYSFrF7VKwWFmh0N1nn/V4cvGlLQ1nVPXCpJefE8HYJoRgYXLuCofRpv0u9e+xgsoSRKrCp9HDMMCzyuexooL0fixYqle7iQFPcUdf6OOED0Pte+qaImMxU7Ve75Y7PIRVfRJntjsfaA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0822.namprd21.prod.outlook.com (10.173.192.8) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Thu, 20 Sep 2018 02:47:48 +0000
+ 15.20.1185.6; Thu, 20 Sep 2018 02:47:34 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 02:47:48 +0000
+ 02:47:33 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Preethi Banala <preethi.banala@intel.com>,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+CC:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 29/56] ice: Clean control queues only when they
- are initialized
-Thread-Topic: [PATCH AUTOSEL 4.18 29/56] ice: Clean control queues only when
- they are initialized
-Thread-Index: AQHUUIxQM7sqVjoHcUW1dHNmAg4zVA==
-Date:   Thu, 20 Sep 2018 02:47:47 +0000
-Message-ID: <20180920024716.58490-29-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 10/56] mmc: atmel-mci: fix bad logic of
+ sg_copy_{from,to}_buffer conversion
+Thread-Topic: [PATCH AUTOSEL 4.18 10/56] mmc: atmel-mci: fix bad logic of
+ sg_copy_{from,to}_buffer conversion
+Thread-Index: AQHUUIxIWHjhE5wtrk6TWbXxBEYF7w==
+Date:   Thu, 20 Sep 2018 02:47:33 +0000
+Message-ID: <20180920024716.58490-10-alexander.levin@microsoft.com>
 References: <20180920024716.58490-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180920024716.58490-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,30 +60,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:PTKXaxpREsKkqbDcTrt1fFFH86mlhLo40mXla731znazV3e3pGDLj6VbKy/OVTbWwFGzoUxt5YxDkudd6JRIwXWjEu5BnPgmPdfX8n60SobES3a1TYQA1B7VM5BYee9g3fBWBxcQG/NqvM9mIF7PJexJjpcdyDWRn/+suPjwRG+6PYxxmwlek1Y5eHUJXCXtwHbNV4scWlPtPghjSbh7Pw/usTZ11BJIPxKtnD5ZSgbdSAcBBWJdNrRiYaPsUfJyQmKWnc9Qf/YQTT5LvTktGWn1xxuOqpCX9kMHdsLQNJ08LVeIcei6OMeFXZYtYiOPsBQ5cMHlnw1FW/MVwBNORmyTPdMfNObMpoqhp5JI1WoZJwWrs4wVRuhgrrIs06RVuPsUQoWX6l+JmS7RfeugbyXp7weP4b4talYYLITxGIqtW81Sw7OJQ+6qp4BT6vsfOvDvUXmeqbjk1ud6qzXftg==;5:sVU02yi/AAyouILAlUtQFuog1qZVNcTn9hQT0oNSvc/t1td/xV1BSwA/01s9tFf9m+vRvkxy6IP9IbT6GuJYfw9VN3h52UgAs51Gs5qsyN3m7sNSxoEPeTtof2S4WsUBo6wmdVlKTGT4DBqK7mPmlhItjkUGrseOWmv2dYmPlL4=;7:GP+c0A326ksn2R6n6upz7vGML4bU3Jxx3agEMEW+9DcX4CN3ywmHpvGEwjyCHs6HF80SYK9y6zTX8ghPkhLwU51A3b07UazTlQB9G7IKLZOsQoqajGWbzSH+RfJKauB+3kp5/ZeG7WBKlT6RRQ6sJIE9ZuM568fRtatQc9URWkJqL+fUqei3mOkNqxB+g1X5DVpva4i0srAkBuxrVH3uUnygi7jtV5rGXE0Oh1Nu4jOnqAMoIo4rL5KAPyRkRiSe
-x-ms-office365-filtering-correlation-id: bb09aae0-8e54-47aa-a06c-08d61ea373a2
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:cwfNAnlaaGTU6yAX6xr4DrkDgjKfTo0pRu16cTPOq3tmnGSdU4wR73rKW12W67Ac3Y/g/6HQPzE9Oh9QVhBYZEv5le0AfAQirgjpgQPC/X5ZHBCbF0c4AuhdlAWwojaoR1dyJWYbeavAPyIKVdiqsHrTt+9MRU4wlPKLnX8DrW5QII5+6c0RSxOF+XuA4NKaU6f+eWsbQRsUwscZRFah+h00UJf8qU+3AtJ1vd1CR9T3S1piXdkOccmDhgj+O5cghK6BQN5TrJwItPOPPBFzjBKKrPHPn5gO8YgrdT6ksPgnzSDEHfhYEKCSdEh7jhPPPSGF6XvuWzpuvk1dqVgvOGEEa8j6+dc9ogKPlpadpNjAb24HOWvADTwK6mSGNpMX+kCHqkWjs8yQrnIX5dxNQ5X4USi5V/FgoFY6B6a+dJ4M8sotPNaf3C2rlV+y6tnSg98XlBxGTTUx37eF2TaFUA==;5:QKK4NpIMQaJDJsh3idAnBKCQihh3tb6g8lTl2gFdbRIM8x0/3Fpwf3TDbv+FLy1lC1CpxEzk78xMu9gmrLSpb+HeHLziYErdVU4EtS877vT1g1cyKKDYI1ttvolKme09X37l0Qs+JfeBXk8JqFKsA3erjLJEfBM7NabLDOVGZS0=;7:ph9FZ8CY+IbE5L0IKyT/z3/WVRXkLcaYIfCgEGxINhBZ4vCzY5U879ypu+RrRO/28nWWu+HJzKvxBWvzW1cgni2LMGh5Ujz4/yHcpi/euZYJJfxb6IXkwL0IJw8ZSX4g7OWs/mvGnthMdVEo65it867/Ts2RenYWS4EnHGLuhrZnWzdbm8YjltFDKwD235LBW+SE2CsiOfjQ031r+G5S9Oy3oOKEU7tHLVdDNfzSLes1TyFbgeLHXv7B37gf4zbp
+x-ms-office365-filtering-correlation-id: 57e87ea4-9d02-4836-ad64-08d61ea36ac9
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0822;
 x-ms-traffictypediagnostic: CY4PR21MB0822:
-x-microsoft-antispam-prvs: <CY4PR21MB0822C4565EAB0F2BF98881EFFB130@CY4PR21MB0822.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0822FA0B3A29E0919C2161D6FB130@CY4PR21MB0822.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089)(12401385986421)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0822;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0822;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(2280148)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0822;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0822;
 x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(366004)(136003)(39860400002)(199004)(189003)(10290500003)(6512007)(54906003)(110136005)(2501003)(2900100001)(86612001)(446003)(6116002)(316002)(81156014)(81166006)(1076002)(26005)(8936002)(22452003)(86362001)(2906002)(107886003)(2616005)(486006)(256004)(14444005)(99286004)(66066001)(5660300001)(6506007)(217873002)(5250100002)(102836004)(186003)(3846002)(4326008)(6436002)(11346002)(25786009)(68736007)(71190400001)(71200400001)(8676002)(476003)(6346003)(6486002)(36756003)(14454004)(106356001)(10090500001)(53936002)(305945005)(72206003)(76176011)(7736002)(97736004)(478600001)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(366004)(136003)(39860400002)(199004)(189003)(10290500003)(6512007)(54906003)(110136005)(2501003)(2900100001)(86612001)(446003)(6116002)(316002)(81156014)(81166006)(1076002)(26005)(8936002)(22452003)(86362001)(2906002)(107886003)(2616005)(486006)(256004)(99286004)(66066001)(5660300001)(6506007)(217873002)(5250100002)(102836004)(186003)(3846002)(4326008)(6436002)(11346002)(25786009)(68736007)(71190400001)(71200400001)(8676002)(476003)(6346003)(6486002)(36756003)(14454004)(106356001)(10090500001)(53936002)(305945005)(72206003)(76176011)(7736002)(97736004)(478600001)(105586002)(60540400001)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: UmCHT80hh/w33eG8iBJcq+RzDj6oo6kR8kLx4tV4uqUyKW82rFKPoSECRLDjjCelAgpwQ+B2Ky5NIATWZteHjI5XFUZq5rn/DXgGlrq/Q++TYpCtfXi9tSXeFTTiXv67nECpUS9DekopJ/gso+HS67ES11TXCyE3SvVPK+8T6FHNlFE7PtCNfO0Wueq9e8/1cwcGx9LGE89eExrG+y8SJEpa5D+BJfyh6ai1RShDsm+1m9DKrf9YIXLoh4wd9wBMRQZRCbR55+2Tv4QkjRp+IJl5uM6OrvkN3Bo6k7FSpQh23Z6L3aX6Q11ZmkwclrleQ/A1/8OlhCtTPVINxwh+Sz0WD987FiItxxvdt9p9ETI=
+x-microsoft-antispam-message-info: EaGlPzDcuAIehYH49RxrC028rLdMadqX9tkxOK0btqzoStUTYD2ULtBGnqEIYWUSSowhW0z+2kxYgL+xvlSpGaNCX9XD0Uifch0w42EMXNuixhOrVCw1c9SEMlUNn8BN7jZm1liQnqZJG0uSI5J5Sj5Eq9Hhy5PACIkzzwvfcOiBcfwu7PFQBbOqu88CS4gza6uJkQ9D2SHL6dpjx4Y4yh3gT1jT16S3rvHLw7P5KuV0Ek6JY9zBTdzQ0muhonhAeOqvCMmoX0SD5NNjcJjDIRwfCYl3kUqsjd3xi86uShZwoRSsJMaGmZu5uEgQO21KJgqKtjhmvcjqB2kPyZz7QM0gXVBxp5Llz7C3ISRir0r/uThNzpialz06IQcIkrsTrLKzVsbYQizASSzPu8dyuMI5TTKUEqjFrC0h1IVYWBobHYdCGxjAMrZFqr5WWcuqeWXs6v+bKR+9Mv8rA34ZIgi7f3ult3BA5Y/b2eROID7t3UwU/8JP9Khy+4TfnyCscozqsEd7M/Bjmxe9gwL1fb5MwK39Z7EKKBtT8tzYVtN8Y0ZSGZt3QFf5B+dsOY2C
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb09aae0-8e54-47aa-a06c-08d61ea373a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:47.6638
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57e87ea4-9d02-4836-ad64-08d61ea36ac9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:33.8202
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,69 +93,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Preethi Banala <preethi.banala@intel.com>
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-[ Upstream commit b29bc220e2c7bd494a4605defcd93b18d5a8cf86 ]
+[ Upstream commit 19f5e9e015675fcdbf2c20e804b2e84e80201454 ]
 
-Clean control queues only when they are initialized. One of the ways to
-validate if the basic initialization is done is by checking value of
-cq->sq.head and cq->rq.head variables that specify the register address.
-This patch adds a check to avoid NULL pointer dereference crash when tried
-to shutdown uninitialized control queue.
+The conversion to sg_copy_{from,to}_buffer has been done in the wrong
+way. sg_copy_to_buffer is a copy from an SG list to a linear buffer so
+it can't replace memcpy(buf + offset, &value, remaining) where buf is
+the virtual address of the SG. Same for sg_copy_to_buffer but in the
+opposite way.
 
-Signed-off-by: Preethi Banala <preethi.banala@intel.com>
-Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-Tested-by: Tony Brelinski <tonyx.brelinski@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Suggested-by: Douglas Gilbert <dgilbert@interlog.com>
+Fixes: 5b4277814e3f ("mmc: atmel-mci: use sg_copy_{from,to}_buffer")
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/intel/ice/ice_controlq.c | 24 ++++++++++++-------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/mmc/host/atmel-mci.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_controlq.c b/drivers/net/et=
-hernet/intel/ice/ice_controlq.c
-index 7c511f144ed6..c064416080e7 100644
---- a/drivers/net/ethernet/intel/ice/ice_controlq.c
-+++ b/drivers/net/ethernet/intel/ice/ice_controlq.c
-@@ -597,10 +597,14 @@ static enum ice_status ice_init_check_adminq(struct i=
-ce_hw *hw)
- 	return 0;
+diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+index 5aa2c9404e92..be53044086c7 100644
+--- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -1976,7 +1976,7 @@ static void atmci_read_data_pio(struct atmel_mci *hos=
+t)
+ 	do {
+ 		value =3D atmci_readl(host, ATMCI_RDR);
+ 		if (likely(offset + 4 <=3D sg->length)) {
+-			sg_pcopy_to_buffer(sg, 1, &value, sizeof(u32), offset);
++			sg_pcopy_from_buffer(sg, 1, &value, sizeof(u32), offset);
 =20
- init_ctrlq_free_rq:
--	ice_shutdown_rq(hw, cq);
--	ice_shutdown_sq(hw, cq);
--	mutex_destroy(&cq->sq_lock);
--	mutex_destroy(&cq->rq_lock);
-+	if (cq->rq.head) {
-+		ice_shutdown_rq(hw, cq);
-+		mutex_destroy(&cq->rq_lock);
-+	}
-+	if (cq->sq.head) {
-+		ice_shutdown_sq(hw, cq);
-+		mutex_destroy(&cq->sq_lock);
-+	}
- 	return status;
- }
+ 			offset +=3D 4;
+ 			nbytes +=3D 4;
+@@ -1993,7 +1993,7 @@ static void atmci_read_data_pio(struct atmel_mci *hos=
+t)
+ 		} else {
+ 			unsigned int remaining =3D sg->length - offset;
 =20
-@@ -706,10 +710,14 @@ static void ice_shutdown_ctrlq(struct ice_hw *hw, enu=
-m ice_ctl_q q_type)
- 		return;
- 	}
+-			sg_pcopy_to_buffer(sg, 1, &value, remaining, offset);
++			sg_pcopy_from_buffer(sg, 1, &value, remaining, offset);
+ 			nbytes +=3D remaining;
 =20
--	ice_shutdown_sq(hw, cq);
--	ice_shutdown_rq(hw, cq);
--	mutex_destroy(&cq->sq_lock);
--	mutex_destroy(&cq->rq_lock);
-+	if (cq->sq.head) {
-+		ice_shutdown_sq(hw, cq);
-+		mutex_destroy(&cq->sq_lock);
-+	}
-+	if (cq->rq.head) {
-+		ice_shutdown_rq(hw, cq);
-+		mutex_destroy(&cq->rq_lock);
-+	}
- }
+ 			flush_dcache_page(sg_page(sg));
+@@ -2003,7 +2003,7 @@ static void atmci_read_data_pio(struct atmel_mci *hos=
+t)
+ 				goto done;
 =20
- /**
+ 			offset =3D 4 - remaining;
+-			sg_pcopy_to_buffer(sg, 1, (u8 *)&value + remaining,
++			sg_pcopy_from_buffer(sg, 1, (u8 *)&value + remaining,
+ 					offset, 0);
+ 			nbytes +=3D offset;
+ 		}
+@@ -2042,7 +2042,7 @@ static void atmci_write_data_pio(struct atmel_mci *ho=
+st)
+=20
+ 	do {
+ 		if (likely(offset + 4 <=3D sg->length)) {
+-			sg_pcopy_from_buffer(sg, 1, &value, sizeof(u32), offset);
++			sg_pcopy_to_buffer(sg, 1, &value, sizeof(u32), offset);
+ 			atmci_writel(host, ATMCI_TDR, value);
+=20
+ 			offset +=3D 4;
+@@ -2059,7 +2059,7 @@ static void atmci_write_data_pio(struct atmel_mci *ho=
+st)
+ 			unsigned int remaining =3D sg->length - offset;
+=20
+ 			value =3D 0;
+-			sg_pcopy_from_buffer(sg, 1, &value, remaining, offset);
++			sg_pcopy_to_buffer(sg, 1, &value, remaining, offset);
+ 			nbytes +=3D remaining;
+=20
+ 			host->sg =3D sg =3D sg_next(sg);
+@@ -2070,7 +2070,7 @@ static void atmci_write_data_pio(struct atmel_mci *ho=
+st)
+ 			}
+=20
+ 			offset =3D 4 - remaining;
+-			sg_pcopy_from_buffer(sg, 1, (u8 *)&value + remaining,
++			sg_pcopy_to_buffer(sg, 1, (u8 *)&value + remaining,
+ 					offset, 0);
+ 			atmci_writel(host, ATMCI_TDR, value);
+ 			nbytes +=3D offset;
 --=20
 2.17.1
