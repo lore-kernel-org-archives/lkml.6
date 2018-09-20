@@ -7,47 +7,43 @@ X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FFBC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF8DECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8178E2146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 331222146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:03:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="fCEU7czU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8178E2146E
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="MarkZyy/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331222146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387533AbeITJmW (ORCPT
+        id S2387563AbeITJof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 05:42:22 -0400
-Received: from cock.li ([185.100.85.212]:50590 "EHLO cock.li"
+        Thu, 20 Sep 2018 05:44:35 -0400
+Received: from cock.li ([185.100.85.212]:51730 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbeITJmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 05:42:21 -0400
+        id S1726000AbeITJof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 05:44:35 -0400
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537416061; bh=+Ji+QCPyN245qmh5S7rh41yob9CpU/rG2uXoKKIYL5E=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fCEU7czU96Wp7LKbVWjw3E3BwTg5mnaGu5ThKT9XB94PUDolZRofl4nLvmUYl2ZE0
-         x2FG26iP3vaZ5Fhbuy6jPKeZouMVP4vbhf8pQwOJVXgNG79cXUa8vfnNFldFYeaMW3
-         YLIjl0MkrmYSgYWi1ic29krBudcXnvVls52ljNOobDpQDo1o8/48E43oWpYXRYRSy/
-         qNUcyq8Ochxw2YlbZeTkoMgHu8JeRsu5Uyoy+/CZh1+LWDpYaVrdo/0UxH6r5/utYL
-         iWXq7yU/DCDo0lppJlgN8lIcjdK+i3aFtH5Baze356T0ooWtYcjTjjsnWiTg5F37yu
-         qQsPkqT0jAY3g==
+        t=1537416195; bh=08ubr0l3vRkytX8H0wSPmq6Gwt5phqLVeZJh/x4qAsE=;
+        h=Date:From:To:Subject:From;
+        b=MarkZyy/6tu08xs2sU86Wbxwnw7sIvf7Z7c8ici8AMAFA7eWO984987q+QPWCluaQ
+         GCj8Yj8z1eJa9+VS66Q8AC7Nl8bMqXmePCYdVqrGfQPw7eE5b31+Ay5FRb5qa1PyDg
+         GAbkFJduVUxgngVh4q4XzpAtQJQEYBFFlXnIy+l4IXLncwZLL5BtH8cdEjiAblXDGF
+         aSx84U9AXFjUuqfBBXECtUyIQ1gBMtJgBFa3YzkS5w35E5G1l5WZgPijG8G6OIowDG
+         aKcKbEpqhYVoCKmfVBb4WUtV9SU6CipXYZSW+G+5ssRT0uZ3D+0q9wkmmquRNn5Nuv
+         A2RrRewD3dIHg==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 20 Sep 2018 04:01:01 +0000
+Date:   Thu, 20 Sep 2018 04:03:15 +0000
 From:   unconditionedwitness@redchan.it
-To:     dng@lists.dyne.org, linux-kernel@vger.kernel.org,
-        debian-user@lists.debian.org
-Cc:     rms@gnu.org, esr@thyrsus.com, moglen@columbia.edu,
-        bruce@perens.com, debian-ctte@lists.debian.org, editor@lwn.net,
-        torvalds@osdl.org, blukashev@sempervictus.com,
-        bkuhn@sfconservancy.org
-Subject: ""The remedies you suggest, if they could even be legally done""
-Message-ID: <22625a1ca4fff1e125e133167b77fe40@redchan.it>
+To:     linux-kernel@vger.kernel.org
+Subject: Code of Conduct: Those Ejected should rescind their license grant.
+ (Yes, bare license grants can be rescinded at the will of the grantor)
+Message-ID: <a3dde93fa26a4c67aede3338b0167055@redchan.it>
 X-Sender: unconditionedwitness@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -55,14 +51,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-   > Steve Litt Wrote:
-   > The remedies you suggest, if they could even be legally done,
+The grant is not supported by consideration.
+It dispenses only largess, and asks for no recompense.
+It is a bare license.
+Thus it can be revoked by the grantor at any time.
+His act of grace bestowed, and his act of propriety can rescind.
 
-I wonder why you doubt me.
+The free software world is held up muchly by a gentleman's agreement.
+The agreement is that we shall take mutually beneficial actions, vis a 
+vis the field of software engineering, to increase the net freedom 
+available to all.
 
+It is not so much held up by law, regardless of what the lay programmers 
+and users of programmers would imagine to believe.
 
+To turn one's contributions around as a weapon against the contributor:
+to tell him he must not say this or that, he must not act this or that 
+way,
+lest he be barred from his hobby; let he be barred from freely giving
+dispensation, is an abhorrent abuse of his magnanimity
 
+Now this gentleman's agreement is being, or has been shattered.
+You will find that the law has no supports to bind him;
+but many to fell the ungrateful who saw themselves the inviolate 
+annuitants of his altruism.
 
+Bare licenses are revocable at will. They always have been.
+Those who are thrown out of the "Linux Kernel Community" in punishment 
+for not obeying this CoC, who's past contributions count for nothing in 
+the face of those who will throughout the ages to control men in all 
+things; for not "behaving properly" here or there, within their public 
+or private life; for not bending the knee to the Anglo-American 
+religion, should absolutely recind the grant they have dispensed.
+They are well within their rights to do so, and hostile action must be 
+met with the same and worse in response.
 
 
 
