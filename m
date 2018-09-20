@@ -2,179 +2,108 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0A5ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 863BBC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55EC7214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:35:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11B1821522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:39:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JdoHfRGo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55EC7214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="pw756e3S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B1821522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733205AbeITWTi (ORCPT
+        id S1729895AbeITWXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:19:38 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40162 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728021AbeITWTh (ORCPT
+        Thu, 20 Sep 2018 18:23:22 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43310 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeITWXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:19:37 -0400
-Received: by mail-pl1-f196.google.com with SMTP id s17-v6so4597229plp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:35:19 -0700 (PDT)
+        Thu, 20 Sep 2018 18:23:22 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 130-v6so5416541qkd.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:39:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/VYscu7rBqxLm1rNawvE/pGHrTD5EpVioCwE+Tsw/NM=;
-        b=JdoHfRGoNEWhUT7UuaZceI9DYmNvD7c3iouwBQeACxcklZjJhgnb4hN2Kkmp5eoQ/W
-         t3QzTVeg3aKgtE7q1sgkvywQhmj29WyUUmGjahTi4OeioPftHT9KiY9NHtVpcm1RVPrD
-         U4mSXimyql4PflLnw8dYDKdnlzUlBroNdkLIA=
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=hXkOWKr79irQebrEhdECzLeU3ACL8OkvnergRcmaUlM=;
+        b=pw756e3SD92E/5glK5+o2k0tC0UonmSnTiUf62ke25qj+wHyWKc6QBqa1174o5D2Vy
+         MAVPEZtRUWo7QgFaVxwQcjEcYPKY5S6htfok/OrZ1ONvyhnnE9CbcrjTpfU6yEwkM3sS
+         v/od05Y59u+Iv+sE5lc4Xgxf9lQhgmwsS46dgZRcCKmD+CWEM6PmN8Q2Z2RmB07wQQkN
+         lsjxHOXRDAbL18upg7POP22WF17Du4UvaBpqpw2wI5kRsSsxnWMzxeaRbS9cbnUMCr+7
+         3ghG6K5xuzIqPx5irQgxcUNbdni9Eds4zzuH2H6SjlrnZa9BSejRXlyCuJypApLyabtz
+         zgYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/VYscu7rBqxLm1rNawvE/pGHrTD5EpVioCwE+Tsw/NM=;
-        b=TQZHj0eWDt4NdWXpqzYL8jaQ782kYR+h6GbkbSZwhlkLE30ZG+yDPeeBZotv9jghTB
-         rlsuhRAkoKjdCtyn1SO8fnHm1WWiaK7T2H+xCjWosFe8PH2udGOMyr5JKtBiAf3l3gIR
-         J7bFhkuk65aBeAo4ZhbsDYY3+3hFNTVMFLzqjSRcWRjRlnC3i26FfdPwR66NxwXNM8CF
-         cfVtdH0RXhCyn2iOmWza0O1ZRWFWCcBW4SBiiXFt3ND2x0c7fOUmCNi5ouss6AxbyYfr
-         JGSMw25zd4SNFGScJS/EUiuNMBF/n0H80V0MgzUW+S3GV+ndx4JVcM1cYiIafX57nkSa
-         S6aw==
-X-Gm-Message-State: APzg51B11sqfeKfvxwYYLFe2oOfM9dIybfBtn/lCet+KG40BFPkTuTlW
-        XcAVyqXXp4Qtlef6z2HMHfvMDg==
-X-Google-Smtp-Source: ANB0VdZgVdT0fIOHHqQr1gmrNAnlmlCHLNXWcVFh3Z1wTJj+/cY/+TxEG4pX9lS1cRR4cwA+LkbrxQ==
-X-Received: by 2002:a17:902:59c7:: with SMTP id d7-v6mr4208972plj.142.1537461318597;
-        Thu, 20 Sep 2018 09:35:18 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v72-v6sm41574418pfj.22.2018.09.20.09.35.15
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=hXkOWKr79irQebrEhdECzLeU3ACL8OkvnergRcmaUlM=;
+        b=eL//pER27BIVY4Rji/7E6ClHmsfGg+asVReDRhW9NnJti+qOOEuDRUuFsB4uzjtyr7
+         M2BTodQ3Kpe7X6TbBdvUSEWzkk3bBJg7sHErOXfn3kPAWlAGV8hlS1T2Gf4V2BOyWZfr
+         sUw8D9unqJVlZ5SZV0K9EZz64TYPwjV3YesEyyN/Rb1OR7+E0aPe1sisRHt3SS5Z35fk
+         ypsUr3S+pTnTKEb2fxi07DG1AJKNpEAkLKcVN0F079KLlavIpWXiwBQnbj5hn/o9BuSp
+         jsZXVh2T7Es/q6L6MCN+WmS91t8A5jRK9O3TKxka7mUVKQhaqWhwVb/0W3MKTNnjWqB3
+         ZdJQ==
+X-Gm-Message-State: APzg51AZJcb8wKgnF502UYWWV1K300Ei7O/mUDv21f5etA70TumEbb/y
+        yqtMbG5IwvPFBWvhd+W2en5NEg==
+X-Google-Smtp-Source: ANB0Vdab5W04XtBBxGMOgKkKs6tn8dwQSU186E3Cx1a6tLrUEtL30M3WAdCvof4RqUPGOllRjRb8Jw==
+X-Received: by 2002:ad4:5052:: with SMTP id m18-v6mr29219149qvq.164.1537461541903;
+        Thu, 20 Sep 2018 09:39:01 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id p22-v6sm8783768qtk.29.2018.09.20.09.39.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 09:35:17 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 09:39:28 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 4/4] clk: pmc-atom: use devm_kstrdup_const()
-Message-ID: <20180920163928.GI1367@tuxbook-pro>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
- <20180828093332.20674-5-brgl@bgdev.pl>
+        Thu, 20 Sep 2018 09:39:01 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 09:38:57 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <davem@davemloft.net>, <dirk.vandermerwe@netronome.com>,
+        <simon.horman@netronome.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: netronome: remove redundant continue
+Message-ID: <20180920093857.6227710f@cakuba.netronome.com>
+In-Reply-To: <1537430541-37817-1-git-send-email-zhongjiang@huawei.com>
+References: <1537430541-37817-1-git-send-email-zhongjiang@huawei.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828093332.20674-5-brgl@bgdev.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 28 Aug 02:33 PDT 2018, Bartosz Golaszewski wrote:
-
-> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-> an example of how to use this new routine to shrink driver code.
+On Thu, 20 Sep 2018 16:02:21 +0800, zhong jiang wrote:
+> The continue will not truely skip any code. hence it is safe to
+> remove it.
 > 
-> While we're at it: replace a call to kcalloc() with devm_kcalloc().
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+I think this came up during review at some point.  I still prefer to
+keep the continue.  The body of the loop performs initialization of
+objects, if an object is removed we shouldn't carry on with the body.
+It's easy to miss that the object got freed otherwise, there is no
+error being set and no warning printed...
 
-Regards,
-Bjorn
-
-> ---
->  drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> index 08ef69945ffb..daa2192e6568 100644
-> --- a/drivers/clk/x86/clk-pmc-atom.c
-> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> @@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
->  		plt_clk_unregister_fixed_rate(data->parents[i]);
->  }
+> diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+> index 0b1ac9c..50d7b58 100644
+> --- a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+> +++ b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+> @@ -230,10 +230,8 @@ static void nfp_net_pf_free_vnics(struct nfp_pf *pf)
+>  		ctrl_bar += NFP_PF_CSR_SLICE_SIZE;
 >  
-> -static void plt_clk_free_parent_names_loop(const char **parent_names,
-> -					   unsigned int i)
-> -{
-> -	while (i--)
-> -		kfree_const(parent_names[i]);
-> -	kfree(parent_names);
-> -}
-> -
->  static void plt_clk_unregister_loop(struct clk_plt_data *data,
->  				    unsigned int i)
->  {
-> @@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  	if (!data->parents)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	parent_names = kcalloc(nparents, sizeof(*parent_names),
-> -			       GFP_KERNEL);
-> +	parent_names = devm_kcalloc(&pdev->dev, nparents,
-> +				    sizeof(*parent_names), GFP_KERNEL);
->  	if (!parent_names)
->  		return ERR_PTR(-ENOMEM);
->  
-> @@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  			err = PTR_ERR(data->parents[i]);
->  			goto err_unreg;
->  		}
-> -		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
-> +		parent_names[i] = devm_kstrdup_const(&pdev->dev,
-> +						     clks[i].name, GFP_KERNEL);
+>  		/* Kill the vNIC if app init marked it as invalid */
+> -		if (nn->port && nn->port->type == NFP_PORT_INVALID) {
+> +		if (nn->port && nn->port->type == NFP_PORT_INVALID)
+>  			nfp_net_pf_free_vnic(pf, nn);
+> -			continue;
+> -		}
 >  	}
 >  
->  	data->nparents = nparents;
-> @@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  
->  err_unreg:
->  	plt_clk_unregister_fixed_rate_loop(data, i);
-> -	plt_clk_free_parent_names_loop(parent_names, i);
->  	return ERR_PTR(err);
->  }
->  
-> @@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
->  		goto err_unreg_clk_plt;
->  	}
->  
-> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> -
->  	platform_set_drvdata(pdev, data);
->  	return 0;
->  
->  err_unreg_clk_plt:
->  	plt_clk_unregister_loop(data, i);
->  	plt_clk_unregister_parents(data);
-> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
->  	return err;
->  }
->  
-> -- 
-> 2.18.0
-> 
+>  	if (list_empty(&pf->vnics))
+
