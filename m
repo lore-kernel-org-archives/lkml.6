@@ -2,79 +2,82 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5465DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9FAECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09B5C21529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09B5C21529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 87ACA2152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:38:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yz4YLBJT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87ACA2152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387712AbeITSUd (ORCPT
+        id S2387728AbeITSVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:20:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55584 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387663AbeITSUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:20:32 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 455E15CD25B56;
-        Thu, 20 Sep 2018 20:37:12 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
- 20:37:12 +0800
-Message-ID: <5BA39477.7050908@huawei.com>
-Date:   Thu, 20 Sep 2018 20:37:11 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Thu, 20 Sep 2018 14:21:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60838 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387424AbeITSVX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:21:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vhmq1rFUrxnuoiBVLGhplCmMJ/ZdIhVEGv/nMhrDT8A=; b=Yz4YLBJTfKUWwGHEo2JOtqRZF
+        cuPDWRLL8yojCB7gOoLjM0Vl1NWkrt5ZMFsoxHgNO0zGXtlOKWhdQfgAeg/6GujtJyqUs47s4IY8x
+        s54xlVZGw6gEkACOxKErLkLkVVmvChyjXv91hcp693Vh+GqmVl7fsz4LE5PkmreydetvMH/bvc2s4
+        CU5LMIkuSQ9i7p58hcsaHUDteXiW5VGXgCdPym2snYBv4jb234tS54HBZHXMzI9lVWjPhhqi9Ci7e
+        A6TeMW6dtDubss1EBe+XdyczUO9WRWtEF+JvK+Ahvh9bHdgNJuNormO6auMx9NcEBqzJ1+86HuaRV
+        kEgfOr85w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g2yDS-0001iS-Iv; Thu, 20 Sep 2018 12:37:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 331E22015F391; Thu, 20 Sep 2018 14:37:53 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 14:37:53 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, kan.liang@intel.com,
+        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
+        jannh@google.com, arei.gonglei@huawei.com
+Subject: Re: [PATCH v3 5/5] KVM/x86/lbr: lazy save the guest lbr stack
+Message-ID: <20180920123753.GT24124@hirez.programming.kicks-ass.net>
+References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com>
+ <1537437959-8751-6-git-send-email-wei.w.wang@intel.com>
 MIME-Version: 1.0
-To:     Kalle Valo <kvalo@codeaurora.org>
-CC:     <davem@davemloft.net>, <hante.meuleman@broadcom.com>,
-        <franky.lin@broadcom.com>, <arend.vanspriel@broadcom.com>,
-        <linux-wireless@vger.kernel.org>,
-        <brcm80211-dev-list.pdl@broadcom.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] brcm80211: remove redundant condition check before debugfs_remove_recursive
-References: <1536761412-24932-1-git-send-email-zhongjiang@huawei.com> <20180920120709.5FE6960BF7@smtp.codeaurora.org> <5BA391D4.20205@huawei.com> <877ejg1hcd.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <877ejg1hcd.fsf@kamboji.qca.qualcomm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537437959-8751-6-git-send-email-wei.w.wang@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/20 20:30, Kalle Valo wrote:
-> zhong jiang <zhongjiang@huawei.com> writes:
->
->> On 2018/9/20 20:07, Kalle Valo wrote:
->>> zhong jiang <zhongjiang@huawei.com> wrote:
->>>
->>>> debugfs_remove_recursive has taken IS_ERR_OR_NULL into account. So just
->>>> remove the condition check before debugfs_remove_recursive.
->>>>
->>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->>> It seems you already submitted an identical patch four days earlier:
->>>
->>> https://patchwork.kernel.org/patch/10593061/
->>>
->>> Why the duplicate? Please ALWAYS add a changelog and increase the version number:
->> I am sorry for that. Maybe I send the patch earlier, but I remeber I
->> should forget to cc to
->> netdev@vger.kernel.org and LMLK. So I repost it.  Plese ingore the current patch.
-> Even then please increase the version number and mention in the change
-> log why you sent a new version. Otherwise you will make maintainers
-> confused and wasting time with asking what has changed.
->
-Get it  and will keep it in mind . Thanks
+On Thu, Sep 20, 2018 at 06:05:59PM +0800, Wei Wang wrote:
+>  /**
+> + * lbr_select_user_callstack - check if the user callstack mode is set
+> + *
+> + * @lbr_select: the lbr select msr
+> + *
+> + * Returns: true if the msr is configured to the user callstack mode.
+> + * Otherwise, false.
+> + *
+> + */
+> +bool lbr_select_user_callstack(u64 lbr_select)
+> +{
+> +	return !!(lbr_select & LBR_USER_CALLSTACK);
+> +}
+> +EXPORT_SYMBOL_GPL(lbr_select_user_callstack);
 
-Sincerely,
-zhong jiang
-
+That function is pure and tiny, wth is that an exported symbol and not
+an inline?
