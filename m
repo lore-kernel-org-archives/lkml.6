@@ -2,88 +2,152 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61923ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D375EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159102147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8998F2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:24:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xkDc7jNX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159102147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BrecM7tm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8998F2147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388103AbeITWIj (ORCPT
+        id S2387898AbeITWIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:08:39 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:39120 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388077AbeITWIi (ORCPT
+        Thu, 20 Sep 2018 18:08:10 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34357 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387868AbeITWIJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:08:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aiVv8H0RRgbNo+YW6tyz47IwYmBIyrMZHycD8Ttvbwg=; b=xkDc7jNXMg413H986Y/N+eQc8
-        tcBJNwuW3TDIQtccQiSiJUhF9ZpZeEZkxm2XqlNKZAwa7jFrp/30MMpWZclvy39uieivFmbuPlwqj
-        70BwkUm2/0yEaexUkeU2mV5jobaJ0Roo/zSm14yHAF0mucGP7C98+tE1WkHMnvhV59qKjYbtfAIPZ
-        RQl0VN0FVZ+WO3xapvAnwe1gkBPgVgLb/bcdRzCmwrHXRK+xx93hPKG+1EsNe5USBO1Jxji+y/KDx
-        EQbRPpdPTWl23DzQzw1I1Z/gLB71XTGuyjMDIQSU1iytlBHy/PF6iBPooEeMbE/6+gGPqHTuqLEuf
-        r/XoAyg8A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g31kP-0003q9-MX; Thu, 20 Sep 2018 16:24:10 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8B4812024E44A; Thu, 20 Sep 2018 18:24:07 +0200 (CEST)
-Date:   Thu, 20 Sep 2018 18:24:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Wei Wang <wei.w.wang@intel.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, pbonzini@redhat.com, kan.liang@intel.com,
-        mingo@redhat.com, rkrcmar@redhat.com, like.xu@intel.com,
-        jannh@google.com, arei.gonglei@huawei.com
-Subject: Re: [PATCH v3 4/5] KVM/x86/vPMU: Add APIs to support host
- save/restore the guest lbr stack
-Message-ID: <20180920162407.GA24124@hirez.programming.kicks-ass.net>
-References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com>
- <1537437959-8751-5-git-send-email-wei.w.wang@intel.com>
- <20180920153035.GB10360@tassilo.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920153035.GB10360@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 20 Sep 2018 18:08:09 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f6-v6so4594242plo.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=V3gWF7rko5DL5iZJCCi6Kc67O4L0MbWrE1FLQotdnGU=;
+        b=BrecM7tmXbNMsUhl0Mupx9lVNe2C1xFeTN5HxndpWFG10LXFE2t093zwwIFTEldMjU
+         0B/JdxWJCPJF7nf71jJKwN7QYCxwBJUxgygh5eQFom/wYx3UkP0M4hpk2VdVGZf0k6EW
+         2AaLPMYE1mizLaCJLG+W0bfPevqbuWTU05lfA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=V3gWF7rko5DL5iZJCCi6Kc67O4L0MbWrE1FLQotdnGU=;
+        b=g1Sma/O9Y6sab6OCHLxvGxlHwwNENhPb7EjKpFRvdKImcPI6KaTX0cUksZlGt8a9Jk
+         +hcUGNrZSfv4OviLXt09HVwQ2A7+vRtGFK9tUzXiZ15CR9uwfTF87OKVHwrDFIKjGAPP
+         C/ThbgZ68t8VfG6uCltlDZBxKKCOkFSgY2I8JauxTisl36HeqA6uXN56ntT4NOQvjGGl
+         TDW/+UV93uRA/HTxtzY0WUKlr3PQ7D8b2RyLiCHjGKkEQGnmnMLUvvSv79GLl4mXXa1E
+         2LpAkCdX16Z2mhB3Cvc61l0wJ83Vq1d59kF72Lq05kawl3wCibOeBzrre350cgKg0znG
+         SAqQ==
+X-Gm-Message-State: APzg51A6v9dWHDxnhNgDetQjZ0Q4UKAA90ETUcU1aVVAGj5w6sRVQC29
+        COwWdtHurg70n3zdSWOalIgyRw==
+X-Google-Smtp-Source: ANB0VdaT5w+o1c5n0s5kLoyPzssRAmXN8DL5+YS5AWpbocANlJiupF6evitkfd4CBV5WESokBnW9Cw==
+X-Received: by 2002:a17:902:4601:: with SMTP id o1-v6mr40579191pld.202.1537460634349;
+        Thu, 20 Sep 2018 09:23:54 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id t1-v6sm26569696pgp.32.2018.09.20.09.23.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 09:23:48 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH security-next v2 09/26] LSM: Provide init debugging infrastructure
+Date:   Thu, 20 Sep 2018 09:23:21 -0700
+Message-Id: <20180920162338.21060-10-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
+References: <20180920162338.21060-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 08:30:35AM -0700, Andi Kleen wrote:
-> > +int intel_pmu_enable_save_guest_lbr(struct kvm_vcpu *vcpu)
-> > +{
-> > +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> > +	struct perf_event *event;
-> > +	struct perf_event_attr attr = {
-> > +		.type = PERF_TYPE_RAW,
-> > +		.size = sizeof(attr),
-> > +		.pinned = true,
-> > +		.exclude_host = true,
-> > +		.sample_type = PERF_SAMPLE_BRANCH_STACK,
-> > +		.branch_sample_type = PERF_SAMPLE_BRANCH_CALL_STACK |
-> > +				      PERF_SAMPLE_BRANCH_USER |
-> > +				      PERF_SAMPLE_BRANCH_KERNEL,
-> 
-> I think that will allocate an extra perfmon counter, right? 
+Booting with "lsm.debug" will report future details on how LSM ordering
+decisions are being made.
 
-I throught the same too, but I think the exclude_host/guest, whichever
-is the right one makes that work for regular counters too.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ .../admin-guide/kernel-parameters.txt          |  2 ++
+ security/security.c                            | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
-That code is a wee bit magical and I didn't take the time to reverse
-engineer that. It most certainly needs a comment.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 9871e649ffef..32d323ee9218 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2274,6 +2274,8 @@
+ 	ltpc=		[NET]
+ 			Format: <io>,<irq>,<dma>
+ 
++	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
++
+ 	machvec=	[IA-64] Force the use of a particular machine-vector
+ 			(machvec) in a generic kernel.
+ 			Example: machvec=hpzx1_swiotlb
+diff --git a/security/security.c b/security/security.c
+index e74f46fba591..ee49b921d750 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -12,6 +12,8 @@
+  *	(at your option) any later version.
+  */
+ 
++#define pr_fmt(fmt) "LSM: " fmt
++
+ #include <linux/bpf.h>
+ #include <linux/capability.h>
+ #include <linux/dcache.h>
+@@ -43,11 +45,19 @@ char *lsm_names;
+ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+ 	CONFIG_DEFAULT_SECURITY;
+ 
++static bool debug __initdata;
++#define init_debug(...)						\
++	do {							\
++		if (debug)					\
++			pr_info(__VA_ARGS__);			\
++	} while (0)
++
+ static void __init major_lsm_init(void)
+ {
+ 	struct lsm_info *lsm;
+ 
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		init_debug("initializing %s\n", lsm->name);
+ 		lsm->init();
+ 	}
+ }
+@@ -91,6 +101,14 @@ static int __init choose_lsm(char *str)
+ }
+ __setup("security=", choose_lsm);
+ 
++/* Enable LSM order debugging. */
++static int __init enable_debug(char *str)
++{
++	debug = true;
++	return 1;
++}
++__setup("lsm.debug", enable_debug);
++
+ static bool match_last_lsm(const char *list, const char *lsm)
+ {
+ 	const char *last;
+-- 
+2.17.1
+
