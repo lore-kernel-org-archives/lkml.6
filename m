@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0455ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA59ECE567
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6515321526
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:12:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6515321526
+	by mail.kernel.org (Postfix) with ESMTP id 7766321526
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7766321526
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733248AbeITU4W (ORCPT
+        id S1733282AbeITU4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 16:56:22 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51917 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387659AbeITU4V (ORCPT
+        Thu, 20 Sep 2018 16:56:23 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33627 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732393AbeITU4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 16:56:21 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y2-v6so10428663wma.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 08:12:24 -0700 (PDT)
+        Thu, 20 Sep 2018 16:56:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v90-v6so9809540wrc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 08:12:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=THDz0P+2hLPCqDegCGQZClg3PBDMfTh1+DDdNthUPK8=;
-        b=MX3KP9lVop73CiXCpF3VR/pFsHrNucXsCePHpKF5OOEq6XMTYzwaOBgEftJ8a6aqGm
-         TdFE1NOOC47P7hu/9jHLc+f2G4KOBU9cU7BywvL6WNw8aadjfHifC6xgVD9ZBlKLR4HC
-         MSkokWZHlByb9S5A5KLpGbb/q0UbyZC1tYWvGvTgvPiXDNbu/hOYn1N3kjj4otUeRLt0
-         NcGr69YwEMYnYj+e3kBKMIc6dUGFseCfFAvWtUN0FRR5xRJANewJZTNAW3Y51ziU6sGY
-         +ETBnAF5CmBnKBJcsvBWPLCYOC2SYfpZUF0o+1Dv0BJQFtqxnSMZYiaPVB8BbyHivgxJ
-         jeww==
-X-Gm-Message-State: ABuFfoiIq8RP6hyplZw0/15xfxbM5dZ1OJI8T6Gv80hyIM2M06gL11n3
-        z1s3lyjMg33pdh84Tw1FaHiyIg==
-X-Google-Smtp-Source: ACcGV63Mg8o3TM2GsrIXvR4H5/dIWJJS5rDgdAGMmH1h385n8FsTCtzFOCexf7d5i4sqAzp9pvyURw==
-X-Received: by 2002:a1c:68f:: with SMTP id 137-v6mr3348417wmg.82.1537456343911;
-        Thu, 20 Sep 2018 08:12:23 -0700 (PDT)
+        bh=T/YPwrXVykLx5hkpqsiA0MJqO4coa4bJc+RtjykLZQc=;
+        b=o6TjySgojfwrvPsakv2TvysSDasBzqATsVT9dIYjNw9v6jkJx1MR4Xct9/QsUftFGj
+         XuHw1inh2S36rnKZugi8xsQNe2tw0WMMoF6dkJbCh5ka7VtiNXiPAMup1TROe3pB+Isb
+         6ZQOcj4Q+Vxgj0A8owW8KMKABqKImcbDWYor/dvoElW3eUgKpWqCTGQZU8V3iNU2YQV4
+         iRA7hYscI7gKRDE5VFCjyqVO6zdbEV7gnZhZGlRped4FTDNZBa68biH7EzGmZcbWf9bU
+         sLK2msRml8NtaIwtoOOJnOsToUTZHN6LoILLx6D33z7P2MbXXpxgvlun6urZKvcZSeIc
+         sQCg==
+X-Gm-Message-State: APzg51DG3UxBChbplOT+Ef+L+DZo4MmURpL4zibbZzUh2O+BDhDnGJHA
+        +l8rOaCPsj5OakJdA4DPsEwycg==
+X-Google-Smtp-Source: ANB0VdaQVigOZt82X6lLMv0ssWlVBmVNEpsMS63HE3GQMp2f5FCgwmIyZe3q2hR9fbCsf4D1oVEpWg==
+X-Received: by 2002:a5d:5450:: with SMTP id w16-v6mr35387051wrv.4.1537456345235;
+        Thu, 20 Sep 2018 08:12:25 -0700 (PDT)
 Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id p89-v6sm55286201wrc.97.2018.09.20.08.12.22
+        by smtp.gmail.com with ESMTPSA id p89-v6sm55286201wrc.97.2018.09.20.08.12.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 08:12:23 -0700 (PDT)
+        Thu, 20 Sep 2018 08:12:24 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     David Howells <dhowells@redhat.com>
 Cc:     Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] mount: fix regression in setting "subtype" from legacy API
-Date:   Thu, 20 Sep 2018 17:12:11 +0200
-Message-Id: <20180920151214.15484-4-mszeredi@redhat.com>
+Subject: [PATCH 4/6] fsconfig: parse "subtype" param for old internal API
+Date:   Thu, 20 Sep 2018 17:12:12 +0200
+Message-Id: <20180920151214.15484-5-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180920151214.15484-1-mszeredi@redhat.com>
 References: <20180920151214.15484-1-mszeredi@redhat.com>
@@ -60,125 +60,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subtype was initilized at the wrong place from the wrong source
-(fstype->fs_type->name, which does not ever contain a subtype).
-
-Set subtype from do_new_mount(), where it actually does something.
-Verified with fuse.
+This subtype thing is specific to "fuse" and "fuseblk" filesystems.  When these
+are switched over to the new context API, the handling of this parameter can be
+moved from legacy_parse_param() into fuse.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fs_context.c | 34 ----------------------------------
- fs/namespace.c  | 21 +++++++++++++++++++++
- 2 files changed, 21 insertions(+), 34 deletions(-)
+ fs/fs_context.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/fs/fs_context.c b/fs/fs_context.c
-index ceaf42559016..c0ecbb1ecdfe 100644
+index c0ecbb1ecdfe..0192456712d2 100644
 --- a/fs/fs_context.c
 +++ b/fs/fs_context.c
-@@ -684,27 +684,6 @@ static int legacy_validate(struct fs_context *fc)
- 				     ctx->secdata);
- }
- 
--/*
-- * Determine the superblock subtype.
-- */
--static int legacy_set_subtype(struct fs_context *fc)
--{
--	const char *subtype = strchr(fc->fs_type->name, '.');
--
--	if (subtype) {
--		subtype++;
--		if (!subtype[0])
--			return -EINVAL;
--	} else {
--		subtype = "";
--	}
--
--	fc->subtype = kstrdup(subtype, GFP_KERNEL);
--	if (!fc->subtype)
--		return -ENOMEM;
--	return 0;
--}
--
- /*
-  * Get a mountable root with the legacy mount command.
-  */
-@@ -713,7 +692,6 @@ static int legacy_get_tree(struct fs_context *fc)
- 	struct legacy_fs_context *ctx = fc->fs_private;
- 	struct super_block *sb;
- 	struct dentry *root;
--	int ret;
- 
- 	root = fc->fs_type->mount(fc->fs_type, fc->sb_flags,
- 				      fc->source, ctx->legacy_data,
-@@ -724,20 +702,8 @@ static int legacy_get_tree(struct fs_context *fc)
- 	sb = root->d_sb;
- 	BUG_ON(!sb);
- 
--	if ((fc->fs_type->fs_flags & FS_HAS_SUBTYPE) &&
--	    !fc->subtype) {
--		ret = legacy_set_subtype(fc);
--		if (ret < 0)
--			goto err_sb;
--	}
--
- 	fc->root = root;
- 	return 0;
--
--err_sb:
--	dput(root);
--	deactivate_locked_super(sb);
--	return ret;
- }
- 
- /*
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 865b6f2c5e7d..7671c1f6fc22 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2617,6 +2617,7 @@ static int do_new_mount(struct path *mountpoint, const char *fstype,
- {
- 	struct file_system_type *fs_type;
- 	struct fs_context *fc;
-+	const char *subtype = NULL;
- 	int err;
- 
- 	if (!fstype)
-@@ -2627,6 +2628,19 @@ static int do_new_mount(struct path *mountpoint, const char *fstype,
- 	if (!fs_type)
- 		goto out;
- 
-+	if (fs_type->fs_flags & FS_HAS_SUBTYPE) {
-+		subtype = strchr(fstype, '.');
-+		if (subtype) {
-+			subtype++;
-+			if (!subtype[0]) {
-+				put_filesystem(fs_type);
-+				return -EINVAL;
-+			}
-+		} else {
-+			subtype = "";
-+		}
-+	}
-+
- 	fc = vfs_new_fs_context(fs_type, NULL, sb_flags, sb_flags,
- 				FS_CONTEXT_FOR_USER_MOUNT);
- 	put_filesystem(fs_type);
-@@ -2635,6 +2649,13 @@ static int do_new_mount(struct path *mountpoint, const char *fstype,
- 		goto out;
+@@ -574,6 +574,16 @@ static int legacy_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		param->string = NULL;
+ 		return 0;
  	}
- 
-+	if (subtype) {
-+		fc->subtype = kstrdup(subtype, GFP_KERNEL);
-+		err = -ENOMEM;
-+		if (!fc->subtype)
-+			goto out;
++	if ((fc->fs_type->fs_flags & FS_HAS_SUBTYPE) &&
++	    strcmp(param->key, "subtype") == 0) {
++		if (param->type != fs_value_is_string)
++			return invalf(fc, "VFS: Legacy: Non-string subtype");
++		if (fc->subtype)
++			return invalf(fc, "VFS: Legacy: Multiple subtype");
++		fc->subtype = param->string;
++		param->string= NULL;
++		return 0;
 +	}
-+
- 	if (name) {
- 		err = vfs_parse_fs_string(fc, "source", name, strlen(name));
- 		if (err < 0)
+ 
+ 	if (ctx->param_type != LEGACY_FS_UNSET_PARAMS &&
+ 	    ctx->param_type != LEGACY_FS_INDIVIDUAL_PARAMS)
 -- 
 2.14.3
 
