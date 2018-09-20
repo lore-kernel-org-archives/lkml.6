@@ -2,107 +2,67 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8A2C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239DCECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F11521523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F11521523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id C400121523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:07:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C400121523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731840AbeITNsR (ORCPT
+        id S1731526AbeITNuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:48:17 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:46909 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728124AbeITNsR (ORCPT
+        Thu, 20 Sep 2018 09:50:02 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49026 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeITNuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:48:17 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1356997|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l01425;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.CtL13Ja_1537430734;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CtL13Ja_1537430734)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Thu, 20 Sep 2018 16:05:34 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     tglx@linutronix.de, daniel.lezcano@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        c-sky_gcc_upstream@c-sky.com, green.hu@gmail.com,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V8 2/2] dt-bindings: timer: gx6605s SOC timer
-Date:   Thu, 20 Sep 2018 16:03:42 +0800
-Message-Id: <590ea79ca7a96255fd83da1963402ee619767c0e.1537412072.git.ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1537412072.git.ren_guo@c-sky.com>
-References: <cover.1537412072.git.ren_guo@c-sky.com>
-In-Reply-To: <cover.1537412072.git.ren_guo@c-sky.com>
-References: <cover.1537412072.git.ren_guo@c-sky.com>
+        Thu, 20 Sep 2018 09:50:02 -0400
+Received: from 79.184.254.22.ipv4.supernova.orange.pl (79.184.254.22) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.148)
+ id 5cfb702518942ee4; Thu, 20 Sep 2018 10:07:47 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Jason Baron <jbaron@akamai.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        netdev@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-btrfs@vger.kernel.org, linux-acpi@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [PATCH 00/22] various dynamic_debug patches
+Date:   Thu, 20 Sep 2018 10:05:00 +0200
+Message-ID: <4563778.42gAD4asSf@aspire.rjw.lan>
+In-Reply-To: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
+References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- - Dt-bindings doc for gx6605s SOC's system timer.
+On Thursday, September 20, 2018 12:04:22 AM CEST Rasmus Villemoes wrote:
+> This started as an experiment to see how hard it would be to change
+> the four pointers in struct _ddebug into relative offsets, a la
+> CONFIG_GENERIC_BUG_RELATIVE_POINTERS, thus saving 16 bytes per
+> pr_debug site (and thus exactly making up for the extra space used by
+> the introduction of jump labels in 9049fc74). I stumbled on a few
+> things that are probably worth fixing regardless of whether the latter
+> half of this series is deemed worthwhile.
+> 
+> Patch relationships: 1-2, 3-4, 5-6 and 15-16 can be applied
+> individually, though 2, 4 and 6 probably makes most sense in the
+> context of the final goal of the series.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/timer/csky,gx6605s-timer.txt          | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
+OK, I can take the [15-16/22] separately.
 
-diff --git a/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
-new file mode 100644
-index 0000000..6b04344
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/csky,gx6605s-timer.txt
-@@ -0,0 +1,42 @@
-+=================
-+gx6605s SOC Timer
-+=================
-+
-+The timer is used in gx6605s soc as system timer and the driver
-+contain clk event and clk source.
-+
-+==============================
-+timer node bindings definition
-+==============================
-+
-+	Description: Describes gx6605s SOC timer
-+
-+	PROPERTIES
-+
-+	- compatible
-+		Usage: required
-+		Value type: <string>
-+		Definition: must be "csky,gx6605s-timer"
-+	- reg
-+		Usage: required
-+		Value type: <u32 u32>
-+		Definition: <phyaddr size> in soc from cpu view
-+	- clocks
-+		Usage: required
-+		Value type: phandle + clock specifier cells
-+		Definition: must be input clk node
-+	- interrupt
-+		Usage: required
-+		Value type: <u32>
-+		Definition: must be timer irq num defined by soc
-+
-+Examples:
-+---------
-+
-+	timer0: timer@20a000 {
-+		compatible = "csky,gx6605s-timer";
-+		reg = <0x0020a000 0x400>;
-+		clocks = <&dummy_apb_clk>;
-+		interrupts = <10>;
-+		interrupt-parent = <&intc>;
-+	};
--- 
-2.7.4
+Thanks,
+Rafael
 
