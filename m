@@ -2,119 +2,246 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84226C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A50C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C37E2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A09312087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 03:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jX23Ngx2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C37E2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DJjIroN1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09312087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732286AbeITJLf (ORCPT
+        id S1732783AbeITJNF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 05:11:35 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35491 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731479AbeITJLf (ORCPT
+        Thu, 20 Sep 2018 05:13:05 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53191 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731479AbeITJNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 05:11:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j26-v6so7809406wre.2;
-        Wed, 19 Sep 2018 20:30:23 -0700 (PDT)
+        Thu, 20 Sep 2018 05:13:05 -0400
+Received: by mail-it0-f65.google.com with SMTP id h3-v6so11305744ita.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 20:31:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v2MU8pQ9tQcK95xwyoIVabcjCrav5PIKNxtLaCvfEKA=;
-        b=jX23Ngx20s6cdMg00aaxULOiNlvhKJA47ZoFb6lYgFrwkWdEZvSzuFjF6MFU2T3Ul4
-         A5JP32zjdLby+yrdAjIchCYG9qIvlXyVxUsoJ1snHwKAubB6E3hDMa4jmb6LR9UAoplN
-         YmPzbvmkQaSoeBNeNAoeTEpO6u4QTMhpqmKBNrPXqiMMuZ1sp74u/OM6ahiQbvZZxjpl
-         sYIbqOKxsmmeLWMpI4pbG+01r8eneptf0jDYC76aDFQ6mBmXLh0MAwf1MWxOy4d72TMj
-         OtXA9YjBjCdRuV2K3lkoE2k3eUR+i6+OTuQjVwE18xSLoae8HTGMKZojBDvvGCG4ugpz
-         1MOQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0UI1UJ3VGKb0pjcJ1KCiEileSfBeYUk/GSyLEbrPm7Q=;
+        b=DJjIroN1AeZX9HgqtK7PO7zwI6r+Jxd/7nrbB9vDUc/WiPkO+tn1ow0f4SHSra+ZPQ
+         Ly2QEcDtNVP+NEKpvnKA5wtik4mam4r+jz1me4e2G+jk5a0P3rRQ4vGhquN9YsIgdfW1
+         kKEzsl2esCkt9Jh3kqhrmvGvfUnTHImnG3YgU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v2MU8pQ9tQcK95xwyoIVabcjCrav5PIKNxtLaCvfEKA=;
-        b=Zz+TvbbFzZBxA1+PRoh8QG6jAgKQVmKmD7OURJ23NfZbHNJT5zvtuYCR3z8Q5EJcdq
-         plTXvFNL7+1BCPyezRY1XJjJZbanNckAb6Pm754//5qp40enUEOZJt3Nhsrt3Ljk8jM/
-         XyVa5hS/VimxVhoyYtI1AWuOqFhU8nuAAcrBN2I/Mu7/kgQg8HD/5G4w3QBC8ApAj+Ly
-         6R24viLQ6Gptq2FAXYSyGeyARFQrCq9RUgHZ1tx7qrSNvXjX3TPLNfmKkFBmvdOrUhGU
-         EEFV2Y9zXtlinY/v13YmAa+W9r3YBdcKKUgCNQoqIfrwSi7ZxdmTJwF00ypA7Nukvmew
-         c23w==
-X-Gm-Message-State: APzg51DBuTAP0s8ueL0gF4xQXYN7N+XlP8gW3XjPHMAN4ESh54XjLYUs
-        YLhEKMzcbF5k1MHNzmh+1HBVuB+mmzr4cg==
-X-Google-Smtp-Source: ANB0Vdb0Onr3bfoicDZJ6encMEzH3I0E3/EPBO4VONRolQD964/QYZYLakx3uEK+OAaHBPh/SFd/lA==
-X-Received: by 2002:a5d:608b:: with SMTP id w11-v6mr32455555wrt.193.1537414222817;
-        Wed, 19 Sep 2018 20:30:22 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id 88-v6sm20475796wrf.95.2018.09.19.20.30.20
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0UI1UJ3VGKb0pjcJ1KCiEileSfBeYUk/GSyLEbrPm7Q=;
+        b=osTP6uyPwkdRt807vmNt5LTj6tKRMjRkIXt9Cbl098BjzYNpL+9wgkTBci4WG68gNT
+         1qYqdwWWVeEGjVlQzqlrWlmbMMHYAlcYGWUWjB+6zC7hv6f3MJ/oukExyqu3a1Q0XSVf
+         TDDgMFsyzWWruRU0o9DoWWA6kPaCdNzV/y0vvRf1VteqUZwzsrLL7lk1/G6aEsRsT+bV
+         p6LzkgfsNgyfphvBLuyYqza2LdUMt26z9dx3/e4JBklX5H1e5tcJ3mI4ljKJzftN5wZs
+         AJN/DwhTDyT1ksezYXbEeM7IBVUMkmIMwJpk4sVEXJ+GST4vIsVFv54KlytBu4StMfXw
+         NcyQ==
+X-Gm-Message-State: APzg51BCee4xZtonAMo8MiUIYAyYEVWqgx53EcSkmYqR9WFCELw0JdYW
+        bVyjg1csQoxgPMU4Lq0yn58wy0qn8CXDkA==
+X-Google-Smtp-Source: ANB0VdZPdgDcgbvIdjgwQl6Z+AyExXWCB+LtpXK3SNSg5rIeCkJaz+oE3j/HRl6uD/PqG27fHI7h8Q==
+X-Received: by 2002:a24:7941:: with SMTP id z62-v6mr665833itc.20.1537414313569;
+        Wed, 19 Sep 2018 20:31:53 -0700 (PDT)
+Received: from mail-it0-f46.google.com (mail-it0-f46.google.com. [209.85.214.46])
+        by smtp.gmail.com with ESMTPSA id f74-v6sm358488itf.20.2018.09.19.20.31.52
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 20:30:21 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Faisal Latif <faisal.latif@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] IB/nes: Remove unnecessary parentheses
-Date:   Wed, 19 Sep 2018 20:29:57 -0700
-Message-Id: <20180920032956.14360-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Wed, 19 Sep 2018 20:31:52 -0700 (PDT)
+Received: by mail-it0-f46.google.com with SMTP id j198-v6so451477ita.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 20:31:52 -0700 (PDT)
+X-Received: by 2002:a24:f54a:: with SMTP id k71-v6mr647746ith.36.1537414311816;
+ Wed, 19 Sep 2018 20:31:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1537314192-26892-1-git-send-email-vgarodia@codeaurora.org>
+ <1537314192-26892-2-git-send-email-vgarodia@codeaurora.org>
+ <CAPBb6MXMv_TD2dbxyM+D2p3pWfCJpQ-_FHK6WdkAEgBhwTdL6g@mail.gmail.com>
+ <97b94b9b-f028-cb8b-a3db-67626dc517ab@linaro.org> <175fcecf3be715d2a20b71746c648f1e@codeaurora.org>
+In-Reply-To: <175fcecf3be715d2a20b71746c648f1e@codeaurora.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Thu, 20 Sep 2018 12:31:39 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MUo6X+L7UYgmw8qUe_2CiZEBKGxaREFhZGRU1jGq0fO=g@mail.gmail.com>
+Message-ID: <CAPBb6MUo6X+L7UYgmw8qUe_2CiZEBKGxaREFhZGRU1jGq0fO=g@mail.gmail.com>
+Subject: Re: [PATCH v9 1/5] venus: firmware: add routine to reset ARM9
+To:     vgarodia@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
+        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when more than one set of parentheses are used in single
-conditional statements.
+On Thu, Sep 20, 2018 at 2:55 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>
+> On 2018-09-19 20:30, Stanimir Varbanov wrote:
+> > Hi Alex,
+> >
+> > On 09/19/2018 10:32 AM, Alexandre Courbot wrote:
+> >> On Wed, Sep 19, 2018 at 8:43 AM Vikash Garodia
+> >> <vgarodia@codeaurora.org> wrote:
+> >>>
+> >>> Add routine to reset the ARM9 and brings it out of reset. Also
+> >>> abstract the Venus CPU state handling with a new function. This
+> >>> is in preparation to add PIL functionality in venus driver.
+> >>>
+> >>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> >>> ---
+> >>>  drivers/media/platform/qcom/venus/core.h         |  2 ++
+> >>>  drivers/media/platform/qcom/venus/firmware.c     | 33
+> >>> ++++++++++++++++++++++++
+> >>>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
+> >>>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
+> >>>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
+> >>>  5 files changed, 57 insertions(+), 9 deletions(-)
+> >>>
+> >>> diff --git a/drivers/media/platform/qcom/venus/core.h
+> >>> b/drivers/media/platform/qcom/venus/core.h
+> >>> index 2f02365..dfd5c10 100644
+> >>> --- a/drivers/media/platform/qcom/venus/core.h
+> >>> +++ b/drivers/media/platform/qcom/venus/core.h
+> >>> @@ -98,6 +98,7 @@ struct venus_caps {
+> >>>   * @dev:               convenience struct device pointer
+> >>>   * @dev_dec:   convenience struct device pointer for decoder device
+> >>>   * @dev_enc:   convenience struct device pointer for encoder device
+> >>> + * @no_tz:     a flag that suggests presence of trustzone
+> >>
+> >> Looks like it suggests the absence of trustzone?
+> >>
+> >> Actually I would rename it as use_tz and set it if TrustZone is used.
+> >> This would avoid double-negative statements like what we see below.
+> >
+> > I find this suggestion reasonable.
+>
+> Initially i planned to keep it as a positive flag. The reason behind
+> keeping it
+> as no_tz was to keep the default value of this flag to 0 indicating tz
+> is present
+> by default.
+> I can switch it to use_tz though and set it in firmware_init after the
+> presence of
+> firmware node is checked.
 
-drivers/infiniband/hw/nes/nes_hw.c:1446:27: warning: equality comparison
-with extraneous parentheses [-Wparentheses-equality]
-        } while ((temp_phy_data2 == temp_phy_data));
-                  ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
-drivers/infiniband/hw/nes/nes_hw.c:1446:27: note: remove extraneous
-parentheses around the comparison to silence this warning
-        } while ((temp_phy_data2 == temp_phy_data));
-                 ~               ^               ~
-drivers/infiniband/hw/nes/nes_hw.c:1446:27: note: use '=' to turn this
-equality comparison into an assignment
-        } while ((temp_phy_data2 == temp_phy_data));
-                                 ^~
-                                 =
+Making sure the flag is explicitly initialized instead of relying on
+default initialization is another good reason to have that change
+IMHO. :)
 
-Remove the unnecessary parentheses to silence this warning.
+>
+> >>
+> >>>   * @lock:      a lock for this strucure
+> >>>   * @instances: a list_head of all instances
+> >>>   * @insts_count:       num of instances
+> >>> @@ -129,6 +130,7 @@ struct venus_core {
+> >>>         struct device *dev;
+> >>>         struct device *dev_dec;
+> >>>         struct device *dev_enc;
+> >>> +       bool no_tz;
+> >>>         struct mutex lock;
+> >>>         struct list_head instances;
+> >>>         atomic_t insts_count;
+> >>> diff --git a/drivers/media/platform/qcom/venus/firmware.c
+> >>> b/drivers/media/platform/qcom/venus/firmware.c
+> >>> index c4a5778..f2ae2f0 100644
+> >>> --- a/drivers/media/platform/qcom/venus/firmware.c
+> >>> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> >>> @@ -22,10 +22,43 @@
+> >>>  #include <linux/sizes.h>
+> >>>  #include <linux/soc/qcom/mdt_loader.h>
+> >>>
+> >>> +#include "core.h"
+> >>>  #include "firmware.h"
+> >>> +#include "hfi_venus_io.h"
+> >>>
+> >>>  #define VENUS_PAS_ID                   9
+> >>>  #define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
+> >>> +#define VENUS_FW_START_ADDR            0x0
+> >>> +
+> >>> +static void venus_reset_cpu(struct venus_core *core)
+> >>> +{
+> >>> +       void __iomem *base = core->base;
+> >>> +
+> >>> +       writel(0, base + WRAPPER_FW_START_ADDR);
+> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_FW_END_ADDR);
+> >>> +       writel(0, base + WRAPPER_CPA_START_ADDR);
+> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_CPA_END_ADDR);
+> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_START_ADDR);
+> >>> +       writel(VENUS_FW_MEM_SIZE, base + WRAPPER_NONPIX_END_ADDR);
+> >>> +       writel(0x0, base + WRAPPER_CPU_CGC_DIS);
+> >>> +       writel(0x0, base + WRAPPER_CPU_CLOCK_CONFIG);
+> >>> +
+> >>> +       /* Bring ARM9 out of reset */
+> >>> +       writel(0, base + WRAPPER_A9SS_SW_RESET);
+> >>> +}
+> >>> +
+> >>> +int venus_set_hw_state(struct venus_core *core, bool resume)
+> >>> +{
+> >>> +       if (!core->no_tz)
+> >>
+> >> This is the kind of double negative statement I was referring do
+> >> above: "if we do not not have TrustZone". Turning it into
+> >>
+> >>     if (core->use_tz)
+> >>
+> >> would save the reader a few neurons. :)
+> >>
+> >>> +               return qcom_scm_set_remote_state(resume, 0);
+> >>> +
+> >>> +       if (resume)
+> >>> +               venus_reset_cpu(core);
+> >>> +       else
+> >>> +               writel(1, core->base + WRAPPER_A9SS_SW_RESET);
+> >>> +
+> >>> +       return 0;
+> >>> +}
+> >>>
+> >>>  int venus_boot(struct device *dev, const char *fwname)
+> >>>  {
+> >>> diff --git a/drivers/media/platform/qcom/venus/firmware.h
+> >>> b/drivers/media/platform/qcom/venus/firmware.h
+> >>> index 428efb5..397570c 100644
+> >>> --- a/drivers/media/platform/qcom/venus/firmware.h
+> >>> +++ b/drivers/media/platform/qcom/venus/firmware.h
+> >>> @@ -18,5 +18,16 @@
+> >>>
+> >>>  int venus_boot(struct device *dev, const char *fwname);
+> >>>  int venus_shutdown(struct device *dev);
+> >>> +int venus_set_hw_state(struct venus_core *core, bool suspend);
+> >>> +
+> >>> +static inline int venus_set_hw_state_suspend(struct venus_core
+> >>> *core)
+> >>> +{
+> >>> +       return venus_set_hw_state(core, false);
+> >>> +}
+> >>> +
+> >>> +static inline int venus_set_hw_state_resume(struct venus_core *core)
+> >>> +{
+> >>> +       return venus_set_hw_state(core, true);
+> >>> +}
+> >>
+> >> I think these two venus_set_hw_state_suspend() and
+> >> venus_set_hw_state_resume() are superfluous, if you want to make the
+> >> state explicit you can also define an enum { SUSPEND, RESUME } to use
+> >> as argument of venus_set_hw_state() and call it directly.
+> >
+> > Infact this was by my request, and I wanted to avoid enum and have the
+> > type of the action in the function name and also avoid one extra
+> > function argument. Of course it is a matter of taste.
 
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/infiniband/hw/nes/nes_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/nes/nes_hw.c b/drivers/infiniband/hw/nes/nes_hw.c
-index bd0675d8f298..5517e392bc01 100644
---- a/drivers/infiniband/hw/nes/nes_hw.c
-+++ b/drivers/infiniband/hw/nes/nes_hw.c
-@@ -1443,7 +1443,7 @@ static int nes_init_2025_phy(struct nes_device *nesdev, u8 phy_type, u8 phy_inde
- 		mdelay(1);
- 		nes_read_10G_phy_reg(nesdev, phy_index, 0x3, 0xd7ee);
- 		temp_phy_data2 = (u16)nes_read_indexed(nesdev, NES_IDX_MAC_MDIO_CONTROL);
--	} while ((temp_phy_data2 == temp_phy_data));
-+	} while (temp_phy_data2 == temp_phy_data);
- 
- 	/* wait for tracking */
- 	counter = 0;
--- 
-2.19.0
-
+That's reasonable as well. I really don't feel strongly about this, so
+please feel free to keep it as it is.
