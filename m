@@ -2,107 +2,114 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E22C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B814C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F9F21531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:25:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F9F21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E11D521531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:25:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="F+ZxiDYm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11D521531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732857AbeITUIu (ORCPT
+        id S1732969AbeITUIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 16:08:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35028 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731135AbeITUIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 16:08:50 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A23D308FF2F;
-        Thu, 20 Sep 2018 14:25:06 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 68BA7600C8;
-        Thu, 20 Sep 2018 14:25:05 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w8KEP4BU021815;
-        Thu, 20 Sep 2018 10:25:04 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w8KEP1jR021811;
-        Thu, 20 Sep 2018 10:25:02 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Thu, 20 Sep 2018 10:25:01 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dmitry Safonov <dima@arista.com>
-cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Nathan March <nathan@gt.net>,
-        =?ISO-8859-15?Q?Pasi_K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Jiri Slaby <jslaby@suse.cz>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-Subject: Re: [PATCHv5 0/7] tty: Hold write ldisc sem in tty_reopen()
-In-Reply-To: <1537388512.21380.44.camel@arista.com>
-Message-ID: <alpine.LRH.2.02.1809201024520.21787@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180917235258.5719-1-dima@arista.com>   <alpine.LRH.2.02.1809191256060.9689@file01.intranet.prod.int.rdu2.redhat.com>   <alpine.LRH.2.02.1809191330590.19146@file01.intranet.prod.int.rdu2.redhat.com>  <1537379148.21380.16.camel@arista.com> 
- <alpine.LRH.2.02.1809191602230.16174@file01.intranet.prod.int.rdu2.redhat.com> <1537388512.21380.44.camel@arista.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Thu, 20 Sep 2018 16:08:54 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52478 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731135AbeITUIx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 16:08:53 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8KEIp05142883;
+        Thu, 20 Sep 2018 14:24:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=nHKiJk8rpfpezRHqmd2UI47n0rjXWHA6Ul5QpzGxKLk=;
+ b=F+ZxiDYmQKOSJobDd3wNUIXkhfKKCrO1r64t2F0S0kYHECjLjsixoJZiU2wIJ0Uxc5Rm
+ cS6tHa8NZVsSWT8lsnduB4Rs88Wc+VVyQJO6tR0EQ/tCvBndpsT6DXEMkjRrXwXhxEk9
+ pVJueiw6lxXQYkW+OyxQmNKOGrQCihd3lvGGnSuaXoNyxVS0PeQMiZI2mAbekpsdxO+p
+ 4wxS0JRSgHH4X59v1v7IoYMOjE1a/0Yt0BmOgXWTVtXhELXHapjHYcbmdQLuF73PUh56
+ hAvEgMD3MfspkgXosdsW+BEAchS0Z9h2hVNvhJrct/q0ErQCiHFeqdruGyGTnweU/4UD Pw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2mgt1q33q1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Sep 2018 14:24:56 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8KEOs2S000931
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Sep 2018 14:24:55 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8KEOspi026180;
+        Thu, 20 Sep 2018 14:24:54 GMT
+Received: from [192.168.1.93] (/99.156.91.244)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Sep 2018 07:24:54 -0700
+Subject: Re: [PATCH] jfs: remove redundant dquot_initialize() in
+ jfs_evict_inode()
+To:     Chao Yu <chao@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        "open list:JFS FILESYSTEM" <jfs-discussion@lists.sourceforge.net>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180917071221.13187-1-yuchao0@huawei.com>
+ <be3a41fb-9a83-19a8-b3da-ca91500471fc@kernel.org>
+From:   Dave Kleikamp <dave.kleikamp@oracle.com>
+Openpgp: preference=signencrypt
+Message-ID: <d6360818-2808-d5a6-119d-97cb506b7d15@oracle.com>
+Date:   Thu, 20 Sep 2018 09:24:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 20 Sep 2018 14:25:06 +0000 (UTC)
+In-Reply-To: <be3a41fb-9a83-19a8-b3da-ca91500471fc@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9021 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809200142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Wed, 19 Sep 2018, Dmitry Safonov wrote:
-
-> On Wed, 2018-09-19 at 16:03 -0400, Mikulas Patocka wrote:
-> > 
-> > On Wed, 19 Sep 2018, Dmitry Safonov wrote:
-> > > Thanks much for the testing, Mikulas.
-> > > Could you try to bisect which of the patches causes it?
-> > > The most important are 1,2,3 - probably, one of them caused it..
-> > > I'll stare a bit into the code.
-> > 
-> > The patch 3 causes it.
-> > 
-> > The hangs during reboot take either 80 seconds, 3 minutes or 3:25.
+On 9/20/18 9:18 AM, Chao Yu wrote:
+> Ping,
 > 
-> Thanks much for that again.
-> Any chance you have sysrq enabled and could print: locks held in system
-> and kernel backtraces for applications?
+> Any comments?
 
-Stacktrace doesn't work on parisc. It used to work on 4.18, but the kernel
-4.19 reportedly requires patched binutils.
+Sorry for putting it off. It looks good to me. I'll push it upstream.
 
-Mikulas
+Thanks,
+Dave
 
-> I suppose, userspace hangs in n_tty_receive_buf_common(), which is
-> better of cause than null-ptr dereference, but I believe we can improve
-> it by stopping a reader earlier if there is any writer pending.
 > 
-> -- 
-> Thanks,
->              Dmitry
-> 
+> On 2018/9/17 15:12, Chao Yu wrote:
+>> We don't need to call dquot_initialize() twice in jfs_evict_inode(),
+>> remove one of them for cleanup.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/jfs/inode.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
+>> index 054cc761b426..805ae9e8944a 100644
+>> --- a/fs/jfs/inode.c
+>> +++ b/fs/jfs/inode.c
+>> @@ -166,7 +166,6 @@ void jfs_evict_inode(struct inode *inode)
+>>  			/*
+>>  			 * Free the inode from the quota allocation.
+>>  			 */
+>> -			dquot_initialize(inode);
+>>  			dquot_free_inode(inode);
+>>  		}
+>>  	} else {
+>>
