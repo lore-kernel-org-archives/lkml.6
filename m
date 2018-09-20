@@ -2,107 +2,69 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AF8ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27514C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07AA9206B5
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:23:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JtWECeF/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AA9206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DD713206B5
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:24:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD713206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731487AbeITLFa (ORCPT
+        id S1731552AbeITLGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:05:30 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43985 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730172AbeITLFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:05:30 -0400
-Received: by mail-io1-f68.google.com with SMTP id y10-v6so6380793ioa.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 22:23:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qD3luyRsioFeQrcJ7TpS7PquXaRw+VnodNG1ePV0gdQ=;
-        b=JtWECeF/Os9Z70oJxLXUCFIouTEakAzgEMSU75ATeWZCKGr3BxdrsmFybfJPT0EBfB
-         KXmKsrtr27dC5rYJtF/yPuJ06stGH+BTV/HXC0O5qOig/YbAyjjANGOaEP8Z9Vis6EMP
-         VB8TinbaZMeQws3hlUjYLTomHd3Jvv6wMj0io=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qD3luyRsioFeQrcJ7TpS7PquXaRw+VnodNG1ePV0gdQ=;
-        b=IXXLIiGLqgbw7/eWO+h2Y0RJb2+y2iySK6CsUXzf5UpWoTzhXCUcNblloI0Ms4ZcTB
-         b+GLJsuBI5Ww0sPxm6sBs/p0S38YlsqZgfhyBjaIIlpwclXEwHccvYe8VaU3FmyWnof7
-         p7vIJPfQW8KgD+aDPUgxDKqT+MF3397XKXIc7QqhVqKxtd5k+retEuX1fDA2HXE403Zl
-         7gylJ9A+zC3rSwMuPQ+37Rd+Nfd/8MUWO6a0ROdfA2W/PlpKGzbMZQ4qHBMla3coKuuE
-         AEH0sJGh5nWkc9QgIatr+byQJgZWaZJxXiOHMluTfTTEQtY/wNd/Hqc7W5JRj3zssDJp
-         4S2g==
-X-Gm-Message-State: APzg51DZRgsVAM0ypU3yw0P7mdRdbnweN/wP9uoyS/Ju7lfqJlQo6hY/
-        IhbNXZ/lkYLuFryGBQ0rItelhvpvOlMzTwOQ7gUnZQ==
-X-Google-Smtp-Source: ANB0VdYTb6lFyh4HJVXUiLDlOt6yPPUWZqiMAzAW1kxCcjDLrVGxKARg4vIJ8ULruCIhVlqe3PoYcltP+VwNMiaciBU=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr31340127iof.304.1537421035845;
- Wed, 19 Sep 2018 22:23:55 -0700 (PDT)
+        Thu, 20 Sep 2018 07:06:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42721 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730172AbeITLGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 07:06:04 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5160ACD9B05C9;
+        Thu, 20 Sep 2018 13:24:26 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 20 Sep 2018 13:24:23 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <ebiederm@xmission.com>
+CC:     <kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] kernel: kexec_file: remove some duplicated include file
+Date:   Thu, 20 Sep 2018 13:12:03 +0800
+Message-ID: <1537420323-30658-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
- <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
- <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com> <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org>
-In-Reply-To: <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 19 Sep 2018 22:23:42 -0700
-Message-ID: <CACRpkdYGpEVG9gqPxNaOsD55k9idEfGaxOUrObbN9VZS06x5jw@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
-To:     timur@kernel.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Timur Tabi <timur@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 4:50 AM Timur Tabi <timur@kernel.org> wrote:
-> On 9/18/18 11:04 PM, Ricardo Ribalda Delgado wrote:
-> > And should't that be tacked in qcom hardware with something like:
-> >
-> > if (!priv->initialized)
-> >     return INPUT;
-> >
-> > if you or Timur point me to the harware that was crashing I would not
-> > mind looking into that, but the current situations seems to me like a
-> > hack.
->
-> I'd say the previous code was the hack.  My comment about not touching
-> the hardware until it is properly claimed is valid, and it applies to
-> all platforms.
+kexec.h and slab.h have duplicated include. hence just remove
+redundant file.
 
-I am a bit uncertain, I understand the reasoning that unless a GPIO line
-has been "claimed" (i.e. .request() was called on it) then we should not
-call any of the gpiochip callbacks.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ kernel/kexec_file.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-But this is merely a convention, the gpiochip becomes what we want
-it to be and it has the semantics we want it to have.
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index c6a3b68..35cf0ad 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -25,8 +25,6 @@
+ #include <linux/elf.h>
+ #include <linux/elfcore.h>
+ #include <linux/kernel.h>
+-#include <linux/kexec.h>
+-#include <linux/slab.h>
+ #include <linux/syscalls.h>
+ #include <linux/vmalloc.h>
+ #include "kexec_internal.h"
+-- 
+1.7.12.4
 
-It also makes sense to inquire the direction initially so we know the
-state of the hardware in the library.
-
-I think most gpiochips easily survives calling the .get_direction()
-early, Qualcomm's stand out here.
-
-Now that we have .valid_mask in the gpiochip could we simply just
-add this back, resepecting valid_mask and avoid checking the
-direction of precisely these GPIOs?
-
-Yours,
-Linus Walleij
