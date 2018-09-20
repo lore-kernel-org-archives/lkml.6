@@ -2,100 +2,84 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD0ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD32ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B92EE2152C
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:30:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eC4U5AB+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IyR09dfc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92EE2152C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2F0DA204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:32:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F0DA204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbeITSOF (ORCPT
+        id S2387672AbeITSPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:14:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42970 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730984AbeITSOE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:14:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5CF2B600ED; Thu, 20 Sep 2018 12:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537446648;
-        bh=i5YYbXA8haf7G9GkqOIHzi8w/mP6tD0X8dj3GRqL9+o=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=eC4U5AB+b1KgyNr8Pth1TpTwISdg4BCbslVZyWQFcc/LQz6aFtX+qirj8jgH86QnD
-         Ew+KTVYmlv3j+n5UXkv7xtV3o6ctXJrm6om+mdGRYe3w5POQV3LbqWQFxItCAaHrpT
-         vabsX2+OshOVIMpyeubVrtxZg3vRzpPWd6gnFoIE=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7FA360B73;
-        Thu, 20 Sep 2018 12:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537446647;
-        bh=i5YYbXA8haf7G9GkqOIHzi8w/mP6tD0X8dj3GRqL9+o=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=IyR09dfc4T9Mnps/3ARGOmdtdw5ukFV3ak0K8/woEv5xTPh72MK4yElU/NZSPSNGc
-         muvdKUmM0giIbDrd1FKlyFKhWGOknTZOh8LeWPgEYgCgk0GKrW1cFVvwQv+wrI3U76
-         Of7NpERltgw1cMYCQN58LofL5koJDwjOR4t0vtwk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7FA360B73
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     <davem@davemloft.net>, <hante.meuleman@broadcom.com>,
-        <franky.lin@broadcom.com>, <arend.vanspriel@broadcom.com>,
-        <linux-wireless@vger.kernel.org>,
-        <brcm80211-dev-list.pdl@broadcom.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] brcm80211: remove redundant condition check before debugfs_remove_recursive
-References: <1536761412-24932-1-git-send-email-zhongjiang@huawei.com>
-        <20180920120709.5FE6960BF7@smtp.codeaurora.org>
-        <5BA391D4.20205@huawei.com>
-Date:   Thu, 20 Sep 2018 15:30:42 +0300
-In-Reply-To: <5BA391D4.20205@huawei.com> (zhong jiang's message of "Thu, 20
-        Sep 2018 20:25:56 +0800")
-Message-ID: <877ejg1hcd.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 20 Sep 2018 14:15:17 -0400
+Received: from mga17.intel.com ([192.55.52.151]:1728 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387637AbeITSPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:15:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 05:32:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,398,1531810800"; 
+   d="scan'208";a="92211952"
+Received: from unknown (HELO [10.239.13.3]) ([10.239.13.3])
+  by orsmga001.jf.intel.com with ESMTP; 20 Sep 2018 05:31:58 -0700
+Message-ID: <5BA39461.8020907@intel.com>
+Date:   Thu, 20 Sep 2018 20:36:49 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+To:     "Gonglei (Arei)" <arei.gonglei@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>
+CC:     "kan.liang@intel.com" <kan.liang@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "like.xu@intel.com" <like.xu@intel.com>,
+        "jannh@google.com" <jannh@google.com>
+Subject: Re: [PATCH v3 0/5] Guest LBR Enabling
+References: <1537437959-8751-1-git-send-email-wei.w.wang@intel.com> <33183CC9F5247A488A2544077AF19020DB0F73EB@dggeml511-mbx.china.huawei.com>
+In-Reply-To: <33183CC9F5247A488A2544077AF19020DB0F73EB@dggeml511-mbx.china.huawei.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zhong jiang <zhongjiang@huawei.com> writes:
-
-> On 2018/9/20 20:07, Kalle Valo wrote:
->> zhong jiang <zhongjiang@huawei.com> wrote:
+On 09/20/2018 07:34 PM, Gonglei (Arei) wrote:
+>> -----Original Message-----
+>> From: kvm-owner@vger.kernel.org [mailto:kvm-owner@vger.kernel.org] On
+>> Behalf Of Wei Wang
+>> Sent: Thursday, September 20, 2018 6:06 PM
+>> To: linux-kernel@vger.kernel.org; kvm@vger.kernel.org; pbonzini@redhat.com;
+>> ak@linux.intel.com
+>> Cc: kan.liang@intel.com; peterz@infradead.org; mingo@redhat.com;
+>> rkrcmar@redhat.com; like.xu@intel.com; wei.w.wang@intel.com;
+>> jannh@google.com; Gonglei (Arei) <arei.gonglei@huawei.com>
+>> Subject: [PATCH v3 0/5] Guest LBR Enabling
 >>
->>> debugfs_remove_recursive has taken IS_ERR_OR_NULL into account. So just
->>> remove the condition check before debugfs_remove_recursive.
->>>
->>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> It seems you already submitted an identical patch four days earlier:
+>> Last Branch Recording (LBR) is a performance monitor unit (PMU) feature
+>> on Intel CPUs that captures branch related info. This patch series enables
+>> this feature to KVM guests.
 >>
->> https://patchwork.kernel.org/patch/10593061/
->>
->> Why the duplicate? Please ALWAYS add a changelog and increase the version number:
+>> Here is a conclusion of the fundamental methods that we use:
+>> 1) the LBR feature is enabled per guest via QEMU setting of
+>>     KVM_CAP_X86_GUEST_LBR;
+> Did you send the QEMU parts for guest LBR support?
 >
-> I am sorry for that. Maybe I send the patch earlier, but I remeber I
-> should forget to cc to
-> netdev@vger.kernel.org and LMLK. So I repost it.  Plese ingore the current patch.
 
-Even then please increase the version number and mention in the change
-log why you sent a new version. Otherwise you will make maintainers
-confused and wasting time with asking what has changed.
+Not yet. Probably next week for the QEMU part.
 
--- 
-Kalle Valo
+Best,
+Wei
