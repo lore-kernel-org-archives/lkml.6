@@ -2,115 +2,81 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9386BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D09C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5488E20833
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:30:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5488E20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 34E7321533
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:33:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E7321533
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeIUEQB (ORCPT
+        id S1725991AbeIUETG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:16:01 -0400
-Received: from mga12.intel.com ([192.55.52.136]:21358 "EHLO mga12.intel.com"
+        Fri, 21 Sep 2018 00:19:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:53786 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbeIUEQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:16:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 15:30:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,282,1534834800"; 
-   d="scan'208";a="85287175"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
-  by orsmga003.jf.intel.com with ESMTP; 20 Sep 2018 15:29:58 -0700
-Subject: [PATCH v4 5/5] nvdimm: Schedule device registration on node local
- to the device
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
-        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
-        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
-Date:   Thu, 20 Sep 2018 15:29:57 -0700
-Message-ID: <20180920222951.19464.39241.stgit@localhost.localdomain>
-In-Reply-To: <20180920215824.19464.8884.stgit@localhost.localdomain>
-References: <20180920215824.19464.8884.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1725783AbeIUETG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 00:19:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43DCC80D;
+        Thu, 20 Sep 2018 15:33:22 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 098663F5C0;
+        Thu, 20 Sep 2018 15:33:22 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 23:33:20 +0100
+Message-ID: <86lg7vx0i7.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] arm64: Trap WFI executed in userspace
+In-Reply-To: <20180920220430.GA27468@xo-6d-61-c0.localdomain>
+References: <20180807093326.5090-1-marc.zyngier@arm.com>
+        <20180920220430.GA27468@xo-6d-61-c0.localdomain>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is meant to force the device registration for nvdimm devices to
-be closer to the actual device. This is achieved by using either the NUMA
-node ID of the region, or of the parent. By doing this we can have
-everything above the region based on the region, and everything below the
-region based on the nvdimm bus.
+On Thu, 20 Sep 2018 23:04:30 +0100,
+Pavel Machek <pavel@ucw.cz> wrote:
+> 
+> On Tue 2018-08-07 10:33:26, Marc Zyngier wrote:
+> > It recently came to light that userspace can execute WFI, and that
+> > the arm64 kernel doesn trap this event. This sounds rather benign,
+> > but the kernel should decide when it wants to wait for an interrupt,
+> > and not userspace.
+> > 
+> > Let's trap WFI and treat it as a way to yield the CPU to another
+> > process.
+> 
+> I don't think that's reasonable. Userspace should not be doing that,
+> and we do not want to encourage it. SIGILL would be reasonable, I'd
+> say.
 
-One additional change I made is that we hold onto a reference to the parent
-while we are going through registration. By doing this we can guarantee we
-can complete the registration before we have the parent device removed.
+This ship has already sailed. Sending SIGILL changes the ABI in an
+incompatible way. Immediately returning to userspace without doing
+anything else (see v2 [1]) is the best we can do without changing the
+behaviour of userspace.
 
-By guaranteeing NUMA locality I see an improvement of as high as 25% for
-per-node init of a system with 12TB of persistent memory.
+Thanks,
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- drivers/nvdimm/bus.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+	M.
 
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index 8aae6dcc839f..ca935296d55e 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -487,7 +487,9 @@ static void nd_async_device_register(void *d, async_cookie_t cookie)
- 		dev_err(dev, "%s: failed\n", __func__);
- 		put_device(dev);
- 	}
-+
- 	put_device(dev);
-+	put_device(dev->parent);
- }
- 
- static void nd_async_device_unregister(void *d, async_cookie_t cookie)
-@@ -504,12 +506,25 @@ static void nd_async_device_unregister(void *d, async_cookie_t cookie)
- 
- void __nd_device_register(struct device *dev)
- {
-+	int node;
-+
- 	if (!dev)
- 		return;
-+
- 	dev->bus = &nvdimm_bus_type;
-+	get_device(dev->parent);
- 	get_device(dev);
--	async_schedule_domain(nd_async_device_register, dev,
--			&nd_async_domain);
-+
-+	/*
-+	 * For a region we can break away from the parent node,
-+	 * otherwise for all other devices we just inherit the node from
-+	 * the parent.
-+	 */
-+	node = is_nd_region(dev) ? to_nd_region(dev)->numa_node :
-+				   dev_to_node(dev->parent);
-+
-+	async_schedule_on_domain(nd_async_device_register, dev, node,
-+				 &nd_async_domain);
- }
- 
- void nd_device_register(struct device *dev)
+[1] https://patchwork.kernel.org/patch/10562517/
 
+-- 
+Jazz is not dead, it just smell funny.
