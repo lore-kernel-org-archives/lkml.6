@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E3EC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E00ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D27A21534
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:19:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D27A21534
+	by mail.kernel.org (Postfix) with ESMTP id EFB2321534
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:20:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB2321534
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388591AbeIUDFV (ORCPT
+        id S2388625AbeIUDF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 23:05:21 -0400
-Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:60442
-        "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727171AbeIUDFV (ORCPT
+        Thu, 20 Sep 2018 23:05:27 -0400
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:35140
+        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726128AbeIUDF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 23:05:21 -0400
+        Thu, 20 Sep 2018 23:05:26 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with ESMTP
-        id 36LdgmcmFwkZt36LdgKqpX; Thu, 20 Sep 2018 14:18:53 -0700
+        id 36Lig3H2Ysezk36Lig9Yi9; Thu, 20 Sep 2018 14:18:58 -0700
 x-originating-ip: 107.180.71.197
 Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
-        id 1g36Lc-0003Zz-SZ; Thu, 20 Sep 2018 14:18:52 -0700
+        id 1g36Li-0003ar-Nz; Thu, 20 Sep 2018 14:18:58 -0700
 From:   Long Li <longli@linuxonhyperv.com>
 To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Cc:     Long Li <longli@microsoft.com>
-Subject: [PATCH V3 (resend) 1/7] CIFS: pass page offsets on SMB1 read/write
-Date:   Thu, 20 Sep 2018 21:18:38 +0000
-Message-Id: <20180920211842.13721-1-longli@linuxonhyperv.com>
+Subject: [PATCH V3 (resend) 2/7] CIFS: SMBD: Do not call ib_dereg_mr on invalidated memory registration
+Date:   Thu, 20 Sep 2018 21:18:39 +0000
+Message-Id: <20180920211842.13721-2-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180920211842.13721-1-longli@linuxonhyperv.com>
+References: <20180920211842.13721-1-longli@linuxonhyperv.com>
 Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfAFWS3dU56MY0CJdB1QajlXDb6ZazfoX6AByb4S2jcO/BB06WA/VotPgmXG/nmKXI704C2DAh+ikKvfvjOn8kxIu5ZkHIMWsVZ2koBjQu10FCHDCzsHN
- Ma2rAgS4cZwA7rgvAgjDkYKi/lbUIPA3Bc6lej2QAg5gkFQb9x3d2ATgsp3Xh21KyPwMASMNwRY4LNgWrfVFqC1V5Bmx4fU3smCLSFo5ojJ6QJwfObTIiaA3
- 6iroqrodFT1vG/szGK7XN9ZhZBbtPYIyu2gyZuZINnmlb56ANg/E9Rib196OIWzaU3NcPb0Z4d30E5hoPCv1vuzl9ih3pg3AhrJ8kyqwj0QZ5E+Tj63u0YqG
- 1Hv69Hn/hnu4GhbCR3eeYOa4Sk0CvIXGm/O9IGRZ1iyDHfIrJfDtjq+dF/sSpu79B3QMKNXN
+X-CMAE-Envelope: MS4wfBFMXqz19nF4hviKOGzw+qm5LuMEs2ONWqHupdIE0M0pcXT4980zayk7qN2ZlyetNbD4AdG5AO14Fook1Niue1433YKh9E483qgi/8bTYl3/spBrsS5x
+ oWpudpyYkAseCxlNKoWkB+S9VF/LG61+V52vMyMtFMcfBWUn6ZqqOY1dy5JCylMNRpnblaC4mv8YnDVESfNK+QvbxnmaL9hwVs/qf+8RY4vAY6htUdFL3tmo
+ oScCE5L0TeYxrVQ0zvIKySuesgVs42HMBfOd9tnIzkbnfr9iN3Z9yWOzNkp1FVfSgOc/Z/BUIMPejfslkggx1Mpp8X7p/MSSAo3INGCn1cykyV+apQN15Euq
+ B5ZEh4tW05Ie9JDT9wSxZ7bH4Q0eotjQUStpR7HKDalPhhx5SEf1x9eT1/AnKFAqex9iTJGz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,33 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-When issuing SMB1 read/write, pass the page offset to transport.
+It is not necessary to deregister a memory registration after it has been
+successfully invalidated.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- fs/cifs/cifssmb.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/cifs/smbdirect.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-index 41329f4..f82fd34 100644
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -1607,6 +1607,7 @@ cifs_readv_callback(struct mid_q_entry *mid)
- 	struct smb_rqst rqst = { .rq_iov = rdata->iov,
- 				 .rq_nvec = 2,
- 				 .rq_pages = rdata->pages,
-+				 .rq_offset = rdata->page_offset,
- 				 .rq_npages = rdata->nr_pages,
- 				 .rq_pagesz = rdata->pagesz,
- 				 .rq_tailsz = rdata->tailsz };
-@@ -2210,6 +2211,7 @@ cifs_async_writev(struct cifs_writedata *wdata,
- 	rqst.rq_iov = iov;
- 	rqst.rq_nvec = 2;
- 	rqst.rq_pages = wdata->pages;
-+	rqst.rq_offset = wdata->page_offset;
- 	rqst.rq_npages = wdata->nr_pages;
- 	rqst.rq_pagesz = wdata->pagesz;
- 	rqst.rq_tailsz = wdata->tailsz;
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index 5fdb9a5..5e28236 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -2295,8 +2295,12 @@ static void smbd_mr_recovery_work(struct work_struct *work)
+ 	int rc;
+ 
+ 	list_for_each_entry(smbdirect_mr, &info->mr_list, list) {
+-		if (smbdirect_mr->state == MR_INVALIDATED ||
+-			smbdirect_mr->state == MR_ERROR) {
++		if (smbdirect_mr->state == MR_INVALIDATED)
++			ib_dma_unmap_sg(
++				info->id->device, smbdirect_mr->sgl,
++				smbdirect_mr->sgl_count,
++				smbdirect_mr->dir);
++		else if (smbdirect_mr->state == MR_ERROR) {
+ 
+ 			/* recover this MR entry */
+ 			rc = ib_dereg_mr(smbdirect_mr->mr);
+@@ -2320,25 +2324,21 @@ static void smbd_mr_recovery_work(struct work_struct *work)
+ 				smbd_disconnect_rdma_connection(info);
+ 				continue;
+ 			}
++		} else
++			/* This MR is being used, don't recover it */
++			continue;
+ 
+-			if (smbdirect_mr->state == MR_INVALIDATED)
+-				ib_dma_unmap_sg(
+-					info->id->device, smbdirect_mr->sgl,
+-					smbdirect_mr->sgl_count,
+-					smbdirect_mr->dir);
+-
+-			smbdirect_mr->state = MR_READY;
++		smbdirect_mr->state = MR_READY;
+ 
+-			/* smbdirect_mr->state is updated by this function
+-			 * and is read and updated by I/O issuing CPUs trying
+-			 * to get a MR, the call to atomic_inc_return
+-			 * implicates a memory barrier and guarantees this
+-			 * value is updated before waking up any calls to
+-			 * get_mr() from the I/O issuing CPUs
+-			 */
+-			if (atomic_inc_return(&info->mr_ready_count) == 1)
+-				wake_up_interruptible(&info->wait_mr);
+-		}
++		/* smbdirect_mr->state is updated by this function
++		 * and is read and updated by I/O issuing CPUs trying
++		 * to get a MR, the call to atomic_inc_return
++		 * implicates a memory barrier and guarantees this
++		 * value is updated before waking up any calls to
++		 * get_mr() from the I/O issuing CPUs
++		 */
++		if (atomic_inc_return(&info->mr_ready_count) == 1)
++			wake_up_interruptible(&info->wait_mr);
+ 	}
+ }
+ 
 -- 
 2.7.4
 
