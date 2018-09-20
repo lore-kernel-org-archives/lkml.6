@@ -2,75 +2,145 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78BEECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7A2ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF4322147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF4322147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C92C92147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92C92147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388397AbeIUBsE (ORCPT
+        id S2388466AbeIUBsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:48:04 -0400
-Received: from mga17.intel.com ([192.55.52.151]:62935 "EHLO mga17.intel.com"
+        Thu, 20 Sep 2018 21:48:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59582 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731832AbeIUBsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:48:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 13:02:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
-   d="scan'208";a="264386357"
-Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.44])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Sep 2018 13:02:04 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kirill Shutemov <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv2 3/7] tools/gup_benchmark: Fix 'write' flag usage
-Date:   Thu, 20 Sep 2018 14:03:54 -0600
-Message-Id: <20180920200358.31680-4-keith.busch@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180920200358.31680-1-keith.busch@intel.com>
-References: <20180920200358.31680-1-keith.busch@intel.com>
+        id S2388196AbeIUBsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 21:48:18 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 55F9E88312;
+        Thu, 20 Sep 2018 20:03:10 +0000 (UTC)
+Received: from gimli.home (ovpn-116-77.phx2.redhat.com [10.3.116.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 47FEF106A785;
+        Thu, 20 Sep 2018 20:03:07 +0000 (UTC)
+Subject: [PATCH v2] vfio/pci: Mask buggy SR-IOV VF INTx support
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     kvm@vger.kernel.org, ashok.raj@intel.com, gage.eads@intel.com
+Cc:     gnomes@lxorguk.ukuu.org.uk, linux-kernel@vger.kernel.org
+Date:   Thu, 20 Sep 2018 14:03:06 -0600
+Message-ID: <153747346143.7344.14634545723456004489.stgit@gimli.home>
+User-Agent: StGit/0.18-136-gffd7-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Sep 2018 20:03:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the '-w' parameter was provided, the benchmark would exit due to a
-mssing 'break'.
+The SR-IOV spec requires that VFs must report zero for the INTx pin
+register as VFs are precluded from INTx support.  It's much easier for
+the host kernel to understand whether a device is a VF and therefore
+whether a non-zero pin register value is bogus than it is to do the
+same in userspace.  Override the INTx count for such devices and
+virtualize the pin register to provide a consistent view of the device
+to the user.
 
-Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
+As this is clearly a spec violation, warn about it to support hardware
+validation, but also provide a known whitelist as it doesn't do much
+good to continue complaining if the hardware vendor doesn't plan to
+fix it.
+
+Known devices with this issue: 8086:270c
+
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 ---
- tools/testing/selftests/vm/gup_benchmark.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
-index c2f785ded9b9..b2082df8beb4 100644
---- a/tools/testing/selftests/vm/gup_benchmark.c
-+++ b/tools/testing/selftests/vm/gup_benchmark.c
-@@ -60,6 +60,7 @@ int main(int argc, char **argv)
- 			break;
- 		case 'w':
- 			write = 1;
-+			break;
- 		default:
- 			return -1;
- 		}
--- 
-2.14.4
+v2:
+Moved the warning to vfio_config_init(), so it triggers on device open and
+no longer depends on the user looking at the number of INTx IRQs available.
+Also changed from dev_warn_once() to pci_warn() as this new location seems
+sufficiently low frequency to nag repeatedly.  Please test.  Thanks,
+
+Alex
+
+ drivers/vfio/pci/vfio_pci.c        |    8 ++++++--
+ drivers/vfio/pci/vfio_pci_config.c |   27 +++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index cddb453a1ba5..50cdedfca9fe 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -434,10 +434,14 @@ static int vfio_pci_get_irq_count(struct vfio_pci_device *vdev, int irq_type)
+ {
+ 	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
+ 		u8 pin;
++
++		if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) ||
++		    vdev->nointx || vdev->pdev->is_virtfn)
++			return 0;
++
+ 		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+-		if (IS_ENABLED(CONFIG_VFIO_PCI_INTX) && !vdev->nointx && pin)
+-			return 1;
+ 
++		return pin ? 1 : 0;
+ 	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
+ 		u8 pos;
+ 		u16 flags;
+diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+index 62023b4a373b..423ea1f98441 100644
+--- a/drivers/vfio/pci/vfio_pci_config.c
++++ b/drivers/vfio/pci/vfio_pci_config.c
+@@ -1611,6 +1611,15 @@ static int vfio_ecap_init(struct vfio_pci_device *vdev)
+ 	return 0;
+ }
+ 
++/*
++ * Nag about hardware bugs, hopefully to have vendors fix them, but at least
++ * to collect a list of dependencies for the VF INTx pin quirk below.
++ */
++static const struct pci_device_id known_bogus_vf_intx_pin[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x270c) },
++	{}
++};
++
+ /*
+  * For each device we allocate a pci_config_map that indicates the
+  * capability occupying each dword and thus the struct perm_bits we
+@@ -1676,6 +1685,24 @@ int vfio_config_init(struct vfio_pci_device *vdev)
+ 	if (pdev->is_virtfn) {
+ 		*(__le16 *)&vconfig[PCI_VENDOR_ID] = cpu_to_le16(pdev->vendor);
+ 		*(__le16 *)&vconfig[PCI_DEVICE_ID] = cpu_to_le16(pdev->device);
++
++		/*
++		 * Per SR-IOV spec rev 1.1, 3.4.1.18 the interrupt pin register
++		 * does not apply to VFs and VFs must implement this register
++		 * as read-only with value zero.  Userspace is not readily able
++		 * to identify whether a device is a VF and thus that the pin
++		 * definition on the device is bogus should it violate this
++		 * requirement.  We already virtualize the pin register for
++		 * other purposes, so we simply need to replace the bogus value
++		 * and consider VFs when we determine INTx IRQ count.
++		 */
++		if (vconfig[PCI_INTERRUPT_PIN] &&
++		    !pci_match_id(known_bogus_vf_intx_pin, pdev))
++			pci_warn(pdev,
++				 "Hardware bug: VF reports bogus INTx pin %d\n",
++				 vconfig[PCI_INTERRUPT_PIN]);
++
++		vconfig[PCI_INTERRUPT_PIN] = 0; /* Gratuitous for good VFs */
+ 	}
+ 
+ 	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx)
 
