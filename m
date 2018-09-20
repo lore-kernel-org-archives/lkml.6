@@ -2,294 +2,108 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F298C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6021BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A661021531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:17:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 100AD2152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:17:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tehQMYAs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A661021531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lVbQKMK6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 100AD2152F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732607AbeITSAW (ORCPT
+        id S1732701AbeITSAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730984AbeITSAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:00:22 -0400
-Received: from [192.168.0.101] (unknown [117.62.222.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB33A21529;
-        Thu, 20 Sep 2018 12:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537445828;
-        bh=QD40aQSP+nY7WKC8MtSG3T2sFix5LWEzEhbX3PMONrI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=tehQMYAseLp8yQgIg533bVOGGHvZywWhhOpDmQs/DlL7YwAXDPUPdaOBZsAuWZ7l8
-         YiIW9J7y28qHNrnFHooXO3N5FJi7pokWGU0bYfPC7aoeJmWk+wIxAF4W8mXwvoLpe4
-         +GFafhG6P21EwxMfFgWsgI7XB/gFWIqzJ+u2xjL4=
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: allow out-place-update for direct IO
- in LFS mode
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Chao Yu <yuchao0@huawei.com>
-Cc:     jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180920085718.66966-1-yuchao0@huawei.com>
- <20180920112555.GI22939@codeaurora.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <0f643ff0-7d49-6175-a449-f18bd368fbbc@kernel.org>
-Date:   Thu, 20 Sep 2018 20:16:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180920112555.GI22939@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+        Thu, 20 Sep 2018 14:00:36 -0400
+Received: from mail-he1eur01on0064.outbound.protection.outlook.com ([104.47.0.64]:29408
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730984AbeITSAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:00:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HZYqEOYxiEFMIUlegmuBidPrdIZxI+pwJlXaCxtW6HI=;
+ b=lVbQKMK6fvOGBV0CgUBC+JQ/VKeC5omQWYSYptbat7L5/r7i0bZoAuy3v+9mJ9THzz+eFhcxCr66FGNpfm9nJLNS6OXtejAkq4ZXBzFFtPoTPJrcA0UjWx9zwH+ZDV8p3XNCTI2qCqkHV/k0WoCGzT5GfIq41YDexSItl3Uoc04=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4308.eurprd04.prod.outlook.com (52.134.126.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.15; Thu, 20 Sep 2018 12:17:18 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c5f:d09d:bdc1:fe03]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::c5f:d09d:bdc1:fe03%2]) with mapi id 15.20.1143.017; Thu, 20 Sep 2018
+ 12:17:18 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "jslaby@suse.com" <jslaby@suse.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Andy Duan <fugang.duan@nxp.com>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] serial: imx: restore handshaking irq for imx1
+Thread-Topic: [PATCH] serial: imx: restore handshaking irq for imx1
+Thread-Index: AQHUUNsX9E7BfMdKEEeXeGa6mxFO3qT5Ff8A
+Date:   Thu, 20 Sep 2018 12:17:18 +0000
+Message-ID: <7c7d24fcfac2fe8afe7151d3afe49cb48be68dce.camel@nxp.com>
+References: <20180920071957.xnwni4lqb5kgncfc@pengutronix.de>
+         <20180920121117.19041-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20180920121117.19041-1-u.kleine-koenig@pengutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.1-2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4308;6:3qH2szq3HYoT5GDY0g0b/TwyUohLeKaSynJyOuxcu8aW+gBBjkelud/wcmuwHHOPnhZzq2ABssGBhm8EIS6lGKcayw1dFSQSVXSsBuFRM9zGwERDqqCA1aRohQWKB8G2mat3xuMGXT+Y4DcD6CCBculHhX5jAg9eO/yELgpB2Sun54J7/TPnXdFuE3HopB59Qm5u4ikthlK/cuassnwhbL/bngAKa0fQHIK2/a70A0pcZvMor/H8iWGidNCsgQMos0czsUuP8gmOjz2v4hHZroOjOCOxKw/NpedQaVRQXErSCIJXoeNRhn2ay+r3rGt4cI603AstKBRvsGq8qEQHKVqYQdUXCPRnWEFomHyWjYcNo+WJEdYZx3XrOkN5exSeI9KEL/tPwr0x/PU1+euKnngmPVn4jEAwBktxkENwC1F1RsiJJ1wsSS5Ihw89e/1Qq2iM05kf9HnDqU5aQ6q/zA==;5:Tt7YvPE3vZz5ZUBPfuBk5zsr1kJuIGiTs1z2I2sewkVW+i7yltFJc9EZ9W0Pj5v+mtpq3ttSk+2ylM4bgcs8BE98/0PlpURLYE4ZgmbJp2LhcBaiS37/poTB3dA3XWfIjy6Sg6pqK9KalbHm65ho5Q8jMBzmvCJdiutoIboxZRY=;7:VjfuxDf1ZK4KyQekRSfBigntWsGC56530/zVzOY2ZvfR0HfZpLOKWWlFN8eUG01TGw76oJFL47eYSbQ4XtbZbNF1+oHRjzBhcDUn9T7aNGas9EEzaoyiPJxadeB7cxAL0m0r5YVN5lHJG0HGN9ytGIL2JuA1EUp/P8KqJxKvsp8ehmfS0rp1xPo3eyNiZv0fXTfSNY1GQ2RPsG7Zh5c0zpBavr1Lx05M7CVRN0Vpce/gJk5lTKmnUgf9IJR8pKm+
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 7c6c7c65-efda-4a6d-7b50-08d61ef3029b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4308;
+x-ms-traffictypediagnostic: AM0PR04MB4308:
+x-microsoft-antispam-prvs: <AM0PR04MB43086011EF150831261CADE8EE130@AM0PR04MB4308.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051);SRVR:AM0PR04MB4308;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4308;
+x-forefront-prvs: 0801F2E62B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(366004)(346002)(376002)(199004)(189003)(7736002)(229853002)(110136005)(68736007)(8676002)(6512007)(486006)(2900100001)(186003)(2201001)(478600001)(99286004)(66066001)(50226002)(26005)(2906002)(14454004)(102836004)(86362001)(2501003)(97736004)(6436002)(316002)(2616005)(6486002)(11346002)(4326008)(53936002)(446003)(76176011)(44832011)(5250100002)(54906003)(6246003)(25786009)(6506007)(8936002)(6116002)(36756003)(81156014)(5660300001)(476003)(3846002)(256004)(305945005)(81166006)(118296001)(105586002)(106356001)(71190400001)(71200400001)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4308;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ax/RgjC+US3bM7NmPhrsK1gMeYmYpcEynpaLNOGXhzhheC7jpsxJvEoaDT8WVs3f/7SimucFHEuvcQY8YjBMXXtjZdSvzXWi9lF70RFOnVabIpIyA2jSeKrA2rfi4lUeU3GgyC4WW+cEro9AormA0r96RnmKlUyYhSWnl1GZ3ctcy1Bo2JpjBoFYqjKUG+SmcAbvfa7WzcdmaCMU+LF7tY4ao+aUJzqu473AcjZ7OoKGjXdQAqIbm6wZ+zHNyAQNBrutzTOi1DVkD5ia9H4BXH/n45zh5kD+UxwN9QeRqok2JtAxaL/c8npsclM6vNpU4aR5sE/Usn1z5zhmDekZ9BGPlcelx2pgssBUaGvH0Qg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1CEEF2D0D925944A9715C53B0CE8233E@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c6c7c65-efda-4a6d-7b50-08d61ef3029b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 12:17:18.8213
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4308
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/20 19:25, Sahitya Tummala wrote:
-> On Thu, Sep 20, 2018 at 04:57:18PM +0800, Chao Yu wrote:
->> Normally, DIO uses in-pllace-update, but in LFS mode, f2fs doesn't
->> allow triggering any in-place-update writes, so we fallback direct
->> write to buffered write, result in bad performance of large size
->> write.
->>
->> This patch adds to support triggering out-place-update for direct IO
->> to enhance its performance.
->>
->> Note that it needs to exclude direct read IO during direct write,
->> since new data writing to new block address will no be valid until
->> write finished.
->>
->> storage: zram
->>
->> time xfs_io -f -d /mnt/f2fs/file -c "pwrite 0 1073741824" -c "fsync"
->>
->> Before:
->> real	0m13.061s
->> user	0m0.327s
->> sys	0m12.486s
->>
->> After:
->> real	0m6.448s
->> user	0m0.228s
->> sys	0m6.212s
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v2:
->> - don't use direct IO for block zoned device.
->>  fs/f2fs/data.c | 41 +++++++++++++++++++++++++++++++++--------
->>  fs/f2fs/f2fs.h | 45 +++++++++++++++++++++++++++++++++++++++++----
->>  fs/f2fs/file.c |  3 ++-
->>  3 files changed, 76 insertions(+), 13 deletions(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index b96f8588d565..e709f0fbb7a8 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -894,7 +894,7 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
->>  
->>  	dn->data_blkaddr = datablock_addr(dn->inode,
->>  				dn->node_page, dn->ofs_in_node);
->> -	if (dn->data_blkaddr == NEW_ADDR)
->> +	if (dn->data_blkaddr != NULL_ADDR)
->>  		goto alloc;
->>  
->>  	if (unlikely((err = inc_valid_block_count(sbi, dn->inode, &count))))
->> @@ -950,7 +950,7 @@ int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->>  
->>  	if (direct_io) {
->>  		map.m_seg_type = f2fs_rw_hint_to_seg_type(iocb->ki_hint);
->> -		flag = f2fs_force_buffered_io(inode, WRITE) ?
->> +		flag = f2fs_force_buffered_io(inode, iocb, from) ?
->>  					F2FS_GET_BLOCK_PRE_AIO :
->>  					F2FS_GET_BLOCK_PRE_DIO;
->>  		goto map_blocks;
->> @@ -1069,7 +1069,15 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->>  		goto sync_out;
->>  	}
->>  
->> -	if (!is_valid_data_blkaddr(sbi, blkaddr)) {
->> +	if (is_valid_data_blkaddr(sbi, blkaddr)) {
->> +		/* use out-place-update for driect IO under LFS mode */
->> +		if (test_opt(sbi, LFS) && create &&
->> +				flag == F2FS_GET_BLOCK_DEFAULT) {
->> +			err = __allocate_data_block(&dn, map->m_seg_type);
->> +			if (!err)
->> +				set_inode_flag(inode, FI_APPEND_WRITE);
->> +		}
->> +	} else {
->>  		if (create) {
->>  			if (unlikely(f2fs_cp_error(sbi))) {
->>  				err = -EIO;
->> @@ -2493,36 +2501,53 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->>  	struct inode *inode = mapping->host;
->>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->>  	size_t count = iov_iter_count(iter);
->>  	loff_t offset = iocb->ki_pos;
->>  	int rw = iov_iter_rw(iter);
->>  	int err;
->>  	enum rw_hint hint = iocb->ki_hint;
->>  	int whint_mode = F2FS_OPTION(sbi).whint_mode;
->> +	bool lock_read;
->>  
->>  	err = check_direct_IO(inode, iter, offset);
->>  	if (err)
->>  		return err < 0 ? err : 0;
->>  
->> -	if (f2fs_force_buffered_io(inode, rw))
->> +	if (f2fs_force_buffered_io(inode, iocb, iter))
->>  		return 0;
->>  
->> +	lock_read = allow_outplace_dio(inode, iocb, iter);
->> +
->>  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
->>  
->>  	if (rw == WRITE && whint_mode == WHINT_MODE_OFF)
->>  		iocb->ki_hint = WRITE_LIFE_NOT_SET;
->>  
->> -	if (!down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[rw])) {
->> -		if (iocb->ki_flags & IOCB_NOWAIT) {
->> +	if (iocb->ki_flags & IOCB_NOWAIT) {
->> +		if (!down_read_trylock(&fi->i_gc_rwsem[rw])) {
->> +			iocb->ki_hint = hint;
->> +			err = -EAGAIN;
->> +			goto out;
->> +		}
->> +		if (lock_read && !down_read_trylock(&fi->i_gc_rwsem[READ])) {
->> +			up_read(&fi->i_gc_rwsem[rw]);
->>  			iocb->ki_hint = hint;
->>  			err = -EAGAIN;
->>  			goto out;
->>  		}
->> -		down_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
->> +	} else {
->> +		down_read(&fi->i_gc_rwsem[rw]);
->> +		if (lock_read)
->> +			down_read(&fi->i_gc_rwsem[READ]);
->>  	}
->>  
->>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
->> -	up_read(&F2FS_I(inode)->i_gc_rwsem[rw]);
->> +
->> +	if (lock_read)
->> +		up_read(&fi->i_gc_rwsem[READ]);
->> +
->> +	up_read(&fi->i_gc_rwsem[rw]);
->>  
->>  	if (rw == WRITE) {
-> 
-> The current code is setting the FI_UPDATE_WRITE inode flag in the success case
-> in this if block. I think it needs to be removed as it is over-writing the
-> the flag FI_APPEND_WRITE that this patch now sets in f2fs_map_blocks() and it
-> now supports out-of-place updates.
-
-Agreed, let me fix this in v3, thanks for catching this.
-
-Thanks,
-
-> 
->>  		if (whint_mode == WHINT_MODE_OFF)
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 63fffd5b105d..39d0b15f2816 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -8,6 +8,7 @@
->>  #ifndef _LINUX_F2FS_H
->>  #define _LINUX_F2FS_H
->>  
->> +#include <linux/uio.h>
->>  #include <linux/types.h>
->>  #include <linux/page-flags.h>
->>  #include <linux/buffer_head.h>
->> @@ -3461,11 +3462,47 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
->>  #endif
->>  }
->>  
->> -static inline bool f2fs_force_buffered_io(struct inode *inode, int rw)
->> +static inline int block_unaligned_IO(struct inode *inode,
->> +				struct kiocb *iocb, struct iov_iter *iter)
->>  {
->> -	return (f2fs_post_read_required(inode) ||
->> -			(rw == WRITE && test_opt(F2FS_I_SB(inode), LFS)) ||
->> -			F2FS_I_SB(inode)->s_ndevs);
->> +	unsigned int i_blkbits = READ_ONCE(inode->i_blkbits);
->> +	unsigned int blocksize_mask = (1 << i_blkbits) - 1;
->> +	loff_t offset = iocb->ki_pos;
->> +	unsigned long align = offset | iov_iter_alignment(iter);
->> +
->> +	return align & blocksize_mask;
->> +}
->> +
->> +static inline int allow_outplace_dio(struct inode *inode,
->> +				struct kiocb *iocb, struct iov_iter *iter)
->> +{
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> +	int rw = iov_iter_rw(iter);
->> +
->> +	return (test_opt(sbi, LFS) && (rw == WRITE) &&
->> +				!block_unaligned_IO(inode, iocb, iter));
->> +}
->> +
->> +static inline bool f2fs_force_buffered_io(struct inode *inode,
->> +				struct kiocb *iocb, struct iov_iter *iter)
->> +{
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> +	int rw = iov_iter_rw(iter);
->> +
->> +	if (f2fs_post_read_required(inode))
->> +		return true;
->> +	if (sbi->s_ndevs)
->> +		return true;
->> +	/*
->> +	 * for blkzoned device, fallback direct IO to buffered IO, so
->> +	 * all IOs can be serialized by log-structured write.
->> +	 */
->> +	if (f2fs_sb_has_blkzoned(sbi))
->> +		return true;
->> +	if (test_opt(sbi, LFS) && (rw == WRITE) &&
->> +				block_unaligned_IO(inode, iocb, iter))
->> +		return true;
->> +	return false;
->>  }
->>  
->>  #ifdef CONFIG_F2FS_FAULT_INJECTION
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 428e7398bd89..70491631e040 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -3018,7 +3018,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>  				if (!f2fs_overwrite_io(inode, iocb->ki_pos,
->>  						iov_iter_count(from)) ||
->>  					f2fs_has_inline_data(inode) ||
->> -					f2fs_force_buffered_io(inode, WRITE)) {
->> +					f2fs_force_buffered_io(inode,
->> +							iocb, from)) {
->>  						clear_inode_flag(inode,
->>  								FI_NO_PREALLOC);
->>  						inode_unlock(inode);
->> -- 
->> 2.18.0.rc1
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+T24gVGh1LCAyMDE4LTA5LTIwIGF0IDE0OjExICswMjAwLCBVd2UgS2xlaW5lLUvDtm5pZyB3cm90
+ZToNCj4gQmFjayBpbiAyMDE1IHdoZW4gaXJkYSB3YXMgZHJvcHBlZCBmcm9tIHRoZSBkcml2ZXIg
+aW14MSB3YXMgYnJva2VuLiBUaGlzDQo+IGNoYW5nZSByZWludHJvZHVjZXMgdGhlIHN1cHBvcnQg
+Zm9yIHRoZSB0aGlyZCBpbnRlcnJ1cHQgb2YgdGhlIFVBUlQuDQo+IA0KPiBGaXhlczogYWZlOWNi
+YjFhNmFkICgic2VyaWFsOiBpbXg6IGRyb3Agc3VwcG9ydCBmb3IgSVJEQSIpDQo+IFNpZ25lZC1v
+ZmYtYnk6IFV3ZSBLbGVpbmUtS8O2bmlnIDx1LmtsZWluZS1rb2VuaWdAcGVuZ3V0cm9uaXguZGU+
+DQoNClJldmlld2VkLWJ5OiBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQuY3Jlc3RlekBueHAuY29t
+Pg0KDQpJJ20gbm90IHN1cmUgaWYgYW55b25lIGhhcyBpbXgxIGhhcmR3YXJlIGhhbmR5IGNhbiBp
+cyB3aWxsaW5nIHRvIHRlc3QNCnRoaXMgQ1RTL1JUUyBidXQgdGhlIGZpeCBpcyBwcmV0dHkgb2J2
+aW91c2x5IGNvcnJlY3Qu
