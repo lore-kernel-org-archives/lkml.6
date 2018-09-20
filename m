@@ -2,222 +2,74 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB24ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D3EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4645521526
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4645521526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E882621526
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 14:07:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E882621526
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732924AbeITTuq (ORCPT
+        id S1732991AbeITTuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 15:50:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731416AbeITTuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 15:50:46 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 432A8C065F8D;
-        Thu, 20 Sep 2018 14:07:07 +0000 (UTC)
-Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 157CC600C8;
-        Thu, 20 Sep 2018 14:07:03 +0000 (UTC)
-Subject: Re: [PATCH v5 11/18] kvm: arm64: Dynamic configuration of VTTBR mask
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20180917104144.19188-1-suzuki.poulose@arm.com>
- <20180917104144.19188-12-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <15830d79-cfc3-964a-c232-a508758ba1b9@redhat.com>
-Date:   Thu, 20 Sep 2018 16:07:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 20 Sep 2018 15:50:51 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:8736 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731416AbeITTuu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 15:50:50 -0400
+X-IronPort-AV: E=Sophos;i="5.53,398,1531785600"; 
+   d="scan'208";a="65816507"
+Date:   Thu, 20 Sep 2018 15:05:49 +0100
+From:   Wei Liu <wei.liu2@citrix.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+CC:     <davem@davemloft.net>, <dmitry.tarnyagin@lockless.no>,
+        <wg@grandegger.com>, <mkl@pengutronix.de>,
+        <michal.simek@xilinx.com>, <hsweeten@visionengravers.com>,
+        <madalin.bucur@nxp.com>, <pantelis.antoniou@gmail.com>,
+        <claudiu.manoil@nxp.com>, <leoyang.li@nxp.com>,
+        <linux@armlinux.org.uk>, <sammy@sammy.net>, <ralf@linux-mips.org>,
+        <nico@fluxnic.net>, <steve.glendinning@shawell.net>,
+        <f.fainelli@gmail.com>, <grygorii.strashko@ti.com>,
+        <w-kwok2@ti.com>, <m-karicheri2@ti.com>, <t.sailer@alumni.ethz.ch>,
+        <jreuter@yaina.de>, <kys@microsoft.com>, <haiyangz@microsoft.com>,
+        <wei.liu2@citrix.com>, <paul.durrant@citrix.com>,
+        <arvid.brodin@alten.se>, <pshelar@ovn.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-can@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-mips@linux-mips.org>,
+        <linux-omap@vger.kernel.org>, <linux-hams@vger.kernel.org>,
+        <devel@linuxdriverproject.org>, <linux-usb@vger.kernel.org>,
+        <xen-devel@lists.xenproject.org>, <dev@openvswitch.org>
+Subject: Re: [PATCH net-next 13/22] net: xen-netback: fix return type of
+ ndo_start_xmit function
+Message-ID: <20180920140549.xdowevpqjw45otjx@zion.uk.xensource.com>
+References: <20180920123306.14772-1-yuehaibing@huawei.com>
+ <20180920123306.14772-14-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180917104144.19188-12-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 20 Sep 2018 14:07:07 +0000 (UTC)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180920123306.14772-14-yuehaibing@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
-> On arm64 VTTBR_EL2:BADDR holds the base address for the stage2
-> translation table. The Arm ARM mandates that the bits BADDR[x-1:0]
-> should be 0, where 'x' is defined for a given IPA Size and the
-> number of levels for a translation granule size. It is defined
-> using some magical constants. This patch is a reverse engineered
-> implementation to calculate the 'x' at runtime for a given ipa and
-> number of page table levels. See patch for more details.
+On Thu, Sep 20, 2018 at 08:32:57PM +0800, YueHaibing wrote:
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, so make sure the implementation in
+> this driver has returns 'netdev_tx_t' value, and change the function
+> return type to netdev_tx_t.
 > 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-> ---
-> Changes since V3:
->  - Update reference to latest ARM ARM and improve commentary
-> ---
->  arch/arm64/include/asm/kvm_arm.h | 63 +++++++++++++++++++++++++++++---
->  arch/arm64/include/asm/kvm_mmu.h | 25 ++++++++++++-
->  2 files changed, 81 insertions(+), 7 deletions(-)
+> Found by coccinelle.
 > 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index 14317b3a1820..3fb1d440be6e 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -123,7 +123,6 @@
->  #define VTCR_EL2_SL0_MASK	(3 << VTCR_EL2_SL0_SHIFT)
->  #define VTCR_EL2_SL0_LVL1	(1 << VTCR_EL2_SL0_SHIFT)
->  #define VTCR_EL2_T0SZ_MASK	0x3f
-> -#define VTCR_EL2_T0SZ_40B	24
->  #define VTCR_EL2_VS_SHIFT	19
->  #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
->  #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
-> @@ -140,11 +139,8 @@
->   * Note that when using 4K pages, we concatenate two first level page tables
->   * together. With 16K pages, we concatenate 16 first level page tables.
->   *
-> - * The magic numbers used for VTTBR_X in this patch can be found in Tables
-> - * D4-23 and D4-25 in ARM DDI 0487A.b.
->   */
->  
-> -#define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
->  #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
->  				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
->  
-> @@ -175,9 +171,64 @@
->  #endif
->  
->  #define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
-> -#define VTTBR_X				(VTTBR_X_TGRAN_MAGIC - VTCR_EL2_T0SZ_IPA)
-> +/*
-> + * ARM VMSAv8-64 defines an algorithm for finding the translation table
-> + * descriptors in section D4.2.8 in ARM DDI 0487C.a.
-> + *
-> + * The algorithm defines the expectations on the BaseAddress (for the page
-> + * table) bits resolved at each level based on the page size, entry level
-> + * and T0SZ. The variable "x" in the algorithm also affects the VTTBR:BADDR
-> + * for stage2 page table.
-> + *
-> + * The value of "x" is calculated as :
-> + *	x = Magic_N - T0SZ
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-What is not crystal clear to me is the "if SL0b,c = n" case where x get
-a value not based on Magic_N. Please could you explain why it is not
-relevant?
-
-Thanks
-
-Eric
-> + *
-> + * where Magic_N is an integer depending on the page size and the entry
-> + * level of the page table as below:
-> + *
-> + *	--------------------------------------------
-> + *	| Entry level		|  4K    16K   64K |
-> + *	--------------------------------------------
-> + *	| Level: 0 (4 levels)	| 28   |  -  |  -  |
-> + *	--------------------------------------------
-> + *	| Level: 1 (3 levels)	| 37   | 31  | 25  |
-> + *	--------------------------------------------
-> + *	| Level: 2 (2 levels)	| 46   | 42  | 38  |
-> + *	--------------------------------------------
-> + *	| Level: 3 (1 level)	| -    | 53  | 51  |
-> + *	--------------------------------------------
-> + *
-> + * We have a magic formula for the Magic_N below:
-> + *
-> + *  Magic_N(PAGE_SIZE, Level) = 64 - ((PAGE_SHIFT - 3) * Number_of_levels)
-> + *
-> + * where Number_of_levels = (4 - Level). We are only interested in the
-> + * value for Entry_Level for the stage2 page table.
-> + *
-> + * So, given that T0SZ = (64 - IPA_SHIFT), we can compute 'x' as follows:
-> + *
-> + *	x = (64 - ((PAGE_SHIFT - 3) * Number_of_levels)) - (64 - IPA_SHIFT)
-> + *	  = IPA_SHIFT - ((PAGE_SHIFT - 3) * Number of levels)
-> + *
-> + * Here is one way to explain the Magic Formula:
-> + *
-> + *  x = log2(Size_of_Entry_Level_Table)
-> + *
-> + * Since, we can resolve (PAGE_SHIFT - 3) bits at each level, and another
-> + * PAGE_SHIFT bits in the PTE, we have :
-> + *
-> + *  Bits_Entry_level = IPA_SHIFT - ((PAGE_SHIFT - 3) * (n - 1) + PAGE_SHIFT)
-> + *		     = IPA_SHIFT - (PAGE_SHIFT - 3) * n - 3
-> + *  where n = number of levels, and since each pointer is 8bytes, we have:
-> + *
-> + *  x = Bits_Entry_Level + 3
-> + *    = IPA_SHIFT - (PAGE_SHIFT - 3) * n
-> + *
-> + * The only constraint here is that, we have to find the number of page table
-> + * levels for a given IPA size (which we do, see stage2_pt_levels())
-> + */
-> +#define ARM64_VTTBR_X(ipa, levels)	((ipa) - ((levels) * (PAGE_SHIFT - 3)))
->  
-> -#define VTTBR_BADDR_MASK  (((UL(1) << (PHYS_MASK_SHIFT - VTTBR_X)) - 1) << VTTBR_X)
->  #define VTTBR_VMID_SHIFT  (UL(48))
->  #define VTTBR_VMID_MASK(size) (_AT(u64, (1 << size) - 1) << VTTBR_VMID_SHIFT)
->  
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-> index 7342d2c51773..ac3ca9690bad 100644
-> --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -145,7 +145,6 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
->  #define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
->  #define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
->  #define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
-> -#define kvm_vttbr_baddr_mask(kvm)	VTTBR_BADDR_MASK
->  
->  static inline bool kvm_page_empty(void *ptr)
->  {
-> @@ -520,5 +519,29 @@ static inline int hyp_map_aux_data(void)
->  
->  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
->  
-> +/*
-> + * Get the magic number 'x' for VTTBR:BADDR of this KVM instance.
-> + * With v8.2 LVA extensions, 'x' should be a minimum of 6 with
-> + * 52bit IPS.
-> + */
-> +static inline int arm64_vttbr_x(u32 ipa_shift, u32 levels)
-> +{
-> +	int x = ARM64_VTTBR_X(ipa_shift, levels);
-> +
-> +	return (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && x < 6) ? 6 : x;
-> +}
-> +
-> +static inline u64 vttbr_baddr_mask(u32 ipa_shift, u32 levels)
-> +{
-> +	unsigned int x = arm64_vttbr_x(ipa_shift, levels);
-> +
-> +	return GENMASK_ULL(PHYS_MASK_SHIFT - 1, x);
-> +}
-> +
-> +static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
-> +{
-> +	return vttbr_baddr_mask(kvm_phys_shift(kvm), kvm_stage2_levels(kvm));
-> +}
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ARM64_KVM_MMU_H__ */
-> 
+Acked-by: Wei Liu <wei.liu2@citrix.com>
