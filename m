@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98BDEC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE3AECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A2F2150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A2F2150F
+	by mail.kernel.org (Postfix) with ESMTP id 9BFFD2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:49:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BFFD2150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732381AbeITH3g (ORCPT
+        id S1732607AbeITHaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 03:29:36 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52920 "EHLO huawei.com"
+        Thu, 20 Sep 2018 03:30:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12627 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731429AbeITH3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 03:29:36 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A76D65909E9B1;
-        Thu, 20 Sep 2018 09:48:49 +0800 (CST)
+        id S1726065AbeITHaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 03:30:04 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 09090DD247989;
+        Thu, 20 Sep 2018 09:49:16 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 09:48:41 +0800
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 20 Sep 2018 09:49:08 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-serial@vger.kernel.org>,
         <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] pinctrl: qcom: spmi-mpp: Fix err handling of pmic_mpp_set_mux
-Date:   Thu, 20 Sep 2018 01:58:18 +0000
-Message-ID: <1537408698-196297-1-git-send-email-yuehaibing@huawei.com>
+Subject: [PATCH -next] serial: imx: remove set but not used variable 'rtsirq'
+Date:   Thu, 20 Sep 2018 01:58:45 +0000
+Message-ID: <1537408725-196364-1-git-send-email-yuehaibing@huawei.com>
 X-Mailer: git-send-email 1.8.3.1
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
@@ -48,24 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'ret' should be returned while pmic_mpp_write_mode_ctl fails. 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
+drivers/tty/serial/imx.c: In function 'imx_uart_probe':
+drivers/tty/serial/imx.c:2198:20: warning:
+ variable 'rtsirq' set but not used [-Wunused-but-set-variable]
+
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/imx.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-index 98f6f40..d6ddc47 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -319,6 +319,8 @@ static int pmic_mpp_set_mux(struct pinctrl_dev *pctldev, unsigned function,
- 	pad->function = function;
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 4341589..1df7d23 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -2195,7 +2195,7 @@ static int imx_uart_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 	u32 ucr1;
+ 	struct resource *res;
+-	int txirq, rxirq, rtsirq;
++	int txirq, rxirq;
  
- 	ret = pmic_mpp_write_mode_ctl(state, pad);
-+	if (ret < 0)
-+		return ret;
+ 	sport = devm_kzalloc(&pdev->dev, sizeof(*sport), GFP_KERNEL);
+ 	if (!sport)
+@@ -2220,7 +2220,6 @@ static int imx_uart_probe(struct platform_device *pdev)
  
- 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+ 	rxirq = platform_get_irq(pdev, 0);
+ 	txirq = platform_get_irq(pdev, 1);
+-	rtsirq = platform_get_irq(pdev, 2);
+ 
+ 	sport->port.dev = &pdev->dev;
+ 	sport->port.mapbase = res->start;
 
