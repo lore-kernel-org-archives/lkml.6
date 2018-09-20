@@ -2,128 +2,112 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5541EC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4960ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB422152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 787E020867
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:06:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="WPu3nxMA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB422152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="buykOIq5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787E020867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387747AbeITSt0 (ORCPT
+        id S2387877AbeITStj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:49:26 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:33565 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbeITSt0 (ORCPT
+        Thu, 20 Sep 2018 14:49:39 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:50269 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387784AbeITStj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:49:26 -0400
-Received: by mail-yb1-f193.google.com with SMTP id y9-v6so3877050ybh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 06:06:00 -0700 (PDT)
+        Thu, 20 Sep 2018 14:49:39 -0400
+Received: by mail-it0-f67.google.com with SMTP id j81-v6so13006872ite.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 06:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1yLkH/BQs0bGxqwuiWcCNpPzlRtF+IwClpfahBLmYe0=;
-        b=WPu3nxMAzCy3m7IdNilCfcHKiSSBVAunWUgNOlr9bw+LEgJTdiXq8M7s2C4esy9h98
-         0ORcnmIBcxwkzBuOvmzB5P2MyuWtWRv5JkujgW7l4tOKbDi0Nc6w/ZWegHKJgq47OO9K
-         ABGQxms6cjjsQiKOc0mXpqviXCWYiRNkvN/o9CaxDaTjrktGG82zBKrge71lln5gi4aw
-         aFeQTg6EcqxAuWl6BqXdp2TGdAFb2dFxZ2ZpQwvcDCg0WVQrR9An4J/VFeNvnsSnbCXb
-         A6sIoWYah7ZN13bY5N5Go9QBcCGhqBqdWZLteATGhplah5FKku40xdlwpaS5DcrCBCHc
-         frMw==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=NqfDjTXnFvMoxdCWZ9A90hnG/iuvsTOkVe6/RjKjle4=;
+        b=buykOIq5wLQi/IZN+Ay7nZVajdh3zFHJ8/FwYf1SQycJt/boLagy8ccx07Ww/TUmdr
+         pWMEZ/g1CJ+GFPTm1ArGSRbth9nTmFjAIFWTxli+ynXMtiPy1ksJ8HNmkBEmD1g8kY8R
+         jZ0Z2mZx7QhUzdf9IcrFj5xvZ6e9yj4/wBne7kpbnm9qWMy9EIcrS498/DDa1hOFwPw9
+         uK8LAalMm9X9XJ0y/KSF9OXeoeI1Zy5n5p+UbYHnaEOJUzgsSAwBp9kvcqWjtKFPI633
+         Ntfcdi0s9MCUxxkFjasQ88Dz84yc9YLKWs/TjOiNb4D6Dj/rD7QnXQTn9AJjHCQfedbc
+         WCEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1yLkH/BQs0bGxqwuiWcCNpPzlRtF+IwClpfahBLmYe0=;
-        b=p+reJC6cxQSHi27gxgtG23hvSFItMHVmhNYgoGhxbK7PrjdduWeEsBIoqYrMs7ECng
-         e/OlOL5IM/SaL8BHnEq3+ZuLdskFprEj2QzqzASf8yaPxKJGQurTOWb8OTsczAigyleK
-         31NcKvWXoAvEDiBEFbEJSEKdzAl+qHIqmMq9aurukq0g7lPuErqnpyY3JKMi1sy+nthw
-         cpHG+Od0hM/rSduzw761DcEca6p5A2P85/OqeWT/GRk0s0i6i0NlfNRqNQZhHdcNn7gm
-         /8qrB48DiMuF+8RgyjKlBJnkJqBHKAVzy5oWZpR+JwhYjG6hDfj/4Iti5UTKA2CRajOd
-         NR5g==
-X-Gm-Message-State: APzg51C5sS35iO5M5GnI8A1lLe6TvjU1AZ3iSv5jtyhhScmY0O1O9p53
-        2vskB7Xj1Y8itZ7MzEwNAsOzuA==
-X-Google-Smtp-Source: ANB0VdZFM5/Gqy9OrQMURxT5uTEwRRm3cxdGyyrwdUyLKglF7WuBfrIxzlUZs6JL5SstTGS9A6/4Zg==
-X-Received: by 2002:a25:7e42:: with SMTP id z63-v6mr10682571ybc.396.1537448759588;
-        Thu, 20 Sep 2018 06:05:59 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id m1-v6sm3755690ywf.96.2018.09.20.06.05.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 06:05:59 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 09:05:58 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     David Airlie <airlied@redhat.com>
-Cc:     sean@poorly.run, dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        seanpaul@chromium.org, airlied <airlied@linux.ie>,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com
-Subject: Re: [PATCH 1/2] MAINTAINERS: Move udl drm driver to drm-misc tree
-Message-ID: <20180920130558.GB188300@art_vandelay>
-References: <20180919204026.3217-1-sean@poorly.run>
- <CAMwc25rA_yB3U=FnZ62-UeqO=5XFG2uZLgdqe9MXeyKDX365NA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=NqfDjTXnFvMoxdCWZ9A90hnG/iuvsTOkVe6/RjKjle4=;
+        b=ak1pFJYTbJdRvNjgsVCe9j3EC7mhDMImJjfhWA0qvbv4DoCPNvFKnLZ389tPJtO92c
+         AN3hnvaIoV8jd6Enr0ocU5+4IP+0925ZIy9lE0tnH3M6cFY3jzBpZK40xk/TY3sEukTj
+         C2Lukmk/8n4sEPkeJVwk0txRLdXqJON+uL26ZeFJZ0hJObjyK0/MzABNIZ/4nHtj/QoB
+         8EnmRzsq7wR2L/WXLpsRtndoyAcodm43yz8j6NxLG4JN46ed2erQstwk1E1aiJiwKaxf
+         r+oIDoj0CknYVf+XnH54O3XQwkyCpJFcqe24jDqdAVG8h/vYw03y2o+wtRd3p9NQ/RE3
+         WllA==
+X-Gm-Message-State: APzg51AgdtxHW/B8rcKfykdkI/NmIW+6B0KLhKXiWDT8mmzm8uOBvb1a
+        PWhyBsZB0v2YdjhiSjZOUl98RPTU2DXi3udZ0i0iYiJ/
+X-Google-Smtp-Source: ANB0Vdb+GZrWIAyrjlojajgbfe5aAjaL+BwqlN6MIYUWHrrWW0atbEsvwNMnxIe16fb6OoDryaW9pCrpTLdUSebxu6c=
+X-Received: by 2002:a24:a20f:: with SMTP id j15-v6mr1880316itf.125.1537448773112;
+ Thu, 20 Sep 2018 06:06:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMwc25rA_yB3U=FnZ62-UeqO=5XFG2uZLgdqe9MXeyKDX365NA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 06:06:12
+ -0700 (PDT)
+In-Reply-To: <20180912080457.12238-1-brgl@bgdev.pl>
+References: <20180912080457.12238-1-brgl@bgdev.pl>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 20 Sep 2018 15:06:12 +0200
+Message-ID: <CAMRc=Mf+WO8tvgWO-=kikh-1ZZD1tANK=QrZfAYndA6GE4ox3g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] eeprom: use devres for nvmem providers
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Devang Panchal <devang.panchal@softnautics.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 07:27:39AM +1000, David Airlie wrote:
-> On Thu, Sep 20, 2018 at 6:40 AM Sean Paul <sean@poorly.run> wrote:
-> >
-> > From: Sean Paul <seanpaul@chromium.org>
-> >
-> > Move udl maintenance into drm-misc tree. I've also signed up to be a
-> > reviewer, but have kept it at "Odd Fixes" level of support.
-> >
-> > Cc: Dave Airlie <airlied@redhat.com>
-> 
-> Acked-by: Dave Airlie <airlied@redhat.com>
+2018-09-12 10:04 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> While working on the nvmem framework recently I noticed that there are
+> many providers that don't use the devm variant of nvmem_register().
+> This series contains relevant updates for eeprom drivers.
+>
+> Note that these patches are independent from my other nvmem series[1].
+>
+> [1] https://lkml.org/lkml/2018/9/12/265
+>
+> v1 -> v2:
+> - fix an invalid devm_ free in patch 1
+>
+> Bartosz Golaszewski (2):
+>   eeprom: eeprom_93xx46: use resource management
+>   eeprom: at25: use devm_nvmem_register()
+>
+>  drivers/misc/eeprom/at25.c          |  3 +--
+>  drivers/misc/eeprom/eeprom_93xx46.c | 19 +++++--------------
+>  2 files changed, 6 insertions(+), 16 deletions(-)
+>
+> --
+> 2.18.0
+>
 
-Applied to -misc-next. Thanks!
+Srinivas,
 
-Sean
+Greg will probably be busy this cycle, so in case he misses those -
+can you send them together with your nvmem pull request? They don't
+depend on my other series in any way.
 
-> 
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Gustavo Padovan <gustavo@padovan.org>
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> > ---
-> >  MAINTAINERS | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 9d9068ed4ee5..ba1dbb8735b8 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -4720,8 +4720,11 @@ F:       drivers/gpu/drm/tdfx/
-> >
-> >  DRM DRIVER FOR USB DISPLAYLINK VIDEO ADAPTERS
-> >  M:     Dave Airlie <airlied@redhat.com>
-> > +R:     Sean Paul <sean@poorly.run>
-> > +L:     dri-devel@lists.freedesktop.org
-> >  S:     Odd Fixes
-> >  F:     drivers/gpu/drm/udl/
-> > +T:     git git://anongit.freedesktop.org/drm/drm-misc
-> >
-> >  DRM DRIVER FOR VMWARE VIRTUAL GPU
-> >  M:     "VMware Graphics" <linux-graphics-maintainer@vmware.com>
-> > --
-> > Sean Paul, Software Engineer, Google / Chromium OS
-> >
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Bart
