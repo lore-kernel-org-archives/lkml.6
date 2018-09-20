@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD809C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850F6ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6930221531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39DBC21532
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GE0rQn0C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6930221531
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyG8mo8+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39DBC21532
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388239AbeITXIY (ORCPT
+        id S2388264AbeITXI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:08:24 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34984 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388191AbeITXIX (ORCPT
+        Thu, 20 Sep 2018 19:08:27 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45614 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbeITXIZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:08:23 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j26-v6so10224146wre.2;
-        Thu, 20 Sep 2018 10:23:51 -0700 (PDT)
+        Thu, 20 Sep 2018 19:08:25 -0400
+Received: by mail-wr1-f65.google.com with SMTP id 20-v6so10195428wrb.12;
+        Thu, 20 Sep 2018 10:23:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0RA0ONh6m9Yv1rVJTvrOsFSDcGT4jsVl1K//X96wXxE=;
-        b=GE0rQn0ChqI0rlDQfCmMochFlu5MMVWGter0daDflRe0EGBZrniL5RHjfQGrTC6GYT
-         qfR1w5xluVEr7xEqbyI/VTwPRv/8UvHdBb72KxZbHEuiZqJEVeRfMf/BV+ZnYWwED7p3
-         UJ4OOyWsraVc9JrkV48UUJGD/Qxk16WiuB0qMontOBX+ola5TlvBcJk+UHcSJ/kLz352
-         Rcj/hmuKUOkEkTQXUIwTqbGkTDsRvDMoUdhxdJI+Gd6zBGhJNh1GQ6nBztzm1q3qHvNu
-         8ko6ABiGoBd0/AC7zfH2T5u1VyEeNy3qmpLVDkBx60M2BitxaL0U4CsXKNNQKIF4AlOv
-         RW3w==
+        bh=MnTJefPcDnUjEexZ63YwvuA/ucBgN9alSs7ZSnkWlhg=;
+        b=kyG8mo8+p3E7jf+6xlOwFJvKyHNsmY94KkGDK0ETcTSQtdy23Mcic7JODYSUPS6O4Z
+         YdNBY82M40WiupXxE5vJ6kiM3VdTJB1HWi5tX/CVAMsOiTjWXDLBZFB7OKpt6RoWKMRH
+         PLPc0eRIKGI4ZnBij01n0tbpYnnd7Wj2+NBss+Gi9yorw53kK3lxsXh3PV6L91N5p4/U
+         9fx3izf6XJ3ud062UAGCQXzK8aE4hYiJ74Vpqxg2fc3wK0eJiACCxzukVVB35nDRqhR6
+         ySr7Pz4pTQVtSeHI9PSPSFfVbDguFSm5IUggyEHZUuJmOYlAOWq/SRdqsbPonllKycCI
+         bFuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0RA0ONh6m9Yv1rVJTvrOsFSDcGT4jsVl1K//X96wXxE=;
-        b=O7gtivy8POKtRojjuR8A7r/LKA8r0QnQHlIIEmEpH6PC2LJCKgUK8pQcZ53W97XUxa
-         SCaVJZyOQUksvYFF2NoKHHH+H/I6nQNPrc/t1JXfq6sejWdIxbTa9WechjIQjtuJapVk
-         yuV0qHkgMzt9BofkZSTTh7qiZgZ9dqvJS5+dNiRgQvfs1lin0drbgnCkgThWTopDuIuB
-         FiElwmWCMqpYSZhAXCv6N66OduINkJPsav7Hg9ENgd/CV1zngVHCH0EQ0fIP726oEBjh
-         lHzLnlB3ZKRQ0Nr0gwhi7Hl3zSw53H9wKKQKS5qap6wqqloogih0XAZljqaqkNCQzL6p
-         VXDg==
-X-Gm-Message-State: APzg51B2q6EAqYga8J7KsNQpHUZCAwkzqD3asT2Ypqcp8vNIDbvG4N5S
-        zFCheKZE5OwiJ1MVB/GKnAI=
-X-Google-Smtp-Source: ANB0VdbPnQwPA61LSbOk68RibKZDCx6D9g5+HXMH3vzL0u2Tt+FXc8SSYTN2I8wpooNOM3LvvH/GNA==
-X-Received: by 2002:adf:8b50:: with SMTP id v16-v6mr12546686wra.282.1537464230740;
-        Thu, 20 Sep 2018 10:23:50 -0700 (PDT)
+        bh=MnTJefPcDnUjEexZ63YwvuA/ucBgN9alSs7ZSnkWlhg=;
+        b=nFxERmkUuZ16JWj20c/6Uw2JiTzQxCLHighLgq6C1NMCq3lNT55DFT/DkPIjICZox9
+         M+vC0FjsSyUjGlHIRNW/rHRJ+mEumoYIYXlc1lBXLbWMPzKhd1RYPdYpznIwjiDr593H
+         py2MZWzPda3o4JDzO0yDHSrOPFM54WkZ/rHkGbz25ojjZ5pJ0DL3S+FVXI+ZWLYC22fJ
+         OYChXFngoCnv53Z2pZXfxzgNpEKMvh7Y99sl7krM9vm+XVcF+HBIoiW6Dlwpryat/EOZ
+         lJVYEp+Gw+0qi1DKV0+9DJm5zNImh4aZmDkN0XroUXSol7ftOUuULA792WSu/gF+yYxP
+         Xj4w==
+X-Gm-Message-State: APzg51CA8766KcoQkjNLcrkU/j4jPQUvZX/jFdOzw8C32bsPE8x+6uMi
+        zTvBnE1z86M8pcmbjNuJSk4=
+X-Google-Smtp-Source: ANB0VdZyGjxq0fGXj6GT4VCfup6Xj7NZdcFTuXeYqkCEurXaYspOYS+t6mFFyuYf0ETFRwSfK5qyBA==
+X-Received: by 2002:adf:9f13:: with SMTP id l19-v6mr35348305wrf.206.1537464232875;
+        Thu, 20 Sep 2018 10:23:52 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.48
+        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:23:50 -0700 (PDT)
+        Thu, 20 Sep 2018 10:23:52 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -97,9 +97,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 12/15] Compiler Attributes: add support for __nonstring (gcc >= 8)
-Date:   Thu, 20 Sep 2018 19:22:58 +0200
-Message-Id: <20180920172301.21868-13-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v5 13/15] Compiler Attributes: enable -Wstringop-truncation on W=1 (gcc >= 8)
+Date:   Thu, 20 Sep 2018 19:22:59 +0200
+Message-Id: <20180920172301.21868-14-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -107,84 +107,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From the GCC manual:
+Commit 217c3e019675 ("disable stringop truncation warnings for now")
+disabled -Wstringop-truncation since it was too noisy.
 
-  nonstring
+Having __nonstring available allows us to let GCC know that a string
+is not meant to be NUL-terminated, which helps suppressing some
+-Wstringop-truncation warnings.
 
-    The nonstring variable attribute specifies that an object or member
-    declaration with type array of char, signed char, or unsigned char,
-    or pointer to such a type is intended to store character arrays that
-    do not necessarily contain a terminating NUL. This is useful in detecting
-    uses of such arrays or pointers with functions that expect NUL-terminated
-    strings, and to avoid warnings when such an array or pointer is used as
-    an argument to a bounded string manipulation function such as strncpy.
+Note that using __nonstring actually triggers other warnings
+(-Wstringop-overflow, which is on by default) which may be real
+problems. Therefore, cleaning up -Wstringop-truncation warnings
+also buys us the ability to uncover further potential problems.
 
-  https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
-
-This attribute can be used for documentation purposes (i.e. replacing
-comments), but it is most helpful when the following warnings are enabled:
-
-  -Wstringop-overflow
-
-    Warn for calls to string manipulation functions such as memcpy and
-    strcpy that are determined to overflow the destination buffer.
-
-    [...]
-
-  -Wstringop-truncation
-
-    Warn for calls to bounded string manipulation functions such as
-    strncat, strncpy, and stpncpy that may either truncate the copied
-    string or leave the destination unchanged.
-
-    [...]
-
-    In situations where a character array is intended to store a sequence
-    of bytes with no terminating NUL such an array may be annotated with
-    attribute nonstring to avoid this warning. Such arrays, however,
-    are not suitable arguments to functions that expect NUL-terminated
-    strings. To help detect accidental misuses of such arrays GCC issues
-    warnings unless it can prove that the use is safe.
-
-  https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+To encourage the use of __nonstring, we put the warning back at W=1.
+In the future, if we end up with a fairly warning-free tree,
+we might want to enable it by default.
 
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler_attributes.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ scripts/Makefile.extrawarn | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
-index f0f9fc398440..6b28c1b7310c 100644
---- a/include/linux/compiler_attributes.h
-+++ b/include/linux/compiler_attributes.h
-@@ -34,6 +34,7 @@
- # define __GCC4_has_attribute___externally_visible__  1
- # define __GCC4_has_attribute___noclone__             1
- # define __GCC4_has_attribute___optimize__            1
-+# define __GCC4_has_attribute___nonstring__           0
- # define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >= 8)
- #endif
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index 8d5357053f86..b8f36f5f43f2 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -29,6 +29,7 @@ warning-1 += $(call cc-option, -Wmissing-include-dirs)
+ warning-1 += $(call cc-option, -Wunused-but-set-variable)
+ warning-1 += $(call cc-option, -Wunused-const-variable)
+ warning-1 += $(call cc-option, -Wpacked-not-aligned)
++warning-1 += $(call cc-option, -Wstringop-truncation)
+ warning-1 += $(call cc-disable-warning, missing-field-initializers)
+ warning-1 += $(call cc-disable-warning, sign-compare)
  
-@@ -181,6 +182,19 @@
-  */
- #define   noinline                      __attribute__((__noinline__))
- 
-+/*
-+ * Optional: only supported since gcc >= 8
-+ * Optional: not supported by clang
-+ * Optional: not supported by icc
-+ *
-+ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-nonstring-variable-attribute
-+ */
-+#if __has_attribute(__nonstring__)
-+# define __nonstring                    __attribute__((__nonstring__))
-+#else
-+# define __nonstring
-+#endif
-+
- /*
-  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noreturn-function-attribute
-  * clang: https://clang.llvm.org/docs/AttributeReference.html#noreturn
 -- 
 2.17.1
 
