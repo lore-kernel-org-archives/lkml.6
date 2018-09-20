@@ -2,95 +2,115 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D82C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79364ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743E6214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31EC52147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:48:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="mI0WfvuB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743E6214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehxFAg/n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EC52147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388696AbeIUCdg (ORCPT
+        id S2388600AbeIUCdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:33:36 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33337 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388513AbeIUCd0 (ORCPT
+        Thu, 20 Sep 2018 22:33:20 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46743 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeIUCdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:33:26 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y18-v6so1674053pge.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:48:07 -0700 (PDT)
+        Thu, 20 Sep 2018 22:33:19 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q22-v6so9567460lfa.13;
+        Thu, 20 Sep 2018 13:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KlIFZq0BkhiXStaglp5pOQnVXeaD2lYE0VybL9AYoMQ=;
-        b=mI0WfvuB6Uf8JA34dMS4SdFd1lGuFnGO8Ky6fWCibLrSYQW3SbpvbgcnJ/YgVrBuTk
-         bNyia8abPCSfpPwXehQpSr3beLV1MWP2PLby6siJy6J7R+Z+5cgOlzgqxxxjEzdi6oq/
-         AKPzjN58SpKOEuCmfu9u9RvzPnemqsvJg+QnFizWw9Y9hvT1gtaomMpd0ZqADJhCsV59
-         lgp9h5fCNV7SXZIzX4kaCMi4FCtU223SV7wvGRYYxirrc5jTgHWBuua3vJXj7HpDOHGC
-         /XVe815UR0bdkDzdSRGu7JU9uM6G63e3ch1tjq54whRjlq4lMEnhbd19kjKTmSB6Qy/F
-         Oguw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=VLIItdANeR2HXKjAG9ooHkEQ/2j2hSQ7yUwph6rZVTY=;
+        b=ehxFAg/nRs2vO3r8LxUBTvZzzoGKo4l17ctNT4xNVczeUf3G13HCkYd/DE9mbFeWkS
+         sOMOm5DmqqCOO7GbcPB6d0LCdIIGya8Z7daAJZ/6W6G1xvrciGPOvLcpjjNe1KqGu5q2
+         /QB7cpT5J+B5TM9OosO2toyn2sxCmU6j9/HImjBJ7smLlOf6rHD8XOxGIp3urQarCDHZ
+         5kXO6niPKM9HOZ1pxm74lx+3pKuMffsj/okTjyztpaFs28/jFxxs/Kv9ndgKKS+J+FWh
+         N+mkly+LP11Pe2LO0dY5kgxNbAa+aeWRm6C+GGJ1FS4kcbJrXa5CMXZ92FtZYDhj/TC4
+         L7Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KlIFZq0BkhiXStaglp5pOQnVXeaD2lYE0VybL9AYoMQ=;
-        b=cbLpwc6Mx0BlEOdGqjsvHy4girwVVNWTHF+XT4/PhBb7SGyxt2xTrAkuCC5PU4nFB+
-         OuadHt1pbPGqGVhhTr4W6hcp3Qt5vT4SZ9OIfxs2Vekx6qXnMRu9pYzLXrttbc3ZlzlP
-         lKxSTA3iGkxC0gczHuTdBB87GWKjRnmdbO49tl1FLrN2o3J6YgljxFlBhygan7kQrK+U
-         MoZWafBzvi/vFseMXec+M7l5NqulQBEFRv7sF/3P8dJvgFCdGNskxZDrO+67I+tFChag
-         RbWNRvJRK37/AraAw5YDqe/gaBLscuubYIM2k/AKs3mk1U+gwmCzzuX5O0OlRAV85JD6
-         Z1bA==
-X-Gm-Message-State: APzg51AnlFM+4ZILtw6tt83+7plQBGcacjUeK472mZTwpuj7dIq1eJU5
-        tEj332jL4pwFugmj/2VTk8H5DA==
-X-Google-Smtp-Source: ANB0VdYq2n1piVtOaExGdmqzrfqaunQRn2OHnseOm7xdc8oOIBKhull7xlAVVvSVZOXkR4LTMrqz1g==
-X-Received: by 2002:a62:1b41:: with SMTP id b62-v6mr19364320pfb.172.1537476487163;
-        Thu, 20 Sep 2018 13:48:07 -0700 (PDT)
-Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm42952174pfi.4.2018.09.20.13.48.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 13:48:07 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 13:47:59 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Haiyang Zhang <haiyangz@linuxonhyperv.com>
-Cc:     haiyangz@microsoft.com, davem@davemloft.net,
-        netdev@vger.kernel.org, olaf@aepfle.de,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        vkuznets@redhat.com
-Subject: Re: [PATCH net-next, 1/3] hv_netvsc: Add support for LRO/RSC in the
- vSwitch
-Message-ID: <20180920134725.3e149a0b@xeon-e3>
-In-Reply-To: <20180920170701.9574-2-haiyangz@linuxonhyperv.com>
-References: <20180920170701.9574-1-haiyangz@linuxonhyperv.com>
-        <20180920170701.9574-2-haiyangz@linuxonhyperv.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=VLIItdANeR2HXKjAG9ooHkEQ/2j2hSQ7yUwph6rZVTY=;
+        b=BJbZT7yLJhfLKdwpGFq5WwfprgSO1fOdLW277942EFFA5yOTGxqFRHThsS5amwyC9t
+         OJGoQyFW/yjM74ZEE1A5nqaC/O1ClCIFm0nwwOKOCg6y0zIa2wGq2OoCUIj91mEVWawQ
+         x+5ZSkWxxJs4GuNfmouLBZJVNpnMHTGUzk/pub/K9UhPqKL/+svGsmuOXyIhHIDtq5IE
+         se43g353g67gB6N25mAlCkEUBg3Xy7hl24dRB8pFMq18Rkvb/EOcFpZIjgwDmPhUYuux
+         8u63/X5eAJdIxvGEuyooS5g93NSx+tan8qr/QzfQlEgtOqHN/75KcaUwM7FDSSYWfg0D
+         icrQ==
+X-Gm-Message-State: APzg51Cvws1LFcAcNtfudAgUH+jJux3oOMB7H3DU4H7nh73YpAeewlgj
+        uYd6yayDfczF87jN9yrbrj4=
+X-Google-Smtp-Source: ANB0VdYFlqfWFZqNcJy0Dsad3saMV57bbtCvgTINeayMSqYgjuhlkQMLSYQPaYHfj+6+c/8FvdunpQ==
+X-Received: by 2002:a19:dd0e:: with SMTP id u14-v6mr287875lfg.109.1537476477924;
+        Thu, 20 Sep 2018 13:47:57 -0700 (PDT)
+Received: from piling.lan (80-71-134-83.u.parknet.dk. [80.71.134.83])
+        by smtp.gmail.com with ESMTPSA id p4-v6sm1821609lfj.49.2018.09.20.13.47.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 13:47:56 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 3/7] [media] ad5820: DT new optional field enable-gpios
+Date:   Thu, 20 Sep 2018 22:47:47 +0200
+Message-Id: <20180920204751.29117-3-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180920204751.29117-1-ricardo.ribalda@gmail.com>
+References: <20180920204751.29117-1-ricardo.ribalda@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Sep 2018 17:06:59 +0000
-Haiyang Zhang <haiyangz@linuxonhyperv.com> wrote:
+Document new enable-gpio field. It can be used to disable the part
+without turning down its regulator.
 
-> +static inline void rsc_add_data
-> +	(struct netvsc_channel *nvchan,
-> +	 const struct ndis_pkt_8021q_info *vlan,
-> +	 const struct ndis_tcp_ip_checksum_info *csum_info,
-> +	 void *data, u32 len)
-> +{
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+---
+ Documentation/devicetree/bindings/media/i2c/ad5820.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Could this be changed to look more like a function and skip the inline.
-The compiler will end up inlining it anyway.
-
-static void rsc_add_data(struct netvsc_channel *nvchan,
+diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+index 5940ca11c021..9ccd96d3d5f0 100644
+--- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
++++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
+@@ -8,6 +8,12 @@ Required Properties:
+ 
+   - VANA-supply: supply of voltage for VANA pin
+ 
++Optional properties:
++
++   - enable-gpios : GPIO spec for the XSHUTDOWN pin. Note that the polarity of
++the enable GPIO is the opposite of the XSHUTDOWN pin (asserting the enable
++GPIO deasserts the XSHUTDOWN signal and vice versa).
++
+ Example:
+ 
+        ad5820: coil@c {
+@@ -15,5 +21,6 @@ Example:
+                reg = <0x0c>;
+ 
+                VANA-supply = <&vaux4>;
++               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+        };
+ 
+-- 
+2.18.0
 
