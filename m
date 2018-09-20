@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B72C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A50F1ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FBD021524
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:19:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3722321522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:19:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DlKlfX4g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FBD021524
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TVcPSt3B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3722321522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733173AbeITGAM (ORCPT
+        id S1733263AbeITGAV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 02:00:12 -0400
-Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:35098 "EHLO
-        sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725941AbeITGAM (ORCPT
+        Thu, 20 Sep 2018 02:00:21 -0400
+Received: from sonic304-18.consmr.mail.bf2.yahoo.com ([74.6.128.41]:40160 "EHLO
+        sonic304-18.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733183AbeITGAU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 02:00:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402785; bh=7PaE4c6vH6epcNtkr4DDShFdEhBrlpQzzMvglnMFATc=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=DlKlfX4gpvG25hIF1yA24yc6sxJcme8WWxomXKj4VZvMhgmuMKM643h+1tw+2vJyFO03QqbdpuLDhv1bT3gpzwdWglpSZfcm9rlBcwYfTGpkWmP63D2hFPD/ycvrd3V9GVvm1fuZaVokMpwG4ObaQTZWCR4l7uCFc6J1krMbsqjICaQuMHWjJ0aRfkBUSVNiS1igdIK/s78Qiwpw3FI1jjQg8ZarCRIIttbEHat7I7dmb8JEqzT+7p9yMOv6sD2PrOERNiBaGjtEh6ejhFj/j/9iB3/TcRCVcIxDE7LLvhIrArsNvy5VLtVF1CN8z1Kj6YeaUIRapAdvmuZgUsYF3Q==
-X-YMail-OSG: h1cqc7UVM1nKsQo4oR9dBhxdn__u_O3kkN_We4reo3.wZewEJuYuG0o4lJvGv24
- OLQJJ4DoYfQXpPce2IEn0fk_w5Zr0AdlujjxkSI4E_eCcwMhcVCaIxaUF28FIx_gMhmhJJKIUnqv
- .tbkUUDI93TYPvrsSNxZQV3CHxxdT7TleQyL4WC9yuvIUL1p_91RdyGvYhBnQseBIESpSwAO.KH5
- tDkBXukQzs58fJBrQLLkxMpK6MfpjCdH.gZ64JCO4FogIXAwAx7d9gly8n2VLqcCPXg88wZvnjQ8
- cQPrngTxqTl5hlLTwrC7mSkjOOiYNSWzIdnlVAKEZ4c0Ffz7XtQ_Ty0EZqt93epzM9rLOLrG8qSx
- UEsXbioDfMa0bKpK8ZOWf_4HEzmjXqhZOBL8mLXSwQNlbed0AeGvbJUpLTlUs1ofbBqX.G_.efzo
- u.bT0mh42xGO7GaPT_WMmLk8WA8aMLvFMsyIl2ofs1qWs5aH1E3RMOGE7AnzajMqBgks6JeU1Wt3
- BWXWUqgNPjF_S1MURa2WNJzdyEi0tMa2pY1R_w6bP0Ex3.GXNZwmHIqs5ezgNbarsbEKL.pS8wfs
- sb.Vk4qqQl0jxtIux8rWxVKmzvH9DJn2k_Au4gL.LvnW_XtVY3h.O1rnJCgiyZ2ct0GeVwHFd.U3
- JVTAkjo2zMDyHpsVIGAcwDpukBQlrbtCN1J5um1yd1d8vWS4mkWoOa6M6Ju7UI50pJespo8bBXsx
- urOME45677AqlBlYQSq.Acwho.7_kDLdPhKXVWsp4mUYHE547ZkKJnqua1KFdsfrOA9_XgTRn9A9
- j71L.4QjqfIrGDhoawMMd7Xy0DsHQjrn8W1jfdridN_1RuVii6X21XjsQyzCZcyq3fCYEC6aki9A
- G_1kidHu59GwBmbr6kxh0._ybTYf4G4PFgh3Y7CzgoDiTc3Y5dnLv_hYmjENHZKi5vWT_QDeqLVS
- Nu2kSa6oxNgPJLOXbITej0KjVG_QviCcN2ocD.WN15mkUMQPnRBqormtV5pEXIm04Zg1P9i_Ck.R
- APhSBwyBfMwMq_xUB
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:19:45 +0000
+        Thu, 20 Sep 2018 02:00:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402792; bh=1lkAfvD2bde2GkI0xlwOB5zymN2wW6RNq50ZvnG5XGE=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=TVcPSt3BB4MqIU8EaED2lXI+dSpS04/kZRvFZEYTpSxY2rTLDie6nAo355MPtxS+saBl9uy9trIraek6Kc2fvCEqVi4yU7GyVu/8mFhwWvjHcvPEX+3G3QsRSYocw+NajcZhXbFWrqCp3ZdfuF+clA7Z2Ly+HcJI2CJx6EHrK/LqwBupJKIzr6ioZni23O3H/ZH7d6oA12oTuzpJ2882ulU4aEpBqcKlBThRcsBGlpk2AjbUlBJ7uSjOPPmU5ltBfgVHGqwHRLh1RvWEj5ipUbaKKBIH3xF6IiERW6t8B6Y74Ssh4tCGIuDeIxxxQoxQi5JEQL074R1uFSNxwULdmA==
+X-YMail-OSG: vr9inm8VM1lBKo0G9TYdpm62nVopBMWEDEqUVZfBQueNRA_hUjhokiC_JP0pH4A
+ BQlIM6BaAG7E7PddjXYy64h03hcgZFFkvMWTIRw8v4yTjFjX_jw0eTaCdBcQTGbsDEJK8sX.mYi0
+ FqDXyB2werDloPh.Q1MacRqbKIlIpHlBnWm6ZmvkUQkMeaGRKMLQRmoOZy.b.aISStx._5O21Js9
+ G07YMek151vUy_b6x3U_vhbsDeR5DMAmJVl1VKTk.5IdBbThWRlrRNRMvl2jZSQxCCIAHh.t5mRq
+ CSyfQNxqsHNRpDxqLChl0LH75.d7BwH_Qc046J3_EZzD0mFtXolC6F3UyTumAxZl2js3SVdE7OKV
+ fejBnLiW_4kVIQWKyBfpkRfCPKrgGpIR3Y4O_n91X33SFwNwRCHZ.niPf7eY9NdxaRS9BD7VjTkz
+ GFDgykMnzcWXW21B0NkWQFv1e22Yd3rUjBGUCtoo97gm.9_RDMQB6r9U.VLKHpXwA2HdSCVwmvks
+ rY.x7vq08qGjsi6.KI1OGhg4yJFERmDzL4vlkm.3UGLxDUZfmBty2rM86HfImmOFQnUY0MfSHq7M
+ eEohBuFLMRDR2tAj3vguNv5G6tV17cJNafw2TLbba9c5zM4AlmOxaVdbtTFcmU8s2SHgd7DTR5wF
+ _D3Ralzx46WaR8RSJZdvej0yi9Xd7ReldELNRaW9UwBHDnWXamICGfExgeuk_8lXRd2CjeN9InsL
+ Iuu6kbKTOwJwOel8I012W7z1K73NJJYzADkDFtvtPxdCILWVt.qdOOG2xeWkC9M1SY8KjyHQmMlW
+ WsWEe4oRCmaRHPt5uP3cFQEDbt4w2AjmqtyyY4sM7ZWmDcxdnZgqx7YpGswc_mJQML6t1ZTUsRyb
+ JXkRtqn8IkTQXB_CSX5aHMR_0P3StpOBGaV8Knn1b3EieB1jBQw_e7YZscnc_9AI8RIRnt3Fnk8D
+ _eT3VsLnPfhoOZ2Iz3rJObAAD53lWHGQ4AMWoi5Tr.dkutB6Dfq_Xx5eJywytUsegIGvM8AfM55X
+ K.KZisl0H2o2o8ryjEosqIj3JD634EEWL
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:19:52 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp412.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 317a6311162862b8a2b2525eefea9b84;
-          Thu, 20 Sep 2018 00:19:42 +0000 (UTC)
-Subject: [PATCH v3 01/16] procfs: add smack subdir to attrs
+          by smtp412.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7251079eb10e14a212909245eedd14f0;
+          Thu, 20 Sep 2018 00:19:50 +0000 (UTC)
+Subject: [PATCH v3 02/16] Smack: Abstract use of cred security blob
 To:     LSM <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         SE Linux <selinux@tycho.nsa.gov>,
@@ -61,8 +62,8 @@ To:     LSM <linux-security-module@vger.kernel.org>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <0b83f6f7-c037-0aa9-9ba0-9d66bba8c5d2@schaufler-ca.com>
-Date:   Wed, 19 Sep 2018 17:19:39 -0700
+Message-ID: <a28b5465-7771-d548-627d-466f45237161@schaufler-ca.com>
+Date:   Wed, 19 Sep 2018 17:19:47 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -75,258 +76,416 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-procfs: add smack subdir to attrs
+Smack: Abstract use of cred security blob
 
-Back in 2007 I made what turned out to be a rather serious
-mistake in the implementation of the Smack security module.
-The SELinux module used an interface in /proc to manipulate
-the security context on processes. Rather than use a similar
-interface, I used the same interface. The AppArmor team did
-likewise. Now /proc/.../attr/current will tell you the
-security "context" of the process, but it will be different
-depending on the security module you're using.
-
-This patch provides a subdirectory in /proc/.../attr for
-Smack. Smack user space can use the "current" file in
-this subdirectory and never have to worry about getting
-SELinux attributes by mistake. Programs that use the
-old interface will continue to work (or fail, as the case
-may be) as before.
-
-The proposed S.A.R.A security module is dependent on
-the mechanism to create its own attr subdirectory.
-
-The original implementation is by Kees Cook.
+Don't use the cred->security pointer directly.
+Provide a helper function that provides the security blob pointer.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- Documentation/admin-guide/LSM/index.rst | 13 +++--
- fs/proc/base.c                          | 64 +++++++++++++++++++++----
- fs/proc/internal.h                      |  1 +
- include/linux/security.h                | 15 ++++--
- security/security.c                     | 24 ++++++++--
- 5 files changed, 96 insertions(+), 21 deletions(-)
+ security/smack/smack.h        | 17 +++++++++--
+ security/smack/smack_access.c |  4 +--
+ security/smack/smack_lsm.c    | 57 +++++++++++++++++------------------
+ security/smack/smackfs.c      | 18 +++++------
+ 4 files changed, 53 insertions(+), 43 deletions(-)
 
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index c980dfe9abf1..9842e21afd4a 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
- specific changes to system operation when these tweaks are not available
- in the core functionality of Linux itself.
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index f7db791fb566..01a922856eba 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -356,6 +356,11 @@ extern struct list_head smack_onlycap_list;
+ #define SMACK_HASH_SLOTS 16
+ extern struct hlist_head smack_known_hash[SMACK_HASH_SLOTS];
  
--Without a specific LSM built into the kernel, the default LSM will be the
--Linux capabilities system. Most LSMs choose to extend the capabilities
--system, building their checks on top of the defined capability hooks.
-+The Linux capabilities modules will always be included. This may be
-+followed by any number of "minor" modules and at most one "major" module.
- For more details on capabilities, see ``capabilities(7)`` in the Linux
- man-pages project.
- 
-@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
- be first, followed by any "minor" modules (e.g. Yama) and then
- the one "major" module (e.g. SELinux) if there is one configured.
- 
-+Process attributes associated with "major" security modules should
-+be accessed and maintained using the special files in ``/proc/.../attr``.
-+A security module may maintain a module specific subdirectory there,
-+named after the module. ``/proc/.../attr/smack`` is provided by the Smack
-+security module and contains all its special files. The files directly
-+in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
-+subdirectories.
-+
- .. toctree::
-    :maxdepth: 1
- 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ccf86f16d9f0..bd2dd85310fe 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -140,9 +140,13 @@ struct pid_entry {
- #define REG(NAME, MODE, fops)				\
- 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
- #define ONE(NAME, MODE, show)				\
--	NOD(NAME, (S_IFREG|(MODE)), 			\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
- 		NULL, &proc_single_file_operations,	\
- 		{ .proc_show = show } )
-+#define ATTR(LSM, NAME, MODE)				\
-+	NOD(NAME, (S_IFREG|(MODE)),			\
-+		NULL, &proc_pid_attr_operations,	\
-+		{ .lsm = LSM })
- 
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-@@ -2503,7 +2507,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
- 	if (!task)
- 		return -ESRCH;
- 
--	length = security_getprocattr(task,
-+	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
- 				      (char*)file->f_path.dentry->d_name.name,
- 				      &p);
- 	put_task_struct(task);
-@@ -2552,7 +2556,9 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	if (rv < 0)
- 		goto out_free;
- 
--	rv = security_setprocattr(file->f_path.dentry->d_name.name, page, count);
-+	rv = security_setprocattr(PROC_I(inode)->op.lsm,
-+				  file->f_path.dentry->d_name.name, page,
-+				  count);
- 	mutex_unlock(&current->signal->cred_guard_mutex);
- out_free:
- 	kfree(page);
-@@ -2566,13 +2572,53 @@ static const struct file_operations proc_pid_attr_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+#define LSM_DIR_OPS(LSM) \
-+static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
-+			     struct dir_context *ctx) \
-+{ \
-+	return proc_pident_readdir(filp, ctx, \
-+				   LSM##_attr_dir_stuff, \
-+				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct file_operations proc_##LSM##_attr_dir_ops = { \
-+	.read		= generic_read_dir, \
-+	.iterate	= proc_##LSM##_attr_dir_iterate, \
-+	.llseek		= default_llseek, \
-+}; \
-+\
-+static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
-+				struct dentry *dentry, unsigned int flags) \
-+{ \
-+	return proc_pident_lookup(dir, dentry, \
-+				  LSM##_attr_dir_stuff, \
-+				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+} \
-+\
-+static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
-+	.lookup		= proc_##LSM##_attr_dir_lookup, \
-+	.getattr	= pid_getattr, \
-+	.setattr	= proc_setattr, \
++static inline struct task_smack *smack_cred(const struct cred *cred)
++{
++	return cred->security;
 +}
 +
-+#ifdef CONFIG_SECURITY_SMACK
-+static const struct pid_entry smack_attr_dir_stuff[] = {
-+	ATTR("smack", "current",	0666),
-+};
-+LSM_DIR_OPS(smack);
-+#endif
+ /*
+  * Is the directory transmuting?
+  */
+@@ -382,13 +387,19 @@ static inline struct smack_known *smk_of_task(const struct task_smack *tsp)
+ 	return tsp->smk_task;
+ }
+ 
+-static inline struct smack_known *smk_of_task_struct(const struct task_struct *t)
++static inline struct smack_known *smk_of_task_struct(
++						const struct task_struct *t)
+ {
+ 	struct smack_known *skp;
++	const struct cred *cred;
+ 
+ 	rcu_read_lock();
+-	skp = smk_of_task(__task_cred(t)->security);
 +
- static const struct pid_entry attr_dir_stuff[] = {
--	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
--	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
--	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
-+	ATTR(NULL, "current",		0666),
-+	ATTR(NULL, "prev",		0444),
-+	ATTR(NULL, "exec",		0666),
-+	ATTR(NULL, "fscreate",		0666),
-+	ATTR(NULL, "keycreate",		0666),
-+	ATTR(NULL, "sockcreate",	0666),
-+#ifdef CONFIG_SECURITY_SMACK
-+	DIR("smack",			0555,
-+	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
-+#endif
- };
++	cred = __task_cred(t);
++	skp = smk_of_task(smack_cred(cred));
++
+ 	rcu_read_unlock();
++
+ 	return skp;
+ }
  
- static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 5185d7f6a51e..d4f9989063d0 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -81,6 +81,7 @@ union proc_op {
- 	int (*proc_show)(struct seq_file *m,
- 		struct pid_namespace *ns, struct pid *pid,
- 		struct task_struct *task);
-+	const char *lsm;
- };
+@@ -405,7 +416,7 @@ static inline struct smack_known *smk_of_forked(const struct task_smack *tsp)
+  */
+ static inline struct smack_known *smk_of_current(void)
+ {
+-	return smk_of_task(current_security());
++	return smk_of_task(smack_cred(current_cred()));
+ }
  
- struct proc_inode {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 75f4156c84d7..418de5d20ffb 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -390,8 +390,10 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
- int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
- 			unsigned nsops, int alter);
- void security_d_instantiate(struct dentry *dentry, struct inode *inode);
--int security_getprocattr(struct task_struct *p, char *name, char **value);
--int security_setprocattr(const char *name, void *value, size_t size);
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+			 char **value);
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size);
- int security_netlink_send(struct sock *sk, struct sk_buff *skb);
- int security_ismaclabel(const char *name);
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
-@@ -1139,15 +1141,18 @@ static inline int security_sem_semop(struct kern_ipc_perm *sma,
+ /*
+diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+index 9a4c0ad46518..489d49a20b47 100644
+--- a/security/smack/smack_access.c
++++ b/security/smack/smack_access.c
+@@ -275,7 +275,7 @@ int smk_tskacc(struct task_smack *tsp, struct smack_known *obj_known,
+ int smk_curacc(struct smack_known *obj_known,
+ 	       u32 mode, struct smk_audit_info *a)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_tskacc(tsp, obj_known, mode, a);
+ }
+@@ -635,7 +635,7 @@ DEFINE_MUTEX(smack_onlycap_lock);
+  */
+ bool smack_privileged_cred(int cap, const struct cred *cred)
+ {
+-	struct task_smack *tsp = cred->security;
++	struct task_smack *tsp = smack_cred(cred);
+ 	struct smack_known *skp = tsp->smk_task;
+ 	struct smack_known_list_elem *sklep;
+ 	int rc;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 340fc30ad85d..68ee3ae8f25c 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -122,7 +122,7 @@ static int smk_bu_note(char *note, struct smack_known *sskp,
+ static int smk_bu_current(char *note, struct smack_known *oskp,
+ 			  int mode, int rc)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 	char acc[SMK_NUM_ACCESS_TYPE + 1];
+ 
+ 	if (rc <= 0)
+@@ -143,7 +143,7 @@ static int smk_bu_current(char *note, struct smack_known *oskp,
+ #ifdef CONFIG_SECURITY_SMACK_BRINGUP
+ static int smk_bu_task(struct task_struct *otp, int mode, int rc)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 	struct smack_known *smk_task = smk_of_task_struct(otp);
+ 	char acc[SMK_NUM_ACCESS_TYPE + 1];
+ 
+@@ -165,7 +165,7 @@ static int smk_bu_task(struct task_struct *otp, int mode, int rc)
+ #ifdef CONFIG_SECURITY_SMACK_BRINGUP
+ static int smk_bu_inode(struct inode *inode, int mode, int rc)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 	struct inode_smack *isp = inode->i_security;
+ 	char acc[SMK_NUM_ACCESS_TYPE + 1];
+ 
+@@ -195,7 +195,7 @@ static int smk_bu_inode(struct inode *inode, int mode, int rc)
+ #ifdef CONFIG_SECURITY_SMACK_BRINGUP
+ static int smk_bu_file(struct file *file, int mode, int rc)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 	struct smack_known *sskp = tsp->smk_task;
+ 	struct inode *inode = file_inode(file);
+ 	struct inode_smack *isp = inode->i_security;
+@@ -225,7 +225,7 @@ static int smk_bu_file(struct file *file, int mode, int rc)
+ static int smk_bu_credfile(const struct cred *cred, struct file *file,
+ 				int mode, int rc)
+ {
+-	struct task_smack *tsp = cred->security;
++	struct task_smack *tsp = smack_cred(cred);
+ 	struct smack_known *sskp = tsp->smk_task;
+ 	struct inode *inode = file_inode(file);
+ 	struct inode_smack *isp = inode->i_security;
+@@ -429,7 +429,7 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
+ 	}
+ 
+ 	rcu_read_lock();
+-	tsp = __task_cred(tracer)->security;
++	tsp = smack_cred(__task_cred(tracer));
+ 	tracer_known = smk_of_task(tsp);
+ 
+ 	if ((mode & PTRACE_MODE_ATTACH) &&
+@@ -496,7 +496,7 @@ static int smack_ptrace_traceme(struct task_struct *ptp)
+ 	int rc;
+ 	struct smack_known *skp;
+ 
+-	skp = smk_of_task(current_security());
++	skp = smk_of_task(smack_cred(current_cred()));
+ 
+ 	rc = smk_ptrace_rule_check(ptp, skp, PTRACE_MODE_ATTACH, __func__);
+ 	return rc;
+@@ -913,7 +913,7 @@ static int smack_sb_statfs(struct dentry *dentry)
+ static int smack_bprm_set_creds(struct linux_binprm *bprm)
+ {
+ 	struct inode *inode = file_inode(bprm->file);
+-	struct task_smack *bsp = bprm->cred->security;
++	struct task_smack *bsp = smack_cred(bprm->cred);
+ 	struct inode_smack *isp;
+ 	struct superblock_smack *sbsp;
+ 	int rc;
+@@ -1744,7 +1744,7 @@ static int smack_mmap_file(struct file *file,
+ 		return -EACCES;
+ 	mkp = isp->smk_mmap;
+ 
+-	tsp = current_security();
++	tsp = smack_cred(current_cred());
+ 	skp = smk_of_current();
+ 	rc = 0;
+ 
+@@ -1840,7 +1840,7 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
+ 				     struct fown_struct *fown, int signum)
+ {
+ 	struct smack_known *skp;
+-	struct smack_known *tkp = smk_of_task(tsk->cred->security);
++	struct smack_known *tkp = smk_of_task(smack_cred(tsk->cred));
+ 	struct file *file;
+ 	int rc;
+ 	struct smk_audit_info ad;
+@@ -1888,7 +1888,7 @@ static int smack_file_receive(struct file *file)
+ 	if (inode->i_sb->s_magic == SOCKFS_MAGIC) {
+ 		sock = SOCKET_I(inode);
+ 		ssp = sock->sk->sk_security;
+-		tsp = current_security();
++		tsp = smack_cred(current_cred());
+ 		/*
+ 		 * If the receiving process can't write to the
+ 		 * passed socket or if the passed socket can't
+@@ -1930,7 +1930,7 @@ static int smack_file_receive(struct file *file)
+  */
+ static int smack_file_open(struct file *file)
+ {
+-	struct task_smack *tsp = file->f_cred->security;
++	struct task_smack *tsp = smack_cred(file->f_cred);
+ 	struct inode *inode = file_inode(file);
+ 	struct smk_audit_info ad;
+ 	int rc;
+@@ -1977,7 +1977,7 @@ static int smack_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+  */
+ static void smack_cred_free(struct cred *cred)
+ {
+-	struct task_smack *tsp = cred->security;
++	struct task_smack *tsp = smack_cred(cred);
+ 	struct smack_rule *rp;
+ 	struct list_head *l;
+ 	struct list_head *n;
+@@ -2007,7 +2007,7 @@ static void smack_cred_free(struct cred *cred)
+ static int smack_cred_prepare(struct cred *new, const struct cred *old,
+ 			      gfp_t gfp)
+ {
+-	struct task_smack *old_tsp = old->security;
++	struct task_smack *old_tsp = smack_cred(old);
+ 	struct task_smack *new_tsp;
+ 	int rc;
+ 
+@@ -2038,15 +2038,14 @@ static int smack_cred_prepare(struct cred *new, const struct cred *old,
+  */
+ static void smack_cred_transfer(struct cred *new, const struct cred *old)
+ {
+-	struct task_smack *old_tsp = old->security;
+-	struct task_smack *new_tsp = new->security;
++	struct task_smack *old_tsp = smack_cred(old);
++	struct task_smack *new_tsp = smack_cred(new);
+ 
+ 	new_tsp->smk_task = old_tsp->smk_task;
+ 	new_tsp->smk_forked = old_tsp->smk_task;
+ 	mutex_init(&new_tsp->smk_rules_lock);
+ 	INIT_LIST_HEAD(&new_tsp->smk_rules);
+ 
+-
+ 	/* cbs copy rule list */
+ }
+ 
+@@ -2057,12 +2056,12 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
+  *
+  * Sets the secid to contain a u32 version of the smack label.
+  */
+-static void smack_cred_getsecid(const struct cred *c, u32 *secid)
++static void smack_cred_getsecid(const struct cred *cred, u32 *secid)
+ {
+ 	struct smack_known *skp;
+ 
+ 	rcu_read_lock();
+-	skp = smk_of_task(c->security);
++	skp = smk_of_task(smack_cred(cred));
+ 	*secid = skp->smk_secid;
+ 	rcu_read_unlock();
+ }
+@@ -2076,7 +2075,7 @@ static void smack_cred_getsecid(const struct cred *c, u32 *secid)
+  */
+ static int smack_kernel_act_as(struct cred *new, u32 secid)
+ {
+-	struct task_smack *new_tsp = new->security;
++	struct task_smack *new_tsp = smack_cred(new);
+ 
+ 	new_tsp->smk_task = smack_from_secid(secid);
  	return 0;
- }
- 
--static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
-+static inline void security_d_instantiate(struct dentry *dentry,
-+					  struct inode *inode)
- { }
- 
--static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
-+static inline int security_getprocattr(struct task_struct *p, const char *lsm,
-+				       char *name, char **value)
+@@ -2094,7 +2093,7 @@ static int smack_kernel_create_files_as(struct cred *new,
+ 					struct inode *inode)
  {
- 	return -EINVAL;
- }
+ 	struct inode_smack *isp = inode->i_security;
+-	struct task_smack *tsp = new->security;
++	struct task_smack *tsp = smack_cred(new);
  
--static inline int security_setprocattr(char *name, void *value, size_t size)
-+static inline int security_setprocattr(const char *lsm, char *name,
-+				       void *value, size_t size)
+ 	tsp->smk_forked = isp->smk_inode;
+ 	tsp->smk_task = tsp->smk_forked;
+@@ -2278,7 +2277,7 @@ static int smack_task_kill(struct task_struct *p, struct siginfo *info,
+ 	 * specific behavior. This is not clean. For one thing
+ 	 * we can't take privilege into account.
+ 	 */
+-	skp = smk_of_task(cred->security);
++	skp = smk_of_task(smack_cred(cred));
+ 	rc = smk_access(skp, tkp, MAY_DELIVER, &ad);
+ 	rc = smk_bu_note("USB signal", skp, tkp, MAY_DELIVER, rc);
+ 	return rc;
+@@ -3605,7 +3604,7 @@ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
+  */
+ static int smack_setprocattr(const char *name, void *value, size_t size)
  {
- 	return -EINVAL;
- }
-diff --git a/security/security.c b/security/security.c
-index 736e78da1ab9..3dfe75d0d373 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1288,14 +1288,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(security_d_instantiate);
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 	struct cred *new;
+ 	struct smack_known *skp;
+ 	struct smack_known_list_elem *sklep;
+@@ -3646,7 +3645,7 @@ static int smack_setprocattr(const char *name, void *value, size_t size)
+ 	if (new == NULL)
+ 		return -ENOMEM;
  
--int security_getprocattr(struct task_struct *p, char *name, char **value)
-+int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
-+				char **value)
+-	tsp = new->security;
++	tsp = smack_cred(new);
+ 	tsp->smk_task = skp;
+ 	/*
+ 	 * process can change its label only once
+@@ -4291,7 +4290,7 @@ static void smack_inet_csk_clone(struct sock *sk,
+ static int smack_key_alloc(struct key *key, const struct cred *cred,
+ 			   unsigned long flags)
  {
--	return call_int_hook(getprocattr, -EINVAL, p, name, value);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.getprocattr(p, name, value);
-+	}
-+	return -EINVAL;
- }
+-	struct smack_known *skp = smk_of_task(cred->security);
++	struct smack_known *skp = smk_of_task(smack_cred(cred));
  
--int security_setprocattr(const char *name, void *value, size_t size)
-+int security_setprocattr(const char *lsm, const char *name, void *value,
-+			 size_t size)
+ 	key->security = skp;
+ 	return 0;
+@@ -4322,7 +4321,7 @@ static int smack_key_permission(key_ref_t key_ref,
  {
--	return call_int_hook(setprocattr, -EINVAL, name, value, size);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
-+		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+			continue;
-+		return hp->hook.setprocattr(name, value, size);
-+	}
-+	return -EINVAL;
+ 	struct key *keyp;
+ 	struct smk_audit_info ad;
+-	struct smack_known *tkp = smk_of_task(cred->security);
++	struct smack_known *tkp = smk_of_task(smack_cred(cred));
+ 	int request = 0;
+ 	int rc;
+ 
+@@ -4591,7 +4590,7 @@ static int smack_inode_copy_up(struct dentry *dentry, struct cred **new)
+ 			return -ENOMEM;
+ 	}
+ 
+-	tsp = new_creds->security;
++	tsp = smack_cred(new_creds);
+ 
+ 	/*
+ 	 * Get label from overlay inode and set it in create_sid
+@@ -4619,8 +4618,8 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ 					const struct cred *old,
+ 					struct cred *new)
+ {
+-	struct task_smack *otsp = old->security;
+-	struct task_smack *ntsp = new->security;
++	struct task_smack *otsp = smack_cred(old);
++	struct task_smack *ntsp = smack_cred(new);
+ 	struct inode_smack *isp;
+ 	int may;
+ 
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index f6482e53d55a..9d2dde608298 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -2208,14 +2208,14 @@ static const struct file_operations smk_logging_ops = {
+ 
+ static void *load_self_seq_start(struct seq_file *s, loff_t *pos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_seq_start(s, pos, &tsp->smk_rules);
  }
  
- int security_netlink_send(struct sock *sk, struct sk_buff *skb)
+ static void *load_self_seq_next(struct seq_file *s, void *v, loff_t *pos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_seq_next(s, v, pos, &tsp->smk_rules);
+ }
+@@ -2262,7 +2262,7 @@ static int smk_open_load_self(struct inode *inode, struct file *file)
+ static ssize_t smk_write_load_self(struct file *file, const char __user *buf,
+ 			      size_t count, loff_t *ppos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_write_rules_list(file, buf, count, ppos, &tsp->smk_rules,
+ 				    &tsp->smk_rules_lock, SMK_FIXED24_FMT);
+@@ -2414,14 +2414,14 @@ static const struct file_operations smk_load2_ops = {
+ 
+ static void *load_self2_seq_start(struct seq_file *s, loff_t *pos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_seq_start(s, pos, &tsp->smk_rules);
+ }
+ 
+ static void *load_self2_seq_next(struct seq_file *s, void *v, loff_t *pos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_seq_next(s, v, pos, &tsp->smk_rules);
+ }
+@@ -2467,7 +2467,7 @@ static int smk_open_load_self2(struct inode *inode, struct file *file)
+ static ssize_t smk_write_load_self2(struct file *file, const char __user *buf,
+ 			      size_t count, loff_t *ppos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_write_rules_list(file, buf, count, ppos, &tsp->smk_rules,
+ 				    &tsp->smk_rules_lock, SMK_LONG_FMT);
+@@ -2681,14 +2681,14 @@ static const struct file_operations smk_syslog_ops = {
+ 
+ static void *relabel_self_seq_start(struct seq_file *s, loff_t *pos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_seq_start(s, pos, &tsp->smk_relabel);
+ }
+ 
+ static void *relabel_self_seq_next(struct seq_file *s, void *v, loff_t *pos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 
+ 	return smk_seq_next(s, v, pos, &tsp->smk_relabel);
+ }
+@@ -2736,7 +2736,7 @@ static int smk_open_relabel_self(struct inode *inode, struct file *file)
+ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
+ 				size_t count, loff_t *ppos)
+ {
+-	struct task_smack *tsp = current_security();
++	struct task_smack *tsp = smack_cred(current_cred());
+ 	char *data;
+ 	int rc;
+ 	LIST_HEAD(list_tmp);
 -- 
 2.17.1
 
