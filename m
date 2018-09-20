@@ -2,136 +2,120 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8857EC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5794BC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D2221528
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:59:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D2221528
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 19A9921524
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 01:59:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A9921524
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732381AbeITHjy (ORCPT
+        id S1732816AbeITHkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 03:39:54 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40781 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbeITHjy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 03:39:54 -0400
-Received: by mail-qk1-f193.google.com with SMTP id c126-v6so4169867qkd.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 18:59:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to;
-        bh=jT2y+5cmpbBSSRFi948qu5ZJwUCJ4GquMGVdmjx1QBA=;
-        b=Oh8ExWRBgM6cUuHzT+l/BQhnP81BHyyDMI3bJceGj4XxbO/Rb3vaO1gvrD4Y/Mw6KZ
-         6JzuK2xMlYFbikoOfiBNCwjQCNEF4sTKt4/6vEpdMlttY3Xb28rfTLp48lhfkHINga3U
-         Q+RZKjCXk2DmiWL7Er9gXuU+MdeTU9LvkBAwR/vNw+9frkK565JgFsjaWs+MQpT82KZe
-         o27CrOxE6uTaJHkmJ+0Xg5/AHJ74qv2EBuCb3RwMrOj+qHRxTokvjC1xDMoVzx3nUh7f
-         RTfVahGOBdQPit8eysYApTR+eq0VhrxOzEgSs3+2Har6gmTckVD416dKc3n6ELOdW/QC
-         MG9g==
-X-Gm-Message-State: APzg51B2QdmIi+jtdx+dcmJ2VgE7SH1LIvvAbSW7C/tynHS1WbmyOqvT
-        wrHlpvsqTaXiSnJc4iiKdr4xhQ==
-X-Google-Smtp-Source: ANB0Vdb8WZFu68s36xIHvUGBLiLyr78VTnpRlTykVDMITM4XrQOSPjYlD4+cQksXkvCrph6qW2olag==
-X-Received: by 2002:ae9:f10c:: with SMTP id k12-v6mr25753704qkg.342.1537408747573;
-        Wed, 19 Sep 2018 18:59:07 -0700 (PDT)
-Received: from localhost.localdomain (50-207-253-10-static.hfc.comcastbusiness.net. [50.207.253.10])
-        by smtp.gmail.com with ESMTPSA id w63-v6sm12438249qkc.52.2018.09.19.18.59.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Sep 2018 18:59:06 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Laura Abbott <labbott@redhat.com>, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] kgdboc: Fix warning with module build
-Date:   Wed, 19 Sep 2018 18:59:01 -0700
-Message-Id: <20180920015901.4639-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180919131208.07aa9c6b@canb.auug.org.au>
+        Thu, 20 Sep 2018 03:40:07 -0400
+Received: from mga03.intel.com ([134.134.136.65]:33655 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbeITHkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 03:40:07 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2018 18:59:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,396,1531810800"; 
+   d="scan'208";a="265074941"
+Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Sep 2018 18:59:18 -0700
+Date:   Thu, 20 Sep 2018 09:56:44 +0800
+From:   Yi Sun <yi.y.sun@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        chao.p.peng@intel.com, chao.gao@intel.com,
+        isaku.yamahata@intel.com, michael.h.kelly@microsoft.com,
+        tianyu.lan@microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: Re: [PATCH v1 2/3] locking/pvqspinlock, hv: Enable PV qspinlock for
+ Hyper-V
+Message-ID: <20180920015644.GE11769@yi.y.sun>
+References: <1536830005-37260-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1536830005-37260-3-git-send-email-yi.y.sun@linux.intel.com>
+ <alpine.DEB.2.21.1809131307110.1473@nanos.tec.linutronix.de>
+ <20180914090440.GB11769@yi.y.sun>
+ <alpine.DEB.2.21.1809141232260.1473@nanos.tec.linutronix.de>
+ <20180917125452.GC11769@yi.y.sun>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180917125452.GC11769@yi.y.sun>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, 
 
-After 2dd453168643 ("kgdboc: Fix restrict error"), kgdboc_option_setup is
-now only used when built in, resulting in a warning when compiled as a
-module:
+On 18-09-17 20:54:52, Yi Sun wrote:
+> On 18-09-14 12:42:33, Thomas Gleixner wrote:
+> > On Fri, 14 Sep 2018, Yi Sun wrote:
+> > > > > +static void hv_notify_long_spin_wait(void)
+> > > > > +{
+> > > > > +	u64 input = spin_wait_info | 0x00000000ffffffff;
+> > > > 
+> > > > What? The result is always 0x00000000ffffffff .....
+> > > > 
+> > > Oh, sorry for such error.
+> > > 
+> > > > > +	spin_wait_info++;
+> > > > > +	hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT, input);
+> > > > > +}
+> > > > > +
+> > > > > +static void hv_qlock_kick(int cpu)
+> > > > > +{
+> > > > > +	spin_wait_info--;
+> > > > 
+> > > > Looking at the above this is completely pointless and I have no idea what
+> > > > that variable is supposed to do.
+> > > > 
+> > > Per Microsoft Hypervisor Top Level Functional Specification, the input
+> > > parameter of HVCALL_NOTIFY_LONG_SPIN_WAIT is defined as below:
+> > > 
+> > > SpinwaitInfo – Specifies the accumulated count the guest was spinning.
+> > > 
+> > > So, it is increased when guest is spinning and reduced when spinlock is
+> > > released.
+> > 
+> > But that's a global variable, so it might be incremented and decremented by
+> > several CPUs at once. I don't have the spec and have no time to study it
+> > either, but global does not make any sense to me. The spin wait info comes
+> > from a single guest CPU and the wakeup is targeted at that guest CPU as
+> > well. So why global? It might be defined that way, but then you really want
+> > to explain it proper.
+> > 
+> > Thanks,
+> > 
+> > 	tglx
+> > 
+> Let me check this more. Will reply to you later. Thanks!
+> 
+> BRs,
+> Yi Sun
 
-drivers/tty/serial/kgdboc.c:134:12: warning: 'kgdboc_option_setup' defined but not used [-Wunused-function]
- static int kgdboc_option_setup(char *opt)
-            ^~~~~~~~~~~~~~~~~~~
+I have got the details from Microsoft.
 
-Move the function under the appropriate ifdef for builtin only.
+Notify_Long_Spin_Wait hypercall should be called after a specific times
+spinning which can be got through CPUID. When hypervisor receives this,
+it will try to ensure that all vcpus are scheduled. 
 
-Fixes: 2dd453168643 ("kgdboc: Fix restrict error")
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
- drivers/tty/serial/kgdboc.c | 37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+Notify_Long_Spin_Wait is a standalone feature which should be split out
+as a new patch set.
 
-diff --git a/drivers/tty/serial/kgdboc.c b/drivers/tty/serial/kgdboc.c
-index e9a83bb5bee5..baeeeaec3f03 100644
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -131,24 +131,6 @@ static void kgdboc_unregister_kbd(void)
- #define kgdboc_restore_input()
- #endif /* ! CONFIG_KDB_KEYBOARD */
- 
--static int kgdboc_option_setup(char *opt)
--{
--	if (!opt) {
--		pr_err("config string not provided\n");
--		return -EINVAL;
--	}
--
--	if (strlen(opt) >= MAX_CONFIG_LEN) {
--		pr_err("config string too long\n");
--		return -ENOSPC;
--	}
--	strcpy(config, opt);
--
--	return 0;
--}
--
--__setup("kgdboc=", kgdboc_option_setup);
--
- static void cleanup_kgdboc(void)
- {
- 	if (kgdb_unregister_nmi_console())
-@@ -316,6 +298,25 @@ static struct kgdb_io kgdboc_io_ops = {
- };
- 
- #ifdef CONFIG_KGDB_SERIAL_CONSOLE
-+static int kgdboc_option_setup(char *opt)
-+{
-+	if (!opt) {
-+		pr_err("config string not provided\n");
-+		return -EINVAL;
-+	}
-+
-+	if (strlen(opt) >= MAX_CONFIG_LEN) {
-+		pr_err("config string too long\n");
-+		return -ENOSPC;
-+	}
-+	strcpy(config, opt);
-+
-+	return 0;
-+}
-+
-+__setup("kgdboc=", kgdboc_option_setup);
-+
-+
- /* This is only available if kgdboc is a built in for early debugging */
- static int __init kgdboc_early_init(char *opt)
- {
--- 
-2.17.1
-
+So I would like split it into a new patch set and submit it after PV
+Hyper-V Spinlock patch set merged.
