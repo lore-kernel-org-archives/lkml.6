@@ -2,131 +2,131 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F5BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B69ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1402421523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:00:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="lkOd2vwO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1402421523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 5E7E021523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:04:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7E021523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbeITLmW (ORCPT
+        id S1731624AbeITLpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:42:22 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:33962 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731240AbeITLmV (ORCPT
+        Thu, 20 Sep 2018 07:45:54 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:45057 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731240AbeITLpy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:42:21 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 9D62F5C00AC;
-        Thu, 20 Sep 2018 08:00:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1537423237;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Yss7WDeE6N1JOpb05H6mEzme9tKsi5DrbdtsDlW0LMU=;
-        b=lkOd2vwO+pYMMeEm/grWR1HCxQhTuO0bUSWqUVHKbPaNNwxC6bM8lijxmJvzsGj4/COy5d
-        qPeeQsbnlxED6FmQTP6rPRTCuXrMJV+01nui8xsuVcB72Q+ttoJ6/TeJapL51KdwjsSGj3
-        qLS+ZyTaRXTxGWjS7FeiV08cZcNWq8Y=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 19 Sep 2018 23:00:37 -0700
-From:   Stefan Agner <stefan@agner.ch>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-sparse@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
-In-Reply-To: <CANiq72kS_w7p3Xe9cDCjCA9j1u-zQ1-C4ZX7N8G+AbP4u7SG8w@mail.gmail.com>
-References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
- <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com>
- <20180918173428.GA21591@kroah.com>
- <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
- <20180919211458.GA8757@kroah.com>
- <CANiq72kS_w7p3Xe9cDCjCA9j1u-zQ1-C4ZX7N8G+AbP4u7SG8w@mail.gmail.com>
-Message-ID: <6837090afde15cd5ee155dbfabb0d556@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
+        Thu, 20 Sep 2018 07:45:54 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 67E5F24000D;
+        Thu, 20 Sep 2018 06:04:01 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v7 00/11] hugetlb: Factorize hugetlb architecture primitives 
+Date:   Thu, 20 Sep 2018 06:03:47 +0000
+Message-Id: <20180920060358.16606-1-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.09.2018 16:00, Miguel Ojeda wrote:
-> On Wed, Sep 19, 2018 at 11:14 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->> On Tue, Sep 18, 2018 at 08:56:04PM +0200, Miguel Ojeda wrote:
->>> Hi Greg,
->>>
->>
->>> Since Linus/Andrew/you
->>> didn't comment on whether you wanted or not this for 4.19, we are
->>> assuming they would go in for 4.20. However, Stefan/Nick/... wanted
->>> this for 4.19 instead, they asked me to extract these patches two
->>> separately for 4.19. I let them comment further on the status of Clang
->>> on arm32.
->>
->> If these do not fix a regression, I don't see how they would be ready
->> for 4.19-final.
+Hi Andrew,
 
-Clang on arm32 worked with v4.18 when using multi_v7_defconfig -CONFIG_EFI.
+As suggested by people who reviewed/acked this series, please consider
+including this series into -mm tree.
 
-With 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually
-exclusive") it broke on v4.19-rc1. IMHO this is a regression and we should
-consider this two patches as a fix for it.
+In order to reduce copy/paste of functions across architectures and then         
+make riscv hugetlb port (and future ports) simpler and smaller, this             
+patchset intends to factorize the numerous hugetlb primitives that are           
+defined across all the architectures.                                            
+                                                                                 
+Except for prepare_hugepage_range, this patchset moves the versions that         
+are just pass-through to standard pte primitives into                            
+asm-generic/hugetlb.h by using the same #ifdef semantic that can be              
+found in asm-generic/pgtable.h, i.e. __HAVE_ARCH_***.                            
+                                                                                 
+s390 architecture has not been tackled in this serie since it does not           
+use asm-generic/hugetlb.h at all.                                                
+                                                                                 
+This patchset has been compiled on all addressed architectures with              
+success (except for parisc, but the problem does not come from this              
+series).                 
 
+v7:
+  Add Ingo Molnar Acked-By for x86.
 
-> 
-> Ok, I will wait a bit to send v5 until this is sorted out.
-> 
-> [CC'd Nick, Stefan, Arnd: I just noticed the Reviewed-by/... lines
-> were not picked as CC].
+v6:                                                                              
+  - Remove nohash/32 and book3s/32 powerpc specific implementations in
+    order to use the generic ones.                                                        
+  - Add all the Reviewed-by, Acked-by and Tested-by in the commits,              
+    thanks to everyone.                                                          
+                                                                                 
+v5:                                                                              
+  As suggested by Mike Kravetz, no need to move the #include                     
+  <asm-generic/hugetlb.h> for arm and x86 architectures, let it live at          
+  the top of the file.                                                           
+                                                                                 
+v4:                                                                              
+  Fix powerpc build error due to misplacing of #include                          
+  <asm-generic/hugetlb.h> outside of #ifdef CONFIG_HUGETLB_PAGE, as              
+  pointed by Christophe Leroy.                                                   
+                                                                                 
+v1, v2, v3:                                                                      
+  Same version, just problems with email provider and misuse of                  
+  --batch-size option of git send-email
 
-Oh yeah thanks, really did not notice the discussion around v2 until
-you CC'd me now.
+Alexandre Ghiti (11):
+  hugetlb: Harmonize hugetlb.h arch specific defines with pgtable.h
+  hugetlb: Introduce generic version of hugetlb_free_pgd_range
+  hugetlb: Introduce generic version of set_huge_pte_at
+  hugetlb: Introduce generic version of huge_ptep_get_and_clear
+  hugetlb: Introduce generic version of huge_ptep_clear_flush
+  hugetlb: Introduce generic version of huge_pte_none
+  hugetlb: Introduce generic version of huge_pte_wrprotect
+  hugetlb: Introduce generic version of prepare_hugepage_range
+  hugetlb: Introduce generic version of huge_ptep_set_wrprotect
+  hugetlb: Introduce generic version of huge_ptep_set_access_flags
+  hugetlb: Introduce generic version of huge_ptep_get
 
---
-Stefan
+ arch/arm/include/asm/hugetlb-3level.h        | 32 +---------
+ arch/arm/include/asm/hugetlb.h               | 30 ----------
+ arch/arm64/include/asm/hugetlb.h             | 39 +++---------
+ arch/ia64/include/asm/hugetlb.h              | 47 ++-------------
+ arch/mips/include/asm/hugetlb.h              | 40 +++----------
+ arch/parisc/include/asm/hugetlb.h            | 33 +++--------
+ arch/powerpc/include/asm/book3s/32/pgtable.h |  6 --
+ arch/powerpc/include/asm/book3s/64/pgtable.h |  1 +
+ arch/powerpc/include/asm/hugetlb.h           | 43 ++------------
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  6 --
+ arch/powerpc/include/asm/nohash/64/pgtable.h |  1 +
+ arch/sh/include/asm/hugetlb.h                | 54 ++---------------
+ arch/sparc/include/asm/hugetlb.h             | 40 +++----------
+ arch/x86/include/asm/hugetlb.h               | 69 ----------------------
+ include/asm-generic/hugetlb.h                | 88 +++++++++++++++++++++++++++-
+ 15 files changed, 135 insertions(+), 394 deletions(-)
 
-> 
->>
->>> I am going to send a v5 of the entire series without these two
->>> patches, based on -rc4 (or -next, which one do you prefer? I would say
->>> these patches should be applied early in the -next branches, so that
->>> everyone is ready for the change, given it "touches" every translation
->>> unit).
->>
->> That's up to whomever takes these into their tree for linux-next
->> inclusion.  If you are about to break everything, then you might
->> consider changing your patches so they do not do that :)
->>
-> 
-> Well, the series shouldn't break anything (famous last words :), even
-> if everyone includes those headers. So, in theory, they *could* be
-> applied anywhere, anytime; but given they are global changes...
-> 
-> Cheers,
-> Miguel
+-- 
+2.16.2
+
