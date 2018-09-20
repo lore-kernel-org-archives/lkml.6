@@ -6,69 +6,273 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA6EC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBB8C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799582146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:12:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799582146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 87BD22146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:13:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87BD22146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732053AbeITLyX (ORCPT
+        id S1732068AbeITLyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:54:23 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12654 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731260AbeITLyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:54:22 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4010CC2479B6F;
-        Thu, 20 Sep 2018 14:12:34 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 14:12:29 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Roman Kiryanov <rkir@google.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] platform: goldfish: pipe: Make symbol 'goldfish_pipe_dev' static
-Date:   Thu, 20 Sep 2018 06:22:05 +0000
-Message-ID: <1537424525-23695-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        Thu, 20 Sep 2018 07:54:54 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:59379 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731260AbeITLyy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 07:54:54 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id A36C924000B;
+        Thu, 20 Sep 2018 06:13:00 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
+        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v7 08/11] hugetlb: Introduce generic version of prepare_hugepage_range
+Date:   Thu, 20 Sep 2018 06:03:55 +0000
+Message-Id: <20180920060358.16606-9-alex@ghiti.fr>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180920060358.16606-1-alex@ghiti.fr>
+References: <20180920060358.16606-1-alex@ghiti.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes the following sparse warning:
+arm, arm64, powerpc, sparc, x86 architectures use the same version of
+prepare_hugepage_range, so move this generic implementation into
+asm-generic/hugetlb.h.
 
-drivers/platform/goldfish/goldfish_pipe.c:214:26: warning:
- symbol 'goldfish_pipe_dev' was not declared. Should it be static?
-
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+Tested-by: Helge Deller <deller@gmx.de> # parisc
+Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
+Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
+Acked-by: Ingo Molnar <mingo@kernel.org> # x86
+Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/include/asm/hugetlb.h     | 11 -----------
+ arch/arm64/include/asm/hugetlb.h   | 11 -----------
+ arch/ia64/include/asm/hugetlb.h    |  1 +
+ arch/mips/include/asm/hugetlb.h    |  1 +
+ arch/parisc/include/asm/hugetlb.h  |  1 +
+ arch/powerpc/include/asm/hugetlb.h | 15 ---------------
+ arch/sh/include/asm/hugetlb.h      |  1 +
+ arch/sparc/include/asm/hugetlb.h   | 16 ----------------
+ arch/x86/include/asm/hugetlb.h     | 15 ---------------
+ include/asm-generic/hugetlb.h      | 15 +++++++++++++++
+ 10 files changed, 19 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index b4a484b..0f66d77 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -211,7 +211,7 @@ struct goldfish_pipe_dev {
- 	unsigned char __iomem *base;
- };
+diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
+index 9ca14227eeb7..3fcef21ff2c2 100644
+--- a/arch/arm/include/asm/hugetlb.h
++++ b/arch/arm/include/asm/hugetlb.h
+@@ -33,17 +33,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
  
--struct goldfish_pipe_dev goldfish_pipe_dev;
-+static struct goldfish_pipe_dev goldfish_pipe_dev;
+-static inline int prepare_hugepage_range(struct file *file,
+-					 unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ 	clear_bit(PG_dcache_clean, &page->flags);
+diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
+index 1fd64ebf0cd7..3e7f6e69b28d 100644
+--- a/arch/arm64/include/asm/hugetlb.h
++++ b/arch/arm64/include/asm/hugetlb.h
+@@ -31,17 +31,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
  
- static int goldfish_pipe_cmd_locked(struct goldfish_pipe *pipe,
- 				    enum PipeCmdCode cmd)
+-static inline int prepare_hugepage_range(struct file *file,
+-					 unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ static inline void arch_clear_hugepage_flags(struct page *page)
+ {
+ 	clear_bit(PG_dcache_clean, &page->flags);
+diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
+index 82fe3d7a38d9..cbe296271030 100644
+--- a/arch/ia64/include/asm/hugetlb.h
++++ b/arch/ia64/include/asm/hugetlb.h
+@@ -9,6 +9,7 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
+ 
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ int prepare_hugepage_range(struct file *file,
+ 			unsigned long addr, unsigned long len);
+ 
+diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
+index b3d6bb53ee6e..6ff2531cfb1d 100644
+--- a/arch/mips/include/asm/hugetlb.h
++++ b/arch/mips/include/asm/hugetlb.h
+@@ -18,6 +18,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ static inline int prepare_hugepage_range(struct file *file,
+ 					 unsigned long addr,
+ 					 unsigned long len)
+diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
+index 5a102d7251e4..fb7e0fd858a3 100644
+--- a/arch/parisc/include/asm/hugetlb.h
++++ b/arch/parisc/include/asm/hugetlb.h
+@@ -22,6 +22,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+  * If the arch doesn't supply something else, assume that hugepage
+  * size aligned regions are ok without further preparation.
+  */
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ static inline int prepare_hugepage_range(struct file *file,
+ 			unsigned long addr, unsigned long len)
+ {
+diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
+index b5b57b309564..2a90f387880a 100644
+--- a/arch/powerpc/include/asm/hugetlb.h
++++ b/arch/powerpc/include/asm/hugetlb.h
+@@ -114,21 +114,6 @@ void hugetlb_free_pgd_range(struct mmu_gather *tlb, unsigned long addr,
+ 			    unsigned long end, unsigned long floor,
+ 			    unsigned long ceiling);
+ 
+-/*
+- * If the arch doesn't supply something else, assume that hugepage
+- * size aligned regions are ok without further preparation.
+- */
+-static inline int prepare_hugepage_range(struct file *file,
+-			unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ #define __HAVE_ARCH_HUGE_PTEP_GET_AND_CLEAR
+ static inline pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+ 					    unsigned long addr, pte_t *ptep)
+diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
+index 54f65094efe6..f1bbd255ee43 100644
+--- a/arch/sh/include/asm/hugetlb.h
++++ b/arch/sh/include/asm/hugetlb.h
+@@ -15,6 +15,7 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+  * If the arch doesn't supply something else, assume that hugepage
+  * size aligned regions are ok without further preparation.
+  */
++#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
+ static inline int prepare_hugepage_range(struct file *file,
+ 			unsigned long addr, unsigned long len)
+ {
+diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
+index f661362376e0..2101ea217f33 100644
+--- a/arch/sparc/include/asm/hugetlb.h
++++ b/arch/sparc/include/asm/hugetlb.h
+@@ -26,22 +26,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
+-/*
+- * If the arch doesn't supply something else, assume that hugepage
+- * size aligned regions are ok without further preparation.
+- */
+-static inline int prepare_hugepage_range(struct file *file,
+-			unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
+ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
+ 					 unsigned long addr, pte_t *ptep)
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index 3cd3a2c9840e..59c056adb3c9 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -13,21 +13,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
+ 	return 0;
+ }
+ 
+-/*
+- * If the arch doesn't supply something else, assume that hugepage
+- * size aligned regions are ok without further preparation.
+- */
+-static inline int prepare_hugepage_range(struct file *file,
+-			unsigned long addr, unsigned long len)
+-{
+-	struct hstate *h = hstate_file(file);
+-	if (len & ~huge_page_mask(h))
+-		return -EINVAL;
+-	if (addr & ~huge_page_mask(h))
+-		return -EINVAL;
+-	return 0;
+-}
+-
+ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
+ 					   unsigned long addr, pte_t *ptep)
+ {
+diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
+index cd9697672b79..6c0c8b0c71e0 100644
+--- a/include/asm-generic/hugetlb.h
++++ b/include/asm-generic/hugetlb.h
+@@ -87,4 +87,19 @@ static inline pte_t huge_pte_wrprotect(pte_t pte)
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
++static inline int prepare_hugepage_range(struct file *file,
++		unsigned long addr, unsigned long len)
++{
++	struct hstate *h = hstate_file(file);
++
++	if (len & ~huge_page_mask(h))
++		return -EINVAL;
++	if (addr & ~huge_page_mask(h))
++		return -EINVAL;
++
++	return 0;
++}
++#endif
++
+ #endif /* _ASM_GENERIC_HUGETLB_H */
+-- 
+2.16.2
 
