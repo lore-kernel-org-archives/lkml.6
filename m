@@ -6,149 +6,67 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDEDC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5AAFC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B8021529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:42:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B8021529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 73F282152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:44:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73F282152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732374AbeITQZB (ORCPT
+        id S1732068AbeITQ1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 12:25:01 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51465 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbeITQZB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 12:25:01 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1g2wPO-0005ds-N7; Thu, 20 Sep 2018 12:42:06 +0200
-Message-ID: <1537440125.3362.161.camel@pengutronix.de>
-Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for the last tail
- data
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Andy Duan <fugang.duan@nxp.com>, Robin Gong <yibin.gong@nxp.com>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "jslaby@suse.com" <jslaby@suse.com>
-Date:   Thu, 20 Sep 2018 12:42:05 +0200
-In-Reply-To: <VI1PR0402MB36009F89D7E629CE99A7C592FF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
-References: <1537457160-10792-1-git-send-email-yibin.gong@nxp.com>
-         <20180920075513.6jqfbrrjax3sp4cn@pengutronix.de>
-         <VI1PR04MB45432291716B64380C1B90DD89130@VI1PR04MB4543.eurprd04.prod.outlook.com>
-         <1537436376.3362.159.camel@pengutronix.de>
-         <VI1PR0402MB36009F89D7E629CE99A7C592FF130@VI1PR0402MB3600.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 20 Sep 2018 12:27:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:50301 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbeITQ1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 12:27:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42GCzR6H8Dz9sBj;
+        Thu, 20 Sep 2018 20:44:51 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     David Howells <dhowells@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+In-Reply-To: <15925.1537309041@warthog.procyon.org.uk>
+References: <20180919073826.02370812@canb.auug.org.au> <20180910133525.28c5dd20@canb.auug.org.au> <15925.1537309041@warthog.procyon.org.uk>
+Date:   Thu, 20 Sep 2018 20:44:51 +1000
+Message-ID: <878t3wjvmk.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 20.09.2018, 10:33 +0000 schrieb Andy Duan:
-> From: Lucas Stach <l.stach@pengutronix.de> Sent: 2018年9月20日 17:40
-> > Am Donnerstag, den 20.09.2018, 08:39 +0000 schrieb Robin Gong:
-> > > > -----Original Message-----
-> > > > From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > > > Sent: 2018年9月20日 15:55
-> > > > To: Robin Gong <yibin.gong@nxp.com>
-> > > > Cc: jslaby@suse.com; Andy Duan <fugang.duan@nxp.com>;
-> > > > linux-serial@vger.kernel.org; linux-kernel@vger.kernel.org; dl-
-> > > > linux-imx <linux-imx@nxp.com>; kernel@pengutronix.de
-> > > > Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for
-> > > > the
-> > > > last tail data
-> > > > 
-> > > > Hello,
-> > > > 
-> > > > On Thu, Sep 20, 2018 at 11:26:00PM +0800, Robin Gong wrote:
-> > > > > enable IDDMAEN in UCR4 to let sdma script has the chance to
-> > > > > detect
-> > > > > the idle status and transfer the last tail data with the
-> > > > > interrupt
-> > > > > notifying uart driver.Otherwise, the last dma done interrupt
-> > > > > of
-> > > > > the tail data in rxfifo whose size is less than watermark may
-> > > > > never be received by uart driver.
-> > > > 
-> > > > Is this a theoretic issue? Or does it fix a real problem?
-> > > > 
-> > > > If the former I'd say UCR1_ATDMAEN being set should prevent
-> > > > this
-> > > > stall.
-> > > 
-> > > It's a real fix, you will see 'timeout We read 0 byte' with the
-> > > attached stress test running on i.mx7d or i.mx6 if no this patch
-> > > applied.
-> > > ' while [ 1 ]; do /unit_tests/UART/mxc_uart_stress_test.out
-> > > /dev/ttymxc5 2000000 D L 100 100 L; done &'
-> > > Please make sure dma enabled on ttymxcX for your test, and sdma
-> > > firmware setup in your rootfs /lib/firmware/imx/sdma/sdma-
-> > > imx6q.bin
-> > 
-> > or
-> > > /lib/firmware/imx/sdma/sdma- imx7d.bin.
-> > > You can get sdma firmware from below:
-> > > 
-> > 
-> > https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2F
-> > gi
-> > t
-> > > .kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Ffirmware%2Flin
-> > 
-> > ux-&amp
-> > > ;data=02%7C01%7Cfugang.duan%40nxp.com%7C213076f6d1114148b5
-> > 
-> > ce08d61edcfb
-> > > 
-> > 
-> > 88%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C636730331
-> > 814804545&amp
-> > > ;sdata=d0uZMjLc%2FrIae3Wd6PWtX2gEGlvZcUjPBVqKK9550jg%3D&amp
-> > 
-> > ;reserved=0
-> > > firmware.git/tree/imx/sdma
-> > 
-> > Please see commit 905c0decad28402aa166975023fb88c8f62f93c8 on
-> > why using the idle detect together with with SDMA is wrong. We
-> > don't
-> > want to re- introduce the broken behavior.
-> > 
-> 
-> The patch just want to use idle timer to stop SDMA transfer using the
-> new ram script, whose action is not the same as rom script.
-> Sdma rom script how to stop sdma transfer if only one byte in rx FIFO
-> that trigger SDMA request ?
+David Howells <dhowells@redhat.com> writes:
 
-Right, and using the idle detect doesn't work with the ROM script as
-this doesn't read the remaining bytes in the FIFO when the idle detect
-condition is hit.
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+>> > After merging the vfs tree, today's linux-next build (powerpc
+>> > allyesconfig) failed like this:
+>> > 
+>> > samples/vfs/test-fsinfo.c: In function 'fsinfo':
+>> > samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first use in this function); did you mean 'fsinfo'?
+>
+> I think the problem is that I haven't allocated system call numbers for any
+> arches other than x86 - even the x86 syscall numbers are provisional until the
+> patchset is taken upstream.  I'm not sure of the best way to deal with this -
+> make the samples dependent on the X86 arch?
+>
+>> > samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long unsigned int'} [-Wformat=]
+>> >   printf("\tmax file size: %llx\n", f->max_file_size);
+>
+> Sigh.  On powerpc __u64 is unsigned long, but on x86_64 it's unsigned long
+> long.  Is it possible to shift all arches to use unsigned long long for __u64?
 
-Instead with the ROM script the aging timer is used to terminate the
-DMA transfer. So if 1 byte is sitting in the FIFO below the watermark
-level, the serial core will trigger a DMA request when the aging time
-is hit. The ROM script checks the aging status and reads the remaining
-bytes from the FIFO, then terminates the transfer. This is all
-documented in the reference manual.
+You can #define SANE_USERSPACE_TYPES to get ll64 for powerpc.
 
-I fail to see why this shouldn't work with the RAM script. If it
-doesn't work with the RAM firmware, this script is violating the
-interface between the serial core and the script in an incompatible way
-and needs fixing.
-
-Regards,
-Lucas
+cheers
