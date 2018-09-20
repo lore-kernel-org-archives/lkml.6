@@ -2,98 +2,94 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C59C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49476C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D692621525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:57:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cantab.net header.i=@cantab.net header.b="vrQh3Hq1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D692621525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cantab.net
+	by mail.kernel.org (Postfix) with ESMTP id 09DB721525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:57:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09DB721525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388165AbeIUEnJ (ORCPT
+        id S2388655AbeIUEnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:43:09 -0400
-Received: from mta01.prd.rdg.aluminati.org ([94.76.243.214]:56098 "EHLO
-        mta01.prd.rdg.aluminati.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725861AbeIUEnJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:43:09 -0400
-Received: from mta01.prd.rdg.aluminati.org (localhost [127.0.0.1])
-        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTP id B96C720BDC;
-        Thu, 20 Sep 2018 23:57:18 +0100 (BST)
-Received: from localhost (localhost [127.0.0.1])
-        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTP id AEE6120BBB;
-        Thu, 20 Sep 2018 23:57:18 +0100 (BST)
-Authentication-Results: mta01.prd.rdg.aluminati.org (amavisd-new);
-        dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
-        header.d=cantab.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cantab.net; h=
-        content-transfer-encoding:content-language:in-reply-to
-        :mime-version:user-agent:date:date:message-id:from:from
-        :references:subject:subject:received:received; s=dkim; t=
-        1537484237; bh=adwNq1Sh98igLw7ZBuuQcw+9ySXX+yM9DJhQegBuQFM=; b=v
-        rQh3Hq1ibUH8eZAm957wZtSI8tuja+B7TmGXls+Niv56JEAyh3DJqbX79K1yCz+5
-        2Td1L4Soa086y0P7h5VEUq/3yoI0bH9J+SpTTEPtAgZZ4OIpj+8a37wSf4lX2b25
-        SIYswn875wBVOM95gLHnzFH/ByhTX7dD+u0SjMAexCEle+UCV61xtLaFOZt8e+iV
-        3V9VUIA95ftIVhw5YjE3FeSE6KCJ5lLcE6jdLN857fJSkb1X4gs77Me6rjNGjiPj
-        wBTQVgOnmIOO8olNcFWK9faIEN9oQsypqYrb2i+O0bPdDW07vVAoaCzihshF7r0a
-        uJufLEB2oi/JJfGev9wAQ==
-X-Quarantine-ID: <S2R4u8QB89eg>
-X-Virus-Scanned: Debian amavisd-new at mta01.prd.rdg.aluminati.org
-Received: from mta.aluminati.local ([127.0.0.1])
-        by localhost (mta01.prd.rdg.aluminati.org [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id S2R4u8QB89eg; Thu, 20 Sep 2018 23:57:17 +0100 (BST)
-Received: from [192.168.0.2] (cpc92884-cmbg20-2-0-cust324.5-4.cable.virginm.net [80.1.217.69])
-        by mta01.prd.rdg.aluminati.org (Postfix) with ESMTPSA id 4139162FD9;
-        Thu, 20 Sep 2018 23:57:15 +0100 (BST)
-Subject: Re: Code of Conduct: Let's revamp it.
-To:     unconditionedwitness@redchan.it
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
- <20180919081812.020f19e3@lwn.net>
- <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
- <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
- <20180920041846.GA4418@1wt.eu> <206423b0a199c1f12e61364d6e687e09@redchan.it>
-From:   Edward Cree <ec429@cantab.net>
-Message-ID: <a9db544f-db9d-d6c4-67d8-43db2eb591fc@cantab.net>
-Date:   Thu, 20 Sep 2018 23:57:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Fri, 21 Sep 2018 00:43:22 -0400
+Received: from mga05.intel.com ([192.55.52.43]:48214 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725861AbeIUEnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 00:43:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 15:57:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,282,1534834800"; 
+   d="scan'208";a="234659201"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga004.jf.intel.com with ESMTP; 20 Sep 2018 15:56:43 -0700
+Received: from fmsmsx124.amr.corp.intel.com (10.18.125.39) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 20 Sep 2018 15:56:43 -0700
+Received: from fmsmsx101.amr.corp.intel.com ([169.254.1.66]) by
+ fmsmsx124.amr.corp.intel.com ([169.254.8.135]) with mapi id 14.03.0319.002;
+ Thu, 20 Sep 2018 15:56:42 -0700
+From:   "Eads, Gage" <gage.eads@intel.com>
+To:     Alex Williamson <alex.williamson@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Raj, Ashok" <ashok.raj@intel.com>
+CC:     "gnomes@lxorguk.ukuu.org.uk" <gnomes@lxorguk.ukuu.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] vfio/pci: Mask buggy SR-IOV VF INTx support
+Thread-Topic: [PATCH v2] vfio/pci: Mask buggy SR-IOV VF INTx support
+Thread-Index: AQHUURz5EGbtYdWy70+WiXMB8NQV0KT5xIIQ
+Date:   Thu, 20 Sep 2018 22:56:41 +0000
+Message-ID: <9184057F7FC11744A2107296B6B8EB1E44721E41@fmsmsx101.amr.corp.intel.com>
+References: <153747346143.7344.14634545723456004489.stgit@gimli.home>
+In-Reply-To: <153747346143.7344.14634545723456004489.stgit@gimli.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2I5OWYwZWYtOTdhNy00ODRhLWI2ZjQtMmJjZTBkOGFkNDc5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSUxFMk0yc2ZZY1VcL29wVnhrU1RUZG13dUZnekpnWkNVenozckJjbkNyMVVmcUw0eFJ6ZXhpUW1pRjRsNjJkMGwifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.106]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <206423b0a199c1f12e61364d6e687e09@redchan.it>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/09/18 10:27, unconditionedwitness@redchan.it wrote:
-> Contributors can, at any time, rescind the license grant regarding their
-> property via written notice to those whom they are rescinding the grant
-> from (regarding their property (code)).
-
-I know others have already said it, but:
-This is legally nonsense.  The only way I can revoke someone's rights to
- my code under the GPL is if they violate the terms of the GPL.  If I
- were to do so otherwise, then _I_ would be in violation for having
- distributed derived works of the kernel without a GPL, not to mention
- the obvious reliance/estoppel problems.
-
-Moreover, even if I _could_ revoke the license, I wouldn't want to do
- so; it would be ridiculously petty in itself and the precedent it would
- set would be destructive to the entire open-source community, about
- which I care deeply.  It is _because_ Linux and other open-source
- projects are so important to humanity that I spoke up about what I
- perceive as a threat to it.
-
-In short, "unconditionedwitness", please shut up.  You're not helping.
+SGkgQWxleCwNCg0KVGhpcyBwYXRjaCBwYXNzZXMgdGVzdGluZyB3aXRoIHRoZSAweDI3MGMgZGV2
+aWNlLCBhbmQgKHdoZW4gSSBjb21tZW50IG91dCBpdHMga25vd25fYm9ndXNfdmZfaW50eF9waW4g
+ZW50cnkpIHRoZSB3YXJuaW5nIGlzIHRyaWdnZXJlZCBieSBRRU1VLg0KDQpUaGFua3MsDQpHYWdl
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWxleCBXaWxsaWFtc29u
+IFttYWlsdG86YWxleC53aWxsaWFtc29uQHJlZGhhdC5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBT
+ZXB0ZW1iZXIgMjAsIDIwMTggMzowMyBQTQ0KPiBUbzoga3ZtQHZnZXIua2VybmVsLm9yZzsgUmFq
+LCBBc2hvayA8YXNob2sucmFqQGludGVsLmNvbT47IEVhZHMsIEdhZ2UNCj4gPGdhZ2UuZWFkc0Bp
+bnRlbC5jb20+DQo+IENjOiBnbm9tZXNAbHhvcmd1ay51a3V1Lm9yZy51azsgbGludXgta2VybmVs
+QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBbUEFUQ0ggdjJdIHZmaW8vcGNpOiBNYXNrIGJ1
+Z2d5IFNSLUlPViBWRiBJTlR4IHN1cHBvcnQNCj4gDQo+IFRoZSBTUi1JT1Ygc3BlYyByZXF1aXJl
+cyB0aGF0IFZGcyBtdXN0IHJlcG9ydCB6ZXJvIGZvciB0aGUgSU5UeCBwaW4gcmVnaXN0ZXIgYXMN
+Cj4gVkZzIGFyZSBwcmVjbHVkZWQgZnJvbSBJTlR4IHN1cHBvcnQuICBJdCdzIG11Y2ggZWFzaWVy
+IGZvciB0aGUgaG9zdCBrZXJuZWwgdG8NCj4gdW5kZXJzdGFuZCB3aGV0aGVyIGEgZGV2aWNlIGlz
+IGEgVkYgYW5kIHRoZXJlZm9yZSB3aGV0aGVyIGEgbm9uLXplcm8gcGluDQo+IHJlZ2lzdGVyIHZh
+bHVlIGlzIGJvZ3VzIHRoYW4gaXQgaXMgdG8gZG8gdGhlIHNhbWUgaW4gdXNlcnNwYWNlLiAgT3Zl
+cnJpZGUgdGhlIElOVHgNCj4gY291bnQgZm9yIHN1Y2ggZGV2aWNlcyBhbmQgdmlydHVhbGl6ZSB0
+aGUgcGluIHJlZ2lzdGVyIHRvIHByb3ZpZGUgYSBjb25zaXN0ZW50IHZpZXcNCj4gb2YgdGhlIGRl
+dmljZSB0byB0aGUgdXNlci4NCj4gDQo+IEFzIHRoaXMgaXMgY2xlYXJseSBhIHNwZWMgdmlvbGF0
+aW9uLCB3YXJuIGFib3V0IGl0IHRvIHN1cHBvcnQgaGFyZHdhcmUgdmFsaWRhdGlvbiwNCj4gYnV0
+IGFsc28gcHJvdmlkZSBhIGtub3duIHdoaXRlbGlzdCBhcyBpdCBkb2Vzbid0IGRvIG11Y2ggZ29v
+ZCB0byBjb250aW51ZQ0KPiBjb21wbGFpbmluZyBpZiB0aGUgaGFyZHdhcmUgdmVuZG9yIGRvZXNu
+J3QgcGxhbiB0byBmaXggaXQuDQo+IA0KPiBLbm93biBkZXZpY2VzIHdpdGggdGhpcyBpc3N1ZTog
+ODA4NjoyNzBjDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBbGV4IFdpbGxpYW1zb24gPGFsZXgud2ls
+bGlhbXNvbkByZWRoYXQuY29tPg0KDQpUZXN0ZWQtYnk6IEdhZ2UgRWFkcyA8Z2FnZS5lYWRzQGlu
+dGVsLmNvbT4NCg==
