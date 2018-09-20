@@ -6,205 +6,141 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CF5C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F8EECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C032320858
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C032320858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CA87C21532
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:57:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA87C21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733228AbeITVgZ convert rfc822-to-8bit (ORCPT
+        id S1726984AbeITVlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:36:25 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16104 "EHLO mga07.intel.com"
+        Thu, 20 Sep 2018 17:41:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:32772 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731025AbeITVgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:36:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 08:52:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,399,1531810800"; 
-   d="scan'208";a="92266669"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 20 Sep 2018 08:52:17 -0700
-Date:   Thu, 20 Sep 2018 08:53:39 -0700
-From:   Jacob Pan <jacob.jun.pan@intel.com>
-To:     "Tian, Kevin" <kevin.tian@intel.com>
-Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>, jacob.jun.pan@intel.com
-Subject: Re: [RFC PATCH v2 00/10] vfio/mdev: IOMMU aware mediated device
-Message-ID: <20180920085339.2ea67e72@jacob-builder>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19130ED5B@SHSMSX101.ccr.corp.intel.com>
-References: <20180830040922.30426-1-baolu.lu@linux.intel.com>
-        <380dc154-5d72-0085-2056-fa466789e1ab@arm.com>
-        <aa1ff748-c2ec-acc0-f1d9-cdff2b131e58@linux.intel.com>
-        <3602f8c1-df17-4894-1bcc-4d779f9aa7fd@arm.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D191300D06@SHSMSX101.ccr.corp.intel.com>
-        <03d496b0-84c2-b3ca-5be5-d4540c6d8ec7@arm.com>
-        <20180914140433.6891a90c@jacob-builder>
-        <a92a6077-226f-5d38-cdfa-ec5e06a5d532@arm.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19130ED5B@SHSMSX101.ccr.corp.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726128AbeITVlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 17:41:06 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F3994206EE; Thu, 20 Sep 2018 17:56:55 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C3F0620379;
+        Thu, 20 Sep 2018 17:56:55 +0200 (CEST)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, jason@lakedaemon.net,
+        andrew@lunn.ch, sebastian.hesselbarth@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] ARM: dts: mvebu: updates and new board
+References: <20180726040257.22285-1-chris.packham@alliedtelesis.co.nz>
+Date:   Thu, 20 Sep 2018 17:56:56 +0200
+In-Reply-To: <20180726040257.22285-1-chris.packham@alliedtelesis.co.nz> (Chris
+        Packham's message of "Thu, 26 Jul 2018 16:02:53 +1200")
+Message-ID: <87bm8sjh6f.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Sep 2018 02:22:03 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
+Hi Chris,
+ 
+ On jeu., juil. 26 2018, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-> > From: Jean-Philippe Brucker [mailto:jean-philippe.brucker@arm.com]
-> > Sent: Tuesday, September 18, 2018 11:47 PM
-> > 
-> > On 14/09/2018 22:04, Jacob Pan wrote:  
-> > >> This example only needs to modify first-level translation, and
-> > >> works with SMMUv3. The kernel here could be the host, in which
-> > >> case second-level translation is disabled in the SMMU, or it
-> > >> could be the guest, in which case second-level mappings are
-> > >> created by QEMU and first-level translation is managed by
-> > >> assigning PASID tables to the guest.  
-> > > There is a difference in case of guest SVA. VT-d v3 will bind
-> > > guest PASID and guest CR3 instead of the guest PASID table. Then
-> > > turn on nesting. In case of mdev, the second level is obtained
-> > > from the aux domain which was setup for the default PASID. Or in
-> > > case of PCI device, second level is harvested from RID2PASID.  
-> > 
-> > Right, though I wasn't talking about the host managing guest SVA
-> > here, but a kernel binding the address space of one of its
-> > userspace drivers to the mdev.
-> >   
-> > >> So (2) would use iommu_sva_bind_device(),  
-> > > We would need something different than that for guest bind, just
-> > > to show the two cases:>
-> > > int iommu_sva_bind_device(struct device *dev, struct mm_struct
-> > > *mm,  
-> > int  
-> > > *pasid, unsigned long flags, void *drvdata)
-> > >
-> > > (WIP)
-> > > int sva_bind_gpasid(struct device *dev, struct gpasid_bind_data
-> > > *data) where:
-> > > /**
-> > >  * struct gpasid_bind_data - Information about device and guest
-> > > PASID binding
-> > >  * @pasid:       Process address space ID used for the guest mm
-> > >  * @addr_width:  Guest address width. Paging mode can also be
-> > > derived.
-> > >  * @gcr3:        Guest CR3 value from guest mm
-> > >  */
-> > > struct gpasid_bind_data {
-> > >         __u32 pasid;
-> > >         __u64 gcr3;
-> > >         __u32 addr_width;
-> > >         __u32 flags;
-> > > #define IOMMU_SVA_GPASID_SRE    BIT(0) /* supervisor request */
-> > > };
-> > > Perhaps there is room to merge with io_mm but the life cycle  
-> > management  
-> > > of guest PASID and host PASID will be different if you rely on mm
-> > > release callback than FD.  
-> 
-> let's not calling gpasid here - which makes sense only in
-> bind_pasid_table proposal where pasid table thus pasid space is
-> managed by guest. In above context it is always about host pasid
-> (allocated in system-wide), which could point to a host cr3 (user
-> process) or a guest cr3 (vm case).
-> 
-I agree this gpasid is confusing, we have a system wide PASID
-name space. Just a way to differentiate different bind, perhaps
-just a flag indicating the PASID is used for guest.
-i.e.
-struct pasid_bind_data {
-         __u32 pasid;
-         __u64 gcr3;
-         __u32 addr_width;
-         __u32 flags;
-#define IOMMU_SVA_GPASID_SRE    BIT(0) /* supervisor request */
-#define IOMMU_SVA_PASID_GUEST   BIT(0) /* host pasid used by guest */
-};
+> This series updates the armada-xp-98dx3236 SoC and related boards to use the
+> new style dts bindings for nand.
+>
+> I've also added a new db-88f6820-amc board which is an Armada-385 based
+> reference board from Marvell's switch team. It's a plugin card for either the
+> db-dxbc2 or db-xc3-24g4 which can be used if you disable the internal CPU on
+> those platforms.
+>
+> Chris Packham (4):
+>   ARM: dts: mvebu: 98dx3236: Rename nand controller node
+>   ARM: dts: mvebu: db-dxbc2: use new style nand binding
+>   ARM: dts: mvebu: db-xc3-24g4: use new style nand binding
+>   ARM: dts: mvebu: Add device tree for db-88f6820-amc board
 
-> > I think gpasid management should stay separate from io_mm, since in
-> > your case VFIO mechanisms are used for life cycle management of the
-> > VM, similarly to the former bind_pasid_table proposal. For example
-> > closing the container fd would unbind all guest page tables. The
-> > QEMU process' address space lifetime seems like the wrong thing to
-> > track for gpasid.  
-> 
-> I sort of agree (though not thinking through all the flow carefully).
-> PASIDs are allocated per iommu domain, thus release also happens when
-> domain is detached (along with container fd close).
-> 
-I also prefer to keep gpasid separate.
+While applying this series mvebu/dt, I got few warning with "ARM: dts:
+mvebu: 98dx3236: Rename nand controller node".
 
-But I don't think we need to have per iommu domain per PASID for guest
-SVA case. Assuming you are talking about host IOMMU domain. The PASID
-bind call is a result of guest PASID cache flush with a PASID
-previously allocated. The host just need to put gcr3 into the PASID
-entry then harvest the second level from the existing domain.
-> >   
-> > >> but (1) needs something
-> > >> else. Aren't auxiliary domains suitable for (1)? Why limit
-> > >> auxiliary domain to second-level or nested translation? It seems
-> > >> silly to use a different API for first-level, since the flow in
-> > >> userspace and VFIO is the same as your second-level case as far
-> > >> as MAP_DMA ioctl goes. The difference is that in your case the
-> > >> auxiliary domain supports an additional operation which binds
-> > >> first-level page tables. An auxiliary domain that only supports
-> > >> first-level wouldn't support this operation, but it can still
-> > >> implement iommu_map/unmap/etc. 
-> > > I think the intention is that when a mdev is created, we don;t
-> > > know whether it will be used for SVA or IOVA. So aux domain is
-> > > here to "hold a spot" for the default PASID such that MAP_DMA
-> > > calls can work as usual, which is second level only. Later, if
-> > > SVA is used on the mdev there will be another PASID allocated for
-> > > that purpose. Do we need to create an aux domain for each PASID?
-> > > the translation can be looked up by the combination of parent dev
-> > > and pasid.  
-> > 
-> > When allocating a new PASID for the guest, I suppose you need to
-> > clone the second-level translation config? In which case a single
-> > aux domain for the mdev might be easier to implement in the IOMMU
-> > driver. Entirely up to you since we don't have this case on SMMUv3
-> >   
-> 
-> One thing to highlight in related discussions (also mentioned in other
-> thread). There is not a new iommu domain type called 'aux'. 'aux'
-> matters only to a specific device when a domain is attached to that
-> device which has aux capability enabled. Same domain can be attached
-> to other device as normal domain. In that case multiple PASIDs
-> allocated on same mdev are tied to same aux domain, same bare metal
-> SVA case, i.e. any domain (normal or aux) can include 2nd level
-> structure and multiple 1st level structures. Jean is correct - all
-> PASIDs in same domain then share 2nd level translation, and there are
-> io_mm or similar tracking structures to associate each PASID to a 1st
-> level translation structure.
-> 
-I think we are all talking about the same thing :)
-yes, 2nd level is cloned from aux domain/default PASID for mdev, and
-pdev similarly from DMA_MAP domain.
+I fix them and also use the new partition binding, the diff is the
+following:
 
-> Thanks
-> Kevin
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+iff --git a/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts b/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
+index d87614057e3f..dc9ccce1d4a1 100644
+--- a/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
++++ b/arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
+@@ -102,9 +102,14 @@
+                nand-ecc-strength = <4>;
+                nand-ecc-step-size = <512>;
+ 
+-               partition@user {
+-                       reg = <0x00000000 0x40000000>;
+-                       label = "user";
++               partitions {
++                       compatible = "fixed-partitions";
++                       #address-cells = <1>;
++                       #size-cells = <1>;
++                       partition@0 {
++                               reg = <0x00000000 0x40000000>;
++                               label = "user";
++                       };
+                };
+        };
+ };
+@@ -131,13 +136,18 @@
+                spi-max-frequency = <50000000>;
+                m25p,fast-read;
+ 
+-               partition@u-boot {
+-                       reg = <0x00000000 0x00100000>;
+-                       label = "u-boot";
+-               };
+-               partition@u-boot-env {
+-                       reg = <0x00100000 0x00040000>;
+-                       label = "u-boot-env";
++               partitions {
++                       compatible = "fixed-partitions";
++                       #address-cells = <1>;
++                       #size-cells = <1>;
++                       partition@0 {
++                               reg = <0x00000000 0x00100000>;
++                               label = "u-boot";
++                       };
++                       partition@100000 {
++                               reg = <0x00100000 0x00040000>;
++                               label = "u-boot-env";
++                       };
+                };
+        };
+ };
 
-[Jacob Pan]
+I amended your patch with it, but if you don't agree with it, I can
+still modify it, the branch is not immutable yet.
+
+Thanks,
+
+Gregory
+
+>
+>  arch/arm/boot/dts/Makefile                    |   1 +
+>  .../boot/dts/armada-385-db-88f6820-amc.dts    | 184 ++++++++++++++++++
+>  arch/arm/boot/dts/armada-xp-98dx3236.dtsi     |   2 +-
+>  arch/arm/boot/dts/armada-xp-db-dxbc2.dts      |  18 +-
+>  arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts |  18 +-
+>  5 files changed, 208 insertions(+), 15 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/armada-385-db-88f6820-amc.dts
+>
+> -- 
+> 2.18.0
+>
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
