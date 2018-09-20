@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9454FECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E194C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5326D21525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B5CB21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9s6vIdu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5326D21525
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAXBuphE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B5CB21525
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388389AbeIUBCR (ORCPT
+        id S2388412AbeIUBCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:02:17 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39035 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388353AbeIUBCQ (ORCPT
+        Thu, 20 Sep 2018 21:02:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43961 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388353AbeIUBCS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:02:16 -0400
-Received: by mail-pl1-f195.google.com with SMTP id w14-v6so4791032plp.6;
-        Thu, 20 Sep 2018 12:17:18 -0700 (PDT)
+        Thu, 20 Sep 2018 21:02:18 -0400
+Received: by mail-pg1-f193.google.com with SMTP id q19-v6so4014532pgn.10;
+        Thu, 20 Sep 2018 12:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
         bh=cd3q5/Kewn+hTh4W6f3AEry026X+iQnpvdBvEnZ6ivs=;
-        b=f9s6vIduHIafl/mFN0dEBP/UVsboVxrEzIOReZWKGX3sjtacRiLoqP+WrOGx9S4qhx
-         sffkqpZAcBxC9QGicPuHTSNYxOMffX5yRZT5LzXiqZuCznXX82UgF0VX+qbxzdJzZ10r
-         OeBQk16GpB4HZyTU+ZGMkpS/xtc6WgzcUw312SsiIS7C6DwtbCM0hociGsRH906p79ne
-         7ItiMtzE/ljgnBdsYU0+ZoyWIY0PtMSRoYs/dRkjWVJKhkVqytFim2AQbkbixpanaGSS
-         +NrRVmNfOciZu7CRf02rsw2oKblC84nsJZxEaMa5olkBrbWMiczuCO7kdR6HtNl45I5a
-         ErUw==
+        b=QAXBuphEVygXX0AQ+eTda3bT2cL8c3olKUBjAf3Wvbs+OlWWpWd+XH33qN1Ygao4Rm
+         mb+quXkUIk1XyYrByN+X1KjmQjJQlqvTXLHRstJsygW4bi2GKOxnABHEXJqgpnOQuMjQ
+         w0Kd/47vHbx0oeAOpK16GSB6JE0rwOGn5WnZniNDMDy6HnFeIOy717D/x2MFPBCzdpg2
+         xRrzvWJsM0zkMI9IQenCjvr2sgulOjKdCg5TOxY9qNGwFUQM5266aO8WvicFOIwpjf+m
+         2rlipsODG6dJMOb3zMuHttqbh2YjMNztegoWoQWA2pdz3TBik7QQ6xZEbRogz0VsArcx
+         pPIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
         bh=cd3q5/Kewn+hTh4W6f3AEry026X+iQnpvdBvEnZ6ivs=;
-        b=tcmrhT4/Q+/OJbE8ina7Ak5RDzhAFtBCtUtIa98G4a5r7D575AaImJilN3qMuYhmYw
-         zmPZyNdK6cZbo+EBwxGZUV6OjnXiD0Ob0rtd+iPYSQf9Pb+kaDZd9xKh/LUlf/S26UH4
-         sBLy+sJM0Lgk6haWXG0J+EO0TuxV53r1Dm4AKKm7o8FtpwGtDdcX1A5HKyALjsF7+KfM
-         vEzhoj2e1mxD4aIWCz7ffjGBbPb5106tMA+cCIi1P6fT2rFokW/B8v7bjVw+qAk5DDN2
-         JdJ9vfwYO/uaap3rrD8aZmzhC3XttniXdlHQriQGTh1XKjLnfQXdCXApYITbWQO9fUDK
-         9WYQ==
-X-Gm-Message-State: APzg51CxbBcDBLjVhBEyxPWV3CnmAO613nnBEzVn+kVK5nhufBPuYG2u
-        V5SH5rc6vKZ11ig/ab4m84lHD0ca
-X-Google-Smtp-Source: ANB0VdbgGpVBEQ80A1Az3JnCbOv/5YAh8IJCNwgWj0gfdbmkw+FabNbVg7xNgfIST9AnvsG9iZleiQ==
-X-Received: by 2002:a17:902:7102:: with SMTP id a2-v6mr40795561pll.217.1537471037853;
-        Thu, 20 Sep 2018 12:17:17 -0700 (PDT)
+        b=oc/n0+Z+pceiQxg272R37IvB9jzzlOtaEeAmT3BTaILJjGh4cjJjBGDHSTaQMPTOh+
+         zL++C8W91EVtruinvVqNPpTVIwAgjq6glX+NsMV5V0WOAfkpSuyEwRVrWcbScVECKcFN
+         IJPmwwxJdTjnExvb1v2SXp82exbtCSAWEakOc2XP+fJI8KGDN72K+SRSd3Lxbc+zZVin
+         wTxevn6TSferAks+add5rplew+bZKs3Zi1yIUDNkGhEuTHOKYMQRe1qOHQDbcU+mZkHM
+         ALuy8OAaVZcOQ1r4W/5QX4G3tJbuiq/r6FfyWp9kNstZBW9mB8+sxExKU8harVHEXrjd
+         Hzzg==
+X-Gm-Message-State: APzg51CTnAfkdYfMUjCkZcptW0lGG71C/ISCUQoO+O9ZtnOb00iRs2Hi
+        ONlZ2XugNS8Y8ZCSJedlud43DTZQ
+X-Google-Smtp-Source: ANB0VdZjMPKqxsLFYDB6Mn/aa1ZuLlSppp7IPkgqI2Zn/jkIzErnm5pb5znKq9g9IvRbmJJwzUMpbg==
+X-Received: by 2002:aa7:83cd:: with SMTP id j13-v6mr42439483pfn.236.1537471039759;
+        Thu, 20 Sep 2018 12:17:19 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.15
+        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 12:17:16 -0700 (PDT)
+        Thu, 20 Sep 2018 12:17:18 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -72,9 +72,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Parallel ATA drivers)),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH 2/9] phy: brcm-sata: allow PHY_BRCM_SATA driver to be built for DSL SoCs
-Date:   Thu, 20 Sep 2018 12:16:36 -0700
-Message-Id: <20180920191646.18198-3-f.fainelli@gmail.com>
+Subject: [PATCH 2/9] phy: broadcom: allow PHY_BRCM_SATA driver to be built for DSL SoCs
+Date:   Thu, 20 Sep 2018 12:16:37 -0700
+Message-Id: <20180920191646.18198-4-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920191646.18198-1-f.fainelli@gmail.com>
 References: <20180920191646.18198-1-f.fainelli@gmail.com>
