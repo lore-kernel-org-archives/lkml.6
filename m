@@ -2,102 +2,98 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A1CC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F642C46470
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D0A21532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:00:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D0A21532
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 59C0321531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 15:03:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OTM7GGpA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C0321531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733264AbeITUoC convert rfc822-to-8bit (ORCPT
+        id S1733136AbeITUrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 16:44:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59319 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732640AbeITUoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 16:44:01 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9144E20795; Thu, 20 Sep 2018 17:00:07 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 658EA206EE;
-        Thu, 20 Sep 2018 16:59:57 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     Yelena Krivosheev <yelena@marvell.com>,
-        "davem\@davemloft.net" <davem@davemloft.net>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni\@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "maxime.chevallier\@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "miquel.raynal\@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        Yan Markman <ymarkman@marvell.com>,
-        "mw\@semihalf.com" <mw@semihalf.com>
-Subject: Re: [EXT] [PATCH net] net: mvneta: fix the Rx desc buffer DMA unmapping
-References: <20180919132906.26868-1-antoine.tenart@bootlin.com>
-        <5ab58500e78549618b597fdc2e54356a@IL-EXCH01.marvell.com>
-        <20180920112010.GB1158@kwain>
-Date:   Thu, 20 Sep 2018 16:59:58 +0200
-In-Reply-To: <20180920112010.GB1158@kwain> (Antoine Tenart's message of "Thu,
-        20 Sep 2018 13:20:10 +0200")
-Message-ID: <87k1ngjjtd.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Thu, 20 Sep 2018 16:47:03 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54104 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730758AbeITUrD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 16:47:03 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8KF31it023463;
+        Thu, 20 Sep 2018 10:03:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537455781;
+        bh=SWzWLjrntZ7+njI6Lx5pp0oLmW+FzjXXaTvFXf8H8fE=;
+        h=From:To:CC:Subject:Date;
+        b=OTM7GGpAYFqsR7xXovifzfPh1QymW3+ep1fTFaW3GeuQGhnHz40NQtT8pc/CFJTDG
+         GolZxolh7r/fiy3qmmPIl6ITsvQ6lQjo8LOw+9IXipJByTbme0aZbVt7ggS+0GeuIr
+         toQ2ZL1fx53lHcdzn/MvZO8bPJUzYdaV+XaFonu0=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8KF31ZU010825;
+        Thu, 20 Sep 2018 10:03:01 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 20
+ Sep 2018 10:03:01 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 20 Sep 2018 10:03:00 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8KF2xMY012651;
+        Thu, 20 Sep 2018 10:03:00 -0500
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     <kishon@ti.com>, <lorenzo.pieralisi@arm.com>,
+        <linux-pci@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH] tools: PCI: exit with error code when test fails
+Date:   Thu, 20 Sep 2018 17:02:53 +0200
+Message-ID: <1537455773-13470-1-git-send-email-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Antoine,
+This makes it easier to use pcitest in automated setups.
+
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+---
+ tools/pci/pcitest.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
+index af146bb..5adc8cd 100644
+--- a/tools/pci/pcitest.c
++++ b/tools/pci/pcitest.c
+@@ -143,6 +143,7 @@ static int run_test(struct pci_test *test)
+ 	}
  
- On jeu., sept. 20 2018, Antoine Tenart <antoine.tenart@bootlin.com> wrote:
-
-> Hi Yelena,
->
-> On Thu, Sep 20, 2018 at 10:14:56AM +0000, Yelena Krivosheev wrote:
->> 
->> Please, check and fix all cases of dma_unmap_single() usage.
->> See mvneta_rxq_drop_pkts()
->> ...
->> 		if (!data || !(rx_desc->buf_phys_addr))
->> 			continue;
->> 		dma_unmap_single(pp->dev->dev.parent, rx_desc->buf_phys_addr,
->> 				 MVNETA_RX_BUF_SIZE(pp->pkt_size), DMA_FROM_DEVICE);
->> 		__free_page(data);
->> ...
->
-> I had a look at the one reported by CONFIG_DMA_API_DEBUG, and at DMA
-> unmapping calls using PAGE_SIZE. As you pointed out there might be
-> others parts, thanks!
-
-Actually Jisheng had submitted a similar patch few weeks ago and as I
-pointed at this time, the dma_unmap in mvneta_rxq_drop_pkts can be
-called when the allocation is done in with HWBM in this case which use a
-dma_map_single.
-
-I though that in this case using dma_map_single is the things to do even
-if in the SWBM case it is less optimal.
-
-Gregory
-
->
-> Antoine
->
-> -- 
-> Antoine Ténart, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
+ 	fflush(stdout);
++	return (ret < 0) ? ret : 1 - ret; /* return 0 if test succeeded */
+ }
+ 
+ int main(int argc, char **argv)
+@@ -231,6 +232,5 @@ int main(int argc, char **argv)
+ 		return -EINVAL;
+ 	}
+ 
+-	run_test(test);
+-	return 0;
++	return run_test(test);
+ }
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.7.4
+
