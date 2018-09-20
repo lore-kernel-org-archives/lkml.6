@@ -2,82 +2,67 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADCAECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F193C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A8720877
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A8720877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id CD113206B5
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:22:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD113206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbeITLBL (ORCPT
+        id S1731413AbeITLDn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:01:11 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41533 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725725AbeITLBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:01:10 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 517183E0235FD;
-        Thu, 20 Sep 2018 13:19:34 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 13:19:32 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <haver@linux.vnet.ibm.com>, <gpiccoli@linux.vnet.ibm.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] misc: genwqe: remove duplicated include file
-Date:   Thu, 20 Sep 2018 13:07:11 +0800
-Message-ID: <1537420031-30405-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Thu, 20 Sep 2018 07:03:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37666 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728049AbeITLDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 07:03:42 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1C2FCA1;
+        Thu, 20 Sep 2018 05:22:07 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 07:22:04 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        stable@vger.kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: Re: [PATCH] firmware: Always initialize the fw_priv list object
+Message-ID: <20180920052204.GA15695@kroah.com>
+References: <20180920010938.10315-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920010938.10315-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-module.h has duplicated include. hence just remove
-redundant include file.
+On Wed, Sep 19, 2018 at 06:09:38PM -0700, Bjorn Andersson wrote:
+> When freeing the fw_priv the item is taken off the list. This causes an
+> oops in the FW_OPT_NOCACHE case as the list object is not initialized.
+> 
+> Make sure to initialize the list object regardless of this flag.
+> 
+> Fixes: 422b3db2a503 ("firmware: Fix security issue with request_firmware_into_buf()")
+> Cc: stable@vger.kernel.org
+> Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/base/firmware_loader/main.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/misc/genwqe/card_base.c | 1 -
- drivers/misc/genwqe/card_ddcb.c | 1 -
- 2 files changed, 2 deletions(-)
+Is this being triggered by some hardware somewhere today?  Or is this
+just a fix found by code inspection?
 
-diff --git a/drivers/misc/genwqe/card_base.c b/drivers/misc/genwqe/card_base.c
-index c7cd367..d137d0fa 100644
---- a/drivers/misc/genwqe/card_base.c
-+++ b/drivers/misc/genwqe/card_base.c
-@@ -24,7 +24,6 @@
-  * controlled from here.
-  */
- 
--#include <linux/module.h>
- #include <linux/types.h>
- #include <linux/pci.h>
- #include <linux/err.h>
-diff --git a/drivers/misc/genwqe/card_ddcb.c b/drivers/misc/genwqe/card_ddcb.c
-index 656449c..9a65bd9 100644
---- a/drivers/misc/genwqe/card_ddcb.c
-+++ b/drivers/misc/genwqe/card_ddcb.c
-@@ -27,7 +27,6 @@
-  */
- 
- #include <linux/types.h>
--#include <linux/module.h>
- #include <linux/sched.h>
- #include <linux/wait.h>
- #include <linux/pci.h>
--- 
-1.7.12.4
+thanks,
 
+greg k-h
