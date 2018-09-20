@@ -1,118 +1,71 @@
 Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SERGIO_SUBJECT_PORN014,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AF1ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D70ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9FA521525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:28:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="scjy3VwN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9FA521525
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
+	by mail.kernel.org (Postfix) with ESMTP id 8E6BE21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 09:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E6BE21525
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732157AbeITPKu (ORCPT
+        id S1731946AbeITPLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:10:50 -0400
-Received: from cock.li ([185.100.85.212]:39616 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731755AbeITPKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:10:49 -0400
+        Thu, 20 Sep 2018 11:11:34 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:35305 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbeITPLe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 11:11:34 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1g2vGS-0002qy-9G; Thu, 20 Sep 2018 11:28:48 +0200
+Date:   Thu, 20 Sep 2018 11:28:47 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+cc:     Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Baoquan He <bhe@redhat.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org, mike.travis@hpe.com, sivanich@hpe.com
+Subject: Re: [PATCH v3 1/2] x86/mm: Add an option to change the padding used
+ for the physical memory mapping
+In-Reply-To: <20180919141058.krruhvsjkm6hqgmf@gabell>
+Message-ID: <alpine.DEB.2.21.1809201127210.3243@nanos.tec.linutronix.de>
+References: <20180904151141.20264-1-msys.mizuma@gmail.com> <20180918133026.gzyix3oyrfcsrdcx@gabell> <20180919121720.GA47424@gmail.com> <alpine.DEB.2.21.1809191421500.18945@nanos.tec.linutronix.de> <20180919124806.GA48413@gmail.com>
+ <20180919141058.krruhvsjkm6hqgmf@gabell>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537435694; bh=0McBbuzErzoIwlUf4kKPDNAgVZNzufhM43CkMw4fhHM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=scjy3VwNCatX10aIqi6LOh0TCZ6uRbQjt53t2Rn0rSkWiHYeSIw9JA+RjMeMae0LU
-         +mB+5mqPPpvRCC2NXseqSLzMx6P5AooEdP74cXXZZzyA94VzcPiDsJGGpDEOzRdTJz
-         GVSx2Zluv9ktxHUEpEGHyPiwhuH2OSRgtmQRzLfbkhE9sHT3nSHcAtrmi62XCAXT5v
-         m5ibUPr7SclKaAwaacoiKcFIu0YAdcjP3VE6hE/IT9RwxtLbga8Ei1SSlJBhwwqqtj
-         8ZbX6OAiT4zJ/5dHO4oLzUsCMrDH+8JI9Feiv03Rbn/7/shiL+ehqXwrRkDPk9dofw
-         DSOJAACdnZmeg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 20 Sep 2018 09:28:14 +0000
-From:   unconditionedwitness@redchan.it
-To:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     linux-kernel-owner@vger.kernel.org
-Subject: Re: A Plea to Unfuck our Codes of Conduct
-In-Reply-To: <20180920082257.znyb3drbkyaeiwbm@gmail.com>
-References: <20180920082257.znyb3drbkyaeiwbm@gmail.com>
-Message-ID: <bcc117cb6a5f11de9d444425e22011c8@redchan.it>
-X-Sender: unconditionedwitness@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Regarding those who are ejected from the Linux Kernel Community after 
-this CoC:
+On Wed, 19 Sep 2018, Masayoshi Mizuma wrote:
+> On Wed, Sep 19, 2018 at 02:48:06PM +0200, Ingo Molnar wrote:
 
-Contributors can, at any time, rescind the license grant regarding their 
-property via written notice to those whom they are rescinding the grant 
-from (regarding their property (code)) .
+> > - Add checking code to the later SRAT case to at least _detect_ bad
+> >   padding after the fact.
+> >
+> >   We don't utilize RAM with bad padding until that, right?
+> 
+> I have an idea as following. Does that make sense?
+> 
+> Add a warning message which shows the padding size is not enough
+> for the physical memory mapping and tell to the user about
+> recommended padding size. User can change the padding size in next
+> reboot to add the boot parameter.
 
-The GPL version 2 lacks a no-rescission clause (the GPL version 3 has 
-such a clause: to attempt furnish defendants with an estoppel defense, 
-the Linux Kernel is licensed under version 2, however, as are the past 
-contributions).
+Yes, that makes sense because silently failing is bad.
 
-When the defendants ignore the rescission and continue using the 
-plaintiff's code, the plaintiff can sue under the copyright statute.
+Thanks,
 
-Banned contributors _should_ do this (note: plaintiff is to register 
-their copyright prior to filing suit, the copyright does not have to be 
-registered at the time of the violation however)
-
-Additionally when said banned contributors joined the Linux team, they 
-were under the impression that it was a meritocracy: in-fact this belief 
-was stated or ratified by those within the governing body regarding 
-Linux when the contributors began their work (whatever that body was at 
-that time, it could have been simply Linus, or Linus and a few 
-associates).
-
-The remuneration for the work was implied to be, or perhaps stated, to 
-be fame as-well as a potential increase in the contributors stature, in 
-addition to membership in the Linux Kernel club or association, or 
-whatever it is that the Linux Kernel Community actually is (which a 
-court may determine... it is something, suffice to say).
-
-Thusly for work, consideration was promised by (Linus? Others? There are 
-years of mailing list archives with which to determine).
-
-And now that consideration has been clawed-back and the contributors 
-image has been tarnished.
-
-Thus the worker did work, however the other side of the implied, or 
-perhaps written (email memorandums), understanding has been violated 
-(once the contributor has been banned under the new non-meritocratic 
-"CoC").
-
-Damages could be recovered under: breach of contract, quazi-contract, 
-libel, false-light. (services rendered for the contractual claims, 
-future lost income for the libel claims)
-
-In addition to copyright claims. (statutory damages, profits)
-
-For greatest effect, all rescission should be done at once in a bloc. 
-(With other banned contributors).
-
-Contributors: You were promised something, you laboured for that 
-promise, and now the promise has become a lie. You have remedies 
-available to you now, as-well as in the close future .
-
-Additionally, regarding those who promoted the Code of Conduct to be 
-used against the linux kernel contributors, knowing full well the effect 
-it would have and desiring those effects; recovery for the ejected 
-contributors via a tortious interference claim may be possible.
-
+	tglx
