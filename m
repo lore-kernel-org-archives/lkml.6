@@ -2,202 +2,223 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DF9ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE68BECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8316620867
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:46:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77D8E21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:46:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vUFl2wqa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8316620867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="tpxZvnE2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D8E21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731025AbeITWad (ORCPT
+        id S1731463AbeITWbB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:30:33 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37171 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeITWad (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:30:33 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v9-v6so9033615ljk.4;
-        Thu, 20 Sep 2018 09:46:10 -0700 (PDT)
+        Thu, 20 Sep 2018 18:31:01 -0400
+Received: from mail-eopbgr710054.outbound.protection.outlook.com ([40.107.71.54]:34422
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728016AbeITWbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 18:31:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=FannyPCOO+Uw3DlLzM6HQREOdTuPz8oxsCBRIzs0tDA=;
-        b=vUFl2wqaRLWSt26onLzYh68ZeVR9ZDJkZDv94F4j7TZvjkbhLrS2A3q5UpbfFPDVd8
-         HzXwmsQ/B5v0TeoxNjDAct6Dq2HcZOg8D2SS8722hDvrcPQJRF1Ztw4o4TDDJZMrq8Di
-         wx1ayv5j9rQAPP1TTsczX0DuOacj+uIXxIsIWDewpEUDi7yzgGCaLxTRNaPRltx8pGic
-         UllxaRuhXtAgbPL5uR1GU02GCP2H8XeWOCLIIwK4dqB8346lsnPprYg+Jdrq+nF2b+cL
-         7L+7Z2PwcC+AoysRsfg+zPajF1+4OhnAL2GJ9dCu/JpFgxyABQqA0ioU1iWzMIX32PZF
-         EvAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FannyPCOO+Uw3DlLzM6HQREOdTuPz8oxsCBRIzs0tDA=;
-        b=LJdfx05KCs54RHyleeMQevOaxc5VNEl0ZVG0M9HCTRc+5uP3Q3BRVyEr0f95+XD0XN
-         1ko4UlXOrI6j+V9a1FSnTC2Ed2sXlBR2UiDwfHcrGAzoQVMfFwCe5z4Zb+iBUMg/aUNG
-         Ea3SaZWr77dDX+XfoFky7E8h2GfhjmLIhB5nQM/1Rxspbq84HmzVW+Qt7t1IT3yomrq9
-         4F3KvvD6Tigsh+WZr8G0xuhh2eaw7uK/XpJYx9Ig7jaCNQUmUXNBNmARDj+EKizVrPtk
-         uZqiBKFUxsvxOrxlDBEKrlEyM5EY12HgXvRyvg4W7428VuUvLNM94BGMNRYw61DuJc8G
-         Cd2w==
-X-Gm-Message-State: APzg51BwL9EgFt1QY5bRU8KC+UcOBW5TWHL3N27gA1bNPkdsLEEGGyE+
-        C12/v/el14twdtY5d2NRd16aiNPa
-X-Google-Smtp-Source: ANB0VdYzt/ey5f0/241EDjCw6mJmbwjHofCRh5u4eojoZVXaK3bZL1hvBkybH5Zvho++Unh7ywPWEQ==
-X-Received: by 2002:a2e:9e17:: with SMTP id e23-v6mr15474555ljk.14.1537461968960;
-        Thu, 20 Sep 2018 09:46:08 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.googlemail.com with ESMTPSA id p65-v6sm4523215lja.44.2018.09.20.09.46.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 09:46:07 -0700 (PDT)
-Subject: Re: [RFC PATCH v4 1/2] drm: Add generic colorkey properties for
- display planes
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-media@vger.kernel.org
-References: <20180807172202.1961-1-digetx@gmail.com>
- <20180807172202.1961-2-digetx@gmail.com> <7041537.TPdt8DIvGD@avalon>
- <20180814103833.GN21634@phenom.ffwll.local>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <38a5e2cd-83a5-816d-9ad7-3119dc294af0@gmail.com>
-Date:   Thu, 20 Sep 2018 19:46:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180814103833.GN21634@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3PNRaSiPVtEhoGhiIC7zdUV8naYpwGNVYUovuCegvkg=;
+ b=tpxZvnE216L4F4TwcMG+8QFbjWB0e/ZTbMfzCF2VaiZT1Gz70ipuSc1yJWdL58KE+uwnizrZxqnmucQ25uD8Iuk6PkVGLTFPVKXXsDdGyx5sdEbgAJ8qKjuWxMY+3lYSYZF9VBniNvVGZTySrWmIHpJCIyMo7Zh/mL1kBwSSSb4=
+Received: from CY1PR02MB2138.namprd02.prod.outlook.com (10.166.190.144) by
+ CY1PR02MB2059.namprd02.prod.outlook.com (10.166.190.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Thu, 20 Sep 2018 16:46:37 +0000
+Received: from CY1PR02MB2138.namprd02.prod.outlook.com
+ ([fe80::d401:dced:c223:a99a]) by CY1PR02MB2138.namprd02.prod.outlook.com
+ ([fe80::d401:dced:c223:a99a%4]) with mapi id 15.20.1143.017; Thu, 20 Sep 2018
+ 16:46:36 +0000
+From:   Jolly Shah <JOLLYS@xilinx.com>
+To:     Jolly Shah <JOLLYS@xilinx.com>, "olof@lixom.net" <olof@lixom.net>,
+        Michal Simek <michals@xilinx.com>,
+        "arm@kernel.org" <arm@kernel.org>
+CC:     Rajan Vaja <RAJANV@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v12 0/6] drivers: Introduce firmware driver for ZynqMP
+ core
+Thread-Topic: [PATCH v12 0/6] drivers: Introduce firmware driver for ZynqMP
+ core
+Thread-Index: AQHUStBI6TetFFdXe0yJGHiWqofw86T5bOTg
+Date:   Thu, 20 Sep 2018 16:46:36 +0000
+Message-ID: <CY1PR02MB21385F71D8BC4498654CD0BFB8130@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1536781120-22794-1-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1536781120-22794-1-git-send-email-jollys@xilinx.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=JOLLYS@xilinx.com; 
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR02MB2059;6:SGm0D4MCkdBvhjbhLKCj71HlnUTdWq1Fr0kFr0bisA3TOaYmjHAfWtiag1qFOLI9qyNKvzPcBN/l7mbH0+AWf7sF/niadzMIuhHETNw4QUS1BF5kxTlRlNw/3RbwbejDcSEFgG9BUCwUS5syF8NMqhizBigku6nKNue5JHYtV4KfjuQrfv/oOV5H02BCzAkF45KRdSNJLu9/8MfxlH+BwztiwuSAgQShky0FfzOue67F968ESxqnXtNBbW+2Qaus7kjF5Z+6cByLpyd0acLyiqMW9n1m2ouzYEs8KFiUEcpoVaAHyzxPWqJw0e/D6E1vPZg5JOImM+Kb1wXHSni0vIy4bNX2vPxGStBS73W3ZhBwWSOHop1nJE6zS1Advv4Oe5+b5MEjE8Im9fKGB+E19g1UUpPA9JpwnclL9iBhHK5xGdoTEZyNcyn4QQuSCnVf2a+j3Edil/h3IZmv9bxwuw==;5:9I4AkFT8/iQFEbhxaQKAgRB+LRkps6E3QlOyOCAFMARRjFnFiKq8IKs46r5QdE0p7lL8/A+GKBcmmDxdN5fkfdFAV3GhWq7k50wp1m3Ummocy5N5ewAbUmmeT7FtGyYZKiIxME9xWj0/ISGKDciwiPj96BldoeUBSqHS2tFP3sM=;7:oRLR0KjwO9vcnGmwFsuR3KPWnSezPThIVc6Ry3DwDQcOC2kA7+k/xey57Y7li7xRPhQkbshNqWX1NaNhHtrCPMUGVh0adVsBq17XrEKf4cye3P+73OQmYBnWr7YMLowsRNYAxvYiCIgg5rAh2Q9J6ombyn2qiWtkKYiqCwntptw33NVgvbJ6i9HJn15zE8jRIhMnSCl9dxGwKJmKOdRwlat2N1Xn7YuSVUQTqF4IdFHXh9TV1LSZKPYCHjUZCuL5
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(136003)(366004)(376002)(13464003)(189003)(199004)(6436002)(66066001)(106356001)(86362001)(54906003)(11346002)(486006)(25786009)(14444005)(5250100002)(256004)(81166006)(229853002)(446003)(8676002)(2501003)(3846002)(8936002)(6116002)(53936002)(6246003)(71200400001)(71190400001)(68736007)(81156014)(99286004)(2906002)(55016002)(105586002)(26005)(9686003)(110136005)(478600001)(305945005)(2900100001)(33656002)(5660300001)(72206003)(53546011)(966005)(7736002)(74316002)(476003)(6306002)(76176011)(316002)(7696005)(97736004)(6506007)(4326008)(14454004)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR02MB2059;H:CY1PR02MB2138.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 054a2613-a5d7-400e-ee4d-08d61f18a134
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:CY1PR02MB2059;
+x-ms-traffictypediagnostic: CY1PR02MB2059:
+x-microsoft-antispam-prvs: <CY1PR02MB2059D15DB963448A711DB6D0B8130@CY1PR02MB2059.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051);SRVR:CY1PR02MB2059;BCL:0;PCL:0;RULEID:;SRVR:CY1PR02MB2059;
+x-forefront-prvs: 0801F2E62B
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fHmaf7zZTHSUCvWAhNqL7SAV+6Z6Llk5hck3+9q6Wc6Z/OuoNpNfqeU142DkwSNcHIcJXTdzmLtwMrU/CwpmYZAA7t01Mjzsh8+81vr9BA/Lrt8K8sqz/CVAF3QKfEQWu3I1XAd1cuUy8M/eBFRUOgdMOj23ProWRrcQMzuVrez14rV9K5V7EBRd2Sye2+wUwTHVqLyhH8kxhdsEN/HVDr7kwsCEDdseVNn9xifQ2GKnZDP99AD5YkCIKePhlQ2GPcLmZlA+MY60/6gEgJefWX5WWRA6nFP1O+UkXroA7gE5TIdgJ6m8UVobl44Z9EkZok5lsndbyUSJaar8y4eE7FtIIkeOPgq7+Oj/0sls8vI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 054a2613-a5d7-400e-ee4d-08d61f18a134
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 16:46:36.2659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR02MB2059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/14/18 1:38 PM, Daniel Vetter wrote:
-> On Tue, Aug 14, 2018 at 12:48:08PM +0300, Laurent Pinchart wrote:
->> Hi Dmitry,
->>
->> Thank you for the patch.
->>
->> On Tuesday, 7 August 2018 20:22:01 EEST Dmitry Osipenko wrote:
->>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>
->>> Color keying is the action of replacing pixels matching a given color
->>> (or range of colors) with transparent pixels in an overlay when
->>> performing blitting. Depending on the hardware capabilities, the
->>> matching pixel can either become fully transparent or gain adjustment
->>> of the pixels component values.
->>>
->>> Color keying is found in a large number of devices whose capabilities
->>> often differ, but they still have enough common features in range to
->>> standardize color key properties. This commit adds new generic DRM plane
->>> properties related to the color keying, providing initial color keying
->>> support.
->>>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>   drivers/gpu/drm/drm_atomic.c |  20 +++++
->>>   drivers/gpu/drm/drm_blend.c  | 150 +++++++++++++++++++++++++++++++++++
->>>   include/drm/drm_blend.h      |   3 +
->>>   include/drm/drm_plane.h      |  91 +++++++++++++++++++++
->>>   4 files changed, 264 insertions(+)
->>
->> [snip]
->>
->>> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
->>> index a16a74d7e15e..13c61dd0d9b7 100644
->>> --- a/drivers/gpu/drm/drm_blend.c
->>> +++ b/drivers/gpu/drm/drm_blend.c
->>> @@ -107,6 +107,11 @@
->>>    *	planes. Without this property the primary plane is always below the
->>> cursor *	plane, and ordering between all other planes is undefined.
->>>    *
->>> + * colorkey:
->>> + *	Color keying is set up with drm_plane_create_colorkey_properties().
->>> + *	It adds support for actions like replacing a range of colors with a
->>> + *	transparent color in the plane. Color keying is disabled by default.
->>> + *
->>>    * Note that all the property extensions described here apply either to the
->>> * plane or the CRTC (e.g. for the background color, which currently is not
->>> * exposed and assumed to be black).
->>> @@ -448,3 +453,148 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
->>>   	return 0;
->>>   }
->>>   EXPORT_SYMBOL(drm_atomic_normalize_zpos);
->>> +
->>> +static const char * const plane_colorkey_mode_name[] = {
->>> +	[DRM_PLANE_COLORKEY_MODE_DISABLED] = "disabled",
->>> +	[DRM_PLANE_COLORKEY_MODE_TRANSPARENT] = "transparent",
->>> +};
->>> +
->>> +/**
->>> + * drm_plane_create_colorkey_properties - create colorkey properties
->>> + * @plane: drm plane
->>> + * @supported_modes: bitmask of supported color keying modes
->>> + *
->>> + * This function creates the generic color keying properties and attaches
->>> them
->>> + * to the @plane to enable color keying control for blending operations.
->>> + *
->>> + * Glossary:
->>> + *
->>> + * Destination plane:
->>> + *	Plane to which color keying properties are applied, this planes takes
->>> + *	the effect of color keying operation. The effect is determined by a
->>> + *	given color keying mode.
->>> + *
->>> + * Source plane:
->>> + *	Pixels of this plane are the source for color key matching operation.
->>> + *
->>> + * Color keying is controlled by these properties:
->>> + *
->>> + * colorkey.plane_mask:
->>> + *	The mask property specifies which planes participate in color key
->>> + *	matching process, these planes are the color key sources.
->>> + *
->>> + *	Drivers return an error from their plane atomic check if plane can't be
->>> + *	handled.
->>
->> This seems fragile to me. We don't document how userspace determines which
->> planes need to be specified here, and we don't document what happens if a
->> plane underneath the destination plane is not specified in the mask. More
->> precise documentation is needed if we want to use such a property.
->>
->> It also seems quite complex. Is an explicit plane mask really the best option
->> ? What's the reason why planes couldn't be handled ? How do drivers determine
->> that ?
-> 
-> General comment: This is why we need the reference userspace. I also
-> think that any feature throwing up so many tricky questions should come
-> with a full set of igt testcases.
+Hi Olof,
 
-At best I can write couple simple tests, simply because Tegra can't do more than 
-that.
+As suggested, this patchset is generated without ioctl interface. Please re=
+view. If you are ok, Michal can create a pull request for merge.
 
-  Since the reference userspace cannot
-> answer how the new uapi should work in all corner-cases (failures and
-> stuff like that).
+Thanks,
+Jolly Shah
 
-Okay.
+
+> -----Original Message-----
+> From: Jolly Shah [mailto:jolly.shah@xilinx.com]
+> Sent: Wednesday, September 12, 2018 12:39 PM
+> To: olof@lixom.net; Michal Simek <michals@xilinx.com>; arm@kernel.org
+> Cc: Rajan Vaja <RAJANV@xilinx.com>; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>
+> Subject: [PATCH v12 0/6] drivers: Introduce firmware driver for ZynqMP co=
+re
+>=20
+> Firmware driver enables APU to communicate to PMUFW(Platform
+> Management Unit) via ATF by using SMC instructions. This patchset is addi=
+ng
+> support for base firmware driver with query and clock control APIs. More =
+API
+> support will be added with incremental patchsets along with their user dr=
+iver.
+>=20
+> v12:
+>  - Removed clock driver patches from set
+>  - Removed ioctl api support
+>  - Incorporated minor review comments from v11 patch series
+>=20
+> v11:
+>  - Removed "Reveiwed-by:Stephen Boyd" tag from firmware binding
+>  - Updated clock and firmware driver to use probe method instead of init
+>  - Marked PMU payload arguments with __le32 for proper endienness code
+>=20
+> v10:
+>  - Incorporated code review comments from v9 patch series. Discussed belo=
+w:
+> 	https://patchwork.kernel.org/patch/10478575/
+> 	https://patchwork.kernel.org/patch/10478457/
+> 	https://patchwork.kernel.org/patch/10478461/
+> 	https://patchwork.kernel.org/patch/10478463/
+>=20
+> v9:
+>  - Fixed minor typo comments
+>=20
+> v8:
+>  - Corrected typo in clk Kconfig
+>=20
+> v7:
+>  - Removed xilinx specific clock debugfs API support
+>  - Added reviewed-by tags for FW and clock bindings
+>  - Updated clock node name to clock-controller
+>=20
+> v6:
+>  - Broke patch series to have base FW driver and Clock driver user
+>  - Incorporated code review comments from last FW and Clock driver patch
+> series. Discussed below:
+> 	https://patchwork.kernel.org/patch/10230759/
+> 	https://patchwork.kernel.org/patch/10250047/
+>=20
+> v5:
+>  - Added ATF version check support
+>  - Updated some functions to be static
+>  - Minor function name corrections
+>=20
+> v4:
+>  - Changed clock setrate/getrate API prototype to support 64 bit rate
+>  - Defined macros for get_node_status return values
+>  - Moved DT node as a child of firmware
+>  - Changed debugfs APIs to return data to debugfs buffer instead of dumpi=
+ng to
+> kernel log
+>  - Minor changes to incorporate other review comments from v3 patch serie=
+s
+>=20
+> v3:
+>  - added some fixes to firmware-ggs.c
+>  - updated pinmux get/set function argument names to specify function id
+> instead of node id
+>  - added new pinctrl query macros
+>  - incorporated review comments from v2 patch series
+>=20
+> v2:
+>  - change SPDX-License-Identifier license text style
+>  - split patch into multiple patches
+>  - Updated copyrights
+>  - Added ABI documentation
+>  - incorporated logical review comments from previuos patch. Discussed be=
+low:
+> 	https://patchwork.kernel.org/patch/10150665/
+>=20
+> Rajan Vaja (6):
+>   dt-bindings: firmware: Add bindings for ZynqMP firmware
+>   firmware: xilinx: Add Zynqmp firmware driver
+>   firmware: xilinx: Add query data API
+>   firmware: xilinx: Add clock APIs
+>   firmware: xilinx: Add debugfs interface
+>   firmware: xilinx: Add debugfs for query data API
+>=20
+>  .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  29 ++
+>  arch/arm64/Kconfig.platforms                       |   1 +
+>  drivers/firmware/Kconfig                           |   1 +
+>  drivers/firmware/Makefile                          |   1 +
+>  drivers/firmware/xilinx/Kconfig                    |  23 +
+>  drivers/firmware/xilinx/Makefile                   |   5 +
+>  drivers/firmware/xilinx/zynqmp-debug.c             | 250 ++++++++++
+>  drivers/firmware/xilinx/zynqmp-debug.h             |  24 +
+>  drivers/firmware/xilinx/zynqmp.c                   | 523 +++++++++++++++=
+++++++
+>  include/linux/firmware/xlnx-zynqmp.h               | 113 +++++
+>  10 files changed, 970 insertions(+)
+>  create mode 100644
+> Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.tx=
+t
+>  create mode 100644 drivers/firmware/xilinx/Kconfig  create mode 100644
+> drivers/firmware/xilinx/Makefile  create mode 100644
+> drivers/firmware/xilinx/zynqmp-debug.c
+>  create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+>  create mode 100644 drivers/firmware/xilinx/zynqmp.c  create mode 100644
+> include/linux/firmware/xlnx-zynqmp.h
+>=20
+> --
+> 2.7.4
+
