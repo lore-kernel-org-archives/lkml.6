@@ -2,99 +2,115 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36BBECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BD1ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 806EF21531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:18:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VamQboH+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806EF21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E263C2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:18:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E263C2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730841AbeITWC1 (ORCPT
+        id S1730962AbeITWCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:02:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35174 "EHLO mail.kernel.org"
+        Thu, 20 Sep 2018 18:02:31 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:47742 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbeITWC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:02:27 -0400
-Received: from localhost (unknown [209.121.128.187])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CEF62087A;
-        Thu, 20 Sep 2018 16:18:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537460293;
-        bh=R1a2FX2dV7JqpxHeZOB+vVTGda5hK8U//UyRGlFHeLM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VamQboH++I6YwozpPIHjM/1eu6Xp26JHtZ7wXYAI1WMfCLT3UFKv5L9+6OHUKJKQn
-         emFybLzSaoNagrKvSXSp1VWH6v1//HU+RlgMVAB5p6ERCimiNQYQPy4jl8tIL5Aq+S
-         X3QJ1yoUqtpL6XDDVWST/vRhr38iQcfyzWAQSocs=
-Date:   Thu, 20 Sep 2018 09:18:13 -0700
-From:   Vinod <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: smd-rpm: Add QCS404 compatible
-Message-ID: <20180920161813.GE2350@vkoul-mobl>
-References: <20180920014540.14894-1-bjorn.andersson@linaro.org>
+        id S1726193AbeITWCb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 18:02:31 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8KGH4g4017154
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 20 Sep 2018 09:17:14 -0700
+Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 20 Sep
+ 2018 09:16:53 -0700
+Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len to
+ command line
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC:     <pmladek@suse.com>, <sergey.senozhatsky@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+ <20180919015030.GA423@jagdpanzerIV>
+ <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
+ <20180919023932.GA14090@jagdpanzerIV>
+ <20180918224312.6e9aef50@vmware.local.home>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
+Date:   Fri, 21 Sep 2018 00:16:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920014540.14894-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180918224312.6e9aef50@vmware.local.home>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.216]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-09-18, 18:45, Bjorn Andersson wrote:
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-> ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt | 1 +
->  drivers/soc/qcom/smd-rpm.c                                  | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-> index 89e1cb9212f6..ec95705ba692 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-> @@ -23,6 +23,7 @@ resources.
->  		    "qcom,rpm-msm8916"
->  		    "qcom,rpm-msm8974"
->  		    "qcom,rpm-msm8998"
-> +		    "qcom,rpm-qcs404"
->  
->  - qcom,smd-channels:
->  	Usage: required
-> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
-> index 93517ed83355..b8e63724a49d 100644
-> --- a/drivers/soc/qcom/smd-rpm.c
-> +++ b/drivers/soc/qcom/smd-rpm.c
-> @@ -227,6 +227,7 @@ static const struct of_device_id qcom_smd_rpm_of_match[] = {
->  	{ .compatible = "qcom,rpm-msm8974" },
->  	{ .compatible = "qcom,rpm-msm8996" },
->  	{ .compatible = "qcom,rpm-msm8998" },
-> +	{ .compatible = "qcom,rpm-qcs404" },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
-> -- 
-> 2.18.0
+On 2018年09月19日 10:43, Steven Rostedt wrote:
+> On Wed, 19 Sep 2018 11:39:32 +0900
+> Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>
+>> On (09/19/18 10:27), He Zhe wrote:
+>>> On 2018年09月19日 09:50, Sergey Senozhatsky wrote:  
+>>>> On (09/19/18 01:17), zhe.he@windriver.com wrote:  
+>>>>> @@ -1048,7 +1048,14 @@ static void __init log_buf_len_update(unsigned size)
+>>>>>  /* save requested log_buf_len since it's too early to process it */
+>>>>>  static int __init log_buf_len_setup(char *str)
+>>>>>  {
+>>>>> -	unsigned size = memparse(str, &str);
+>>>>> +	unsigned size;  
+>>>> 	unsigned int size;  
+>>> This is in v1 but then Steven suggested that it should be split out
+>>> and only keep the pure fix part here.  
+>> Ah, I see.
+>>
+>> Hmm... memparse() returns u64 value. A user *probably* can ask the kernel
+>> to allocate log_buf larger than 'unsigned int'.
+>>
+>> So may be I'd do two fixes here:
+>>
+>>  First  - switch to u64 size.
+>>  Second - check for NULL str.
+>>
+>>
+>> Steven, Petr, what do you think?
+>>
+> I think I would switch it around. Check for NULL first, and then switch
+> to u64. It was always an int, do we need to backport converting it to
+> u64 to stable? The NULL check is a definite, the overflow of int
+> shouldn't crash anything.
 
--- 
-~Vinod
+To switch to u64, several variables need to be adjusted to new type to aligned
+with new_log_buf_len. And currently new_log_buf_len is passed to
+memblock_virt_alloc(phys_addr_t, phys_addr_t). So we can't simply define
+new_log_buf_len as u64. We need to define it as phys_addr_t tomake it work
+well for both 32bit and 64bit arches, since a 32-bit architecture can set
+ARCH_PHYS_ADDR_T_64BIT if it needs a 64-bit phys_addr_t.
+
+What do you think?
+
+#ifdef CONFIG_PHYS_ADDR_T_64BIT
+typedef u64 phys_addr_t;
+#else
+typedef u32 phys_addr_t;
+#endif
+
+Thanks,
+Zhe
+
+
+> -- Steve
+>
+
