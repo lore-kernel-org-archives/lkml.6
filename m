@@ -2,116 +2,307 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C39ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E220C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B61621525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EBC021525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:02:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RJPr0zv7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B61621525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuIvp7I7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EBC021525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388608AbeIUErO (ORCPT
+        id S2388716AbeIUEsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:47:14 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33542 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeIUErO (ORCPT
+        Fri, 21 Sep 2018 00:48:14 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38254 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725968AbeIUEsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:47:14 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b97-v6so5040420plb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 16:01:24 -0700 (PDT)
+        Fri, 21 Sep 2018 00:48:14 -0400
+Received: by mail-wm1-f66.google.com with SMTP id t25-v6so1184932wmi.3;
+        Thu, 20 Sep 2018 16:02:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XnbSOaS3cXFSRr7RaJlQgCJQp+2/RhzokjFBEA1aXJw=;
-        b=RJPr0zv705fZvYJeTcYQoYl+m4G1Z6F9hTm6q7h6UnUyhkEE0MDByNrt3eTT90nfPw
-         scx/GDEMlnITYLYUzIVYl1Gb3HWmgh4BZQ3EdkGUYSTS1n95mKbegJcPNmmlnOi8bI5+
-         lHMFw452MJXhmQwfRCntrX0sBrEmXfAmPpT5Q=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BkPypl0PFbIXh7stE5Dd5kMzzdHa3nmYxj9+3wcehLI=;
+        b=OuIvp7I7eOiITV1dra1PVDVhFdAP9fu0KaXNjcwI5k2gmUod8NF8p6ua4NLLK4iL2W
+         itIF98+yQmbQ1trBorlunRhZk4QWeGPqIRcDP6+I92iaTOk6B3hZ6ctwvTr71tJNadmv
+         jgXsIHVnQLzV4f/NYt5r54J5SulgEL3WWfejZV6Iw4nlwQQSvda/tN7YITEtsYbaodAr
+         yiNjHU5vDS3BPVKMm7YjtTWTXAh8lTTEpnj/3gzPMn3XLqjFXSP8xq8/TNY9NeOzdJhL
+         7B1pPJTgIqMvLHZGpx3GiwRmGRFFNtsH286gs84G8+NeAXqyqjnBNozESDJd1c4Axl0i
+         Ii2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XnbSOaS3cXFSRr7RaJlQgCJQp+2/RhzokjFBEA1aXJw=;
-        b=RxwdadV9UweyexckCBSC9ZMgcYdSuupGxDebBRIKvOaRQtf7wqeAIgxXjtb+iW2Fml
-         azTFqhA0abFbjX65q5zpVWtSOwdEybqD6ffIMQoo5TPWBIEZTjd6Xdpp9nfv06PTIZ9D
-         +FX96LbVU79Ey6cGR2xY2J6UJZ4xYCMks/elWeNQgHyTSL4rMeUycKqXOvvuojiuIoSa
-         KzZ5q6q8t/ZJ+3n6BfkbpJ+CjcuguaiPt3hDlzGc1J3KMDGZK3kCvAZ1yem0jYmPoELR
-         ps3OktT9ALrA/ql3F738cA57XqkeNEMDfA3pjn+lNJGxo9FCLkqnrpCgZ93nfRxznQau
-         w8ZA==
-X-Gm-Message-State: APzg51AEgss/049u2cCVvOR2cJY7zz4hA2CglSlAbDh+1zgsp16PvNwv
-        VMeksMYsIMeTDnKrqx4i7w8aNg==
-X-Google-Smtp-Source: ANB0VdZ+j2v8m4x9lYeW5QwMTAjeVo8BSpBFXhvo2KqoYstzWsqF9NpMrDFjT7SkDYOt9QjmzQV5ig==
-X-Received: by 2002:a17:902:ac86:: with SMTP id h6-v6mr4137818plr.103.1537484483721;
-        Thu, 20 Sep 2018 16:01:23 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm41038945pfg.21.2018.09.20.16.01.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 16:01:21 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 16:01:21 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
- (BD_ADDR)
-Message-ID: <20180920230121.GT22824@google.com>
-References: <20180920223436.202454-1-mka@chromium.org>
- <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BkPypl0PFbIXh7stE5Dd5kMzzdHa3nmYxj9+3wcehLI=;
+        b=oqNjkhlLJcZWU9eAjENM6+uVhFqJGIHgWh1sU1vhB7VLSAcFXsgHUVr1LdE33VhJ1X
+         7tK3RwKEMpFEgyRZZUtPTbZmKYlC0IJVFuJXTonB5k6oXGm7fWUTDUZuI7XICmKl7umJ
+         S1NEHfSbkYi30RHlXLBYuDScWZvFnEVIjHJsBCdbQWW9NLtXdYp2BMXgo8JQSUk+6LiW
+         8p6pxovcMZ9gJCAP1JexIoe989TkEllw2z7Wad/09fH16ZoPeSOnkxPifw8raUugTgPr
+         8e8R/x7ARunCfMF5QeBPSpqZzMbAlNM3y09eFOgVyhPdZEYpBYNtOWHI1Dz6apc2lKWp
+         wVhg==
+X-Gm-Message-State: APzg51At7GCdNMAhZIjGbFQhiBkowNZPMkIPCgJdmW6XbZUDvXjlP6TW
+        bRfYL/kTGTsV5/FjQDF42HE=
+X-Google-Smtp-Source: ANB0VdaRBRL4rF8/40jFnrVUXxWq0xNNVoYINasYViJsKYv7CKDsHOy+c8Lj+5Fp85cmNT96CR3T6w==
+X-Received: by 2002:a1c:ee57:: with SMTP id m84-v6mr4578481wmh.9.1537484541047;
+        Thu, 20 Sep 2018 16:02:21 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id h206-v6sm4305761wmf.25.2018.09.20.16.02.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 16:02:20 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] scsi: bfa: Remove unused functions
+Date:   Thu, 20 Sep 2018 16:02:12 -0700
+Message-Id: <20180920230212.22227-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 06:45:58PM -0400, Sinan Kaya wrote:
-> On 9/20/2018 6:34 PM, Matthias Kaehlcke wrote:
-> > On some systems the Bluetooth Device Address (BD_ADDR) isn't stored
-> > on the Bluetooth chip itself. One way to configure the BD address is
-> > through the device tree. The btqcomsmd driver is an example, it can
-> > read the BD address from the DT property 'local-bd-address'. It is
-> > also planned to extend the hci_qca driver to support setting the BD
-> > address through the DT.
-> > 
-> > To avoid redundant open-coded reading of 'local-bd-address' and error
-> > handling this series adds an API to retrieve the BD address of a device
-> > and adapts the btqcomsmd driver to use this API.
-> 
-> I don't think you have got enough number of line savings to make this
-> code to be folded into property.c
+Clang warns when a variable is assigned to itself.
 
-Most of the new lines are documentation ;-)
+drivers/scsi/bfa/bfa_fcbuild.c:199:6: warning: explicitly assigning
+value of variable of type 'int' to itself [-Wself-assign]
+        len = len;
+        ~~~ ^ ~~~
+drivers/scsi/bfa/bfa_fcbuild.c:838:6: warning: explicitly assigning
+value of variable of type 'int' to itself [-Wself-assign]
+        len = len;
+        ~~~ ^ ~~~
+drivers/scsi/bfa/bfa_fcbuild.c:917:6: warning: explicitly assigning
+value of variable of type 'int' to itself [-Wself-assign]
+        len = len;
+        ~~~ ^ ~~~
+drivers/scsi/bfa/bfa_fcbuild.c:981:6: warning: explicitly assigning
+value of variable of type 'int' to itself [-Wself-assign]
+        len = len;
+        ~~~ ^ ~~~
+drivers/scsi/bfa/bfa_fcbuild.c:1008:6: warning: explicitly assigning
+value of variable of type 'int' to itself [-Wself-assign]
+        len = len;
+        ~~~ ^ ~~~
+5 warnings generated.
 
-> Not my call but seems redundant IMO.
+This construct is usually used to avoid unused variable warnings, which
+I assume is the case here. -Wunused-parameter is hidden behind -Wextra
+with GCC 4.6, which is the minimum version to compile the kernel as of
+commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6").
 
-Certainly true if this was the only driver. However another one will
-follow soon and 'local-bd-address' is the official binding, so it's
-not unlikely there will be more.
+However, upon further inspection, these functions aren't actually used
+anywhere; they're just defined. Rather than just removing the self
+assignments, remove all of this dead code.
 
-Also fwnode_get_bd_address() handles the case where the property
-exists but is all zeros which adds a few LOC, which isn't handled by
-the btqcomsmd driver.
+Link: https://github.com/ClangBuiltLinux/linux/issues/148
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/scsi/bfa/bfa_fcbuild.c | 108 ---------------------------------
+ drivers/scsi/bfa/bfa_fcbuild.h |   9 ---
+ 2 files changed, 117 deletions(-)
 
-Cheers
+diff --git a/drivers/scsi/bfa/bfa_fcbuild.c b/drivers/scsi/bfa/bfa_fcbuild.c
+index d3b00a475aeb..2de5d514e99c 100644
+--- a/drivers/scsi/bfa/bfa_fcbuild.c
++++ b/drivers/scsi/bfa/bfa_fcbuild.c
+@@ -190,27 +190,6 @@ fc_els_rsp_build(struct fchs_s *fchs, u32 d_id, u32 s_id, __be16 ox_id)
+ 	fchs->ox_id = ox_id;
+ }
+ 
+-enum fc_parse_status
+-fc_els_rsp_parse(struct fchs_s *fchs, int len)
+-{
+-	struct fc_els_cmd_s *els_cmd = (struct fc_els_cmd_s *) (fchs + 1);
+-	struct fc_ls_rjt_s *ls_rjt = (struct fc_ls_rjt_s *) els_cmd;
+-
+-	len = len;
+-
+-	switch (els_cmd->els_code) {
+-	case FC_ELS_LS_RJT:
+-		if (ls_rjt->reason_code == FC_LS_RJT_RSN_LOGICAL_BUSY)
+-			return FC_PARSE_BUSY;
+-		else
+-			return FC_PARSE_FAILURE;
+-
+-	case FC_ELS_ACC:
+-		return FC_PARSE_OK;
+-	}
+-	return FC_PARSE_OK;
+-}
+-
+ static void
+ fc_bls_rsp_build(struct fchs_s *fchs, u32 d_id, u32 s_id, __be16 ox_id)
+ {
+@@ -830,18 +809,6 @@ fc_rpsc_acc_build(struct fchs_s *fchs, struct fc_rpsc_acc_s *rpsc_acc,
+ 	return sizeof(struct fc_rpsc_acc_s);
+ }
+ 
+-u16
+-fc_logo_rsp_parse(struct fchs_s *fchs, int len)
+-{
+-	struct fc_els_cmd_s *els_cmd = (struct fc_els_cmd_s *) (fchs + 1);
+-
+-	len = len;
+-	if (els_cmd->els_code != FC_ELS_ACC)
+-		return FC_PARSE_FAILURE;
+-
+-	return FC_PARSE_OK;
+-}
+-
+ u16
+ fc_pdisc_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
+ 	       wwn_t port_name, wwn_t node_name, u16 pdu_size)
+@@ -907,40 +874,6 @@ fc_prlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
+ 	return be16_to_cpu(prlo->payload_len);
+ }
+ 
+-u16
+-fc_prlo_rsp_parse(struct fchs_s *fchs, int len)
+-{
+-	struct fc_prlo_acc_s *prlo = (struct fc_prlo_acc_s *) (fchs + 1);
+-	int             num_pages = 0;
+-	int             page = 0;
+-
+-	len = len;
+-
+-	if (prlo->command != FC_ELS_ACC)
+-		return FC_PARSE_FAILURE;
+-
+-	num_pages = ((be16_to_cpu(prlo->payload_len)) - 4) / 16;
+-
+-	for (page = 0; page < num_pages; page++) {
+-		if (prlo->prlo_acc_params[page].type != FC_TYPE_FCP)
+-			return FC_PARSE_FAILURE;
+-
+-		if (prlo->prlo_acc_params[page].opa_valid != 0)
+-			return FC_PARSE_FAILURE;
+-
+-		if (prlo->prlo_acc_params[page].rpa_valid != 0)
+-			return FC_PARSE_FAILURE;
+-
+-		if (prlo->prlo_acc_params[page].orig_process_assc != 0)
+-			return FC_PARSE_FAILURE;
+-
+-		if (prlo->prlo_acc_params[page].resp_process_assc != 0)
+-			return FC_PARSE_FAILURE;
+-	}
+-	return FC_PARSE_OK;
+-
+-}
+-
+ u16
+ fc_tprlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
+ 	       int num_pages, enum fc_tprlo_type tprlo_type, u32 tpr_id)
+@@ -971,47 +904,6 @@ fc_tprlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id, u16 ox_id,
+ 	return be16_to_cpu(tprlo->payload_len);
+ }
+ 
+-u16
+-fc_tprlo_rsp_parse(struct fchs_s *fchs, int len)
+-{
+-	struct fc_tprlo_acc_s *tprlo = (struct fc_tprlo_acc_s *) (fchs + 1);
+-	int             num_pages = 0;
+-	int             page = 0;
+-
+-	len = len;
+-
+-	if (tprlo->command != FC_ELS_ACC)
+-		return FC_PARSE_ACC_INVAL;
+-
+-	num_pages = (be16_to_cpu(tprlo->payload_len) - 4) / 16;
+-
+-	for (page = 0; page < num_pages; page++) {
+-		if (tprlo->tprlo_acc_params[page].type != FC_TYPE_FCP)
+-			return FC_PARSE_NOT_FCP;
+-		if (tprlo->tprlo_acc_params[page].opa_valid != 0)
+-			return FC_PARSE_OPAFLAG_INVAL;
+-		if (tprlo->tprlo_acc_params[page].rpa_valid != 0)
+-			return FC_PARSE_RPAFLAG_INVAL;
+-		if (tprlo->tprlo_acc_params[page].orig_process_assc != 0)
+-			return FC_PARSE_OPA_INVAL;
+-		if (tprlo->tprlo_acc_params[page].resp_process_assc != 0)
+-			return FC_PARSE_RPA_INVAL;
+-	}
+-	return FC_PARSE_OK;
+-}
+-
+-enum fc_parse_status
+-fc_rrq_rsp_parse(struct fchs_s *fchs, int len)
+-{
+-	struct fc_els_cmd_s *els_cmd = (struct fc_els_cmd_s *) (fchs + 1);
+-
+-	len = len;
+-	if (els_cmd->els_code != FC_ELS_ACC)
+-		return FC_PARSE_FAILURE;
+-
+-	return FC_PARSE_OK;
+-}
+-
+ u16
+ fc_ba_rjt_build(struct fchs_s *fchs, u32 d_id, u32 s_id, __be16 ox_id,
+ 		u32 reason_code, u32 reason_expl)
+diff --git a/drivers/scsi/bfa/bfa_fcbuild.h b/drivers/scsi/bfa/bfa_fcbuild.h
+index b109a8813401..ac08d0b5b89a 100644
+--- a/drivers/scsi/bfa/bfa_fcbuild.h
++++ b/drivers/scsi/bfa/bfa_fcbuild.h
+@@ -163,7 +163,6 @@ enum fc_parse_status fc_abts_rsp_parse(struct fchs_s *buf, int len);
+ 
+ u16        fc_rrq_build(struct fchs_s *buf, struct fc_rrq_s *rrq, u32 d_id,
+ 			     u32 s_id, u16 ox_id, u16 rrq_oxid);
+-enum fc_parse_status fc_rrq_rsp_parse(struct fchs_s *buf, int len);
+ 
+ u16        fc_rspnid_build(struct fchs_s *fchs, void *pld, u32 s_id,
+ 				u16 ox_id, u8 *name);
+@@ -276,8 +275,6 @@ void		fc_get_fc4type_bitmask(u8 fc4_type, u8 *bit_mask);
+ void		fc_els_req_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
+ 					 __be16 ox_id);
+ 
+-enum fc_parse_status	fc_els_rsp_parse(struct fchs_s *fchs, int len);
+-
+ enum fc_parse_status	fc_plogi_rsp_parse(struct fchs_s *fchs, int len,
+ 					wwn_t port_name);
+ 
+@@ -297,8 +294,6 @@ u16 fc_tprlo_acc_build(struct fchs_s *fchs, struct fc_tprlo_acc_s *tprlo_acc,
+ u16 fc_prlo_acc_build(struct fchs_s *fchs, struct fc_prlo_acc_s *prlo_acc,
+ 		u32 d_id, u32 s_id, __be16 ox_id, int num_pages);
+ 
+-u16 fc_logo_rsp_parse(struct fchs_s *fchs, int len);
+-
+ u16 fc_pdisc_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
+ 		u16 ox_id, wwn_t port_name, wwn_t node_name,
+ 		u16 pdu_size);
+@@ -308,14 +303,10 @@ u16 fc_pdisc_rsp_parse(struct fchs_s *fchs, int len, wwn_t port_name);
+ u16 fc_prlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
+ 		u16 ox_id, int num_pages);
+ 
+-u16 fc_prlo_rsp_parse(struct fchs_s *fchs, int len);
+-
+ u16 fc_tprlo_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
+ 		u16 ox_id, int num_pages, enum fc_tprlo_type tprlo_type,
+ 		u32 tpr_id);
+ 
+-u16 fc_tprlo_rsp_parse(struct fchs_s *fchs, int len);
+-
+ u16 fc_ba_rjt_build(struct fchs_s *fchs, u32 d_id, u32 s_id,
+ 		__be16 ox_id, u32 reason_code, u32 reason_expl);
+ 
+-- 
+2.19.0
 
-Matthias
