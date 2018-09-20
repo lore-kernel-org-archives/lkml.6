@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15820C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 426E2C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE9FD21529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:49:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE9FD21529
+	by mail.kernel.org (Postfix) with ESMTP id ED9E221529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED9E221529
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387969AbeITScq (ORCPT
+        id S2388353AbeITScU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:32:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12661 "EHLO huawei.com"
+        Thu, 20 Sep 2018 14:32:20 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12660 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387944AbeITSc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:32:26 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B8CAC90CA362D;
-        Thu, 20 Sep 2018 20:49:00 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
- 20:48:56 +0800
+        id S2387764AbeITScT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:32:19 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C52AE7C16A8C3;
+        Thu, 20 Sep 2018 20:48:51 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Thu, 20 Sep 2018
+ 20:48:45 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <davem@davemloft.net>, <dmitry.tarnyagin@lockless.no>,
         <wg@grandegger.com>, <mkl@pengutronix.de>,
@@ -49,9 +49,9 @@ CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
         <devel@linuxdriverproject.org>, <linux-usb@vger.kernel.org>,
         <xen-devel@lists.xenproject.org>, <dev@openvswitch.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next 21/22] l2tp: fix return type of ndo_start_xmit function
-Date:   Thu, 20 Sep 2018 20:33:05 +0800
-Message-ID: <20180920123306.14772-22-yuehaibing@huawei.com>
+Subject: [PATCH net-next 17/22] hv_netvsc: fix return type of ndo_start_xmit function
+Date:   Thu, 20 Sep 2018 20:33:01 +0800
+Message-ID: <20180920123306.14772-18-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20180920123306.14772-1-yuehaibing@huawei.com>
 References: <20180920123306.14772-1-yuehaibing@huawei.com>
@@ -73,23 +73,37 @@ Found by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- net/l2tp/l2tp_eth.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc_drv.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/net/l2tp/l2tp_eth.c b/net/l2tp/l2tp_eth.c
-index 8aadc4f..4173cb1 100644
---- a/net/l2tp/l2tp_eth.c
-+++ b/net/l2tp/l2tp_eth.c
-@@ -77,7 +77,8 @@ static void l2tp_eth_dev_uninit(struct net_device *dev)
- 	 */
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 3af6d8d..056c472 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -511,7 +511,8 @@ static int netvsc_vf_xmit(struct net_device *net, struct net_device *vf_netdev,
+ 	return rc;
  }
  
--static int l2tp_eth_dev_xmit(struct sk_buff *skb, struct net_device *dev)
+-static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
 +static netdev_tx_t
-+l2tp_eth_dev_xmit(struct sk_buff *skb, struct net_device *dev)
++netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
  {
- 	struct l2tp_eth *priv = netdev_priv(dev);
- 	struct l2tp_session *session = priv->session;
+ 	struct net_device_context *net_device_ctx = netdev_priv(net);
+ 	struct hv_netvsc_packet *packet = NULL;
+@@ -528,8 +529,11 @@ static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
+ 	 */
+ 	vf_netdev = rcu_dereference_bh(net_device_ctx->vf_netdev);
+ 	if (vf_netdev && netif_running(vf_netdev) &&
+-	    !netpoll_tx_running(net))
+-		return netvsc_vf_xmit(net, vf_netdev, skb);
++	    !netpoll_tx_running(net)) {
++		ret = netvsc_vf_xmit(net, vf_netdev, skb);
++		if (ret)
++			return NETDEV_TX_BUSY;
++	}
+ 
+ 	/* We will atmost need two pages to describe the rndis
+ 	 * header. We can only transmit MAX_PAGE_BUFFER_COUNT number
 -- 
 1.8.3.1
 
