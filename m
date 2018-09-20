@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3A7ECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E72E7C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF3321521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8613A21522
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:52:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="dj/rhUhn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF3321521
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Vosd0eVr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8613A21522
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388689AbeITIdu (ORCPT
+        id S2388714AbeITIeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 04:33:50 -0400
-Received: from mail-bl2nam02on0090.outbound.protection.outlook.com ([104.47.38.90]:36192
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Thu, 20 Sep 2018 04:34:00 -0400
+Received: from mail-dm3nam03on0120.outbound.protection.outlook.com ([104.47.41.120]:36173
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387688AbeITIac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:30:32 -0400
+        id S2388331AbeITIab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:30:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bj6yafJ23O0Ki7KZYtWPPP5vme53CH1JhMlARqbKq+o=;
- b=dj/rhUhnYgwDq1zsxNqaCyx4xGIKflX5ntFrufZlqQc2BClbXdll3kgUrpWN4dlZ4CWFH7nVmXT4oaHr4aDftrf42KaO36Fa6OUhmYuqOPIwirXvo/2hxIcERD/P9ievKT7E9XTZSxzfW6ujJ55ol/VBxHxJhk+hqlK5wGEvlCw=
+ bh=mpoUmfOyQPdsInzd6gEjoienImKLdM+jkv0MYF3jLf8=;
+ b=Vosd0eVrUmhvn9+DbOD2jpsjSvJN1hDxINcxFH9YL6XS+n7PSZyIKehyu4fY5mTYSAjIvRvDEpYJaNy7qqvhtjizSdD9zUEo+pe+ajYB2j83/IPqe0t2EgSU0Y67SaNicouZHchoSf029+YJNKsHGCvFi04VN3lU/S2MUpOKrQY=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
+ CY4PR21MB0119.namprd21.prod.outlook.com (10.173.189.13) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Thu, 20 Sep 2018 02:49:19 +0000
+ 15.20.1185.4; Thu, 20 Sep 2018 02:48:37 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 02:49:19 +0000
+ 02:48:37 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+CC:     Tomer Tayar <Tomer.Tayar@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.14 24/25] i2c: i801: Allow ACPI AML access I/O ports
- not reserved for SMBus
-Thread-Topic: [PATCH AUTOSEL 4.14 24/25] i2c: i801: Allow ACPI AML access I/O
- ports not reserved for SMBus
-Thread-Index: AQHUUIxrv1qQNWCz0Em2fMekHyuoMQ==
-Date:   Thu, 20 Sep 2018 02:48:32 +0000
-Message-ID: <20180920024810.58594-24-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 03/25] qed: Prevent a possible deadlock during
+ driver load and unload
+Thread-Topic: [PATCH AUTOSEL 4.14 03/25] qed: Prevent a possible deadlock
+ during driver load and unload
+Thread-Index: AQHUUIxhDcaeIMml+UWiw/IEi6sFzg==
+Date:   Thu, 20 Sep 2018 02:48:16 +0000
+Message-ID: <20180920024810.58594-3-alexander.levin@microsoft.com>
 References: <20180920024810.58594-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180920024810.58594-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,131 +61,225 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:Rzhyz+r90PQUJ9A+w6Doio1THHpVYSMvMY+Z97TgHjznYCntPl9bnuOG3Mc6Jd2esyiNoglwi0e+Rf46jHf+LsAu1iBBz3IGbtZsbC3TvIH6b0rHlFzBwTWvW3oG7/r64qXqSUXwV9pcsdHTffSwoYfDejgyE8+goCKNR6U1zJs3ZuggPdWufRdnyUaUFDl7re5PqlBKUJJrKDBG62+d6vLXg2cry0un3XBBpsgZICg9PUH2jEJuBVzCX6hZ0Rlxa2rE0dL5/csCWK9kRnE2JZRdrobCPKzzgfRE/Fom2PONj+HV9p8bsKDS1mSSKGuK/X947GB32okQ4eQZiU+zguayv5v8Guk5qGDyi235+IifMLxnCbf/wkzjYZ6wPSjiv/c82DmyRmw/qVvn8loOlHMmHTevcr8mWp2qgjpqo8mlZ7/Y2W/PT+Hlvk0ERYMic/UNuZQmXzUNsAV68XzJwQ==;5:MbiL80Htn0lQV8isRCZY7mZZ/ZwF2cFzaeADnuu8BXhyfR3TH4aOnAEaZylZ2wz08FSeGWXjU781DNMvzcEFxy1bEvUxaBDWEqV3B8tNS21ipQVA4gChHTi+zmhPWVn6mqAIXl9Ad9x4zc8fr2YbDwogLStaey51Ngs0bJz6xqI=;7:DmbiXLxUwdjnlAvj6zfqEuJDr6TRrJip5G4+DkAopmB3ps+MZKofxcF1YiXebHbb95d4RmORHao1VpHvsBvFkiyJRytKXNoHxwZQojmnEhXB9CjSzpJQqjeM+X1ZSDjjO1NpC/ijw6Ovx7M+a83u3/4Ep6/LrIC9qNEeOKs4mBa/n1mcPhd2011cQOh2wCRzojy/o0waejo5rTfcKa5eCS6tKm9nGl9j7YABY6oaL59b2s2P9ZZgjKeqx5NJPbuy
-x-ms-office365-filtering-correlation-id: 82e32396-3504-4851-ba19-08d61ea3a9e4
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0119;6:4mycRGYxpTT1okDul1hpX2im0ghrPdtByGDzFVnwG4M3uTW7HQ48jkx+x9BltyxbD6y+PIXW2OKbnoSTdTYm874QGo1NjFBxsuS0Kn2C7i3db7iTflDdKbkkxWf/Gam08CqFLiDSHkkq2e9uR1PQN2kPXCByRC43RDscqdyh3IJu70/D/X/g0z+RZz771kjlR7e47QT1uJwDO09d8c+5WVfKzGOcuc4sYPs4RDVixB4oDE99HKsx2xh4Ol7yVg9Rnx6+OQ0HvC9hzIuORFeJKH9baUUPSqttvbhD0m3tBc4JSzlfEhFG6t9W7Rv7xqLKN3VBQop6wif/rA1F6YxXxubuNwXFbBke6mw8EcFsT2wNeJeKJ98NAVx2aLY7ecEAYA0Sh4jaEQbDS4reO9LlDucMviihurLblRWsvCetRx5bsHFvnGduFHVYPdi6v7P9CInAUi0DzTaw5n7pek9INQ==;5:sJq+uMSLx9oyMl6w+vkJUQZmubJdYmAKTCvuGn/FQhaeIZegOzhN0y5BCVi4dI7nJY9WeaOaG5Kv2dDbh5Azzww8h5KN8FHztkE4QPAyWRlgmFv3xhAChul9bGugerfL+Dv+ZxCN9NHc1OvTHykftqXfiijWJwh7iEYqgjtf2SA=;7:O82+nodS5PrBGwgyd/eA72/pske6E/wctlvau5H6pSrODr6mICU0egKGk16vtvI46zJpcaJ1Om+vUxoDMKBkvxRigemeR7r4s6LgYv6CJWbxssjTnDKW9yNecd3BubZoI+1PxSKa4bhsK7wgf5WzxsmPF3TkuCpttZFTizOi/4OSQsGdky+WH+JRVqn/4RDNpxHBK8wuaGYQW5HHUj6HiCmOrDArmD2S54JHQPPTp68CPcV+2RYW/9XdZd6XVC/2
+x-ms-office365-filtering-correlation-id: 9d03dfe4-63df-4de6-6dd6-08d61ea390ac
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
-x-ms-traffictypediagnostic: CY4PR21MB0744:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0119;
+x-ms-traffictypediagnostic: CY4PR21MB0119:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB07442A0519E5551C4D2BEA2DFB130@CY4PR21MB0744.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0119033DF2C67B3CCBE09CA1FB130@CY4PR21MB0119.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0119;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0119;
 x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(376002)(346002)(136003)(189003)(199004)(8936002)(6436002)(10090500001)(110136005)(217873002)(54906003)(6512007)(6306002)(53936002)(68736007)(5660300001)(14444005)(256004)(6666003)(71190400001)(6486002)(316002)(446003)(11346002)(105586002)(476003)(106356001)(478600001)(2616005)(2906002)(186003)(25786009)(10290500003)(486006)(71200400001)(72206003)(66066001)(4326008)(966005)(14454004)(22452003)(36756003)(102836004)(86612001)(97736004)(8676002)(305945005)(7736002)(1076002)(86362001)(81156014)(26005)(76176011)(6506007)(5250100002)(107886003)(2900100001)(99286004)(3846002)(2501003)(81166006)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(136003)(39860400002)(189003)(199004)(5660300001)(54906003)(1076002)(478600001)(10090500001)(72206003)(22452003)(107886003)(110136005)(316002)(68736007)(4326008)(76176011)(3846002)(6116002)(25786009)(14454004)(106356001)(99286004)(6666003)(105586002)(102836004)(6506007)(5250100002)(186003)(2501003)(26005)(6486002)(6436002)(53936002)(6512007)(66066001)(486006)(476003)(2616005)(10290500003)(11346002)(446003)(97736004)(36756003)(2900100001)(2906002)(8936002)(305945005)(217873002)(7736002)(86362001)(8676002)(86612001)(256004)(71200400001)(14444005)(71190400001)(81156014)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0119;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 4cfOe2LjlFpPuayWYOaqKLKq2PHHK6IzBJhfSDCus5cPWoT3vJ5Nl8l3FMGgrXC8EvXOgLrXAI43uWxFAWnHqL4UQoSKmeFoOHihzVzXyAF4Kh+c0Ma1PQ/JviE4XoIfRkUOreuVHQq/E5iT/gsWDy50M4vUr47UB1B3Nn1rQK+cXi6akOfv/e5H0cywXncCzx9MDY6bUtIrA4IQWjwemz660Re3E64CHEWngggpITgHaIAfHR/TYG1983xwNHT/J2oFhFiC0oIERTV/OWSlDxJihgaFw1gydVuZPb3/mDomiLUvIVVMmNp22tZiT1Hf9lIjobEROS0/ZaR5JZCoyjQMLTFpl/pNj+clyald5KE=
+x-microsoft-antispam-message-info: Bb2JoLJQ3ByEUcuAnd+GB8f+CgOIdpDl/aPE/VMF4k+A70lWh1R6GKo5bV+l1Tg9vsHZ4OtPSdLY83gFVcVc75WdywsnadBlldEjrdTNXCx/OA3e3bU+GZvqb1vAVH4xi8IeNy8wyw2w/5mmH/OA7nB4RSAovLXPa6oBhcKGufp5nZ3Xk/74brQ3S9moaqvq6c5wby9RkadbH90d8nJFnX94zIh+Xx8gAP9ZOyK9eLpK8wXa4cD1EXhhaWEOSMJpTnlIFHDuVVw9xVuWcYgKd7Vnal/lgt8YVp2rljxxUvbKX4OavGnbiWQFUqquYEMi0CxiOQ+zRR4yOs5LSJoxWtsq+y1QaCIOmTMEsXie/VI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82e32396-3504-4851-ba19-08d61ea3a9e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:32.7726
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d03dfe4-63df-4de6-6dd6-08d61ea390ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:48:16.5384
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Tomer Tayar <Tomer.Tayar@cavium.com>
 
-[ Upstream commit 7fd6d98b89f382d414e1db528e29a67bbd749457 ]
+[ Upstream commit eaa50fc59e5841910987e90b0438b2643041f508 ]
 
-Commit 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict
-with PCI BAR") made it possible for AML code to access SMBus I/O ports
-by installing custom SystemIO OpRegion handler and blocking i80i driver
-access upon first AML read/write to this OpRegion.
+The MFW manages an internal lock to prevent concurrent hardware
+(de)initialization of different PFs.
+This, together with the busy-waiting for the MFW's responses for commands,
+might lead to a deadlock during concurrent load or unload of PFs.
+This patch adds the option to sleep within the busy-waiting, and uses it
+for the (un)load requests (which are not sent from an interrupt context) to
+prevent the possible deadlock.
 
-However, while ThinkPad T560 does have SystemIO OpRegion declared under
-the SMBus device, it does not access any of the SMBus registers:
-
-    Device (SMBU)
-    {
-        ...
-
-        OperationRegion (SMBP, PCI_Config, 0x50, 0x04)
-        Field (SMBP, DWordAcc, NoLock, Preserve)
-        {
-            ,   5,
-            TCOB,   11,
-            Offset (0x04)
-        }
-
-        Name (TCBV, 0x00)
-        Method (TCBS, 0, NotSerialized)
-        {
-            If ((TCBV =3D=3D 0x00))
-            {
-            TCBV =3D (\_SB.PCI0.SMBU.TCOB << 0x05)
-            }
-
-            Return (TCBV) /* \_SB_.PCI0.SMBU.TCBV */
-        }
-
-        OperationRegion (TCBA, SystemIO, TCBS (), 0x10)
-        Field (TCBA, ByteAcc, NoLock, Preserve)
-        {
-            Offset (0x04),
-            ,   9,
-            CPSC,   1
-        }
-    }
-
-Problem with the current approach is that it blocks all I/O port access
-and because this system has touchpad connected to the SMBus controller
-after first AML access (happens during suspend/resume cycle) the
-touchpad fails to work anymore.
-
-Fix this so that we allow ACPI AML I/O port access if it does not touch
-the region reserved for the SMBus.
-
-Fixes: 7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to conflict wi=
-th PCI BAR")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D200737
-Reported-by: Yussuf Khalil <dev@pp3345.net>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Signed-off-by: Ariel Elior <Ariel.Elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/i2c/busses/i2c-i801.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_mcp.c | 43 ++++++++++++++++-------
+ drivers/net/ethernet/qlogic/qed/qed_mcp.h | 21 ++++++-----
+ 2 files changed, 44 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-index ba8df2fde1b2..ec10aa1655f7 100644
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1411,6 +1411,13 @@ static void i801_add_tco(struct i801_priv *priv)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethern=
+et/qlogic/qed/qed_mcp.c
+index 5748bcb26d40..a1e1092fa3ce 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -47,7 +47,7 @@
+ #include "qed_reg_addr.h"
+ #include "qed_sriov.h"
+=20
+-#define CHIP_MCP_RESP_ITER_US 10
++#define QED_MCP_RESP_ITER_US	10
+=20
+ #define QED_DRV_MB_MAX_RETRIES	(500 * 1000)	/* Account for 5 sec */
+ #define QED_MCP_RESET_RETRIES	(50 * 1000)	/* Account for 500 msec */
+@@ -316,7 +316,7 @@ static void qed_mcp_reread_offsets(struct qed_hwfn *p_h=
+wfn,
+=20
+ int qed_mcp_reset(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+-	u32 org_mcp_reset_seq, seq, delay =3D CHIP_MCP_RESP_ITER_US, cnt =3D 0;
++	u32 org_mcp_reset_seq, seq, delay =3D QED_MCP_RESP_ITER_US, cnt =3D 0;
+ 	int rc =3D 0;
+=20
+ 	/* Ensure that only a single thread is accessing the mailbox */
+@@ -448,10 +448,10 @@ static int
+ _qed_mcp_cmd_and_union(struct qed_hwfn *p_hwfn,
+ 		       struct qed_ptt *p_ptt,
+ 		       struct qed_mcp_mb_params *p_mb_params,
+-		       u32 max_retries, u32 delay)
++		       u32 max_retries, u32 usecs)
+ {
++	u32 cnt =3D 0, msecs =3D DIV_ROUND_UP(usecs, 1000);
+ 	struct qed_mcp_cmd_elem *p_cmd_elem;
+-	u32 cnt =3D 0;
+ 	u16 seq_num;
+ 	int rc =3D 0;
+=20
+@@ -474,7 +474,11 @@ _qed_mcp_cmd_and_union(struct qed_hwfn *p_hwfn,
+ 			goto err;
+=20
+ 		spin_unlock_bh(&p_hwfn->mcp_info->cmd_lock);
+-		udelay(delay);
++
++		if (QED_MB_FLAGS_IS_SET(p_mb_params, CAN_SLEEP))
++			msleep(msecs);
++		else
++			udelay(usecs);
+ 	} while (++cnt < max_retries);
+=20
+ 	if (cnt >=3D max_retries) {
+@@ -503,7 +507,11 @@ _qed_mcp_cmd_and_union(struct qed_hwfn *p_hwfn,
+ 		 * The spinlock stays locked until the list element is removed.
+ 		 */
+=20
+-		udelay(delay);
++		if (QED_MB_FLAGS_IS_SET(p_mb_params, CAN_SLEEP))
++			msleep(msecs);
++		else
++			udelay(usecs);
++
+ 		spin_lock_bh(&p_hwfn->mcp_info->cmd_lock);
+=20
+ 		if (p_cmd_elem->b_is_completed)
+@@ -538,7 +546,7 @@ _qed_mcp_cmd_and_union(struct qed_hwfn *p_hwfn,
+ 		   "MFW mailbox: response 0x%08x param 0x%08x [after %d.%03d ms]\n",
+ 		   p_mb_params->mcp_resp,
+ 		   p_mb_params->mcp_param,
+-		   (cnt * delay) / 1000, (cnt * delay) % 1000);
++		   (cnt * usecs) / 1000, (cnt * usecs) % 1000);
+=20
+ 	/* Clear the sequence number from the MFW response */
+ 	p_mb_params->mcp_resp &=3D FW_MSG_CODE_MASK;
+@@ -556,7 +564,7 @@ static int qed_mcp_cmd_and_union(struct qed_hwfn *p_hwf=
+n,
+ {
+ 	size_t union_data_size =3D sizeof(union drv_union_data);
+ 	u32 max_retries =3D QED_DRV_MB_MAX_RETRIES;
+-	u32 delay =3D CHIP_MCP_RESP_ITER_US;
++	u32 usecs =3D QED_MCP_RESP_ITER_US;
+=20
+ 	/* MCP not initialized */
+ 	if (!qed_mcp_is_init(p_hwfn)) {
+@@ -573,8 +581,13 @@ static int qed_mcp_cmd_and_union(struct qed_hwfn *p_hw=
+fn,
+ 		return -EINVAL;
+ 	}
+=20
++	if (QED_MB_FLAGS_IS_SET(p_mb_params, CAN_SLEEP)) {
++		max_retries =3D DIV_ROUND_UP(max_retries, 1000);
++		usecs *=3D 1000;
++	}
++
+ 	return _qed_mcp_cmd_and_union(p_hwfn, p_ptt, p_mb_params, max_retries,
+-				      delay);
++				      usecs);
  }
 =20
- #ifdef CONFIG_ACPI
-+static bool i801_acpi_is_smbus_ioport(const struct i801_priv *priv,
-+				      acpi_physical_address address)
-+{
-+	return address >=3D priv->smba &&
-+	       address <=3D pci_resource_end(priv->pci_dev, SMBBAR);
-+}
+ int qed_mcp_cmd(struct qed_hwfn *p_hwfn,
+@@ -763,6 +776,7 @@ __qed_mcp_load_req(struct qed_hwfn *p_hwfn,
+ 	mb_params.data_src_size =3D sizeof(load_req);
+ 	mb_params.p_data_dst =3D &load_rsp;
+ 	mb_params.data_dst_size =3D sizeof(load_rsp);
++	mb_params.flags =3D QED_MB_FLAG_CAN_SLEEP;
+=20
+ 	DP_VERBOSE(p_hwfn, QED_MSG_SP,
+ 		   "Load Request: param 0x%08x [init_hw %d, drv_type %d, hsi_ver %d, pda=
+ 0x%04x]\n",
+@@ -984,7 +998,8 @@ int qed_mcp_load_req(struct qed_hwfn *p_hwfn,
+=20
+ int qed_mcp_unload_req(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+ {
+-	u32 wol_param, mcp_resp, mcp_param;
++	struct qed_mcp_mb_params mb_params;
++	u32 wol_param;
+=20
+ 	switch (p_hwfn->cdev->wol_config) {
+ 	case QED_OV_WOL_DISABLED:
+@@ -1002,8 +1017,12 @@ int qed_mcp_unload_req(struct qed_hwfn *p_hwfn, stru=
+ct qed_ptt *p_ptt)
+ 		wol_param =3D DRV_MB_PARAM_UNLOAD_WOL_MCP;
+ 	}
+=20
+-	return qed_mcp_cmd(p_hwfn, p_ptt, DRV_MSG_CODE_UNLOAD_REQ, wol_param,
+-			   &mcp_resp, &mcp_param);
++	memset(&mb_params, 0, sizeof(mb_params));
++	mb_params.cmd =3D DRV_MSG_CODE_UNLOAD_REQ;
++	mb_params.param =3D wol_param;
++	mb_params.flags =3D QED_MB_FLAG_CAN_SLEEP;
 +
- static acpi_status
- i801_acpi_io_handler(u32 function, acpi_physical_address address, u32 bits=
-,
- 		     u64 *value, void *handler_context, void *region_context)
-@@ -1426,7 +1433,7 @@ i801_acpi_io_handler(u32 function, acpi_physical_addr=
-ess address, u32 bits,
- 	 */
- 	mutex_lock(&priv->acpi_lock);
++	return qed_mcp_cmd_and_union(p_hwfn, p_ptt, &mb_params);
+ }
 =20
--	if (!priv->acpi_reserved) {
-+	if (!priv->acpi_reserved && i801_acpi_is_smbus_ioport(priv, address)) {
- 		priv->acpi_reserved =3D true;
+ int qed_mcp_unload_done(struct qed_hwfn *p_hwfn, struct qed_ptt *p_ptt)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.h b/drivers/net/ethern=
+et/qlogic/qed/qed_mcp.h
+index c7ec2395d1ce..e5d0483f3c44 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.h
+@@ -565,14 +565,19 @@ struct qed_mcp_info {
+ };
 =20
- 		dev_warn(&pdev->dev, "BIOS is accessing SMBus registers\n");
+ struct qed_mcp_mb_params {
+-	u32			cmd;
+-	u32			param;
+-	void			*p_data_src;
+-	u8			data_src_size;
+-	void			*p_data_dst;
+-	u8			data_dst_size;
+-	u32			mcp_resp;
+-	u32			mcp_param;
++	u32 cmd;
++	u32 param;
++	void *p_data_src;
++	void *p_data_dst;
++	u8 data_src_size;
++	u8 data_dst_size;
++	u32 mcp_resp;
++	u32 mcp_param;
++	u32 flags;
++#define QED_MB_FLAG_CAN_SLEEP	(0x1 << 0)
++#define QED_MB_FLAGS_IS_SET(params, flag) \
++	({ typeof(params) __params =3D (params); \
++	   (__params && (__params->flags & QED_MB_FLAG_ ## flag)); })
+ };
+=20
+ /**
 --=20
 2.17.1
