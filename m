@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81664C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB88C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9DA21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:26:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9DA21533
+	by mail.kernel.org (Postfix) with ESMTP id 685D421533
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:27:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 685D421533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeIUEMe (ORCPT
+        id S1727237AbeIUENi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:12:34 -0400
-Received: from mga03.intel.com ([134.134.136.65]:50952 "EHLO mga03.intel.com"
+        Fri, 21 Sep 2018 00:13:38 -0400
+Received: from mga01.intel.com ([192.55.52.88]:46584 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbeIUEMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:12:34 -0400
+        id S1725808AbeIUENi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 00:13:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 15:26:51 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 15:27:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,282,1534834800"; 
-   d="scan'208";a="85285550"
+   d="scan'208";a="85285823"
 Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
-  by orsmga003.jf.intel.com with ESMTP; 20 Sep 2018 15:26:36 -0700
-Subject: [PATCH v4 1/5] mm: Provide kernel parameter to allow disabling page
- init poisoning
+  by orsmga003.jf.intel.com with ESMTP; 20 Sep 2018 15:27:53 -0700
+Subject: [PATCH v4 2/5] mm: Create non-atomic version of SetPageReserved for
+ init use
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org
@@ -40,8 +40,8 @@ Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
         dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
         jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
         dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
-Date:   Thu, 20 Sep 2018 15:26:36 -0700
-Message-ID: <20180920222415.19464.38400.stgit@localhost.localdomain>
+Date:   Thu, 20 Sep 2018 15:27:53 -0700
+Message-ID: <20180920222641.19464.75787.stgit@localhost.localdomain>
 In-Reply-To: <20180920215824.19464.8884.stgit@localhost.localdomain>
 References: <20180920215824.19464.8884.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -53,174 +53,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems with a large amount of memory it can take a significant amount
-of time to initialize all of the page structs with the PAGE_POISON_PATTERN
-value. I have seen it take over 2 minutes to initialize a system with
-over 12TB of RAM.
+It doesn't make much sense to use the atomic SetPageReserved at init time
+when we are using memset to clear the memory and manipulating the page
+flags via simple "&=" and "|=" operations in __init_single_page.
 
-In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
-the boot time returned to something much more reasonable as the
-arch_add_memory call completed in milliseconds versus seconds. However in
-doing that I had to disable all of the other VM debugging on the system.
+This patch adds a non-atomic version __SetPageReserved that can be used
+during page init and shows about a 10% improvement in initialization times
+on the systems I have available for testing. On those systems I saw
+initialization times drop from around 35 seconds to around 32 seconds to
+initialize a 3TB block of persistent memory. I believe the main advantage
+of this is that it allows for more compiler optimization as the __set_bit
+operation can be reordered whereas the atomic version cannot.
 
-In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
-a system that has a large amount of memory I have added a new kernel
-parameter named "vm_debug" that can be set to "-" in order to disable it.
+I tried adding a bit of documentation based on commit <f1dd2cd13c4> ("mm,
+memory_hotplug: do not associate hotadded memory to zones until online").
 
+Ideally the reserved flag should be set earlier since there is a brief
+window where the page is initialization via __init_single_page and we have
+not set the PG_Reserved flag. I'm leaving that for a future patch set as
+that will require a more significant refactor.
+
+Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
 
-v3: Switched from kernel config option to parameter
-v4: Added comment to parameter handler to record when option is disabled
-    Updated parameter description based on feedback from Michal Hocko
-    Fixed GB vs TB typo in patch description.
-    Switch to vm_debug option similar to slub_debug
+v4: Added comment about __set_bit vs set_bit to the patch description
 
- Documentation/admin-guide/kernel-parameters.txt |   12 ++++++
- include/linux/page-flags.h                      |    8 ++++
- mm/debug.c                                      |   46 +++++++++++++++++++++++
- mm/memblock.c                                   |    5 +--
- mm/sparse.c                                     |    4 +-
- 5 files changed, 69 insertions(+), 6 deletions(-)
+ include/linux/page-flags.h |    1 +
+ mm/page_alloc.c            |    9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dfe3d7b99abf..ee257b5b584f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4811,6 +4811,18 @@
- 			This is actually a boot loader parameter; the value is
- 			passed to the kernel using a special protocol.
- 
-+	vm_debug[=options]	[KNL] Available with CONFIG_DEBUG_VM=y.
-+			May slow down system boot speed, especially when
-+			enabled on systems with a large amount of memory.
-+			All options are enabled by default, and this
-+			interface is meant to allow for selectively
-+			enabling or disabling specific virtual memory
-+			debugging features.
-+
-+			Available options are:
-+			  P	Enable page structure init time poisoning
-+			  -	Disable all of the above options
-+
- 	vmalloc=nn[KMG]	[KNL,BOOT] Forces the vmalloc area to have an exact
- 			size of <nn>. This can be used to increase the
- 			minimum size (128MB on x86). It can also be used to
 diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 4d99504f6496..934f91ef3f54 100644
+index 934f91ef3f54..50ce1bddaf56 100644
 --- a/include/linux/page-flags.h
 +++ b/include/linux/page-flags.h
-@@ -163,6 +163,14 @@ static inline int PagePoisoned(const struct page *page)
- 	return page->flags == PAGE_POISON_PATTERN;
- }
+@@ -303,6 +303,7 @@ static inline void page_init_poison(struct page *page, size_t size)
  
-+#ifdef CONFIG_DEBUG_VM
-+void page_init_poison(struct page *page, size_t size);
-+#else
-+static inline void page_init_poison(struct page *page, size_t size)
-+{
-+}
-+#endif
-+
- /*
-  * Page flags policies wrt compound pages
-  *
-diff --git a/mm/debug.c b/mm/debug.c
-index bd10aad8539a..cdacba12e09a 100644
---- a/mm/debug.c
-+++ b/mm/debug.c
-@@ -13,6 +13,7 @@
- #include <trace/events/mmflags.h>
- #include <linux/migrate.h>
- #include <linux/page_owner.h>
-+#include <linux/ctype.h>
+ PAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ 	__CLEARPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
++	__SETPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
+ PAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+ 	__CLEARPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+ 	__SETPAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 712cab17f86f..29bd662fffd7 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1239,7 +1239,12 @@ void __meminit reserve_bootmem_region(phys_addr_t start, phys_addr_t end)
+ 			/* Avoid false-positive PageTail() */
+ 			INIT_LIST_HEAD(&page->lru);
  
- #include "internal.h"
- 
-@@ -175,4 +176,49 @@ void dump_mm(const struct mm_struct *mm)
- 	);
- }
- 
-+static bool page_init_poisoning __read_mostly = true;
-+
-+static int __init setup_vm_debug(char *str)
-+{
-+	bool __page_init_poisoning = true;
-+
-+	/*
-+	 * Calling vm_debug with no arguments is equivalent to requesting
-+	 * to enable all debugging options we can control.
-+	 */
-+	if (*str++ != '=' || !*str)
-+		goto out;
-+
-+	__page_init_poisoning = false;
-+	if (*str == '-')
-+		goto out;
-+
-+	while (*str) {
-+		switch (tolower(*str)) {
-+		case'p':
-+			__page_init_poisoning = true;
-+			break;
-+		default:
-+			pr_err("vm_debug option '%c' unknown. skipped\n",
-+			       *str);
-+		}
-+
-+		str++;
-+	}
-+out:
-+	if (page_init_poisoning && !__page_init_poisoning)
-+		pr_warn("Page struct poisoning disabled by kernel command line option 'vm_debug'\n");
-+
-+	page_init_poisoning = __page_init_poisoning;
-+
-+	return 1;
-+}
-+__setup("vm_debug", setup_vm_debug);
-+
-+void page_init_poison(struct page *page, size_t size)
-+{
-+	if (page_init_poisoning)
-+		memset(page, PAGE_POISON_PATTERN, size);
-+}
-+EXPORT_SYMBOL_GPL(page_init_poison);
- #endif		/* CONFIG_DEBUG_VM */
-diff --git a/mm/memblock.c b/mm/memblock.c
-index f7981098537b..b1017ec1b167 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1495,10 +1495,9 @@ void * __init memblock_virt_alloc_try_nid_raw(
- 
- 	ptr = memblock_virt_alloc_internal(size, align,
- 					   min_addr, max_addr, nid);
--#ifdef CONFIG_DEBUG_VM
- 	if (ptr && size > 0)
--		memset(ptr, PAGE_POISON_PATTERN, size);
--#endif
-+		page_init_poison(ptr, size);
-+
- 	return ptr;
- }
- 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 10b07eea9a6e..67ad061f7fb8 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -696,13 +696,11 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
- 		goto out;
+-			SetPageReserved(page);
++			/*
++			 * no need for atomic set_bit because the struct
++			 * page is not visible yet so nobody should
++			 * access it yet.
++			 */
++			__SetPageReserved(page);
+ 		}
  	}
+ }
+@@ -5513,7 +5518,7 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		page = pfn_to_page(pfn);
+ 		__init_single_page(page, pfn, zone, nid);
+ 		if (context == MEMMAP_HOTPLUG)
+-			SetPageReserved(page);
++			__SetPageReserved(page);
  
--#ifdef CONFIG_DEBUG_VM
- 	/*
- 	 * Poison uninitialized struct pages in order to catch invalid flags
- 	 * combinations.
- 	 */
--	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
--#endif
-+	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
- 
- 	section_mark_present(ms);
- 	sparse_init_one_section(ms, section_nr, memmap, usemap);
+ 		/*
+ 		 * Mark the block movable so that blocks are reserved for
 
