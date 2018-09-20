@@ -2,212 +2,177 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF560ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECB6ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7411F21531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:21:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA4C221523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:33:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eVXdKou0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7411F21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsZEF5n1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4C221523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388938AbeIUBD6 (ORCPT
+        id S2388031AbeIUBS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:03:58 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39286 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388450AbeIUBD4 (ORCPT
+        Thu, 20 Sep 2018 21:18:26 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38344 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeIUBS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:03:56 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so4820660pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:18:57 -0700 (PDT)
+        Thu, 20 Sep 2018 21:18:26 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h33-v6so8830112edb.5;
+        Thu, 20 Sep 2018 12:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lmS56beqTImL3Fl6E6Cwq10GeXJJvehS5phOJWJ21C4=;
-        b=eVXdKou0wkV9Outr8mazEtsG/LuDsWW89sghkAAEF5d91eZtzNBqzdJ+dh7sUEAaVF
-         scPvJDd0AjLO9Xi0xKtNCqxXcXyu6Xq31U2TGceMwWcBYWHs3gn97eBmKX0HwZdY+Fqq
-         oysuwhDQwKjcAob2FXx6HoRZqfBlfLA7eycQs=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FfxFH2Td1dLQmcGVuwiJOhxW/aruuY4P4zlRnxmeHk0=;
+        b=PsZEF5n1nVU2vS6O0VBZ51wriv0/HcYQtOjtpzc5/IU2qz1n6Y3lohD4ehNldhxaWs
+         CdJflJqPGOq36qCgj3GH+XxdO7Bh7bIfXIT9XCxH9S1gJpFBHvBnTCDwn831LYIVGf48
+         aj6lg2xzcunVruLdz/6PrCaj+WQdh07FBGTH4OBdj06jQSpYvg6Ie6Qy9b5bEksbTam8
+         8Nd0qkMLVhjgIitQmtTHMYLgj5tNp3C771NTTNJc1jxE6eiAC6yYHDWEsjzaHuL2t7qW
+         L7X3n6XQSZYUcOLexcaySILZrT6s++a+xl+7EKpVh2wxdWwLInea0xFPeO9cp7+sdYOw
+         i6jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lmS56beqTImL3Fl6E6Cwq10GeXJJvehS5phOJWJ21C4=;
-        b=sshugw9/NdPp8Df6F24teV3cmP3JV6oAEQW6p28fcWrCznowdJhvvcExh+rKWP9Pg7
-         txMtjlb5AM8/mL52gbCW6elMetFpJEn1pKIVCQMBC79KnTq9CE/zgt0f/WTFg2G5MCiR
-         IDI3S2kcmGNUXcAbV5vxWQjiuYk+XyESQWOzSVrg+92XoInRQEVngw7jaPugFlfwwylZ
-         mKRanXK1bDAIRjhoxfYs0EX9TR04KuWUIvpraCeRqFyd09vb251xFkCBOjW2iQHAYCOE
-         V4c5dxJpPr3FZGKPI4BzKyQrtfbudbuQs4KCqyxURz0gtUvOnxfQMwFt0YBHNpjCla2z
-         RdSQ==
-X-Gm-Message-State: APzg51AQpLXn91rWPsP1ft/Q6pfd+8p5/tzTwpKUB3v4PTS9teTPzmhz
-        Sw15P+x+hX3F8TKl0ORqMjmrZw==
-X-Google-Smtp-Source: ANB0VdZ/P1RIzARx78KuZZzVG0qUOJ8+89UNwk87hUE0X9q+gD3joIiXLH4YdxVK+74EgLIR68MBuw==
-X-Received: by 2002:a62:4255:: with SMTP id p82-v6mr42912778pfa.238.1537471136867;
-        Thu, 20 Sep 2018 12:18:56 -0700 (PDT)
-Received: from localhost.localdomain ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm4424443pgf.37.2018.09.20.12.18.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Sep 2018 12:18:55 -0700 (PDT)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 23/44] coresight: etb10: Refactor etb_drvdata::mode handling
-Date:   Thu, 20 Sep 2018 13:17:58 -0600
-Message-Id: <1537471099-19781-24-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
-References: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FfxFH2Td1dLQmcGVuwiJOhxW/aruuY4P4zlRnxmeHk0=;
+        b=jIgRrNTqavg/SUKykW6dBAh0Ern83//0ENRdcH6OE/LxXyhs6pTK6JWrCnu57EiXt6
+         Mbcj6KsXGR20ssJbxswPJpSuTUp6cD7pIxX4V6KW6lzPBLKpUFaaZXh9dw9JbPuPTQ1X
+         eu8WVG62hnCT+aJXJ0blw6bsn7iWSJfcOM2yChoahFjpiutacI6WYVp0NYXyj1r01HXP
+         eEnxMkUijqCX4MEd99/59HDMHrUGo8lTpspe3+4pol43XzxvvKcdab+ZlHOVnbC8gmes
+         KEMTnzDbIlXQtCwRoKvWEI6mgQ9en+LjM0yAV5Q9mTHQsypF3CWOX6gg50LT71OI365o
+         9R2w==
+X-Gm-Message-State: APzg51CNKUlRI3IOo6enuDTuReyN6aNEQGXm8COsgZMBpR4HpetrFzRR
+        ZLxxyGzGPq4tSXW/k5p5izg=
+X-Google-Smtp-Source: ANB0VdZJ8kgneSwGkSR+XzrFv+wDkIOQo/jp8HWaH1G0YDFE1foyU2BaBkdgwc+D1alzDLXgZFDBnA==
+X-Received: by 2002:a50:a93c:: with SMTP id l57-v6mr6468281edc.229.1537472001961;
+        Thu, 20 Sep 2018 12:33:21 -0700 (PDT)
+Received: from localhost.localdomain (235.99.60.188.dynamic.wline.res.cust.swisscom.ch. [188.60.99.235])
+        by smtp.googlemail.com with ESMTPSA id 25-v6sm1810809edz.45.2018.09.20.12.33.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 12:33:21 -0700 (PDT)
+From:   Romain Aviolat <r.aviolat@gmail.com>
+To:     davem@davemloft.net
+Cc:     elena.reshetova@intel.com, ishkamiel@gmail.com, sd@queasysnail.net,
+        dan.carpenter@oracle.com, felix.walter@cloudandheat.com,
+        r.aviolat@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] DRIVERS: net: macsec: Fix multiple coding style issues
+Date:   Thu, 20 Sep 2018 21:33:08 +0200
+Message-Id: <20180920193308.22869-1-r.aviolat@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the etb_drvdata::mode from a locat_t to a simple u32,
-as it is for the ETF and ETR drivers.  This streamlines the code and adds
-commonality with the other drivers when dealing with similar operations.
+This patch fixes a couple of issues highlighted by checkpatch.pl:
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+    * Missing a blank line after declarations
+    * Alignment should match open parenthesis
+
+Signed-off-by: Romain Aviolat <r.aviolat@gmail.com>
 ---
- drivers/hwtracing/coresight/coresight-etb10.c | 62 +++++++++++++++------------
- 1 file changed, 34 insertions(+), 28 deletions(-)
+ drivers/net/macsec.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index 9fd77fdc1244..69287163ce4e 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -5,7 +5,6 @@
-  * Description: CoreSight Embedded Trace Buffer driver
-  */
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 7de88b33d5b9..4bb90b6867a2 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -64,9 +64,9 @@ struct macsec_eth_header {
  
--#include <asm/local.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/types.h>
-@@ -72,8 +71,8 @@
-  * @miscdev:	specifics to handle "/dev/xyz.etb" entry.
-  * @spinlock:	only one at a time pls.
-  * @reading:	synchronise user space access to etb buffer.
-- * @mode:	this ETB is being used.
-  * @buf:	area of memory where ETB buffer content gets sent.
-+ * @mode:	this ETB is being used.
-  * @buffer_depth: size of @buf.
-  * @trigger_cntr: amount of words to store after a trigger.
-  */
-@@ -85,8 +84,8 @@ struct etb_drvdata {
- 	struct miscdevice	miscdev;
- 	spinlock_t		spinlock;
- 	local_t			reading;
--	local_t			mode;
- 	u8			*buf;
-+	u32			mode;
- 	u32			buffer_depth;
- 	u32			trigger_cntr;
- };
-@@ -138,44 +137,48 @@ static void etb_enable_hw(struct etb_drvdata *drvdata)
- static int etb_enable(struct coresight_device *csdev, u32 mode, void *data)
- {
- 	int ret = 0;
--	u32 val;
- 	unsigned long flags;
- 	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ #define MACSEC_NUM_AN 4 /* 2 bits for the association number */
  
--	/*
--	 * We don't have an internal state to clean up if we fail to setup
--	 * the perf buffer. So we can perform the step before we turn the
--	 * ETB on and leave without cleaning up.
--	 */
--	if (mode == CS_MODE_PERF) {
--		ret = etb_set_buffer(csdev, (struct perf_output_handle *)data);
--		if (ret)
--			goto out;
--	}
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
+-#define for_each_rxsc(secy, sc)			\
++#define for_each_rxsc(secy, sc)				\
+ 	for (sc = rcu_dereference_bh(secy->rx_sc);	\
+-	     sc;				\
++	     sc;					\
+ 	     sc = rcu_dereference_bh(sc->next))
+ #define for_each_rxsc_rtnl(secy, sc)			\
+ 	for (sc = rtnl_dereference(secy->rx_sc);	\
+@@ -1142,6 +1142,7 @@ static rx_handler_result_t macsec_handle_frame(struct sk_buff **pskb)
  
--	val = local_cmpxchg(&drvdata->mode,
--			    CS_MODE_DISABLED, mode);
- 	/*
- 	 * When accessing from Perf, a HW buffer can be handled
- 	 * by a single trace entity.  In sysFS mode many tracers
- 	 * can be logging to the same HW buffer.
- 	 */
--	if (val == CS_MODE_PERF)
--		return -EBUSY;
-+	if (drvdata->mode == CS_MODE_PERF) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
- 
- 	/* Don't let perf disturb sysFS sessions */
--	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
--		return -EBUSY;
-+	if (drvdata->mode == CS_MODE_SYSFS && mode == CS_MODE_PERF) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
- 
- 	/* Nothing to do, the tracer is already enabled. */
--	if (val == CS_MODE_SYSFS)
-+	if (drvdata->mode == CS_MODE_SYSFS && mode == CS_MODE_SYSFS)
- 		goto out;
- 
--	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	/*
-+	 * We don't have an internal state to clean up if we fail to setup
-+	 * the perf buffer. So we can perform the step before we turn the
-+	 * ETB on and leave without cleaning up.
-+	 */
-+	if (mode == CS_MODE_PERF) {
-+		ret = etb_set_buffer(csdev, (struct perf_output_handle *)data);
-+		if (ret)
-+			goto out;
-+	}
+ 	list_for_each_entry_rcu(macsec, &rxd->secys, secys) {
+ 		struct macsec_rx_sc *sc = find_rx_sc(&macsec->secy, sci);
 +
-+	drvdata->mode = mode;
- 	etb_enable_hw(drvdata);
--	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 		sc = sc ? macsec_rxsc_get(sc) : NULL;
  
- out:
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+
- 	if (!ret)
- 		dev_dbg(drvdata->dev, "ETB enabled\n");
- 	return ret;
-@@ -277,11 +280,14 @@ static void etb_disable(struct coresight_device *csdev)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
--	etb_disable_hw(drvdata);
--	etb_dump_hw(drvdata);
--	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
--	local_set(&drvdata->mode, CS_MODE_DISABLED);
-+	/* Disable the ETB only if it needs to */
-+	if (drvdata->mode != CS_MODE_DISABLED) {
-+		etb_disable_hw(drvdata);
-+		etb_dump_hw(drvdata);
-+		drvdata->mode = CS_MODE_DISABLED;
-+	}
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	dev_dbg(drvdata->dev, "ETB disabled\n");
+ 		if (sc) {
+@@ -1584,7 +1585,6 @@ static struct macsec_rx_sa *get_rxsa_from_nl(struct net *net,
+ 	return rx_sa;
  }
-@@ -488,7 +494,7 @@ static void etb_dump(struct etb_drvdata *drvdata)
- 	unsigned long flags;
  
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
--	if (local_read(&drvdata->mode) == CS_MODE_SYSFS) {
-+	if (drvdata->mode == CS_MODE_SYSFS) {
- 		etb_disable_hw(drvdata);
- 		etb_dump_hw(drvdata);
- 		etb_enable_hw(drvdata);
+-
+ static const struct nla_policy macsec_genl_policy[NUM_MACSEC_ATTR] = {
+ 	[MACSEC_ATTR_IFINDEX] = { .type = NLA_U32 },
+ 	[MACSEC_ATTR_RXSC_CONFIG] = { .type = NLA_NESTED },
+@@ -2156,7 +2156,7 @@ static int macsec_upd_rxsc(struct sk_buff *skb, struct genl_info *info)
+ }
+ 
+ static int copy_tx_sa_stats(struct sk_buff *skb,
+-			     struct macsec_tx_sa_stats __percpu *pstats)
++			    struct macsec_tx_sa_stats __percpu *pstats)
+ {
+ 	struct macsec_tx_sa_stats sum = {0, };
+ 	int cpu;
+@@ -2176,7 +2176,7 @@ static int copy_tx_sa_stats(struct sk_buff *skb,
+ }
+ 
+ static int copy_rx_sa_stats(struct sk_buff *skb,
+-			     struct macsec_rx_sa_stats __percpu *pstats)
++			    struct macsec_rx_sa_stats __percpu *pstats)
+ {
+ 	struct macsec_rx_sa_stats sum = {0, };
+ 	int cpu;
+@@ -2202,7 +2202,7 @@ static int copy_rx_sa_stats(struct sk_buff *skb,
+ }
+ 
+ static int copy_rx_sc_stats(struct sk_buff *skb,
+-			     struct pcpu_rx_sc_stats __percpu *pstats)
++			    struct pcpu_rx_sc_stats __percpu *pstats)
+ {
+ 	struct macsec_rx_sc_stats sum = {0, };
+ 	int cpu;
+@@ -2266,7 +2266,7 @@ static int copy_rx_sc_stats(struct sk_buff *skb,
+ }
+ 
+ static int copy_tx_sc_stats(struct sk_buff *skb,
+-			     struct pcpu_tx_sc_stats __percpu *pstats)
++			    struct pcpu_tx_sc_stats __percpu *pstats)
+ {
+ 	struct macsec_tx_sc_stats sum = {0, };
+ 	int cpu;
+@@ -2306,7 +2306,7 @@ static int copy_tx_sc_stats(struct sk_buff *skb,
+ }
+ 
+ static int copy_secy_stats(struct sk_buff *skb,
+-			    struct pcpu_secy_stats __percpu *pstats)
++			   struct pcpu_secy_stats __percpu *pstats)
+ {
+ 	struct macsec_dev_stats sum = {0, };
+ 	int cpu;
+@@ -2962,13 +2962,11 @@ static int macsec_get_iflink(const struct net_device *dev)
+ 	return macsec_priv(dev)->real_dev->ifindex;
+ }
+ 
+-
+ static int macsec_get_nest_level(struct net_device *dev)
+ {
+ 	return macsec_priv(dev)->nest_level;
+ }
+ 
+-
+ static const struct net_device_ops macsec_netdev_ops = {
+ 	.ndo_init		= macsec_dev_init,
+ 	.ndo_uninit		= macsec_dev_uninit,
 -- 
-2.7.4
+2.17.1
 
