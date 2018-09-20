@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F93C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51A0C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 049A4206B5
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:10:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 049A4206B5
+	by mail.kernel.org (Postfix) with ESMTP id A1C022087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:10:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C022087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731109AbeITVyw (ORCPT
+        id S1731345AbeITVyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 17:54:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:48580 "EHLO foss.arm.com"
+        Thu, 20 Sep 2018 17:54:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:48600 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731009AbeITVyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 17:54:51 -0400
+        id S1731135AbeITVyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 17:54:53 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DB3615BE;
-        Thu, 20 Sep 2018 09:10:40 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86C1315BF;
+        Thu, 20 Sep 2018 09:10:42 -0700 (PDT)
 Received: from e110467-lin.cambridge.arm.com (e110467-lin.Emea.Arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B3C513F557;
-        Thu, 20 Sep 2018 09:10:38 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BCF613F557;
+        Thu, 20 Sep 2018 09:10:40 -0700 (PDT)
 From:   Robin Murphy <robin.murphy@arm.com>
 To:     joro@8bytes.org, will.deacon@arm.com, thunder.leizhen@huawei.com,
         iommu@lists.linux-foundation.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     linuxarm@huawei.com, guohanjun@huawei.com, huawei.libin@huawei.com,
         john.garry@huawei.com
-Subject: [PATCH v8 3/7] iommu: Add "iommu.strict" command line option
-Date:   Thu, 20 Sep 2018 17:10:23 +0100
-Message-Id: <799fad801970298385af3abc8ca82620ad62c000.1537458163.git.robin.murphy@arm.com>
+Subject: [PATCH v8 4/7] iommu/io-pgtable-arm: Add support for non-strict mode
+Date:   Thu, 20 Sep 2018 17:10:24 +0100
+Message-Id: <9a666d63a96ab97dc53df2a64b3a8d22a0986423.1537458163.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.19.0.dirty
 In-Reply-To: <cover.1537458163.git.robin.murphy@arm.com>
 References: <cover.1537458163.git.robin.murphy@arm.com>
@@ -49,96 +49,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhen Lei <thunder.leizhen@huawei.com>
 
-Add a generic command line option to enable lazy unmapping via IOVA
-flush queues, which will initally be suuported by iommu-dma. This echoes
-the semantics of "intel_iommu=strict" (albeit with the opposite default
-value), but in the driver-agnostic fashion of "iommu.passthrough".
+Non-strict mode is simply a case of skipping 'regular' leaf TLBIs, since
+the sync is already factored out into ops->iotlb_sync at the core API
+level. Non-leaf invalidations where we change the page table structure
+itself still have to be issued synchronously in order to maintain walk
+caches correctly.
+
+To save having to reason about it too much, make sure the invalidation
+in arm_lpae_split_blk_unmap() just performs its own unconditional sync
+to minimise the window in which we're technically violating the break-
+before-make requirement on a live mapping. This might work out redundant
+with an outer-level sync for strict unmaps, but we'll never be splitting
+blocks on a DMA fastpath anyway.
 
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-[rm: move handling out of SMMUv3 driver, clean up documentation]
+[rm: tweak comment, commit message, split_blk_unmap logic and barriers]
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
 
-v8:
- - Rename "non-strict" to "strict" to better match existing options
- - Rewrite doc text/commit message
- - Downgrade boot-time message from warn/taint to info
+v8: Add barrier for the fiddly cross-cpu flush case
 
- .../admin-guide/kernel-parameters.txt         | 12 ++++++++++
- drivers/iommu/iommu.c                         | 23 +++++++++++++++++++
- 2 files changed, 35 insertions(+)
+ drivers/iommu/io-pgtable-arm.c | 14 ++++++++++++--
+ drivers/iommu/io-pgtable.h     |  5 +++++
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9871e649ffef..92ae12aeabf4 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1749,6 +1749,18 @@
- 		nobypass	[PPC/POWERNV]
- 			Disable IOMMU bypass, using IOMMU for PCI devices.
- 
-+	iommu.strict=	[ARM64] Configure TLB invalidation behaviour
-+			Format: { "0" | "1" }
-+			0 - Lazy mode.
-+			  Request that DMA unmap operations use deferred
-+			  invalidation of hardware TLBs, for increased
-+			  throughput at the cost of reduced device isolation.
-+			  Will fall back to strict mode if not supported by
-+			  the relevant IOMMU driver.
-+			1 - Strict mode (default).
-+			  DMA unmap operations invalidate IOMMU hardware TLBs
-+			  synchronously.
-+
- 	iommu.passthrough=
- 			[ARM64] Configure DMA to bypass the IOMMU by default.
- 			Format: { "0" | "1" }
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 8c15c5980299..02b6603f0616 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -41,6 +41,7 @@ static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_IDENTITY;
- #else
- static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
- #endif
-+static bool iommu_dma_strict __read_mostly = true;
- 
- struct iommu_callback_data {
- 	const struct iommu_ops *ops;
-@@ -131,6 +132,21 @@ static int __init iommu_set_def_domain_type(char *str)
- }
- early_param("iommu.passthrough", iommu_set_def_domain_type);
- 
-+static int __init iommu_dma_setup(char *str)
-+{
-+	int ret;
-+
-+	ret = kstrtobool(str, &iommu_dma_strict);
-+	if (ret)
-+		return ret;
-+
-+	if (!iommu_dma_strict)
-+		pr_info("Enabling deferred TLB invalidation for DMA; protection against malicious/malfunctioning devices may be reduced.\n");
-+
-+	return 0;
-+}
-+early_param("iommu.strict", iommu_dma_setup);
-+
- static ssize_t iommu_group_attr_show(struct kobject *kobj,
- 				     struct attribute *__attr, char *buf)
- {
-@@ -1072,6 +1088,13 @@ struct iommu_group *iommu_group_get_for_dev(struct device *dev)
- 		group->default_domain = dom;
- 		if (!group->domain)
- 			group->domain = dom;
-+
-+		if (dom && !iommu_dma_strict) {
-+			int attr = 1;
-+			iommu_domain_set_attr(dom,
-+					      DOMAIN_ATTR_DMA_USE_FLUSH_QUEUE,
-+					      &attr);
-+		}
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 2f79efd16a05..237cacd4a62b 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -576,6 +576,7 @@ static size_t arm_lpae_split_blk_unmap(struct arm_lpae_io_pgtable *data,
+ 		tablep = iopte_deref(pte, data);
+ 	} else if (unmap_idx >= 0) {
+ 		io_pgtable_tlb_add_flush(&data->iop, iova, size, size, true);
++		io_pgtable_tlb_sync(&data->iop);
+ 		return size;
  	}
  
- 	ret = iommu_group_add_device(group, dev);
+@@ -609,6 +610,13 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+ 			io_pgtable_tlb_sync(iop);
+ 			ptep = iopte_deref(pte, data);
+ 			__arm_lpae_free_pgtable(data, lvl + 1, ptep);
++		} else if (iop->cfg.quirks & IO_PGTABLE_QUIRK_NON_STRICT) {
++			/*
++			 * Order the PTE update against queueing the IOVA, to
++			 * guarantee that a flush callback from a different CPU
++			 * has observed it before the TLBIALL can be issued.
++			 */
++			smp_wmb();
+ 		} else {
+ 			io_pgtable_tlb_add_flush(iop, iova, size, size, true);
+ 		}
+@@ -771,7 +779,8 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
+ 	u64 reg;
+ 	struct arm_lpae_io_pgtable *data;
+ 
+-	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA))
++	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA |
++			    IO_PGTABLE_QUIRK_NON_STRICT))
+ 		return NULL;
+ 
+ 	data = arm_lpae_alloc_pgtable(cfg);
+@@ -863,7 +872,8 @@ arm_64_lpae_alloc_pgtable_s2(struct io_pgtable_cfg *cfg, void *cookie)
+ 	struct arm_lpae_io_pgtable *data;
+ 
+ 	/* The NS quirk doesn't apply at stage 2 */
+-	if (cfg->quirks & ~IO_PGTABLE_QUIRK_NO_DMA)
++	if (cfg->quirks & ~(IO_PGTABLE_QUIRK_NO_DMA |
++			    IO_PGTABLE_QUIRK_NON_STRICT))
+ 		return NULL;
+ 
+ 	data = arm_lpae_alloc_pgtable(cfg);
+diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
+index 2df79093cad9..47d5ae559329 100644
+--- a/drivers/iommu/io-pgtable.h
++++ b/drivers/iommu/io-pgtable.h
+@@ -71,12 +71,17 @@ struct io_pgtable_cfg {
+ 	 *	be accessed by a fully cache-coherent IOMMU or CPU (e.g. for a
+ 	 *	software-emulated IOMMU), such that pagetable updates need not
+ 	 *	be treated as explicit DMA data.
++	 *
++	 * IO_PGTABLE_QUIRK_NON_STRICT: Skip issuing synchronous leaf TLBIs
++	 *	on unmap, for DMA domains using the flush queue mechanism for
++	 *	delayed invalidation.
+ 	 */
+ 	#define IO_PGTABLE_QUIRK_ARM_NS		BIT(0)
+ 	#define IO_PGTABLE_QUIRK_NO_PERMS	BIT(1)
+ 	#define IO_PGTABLE_QUIRK_TLBI_ON_MAP	BIT(2)
+ 	#define IO_PGTABLE_QUIRK_ARM_MTK_4GB	BIT(3)
+ 	#define IO_PGTABLE_QUIRK_NO_DMA		BIT(4)
++	#define IO_PGTABLE_QUIRK_NON_STRICT	BIT(5)
+ 	unsigned long			quirks;
+ 	unsigned long			pgsize_bitmap;
+ 	unsigned int			ias;
 -- 
 2.19.0.dirty
 
