@@ -2,312 +2,101 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8704ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D52DECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BE2521525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:22:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE2521525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 61E9921529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:22:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E9921529
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731526AbeITQE4 (ORCPT
+        id S1732192AbeITQFF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 12:04:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42516 "EHLO mx1.redhat.com"
+        Thu, 20 Sep 2018 12:05:05 -0400
+Received: from mga11.intel.com ([192.55.52.93]:4221 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbeITQEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 12:04:55 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 69EDB81106;
-        Thu, 20 Sep 2018 10:22:09 +0000 (UTC)
-Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 625797D64C;
-        Thu, 20 Sep 2018 10:22:06 +0000 (UTC)
-Subject: Re: [PATCH v5 07/18] kvm: arm64: Configure VTCR_EL2 per VM
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org
-References: <20180917104144.19188-1-suzuki.poulose@arm.com>
- <20180917104144.19188-8-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <3c4d3139-1b8b-12fd-bd41-10a21b86e7b5@redhat.com>
-Date:   Thu, 20 Sep 2018 12:21:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1731755AbeITQFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 12:05:05 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 03:22:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,398,1531810800"; 
+   d="scan'208";a="91738481"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 20 Sep 2018 03:16:49 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 20 Sep 2018 13:16:48 +0300
+Date:   Thu, 20 Sep 2018 13:16:48 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
+ for legacy boards
+Message-ID: <20180920101648.GC11965@kuha.fi.intel.com>
+References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+ <20180917181603.125492-3-dmitry.torokhov@gmail.com>
+ <20180919151026.GB11965@kuha.fi.intel.com>
+ <20180919171326.GB116719@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <20180917104144.19188-8-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Sep 2018 10:22:09 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180919171326.GB116719@dtor-ws>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-
-On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
-> Add support for setting the VTCR_EL2 per VM, rather than hard
-> coding a value at boot time per CPU. This would allow us to tune
-> the stage2 page table parameters per VM in the later changes.
+On Wed, Sep 19, 2018 at 10:13:26AM -0700, Dmitry Torokhov wrote:
+> > > diff --git a/drivers/base/pset_property.c b/drivers/base/pset_property.c
+> > > index 08ecc13080ae..63f2377aefe8 100644
+> > > --- a/drivers/base/pset_property.c
+> > > +++ b/drivers/base/pset_property.c
+> > > @@ -18,6 +18,11 @@ struct property_set {
+> > >  	struct device *dev;
+> > >  	struct fwnode_handle fwnode;
+> > >  	const struct property_entry *properties;
+> > > +
+> > > +	struct property_set *parent;
+> > > +	/* Entry in parent->children list */
+> > > +	struct list_head child_node;
+> > > +	struct list_head children;
+> > 
+> > Add
+> > 
+> >         const char *name;
+> > 
+> > and you can implement also pset_get_named_child_node().
 > 
-> We compute the VTCR fields based on the system wide sanitised
-> feature registers, except for the hardware management of Access
-> Flags (VTCR_EL2.HA). It is fine to run a system with a mix of
-> CPUs that may or may not update the page table Access Flags.
-> Since the bit is RES0 on CPUs that don't support it, the bit
-> should be ignored on them.
+> Or
+> 	char name[];
 > 
-> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-> Acked-by: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/include/asm/kvm_arm.h  |  3 +-
->  arch/arm64/include/asm/kvm_asm.h  |  2 -
->  arch/arm64/include/asm/kvm_host.h | 12 ++++--
->  arch/arm64/include/asm/kvm_hyp.h  |  1 +
->  arch/arm64/kvm/hyp/Makefile       |  1 -
->  arch/arm64/kvm/hyp/s2-setup.c     | 72 -------------------------------
->  arch/arm64/kvm/reset.c            | 30 +++++++++++++
->  7 files changed, 40 insertions(+), 81 deletions(-)
->  delete mode 100644 arch/arm64/kvm/hyp/s2-setup.c
+> to avoid separate allocation.
+
+Let's not do that, especially if you are planning on exporting this
+structure. If the name is coming from .rodata, there is no need to
+allocate anything for the name. Check kstrdup_const().
+
+> Alternatively, we can add it later when we need it, and add
+> device_add_named_child_properties().
 > 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index 5f807b680a5f..14317b3a1820 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -135,8 +135,7 @@
->   * 40 bits wide (T0SZ = 24).  Systems with a PARange smaller than 40 bits are
->   * not known to exist and will break with this configuration.
->   *
-> - * VTCR_EL2.PS is extracted from ID_AA64MMFR0_EL1.PARange at boot time
-> - * (see hyp-init.S).
-> + * The VTCR_EL2 is configured per VM and is initialised in kvm_arm_config_vm().
->   *
->   * Note that when using 4K pages, we concatenate two first level page tables
->   * together. With 16K pages, we concatenate 16 first level page tables.
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index 102b5a5c47b6..0b53c72e7591 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -72,8 +72,6 @@ extern void __vgic_v3_init_lrs(void);
->  
->  extern u32 __kvm_get_mdcr_el2(void);
->  
-> -extern u32 __init_stage2_translation(void);
-> -
->  /* Home-grown __this_cpu_{ptr,read} variants that always work at HYP */
->  #define __hyp_this_cpu_ptr(sym)						\
->  	({								\
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index b04280ae1be0..5ecd457bce7d 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -61,11 +61,13 @@ struct kvm_arch {
->  	u64    vmid_gen;
->  	u32    vmid;
->  
-> -	/* 1-level 2nd stage table, protected by kvm->mmu_lock */
-> +	/* stage2 entry level table */
->  	pgd_t *pgd;
->  
->  	/* VTTBR value associated with above pgd and vmid */
->  	u64    vttbr;
-> +	/* VTCR_EL2 value for this VM */
-> +	u64    vtcr;
->  
->  	/* The last vcpu id that ran on each physical CPU */
->  	int __percpu *last_vcpu_ran;
-> @@ -442,10 +444,12 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
->  
->  static inline void __cpu_init_stage2(void)
->  {
-> -	u32 parange = kvm_call_hyp(__init_stage2_translation);
-> +	u32 ps;
->  
-> -	WARN_ONCE(parange < 40,
-> -		  "PARange is %d bits, unsupported configuration!", parange);
-> +	/* Sanity check for minimum IPA size support */
-> +	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1) & 0x7);
-> +	WARN_ONCE(ps < 40,
-> +		  "PARange is %d bits, unsupported configuration!", ps);
->  }
->  
->  /* Guest/host FPSIMD coordination helpers */
-> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-> index d1bd1e0f14d7..23aca66767f9 100644
-> --- a/arch/arm64/include/asm/kvm_hyp.h
-> +++ b/arch/arm64/include/asm/kvm_hyp.h
-> @@ -161,6 +161,7 @@ void __noreturn __hyp_do_panic(unsigned long, ...);
->   */
->  static __always_inline void __hyp_text __load_guest_stage2(struct kvm *kvm)
->  {
-> +	write_sysreg(kvm->arch.vtcr, vtcr_el2);
->  	write_sysreg(kvm->arch.vttbr, vttbr_el2);
->  }
->  
-> diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-> index 2fabc2dc1966..82d1904328ad 100644
-> --- a/arch/arm64/kvm/hyp/Makefile
-> +++ b/arch/arm64/kvm/hyp/Makefile
-> @@ -19,7 +19,6 @@ obj-$(CONFIG_KVM_ARM_HOST) += switch.o
->  obj-$(CONFIG_KVM_ARM_HOST) += fpsimd.o
->  obj-$(CONFIG_KVM_ARM_HOST) += tlb.o
->  obj-$(CONFIG_KVM_ARM_HOST) += hyp-entry.o
-> -obj-$(CONFIG_KVM_ARM_HOST) += s2-setup.o
->  
->  # KVM code is run at a different exception code with a different map, so
->  # compiler instrumentation that inserts callbacks or checks into the code may
-> diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
-> deleted file mode 100644
-> index e1ca672e937a..000000000000
-> --- a/arch/arm64/kvm/hyp/s2-setup.c
-> +++ /dev/null
-> @@ -1,72 +0,0 @@
-> -/*
-> - * Copyright (C) 2016 - ARM Ltd
-> - * Author: Marc Zyngier <marc.zyngier@arm.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> - */
-> -
-> -#include <linux/types.h>
-> -#include <asm/kvm_arm.h>
-> -#include <asm/kvm_asm.h>
-> -#include <asm/kvm_hyp.h>
-> -#include <asm/cpufeature.h>
-> -
-> -u32 __hyp_text __init_stage2_translation(void)
-> -{
-> -	u64 val = VTCR_EL2_FLAGS;
-> -	u64 parange;
-> -	u32 phys_shift;
-> -	u64 tmp;
-> -
-> -	/*
-> -	 * Read the PARange bits from ID_AA64MMFR0_EL1 and set the PS
-> -	 * bits in VTCR_EL2. Amusingly, the PARange is 4 bits, but the
-> -	 * allocated values are limited to 3bits.
-> -	 */
-> -	parange = read_sysreg(id_aa64mmfr0_el1) & 7;
-> -	if (parange > ID_AA64MMFR0_PARANGE_MAX)
-> -		parange = ID_AA64MMFR0_PARANGE_MAX;
-> -	val |= parange << VTCR_EL2_PS_SHIFT;
-> -
-> -	/* Compute the actual PARange... */
-> -	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
-> -
-> -	/*
-> -	 * ... and clamp it to 40 bits, unless we have some braindead
-> -	 * HW that implements less than that. In all cases, we'll
-> -	 * return that value for the rest of the kernel to decide what
-> -	 * to do.
-> -	 */
-> -	val |= VTCR_EL2_T0SZ(phys_shift > 40 ? 40 : phys_shift);
-> -
-> -	/*
-> -	 * Check the availability of Hardware Access Flag / Dirty Bit
-> -	 * Management in ID_AA64MMFR1_EL1 and enable the feature in VTCR_EL2.
-> -	 */
-> -	tmp = (read_sysreg(id_aa64mmfr1_el1) >> ID_AA64MMFR1_HADBS_SHIFT) & 0xf;
-> -	if (tmp)
-> -		val |= VTCR_EL2_HA;
-> -
-> -	/*
-> -	 * Read the VMIDBits bits from ID_AA64MMFR1_EL1 and set the VS
-> -	 * bit in VTCR_EL2.
-> -	 */
-> -	tmp = (read_sysreg(id_aa64mmfr1_el1) >> ID_AA64MMFR1_VMIDBITS_SHIFT) & 0xf;
-> -	val |= (tmp == ID_AA64MMFR1_VMIDBITS_16) ?
-> -			VTCR_EL2_VS_16BIT :
-> -			VTCR_EL2_VS_8BIT;
-> -
-> -	write_sysreg(val, vtcr_el2);
-> -
-> -	return phys_shift;
-> -}
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index b0c07dab5cb3..e0c49377b771 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -26,6 +26,7 @@
->  
->  #include <kvm/arm_arch_timer.h>
->  
-> +#include <asm/cpufeature.h>
->  #include <asm/cputype.h>
->  #include <asm/ptrace.h>
->  #include <asm/kvm_arm.h>
-> @@ -134,9 +135,38 @@ int kvm_reset_vcpu(struct kvm_vcpu *vcpu)
->  	return kvm_timer_vcpu_reset(vcpu);
->  }
->  
-> +/*
-> + * Configure the VTCR_EL2 for this VM. The VTCR value is common
-> + * across all the physical CPUs on the system. We use system wide
-> + * sanitised values to fill in different fields, except for Hardware
-> + * Management of Access Flags. HA Flag is set unconditionally on
-> + * all CPUs, as it is safe to run with or without the feature and
-> + * the bit is RES0 on CPUs that don't support it.
-> + */
->  int kvm_arm_config_vm(struct kvm *kvm, unsigned long type)
->  {
-> +	u64 vtcr = VTCR_EL2_FLAGS;
-#define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
+> I'll leave it up to Rafael to decide.
 
-in include/asm/kvm_arm.h
+Fair enough.
 
-I don't see T0SZ=24 encoded there and I don't see it set either in the
-code below? For bisection purpose.
 
-Thanks
+Thanks,
 
-Eric
-> +	u64 parange;
-> +
->  	if (type)
->  		return -EINVAL;
-> +
-> +	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 7;
-> +	if (parange > ID_AA64MMFR0_PARANGE_MAX)
-> +		parange = ID_AA64MMFR0_PARANGE_MAX;
-> +	vtcr |= parange << VTCR_EL2_PS_SHIFT;
-> +
-> +	/*
-> +	 * Enable the Hardware Access Flag management, unconditionally
-> +	 * on all CPUs. The features is RES0 on CPUs without the support
-> +	 * and must be ignored by the CPUs.
-> +	 */
-> +	vtcr |= VTCR_EL2_HA;
-> +
-> +	/* Set the vmid bits */
-> +	vtcr |= (kvm_get_vmid_bits() == 16) ?
-> +		VTCR_EL2_VS_16BIT :
-> +		VTCR_EL2_VS_8BIT;
-> +	kvm->arch.vtcr = vtcr;
->  	return 0;
->  }
-> 
+-- 
+heikki
