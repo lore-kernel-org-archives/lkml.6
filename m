@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404F8ECE567
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A1BECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B8B21522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21C5021524
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 04:53:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndE5dq3i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1B8B21522
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnVIVH0a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C5021524
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731473AbeITKec (ORCPT
+        id S1731526AbeITKeh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 06:34:32 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34224 "EHLO
+        Thu, 20 Sep 2018 06:34:37 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37337 "EHLO
         mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731390AbeITKeb (ORCPT
+        with ESMTP id S1731390AbeITKeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 06:34:31 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f6-v6so3710757plo.1;
-        Wed, 19 Sep 2018 21:53:03 -0700 (PDT)
+        Thu, 20 Sep 2018 06:34:36 -0400
+Received: by mail-pl1-f196.google.com with SMTP id q5-v6so231944pli.4;
+        Wed, 19 Sep 2018 21:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pVLquGe0jfKFFNFc/hZvEXUfXFEiHzNgnYns4IMCj3A=;
-        b=ndE5dq3iednjhbX5VZScO+d/DGc+OWFiAvCu/pA3bfs3GU2XYzOUy/6/DAoPLUJbqs
-         hlEps0LViS4FJXBvARyKf1QO5pJ5cJxT/Dt1AwmfMoNODYpTJmFLTs4Ik8/LWBn57Yv0
-         TOlPu1kRyAeDKyC19UAo20hk2EJcSvbPFTEFcPBJHFUypGMlZwMQjn8rMOtGNxs/hz2U
-         CaGxhahoW8bMv+eiwzTC/KWB9uVE63pBlhoL0JPLWGHvS7PQULvUEXRJziwrSb46oUEc
-         qvxGJE8GZrmCoNbaoyqNAnMyJZP/F4bhKfzR6+Pmbeh8gWpHooobDafcsLkf4wExEIZm
-         IVTQ==
+        bh=lCwoMUYaxGxdpzraNXrprPsWtdbloLObMULlolIXxTY=;
+        b=cnVIVH0adF6cVdCw8GhM2Vl0EfD3CyFaRTlce4dc1hFVR4qt1ADa2uCW2EOUYar40a
+         wfFxZhnnLWwZPz3xkwDRoUAwSGCNjjfYMBMPfDBilYWfhtqN2uEECadaX3HBIxZAkGDS
+         mM/SKZwyMSA7Bxy+5TYUkgc24cKssiPkvnYZXYckr0dHybfmC3HWYrRu6UmTmAigzOYf
+         08xbVJNkd2FovHQ7JMu5+m7Q5NJ/Kz9MapzVZO8BmV+rtFonpdyXa+7YxpJJDqM6G/5a
+         Jhx33Hr87NJn8R6IZjPzC9sf6AeVTrMjBwDcjoV6o1Y4349tmwOFP/sMmi5F9NusUazt
+         Kiww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pVLquGe0jfKFFNFc/hZvEXUfXFEiHzNgnYns4IMCj3A=;
-        b=YNYtg+UJf85oeEi2K/KKiSm3yePdcnNVxkTNBFzg9G3jhNLKVJgnQHAvHzo2OIR4Qp
-         oXLpOL/aJmdvHMuoZynliSNyCNddZlUW6Rpuo4EEnZLxilI4aC58C7N91Fu3m9G8RaUq
-         ckbuHrSuHU7xy9P7yQX3g7y9E3U4BfQvrmY2m9h+PEmxqFBTbs9HCcRJbBTlqWMf5lEN
-         h71idMIGOXyF2leNT7RbiuXf53nx/b1EOBFdRdM9aS9topOwSDxaANSfhGF2CR7X7rY2
-         9s8S2FJXhBC/RKlDHAtk2akyF9Gs7HzZLZWwGjZmcJwFijH7aAz7gn6j9ffJkWrupXfH
-         g4vA==
-X-Gm-Message-State: APzg51A5k2LIM7I+8M6jYlI7yTejCEQl4MuQ2Sx1vbaaivcuR6nUFFCe
-        YlvvVb9TAWvroph/QGd0+2Q=
-X-Google-Smtp-Source: ANB0VdbshzfiLw1fKae8umDogxLlIqgFziKjrVP5YN7mqS8sSKxW9SFHodS/+v8uMM6zCIoT4gGnKQ==
-X-Received: by 2002:a17:902:22e:: with SMTP id 43-v6mr37906850plc.118.1537419183339;
-        Wed, 19 Sep 2018 21:53:03 -0700 (PDT)
+        bh=lCwoMUYaxGxdpzraNXrprPsWtdbloLObMULlolIXxTY=;
+        b=Xf4n4DsTTszYiM3mILamCKu8yYJG/iDIf55XTLeU4yzaWfRfy52r6r7IBrW9MW70ur
+         n6Ffqrbp1D4QAutcaKoVo/6dwTAlv6c3rvitF3bIhqmk8bRhiSYU2FhzU+BAhcyevwF7
+         LkJqUVXun4FZvDmKrL2DVxVF7y3lFVcVK3Rgxi+n9VO0xBBWrrQVDRsbJF3hcjjl5K1U
+         QsDkNBiK4wZbS3htmqvmpiCl3RVo9B5Zb/vNnHs/pilclGWpWdpvlnPmZ3ewYg5aG39n
+         xo6hxZAeslKoYIOQNT+LxBar6bLOe1AcUTuNVDnsoestPf88c4m6dl6EFRvPNTOJvLk6
+         X8fQ==
+X-Gm-Message-State: APzg51Asw76bmb2dj3oyv/O8Gs67mGj6M4YbWMxFJqvIICKUSfW0LVgV
+        ctI3cIUXMFQnnGipHQ8AP3c=
+X-Google-Smtp-Source: ANB0VdaPisiCDMhXXH28TyemwPfQxwdUxmuBM4vqoftBxdukhvy4MKpZUU0gprEv78Y/BrEjMKF8SA==
+X-Received: by 2002:a17:902:f209:: with SMTP id gn9mr37348100plb.173.1537419187770;
+        Wed, 19 Sep 2018 21:53:07 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-67-170-212-194.hsd1.ca.comcast.net. [67.170.212.194])
-        by smtp.gmail.com with ESMTPSA id d66-v6sm39209705pfd.121.2018.09.19.21.53.02
+        by smtp.gmail.com with ESMTPSA id d66-v6sm39209705pfd.121.2018.09.19.21.53.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Sep 2018 21:53:02 -0700 (PDT)
+        Wed, 19 Sep 2018 21:53:07 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     viro@zeniv.linux.org.uk, tglx@linutronix.de,
         linux-kernel@vger.kernel.org
 Cc:     arnd@arndb.de, y2038@lists.linaro.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-aio@kvack.org
-Subject: [PATCH v4 3/5] ppoll: use __kernel_timespec
-Date:   Wed, 19 Sep 2018 21:41:06 -0700
-Message-Id: <20180920044108.6606-4-deepa.kernel@gmail.com>
+Subject: [PATCH v4 4/5] pselect6: use __kernel_timespec
+Date:   Wed, 19 Sep 2018 21:41:07 -0700
+Message-Id: <20180920044108.6606-5-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920044108.6606-1-deepa.kernel@gmail.com>
 References: <20180920044108.6606-1-deepa.kernel@gmail.com>
@@ -78,7 +78,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 struct timespec is not y2038 safe.
 struct __kernel_timespec is the new y2038 safe structure for all
 syscalls that are using struct timespec.
-Update ppoll interfaces to use struct __kernel_timespec.
+Update pselect interfaces to use struct __kernel_timespec.
 
 sigset_t also has different representations on 32 bit and 64 bit
 architectures. Hence, we need to support the following different
@@ -87,318 +87,227 @@ syscalls:
 New y2038 safe syscalls:
 (Controlled by CONFIG_64BIT_TIME for 32 bit ABIs)
 
-Native 64 bit(unchanged) and native 32 bit : sys_ppoll
-Compat : compat_sys_ppoll_time64
+Native 64 bit(unchanged) and native 32 bit : sys_pselect6
+Compat : compat_sys_pselect6_time64
 
 Older y2038 unsafe syscalls:
 (Controlled by CONFIG_32BIT_COMPAT_TIME for 32 bit ABIs)
 
-Native 32 bit : ppoll_time32
-Compat : compat_sys_ppoll
+Native 32 bit : pselect6_time32
+Compat : compat_sys_pselect6
+
+Note that all other versions of select syscalls will not have
+y2038 safe versions.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 ---
- fs/select.c              | 166 ++++++++++++++++++++++++++-------------
- include/linux/compat.h   |   5 ++
- include/linux/syscalls.h |   5 +-
- 3 files changed, 120 insertions(+), 56 deletions(-)
+ fs/select.c              | 94 ++++++++++++++++++++++++++++++++++------
+ include/linux/compat.h   |  5 +++
+ include/linux/syscalls.h |  5 ++-
+ 3 files changed, 90 insertions(+), 14 deletions(-)
 
 diff --git a/fs/select.c b/fs/select.c
-index eb9132520197..d332be059487 100644
+index d332be059487..4c8652390c94 100644
 --- a/fs/select.c
 +++ b/fs/select.c
-@@ -287,12 +287,18 @@ int poll_select_set_timeout(struct timespec64 *to, time64_t sec, long nsec)
- 	return 0;
+@@ -729,16 +729,27 @@ SYSCALL_DEFINE5(select, int, n, fd_set __user *, inp, fd_set __user *, outp,
  }
  
-+enum poll_time_type {
-+	PT_TIMEVAL = 0,
-+	PT_OLD_TIMEVAL = 1,
-+	PT_TIMESPEC = 2,
-+	PT_OLD_TIMESPEC = 3,
-+};
-+
- static int poll_select_copy_remaining(struct timespec64 *end_time,
- 				      void __user *p,
--				      int timeval, int ret)
-+				      enum poll_time_type pt_type, int ret)
- {
- 	struct timespec64 rts;
--	struct timeval rtv;
- 
- 	if (!p)
- 		return ret;
-@@ -310,18 +316,40 @@ static int poll_select_copy_remaining(struct timespec64 *end_time,
- 		rts.tv_sec = rts.tv_nsec = 0;
- 
- 
--	if (timeval) {
--		if (sizeof(rtv) > sizeof(rtv.tv_sec) + sizeof(rtv.tv_usec))
--			memset(&rtv, 0, sizeof(rtv));
--		rtv.tv_sec = rts.tv_sec;
--		rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
-+	switch (pt_type) {
-+	case PT_TIMEVAL:
-+		{
-+			struct timeval rtv;
- 
--		if (!copy_to_user(p, &rtv, sizeof(rtv)))
-+			if (sizeof(rtv) > sizeof(rtv.tv_sec) + sizeof(rtv.tv_usec))
-+				memset(&rtv, 0, sizeof(rtv));
-+			rtv.tv_sec = rts.tv_sec;
-+			rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
-+			if (!copy_to_user(p, &rtv, sizeof(rtv)))
-+				return ret;
-+		}
-+		break;
-+	case PT_OLD_TIMEVAL:
-+		{
-+			struct old_timeval32 rtv;
-+
-+			rtv.tv_sec = rts.tv_sec;
-+			rtv.tv_usec = rts.tv_nsec / NSEC_PER_USEC;
-+			if (!copy_to_user(p, &rtv, sizeof(rtv)))
-+				return ret;
-+		}
-+		break;
-+	case PT_TIMESPEC:
-+		if (!put_timespec64(&rts, p))
- 			return ret;
--
--	} else if (!put_timespec64(&rts, p))
--		return ret;
--
-+		break;
-+	case PT_OLD_TIMESPEC:
-+		if (!put_old_timespec32(&rts, p))
-+			return ret;
-+		break;
-+	default:
-+		BUG();
-+	}
- 	/*
- 	 * If an application puts its timeval in read-only memory, we
- 	 * don't want the Linux-specific update to the timeval to
-@@ -689,7 +717,7 @@ static int kern_select(int n, fd_set __user *inp, fd_set __user *outp,
- 	}
- 
- 	ret = core_sys_select(n, inp, outp, exp, to);
--	ret = poll_select_copy_remaining(&end_time, tvp, 1, ret);
-+	ret = poll_select_copy_remaining(&end_time, tvp, PT_TIMEVAL, ret);
- 
- 	return ret;
- }
-@@ -722,7 +750,7 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
- 		return ret;
- 
- 	ret = core_sys_select(n, inp, outp, exp, to);
--	ret = poll_select_copy_remaining(&end_time, tsp, 0, ret);
-+	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
- 
- 	restore_user_sigmask(sigmask, &sigsaved);
- 
-@@ -1026,7 +1054,7 @@ SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
- }
- 
- SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
--		struct timespec __user *, tsp, const sigset_t __user *, sigmask,
-+		struct __kernel_timespec __user *, tsp, const sigset_t __user *, sigmask,
- 		size_t, sigsetsize)
+ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
+-		       fd_set __user *exp, struct timespec __user *tsp,
+-		       const sigset_t __user *sigmask, size_t sigsetsize)
++		       fd_set __user *exp, void __user *tsp,
++		       const sigset_t __user *sigmask, size_t sigsetsize,
++		       enum poll_time_type type)
  {
  	sigset_t ksigmask, sigsaved;
-@@ -1054,60 +1082,50 @@ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
+ 	struct timespec64 ts, end_time, *to = NULL;
+ 	int ret;
  
--	ret = poll_select_copy_remaining(&end_time, tsp, 0, ret);
-+	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
+ 	if (tsp) {
+-		if (get_timespec64(&ts, tsp))
+-			return -EFAULT;
++		switch (type) {
++		case PT_TIMESPEC:
++			if (get_timespec64(&ts, tsp))
++				return -EFAULT;
++			break;
++		case PT_OLD_TIMESPEC:
++			if (get_old_timespec32(&ts, tsp))
++				return -EFAULT;
++			break;
++		default:
++			BUG();
++		}
  
- 	return ret;
- }
- 
--#ifdef CONFIG_COMPAT
--#define __COMPAT_NFDBITS       (8 * sizeof(compat_ulong_t))
-+#if defined(CONFIG_COMPAT_32BIT_TIME) && !defined(CONFIG_64BIT)
- 
--static
--int compat_poll_select_copy_remaining(struct timespec64 *end_time, void __user *p,
--				      int timeval, int ret)
-+SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
-+		struct old_timespec32 __user *, tsp, const sigset_t __user *, sigmask,
-+		size_t, sigsetsize)
- {
--	struct timespec64 ts;
-+	sigset_t ksigmask, sigsaved;
-+	struct timespec64 ts, end_time, *to = NULL;
-+	int ret;
- 
--	if (!p)
--		return ret;
-+	if (tsp) {
-+		if (get_old_timespec32(&ts, tsp))
-+			return -EFAULT;
- 
--	if (current->personality & STICKY_TIMEOUTS)
--		goto sticky;
-+		to = &end_time;
-+		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
-+			return -EINVAL;
-+	}
- 
--	/* No update for zero timeout */
--	if (!end_time->tv_sec && !end_time->tv_nsec)
-+	ret = set_user_sigmask(sigmask, &ksigmask, &sigsaved, sigsetsize);
-+	if (ret)
+ 		to = &end_time;
+ 		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
+@@ -750,7 +761,7 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
  		return ret;
  
--	ktime_get_ts64(&ts);
--	ts = timespec64_sub(*end_time, ts);
--	if (ts.tv_sec < 0)
--		ts.tv_sec = ts.tv_nsec = 0;
-+	ret = do_sys_poll(ufds, nfds, to);
- 
--	if (timeval) {
--		struct old_timeval32 rtv;
-+	restore_user_sigmask(sigmask, &sigsaved);
- 
--		rtv.tv_sec = ts.tv_sec;
--		rtv.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
-+	/* We can restart this syscall, usually */
-+	if (ret == -EINTR)
-+		ret = -ERESTARTNOHAND;
- 
--		if (!copy_to_user(p, &rtv, sizeof(rtv)))
--			return ret;
--	} else {
--		if (!put_old_timespec32(&ts, p))
--			return ret;
--	}
--	/*
--	 * If an application puts its timeval in read-only memory, we
--	 * don't want the Linux-specific update to the timeval to
--	 * cause a fault after the select has completed
--	 * successfully. However, because we're not updating the
--	 * timeval, we can't restart the system call.
--	 */
-+	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
- 
--sticky:
--	if (ret == -ERESTARTNOHAND)
--		ret = -EINTR;
- 	return ret;
- }
-+#endif
-+
-+#ifdef CONFIG_COMPAT
-+#define __COMPAT_NFDBITS       (8 * sizeof(compat_ulong_t))
- 
- /*
-  * Ooo, nasty.  We need here to frob 32-bit unsigned longs to
-@@ -1239,7 +1257,7 @@ static int do_compat_select(int n, compat_ulong_t __user *inp,
- 	}
- 
- 	ret = compat_core_sys_select(n, inp, outp, exp, to);
--	ret = compat_poll_select_copy_remaining(&end_time, tvp, 1, ret);
-+	ret = poll_select_copy_remaining(&end_time, tvp, PT_OLD_TIMEVAL, ret);
- 
- 	return ret;
- }
-@@ -1292,7 +1310,7 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
- 		return ret;
- 
- 	ret = compat_core_sys_select(n, inp, outp, exp, to);
--	ret = compat_poll_select_copy_remaining(&end_time, tsp, 0, ret);
-+	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
+ 	ret = core_sys_select(n, inp, outp, exp, to);
+-	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
++	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
  
  	restore_user_sigmask(sigmask, &sigsaved);
  
-@@ -1318,6 +1336,7 @@ COMPAT_SYSCALL_DEFINE6(pselect6, int, n, compat_ulong_t __user *, inp,
- 				 sigsetsize);
+@@ -764,7 +775,27 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
+  * the sigset size.
+  */
+ SYSCALL_DEFINE6(pselect6, int, n, fd_set __user *, inp, fd_set __user *, outp,
+-		fd_set __user *, exp, struct timespec __user *, tsp,
++		fd_set __user *, exp, struct __kernel_timespec __user *, tsp,
++		void __user *, sig)
++{
++	size_t sigsetsize = 0;
++	sigset_t __user *up = NULL;
++
++	if (sig) {
++		if (!access_ok(VERIFY_READ, sig, sizeof(void *)+sizeof(size_t))
++		    || __get_user(up, (sigset_t __user * __user *)sig)
++		    || __get_user(sigsetsize,
++				(size_t __user *)(sig+sizeof(void *))))
++			return -EFAULT;
++	}
++
++	return do_pselect(n, inp, outp, exp, tsp, up, sigsetsize, PT_TIMESPEC);
++}
++
++#if defined(CONFIG_COMPAT_32BIT_TIME) && !defined(CONFIG_64BIT)
++
++SYSCALL_DEFINE6(pselect6_time32, int, n, fd_set __user *, inp, fd_set __user *, outp,
++		fd_set __user *, exp, struct old_timespec32 __user *, tsp,
+ 		void __user *, sig)
+ {
+ 	size_t sigsetsize = 0;
+@@ -778,9 +809,11 @@ SYSCALL_DEFINE6(pselect6, int, n, fd_set __user *, inp, fd_set __user *, outp,
+ 			return -EFAULT;
+ 	}
+ 
+-	return do_pselect(n, inp, outp, exp, tsp, up, sigsetsize);
++	return do_pselect(n, inp, outp, exp, tsp, up, sigsetsize, PT_OLD_TIMESPEC);
  }
  
-+#if defined(CONFIG_COMPAT_32BIT_TIME)
- COMPAT_SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds,
- 	unsigned int,  nfds, struct old_timespec32 __user *, tsp,
- 	const compat_sigset_t __user *, sigmask, compat_size_t, sigsetsize)
-@@ -1347,8 +1366,45 @@ COMPAT_SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds,
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
++#endif
++
+ #ifdef __ARCH_WANT_SYS_OLD_SELECT
+ struct sel_arg_struct {
+ 	unsigned long n;
+@@ -1289,16 +1322,26 @@ COMPAT_SYSCALL_DEFINE1(old_select, struct compat_sel_arg_struct __user *, arg)
  
--	ret = compat_poll_select_copy_remaining(&end_time, tsp, 0, ret);
-+	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
+ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
+ 	compat_ulong_t __user *outp, compat_ulong_t __user *exp,
+-	struct old_timespec32 __user *tsp, compat_sigset_t __user *sigmask,
+-	compat_size_t sigsetsize)
++	void __user *tsp, compat_sigset_t __user *sigmask,
++	compat_size_t sigsetsize, enum poll_time_type type)
+ {
+ 	sigset_t ksigmask, sigsaved;
+ 	struct timespec64 ts, end_time, *to = NULL;
+ 	int ret;
+ 
+ 	if (tsp) {
+-		if (get_old_timespec32(&ts, tsp))
+-			return -EFAULT;
++		switch (type) {
++		case PT_OLD_TIMESPEC:
++			if (get_old_timespec32(&ts, tsp))
++				return -EFAULT;
++			break;
++		case PT_TIMESPEC:
++			if (get_timespec64(&ts, tsp))
++				return -EFAULT;
++			break;
++		default:
++			BUG();
++		}
+ 
+ 		to = &end_time;
+ 		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
+@@ -1310,13 +1353,35 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
+ 		return ret;
+ 
+ 	ret = compat_core_sys_select(n, inp, outp, exp, to);
+-	ret = poll_select_copy_remaining(&end_time, tsp, PT_OLD_TIMESPEC, ret);
++	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
+ 
+ 	restore_user_sigmask(sigmask, &sigsaved);
  
  	return ret;
  }
- #endif
-+
-+/* New compat syscall for 64 bit time_t*/
-+COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
-+	unsigned int,  nfds, struct __kernel_timespec __user *, tsp,
-+	const compat_sigset_t __user *, sigmask, compat_size_t, sigsetsize)
+ 
++COMPAT_SYSCALL_DEFINE6(pselect6_time64, int, n, compat_ulong_t __user *, inp,
++	compat_ulong_t __user *, outp, compat_ulong_t __user *, exp,
++	struct __kernel_timespec __user *, tsp, void __user *, sig)
 +{
-+	sigset_t ksigmask, sigsaved;
-+	struct timespec64 ts, end_time, *to = NULL;
-+	int ret;
++	compat_size_t sigsetsize = 0;
++	compat_uptr_t up = 0;
 +
-+	if (tsp) {
-+		if (get_timespec64(&ts, tsp))
++	if (sig) {
++		if (!access_ok(VERIFY_READ, sig,
++				sizeof(compat_uptr_t)+sizeof(compat_size_t)) ||
++				__get_user(up, (compat_uptr_t __user *)sig) ||
++				__get_user(sigsetsize,
++				(compat_size_t __user *)(sig+sizeof(up))))
 +			return -EFAULT;
-+
-+		to = &end_time;
-+		if (poll_select_set_timeout(to, ts.tv_sec, ts.tv_nsec))
-+			return -EINVAL;
 +	}
 +
-+	ret = set_compat_user_sigmask(sigmask, &ksigmask, &sigsaved, sigsetsize);
-+	if (ret)
-+		return ret;
-+
-+	ret = do_sys_poll(ufds, nfds, to);
-+
-+	restore_user_sigmask(sigmask, &sigsaved);
-+
-+	/* We can restart this syscall, usually */
-+	if (ret == -EINTR)
-+		ret = -ERESTARTNOHAND;
-+
-+	ret = poll_select_copy_remaining(&end_time, tsp, PT_TIMESPEC, ret);
-+
-+	return ret;
++	return do_compat_pselect(n, inp, outp, exp, tsp, compat_ptr(up),
++				 sigsetsize, PT_TIMESPEC);
 +}
 +
++#if defined(CONFIG_COMPAT_32BIT_TIME)
++
+ COMPAT_SYSCALL_DEFINE6(pselect6, int, n, compat_ulong_t __user *, inp,
+ 	compat_ulong_t __user *, outp, compat_ulong_t __user *, exp,
+ 	struct old_timespec32 __user *, tsp, void __user *, sig)
+@@ -1332,10 +1397,13 @@ COMPAT_SYSCALL_DEFINE6(pselect6, int, n, compat_ulong_t __user *, inp,
+ 				(compat_size_t __user *)(sig+sizeof(up))))
+ 			return -EFAULT;
+ 	}
++
+ 	return do_compat_pselect(n, inp, outp, exp, tsp, compat_ptr(up),
+-				 sigsetsize);
++				 sigsetsize, PT_OLD_TIMESPEC);
+ }
+ 
 +#endif
++
+ #if defined(CONFIG_COMPAT_32BIT_TIME)
+ COMPAT_SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds,
+ 	unsigned int,  nfds, struct old_timespec32 __user *, tsp,
 diff --git a/include/linux/compat.h b/include/linux/compat.h
-index 03d65c509eeb..349a2d98e450 100644
+index 349a2d98e450..6896e6e51c00 100644
 --- a/include/linux/compat.h
 +++ b/include/linux/compat.h
-@@ -646,6 +646,11 @@ asmlinkage long compat_sys_ppoll(struct pollfd __user *ufds,
+@@ -641,6 +641,11 @@ asmlinkage long compat_sys_pselect6(int n, compat_ulong_t __user *inp,
+ 				    compat_ulong_t __user *exp,
+ 				    struct old_timespec32 __user *tsp,
+ 				    void __user *sig);
++asmlinkage long compat_sys_pselect6_time64(int n, compat_ulong_t __user *inp,
++				    compat_ulong_t __user *outp,
++				    compat_ulong_t __user *exp,
++				    struct __kernel_timespec __user *tsp,
++				    void __user *sig);
+ asmlinkage long compat_sys_ppoll(struct pollfd __user *ufds,
+ 				 unsigned int nfds,
  				 struct old_timespec32 __user *tsp,
- 				 const compat_sigset_t __user *sigmask,
- 				 compat_size_t sigsetsize);
-+asmlinkage long compat_sys_ppoll_time64(struct pollfd __user *ufds,
-+				 unsigned int nfds,
-+				 struct __kernel_timespec __user *tsp,
-+				 const compat_sigset_t __user *sigmask,
-+				 compat_size_t sigsetsize);
- 
- /* fs/signalfd.c */
- asmlinkage long compat_sys_signalfd4(int ufd,
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 82682b69435e..9755e70cfbb0 100644
+index 9755e70cfbb0..e9cd0409c3fe 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -470,7 +470,10 @@ asmlinkage long sys_pselect6(int, fd_set __user *, fd_set __user *,
- 			     fd_set __user *, struct timespec __user *,
+@@ -467,7 +467,10 @@ asmlinkage long sys_sendfile64(int out_fd, int in_fd,
+ 
+ /* fs/select.c */
+ asmlinkage long sys_pselect6(int, fd_set __user *, fd_set __user *,
+-			     fd_set __user *, struct timespec __user *,
++			     fd_set __user *, struct __kernel_timespec __user *,
++			     void __user *);
++asmlinkage long sys_pselect6_time32(int, fd_set __user *, fd_set __user *,
++			     fd_set __user *, struct old_timespec32 __user *,
  			     void __user *);
  asmlinkage long sys_ppoll(struct pollfd __user *, unsigned int,
--			  struct timespec __user *, const sigset_t __user *,
-+			  struct __kernel_timespec __user *, const sigset_t __user *,
-+			  size_t);
-+asmlinkage long sys_ppoll_time32(struct pollfd __user *, unsigned int,
-+			  struct old_timespec32 __user *, const sigset_t __user *,
- 			  size_t);
- 
- /* fs/signalfd.c */
+ 			  struct __kernel_timespec __user *, const sigset_t __user *,
 -- 
 2.17.1
 
