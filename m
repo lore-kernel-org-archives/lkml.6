@@ -2,145 +2,288 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7A2ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F19C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92C92147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92C92147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AAAD12147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:03:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAD12147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388466AbeIUBsT (ORCPT
+        id S2388486AbeIUBs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:48:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59582 "EHLO mx1.redhat.com"
+        Thu, 20 Sep 2018 21:48:27 -0400
+Received: from mga11.intel.com ([192.55.52.93]:15936 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388196AbeIUBsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:48:18 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 55F9E88312;
-        Thu, 20 Sep 2018 20:03:10 +0000 (UTC)
-Received: from gimli.home (ovpn-116-77.phx2.redhat.com [10.3.116.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 47FEF106A785;
-        Thu, 20 Sep 2018 20:03:07 +0000 (UTC)
-Subject: [PATCH v2] vfio/pci: Mask buggy SR-IOV VF INTx support
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     kvm@vger.kernel.org, ashok.raj@intel.com, gage.eads@intel.com
-Cc:     gnomes@lxorguk.ukuu.org.uk, linux-kernel@vger.kernel.org
-Date:   Thu, 20 Sep 2018 14:03:06 -0600
-Message-ID: <153747346143.7344.14634545723456004489.stgit@gimli.home>
-User-Agent: StGit/0.18-136-gffd7-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Sep 2018 20:03:10 +0000 (UTC)
+        id S2388362AbeIUBsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 21:48:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 13:02:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,281,1534834800"; 
+   d="scan'208";a="264386380"
+Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.44])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Sep 2018 13:02:05 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCHv2 7/7] mm/gup: Cache dev_pagemap while pinning pages
+Date:   Thu, 20 Sep 2018 14:03:58 -0600
+Message-Id: <20180920200358.31680-8-keith.busch@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180920200358.31680-1-keith.busch@intel.com>
+References: <20180920200358.31680-1-keith.busch@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SR-IOV spec requires that VFs must report zero for the INTx pin
-register as VFs are precluded from INTx support.  It's much easier for
-the host kernel to understand whether a device is a VF and therefore
-whether a non-zero pin register value is bogus than it is to do the
-same in userspace.  Override the INTx count for such devices and
-virtualize the pin register to provide a consistent view of the device
-to the user.
+Pinning pages from ZONE_DEVICE memory needs to check the backing device's
+live-ness, which is tracked in the device's dev_pagemap metadata. This
+metadata is stored in a radix tree and looking it up adds measurable
+software overhead.
 
-As this is clearly a spec violation, warn about it to support hardware
-validation, but also provide a known whitelist as it doesn't do much
-good to continue complaining if the hardware vendor doesn't plan to
-fix it.
+This patch avoids repeating this relatively costly operation when
+dev_pagemap is used by caching the last dev_pagemap while getting user
+pages. The gup_benchmark reports this reduces the time to get user pages
+to as low as 1/3 of the previous time.
 
-Known devices with this issue: 8086:270c
-
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Cc: Kirill Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
+ include/linux/mm.h |  8 +++++++-
+ mm/gup.c           | 41 ++++++++++++++++++++++++-----------------
+ mm/huge_memory.c   | 35 +++++++++++++++--------------------
+ 3 files changed, 46 insertions(+), 38 deletions(-)
 
-v2:
-Moved the warning to vfio_config_init(), so it triggers on device open and
-no longer depends on the user looking at the number of INTx IRQs available.
-Also changed from dev_warn_once() to pci_warn() as this new location seems
-sufficiently low frequency to nag repeatedly.  Please test.  Thanks,
-
-Alex
-
- drivers/vfio/pci/vfio_pci.c        |    8 ++++++--
- drivers/vfio/pci/vfio_pci_config.c |   27 +++++++++++++++++++++++++++
- 2 files changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index cddb453a1ba5..50cdedfca9fe 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -434,10 +434,14 @@ static int vfio_pci_get_irq_count(struct vfio_pci_device *vdev, int irq_type)
- {
- 	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
- 		u8 pin;
-+
-+		if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) ||
-+		    vdev->nointx || vdev->pdev->is_virtfn)
-+			return 0;
-+
- 		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
--		if (IS_ENABLED(CONFIG_VFIO_PCI_INTX) && !vdev->nointx && pin)
--			return 1;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index f1fd241c9071..d688e18a19c4 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -380,6 +380,7 @@ struct vm_fault {
  
-+		return pin ? 1 : 0;
- 	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
- 		u8 pos;
- 		u16 flags;
-diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
-index 62023b4a373b..423ea1f98441 100644
---- a/drivers/vfio/pci/vfio_pci_config.c
-+++ b/drivers/vfio/pci/vfio_pci_config.c
-@@ -1611,6 +1611,15 @@ static int vfio_ecap_init(struct vfio_pci_device *vdev)
- 	return 0;
+ struct follow_page_context {
+ 	struct vm_area_struct *vma;
++	struct dev_pagemap *pgmap;
+ 	unsigned long address;
+ 	unsigned int page_mask;
+ 	unsigned int flags;
+@@ -2546,14 +2547,19 @@ struct page *follow_page_mask(struct follow_page_context *ctx);
+ static inline struct page *follow_page(struct vm_area_struct *vma,
+ 		unsigned long address, unsigned int foll_flags)
+ {
++	struct page *page;
+ 	struct follow_page_context ctx = {
+ 		.vma = vma,
++		.pgmap = NULL,
+ 		.address = address,
+ 		.page_mask = 0,
+ 		.flags = foll_flags,
+ 	};
+ 
+-	return follow_page_mask(&ctx);
++	page = follow_page_mask(&ctx);
++	if (ctx.pgmap)
++		put_dev_pagemap(ctx.pgmap);
++	return page;
  }
  
-+/*
-+ * Nag about hardware bugs, hopefully to have vendors fix them, but at least
-+ * to collect a list of dependencies for the VF INTx pin quirk below.
-+ */
-+static const struct pci_device_id known_bogus_vf_intx_pin[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x270c) },
-+	{}
-+};
-+
- /*
-  * For each device we allocate a pci_config_map that indicates the
-  * capability occupying each dword and thus the struct perm_bits we
-@@ -1676,6 +1685,24 @@ int vfio_config_init(struct vfio_pci_device *vdev)
- 	if (pdev->is_virtfn) {
- 		*(__le16 *)&vconfig[PCI_VENDOR_ID] = cpu_to_le16(pdev->vendor);
- 		*(__le16 *)&vconfig[PCI_DEVICE_ID] = cpu_to_le16(pdev->device);
-+
-+		/*
-+		 * Per SR-IOV spec rev 1.1, 3.4.1.18 the interrupt pin register
-+		 * does not apply to VFs and VFs must implement this register
-+		 * as read-only with value zero.  Userspace is not readily able
-+		 * to identify whether a device is a VF and thus that the pin
-+		 * definition on the device is bogus should it violate this
-+		 * requirement.  We already virtualize the pin register for
-+		 * other purposes, so we simply need to replace the bogus value
-+		 * and consider VFs when we determine INTx IRQ count.
-+		 */
-+		if (vconfig[PCI_INTERRUPT_PIN] &&
-+		    !pci_match_id(known_bogus_vf_intx_pin, pdev))
-+			pci_warn(pdev,
-+				 "Hardware bug: VF reports bogus INTx pin %d\n",
-+				 vconfig[PCI_INTERRUPT_PIN]);
-+
-+		vconfig[PCI_INTERRUPT_PIN] = 0; /* Gratuitous for good VFs */
- 	}
+ #define FOLL_WRITE	0x01	/* check pte is writable */
+diff --git a/mm/gup.c b/mm/gup.c
+index 4c4da54f8dbe..c98ea05eaa59 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -72,7 +72,6 @@ static inline bool can_follow_write_pte(pte_t pte, unsigned int flags)
+ static struct page *follow_page_pte(struct follow_page_context *ctx, pmd_t *pmd)
+ {
+ 	struct mm_struct *mm = ctx->vma->vm_mm;
+-	struct dev_pagemap *pgmap = NULL;
+ 	struct page *page;
+ 	spinlock_t *ptl;
+ 	pte_t *ptep, pte;
+@@ -114,8 +113,8 @@ static struct page *follow_page_pte(struct follow_page_context *ctx, pmd_t *pmd)
+ 		 * Only return device mapping pages in the FOLL_GET case since
+ 		 * they are only valid while holding the pgmap reference.
+ 		 */
+-		pgmap = get_dev_pagemap(pte_pfn(pte), NULL);
+-		if (pgmap)
++		ctx->pgmap = get_dev_pagemap(pte_pfn(pte), ctx->pgmap);
++		if (ctx->pgmap)
+ 			page = pte_page(pte);
+ 		else
+ 			goto no_page;
+@@ -154,9 +153,9 @@ static struct page *follow_page_pte(struct follow_page_context *ctx, pmd_t *pmd)
+ 		get_page(page);
  
- 	if (!IS_ENABLED(CONFIG_VFIO_PCI_INTX) || vdev->nointx)
+ 		/* drop the pgmap reference now that we hold the page */
+-		if (pgmap) {
+-			put_dev_pagemap(pgmap);
+-			pgmap = NULL;
++		if (ctx->pgmap) {
++			put_dev_pagemap(ctx->pgmap);
++			ctx->pgmap = NULL;
+ 		}
+ 	}
+ 	if (ctx->flags & FOLL_TOUCH) {
+@@ -645,7 +644,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		unsigned int gup_flags, struct page **pages,
+ 		struct vm_area_struct **vmas, int *nonblocking)
+ {
+-	long i = 0;
++	long ret = 0, i = 0;
+ 	struct vm_area_struct *vma = NULL;
+ 	struct follow_page_context ctx = {};
+ 
+@@ -681,8 +680,10 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 				goto next_page;
+ 			}
+ 
+-			if (!vma || check_vma_flags(vma, gup_flags))
+-				return i ? : -EFAULT;
++			if (!vma || check_vma_flags(vma, gup_flags)) {
++				ret = -EFAULT;
++				goto out;
++			}
+ 			if (is_vm_hugetlb_page(vma)) {
+ 				i = follow_hugetlb_page(mm, vma, pages, vmas,
+ 						&start, &nr_pages, i,
+@@ -697,23 +698,25 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		 * If we have a pending SIGKILL, don't keep faulting pages and
+ 		 * potentially allocating memory.
+ 		 */
+-		if (unlikely(fatal_signal_pending(current)))
+-			return i ? i : -ERESTARTSYS;
++		if (unlikely(fatal_signal_pending(current))) {
++			ret = -ERESTARTSYS;
++			goto out;
++		}
+ 		cond_resched();
+ 
+ 		page = follow_page_mask(&ctx);
+ 		if (!page) {
+-			int ret;
+ 			ret = faultin_page(tsk, &ctx, nonblocking);
+ 			switch (ret) {
+ 			case 0:
+ 				goto retry;
++			case -EBUSY:
++				ret = 0;
++				/* FALLTHRU */
+ 			case -EFAULT:
+ 			case -ENOMEM:
+ 			case -EHWPOISON:
+-				return i ? i : ret;
+-			case -EBUSY:
+-				return i;
++				goto out;
+ 			case -ENOENT:
+ 				goto next_page;
+ 			}
+@@ -725,7 +728,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 			 */
+ 			goto next_page;
+ 		} else if (IS_ERR(page)) {
+-			return i ? i : PTR_ERR(page);
++			ret = PTR_ERR(page);
++			goto out;
+ 		}
+ 		if (pages) {
+ 			pages[i] = page;
+@@ -745,7 +749,10 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 		start += page_increm * PAGE_SIZE;
+ 		nr_pages -= page_increm;
+ 	} while (nr_pages);
+-	return i;
++out:
++	if (ctx.pgmap)
++		put_dev_pagemap(ctx.pgmap);
++	return i ? i : ret;
+ }
+ 
+ static bool vma_permits_fault(struct vm_area_struct *vma,
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index abd36e6afe2c..6787011385ce 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -851,12 +851,23 @@ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 		update_mmu_cache_pmd(vma, addr, pmd);
+ }
+ 
++static struct page *pagemap_page(struct follow_page_context *ctx,
++				 unsigned long pfn)
++{
++	struct page *page;
++
++	ctx->pgmap = get_dev_pagemap(pfn, ctx->pgmap);
++	if (!ctx->pgmap)
++		return ERR_PTR(-EFAULT);
++	page = pfn_to_page(pfn);
++	get_page(page);
++	return page;
++}
++
+ struct page *follow_devmap_pmd(struct follow_page_context *ctx, pmd_t *pmd)
+ {
+ 	unsigned long pfn = pmd_pfn(*pmd);
+ 	struct mm_struct *mm = ctx->vma->vm_mm;
+-	struct dev_pagemap *pgmap;
+-	struct page *page;
+ 
+ 	assert_spin_locked(pmd_lockptr(mm, pmd));
+ 
+@@ -885,14 +896,7 @@ struct page *follow_devmap_pmd(struct follow_page_context *ctx, pmd_t *pmd)
+ 		return ERR_PTR(-EEXIST);
+ 
+ 	pfn += (ctx->address & ~PMD_MASK) >> PAGE_SHIFT;
+-	pgmap = get_dev_pagemap(pfn, NULL);
+-	if (!pgmap)
+-		return ERR_PTR(-EFAULT);
+-	page = pfn_to_page(pfn);
+-	get_page(page);
+-	put_dev_pagemap(pgmap);
+-
+-	return page;
++	return pagemap_page(ctx, pfn);
+ }
+ 
+ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+@@ -1002,8 +1006,6 @@ struct page *follow_devmap_pud(struct follow_page_context *ctx, pud_t *pud)
+ {
+ 	unsigned long pfn = pud_pfn(*pud);
+ 	struct mm_struct *mm = ctx->vma->vm_mm;
+-	struct dev_pagemap *pgmap;
+-	struct page *page;
+ 
+ 	assert_spin_locked(pud_lockptr(mm, pud));
+ 
+@@ -1026,14 +1028,7 @@ struct page *follow_devmap_pud(struct follow_page_context *ctx, pud_t *pud)
+ 		return ERR_PTR(-EEXIST);
+ 
+ 	pfn += (ctx->address & ~PUD_MASK) >> PAGE_SHIFT;
+-	pgmap = get_dev_pagemap(pfn, NULL);
+-	if (!pgmap)
+-		return ERR_PTR(-EFAULT);
+-	page = pfn_to_page(pfn);
+-	get_page(page);
+-	put_dev_pagemap(pgmap);
+-
+-	return page;
++	return pagemap_page(ctx, pfn);
+ }
+ 
+ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+-- 
+2.14.4
 
