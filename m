@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF3DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C650C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF5B621526
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:14:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF5B621526
+	by mail.kernel.org (Postfix) with ESMTP id C0C8921523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0C8921523
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731902AbeITN5D (ORCPT
+        id S1731492AbeITOCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:57:03 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:12630 "EHLO huawei.com"
+        Thu, 20 Sep 2018 10:02:30 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51777 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730172AbeITN5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:57:03 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 320823FD69C2A;
-        Thu, 20 Sep 2018 16:14:45 +0800 (CST)
+        id S1726028AbeITOCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 10:02:30 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A2CA415CF12E;
+        Thu, 20 Sep 2018 16:20:09 +0800 (CST)
 Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.399.0; Thu, 20 Sep 2018 16:14:43 +0800
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 20 Sep 2018 16:20:09 +0800
 From:   zhong jiang <zhongjiang@huawei.com>
 To:     <davem@davemloft.net>
-CC:     <dirk.vandermerwe@netronome.com>, <simon.horman@netronome.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] net: netronome: remove redundant continue
-Date:   Thu, 20 Sep 2018 16:02:21 +0800
-Message-ID: <1537430541-37817-1-git-send-email-zhongjiang@huawei.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: amd: remove redundant continue
+Date:   Thu, 20 Sep 2018 16:07:47 +0800
+Message-ID: <1537430867-38085-1-git-send-email-zhongjiang@huawei.com>
 X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -50,25 +49,25 @@ remove it.
 
 Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_net_main.c | 4 +---
+ drivers/net/ethernet/amd/ni65.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
-index 0b1ac9c..50d7b58 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
-@@ -230,10 +230,8 @@ static void nfp_net_pf_free_vnics(struct nfp_pf *pf)
- 		ctrl_bar += NFP_PF_CSR_SLICE_SIZE;
- 
- 		/* Kill the vNIC if app init marked it as invalid */
--		if (nn->port && nn->port->type == NFP_PORT_INVALID) {
-+		if (nn->port && nn->port->type == NFP_PORT_INVALID)
- 			nfp_net_pf_free_vnic(pf, nn);
--			continue;
--		}
+diff --git a/drivers/net/ethernet/amd/ni65.c b/drivers/net/ethernet/amd/ni65.c
+index e248d1a..8931ce6 100644
+--- a/drivers/net/ethernet/amd/ni65.c
++++ b/drivers/net/ethernet/amd/ni65.c
+@@ -435,10 +435,8 @@ static int __init ni65_probe1(struct net_device *dev,int ioaddr)
+ 		}
+ 		if(cards[i].vendor_id) {
+ 			for(j=0;j<3;j++)
+-				if(inb(ioaddr+cards[i].addr_offset+j) != cards[i].vendor_id[j]) {
++				if(inb(ioaddr+cards[i].addr_offset+j) != cards[i].vendor_id[j])
+ 					release_region(ioaddr, cards[i].total_size);
+-					continue;
+-			  }
+ 		}
+ 		break;
  	}
- 
- 	if (list_empty(&pf->vnics))
 -- 
 1.7.12.4
 
