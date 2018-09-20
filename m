@@ -2,222 +2,112 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6E6ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBE4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E87F82152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:54:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pimd/hs8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87F82152A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 744532152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 744532152A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388199AbeIUAj0 (ORCPT
+        id S2388370AbeIUAje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:39:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbeIUAj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:39:26 -0400
-Received: from localhost (unknown [213.57.183.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0714214C2;
-        Thu, 20 Sep 2018 18:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537469672;
-        bh=DVDAfpmQnqnzEakfLjcWWfGh3ZoR5dB/Y9h+DzP484Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pimd/hs8hzRERuhl5MDW+Hy7NjEIqzPzF3aimaxGdXt4ws9TjZYbHKeerYCbhpNFM
-         f1qR54vK45WHSRyNJrmwm/p+9bcNh0ZueLPrvFXggyxQ5IgJnMUOG8p3ki0hFDnfDT
-         NsIyaHu+nNTrguSUJVMvNwELrlt9iYrME/U7Yvww=
-Date:   Thu, 20 Sep 2018 21:54:28 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     linux-rdma@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Alex Rosenbaum <alexr@mellanox.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Don Dutile <ddutile@redhat.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Noa Osherovich <noaos@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: Linux RDMA mini-conf at Plumbers 2018
-Message-ID: <20180920185428.GT3519@mtr-leonro.mtl.com>
-References: <20180920181923.GA6542@mellanox.com>
+        Thu, 20 Sep 2018 20:39:34 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40849 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387865AbeIUAje (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 20:39:34 -0400
+Received: by mail-ot1-f65.google.com with SMTP id v10-v6so10512655otk.7
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 11:54:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LvHUmPg+LVOwneV25jZ5AWR93WLMwiIvr2Fn2r3/IBs=;
+        b=XAfQfdFlONICwsVUC+r4093LRqYIA5qTbClw4sBVqgRlquAV9v3jSx/tAKAU7dnRQ6
+         52GH87D5VVTHkwnfg45dU61FAt17swgpmhp786SbmriQf5Iowm10C82tzPxc7O0rnCSl
+         9zWatEKNopW3+qaG2xXc7lc3hTFi4qqUQCeFEJIZtE056m1UJr8iKc+FUa9mfSCYDyPk
+         yb85BYq57IrdQUUwR4MVQ/NgaCFZCTtYkf4vFcWaSVlNzYWXXP5Fo+L5jgX9+sfbaHSF
+         HWLC7n4ZDLWjaDB16x2FnMYPtrZLZzNgEdL8BqmsbPEFkFzqzE+ieTWwJLESpZke9lin
+         YD/A==
+X-Gm-Message-State: APzg51AFAVQ+2ruykosL/uqZ2nkKoKDqvTAbSi5+8LNt6O3LydQoh12I
+        +3av6KKHmknVM3ZJI2UCsPaMBJFU
+X-Google-Smtp-Source: ANB0VdYv3jI4MJyJshIWyqo7Ewq3C8XZgD6ZjTdO5xyD9NQboCa/nq29h5LYthPhJ3+NWbH3E2ExCw==
+X-Received: by 2002:a9d:4716:: with SMTP id a22-v6mr7541456otf.242.1537469681312;
+        Thu, 20 Sep 2018 11:54:41 -0700 (PDT)
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com. [209.85.210.42])
+        by smtp.gmail.com with ESMTPSA id 31-v6sm7587637ota.23.2018.09.20.11.54.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 11:54:40 -0700 (PDT)
+Received: by mail-ot1-f42.google.com with SMTP id j9-v6so10531263otl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 11:54:40 -0700 (PDT)
+X-Received: by 2002:a9d:48a:: with SMTP id 10-v6mr21149429otm.361.1537469680529;
+ Thu, 20 Sep 2018 11:54:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="M0YLxmUXciMpOLPE"
-Content-Disposition: inline
-In-Reply-To: <20180920181923.GA6542@mellanox.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1537456011-10769-1-git-send-email-madalin.bucur@nxp.com> <1537456011-10769-3-git-send-email-madalin.bucur@nxp.com>
+In-Reply-To: <1537456011-10769-3-git-send-email-madalin.bucur@nxp.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Thu, 20 Sep 2018 13:54:28 -0500
+X-Gmail-Original-Message-ID: <CADRPPNSz-x1uf98+cKUjj54sSxQbJOXWk7xn_ExhbcjdAYKUpw@mail.gmail.com>
+Message-ID: <CADRPPNSz-x1uf98+cKUjj54sSxQbJOXWk7xn_ExhbcjdAYKUpw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] soc/fsl/qbman: Add 64 bit DMA addressing requirement
+ to QBMan
+To:     madalin.bucur@nxp.com
+Cc:     Roy Pledge <roy.pledge@nxp.com>, claudiu.manoil@nxp.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Scott Wood <oss@buserror.net>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 20, 2018 at 10:09 AM Madalin Bucur <madalin.bucur@nxp.com> wrote:
+>
+> From: Roy Pledge <roy.pledge@nxp.com>
+>
+> The QBMan block is memory mapped on SoCs above a 32 bit (4 Gigabyte)
+> boundary so enabling 64 bit DMA addressing is needed for QBMan to
+> be usable.
+>
+> Signed-off-by: Roy Pledge <roy.pledge@nxp.com>
+> Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
+> ---
+>  drivers/soc/fsl/qbman/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/fsl/qbman/Kconfig b/drivers/soc/fsl/qbman/Kconfig
+> index d570cb5fd381..19d6f4621e23 100644
+> --- a/drivers/soc/fsl/qbman/Kconfig
+> +++ b/drivers/soc/fsl/qbman/Kconfig
+> @@ -1,6 +1,6 @@
+>  menuconfig FSL_DPAA
+>         bool "QorIQ DPAA1 framework support"
+> -       depends on (FSL_SOC_BOOKE || ARCH_LAYERSCAPE)
+> +       depends on ((FSL_SOC_BOOKE || ARCH_LAYERSCAPE || ARM) && ARCH_DMA_ADDR_T_64BIT)
 
---M0YLxmUXciMpOLPE
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You also added ARM support here.  Actually the dependency on
+ARCH_DMA_ADDR_T_64BIT is only explicitly needed by ARM(other platforms
+already implies ARCH_DMA_ADDR_T_64BIT).  So I think the patch title
+should be like: adding 32-bit ARM support.  The ARCH_DMA_ADDR_T_64BIT
+is enabled by ARM_LPAE on ARM.  Probably we should make that
+straightforward in the Kconfig, so that people better understand what
+is needed for 32-bit ARM.
 
-On Thu, Sep 20, 2018 at 12:19:23PM -0600, Jason Gunthorpe wrote:
-> This is just a friendly reminder that registration deadlines are
-> approaching for this conference. Please see
+>         select GENERIC_ALLOCATOR
+>         help
+>           The Freescale Data Path Acceleration Architecture (DPAA) is a set of
+> --
+> 2.1.0
 >
-> https://www.linuxplumbersconf.org/event/2/page/7-attend
->
-> For details.
->
-> This year we expect to have close to a day set aside for RDMA related
-> topics. Including up to half a day for the thorny general kernel issues
-> related to get_user_pages(), particularly as exasperated by RDMA.
->
-> We have been working on the following concepts for sessions, I've
-> roughly marked names based on past participation in related email
-> threads. As we get closer to the conference date we will be organizing
-> leaders for each section based on these lists, please let us know of
-> any changes, or desire to be a leader!
->
-> RDMA and get_user_pages
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   Dan Williams <dan.j.williams@intel.com>
->   Matthew Wilcox <willy@infradead.org>
->   John Hubbard <jhubbard@nvidia.com>
->   Nicholas Piggin <npiggin@gmail.com>
->   Jan Kara <jack@suse.cz>
->
->  RDMA, DAX and persistant memory co-existence.
->
->  Explore the limits of what is possible without using On
->  Demand Paging Memory Registration. Discuss 'shootdown'
->  of userspace MRs
->
->  Dirtying pages obtained with get_user_pages() can oops ext4
->  discuss open solutions.
->
-> RDMA and PCI peer to peer
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->   Don Dutile <ddutile@redhat.com>
->   Alex Williamson <alex.williamson@redhat.com>
->   Christoph Hellwig <hch@lst.de>
->   Stephen Bates <sbates@raithlin.com>
->   Logan Gunthorpe <logang@deltatee.com>
->   J=E9r=F4me Glisse <jglisse@redhat.com>
->   Christian K=F6nig <christian.koenig@amd.com>
->   Bjorn Helgaas <bhelgaas@google.com>
->
->  RDMA and PCI peer to peer transactions. IOMMU issues. Integration
->  with HMM. How to expose PCI BAR memory to userspace and other
->  drivers as a DMA target.
->
-> Improving testing of RDMA with syzkaller, RXE and Python
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
->  Noa Osherovich <noaos@mellanox.com>
->  Don Dutile <ddutile@redhat.com>
->  Jason Gunthorpe <jgg@mellanox.com>
->
->  Problem solve RDMA's distinct lack of public tests.
->  Provide a better framework for all drivers to test with,
->  and a framework for basic testing in userspace.
->
->  Worst remaining unfixed syzkaller bugs and how to try to fix them
->
->  How to hook syzkaller more deeply into RDMA.
->
-> IOCTL conversion and new kABI topics
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->  Jason Gunthorpe <jgg@mellanox.com>
->  Alex Rosenbaum <alexr@mellanox.com>
->
->  Attempt to close on the remaining tasks to complete the project
->
->  Restore fork() support to userspace
->
-> Container and namespaces for RDMA topics
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->  Parav Pandit <parav@mellanox.com>
->  Doug Ledford <dledford@redhat.com>
->
->  Remaining sticky situations with containers
->
->  namespaces in sysfs and legacy all-namespace operation
->
->  Remaining CM issues
->
->  Security isolation problems
->
-> Very large Contiguous regions in userspace
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->  Christopher Lameter <cl@linux.com>
->  Parav Pandit <parav@mellanox.com>
->
->  Poor performance of get_user_pages on very large virtual ranges
->
->  No standardized API to allocate regions to user space
->
->  Carry over from last year
->
-> As we get closer to the conference date the exact schedule will be
-> published on the conference web site. I belive we have the Thursday
-> set aside right now.
->
-> If there are any last minute topics people would like to see please
-> let us know.
-
-I want to remind you that Mike wanted to bring the topic of enhancing
-remote page faults during post-copy container migration in CRIU over
-RDMA.
-
-Thanks
-
->
-> See you all in Vancouver!
->
-> Thanks,
-> Jason & Leon
->
-
---M0YLxmUXciMpOLPE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbo+zkAAoJEORje4g2clinH6IP+wfLFZ7fzsARxS15q/RbnRf1
-fwsHV80uj2xr5fRwGyIvA+zkhOQyzdEyF2Pfo6fK9jtR5lIJDMHv0KLkfkgYhQrB
-YMTkWW9KcczlA2d/d1iOMaK7Xg/o/rids7KgTVTPGY8unyfWxUpYNd+R2kSnmmc0
-7VkS/uciKu4tacsunPxSHdOjOmU4a3FWZk4U2HpQkRaYfsJIDjcUmdZcN5QOZJcr
-4lv3n8xV+u2Hn6O/A0tagh7WWbQay99xQQX6ZEay8Y7Rb+N6sxnsapZf0K3EKK+d
-GFWV9lG1+IisMhAvV58zy7nAdWUHGgudqs9eKxcksMWMG1gd6Kf+lnQxqbaixeiE
-v15SZNF/zGTmbxzgHbpf9XEznSRIUW9WQmmQU1ncZ4mG7GAJK9aErzpj7nJS3/fi
-kk/eRyPeV5mFDZ1uTYV+ppy7azRCmRhVJWhgbHnx6XCBJl3aSXg7RNA7YmzfU3DW
-nneLe7HlEENgN/FQjAI540wFnzey1vS384Y0PgcA2h6RaSUzAMlfJxkkauWmECB7
-90d6S+Fo/wxPe46Tm4Wz/LFwyQ/LTS+RrobRJn7qJNRZZDLP1YOPSsf2rWRfDCP3
-2c7V9p9AVZe7LumdmgO9Te0P6bOZFF8G0/MRSiGL6zxAqqiB6abzFH1DKwI9fRam
-W/AMQ5XL93NxGwA/c9G9
-=LW6p
------END PGP SIGNATURE-----
-
---M0YLxmUXciMpOLPE--
