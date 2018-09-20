@@ -1,125 +1,129 @@
 Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_DBL_ABUSE_MALW autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F4BC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5D3C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B810121523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AC6620867
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:49:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fwgBnfSK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B810121523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bxs4XHPX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AC6620867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732189AbeITWcT (ORCPT
+        id S1731109AbeITWdW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:32:19 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37378 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeITWcT (ORCPT
+        Thu, 20 Sep 2018 18:33:22 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37231 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbeITWdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:32:19 -0400
-Received: by mail-pl1-f196.google.com with SMTP id q5-v6so1144650pli.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:47:57 -0700 (PDT)
+        Thu, 20 Sep 2018 18:33:22 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 2-v6so4709117pgo.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:48:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kReLGVNrs9tiIkaA47+ljM25/W15cf3ZC1aQvRVZzUc=;
-        b=fwgBnfSKNjj2RbNM6auuNgC5JboIhVn/AIrLcQYhcUj6uUh61HKEkR3VYRIIy4ZAfl
-         CPnLNt0SRHdzPObF+JjE2iGyBJFxZprZmS6+CbEaUBU5LxOGJqD66U74MXEjVIsMy5Rz
-         jG45sYvRAul1TnQl0nEQvAzvUxy7J9RaTLemfblnS30aZofgDcd5UnYGbFPxO5Bdsg2q
-         xIQKJ3z1IBfDXsO9eBFAKGwn+E8sJIqXZzaNI+IpFZYgp9k+NMWDcowP+ti6v2hvOC9P
-         dUfRY7AHFPXRlxy6pDo44BGvihtPOl1sHRNkU3P29R6Xm69/63SRhJZ7AmTVP+7NbXiD
-         U2bw==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4sF7YlJC4fYWgII/0k7DZ1sn29lkoXrp7mBq9adGUx8=;
+        b=bxs4XHPXOkY6AjMkmwmRQqarBu8shKucrwaFb24mPGAMzguw85yxQpnDO8sXhK8u2a
+         r6sy3uS6yGLmx5gXhwj8Q3Mymti489v7C1Iwtt6oFm4IABCoa7o/MlZGe0vr+t7vKfeZ
+         vbRxKz5+V8J4/5WrTAzj7MJYivTb+o38wyPcg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kReLGVNrs9tiIkaA47+ljM25/W15cf3ZC1aQvRVZzUc=;
-        b=XWH4iDtEaLjel328NgejXf7C0L8y2+dlzj6hzTFXMbIuw1OEZRcMxOV6jxek2zgfsk
-         ICTTjrQKermBNmBCiwx78yEHySJXjEPxu4ZqtJroUAe+dHeXtWIUVpyTEI+WXiJcR0Xv
-         LDUtQE56mb/Eq+uVEWoKND7b6Hy1sNewAJQqVtr+ZS4CGKPEhUisZEmrZV7jKPU+QpVI
-         vII854VD85KctJqfUJKB2iw0MCi3lrSOR35XuFhdDCDqDD1OpqrcqBG1sVetIgg/z7bC
-         VlsI0zkkHygNMQzOlB6wPzQKzwKdZWZUjMUPGHDl0mwmX3rPhS3eBb80atxGFfdZznbq
-         5HGg==
-X-Gm-Message-State: APzg51CVCkNMaxS3oAV7gLdckrA628APc3d1lNxg9MbutK8tzpjBLbdz
-        bUJcf8vLkJnU+kpKkh7w4tNjoMErmJKAIm0u3JL9aQ==
-X-Google-Smtp-Source: ANB0VdYeTflYay/37jj7pbWnHzMulekDwC1FWFe6m0H28ub5dSfM9Tz397bRqzl7E/2l6t/XMF2UnofD0iidsLMfDjc=
-X-Received: by 2002:a17:902:561:: with SMTP id 88-v6mr40040098plf.320.1537462077114;
- Thu, 20 Sep 2018 09:47:57 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4sF7YlJC4fYWgII/0k7DZ1sn29lkoXrp7mBq9adGUx8=;
+        b=SBfZlg++Ht+yukuwoU0Uf3pC3UmiT5XjvoE7NJSUWD3qydr9KgRKUljX7KxSM+h9Fm
+         q75xMctQHCIgkmb+ZKkbqypivZXRKM0PbYs7ZBPHaucixtpx90SZasjZ4fH1EjbI/Oko
+         oAEfYVGq4XwjqzfBZBCjDRWo0bEsPLWbnbAv4RJBDXImwlG/y+e1Wfk5kmgxry9Qnl3A
+         qMMq49g7CiZYMOMZ3j0mHZ3K3QXx9u5TIWQ7vugVnJdpsUQq+zFMlfkaxV0/rCCt02cE
+         2iBUHHw3Gr+DNyM2qEZe/V+C9Kj7zycctwBibrxyLQQ8c6mOSjGQ2pAMiRmQKsxzemYR
+         2dwA==
+X-Gm-Message-State: APzg51Ctr3bOrlijd8kyfAF3lQIpRL+2SFLubIYvIOJ1jVhNDAcKZMSH
+        mhB09DgB7NR7uuw30mLhKoku3g==
+X-Google-Smtp-Source: ANB0VdaQK/ACpuGMKA2LVYnXaisj4YIIhkPEbJT3dVR9QyQRQnLTK/XGMFsaxc5wgXstls+6U96ADw==
+X-Received: by 2002:a63:165f:: with SMTP id 31-v6mr16781439pgw.103.1537462139272;
+        Thu, 20 Sep 2018 09:48:59 -0700 (PDT)
+Received: from [10.21.2.196] ([209.121.128.187])
+        by smtp.googlemail.com with ESMTPSA id d22-v6sm60043211pfm.48.2018.09.20.09.48.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 09:48:58 -0700 (PDT)
+Subject: Re: [RESEND PATCH v3 0/3] sh: make early_platform code
+ SuperH-specific
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>
+References: <20180827090651.25062-1-brgl@bgdev.pl>
+ <CAMRc=McWre+5PRuozF69YKONvzy4X31=MzZim-QjhaAZ9iAVTw@mail.gmail.com>
+ <9963d3f3-ba14-0d18-d669-53fc79b783c2@linaro.org>
+ <CAMRc=MeC8gwEpjNf5AEX4oocHYv8c_CJXkCDMM9CQvaqxrbdXQ@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <0622b4da-20d3-5f05-5774-85c1dbabe00e@linaro.org>
+Date:   Thu, 20 Sep 2018 18:48:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180920032956.14360-1-natechancellor@gmail.com>
-In-Reply-To: <20180920032956.14360-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 20 Sep 2018 09:47:45 -0700
-Message-ID: <CAKwvOdnB32mZ900adeMmBpXTa6LjzAOooaGS+w96vkjZR=G_HQ@mail.gmail.com>
-Subject: Re: [PATCH] IB/nes: Remove unnecessary parentheses
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     faisal.latif@intel.com, dledford@redhat.com, jgg@ziepe.ca,
-        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMRc=MeC8gwEpjNf5AEX4oocHYv8c_CJXkCDMM9CQvaqxrbdXQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 8:30 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns when more than one set of parentheses are used in single
-> conditional statements.
->
-> drivers/infiniband/hw/nes/nes_hw.c:1446:27: warning: equality comparison
-> with extraneous parentheses [-Wparentheses-equality]
->         } while ((temp_phy_data2 == temp_phy_data));
->                   ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
-> drivers/infiniband/hw/nes/nes_hw.c:1446:27: note: remove extraneous
-> parentheses around the comparison to silence this warning
->         } while ((temp_phy_data2 == temp_phy_data));
->                  ~               ^               ~
-> drivers/infiniband/hw/nes/nes_hw.c:1446:27: note: use '=' to turn this
-> equality comparison into an assignment
->         } while ((temp_phy_data2 == temp_phy_data));
->                                  ^~
->                                  =
->
-> Remove the unnecessary parentheses to silence this warning.
->
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/infiniband/hw/nes/nes_hw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/infiniband/hw/nes/nes_hw.c b/drivers/infiniband/hw/nes/nes_hw.c
-> index bd0675d8f298..5517e392bc01 100644
-> --- a/drivers/infiniband/hw/nes/nes_hw.c
-> +++ b/drivers/infiniband/hw/nes/nes_hw.c
-> @@ -1443,7 +1443,7 @@ static int nes_init_2025_phy(struct nes_device *nesdev, u8 phy_type, u8 phy_inde
->                 mdelay(1);
->                 nes_read_10G_phy_reg(nesdev, phy_index, 0x3, 0xd7ee);
->                 temp_phy_data2 = (u16)nes_read_indexed(nesdev, NES_IDX_MAC_MDIO_CONTROL);
-> -       } while ((temp_phy_data2 == temp_phy_data));
-> +       } while (temp_phy_data2 == temp_phy_data);
->
->         /* wait for tracking */
->         counter = 0;
-> --
-> 2.19.0
->
+On 20/09/2018 18:19, Bartosz Golaszewski wrote:
+> 2018-09-20 18:09 GMT+02:00 Daniel Lezcano <daniel.lezcano@linaro.org>:
+>> On 20/09/2018 15:00, Bartosz Golaszewski wrote:
+>>
+>> [ ... ]
+>>
+>>> Ping for 4.20. This is the third release cycle I'm trying to get this
+>>> merged and there never were any objections.
+>>
+>> Thanks for the heads up, it is in the pipe.
+>>
+> 
+> I guess you mean only the clocksource patch?
 
-Nathan, thanks for this patch.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+I meant it is in the pipe of things to review :)
 
 
 -- 
-Thanks,
-~Nick Desaulniers
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
