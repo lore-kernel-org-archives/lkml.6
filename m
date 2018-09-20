@@ -2,62 +2,63 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF45AECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B82F4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F7D521525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7943A21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:17:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ex4nqgXf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7D521525
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l716UMDz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7943A21525
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388509AbeIUBC3 (ORCPT
+        id S2388529AbeIUBCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:02:29 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44648 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388353AbeIUBC2 (ORCPT
+        Thu, 20 Sep 2018 21:02:31 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39051 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388353AbeIUBCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:02:28 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r1-v6so4867801pgp.11;
-        Thu, 20 Sep 2018 12:17:30 -0700 (PDT)
+        Thu, 20 Sep 2018 21:02:30 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w14-v6so4791247plp.6;
+        Thu, 20 Sep 2018 12:17:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GQe8dWaIWFtV1ZNvAEkJWOMwhon4VpCEGr9xrv2EmUc=;
-        b=ex4nqgXf/iI06i8uU2fw4bsYXqYZrm9Z5zhO18h4tYfAtTEe6P9UupMimAnjdcJ/sR
-         bkUu0JusAxKaC/FQgdODP8KSsg83CN2LMOoZ6b7/sxEJXIHITppu5SQes9jXpR3al7U4
-         SguKsEMR5m5c+9GL9mo0hwBaJMPEJrA4kDTFVVGo1K2ewGF3BtCy7qibDJfF15NPCFML
-         yENobKV3KyTZXyrkCf02btd4QSVuNg9EwuNOKsDtLkLqWndw1Va8SW7vHElZ0oIA/Ftm
-         PtQtUN82MQwLNTikCWrXiA6UReB3HTVW+BAW23dCZHgfRdJsmEICUXUTIGCd8rubZghu
-         aqXw==
+        bh=3q5yHdmt2ZOMxDln96L5e6epgJ+iuke2PxN+1yKq7WY=;
+        b=l716UMDzOkeR7I/nEFyCozCVE54+bLR///ioPiQ1dwYVHxCNAkVv6FkRxdYLRekEv1
+         szqC3qghU7FVjNPYSWu4XWRL8h2AaKyN/NyeNoLbsWBcLvQQLyxop7HDqGfQcpwwfSJF
+         CB0mEAI3InZf4cSz4MjJJOcb/Hdb0EsgLmBcAfhPuUEiN0yWMCSXdbDZlm9jAFFLqPxE
+         R7Ii9ySeIsiNF27gJ25GykcaSDwsYitaMzBcodbG9wbiYmC4kRQSkucHxqCmx/qRGGwQ
+         p4DR80NyyODcTRCYr5gRXKdetHYkLrac/mW9PHh3wMcxwZ4gLm0zA5Q0SeUBmBgqN1pr
+         ZDpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GQe8dWaIWFtV1ZNvAEkJWOMwhon4VpCEGr9xrv2EmUc=;
-        b=DKuX3uKfSPstpiEDjIqz2Km8ekaY6UogMCZ30gMgWyKN8cxMaLDgGZK5HNA1pRrzof
-         WTtX5oU6xFC6EXu1KLShq2mkf1kWRawWNzZIH205IreCa6Xnr5+s3mVRiOlEzHwl0bGo
-         x8RJo3ivbcffXOnIOdC3QThzCqOUNL2lGTMmHo48lS7EYEZitbiu2sHH/0sRKv15opLR
-         sCm7BuCjIEz9Oyisnd8IT4ubuW43TUV9EXh73Zod7DeUeNuBlC+bkZ1fsDfVnEnlAdnZ
-         arW3UsuI0OtK41iCaJshWJbbFpztZODCQ4OT15dyhRmG3aw9zhS/V6h26uJAAPGeZvUo
-         dU+A==
-X-Gm-Message-State: APzg51DniiKTmihki5qKrdiODqnc7enpWwl7N9jfPnWzuKtUJqY17kgo
-        nqlt5DbVGiNLsuX9x3MMprCjrxmR
-X-Google-Smtp-Source: ANB0VdbdH/o985ceDzsPLDud++0tWcqCqUqEU378lfIBReKLiTZQVRRtoZf1D/HF/6J//DOfcrXxkg==
-X-Received: by 2002:a63:d34f:: with SMTP id u15-v6mr8696031pgi.325.1537471049509;
-        Thu, 20 Sep 2018 12:17:29 -0700 (PDT)
+        bh=3q5yHdmt2ZOMxDln96L5e6epgJ+iuke2PxN+1yKq7WY=;
+        b=G3bqeUhF5hiNrrybU26It+3h3u/LcknVBJ7MO354HHDJDisLi2AJCpC0Np7kf+NUu1
+         sHDxTHG0vxqMScMvAtuWw6ICvADNs+4C8FCSKX24up0zZwmue1QD6myP5mJgke4yt3O9
+         w5SChuyY0JBM88xpesN4aSxE3WfGzvLtcKEl79HQRuCj/eXx81v8Nmu1scx8hfgTijsx
+         tAKw5OhR+kp5UI5JnWe0hwmigSO713Te1X2DHuc7I6AywZqIFtsWnd8yBFPnVypCxnVq
+         Op7m/tLGLdzVFyGF6WyiluxU2xi6OSWBE8yITphBFs8Y9Xst+2ZQa4wX/hVgNFuS2G7e
+         9vkg==
+X-Gm-Message-State: APzg51CjyfUzSNomVcUz/F+0kdC9gZiLu7nZsn7dBWR2VsEoeEonLvnM
+        4k3kTSfzsw9zRkwQHFx2yd5JPN+y
+X-Google-Smtp-Source: ANB0VdYXfFdf3g9YxsRDjBTj8uHchcjHZ5lbzLIT0DVZZfNe8rReJwM2SMLc/JrlG7uGcJhc94DokA==
+X-Received: by 2002:a17:902:b947:: with SMTP id h7-v6mr41243865pls.157.1537471051429;
+        Thu, 20 Sep 2018 12:17:31 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.27
+        by smtp.gmail.com with ESMTPSA id n9-v6sm40665601pfg.21.2018.09.20.12.17.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 12:17:28 -0700 (PDT)
+        Thu, 20 Sep 2018 12:17:30 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -72,9 +73,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Parallel ATA drivers)),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), bcm-kernel-feedback-list@broadcom.com
-Subject: [PATCH 6/9] ata: ahci_brcm: Match BCM63138 compatible strings
-Date:   Thu, 20 Sep 2018 12:16:42 -0700
-Message-Id: <20180920191646.18198-9-f.fainelli@gmail.com>
+Subject: [PATCH 6/9] ata: ahci_brcmstb: Match 63138 compatible strings
+Date:   Thu, 20 Sep 2018 12:16:43 -0700
+Message-Id: <20180920191646.18198-10-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920191646.18198-1-f.fainelli@gmail.com>
 References: <20180920191646.18198-1-f.fainelli@gmail.com>
@@ -82,9 +83,6 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-Match the "brcm,bcm63138-ahci" compatible string in order to allow this
-driver to probe on such platforms.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
