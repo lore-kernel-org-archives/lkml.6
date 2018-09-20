@@ -2,232 +2,828 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2531DC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F568ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C291521525
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C291521525
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id BAC102146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:27:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC102146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732398AbeITMHt (ORCPT
+        id S1732106AbeITMIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 08:07:49 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:50558 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731766AbeITMHt (ORCPT
+        Thu, 20 Sep 2018 08:08:54 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:43437 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731651AbeITMIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 08:07:49 -0400
-Received: from relay10.mail.gandi.net (unknown [217.70.178.230])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id CC72F3A3C9E;
-        Thu, 20 Sep 2018 08:15:23 +0200 (CEST)
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 053F5240007;
-        Thu, 20 Sep 2018 06:15:12 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v7 10/11] hugetlb: Introduce generic version of huge_ptep_set_access_flags
-Date:   Thu, 20 Sep 2018 06:03:57 +0000
-Message-Id: <20180920060358.16606-11-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180920060358.16606-1-alex@ghiti.fr>
-References: <20180920060358.16606-1-alex@ghiti.fr>
+        Thu, 20 Sep 2018 08:08:53 -0400
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-02.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1g2sPk-0001XZ-DU from Deepak_Das@mentor.com ; Wed, 19 Sep 2018 23:26:12 -0700
+Received: from [192.168.239.130] (137.202.0.90) by
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 20 Sep 2018 07:26:03 +0100
+Subject: Re: [PATCH] arm64: dts: rockchip: add initial dts support for
+ Rockpro64 board
+To:     Akash Gajjar <Akash_Gajjar@mentor.com>, <heiko@sntech.de>
+References: <Akash_Gajjar@mentor.com>
+ <1537368206-22058-1-git-send-email-Akash_Gajjar@mentor.com>
+CC:     <Pragnesh_Patel@mentor.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Levin Du <djw@t-chip.com.cn>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shohei Maruyama <cheat.sc.linux@outlook.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Deepak Das <deepak_das@mentor.com>
+Message-ID: <5BA33D43.1040001@mentor.com>
+Date:   Thu, 20 Sep 2018 11:55:07 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
+MIME-Version: 1.0
+In-Reply-To: <1537368206-22058-1-git-send-email-Akash_Gajjar@mentor.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, ia64, sh, x86 architectures use the same version
-of huge_ptep_set_access_flags, so move this generic implementation
-into asm-generic/hugetlb.h.
+Hi Akash,
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Tested-by: Helge Deller <deller@gmx.de> # parisc
-Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
-Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
-Acked-by: Ingo Molnar <mingo@kernel.org> # x86
-Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- arch/arm/include/asm/hugetlb-3level.h | 7 -------
- arch/arm64/include/asm/hugetlb.h      | 1 +
- arch/ia64/include/asm/hugetlb.h       | 7 -------
- arch/mips/include/asm/hugetlb.h       | 1 +
- arch/parisc/include/asm/hugetlb.h     | 1 +
- arch/powerpc/include/asm/hugetlb.h    | 1 +
- arch/sh/include/asm/hugetlb.h         | 7 -------
- arch/sparc/include/asm/hugetlb.h      | 1 +
- arch/x86/include/asm/hugetlb.h        | 7 -------
- include/asm-generic/hugetlb.h         | 9 +++++++++
- 10 files changed, 14 insertions(+), 28 deletions(-)
+On Wednesday 19 September 2018 08:13 PM, Akash Gajjar wrote:
+> This patch basic node support for Rockpro64 board and make it able to bring up.
+> 
+Please modify the commit message to make it more clear.
 
-diff --git a/arch/arm/include/asm/hugetlb-3level.h b/arch/arm/include/asm/hugetlb-3level.h
-index 8247cd6a2ac6..54e4b097b1f5 100644
---- a/arch/arm/include/asm/hugetlb-3level.h
-+++ b/arch/arm/include/asm/hugetlb-3level.h
-@@ -37,11 +37,4 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
- 	return retval;
- }
- 
--static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
--					     unsigned long addr, pte_t *ptep,
--					     pte_t pte, int dirty)
--{
--	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
--}
--
- #endif /* _ASM_ARM_HUGETLB_3LEVEL_H */
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index f4f69ae5466e..80887abcef7f 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -42,6 +42,7 @@ extern pte_t arch_make_huge_pte(pte_t entry, struct vm_area_struct *vma,
- #define __HAVE_ARCH_HUGE_SET_HUGE_PTE_AT
- extern void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- 			    pte_t *ptep, pte_t pte);
-+#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
- extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 				      unsigned long addr, pte_t *ptep,
- 				      pte_t pte, int dirty);
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index 49d1f7949f3a..e9b42750fdf5 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -27,13 +27,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
--					     unsigned long addr, pte_t *ptep,
--					     pte_t pte, int dirty)
--{
--	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
--}
--
- static inline pte_t huge_ptep_get(pte_t *ptep)
- {
- 	return *ptep;
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 3dcf5debf8c4..120adc3b2ffd 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -63,6 +63,7 @@ static inline int huge_pte_none(pte_t pte)
- 	return !val || (val == (unsigned long)invalid_pte_table);
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr,
- 					     pte_t *ptep, pte_t pte,
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 9c3950ca2974..165b4e5a6f32 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -43,6 +43,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep);
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
- int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty);
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index 2a90f387880a..d4d9cf6cb846 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -134,6 +134,7 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 	flush_hugetlb_page(vma, addr);
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
- extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 				      unsigned long addr, pte_t *ptep,
- 				      pte_t pte, int dirty);
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index 8df4004977b9..c87195ae0cfa 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -32,13 +32,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
--					     unsigned long addr, pte_t *ptep,
--					     pte_t pte, int dirty)
--{
--	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
--}
--
- static inline pte_t huge_ptep_get(pte_t *ptep)
- {
- 	return *ptep;
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index c41754a113f3..028a1465fbe7 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -40,6 +40,7 @@ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 	set_huge_pte_at(mm, addr, ptep, pte_wrprotect(old_pte));
- }
- 
-+#define __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
- static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 					     unsigned long addr, pte_t *ptep,
- 					     pte_t pte, int dirty)
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index a3f781f7a264..574d42eb081e 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -13,13 +13,6 @@ static inline int is_hugepage_only_range(struct mm_struct *mm,
- 	return 0;
- }
- 
--static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
--					     unsigned long addr, pte_t *ptep,
--					     pte_t pte, int dirty)
--{
--	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
--}
--
- static inline pte_t huge_ptep_get(pte_t *ptep)
- {
- 	return *ptep;
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 9b9039845278..f3c99a03ee83 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -110,4 +110,13 @@ static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGE_PTEP_SET_ACCESS_FLAGS
-+static inline int huge_ptep_set_access_flags(struct vm_area_struct *vma,
-+		unsigned long addr, pte_t *ptep,
-+		pte_t pte, int dirty)
-+{
-+	return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
+> Peripheral Works
+> - SDIO, Sdcard
+> - USB 2.0, 3.0
+> - Leds
+> 
+> Not working:
+> - USB Type-C
+> 
+> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
+> ---
+> 
+> Changes in v2:
+> - add support for usb 2.0, 3.0
+> - add fusb302 node and its regulator support
+> - cleanup pinctrl node
+> - remove backlight, pcie, sound codec node inherited from firefly-rk3399 dts
+> 
+Mark this patch as V2.
 
+>  Documentation/devicetree/bindings/arm/rockchip.txt |   4 +
+>  arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+>  arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts  | 692 +++++++++++++++++++++
+>  3 files changed, 697 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
+> index acfd3c7..ac95183 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.txt
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.txt
+> @@ -160,6 +160,10 @@ Rockchip platforms device tree bindings
+>      Required root node properties:
+>      - compatible = "pine64,rock64", "rockchip,rk3328";
+>  
+> +- Pine64 RockPro64 board:
+> +    Required root node properties:
+> +    - compatible = "pine64,rockpro64", "rockchip,rk3399";
+> +
+>  - Rockchip PX3 Evaluation board:
+>      Required root node properties:
+>        - compatible = "rockchip,px3-evb", "rockchip,px3", "rockchip,rk3188";
+> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+> index b0092d9..03d523a 100644
+> --- a/arch/arm64/boot/dts/rockchip/Makefile
+> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> @@ -14,5 +14,6 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-firefly.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-bob.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-gru-kevin.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-puma-haikou.dtb
+> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> new file mode 100644
+> index 0000000..6fff5dbf
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+> @@ -0,0 +1,692 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd.
+> + *		 2018 Akash Gajjar <Akash_Gajjar@mentor.com>
+update your Copyright properly.
+> + */
+> +
+> +/dts-v1/;
+> +#include <dt-bindings/input/linux-event-codes.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +#include "rk3399.dtsi"
+> +#include "rk3399-opp.dtsi"
+> +
+> +/ {
+> +	model = "Pine64 RockPro64";
+> +	compatible = "pine64,rockpro64", "rockchip,rk3399";
+> +
+> +	chosen {
+> +		stdout-path = "serial2:1500000n8";
+> +	};
+> +
+> +	clkin_gmac: external-gmac-clock {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <125000000>;
+> +		clock-output-names = "clkin_gmac";
+> +		#clock-cells = <0>;
+> +	};
+> +
+> +	dc_12v: dc-12v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "dc_12v";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <12000000>;
+> +		regulator-max-microvolt = <12000000>;
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		autorepeat;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pwrbtn>;
+> +
+> +		power {
+> +			debounce-interval = <100>;
+> +			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_LOW>;
+> +			label = "GPIO Key Power";
+> +			linux,code = <KEY_POWER>;
+> +			wakeup-source;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&work_led_gpio>, <&diy_led_gpio>;
+> +
+> +		work-led {
+> +			label = "work";
+> +			default-state = "on";
+> +			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+> +		};
+> +
+> +		diy-led {
+> +			label = "diy";
+> +			default-state = "off";
+> +			gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
+> +		};
+> +	};
+> +
+> +	sdio_pwrseq: sdio-pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		clocks = <&rk808 1>;
+> +		clock-names = "ext_clock";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wifi_enable_h>;
+> +
+> +		/*
+> +		 * On the module itself this is one of these (depending
+> +		 * on the actual card populated):
+> +		 * - SDIO_RESET_L_WL_REG_ON
+> +		 * - PDN (power down when low)
+> +		 */
+> +		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> +	/* switched by pmic_sleep */
+> +	vcc1v8_s3: vcca1v8_s3: vcc1v8-s3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc1v8_s3";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		vin-supply = <&vcc_1v8>;
+> +	};
+> +
+> +	vcc3v3_pcie: vcc3v3-pcie-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pcie_pwr_en>;
+> +		regulator-name = "vcc3v3_pcie";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		vin-supply = <&dc_12v>;
+> +	};
+> +
+> +	vcc3v3_sys: vcc3v3-sys {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc3v3_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +
+> +	/* Actually 3 regulators (host0, 1, 2) controlled by the same gpio */
+> +	vcc5v0_host: vcc5v0-host-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcc5v0_host_en>;
+> +		regulator-name = "vcc5v0_host";
+> +		regulator-always-on;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +
+> +	vcc5v0_typec: vcc5v0-typec-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio1 RK_PA3 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcc5v0_typec_en>;
+> +		regulator-name = "vcc5v0_typec";
+> +		regulator-always-on;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +
+> +	vcc_sys: vcc-sys {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		vin-supply = <&dc_12v>;
+> +	};
+> +
+> +	vdd_log: vdd-log {
+> +		compatible = "pwm-regulator";
+> +		pwms = <&pwm2 0 25000 1>;
+> +		regulator-name = "vdd_log";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <800000>;
+> +		regulator-max-microvolt = <1400000>;
+> +		vin-supply = <&vcc_sys>;
+> +	};
+> +};
+> +
+> +&cpu_l0 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_l1 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_l2 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_l3 {
+> +	cpu-supply = <&vdd_cpu_l>;
+> +};
+> +
+> +&cpu_b0 {
+> +	cpu-supply = <&vdd_cpu_b>;
+> +};
+> +
+> +&cpu_b1 {
+> +	cpu-supply = <&vdd_cpu_b>;
+> +};
+> +
+> +&emmc_phy {
+> +	status = "okay";
+> +};
+> +
+> +&gmac {
+> +	assigned-clocks = <&cru SCLK_RMII_SRC>;
+> +	assigned-clock-parents = <&clkin_gmac>;
+> +	clock_in_out = "input";
+> +	phy-supply = <&vcc_lan>;
+> +	phy-mode = "rgmii";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&rgmii_pins>;
+> +	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+> +	snps,reset-active-low;
+> +	snps,reset-delays-us = <0 10000 50000>;
+> +	tx_delay = <0x28>;
+> +	rx_delay = <0x11>;
+> +	status = "okay";
+> +};
+Is Ethernet working? If yes, Please add this in working list.
+> +
+> +&i2c0 {
+> +	clock-frequency = <400000>;
+> +	i2c-scl-rising-time-ns = <168>;
+> +	i2c-scl-falling-time-ns = <4>;
+> +	status = "okay";
+> +
+> +	rk808: pmic@1b {
+> +		compatible = "rockchip,rk808";
+> +		reg = <0x1b>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
+> +		#clock-cells = <1>;
+> +		clock-output-names = "xin32k", "rk808-clkout2";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pmic_int_l>;
+> +		rockchip,system-power-controller;
+> +		wakeup-source;
+> +
+> +		vcc1-supply = <&vcc_sys>;
+> +		vcc2-supply = <&vcc_sys>;
+> +		vcc3-supply = <&vcc_sys>;
+> +		vcc4-supply = <&vcc_sys>;
+> +		vcc6-supply = <&vcc_sys>;
+> +		vcc7-supply = <&vcc_sys>;
+> +		vcc8-supply = <&vcc3v3_sys>;
+> +		vcc9-supply = <&vcc_sys>;
+> +		vcc10-supply = <&vcc_sys>;
+> +		vcc11-supply = <&vcc_sys>;
+> +		vcc12-supply = <&vcc3v3_sys>;
+> +		vddio-supply = <&vcc1v8_pmu>;
+> +
+> +		regulators {
+> +			vdd_center: DCDC_REG1 {
+> +				regulator-name = "vdd_center";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <750000>;
+> +				regulator-max-microvolt = <1350000>;
+> +				regulator-ramp-delay = <6001>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vdd_cpu_l: DCDC_REG2 {
+> +				regulator-name = "vdd_cpu_l";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <750000>;
+> +				regulator-max-microvolt = <1350000>;
+> +				regulator-ramp-delay = <6001>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_ddr: DCDC_REG3 {
+> +				regulator-name = "vcc_ddr";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_1v8: DCDC_REG4 {
+> +				regulator-name = "vcc_1v8";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <1800000>;
+> +				};
+> +			};
+> +
+> +			vcc1v8_dvp: LDO_REG1 {
+> +				regulator-name = "vcc1v8_dvp";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc2v8_dvp: LDO_REG2 {
+> +				regulator-name = "vcc2v8_dvp";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <2800000>;
+> +				regulator-max-microvolt = <2800000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc1v8_pmu: LDO_REG3 {
+> +				regulator-name = "vcc1v8_pmu";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <1800000>;
+> +				};
+> +			};
+> +
+> +			vcc_sdio: LDO_REG4 {
+> +				regulator-name = "vcc_sdio";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <3000000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <3000000>;
+> +				};
+> +			};
+> +
+> +			vcca3v0_codec: LDO_REG5 {
+> +				regulator-name = "vcca3v0_codec";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <3000000>;
+> +				regulator-max-microvolt = <3000000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_1v5: LDO_REG6 {
+> +				regulator-name = "vcc_1v5";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1500000>;
+> +				regulator-max-microvolt = <1500000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <1500000>;
+> +				};
+> +			};
+> +
+> +			vcca1v8_codec: LDO_REG7 {
+> +				regulator-name = "vcca1v8_codec";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <1800000>;
+> +				regulator-max-microvolt = <1800000>;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc_3v0: LDO_REG8 {
+> +				regulator-name = "vcc_3v0";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-min-microvolt = <3000000>;
+> +				regulator-max-microvolt = <3000000>;
+> +				regulator-state-mem {
+> +					regulator-on-in-suspend;
+> +					regulator-suspend-microvolt = <3000000>;
+> +				};
+> +			};
+> +
+> +			vcc3v3_s3: vcc_lan: SWITCH_REG1 {
+> +				regulator-name = "vcc3v3_s3";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +
+> +			vcc3v3_s0: SWITCH_REG2 {
+> +				regulator-name = "vcc3v3_s0";
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-state-mem {
+> +					regulator-off-in-suspend;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	vdd_cpu_b: regulator@40 {
+> +		compatible = "silergy,syr827";
+> +		reg = <0x40>;
+> +		fcs,suspend-voltage-selector = <0>;
+> +		regulator-name = "vdd_cpu_b";
+> +		regulator-min-microvolt = <712500>;
+> +		regulator-max-microvolt = <1500000>;
+> +		regulator-ramp-delay = <1000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		vin-supply = <&vcc_sys>;
+> +
+> +		regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +
+> +	vdd_gpu: regulator@41 {
+> +		compatible = "silergy,syr828";
+> +		reg = <0x41>;
+> +		fcs,suspend-voltage-selector = <1>;
+> +		regulator-name = "vdd_gpu";
+> +		regulator-min-microvolt = <712500>;
+> +		regulator-max-microvolt = <1500000>;
+> +		regulator-ramp-delay = <1000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		vin-supply = <&vcc_sys>;
+> +
+> +		regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +};
+> +
+> +&i2c1 {
+> +	i2c-scl-rising-time-ns = <300>;
+> +	i2c-scl-falling-time-ns = <15>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c3 {
+> +	i2c-scl-rising-time-ns = <450>;
+> +	i2c-scl-falling-time-ns = <15>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c4 {
+> +	i2c-scl-rising-time-ns = <600>;
+> +	i2c-scl-falling-time-ns = <20>;
+> +	status = "okay";
+> +
+> +	fusb0: typec-portc@22 {
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&fusb0_int>;
+> +		vbus-supply = <&vcc5v0_typec>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&i2s0 {
+> +	rockchip,playback-channels = <8>;
+> +	rockchip,capture-channels = <8>;
+> +	status = "okay";
+> +};
+> +
+> +&i2s1 {
+> +	rockchip,playback-channels = <2>;
+> +	rockchip,capture-channels = <2>;
+> +	status = "okay";
+> +};
+> +
+> +&i2s2 {
+> +	status = "okay";
+> +};
+> +
+> +&io_domains {
+> +	status = "okay";
+> +
+> +	bt656-supply = <&vcc1v8_dvp>;
+> +	audio-supply = <&vcca1v8_codec>;
+> +	sdmmc-supply = <&vcc_sdio>;
+> +	gpio1830-supply = <&vcc_3v0>;
+> +};
+> +
+> +&pmu_io_domains {
+> +	pmu1830-supply = <&vcc_3v0>;
+> +	status = "okay";
+> +};
+> +
+> +&pinctrl {
+> +	buttons {
+> +		pwrbtn: pwrbtn {
+> +			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	fusb302x {
+> +		fusb0_int: fusb0-int {
+> +			rockchip,pins = <1 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		work_led_gpio: work_led-gpio {
+> +			rockchip,pins = <0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +
+> +		diy_led_gpio: diy_led-gpio {
+> +			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	lcd-panel {
+> +		lcd_panel_reset: lcd-panel-reset {
+> +			rockchip,pins = <4 RK_PD6 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	pcie {
+> +		pcie_pwr_en: pcie-pwr-en {
+> +			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	pmic {
+> +		pmic_int_l: pmic-int-l {
+> +			rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +
+> +		vsel1_gpio: vsel1-gpio {
+> +			rockchip,pins = <1 RK_PC2 RK_FUNC_GPIO &pcfg_pull_down>;
+> +		};
+> +
+> +		vsel2_gpio: vsel2-gpio {
+> +			rockchip,pins = <1 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
+> +		};
+> +	};
+> +
+> +	sdio-pwrseq {
+> +		wifi_enable_h: wifi-enable-h {
+> +			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +
+> +	usb-typec {
+> +		vcc5v0_typec_en: vcc5v0_typec_en {
+> +			rockchip,pins = <1 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +	};
+> +
+> +	usb2 {
+> +		vcc5v0_host_en: vcc5v0-host-en {
+> +			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+> +};
+> +
+> +&pwm0 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm2 {
+> +	status = "okay";
+> +};
+> +
+> +&saradc {
+> +	vref-supply = <&vcca1v8_s3>;
+> +	status = "okay";
+> +};
+> +
+> +&sdmmc {
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+> +	cap-sd-highspeed;
+> +	cd-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>;
+> +	disable-wp;
+> +	max-frequency = <150000000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
+> +	status = "okay";
+> +};
+> +
+> +&sdhci {
+> +	bus-width = <8>;
+> +	mmc-hs400-1_8v;
+> +	mmc-hs400-enhanced-strobe;
+> +	non-removable;
+> +	status = "okay";
+> +};
+> +
+> +&tcphy0 {
+> +	status = "okay";
+> +};
+> +
+> +&tcphy1 {
+> +	status = "okay";
+> +};
+> +
+> +&tsadc {
+> +	/* tshut mode 0:CRU 1:GPIO */
+> +	rockchip,hw-tshut-mode = <1>;
+> +	/* tshut polarity 0:LOW 1:HIGH */
+> +	rockchip,hw-tshut-polarity = <1>;
+> +	status = "okay";
+> +};
+> +
+> +&u2phy0 {
+> +	status = "okay";
+> +
+> +	u2phy0_otg: otg-port {
+> +		status = "okay";
+> +	};
+> +
+> +	u2phy0_host: host-port {
+> +		phy-supply = <&vcc5v0_host>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&u2phy1 {
+> +	status = "okay";
+> +
+> +	u2phy1_otg: otg-port {
+> +		status = "okay";
+> +	};
+> +
+> +	u2phy1_host: host-port {
+> +		phy-supply = <&vcc5v0_host>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&uart0_xfer &uart0_cts>;
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host0_ehci {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host0_ohci {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host1_ehci {
+> +	status = "okay";
+> +};
+> +
+> +&usb_host1_ohci {
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd3_0 {
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd_dwc3_0 {
+> +	status = "okay";
+> +	dr_mode = "otg";
+> +};
+> +
+> +&usbdrd3_1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbdrd_dwc3_1 {
+> +	status = "okay";
+> +	dr_mode = "host";
+> +};
+> +
+> +&vopb {
+> +	status = "okay";
+> +};
+> +
+> +&vopb_mmu {
+> +	status = "okay";
+> +};
+> +
+> +&vopl {
+> +	status = "okay";
+> +};
+> +
+> +&vopl_mmu {
+> +	status = "okay";
+> +};
+> 
