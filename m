@@ -6,238 +6,69 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D30EDC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA6EC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB362146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:12:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB362146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+	by mail.kernel.org (Postfix) with ESMTP id 799582146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:12:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799582146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732041AbeITLxq (ORCPT
+        id S1732053AbeITLyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:53:46 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:57271 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731580AbeITLxq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:53:46 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id EA94F40009;
-        Thu, 20 Sep 2018 06:11:53 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, mike.kravetz@oracle.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, tony.luck@intel.com,
-        fenghua.yu@intel.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, jejb@parisc-linux.org, deller@gmx.de,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        ysato@users.sourceforge.jp, dalias@libc.org, davem@davemloft.net,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-arch@vger.kernel.org, Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH v7 07/11] hugetlb: Introduce generic version of huge_pte_wrprotect
-Date:   Thu, 20 Sep 2018 06:03:54 +0000
-Message-Id: <20180920060358.16606-8-alex@ghiti.fr>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180920060358.16606-1-alex@ghiti.fr>
-References: <20180920060358.16606-1-alex@ghiti.fr>
+        Thu, 20 Sep 2018 07:54:23 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12654 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731260AbeITLyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 07:54:22 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4010CC2479B6F;
+        Thu, 20 Sep 2018 14:12:34 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 20 Sep 2018 14:12:29 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Roman Kiryanov <rkir@google.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] platform: goldfish: pipe: Make symbol 'goldfish_pipe_dev' static
+Date:   Thu, 20 Sep 2018 06:22:05 +0000
+Message-ID: <1537424525-23695-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm, arm64, ia64, mips, parisc, powerpc, sh, sparc, x86
-architectures use the same version of huge_pte_wrprotect, so move
-this generic implementation into asm-generic/hugetlb.h.
+Fixes the following sparse warning:
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
-Tested-by: Helge Deller <deller@gmx.de> # parisc
-Acked-by: Catalin Marinas <catalin.marinas@arm.com> # arm64
-Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
-Acked-by: Ingo Molnar <mingo@kernel.org> # x86
-Reviewed-by: Luiz Capitulino <lcapitulino@redhat.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+drivers/platform/goldfish/goldfish_pipe.c:214:26: warning:
+ symbol 'goldfish_pipe_dev' was not declared. Should it be static?
+
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- arch/arm/include/asm/hugetlb.h     | 5 -----
- arch/arm64/include/asm/hugetlb.h   | 5 -----
- arch/ia64/include/asm/hugetlb.h    | 5 -----
- arch/mips/include/asm/hugetlb.h    | 5 -----
- arch/parisc/include/asm/hugetlb.h  | 5 -----
- arch/powerpc/include/asm/hugetlb.h | 5 -----
- arch/sh/include/asm/hugetlb.h      | 5 -----
- arch/sparc/include/asm/hugetlb.h   | 5 -----
- arch/x86/include/asm/hugetlb.h     | 5 -----
- include/asm-generic/hugetlb.h      | 7 +++++++
- 10 files changed, 7 insertions(+), 45 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/hugetlb.h b/arch/arm/include/asm/hugetlb.h
-index c821b550d6a4..9ca14227eeb7 100644
---- a/arch/arm/include/asm/hugetlb.h
-+++ b/arch/arm/include/asm/hugetlb.h
-@@ -44,11 +44,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
+diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+index b4a484b..0f66d77 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.c
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@ -211,7 +211,7 @@ struct goldfish_pipe_dev {
+ 	unsigned char __iomem *base;
+ };
  
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void arch_clear_hugepage_flags(struct page *page)
- {
- 	clear_bit(PG_dcache_clean, &page->flags);
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index 49247c6f94db..1fd64ebf0cd7 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -42,11 +42,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
+-struct goldfish_pipe_dev goldfish_pipe_dev;
++static struct goldfish_pipe_dev goldfish_pipe_dev;
  
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void arch_clear_hugepage_flags(struct page *page)
- {
- 	clear_bit(PG_dcache_clean, &page->flags);
-diff --git a/arch/ia64/include/asm/hugetlb.h b/arch/ia64/include/asm/hugetlb.h
-index bf573500b3c4..82fe3d7a38d9 100644
---- a/arch/ia64/include/asm/hugetlb.h
-+++ b/arch/ia64/include/asm/hugetlb.h
-@@ -26,11 +26,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index 1c9c4531376c..b3d6bb53ee6e 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -62,11 +62,6 @@ static inline int huge_pte_none(pte_t pte)
- 	return !val || (val == (unsigned long)invalid_pte_table);
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index c09d8c74553c..5a102d7251e4 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -38,11 +38,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep);
- 
-diff --git a/arch/powerpc/include/asm/hugetlb.h b/arch/powerpc/include/asm/hugetlb.h
-index 6a534353c8eb..b5b57b309564 100644
---- a/arch/powerpc/include/asm/hugetlb.h
-+++ b/arch/powerpc/include/asm/hugetlb.h
-@@ -149,11 +149,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- 	flush_hugetlb_page(vma, addr);
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- extern int huge_ptep_set_access_flags(struct vm_area_struct *vma,
- 				      unsigned long addr, pte_t *ptep,
- 				      pte_t pte, int dirty);
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index a9f8266f33cf..54f65094efe6 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -31,11 +31,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/sparc/include/asm/hugetlb.h b/arch/sparc/include/asm/hugetlb.h
-index 11115bbd712e..f661362376e0 100644
---- a/arch/sparc/include/asm/hugetlb.h
-+++ b/arch/sparc/include/asm/hugetlb.h
-@@ -48,11 +48,6 @@ static inline void huge_ptep_clear_flush(struct vm_area_struct *vma,
- {
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-index 42d872054791..3cd3a2c9840e 100644
---- a/arch/x86/include/asm/hugetlb.h
-+++ b/arch/x86/include/asm/hugetlb.h
-@@ -28,11 +28,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	return 0;
- }
- 
--static inline pte_t huge_pte_wrprotect(pte_t pte)
--{
--	return pte_wrprotect(pte);
--}
--
- static inline void huge_ptep_set_wrprotect(struct mm_struct *mm,
- 					   unsigned long addr, pte_t *ptep)
- {
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 2fc3d68424e9..cd9697672b79 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -80,4 +80,11 @@ static inline int huge_pte_none(pte_t pte)
- }
- #endif
- 
-+#ifndef __HAVE_ARCH_HUGE_PTE_WRPROTECT
-+static inline pte_t huge_pte_wrprotect(pte_t pte)
-+{
-+	return pte_wrprotect(pte);
-+}
-+#endif
-+
- #endif /* _ASM_GENERIC_HUGETLB_H */
--- 
-2.16.2
+ static int goldfish_pipe_cmd_locked(struct goldfish_pipe *pipe,
+ 				    enum PipeCmdCode cmd)
 
