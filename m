@@ -6,194 +6,203 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAA0C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014B5ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0478A2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0478A2087A
+	by mail.kernel.org (Postfix) with ESMTP id B1DFA2150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:33:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DFA2150F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387877AbeITXQZ (ORCPT
+        id S2388333AbeITXR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:16:25 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:19626 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387773AbeITXQY (ORCPT
+        Thu, 20 Sep 2018 19:17:58 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:8434 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732794AbeITXQX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:16:24 -0400
+        Thu, 20 Sep 2018 19:16:23 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Thu, 20 Sep 2018 10:31:20 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Thu, 20 Sep 2018 10:31:47 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 1F59640695;
-        Thu, 20 Sep 2018 10:31:48 -0700 (PDT)
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id EDB7E4069D;
+        Thu, 20 Sep 2018 10:31:47 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Arnd Bergmann <arnd@arndb.de>
 CC:     <linux-kernel@vger.kernel.org>,
         Xavier Deguillard <xdeguillard@vmware.com>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH v2 09/20] vmw_balloon: refactor change size from vmballoon_work
-Date:   Thu, 20 Sep 2018 10:30:15 -0700
-Message-ID: <20180920173026.141333-10-namit@vmware.com>
+Subject: [PATCH v2 05/20] vmw_balloon: remove sleeping allocations
+Date:   Thu, 20 Sep 2018 10:30:11 -0700
+Message-ID: <20180920173026.141333-6-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180920173026.141333-1-namit@vmware.com>
 References: <20180920173026.141333-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The required change in the balloon size is currently computed in
-vmballoon_work(), vmballoon_inflate() and vmballoon_deflate(). Refactor
-it to simplify the next patches.
+Splitting the allocations between sleeping and non-sleeping made some
+sort of sense as long as rate-limiting was enabled. Now that it is
+removed, we need to decide - either we want sleeping allocations or not.
+
+Since no other Linux balloon driver (hv, Xen, virtio) uses sleeping
+allocations, use the same approach.
+
+We do distinguish, however, between 2MB allocations and 4kB allocations
+and prevent reclamation on 2MB. In both cases, we avoid using emergency
+low-memory pools, as it may cause undesired effects.
 
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 75 ++++++++++++++++++++++++++------------
- 1 file changed, 52 insertions(+), 23 deletions(-)
+ drivers/misc/vmw_balloon.c | 67 ++++++++++----------------------------
+ 1 file changed, 18 insertions(+), 49 deletions(-)
 
 diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 626abe65eddb..0d9f223d463e 100644
+index 7af70fc988b9..952308997499 100644
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -633,6 +633,37 @@ static void vmballoon_add_page(struct vmballoon *b, int idx, struct page *p)
- 		b->page = p;
+@@ -37,20 +37,20 @@ MODULE_ALIAS("vmware_vmmemctl");
+ MODULE_LICENSE("GPL");
+ 
+ /*
+- * Use __GFP_HIGHMEM to allow pages from HIGHMEM zone. We don't
+- * allow wait (__GFP_RECLAIM) for NOSLEEP page allocations. Use
+- * __GFP_NOWARN, to suppress page allocation failure warnings.
++ * Use __GFP_HIGHMEM to allow pages from HIGHMEM zone. We don't allow wait
++ * (__GFP_RECLAIM) for huge page allocations. Use __GFP_NOWARN, to suppress page
++ * allocation failure warnings. Disallow access to emergency low-memory pools.
+  */
+-#define VMW_PAGE_ALLOC_NOSLEEP		(__GFP_HIGHMEM|__GFP_NOWARN)
++#define VMW_HUGE_PAGE_ALLOC_FLAGS	(__GFP_HIGHMEM|__GFP_NOWARN|	\
++					 __GFP_NOMEMALLOC)
+ 
+ /*
+- * Use GFP_HIGHUSER when executing in a separate kernel thread
+- * context and allocation can sleep.  This is less stressful to
+- * the guest memory system, since it allows the thread to block
+- * while memory is reclaimed, and won't take pages from emergency
+- * low-memory pools.
++ * Use __GFP_HIGHMEM to allow pages from HIGHMEM zone. We allow lightweight
++ * reclamation (__GFP_NORETRY). Use __GFP_NOWARN, to suppress page allocation
++ * failure warnings. Disallow access to emergency low-memory pools.
+  */
+-#define VMW_PAGE_ALLOC_CANSLEEP		(GFP_HIGHUSER)
++#define VMW_PAGE_ALLOC_FLAGS		(__GFP_HIGHMEM|__GFP_NOWARN|	\
++					 __GFP_NOMEMALLOC|__GFP_NORETRY)
+ 
+ /* Maximum number of refused pages we accumulate during inflation cycle */
+ #define VMW_BALLOON_MAX_REFUSED		16
+@@ -151,8 +151,6 @@ struct vmballoon_stats {
+ 	/* allocation statistics */
+ 	unsigned int alloc[VMW_BALLOON_NUM_PAGE_SIZES];
+ 	unsigned int alloc_fail[VMW_BALLOON_NUM_PAGE_SIZES];
+-	unsigned int sleep_alloc;
+-	unsigned int sleep_alloc_fail;
+ 	unsigned int refused_alloc[VMW_BALLOON_NUM_PAGE_SIZES];
+ 	unsigned int refused_free[VMW_BALLOON_NUM_PAGE_SIZES];
+ 	unsigned int free[VMW_BALLOON_NUM_PAGE_SIZES];
+@@ -442,12 +440,13 @@ static int vmballoon_send_batched_lock(struct vmballoon *b,
+ 	return 1;
  }
  
-+/**
-+ * vmballoon_change - retrieve the required balloon change
-+ *
-+ * @b: pointer for the balloon.
-+ *
-+ * Return: the required change for the balloon size. A positive number
-+ * indicates inflation, a negative number indicates a deflation.
-+ */
-+static int64_t vmballoon_change(struct vmballoon *b)
-+{
-+	int64_t size, target;
-+
-+	size = b->size;
-+	target = b->target;
-+
-+	/*
-+	 * We must cast first because of int sizes
-+	 * Otherwise we might get huge positives instead of negatives
-+	 */
-+
-+	if (b->reset_required)
-+		return 0;
-+
-+	/* consider a 2MB slack on deflate, unless the balloon is emptied */
-+	if (target < size && size - target < vmballoon_page_size(true) &&
-+	    target != 0)
-+		return 0;
-+
-+	return target - size;
-+}
-+
- /*
-  * Inflate the balloon towards its target size. Note that we try to limit
-  * the rate of allocation to make sure we are not choking the rest of the
-@@ -644,8 +675,6 @@ static void vmballoon_inflate(struct vmballoon *b)
+-static struct page *vmballoon_alloc_page(gfp_t flags, bool is_2m_page)
++static struct page *vmballoon_alloc_page(bool is_2m_page)
+ {
+ 	if (is_2m_page)
+-		return alloc_pages(flags, VMW_BALLOON_2M_SHIFT);
++		return alloc_pages(VMW_HUGE_PAGE_ALLOC_FLAGS,
++				   VMW_BALLOON_2M_SHIFT);
+ 
+-	return alloc_page(flags);
++	return alloc_page(VMW_PAGE_ALLOC_FLAGS);
+ }
+ 
+ static void vmballoon_free_page(struct page *page, bool is_2m_page)
+@@ -701,7 +700,6 @@ static void vmballoon_inflate(struct vmballoon *b)
+ {
+ 	unsigned int num_pages = 0;
  	int error = 0;
+-	gfp_t flags = VMW_PAGE_ALLOC_NOSLEEP;
  	bool is_2m_pages;
  
--	pr_debug("%s - size: %d, target %d\n", __func__, b->size, b->target);
--
- 	/*
- 	 * First try NOSLEEP page allocations to inflate balloon.
- 	 *
-@@ -667,11 +696,8 @@ static void vmballoon_inflate(struct vmballoon *b)
- 	 */
- 	is_2m_pages = b->supported_page_sizes == VMW_BALLOON_NUM_PAGE_SIZES;
- 
--	pr_debug("%s - goal: %d",  __func__, b->target - b->size);
--
--	while (!b->reset_required &&
--		b->size + num_pages * vmballoon_page_size(is_2m_pages)
--		< b->target) {
-+	while ((int64_t)(num_pages * vmballoon_page_size(is_2m_pages)) <
-+	       vmballoon_change(b)) {
+ 	pr_debug("%s - size: %d, target %d\n", __func__, b->size, b->target);
+@@ -734,15 +732,10 @@ static void vmballoon_inflate(struct vmballoon *b)
+ 		< b->target) {
  		struct page *page;
  
- 		STATS_INC(b->stats.alloc[is_2m_pages]);
-@@ -742,8 +768,6 @@ static void vmballoon_deflate(struct vmballoon *b)
- {
- 	unsigned is_2m_pages;
- 
--	pr_debug("%s - size: %d, target %d\n", __func__, b->size, b->target);
+-		if (flags == VMW_PAGE_ALLOC_NOSLEEP)
+-			STATS_INC(b->stats.alloc[is_2m_pages]);
+-		else
+-			STATS_INC(b->stats.sleep_alloc);
 -
- 	/* free pages to reach target */
- 	for (is_2m_pages = 0; is_2m_pages < b->supported_page_sizes;
- 			is_2m_pages++) {
-@@ -753,11 +777,9 @@ static void vmballoon_deflate(struct vmballoon *b)
- 				&b->page_sizes[is_2m_pages];
+-		page = vmballoon_alloc_page(flags, is_2m_pages);
++		STATS_INC(b->stats.alloc[is_2m_pages]);
++		page = vmballoon_alloc_page(is_2m_pages);
+ 		if (!page) {
+ 			STATS_INC(b->stats.alloc_fail[is_2m_pages]);
+-
+ 			if (is_2m_pages) {
+ 				b->ops->lock(b, num_pages, true);
  
- 		list_for_each_entry_safe(page, next, &page_size->pages, lru) {
--			if (b->reset_required ||
--				(b->target > 0 &&
--					b->size - num_pages
--					* vmballoon_page_size(is_2m_pages)
--				< b->target + vmballoon_page_size(true)))
-+			if ((int64_t)(num_pages *
-+				      vmballoon_page_size(is_2m_pages)) >=
-+					-vmballoon_change(b))
- 				break;
+@@ -756,29 +749,7 @@ static void vmballoon_inflate(struct vmballoon *b)
+ 				is_2m_pages = false;
+ 				continue;
+ 			}
+-
+-			if (flags == VMW_PAGE_ALLOC_CANSLEEP) {
+-				/*
+-				 * CANSLEEP page allocation failed, so guest
+-				 * is under severe memory pressure. We just log
+-				 * the event, but do not stop the inflation
+-				 * due to its negative impact on performance.
+-				 */
+-				STATS_INC(b->stats.sleep_alloc_fail);
+-				break;
+-			}
+-
+-			/*
+-			 * NOSLEEP page allocation failed, so the guest is
+-			 * under memory pressure. Slowing down page alloctions
+-			 * seems to be reasonable, but doing so might actually
+-			 * cause the hypervisor to throttle us down, resulting
+-			 * in degraded performance. We will count on the
+-			 * scheduler and standard memory management mechanisms
+-			 * for now.
+-			 */
+-			flags = VMW_PAGE_ALLOC_CANSLEEP;
+-			continue;
++			break;
+ 		}
  
- 			list_del(&page->lru);
-@@ -921,28 +943,35 @@ static void vmballoon_reset(struct vmballoon *b)
- 		pr_err("failed to send guest ID to the host\n");
- }
- 
--/*
-- * Balloon work function: reset protocol, if needed, get the new size and
-- * adjust balloon as needed. Repeat in 1 sec.
-+/**
-+ * vmballoon_work - periodic balloon worker for reset, inflation and deflation.
-+ *
-+ * @work: pointer to the &work_struct which is provided by the workqueue.
-+ *
-+ * Resets the protocol if needed, gets the new size and adjusts balloon as
-+ * needed. Repeat in 1 sec.
-  */
- static void vmballoon_work(struct work_struct *work)
- {
- 	struct delayed_work *dwork = to_delayed_work(work);
- 	struct vmballoon *b = container_of(dwork, struct vmballoon, dwork);
-+	int64_t change = 0;
- 
- 	STATS_INC(b->stats.timer);
- 
- 	if (b->reset_required)
- 		vmballoon_reset(b);
- 
--	if (!b->reset_required && vmballoon_send_get_target(b)) {
--		unsigned long target = b->target;
-+	if (vmballoon_send_get_target(b))
-+		change = vmballoon_change(b);
-+
-+	if (change != 0) {
-+		pr_debug("%s - size: %u, target %u", __func__,
-+			 b->size, b->target);
- 
--		/* update target, adjust size */
--		if (b->size < target)
-+		if (change > 0)
- 			vmballoon_inflate(b);
--		else if (target == 0 ||
--				b->size > target + vmballoon_page_size(true))
-+		else  /* (change < 0) */
- 			vmballoon_deflate(b);
- 	}
- 
+ 		b->ops->add_page(b, num_pages++, page);
+@@ -1044,8 +1015,7 @@ static int vmballoon_debug_show(struct seq_file *f, void *offset)
+ 		   "timer:              %8u\n"
+ 		   "doorbell:           %8u\n"
+ 		   "prim2mAlloc:        %8u (%4u failed)\n"
+-		   "primNoSleepAlloc:   %8u (%4u failed)\n"
+-		   "primCanSleepAlloc:  %8u (%4u failed)\n"
++		   "prim4kAlloc:        %8u (%4u failed)\n"
+ 		   "prim2mFree:         %8u\n"
+ 		   "primFree:           %8u\n"
+ 		   "err2mAlloc:         %8u\n"
+@@ -1056,7 +1026,6 @@ static int vmballoon_debug_show(struct seq_file *f, void *offset)
+ 		   stats->doorbell,
+ 		   stats->alloc[true], stats->alloc_fail[true],
+ 		   stats->alloc[false], stats->alloc_fail[false],
+-		   stats->sleep_alloc, stats->sleep_alloc_fail,
+ 		   stats->free[true],
+ 		   stats->free[false],
+ 		   stats->refused_alloc[true], stats->refused_alloc[false],
 -- 
 2.17.1
 
