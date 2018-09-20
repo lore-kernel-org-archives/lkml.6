@@ -2,69 +2,102 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8507C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C054ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFFE2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DFFE2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F66E2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F66E2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731684AbeITNTE (ORCPT
+        id S1731817AbeITNTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:19:04 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39269 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeITNTE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:19:04 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c12-v6so8461267otl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 00:36:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lFmf+QAM6flp/n2FMTqvfiqvvbSYVoY3DlFHVHUJva4=;
-        b=TtvptXa+J+pWiCtORhKYKOZq2fgpHF84525dp5/8PtrWheoKXYj7tg1Dq6gXE3zEWy
-         YCFoeVzkMfyCOAzeQEkpywMGYrVT8NTlc4/HPnb+T2+r5yGgnSq6gIqN5VMPwrT29vKk
-         Qjvtu4HFKM7UokF8WnZ4ahh/zFE8yr3kU/bte2eoaQI5xqR+n0UFvXxrfZKs7xKktMzi
-         7WYMFufgUEh5WQPhtUk5AWCfUz3mwSmaB7EHfym+iQftLFLYDLZl70e6HgBqHaF5vvMR
-         zA1n206rMgyagIBYxjnxF8VPwJXPPblZV05nCQPY7qvKolMsTuWh1VMLLxGlP03k0TPu
-         THCQ==
-X-Gm-Message-State: APzg51C60NmPttzkpDrrzjP3xQ5sBY2hGaD6Kos+7Ih1ODCdTsPjwGFa
-        lRHHRv3Xk1wDyYznviQQSfPF2K1UAkPNUdWrzkg=
-X-Google-Smtp-Source: ANB0VdZNp206xYX+V5D3lLAdQ75a/N87AsoRXOhQdIKcdQRGzgLt+ITGEy3OYqdGx2Ojh1c/KM8SOIqiNhjkK6B5+qE=
-X-Received: by 2002:a9d:2645:: with SMTP id a63-v6mr20519075otb.270.1537429018086;
- Thu, 20 Sep 2018 00:36:58 -0700 (PDT)
+        Thu, 20 Sep 2018 09:19:13 -0400
+Received: from nautica.notk.org ([91.121.71.147]:57032 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbeITNTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 09:19:13 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 7F3E3C01B; Thu, 20 Sep 2018 09:37:05 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 09:36:50 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] Compiler Attributes: naked can be shared
+Message-ID: <20180920073650.GA6001@nautica>
+References: <20180918165542.4691-1-miguel.ojeda.sandonis@gmail.com>
+ <20180918165542.4691-3-miguel.ojeda.sandonis@gmail.com>
+ <20180918173428.GA21591@kroah.com>
+ <CANiq72=ZU61EaoWm2N4G1SZF0QUvzquULo50uEvDRU-hitOJVQ@mail.gmail.com>
+ <20180919211458.GA8757@kroah.com>
+ <20180919230504.GA20280@nautica>
+ <CANiq72=C==Us7YjkzwVW7QHXnuGxHTowriYjX3Wsff19JO=uHw@mail.gmail.com>
+ <20180920001024.GD20280@nautica>
+ <20180920072205.GC11963@kroah.com>
 MIME-Version: 1.0
-References: <1537422122-6166-1-git-send-email-svellattu@mvista.com>
-In-Reply-To: <1537422122-6166-1-git-send-email-svellattu@mvista.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 20 Sep 2018 09:36:46 +0200
-Message-ID: <CAJZ5v0j05v+69cCJ1jzekdC_2kqXu6SQaNLeOhk=04b08pT6YQ@mail.gmail.com>
-Subject: Re: [PATCH] Driver core: add bus_find_device_by_of_node
-To:     svellattu@mvista.com
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180920072205.GC11963@kroah.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 7:43 AM Silesh C V <svellattu@mvista.com> wrote:
->
-> Similar to bus_find_device_by_name, but finds the device having a
-> specific of_node.
+Greg Kroah-Hartman wrote on Thu, Sep 20, 2018:
+> "Fixes:" is not just for stable, we use it wherever we have a patch that
+> we know fixes a problem introduced in another patch.
+> 
+> For this instance, I think we should just revert the offending patch,
+> which should resolve the issue for everyone and then you can try to redo
+> your series to get it right the next time.
+> 
+> Sound good?
 
-First, what do you need it for?  Please describe your use case in the changelog.
+Except that 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h
+mutually exclusive") itself fixes cafa0010cd51 ("Raise the minimum
+required gcc version to 4.6"), which breaks clang altogether (as used by
+example by bcc for most BPF programs, that I caught before -rc1 got
+released so we got both in rc1)
 
-Second, what about a more generic bus_find_device_by_fwnode() ?
+I'm not aware of anything that would break if both were to be reverted,
+I have no opinion on which way to go.
 
-Thanks,
-Rafael
+> Why not just route these through Andrew?  He takes lots of stuff like
+> this for this very reason.
+
+That works for me (although it might have helped if Andrew had been in
+Cc at any point in this discussion...), but part of the discussion was
+about seriously maintaining these files, and Miguel stepped up to help
+with that so it could make sense to have his own tree.
+
+
+Frankly, after this whole episode I'd find quite helpful if "compiler
+stuff" (or headers maintainance in general) were to grow its own mailing
+list and start being considered like a proper component of the kernel.
+
+It does impact quite a few people, and it's neigh-impossible to review
+this stuff as things are right now with a hand-picked list of CCs, no
+matter how large it is -- I don't mind if it goes in -next through its
+own branch or through Andrew, but a proper place where folks interested
+in these could subscribe and test/review the patches would be awesome.
+
+-- 
+Dominique Martinet
+
