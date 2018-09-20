@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B067CECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC33ECE567
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68C8321531
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A56B921525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:18:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eFxhI9VX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C8321531
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L9kS2n2d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A56B921525
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388764AbeIUBDh (ORCPT
+        id S2388777AbeIUBDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 20 Sep 2018 21:03:37 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44724 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388702AbeIUBDf (ORCPT
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46420 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388760AbeIUBDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:03:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1-v6so4869055pgp.11
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:18:37 -0700 (PDT)
+        Thu, 20 Sep 2018 21:03:37 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t20-v6so1358161ply.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ivmOX6tgxT1fHE4D3dvFMA9pX4WdQdVXEtSEe52x+DM=;
-        b=eFxhI9VX8R79nHZBuH0TWpyBnN5A+DY0+Cs4SC1yYLGIKrMvCWboYZJ3d8FX6YOBek
-         EHXq+BVWwUR6n3bqxNZQb5GLK+e+fMYROc2mvW3CTbsEo7i7hq8UFSdElIUWEtdn+pJV
-         HEA+AVnp2dhE/nGef1DFuYVl4nsix+4TTzvJo=
+        bh=t1KhZyFjqvp9qI0UT6EcOP3PoDOXaznF3Gjt2laGV3Y=;
+        b=L9kS2n2dYrjXqP0FTqo/L6z3LMjLPFZnDy1/NCam49Pu/9K5j/V+6sKe2M7p5Sp/cJ
+         Z3hvIIYw+O79vv50spP1XsQXNliUqi2HoSqh31VVfSkKUJhGdL3H7ASB9G5B4tyKJ9tV
+         2AC8LCNxWzW9GZesWiMNPqxLLy02oDiLe8/Lo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ivmOX6tgxT1fHE4D3dvFMA9pX4WdQdVXEtSEe52x+DM=;
-        b=YwM9SaORMhlkNE5AYOkkrKg4tDZZ+IAJYDu5F5HNezOt3d0KcQic8UrqZ1bcIAUUGW
-         27hAIHrRByBmEyopFaIT6NOHGITd2BnAehVEL879u1/Gpv1PReiFwbjzjXoZn12cOWuQ
-         lRg12Zq1TfuwpcdSjVadVEn5R79zpkSqRUkBx8Mh83N8NcclVG1qBdn+NknrPRDP6C5r
-         sl6w/zF7MdTY0QaFqF6iIWwzgn2hz5RsmJhsx5lBiCY9k/xzOsFtkohc42SFzBvIsDrg
-         2YYKLSxd8jlPHVRukSky0nA16RRmAgYki4L86aWAdDkoJPlUijv7QYAtl6dcdC0GvvTC
-         5tfw==
-X-Gm-Message-State: APzg51A0EGSuxOJ+uxSpbp0LQxh2r1B/dJrCFMK2DbLQnyKttCuFvft6
-        r4jLUH4UI9notr5OgOUg9hvyrZnJOLY=
-X-Google-Smtp-Source: ANB0VdZmtqzKAqK8soThp/nHliOt85tv+ah4cYRT0NNwTM6PDrPGhmtri5XRAja2+QxIvecLOK7O5g==
-X-Received: by 2002:a62:642:: with SMTP id 63-v6mr43022850pfg.42.1537471116843;
-        Thu, 20 Sep 2018 12:18:36 -0700 (PDT)
+        bh=t1KhZyFjqvp9qI0UT6EcOP3PoDOXaznF3Gjt2laGV3Y=;
+        b=Uqj4dLrtO1Xuok4Ku4QtjjxZqAl/QRGqgoizgoRGAZ5nEdcqc304WcG7xywEuZDGlH
+         +H1435/TntbohuNnpZ5oHV5DJwzuWe4uhuUEjValRvDE3K8+ig7pmwNGcZwYWiasNMrq
+         9Tk3PfwVmjfRgN/brCABNVpYLonxq+tdHKWBudcdvutdvN/9RiEPyp6QYaezREdmWffw
+         /44frR0KRQ2vOvC9KC6bxObFgaVTw+GMld9R8SaRd47ClFIgE3MehSQ0bugrc1Iwehap
+         kywUrAGrW83eKOg9lynR5IJBCRSLWad6Y1O/NWwdmWT6Ongpl19SARrKyooPLkzvn1rG
+         6mKw==
+X-Gm-Message-State: APzg51AxsgqJ2SPrd6dWEhw+5ckB/SW0OyP5uf6kVjdIxr92A2pstySr
+        l5FQ2LJ7CJwdD7n1LQBw4euD6A==
+X-Google-Smtp-Source: ANB0VdYTBg5r/C1+hrHdb5s4YaIbTjnFnaLgZxipUXMCoSGtE6sUSH+ebi0O60bOMmKqVZz0VpGZNA==
+X-Received: by 2002:a17:902:14d:: with SMTP id 71-v6mr39564481plb.146.1537471118323;
+        Thu, 20 Sep 2018 12:18:38 -0700 (PDT)
 Received: from localhost.localdomain ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm4424443pgf.37.2018.09.20.12.18.35
+        by smtp.gmail.com with ESMTPSA id k13-v6sm4424443pgf.37.2018.09.20.12.18.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Sep 2018 12:18:35 -0700 (PDT)
+        Thu, 20 Sep 2018 12:18:37 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 10/44] coresight: Fix handling of sinks
-Date:   Thu, 20 Sep 2018 13:17:45 -0600
-Message-Id: <1537471099-19781-11-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 11/44] coresight: etb10: Fix handling of perf mode
+Date:   Thu, 20 Sep 2018 13:17:46 -0600
+Message-Id: <1537471099-19781-12-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
@@ -71,72 +71,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-The coresight components could be operated either in sysfs mode or in perf
-mode. For some of the components, the mode of operation doesn't matter as
-they simply relay the data to the next component in the trace path. But for
-sinks, they need to be able to provide the trace data back to the user.
-Thus we need to make sure that "mode" is handled appropriately. e.g,
-the sysfs mode could have multiple sources driving the trace data, while
-perf mode doesn't allow sharing the sink.
-
-The coresight_enable_sink() however doesn't really allow this check to
-trigger as it skips the "enable_sink" callback if the component is
-already enabled, irrespective of the mode. This could cause mixing
-of data from different modes or even same mode (in perf), if the
-sources are different. Also, if we fail to enable the sink while
-enabling a path (where sink is the first component enabled),
-we could end up in disabling the components in the "entire"
-path which were not enabled in this trial, causing disruptions
-in the existing trace paths.
+If the ETB is already enabled in sysfs mode, the ETB reports
+success even if a perf mode is requested. Fix this by checking
+the requested mode.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/hwtracing/coresight/coresight-etb10.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 5e8880ca8078..07382c55b31d 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -132,12 +132,14 @@ static int coresight_enable_sink(struct coresight_device *csdev, u32 mode)
- {
- 	int ret;
+diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+index 306119eaf16a..0dad8626bcfb 100644
+--- a/drivers/hwtracing/coresight/coresight-etb10.c
++++ b/drivers/hwtracing/coresight/coresight-etb10.c
+@@ -147,6 +147,10 @@ static int etb_enable(struct coresight_device *csdev, u32 mode)
+ 	if (val == CS_MODE_PERF)
+ 		return -EBUSY;
  
--	if (!csdev->enable) {
--		if (sink_ops(csdev)->enable) {
--			ret = sink_ops(csdev)->enable(csdev, mode);
--			if (ret)
--				return ret;
--		}
-+	/*
-+	 * We need to make sure the "new" session is compatible with the
-+	 * existing "mode" of operation.
-+	 */
-+	if (sink_ops(csdev)->enable) {
-+		ret = sink_ops(csdev)->enable(csdev, mode);
-+		if (ret)
-+			return ret;
- 		csdev->enable = true;
- 	}
- 
-@@ -339,8 +341,14 @@ int coresight_enable_path(struct list_head *path, u32 mode)
- 		switch (type) {
- 		case CORESIGHT_DEV_TYPE_SINK:
- 			ret = coresight_enable_sink(csdev, mode);
-+			/*
-+			 * Sink is the first component turned on. If we
-+			 * failed to enable the sink, there are no components
-+			 * that need disabling. Disabling the path here
-+			 * would mean we could disrupt an existing session.
-+			 */
- 			if (ret)
--				goto err;
-+				goto out;
- 			break;
- 		case CORESIGHT_DEV_TYPE_SOURCE:
- 			/* sources are enabled from either sysFS or Perf */
++	/* Don't let perf disturb sysFS sessions */
++	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
++		return -EBUSY;
++
+ 	/* Nothing to do, the tracer is already enabled. */
+ 	if (val == CS_MODE_SYSFS)
+ 		goto out;
 -- 
 2.7.4
 
