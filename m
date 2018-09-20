@@ -2,113 +2,535 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A23C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDAFECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1652E21533
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:31:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1652E21533
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 0162921533
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:33:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="lEG2wtGm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0162921533
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbeIUFRb (ORCPT
+        id S2388299AbeIUFT2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:17:31 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:39212 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725749AbeIUFRb (ORCPT
+        Fri, 21 Sep 2018 01:19:28 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44888 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbeIUFT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:17:31 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08894381|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l01425;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.CtbYBbe_1537486265;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CtbYBbe_1537486265)
-          by smtp.aliyun-inc.com(10.147.40.200);
-          Fri, 21 Sep 2018 07:31:05 +0800
-Date:   Fri, 21 Sep 2018 07:31:04 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
-        green.hu@gmail.com
-Subject: Re: [PATCH V8 1/2] clocksource: add gx6605s SOC system timer
-Message-ID: <20180920233103.GA8891@guoren-Inspiron-7460>
-References: <cover.1537412072.git.ren_guo@c-sky.com>
- <4d409a1fdecf1c376e8cc6b55308cd3c522047b0.1537412072.git.ren_guo@c-sky.com>
- <6c31f9b2-d536-1cee-8024-b52eb862fd9d@linaro.org>
+        Fri, 21 Sep 2018 01:19:28 -0400
+Received: by mail-lf1-f67.google.com with SMTP id g24-v6so9866273lfb.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 16:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w4LDfm4x4iIduNkH71/uzahkmlx5BgxgpB/g4NJ3obc=;
+        b=lEG2wtGmcYi3KjFkgWYytsWFCN8UXvHHIMgDecOmyK6OVgGH8pC2XfshPtJ66Wy/3w
+         XeYojMduPf47qtEjD3iR7vVGuuk2nNgHuU7lzo2woRnyznZ28AAfyOclruCm+8Tf3uBV
+         KawenVgPOhaIWpOOmggS7IpNfbCRYlSJBw9co=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w4LDfm4x4iIduNkH71/uzahkmlx5BgxgpB/g4NJ3obc=;
+        b=d9c2fQCr3nrHUWzYLYZrQVB+9LHKN/viGjXVeAJX59Hy1Fwu0shxH++PRQ72qYV8/z
+         qvpBWrMKGpbz6lIPF2liMVGPAsKy4hgdOhY0FBEiHHyGoXF0V+ZEutakJ0CQzUAtpX1e
+         lk8J12oBPBmfRce+HOfJSGEAlmFCAHsUVIFdqyQJL9F0o+h69HMJZJuvLUw3eAUT+gDY
+         +n5wEl+QSyET62NZESz3BFt2B1CWtADKxgpIpPkPpM0umWKmhq69eKHIJr5IqIUGCv7h
+         OFMQ3KAsQ+fTrBmbRETWhdzHIUfeUGpUm8GWrHmbEelYckJjPJkObNHgeVg7xFlFy+Cx
+         a+0w==
+X-Gm-Message-State: APzg51B/Qi0AnNTp+zW67CDtrgnItWnp1xoU868ilQKNBcb0DO7GrI5P
+        ra5jq5fPri9EttDOAzFHwRI087KV7OsIJZSRih26kw==
+X-Google-Smtp-Source: ANB0Vdb+wIw9GYnAybh/UDGA54MLIMpoPTxCZaydXO7HgEewydbdYkJx69LsdXIBMVitvCD8e/wS7JoleMOYhtvR3D8=
+X-Received: by 2002:a19:f8d:: with SMTP id 13-v6mr14608436lfp.107.1537486407398;
+ Thu, 20 Sep 2018 16:33:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c31f9b2-d536-1cee-8024-b52eb862fd9d@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <000000000000f7a28e057653dc6e@google.com> <20180920141058.4ed467594761e073606eafe2@linux-foundation.org>
+ <CAHRSSEzX5HOUEQ6DgEF76OLGrwS1isWMdtvneBLOEEnwoMxVrA@mail.gmail.com>
+In-Reply-To: <CAHRSSEzX5HOUEQ6DgEF76OLGrwS1isWMdtvneBLOEEnwoMxVrA@mail.gmail.com>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Thu, 20 Sep 2018 19:33:15 -0400
+Message-ID: <CAEXW_YSot+3AMQ=jmDRowmqoOmQmujp9r8Dh18KJJN1EDmyHOw@mail.gmail.com>
+Subject: Re: possible deadlock in __do_page_fault
+To:     Todd Kjos <tkjos@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Joel Fernandes <joelaf@google.com>,
+        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
+        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
+        jack@suse.cz, jrdr.linux@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        syzkaller-bugs@googlegroups.com,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 06:06:19PM +0200, Daniel Lezcano wrote:
-> On 20/09/2018 10:03, Guo Ren wrote:
-> > Changelog:
-> >  - Add License and Copyright
-> >  - Use timer-of framework
-> >  - Change name with upstream feedback
-> >  - Use clksource_mmio framework
-> > 
-> > Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> > ---
-> >  drivers/clocksource/Kconfig         |   8 ++
-> >  drivers/clocksource/Makefile        |   1 +
-> >  drivers/clocksource/timer-gx6605s.c | 150 ++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 159 insertions(+)
-> >  create mode 100644 drivers/clocksource/timer-gx6605s.c
-> > 
-> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> > index a11f4ba..6d0f18d 100644
-> > --- a/drivers/clocksource/Kconfig
-> > +++ b/drivers/clocksource/Kconfig
-> > @@ -620,4 +620,12 @@ config RISCV_TIMER
-> >  	  is accessed via both the SBI and the rdcycle instruction.  This is
-> >  	  required for all RISC-V systems.
-> >  
-> > +config GX6605S_TIMER
-> > +	bool "Gx6605s SOC system timer driver"
-> > +	depends on CSKY
-> > +	select CLKSRC_MMIO
-> > +	select TIMER_OF
-> > +	help
-> > +	  This option enables support for gx6605s SOC's timer.
-> > +
-> >  endmenu
-> 
-> Please make the option not visible as default. There are currently two
-> approaches look at MTK_TIMER and SPRD_TIMER.
-Em ... (ot sure why COMPILE_TEST?):
-	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
-Hmm?
+On Thu, Sep 20, 2018 at 5:12 PM Todd Kjos <tkjos@google.com> wrote:
+>
+> +Joel Fernandes
+>
+> On Thu, Sep 20, 2018 at 2:11 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> >
+> > Thanks.  Let's cc the ashmem folks.
+> >
 
-> > +static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
-> > +{
-> > +	struct clock_event_device *ce = (struct clock_event_device *) dev;
-> 
-> nit: no cast is needed.
-Yes, change to:
-	struct clock_event_device *ce = dev;
+This should be fixed by https://patchwork.kernel.org/patch/10572477/
+
+It has Neil Brown's Reviewed-by but looks like didn't yet appear in
+anyone's tree, could Greg take this patch?
+
+thanks,
+
+ - Joel
 
 
-> > +static u64 notrace gx6605s_sched_clock_read(void)
-> > +{
-> > +	void __iomem *base;
-> > +
-> > +	base = timer_of_base(&to) + CLKSRC_OFFSET;
-> > +
-> > +	return (u64) readl_relaxed(base + TIMER_VALUE);
-> 
-> nit: extra space after '(u64)'
-Ok
-	return (u64)readl_relaxed(base + TIMER_VALUE);
 
-Best Regards
- Guo Ren
+> > On Thu, 20 Sep 2018 14:04:05 -0700 syzbot <syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com> wrote:
+> >
+> > > Hello,
+> > >
+> > > syzbot found the following crash on:
+> > >
+> > > HEAD commit:    a0cb0cabe4bb Add linux-next specific files for 20180920
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=15139721400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=786006c5dafbadf6
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=a76129f18c89f3e2ddd4
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > >
+> > > Unfortunately, I don't have any reproducer for this crash yet.
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com
+> > >
+> > >
+> > > ======================================================
+> > > WARNING: possible circular locking dependency detected
+> > > 4.19.0-rc4-next-20180920+ #76 Not tainted
+> > > ------------------------------------------------------
+> > > syz-executor3/21327 is trying to acquire lock:
+> > > 000000009bc5286f (&mm->mmap_sem){++++}, at: __do_page_fault+0xb61/0xec0
+> > > arch/x86/mm/fault.c:1333
+> > >
+> > > but task is already holding lock:
+> > > 00000000a2c51c08 (&sb->s_type->i_mutex_key#10){+.+.}, at: inode_lock
+> > > include/linux/fs.h:745 [inline]
+> > > 00000000a2c51c08 (&sb->s_type->i_mutex_key#10){+.+.}, at:
+> > > generic_file_write_iter+0xed/0x870 mm/filemap.c:3304
+> > >
+> > > which lock already depends on the new lock.
+> > >
+> > >
+> > > the existing dependency chain (in reverse order) is:
+> > >
+> > > -> #2 (&sb->s_type->i_mutex_key#10){+.+.}:
+> > >         down_write+0x8a/0x130 kernel/locking/rwsem.c:70
+> > >         inode_lock include/linux/fs.h:745 [inline]
+> > >         shmem_fallocate+0x18b/0x12c0 mm/shmem.c:2651
+> > >         ashmem_shrink_scan+0x238/0x660 drivers/staging/android/ashmem.c:455
+> > >         ashmem_ioctl+0x3ae/0x13a0 drivers/staging/android/ashmem.c:797
+> > >         vfs_ioctl fs/ioctl.c:46 [inline]
+> > >         file_ioctl fs/ioctl.c:501 [inline]
+> > >         do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+> > >         ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+> > >         __do_sys_ioctl fs/ioctl.c:709 [inline]
+> > >         __se_sys_ioctl fs/ioctl.c:707 [inline]
+> > >         __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+> > >         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > >
+> > > -> #1 (ashmem_mutex){+.+.}:
+> > >         __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+> > >         __mutex_lock+0x166/0x1700 kernel/locking/mutex.c:1072
+> > >         mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+> > >         ashmem_mmap+0x55/0x520 drivers/staging/android/ashmem.c:361
+> > >         call_mmap include/linux/fs.h:1830 [inline]
+> > >         mmap_region+0xe82/0x1cd0 mm/mmap.c:1762
+> > >         do_mmap+0xa10/0x1220 mm/mmap.c:1535
+> > >         do_mmap_pgoff include/linux/mm.h:2298 [inline]
+> > >         vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+> > >         ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
+> > >         __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+> > >         __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+> > >         __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+> > >         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > >
+> > > -> #0 (&mm->mmap_sem){++++}:
+> > >         lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
+> > >         down_read+0x8d/0x120 kernel/locking/rwsem.c:24
+> > >         __do_page_fault+0xb61/0xec0 arch/x86/mm/fault.c:1333
+> > >         do_page_fault+0xed/0x7d1 arch/x86/mm/fault.c:1472
+> > >         page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1139
+> > >         fault_in_pages_readable include/linux/pagemap.h:601 [inline]
+> > >         iov_iter_fault_in_readable+0x1b4/0x450 lib/iov_iter.c:421
+> > >         generic_perform_write+0x216/0x6a0 mm/filemap.c:3144
+> > >         __generic_file_write_iter+0x26e/0x630 mm/filemap.c:3279
+> > >         generic_file_write_iter+0x436/0x870 mm/filemap.c:3307
+> > >         call_write_iter include/linux/fs.h:1825 [inline]
+> > >         do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+> > >         do_iter_write+0x185/0x5f0 fs/read_write.c:959
+> > >         vfs_writev+0x1f1/0x360 fs/read_write.c:1004
+> > >         do_pwritev+0x1cc/0x280 fs/read_write.c:1093
+> > >         __do_sys_pwritev fs/read_write.c:1140 [inline]
+> > >         __se_sys_pwritev fs/read_write.c:1135 [inline]
+> > >         __x64_sys_pwritev+0x9a/0xf0 fs/read_write.c:1135
+> > >         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > >
+> > > other info that might help us debug this:
+> > >
+> > > Chain exists of:
+> > >    &mm->mmap_sem --> ashmem_mutex --> &sb->s_type->i_mutex_key#10
+> > >
+> > >   Possible unsafe locking scenario:
+> > >
+> > >         CPU0                    CPU1
+> > >         ----                    ----
+> > >    lock(&sb->s_type->i_mutex_key#10);
+> > >                                 lock(ashmem_mutex);
+> > >                                 lock(&sb->s_type->i_mutex_key#10);
+> > >    lock(&mm->mmap_sem);
+> > >
+> > >   *** DEADLOCK ***
+> > >
+> > > 2 locks held by syz-executor3/21327:
+> > >   #0: 000000003de4eab1 (sb_writers#3){.+.+}, at: file_start_write
+> > > include/linux/fs.h:2784 [inline]
+> > >   #0: 000000003de4eab1 (sb_writers#3){.+.+}, at: vfs_writev+0x2bd/0x360
+> > > fs/read_write.c:1003
+> > >   #1: 00000000a2c51c08 (&sb->s_type->i_mutex_key#10){+.+.}, at: inode_lock
+> > > include/linux/fs.h:745 [inline]
+> > >   #1: 00000000a2c51c08 (&sb->s_type->i_mutex_key#10){+.+.}, at:
+> > > generic_file_write_iter+0xed/0x870 mm/filemap.c:3304
+> > >
+> > > stack backtrace:
+> > > CPU: 1 PID: 21327 Comm: syz-executor3 Not tainted 4.19.0-rc4-next-20180920+
+> > > #76
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > >   dump_stack+0x1d3/0x2c4 lib/dump_stack.c:113
+> > >   print_circular_bug.isra.33.cold.54+0x1bd/0x27d
+> > > kernel/locking/lockdep.c:1221
+> > >   check_prev_add kernel/locking/lockdep.c:1861 [inline]
+> > >   check_prevs_add kernel/locking/lockdep.c:1974 [inline]
+> > >   validate_chain kernel/locking/lockdep.c:2415 [inline]
+> > >   __lock_acquire+0x33e4/0x4ec0 kernel/locking/lockdep.c:3411
+> > >   lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3900
+> > >   down_read+0x8d/0x120 kernel/locking/rwsem.c:24
+> > >   __do_page_fault+0xb61/0xec0 arch/x86/mm/fault.c:1333
+> > >   do_page_fault+0xed/0x7d1 arch/x86/mm/fault.c:1472
+> > >   page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1139
+> > > RIP: 0010:fault_in_pages_readable include/linux/pagemap.h:601 [inline]
+> > > RIP: 0010:iov_iter_fault_in_readable+0x1b4/0x450 lib/iov_iter.c:421
+> > > Code: fd 49 39 dc 76 17 eb 3c e8 e9 a0 ef fd 49 81 c4 00 10 00 00 4c 39 a5
+> > > 28 ff ff ff 72 2e e8 d4 a0 ef fd 0f 1f 00 0f ae e8 31 db <41> 8a 04 24 0f
+> > > 1f 00 31 ff 89 de 88 85 58 ff ff ff e8 c6 a1 ef fd
+> > > RSP: 0018:ffff88018dfe7650 EFLAGS: 00010246
+> > > RAX: 0000000000040000 RBX: 0000000000000000 RCX: ffffc90005662000
+> > > RDX: 00000000000001c2 RSI: ffffffff838daf1c RDI: 0000000000000005
+> > > RBP: ffff88018dfe7728 R08: ffff880198ad2240 R09: ffffed00319dc039
+> > > R10: ffffed00319dc039 R11: ffff88018cee01cb R12: 0000000020012000
+> > > R13: 0000000000000001 R14: 0000000000000001 R15: ffff88018dfe7c50
+> > >   generic_perform_write+0x216/0x6a0 mm/filemap.c:3144
+> > >   __generic_file_write_iter+0x26e/0x630 mm/filemap.c:3279
+> > >   generic_file_write_iter+0x436/0x870 mm/filemap.c:3307
+> > >   call_write_iter include/linux/fs.h:1825 [inline]
+> > >   do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+> > >   do_iter_write+0x185/0x5f0 fs/read_write.c:959
+> > >   vfs_writev+0x1f1/0x360 fs/read_write.c:1004
+> > >   do_pwritev+0x1cc/0x280 fs/read_write.c:1093
+> > >   __do_sys_pwritev fs/read_write.c:1140 [inline]
+> > >   __se_sys_pwritev fs/read_write.c:1135 [inline]
+> > >   __x64_sys_pwritev+0x9a/0xf0 fs/read_write.c:1135
+> > >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > RIP: 0033:0x457679
+> > > Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > > ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007f96ef162c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000128
+> > > RAX: ffffffffffffffda RBX: 00007f96ef1636d4 RCX: 0000000000457679
+> > > RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000004
+> > > RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> > > R13: 00000000004d4a88 R14: 00000000004c31d4 R15: 0000000000000000
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > FAULT_FLAG_ALLOW_RETRY missing 30
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > CPU: 1 PID: 21327 Comm: syz-executor3 Not tainted 4.19.0-rc4-next-20180920+
+> > > #76
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > >   dump_stack+0x1d3/0x2c4 lib/dump_stack.c:113
+> > >   handle_userfault.cold.33+0x47/0x62 fs/userfaultfd.c:432
+> > >   do_anonymous_page mm/memory.c:2915 [inline]
+> > >   handle_pte_fault mm/memory.c:3732 [inline]
+> > >   __handle_mm_fault+0x45ed/0x53e0 mm/memory.c:3858
+> > >   handle_mm_fault+0x54f/0xc70 mm/memory.c:3895
+> > >   __do_page_fault+0x673/0xec0 arch/x86/mm/fault.c:1397
+> > >   do_page_fault+0xed/0x7d1 arch/x86/mm/fault.c:1472
+> > >   page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1139
+> > > RIP: 0010:fault_in_pages_readable include/linux/pagemap.h:601 [inline]
+> > > RIP: 0010:iov_iter_fault_in_readable+0x1b4/0x450 lib/iov_iter.c:421
+> > > Code: fd 49 39 dc 76 17 eb 3c e8 e9 a0 ef fd 49 81 c4 00 10 00 00 4c 39 a5
+> > > 28 ff ff ff 72 2e e8 d4 a0 ef fd 0f 1f 00 0f ae e8 31 db <41> 8a 04 24 0f
+> > > 1f 00 31 ff 89 de 88 85 58 ff ff ff e8 c6 a1 ef fd
+> > > RSP: 0018:ffff88018dfe7650 EFLAGS: 00010246
+> > > RAX: 0000000000040000 RBX: 0000000000000000 RCX: ffffc90005662000
+> > > RDX: 00000000000001c2 RSI: ffffffff838daf1c RDI: 0000000000000005
+> > > RBP: ffff88018dfe7728 R08: ffff880198ad2240 R09: ffffed00319dc039
+> > > R10: ffffed00319dc039 R11: ffff88018cee01cb R12: 0000000020012000
+> > > R13: 0000000000000001 R14: 0000000000000001 R15: ffff88018dfe7c50
+> > >   generic_perform_write+0x216/0x6a0 mm/filemap.c:3144
+> > >   __generic_file_write_iter+0x26e/0x630 mm/filemap.c:3279
+> > >   generic_file_write_iter+0x436/0x870 mm/filemap.c:3307
+> > >   call_write_iter include/linux/fs.h:1825 [inline]
+> > >   do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+> > >   do_iter_write+0x185/0x5f0 fs/read_write.c:959
+> > >   vfs_writev+0x1f1/0x360 fs/read_write.c:1004
+> > >   do_pwritev+0x1cc/0x280 fs/read_write.c:1093
+> > >   __do_sys_pwritev fs/read_write.c:1140 [inline]
+> > >   __se_sys_pwritev fs/read_write.c:1135 [inline]
+> > >   __x64_sys_pwritev+0x9a/0xf0 fs/read_write.c:1135
+> > >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > RIP: 0033:0x457679
+> > > Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > > ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007f96ef162c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000128
+> > > RAX: ffffffffffffffda RBX: 00007f96ef1636d4 RCX: 0000000000457679
+> > > RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000004
+> > > RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> > > R13: 00000000004d4a88 R14: 00000000004c31d4 R15: 0000000000000000
+> > > kobject: 'loop4' (000000004119f3b1): kobject_uevent_env
+> > > kobject: 'loop4' (000000004119f3b1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop4'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop4' (000000004119f3b1): kobject_uevent_env
+> > > kobject: 'loop4' (000000004119f3b1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop4'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop4' (000000004119f3b1): kobject_uevent_env
+> > > kobject: 'loop4' (000000004119f3b1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop4'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop4' (000000004119f3b1): kobject_uevent_env
+> > > kobject: 'loop4' (000000004119f3b1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop4'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop4' (000000004119f3b1): kobject_uevent_env
+> > > kobject: 'loop4' (000000004119f3b1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop4'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop4' (000000004119f3b1): kobject_uevent_env
+> > > kobject: 'loop4' (000000004119f3b1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop4'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > audit: type=1326 audit(2000000012.020:46): auid=4294967295 uid=0 gid=0
+> > > ses=4294967295 subj==unconfined pid=21534 comm="syz-executor0"
+> > > exe="/root/syz-executor0" sig=31 arch=c000003e syscall=202 compat=0
+> > > ip=0x457679 code=0x0
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > audit: type=1326 audit(2000000012.950:47): auid=4294967295 uid=0 gid=0
+> > > ses=4294967295 subj==unconfined pid=21566 comm="syz-executor0"
+> > > exe="/root/syz-executor0" sig=31 arch=c000003e syscall=202 compat=0
+> > > ip=0x457679 code=0x0
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop2' (00000000dc629c38): kobject_uevent_env
+> > > kobject: 'loop2' (00000000dc629c38): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop2'
+> > > kobject: 'loop3' (00000000aff594d4): kobject_uevent_env
+> > > kobject: 'loop3' (00000000aff594d4): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop3'
+> > > kobject: 'loop4' (000000004119f3b1): kobject_uevent_env
+> > > kobject: 'loop4' (000000004119f3b1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop4'
+> > > audit: type=1326 audit(2000000013.460:48): auid=4294967295 uid=0 gid=0
+> > > ses=4294967295 subj==unconfined pid=21585 comm="syz-executor4"
+> > > exe="/root/syz-executor4" sig=31 arch=c000003e syscall=202 compat=0
+> > > ip=0x457679 code=0x0
+> > > audit: type=1326 audit(2000000013.510:49): auid=4294967295 uid=0 gid=0
+> > > ses=4294967295 subj==unconfined pid=21588 comm="syz-executor2"
+> > > exe="/root/syz-executor2" sig=31 arch=c000003e syscall=202 compat=0
+> > > ip=0x457679 code=0x0
+> > > kobject: 'loop1' (00000000980d23a1): kobject_uevent_env
+> > > kobject: 'loop1' (00000000980d23a1): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop1'
+> > > kobject: 'loop0' (00000000ee0adfaf): kobject_uevent_env
+> > > kobject: 'loop0' (00000000ee0adfaf): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop0'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > audit: type=1326 audit(2000000013.800:50): auid=4294967295 uid=0 gid=0
+> > > ses=4294967295 subj==unconfined pid=21601 comm="syz-executor0"
+> > > exe="/root/syz-executor0" sig=31 arch=c000003e syscall=202 compat=0
+> > > ip=0x457679 code=0x0
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > > kobject: 'loop5' (00000000699d1086): kobject_uevent_env
+> > > kobject: 'loop5' (00000000699d1086): fill_kobj_path: path
+> > > = '/devices/virtual/block/loop5'
+> > >
+> > >
+> > > ---
+> > > This bug is generated by a bot. It may contain errors.
+> > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > >
+> > > syzbot will keep track of this bug report. See:
+> > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > > syzbot.
