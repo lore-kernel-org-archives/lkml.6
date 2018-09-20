@@ -2,92 +2,70 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B883ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 535BDC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE0421526
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:09:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE0421526
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 181ED206B5
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:09:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181ED206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731506AbeITMvl (ORCPT
+        id S1731440AbeITMvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 08:51:41 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:18944 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeITMvk (ORCPT
+        Thu, 20 Sep 2018 08:51:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45220 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726235AbeITMvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 08:51:40 -0400
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 20 Sep 2018
- 15:10:04 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 1/2] dt-bindings: arm: amlogic: Add Meson G12A binding
-Date:   Thu, 20 Sep 2018 15:09:26 +0800
-Message-ID: <1537427368-11104-2-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1537427368-11104-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1537427368-11104-1-git-send-email-jianxin.pan@amlogic.com>
+        Thu, 20 Sep 2018 08:51:39 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13522BD4;
+        Thu, 20 Sep 2018 07:09:39 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 09:09:37 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Trent Piepho <tpiepho@impinj.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Todd Kjos <tkjos@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] ARM: amba: Fix leak of driver_override attribute value
+Message-ID: <20180920070937.GA9609@kroah.com>
+References: <20180919234721.16042-1-tpiepho@impinj.com>
+ <CAMuHMdVMbjkvEXex_Z8ELPUo8hVZucFBCd2Wy4ENpiqEaLES_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVMbjkvEXex_Z8ELPUo8hVZucFBCd2Wy4ENpiqEaLES_w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce new bindings for the Meson G12A SoC
+On Thu, Sep 20, 2018 at 08:48:36AM +0200, Geert Uytterhoeven wrote:
+> On Thu, Sep 20, 2018 at 1:48 AM Trent Piepho <tpiepho@impinj.com> wrote:
+> > If driver_override was set when a device was released the string would
+> > not be kfree'ed in amba_device_release and thus leaked when the amba
+> > device was freed.
+> >
+> > Cc: Russell King <linux@armlinux.org.uk>
+> > Cc: Todd Kjos <tkjos@google.com>
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Trent Piepho <tpiepho@impinj.com>
+> 
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device
+> binding path 'driver_override'")
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
----
- Documentation/devicetree/bindings/arm/amlogic.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+Then it should also have a cc: stable, right?
 
-diff --git a/Documentation/devicetree/bindings/arm/amlogic.txt b/Documentation/devicetree/bindings/arm/amlogic.txt
-index b5c2b5c..cf4bbc7 100644
---- a/Documentation/devicetree/bindings/arm/amlogic.txt
-+++ b/Documentation/devicetree/bindings/arm/amlogic.txt
-@@ -57,6 +57,10 @@ Boards with the Amlogic Meson AXG A113D SoC shall have the following properties:
-   Required root node property:
-     compatible: "amlogic,a113d", "amlogic,meson-axg";
- 
-+Boards with the Amlogic Meson G12A S905D2 SoC shall have the following properties:
-+  Required root node property:
-+    compatible: "amlogic,g12a";
-+
- Board compatible values (alphabetically, grouped by SoC):
- 
-   - "geniatech,atv1200" (Meson6)
-@@ -101,6 +105,8 @@ Board compatible values (alphabetically, grouped by SoC):
- 
-   - "amlogic,s400" (Meson axg a113d)
- 
-+  - "amlogic,u200" (Meson g12a s905d2)
-+
- Amlogic Meson Firmware registers Interface
- ------------------------------------------
- 
--- 
-1.9.1
+thanks,
 
+greg k-h
