@@ -2,175 +2,149 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,GAPPY_SUBJECT,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE37C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8956FC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D024B2150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4332A21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:56:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+wHZMcJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D024B2150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LFuyo+qe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4332A21525
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731680AbeITXkr (ORCPT
+        id S2387485AbeITXlO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:40:47 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37081 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726799AbeITXkr (ORCPT
+        Thu, 20 Sep 2018 19:41:14 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:37562 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732340AbeITXlN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:40:47 -0400
-Received: by mail-io1-f68.google.com with SMTP id v14-v6so8635974iob.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:56:08 -0700 (PDT)
+        Thu, 20 Sep 2018 19:41:13 -0400
+Received: by mail-yb1-f194.google.com with SMTP id b3-v6so3241715yba.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:56:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=bUFcJpjuQBK9I27ZQKgT97KpChNSn9yC6lv9abYHYlE=;
-        b=j+wHZMcJHLq2txup1w8cVuMYohrhgx/fWQaUrFZi7F8Y4Jhl81nbOEA47LgTnYtyrN
-         7oqxsUc0BI/QffgLYBOUCbBefwzWl0BU+6WvZicAgUCVhjdCkyNcj4d5jstiugfwqQqS
-         UPXHQ552iQYmUywsyWuH8W9xcHl98kfWOISjE=
+        bh=kn50+P8/uP7dtkuW3PKZfNCNCBS/4I7LKjfU27Vk4I4=;
+        b=LFuyo+qeViShYCLyi4wjbO9y3+EGDm+r2zHR9S6ztMhgLksrUwvI8zT7dqyiLn/ASh
+         v8qu2nGR7r/FbU+s4koDRoF8/1USHyiAA2+3nv9qxXa9WF5AaAHiueQoKjQ3fqZNiVaK
+         gaYqnB3qaO6mUGMGGLJcTMiqjSKsxfQubd7Bg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=bUFcJpjuQBK9I27ZQKgT97KpChNSn9yC6lv9abYHYlE=;
-        b=AYclvPKei9hNkx6tzPBWas1HzIhtZPyUKdki6kqCLcZPSaEASumXamtXx2gSucmBp4
-         PqxTv0E1isQzTJioWcaOZYBhzAdyPYC0+onHue7DwfzkFUoRVa8pMfVvGr8+RH5TWH6t
-         qZb2v3jr7pck8Xs7FCJ55sS2UIq4AD/AGrrd3GNyFP8b7QnLbv+ABXMoW2iPhpk0p4lS
-         faTwxC4UH3/e7xPwFxLfTDaHedbNDL9QHoWEBa6ZGwrntVMF+MF/c7MygT9rbK2VPUpI
-         izcEHClpOOKi1CRqWK4s0Qwcno/EgV/WBCeuC2tE2nlQz6B2VgDIA86zSgiv4J57frKl
-         Z8tQ==
-X-Gm-Message-State: APzg51AmTB4KEWkpE+NQeVDENm0SWvfSV1y8rIA8kfMGcFngTmhJAAbC
-        HRSxERZI6hXxmkqlej0BBvJ7yTv2h7kDh3GGGW1Xzw==
-X-Google-Smtp-Source: ANB0VdbpAJ8YbqBnmDqxdXC2TiSIRuDY+cUKrvkexX50YDnslk4aL8Ga57dOoVLyCCkbT3YlHj9T6/B7UNu9kqUjw2o=
-X-Received: by 2002:a24:5f92:: with SMTP id r140-v6mr3203741itb.45.1537466168204;
- Thu, 20 Sep 2018 10:56:08 -0700 (PDT)
+        bh=kn50+P8/uP7dtkuW3PKZfNCNCBS/4I7LKjfU27Vk4I4=;
+        b=GPiq/nVRybVbAstj8tISjThQYTJoSh8WZ2ZvaG1uIdtD2Mrl15gfngvqM7Fzwfy8Rx
+         R5v4f853unSewT761j2njTvhAOUUs2YwVrhC3bLC29npx8K1BCfVLUN2v3iP7rYOfKqH
+         PhXiHM/gIa8os1WLq4PuyvgHdYEB8FUVbKR+7aXYAAzZvxhKl5BaE1VNsq+drvWN4R5A
+         B2To7XixO2mUagyHV3T9JTcxGTGOnO0IBwZqI2i9aEdgWZHLcn2XpZ38Z+NsDddAvvhZ
+         DTxJUVlO1BGuUzVZaQhWerkDw9KfIPLq/4bH1i/K2aN8/9MNWqUstfI+m1/NiSNtooWj
+         ESCw==
+X-Gm-Message-State: APzg51DBaRflTKh8x74YFY5svksfIuKq8z5XuWM9i50+kjkUmcc9XV6j
+        5kB/A81EJWcy2PJ+ug+34JqlOIKSYYc=
+X-Google-Smtp-Source: ANB0Vda9f2wG8bKIt+gjCmdfcNCek6zcgHNcRUpXv9ycXThSaODlM2suZNfrl81cQVu7zk9G0UgHOA==
+X-Received: by 2002:a25:5507:: with SMTP id j7-v6mr13541362ybb.133.1537466193550;
+        Thu, 20 Sep 2018 10:56:33 -0700 (PDT)
+Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id z193-v6sm4479396ywd.90.2018.09.20.10.56.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 10:56:31 -0700 (PDT)
+Received: by mail-yw1-f43.google.com with SMTP id l9-v6so4105057ywc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 10:56:30 -0700 (PDT)
+X-Received: by 2002:a81:2288:: with SMTP id i130-v6mr2763603ywi.288.1537466190637;
+ Thu, 20 Sep 2018 10:56:30 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 10:56:07
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 10:56:30
  -0700 (PDT)
-In-Reply-To: <1537268144-21152-3-git-send-email-ludovic.Barre@st.com>
-References: <1537268144-21152-1-git-send-email-ludovic.Barre@st.com> <1537268144-21152-3-git-send-email-ludovic.Barre@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 20 Sep 2018 19:56:07 +0200
-Message-ID: <CAPDyKFrwiQv-EFfSrY7TwxXN-AnOsbbPop88GPo8_32hcjBzsg@mail.gmail.com>
-Subject: Re: [PATCH V2 02/27] mmc: mmci: internalize dma_inprogress into mmci
- dma functions
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com
+In-Reply-To: <8ef63a94-c7b6-226d-2d60-a05f79406819@schaufler-ca.com>
+References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com> <8ef63a94-c7b6-226d-2d60-a05f79406819@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 20 Sep 2018 10:56:30 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+aWyiQ_aGCkeoyvYC7Aj2hfuvKei+SAOMrfOWyfpP8xw@mail.gmail.com>
+Message-ID: <CAGXu5j+aWyiQ_aGCkeoyvYC7Aj2hfuvKei+SAOMrfOWyfpP8xw@mail.gmail.com>
+Subject: Re: [PATCH v3 16/16] LSM: Blob sharing support for S.A.R.A and LandLock
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 September 2018 at 12:55, Ludovic Barre <ludovic.Barre@st.com> wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
->
-> This patch internalizes the dma_inprogress into mmci dma interfaces.
-> This allows to simplify and prepare the next dma callbacks
-> for mmci host ops. __dma_inprogress is called in mmci_dma_data_error
-> and mmci_dma_finalize.
->
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->  drivers/mmc/host/mmci.c | 16 ++++++++++------
->  drivers/mmc/host/mmci.h |  4 +---
->  2 files changed, 11 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-> index bf0bb07..7d22cb9 100644
-> --- a/drivers/mmc/host/mmci.c
-> +++ b/drivers/mmc/host/mmci.c
-> @@ -497,6 +497,9 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
->
->  static void mmci_dma_data_error(struct mmci_host *host)
+On Wed, Sep 19, 2018 at 5:21 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 8f3b809d7c26..0156ffea7f8c 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3475,18 +3475,16 @@ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
 >  {
-> +       if (!__dma_inprogress(host))
-> +               return;
-> +
->         dev_err(mmc_dev(host->mmc), "error during DMA transfer!\n");
->         dmaengine_terminate_all(host->dma_current);
->         host->dma_in_progress = false;
-> @@ -512,6 +515,9 @@ static void mmci_dma_finalize(struct mmci_host *host, struct mmc_data *data)
->         u32 status;
->         int i;
+>         struct smack_known *skp = smk_of_task_struct(p);
+>         char *cp;
+> -       int slen;
 >
-> +       if (!__dma_inprogress(dmae))
-> +               return;
-> +
->         /* Wait up to 1ms for the DMA to complete */
->         for (i = 0; ; i++) {
->                 status = readl(host->base + MMCISTATUS);
-> @@ -903,8 +909,7 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
->                 u32 remain, success;
+> -       if (strcmp(name, "current") != 0)
+> +       if (strcmp(name, "current") == 0) {
+> +               cp = kstrdup(skp->smk_known, GFP_KERNEL);
+> +               if (cp == NULL)
+> +                       return -ENOMEM;
+> +       } else
+>                 return -EINVAL;
 >
->                 /* Terminate the DMA transfer */
-> -               if (dma_inprogress(host))
-> -                       mmci_dma_data_error(host);
-> +               mmci_dma_data_error(host);
->
->                 /*
->                  * Calculate how far we are into the transfer.  Note that
-> @@ -942,8 +947,8 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
->                 dev_err(mmc_dev(host->mmc), "stray MCI_DATABLOCKEND interrupt\n");
->
->         if (status & MCI_DATAEND || data->error) {
-> -               if (dma_inprogress(host))
-> -                       mmci_dma_finalize(host, data);
-> +               mmci_dma_finalize(host, data);
-> +
->                 mmci_stop_data(host);
->
->                 if (!data->error)
-> @@ -1050,8 +1055,7 @@ mmci_cmd_irq(struct mmci_host *host, struct mmc_command *cmd,
->         if ((!sbc && !cmd->data) || cmd->error) {
->                 if (host->data) {
->                         /* Terminate the DMA transfer */
-> -                       if (dma_inprogress(host))
-> -                               mmci_dma_data_error(host);
-> +                       mmci_dma_data_error(host);
->
->                         mmci_stop_data(host);
->                 }
-> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-> index 696a066..f1ec066 100644
-> --- a/drivers/mmc/host/mmci.h
-> +++ b/drivers/mmc/host/mmci.h
-> @@ -332,9 +332,7 @@ struct mmci_host {
->         struct mmci_host_next   next_data;
->         bool                    dma_in_progress;
->
-> -#define dma_inprogress(host)   ((host)->dma_in_progress)
-> -#else
-> -#define dma_inprogress(host)   (0)
-> +#define __dma_inprogress(host) ((host)->dma_in_progress)
+> -       cp = kstrdup(skp->smk_known, GFP_KERNEL);
+> -       if (cp == NULL)
+> -               return -ENOMEM;
+> -
+> -       slen = strlen(cp);
+>         *value = cp;
+> -       return slen;
+> +       return strlen(cp);
+>  }
 
-Overall the change makes good sense to me, however I don't get why you
-want to rename the macro-function. Please don't.
+This should be separate: it looks like unrelated refactoring? (I
+mentioned this before, I think?)
 
->  #endif
->  };
+> diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+> index 0110bebe86e2..f386f92c57c5 100644
+> --- a/security/tomoyo/common.h
+> +++ b/security/tomoyo/common.h
+> @@ -1216,8 +1221,13 @@ static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
+>   */
+>  static inline struct tomoyo_domain_info *tomoyo_domain(void)
+>  {
+> -       struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
+> +       const struct cred *cred = current_cred();
+> +       struct tomoyo_domain_info **blob;
+> +
+> +       if (cred->security == NULL)
+> +               return NULL;
 >
-> --
-> 2.7.4
->
+> +       blob = tomoyo_cred(cred);
+>         return *blob;
+>  }
 
-Kind regards
-Uffe
+I think this is another lost hunk?
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
