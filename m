@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BD5ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8605ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F38E92150E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FF822150E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 00:20:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PchEoz7W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F38E92150E
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="RSwnStcl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF822150E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387481AbeITGAx (ORCPT
+        id S2387508AbeITGBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 02:00:53 -0400
-Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:46344 "EHLO
+        Thu, 20 Sep 2018 02:01:03 -0400
+Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:33355 "EHLO
         sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727632AbeITGAx (ORCPT
+        by vger.kernel.org with ESMTP id S2387451AbeITGBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 02:00:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402825; bh=tW98kW7ydoNWqgAJkvlmczWEOzk/bW3JvbuBz1eIV90=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=PchEoz7Wm3QEQwqzRHgYQ+hGUrXqpCOMO8A/f3N6IK8v/4bsKec4nWxhBk3a+WQjZuirjOGIA05McHfnGSPtjL6giIkc3PoLKzVw8daR3joLmRn+xG22QI6CKMnI2ACbJ49rVefJGifc/TsvJBJ4C0KaKjGkupA18O3IkNChd7EJIetwo4Mt/DrwDNeIGIW4Dpz1i1+/ClKaJL8hVRKjdzt+lWTMX0q4JP3rAVsjHRKze0Mt0cR0v9iG+4tmxGws6chZWbigJB5+TK921Qyab4ZxLWQEbflg+7mu4xkcNC5lx57aJu6sYQ+dz3gqqyGyCpHfiR6rwkJGEhzTb3fxEQ==
-X-YMail-OSG: 0CAhtPwVM1mEe.NS_d65L5bvbWz1hNlEQEbcLDEKpfPLbpoyO5b9nICyjoUJCdG
- mQACUaZgDxR2xBMlOnyPY9F4QB00WUw2.gSlVgaumd9gs.NLCuJlN2P1nBTVsjZ5eSXGOTEoaZ0_
- wy6R6NHb_iVfh6oleKG5QNyI.qf9rivXqeIyr562TJFnzf.OupbYkJ8F.PIFni_Ljus9_.0YnN6Y
- 8ZWG5dS0J_jI8X2ZSGxzs2vdxgC6Co1Gjz.taAw0M7PSJtO0IIqqJkQCZluBqVH_DYXOUn5ECUIT
- OR..sM24E.CT71lJxJlPGSFOb59ou.I6GKkI.obmykJMq3Aty3YKn4M3u7rImFJeyCMFFoNbpZyU
- GIlr5PC4vjZyhIJpb01Pjc_uZKdZ1mnuckvs0TRB69JCRw5vxxxYwO5GTz6pK9oUkAVDjnqvf6N1
- nDWKnXq.axcD8OhnKT9xV3OuWiK8S3Qa42MTGDAY96.f_ZCED9lhTe6jkI8vA.IBdSSRFpbOcpsA
- l9CXiY494zB82eSF0NNIyG3cimkl5SQ2th69wAp9DKDe8WJjfnbJDxaP0oX5.qB3iYmSqpl1sFuL
- E6mMgR4u2lpNG1PFpOFehNftA76UB5B2PeSw.Zwog20_tben0iKvbvuxnnj2CLb_4zGV5uozpNYP
- jpfFya7HEIkl0WNW0ho.qZJQIOefcqw4kuL2_JPie2pBGSLTmWCVhgLyI4JyltPvhg7Ra51PPGhm
- 7C48rj5dbsI3dWBhXroXtvgJWCQS3sWH92vOqKhaBaFbl_T5xIicCSnLfP6CT6UYUA1QzlNV6JFJ
- XzqWz4crF8Qwb.wEvIN8hxzZntWl_WtfJi4qEJHhxR1c6cSlwUab9VGHnfplbbrfTSSuNth_D6Gx
- .cmUXgckCf7gw35oDe8iON7EeAovqNRf2y0Gjdr3N381VqfNTxEH_YZnsdyWjFQ80d8tggknMTtL
- d04bNQGdRzu_xSBDl8N9wi6xE1IvLHW._CB4eff8xT7oMhaZw6FeWmRJ01TcUuj9fJ3wsSnpcmnw
- rNcXIFog-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:25 +0000
+        Thu, 20 Sep 2018 02:01:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537402836; bh=4YFT2kRkcBS6EDzTvP9aJ97USIwUQlxH8rUXSudgMqg=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=RSwnStclYuCnlAEmk9IGzHV/dX35X33WIm0Dc7LFAm0Ptciy6jHI0hFKy5sozdxE5W29Wd2Q30wQlem6Uf26SCZ5BWSaHwYLxY+/x6XOWOCbGv3QFKK0l+0s4OcxsLkQN//eoKKN5kloiTSs+CiPkeQOVHarBgmuCdui/PIo/IglmmybybaQNLcS9ZaEsb3GMVxm3ueg9xiD4lEV5L5Y7F9QlupSpDAM8G2mQu0B/RemThsmZbrGlRpr0zaZVt27xrP/cVVwNM7PbHTZgYKrjdc5aXFsi32f7M4+cHKgDGNUi2JkdmAinWcXVi9DwuM3ifVoyUm8v4vPj4ODVihJJg==
+X-YMail-OSG: VHdmbdAVM1lFDdy5OQtZFwpJGS3V.PEhyjwSCDTfAEafG3OaIjQbJjU2GjdO.S2
+ DaqRwlbM2USxAqo7.jzATHGIZ1h135oRTk2w_O9QrPYA8RPGhlsvNTT1SLpZ7LNR8vjPVEFWRvj4
+ v3ZTiEr6p9bCSS4Zp7nAHyQLmvXkXMKMoLljUH0DLmhe6UqgQdrfZFGU5edgwIH8PLByzhAwAPhK
+ qS0MnjeqDaWSTMA.FvyApMZ89vkrmQ7akQ.9q7nBIKQpA1mMp_9eSpKYCrNvRiPyVXuY0erXRfEc
+ o6bsO3UJ7NANjr3HDhvdob.GF7MAy6prB5dCjpuF30QszEfc9PzDjFOJb7jty1vFP.wVOcLM1YA7
+ 5La_m1KIH77rszXA57QFP7hSk3.TZfMFZ9DN.e8MPo_LEuVDiqUWCjitbnwV5HsMHhirOjWBn3rE
+ BdTP55jV0sINSk7VRg8JmJ6.MKKEUH9zc2Hq6Jw2ZGcyVQtnMTsfKfw6xa3brXDJNMi.ADsrrFVi
+ 3VcKj1I3SQfht3zVnOIvvvcKT3VwR0aQD1DHWuVk4IgBKsIhtLW0zPLHo0xDvEoUgX9WO.XBONhW
+ VpTEl.oGyggkofG_x6GiUZZJiyDFdDFuCTTRwngsJSwxTaGtIV7xea_FXxEQa3PxnGvRxsGlG__u
+ DLLtWxpMf_aHGy89r1NjuWZnIr8msxkMenPX7aZP63eBgGNJY4KB4q_xMBqs11yIPIH1Ec0wU0nm
+ NdnJM9yLAIWYQTIXPINERgg_o7rxufyyHxG5rB_EihSpkz1ZaZFTf9fCTGHyJEKMs1M8_DKND591
+ MsZEDpm46mhRz.HMI2.0h6f91gk7fKJoEnnVBOggVSWpF.VUqqpuC.mAWBJUDZWYAxyncYVgxmv4
+ X.w7iwQqip.fNDiMED9kdHjX2ctagnoisB9rpF6IrWHwhhVoNDoowwNGA0TyTqibN_NtxntM77r.
+ vqNY.85Xlh_WUvprI.kMm3fFTCcASH.byoZOJCWFROS4f3nkykuccnmQZPunMzjcW502TLYaNRkX
+ uR0.8PPHpE1KiDYvOtBmW7gmYklAHDiCdbg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Sep 2018 00:20:36 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp429.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 007b3a714951275b603f755216446471;
-          Thu, 20 Sep 2018 00:20:24 +0000 (UTC)
-Subject: [PATCH v3 05/16] SELinux: Remove unused selinux_is_enabled
+          by smtp423.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 601572d7d29fa84acf960ef7c37cc7a4;
+          Thu, 20 Sep 2018 00:20:32 +0000 (UTC)
+Subject: [PATCH v3 06/16] AppArmor: Abstract use of cred security blob
 To:     LSM <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         SE Linux <selinux@tycho.nsa.gov>,
@@ -61,8 +61,8 @@ To:     LSM <linux-security-module@vger.kernel.org>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <bc0785c2-604b-2204-9103-ac9e70d18b8a@schaufler-ca.com>
-Date:   Wed, 19 Sep 2018 17:20:21 -0700
+Message-ID: <2eb4065c-1bae-203c-dbe0-47980e009a2c@schaufler-ca.com>
+Date:   Wed, 19 Sep 2018 17:20:28 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -75,158 +75,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SELinux: Remove unused selinux_is_enabled
+AppArmor: Abstract use of cred security blob
 
-There are no longer users of selinux_is_enabled().
-Remove it. As selinux_is_enabled() is the only reason
-for include/linux/selinux.h remove that as well.
+Don't use the cred->security pointer directly.
+Provide a helper function that provides the security blob pointer.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/cred.h             |  1 -
- include/linux/selinux.h          | 35 --------------------------------
- security/selinux/Makefile        |  2 +-
- security/selinux/exports.c       | 23 ---------------------
- security/selinux/hooks.c         |  1 -
- security/selinux/include/audit.h |  3 ---
- security/selinux/ss/services.c   |  1 -
- 7 files changed, 1 insertion(+), 65 deletions(-)
- delete mode 100644 include/linux/selinux.h
- delete mode 100644 security/selinux/exports.c
+ security/apparmor/domain.c       |  2 +-
+ security/apparmor/include/cred.h | 16 +++++++++++++++-
+ security/apparmor/lsm.c          | 10 +++++-----
+ security/apparmor/task.c         |  6 +++---
+ 4 files changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 7eed6101c791..2e715e202e6a 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -15,7 +15,6 @@
- #include <linux/capability.h>
- #include <linux/init.h>
- #include <linux/key.h>
--#include <linux/selinux.h>
- #include <linux/atomic.h>
- #include <linux/uidgid.h>
- #include <linux/sched.h>
-diff --git a/include/linux/selinux.h b/include/linux/selinux.h
-deleted file mode 100644
-index 44f459612690..000000000000
---- a/include/linux/selinux.h
-+++ /dev/null
-@@ -1,35 +0,0 @@
--/*
-- * SELinux services exported to the rest of the kernel.
-- *
-- * Author: James Morris <jmorris@redhat.com>
-- *
-- * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
-- * Copyright (C) 2006 Trusted Computer Solutions, Inc. <dgoeddel@trustedcs.com>
-- * Copyright (C) 2006 IBM Corporation, Timothy R. Chavez <tinytim@us.ibm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2,
-- * as published by the Free Software Foundation.
-- */
--#ifndef _LINUX_SELINUX_H
--#define _LINUX_SELINUX_H
--
--struct selinux_audit_rule;
--struct audit_context;
--struct kern_ipc_perm;
--
--#ifdef CONFIG_SECURITY_SELINUX
--
--/**
-- * selinux_is_enabled - is SELinux enabled?
-- */
--bool selinux_is_enabled(void);
--#else
--
--static inline bool selinux_is_enabled(void)
--{
--	return false;
--}
--#endif	/* CONFIG_SECURITY_SELINUX */
--
--#endif /* _LINUX_SELINUX_H */
-diff --git a/security/selinux/Makefile b/security/selinux/Makefile
-index c7161f8792b2..ccf950409384 100644
---- a/security/selinux/Makefile
-+++ b/security/selinux/Makefile
-@@ -6,7 +6,7 @@
- obj-$(CONFIG_SECURITY_SELINUX) := selinux.o
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 08c88de0ffda..726910bba84b 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -975,7 +975,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 	}
+ 	aa_put_label(cred_label(bprm->cred));
+ 	/* transfer reference, released when cred is freed */
+-	cred_label(bprm->cred) = new;
++	set_cred_label(bprm->cred, new);
  
- selinux-y := avc.o hooks.o selinuxfs.o netlink.o nlmsgtab.o netif.o \
--	     netnode.o netport.o ibpkey.o exports.o \
-+	     netnode.o netport.o ibpkey.o \
- 	     ss/ebitmap.o ss/hashtab.o ss/symtab.o ss/sidtab.o ss/avtab.o \
- 	     ss/policydb.o ss/services.o ss/conditional.o ss/mls.o ss/status.o
+ done:
+ 	aa_put_label(label);
+diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+index e287b7d0d4be..a90eae76d7c1 100644
+--- a/security/apparmor/include/cred.h
++++ b/security/apparmor/include/cred.h
+@@ -23,8 +23,22 @@
+ #include "policy_ns.h"
+ #include "task.h"
  
-diff --git a/security/selinux/exports.c b/security/selinux/exports.c
-deleted file mode 100644
-index e75dd94e2d2b..000000000000
---- a/security/selinux/exports.c
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/*
-- * SELinux services exported to the rest of the kernel.
-- *
-- * Author: James Morris <jmorris@redhat.com>
-- *
-- * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
-- * Copyright (C) 2006 Trusted Computer Solutions, Inc. <dgoeddel@trustedcs.com>
-- * Copyright (C) 2006 IBM Corporation, Timothy R. Chavez <tinytim@us.ibm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2,
-- * as published by the Free Software Foundation.
-- */
--#include <linux/module.h>
--#include <linux/selinux.h>
--
--#include "security.h"
--
--bool selinux_is_enabled(void)
--{
--	return selinux_enabled;
--}
--EXPORT_SYMBOL_GPL(selinux_is_enabled);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 80614ca25a2b..82b28ee878c4 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -79,7 +79,6 @@
- #include <linux/personality.h>
- #include <linux/audit.h>
- #include <linux/string.h>
--#include <linux/selinux.h>
- #include <linux/mutex.h>
- #include <linux/posix-timers.h>
- #include <linux/syslog.h>
-diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
-index 1bdf973433cc..36e1d44c0209 100644
---- a/security/selinux/include/audit.h
-+++ b/security/selinux/include/audit.h
-@@ -1,9 +1,6 @@
+-#define cred_label(X) ((X)->security)
++static inline struct aa_label *cred_label(const struct cred *cred)
++{
++	struct aa_label **blob = cred->security;
++
++	AA_BUG(!blob);
++	return *blob;
++}
+ 
++static inline void set_cred_label(const struct cred *cred,
++				  struct aa_label *label)
++{
++	struct aa_label **blob = cred->security;
++
++	AA_BUG(!blob);
++	*blob = label;
++}
+ 
+ /**
+  * aa_cred_raw_label - obtain cred's label
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 8b8b70620bbe..4f51705c3c71 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -57,7 +57,7 @@ DEFINE_PER_CPU(struct aa_buffers, aa_buffers);
+ static void apparmor_cred_free(struct cred *cred)
+ {
+ 	aa_put_label(cred_label(cred));
+-	cred_label(cred) = NULL;
++	set_cred_label(cred, NULL);
+ }
+ 
  /*
-  * SELinux support for the Audit LSM hooks
-  *
-- * Most of below header was moved from include/linux/selinux.h which
-- * is released under below copyrights:
-- *
-  * Author: James Morris <jmorris@redhat.com>
-  *
-  * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index f3def298a90e..e2235f1a99aa 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -49,7 +49,6 @@
- #include <linux/sched.h>
- #include <linux/audit.h>
- #include <linux/mutex.h>
--#include <linux/selinux.h>
- #include <linux/flex_array.h>
- #include <linux/vmalloc.h>
- #include <net/netlabel.h>
+@@ -65,7 +65,7 @@ static void apparmor_cred_free(struct cred *cred)
+  */
+ static int apparmor_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+ {
+-	cred_label(cred) = NULL;
++	set_cred_label(cred, NULL);
+ 	return 0;
+ }
+ 
+@@ -75,7 +75,7 @@ static int apparmor_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+ static int apparmor_cred_prepare(struct cred *new, const struct cred *old,
+ 				 gfp_t gfp)
+ {
+-	cred_label(new) = aa_get_newest_label(cred_label(old));
++	set_cred_label(new, aa_get_newest_label(cred_label(old)));
+ 	return 0;
+ }
+ 
+@@ -84,7 +84,7 @@ static int apparmor_cred_prepare(struct cred *new, const struct cred *old,
+  */
+ static void apparmor_cred_transfer(struct cred *new, const struct cred *old)
+ {
+-	cred_label(new) = aa_get_newest_label(cred_label(old));
++	set_cred_label(new, aa_get_newest_label(cred_label(old)));
+ }
+ 
+ static void apparmor_task_free(struct task_struct *task)
+@@ -1455,7 +1455,7 @@ static int __init set_init_ctx(void)
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
+-	cred_label(cred) = aa_get_label(ns_unconfined(root_ns));
++	set_cred_label(cred, aa_get_label(ns_unconfined(root_ns)));
+ 	task_ctx(current) = ctx;
+ 
+ 	return 0;
+diff --git a/security/apparmor/task.c b/security/apparmor/task.c
+index c6b78a14da91..4551110f0496 100644
+--- a/security/apparmor/task.c
++++ b/security/apparmor/task.c
+@@ -81,7 +81,7 @@ int aa_replace_current_label(struct aa_label *label)
+ 	 */
+ 	aa_get_label(label);
+ 	aa_put_label(cred_label(new));
+-	cred_label(new) = label;
++	set_cred_label(new, label);
+ 
+ 	commit_creds(new);
+ 	return 0;
+@@ -138,7 +138,7 @@ int aa_set_current_hat(struct aa_label *label, u64 token)
+ 		return -EACCES;
+ 	}
+ 
+-	cred_label(new) = aa_get_newest_label(label);
++	set_cred_label(new, aa_get_newest_label(label));
+ 	/* clear exec on switching context */
+ 	aa_put_label(ctx->onexec);
+ 	ctx->onexec = NULL;
+@@ -172,7 +172,7 @@ int aa_restore_previous_label(u64 token)
+ 		return -ENOMEM;
+ 
+ 	aa_put_label(cred_label(new));
+-	cred_label(new) = aa_get_newest_label(ctx->previous);
++	set_cred_label(new, aa_get_newest_label(ctx->previous));
+ 	AA_BUG(!cred_label(new));
+ 	/* clear exec && prev information when restoring to previous context */
+ 	aa_clear_task_ctx_trans(ctx);
 -- 
 2.17.1
 
