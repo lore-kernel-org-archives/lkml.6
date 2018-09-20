@@ -2,107 +2,140 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF34ECE567
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D79C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0FC21522
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ED732147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 16:29:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTGilprg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0FC21522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cA2l9yp5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED732147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731231AbeITWM6 (ORCPT
+        id S1731873AbeITWNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:12:58 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40911 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeITWM6 (ORCPT
+        Thu, 20 Sep 2018 18:13:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44810 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730919AbeITWNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:12:58 -0400
-Received: by mail-qk1-f193.google.com with SMTP id c126-v6so5372816qkd.7;
-        Thu, 20 Sep 2018 09:28:41 -0700 (PDT)
+        Thu, 20 Sep 2018 18:13:53 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k21-v6so4609873pff.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 09:29:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=7OsRJQ8lMnbnCCd91LUHXhmUNXYEOPVk7W75hhk+o78=;
-        b=fTGilprgxiKCs4U164CWmHy6xTooPqAOmfDJ3Y+NRep6KwLRKU9ltqaGaNFSXjYUnP
-         hEesTIdNeYxK72T5+IhQuU0MyYsJDAqK1JuyU+wmXGtJen68OQr1PyB2Bl8gpl4Zpr9C
-         38e2dgd0BlOt1PWJWUVWAlOwt/72Wu9K+cabOXFxtWWOs+luo/vEHvUOtgZqQyC7Y7Av
-         O59NdqoEPGv6rfHSwzLodPLEPRwZjMjdyhCGqPnJ6vrgx/qnayfqdX5ErIPdX7VK0qzQ
-         aYlQnqQsO9mAol0n2AsR8fan3UriOsIgnztIYqmgaPnecMvRQ7feAwHJ0a1IS7vBKZLY
-         a/SA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1R3OyL5qZwtVctuoKGY5KtAiw4R0ChLxsIprVubIdKY=;
+        b=cA2l9yp59kBSM66Ek4dMpVBzmjS7OG6j+25ylPsFYwXzqkxEtpMvK6SDkZX3dOIcIu
+         mrm1eg624plsw7/ZZKLEZnBJbvTnhPCkZQYgZLEKEgHngwO8enaDtRK5tTaC1emHaP5x
+         YcwoB9yIPKsJV2Tg/RHhGh/a4OEeQ/q3PVUl8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=7OsRJQ8lMnbnCCd91LUHXhmUNXYEOPVk7W75hhk+o78=;
-        b=F+4H3jYxC5675pxyqMwaH/Hv5cjZHrFkFVWLeABMcGvmEGkjfCHhsKZXtaEVbxXyZK
-         VstVsUTmCzqa61+XuMD7pG9Fk/io6orVb/EexRbGm6NpwTXBnaRocbPxpm4v4AKzjRM9
-         B6Ms3x6n4IikC8Qq2mU7acm4nXpV0ZzDaHOtXpyV/jLA32T4b4m/J2V5ZGfMowiYxlkn
-         H7F0CCCLiKc6QUwSiF5wmlHakGKz8my2CFnvEFRmkRa13ZVkzcB8P+PJ6BYPiDpeQk3d
-         eVCMIoPV+F8rRok/R4NNj/l0GCEHiD/knk2wgoqmzgpDMEd+3uNlyWcAmd3qCzxjrZA7
-         NQAQ==
-X-Gm-Message-State: APzg51DK9skqXtmWBnGdRH+NJQS8WHJZ6Y9sw7713OfVqkLIWBjdz2Kz
-        MQ7wQ04p1A1NhZ8I0gwyHIn1AyOff3VTOrA2krgX73GWZCc=
-X-Google-Smtp-Source: ANB0VdauWW8sSQQkOKLvTFXKk63jVNYRR9CFUas0bkMWyFT03LMkCL37nh80Nld6AzaaWdUwVm93+hAdx1pCiA9niJI=
-X-Received: by 2002:a0c:a202:: with SMTP id f2-v6mr28176302qva.170.1537460920775;
- Thu, 20 Sep 2018 09:28:40 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 09:28:20
- -0700 (PDT)
-In-Reply-To: <CA+55aFyApn2d+bv_3LGwXKnLpj2zdX6HYw_9cYZoNUVPi-Bu_g@mail.gmail.com>
-References: <20180831080714.4f94fba9@canb.auug.org.au> <CA+55aFyApn2d+bv_3LGwXKnLpj2zdX6HYw_9cYZoNUVPi-Bu_g@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 20 Sep 2018 18:28:20 +0200
-Message-ID: <CANiq72kseYacgu91NuDGaH1cb+9Jind=0bAt-7baPi28YGbgsQ@mail.gmail.com>
-Subject: Re: linux-next: disabling -Wstringop-truncation
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andi Kleen <ak@linux.intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1R3OyL5qZwtVctuoKGY5KtAiw4R0ChLxsIprVubIdKY=;
+        b=a6EMGg5rFmEsc3Jh1SeoB3q5C37I3n+i/cI8z9QORroyUyl+3S2W2+99jb0qsjIOXp
+         /kXBd6lfv+vebzR8t/bk5FnNsDsJnPPDiUzKKfhCcsv0ehyS0lvyX/mxtCdDFB3DBLWx
+         SGueRkni81Fzb5r//soJPHjp0JbxQa6T9rxbKamQa4GWf8+fx9Dct4T1YPGC0UpiL+Nz
+         yLKh4lgGlFcC/k+rN4M78dIQkFGLQHmh4pd12J7J3dfGO1PtueziTYPuGogpmxzPMDIr
+         kVGOuXBS8SnwKdsrcij97DDj6j9d/exRzjo/M2lXTRySSz1EmrrOHMRyIErNBvTiobuR
+         OSzw==
+X-Gm-Message-State: APzg51CpO4dRfB87GVBJ1VOsOFbGrPkMulIniYdqFCNz7UWzTOTv6uHX
+        DoVi4KlA3PQb2nw9QNwcHq2Uzw==
+X-Google-Smtp-Source: ANB0VdaCGJFsG0abGS3ayfdSrynwn6t5dkQ3yO8PdUO2g3QQMkoeUCg4ag80XRiM4VXRM9lKq9+dNg==
+X-Received: by 2002:a65:41c6:: with SMTP id b6-v6mr38007537pgq.174.1537460975559;
+        Thu, 20 Sep 2018 09:29:35 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id 77-v6sm30867694pga.40.2018.09.20.09.29.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 09:29:34 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH security-next v2 24/26] capability: Mark as LSM_ORDER_FIRST
+Date:   Thu, 20 Sep 2018 09:23:36 -0700
+Message-Id: <20180920162338.21060-25-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
+References: <20180920162338.21060-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen, Andi, (Linus),
+This converts capabilities to use the new LSM_ORDER_FIRST position.
 
-On Fri, Aug 31, 2018 at 3:17 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Aug 30, 2018 at 3:07 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> I am now mainly using gcc v8.2 for my builds and -Wstringop-truncation
->> causes so many warnings that I am sure to miss others, so I have
->> applied the below to my fixes tree until the noise reduces.
->
-> Applied.
->
-> If people want the warning with W=xyz, then this is still the correct
-> patch, and we should add a line to re-enable it in
-> scripts/Makefile.extrawarn.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/linux/lsm_hooks.h | 2 --
+ security/commoncap.c      | 8 +++++++-
+ security/security.c       | 5 -----
+ 3 files changed, 7 insertions(+), 8 deletions(-)
 
-For reference, I am sending the v5 of the Compiler Attributes series
-with the __nonstring patches appended on top, and I am adding the
-warning back as well, on W=1.
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index bf29851baf47..8e843eaacffb 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2098,6 +2098,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+ 
+-extern void __init capability_add_hooks(void);
+-
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 2e489d6a3ac8..7a6abaec65de 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1366,10 +1366,16 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory),
+ };
+ 
+-void __init capability_add_hooks(void)
++static int __init capability_init(void)
+ {
+ 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+ 				"capability");
++	return 0;
+ }
+ 
++DEFINE_LSM(capability)
++	.order = LSM_ORDER_FIRST,
++	.init = capability_init,
++END_LSM;
++
+ #endif /* CONFIG_SECURITY */
+diff --git a/security/security.c b/security/security.c
+index d649e7dea4c4..a40e938db1b0 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -259,11 +259,6 @@ int __init security_init(void)
+ 		}
+ 	}
+ 
+-	/*
+-	 * Load minor LSMs, with the capability module always first.
+-	 */
+-	capability_add_hooks();
+-
+ 	/* Load LSMs in specified order. */
+ 	prepare_lsm_order();
+ 	ordered_lsm_init();
+-- 
+2.17.1
 
-I think W=1 is better: there are not that many warnings compared to
-those in W=2. AFAIK, it is relatively easy to achieve a clean W=1 (and
-most code should at least try be W=1 clean, no?). Also, note that now
-people can use __nonstring to suppress that warning (if applicable);
-and that using properly __nonstring can detect even more problems
-(i.e. adding __nonstring may trigger additional warnings, e.g.
--Wstringop-overflow); so I think we should encourage the use of
-__nonstring.
-
-Cheers,
-Miguel
