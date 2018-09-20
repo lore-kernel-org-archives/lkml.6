@@ -2,67 +2,107 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F193C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AF8ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD113206B5
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:22:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD113206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 07AA9206B5
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 05:23:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JtWECeF/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AA9206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731413AbeITLDn (ORCPT
+        id S1731487AbeITLFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 07:03:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37666 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbeITLDm (ORCPT
+        Thu, 20 Sep 2018 07:05:30 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43985 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730172AbeITLFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 07:03:42 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1C2FCA1;
-        Thu, 20 Sep 2018 05:22:07 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 07:22:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        stable@vger.kernel.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: Re: [PATCH] firmware: Always initialize the fw_priv list object
-Message-ID: <20180920052204.GA15695@kroah.com>
-References: <20180920010938.10315-1-bjorn.andersson@linaro.org>
+        Thu, 20 Sep 2018 07:05:30 -0400
+Received: by mail-io1-f68.google.com with SMTP id y10-v6so6380793ioa.10
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 22:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qD3luyRsioFeQrcJ7TpS7PquXaRw+VnodNG1ePV0gdQ=;
+        b=JtWECeF/Os9Z70oJxLXUCFIouTEakAzgEMSU75ATeWZCKGr3BxdrsmFybfJPT0EBfB
+         KXmKsrtr27dC5rYJtF/yPuJ06stGH+BTV/HXC0O5qOig/YbAyjjANGOaEP8Z9Vis6EMP
+         VB8TinbaZMeQws3hlUjYLTomHd3Jvv6wMj0io=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qD3luyRsioFeQrcJ7TpS7PquXaRw+VnodNG1ePV0gdQ=;
+        b=IXXLIiGLqgbw7/eWO+h2Y0RJb2+y2iySK6CsUXzf5UpWoTzhXCUcNblloI0Ms4ZcTB
+         b+GLJsuBI5Ww0sPxm6sBs/p0S38YlsqZgfhyBjaIIlpwclXEwHccvYe8VaU3FmyWnof7
+         p7vIJPfQW8KgD+aDPUgxDKqT+MF3397XKXIc7QqhVqKxtd5k+retEuX1fDA2HXE403Zl
+         7gylJ9A+zC3rSwMuPQ+37Rd+Nfd/8MUWO6a0ROdfA2W/PlpKGzbMZQ4qHBMla3coKuuE
+         AEH0sJGh5nWkc9QgIatr+byQJgZWaZJxXiOHMluTfTTEQtY/wNd/Hqc7W5JRj3zssDJp
+         4S2g==
+X-Gm-Message-State: APzg51DZRgsVAM0ypU3yw0P7mdRdbnweN/wP9uoyS/Ju7lfqJlQo6hY/
+        IhbNXZ/lkYLuFryGBQ0rItelhvpvOlMzTwOQ7gUnZQ==
+X-Google-Smtp-Source: ANB0VdYTb6lFyh4HJVXUiLDlOt6yPPUWZqiMAzAW1kxCcjDLrVGxKARg4vIJ8ULruCIhVlqe3PoYcltP+VwNMiaciBU=
+X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr31340127iof.304.1537421035845;
+ Wed, 19 Sep 2018 22:23:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920010938.10315-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
+ <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
+ <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com> <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org>
+In-Reply-To: <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 19 Sep 2018 22:23:42 -0700
+Message-ID: <CACRpkdYGpEVG9gqPxNaOsD55k9idEfGaxOUrObbN9VZS06x5jw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
+To:     timur@kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Timur Tabi <timur@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 06:09:38PM -0700, Bjorn Andersson wrote:
-> When freeing the fw_priv the item is taken off the list. This causes an
-> oops in the FW_OPT_NOCACHE case as the list object is not initialized.
-> 
-> Make sure to initialize the list object regardless of this flag.
-> 
-> Fixes: 422b3db2a503 ("firmware: Fix security issue with request_firmware_into_buf()")
-> Cc: stable@vger.kernel.org
-> Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/base/firmware_loader/main.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+On Wed, Sep 19, 2018 at 4:50 AM Timur Tabi <timur@kernel.org> wrote:
+> On 9/18/18 11:04 PM, Ricardo Ribalda Delgado wrote:
+> > And should't that be tacked in qcom hardware with something like:
+> >
+> > if (!priv->initialized)
+> >     return INPUT;
+> >
+> > if you or Timur point me to the harware that was crashing I would not
+> > mind looking into that, but the current situations seems to me like a
+> > hack.
+>
+> I'd say the previous code was the hack.  My comment about not touching
+> the hardware until it is properly claimed is valid, and it applies to
+> all platforms.
 
-Is this being triggered by some hardware somewhere today?  Or is this
-just a fix found by code inspection?
+I am a bit uncertain, I understand the reasoning that unless a GPIO line
+has been "claimed" (i.e. .request() was called on it) then we should not
+call any of the gpiochip callbacks.
 
-thanks,
+But this is merely a convention, the gpiochip becomes what we want
+it to be and it has the semantics we want it to have.
 
-greg k-h
+It also makes sense to inquire the direction initially so we know the
+state of the hardware in the library.
+
+I think most gpiochips easily survives calling the .get_direction()
+early, Qualcomm's stand out here.
+
+Now that we have .valid_mask in the gpiochip could we simply just
+add this back, resepecting valid_mask and avoid checking the
+direction of precisely these GPIOs?
+
+Yours,
+Linus Walleij
