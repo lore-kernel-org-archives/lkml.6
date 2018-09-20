@@ -2,164 +2,124 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707F5ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02395ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 070AA21529
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:59:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070AA21529
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B113F21529
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 12:59:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="tjckJiG3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B113F21529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387779AbeITSmm (ORCPT
+        id S2387839AbeITSnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:42:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:27159 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387679AbeITSml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:42:41 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E47405C9;
-        Thu, 20 Sep 2018 12:59:17 +0000 (UTC)
-Received: from prarit.khw1.lab.eng.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8CAB97E6C1;
-        Thu, 20 Sep 2018 12:59:16 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        kgdb-bugreport@lists.sourceforge.net
-Subject: [PATCH v2] kdb: Use strscpy with destination buffer size
-Date:   Thu, 20 Sep 2018 08:59:14 -0400
-Message-Id: <20180920125914.17920-1-prarit@redhat.com>
+        Thu, 20 Sep 2018 14:43:20 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:52785 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387659AbeITSnT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 14:43:19 -0400
+Received: by mail-it0-f68.google.com with SMTP id h3-v6so12953949ita.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 05:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ngu4w6s9AdGDjn8xwKv2bIWVr5gDVr2rZ8xldkaEhUg=;
+        b=tjckJiG3sSg9Sdj0QPVZQBPlkU4dirzPDpD8lkNp5rIzthc0CQpObUioo/xoSueXHH
+         HDIscUVb2uk7521R9WraX7xmsZI9bTBOwa+zQJIVRMRQ4y5K+2+8OQRFCl5Jqv2X6Yl9
+         mBMhzlZsNL8zWxdyVTvidKHGQ31zKJKeOsEzWtWN/U3sxdidMsyaMH04fG4c1vNEKH/X
+         Ta0QSEw6f7ldPupZb5ae7Xi8hu66a4V2EJl+grfBsQ262X7w7jwtAwM1UAdXG7+48+h/
+         E92upP8BnT2vxmIdMO2KTkDWwNxUzC6M+H7BEv8tzReZCz56P4hB/Yf3YUZswtxmEStd
+         AHxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ngu4w6s9AdGDjn8xwKv2bIWVr5gDVr2rZ8xldkaEhUg=;
+        b=PVTXQP8WSUtFJpnGxalClhpDVaVaasHkVWBPW8x99uKjZmjccvZOnsDgZ/pOPUnr7b
+         jXlfknuPO2BAHgcIPNy0A5SITgXnSoU6wuzTJXUW2Rev6GmToi+GZ/yuc0gHzXor1EVo
+         aXpyaIit9B1pdwJEtMoxyEsFxOEK5tNkwIRr5KQkweGnS4vngc4XW0ezctBpmtMclVTn
+         o63RamyDpC0HXC7X2hb+NUwDE3rbK64V7ThwmxfiVt1eKbATYX82FwTCZtbQkGYg/iJh
+         VBO5JVUAzy1+B9WS43rTZHGHKFlgB+7ZUVVqUHCfd+8rHjKtraiZ2MmYbD1vtWAhZJBR
+         LQCQ==
+X-Gm-Message-State: APzg51CqmE1FJNh+T5vR/lY6e//3+442gBFhS0rlsXn9YusAiiSKi3/w
+        lU/NlolAOAot2k6fnLjcG/kH2obptxl4Ggdj/pSUYA==
+X-Google-Smtp-Source: ANB0VdZ2sHLL6NgxoXSskBL0zgPn0YfQ002YVvdpaqVxYVEYdUdPABA9DEfB+L6xJMuezun9USRueClr/btgu/LSBAQ=
+X-Received: by 2002:a24:a20f:: with SMTP id j15-v6mr1852100itf.125.1537448395026;
+ Thu, 20 Sep 2018 05:59:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 20 Sep 2018 12:59:18 +0000 (UTC)
+Received: by 2002:a6b:1905:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 05:59:54
+ -0700 (PDT)
+In-Reply-To: <20180828093332.20674-1-brgl@bgdev.pl>
+References: <20180828093332.20674-1-brgl@bgdev.pl>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 20 Sep 2018 14:59:54 +0200
+Message-ID: <CAMRc=McmvkWEKV71pX9_PbNaYYf2VpovO2JrUQckWJ_0taqCZw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] devres: provide and use devm_kstrdup_const()
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gcc 8.1.0 warns with:
+2018-08-28 11:33 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> This series implements devm_kstrdup_const() together with some
+> prerequisite changes and uses it in pmc-atom driver.
+>
+> v1 -> v2:
+> - fixed the changelog in the patch implementing devm_kstrdup_const()
+> - fixed the kernel doc
+> - moved is_kernel_rodata() to asm-generic/sections.h
+> - fixed constness
+>
+> Bartosz Golaszewski (4):
+>   devres: constify p in devm_kfree()
+>   mm: move is_kernel_rodata() to asm-generic/sections.h
+>   devres: provide devm_kstrdup_const()
+>   clk: pmc-atom: use devm_kstrdup_const()
+>
+>  drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
+>  drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
+>  include/asm-generic/sections.h | 14 +++++++++++
+>  include/linux/device.h         |  5 +++-
+>  mm/util.c                      |  7 ------
+>  5 files changed, 63 insertions(+), 25 deletions(-)
+>
+> --
+> 2.18.0
+>
 
-kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
-kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-     strncpy(prefix_name, name, strlen(name)+1);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
+If there are no objections - can this be picked up for 4.20?
 
-Use strscpy() with the destination buffer size, and use ellipses when
-displaying truncated symbols.
-
-v2: Use strscpy()
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Jonathan Toppins <jtoppins@redhat.com>
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: kgdb-bugreport@lists.sourceforge.net
----
- kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
- kernel/debug/kdb/kdb_private.h |  2 +-
- kernel/debug/kdb/kdb_support.c | 10 +++++-----
- 3 files changed, 15 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index ed5d34925ad0..6a4b41484afe 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -216,7 +216,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 	int count;
- 	int i;
- 	int diag, dtab_count;
--	int key;
-+	int key, buf_size, ret;
- 
- 
- 	diag = kdbgetintenv("DTABCOUNT", &dtab_count);
-@@ -336,9 +336,8 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 		else
- 			p_tmp = tmpbuffer;
- 		len = strlen(p_tmp);
--		count = kallsyms_symbol_complete(p_tmp,
--						 sizeof(tmpbuffer) -
--						 (p_tmp - tmpbuffer));
-+		buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
-+		count = kallsyms_symbol_complete(p_tmp, buf_size);
- 		if (tab == 2 && count > 0) {
- 			kdb_printf("\n%d symbols are found.", count);
- 			if (count > dtab_count) {
-@@ -350,9 +349,13 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 			}
- 			kdb_printf("\n");
- 			for (i = 0; i < count; i++) {
--				if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
-+				ret = kallsyms_symbol_next(p_tmp, i, buf_size);
-+				if (WARN_ON(!ret))
- 					break;
--				kdb_printf("%s ", p_tmp);
-+				if (ret != -E2BIG)
-+					kdb_printf("%s ", p_tmp);
-+				else
-+					kdb_printf("%s... ", p_tmp);
- 				*(p_tmp + len) = '\0';
- 			}
- 			if (i >= dtab_count)
-diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
-index 1e5a502ba4a7..2118d8258b7c 100644
---- a/kernel/debug/kdb/kdb_private.h
-+++ b/kernel/debug/kdb/kdb_private.h
-@@ -83,7 +83,7 @@ typedef struct __ksymtab {
- 		unsigned long sym_start;
- 		unsigned long sym_end;
- 		} kdb_symtab_t;
--extern int kallsyms_symbol_next(char *prefix_name, int flag);
-+extern int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size);
- extern int kallsyms_symbol_complete(char *prefix_name, int max_len);
- 
- /* Exported Symbols for kernel loadable modules to use. */
-diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
-index 990b3cc526c8..61cd704a21c8 100644
---- a/kernel/debug/kdb/kdb_support.c
-+++ b/kernel/debug/kdb/kdb_support.c
-@@ -221,11 +221,13 @@ int kallsyms_symbol_complete(char *prefix_name, int max_len)
-  * Parameters:
-  *	prefix_name	prefix of a symbol name to lookup
-  *	flag	0 means search from the head, 1 means continue search.
-+ *	buf_size	maximum length that can be written to prefix_name
-+ *			buffer
-  * Returns:
-  *	1 if a symbol matches the given prefix.
-  *	0 if no string found
-  */
--int kallsyms_symbol_next(char *prefix_name, int flag)
-+int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size)
- {
- 	int prefix_len = strlen(prefix_name);
- 	static loff_t pos;
-@@ -235,10 +237,8 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
- 		pos = 0;
- 
- 	while ((name = kdb_walk_kallsyms(&pos))) {
--		if (strncmp(name, prefix_name, prefix_len) == 0) {
--			strncpy(prefix_name, name, strlen(name)+1);
--			return 1;
--		}
-+		if (!strncmp(name, prefix_name, prefix_len))
-+			return strscpy(prefix_name, name, buf_size);
- 	}
- 	return 0;
- }
--- 
-2.14.4
-
+Thanks,
+Bartosz
