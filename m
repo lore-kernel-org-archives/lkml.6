@@ -2,60 +2,114 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FD2ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13947C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB7EB21536
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:06:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7EB21536
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 89A8F21534
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:14:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWA7g56+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A8F21534
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388909AbeIUDvm (ORCPT
+        id S1725855AbeIUEAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 23:51:42 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55838 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732112AbeIUDvl (ORCPT
+        Fri, 21 Sep 2018 00:00:32 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35517 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725759AbeIUEAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 23:51:41 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 99FE480749; Fri, 21 Sep 2018 00:06:02 +0200 (CEST)
-Date:   Fri, 21 Sep 2018 00:06:01 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Chen Yu <yu.c.chen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Len Brown <len.brown@intel.com>,
-        Zhimin Gu <kookoo.gu@intel.com>
-Subject: Re: [PATCH 12/12][RFC v3] x86-32, hibernate: Adjust in_suspend after
- resumed on 32bit system
-Message-ID: <20180920220601.GN27468@xo-6d-61-c0.localdomain>
-References: <cover.1537275915.git.yu.c.chen@intel.com>
- <e2b157a14ddadb557c07ed2e081637c0e1dbff5e.1537275915.git.yu.c.chen@intel.com>
+        Fri, 21 Sep 2018 00:00:31 -0400
+Received: by mail-lf1-f68.google.com with SMTP id x20-v6so9767796lfg.2;
+        Thu, 20 Sep 2018 15:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z770HlOYnuiuFaHvQ7YcAaglZJGe3WPohVkcbEsuZj8=;
+        b=fWA7g56+dE/Q2Oe0epHkEsTiY9EMGcf+zL72gsAslRb1M5ee1o//C5htGdSeF34uNY
+         OPCXA5ycGxDBB2cnWzG9+PKMN/fXA6/mGdRQ7gckZ8lWSENZMwke+FUB+OWNEAtUw8hd
+         Ic4M2/GeJU33BQrYRvDgKNqqSa6vYisND7ClJ7RTx75LWIIE5w3sYAu8UHVH3nK/Ykdl
+         kbPUPcMJqlSjdaVH8vqHPiE7MlFC20SXiNPmVINTKumpg27c769VKdHhFF20wAhw/iwu
+         GsyQzNvLdjRj+hL27f7YygDVg2Ird6k6IPdj/QUkFyZk0PzVUAbHXwx/sHK0WWQhjKxr
+         3E6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z770HlOYnuiuFaHvQ7YcAaglZJGe3WPohVkcbEsuZj8=;
+        b=TS/TuXRruVKO4KQibkhhENQ8SLqdTXO8VJPHwP8k2vugti9ftobezCoSccqyyqgDTX
+         GnyxBg9NI9jjLepYPaquJnR2NlaW78vjyh7ctMCwvWThlfclH7Z7yLL8Pg7dTtmCPwwZ
+         A7rySEOTJyZtc6hCC8xIyVeQ0NuXK69+7gY82XWvQWR1XdUJT4swPoBMHToB8xkO/KnV
+         hnUHmyK183IRKSgFb0XptOwENxhcMTBxgPMSw5d2LL+H9BGiV/pqDlJ2EjJ0nR/woUjM
+         nbOg1vqaqarx+x2w2imkodvab8l82XHgp//Rc5rYFDhW+IDWBZT1tibGq6UPYSBsIcuG
+         BWIA==
+X-Gm-Message-State: APzg51AKrjTe28cfcox62F2yx2wzx2odq1HRdaqEc8ZB9hzgwBsSjXKr
+        IBNXrfXqLfcrVxUO9w94SHw=
+X-Google-Smtp-Source: ANB0VdYxLGc8hbaomQ1RDPzf2t2X33+yNziG9R5lPvmQn/O+DbTDP9r+c18HRG/eQ0w8UEuMZNRCJQ==
+X-Received: by 2002:a19:f00a:: with SMTP id p10-v6mr10028357lfc.43.1537481690022;
+        Thu, 20 Sep 2018 15:14:50 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id y16-v6sm4684450lje.30.2018.09.20.15.14.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 15:14:49 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id C7AE6460674; Fri, 21 Sep 2018 01:14:48 +0300 (MSK)
+Date:   Fri, 21 Sep 2018 01:14:48 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [RFC 02/20] timens: Add timens_offsets
+Message-ID: <20180920221448.GE20786@uranus>
+References: <20180919205037.9574-1-dima@arista.com>
+ <20180919205037.9574-3-dima@arista.com>
+ <20180920184510.GC20786@uranus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e2b157a14ddadb557c07ed2e081637c0e1dbff5e.1537275915.git.yu.c.chen@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180920184510.GC20786@uranus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-09-19 15:43:42, Chen Yu wrote:
-> From: Zhimin Gu <kookoo.gu@intel.com>
+On Thu, Sep 20, 2018 at 09:45:10PM +0300, Cyrill Gorcunov wrote:
+> On Wed, Sep 19, 2018 at 09:50:19PM +0100, Dmitry Safonov wrote:
+> > From: Andrei Vagin <avagin@openvz.org>
+> > 
+> > Introduce offsets for time namespace. They will contain adjustment
+> > needed to convert clocks to/from host's.
+> > 
+> > Allocate one page for each time namespace that will be premapped into
+> > userspace with vvar pages.
 > 
-> Update the in_suspend variable to reflect the actual hibernation
-> status. Back-port from 64bit system.
-> 
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> Is not it too much?! The whole page per each clone(new-time-ns) call.
+> Moreover everytime it is get explicitly zeroifyed. Don't get me wrong,
+> maybe I miss something obvious, but additional 4K per process, guys :)
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+After being talking to Andrew I think there is no better option though.
+If syscalls would be free of course we could use them instead but this
+vdso stuff, sigh. I thouhgh about modifying vdso code so it would carry
+refs inside (or adding some section into elf loader kernel code), but
+all this would simply mess the code. Thus this 4K per namespace seems
+to be acceptable trade off.
