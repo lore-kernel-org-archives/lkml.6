@@ -2,121 +2,225 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93191C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81664C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35D982147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:25:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6PF2w0u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D982147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A9DA21533
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9DA21533
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbeIUELJ (ORCPT
+        id S1727141AbeIUEMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:11:09 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40208 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeIUELJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:11:09 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207-v6so1102854wme.5;
-        Thu, 20 Sep 2018 15:25:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xz1ojDlbk5c1+6N64TtVDkYUYOmlExGBv1LSVHIi5Nw=;
-        b=m6PF2w0uwdwEfvx1RzuFWSwsDR/eXiia7AwQLJBRqr3RDUYBNXBVVpln7dszSV64L9
-         7JfLtnZGMPceL7lXytm5YZKAZmHRCLQlrzhK9vMU49BFRHjhc0BeTS4sBFIfwADT1Uxz
-         BZysVSDwlat7eyBFXMHbVH1Sd2XoLNjcpY3Y9PdiMymwluEs4qOSp1IJviijo8BTldNl
-         K1aHMugny0b9u+VA7OQtPcJAHy5/sGLfA7hQ4YJmfZRt09TJObIs87iK4XBeYOZtN2u8
-         afDx0NbblHn/3iLnYPYn1kpXUVKAFELT+t+pGbGcjyZQ8LgYsJalB8f2KaWgNdwSSOMi
-         jADw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xz1ojDlbk5c1+6N64TtVDkYUYOmlExGBv1LSVHIi5Nw=;
-        b=FIPWuiKoWFtJnTPmHNuj3wwQnqeQOLK0j3YtnR93LadCW2gLvI4KPNEGsgjEw/8nm1
-         dSFOZwzez+6qyz8iQbryCFBt9riSx98SLJsn/2+Q8QI6WU6AmodmN0knOO/hAR4MKakk
-         juIM7o0ePGds6akjTnGmg2Z2/IEQGLGXCv/ARJLJu6sfWFvO1oVr4h4P6L/TimJG0Kir
-         46kVkV+snQT7v5XM7BHSMzTrumyyJ2tXstfDa35hIVGVGAv6HzCmNL+k88RrFwsxLJD7
-         EhzE59Py1dYopP/JpXmZDXvmqRzD7e7eV67CzhIyQlK/PHb7U4RqRcWRuonRF/OrX3Xx
-         2D0g==
-X-Gm-Message-State: APzg51CbPTRE5N1OqH7g9mzuAiTm3BuadiLlDiddY4b5XCC7n7jtlh1d
-        XaREvC4ptfVr3QOHhTpij5Hd0h9M+ARjow==
-X-Google-Smtp-Source: ANB0Vdb/bmG4Q0Phg5RjtNOV94eRBnGzpr1rQF+rN9CltZm6gP+A7kHWhDqRGL8NjOf1ww4MQ8F83Q==
-X-Received: by 2002:a1c:1182:: with SMTP id 124-v6mr4772493wmr.75.1537482325691;
-        Thu, 20 Sep 2018 15:25:25 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id r13-v6sm2170698wmf.34.2018.09.20.15.25.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 15:25:24 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Rasesh Mody <rasesh.mody@cavium.com>,
-        Sudarsana Kalluru <sudarsana.kalluru@cavium.com>,
-        Dept-GELinuxNICDev@cavium.com,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] bna: Remove unnecessary self assignment
-Date:   Thu, 20 Sep 2018 15:24:59 -0700
-Message-Id: <20180920222458.9475-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 00:12:34 -0400
+Received: from mga03.intel.com ([134.134.136.65]:50952 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725823AbeIUEMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 00:12:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 15:26:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,282,1534834800"; 
+   d="scan'208";a="85285550"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO localhost.localdomain) ([10.7.198.152])
+  by orsmga003.jf.intel.com with ESMTP; 20 Sep 2018 15:26:36 -0700
+Subject: [PATCH v4 1/5] mm: Provide kernel parameter to allow disabling page
+ init poisoning
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Cc:     pavel.tatashin@microsoft.com, mhocko@suse.com,
+        dave.jiang@intel.com, mingo@kernel.org, dave.hansen@intel.com,
+        jglisse@redhat.com, akpm@linux-foundation.org, logang@deltatee.com,
+        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com
+Date:   Thu, 20 Sep 2018 15:26:36 -0700
+Message-ID: <20180920222415.19464.38400.stgit@localhost.localdomain>
+In-Reply-To: <20180920215824.19464.8884.stgit@localhost.localdomain>
+References: <20180920215824.19464.8884.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when a variable is assigned to itself.
+On systems with a large amount of memory it can take a significant amount
+of time to initialize all of the page structs with the PAGE_POISON_PATTERN
+value. I have seen it take over 2 minutes to initialize a system with
+over 12TB of RAM.
 
-drivers/net/ethernet/brocade/bna/bna_enet.c:1800:9: warning: explicitly
-assigning value of variable of type 'int' to itself [-Wself-assign]
-        for (i = i; i < (bna->ioceth.attr.num_ucmac * 2); i++)
-             ~ ^ ~
-drivers/net/ethernet/brocade/bna/bna_enet.c:1835:9: warning: explicitly
-assigning value of variable of type 'int' to itself [-Wself-assign]
-        for (i = i; i < (bna->ioceth.attr.num_mcmac * 2); i++)
-             ~ ^ ~
-2 warnings generated.
+In order to work around the issue I had to disable CONFIG_DEBUG_VM and then
+the boot time returned to something much more reasonable as the
+arch_add_memory call completed in milliseconds versus seconds. However in
+doing that I had to disable all of the other VM debugging on the system.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/110
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+In order to work around a kernel that might have CONFIG_DEBUG_VM enabled on
+a system that has a large amount of memory I have added a new kernel
+parameter named "vm_debug" that can be set to "-" in order to disable it.
+
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/net/ethernet/brocade/bna/bna_enet.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/brocade/bna/bna_enet.c b/drivers/net/ethernet/brocade/bna/bna_enet.c
-index bba81735ce87..6d2d4527357c 100644
---- a/drivers/net/ethernet/brocade/bna/bna_enet.c
-+++ b/drivers/net/ethernet/brocade/bna/bna_enet.c
-@@ -1797,7 +1797,7 @@ bna_ucam_mod_init(struct bna_ucam_mod *ucam_mod, struct bna *bna,
+v3: Switched from kernel config option to parameter
+v4: Added comment to parameter handler to record when option is disabled
+    Updated parameter description based on feedback from Michal Hocko
+    Fixed GB vs TB typo in patch description.
+    Switch to vm_debug option similar to slub_debug
+
+ Documentation/admin-guide/kernel-parameters.txt |   12 ++++++
+ include/linux/page-flags.h                      |    8 ++++
+ mm/debug.c                                      |   46 +++++++++++++++++++++++
+ mm/memblock.c                                   |    5 +--
+ mm/sparse.c                                     |    4 +-
+ 5 files changed, 69 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index dfe3d7b99abf..ee257b5b584f 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4811,6 +4811,18 @@
+ 			This is actually a boot loader parameter; the value is
+ 			passed to the kernel using a special protocol.
  
- 	/* A separate queue to allow synchronous setting of a list of MACs */
- 	INIT_LIST_HEAD(&ucam_mod->del_q);
--	for (i = i; i < (bna->ioceth.attr.num_ucmac * 2); i++)
-+	for (; i < (bna->ioceth.attr.num_ucmac * 2); i++)
- 		list_add_tail(&ucam_mod->ucmac[i].qe, &ucam_mod->del_q);
++	vm_debug[=options]	[KNL] Available with CONFIG_DEBUG_VM=y.
++			May slow down system boot speed, especially when
++			enabled on systems with a large amount of memory.
++			All options are enabled by default, and this
++			interface is meant to allow for selectively
++			enabling or disabling specific virtual memory
++			debugging features.
++
++			Available options are:
++			  P	Enable page structure init time poisoning
++			  -	Disable all of the above options
++
+ 	vmalloc=nn[KMG]	[KNL,BOOT] Forces the vmalloc area to have an exact
+ 			size of <nn>. This can be used to increase the
+ 			minimum size (128MB on x86). It can also be used to
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 4d99504f6496..934f91ef3f54 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -163,6 +163,14 @@ static inline int PagePoisoned(const struct page *page)
+ 	return page->flags == PAGE_POISON_PATTERN;
+ }
  
- 	ucam_mod->bna = bna;
-@@ -1832,7 +1832,7 @@ bna_mcam_mod_init(struct bna_mcam_mod *mcam_mod, struct bna *bna,
++#ifdef CONFIG_DEBUG_VM
++void page_init_poison(struct page *page, size_t size);
++#else
++static inline void page_init_poison(struct page *page, size_t size)
++{
++}
++#endif
++
+ /*
+  * Page flags policies wrt compound pages
+  *
+diff --git a/mm/debug.c b/mm/debug.c
+index bd10aad8539a..cdacba12e09a 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -13,6 +13,7 @@
+ #include <trace/events/mmflags.h>
+ #include <linux/migrate.h>
+ #include <linux/page_owner.h>
++#include <linux/ctype.h>
  
- 	/* A separate queue to allow synchronous setting of a list of MACs */
- 	INIT_LIST_HEAD(&mcam_mod->del_q);
--	for (i = i; i < (bna->ioceth.attr.num_mcmac * 2); i++)
-+	for (; i < (bna->ioceth.attr.num_mcmac * 2); i++)
- 		list_add_tail(&mcam_mod->mcmac[i].qe, &mcam_mod->del_q);
+ #include "internal.h"
  
- 	mcam_mod->bna = bna;
--- 
-2.19.0
+@@ -175,4 +176,49 @@ void dump_mm(const struct mm_struct *mm)
+ 	);
+ }
+ 
++static bool page_init_poisoning __read_mostly = true;
++
++static int __init setup_vm_debug(char *str)
++{
++	bool __page_init_poisoning = true;
++
++	/*
++	 * Calling vm_debug with no arguments is equivalent to requesting
++	 * to enable all debugging options we can control.
++	 */
++	if (*str++ != '=' || !*str)
++		goto out;
++
++	__page_init_poisoning = false;
++	if (*str == '-')
++		goto out;
++
++	while (*str) {
++		switch (tolower(*str)) {
++		case'p':
++			__page_init_poisoning = true;
++			break;
++		default:
++			pr_err("vm_debug option '%c' unknown. skipped\n",
++			       *str);
++		}
++
++		str++;
++	}
++out:
++	if (page_init_poisoning && !__page_init_poisoning)
++		pr_warn("Page struct poisoning disabled by kernel command line option 'vm_debug'\n");
++
++	page_init_poisoning = __page_init_poisoning;
++
++	return 1;
++}
++__setup("vm_debug", setup_vm_debug);
++
++void page_init_poison(struct page *page, size_t size)
++{
++	if (page_init_poisoning)
++		memset(page, PAGE_POISON_PATTERN, size);
++}
++EXPORT_SYMBOL_GPL(page_init_poison);
+ #endif		/* CONFIG_DEBUG_VM */
+diff --git a/mm/memblock.c b/mm/memblock.c
+index f7981098537b..b1017ec1b167 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1495,10 +1495,9 @@ void * __init memblock_virt_alloc_try_nid_raw(
+ 
+ 	ptr = memblock_virt_alloc_internal(size, align,
+ 					   min_addr, max_addr, nid);
+-#ifdef CONFIG_DEBUG_VM
+ 	if (ptr && size > 0)
+-		memset(ptr, PAGE_POISON_PATTERN, size);
+-#endif
++		page_init_poison(ptr, size);
++
+ 	return ptr;
+ }
+ 
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 10b07eea9a6e..67ad061f7fb8 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -696,13 +696,11 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
+ 		goto out;
+ 	}
+ 
+-#ifdef CONFIG_DEBUG_VM
+ 	/*
+ 	 * Poison uninitialized struct pages in order to catch invalid flags
+ 	 * combinations.
+ 	 */
+-	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
+-#endif
++	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
+ 
+ 	section_mark_present(ms);
+ 	sparse_init_one_section(ms, section_nr, memmap, usemap);
 
