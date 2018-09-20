@@ -2,193 +2,131 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0DEECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB2FECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7DC820880
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:54:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ep1EBbQM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DC820880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 42B1920880
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:55:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B1920880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbeITNgu (ORCPT
+        id S1731595AbeITNhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:36:50 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36938 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeITNgu (ORCPT
+        Thu, 20 Sep 2018 09:37:34 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40439 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeITNhe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:36:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u12-v6so8325732wrr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 00:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=HS/qUo0KSn4e5rqSvPRq9Uqk0287bshrj/sMI3BlqJc=;
-        b=ep1EBbQMRP8v1xkhja+2kbswQJgjSUQaeTcqBr1Em0c6j4MrcJXVpVzgHRxQs1vjyo
-         0XPlMEMze9bo4UY93bUiECVSDyaVCUOlhHhTXXJ/1+83eh5Y4zzxvi9B+Ax2fy45cqvl
-         B1eAGC3kpQFu0wphk18P/4ut1Jc+vU8wE0sXbhoahSrgZebask3TekuNgN9bIPpHeUjH
-         zepODqtGcYCPkFuzsOcuSZ6heWYrseRP7ncQzxVGzh5ukdOgbDmgBt/vpWR7f3/OAITR
-         FSWF8E4b98IjmanpYqYjEmQx/9r6bF1z53lnWag5e5ak9oWh325k0nTm4fxFDykuhKN1
-         +9aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=HS/qUo0KSn4e5rqSvPRq9Uqk0287bshrj/sMI3BlqJc=;
-        b=l98gCxuP3NdsGW7kYDJFAEWxkrzKdAZ+W9M29z+ziYJoYfF9MFN0/Dh2wk6jf1Rx/h
-         0peG1F7NjePokuWrocQ1kMicI8ZMKeuj/hE6sQbkuyWptSp0P2NOpP+XKrUb6gmnm8ye
-         nbQqrkyKycR8T1VO70dCwiqWQEwF/xmqNjPcdgsx1nBYLc+04Zpj97/p8nswprLmS/x0
-         1A7w9OUpNc4q4ISyJccobRmIcN8mFtZih7bDvyYZ7k578bBDlc5tYfctx9VUC2HG04yY
-         xzcdgSRjN29L/ZWC9W9ThCBN1NCwcExu/oI0kTqnSYV665A/h78PW2wxiiUIyapMqfRx
-         6YCA==
-X-Gm-Message-State: APzg51C43F5gSt9EFMwGmr7ys5upZb2Yqm6UzaUebPZU9iDQZRYIeLD/
-        3hSBRwTdLk3V8Ht7xo9ioCuj7WJqGzY=
-X-Google-Smtp-Source: ANB0VdYDFhJ2XDx2v70T6+JCahcvc+wpMpSfsz68OGkgA4JnBb0bV74cmpzQcFYOrno4v55ccqGwgg==
-X-Received: by 2002:a5d:4089:: with SMTP id o9-v6mr32339310wrp.133.1537430078357;
-        Thu, 20 Sep 2018 00:54:38 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:eeb6:4690:3dd5:8518:3946:bbed? ([2a01:e34:eeb6:4690:3dd5:8518:3946:bbed])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm1113134wmf.28.2018.09.20.00.54.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 00:54:37 -0700 (PDT)
-Subject: Re: [PATCH v4 2/2] arm64: dts: meson-g12a: add initial g12a s905d2
- SoC DT support
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Jian Hu <jian.hu@amlogic.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1537427368-11104-1-git-send-email-jianxin.pan@amlogic.com>
- <1537427368-11104-3-git-send-email-jianxin.pan@amlogic.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <c16ae8cf-5802-778b-1fd8-494dfb2d8d1b@baylibre.com>
-Date:   Thu, 20 Sep 2018 09:54:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 20 Sep 2018 09:37:34 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1g2tnu-0004fx-RM; Thu, 20 Sep 2018 09:55:14 +0200
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1g2tnt-0008Tg-F6; Thu, 20 Sep 2018 09:55:13 +0200
+Date:   Thu, 20 Sep 2018 09:55:13 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     jslaby@suse.com, fugang.duan@nxp.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de
+Subject: Re: [PATCH v1] tty: serial: imx: enable IDDMAEN for the last tail
+ data
+Message-ID: <20180920075513.6jqfbrrjax3sp4cn@pengutronix.de>
+References: <1537457160-10792-1-git-send-email-yibin.gong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1537427368-11104-3-git-send-email-jianxin.pan@amlogic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1537457160-10792-1-git-send-email-yibin.gong@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/09/2018 09:09, Jianxin Pan wrote:
-> Try to add basic DT support for the Amlogic's Meson-G12A S905D2 SoC,
-> which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
-> Timer, UART. It's capable of booting up into the serial console.
-> 
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Hello,
+
+On Thu, Sep 20, 2018 at 11:26:00PM +0800, Robin Gong wrote:
+> enable IDDMAEN in UCR4 to let sdma script has the chance to detect
+> the idle status and transfer the last tail data with the interrupt
+> notifying uart driver.Otherwise, the last dma done interrupt of the
+> tail data in rxfifo whose size is less than watermark may never be
+> received by uart driver.
+
+Is this a theoretic issue? Or does it fix a real problem?
+
+If the former I'd say UCR1_ATDMAEN being set should prevent this stall.
+
+Also I'd say the SDMA scripts I know don't properly handle the IDDMA
+request.
+
+Best regards
+Uwe
+
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
 > ---
->  arch/arm64/boot/dts/amlogic/Makefile            |   1 +
->  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts |  22 +++
->  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi     | 172 ++++++++++++++++++++++++
->  3 files changed, 195 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+>  drivers/tty/serial/imx.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-> index a97c0e2..c31f29d6 100644
-> --- a/arch/arm64/boot/dts/amlogic/Makefile
-> +++ b/arch/arm64/boot/dts/amlogic/Makefile
-> @@ -1,5 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nanopi-k2.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nexbox-a95x.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-odroidc2.dtb
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-> new file mode 100644
-> index 0000000..d267a37
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> + */
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 239c0fa..bbb1693 100644
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -1278,7 +1278,7 @@ static int imx_uart_dma_init(struct imx_port *sport)
+>  
+>  static void imx_uart_enable_dma(struct imx_port *sport)
+>  {
+> -	u32 ucr1;
+> +	u32 ucr1, ucr4;
+>  
+>  	imx_uart_setup_ufcr(sport, TXTL_DMA, RXTL_DMA);
+>  
+> @@ -1287,18 +1287,26 @@ static void imx_uart_enable_dma(struct imx_port *sport)
+>  	ucr1 |= UCR1_RXDMAEN | UCR1_TXDMAEN | UCR1_ATDMAEN;
+>  	imx_uart_writel(sport, ucr1, UCR1);
+>  
+> +	ucr4 = imx_uart_readl(sport, UCR4);
+> +	ucr4 |= UCR4_IDDMAEN;
+> +	imx_uart_writel(sport, ucr4, UCR4);
 > +
-> +/dts-v1/;
+>  	sport->dma_is_enabled = 1;
+>  }
+>  
+>  static void imx_uart_disable_dma(struct imx_port *sport)
+>  {
+> -	u32 ucr1;
+> +	u32 ucr1, ucr4;
+>  
+>  	/* clear UCR1 */
+>  	ucr1 = imx_uart_readl(sport, UCR1);
+>  	ucr1 &= ~(UCR1_RXDMAEN | UCR1_TXDMAEN | UCR1_ATDMAEN);
+>  	imx_uart_writel(sport, ucr1, UCR1);
+>  
+> +	ucr4 = imx_uart_readl(sport, UCR4);
+> +	ucr4 &= ~UCR4_IDDMAEN;
+> +	imx_uart_writel(sport, ucr4, UCR4);
 > +
-> +#include "meson-g12a.dtsi"
-> +
-> +/ {
-> +	compatible = "amlogic,u200", "amlogic,g12a";
-> +	model = "Amlogic Meson G12A U200 Development Board";
-> +
-> +	aliases {
-> +		serial0 = &uart_AO;
-> +	};
+>  	imx_uart_setup_ufcr(sport, TXTL_DEFAULT, RXTL_DEFAULT);
+>  
+>  	sport->dma_is_enabled = 0;
+> -- 
+> 2.7.4
+> 
+> 
 
-Hi Jianxin,
-
-Please add the /memory and /chosen nodes.
-
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x40000000>;
-+	};
-
-Thanks,
-Neil
-
-
-> +};
-> +
-> +&uart_AO {
-> +	status = "okay";
-> +};
-> +
-[...]
-
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
