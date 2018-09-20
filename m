@@ -2,115 +2,87 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D948FC433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCF0ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922B021524
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:42:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 922B021524
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DEB221523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEB221523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731830AbeITMXi (ORCPT
+        id S1727101AbeITMam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 08:23:38 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13479 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731240AbeITMXg (ORCPT
+        Thu, 20 Sep 2018 08:30:42 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42080 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbeITMam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 08:23:36 -0400
-X-UUID: 3d743ae4ccb9445892b222e8f3b60df5-20180920
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <long.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1765469941; Thu, 20 Sep 2018 14:41:38 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 20 Sep 2018 14:41:36 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 20 Sep 2018 14:41:35 +0800
-From:   Long Cheng <long.cheng@mediatek.com>
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ed Blake <ed.blake@sondrel.com>,
-        Long Cheng <long.cheng@mediatek.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>
-Subject: [PATCH 1/4] dt-bindings: dma: uart: add uart dma bindings
-Date:   Thu, 20 Sep 2018 14:41:10 +0800
-Message-ID: <1537425673-18807-2-git-send-email-long.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1537425673-18807-1-git-send-email-long.cheng@mediatek.com>
-References: <1537425673-18807-1-git-send-email-long.cheng@mediatek.com>
+        Thu, 20 Sep 2018 08:30:42 -0400
+Received: by mail-vs1-f68.google.com with SMTP id s188-v6so2609104vss.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Sep 2018 23:48:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JqgmhIqBxWdnEfNOmK9xhyTdL7vRqnbim7L3WcibdEg=;
+        b=NT6veyCwCdoCA9bmcVw36+Y14M8e7jDNXdsEIh1vt3FpbVoRHjkM2OP6My+LgVnHPM
+         qw/S9HNWd4UwEbQ+iQAclORxYxhp64XtA8ifXcaNhbmo4xsFaDzK0JNJ5dQ+my+s3bbq
+         Rur6RbDmiieYqivQg/cqZCElLJx07kFdQtRUPBUCy/DrckaXMkJFW88wbxSRGFHFyCln
+         C+LCPCQql9QpMCnc0jnSoP/YYjj4S958lf0rdfNONQP/QAJmUScAQIs1wLIBbGLFAhr4
+         WQgL0rcca8Tjc/lKdElJaFE+ExDK5WX/G8/Lw6oij8dJhNTdBkSRVGaw2epLm3sZvV9U
+         ms6g==
+X-Gm-Message-State: APzg51BY7a8XHrmMyCInzvpQOJP+cQQb2wSvYnKK4hW+2nG2qy6MBKQ9
+        Rx/SZjLnLT9E+6y+ZfdUUfGRHfLN+/7HT+dztro=
+X-Google-Smtp-Source: ANB0VdbA3B99SvkiiejQ5LMN4DkaRuLTM3vZbemo1ZRlNsHxR7g1NT2ANOBGZaDyj9qC3WitmudD8rfeDhfoagPrjWE=
+X-Received: by 2002:a67:cd07:: with SMTP id u7-v6mr11734798vsl.78.1537426127631;
+ Wed, 19 Sep 2018 23:48:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: E30A2FDC9B276636E2217E4481B3B476A3667A02CF048F78A8DDC00598E56DA62000:8
-X-MTK:  N
+References: <20180919234721.16042-1-tpiepho@impinj.com>
+In-Reply-To: <20180919234721.16042-1-tpiepho@impinj.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 20 Sep 2018 08:48:36 +0200
+Message-ID: <CAMuHMdVMbjkvEXex_Z8ELPUo8hVZucFBCd2Wy4ENpiqEaLES_w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: amba: Fix leak of driver_override attribute value
+To:     Trent Piepho <tpiepho@impinj.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Todd Kjos <tkjos@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add uart dma bindings
+On Thu, Sep 20, 2018 at 1:48 AM Trent Piepho <tpiepho@impinj.com> wrote:
+> If driver_override was set when a device was released the string would
+> not be kfree'ed in amba_device_release and thus leaked when the amba
+> device was freed.
+>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Trent Piepho <tpiepho@impinj.com>
 
-Signed-off-by: Long Cheng <long.cheng@mediatek.com>
----
- .../devicetree/bindings/dma/8250_mtk_dma.txt       |   32 ++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/8250_mtk_dma.txt
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device
+binding path 'driver_override'")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/dma/8250_mtk_dma.txt b/Documentation/devicetree/bindings/dma/8250_mtk_dma.txt
-new file mode 100644
-index 0000000..b140cf4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/8250_mtk_dma.txt
-@@ -0,0 +1,32 @@
-+* Mediatek UART APDMA Controller
-+
-+Required properties:
-+- compatible should contain:
-+  * "mediatek,mt2712-uart-dma" for MT2712 compatible APDMA
-+  * "mediatek,mt6577-uart-dma" for MT6577 and all of the above
-+
-+- reg: The base address of the APDMA register bank.
-+
-+- interrupts: A single interrupt specifier.
-+
-+- clocks : Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: The APDMA clock for register accesses
-+
-+Examples:
-+
-+	apdma: dma-controller@11000380 {
-+		compatible = "mediatek,mt2712-uart-dma";
-+		reg = <0 0x11000380 0 0x400>;
-+		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 64 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 65 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 66 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 67 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 68 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 69 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_SPI 70 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&pericfg CLK_PERI_AP_DMA>;
-+		clock-names = "apdma";
-+		#dma-cells = <1>;
-+	};
-\ No newline at end of file
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.7.9.5
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
