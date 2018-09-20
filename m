@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B550C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C39C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B2221532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B2221532
+	by mail.kernel.org (Postfix) with ESMTP id 562F121534
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:54:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 562F121534
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388500AbeIUCj1 (ORCPT
+        id S2388535AbeIUCje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:39:27 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:50010 "EHLO
+        Thu, 20 Sep 2018 22:39:34 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:48734 "EHLO
         mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727232AbeIUCj0 (ORCPT
+        with ESMTP id S2388456AbeIUCj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:39:26 -0400
-Received: by mail-io1-f72.google.com with SMTP id k9-v6so14567716iob.16
+        Thu, 20 Sep 2018 22:39:27 -0400
+Received: by mail-io1-f72.google.com with SMTP id n26-v6so14715062iog.15
         for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:54:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=oZ8mnwcH49ElscPrL+lxvJPFrjEN7w//K8rwo8Kv+0o=;
-        b=GwOsJa69ggK/CemzKvRaJUdouWTuZO6ndRlpEmcmvurz27I5cDZaApryQT89pKotFG
-         zMHDOK5DgsrqHpNQW/5MwN7rlrk+lkhautrs15GB14l0iVfmQuY5aDtwcGAIKBzALY7j
-         9FqlSvy9jV7BCZlU/quhqcCwfBFqPeQxWCufn1zorwTvTEM/F0z8QC7U0u8vGMpUZL/Q
-         FUz4ppw1pqqL16h5OfqcIa23516L8Yq5/KGVqxYL3v7rKub1/M8FSrWvPRZtfhVArDGJ
-         FgtGKV8lzWvyD5lPyrHWOsRmz5oFrF706fz51qc1TlCZlJmEmW5yLaA85iKKkH3UTaMd
-         mqjQ==
-X-Gm-Message-State: APzg51CNNYKhr5Q9XEDQslb7gISjwYIpqKNreA9Ql/i9GUqOBIePTbyd
-        38kK/rwcCr9oehnvs0srSlAJvXQd9XN9M0KSpdIKfoiz9OQV
-X-Google-Smtp-Source: ANB0VdbHIvxie1aJVSGOr8rUTQJzY4YDGzNs3YsXBYzLUCYPl/Ctk3PZ+pgELEYB6yEsuS1bU2plkbuk275eJw8dUD+bFu0hY2eO
+        bh=Y5B7idGfCL5Gvg/CLqpjuDPHwkJUl4W+oGREOmCXCLU=;
+        b=oqCLV4ZR8FPQbQX0DjeB5aUAVXcfXR2E9e4DtG/ZDNntFsOrQN0pyrERLjcY3XLe5b
+         DFL4vaX4uR/lHThdvoU6NyxV2l3oOzICyumL4yeYyAgxK6DgGk9wA/WT5UxL+HyHCQso
+         1ROmJhWxHHeKlDO89cW7rm0vmgReqmob59lIHrsrYNFYhRKzdQl1AsAQ5DcOBvSKbNUm
+         m7RnZW9RG1PEeAkfxf69YbxGV1DqP01TZMa0n3VbXsggJmrkffqMcjxEH0Rwec/kElXv
+         FYYKlRDkmMakiy4K4CyGM9VOwr2psuI3CvKKolNj4JwmFRHAEX/zyW8duJzVQhILFcze
+         sYgQ==
+X-Gm-Message-State: APzg51BnBnAbhVV6dFwTzBxyzDQQoLAdG4ezxYqqn45mHAwvHqWTa/Cg
+        UKQsD056aepsTTZ0L4w+vTswO6p3NtOOPrx9lbdBzTnVgHa3
+X-Google-Smtp-Source: ANB0VdbhF3I/5ATLi8GsnaMJTTdDTyFIqgVhX/YDnxdGGSKRCIWK32ZW7E7EdZSDDGoptXNhMMZ5GCHo3/OorRC/qZe0T5Qs9bLS
 MIME-Version: 1.0
-X-Received: by 2002:a24:3344:: with SMTP id k65-v6mr3632146itk.10.1537476844875;
- Thu, 20 Sep 2018 13:54:04 -0700 (PDT)
-Date:   Thu, 20 Sep 2018 13:54:04 -0700
+X-Received: by 2002:a6b:ce10:: with SMTP id p16-v6mr30530570iob.74.1537476845274;
+ Thu, 20 Sep 2018 13:54:05 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 13:54:05 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000030779c057653b9ef@google.com>
-Subject: KMSAN: uninit-value in ip6_parse_tlv
-From:   syzbot <syzbot+f08ac29f2ac8aea19826@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+Message-ID: <000000000000368ca9057653b99a@google.com>
+Subject: KMSAN: uninit-value in dev_uc_add_excl
+From:   syzbot <syzbot+3a288d5f5530b901310e@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, edumazet@google.com,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+        sunlw.fnst@cn.fujitsu.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,108 +60,84 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    74ee2200b89f kmsan: bump .config.example to v4.17-rc3
+HEAD commit:    99e79f6a8963 kmsan: disable assembly implementations of cr..
 git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=1426fde7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4ca1e57bafa8ab1f
-dashboard link: https://syzkaller.appspot.com/bug?extid=f08ac29f2ac8aea19826
-compiler:       clang version 7.0.0 (trunk 329391)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15574be7800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1003fc37800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ccc911400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dc53c800f40430e5
+dashboard link: https://syzkaller.appspot.com/bug?extid=3a288d5f5530b901310e
+compiler:       clang version 8.0.0 (trunk 339414)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=178141fa400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=113d1efa400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f08ac29f2ac8aea19826@syzkaller.appspotmail.com
+Reported-by: syzbot+3a288d5f5530b901310e@syzkaller.appspotmail.com
 
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 ==================================================================
-BUG: KMSAN: uninit-value in ip6_parse_tlv+0x8d5/0xcd0 net/ipv6/exthdrs.c:172
-CPU: 1 PID: 4535 Comm: syz-executor786 Not tainted 4.17.0-rc3+ #88
+BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
+CPU: 1 PID: 4318 Comm: syz-executor998 Not tainted 4.19.0-rc3+ #49
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  ip6_parse_tlv+0x8d5/0xcd0 net/ipv6/exthdrs.c:172
-  ipv6_destopt_rcv+0x50d/0xd90 net/ipv6/exthdrs.c:310
-  ip6_input_finish+0xaac/0x2250 net/ipv6/ip6_input.c:284
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip6_input net/ipv6/ip6_input.c:327 [inline]
-  ip6_mc_input+0xa67/0x1080 net/ipv6/ip6_input.c:404
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x46e/0x6e0 net/ipv6/ip6_input.c:71
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ipv6_rcv+0x1e16/0x2340 net/ipv6/ip6_input.c:208
-  __netif_receive_skb_core+0x47df/0x4a90 net/core/dev.c:4592
-  __netif_receive_skb net/core/dev.c:4657 [inline]
-  process_backlog+0x62d/0xe20 net/core/dev.c:5337
-  napi_poll net/core/dev.c:5735 [inline]
-  net_rx_action+0x7c1/0x1a70 net/core/dev.c:5801
-  __do_softirq+0x56d/0x93d kernel/softirq.c:285
-  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
-  </IRQ>
-  do_softirq+0xb6/0xf0 kernel/softirq.c:329
-  netif_rx_ni net/core/dev.c:4219 [inline]
-  dev_loopback_xmit+0x8b0/0x900 net/core/dev.c:3347
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip6_finish_output2+0x1e24/0x2110 net/ipv6/ip6_output.c:84
-  ip6_finish_output+0xae9/0xba0 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
-  ip6_output+0x597/0x6c0 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:444 [inline]
-  ip6_local_out+0x15e/0x1d0 net/ipv6/output_core.c:176
-  ip6_send_skb net/ipv6/ip6_output.c:1702 [inline]
-  ip6_push_pending_frames+0x218/0x4d0 net/ipv6/ip6_output.c:1722
-  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
-  rawv6_sendmsg+0x4235/0x4fb0 net/ipv6/raw.c:935
-  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg net/socket.c:639 [inline]
-  __sys_sendto+0x6c0/0x7e0 net/socket.c:1789
-  __do_sys_sendto net/socket.c:1801 [inline]
-  __se_sys_sendto net/socket.c:1797 [inline]
-  __x64_sys_sendto+0x1a1/0x210 net/socket.c:1797
-  do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43fe79
-RSP: 002b:00007ffc475970d8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fe79
-RDX: 0000000000000000 RSI: 0000000020001ffe RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000020003000 R09: 000000000000001c
-R10: 0000000000000000 R11: 0000000000000216 R12: 00000000004017a0
-R13: 0000000000401830 R14: 0000000000000000 R15: 0000000000000000
+  dump_stack+0x14b/0x190 lib/dump_stack.c:113
+  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+  memcmp+0x11d/0x180 lib/string.c:863
+  dev_uc_add_excl+0x165/0x7b0 net/core/dev_addr_lists.c:464
+  ndo_dflt_fdb_add net/core/rtnetlink.c:3463 [inline]
+  rtnl_fdb_add+0x1081/0x1270 net/core/rtnetlink.c:3558
+  rtnetlink_rcv_msg+0xa0b/0x1530 net/core/rtnetlink.c:4715
+  netlink_rcv_skb+0x36e/0x5f0 net/netlink/af_netlink.c:2454
+  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4733
+  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+  netlink_unicast+0x1638/0x1720 net/netlink/af_netlink.c:1343
+  netlink_sendmsg+0x1205/0x1290 net/netlink/af_netlink.c:1908
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+  __sys_sendmsg net/socket.c:2152 [inline]
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
+  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440ee9
+Code: e8 cc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff6a93b518 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440ee9
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 000000000000b4b0
+R13: 0000000000401ec0 R14: 0000000000000000 R15: 0000000000000000
 
 Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-  kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:321
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
+  kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
+  kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:100
   slab_post_alloc_hook mm/slab.h:446 [inline]
-  slab_alloc_node mm/slub.c:2753 [inline]
-  __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
+  slab_alloc_node mm/slub.c:2718 [inline]
+  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4351
   __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:988 [inline]
-  alloc_skb_with_frags+0x1e6/0xb80 net/core/skbuff.c:5254
-  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2088
-  sock_alloc_send_skb+0xca/0xe0 net/core/sock.c:2105
-  __ip6_append_data+0x33a2/0x4e40 net/ipv6/ip6_output.c:1427
-  ip6_append_data+0x40e/0x6b0 net/ipv6/ip6_output.c:1596
-  rawv6_sendmsg+0x2740/0x4fb0 net/ipv6/raw.c:928
-  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg net/socket.c:639 [inline]
-  __sys_sendto+0x6c0/0x7e0 net/socket.c:1789
-  __do_sys_sendto net/socket.c:1801 [inline]
-  __se_sys_sendto net/socket.c:1797 [inline]
-  __x64_sys_sendto+0x1a1/0x210 net/socket.c:1797
-  do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:996 [inline]
+  netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
+  netlink_sendmsg+0xb49/0x1290 net/netlink/af_netlink.c:1883
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+  __sys_sendmsg net/socket.c:2152 [inline]
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
+  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
 ==================================================================
 
 
