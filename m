@@ -2,122 +2,129 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6611C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6078CC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F48E2086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C6C22152F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 10:16:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Zr6oFgfN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F48E2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VWI8JahK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6C22152F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732374AbeITP6V (ORCPT
+        id S1732257AbeITP7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 11:58:21 -0400
-Received: from mail-ua1-f44.google.com ([209.85.222.44]:40432 "EHLO
-        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732221AbeITP6V (ORCPT
+        Thu, 20 Sep 2018 11:59:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39728 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730654AbeITP7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 11:58:21 -0400
-Received: by mail-ua1-f44.google.com with SMTP id 101-v6so4256877uav.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 03:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ycyHlqo2zLMsvN6aVN1w5p7UQDUNqWOlovdTBWcupYI=;
-        b=Zr6oFgfNy9AfFQslellEWarP+7khGQF5qjE3kLmVP3I8wCPTVlscXm+BWmGj9hA67M
-         JRJEXG9UGx2bsIjLYdPiHKHYTITqgnhABy7TA5IIPLpnAVqwfKNiJybZaSGzOZ7kQ2pT
-         RrI1IogW8A1X3t64MoLwvaTaozQFoQnewaRzdirijOstC8mTxlcUXA48B0ppf/3ynxrd
-         +3Dhd35fv4NQl4qgFXSADFV5h4N9/K6ALIJz+ueGFfMWfEEqRym4plSGPh1IN45NzHbP
-         D7H5bpqk8k0HodW0QNWnEUNRVLMR8FLHeoCsX219vRZSyziokv6LGL4LBxFXO75V6IQS
-         BP4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ycyHlqo2zLMsvN6aVN1w5p7UQDUNqWOlovdTBWcupYI=;
-        b=opXsR0a82SpoJtA344XdafyJ396UGtlNxz9SrefBNaqvgXr2TWHy2BcEYuWNBv0xKp
-         Cu5gWiEJQUvESl00/zteZeBNqHe59VW0oWbYwqOCSRKABLNjcNuET24Ie5x1BwBeFmUv
-         1rg3zIPoR3r45QrLoEdmU9sOqNOPKbm7ur5M7T+99lrxhdSXuAOfLcjeCHAWNZAMfc+n
-         G9SyKvy35plORatRi6Rlotc4xeyfAn+La/QTyG0W7vp434zFfeC+qhwO+7TVQ305Iw+p
-         Utuv34j0gomMuojfKm/IGMyA0kPOS0ZEk8wQPSGWKWOBKodUqu+4bAU4g3ln0E94cbEv
-         YV3w==
-X-Gm-Message-State: ABuFfogWOxBcokjc82McDiQyc3r1/WCXRKnj5Me4+AKC1zoijFDkABgc
-        AXELVWGLf6J/t2d59b4IQkqGKgAuF45cvP0ck1U=
-X-Google-Smtp-Source: ANB0VdZTPr5e7yKs9jUok6P2L93ZhXdzBYdywQ5qTThdrwr07sdyLtCrj9OvE2nGBtc6LRBUGGy+4EvygJdwipAGJys=
-X-Received: by 2002:ab0:1886:: with SMTP id t6-v6mr507836uag.19.1537438536114;
- Thu, 20 Sep 2018 03:15:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <6b4a0cf6fa672938b8ab98acd1dea0a1@redchan.it> <BBFE2346-72C7-47D3-910A-DD720C7637DC@charter.net>
- <24cf6d6095c740903f16b56e22dd137c@redchan.it> <996c99ea4146a247730d87df14dfca1a@redchan.it>
- <E1g2TJn-0006lD-Lm@fencepost.gnu.org> <0bd7fb92f5b2d5f18e67fdc9b3f6e603@redchan.it>
- <77f81bcb07d6a9193992f87dbd040658@redchan.it> <CAMjeLr-qVubez4wJ0AVrjVv2hEk6HjCpA30U=Of0hJEWmwqKyA@mail.gmail.com>
-In-Reply-To: <CAMjeLr-qVubez4wJ0AVrjVv2hEk6HjCpA30U=Of0hJEWmwqKyA@mail.gmail.com>
-From:   Martin Schroeder <mkschreder.uk@googlemail.com>
-Date:   Thu, 20 Sep 2018 12:15:24 +0200
-Message-ID: <CAGmj6qv9k+24qvA9Kxik797cx07=_qJdkxYU-39SFG0tu50HNg@mail.gmail.com>
-Subject: Re: Re: Fwd: Re: [DNG] GPL version 2 is a bare license. Recind.
- (Regarding (future) linux Code of Conduct Bannings).
-To:     dreamingforward@gmail.com
-Cc:     observerofaffairs@redchan.it, linux-kernel@vger.kernel.org,
-        dng@lists.dyne.org, debian-user@lists.debian.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 20 Sep 2018 11:59:21 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8KAF83N102169;
+        Thu, 20 Sep 2018 10:16:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=WdQMwdwP5PFLQVcMIQw7SAoiypQcZmo6xCJvd0x/t84=;
+ b=VWI8JahKe1e4RbVNE16/jvXl27wIpScuUv91fj2SX+yEedyuLFs1HtTqCKv0+JTAgkcM
+ fIbRYLT2BaTtlfRvVZUUGuUkzeDCM2BXH3FaxjCt2t6uqk18HrDEguj3JSKXUGKYqf5S
+ O7mqAC/V2kmmTYnAGHL02o4pKpn6dr8XiKasWzpXu51Bgz+AjTZTaTqrRNOa1JQGlSvC
+ K6V6Z5F4AJViUzgZWN6LlLKAkIYh27ucNQYattlpxaD9KVzbwRkpkUynX0qVPGqBiqRE
+ 0JH5g4n5DXWlJN/dmoFoh1w0VVON+8mM696QQtmFjyW3f+g9zIoyZVjPyH/bpZEinY7e /g== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2mgsgu1udk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Sep 2018 10:16:32 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8KAGVRc017125
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Sep 2018 10:16:31 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8KAGUDR001252;
+        Thu, 20 Sep 2018 10:16:30 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Sep 2018 03:16:30 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk, tj@kernel.org, kent.overstreet@gmail.com,
+        ming.lei@redhat.com, bart.vanassche@wdc.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] percpu_ref: add a new helper interface __percpu_ref_get_many
+Date:   Thu, 20 Sep 2018 18:18:21 +0800
+Message-Id: <1537438703-25217-2-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1537438703-25217-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1537438703-25217-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9021 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809200105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the license clearly states that permission is granted to any third
-party to use the code provided that the same rights are granted to
-everyone else who uses the subsequently distributed versions, wouldn't
-the original holder who is willing to rescind the license fully also
-be liable to compensate everyone involved for damages caused by such a
-rescission?
+This __percpu_ref_get_many is almost same with the percpu_ref_get_many,
+except for the caller need to provide a sched rcu critical section
+for it. We want to do some other condition checking under the sched
+rcu lock. With this interface, one extra rcu_read_lock/unlock_sched
+could be saved.
 
-It would only sound reasonable to me. You can not first grant
-something and then revoke that grant and expect that it can be done
-without consequences. If that becomes possible then there is no point
-in giving the grant in the first place. It would sound reasonable that
-there should be plenty of room for a counter lawsuit that would focus
-on how much damage a complete revocation would cause to everyone who
-have originally accepted the grant and then went with it. It is
-crucial I think that rescission of a grant (not just any license) be
-made close to impossible to accomplish after the grant has been made
-in the first place and the work has been made public.
-On Wed, Sep 19, 2018 at 7:22 PM \0xDynamite <dreamingforward@gmail.com> wrote:
->
-> > On 2018-09-19 03:38, Richard Stallman wrote:
-> >> [[[ To any NSA and FBI agents reading my email: please consider    ]]]
-> >> [[[ whether defending the US Constitution against all enemies,     ]]]
-> >> [[[ foreign or domestic, requires you to follow Snowden's example. ]]]
-> >>
-> >>   > One is rescission of the license they granted regarding their code,
-> >> and
-> >>   > then a lawsuit under copyright if/when the rescission is ignored.
-> >>   > The others are breach of contract, libel, false light, etc.
-> >>
-> >> If "rescission" is really a possibility, it would cause greast trouble
-> >> for the free software community.  We would need to take steps to make
-> >> sure it cannot happen.
-> >>
-> >> However, that goes against everything I have been told by others.
->
-> This is where copyright differs from IP.  With copyright, you have the
-> right to derived works if they don't violate Fair Use -- but that
-> could essentially be violating the GPL.
->
-> The only way to protect the code and spirit of the GPL at that point,
-> is to accept the legal concept of Intellectual Property.
->
-> The question then, is, is source code released under the GPL
-> considered "published work"?
->
-> Mark Janssen, JD
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ include/linux/percpu-refcount.h | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
+index 009cdf3..b86e03b 100644
+--- a/include/linux/percpu-refcount.h
++++ b/include/linux/percpu-refcount.h
+@@ -169,21 +169,32 @@ static inline bool __ref_is_percpu(struct percpu_ref *ref,
+  * @ref: percpu_ref to get
+  * @nr: number of references to get
+  *
+- * Analogous to atomic_long_add().
+- *
+- * This function is safe to call as long as @ref is between init and exit.
++ * This function is same with percpu_ref_get_many except for the caller need to
++ * provide a sched rcu critical section for it.
+  */
+-static inline void percpu_ref_get_many(struct percpu_ref *ref, unsigned long nr)
++static inline void __percpu_ref_get_many(struct percpu_ref *ref, unsigned long nr)
+ {
+ 	unsigned long __percpu *percpu_count;
+ 
+-	rcu_read_lock_sched();
+-
+ 	if (__ref_is_percpu(ref, &percpu_count))
+ 		this_cpu_add(*percpu_count, nr);
+ 	else
+ 		atomic_long_add(nr, &ref->count);
++}
+ 
++/**
++ * percpu_ref_get_many - increment a percpu refcount
++ * @ref: percpu_ref to get
++ * @nr: number of references to get
++ *
++ * Analogous to atomic_long_add().
++ *
++ * This function is safe to call as long as @ref is between init and exit.
++ */
++static inline void percpu_ref_get_many(struct percpu_ref *ref, unsigned long nr)
++{
++	rcu_read_lock_sched();
++	__percpu_ref_get_many(ref, nr);
+ 	rcu_read_unlock_sched();
+ }
+ 
+-- 
+2.7.4
+
