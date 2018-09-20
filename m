@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693F6C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D243ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1893721533
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:20:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25F921531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:20:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O3P0FTMq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1893721533
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C6c/Xhga"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25F921531
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388385AbeIUBF3 (ORCPT
+        id S2388555AbeIUBFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:05:29 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39994 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388572AbeIUBEJ (ORCPT
+        Thu, 20 Sep 2018 21:05:36 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33545 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389005AbeIUBEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:04:09 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l63-v6so4875664pga.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:19:11 -0700 (PDT)
+        Thu, 20 Sep 2018 21:04:07 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b97-v6so4812091plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 12:19:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SzFk6dtDlJeMVc6wDpFORp4xi55mVKK/kcJWa63rh4U=;
-        b=O3P0FTMqrFW1T19bYs+eHLsebUDbMoVpQAtSryseJoCJ1YMnY9JJ2lhrEMRPdexLSJ
-         BSbovZszdcoUuq0jbhANctb754vz9jIAYEqjIQ2VcKlCxyKTcUplCcArKmXU4IwIXtKQ
-         ApbYuv2/D0SGRuWjPUlR8UIZpaxcyzSghJmF0=
+        bh=V6vu1RIZBsPM7h6OM/OfrWdKkRSO5vP9cV5FH4ePhdM=;
+        b=C6c/XhgaZor+HAv6JiOxdav3v6vR8+mbX1mUgcpeTuJgztugUORTRCiW7s9mmA81Ih
+         1c7xx8hIxug/bPhBcJBsegcbNLI4WKHtf+86pYzPuj8dpyijFYXkCrHofCG8YKk2fLPP
+         A2koKFJyK1vFXrX3h80f5hPrt1jV9tlhRpzt8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SzFk6dtDlJeMVc6wDpFORp4xi55mVKK/kcJWa63rh4U=;
-        b=snE14meEWdPX3EJAPMUTdefFOiYD8Xv+B7mK+4CpY6CdshZPNl+a6ezJ25c7hihPEm
-         jeAm1pkI6/MHSH8MJ6SLteoxn5cqPLT18pUNbKHuxmnToUD2xe6YNct67IRc0u6gbbdV
-         vuSCY6DY6II8GWRA3A3HtLdAkgIxrWASpcyW75slmwXw7UWpeKLDFOsOr/9KqMKKx/lK
-         a4/DluuMyUV041LVl7fJkLXt7q87Et5yph1tvZiYbCIVCWXgC0J9aTIinjvhqhUh4nJx
-         MHejDXaNMimomcdiV9yp/kVjLv5QbCWOLQYuttuCYOfsG9Dkkz4t9s5CYyCTDknehxOH
-         lYjQ==
-X-Gm-Message-State: APzg51B2SRUtylESi3u9OYke84b5RFOWJ4pJpR6rvP+P5FJ1d1zaPtKr
-        YncmGdTrscrFjHNeBqjAC+nU7A==
-X-Google-Smtp-Source: ANB0VdbZWxPYsErQxFuJgk/oYqcWjl/Cejx4z3sRZ/Jz01IIAEvYodRyfLTR1j79mFXCWhf/7H3Drg==
-X-Received: by 2002:a62:fc5:: with SMTP id 66-v6mr42417065pfp.237.1537471150739;
-        Thu, 20 Sep 2018 12:19:10 -0700 (PDT)
+        bh=V6vu1RIZBsPM7h6OM/OfrWdKkRSO5vP9cV5FH4ePhdM=;
+        b=Gq2fzUjO9sKv/THMZLG5Km61Jq3V5ItO8g7D53uOUpKcFrqKGwhYcNrlQGGaBK5k/6
+         U9Z6rwP7Vr9aZqbcKE64lT8FQM6+9UE+WCj6jnpcc4yRLcXUAe48tEkGFllihgQxvbCE
+         Lm+4hZdFZ/gx4eZZkMzDfNZM+tsHysq48Y7XoVrt6+EILvck80jhM0EhghOv4zJsEanc
+         aP5K9VapsuxehVUJZwEfM4a7QR7AuGE9GT9iZghkMZBNAgo4KFzqeSlnRNcfdK4BWcZo
+         /ieCYF89IcNOQav1n3nU+yoo0/ilZcu8KPN/zb26pBTmPVLtoQ5RB3dtLU9IpLT3XNp/
+         PO+Q==
+X-Gm-Message-State: APzg51B8cfvD0eZyWvLZhc4hXbz7G8nn0eBou5hsY05YB8pdb8MlPzK5
+        OXcfYfFyX9CT7E1g1goHkCXIk1O3XUw=
+X-Google-Smtp-Source: ANB0Vdbj7QK/Sua221Qyp1+ZazOPyCW6v1ly1zfls0QiExc33cFLHQKyEDsn3RFPkiI2IyoJIn19xA==
+X-Received: by 2002:a17:902:c85:: with SMTP id 5-v6mr40952054plt.141.1537471147788;
+        Thu, 20 Sep 2018 12:19:07 -0700 (PDT)
 Received: from localhost.localdomain ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm4424443pgf.37.2018.09.20.12.19.09
+        by smtp.gmail.com with ESMTPSA id k13-v6sm4424443pgf.37.2018.09.20.12.19.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Sep 2018 12:19:09 -0700 (PDT)
+        Thu, 20 Sep 2018 12:19:06 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 32/44] coresight: etm4x: Add support for handling errors
-Date:   Thu, 20 Sep 2018 13:18:07 -0600
-Message-Id: <1537471099-19781-33-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH 30/44] coresight: tmc-etr: Handle errors enabling CATU
+Date:   Thu, 20 Sep 2018 13:18:05 -0600
+Message-Id: <1537471099-19781-31-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1537471099-19781-1-git-send-email-mathieu.poirier@linaro.org>
@@ -71,101 +71,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Add support for handling errors in enabling the component.
-The ETM is enabled via cross call to owner CPU. Make
-necessary changes to report the error back from the cross
-call.
+Make sure we honor the errors in CATU device and abort the operation.
+While at it, delay setting the etr_buf for the session until we are
+sure that we are indeed enabling the ETR.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-etm4x.c | 39 ++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-index b7379e9cfb30..064e0bfaefd0 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -78,10 +78,14 @@ static int etm4_trace_id(struct coresight_device *csdev)
- 	return drvdata->trcid;
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index c42693542ec8..daad52146140 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -751,12 +751,14 @@ tmc_etr_get_catu_device(struct tmc_drvdata *drvdata)
+ 	return NULL;
  }
  
--static void etm4_enable_hw(void *info)
-+struct etm4_enable_arg {
-+	struct etmv4_drvdata *drvdata;
-+	int rc;
-+};
-+
-+static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
+-static inline void tmc_etr_enable_catu(struct tmc_drvdata *drvdata)
++static inline int tmc_etr_enable_catu(struct tmc_drvdata *drvdata,
++				      struct etr_buf *etr_buf)
  {
- 	int i;
--	struct etmv4_drvdata *drvdata = info;
- 	struct etmv4_config *config = &drvdata->config;
+ 	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
  
- 	CS_UNLOCK(drvdata->base);
-@@ -178,6 +182,16 @@ static void etm4_enable_hw(void *info)
- 	CS_LOCK(drvdata->base);
- 
- 	dev_dbg(drvdata->dev, "cpu: %d enable smp call done\n", drvdata->cpu);
+ 	if (catu && helper_ops(catu)->enable)
+-		helper_ops(catu)->enable(catu, drvdata->etr_buf);
++		return helper_ops(catu)->enable(catu, etr_buf);
 +	return 0;
-+}
-+
-+static void etm4_enable_hw_smp_call(void *info)
-+{
-+	struct etm4_enable_arg *arg = info;
-+
-+	if (WARN_ON(!arg))
-+		return;
-+	arg->rc = etm4_enable_hw(arg->drvdata);
  }
  
- static int etm4_parse_event_config(struct etmv4_drvdata *drvdata,
-@@ -243,7 +257,7 @@ static int etm4_enable_perf(struct coresight_device *csdev,
- 	if (ret)
- 		goto out;
- 	/* And enable it */
--	etm4_enable_hw(drvdata);
-+	ret = etm4_enable_hw(drvdata);
- 
- out:
- 	return ret;
-@@ -252,6 +266,7 @@ static int etm4_enable_perf(struct coresight_device *csdev,
- static int etm4_enable_sysfs(struct coresight_device *csdev)
+ static inline void tmc_etr_disable_catu(struct tmc_drvdata *drvdata)
+@@ -971,6 +973,8 @@ static void __tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
+ static int tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
+ 			     struct etr_buf *etr_buf)
  {
- 	struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct etm4_enable_arg arg = { 0 };
- 	int ret;
++	int rc;
++
+ 	/* Callers should provide an appropriate buffer for use */
+ 	if (WARN_ON(!etr_buf))
+ 		return -EINVAL;
+@@ -982,16 +986,17 @@ static int tmc_etr_enable_hw(struct tmc_drvdata *drvdata,
+ 	if (WARN_ON(drvdata->etr_buf))
+ 		return -EBUSY;
  
- 	spin_lock(&drvdata->spinlock);
-@@ -260,19 +275,17 @@ static int etm4_enable_sysfs(struct coresight_device *csdev)
- 	 * Executing etm4_enable_hw on the cpu whose ETM is being enabled
- 	 * ensures that register writes occur when cpu is powered.
+-	/* Set the buffer for the session */
+-	drvdata->etr_buf = etr_buf;
+ 	/*
+ 	 * If this ETR is connected to a CATU, enable it before we turn
+ 	 * this on.
  	 */
-+	arg.drvdata = drvdata;
- 	ret = smp_call_function_single(drvdata->cpu,
--				       etm4_enable_hw, drvdata, 1);
--	if (ret)
--		goto err;
--
--	drvdata->sticky_enable = true;
-+				       etm4_enable_hw_smp_call, &arg, 1);
-+	if (!ret)
-+		ret = arg.rc;
-+	if (!ret)
-+		drvdata->sticky_enable = true;
- 	spin_unlock(&drvdata->spinlock);
+-	tmc_etr_enable_catu(drvdata);
++	rc = tmc_etr_enable_catu(drvdata, etr_buf);
++	if (!rc) {
++		drvdata->etr_buf = etr_buf;
++		__tmc_etr_enable_hw(drvdata);
++	}
  
--	dev_dbg(drvdata->dev, "ETM tracing enabled\n");
+-	__tmc_etr_enable_hw(drvdata);
 -	return 0;
--
--err:
--	spin_unlock(&drvdata->spinlock);
-+	if (!ret)
-+		dev_dbg(drvdata->dev, "ETM tracing enabled\n");
- 	return ret;
++	return rc;
  }
  
+ /*
 -- 
 2.7.4
 
