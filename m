@@ -3,115 +3,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE27C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD61C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF42B2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:04:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F5D52147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:04:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VOabTww7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF42B2147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="jWzqXWo1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F5D52147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388550AbeIUBtT (ORCPT
+        id S2388558AbeIUBtj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 21:49:19 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36120 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388212AbeIUBtT (ORCPT
+        Thu, 20 Sep 2018 21:49:39 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53992 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388176AbeIUBtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 21:49:19 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 782041C86;
-        Thu, 20 Sep 2018 22:04:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1537473848;
-        bh=N+Li+HCZuuNN6pBOpT0h2asOWFC/iQbWql3qEFClcgY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VOabTww7qBxqgR0TE8cRfZBaNAuldRg5kRHcplL0ybXLTuB5HB8xB7FwgLF7Qo4Be
-         hh10lAFEAmuzSUB2ypb7ki6aIhtsuK9HhMoAiiGBqhay98LEhhbp/MGGKk/60OtbVR
-         bcd5YY7XgQl983YiZ9EfQW8WaZD1cAisoTCgpc3Q=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: Re: [PATCH v2 2/4] [media] ad5820: Add support for enable pin
-Date:   Thu, 20 Sep 2018 23:04:21 +0300
-Message-ID: <1887575.If169ivQRG@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAPybu_2mNE7Jmfm2n60Z9Hk_iO+-zLgtu4xn72pJUSXBitVg=g@mail.gmail.com>
-References: <20180920161912.17063-2-ricardo.ribalda@gmail.com> <20180920190855.GC26589@amd> <CAPybu_2mNE7Jmfm2n60Z9Hk_iO+-zLgtu4xn72pJUSXBitVg=g@mail.gmail.com>
+        Thu, 20 Sep 2018 21:49:39 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 174D7240AFB;
+        Thu, 20 Sep 2018 16:04:28 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id Jd6WDegwnGXP; Thu, 20 Sep 2018 16:04:27 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 2283B240AF7;
+        Thu, 20 Sep 2018 16:04:27 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2283B240AF7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1537473867;
+        bh=FKDbtBMGdRMQP1pI9M4peWUO1d5nRjqSunZvZ14ozLQ=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=jWzqXWo1JAAr6PUqf6mWYE3jnzfJ0BBVVGRL5S4u9iGtSB0NMpW2KnmZGA1ocDqYp
+         jjfgetrYf1YPVMKuyyCO2NB7mp49jMo1sP0dvhIIXcZziLGj9xhMRx0g/n2NClKqvk
+         fGDf7DO36eT880iksvLpaHa07wbm/Gk5LW3biszinZN51V0GOn1dqCjikz5qtPlmsC
+         qmir8xzDSXJB/GWKZyoFFD7GSra3XX37eIoVibVI6uHyT4zVjeMmm0OBEe8attXpXl
+         Y6ajiMC5I1EJXN/3KxLiM/lYKt4kUgkrKtMxAtXMb2bz3cjluf6+uyAAgXWr6CJtmi
+         B9p4jF5QyidcA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id tfReVVDItLcw; Thu, 20 Sep 2018 16:04:27 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 0882D240AF0;
+        Thu, 20 Sep 2018 16:04:27 -0400 (EDT)
+Date:   Thu, 20 Sep 2018 16:04:26 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Joseph Myers <joseph@codesourcery.com>
+Cc:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Message-ID: <381061785.8994.1537473866841.JavaMail.zimbra@efficios.com>
+In-Reply-To: <alpine.DEB.2.21.1809191630260.26757@digraph.polyomino.org.uk>
+References: <20180919144438.1066-1-mathieu.desnoyers@efficios.com> <alpine.DEB.2.21.1809191630260.26757@digraph.polyomino.org.uk>
+Subject: Re: [RFC PATCH] glibc: Perform rseq(2) registration at nptl init
+ and thread creation
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.9_GA_3019 (ZimbraWebClient - FF52 (Linux)/8.8.9_GA_3019)
+Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
+Thread-Index: psWJMi4/wKh/74j4G/pR5+hFK1ZtpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+----- On Sep 19, 2018, at 12:37 PM, Joseph Myers joseph@codesourcery.com wrote:
 
-On Thursday, 20 September 2018 22:12:44 EEST Ricardo Ribalda Delgado wrote:
-> On Thu, Sep 20, 2018 at 9:08 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > On Thu 2018-09-20 21:06:16, Ricardo Ribalda Delgado wrote:
-> >> On Thu, Sep 20, 2018 at 8:54 PM Pavel Machek <pavel@ucw.cz> wrote:
-> >>> On Thu 2018-09-20 20:45:52, Ricardo Ribalda Delgado wrote:
-> >>>> This patch adds support for a programmable enable pin. It can be
-> >>>> used in situations where the ANA-vcc is not configurable (dummy-
-> >>>> regulator), or just to have a more fine control of the power saving.
-> >>>> 
-> >>>> The use of the enable pin is optional.
-> >>>> 
-> >>>> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> >>> 
-> >>> Do we really want to do that?
-> >>> 
-> >>> Would it make more sense to add gpio-regulator and connect ad5820 to
-> >>> it in such case?
-> >> 
-> >> My board (based on db820c)  has both:
-> >> 
-> >> ad5820: dac@0c {
-> >>    compatible = "adi,ad5820";
-> >>    reg = <0x0c>;
-> >>    
-> >>    VANA-supply = <&pm8994_l23>;
-> >>    enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
-> >> };
-> > 
-> > Well, I'm sure you could have gpio-based regulator powered from
-> > pm8994_l23, and outputting to ad5820.
-> > 
-> > Does ad5820 chip have a gpio input for enable?
+> On Wed, 19 Sep 2018, Mathieu Desnoyers wrote:
 > 
-> xshutdown pin:
-> http://www.analog.com/media/en/technical-documentation/data-sheets/AD5821.pd
-> f
+>> Here is a rough prototype registering rseq(2) TLS for each thread
+>> (including main), and unregistering for each thread (excluding
+>> main). "rseq" stands for Restartable Sequences.
 > 
-> (AD5820,AD5821, and AD5823 are compatibles, or at least that is waht
-> the module manufacturer says :)
+> A final patch would need to add documentation and tests and a NEWS entry
+> and fix various coding style issues.
 
-Is that the pin that msmgpio 26 is connected to on your board ?
+Sure,
 
-I'd argue that the GPIO should be called xshutdown in that case, as DT usually 
-uses the pin name, but there's precedent of using well-known names for pins 
-with the same functionality. In any case you should update the DT bindings to 
-document the new property, and clearly explain that it describes the GPIO 
-connected to the xshutdown pin. Please CC the devicetree@vger.kernel.org 
-mailing list on the bindings change (they usually like bindings changes to be 
-split to a separate patch).
+> 
+>> diff --git a/nptl/Versions b/nptl/Versions
+>> index e7f691da7a..7316c2815d 100644
+>> --- a/nptl/Versions
+>> +++ b/nptl/Versions
+>> @@ -275,6 +275,7 @@ libpthread {
+>>      mtx_init; mtx_lock; mtx_timedlock; mtx_trylock; mtx_unlock; mtx_destroy;
+>>      call_once; cnd_broadcast; cnd_destroy; cnd_init; cnd_signal;
+>>      cnd_timedwait; cnd_wait; tss_create; tss_delete; tss_get; tss_set;
+>> +    __rseq_abi; __rseq_refcount;
+> 
+> That's the GLIBC_2.28 section, but 2.28 is already out.  New symbols would
+> need to go in GLIBC_2.29 or later (and the ABI test baselines would all
+> need updating).
+
+OK
+
+> 
+>> diff --git a/sysdeps/unix/sysv/linux/rseq.h b/sysdeps/unix/sysv/linux/rseq.h
+> 
+> This looks like it's coming from the Linux kernel.  Can't the relevant
+> uapi header just be used directly without copying into glibc (with due
+> care to ensure that glibc still builds if the kernel headers used for the
+> build are too old - you need such conditionals anyway if they don't define
+> the relevant syscall number)?
+
+Something like this in pthreadP.h ?
+
++#ifdef __NR_rseq
++#include <sysdeps/unix/sysv/linux/rseq-internal.h>
++#else
++#include <sysdeps/nptl/rseq-internal.h>
++#endif  /* __NR_rseq.  */
+
+where sysdeps/unix/sysv/linux/rseq-internal.h contains the linux
+implementation of rseq_register_current_thread () and
+rseq_unregister_current_thread (), and sysdeps/nptl/rseq-internal.h
+contains stubs.
+
+Am I on the right track ?
+
+Thanks,
+
+Mathieu
+
+
+
+> 
+> --
+> Joseph S. Myers
+> joseph@codesourcery.com
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
