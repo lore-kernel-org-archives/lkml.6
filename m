@@ -2,105 +2,92 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7C9C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26218ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6388B21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:24:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6388B21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id DCD0821523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 07:24:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCD0821523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731780AbeITNGA (ORCPT
+        id S1731828AbeITNGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:06:00 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33757 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731366AbeITNGA (ORCPT
+        Thu, 20 Sep 2018 09:06:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47978 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729647AbeITNGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:06:00 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7351D8063B; Thu, 20 Sep 2018 09:23:55 +0200 (CEST)
-Date:   Thu, 20 Sep 2018 09:23:54 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Aditya Prayoga <aditya@kobol.io>
-Cc:     linux-ide@vger.kernel.org, linux-leds@vger.kernel.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thu, 20 Sep 2018 09:06:34 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64BBFD8B;
+        Thu, 20 Sep 2018 07:24:31 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 09:24:28 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Trent Piepho <tpiepho@impinj.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH 1/2] libata: add ledtrig support
-Message-ID: <20180920072354.GA20392@amd>
-References: <1537328730-9156-1-git-send-email-aditya@kobol.io>
- <1537328730-9156-2-git-send-email-aditya@kobol.io>
+        Todd Kjos <tkjos@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] ARM: amba: Fix leak of driver_override attribute value
+Message-ID: <20180920072428.GA12411@kroah.com>
+References: <20180919234721.16042-1-tpiepho@impinj.com>
+ <CAMuHMdVMbjkvEXex_Z8ELPUo8hVZucFBCd2Wy4ENpiqEaLES_w@mail.gmail.com>
+ <20180920070937.GA9609@kroah.com>
+ <CAMuHMdVoFQpLntp-aygO-T818BFb4-ybXa3FLkFKJxCpdw6m=w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537328730-9156-2-git-send-email-aditya@kobol.io>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAMuHMdVoFQpLntp-aygO-T818BFb4-ybXa3FLkFKJxCpdw6m=w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 20, 2018 at 09:16:36AM +0200, Geert Uytterhoeven wrote:
+> Hi Greg,
+> 
+> On Thu, Sep 20, 2018 at 9:09 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > On Thu, Sep 20, 2018 at 08:48:36AM +0200, Geert Uytterhoeven wrote:
+> > > On Thu, Sep 20, 2018 at 1:48 AM Trent Piepho <tpiepho@impinj.com> wrote:
+> > > > If driver_override was set when a device was released the string would
+> > > > not be kfree'ed in amba_device_release and thus leaked when the amba
+> > > > device was freed.
+> > > >
+> > > > Cc: Russell King <linux@armlinux.org.uk>
+> > > > Cc: Todd Kjos <tkjos@google.com>
+> > > > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Signed-off-by: Trent Piepho <tpiepho@impinj.com>
+> > >
+> > > Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device
+> > > binding path 'driver_override'")
+> >
+> > Then it should also have a cc: stable, right?
+> 
+> Perhaps. I usually leave that up to the maintainer, else git send-email sends
+> it to stable immediately.
 
---AqsLC8rIMeq19msA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's fine, no one ever complains about that.  In fact it is _good_ to
+have that happen, as it gives us stable people a "heads up" that
+something is coming to resolve a reported problems.
 
-Hi!
+> The modern backporting AI will consider it anyway, due to the subject, and
+> the Fixes tag, right?
 
-> +#ifdef CONFIG_ATA_LEDS
-> +	/* register LED triggers for all ports */
-> +	for (i =3D 0; i < host->n_ports; i++) {
-> +		if (unlikely(!host->ports[i]->ledtrig))
-> +			continue;
-> +
-> +		snprintf(host->ports[i]->ledtrig_name,
-> +			sizeof(host->ports[i]->ledtrig_name), "ata%u",
-> +			host->ports[i]->print_id);
+Don't count on the "AI" to pick things up if you _know_ it resolves a
+problem, like you have said here.
 
-> +		host->ports[i]->ledtrig->name =3D host->ports[i]->ledtrig_name;
-> +
-> +		if (led_trigger_register(host->ports[i]->ledtrig)) {
-> +			kfree(host->ports[i]->ledtrig);
-> +			host->ports[i]->ledtrig =3D NULL;
-> +		}
-> +	}
-> +#endif
+So please, just add it when you know it needs to be backported,
+otherwise it might never get backported.
 
-No, we don't want you to register multiple triggers. We want one
-trigger, than has parameter "which port to watch". (Number of triggers
-is limited as by sysfs limitations).
+thanks,
 
-Otherwise yes, ata trigger makes sense.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---AqsLC8rIMeq19msA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlujSwoACgkQMOfwapXb+vIkLQCeM1xnlhIVNTLBYZqEdF3DiNEH
-dG0AniCzufR3yA8q21j0PjHy7+Vo3TiQ
-=xqO6
------END PGP SIGNATURE-----
-
---AqsLC8rIMeq19msA--
+greg k-h
