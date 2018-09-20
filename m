@@ -7,75 +7,64 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F65ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA73ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59F821534
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7328621533
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 22:36:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oZpq8+rS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59F821534
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YkFt4jlU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7328621533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbeIUEUn (ORCPT
+        id S2388438AbeIUEVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 00:20:43 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38506 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeIUEUk (ORCPT
+        Fri, 21 Sep 2018 00:21:46 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34247 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbeIUEVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 00:20:40 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t84-v6so5082804pgb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:34:56 -0700 (PDT)
+        Fri, 21 Sep 2018 00:21:46 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d19-v6so5100967pgv.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 15:36:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/OzhjKfIiOA92KAMHhiyw66BTMWC//bJiHP0kql6Sho=;
-        b=oZpq8+rSEVJEsSdIyzjpOw8f4LdJXZPGE2k1RfY16tsWRVKgewuVDdzKTSU5t2ePEu
-         jl3T+xgozy0DnE/TNAjn7ePr2bkPV4HfqDtyn3z4GFKKTYufSDlS5piAE8i+OrPTNuZN
-         BnN/cCcbwaM2gte4r4Bn45SDOOTrauhbrq4tI=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WoOEUWeRVPHs3MeL0Ayx/Ozq2NR2V3uIeTrMEEIQGk4=;
+        b=YkFt4jlUqHNgagOPU+/6e303ZRkMIlOxPdjSdqDNZtb9OQ/Kgg7Nh1/IYYkIKEU47i
+         pb+Qq7NKmuT0tVbIAoUtz2WzLKJEKVRrH9jvai2fEQSRktt+M+FXx2Ryn3RKqwHUF9MS
+         ExWc36ZpSOGr7F2G9+wCQ+3JUgm+ouRAJR/pE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/OzhjKfIiOA92KAMHhiyw66BTMWC//bJiHP0kql6Sho=;
-        b=nHtNqUxHoo5EnwmLB7FQ0UdEMIuE8dxv5JhuT1Lg5YUBGvAEPL1zVAMQLJJp4mg8C2
-         MtVfdaZqsakZyXjd4kyKR/55KyytPwvUNW0av/3vs6tJfeZd1MYImARCFlUAmjW/sGuG
-         wc0Yn/DO3Zm+BGkwyL//26jZPDau+uV/EyT9oHoiTOmnQ0H0iiSNAXwuFsjgQkA40nLu
-         GfFk1YiKcEuDV9XnlAtG+0mBNo4du91b2b8Yu8gbHarGRmAnT2ymyp5LBIymeXLw4X49
-         VxwzoqZSL+aYhGoFQHX5VbCk8J8C6qiLHkiyQQ14DMMqj8vYNt/Qq9/KlxtuchfqD50N
-         2+iA==
-X-Gm-Message-State: APzg51CuIhetINZEvdhISCAYtj0amxsbo1LA9dh6PFhygCKE5BvBKiJL
-        FMKsXh67DeMFeGzr0g+bToyNjQ==
-X-Google-Smtp-Source: ANB0VdbM4MF5WIyqYcqnEGyBw2wgwgBDdqlwK72iVuFR2V9dKrKbSl56x5CdZEWjOSTCnGS4Zyu3zA==
-X-Received: by 2002:a63:b104:: with SMTP id r4-v6mr2869719pgf.442.1537482896028;
-        Thu, 20 Sep 2018 15:34:56 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id g11-v6sm31366696pgi.90.2018.09.20.15.34.55
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WoOEUWeRVPHs3MeL0Ayx/Ozq2NR2V3uIeTrMEEIQGk4=;
+        b=nRFIeC+QSl5hTUMlUaNPORiYM3C9S82AvzPfvmbCB9J1BQFTdOlKkwKfpYtWj0aXZf
+         QvWrVrle748uz7zdnS/KZHdDO4kNW/jLc6Ygrd+9gFOM00uqTxItt87kUkWkdeKrCjbH
+         kM7THYvO7TeQAVi39to/XxWBz3iM/3+CovWniSO/Th28IX9zntMH+AyXgd2u4zGTJwAh
+         jU4mjg922uvi7GQTynjI7Q6u1OPoEOeC/RAxCBrx7E69GETYAS1pNNavJrxB3u/eSilT
+         sYnfxvMun8vSFlHWbRedC7FbeBswWllp2JsqEAiVoXYDEv+vduVOUK+keuY8TKG161eb
+         nr4Q==
+X-Gm-Message-State: APzg51DovLrikBssevu0O70ZiTLUrH6peFWfw86iiEg2rilXM65P6G43
+        LOXjeX06H9DuGYorCRp+HOXBjA==
+X-Google-Smtp-Source: ANB0VdabfL1Nu3RZayCABpUj6h3mXbUkddYQ391uYIYDW/SScWP4EAsqxD5O2M1fN/7NyJWUvzjNOw==
+X-Received: by 2002:a63:9809:: with SMTP id q9-v6mr38047883pgd.58.1537482961822;
+        Thu, 20 Sep 2018 15:36:01 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id f87-v6sm61430740pfh.168.2018.09.20.15.36.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 15:34:55 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 2/2] Bluetooth: btqcomsmd: Get the BD address with device_get_bd_address()
-Date:   Thu, 20 Sep 2018 15:34:36 -0700
-Message-Id: <20180920223436.202454-3-mka@chromium.org>
+        Thu, 20 Sep 2018 15:36:00 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: [PATCH] dma-debug: Check for drivers mapping vmalloc addresses
+Date:   Thu, 20 Sep 2018 15:35:59 -0700
+Message-Id: <20180920223559.136915-1-swboyd@chromium.org>
 X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
-In-Reply-To: <20180920223436.202454-1-mka@chromium.org>
-References: <20180920223436.202454-1-mka@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,34 +72,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new API to get the BD address instead of reading it directly
-from the device tree.
+I recently debugged a DMA mapping oops where a driver was trying to map
+a buffer returned from request_firmware() with dma_map_single(). Memory
+returned from request_firmware() is mapped into the vmalloc region and
+this isn't a valid region to map with dma_map_single() per the DMA
+documentation's "What memory is DMA'able?" section.
 
-Also remove an unncessary pair of braces in the same area of code.
+Unfortunately, we don't really check that in the DMA debugging code, so
+enabling DMA debugging doesn't help catch this problem. Let's add a new
+DMA debug function to check for a vmalloc address and print a warning if
+this happens. This makes it a little easier to debug these sorts of
+problems, instead of seeing odd behavior or crashes when drivers attempt
+to map the vmalloc space for DMA.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/bluetooth/btqcomsmd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ include/linux/dma-debug.h   |  8 ++++++++
+ include/linux/dma-mapping.h |  1 +
+ kernel/dma/debug.c          | 12 ++++++++++++
+ 3 files changed, 21 insertions(+)
 
-diff --git a/drivers/bluetooth/btqcomsmd.c b/drivers/bluetooth/btqcomsmd.c
-index 7df3eed1ef5e..1f2de6aeb3dd 100644
---- a/drivers/bluetooth/btqcomsmd.c
-+++ b/drivers/bluetooth/btqcomsmd.c
-@@ -172,11 +172,10 @@ static int btqcomsmd_probe(struct platform_device *pdev)
- 	/* The local-bd-address property is usually injected by the
- 	 * bootloader which has access to the allocated BD address.
- 	 */
--	if (!of_property_read_u8_array(pdev->dev.of_node, "local-bd-address",
--				       (u8 *)&btq->bdaddr, sizeof(bdaddr_t))) {
-+	if (!device_get_bd_address(&pdev->dev, (u8 *)&btq->bdaddr,
-+				   sizeof(bdaddr_t)))
- 		dev_info(&pdev->dev, "BD address %pMR retrieved from device-tree",
- 			 &btq->bdaddr);
--	}
+diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
+index a785f2507159..5aec2ca8a426 100644
+--- a/include/linux/dma-debug.h
++++ b/include/linux/dma-debug.h
+@@ -32,6 +32,9 @@ extern void dma_debug_add_bus(struct bus_type *bus);
  
- 	hdev = hci_alloc_dev();
- 	if (!hdev)
+ extern int dma_debug_resize_entries(u32 num_entries);
+ 
++extern void debug_dma_check_vmalloc(struct device *dev, const void *addr,
++				    unsigned long len);
++
+ extern void debug_dma_map_page(struct device *dev, struct page *page,
+ 			       size_t offset, size_t size,
+ 			       int direction, dma_addr_t dma_addr,
+@@ -103,6 +106,11 @@ static inline int dma_debug_resize_entries(u32 num_entries)
+ 	return 0;
+ }
+ 
++static inline void debug_dma_check_vmalloc(struct device *dev, const void *addr,
++					   unsigned long len)
++{
++}
++
+ static inline void debug_dma_map_page(struct device *dev, struct page *page,
+ 				      size_t offset, size_t size,
+ 				      int direction, dma_addr_t dma_addr,
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index eafd6f318e78..a0e67fd5433c 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -232,6 +232,7 @@ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+ 	dma_addr_t addr;
+ 
+ 	BUG_ON(!valid_dma_direction(dir));
++	debug_dma_check_vmalloc(dev, ptr, size);
+ 	addr = ops->map_page(dev, virt_to_page(ptr),
+ 			     offset_in_page(ptr), size,
+ 			     dir, attrs);
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index c007d25bee09..7ee7978868d4 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -1312,6 +1312,18 @@ static void check_sg_segment(struct device *dev, struct scatterlist *sg)
+ #endif
+ }
+ 
++void debug_dma_check_vmalloc(struct device *dev, const void *addr,
++		unsigned long len)
++{
++	if (unlikely(dma_debug_disabled()))
++		return;
++
++	if (is_vmalloc_addr(addr))
++		err_printk(dev, NULL, "DMA-API: device driver maps memory from vmalloc area [addr=%p] [len=%lu]\n",
++			   addr, len);
++}
++EXPORT_SYMBOL(debug_dma_check_vmalloc);
++
+ void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
+ 			size_t size, int direction, dma_addr_t dma_addr,
+ 			bool map_single)
 -- 
-2.19.0.444.g18242da7ef-goog
+Sent by a computer through tubes
 
