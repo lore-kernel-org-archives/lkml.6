@@ -2,160 +2,102 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53967ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B180ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EDFB2150E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:11:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WUeGnraN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EDFB2150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CBE52150E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 13:13:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CBE52150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387938AbeITSyc (ORCPT
+        id S2387841AbeITS43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 14:54:32 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54874 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387418AbeITSyc (ORCPT
+        Thu, 20 Sep 2018 14:56:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49102 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387656AbeITS43 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 14:54:32 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5FC051A9C;
-        Thu, 20 Sep 2018 15:11:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1537449062;
-        bh=KzxRfSGlTG36QHbdDuu62BeSdIst1dfK7oU07zhAYc0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WUeGnraNABJEJEzRS/aRinOpk/UIHEUmYoyFBLE32o5QB0hw8npyLHHAmEVuhwSeX
-         mFqbhchjZDkbk6BrzCnKdj0gMp/y1nV+nrRwK1AWILdbEQY/+NpbfdgzJwP20Vgily
-         4kjNchrjHc8IojTAXY4PURss4Z1sVtpOLG8EMZlk=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Luis Oliveira <Luis.Oliveira@synopsys.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Joao.Pinto@synopsys.com, festevam@gmail.com,
-        Luis Oliveira <luis.oliveira@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [V2, 2/5] Documentation: dt-bindings: Document the Synopsys MIPI DPHY Rx bindings
-Date:   Thu, 20 Sep 2018 16:11:14 +0300
-Message-ID: <1754496.WQhu2lOnZY@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180920111648.27000-3-lolivei@synopsys.com>
-References: <20180920111648.27000-1-lolivei@synopsys.com> <20180920111648.27000-3-lolivei@synopsys.com>
+        Thu, 20 Sep 2018 14:56:29 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9DA7D122F;
+        Thu, 20 Sep 2018 13:13:00 +0000 (UTC)
+Date:   Thu, 20 Sep 2018 15:12:58 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Frank Haverkamp <haver@linux.vnet.ibm.com>,
+        Joerg-Stephan Vogt <jsvogt@de.ibm.com>,
+        Michael Jung <mijung@gmx.net>,
+        Michael Ruettger <michael@ibmra.de>,
+        Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>,
+        Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        "Eberhard S. Amann" <esa@linux.vnet.ibm.com>,
+        Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>
+Subject: Re: [PATCH] signal/GenWQE: Fix sending of SIGKILL
+Message-ID: <20180920131258.GB18628@kroah.com>
+References: <87a7olllkk.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a7olllkk.fsf@xmission.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Louis,
-
-Thank you for the patch.
-
-On Thursday, 20 September 2018 14:16:40 EEST Luis Oliveira wrote:
-> Add device-tree bindings documentation for SNPS DesignWare MIPI D-PHY in
-> RX mode.
+On Thu, Sep 13, 2018 at 12:48:43PM +0200, Eric W. Biederman wrote:
 > 
-> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+> The genweq_add_file and genwqe_del_file by caching current without
+> using reference counting embed the assumption that a file descriptor
+> will never be passed from one process to another.  It even embeds the
+> assumption that the the thread that opened the file will be in
+> existence when the process terminates.   Neither of which are
+> guaranteed to be true.
+> 
+> Therefore replace caching the task_struct of the opener with
+> pid of the openers thread group id.  All the knowledge of the
+> opener is used for is as the target of SIGKILL and a SIGKILL
+> will kill the entire process group.
+> 
+> Rename genwqe_force_sig to genwqe_terminate, remove it's unncessary
+> signal argument, update it's ownly caller, and use kill_pid
+> instead of force_sig.
+> 
+> The work force_sig does in changing signal handling state is not
+> relevant to SIGKILL sent as SEND_SIG_PRIV.  The exact same processess
+> will be killed just with less work, and less confusion.  The work done
+> by force_sig is really only needed for handling syncrhonous
+> exceptions.
+> 
+> It will still be possible to cause genwqe_device_remove to wait 8
+> seconds by passing a file descriptor to another process but the possible
+> user after free is fixed.
+> 
+> Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+> Cc: stable@vger.kernel.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
+> Cc: Joerg-Stephan Vogt <jsvogt@de.ibm.com>
+> Cc: Michael Jung <mijung@gmx.net>
+> Cc: Michael Ruettger <michael@ibmra.de>
+> Cc: Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>
+> Cc: Sebastian Ott <sebott@linux.vnet.ibm.com>
+> Cc: Eberhard S. Amann <esa@linux.vnet.ibm.com>
+> Cc: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
+> Cc: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 > ---
-> Changelog
-> v2:
-> - no changes
 > 
->  .../devicetree/bindings/phy/snps,dphy-rx.txt       | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
-> b/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt new file mode
-> 100644
-> index 0000000..9079f4a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
-> @@ -0,0 +1,36 @@
-> +Synopsys DesignWare MIPI Rx D-PHY block details
-> +
-> +Description
-> +-----------
-> +
-> +The Synopsys MIPI D-PHY controller supports MIPI-DPHY in receiver mode.
-> +Please refer to phy-bindings.txt for more information.
-> +
-> +Required properties:
-> +- compatible		: Shall be "snps,dphy-rx".
-> +- #phy-cells		: Must be 1.
-> +- snps,dphy-frequency	: Output frequency of the D-PHY.
+> Greg I intend to take this through my signal tree, but if you would
+> rather take this through your driver tree please feel free.
 
-If that's the frequency of the clock on the output side of the RX PHY, doesn't 
-it depend on the frequency on the CSI-2 (or other) bus ? Can't it vary ? Why 
-do you need to have it in DT ?
+No objection from me for you to take it through your tree:
 
-> +- snps,dphy-te-len	: Size of the communication interface (8 bits->8 or
-> 12bits->12).
-
-We have similar properties in various bindings, such as bus-width in video-
-interfaces.txt. Couldn't we use a more standard name ?
-
-> +- reg			: Physical base address and size of the device memory mapped
-> +		 	  registers;
-
-The example below shows three ranges. Could you document the ranges that are 
-expected ?
-
-> +Optional properties:
-> +- snps,compat-mode	: Compatibility mode control
-
-What is this ?
-
-> +The per-board settings:
-> +- gpios 		: Synopsys testchip used as reference uses this to change 
-setup
-> +		  	  configurations.
-
-Here too, what is this for ?
-
-> +Example:
-> +
-> +	mipi_dphy_rx1: dphy@3040 {
-> +		compatible = "snps,dphy-rx";
-> +		#phy-cells = <1>;
-> +		snps,dphy-frequency = <300000>;
-> +		snps,dphy-te-len = <12>;
-> +		snps,compat-mode = <1>;
-> +		reg = < 0x03040 0x20
-> +			0x08000 0x100
-> +			0x09000 0x100>;
-
-The base addresses are pretty low, what kind of bus does this sit on ?
-
-> +	};
-> +
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
