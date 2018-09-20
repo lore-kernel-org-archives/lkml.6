@@ -1,174 +1,220 @@
 Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4824FECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B00C1ECE561
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE00D21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:12:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RJLkByaj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE00D21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6962121526
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 08:13:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6962121526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731738AbeITNyw (ORCPT
+        id S1731869AbeITNzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 09:54:52 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:39077 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbeITNyw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 09:54:52 -0400
-Received: by mail-yw1-f67.google.com with SMTP id k130-v6so903795ywe.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 01:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8oJy7BqSZNnTAN520tyfdX6YbtuMitnMJzwVgZH+hV4=;
-        b=RJLkByajtf0DrgeClLVN3foGgGLUj6/WQJL9pWNAamx2eyE+8wS7zzubgUb1paAt5h
-         RE5fmkrHF1qWcY94XJalt+wevPNvIokB8Axb4j9IO6jHzVM277fXJxBwlMy2KjID2+wc
-         TbO/pcgT/y2uBVYUOHYKXTPDMOjg0lvwA59pM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8oJy7BqSZNnTAN520tyfdX6YbtuMitnMJzwVgZH+hV4=;
-        b=GEF4LE1tOPL0f4CxBljqx6JorZO0f5MR7C5LDt640BAyozWgiXC/erRAfZ+ox9KqV/
-         tD/f5N6KwV8qjCzqoXDtMEGxt08t/40aOt8cPq4gJwCHr7exueM49MXS7fJVKHelFF//
-         +PsjlHqMi56liohBTtbm+nOOqvfrggQbwptRx8f9qAvP9bwB46CxdrzoSiCLorI+53DU
-         Bcpfb4p3SeV6SPqA77wJE022HxMxlBV64zmfSwi4qa8m7ly7xyTho82mVZ+EXQME8Fyc
-         c8/l1372Fc/sY/DsncUhGwExtCOoafFjkR2aDjUaREftesQ+/agYr4qbo2ZfsTwfDOjK
-         Kpcw==
-X-Gm-Message-State: APzg51DVRNXmteVbPVMz+rpGUir5WglJ+exqtBAUKQWAlql07Fs1TshX
-        u/VUwcXR1z0EHupxQDx6Ytrer1ZLjGKpwHsQ6R8O5A==
-X-Google-Smtp-Source: ANB0VdbuRp6mD0JVJ32GO8AlHn+1l7HDRWIckn+BGR5EPy6QeowWwFhItS8npLMxxvwyLApRmTNZ/Y+YIAweCxWu/SY=
-X-Received: by 2002:a81:5fd4:: with SMTP id t203-v6mr12568140ywb.84.1537431157642;
- Thu, 20 Sep 2018 01:12:37 -0700 (PDT)
+        Thu, 20 Sep 2018 09:55:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49524 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbeITNzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 09:55:12 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 37C2F308FE91;
+        Thu, 20 Sep 2018 08:12:58 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-168.brq.redhat.com [10.40.204.168])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F3805C26E;
+        Thu, 20 Sep 2018 08:12:55 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: Re: [PATCH 6/9] x86/kvm/mmu: make space for source data caching in struct kvm_mmu
+References: <20180802100132.5249-1-vkuznets@redhat.com>
+        <20180802100132.5249-7-vkuznets@redhat.com>
+        <1537372499.9937.42.camel@intel.com>
+Date:   Thu, 20 Sep 2018 10:12:52 +0200
+In-Reply-To: <1537372499.9937.42.camel@intel.com> (Sean Christopherson's
+        message of "Wed, 19 Sep 2018 08:54:59 -0700")
+Message-ID: <87h8iky4cb.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a0d:cc4f:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 01:12:37
- -0700 (PDT)
-In-Reply-To: <CAMuHMdUcg-73DNNGuG3Kn9oQ9R+LpYxpWYV_1tmzN-EzBFUXVQ@mail.gmail.com>
-References: <1533791723-3882-1-git-send-email-firoz.khan@linaro.org>
- <1533791723-3882-3-git-send-email-firoz.khan@linaro.org> <CAMuHMdVR+GKwT8WwjZy+=8j=ndWJ0s0sVnCGFGtsyvPAY9jnHQ@mail.gmail.com>
- <CALxhOnheD75br1X_A7h5cNYWdjrDn4ciPc++mYd-_oZJApJyZg@mail.gmail.com> <CAMuHMdUcg-73DNNGuG3Kn9oQ9R+LpYxpWYV_1tmzN-EzBFUXVQ@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Thu, 20 Sep 2018 13:42:37 +0530
-Message-ID: <CALxhOnjLKU8BCHFoc35P_tTh=6+NRbCrO6oB3Gar=uBMqYU4iw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] m68k: Replace NR_syscalls macro from asm/unistd.h
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 20 Sep 2018 08:12:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-On 18 September 2018 at 15:34, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Firoz,
+> On Thu, 2018-08-02 at 12:01 +0200, Vitaly Kuznetsov wrote:
+>> In preparation to MMU reconfiguration avoidance we need a space to
+>> cache source data. As this partially intersects with kvm_mmu_page_role,
+>> create 64bit sized union kvm_mmu_role holding both base_role and
+>> extended data. No functional change.
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> ---
+>>  arch/x86/include/asm/kvm_host.h | 14 +++++++++++++-
+>>  arch/x86/kvm/mmu.c              | 19 ++++++++++++-------
+>>  arch/x86/kvm/vmx.c              |  2 +-
+>>  3 files changed, 26 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>> index c5f116f9783d..830166ab4d59 100644
+>> --- a/arch/x86/include/asm/kvm_host.h
+>> +++ b/arch/x86/include/asm/kvm_host.h
+>> @@ -272,6 +272,18 @@ union kvm_mmu_page_role {
+>>  	};
+>>  };
+>>  
+>> +union kvm_mmu_scache {
+>> +	unsigned int word;
+>> +};
+>> +
+>> +union kvm_mmu_role {
+>> +	unsigned long as_u64;
 >
-> On Tue, Sep 18, 2018 at 9:16 AM Firoz Khan <firoz.khan@linaro.org> wrote:
->> On 9 August 2018 at 13:00, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> > One first comment below...
->> >
->> > On Thu, Aug 9, 2018 at 7:16 AM Firoz Khan <firoz.khan@linaro.org> wrote:
->> >> NR_syscalls macro holds the number of system call exist in m68k
->> >> architecture. This macro is currently the part of asm/unistd.h file.
->> >> We have to change the value of NR_syscalls, if we add or delete a
->> >> system call.
->> >>
->> >> One of patch in this patch series has a script which will generate
->> >> a uapi header based on syscall.tbl file. The syscall.tbl file
->> >> contains the number of system call information. So we have two
->> >> option to update NR_syscalls value.
->> >>
->> >> 1. Update NR_syscalls in asm/unistd.h manually by counting the
->> >>    no.of system calls. No need to update NR_syscalls untill
->> >>    we either add a new system call or delete an existing system
->> >>    call.
->> >>
->> >> 2. We can keep this feature it above mentioned script, that'll
->> >>    count the number of syscalls and keep it in a generated file.
->> >>    In this case we don't need to explicitly update NR_syscalls
->> >>    in asm/unistd.h file.
->> >>
->> >> The 2nd option will be the recommended one. For that, I moved the
->> >> NR_syscalls macro from asm/unistd.h to uapi/asm/unistd.h. The macro
->> >> name also changed form NR_syscalls to __NR_syscalls for making the
->> >> name convention same across all architecture. While __NR_syscalls
->> >> isn't strictly part of the uapi, having it as part of the generated
->> >> header to simplifies the implementation.
->> >
->> > It can indeed not be part of the UAPI, as UAPI definitions can never change,
->> > while new syscalls will be added in the future, increasing the number ;-)
->>
->> Thanks for your reply :)
->> Sorry for the delayed response :(
->>
->> I would like to keep __NR_syscalls macro to uapi header in order to simplify
->> the system call table generation script. Otherwise the __NR_syscalls
->> macro need to update manually. That become a problem.
->>
->> Please check the below implementation in uapi file make sense?
->> It is an easy workaround to leave __NR_syscalls macro in uapi/asm/unistd.h
->> and enclose it in #ifdef __KERNEL__
->>
->> ...
->> ...
->> #define __NR_pwritev2  378
->> #define __NR_statx      379
->>
->> #ifdef __KERNEL__
->> #define __NR_syscalls   380
->> #endif
->> ...
->> ...
->
-> #ifdef __KERNEL__ sounds fine to me.
+> No clue if it matters, but can't this be a u32 since both
+> kvm_mmu_page_role and kvm_mmu_scache are capped at 16 bits?
 
-I posted similar script for 10 different architectures. I got few good review
-from the maintainers and it will be applicable for all the
-architectures including
-m68k. There are few area which I identified need to improve. This will take
-couple of days.
+kvm_mmu_page_role is 32 bits, even if we make 'smm' a 1-bit field and
+throw away its padding we'll end up with 19 bits ...
 
-But it will be very helpful if you can perform the boot test on the
-actual platform
-and share the result.
-
-FYI, Keeping a single script is always our plan for long run. But I
-have to keep a
-separate versions for the start so each architecture can be handled  in one
-series. Which would make easier to merge in the initial version. we
-could probably
-add it to scripts/*.sh first, but that requires more coordination between the
-architectures.
-
-- Firoz
+(Generally speaking, I would prefer to leave some space for future
+extension: we only have 3 'struct kvm_mmu' per vcpu so we're talking
+about 12 bytes. We can, of course, change types here in future - this in
+not a stable ABI or anything - but the one doing that will have to check
+all users and this is always error-prone.)
 
 >
-> Gr{oetje,eeting}s,
+> Tangentially related, it seems like we should have build-
+> time asserts on the size of the unions since we're (ab)using
+> union behavior to dereference the entire value in a single
+> shot, e.g. base_role.word and mmu_role->as_u64.
+
+(I was told that union aliasing is UB, however, it's all over kernel so
+it's unlikely that gcc's behavior is ever going to change).
+
+I like your idea, I'll add a couple of BUILD_BUG_ONs in v2. Thanks!
+
 >
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+>> +	struct {
+>> +		union kvm_mmu_page_role base_role;
+>> +		union kvm_mmu_scache scache;
+>> +	};
+>> +};
+>> +
+>>  struct kvm_rmap_head {
+>>  	unsigned long val;
+>>  };
+>> @@ -359,7 +371,7 @@ struct kvm_mmu {
+>>  	void (*update_pte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
+>>  			   u64 *spte, const void *pte);
+>>  	hpa_t root_hpa;
+>> -	union kvm_mmu_page_role base_role;
+>> +	union kvm_mmu_role mmu_role;
+>>  	u8 root_level;
+>>  	u8 shadow_root_level;
+>>  	u8 ept_ad;
+>> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+>> index 85ec027299d6..c538e47e471b 100644
+>> --- a/arch/x86/kvm/mmu.c
+>> +++ b/arch/x86/kvm/mmu.c
+>> @@ -2331,7 +2331,7 @@ static struct kvm_mmu_page *kvm_mmu_get_page(struct kvm_vcpu *vcpu,
+>>  	int collisions = 0;
+>>  	LIST_HEAD(invalid_list);
+>>  
+>> -	role = vcpu->arch.mmu->base_role;
+>> +	role = vcpu->arch.mmu->mmu_role.base_role;
+>>  	role.level = level;
+>>  	role.direct = direct;
+>>  	if (role.direct)
+>> @@ -4377,7 +4377,8 @@ static void reset_rsvds_bits_mask_ept(struct kvm_vcpu *vcpu,
+>>  void
+>>  reset_shadow_zero_bits_mask(struct kvm_vcpu *vcpu, struct kvm_mmu *context)
+>>  {
+>> -	bool uses_nx = context->nx || context->base_role.smep_andnot_wp;
+>> +	bool uses_nx = context->nx ||
+>> +		context->mmu_role.base_role.smep_andnot_wp;
+>>  	struct rsvd_bits_validate *shadow_zero_check;
+>>  	int i;
+>>  
+>> @@ -4696,7 +4697,7 @@ static void init_kvm_tdp_mmu(struct kvm_vcpu *vcpu)
+>>  {
+>>  	struct kvm_mmu *context = vcpu->arch.mmu;
+>>  
+>> -	context->base_role.word = mmu_base_role_mask.word &
+>> +	context->mmu_role.base_role.word = mmu_base_role_mask.word &
+>>  				  kvm_calc_tdp_mmu_root_page_role(vcpu).word;
+>>  	context->page_fault = tdp_page_fault;
+>>  	context->sync_page = nonpaging_sync_page;
+>> @@ -4777,7 +4778,7 @@ void kvm_init_shadow_mmu(struct kvm_vcpu *vcpu)
+>>  	else
+>>  		paging32_init_context(vcpu, context);
+>>  
+>> -	context->base_role.word = mmu_base_role_mask.word &
+>> +	context->mmu_role.base_role.word = mmu_base_role_mask.word &
+>>  				  kvm_calc_shadow_mmu_root_page_role(vcpu).word;
+>>  	reset_shadow_zero_bits_mask(vcpu, context);
+>>  }
+>> @@ -4786,7 +4787,7 @@ EXPORT_SYMBOL_GPL(kvm_init_shadow_mmu);
+>>  static union kvm_mmu_page_role
+>>  kvm_calc_shadow_ept_root_page_role(struct kvm_vcpu *vcpu, bool accessed_dirty)
+>>  {
+>> -	union kvm_mmu_page_role role = vcpu->arch.mmu->base_role;
+>> +	union kvm_mmu_page_role role = vcpu->arch.mmu->mmu_role.base_role;
+>>  
+>>  	role.level = PT64_ROOT_4LEVEL;
+>>  	role.direct = false;
+>> @@ -4816,7 +4817,8 @@ void kvm_init_shadow_ept_mmu(struct kvm_vcpu *vcpu, bool execonly,
+>>  	context->update_pte = ept_update_pte;
+>>  	context->root_level = PT64_ROOT_4LEVEL;
+>>  	context->direct_map = false;
+>> -	context->base_role.word = root_page_role.word & mmu_base_role_mask.word;
+>> +	context->mmu_role.base_role.word =
+>> +		root_page_role.word & mmu_base_role_mask.word;
+>>  	context->get_pdptr = kvm_pdptr_read;
+>>  
+>>  	update_permission_bitmask(vcpu, context, true);
+>> @@ -5131,10 +5133,13 @@ static void kvm_mmu_pte_write(struct kvm_vcpu *vcpu, gpa_t gpa,
+>>  
+>>  		local_flush = true;
+>>  		while (npte--) {
+>> +			unsigned int base_role =
+>> +				vcpu->arch.mmu->mmu_role.base_role.word;
+>> +
+>>  			entry = *spte;
+>>  			mmu_page_zap_pte(vcpu->kvm, sp, spte);
+>>  			if (gentry &&
+>> -			      !((sp->role.word ^ vcpu->arch.mmu->base_role.word)
+>> +			      !((sp->role.word ^ base_role)
+>>  			      & mmu_base_role_mask.word) && rmap_can_add(vcpu))
+>>  				mmu_pte_write_new_pte(vcpu, sp, spte, &gentry);
+>>  			if (need_remote_flush(entry, *spte))
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index 494148818b8d..0d41116bef1f 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -9028,7 +9028,7 @@ static int nested_vmx_eptp_switching(struct kvm_vcpu *vcpu,
+>>  
+>>  		kvm_mmu_unload(vcpu);
+>>  		mmu->ept_ad = accessed_dirty;
+>> -		mmu->base_role.ad_disabled = !accessed_dirty;
+>> +		mmu->mmu_role.base_role.ad_disabled = !accessed_dirty;
+>>  		vmcs12->ept_pointer = address;
+>>  		/*
+>>  		 * TODO: Check what's the correct approach in case
+
+-- 
+  Vitaly
