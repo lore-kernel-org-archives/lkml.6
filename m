@@ -2,78 +2,78 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9F3C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30B4C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEF212150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:05:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF212150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 9231B214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:06:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9231B214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732002AbeITWt1 (ORCPT
+        id S1731832AbeITWvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:49:27 -0400
-Received: from ms.lwn.net ([45.79.88.28]:46878 "EHLO ms.lwn.net"
+        Thu, 20 Sep 2018 18:51:03 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:53120 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726128AbeITWt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:49:27 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id DA0D9866;
-        Thu, 20 Sep 2018 17:05:00 +0000 (UTC)
-Date:   Thu, 20 Sep 2018 11:04:58 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] docs/core-api: add memory allocation guide
-Message-ID: <20180920110458.07d5a1c7@lwn.net>
-In-Reply-To: <20180920042930.GA19495@rapoport-lnx>
-References: <1536917278-31191-1-git-send-email-rppt@linux.vnet.ibm.com>
-        <20180920042930.GA19495@rapoport-lnx>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        id S1726786AbeITWvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 18:51:03 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0B87B20006F;
+        Thu, 20 Sep 2018 19:06:36 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C719E200063;
+        Thu, 20 Sep 2018 19:06:35 +0200 (CEST)
+Received: from someleo.am.freescale.net (someleo.am.freescale.net [10.81.33.95])
+        by inv1260.us-phx01.nxp.com (Postfix) with ESMTP id 071F240A63;
+        Thu, 20 Sep 2018 10:06:34 -0700 (MST)
+From:   Li Yang <leoyang.li@nxp.com>
+To:     arm@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shawnguo@kernel.org
+Subject: [GIT PULL] soc/fsl drivers updates for next(v4.20)
+Date:   Thu, 20 Sep 2018 12:06:34 -0500
+Message-Id: <20180920170634.32046-1-leoyang.li@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Sep 2018 07:29:30 +0300
-Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+Hi arm-soc maintainers,
 
-> Ping?
-> 
-> On Fri, Sep 14, 2018 at 12:27:55PM +0300, Mike Rapoport wrote:
-> > Hi,
-> > 
-> > As Vlastimil mentioned at [1], it would be nice to have some guide about
-> > memory allocation. This set adds such guide that summarizes the "best
-> > practices". 
-> > 
-> > The changes from the RFC include additions and corrections from Michal and
-> > Randy. I've also added markup to cross-reference the kernel-doc
-> > documentation.
-> > 
-> > I've split the patch into three to separate labels addition to the exiting
-> > files from the new contents.
-> > 
-> > v3 -> v4:
-> >   * make GFP_*USER* description less confusing
+Please merge the following updates for soc/fsl drivers.
 
-Sorry...but it's been less than a week.  And this week has been ...
-busy ...
+Regards,
+Leo
 
-Anyway, I've applied the set now, thanks.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-jon
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-for-next-4.20
+
+for you to fetch changes up to afa86d264a7ce62ba214bc7c6012e2129141421e:
+
+  soc: fsl: dpio: remove redundant pointer 'priv' (2018-08-30 12:19:02 -0500)
+
+----------------------------------------------------------------
+soc/fsl for next
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      soc: fsl: dpio: remove redundant pointer 'priv'
+
+Rob Herring (1):
+      soc: fsl/qe: Use of_get_child_by_name helper
+
+ drivers/soc/fsl/dpio/dpio-driver.c | 3 ---
+ drivers/soc/fsl/qe/qe.c            | 6 +-----
+ 2 files changed, 1 insertion(+), 8 deletions(-)
