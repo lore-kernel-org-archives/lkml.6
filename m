@@ -2,177 +2,170 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FF3C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD362ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1288C21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1288C21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
+	by mail.kernel.org (Postfix) with ESMTP id 68FB021523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:14:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T1HKP7Mt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68FB021523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388288AbeIUCAB convert rfc822-to-8bit (ORCPT
+        id S2388370AbeIUCAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:00:01 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:48901 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727232AbeIUCAB (ORCPT
+        Thu, 20 Sep 2018 22:00:07 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:33174 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727232AbeIUCAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:00:01 -0400
-Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mail.lichtvoll.de (Postfix) with ESMTPSA id D96DB3B284C;
-        Thu, 20 Sep 2018 22:14:46 +0200 (CEST)
-From:   Martin Steigerwald <martin@lichtvoll.de>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH security-next v2 00/26] LSM: Explict LSM ordering
-Date:   Thu, 20 Sep 2018 22:14:46 +0200
-Message-ID: <1898403.NNy4ELVaME@merkaba>
-In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
-References: <20180920162338.21060-1-keescook@chromium.org>
+        Thu, 20 Sep 2018 22:00:06 -0400
+Received: by mail-yb1-f194.google.com with SMTP id y9-v6so4494531ybh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=YocOBZnb5FubGF2oF328ra0Xl0q6v8qLlmnhyCvaydE=;
+        b=T1HKP7MtlJGRghrDPBWE4M5k0+mvCcZ5z/oqL1Cx0pE+ujAXmVl9+8FoQDMeJy2Bze
+         vqUgBcn+Iy2JSY/E4BOE5H3dHg9Mjy/qfHE1J5AqthUXcFBnSal/K1qXHgECXsXAukrQ
+         iC7FJY1WFa14Uc/bR0+ZhKER/WdQSKcDz5UOw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=YocOBZnb5FubGF2oF328ra0Xl0q6v8qLlmnhyCvaydE=;
+        b=WDy8v8LItePpgJI6LkmLQcfH4ycn45GF+i66cplZvmtkSo4jxfZphLHlPjW+ZSLbbR
+         XKVFanUQdQDfkcXaARJBQliDcSs3nQsAzpkJyVxkekK6savy+gp9oWYejzXWOrDBQQ0q
+         AR57IlHn1HoE2la1vcx5jv5p6h8ZKCi66WPgXZMKr8tUrmdjhAJvEicEt/FaJOw0h5qN
+         ieBrg8C/BPbDGoE5Xy9c+hf2yhxPZRUvZZ/VFjEXQDecLwnCEL5GwPK2GhTRMPw0O0Oz
+         ESfDXKDZHAkiTq5EKXhJINdEyhKXuDoRJS2711+EVSrf2wClp6v9whNAz96QrdpeMBWr
+         L4/g==
+X-Gm-Message-State: APzg51Bm1hJt4nD7w/uHM9dGOOenIdLBeBlsDJA8M2setvc0HQQSDJWi
+        YUuMPTBd3EUM+tFQCoA9iTu85x6wxNs=
+X-Google-Smtp-Source: ANB0VdYhTfAkrLYLl//3w8MHEfnh57fANqDUhTY+Fr/eU6f4+AcOC5GC6ds97ISRjFuI0vzPcNPlHg==
+X-Received: by 2002:a25:3c86:: with SMTP id j128-v6mr16016277yba.190.1537474494331;
+        Thu, 20 Sep 2018 13:14:54 -0700 (PDT)
+Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
+        by smtp.gmail.com with ESMTPSA id b185-v6sm3606821ywf.12.2018.09.20.13.14.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 13:14:54 -0700 (PDT)
+Received: by mail-yw1-f50.google.com with SMTP id z143-v6so4292092ywa.7
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 13:14:53 -0700 (PDT)
+X-Received: by 2002:a81:4418:: with SMTP id r24-v6mr18926266ywa.407.1537474121494;
+ Thu, 20 Sep 2018 13:08:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 13:08:40
+ -0700 (PDT)
+In-Reply-To: <20180920172301.21868-13-miguel.ojeda.sandonis@gmail.com>
+References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com> <20180920172301.21868-13-miguel.ojeda.sandonis@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 20 Sep 2018 13:08:40 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJEXFXnOVZrjoUyyuQ-=L=Lou3iLsA2Jjzci_McSgn2XA@mail.gmail.com>
+Message-ID: <CAGXu5jJEXFXnOVZrjoUyyuQ-=L=Lou3iLsA2Jjzci_McSgn2XA@mail.gmail.com>
+Subject: Re: [PATCH v5 12/15] Compiler Attributes: add support for __nonstring
+ (gcc >= 8)
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Olof Johansson <olof@lxom.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        David Rientjes <rientjes@google.com>, Willy Tarreau <w@1wt.eu>,
+        Martin Sebor <msebor@gmail.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook - 20.09.18, 18:23:
-> v2:
-> - add "lsm.order=" and CONFIG_LSM_ORDER instead of overloading
-> "security=" - reorganize introduction of ordering logic code
-> 
-> Updated cover letter:
-> 
-> This refactors the LSM registration and initialization infrastructure
-> to more centrally support different LSM types. What was considered a
-> "major" LSM is kept for legacy use of the "security=" boot parameter,
-> and now overlaps with the new class of "exclusive" LSMs for the future
-> blob sharing (to be added later). The "minor" LSMs become more well
-> defined as a result of the refactoring.
-> 
-> Instead of continuing to (somewhat improperly) overload the kernel's
-> initcall system, this changes the LSM infrastructure to store a
-> registration structure (struct lsm_info) table instead, where metadata
-> about each LSM can be recorded (name, flags, order, enable flag, init
-> function). This can be extended in the future to include things like
-> required blob size for the coming "blob sharing" LSMs.
+On Thu, Sep 20, 2018 at 10:22 AM, Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> From the GCC manual:
+>
+>   nonstring
+>
+>     The nonstring variable attribute specifies that an object or member
+>     declaration with type array of char, signed char, or unsigned char,
+>     or pointer to such a type is intended to store character arrays that
+>     do not necessarily contain a terminating NUL. This is useful in detecting
+>     uses of such arrays or pointers with functions that expect NUL-terminated
+>     strings, and to avoid warnings when such an array or pointer is used as
+>     an argument to a bounded string manipulation function such as strncpy.
+>
+>   https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html
+>
+> This attribute can be used for documentation purposes (i.e. replacing
+> comments), but it is most helpful when the following warnings are enabled:
+>
+>   -Wstringop-overflow
+>
+>     Warn for calls to string manipulation functions such as memcpy and
+>     strcpy that are determined to overflow the destination buffer.
+>
+>     [...]
+>
+>   -Wstringop-truncation
+>
+>     Warn for calls to bounded string manipulation functions such as
+>     strncat, strncpy, and stpncpy that may either truncate the copied
+>     string or leave the destination unchanged.
+>
+>     [...]
+>
+>     In situations where a character array is intended to store a sequence
+>     of bytes with no terminating NUL such an array may be annotated with
+>     attribute nonstring to avoid this warning. Such arrays, however,
+>     are not suitable arguments to functions that expect NUL-terminated
+>     strings. To help detect accidental misuses of such arrays GCC issues
+>     warnings unless it can prove that the use is safe.
+>
+>   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-I read the cover letter and still don´t know what this is about. Now I 
-am certainly not engaged deeply with LSM. I bet my main missing piece 
-is: What is a "blob sharing" LSM.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-I think it would improve the cover letter greatly if it explains briefly 
-what is a major LSM, what is a minor LSM and what is a "blob sharing" 
-LSM.
-
-Why those are all needed? What is the actual security or end user 
-benefit of this work? The questions are not to question your work. I bet 
-it makes all perfect sense. I just did not understand its sense from 
-reading the cover letter.
-
-> The "major" LSMs had to individually negotiate which of them should be
-> enabled. This didn't provide a way to negotiate combinations of other
-> LSMs (as will be needed for "blob sharing" LSMs). This is solved by
-> providing the LSM infrastructure with all the details needed to make
-> the choice (exposing the per-LSM "enabled" flag, if used, the LSM
-> characteristics, and ordering expectations).
-> 
-> As a result of the refactoring, the "minor" LSMs are able to remove
-> the open-coded security_add_hooks() calls for "capability", "yama",
-> and "loadpin", and to redefine "integrity" properly as a general LSM.
-> (Note that "integrity" actually defined _no_ hooks, but needs the
-> early initialization).
-> 
-> With all LSMs being proessed centrally, it was possible to implement
-> a new boot parameter "lsm.order=" to provide explicit ordering, which
-> is helpful for the future "blob sharing" LSMs. Matching this is the
-> new CONFIG_LSM_ORDER, which replaces CONFIG_DEFAULT_SECURITY, as it
-> provides a higher granularity of control.
-> 
-> To better show LSMs activation some debug reporting was added (enabled
-> with the "lsm.debug" boot commandline option).
-> 
-> Finally, I added a WARN() around LSM initialization failures, which
-> appear to have always been silently ignored. (Realistically any LSM
-> init failures would have only been due to catastrophic kernel issues
-> that would render a system unworkable anyway, but it'd be better to
-> expose the problem as early as possible.)
-> 
-> -Kees
-> 
-> Kees Cook (26):
->   LSM: Correctly announce start of LSM initialization
->   vmlinux.lds.h: Avoid copy/paste of security_init section
->   LSM: Rename .security_initcall section to .lsm_info
->   LSM: Remove initcall tracing
->   LSM: Convert from initcall to struct lsm_info
->   vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
->   LSM: Convert security_initcall() into DEFINE_LSM()
->   LSM: Record LSM name in struct lsm_info
->   LSM: Provide init debugging infrastructure
->   LSM: Don't ignore initialization failures
->   LSM: Introduce LSM_FLAG_LEGACY_MAJOR
->   LSM: Provide separate ordered initialization
->   LSM: Plumb visibility into optional "enabled" state
->   LSM: Lift LSM selection out of individual LSMs
->   LSM: Introduce lsm.enable= and lsm.disable=
->   LSM: Prepare for reorganizing "security=" logic
->   LSM: Refactor "security=" in terms of enable/disable
->   LSM: Build ordered list of ordered LSMs for init
->   LSM: Introduce CONFIG_LSM_ORDER
->   LSM: Introduce "lsm.order=" for boottime ordering
->   LoadPin: Initialize as ordered LSM
->   Yama: Initialize as ordered LSM
->   LSM: Introduce enum lsm_order
->   capability: Mark as LSM_ORDER_FIRST
->   LSM: Separate idea of "major" LSM from "exclusive" LSM
->   LSM: Add all exclusive LSMs to ordered initialization
-> 
->  .../admin-guide/kernel-parameters.txt         |   7 +
->  arch/arc/kernel/vmlinux.lds.S                 |   1 -
->  arch/arm/kernel/vmlinux-xip.lds.S             |   1 -
->  arch/arm64/kernel/vmlinux.lds.S               |   1 -
->  arch/h8300/kernel/vmlinux.lds.S               |   1 -
->  arch/microblaze/kernel/vmlinux.lds.S          |   2 -
->  arch/powerpc/kernel/vmlinux.lds.S             |   2 -
->  arch/um/include/asm/common.lds.S              |   2 -
->  arch/xtensa/kernel/vmlinux.lds.S              |   1 -
->  include/asm-generic/vmlinux.lds.h             |  25 +-
->  include/linux/init.h                          |   2 -
->  include/linux/lsm_hooks.h                     |  43 ++-
->  include/linux/module.h                        |   1 -
->  security/Kconfig                              |  42 +--
->  security/apparmor/lsm.c                       |  16 +-
->  security/commoncap.c                          |   8 +-
->  security/integrity/iint.c                     |   5 +-
->  security/loadpin/loadpin.c                    |  10 +-
->  security/security.c                           | 304
-> ++++++++++++++---- security/selinux/hooks.c                      | 
-> 16 +-
->  security/smack/smack_lsm.c                    |   8 +-
->  security/tomoyo/tomoyo.c                      |   7 +-
->  security/yama/yama_lsm.c                      |   7 +-
->  23 files changed, 348 insertions(+), 164 deletions(-)
-
+-Kees
 
 -- 
-Martin
-
-
+Kees Cook
+Pixel Security
