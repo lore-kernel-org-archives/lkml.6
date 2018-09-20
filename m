@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED4FECE562
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 646FBECE562
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7041721521
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C22521521
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 02:48:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="OOmpX47i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7041721521
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="CByruXM7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C22521521
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387884AbeITI3B (ORCPT
+        id S2387871AbeITI3B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 20 Sep 2018 04:29:01 -0400
-Received: from mail-bl2nam02on0137.outbound.protection.outlook.com ([104.47.38.137]:41534
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr700094.outbound.protection.outlook.com ([40.107.70.94]:25376
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387789AbeITI27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 04:28:59 -0400
+        id S2387719AbeITI3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 04:29:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OqGXUUVsT8024sv9zFtExRzJUxqSBbk+UTZCG/tYcWc=;
- b=OOmpX47iKQ1I78P4X/AkTLsN2N25BJ6BGstFx5rS18ADuy0RHIGZjmnyIWrgOvWqQuBqXEj0zCd2mDOwVvX8gypTm4TksaliE9a032jSl1KZXREsyLwCEoJiNzTkhYPQjSZ0iL9Km+m/0l+dZWpR0SskUkG5nf0lAU5qScIIYrw=
+ bh=5s82SZxOG+WLmwHSXxTF6Xt24uI0ZGgLIK89ulx88bU=;
+ b=CByruXM7+/5GGiVeiOZxynyHSRcbHy9vXfEknYZm8/4+oy97be2S1RhQlFVWu3lNzMnbj9+FlDZDH2Dm9D043RR3RP1tSN9qwmUlVo9BPan3GwxvSfGj6yyCnavUzYCT/tvxAW+K2P29ZxcghbKXpOMUD9joWILn4ydiX6pxzIs=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0822.namprd21.prod.outlook.com (10.173.192.8) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Thu, 20 Sep 2018 02:47:46 +0000
+ 15.20.1185.6; Thu, 20 Sep 2018 02:47:47 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Thu, 20 Sep 2018
- 02:47:46 +0000
+ 02:47:47 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
@@ -46,13 +46,13 @@ CC:     Huazhong Tan <tanhuazhong@huawei.com>,
         Salil Mehta <salil.mehta@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 25/56] net: hns: fix skb->truesize
- underestimation
-Thread-Topic: [PATCH AUTOSEL 4.18 25/56] net: hns: fix skb->truesize
- underestimation
-Thread-Index: AQHUUIxOLdZieT6iOkeSnR6A4xIe0Q==
-Date:   Thu, 20 Sep 2018 02:47:44 +0000
-Message-ID: <20180920024716.58490-25-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 26/56] net: hns3: fix page_offset overflow when
+ CONFIG_ARM64_64K_PAGES
+Thread-Topic: [PATCH AUTOSEL 4.18 26/56] net: hns3: fix page_offset overflow
+ when CONFIG_ARM64_64K_PAGES
+Thread-Index: AQHUUIxPFJqLEon8CEm41ZlmR3vBhw==
+Date:   Thu, 20 Sep 2018 02:47:45 +0000
+Message-ID: <20180920024716.58490-26-alexander.levin@microsoft.com>
 References: <20180920024716.58490-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180920024716.58490-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,30 +61,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:a8WRgno1TnsUcMTjZyj+lssRisvym9iimURjqXI3dQCVgwGwngW87/WnuYdl8RWLF5y0id9m7oSblp/4RfZdCJUUe84frf3DEu9cWVtgp0DZu3a1lOmumEFakzcbORdaXCRhYvQbuFWD2BqvmWosmW82uYs1pDZMlchJp3gKnf3iDQadv6LG/rmWm3MMGWFlxbNdKb3llh1cSA2MO7d7gJiPl8ITN/AJK7IzTOt1n75N+YK8F2KQiZYyUUoiYd3DAVxHw4lzQRAiKDCIuQMAm6Jnvhj5JkmSKHrE2iwM6mt04PwHz6SlyyHLsao7dJn9WI9gj4Nbdu+vlb7QdjOwtGZj9XHN9wpGFmlUzBfzYwMHmmdG//6swDJYuZIrv3Hs99Hs2AIuJDQa38QubnDEZAYgQ0crRCEeBgc3DvtSni5aECzWDp8adGo2Wpl3e0oJRUqn3LZu25nUULIAcIXvDg==;5:tfXuR7RJRyR6/6VYZv4XjJ1kn3efPiq8QNJ1SHSGGaKyUQCHCL4phJOQd2yROGWNjvAsHrRR085a9DWtdnnEtwhdvUwEnfPnIJBqHFhQjEfQGJwSiG94FcP9OG0O84jMxz1LMa6k1CefxiaNRmvS7/v0xlBNji81McJYqMISx0w=;7:6gdgyRfAKTRFVfwC3TKhg5HtC+0xeHNNtgyOkzAc+0mXtjPw0tdgU6byboZQcgVNsHDVT32LnvAmw3v/F8O6hsjoh2XDskmB8LN8k3jf3nHWQMNxbyAlGcNwmggLEwXbpcnfAHXMmBPNYiF9ck5CUy4N2zSXUHoxHcJZFHc8BgUAfmFg1DorkGmbXHC661RNXkHgzk6gjd9/tlPAstUT95LyfnbsDf/hjOF6NXxEQy+T6A5GocOPkSB/Z0GNiOTl
-x-ms-office365-filtering-correlation-id: 3e5e4b6c-1fe1-4bc3-b2b8-08d61ea3722e
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0822;6:lRF4cl1vO70SMn9O/n3W6ihcuZpT3u1qFt6DKJr0tnBBCkL0j+buL4btw7/B66MiHuyxCtREQPl9tHZ2n829Fk61dVfGLJmC93EKEDG6zRH0RGYziVHwR9eBSUZ+r+lGjnAAh2rJrWYn7/cZwmBMWrL5sfhEmxXpSxfVgy7z4pAJl/a78v7jlhMQIAV7zVmw6bth6wRlYYqYBtMiVIgAK+0shKg8Txrd0UxtSLHnBgmHcyVHU1TmbeKHvlCnjMPpnsDV4/gGZ6Rf/cQWESR60VgnfMzqXXqAnDBNG8mZjAYSA8LEv65y0JIZOe9Sb5LHk5LdkUY4FpCAYgqfApYIBU+IoTOco8/iLk/jI/Hp6L3hhgVasxthELKtOUHlBtsbw0iFLXRHSCK0I8CI++9T46UyIIQBC0rVk7Gs1EoIPIKuYVrw+zpyHy0kzjBdrlYROVCCkcEZm/0c7bFFxuUwAw==;5:UQFpF7A8Ef5XK5NBUWaWMLh5EWNXoKUbQWDGIhx13uWRUqaDO8Td0uPj5Bh7KfhC8yxU1Pprekqq9ckH/WmZV9LWSqtkmj4ArBoUGHE3LyTxuekMZcn/6H0iqXhFrSBv45iqK74MyIx3KL1kH5zpESTX0gglsqmlphF1ASgD84Q=;7:Xutw6mw7XpyAb01WCIr7x8pux5w7S47wcgd3xAuakBlTz78Pi5z7a31C3/kMk5D8xlSjqWrrm6wzMuPkdaQh6fGAtyWgIKMQk7EqNRNgkRBt/LBM1iguzrBSTz9Wiwm3/mXpTtjTeTe485e3s9PR4YZq/VFbRUv2/lSpDrhrnL9ZZQWO14sZsc50uzdc0PJlB7iHCw0TfM3q8ZP+OpjCyey2022W5Q+n5phL+ji1kbXm96uRGVX70u2g+GeUidFL
+x-ms-office365-filtering-correlation-id: 0b2dc3ef-c904-45ec-fc3a-08d61ea37299
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0822;
 x-ms-traffictypediagnostic: CY4PR21MB0822:
-x-microsoft-antispam-prvs: <CY4PR21MB0822248A8FCD15D422567618FB130@CY4PR21MB0822.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0822A2F8EFEECEC49325C4A4FB130@CY4PR21MB0822.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(50582790962513)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231355)(944501410)(52105095)(2018427008)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0822;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0822;
 x-forefront-prvs: 0801F2E62B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(366004)(136003)(39860400002)(199004)(189003)(10290500003)(6512007)(54906003)(110136005)(2501003)(2900100001)(86612001)(446003)(6116002)(316002)(81156014)(81166006)(1076002)(26005)(8936002)(22452003)(86362001)(575784001)(2906002)(107886003)(2616005)(486006)(256004)(14444005)(99286004)(66066001)(5660300001)(6506007)(217873002)(5250100002)(102836004)(186003)(3846002)(4326008)(6436002)(11346002)(25786009)(68736007)(71190400001)(71200400001)(8676002)(476003)(6346003)(6486002)(36756003)(14454004)(106356001)(10090500001)(53936002)(305945005)(72206003)(76176011)(7736002)(97736004)(478600001)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(366004)(136003)(39860400002)(199004)(189003)(10290500003)(6512007)(54906003)(110136005)(2501003)(2900100001)(86612001)(446003)(6116002)(15760500003)(316002)(81156014)(81166006)(1076002)(26005)(8936002)(22452003)(86362001)(575784001)(2906002)(107886003)(2616005)(486006)(256004)(99286004)(66066001)(5660300001)(6506007)(217873002)(5250100002)(102836004)(186003)(3846002)(4326008)(6436002)(11346002)(25786009)(68736007)(71190400001)(71200400001)(8676002)(476003)(6346003)(6486002)(36756003)(14454004)(106356001)(10090500001)(53936002)(305945005)(72206003)(76176011)(7736002)(97736004)(478600001)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0822;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: euQaCDnPupBLbocYoBhZX9UCrZPA+NXse6bC91H95GMUaXC7Ogv6qBmxkPOA2gtgDQATyNlfomIg2WKCNIAQ9BQbfyboRpquicAghrmHrkzCEcmsdLqryHKfVroL3radWUC4N/3SpfCevkeJsq/s2OatVnoTB0MR3TLoWif6oLsqU4zsFQLrzqozX8OrH9k1XmDFFj/It6DyTd8bEz4aGJ30wycw6anQDDhNad1ysNQKF/QYYjyCUs7k8XsRMlCX3KABdZnJsLC2Z3JV6b4dmqfHw/OgVqDZNPatpMGD0Ss000pOsTDaAHIEOx61K3G45z2hBiB7MHlAY9CeFKHBSooAU8Z3kFyqOVx/xP+ZR7o=
+x-microsoft-antispam-message-info: B6G8Vv+lUDlDHJRJCzbQ2WnFi4xGfFJ1IgemfSzXN8wFHpsKRjGZFmuamqVE90KCV8gkgfbVf6Bro84cdGT1t/5DgYd3ECh6T8MSrFDRAZAx5CnAlgga4KdLb/jKEz46UHDp+oA9euOhj9R3XyLl0mVGuB2IbBQHZf+DoiAZg0oKe4j6+JAS8QIyE2BtAAVtSqKOg/tPY5pA2kNCaLZRUblizyKO5Kie3pAvpAZQjAV/Kmuh9ltf4J96NPi2CDuTW/jlT8+GGWeUme7JwGmQguBbX8z/a7AarjWFeFbU/veKMnDwOWrV7xBoG6geci+vZtnUb2u/Dq0m7h4iZQU7mmWRG+09KpNHXCLLvIcjJ1Q=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e5e4b6c-1fe1-4bc3-b2b8-08d61ea3722e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:44.6325
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b2dc3ef-c904-45ec-fc3a-08d61ea37299
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2018 02:47:45.5232
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -96,41 +96,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit b1ccd4c0ab6ef499f47dd84ed4920502a7147bba ]
+[ Upstream commit 27a5959308559fa6afcaa4e6cd81d25bcb2dda7c ]
 
-skb->truesize is not meant to be tracking amount of used bytes in a skb,
-but amount of reserved/consumed bytes in memory.
+When enable the config item "CONFIG_ARM64_64K_PAGES", the size of
+PAGE_SIZE is 65536(64K). But the type of page_offset is u16, it will
+overflow. So change it to u32, when "CONFIG_ARM64_64K_PAGES" enabled.
 
-For instance, if we use a single byte in last page fragment, we have to
-account the full size of the fragment.
-
-So skb_add_rx_frag needs to calculate the length of the entire buffer into
-turesize.
-
-Fixes: 9cbe9fd5214e ("net: hns: optimize XGE capability by reducing cpu usa=
-ge")
-Signed-off-by: Huazhong tan <tanhuazhong@huawei.com>
+Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hi=
+p08 SoC")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/et=
-hernet/hisilicon/hns/hns_enet.c
-index ef9ef703d13a..ef994a715f93 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -530,7 +530,7 @@ static void hns_nic_reuse_page(struct sk_buff *skb, int=
- i,
- 	}
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/=
+ethernet/hisilicon/hns3/hns3_enet.h
+index 3b083d5ae9ce..c84c09053640 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -290,11 +290,11 @@ struct hns3_desc_cb {
 =20
- 	skb_add_rx_frag(skb, i, desc_cb->priv, desc_cb->page_offset + pull_len,
--			size - pull_len, truesize - pull_len);
-+			size - pull_len, truesize);
+ 	/* priv data for the desc, e.g. skb when use with ip stack*/
+ 	void *priv;
+-	u16 page_offset;
+-	u16 reuse_flag;
+-
++	u32 page_offset;
+ 	u32 length;     /* length of the buffer */
 =20
- 	 /* avoid re-using remote pages,flag default unreuse */
- 	if (unlikely(page_to_nid(desc_cb->priv) !=3D numa_node_id()))
++	u16 reuse_flag;
++
+        /* desc type, used by the ring user to mark the type of the priv da=
+ta */
+ 	u16 type;
+ };
 --=20
 2.17.1
