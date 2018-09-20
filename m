@@ -2,109 +2,82 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB767C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3D3C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B9332147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFA48214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:52:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v7IapQr6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B9332147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qTZrhxfN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA48214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388130AbeIUAgk (ORCPT
+        id S2388217AbeIUAht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:36:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbeIUAgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:36:39 -0400
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E72FA214C2;
-        Thu, 20 Sep 2018 18:51:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537469508;
-        bh=Yvu/N1EKlA/F38VY/EkNz9Vl8IT6XPTnue0an1ho8Kc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=v7IapQr6xJMV0Gas5Ev8CJYLMVdsBiDci8EFgADeTLFsKKIHUFkCo0idhSFY3wKnY
-         lAdK1C4CEcfJaxkpf9v3ibfeybb0YXTqEFyZccSChdE8/3ya6DxqEy5b0XRZxQQeMf
-         90cNHIgUX8iAlv4t33J0pIvkKOdXu1E0l9jKsoLM=
-Received: by mail-qk1-f172.google.com with SMTP id z78-v6so6136626qka.0;
-        Thu, 20 Sep 2018 11:51:47 -0700 (PDT)
-X-Gm-Message-State: APzg51C6GSe/fxTjDx+8CyUDMbqljGdz4tsfV8I5EwxwdKW6Kr2CGUk+
-        OVXmUEa2PgKvqwMBchNi2Kxn5QZ2tLAcbKREPQ==
-X-Google-Smtp-Source: ANB0VdbivjFUiMf6/5j+1/HsAFRG+nq45uK2MqkHjvOj79pwH8YtZcgcJCwfUgMWqrGiVWDBb3t2AeRUzzgm1rU4DcM=
-X-Received: by 2002:a37:ddcf:: with SMTP id u76-v6mr8470135qku.184.1537469507132;
- Thu, 20 Sep 2018 11:51:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180627045234.27403-1-rnayak@codeaurora.org> <20180627045234.27403-3-rnayak@codeaurora.org>
- <20180703223554.GA32313@rob-hp-laptop> <20180704055757.4li26b6poxllmh2k@vireshk-i7>
- <1463d24b-481d-eecd-9e44-e7a5a993e5fc@codeaurora.org>
-In-Reply-To: <1463d24b-481d-eecd-9e44-e7a5a993e5fc@codeaurora.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 20 Sep 2018 11:51:35 -0700
-X-Gmail-Original-Message-ID: <CAL_JsqJe+m4hD3nxQDjOT1JzRoSMXppy1r6APV1w=NtgCr-X_A@mail.gmail.com>
-Message-ID: <CAL_JsqJe+m4hD3nxQDjOT1JzRoSMXppy1r6APV1w=NtgCr-X_A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] dt-bindings: power: Add qcom rpm power domain
- driver bindings
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 20 Sep 2018 20:37:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36780 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeIUAht (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 20:37:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AOLlbSuHhx+0PG/hegozsrUdJLTxsHqKyO8h1vJ2Vbs=; b=qTZrhxfNbx+r6rg+PHzKe2nlR
+        pA7iJ+md/pbloIlqvp+Rz1qB/AqYGSpSC24IrNkhrVpndjDZV63DMO4iuTTpOieVUOyxPBfO/dX9Z
+        e0CquIyc+j71DGfb4iFMzc9H4w7cmKMAQPVH9q4zlKVzML0BVB6To6YAtREN7ifZsqyTLtMHfeF43
+        JZlsr5WVgkyNotx/ZY4lyjGRi1EWauHnqpNdPBvPbJAM8vajccjp4grQ9JI1QV2qzyKvsVv1yuwS2
+        rchwhWdDC2Udyw9uz//jxt7Kg3t4hwN4F/1tSp6byBAN1V17H7wJ7Ki/gh5pGMyZv33RXMJalAorG
+        RITSkazpg==;
+Received: from 089144198037.atnat0007.highway.a1.net ([89.144.198.37] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g344K-0001kP-9Q; Thu, 20 Sep 2018 18:52:52 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: dma mask related fixups (including full bus_dma_mask support)
+Date:   Thu, 20 Sep 2018 20:52:42 +0200
+Message-Id: <20180920185247.20037-1-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 11:31 PM Rajendra Nayak <rnayak@codeaurora.org> wrote:
->
->
->
-> On 7/4/2018 11:27 AM, Viresh Kumar wrote:
-> > On 03-07-18, 16:35, Rob Herring wrote:
-> >>> +qcom,level values specified in the OPP tables for RPMh power domains
-> >>> +should use the RPMH_REGULATOR_LEVEL_* constants from
-> >>> +<dt-bindings/power/qcom-rpmhpd.h>
-> >>> +
-> >>> +   rpmhpd: power-controller {
-> >>> +           compatible = "qcom,sdm845-rpmhpd";
-> >>> +           #power-domain-cells = <1>;
-> >>> +           operating-points-v2 = <&rpmhpd_opp_table>;
-> >>> +   };
-> >>> +
-> >>> +   rpmhpd_opp_table: opp-table {
-> >>> +           compatible = "operating-points-v2-qcom-level";
-> >>> +
-> >>> +           rpmhpd_opp_ret: opp1 {
-> >>> +                   qcom,level = <RPMH_REGULATOR_LEVEL_RETENTION>;
-> >>> +           };
-> >>
-> >> I don't see the point in using the OPP binding here when you aren't
-> >> using *any* of the properties from it.
-> >
-> > Yeah, that's the case for now. But there are cases (as Stephen
-> > mentioned earlier [1]) where the voltage values (and maybe other
-> > values like current, etc) would be known and filled in DT. And that's
-> > why we all agreed to use OPP tables for PM domains as well, as these
-> > are really "operating performance points" of these PM domains.
->
-> Rob, are you fine with these bindings then?
+Hi all,
 
-Okay, my only thought is whether we should just use 'reg' here, or do
-we need 'level' for anything else and should make it common?
+the dma_get_required_mask dma API implementation has always been a little
+odd, in that we by default don't wire it up struct dma_map_ops, but
+instead hard code a default implementation.  powerpc and ia64 override
+this default and either call a method or otherwise duplicate the default.
 
-Rob
+This series always enabled the method and just falls back to the previous
+default implementation when it is not available, as well as fixing up
+a few bits in the default implementations.  This already allows removing
+the ia64 override of the implementation, and will also allow to remove
+the powerpc one together with a few additional cleanups in the powerpc
+code, but those will be sent separately with other powerpc DMA API
+patches.  Last but not least the method will allow us to return a more
+sensible value for typical iommu dma_ops eventually, but that is left
+to another series as well.
+
+Additionally the dma-direct code has been a bit sloppy in when it was
+using phys_to_dma in a few places, so this gets fixed up as well as
+actually respecting the bus_dma_mask everywhere instead of just
+rejecting dma mask that don't fit into it.
+
+Alltogether this should be all core dma-direct changes required to
+move powerpc over to the generic code.
