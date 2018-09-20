@@ -2,82 +2,89 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC578C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6117FC433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75EBC21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:39:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75EBC21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1AD0521523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 06:41:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AD0521523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbeITMVd (ORCPT
+        id S1731709AbeITMXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 08:21:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58108 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731159AbeITMVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 08:21:33 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 687C183F4C;
-        Thu, 20 Sep 2018 06:39:41 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-74.pek2.redhat.com [10.72.12.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 295A430912F4;
-        Thu, 20 Sep 2018 06:39:27 +0000 (UTC)
-Subject: Re: [PATCH 1/3 v2] resource: fix an error which walks through iomem
- resources
-To:     Borislav Petkov <bp@suse.de>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, akpm@linux-foundation.org,
-        dan.j.williams@intel.com, thomas.lendacky@amd.com,
-        bhelgaas@google.com, baiyaowei@cmss.chinamobile.com, tiwai@suse.de,
-        brijesh.singh@amd.com, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>
-References: <20180919125251.8181-1-lijiang@redhat.com>
- <20180919125251.8181-2-lijiang@redhat.com>
- <20180919132949.GB9122@nazgul.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <32409e2a-533b-c317-5519-26e0993cd30e@redhat.com>
-Date:   Thu, 20 Sep 2018 14:39:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 20 Sep 2018 08:23:36 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:8174 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731159AbeITMXf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 08:23:35 -0400
+X-UUID: 71354c29b3a44c4bb770fab526698269-20180920
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 610914191; Thu, 20 Sep 2018 14:41:37 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 20 Sep 2018 14:41:35 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 20 Sep 2018 14:41:34 +0800
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Ed Blake <ed.blake@sondrel.com>,
+        Long Cheng <long.cheng@mediatek.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>
+Subject: [PATCH 0/4] add uart DMA function 
+Date:   Thu, 20 Sep 2018 14:41:09 +0800
+Message-ID: <1537425673-18807-1-git-send-email-long.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <20180919132949.GB9122@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 20 Sep 2018 06:39:41 +0000 (UTC)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B07FE630EE267F38493279D12D954B3CC1733D277661529957BDE1DBC86DEF992000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年09月19日 21:29, Borislav Petkov 写道:
-> On Wed, Sep 19, 2018 at 08:52:49PM +0800, Lianbo Jiang wrote:
-> 
-> ...
-> 
->> In fact, we should get the resource A and B when we walk through the
->> whole tree, but it only gets the resource A, the resource B is missed.
->>
->> Signed-off-by: Dave Young <dyoung@redhat.com>
->> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-> 
-> Before looking at this: the SOB chain of all three patches is wrong.
-> Hint: see section 12) in Documentation/process/submitting-patches.rst
-> 
-Thanks for your advice, Borislav.
+In Mediatek SOCs, the uart can support DMA function.
+Base on DMA engine formwork, we add the DMA code to support uart. And put the code under drivers/dma.
 
-I have discussed with Dave Young, and he suggested that i might add a Suggested-by
-tag instead of Signed-off-by tag for him. What do you think about?
+This series contains document bindings, Kconfig to control the function enable or not,
+device tree including interrupt and dma device node, the code of UART DMA function.
 
-I will modify the invalid SOB chain and post it again.
+Long Cheng (4):
+  dt-bindings: dma: uart: add uart dma bindings
+  dmaengine: mtk_uart_dma: add Mediatek uart DMA support
+  serial: 8250-mtk: add uart DMA support
+  arm: dts: mt2701: add uart APDMA to device tree
+
+ .../devicetree/bindings/dma/8250_mtk_dma.txt       |   32 +
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |   50 +
+ drivers/dma/8250_mtk_dma.c                         | 1049 ++++++++++++++++++++
+ drivers/dma/Kconfig                                |   11 +
+ drivers/dma/Makefile                               |    1 +
+ drivers/tty/serial/8250/8250_mtk.c                 |  211 +++-
+ 6 files changed, 1353 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/8250_mtk_dma.txt
+ create mode 100644 drivers/dma/8250_mtk_dma.c
+
+-- 
+1.7.9.5
+
 
