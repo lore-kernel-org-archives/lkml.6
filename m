@@ -2,167 +2,151 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4FBECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0135ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70AE1214C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:07:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70AE1214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B91E214C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:07:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fz1zYZw4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B91E214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733144AbeITWvj (ORCPT
+        id S1733192AbeITWwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 18:51:39 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33379 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbeITWvj (ORCPT
+        Thu, 20 Sep 2018 18:52:21 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42607 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeITWwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 18:51:39 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so4680024pfn.0;
-        Thu, 20 Sep 2018 10:07:13 -0700 (PDT)
+        Thu, 20 Sep 2018 18:52:20 -0400
+Received: by mail-oi0-f65.google.com with SMTP id v198-v6so9013384oif.9;
+        Thu, 20 Sep 2018 10:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fwqKaKdgvaiU/cUk6D4Wr1DpxV9SN7fSzIsgOeo8IVI=;
+        b=Fz1zYZw4B+GNp2fA72+kPwGrz9j1AtGiMBDbyizgj5wo/Zi1S4P8kDyO9LC3XrQHbA
+         Ut7f7qSuBZnV4tY7d//E4mFuIt6DO9WydVYgesVjuI5FW4HGd6qx6gYZ4SlRKfxhFrHU
+         4f+TVdd0GqNY1Tyd+QMtOuIUfIFgO361inRuG/IJAE8+R0C50pdtTAJDYU0oEJDlAgQ/
+         uH3tV1pbwDX8byRNhh94le2CKH1WkuDnMVphd5kAP3QqPvN6dGCiqaVJ29mW9PHGs3Kd
+         WWGYb3Bbr652eb3AhQVpe4HpYs7GkEf/Euad9Me2sr4QmIt/1ku2uBlKkZpYbe6bNIyI
+         CrkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xs3yP+wtem13cXfYrPaYO8iu1v56yy54TdFC4qM/CZM=;
-        b=SsruX9kjhtOIRJ9ZeJZHcGo24xKhL+3cbI+3V2Vw9gxHIQT0Gg61VVVsOs+0+v8gVl
-         1P8Jl4fec4IC2mt6Ttjdcnfd8z7kk9wNJktAL+jLEXlK7p24ads5UWqAQpaOfFGc0HSf
-         kVEKbBMmuC/bJF3SCltKLw2dif8Hez3PyrgkOWEUkyfP7GyWof0+f86R7Vl0TedbjwMs
-         ZlOBG33EcyKzgLsGEm52u+AFyNPx9hhd5PddlLEu9fGazXwSsqhSEULAzEX25D/Pw2n7
-         NtFzT9pVYwYCePSU+vvBzizJmO10nWsdLtwqFd1zywmbSYqoifWhCCl3RUXExE7c+sdM
-         xJEQ==
-X-Gm-Message-State: APzg51D72EQZ2WsIZcaeoB+C+/WluTh5alx2H8/bwZtJcMCWa2VYApbI
-        2VVvzMOGX0WjgX87BdfszrM=
-X-Google-Smtp-Source: ANB0VdZtO7i06QRaAgJbJOiuOeYvG9X68R8AqvCEj7eBbOyLjPKH/7SJjhc3SZfLt5mL5LNn0Njibw==
-X-Received: by 2002:a62:6283:: with SMTP id w125-v6mr42147587pfb.108.1537463232268;
-        Thu, 20 Sep 2018 10:07:12 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id p64-v6sm38701039pfa.47.2018.09.20.10.07.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 10:07:11 -0700 (PDT)
-Message-ID: <1537463217.224533.4.camel@acm.org>
-Subject: Re: [RFC PATCH 0/3] blk-mq: rework queue freeze and preempt-only
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@kernel.dk,
-        tj@kernel.org, kent.overstreet@gmail.com, ming.lei@redhat.com,
-        bart.vanassche@wdc.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 20 Sep 2018 10:06:57 -0700
-In-Reply-To: <1537438703-25217-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1537438703-25217-1-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fwqKaKdgvaiU/cUk6D4Wr1DpxV9SN7fSzIsgOeo8IVI=;
+        b=FNzK66k2zE1VnZvzQyy3KlWhQMrJN/iBMKtwUd+sN7881DmZkXw38v4Rt2+uqf1WP1
+         zeJ2/wkCmqnG5QbpUZ5IY9NiaZIqN5IWeiIv/l9gLiYHOvXqpwX8/elAngdhtQO2NLWy
+         mGmBipD8GG6i92bR5EMRPIKAsJMdNu1tH7/kD5FpIB/LWXUynDOLXBueOTKUcIyNyI7L
+         MbNVr+ww+JtHaRtSrtVo3QYgQzFds01bw0w6vSEb+804ZjXoLZrosp634Ec8fXBjz0Bd
+         UEjxcdvDQ7XVXkPvN/9+tTJ/JxcU1KDfXER2EzUJfjkuoPD5SC3abh0XgIIQgZnUIiKD
+         jHCw==
+X-Gm-Message-State: APzg51CkbE9SwQGm7gqwpi3UsrzVvQNGkwuXAmdABMaMOySuUOaKpL9b
+        x/u3UENLNmtZHV4Og5g2qVJfdBu/
+X-Google-Smtp-Source: ANB0VdYedRQnnwFyj/yp8xKUTZ5dT99RUKAnyJW2r1Led74ulFsM/A4DDnlM4UBsMoe8LvBRq+Zs6Q==
+X-Received: by 2002:aca:2203:: with SMTP id b3-v6mr2277627oic.366.1537463273288;
+        Thu, 20 Sep 2018 10:07:53 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id q38-v6sm496231otc.46.2018.09.20.10.07.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 10:07:52 -0700 (PDT)
+Subject: Re: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <c33c759d-9243-8885-7c5f-667681b759c2@gmail.com>
+ <14f91823-474e-1b46-d305-12229dac8967@gmail.com>
+ <0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
+ <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
+ <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+ <1537253993.20009.62.camel@infradead.org>
+ <14067.1537285833@warthog.procyon.org.uk>
+ <745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
+ <19247.1537288419@warthog.procyon.org.uk>
+ <23698.1537289705@warthog.procyon.org.uk>
+ <20622.1537291117@warthog.procyon.org.uk>
+ <58F37819-78E2-45C8-8F04-4F21DDFB640E@holtmann.org>
+ <219367882d33fda9705485aa4a40b2ef55f3992f.camel@infradead.org>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <c8608829-2669-077f-b7d4-5a199f4bf4c8@gmail.com>
+Date:   Thu, 20 Sep 2018 12:07:51 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <219367882d33fda9705485aa4a40b2ef55f3992f.camel@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-09-20 at 18:18 +-0800, Jianchao Wang wrote:
-+AD4 The current queue freeze depending on percpu+AF8-ref+AF8-kil/reinit has a limit that
-+AD4 we have drain the requests before unfreeze the queue.
-+AD4 
-+AD4 Let's rework the queue freeze feature as following:
-+AD4 1. introduce +AF8AXw-percpu+AF8-ref+AF8-get+AF8-many.
-+AD4    It is same with original percpu+AF8-ref+AF8-get+AF8-many, but just need callers to provide
-+AD4    sched rcu critical section. We will put the +AF8AXw-percpu+AF8-ref+AF8-get+AF8-many and our own
-+AD4    condition checking under rcu+AF8-read+AF8-lock+AF8-sched. With this new helper interface,
-+AD4    we could save an extra rcu+AF8-read+AF8-lock+AF8-sched.
-+AD4 2. rework the blk+AF8-queue+AF8-enter as:
-+AD4    
-+AD4    rcu+AF8-read+AF8-lock+AF8-sched()
-+AD4    if condition check true
-+AD4      +AF8AXw-percpu+AF8-ref+AF8-get+AF8-many(+ACY-q-+AD4-q+AF8-usage+AF8-counter, 1)
-+AD4    else
-+AD4      goto wait
-+AD4    rcu+AF8-read+AF8-unlock+AF8-sched()
-+AD4 3. use percpu+AF8-ref+AF8-switch+AF8-to+AF8-atomic/percpu to switch mode directly.
-+AD4 
-+AD4 Then we could unfreeze the queue w/o draining requests.
-+AD4 In addition, preempt-only mode code could be simplified.
+David,
 
-Hello Jianchao,
-                                                                           +AD0
-Thanks for having taken a look. However, the approach of this patch series
-may be more complicated than necessary. Had you considered something like
-the patch below?
+On 09/20/2018 11:45 AM, David Woodhouse wrote:
+> On Thu, 2018-09-20 at 09:26 +0200, Marcel Holtmann wrote:
+>> Hi David,
+>>
+>>>>> Yes.  It shouldn't be much code, either.  You still have to check for X.509
+>>>>> DER since the kernel currently supports that.
+>>>>
+>>>> For reasons of backward compatibility, correct?  The kernel also has
+>>>> mscode.asn1 which we would need to support as well.  Since we can't break
+>>>> compatibility then perhaps this doesn't buy us a whole lot in the end.
+>>>
+>>> Don't worry about mscode - that's not an asymmetric key parser.  That's only
+>>> ever used directly from verify_pefile_signature().
+>>>
+>>> Currently, we have to retain support for DER-encoded X.509.
+>>>
+>>> But there's no reason we can't have a PEM parser that decodes the PEM and
+>>> selects X.509, PKCS#8 or TPM based on the ascii header in that.  PKCS#8 and
+>>> TPM don't need to take DER directly.
+>>
+>> since we have to support DER-encoded anyway, can we get the current
+>> patches merged (with fixes to the commit messages for the openssl
+>> examples if needed) and then work on PEM support inside the kernel.
+>> For me these seems to be two independent features. And in the current
+>> form the patches have been tested and used.
+>>
+>> Or let me ask this differently, are there any objections to merging
+>> these patches with just DER support?
+> 
+> Let me rephrase that question slightly: Are we happy to have to make
+> inferences from the ASN.1 structure, and in particular that a bare
+> OCTET-STRING is a TPMv1 blob? I believe James ended up doing something
+> somewhat more sensible for the TPMv2 blob so that might end up being
+> OK...?
+> 
 
-Thanks,
+I think it should be OK.  It is highly unlikely that we get another 
+OCTET string type format, and even then we can actually peek inside and 
+try to parse the TPM structure carried in the DER if there is indeed a 
+conflict.
 
-Bart.
+Also, after refreshing my memory of how PEM format is actually 
+specified, I'm no longer convinced that having it in the kernel is such 
+a good idea.  It would probably be made to work, but the PEM file format 
+itself isn't that precise, at least compared to DER.
 
+James, is there a document / official place with your TPMKey ASN.1 
+format?  The only reference I can find is here:
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine/+/93b2f4f3f0f2260292f54de4e6333219063c77b1/tpm2-asn.h
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 20fdd78b75c7..d384ab700afd 100644
---- a/block/blk-mq.c
-+-+-+- b/block/blk-mq.c
-+AEAAQA -199,7 +-199,7 +AEAAQA void blk+AF8-mq+AF8-unfreeze+AF8-queue(struct request+AF8-queue +ACo-q)
- 	freeze+AF8-depth +AD0 atomic+AF8-dec+AF8-return(+ACY-q-+AD4-mq+AF8-freeze+AF8-depth)+ADs
- 	WARN+AF8-ON+AF8-ONCE(freeze+AF8-depth +ADw 0)+ADs
- 	if (+ACE-freeze+AF8-depth) +AHs
--		percpu+AF8-ref+AF8-reinit(+ACY-q-+AD4-q+AF8-usage+AF8-counter)+ADs
-+-		percpu+AF8-ref+AF8-resurrect(+ACY-q-+AD4-q+AF8-usage+AF8-counter)+ADs
- 		wake+AF8-up+AF8-all(+ACY-q-+AD4-mq+AF8-freeze+AF8-wq)+ADs
- 	+AH0
- +AH0
-diff --git a/include/linux/percpu-refcount.h b/include/linux/percpu-refcount.h
-index 009cdf3d65b6..b297cd1cd4f1 100644
---- a/include/linux/percpu-refcount.h
-+-+-+- b/include/linux/percpu-refcount.h
-+AEAAQA -108,6 +-108,7 +AEAAQA void percpu+AF8-ref+AF8-switch+AF8-to+AF8-atomic+AF8-sync(struct percpu+AF8-ref +ACo-ref)+ADs
- void percpu+AF8-ref+AF8-switch+AF8-to+AF8-percpu(struct percpu+AF8-ref +ACo-ref)+ADs
- void percpu+AF8-ref+AF8-kill+AF8-and+AF8-confirm(struct percpu+AF8-ref +ACo-ref,
- 				 percpu+AF8-ref+AF8-func+AF8-t +ACo-confirm+AF8-kill)+ADs
-+-void percpu+AF8-ref+AF8-resurrect(struct percpu+AF8-ref +ACo-ref)+ADs
- void percpu+AF8-ref+AF8-reinit(struct percpu+AF8-ref +ACo-ref)+ADs
- 
- /+ACoAKg
-diff --git a/lib/percpu-refcount.c b/lib/percpu-refcount.c
-index 9f96fa7bc000..054e7650cd35 100644
---- a/lib/percpu-refcount.c
-+-+-+- b/lib/percpu-refcount.c
-+AEAAQA -356,11 +-356,31 +AEAAQA EXPORT+AF8-SYMBOL+AF8-GPL(percpu+AF8-ref+AF8-kill+AF8-and+AF8-confirm)+ADs
-  +ACo-/
- void percpu+AF8-ref+AF8-reinit(struct percpu+AF8-ref +ACo-ref)
- +AHs
-+-	WARN+AF8-ON+AF8-ONCE(+ACE-percpu+AF8-ref+AF8-is+AF8-zero(ref))+ADs
-+-
-+-	percpu+AF8-ref+AF8-resurrect(ref)+ADs
-+-+AH0
-+-EXPORT+AF8-SYMBOL+AF8-GPL(percpu+AF8-ref+AF8-reinit)+ADs
-+-
-+-/+ACoAKg
-+- +ACo percpu+AF8-ref+AF8-resurrect - modify a percpu refcount from dead to live
-+- +ACo +AEA-ref: perpcu+AF8-ref to resurrect
-+- +ACo
-+- +ACo Modify +AEA-ref so that it's in the same state as before percpu+AF8-ref+AF8-kill() was
-+- +ACo called. +AEA-ref must have be dead but not exited.
-+- +ACo
-+- +ACo Note that percpu+AF8-ref+AF8-tryget+AFsAXw-live+AF0() are safe to perform on +AEA-ref while
-+- +ACo this function is in progress.
-+- +ACo-/
-+-void percpu+AF8-ref+AF8-resurrect(struct percpu+AF8-ref +ACo-ref)
-+-+AHs
-+-	unsigned long +AF8AXw-percpu +ACo-percpu+AF8-count+ADs
- 	unsigned long flags+ADs
- 
- 	spin+AF8-lock+AF8-irqsave(+ACY-percpu+AF8-ref+AF8-switch+AF8-lock, flags)+ADs
- 
--	WARN+AF8-ON+AF8-ONCE(+ACE-percpu+AF8-ref+AF8-is+AF8-zero(ref))+ADs
-+-	WARN+AF8-ON+AF8-ONCE(+ACE(ref-+AD4-percpu+AF8-count+AF8-ptr +ACY +AF8AXw-PERCPU+AF8-REF+AF8-DEAD))+ADs
-+-	WARN+AF8-ON+AF8-ONCE(+AF8AXw-ref+AF8-is+AF8-percpu(ref, +ACY-percpu+AF8-count))+ADs
- 
- 	ref-+AD4-percpu+AF8-count+AF8-ptr +ACYAPQ +AH4AXwBf-PERCPU+AF8-REF+AF8-DEAD+ADs
- 	percpu+AF8-ref+AF8-get(ref)+ADs
-+AEAAQA -368,4 +-388,4 +AEAAQA void percpu+AF8-ref+AF8-reinit(struct percpu+AF8-ref +ACo-ref)
- 
- 	spin+AF8-unlock+AF8-irqrestore(+ACY-percpu+AF8-ref+AF8-switch+AF8-lock, flags)+ADs
- +AH0
--EXPORT+AF8-SYMBOL+AF8-GPL(percpu+AF8-ref+AF8-reinit)+ADs
-+-EXPORT+AF8-SYMBOL+AF8-GPL(percpu+AF8-ref+AF8-resurrect)+ADs-
+Regards,
+-Denis
