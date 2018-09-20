@@ -2,137 +2,129 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C26B5ECE561
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7570C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 430DD2152A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8D02152A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 11:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="uQki5q84"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430DD2152A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="I5uYt2zC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8D02152A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732314AbeITQso (ORCPT
+        id S1732302AbeITQxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 12:48:44 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43896 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbeITQsn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 12:48:43 -0400
-Received: by mail-pg1-f193.google.com with SMTP id q19-v6so3409846pgn.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 04:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y2uwsEGQ+BDYSb3DzxFrlsSXGgyFnLshtKaWsj8HMKU=;
-        b=uQki5q84D5V98ziKis+wI+rterX2GzsmzRt//ioACPppa8+W9GimN/2aB4aco0mUSV
-         XWJb7aelYzKW56np73uzch5bIPoGqidaCgfxNdy7gFsYb1eSNW68ee9uSIv7m77reY3e
-         56jURtbMUFjSL1sDnQ0N1iDVUkUrg53F2hoE9ztxCaEz8lumHwLYLvSMLc21O07VbGMf
-         P9OgZJvKwy95ROWiki88n94Ezavs7/wRfwra5BPWKDlsM/5hyg/I+ARvQzq02qF82GZh
-         KxD32EgUpwypfj0KUe2auUibwfNYwV0pqEpIvpSXVuCOEmIC7T0T64mn85/S0gUGRvHe
-         uB1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y2uwsEGQ+BDYSb3DzxFrlsSXGgyFnLshtKaWsj8HMKU=;
-        b=b/+5C/MzLU4/cDdj+gP/DHyD+U5GW6giWWbtSkRpOQliCz1nXYkKVgaMqd4kxzQSlS
-         AmUUDNOYNvBjvoDSifv6Ut4XrJjuTTKO6uLvwhtAzfAGXzunWydFdUM7i66OrvBMAIJW
-         a2WcD+1BxnWgIwHqD7YjwwlbK6Uc0TbBhlW0671JPl9mnT+K1XxPsHHcLXk46zJg041B
-         oK6Z93gmPtEWhPfjv5/R/Vbu80IINPDkAwRhu9w/glcQo+JO9hW8k6tk5VbXNyben3iw
-         xgA/MlrQ/KZavJ9CpHcfwJp+vQbPrhiw/XHAMeVGC7HeNMZWDFhrXycQMvn756id8RfI
-         9GQA==
-X-Gm-Message-State: APzg51CN9yqNyabnwLSPH44TRHRP7nX9MFM8YXd3aL8KnYXIA4ftK7lI
-        /sY27Rz49wB2APNCkoSeRRpimg==
-X-Google-Smtp-Source: ANB0VdapmfTtTmSoGSojcJeOw5fboGtLWV4EHXUfOV2X89NHLdqH6r8+sttsSZ2eY9uIEVGyuw2H6w==
-X-Received: by 2002:a62:5b85:: with SMTP id p127-v6mr40840708pfb.33.1537441547048;
-        Thu, 20 Sep 2018 04:05:47 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm38343176pfg.25.2018.09.20.04.05.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 04:05:45 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 6A320300527; Thu, 20 Sep 2018 14:05:38 +0300 (+03)
-Date:   Thu, 20 Sep 2018 14:05:38 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     akpm@linux-foundation.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Recheck page table entry with page table lock held
-Message-ID: <20180920110538.rlcpw75eabkqudkl@kshutemo-mobl1>
-References: <20180920092408.9128-1-aneesh.kumar@linux.ibm.com>
+        Thu, 20 Sep 2018 12:53:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:44629 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726788AbeITQxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 12:53:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42GDXc5sRXz9sC2;
+        Thu, 20 Sep 2018 21:10:08 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537441808;
+        bh=Apfzl0LBx4/zPCjTcu3rgmzHQLqWyjn1orqK0ayrsgM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=I5uYt2zCRHmW7IKyMR6mxx4OYjxnWC4kzccMvr87uc5NIpYVwLYIbyLXIUpMIe3yT
+         rIIPmv4e38kmap/oIgpA/dKmHWl7on4QugEf1DiltlaIABa/ozv1uFMddxa9UPBkWz
+         P5cxpQHiWnzHCb+G2WwZ4opkeSuo8FKcI6j3bac78nnZDL5C4wOR+ZXU0FP1V0H964
+         7yz0cI+Gw7KoNeAaVzJDdTyg1WzSwPenbM7DwNgQKGPOR+WIh4Z9ogPrPrlqWNbVu/
+         bKmr7Uevwe92qaEuQ14rWxeqjBYCbNlNVdikcuufrY6iOAjrSiqp8cSwmsaqig1xX+
+         qHa6ihAm3Xkmg==
+Date:   Thu, 20 Sep 2018 21:10:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>, robh@kernel.org
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Sep 20
+Message-ID: <20180920210711.4561abee@canb.auug.org.au>
+In-Reply-To: <87d0t8jvym.fsf@concordia.ellerman.id.au>
+References: <20180920151243.5524c6ca@canb.auug.org.au>
+        <87d0t8jvym.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920092408.9128-1-aneesh.kumar@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fqB1TWcNoApRYmxO2qH.b0N"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 02:54:08PM +0530, Aneesh Kumar K.V wrote:
-> We clear the pte temporarily during read/modify/write update of the pte. If we
-> take a page fault while the pte is cleared, the application can get SIGBUS. One
-> such case is with remap_pfn_range without a backing vm_ops->fault callback.
-> do_fault will return SIGBUS in that case.
+--Sig_/fqB1TWcNoApRYmxO2qH.b0N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It would be nice to show the path that clears pte temporarily.
+Hi Michael,
 
-> Fix this by taking page table lock and rechecking for pte_none.
-> 
-> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> ---
->  mm/memory.c | 31 +++++++++++++++++++++++++++----
->  1 file changed, 27 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index c467102a5cbc..c2f933184303 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3745,10 +3745,33 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
->  	struct vm_area_struct *vma = vmf->vma;
->  	vm_fault_t ret;
->  
-> -	/* The VMA was not fully populated on mmap() or missing VM_DONTEXPAND */
-> -	if (!vma->vm_ops->fault)
-> -		ret = VM_FAULT_SIGBUS;
-> -	else if (!(vmf->flags & FAULT_FLAG_WRITE))
-> +	/*
-> +	 * The VMA was not fully populated on mmap() or missing VM_DONTEXPAND
-> +	 */
-> +	if (!vma->vm_ops->fault) {
-> +
-> +		/*
-> +		 * pmd entries won't be marked none during a R/M/W cycle.
-> +		 */
-> +		if (unlikely(pmd_none(*vmf->pmd)))
-> +			ret = VM_FAULT_SIGBUS;
-> +		else {
-> +			vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
-> +			/*
-> +			 * Make sure this is not a temporary clearing of pte
-> +			 * by holding ptl and checking again. A R/M/W update
-> +			 * of pte involves: take ptl, clearing the pte so that
-> +			 * we don't have concurrent modification by hardware
-> +			 * followed by an update.
-> +			 */
-> +			spin_lock(vmf->ptl);
-> +			if (unlikely(pte_none(*vmf->pte)))
-> +				ret = VM_FAULT_SIGBUS;
-> +			else
-> +				ret = VM_FAULT_NOPAGE;
+On Thu, 20 Sep 2018 20:37:37 +1000 Michael Ellerman <mpe@ellerman.id.au> wr=
+ote:
+>
+> Oodles of:
+>=20
+>   # < make -s -j 48 ARCH=3Darm64 O=3D/kisskb/build/linux-next_arm64-allno=
+config_arm64 CROSS_COMPILE=3D/opt/cross/kisskb/br-aarch64-glibc-2016.08-613=
+-ge98b4dd/bin/aarch64-linux-  allnoconfig
+>   # make -s -j 48 ARCH=3Darm64 O=3D/kisskb/build/linux-next_arm64-allnoco=
+nfig_arm64 CROSS_COMPILE=3D/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-g=
+e98b4dd/bin/aarch64-linux- =20
+>   /bin/sh: 1: pkg-config: not found
+>   make[3]: pkg-config: Command not found
+>   /kisskb/src/scripts/dtc/yamltree.c:23:10: fatal error: yaml.h: No such =
+file or directory
+>    #include <yaml.h>
+>             ^~~~~~~~
+>   compilation terminated.
+>   make[3]: *** [scripts/Makefile.host:107: scripts/dtc/yamltree.o] Error 1
+>   make[3]: *** Waiting for unfinished jobs....
+>   make[2]: *** [/kisskb/src/scripts/Makefile.build:536: scripts/dtc] Erro=
+r 2
+>   make[2]: *** Waiting for unfinished jobs....
+>   make[1]: *** [/kisskb/src/Makefile:1067: scripts] Error 2
+>   make: *** [Makefile:146: sub-make] Error 2
+>=20
+> http://kisskb.ellerman.id.au/kisskb/head/a0cb0cabe4bbeacf5ed9e81a41abcbae=
+47ba925a/
+>=20
+>=20
+> I guess we've got a yaml dependency now?
 
-We return 0 if we did nothing in fault path.
+Yeah, but it is tested for and worked for my builds during the day (I
+don't have it installed on my build machine either ...  do we have
+pkg-config installed in the build images?
 
--- 
- Kirill A. Shutemov
+Anyway, it is (presuambly) caused by commit
+
+  52786e7517a2 ("scripts/dtc: Update to upstream version v1.4.7-14-gc86da84=
+d30e4")
+
+from the devicetree tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fqB1TWcNoApRYmxO2qH.b0N
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlujgBAACgkQAVBC80lX
+0Gw1qQf/e+2+cE7SAGP2TO0AitY5bEECuk7I8gjnytxwcD/+nRVoXrH8dU/wSS9l
+iAdgsoi2uYefca4+h8IOgzgrIbhfRcBR6mFJ0jgzH0bSyXgoxQXYUquY/xhiznIe
+0l2xXEoOF7I1YHWWssMLvAtmWqFIjiWn3gNBDP9eC6ULRUFl8wG+RErqfDGYlS4d
+FlEp5N1vtQ2tmLboM45zToUocjsXxPhat8mprbThnSuLfGgQBHNefD5L5x/qA4sy
+2TIxQwnA0AHqKjZFCE2pwdmVgLStJkppxKkhu7zLbjp5twYR4SMMbKHIxdDu4lGC
+9A4VuClZI0atGcM44tCDlERo77omaw==
+=brwp
+-----END PGP SIGNATURE-----
+
+--Sig_/fqB1TWcNoApRYmxO2qH.b0N--
