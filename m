@@ -2,245 +2,103 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA51CECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787A3ECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44ED921532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3147D21531
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 18:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OqRd8fsY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44ED921532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="js5hjkP5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3147D21531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388003AbeIUADP (ORCPT
+        id S2388103AbeIUADp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:03:15 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34560 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727813AbeIUADO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:03:14 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d19-v6so4825358pgv.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 11:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6dLv9BFMsAwxCi/XYmlJKxqLD7eDnACUAKnEAGhV/fQ=;
-        b=OqRd8fsY65MwISMMW5lykrjmCcOT34FiK3qyFvRNMMqtivOS4oWGCJ+hBS4tpwLWYj
-         5glFiTQqmU6VVycj4LmI1uknhSxb6+qqpwM9pFwRevOQhbVdzNOmZ13M+pHIzWza8iO4
-         mG8+3XMBQUo7LYMn9zkpeRdowzcW4EVYBaAH29qDZdV5zvVA1XLpny8YG1D2f3pDuAt7
-         J3OhVtICODVPRlAEjeawPR2D07of4QACCWlGlf65YakLJsiR82UeAFPOhomLb6Osgtid
-         lI5cDGTK+0pVsQyx8iInmv4BBWuPyj/bBxNYGEp4vyiuoOIU5eYwpk3aGP3p3fXYWKPn
-         k2OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6dLv9BFMsAwxCi/XYmlJKxqLD7eDnACUAKnEAGhV/fQ=;
-        b=Nnjz9A7DmJPw8hyKYko11Htf6rbpHElhnLJiLV8alAd2bMzscTJYQAy9aSPelzjgP1
-         gx9+mpJTbUOcz4nK5H+wkjegQhJFd35Rlncz2eGZWx7zG+W4JyaD6jcHpnjhajd8iqIT
-         l6uNviuFLD5okMbisg71NGYMNaZrtPqG6owrJNxg69bAzIAavluMdwRqE89ZgmfzRNib
-         /cb1MemwUtCjXWaD0zIJDJT9Mu+GtyrhIwNqFwy530oo/89t0jfB3P1VowwFH6wMI+Rr
-         BEOkYs0MCZyAp6ZGpko0w/8RfI1V/cdCOVvRRgbF16TeZY0g7VbM1t0kGjY5IOjSpitd
-         qW/A==
-X-Gm-Message-State: APzg51BvvIvRDCBxAxwlpObfDgL+iWYvN04nlY/eOom/MF1r009FWT2L
-        4nMbid7Jm6kQLNrbQ1+GzQrmR3WIiiw1ClfXERZ8SQ==
-X-Google-Smtp-Source: ANB0VdY8KZlpSW6gX0nWeae/iEzGzDX5InOHLzEWy1YMZqbV2Ms4vbei91gthvAk46rJGhvK9xJClMrZ20maRTvKDBw=
-X-Received: by 2002:a62:591a:: with SMTP id n26-v6mr42590521pfb.94.1537467508667;
- Thu, 20 Sep 2018 11:18:28 -0700 (PDT)
+        Thu, 20 Sep 2018 20:03:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727171AbeIUADo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Sep 2018 20:03:44 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE9702152A;
+        Thu, 20 Sep 2018 18:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537467539;
+        bh=9ZYOmBhU4JGj48pyKMkRS3jv3lEIqD03IpMI2mcLiJo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=js5hjkP5ZOHRH0UasoA7ciCXlCkeGrcTWkOD/449rNtJ0ZUL8gzvwozDmcY9C76ix
+         Vx8zq2Lsz4FKPkayQmdc302lSsnGt1CdwbKOx6wCLEcMmVYv/SFkXTJr1cNM65NmnS
+         P2PlbtYJ3AMkNB1Z8t+V2EtfReOL04XyChflKdME=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 9416A1401A1; Thu, 20 Sep 2018 15:18:54 -0300 (-03)
+Date:   Thu, 20 Sep 2018 15:18:54 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: RFC/error: Re: [PATCH 3/6] perf tools: Improve
+ thread_stack__event() for trace begin / end
+Message-ID: <20180920181854.GB9919@kernel.org>
+References: <20180919112338.20347-1-adrian.hunter@intel.com>
+ <20180919112338.20347-4-adrian.hunter@intel.com>
+ <20180920181352.GA9919@kernel.org>
 MIME-Version: 1.0
-References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
-In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 20 Sep 2018 11:18:17 -0700
-Message-ID: <CAKwvOdk2O+-FqXU1R8m=vSbZuMGJxY-_4AWd+tFpcTDKhWWFaw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] Compiler Attributes
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, adilger.kernel@dilger.ca,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, rostedt@goodmis.org,
-        mchehab+samsung@kernel.org, olof@lxom.net,
-        konstantin@linuxfoundation.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        sandipan@linux.vnet.ibm.com,
-        Andrey Konovalov <andreyknvl@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        paul.burton@mips.com, David Rientjes <rientjes@google.com>,
-        w@1wt.eu, msebor@gmail.com, sparse@chrisli.org,
-        Jonathan Corbet <corbet@lwn.net>, tytso@mit.edu,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, joe@perches.com,
-        Arnd Bergmann <arnd@arndb.de>, asmadeus@codewreck.org,
-        Stefan Agner <stefan@agner.ch>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-sparse@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920181352.GA9919@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 10:23 AM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> The Compiler Attributes series is an effort to disentangle
-> the include/linux/compiler*.h headers and bring them up to date.
->
-> The main idea behind the series is to use feature checking macros
-> (i.e. __has_attribute) instead of compiler version checks (e.g. GCC_VERSION),
-> which are compiler-agnostic (so they can be shared, reducing the size
-> of compiler-specific headers) and version-agnostic.
->
-> Other related improvements have been performed in the headers as well,
-> which on top of the use of __has_attribute it has amounted to a significant
-> simplification of these headers (e.g. GCC_VERSION is now only guarding 4
-> non-attribute macros).
->
-> This series should also help the efforts to support compiling the kernel
-> with clang and icc. A fair amount of documentation and comments have also
-> been added, clarified or removed; and the headers are now more readable,
-> which should help kernel developers in general.
->
-> The series was triggered due to the move to gcc >= 4.6. In turn, this series
-> has also triggered Sparse to gain the ability to recognize __has_attribute
-> on its own.
->
-> Finally, the nonstring variable attribute series has been applied on top
-> of this one.
->
-> You can also fetch it from:
->
->   https://github.com/ojeda/linux/tree/compiler-attributes-v5
->
-> Enjoy!
->
-> Cheers,
-> Miguel
+Em Thu, Sep 20, 2018 at 03:13:52PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Sep 19, 2018 at 02:23:35PM +0300, Adrian Hunter escreveu:
+> > +		return thread_stack__push(thread->ts, ret_addr,
+> > +					  flags && PERF_IP_FLAG_TRACE_END);
+> > +	} else if (flags & PERF_IP_FLAG_TRACE_BEGIN) {
+> 
+> Some of the build containers caught this:
+> 
+> util/thread-stack.c:274:14: error: use of logical '&&' with constant operand [-Werror,-Wconstant-logical-operand]
+>                                           flags && PERF_IP_FLAG_TRACE_END);
+>                                                 ^  ~~~~~~~~~~~~~~~~~~~~~~
+> util/thread-stack.c:274:14: note: use '&' for a bitwise operation
+>                                           flags && PERF_IP_FLAG_TRACE_END);
+>                                                 ^~
+>                                                 &
+> util/thread-stack.c:274:14: note: remove constant to silence this warning
+>                                           flags && PERF_IP_FLAG_TRACE_END);
+>                                                ~^~~~~~~~~~~~~~~~~~~~~~~~~
+> 1 error generated.
+> 
+> 
+> --------------------------
+> 
+> Should be a '&' as suggested by: 
+> 
+>   16   146.45 debian:9                      : FAIL gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+>   17   138.35 debian:experimental           : FAIL gcc (Debian 8.2.0-4) 8.2.0
 
-Thanks for this series.  I've reviewed the rest of the patches in the
-series that didn't already have my reviewed by tags on them.  They
-look good to go to me.
+Ok, the compilers that caught this was:
 
->
-> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Cc: Olof Johansson <olof@lxom.net>
-> Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Paul Lawrence <paullawrence@google.com>
-> Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
-> Cc: Andrey Konovalov <andreyknvl@google.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Willy Tarreau <w@1wt.eu>
-> Cc: Martin Sebor <msebor@gmail.com>
-> Cc: Christopher Li <sparse@chrisli.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dominique Martinet <asmadeus@codewreck.org>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-ext4@vger.kernel.org
-> Cc: linux-sparse@vger.kernel.org
-> Cc: linux-kbuild@vger.kernel.org
->
-> v4 -> v5
->
->   * Removed the 2 __naked patches, since Greg just applied them to master;
->     and rebased on top of that. The only change in the range-diff is in
->     "Compiler Attributes: always use the extra-underscores syntax" due
->     to the move of __naked to compiler_types.h.
->
->   * Applied the nonstring series on top of this one (last 4 patches).
->     Rationale:
->       - the nonstring series would anyway be modified again by this one
->         (so it has been rebased after the general cleanup).
->       - ext4's "local" nonstring was merged
->       - easier to manage (and easier to see the end result)
->
->     The first 2 patches of the last 4 add the warning back at W=1 and
->     add the __nonstring attribute. The other two serve as an example
->     of usage and as a cleanup.
->
->   * Cc lists removed from each commit; using a single list in the cover letter;
->     and a new, revised list of Cc (wider audience).
->
-> Miguel Ojeda (15):
->   Compiler Attributes: remove unused attributes
->   Compiler Attributes: always use the extra-underscores syntax
->   Compiler Attributes: remove unneeded tests
->   Compiler Attributes: homogenize __must_be_array
->   Compiler Attributes: remove unneeded sparse (__CHECKER__) tests
->   Compiler Attributes: add missing SPDX ID in compiler_types.h
->   Compiler Attributes: use feature checks instead of version checks
->   Compiler Attributes: KENTRY used twice the "used" attribute
->   Compiler Attributes: remove uses of __attribute__ from compiler.h
->   Compiler Attributes: add Doc/process/programming-language.rst
->   Compiler Attributes: add MAINTAINERS entry
->   Compiler Attributes: add support for __nonstring (gcc >= 8)
->   Compiler Attributes: enable -Wstringop-truncation on W=1 (gcc >= 8)
->   Compiler Attributes: auxdisplay: panel: use __nonstring
->   Compiler Attributes: ext4: remove local __nonstring definition
->
->  Documentation/process/index.rst               |   1 +
->  .../process/programming-language.rst          |  45 +++
->  MAINTAINERS                                   |   5 +
->  drivers/auxdisplay/panel.c                    |   7 +-
->  fs/ext4/ext4.h                                |   9 -
->  include/linux/compiler-clang.h                |   5 -
->  include/linux/compiler-gcc.h                  |  70 +----
->  include/linux/compiler-intel.h                |   9 -
->  include/linux/compiler.h                      |  19 +-
->  include/linux/compiler_attributes.h           | 258 ++++++++++++++++++
->  include/linux/compiler_types.h                | 101 +------
->  scripts/Makefile.extrawarn                    |   1 +
->  12 files changed, 341 insertions(+), 189 deletions(-)
->  create mode 100644 Documentation/process/programming-language.rst
->  create mode 100644 include/linux/compiler_attributes.h
->
-> --
-> 2.17.1
->
+debian:9:            clang version 3.8.1-24 (tags/RELEASE_381/final)
+debian:experimental: clang version 6.0.1-6 (tags/RELEASE_601/final)
 
 
--- 
-Thanks,
-~Nick Desaulniers
+Those gcc versions (6.3 and 8.2) compiled it without warnings.
+
+- Arnaldo
+ 
+> 
+> I'm changing this here, please Ack.
+> 
+> - Arnaldo
