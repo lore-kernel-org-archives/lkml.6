@@ -2,118 +2,183 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA7FECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA26C433F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015672083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:06:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fjloqi9A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015672083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E20EC21523
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 19:07:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E20EC21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbeIUAva (ORCPT
+        id S2388333AbeIUAwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 20:51:30 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41296 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbeIUAva (ORCPT
+        Thu, 20 Sep 2018 20:52:17 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43286 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbeIUAwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 20:51:30 -0400
-Received: by mail-lf1-f68.google.com with SMTP id l26-v6so9334113lfc.8;
-        Thu, 20 Sep 2018 12:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E0W0KBJtbbOM886y6xFZI2zEICxBxA+C9wS7zXIzQiU=;
-        b=Fjloqi9AIh9bDhpoeK3YDi1eVPANKuW+189IEmTT4/PjPKrfmaiWOuKWkTNbvBH6H/
-         zHA+2weEmlZD7ryR7k1OhnXR04CWR+m9wIwepwpQpAKgH40zfEXvyxuXA1U5NwJATdpg
-         mFYL8xbzy4ltHXlMkJFPIBB3OsluwFRKiB4vmmpmmwWUXolWVT7UDdy8wLlAwlmOK4ah
-         AozfO0lWZdIGM79yVNzlEpeGX0bRjptotYoF/VwMe/W4OdUPO3XzJLRGut3HYHyYYgwC
-         NkwhulS80G9KBZXyesVzr+yNBzhLoX6MaXbvsewt5jbQrBZodG1Kf8KnJZu2YIa7iIR6
-         kjMg==
+        Thu, 20 Sep 2018 20:52:16 -0400
+Received: by mail-ot1-f66.google.com with SMTP id u20-v6so10521393otk.10;
+        Thu, 20 Sep 2018 12:07:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=E0W0KBJtbbOM886y6xFZI2zEICxBxA+C9wS7zXIzQiU=;
-        b=XkV3/UhSQ6vq9wA7sjV2HwNDdhIpAb27u4H0Yy6taqsMbYZbxGJYsKwvlezRGWZSyx
-         NTXEralumIDeUWyNZC4dRjm8ARqiDlKHazlrpPAZEoMPEf4fELSLHFSWAvtUQ6kNZe3y
-         p1HxWc2vuFQnFCi0A79M55VTQnLTAuCP6UrsNB/s36dKbvCSBpofWAnWY1mqCW+5QrSx
-         X6QpQ2fdbsgMQwx/01Mz/SL/z/aZQeMCObdY1Q8cxlPGnTMy1rDgx++Ic0Zvbpmn/w4C
-         rK4knofQaG5Luzv80tbl2E76CEpO3ku2HUyI9Zaq68HiW8Wc29oVTFHPUjRubMTpA1pX
-         yb+Q==
-X-Gm-Message-State: APzg51DIsBaSgxD8E2Q1m7nl350dI8VlRvmpSBY05Huh4iwV34Su+Foq
-        GzlgzaOAy5FvhyV3Za7jvtfuPqxGx0vYvf3GVtA=
-X-Google-Smtp-Source: ANB0VdZ6wqFwyj/DRpggd2wYEJPyMqzQs80hQEIqL5sbPU5JCPq4fImdoSqYj4eg43oThinRONcS058UJPV6AE/3rn8=
-X-Received: by 2002:a19:9f06:: with SMTP id i6-v6mr27308514lfe.149.1537470392761;
- Thu, 20 Sep 2018 12:06:32 -0700 (PDT)
+        bh=eeb08svpxj+/0Ppk65lKZJrhyLEVSoirv+f26Cea7WI=;
+        b=SSFcZm/HvPDBLMbHbNGDrsGoW04grIjp6ubfYHYpdNy5cGr9K4ZYlqyc1KoAUxN6KP
+         xilJbEzqDNxI4mlddcQtMIlTqX7NADaH14lXYtP6k9EHlbb6HuZTV/RVrMRYWGEnHvpS
+         Q9mQy0I45HdAjuXvE+reSbvFhwQSfGTm6hewhmJgXorew1+a0kHrdpm3Bm1taT6DMDf3
+         Zs3T50cxPNSJjhDmaiEX2PKdkSnQnDc7YnmXR839Sxg6NqY7MdXI7a1t0/oQHthU8WnC
+         q3zZBfKTQgIXdO3e7wPqbjNT4CPBX3QCB++mNzPnySGIgu1e0eB559mic4sEkKdlMKEG
+         j87g==
+X-Gm-Message-State: APzg51CnOVX8kXflfHFOAVYiMwa9pMVaPO4sjwpK5167M8KEn2bSDc01
+        TGde3pCX0mfksg5NSfRKvAArusE8LKE=
+X-Google-Smtp-Source: ANB0Vdb169rN3lH9KpYiS2xRsgqlbitqkc7QXGoUOB249PIn0tVmEwH15wzazLTPgvrt9YEmkg3gWQ==
+X-Received: by 2002:a9d:7281:: with SMTP id t1-v6mr24282730otj.345.1537470439694;
+        Thu, 20 Sep 2018 12:07:19 -0700 (PDT)
+Received: from mail-oi0-f45.google.com (mail-oi0-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id g5-v6sm8052534otb.65.2018.09.20.12.07.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 12:07:18 -0700 (PDT)
+Received: by mail-oi0-f45.google.com with SMTP id v198-v6so9323287oif.9;
+        Thu, 20 Sep 2018 12:07:18 -0700 (PDT)
+X-Received: by 2002:aca:50cf:: with SMTP id e198-v6mr101049oib.332.1537470438279;
+ Thu, 20 Sep 2018 12:07:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180920161912.17063-2-ricardo.ribalda@gmail.com>
- <20180920184552.4919-1-ricardo.ribalda@gmail.com> <20180920185405.GA26589@amd>
-In-Reply-To: <20180920185405.GA26589@amd>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Thu, 20 Sep 2018 21:06:16 +0200
-Message-ID: <CAPybu_2hjrq=r+kpAHKxX59gOXfbqGf9CUPh9CNqv7WGqJsrQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] [media] ad5820: Add support for enable pin
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180919123613.15092-1-laurentiu.tudor@nxp.com>
+ <7d7646dc-9d0b-013d-75d7-a6cb4453f41f@arm.com> <fd8ab351-46aa-f73e-593b-502a57de1975@nxp.com>
+ <39211e7a-034b-cdca-f182-1b6f6e5fbc53@arm.com> <33eac426-cbb7-f899-5a35-aea28f8e5dc4@nxp.com>
+In-Reply-To: <33eac426-cbb7-f899-5a35-aea28f8e5dc4@nxp.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Thu, 20 Sep 2018 14:07:07 -0500
+X-Gmail-Original-Message-ID: <CADRPPNTot7U6vARqtrRrw4XqhDQPSXP1QO9ZbGpNQByJPcU37Q@mail.gmail.com>
+Message-ID: <CADRPPNTot7U6vARqtrRrw4XqhDQPSXP1QO9ZbGpNQByJPcU37Q@mail.gmail.com>
+Subject: Re: [PATCH 00/21] SMMU enablement for NXP LS1043A and LS1046A
+To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc:     robin.murphy@arm.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, madalin.bucur@nxp.com,
+        Roy Pledge <roy.pledge@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        David Miller <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel
-
-On Thu, Sep 20, 2018 at 8:54 PM Pavel Machek <pavel@ucw.cz> wrote:
+On Thu, Sep 20, 2018 at 5:39 AM Laurentiu Tudor <laurentiu.tudor@nxp.com> wrote:
 >
-> On Thu 2018-09-20 20:45:52, Ricardo Ribalda Delgado wrote:
-> > This patch adds support for a programmable enable pin. It can be used in
-> > situations where the ANA-vcc is not configurable (dummy-regulator), or
-> > just to have a more fine control of the power saving.
+>
+>
+> On 19.09.2018 17:37, Robin Murphy wrote:
+> > On 19/09/18 15:18, Laurentiu Tudor wrote:
+> >> Hi Robin,
+> >>
+> >> On 19.09.2018 16:25, Robin Murphy wrote:
+> >>> Hi Laurentiu,
+> >>>
+> >>> On 19/09/18 13:35, laurentiu.tudor@nxp.com wrote:
+> >>>> From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> >>>>
+> >>>> This patch series adds SMMU support for NXP LS1043A and LS1046A chips
+> >>>> and consists mostly in important driver fixes and the required device
+> >>>> tree updates. It touches several subsystems and consists of three main
+> >>>> parts:
+> >>>>    - changes in soc/drivers/fsl/qbman drivers adding iommu mapping of
+> >>>>      reserved memory areas, fixes and defered probe support
+> >>>>    - changes in drivers/net/ethernet/freescale/dpaa_eth drivers
+> >>>>      consisting in misc dma mapping related fixes and probe ordering
+> >>>>    - addition of the actual arm smmu device tree node together with
+> >>>>      various adjustments to the device trees
+> >>>>
+> >>>> Performance impact
+> >>>>
+> >>>>       Running iperf benchmarks in a back-to-back setup (both sides
+> >>>>       having smmu enabled) on a 10GBps port show an important
+> >>>>       networking performance degradation of around %40 (9.48Gbps
+> >>>>       linerate vs 5.45Gbps). If you need performance but without
+> >>>>       SMMU support you can use "iommu.passthrough=1" to disable
+> >>>>       SMMU.
+> >>>>
+> >>>> USB issue and workaround
+> >>>>
+> >>>>       There's a problem with the usb controllers in these chips
+> >>>>       generating smaller, 40-bit wide dma addresses instead of the
+> >>>> 48-bit
+> >>>>       supported at the smmu input. So you end up in a situation
+> >>>> where the
+> >>>>       smmu is mapped with 48-bit address translations, but the device
+> >>>>       generates transactions with clipped 40-bit addresses, thus smmu
+> >>>>       context faults are triggered. I encountered a similar
+> >>>> situation for
+> >>>>       mmc that I  managed to fix in software [1] however for USB I
+> >>>> did not
+> >>>>       find a proper place in the code to add a similar fix. The only
+> >>>>       workaround I found was to add this kernel parameter which
+> >>>> limits the
+> >>>>       usb dma to 32-bit size: "xhci-hcd.quirks=0x800000".
+> >>>>       This workaround if far from ideal, so any suggestions for a code
+> >>>>       based workaround in this area would be greatly appreciated.
+> >>>
+> >>> If you have a nominally-64-bit device with a
+> >>> narrower-than-the-main-interconnect link in front of it, that should
+> >>> already be fixed in 4.19-rc by bus_dma_mask picking up DT dma-ranges,
+> >>> provided the interconnect hierarchy can be described appropriately (or
+> >>> at least massaged sufficiently to satisfy the binding), e.g.:
+> >>>
+> >>> / {
+> >>>       ...
+> >>>
+> >>>       soc {
+> >>>           ranges;
+> >>>           dma-ranges = <0 0 10000 0>;
+> >>>
+> >>>           dev_48bit { ... };
+> >>>
+> >>>           periph_bus {
+> >>>               ranges;
+> >>>               dma-ranges = <0 0 100 0>;
+> >>>
+> >>>               dev_40bit { ... };
+> >>>           };
+> >>>       };
+> >>> };
+> >>>
+> >>> and if that fails to work as expected (except for PCI hosts where
+> >>> handling dma-ranges properly still needs sorting out), please do let us
+> >>> know ;)
+> >>>
+> >>
+> >> Just to confirm, Is this [1] the change I was supposed to test?
 > >
-> > The use of the enable pin is optional.
+> > Not quite - dma-ranges is only valid for nodes representing a bus, so
+> > putting it directly in the USB device nodes doesn't work (FWIW that's
+> > why PCI is broken, because the parser doesn't expect the
+> > bus-as-leaf-node case). That's teh point of that intermediate simple-bus
+> > node represented by "periph_bus" in my example (sorry, I should have put
+> > compatibles in to make it clearer) - often that's actually true to life
+> > (i.e. "soc" is something like a CCI and "periph_bus" is something like
+> > an AXI NIC gluing a bunch of lower-bandwidth DMA masters to one of the
+> > CCI ports) but at worst it's just a necessary evil to make the binding
+> > happy (if it literally only represents the point-to-point link between
+> > the device master port and interconnect slave port).
 > >
-> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 >
-> Do we really want to do that?
->
-> Would it make more sense to add gpio-regulator and connect ad5820 to
-> it in such case?
->
+> Quick update: so I adjusted to device tree according to your example and
+> it works so now I can get rid of that nasty kernel arg based workaround,
+> yey! :-)
 
-My board (based on db820c)  has both:
+Great that we have a generic solution like I hoped for!  So you will
+submit a new revision of the series to include these dts updates,
+right?
 
-ad5820: dac@0c {
-   compatible = "adi,ad5820";
-   reg = <0x0c>;
-
-   VANA-supply = <&pm8994_l23>;
-   enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
-};
-
-
-
->                                                                 Pavel
->
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-
-
-
--- 
-Ricardo Ribalda
+Regards,
+Leo
