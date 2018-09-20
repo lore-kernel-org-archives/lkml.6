@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC469ECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F41ECE567
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A5E21523
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6EE121534
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 17:23:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtD32SbD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A5E21523
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K7ExAC7J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EE121534
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388047AbeITXIG (ORCPT
+        id S2388089AbeITXII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 19:08:06 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40128 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbeITXIF (ORCPT
+        Thu, 20 Sep 2018 19:08:08 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52804 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387922AbeITXIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 19:08:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y8-v6so6562169wrh.7;
-        Thu, 20 Sep 2018 10:23:33 -0700 (PDT)
+        Thu, 20 Sep 2018 19:08:07 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y139-v6so328953wmc.2;
+        Thu, 20 Sep 2018 10:23:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3IAlaipCNnrtQXC9KGumpKwQRaKsYxmUF93A0nM9u8k=;
-        b=VtD32SbDIbB8mKCUPJoXm+oF2hfSMjUQk6HnHcXYt+Wsy39LwvZ5dYPRqB+Vzuqyid
-         mEncoH5wOxwdrRAxKOOl1RFgJ8LaVJViaew5fTMgWprGZYS8Nr2C8zz//2FnBLJumBC2
-         N/vaQeS31/bntVshVutpj5dWfxEa4JZcH/H3L0HiBfPpfcHhsr3tzyGHciSq4HY2wl32
-         z0utH32YK8sCtinfEtY5OJkpt3/IlK6KktbP4MLrC63SdaQ1PeTna8w2xDZf9bL7y5Ni
-         OpIomudruyWj/hlNI7DUJ653rG3H7726+VpeggiTxO5Mpms1LslWJ8nZU9b2aLpJAB6i
-         QNhw==
+        bh=IOszDx0+PcEdvwwbT4AXK0NljevKHMGsY/DMk4sv7Dc=;
+        b=K7ExAC7JSD0agyD0RvT0q8cXvC6yEwbBU5+ykXIOb+fSS5+GmbFI8qRKBnHHSAl6Gz
+         LH3upOYhlPJeSLNliTYbPHhZUHarvUr1rYsDeI+YOEKfm+hDl6C4EiqHHv4Pqr+IC5P9
+         ZFjAA4ms4dmAtT63dhBSRPskues4ak2YKbXgm+QMfHpgLeYYWhN/XVkxhkv7ooJ37oKV
+         ok6F/EqrChPWLciCEcTBk4eEGBCks5zxt1KxTsKsmFPE4xEFqsOSAhsO2JTH4cuEkDpt
+         dbKkAlVdnS6WZBY3/tXTowYfLrt2tRRIeqk6ZzMZonfmidOO3LZgagDGG/9x7Vb+S75j
+         mHZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3IAlaipCNnrtQXC9KGumpKwQRaKsYxmUF93A0nM9u8k=;
-        b=TMGzCy1JHcpkdoankZwu14inbuqqYGEprQyo73GCqsnuBkktFWUjrA7clb+g1fu+rW
-         k4M8VeAParz5zgPbecH0WD7Rt3thPIQIgmjNVQD2XKV2ao6z3RrK/6l/YSFK6ddP80jB
-         0Zhya7qtpJwBo04bDO/GhWBH1N9J23hSxN8TM2DF086C2TMqwG2fM3sFTEWsR6Dgojve
-         twQuC0wEAjgM/R8/sodPX5ahzO3WwULt+SOxFSdPuqMRKI7enIwNNFuFj7d5gaeXMTdc
-         Q2jRusjaxJRJxvpqICwzybnhm05Uv0tOubs8ky7i2ZtYgQPydOarNTojMX6LTjAqe4xD
-         8LPA==
-X-Gm-Message-State: APzg51BWX/1XHFN3C1Isz7R3UAs32jp2nEaaoDZIsNkJlBI0FFwYTOV9
-        KqQ6ib4+FuCPO9gTFVKNTho=
-X-Google-Smtp-Source: ANB0VdagG0B/cJ2qgWtdvU1a704upGMJ21SS9X3hnbH32lyUbGuYDT/44Q8vKCUzR2u/XiYwrujlJQ==
-X-Received: by 2002:adf:ad34:: with SMTP id p49-v6mr35394591wrc.10.1537464213065;
-        Thu, 20 Sep 2018 10:23:33 -0700 (PDT)
+        bh=IOszDx0+PcEdvwwbT4AXK0NljevKHMGsY/DMk4sv7Dc=;
+        b=kYN5RSQ6hm2hu1GdqPOBLOBi+9y5yRrHpTXI1sPM7+/T/P3kTpFnG6hgvL9zveCTI1
+         h995R05Y1nO0yvQHHHJIA6F8J0X4v7N+t1C9Nm+hX53WQ8E/99j9g4GVkcN4aNBgdY+V
+         gGfOJKexi2wxTnMtSNTjB+eTk+1V5rBPiqEe3Umlr5PDdnY+NZnOc+x6o0vRCOfG2P1W
+         rkMaPI9Nn8vO7nFgZKGrqjsE5QoV00ZqKQ6R9XIFYhhaK439bHpFOhvWwCQ3M3mTjT3P
+         HMed/8AbF0T/63gZRyRwNaRPsxnWfabOyBd8guo0WEIddKs8omp8/duNCK7Oe8EQf8TY
+         YVqw==
+X-Gm-Message-State: ABuFfohRiW0GSp0yE8utboljIX0AeOGWyCI+Ktz0bzHuw2Wg18WXCieU
+        WagQFOfKZIJv6ug6Mtz8rCo=
+X-Google-Smtp-Source: ANB0Vdb0WqhZt4aUrTspa42pbi+ObXTn9IKpRijP7VwTjnBd6NAs91VztZMiHDdieffha3eC4IK52A==
+X-Received: by 2002:a1c:c3:: with SMTP id 186-v6mr3949415wma.126.1537464215294;
+        Thu, 20 Sep 2018 10:23:35 -0700 (PDT)
 Received: from localhost.localdomain (62.83.35.8.dyn.user.ono.com. [62.83.35.8])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.30
+        by smtp.gmail.com with ESMTPSA id q200-v6sm3466562wmd.2.2018.09.20.10.23.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 10:23:32 -0700 (PDT)
+        Thu, 20 Sep 2018 10:23:34 -0700 (PDT)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -97,9 +97,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-sparse@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: [PATCH v5 04/15] Compiler Attributes: homogenize __must_be_array
-Date:   Thu, 20 Sep 2018 19:22:50 +0200
-Message-Id: <20180920172301.21868-5-miguel.ojeda.sandonis@gmail.com>
+Subject: [PATCH v5 05/15] Compiler Attributes: remove unneeded sparse (__CHECKER__) tests
+Date:   Thu, 20 Sep 2018 19:22:51 +0200
+Message-Id: <20180920172301.21868-6-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 References: <20180920172301.21868-1-miguel.ojeda.sandonis@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -107,88 +107,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Different definitions of __must_be_array:
+Sparse knows about a few more attributes now, so we can remove
+the __CHECKER__ conditions from them (which, in turn, allow us
+to move some of them later on to compiler_attributes.h).
 
-  * gcc: disabled for __CHECKER__
+  * assume_aligned: since sparse's commit ffc860b ("sparse:
+    ignore __assume_aligned__ attribute"), included in 0.5.1
 
-  * clang: same definition as gcc's, but without __CHECKER__
+  * error: since sparse's commit 0a04210 ("sparse: Add 'error'
+    to ignored attributes"), included in 0.5.0
 
-  * intel: the comment claims __builtin_types_compatible_p()
-    is unsupported; but icc seems to support it since 13.0.1
-    (released in 2012). See https://godbolt.org/z/S0l6QQ
+  * hotpatch: since sparse's commit 6043210 ("sparse/parse.c:
+    ignore hotpatch attribute"), included in 0.5.1
 
-Therefore, we can remove all of them and have a single definition
-in compiler.h
+  * warning: since sparse's commit 977365d ("Avoid "attribute
+    'warning': unknown attribute" warning"), included in 0.4.2
+
+On top of that, __must_be_array does not need it either because:
+
+  * Even ancient versions of sparse do not have a problem
+
+  * BUILD_BUG_ON_ZERO() is currently disabled for __CHECKER__
 
 Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- include/linux/compiler-clang.h | 1 -
- include/linux/compiler-gcc.h   | 7 -------
- include/linux/compiler-intel.h | 3 ---
- include/linux/compiler.h       | 7 +++++++
- 4 files changed, 7 insertions(+), 11 deletions(-)
+ include/linux/compiler-gcc.h   | 6 ++----
+ include/linux/compiler.h       | 4 ----
+ include/linux/compiler_types.h | 2 +-
+ 3 files changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index d11cad61ba5c..fa9532f8d885 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -41,6 +41,5 @@
-  * compilers, like ICC.
-  */
- #define barrier() __asm__ __volatile__("" : : : "memory")
--#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
- #define __assume_aligned(a, ...)	\
- 	__attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
 diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 7a1de7683df5..3b32bbfa5a49 100644
+index 3b32bbfa5a49..1ca6a51cfaa9 100644
 --- a/include/linux/compiler-gcc.h
 +++ b/include/linux/compiler-gcc.h
-@@ -68,13 +68,6 @@
-  */
- #define uninitialized_var(x) x = x
+@@ -76,14 +76,12 @@
+ 
+ #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
+ 
+-#ifndef __CHECKER__
+ #define __compiletime_warning(message) __attribute__((__warning__(message)))
+ #define __compiletime_error(message) __attribute__((__error__(message)))
+ 
+-#ifdef LATENT_ENTROPY_PLUGIN
++#if defined(LATENT_ENTROPY_PLUGIN) && !defined(__CHECKER__)
+ #define __latent_entropy __attribute__((latent_entropy))
+ #endif
+-#endif /* __CHECKER__ */
+ 
+ /*
+  * calling noreturn functions, __builtin_unreachable() and __builtin_trap()
+@@ -131,7 +129,7 @@
+ 
+ /* gcc version specific checks */
+ 
+-#if GCC_VERSION >= 40900 && !defined(__CHECKER__)
++#if GCC_VERSION >= 40900
+ /*
+  * __assume_aligned(n, k): Tell the optimizer that the returned
+  * pointer can be assumed to be k modulo n. The second argument is
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 165b1d5683ed..4030a2940d6b 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -357,11 +357,7 @@ static inline void *offset_to_ptr(const int *off)
+ 	compiletime_assert(__native_word(t),				\
+ 		"Need native word sized stores/loads for atomicity.")
  
 -#ifdef __CHECKER__
 -#define __must_be_array(a)	0
 -#else
--/* &a[0] degrades to a pointer: a different type from an array */
--#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+ /* &a[0] degrades to a pointer: a different type from an array */
+ #define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
 -#endif
--
- #ifdef RETPOLINE
- #define __noretpoline __attribute__((__indirect_branch__("keep")))
- #endif
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index fef8bb3e53ef..6004b4588bd4 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -29,9 +29,6 @@
-  */
- #define OPTIMIZER_HIDE_VAR(var) barrier()
  
--/* Intel ECC compiler doesn't support __builtin_types_compatible_p() */
--#define __must_be_array(a) 0
--
- #endif
- 
- /* icc has this, but it's called _bswap16 */
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ec4a28bad2c6..165b1d5683ed 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -357,4 +357,11 @@ static inline void *offset_to_ptr(const int *off)
- 	compiletime_assert(__native_word(t),				\
- 		"Need native word sized stores/loads for atomicity.")
- 
-+#ifdef __CHECKER__
-+#define __must_be_array(a)	0
-+#else
-+/* &a[0] degrades to a pointer: a different type from an array */
-+#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-+#endif
-+
  #endif /* __LINUX_COMPILER_H */
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 5ff9cda893f4..a3eceb3ad1b3 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -218,7 +218,7 @@ struct ftrace_likely_data {
+ #define __must_check
+ #endif
+ 
+-#if defined(CC_USING_HOTPATCH) && !defined(__CHECKER__)
++#if defined(CC_USING_HOTPATCH)
+ #define notrace			__attribute__((hotpatch(0, 0)))
+ #else
+ #define notrace			__attribute__((__no_instrument_function__))
 -- 
 2.17.1
 
