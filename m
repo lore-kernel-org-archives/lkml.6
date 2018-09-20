@@ -2,114 +2,113 @@ Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA592C433F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1978DECE566
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 567EE21532
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:21:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vGpTwZ++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567EE21532
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id CD4CE21532
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 20:21:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4CE21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388251AbeIUCGb (ORCPT
+        id S2388345AbeIUCGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Sep 2018 22:06:31 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36264 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbeIUCGb (ORCPT
+        Thu, 20 Sep 2018 22:06:37 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53560 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeIUCGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 22:06:31 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A2E661C86;
-        Thu, 20 Sep 2018 22:21:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1537474876;
-        bh=skZjKh8hJaHWnEN+2VQvCQPBzit+qp2hRFCU1ZkhgYo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGpTwZ++JmNhL4gYz0nZ+zWPWBXPzpHPEJTJ0ziHPRD6hYZL85BigbilJu5276ye7
-         qxRfCxetm07jXNk2tgEk179ZWBIuT/E98M3VyFWZ9cOcE68eYcyfEfc8BQ+rsnAUtE
-         VTZMKUzEnBsneR97XN/GONHkeWo0MDYb+isvZt0I=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        Thu, 20 Sep 2018 22:06:37 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 238148073F; Thu, 20 Sep 2018 22:21:23 +0200 (CEST)
+Date:   Thu, 20 Sep 2018 22:21:22 +0200
+From:   Pavel Machek <pavel@ucw.cz>
 To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Sakari Ailus <sakari.ailus@iki.fi>,
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Hans Verkuil <hans.verkuil@cisco.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] [media] ad5820: DT new optional field enable-gpios
-Date:   Thu, 20 Sep 2018 23:21:28 +0300
-Message-ID: <1939782.bRt5jKDIiS@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180920161912.17063-3-ricardo.ribalda@gmail.com>
-References: <20180920161912.17063-1-ricardo.ribalda@gmail.com> <20180920161912.17063-3-ricardo.ribalda@gmail.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v2 2/4] [media] ad5820: Add support for enable pin
+Message-ID: <20180920202122.GA30748@amd>
+References: <20180920161912.17063-2-ricardo.ribalda@gmail.com>
+ <20180920184552.4919-1-ricardo.ribalda@gmail.com>
+ <20180920185405.GA26589@amd>
+ <CAPybu_2hjrq=r+kpAHKxX59gOXfbqGf9CUPh9CNqv7WGqJsrQQ@mail.gmail.com>
+ <20180920190855.GC26589@amd>
+ <CAPybu_2mNE7Jmfm2n60Z9Hk_iO+-zLgtu4xn72pJUSXBitVg=g@mail.gmail.com>
+ <20180920201420.GA28766@amd>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+Content-Disposition: inline
+In-Reply-To: <20180920201420.GA28766@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
 
-Thank you for the patch.
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, 20 September 2018 19:19:11 EEST Ricardo Ribalda Delgado wrote:
-> Document new enable-gpio field. It can be used to disable the part
-> without turning down its regulator.
-> 
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
->  Documentation/devicetree/bindings/media/i2c/ad5820.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> b/Documentation/devicetree/bindings/media/i2c/ad5820.txt index
-> 5940ca11c021..07d577bb37f7 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/ad5820.txt
-> @@ -8,6 +8,11 @@ Required Properties:
-> 
->    - VANA-supply: supply of voltage for VANA pin
-> 
-> +Optional properties:
-> +
-> +   - enable-gpios : GPIO spec for the XSHUTDOWN pin.
+Hi!
 
-xshutdown is active-low, so enable is active-high. Should this be documented 
-explicitly, to avoid polarity errors ? Maybe something along the lines of
+> > > > ad5820: dac@0c {
+> > > >    compatible =3D "adi,ad5820";
+> > > >    reg =3D <0x0c>;
+> > > >
+> > > >    VANA-supply =3D <&pm8994_l23>;
+> > > >    enable-gpios =3D <&msmgpio 26 GPIO_ACTIVE_HIGH>;
+> > > > };
+> > >
+> > > Well, I'm sure you could have gpio-based regulator powered from
+> > > pm8994_l23, and outputting to ad5820.
+> > >
+> > > Does ad5820 chip have a gpio input for enable?
+> >=20
+> > xshutdown pin:
+> > http://www.analog.com/media/en/technical-documentation/data-sheets/AD58=
+21.pdf
+> >=20
+> > (AD5820,AD5821, and AD5823 are compatibles, or at least that is waht
+> > the module manufacturer says :)
+>=20
+> Aha, sorry for the noise.
+>=20
+> 2,3: Acked-by: Pavel Machek <pavel@ucw.cz>
 
-- enable-gpios: GPIO spec for the XSHUTDOWN pin. Note that the polarity of the 
-enable GPIO is the opposite of the XSHUTDOWN pin (asserting the enable GPIO 
-deasserts the XSHUTDOWN signal and vice versa).
+And I forgot to mention. If ad5821 and ad5823 are compatible, it would
+be good to mention it somewhere where it is easy to find... That can
+save quite a bit of work to someone.
 
-> If specified, it will be
-> +     asserted when VANA-supply is enabled.
-
-That documents a driver behaviour, is it needed in DT ?
-
-
->  Example:
-> 
->         ad5820: coil@c {
-> @@ -15,5 +20,6 @@ Example:
->                 reg = <0x0c>;
-> 
->                 VANA-supply = <&vaux4>;
-> +               enable-gpios = <&msmgpio 26 GPIO_ACTIVE_HIGH>;
->         };
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+								Pavel
 
 
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlukAUIACgkQMOfwapXb+vKfkgCaAp3YUw8ANWqeDyzntNg6Sar4
+sH0AmQHxE0BGFw/kcXRQXItye37lsY7y
+=OWrj
+-----END PGP SIGNATURE-----
+
+--8t9RHnE3ZwKMSgU+--
