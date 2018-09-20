@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D342ECE566
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B6AC46470
 	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCC5621535
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:20:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC5621535
+	by mail.kernel.org (Postfix) with ESMTP id 2B4FF21537
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 21:20:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4FF21537
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388651AbeIUDFa (ORCPT
+        id S2388675AbeIUDFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 20 Sep 2018 23:05:30 -0400
-Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:60442
+Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:60590
         "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726128AbeIUDF3 (ORCPT
+        by vger.kernel.org with ESMTP id S2387962AbeIUDFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Sep 2018 23:05:29 -0400
+        Thu, 20 Sep 2018 23:05:30 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with ESMTP
-        id 36LkgmcunwkZt36LkgKqwN; Thu, 20 Sep 2018 14:19:00 -0700
+        id 36LlgmcwXwkZt36LlgKqy0; Thu, 20 Sep 2018 14:19:01 -0700
 x-originating-ip: 107.180.71.197
 Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
-        id 1g36Lk-0003ay-M9; Thu, 20 Sep 2018 14:19:00 -0700
+        id 1g36Ll-0003b4-QJ; Thu, 20 Sep 2018 14:19:01 -0700
 From:   Long Li <longli@linuxonhyperv.com>
 To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Cc:     Long Li <longli@microsoft.com>
-Subject: [PATCH V3 (resend) 3/7] CIFS: Add support for direct I/O read
-Date:   Thu, 20 Sep 2018 21:18:40 +0000
-Message-Id: <20180920211842.13721-3-longli@linuxonhyperv.com>
+Subject: [PATCH V3 (resend) 4/7] CIFS: Add support for direct I/O write
+Date:   Thu, 20 Sep 2018 21:18:41 +0000
+Message-Id: <20180920211842.13721-4-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180920211842.13721-1-longli@linuxonhyperv.com>
 References: <20180920211842.13721-1-longli@linuxonhyperv.com>
 Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfPrcekpaFGtM1V+r/8hOchv1+N+qDLk30c1D//ntpVams2oRUGkf5cDo2gHoogNuc+/8hihseOHsbjO6pJRSOjuNpfysaSb4zpZqqBriMgSWQ281I4qa
- 5nc1g2/EQaVhQFGq7PG8OSQGjFZsvZr5dxYMsqa+8KziIMXHBomknzKNy+c9F3HWaUX/VVaexUm5nZdhjeRgIWIqJCgum5AXXbyTwrzM/QVhnr/HVsDlpYot
- LZ6LqHZJQ+TbK58WScd2mwMSZKzBjRTe7V5QwcvutWK7Gc11tC9R6is7R1n8TxyRM6VAYfGCkDJ9MgfvBXDmAGuujn5o0IXVrHQ6lmd0edB2WQlnPY2Ae/tt
- QjHUZai0lWDFbM9EXV18F65BQpIk33xt7AjUZKpvG7HtxC2RTfIUprVZtrmwh0NgC2S+L90p
+X-CMAE-Envelope: MS4wfIqEGm/9CCjOzHr4ctRuFfOIIqKEfKDZOd3zvDuG4blJPz8dbZTPCdjvDdN5XNYA2Y8HfdKf2N8BzPVFu4uDFlgmOnQhFsrPqyenrIbjQ93opZtCJPFO
+ QoXarrxAejJKaV2n12qdi9gCHdeDaO5xXUA4aYTmS86jXCGhRZTjuX5DF+HmjyBBbsZNbGqr2nsX5h+oxdgWmgGiD93BAFwJQfVjXkrnHmmh3aRtm+d2ZKV0
+ wr2VNyGlsLkvG4VlBhFPN2/lvYNRHWplCSUeIO0F8N6BfUHWeZ7WAmH+ZEWYJQAFNw1p2DuyDPNpa8j61xLXhA6JHrQy1h+5lsiAHbFon+NbFXHhdxkedJGJ
+ dUGlyL8lZQcfGzmD/LfFZIfyxeYMW7eDvRjV2f+W5iZEPwLCMh+WewqdWrf67viF9wPNZoAg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,305 +53,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-With direct I/O read, we transfer the data directly from transport layer to
-the user data buffer.
+With direct I/O write, user supplied buffers are pinned to the memory and data
+are transferred directly from user buffers to the transport layer.
 
 Change in v3: add support for kernel AIO
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- fs/cifs/cifsfs.h   |   1 +
- fs/cifs/cifsglob.h |   5 ++
- fs/cifs/file.c     | 210 +++++++++++++++++++++++++++++++++++++++++++++--------
- 3 files changed, 187 insertions(+), 29 deletions(-)
+ fs/cifs/cifsfs.h |   1 +
+ fs/cifs/file.c   | 196 ++++++++++++++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 166 insertions(+), 31 deletions(-)
 
 diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
-index f047e87..ed5479c 100644
+index ed5479c..cc54051 100644
 --- a/fs/cifs/cifsfs.h
 +++ b/fs/cifs/cifsfs.h
-@@ -101,6 +101,7 @@ extern int cifs_open(struct inode *inode, struct file *file);
- extern int cifs_close(struct inode *inode, struct file *file);
- extern int cifs_closedir(struct inode *inode, struct file *file);
- extern ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to);
-+extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to);
+@@ -104,6 +104,7 @@ extern ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to);
+ extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to);
  extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to);
  extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from);
++extern ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from);
  extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from);
-diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
-index 9dcaed0..2131fec 100644
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -1172,6 +1172,11 @@ struct cifs_aio_ctx {
- 	unsigned int		len;
- 	unsigned int		total_len;
- 	bool			should_dirty;
-+	/*
-+	 * Indicates if this aio_ctx is for direct_io,
-+	 * If yes, iter is a copy of the user passed iov_iter
-+	 */
-+	bool			direct_io;
- };
- 
- struct cifs_readdata;
+ extern int cifs_lock(struct file *, int, struct file_lock *);
+ extern int cifs_fsync(struct file *, loff_t, loff_t, int);
 diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 8d41ca7..6a939fa 100644
+index 6a939fa..2a5d209 100644
 --- a/fs/cifs/file.c
 +++ b/fs/cifs/file.c
-@@ -2965,7 +2965,6 @@ cifs_uncached_readdata_release(struct kref *refcount)
- 	kref_put(&rdata->ctx->refcount, cifs_aio_ctx_release);
- 	for (i = 0; i < rdata->nr_pages; i++) {
- 		put_page(rdata->pages[i]);
--		rdata->pages[i] = NULL;
- 	}
- 	cifs_readdata_release(refcount);
- }
-@@ -3004,7 +3003,7 @@ cifs_readdata_to_iov(struct cifs_readdata *rdata, struct iov_iter *iter)
- 	return remaining ? -EFAULT : 0;
- }
- 
--static void collect_uncached_read_data(struct cifs_aio_ctx *ctx);
-+static void collect_uncached_read_data(struct cifs_readdata *rdata, struct cifs_aio_ctx *ctx);
- 
- static void
- cifs_uncached_readv_complete(struct work_struct *work)
-@@ -3013,7 +3012,7 @@ cifs_uncached_readv_complete(struct work_struct *work)
- 						struct cifs_readdata, work);
- 
- 	complete(&rdata->done);
--	collect_uncached_read_data(rdata->ctx);
-+	collect_uncached_read_data(rdata, rdata->ctx);
- 	/* the below call can possibly free the last ref to aio ctx */
- 	kref_put(&rdata->refcount, cifs_uncached_readdata_release);
- }
-@@ -3103,6 +3102,9 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
- 	int rc;
+@@ -2537,6 +2537,8 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
+ 	loff_t saved_offset = offset;
  	pid_t pid;
  	struct TCP_Server_Info *server;
 +	struct page **pagevec;
 +	size_t start;
-+	struct iov_iter direct_iov = ctx->iter;
  
- 	server = tlink_tcon(open_file->tlink)->ses->server;
- 
-@@ -3111,6 +3113,9 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
- 	else
- 		pid = current->tgid;
- 
-+	if (ctx->direct_io)
-+		iov_iter_advance(&direct_iov, offset - ctx->pos);
-+
- 	do {
- 		rc = server->ops->wait_mtu_credits(server, cifs_sb->rsize,
- 						   &rsize, &credits);
-@@ -3118,20 +3123,56 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
+ 		pid = open_file->pid;
+@@ -2553,38 +2555,74 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
+ 		if (rc)
  			break;
  
- 		cur_len = min_t(const size_t, len, rsize);
--		npages = DIV_ROUND_UP(cur_len, PAGE_SIZE);
- 
--		/* allocate a readdata struct */
--		rdata = cifs_readdata_alloc(npages,
+-		nr_pages = get_numpages(wsize, len, &cur_len);
+-		wdata = cifs_writedata_alloc(nr_pages,
 +		if (ctx->direct_io) {
-+
 +			cur_len = iov_iter_get_pages_alloc(
-+					&direct_iov, &pagevec,
-+					cur_len, &start);
++				from, &pagevec, wsize, &start);
 +			if (cur_len < 0) {
 +				cifs_dbg(VFS,
-+					"couldn't get user pages (cur_len=%zd)"
-+					" iter type %d"
-+					" iov_offset %zd count %zd\n",
-+					cur_len, direct_iov.type, direct_iov.iov_offset,
-+					direct_iov.count);
++					"direct_writev couldn't get user pages "
++					"(rc=%zd) iter type %d iov_offset %zd count"
++					" %zd\n",
++					cur_len, from->type,
++					from->iov_offset, from->count);
 +				dump_stack();
 +				break;
 +			}
-+			iov_iter_advance(&direct_iov, cur_len);
++			iov_iter_advance(from, cur_len);
 +
-+			rdata = cifs_readdata_direct_alloc(
-+					pagevec, cifs_uncached_readv_complete);
-+			if (!rdata) {
-+				add_credits_and_wake_if(server, credits, 0);
-+				rc = -ENOMEM;
-+				break;
-+			}
++			nr_pages = (cur_len + start + PAGE_SIZE - 1) / PAGE_SIZE;
 +
-+			npages = (cur_len + start + PAGE_SIZE-1) / PAGE_SIZE;
-+			rdata->page_offset = start;
-+			rdata->tailsz = npages > 1 ?
-+				cur_len-(PAGE_SIZE-start)-(npages-2)*PAGE_SIZE :
-+				cur_len;
-+
-+		} else {
-+
-+			npages = DIV_ROUND_UP(cur_len, PAGE_SIZE);
-+			/* allocate a readdata struct */
-+			rdata = cifs_readdata_alloc(npages,
- 					    cifs_uncached_readv_complete);
--		if (!rdata) {
--			add_credits_and_wake_if(server, credits, 0);
++			wdata = cifs_writedata_direct_alloc(pagevec,
+ 					     cifs_uncached_writev_complete);
+-		if (!wdata) {
 -			rc = -ENOMEM;
+-			add_credits_and_wake_if(server, credits, 0);
 -			break;
 -		}
-+			if (!rdata) {
-+				add_credits_and_wake_if(server, credits, 0);
++			if (!wdata) {
 +				rc = -ENOMEM;
++				add_credits_and_wake_if(server, credits, 0);
 +				break;
 +			}
  
--		rc = cifs_read_allocate_pages(rdata, npages);
--		if (rc)
--			goto error;
-+			rc = cifs_read_allocate_pages(rdata, npages);
-+			if (rc)
-+				goto error;
+-		rc = cifs_write_allocate_pages(wdata->pages, nr_pages);
+-		if (rc) {
+-			kfree(wdata);
+-			add_credits_and_wake_if(server, credits, 0);
+-			break;
+-		}
+ 
+-		num_pages = nr_pages;
+-		rc = wdata_fill_from_iovec(wdata, from, &cur_len, &num_pages);
+-		if (rc) {
+-			for (i = 0; i < nr_pages; i++)
+-				put_page(wdata->pages[i]);
+-			kfree(wdata);
+-			add_credits_and_wake_if(server, credits, 0);
+-			break;
+-		}
++			wdata->page_offset = start;
++			wdata->tailsz =
++				nr_pages > 1 ?
++					cur_len - (PAGE_SIZE - start) -
++					(nr_pages - 2) * PAGE_SIZE :
++					cur_len;
++		} else {
++			nr_pages = get_numpages(wsize, len, &cur_len);
++			wdata = cifs_writedata_alloc(nr_pages,
++					     cifs_uncached_writev_complete);
++			if (!wdata) {
++				rc = -ENOMEM;
++				add_credits_and_wake_if(server, credits, 0);
++				break;
++			}
+ 
+-		/*
+-		 * Bring nr_pages down to the number of pages we actually used,
+-		 * and free any pages that we didn't use.
+-		 */
+-		for ( ; nr_pages > num_pages; nr_pages--)
+-			put_page(wdata->pages[nr_pages - 1]);
++			rc = cifs_write_allocate_pages(wdata->pages, nr_pages);
++			if (rc) {
++				kfree(wdata);
++				add_credits_and_wake_if(server, credits, 0);
++				break;
++			}
 +
-+			rdata->tailsz = PAGE_SIZE;
++			num_pages = nr_pages;
++			rc = wdata_fill_from_iovec(wdata, from, &cur_len, &num_pages);
++			if (rc) {
++				for (i = 0; i < nr_pages; i++)
++					put_page(wdata->pages[i]);
++				kfree(wdata);
++				add_credits_and_wake_if(server, credits, 0);
++				break;
++			}
++
++			/*
++			 * Bring nr_pages down to the number of pages we actually used,
++			 * and free any pages that we didn't use.
++			 */
++			for ( ; nr_pages > num_pages; nr_pages--)
++				put_page(wdata->pages[nr_pages - 1]);
++
++			wdata->tailsz = cur_len - ((nr_pages - 1) * PAGE_SIZE);
 +		}
  
- 		rdata->cfile = cifsFileInfo_get(open_file);
- 		rdata->nr_pages = npages;
-@@ -3139,7 +3180,6 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
- 		rdata->bytes = cur_len;
- 		rdata->pid = pid;
- 		rdata->pagesz = PAGE_SIZE;
--		rdata->tailsz = PAGE_SIZE;
- 		rdata->read_into_pages = cifs_uncached_read_into_pages;
- 		rdata->copy_into_pages = cifs_uncached_copy_into_pages;
- 		rdata->credits = credits;
-@@ -3153,13 +3193,17 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
- 		if (rc) {
- 			add_credits_and_wake_if(server, rdata->credits, 0);
- 			kref_put(&rdata->refcount,
--				 cifs_uncached_readdata_release);
--			if (rc == -EAGAIN)
-+				cifs_uncached_readdata_release);
-+			if (rc == -EAGAIN) {
-+				iov_iter_revert(&direct_iov, cur_len);
- 				continue;
-+			}
- 			break;
- 		}
- 
--		list_add_tail(&rdata->list, rdata_list);
-+		/* Add to aio pending list if it's not there */
-+		if (rdata_list)
-+			list_add_tail(&rdata->list, rdata_list);
- 		offset += cur_len;
- 		len -= cur_len;
- 	} while (len > 0);
-@@ -3168,7 +3212,7 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
- }
- 
- static void
--collect_uncached_read_data(struct cifs_aio_ctx *ctx)
-+collect_uncached_read_data(struct cifs_readdata *uncached_rdata, struct cifs_aio_ctx *ctx)
- {
- 	struct cifs_readdata *rdata, *tmp;
- 	struct iov_iter *to = &ctx->iter;
-@@ -3211,10 +3255,12 @@ collect_uncached_read_data(struct cifs_aio_ctx *ctx)
- 				 * reading.
- 				 */
- 				if (got_bytes && got_bytes < rdata->bytes) {
--					rc = cifs_readdata_to_iov(rdata, to);
-+					rc = 0;
-+					if (!ctx->direct_io)
-+						rc = cifs_readdata_to_iov(rdata, to);
- 					if (rc) {
- 						kref_put(&rdata->refcount,
--						cifs_uncached_readdata_release);
-+							cifs_uncached_readdata_release);
- 						continue;
- 					}
- 				}
-@@ -3228,28 +3274,32 @@ collect_uncached_read_data(struct cifs_aio_ctx *ctx)
- 				list_splice(&tmp_list, &ctx->list);
- 
- 				kref_put(&rdata->refcount,
--					 cifs_uncached_readdata_release);
-+					cifs_uncached_readdata_release);
- 				goto again;
- 			} else if (rdata->result)
- 				rc = rdata->result;
--			else
-+			else if (!ctx->direct_io)
- 				rc = cifs_readdata_to_iov(rdata, to);
- 
- 			/* if there was a short read -- discard anything left */
- 			if (rdata->got_bytes && rdata->got_bytes < rdata->bytes)
- 				rc = -ENODATA;
-+
-+			ctx->total_len += rdata->got_bytes;
- 		}
- 		list_del_init(&rdata->list);
- 		kref_put(&rdata->refcount, cifs_uncached_readdata_release);
+ 		wdata->sync_mode = WB_SYNC_ALL;
+ 		wdata->nr_pages = nr_pages;
+@@ -2593,7 +2631,6 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
+ 		wdata->pid = pid;
+ 		wdata->bytes = cur_len;
+ 		wdata->pagesz = PAGE_SIZE;
+-		wdata->tailsz = cur_len - ((nr_pages - 1) * PAGE_SIZE);
+ 		wdata->credits = credits;
+ 		wdata->ctx = ctx;
+ 		kref_get(&ctx->refcount);
+@@ -2687,8 +2724,9 @@ static void collect_uncached_write_data(struct cifs_aio_ctx *ctx)
+ 		kref_put(&wdata->refcount, cifs_uncached_writedata_release);
  	}
  
--	for (i = 0; i < ctx->npages; i++) {
--		if (ctx->should_dirty)
--			set_page_dirty(ctx->bv[i].bv_page);
+-	for (i = 0; i < ctx->npages; i++)
 -		put_page(ctx->bv[i].bv_page);
--	}
-+	if (!ctx->direct_io) {
-+		for (i = 0; i < ctx->npages; i++) {
-+			if (ctx->should_dirty)
-+				set_page_dirty(ctx->bv[i].bv_page);
++	if (!ctx->direct_io)
++		for (i = 0; i < ctx->npages; i++)
 +			put_page(ctx->bv[i].bv_page);
-+		}
  
--	ctx->total_len = ctx->len - iov_iter_count(to);
-+		ctx->total_len = ctx->len - iov_iter_count(to);
-+	}
- 
- 	cifs_stats_bytes_read(tcon, ctx->total_len);
- 
-@@ -3267,6 +3317,108 @@ collect_uncached_read_data(struct cifs_aio_ctx *ctx)
+ 	cifs_stats_bytes_written(tcon, ctx->total_len);
+ 	set_bit(CIFS_INO_INVALID_MAPPING, &CIFS_I(dentry->d_inode)->flags);
+@@ -2703,6 +2741,102 @@ static void collect_uncached_write_data(struct cifs_aio_ctx *ctx)
  		complete(&ctx->done);
  }
  
-+ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to)
++ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from)
 +{
-+	size_t len;
-+	struct file *file;
-+	struct cifs_sb_info *cifs_sb;
++	struct file *file = iocb->ki_filp;
++	ssize_t total_written = 0;
 +	struct cifsFileInfo *cfile;
 +	struct cifs_tcon *tcon;
-+	ssize_t rc, total_read = 0;
++	struct cifs_sb_info *cifs_sb;
 +	struct TCP_Server_Info *server;
-+	loff_t offset = iocb->ki_pos;
-+	pid_t pid;
++	size_t len = iov_iter_count(from);
++	int rc;
 +	struct cifs_aio_ctx *ctx;
 +
 +	/*
-+	 * iov_iter_get_pages_alloc() doesn't work with ITER_KVEC,
-+	 * fall back to data copy read path
++	 * iov_iter_get_pages_alloc doesn't work with ITER_KVEC.
++	 * In this case, fall back to non-direct write function.
 +	 * this could be improved by getting pages directly in ITER_KVEC
 +	 */
-+	if (to->type & ITER_KVEC) {
-+		cifs_dbg(FYI, "use non-direct cifs_user_readv for kvec I/O\n");
-+		return cifs_user_readv(iocb, to);
++	if (from->type & ITER_KVEC) {
++		cifs_dbg(FYI, "use non-direct cifs_user_writev for kvec I/O\n");
++		return cifs_user_writev(iocb, from);
 +	}
 +
-+	len = iov_iter_count(to);
-+	if (!len)
-+		return 0;
++	rc = generic_write_checks(iocb, from);
++	if (rc <= 0)
++		return rc;
 +
-+	file = iocb->ki_filp;
 +	cifs_sb = CIFS_FILE_SB(file);
 +	cfile = file->private_data;
 +	tcon = tlink_tcon(cfile->tlink);
 +	server = tcon->ses->server;
 +
-+	if (!server->ops->async_readv)
++	if (!server->ops->async_writev)
 +		return -ENOSYS;
-+
-+	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
-+		pid = cfile->pid;
-+	else
-+		pid = current->tgid;
-+
-+	if ((file->f_flags & O_ACCMODE) == O_WRONLY)
-+		cifs_dbg(FYI, "attempting read on write only file instance\n");
 +
 +	ctx = cifs_aio_ctx_alloc();
 +	if (!ctx)
@@ -362,20 +259,24 @@ index 8d41ca7..6a939fa 100644
 +	if (!is_sync_kiocb(iocb))
 +		ctx->iocb = iocb;
 +
-+	if (to->type == ITER_IOVEC)
-+		ctx->should_dirty = true;
++	ctx->pos = iocb->ki_pos;
 +
-+	ctx->pos = offset;
 +	ctx->direct_io = true;
-+	ctx->iter = *to;
++	ctx->iter = *from;
 +	ctx->len = len;
 +
 +	/* grab a lock here due to read response handlers can access ctx */
 +	mutex_lock(&ctx->aio_mutex);
 +
-+	rc = cifs_send_async_read(offset, len, cfile, cifs_sb, &ctx->list, ctx);
++	rc = cifs_write_from_iter(iocb->ki_pos, ctx->len, from,
++				  cfile, cifs_sb, &ctx->list, ctx);
 +
-+	/* if at least one read request send succeeded, then reset rc */
++	/*
++	 * If at least one write was successfully sent, then discard any rc
++	 * value from the later writes. If the other write succeeds, then
++	 * we'll end up returning whatever was written. If it fails, then
++	 * we'll get a new rc value from that.
++	 */
 +	if (!list_empty(&ctx->list))
 +		rc = 0;
 +
@@ -395,23 +296,23 @@ index 8d41ca7..6a939fa 100644
 +	if (rc) {
 +		mutex_lock(&ctx->aio_mutex);
 +		ctx->rc = rc = -EINTR;
-+		total_read = ctx->total_len;
++		total_written = ctx->total_len;
 +		mutex_unlock(&ctx->aio_mutex);
 +	} else {
 +		rc = ctx->rc;
-+		total_read = ctx->total_len;
++		total_written = ctx->total_len;
 +	}
 +
 +	kref_put(&ctx->refcount, cifs_aio_ctx_release);
 +
-+	if (total_read) {
-+		iocb->ki_pos += total_read;
-+		return total_read;
-+	}
-+	return rc;
++	if (unlikely(!total_written))
++		return rc;
++
++	iocb->ki_pos += total_written;
++	return total_written;
 +}
 +
- ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
+ ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from)
  {
  	struct file *file = iocb->ki_filp;
 -- 
