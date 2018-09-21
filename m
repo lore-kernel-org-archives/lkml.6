@@ -2,249 +2,214 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CA5ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1318FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 077282150E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:45:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077282150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FBE62150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:48:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mD/2lxL8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FBE62150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389843AbeIUSd6 (ORCPT
+        id S2389935AbeIUSgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:33:58 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:47196 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeIUSd6 (ORCPT
+        Fri, 21 Sep 2018 14:36:50 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42529 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbeIUSgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:33:58 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g3Ko5-0007gp-S9; Fri, 21 Sep 2018 06:45:13 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g3Ko4-0001vV-J7; Fri, 21 Sep 2018 06:45:13 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org
-References: <87y3bzk6yv.fsf@xmission.com>
-        <20180918000546.12552-8-ebiederm@xmission.com>
-        <alpine.DEB.2.21.1809182228350.1468@nanos.tec.linutronix.de>
-Date:   Fri, 21 Sep 2018 14:45:01 +0200
-In-Reply-To: <alpine.DEB.2.21.1809182228350.1468@nanos.tec.linutronix.de>
-        (Thomas Gleixner's message of "Tue, 18 Sep 2018 22:33:15 +0200
-        (CEST)")
-Message-ID: <877ejf58aa.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 21 Sep 2018 14:36:50 -0400
+Received: by mail-qk1-f196.google.com with SMTP id w73-v6so2318360qkb.9;
+        Fri, 21 Sep 2018 05:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0xhR8c49X1oItXOMFB/yvowhp2isimQUTwFmgWM51eQ=;
+        b=mD/2lxL84SwBiySzcuyc8MpwT4Fa2Ke09PsLN5efOw9gHDHYzKOL2RmgdS1oGCgXhF
+         Sy7Wp99NDAmm+4FeqyYJv+8MvC6h9RPPp961zFG80+xawjN3mxNK31zpZ/zUyBs4WIi2
+         PwFCV8v0wzMXmgUxYz/+mEUSrHRHH68OeaOTazi1LilvZ4SphBs3hd2Oii7DfLMS/gGA
+         OZRiFzLof1/VuGzy93s/J7cb5mdxGEAPaaE6qV2N9roAVVT2T3oLMnwJqqtCXeezhm2B
+         O3p1SlovflLdf8UWQfFsJYOwdxheoZqMWdPdDtU6H1XNZa5Xnmyopbtgr+46I7Wrm0eY
+         zLgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0xhR8c49X1oItXOMFB/yvowhp2isimQUTwFmgWM51eQ=;
+        b=oxVF7OcDtl87YOPAu2JWTxH0gVBjFv4JZvrsSqqKj+FMjm6fZlwlPC5sX6rxTqy3Rj
+         Fe2X4A/LeYOdeGq9pbfML4BhaeBHWyGRIrB/Lsvcha3It7zxn+RIwCWoa4EgUBX28W4n
+         r9TD8zZBvgwzKacsW9YaSI2ecH2uCLEZ8DmQLCjrLBNoYF+4qUdtvp6Y/97Ay2pqVnt+
+         3bqlb+lyFAfLJj/rmlgt/eRpLYigDvkhhnExjhejHuPpZ6a1TBe7HqDCt+8szrtWlt6X
+         9+9YMg2uIxMudsiCZ0eVxUtHhDr7L6fB5pCQ7bJt4fhpg3bgtcHB6sT2uipV4EhwrEDY
+         XXdg==
+X-Gm-Message-State: APzg51CGyTXYyWyqPbE4XqMDqUqUJz6ISrG/bHPxDQuwfMFkHcCFCCu2
+        9U4I95KZqGG2Dc63SWw7+AY4wKaQ2KkLrinq5Q8=
+X-Google-Smtp-Source: ANB0VdZ6BRdhhNszEPa093tRMgY4LvGbi09ZMx1w7kESmVfGlliA73jLhmxp7XSbi6+PkGAizMToPTavWfqkaseNaQQ=
+X-Received: by 2002:a37:270f:: with SMTP id n15-v6mr10995967qkn.33.1537534085159;
+ Fri, 21 Sep 2018 05:48:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1g3Ko4-0001vV-J7;;;mid=<877ejf58aa.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/uthwH7/VXwynng47GZg8uz3XH1Q3fjMg=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [REVIEW][PATCH 08/20] signal/x86/traps: Move setting error_code and trap_nr into do_trap_no_signal
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20180920223436.202454-1-mka@chromium.org> <20180920223436.202454-2-mka@chromium.org>
+ <20180921071312.gg7xshwa2ro3hiix@kekkonen.localdomain>
+In-Reply-To: <20180921071312.gg7xshwa2ro3hiix@kekkonen.localdomain>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 21 Sep 2018 15:47:54 +0300
+Message-ID: <CAHp75Vc-evA6MCxGN+Ho+XQkBqtQ_JpMEpPUmMGxMxUSmL1LMA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] device property: Add device_get_bd_address() and fwnode_get_bd_address()
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, mw@semihalf.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, bgodavar@codeaurora.org,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
-
-> On Tue, 18 Sep 2018, Eric W. Biederman wrote:
+On Fri, Sep 21, 2018 at 10:16 AM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
 >
->> Half of the times when error_code and trap_nr are set are already in
+> Hi Matthias,
 >
-> s/when// I think
+> On Thu, Sep 20, 2018 at 03:34:35PM -0700, Matthias Kaehlcke wrote:
+> > Provide an API for Bluetooth drivers to retrieve the Bluetooth Device
+> > address (BD_ADDR) for a device. If the device node has a property
+> > 'local-bd-address' the BD address is read from this property.
+> >
 
-Yes that changelog was not a good description of why I was changing
-things.
+I have nothing to object for the idea and agree fully on Sakari's comments.
 
->> do_trap_no_signal.  Move the other time these are set into do_trap_no_signal,
+After addressing them, fill free to add my
+
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  drivers/base/property.c  | 49 ++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/property.h |  4 ++++
+> >  2 files changed, 53 insertions(+)
+> >
+> > diff --git a/drivers/base/property.c b/drivers/base/property.c
+> > index 240ab5230ff6..8fe546b9805a 100644
+> > --- a/drivers/base/property.c
+> > +++ b/drivers/base/property.c
+> > @@ -18,6 +18,8 @@
+> >  #include <linux/etherdevice.h>
+> >  #include <linux/phy.h>
+> >
+> > +#define BD_ADDR_LEN  6
+> > +
+> >  struct property_set {
+> >       struct device *dev;
+> >       struct fwnode_handle fwnode;
+> > @@ -1315,6 +1317,53 @@ void *device_get_mac_address(struct device *dev, char *addr, int alen)
+> >  }
+> >  EXPORT_SYMBOL(device_get_mac_address);
+> >
+> > +/**
+> > + * fwnode_get_bd_address - Get the Bluetooth Device Address (BD_ADDR) from the
+> > + *                         firmware node
+> > + * @fwnode:  Pointer to the firmware node
+> > + * @addr:    Address of buffer to store the BD address in
+> > + * @alen:    Length of the buffer pointed to by addr, should be BD_ADDR_LEN
+> > + *
+> > + * Search the firmware node for 'local-bd-address'.
+> > + *
+> > + * All-zero BD addresses are rejected, because those could be properties
+> > + * that exist in the firmware tables, but were not updated by the firmware. For
+> > + * example, the DTS could define 'local-bd-address', with zero BD addresses.
+> > + */
+> > +int fwnode_get_bd_address(struct fwnode_handle *fwnode, u8 *addr, int alen)
 >
-> Please write function as do_trap_no_signal() so it's more obvious what you
-> are talking about.
-
-That feels quite unnatural to me.
-
->> and give do_trap_no_signal a single exit where a signals are sent.
+> How about using bdaddr_t instead? The original caller was casting it to u8
+> probably just because there was no function specifically for this purpose.
 >
-> s/a/// or s/a/all/ Not sure what you wanted to do here.
+> I wonder if this also should be made depend on CONFIG_BT. The fwnode
+> framework is unconditionally a part of the kernel and it's not very big at
+> the moment but adding stuff little by little will add up eventually.
 >
->> After the move the comment documeting this all is much easier to follow
->> as everything is together in one place.
->> 
->> Also update the string that is passed in to const.  The only user of that
->> str is die and it already takes a const string, so this just makes it explicit
+> > +{
+> > +     u8 buf[BD_ADDR_LEN];
+> > +     int ret;
+> > +
+> > +     if (alen != BD_ADDR_LEN)
+> > +             return -EINVAL;
+> > +
+> > +     ret = fwnode_property_read_u8_array(fwnode, "local-bd-address",
+> > +                                         buf, alen);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +     if (is_zero_ether_addr(buf))
+> > +             return -ENODATA;
+> > +
+> > +     memcpy(addr, buf, BD_ADDR_LEN);
+> > +
+> > +     return 0;
+> > +}
+> > +EXPORT_SYMBOL(fwnode_get_bd_address);
+> > +
+> > +/**
+> > + * device_get_bd_address - Get the Bluetooth Device Address (BD_ADDR) for a
+> > + *                         given device
+> > + * @dev:     Pointer to the device
+> > + * @addr:    Address of buffer to store the BD address in
+> > + * @alen:    Length of the buffer pointed to by addr, should be BD_ADDR_LEN
+> > + */
+> > +int device_get_bd_address(struct device *dev, u8 *addr, int alen)
+> > +{
+> > +     return fwnode_get_bd_address(dev_fwnode(dev), addr, alen);
+> > +}
+> > +EXPORT_SYMBOL(device_get_bd_address);
+> > +
+> >  /**
+> >   * fwnode_irq_get - Get IRQ directly from a fwnode
+> >   * @fwnode:  Pointer to the firmware node
+> > diff --git a/include/linux/property.h b/include/linux/property.h
+> > index ac8a1ebc4c1b..4e2f1b276f4f 100644
+> > --- a/include/linux/property.h
+> > +++ b/include/linux/property.h
+> > @@ -287,9 +287,13 @@ int device_get_phy_mode(struct device *dev);
+> >
+> >  void *device_get_mac_address(struct device *dev, char *addr, int alen);
+> >
+> > +int device_get_bd_address(struct device *dev, u8 *addr, int alen);
+> > +
+> >  int fwnode_get_phy_mode(struct fwnode_handle *fwnode);
+> >  void *fwnode_get_mac_address(struct fwnode_handle *fwnode,
+> >                            char *addr, int alen);
+> > +int fwnode_get_bd_address(struct fwnode_handle *fwnode,
+> > +                       u8 *addr, int alen);
 >
-> string
+> This would be a good opportunity to add a newline here, and avoid adding
+> one after device_get_mac_address().
 >
->> that the string won't change.
->> 
->> This prepares the way for adding a second caller to do_trap_no_signal.
->> 
->> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> ---
->>  arch/x86/kernel/traps.c | 29 ++++++++++++++---------------
->>  1 file changed, 14 insertions(+), 15 deletions(-)
->> 
->> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
->> index 31a689b67be3..f31c0ddee278 100644
->> --- a/arch/x86/kernel/traps.c
->> +++ b/arch/x86/kernel/traps.c
->> @@ -189,7 +189,7 @@ int fixup_bug(struct pt_regs *regs, int trapnr)
->>  }
->>  
->>  static nokprobe_inline int
->> -do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
->> +do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
->>  		  struct pt_regs *regs,	long error_code)
->>  {
->>  	if (v8086_mode(regs)) {
->> @@ -202,10 +202,8 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
->>  						error_code, trapnr))
->>  				return 0;
->>  		}
->> -		return -1;
->>  	}
->> -
->> -	if (!user_mode(regs)) {
->> +	else if (!user_mode(regs)) {
+> >  struct fwnode_handle *fwnode_graph_get_next_endpoint(
+> >       const struct fwnode_handle *fwnode, struct fwnode_handle *prev);
+> >  struct fwnode_handle *
 >
-> Please put that 'else if' right after the closing bracket, i.e.
+> --
+> Regards,
 >
-> 	} else if (...) {
->
->>  		if (fixup_exception(regs, trapnr))
->>  			return 0;
->
-> With that fixed:
->
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
 
-Done.  The upated patch is below.
 
-I also realized for clarity of the code I could have moved show_signal
-into do_trap_no_signal as well.  I will post a follow up change where I
-do that.
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-Date: Fri, 4 Aug 2017 14:01:50 -0500
-Subject: [PATCH] signal/x86/traps: Move more code into do_trap_no_signal so it can be reused
-
-The function do_trap_no_signal embodies almost all of the work of the
-function do_trap.  The exceptions are setting of thread.error_code and
-thread.trap_nr in the case when the signal will be sent, and reporting
-which signal will be sent with show_signal.
-
-Filling in struct siginfo and then calling do_trap is problematic as
-filling in struct siginfo is an fiddly process that can through
-inattention has resulted in fields not initialized and the wrong
-fields being filled in.
-
-To avoid this error prone situation I am replacing force_sig_info with
-a set of functions that take as arguments the information needed to
-send a specific kind of signal.
-
-The function do_trap is called in the context of several different
-kinds of signals today.  Having a solid do_trap_no_signal that
-can be reused allows call sites that send different kinds of
-signals to reuse all of the code in do_trap_no_signal.
-
-Modify do_trap_no_signal to have a single exit there signals
-where be sent (aka returning -1) to allow more of the signal
-sending path to be moved to from do_trap to do_trap_no_signal.
-
-Move setting thread.trap_nr and thread.error_code into do_trap_no_signal
-so the code does not need to be duplicated.
-
-Make the type of the string that is passed into do_trap_no_signal to
-const.  The only user of that str is die and it already takes a const
-string, so this just makes it explicit that the string won't change.
-
-All of this prepares the way for using do_trap_no_signal outside
-of do_trap.
-
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- arch/x86/kernel/traps.c | 29 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 31a689b67be3..f31c0ddee278 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -189,7 +189,7 @@ int fixup_bug(struct pt_regs *regs, int trapnr)
- }
- 
- static nokprobe_inline int
--do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
-+do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
- 		  struct pt_regs *regs,	long error_code)
- {
- 	if (v8086_mode(regs)) {
-@@ -202,10 +202,8 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
- 						error_code, trapnr))
- 				return 0;
- 		}
--		return -1;
- 	}
--
--	if (!user_mode(regs)) {
-+	else if (!user_mode(regs)) {
- 		if (fixup_exception(regs, trapnr))
- 			return 0;
- 
-@@ -214,6 +212,18 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
- 		die(str, regs, error_code);
- 	}
- 
-+	/*
-+	 * We want error_code and trap_nr set for userspace faults and
-+	 * kernelspace faults which result in die(), but not
-+	 * kernelspace faults which are fixed up.  die() gives the
-+	 * process no chance to handle the signal and notice the
-+	 * kernel fault information, so that won't result in polluting
-+	 * the information about previously queued, but not yet
-+	 * delivered, faults.  See also do_general_protection below.
-+	 */
-+	tsk->thread.error_code = error_code;
-+	tsk->thread.trap_nr = trapnr;
-+
- 	return -1;
- }
- 
-@@ -271,17 +281,6 @@ do_trap(int trapnr, int signr, char *str, struct pt_regs *regs,
- 
- 	if (!do_trap_no_signal(tsk, trapnr, str, regs, error_code))
- 		return;
--	/*
--	 * We want error_code and trap_nr set for userspace faults and
--	 * kernelspace faults which result in die(), but not
--	 * kernelspace faults which are fixed up.  die() gives the
--	 * process no chance to handle the signal and notice the
--	 * kernel fault information, so that won't result in polluting
--	 * the information about previously queued, but not yet
--	 * delivered, faults.  See also do_general_protection below.
--	 */
--	tsk->thread.error_code = error_code;
--	tsk->thread.trap_nr = trapnr;
- 
- 	show_signal(tsk, signr, "trap ", str, regs, error_code);
- 
 -- 
-2.17.1
-
-
+With Best Regards,
+Andy Shevchenko
