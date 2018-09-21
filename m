@@ -2,149 +2,148 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A14FECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B087ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DA4921566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKF6Gwn+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DA4921566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1109C21567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1109C21567
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391148AbeIUWXu (ORCPT
+        id S2391160AbeIUWXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:23:50 -0400
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:38135 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeIUWXu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:23:50 -0400
-Received: by mail-lj1-f180.google.com with SMTP id p6-v6so12216942ljc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:34:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0qZuSNRjTgYirOzOAIQG/TiFiArsyn9V+cq/LV9yDT0=;
-        b=JKF6Gwn+yqtrkXTlzed277AefSJsnn0QCr5gm6GruTz2rEkFHDVp1U0yZDcd45q+DB
-         A6DepYii71nftsY+Ulu+uWv5p7sHkJpypYr3bkgfglfMaSFB+2u8fb8fkhXU5absCtza
-         wWWL2F1Yv8vD7cChA5obRRt09HtQuUE8wJY9Yd+e1LUKyFOwUzYs+XxzZSEePR4av6z9
-         zZ6Jn4jrLh/jeqkZ9aMZqJ3d/01/LliJhtDvv/0GUi3Zg74IAPDogyD6RoIDkA6AfoJj
-         3AVr5TFEikKh0pZ4pYJE7iEqn4A1h14v4U3ZFkwnN4PdyUBa2Ob4SU28vM9ZzdQstv76
-         oX6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0qZuSNRjTgYirOzOAIQG/TiFiArsyn9V+cq/LV9yDT0=;
-        b=trMd0B8uvzPdsxlLx84FOxbSZVuIdjojNybE7ldoUyzF9WxNNPynUbs3LRdkL3L0rv
-         WRcyLLBA8L7vFtpkqIfIuYXLE42sb8jRQqGoMPF5k9wS2e+4fEF1a+oGKLRMh+KFb7Qf
-         ZhzGuLzG7uo+i++xJKnuZ6mf+yJs6VtOR6qI2NfbUVbB4vY9UvM9AXAsRBEsm0JrTIdF
-         h0kxtpAXaCf2Z8W+E2jJV8nSZGR+caU68vJIt6EcsNm6DoWiauMrqGBxjbrummQEvs7o
-         MtkBkK183Y08NquCLVeqTJKvf5iyeQfzjaH9DVYvvPGtieus4K6cbiDzIY9LAR7hYSJv
-         qFMQ==
-X-Gm-Message-State: APzg51Duwje4tXwEM+68M44H+Ipt2j82uouOM5IzwYM6NpTRMbvZq5/T
-        ZlrAvFQaLjI7jMEjB6P1e4edUuA99FKqge9Fi6YISw==
-X-Google-Smtp-Source: ANB0VdY0idYwoIByR3nQ3EFxcV5mdJLTFX/aRZ8jaPXpVpyjoXd1BHdCkXOYVdqEphuP3LWHm1ctH8jAS5TXt3y/I6M=
-X-Received: by 2002:a2e:752:: with SMTP id i18-v6mr2444453ljd.118.1537547648632;
- Fri, 21 Sep 2018 09:34:08 -0700 (PDT)
+        Fri, 21 Sep 2018 18:23:54 -0400
+Received: from mga07.intel.com ([134.134.136.100]:56916 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388909AbeIUWXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:23:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:34:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="92594016"
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga001.jf.intel.com with ESMTP; 21 Sep 2018 09:33:08 -0700
+Subject: Re: [patch V3 03/11] x86/mm/cpa: Rework static_protections()
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180917142906.384767038@linutronix.de>
+ <20180917143545.913005317@linutronix.de>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Bin Yang <bin.yang@intel.com>,
+        Mark Gross <mark.gross@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <b2fe2ecc-a0f2-8b06-9709-dd49e3163ad3@intel.com>
+Date:   Fri, 21 Sep 2018 09:33:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a19:278e:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 09:34:07
- -0700 (PDT)
-In-Reply-To: <87zhwbj8xe.fsf@redhat.com>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
- <20180919081812.020f19e3@lwn.net> <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
- <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
- <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net> <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
- <87zhwbj8xe.fsf@redhat.com>
-From:   "\\0xDynamite" <dreamingforward@gmail.com>
-Date:   Fri, 21 Sep 2018 11:34:07 -0500
-Message-ID: <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
-Subject: Re: Code of Conduct: Let's revamp it.
-To:     "Frank Ch. Eigler" <fche@redhat.com>
-Cc:     Rik van Riel <riel@surriel.com>, Edward Cree <ec429@cantab.net>,
-        Olof Johansson <olof@lixom.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180917143545.913005317@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ahem...
+On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
+> +/*
+> + * The kernel text needs to be executable for obvious reasons. This does
+> + * not cover __inittext since that is gone after boot. On 64bit we do not
+> + * enforce !NX on the low mapping
+> + */
+> +static pgprotval_t protect_kernel_text(unsigned long address)
+> +{
+> +	if (within(address, (unsigned long)_text, (unsigned long)_etext))
+> +		return _PAGE_NX;
+> +	return 0;
+> +}
 
-Of course, the linux community, like ALL communities, needs more
-political correctness, because we wouldn't want others to feel left
-out merely because they are wrong.   FALSE || TRUE = more
-participation and diversity!
+Minor nit: I was scratching my head about how why this works.  It
+_reads_ like we are using _PAGE_NX to protect kernel text which doesn't
+make any sense of course.
 
->Our Pledge
->In the interest of fostering an open and welcoming environment, we as
->contributors and maintainers pledge to making participation in our project and
->our community a harassment-free experience for everyone, regardless of age, body
->size, disability, ethnicity, sex characteristics, gender identity and
->expression, level of experience, education, socio-economic status, nationality,
->personal appearance, race, religion, or sexual identity and orientation.
+Could we make a connection between the protection and _PAGE_NX in the
+comments:
 
-As soon as you start to enumerate a list of communities that you're
-including, you have set yourself up for failure, because you will,
-LOGICALLY, leave out an endless number of groups that could
-conceivably want to participate, too:  necrophiliacs (NO harm, NO
-foul!), small animal lovers, balloon sculpturers, magicians, etc.
-These people may feel ostracized when trying to participate, too.
+	Protect kernel text against by forbidding _PAGE_NX.  This 	
+	protects only the high kernel mapping (_text -> _etext) out of
+	which we actually execute.  Do not protect the low mapping.
 
-No, all you need to do is say that everyone are invited to
-participate, but that this is a kernel development community -- you
-are expected to be able to code in C (is that exclusory?), know some
-OS theory, done some research, etc. before bothering the participants
-of the list, who do not have endless amounts of time.
+	This does not cover __inittext since that is gone after boot.
 
-Our Standards
-=============
+The static_protections() code looks fine because it's totally obvious
+that it is dealing with "forbidden" bits, btw:
 
-Examples of behavior that contributes to creating a positive environment
-include:
+> +static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
+> +					  unsigned long pfn)
+> +{
+> +	pgprotval_t forbidden;
+> +
+> +	/* Operate on the virtual address */
+> +	forbidden  = protect_kernel_text(address);
+> +	forbidden |= protect_kernel_text_ro(address);
+> +
+> +	/* Check the PFN directly */
+> +	forbidden |= protect_pci_bios(pfn);
+> +	forbidden |= protect_rodata(pfn);
+>  
+> -	return prot;
+> +	return __pgprot(pgprot_val(prot) & ~forbidden);
+>  }
 
->* Using welcoming and inclusive language
+This is more of a, "if you happen to respin these" comment, though, so:
 
-Something like:
-
-Hello, thank you for contributing your code.  Of course, we'd love to
-add your recipe for fruit cake into our code base.
-
->* Being respectful of differing viewpoints and experiences
-
-Consider:
-I respect that you think we should make linux include gay and
-lesbian-friendly (or other minority group) themed fonts and logos,
-
->* Focusing on what is best for the community
-
-When the community is made infinitely large, we'll be PERFECT!
-
->* Showing empathy towards other community members
-
-Your pussy hurts?  Maybe you should have just accepted that your a boy!
-
-I think Linus is perfectly fine in conduct.   I mean, this bullshit
-pressure comes from corporations and other wierd places (<subtext>all
-seeing eye</subtext>) that want to "help".  Do not even be fooled that
-this is somehow become the accepted standard that EVERYONE BUT YOU is
-accepting.  It is utterly political and based on POWER, not community.
-
-Please, most of these people are still sitting on land that belonged
-to the Native Americans who have never been given justice at all.  It
-is an utter joke that these people actually think that they are
-"politically correct".  They are as delusional as gunnuts who want to
-carry assault rifles into Walmart.  Do not pander to them.  Consider
-them TROLLS.
-
-Mark Janssen
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
