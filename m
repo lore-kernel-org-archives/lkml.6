@@ -8,67 +8,67 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD5AECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310EDC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7327206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A0E21547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAGNz1Jo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7327206B7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nNOuoybd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A0E21547
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390428AbeIUQON (ORCPT
+        id S2390443AbeIUQOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:14:13 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54830 "EHLO
+        Fri, 21 Sep 2018 12:14:14 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33111 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390390AbeIUQOM (ORCPT
+        with ESMTP id S2389264AbeIUQON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:14:12 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c14-v6so2493696wmb.4;
-        Fri, 21 Sep 2018 03:25:58 -0700 (PDT)
+        Fri, 21 Sep 2018 12:14:13 -0400
+Received: by mail-wm1-f68.google.com with SMTP id r1-v6so3806649wmh.0;
+        Fri, 21 Sep 2018 03:25:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5uGioRpmWHw5HmBGBMYla/FtUi6hl7emhEwjHohddII=;
-        b=KAGNz1JotYwpwgKedqzNuJSQpZZabk2WAg1RdGTll1ITafzjPx8xL+1RrPkDNc7vNc
-         erhT6L8fB1A+hab7uAtSQDVyV4uMS0hwJ7lQ57CtZBMTw1Txoan1sf0plCFfykWJOqcT
-         696kgx25ng6ctz/gTrKoQg8iUsI6jWfcxw1dx0+Zq3lnjRJ7pTL4Zo+eD7tqkFemB6Qe
-         cr3XmAsWaWvrI8Fdg2TMYKgYbeyDuia2GwJ98e5A4JvnieD52cLmk4gbyZ5vrFdvTSXc
-         Fa36TdtSbG5Cd81jboptQ90aKTMoEooj77pJRPIWFsBFCSfu55HKMpsYwa/gdi5Al2mh
-         tk8w==
+        bh=Jr2Guj4IS+KaSpQIhd5X6b3SqJiQa+YzNCwuQumn9r0=;
+        b=nNOuoybduFOKNSwFgG9MWSKog5EthQjw2mp59zTfdsNQOC1S5T0lyx10Cfqd3leIMz
+         3JHxL3LE/OZjkYq5PeHDgdgZOD1s7LuyeB8kGMpZIUiEszoV6itJda8VZ2h8unsFrLbC
+         iC7jAEyE/kCU3PxOD5DqSVZGZUTAo3f4+zT9HFnbHcsdkYmjOEZ70PkL/23OEGQ0Xc3R
+         cwaVOLa79R78+6jbe9p4Cx/mN3Qb82SSO8d4mNOm+620SOMpZo/VhRTnUq/JVGNK4GfL
+         4CXset+4j+33Nsxy0qrAoMD8uUfKmLxfL0b5HX2GXJbjdkM7+ImnwLi2EnOpTw0J/O0C
+         ilng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5uGioRpmWHw5HmBGBMYla/FtUi6hl7emhEwjHohddII=;
-        b=AvNSIESkslfSRTHBzN5Bg6YqAbFcjw1hKS/UKRknHZWaxTo4JB3vygeiRiADTFcKb8
-         76R2ZQbNjfmsEtPqV6TqHqMjS/z3TZVRhx8SUcZmsJe1tVhoXcaSqzmwr/AQr3Z61ac8
-         zKzn60o7RWIvduLbhb2Fk85p8c97TGRcUw8G2XY1Fnx+wNXQQJUTbYUrN4WTqqQKjAOb
-         4WQUwnRwPVMVU2kdSNPfPVEfkiz8kaprktyfBu6qcIoTJe/2bQH/lGFQQfQzLN0JgUg2
-         zuPjlzKAPx/a3S6W8Moru/vfH0BN98hn0SC3IJ2XDcS1cEu2vPCxzDVAIYJRc5b0Nizz
-         0pyQ==
-X-Gm-Message-State: APzg51C447UqGqpC6tKCq2ysLhNbjScn1SFuzY9MWf9MT0+4bd1gP8nV
-        TzKK04zycdA4HGmW2+gIqnE=
-X-Google-Smtp-Source: ACcGV63EuhjidxUB6Uv8yfATh85hxgoid0pNzlBZ7CyrdBXFrfCjeK9zqiG064Y8JxRKKdxle1vpYw==
-X-Received: by 2002:a1c:7704:: with SMTP id t4-v6mr6133479wmi.136.1537525557530;
-        Fri, 21 Sep 2018 03:25:57 -0700 (PDT)
+        bh=Jr2Guj4IS+KaSpQIhd5X6b3SqJiQa+YzNCwuQumn9r0=;
+        b=sTXp/58XqVVmoQr0pTczfGionG0LxYdcAGw7xIk5X573Nj4Noy2oOb0ZBWOKUKU813
+         A5AiH/VW0B/UH/Bi4xiHtsngJsatxJq3AAm/rXk/9LepJ0Gk+qLXe82ATYIuW0YbzfX4
+         tyW+Dvy285P5rPaJ80nl1JGZx4V4BdoCCBdVSh9sKlz1PWAYKWoHu69hTqMlLzmupVqS
+         YCnvjaJ1tLZlPukrpbWjpAF6tF9GEGGTPh8IbO7j5PQyRTavMGmhFLjnw1miCRB6IIFH
+         b4qK9WMi3ZKSOnRt7v3X+42nle/TyH+3XF02cZ91Foy+aZavczoO52kNfUlHBACkMcvZ
+         vdsA==
+X-Gm-Message-State: APzg51A8AyEN914yuFzm9SR1kD3OB7dxuuA3uqNkZxN6C1z95IwTISAQ
+        5hwRYYqnNWfRNFYFWSWVnak=
+X-Google-Smtp-Source: ANB0VdYWn21FZZ+t2W1B4ur7HqFpvtJq51al8+6bCWZ0SVlxPMA6qkV6xHxkbANY1CkmtYongBNx0g==
+X-Received: by 2002:a1c:e5cf:: with SMTP id c198-v6mr6258019wmh.113.1537525558907;
+        Fri, 21 Sep 2018 03:25:58 -0700 (PDT)
 Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id i125-v6sm6341423wmd.23.2018.09.21.03.25.56
+        by smtp.gmail.com with ESMTPSA id x65-v6sm5573042wmg.39.2018.09.21.03.25.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 03:25:57 -0700 (PDT)
+        Fri, 21 Sep 2018 03:25:58 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] gpio: Add support for hierarchical IRQ domains
-Date:   Fri, 21 Sep 2018 12:25:43 +0200
-Message-Id: <20180921102546.12745-7-thierry.reding@gmail.com>
+Subject: [PATCH 7/9] dt-bindings: tegra186-gpio: Add wakeup parent support
+Date:   Fri, 21 Sep 2018 12:25:44 +0200
+Message-Id: <20180921102546.12745-8-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180921102546.12745-1-thierry.reding@gmail.com>
 References: <20180921102546.12745-1-thierry.reding@gmail.com>
@@ -81,69 +81,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Hierarchical IRQ domains can be used to stack different IRQ controllers
-on top of each other. One specific use-case where this can be useful is
-if a power management controller has top-level controls for wakeup
-interrupts. In such cases, the power management controller can be a
-parent to other interrupt controllers and program additional registers
-when an IRQ has its wake capability enabled or disabled.
+Tegra186 and later have some top-level controls for wake events in the
+power management controller (PMC). In order to enable the system to wake
+up from low power states, additional registers in the PMC need to be
+programmed. Add a wakeup-parent property to establish this relationship
+between the GPIO controller and the PMC.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpio/gpiolib.c      | 15 +++++++++++----
- include/linux/gpio/driver.h |  6 ++++++
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/gpio/nvidia,tegra186-gpio.txt      | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a53d17745d21..94146093ee95 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1918,7 +1918,9 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
- 		type = IRQ_TYPE_NONE;
- 	}
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+index adff16c71d21..cbb51a8990c3 100644
+--- a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+@@ -127,6 +127,11 @@ Required properties:
+             - 8: Active low level-sensitive.
+             Valid combinations are 1, 2, 3, 4, 8.
  
--	gpiochip->to_irq = gpiochip_to_irq;
-+	if (!gpiochip->to_irq)
-+		gpiochip->to_irq = gpiochip_to_irq;
++Optional properties:
++- wake-parent
++    A phandle to the Power Management Controller (PMC) that contains top-
++    level controls to enable the wake-up capabilities of some GPIOs.
 +
- 	gpiochip->irq.default_type = type;
- 	gpiochip->irq.lock_key = lock_key;
- 	gpiochip->irq.request_key = request_key;
-@@ -1928,9 +1930,14 @@ static int gpiochip_add_irqchip(struct gpio_chip *gpiochip,
- 	else
- 		ops = &gpiochip_domain_ops;
+ Example:
  
--	gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
--						     gpiochip->irq.first,
--						     ops, gpiochip);
-+	if (gpiochip->irq.parent_domain)
-+		gpiochip->irq.domain = irq_domain_add_hierarchy(gpiochip->irq.parent_domain,
-+								0, gpiochip->ngpio,
-+								np, ops, gpiochip);
-+	else
-+		gpiochip->irq.domain = irq_domain_add_simple(np, gpiochip->ngpio,
-+							     gpiochip->irq.first,
-+							     ops, gpiochip);
- 	if (!gpiochip->irq.domain)
- 		return -EINVAL;
+ #include <dt-bindings/interrupt-controller/irq.h>
+@@ -148,6 +153,7 @@ gpio@2200000 {
+ 	#gpio-cells = <2>;
+ 	interrupt-controller;
+ 	#interrupt-cells = <2>;
++	wakeup-parent = <&pmc>;
+ };
  
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index d8dcd0e44cab..fcd09a396d76 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -47,6 +47,12 @@ struct gpio_irq_chip {
- 	 */
- 	const struct irq_domain_ops *domain_ops;
- 
-+	/**
-+	 * @parent_domain:
-+	 *
-+	 */
-+	struct irq_domain *parent_domain;
-+
- 	/**
- 	 * @handler:
- 	 *
+ gpio@c2f0000 {
+@@ -162,4 +168,5 @@ gpio@c2f0000 {
+ 	#gpio-cells = <2>;
+ 	interrupt-controller;
+ 	#interrupt-cells = <2>;
++	wakeup-parent = <&pmc>;
+ };
 -- 
 2.19.0
 
