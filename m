@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 490C4ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691F6C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064D221547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064D221547
+	by mail.kernel.org (Postfix) with ESMTP id 2691321547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2691321547
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389267AbeIUMHG (ORCPT
+        id S2389334AbeIUMHQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 08:07:06 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51506 "EHLO mga07.intel.com"
+        Fri, 21 Sep 2018 08:07:16 -0400
+Received: from mga04.intel.com ([192.55.52.120]:60156 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbeIUMHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 08:07:06 -0400
+        id S1725887AbeIUMHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 08:07:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 23:19:45 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 23:19:54 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,283,1534834800"; 
-   d="scan'208";a="74798757"
+   d="scan'208";a="74798785"
 Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
-  by orsmga007.jf.intel.com with ESMTP; 20 Sep 2018 23:19:43 -0700
+  by orsmga007.jf.intel.com with ESMTP; 20 Sep 2018 23:19:52 -0700
 From:   Chen Yu <yu.c.chen@intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
         Zhimin Gu <kookoo.gu@intel.com>, Chen Yu <yu.c.chen@intel.com>,
         x86@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@kernel.org
-Subject: [PATCH 01/12][v4] x86, hibernate: Fix nosave_regions setup for hibernation
-Date:   Fri, 21 Sep 2018 14:26:24 +0800
-Message-Id: <9b373ca69c3a1b872874487ad235161314f1172c.1537448058.git.yu.c.chen@intel.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 02/12][v4] PM / hibernate: Check the success of generating md5 digest before hibernation
+Date:   Fri, 21 Sep 2018 14:26:38 +0800
+Message-Id: <a4fb21d16b59b1d32fec9bf67e1f6fa38d1f061d.1537448058.git.yu.c.chen@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1537448058.git.yu.c.chen@intel.com>
 References: <cover.1537448058.git.yu.c.chen@intel.com>
@@ -49,82 +49,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhimin Gu <kookoo.gu@intel.com>
+Currently if get_e820_md5() fails, then it will hibernate nevertheless.
+Actually the error code should be propagated to upper caller so that
+the hibernation could be aware of the result and terminates the process
+if md5 digest fails.
 
-On 32bit systems, nosave_regions(non RAM areas) located between
-max_low_pfn and max_pfn are not excluded from hibernation snapshot
-currently, which may result in a machine check exception when
-trying to access these unsafe regions during hibernation:
-
-[  612.800453] Disabling lock debugging due to kernel taint
-[  612.805786] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 6: fe00000000801136
-[  612.814344] mce: [Hardware Error]: RIP !INEXACT! 60:<00000000d90be566> {swsusp_save+0x436/0x560}
-[  612.823167] mce: [Hardware Error]: TSC 1f5939fe276 ADDR dd000000 MISC 30e0000086
-[  612.830677] mce: [Hardware Error]: PROCESSOR 0:306c3 TIME 1529487426 SOCKET 0 APIC 0 microcode 24
-[  612.839581] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-[  612.846394] mce: [Hardware Error]: Machine check: Processor context corrupt
-[  612.853380] Kernel panic - not syncing: Fatal machine check
-[  612.858978] Kernel Offset: 0x18000000 from 0xc1000000 (relocation range: 0xc0000000-0xf7ffdfff)
-
-This is because on 32bit systems, pages above max_low_pfn are regarded
-as high memeory, and accessing unsafe pages might cause expected MCE.
-On the problematic 32bit system, there are reserved memory above low
-memory, which triggered the MCE:
-
-e820 memory mapping:
-[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009d7ff] usable
-[    0.000000] BIOS-e820: [mem 0x000000000009d800-0x000000000009ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000d160cfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d160d000-0x00000000d1613fff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000d1614000-0x00000000d1a44fff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d1a45000-0x00000000d1ecffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d1ed0000-0x00000000d7eeafff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d7eeb000-0x00000000d7ffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8000000-0x00000000d875ffff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8760000-0x00000000d87fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8800000-0x00000000d8fadfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8fae000-0x00000000d8ffffff] ACPI data
-[    0.000000] BIOS-e820: [mem 0x00000000d9000000-0x00000000da71bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000da71c000-0x00000000da7fffff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000da800000-0x00000000dbb8bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000dbb8c000-0x00000000dbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000dd000000-0x00000000df1fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed03fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000041edfffff] usable
-
-Fix this problem by changing pfn limit from max_low_pfn to max_pfn.
-This fix does not impact 64bit system because on 64bit max_low_pfn
-is the same as max_pfn.
-
-Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Pavel Machek <pavel@ucw.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@kernel.org
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- arch/x86/kernel/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/power/hibernate_64.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index b4866badb235..90ecc108bc8a 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1251,7 +1251,7 @@ void __init setup_arch(char **cmdline_p)
- 	x86_init.hyper.guest_late_init();
+diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+index f8e3b668d20b..e0de959ad02d 100644
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -265,9 +265,9 @@ static int get_e820_md5(struct e820_table *table, void *buf)
+ 	return ret;
+ }
  
- 	e820__reserve_resources();
--	e820__register_nosave_regions(max_low_pfn);
-+	e820__register_nosave_regions(max_pfn);
+-static void hibernation_e820_save(void *buf)
++static int hibernation_e820_save(void *buf)
+ {
+-	get_e820_md5(e820_table_firmware, buf);
++	return get_e820_md5(e820_table_firmware, buf);
+ }
  
- 	x86_init.resources.reserve_resources();
+ static bool hibernation_e820_mismatch(void *buf)
+@@ -287,8 +287,9 @@ static bool hibernation_e820_mismatch(void *buf)
+ 	return memcmp(result, buf, MD5_DIGEST_SIZE) ? true : false;
+ }
+ #else
+-static void hibernation_e820_save(void *buf)
++static int hibernation_e820_save(void *buf)
+ {
++	return 0;
+ }
  
+ static bool hibernation_e820_mismatch(void *buf)
+@@ -333,9 +334,7 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
+ 
+ 	rdr->magic = RESTORE_MAGIC;
+ 
+-	hibernation_e820_save(rdr->e820_digest);
+-
+-	return 0;
++	return hibernation_e820_save(rdr->e820_digest);
+ }
+ 
+ /**
 -- 
 2.17.1
 
