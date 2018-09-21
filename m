@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4363ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC8EC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8765821557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8765821557
+	by mail.kernel.org (Postfix) with ESMTP id 4BCE121557
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BCE121557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391182AbeIUXjl (ORCPT
+        id S2391211AbeIUXjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:39:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55598 "EHLO
+        Fri, 21 Sep 2018 19:39:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49278 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391097AbeIUXjl (ORCPT
+        by vger.kernel.org with ESMTP id S2391053AbeIUXjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Sep 2018 19:39:41 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LHnIrF176953
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:43 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mn3snm2kj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LHnJa9020380
         for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:42 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn4ya0wvs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:40 -0400
 Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Fri, 21 Sep 2018 18:49:41 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 21 Sep 2018 18:49:39 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Sep 2018 18:49:38 +0100
+        Fri, 21 Sep 2018 18:49:35 +0100
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LHnbpA48824366
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LHnZfY57212952
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 Sep 2018 17:49:37 GMT
+        Fri, 21 Sep 2018 17:49:35 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98C54AE055;
-        Fri, 21 Sep 2018 20:48:42 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id C129AAE04D;
+        Fri, 21 Sep 2018 20:48:39 +0100 (BST)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 19250AE045;
-        Fri, 21 Sep 2018 20:48:41 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id D947AAE053;
+        Fri, 21 Sep 2018 20:48:37 +0100 (BST)
 Received: from srikart450.in.ibm.com (unknown [9.199.39.50])
         by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Sep 2018 20:48:40 +0100 (BST)
+        Fri, 21 Sep 2018 20:48:37 +0100 (BST)
 From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 To:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
@@ -60,21 +60,21 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jirka Hladky <jhladky@redhat.com>
-Subject: [PATCH v2 3/6] sched/numa: Reset scan rate whenever task moves across nodes
-Date:   Fri, 21 Sep 2018 23:18:58 +0530
+Subject: [PATCH v2 2/6] sched/numa: Pass destination CPU as a parameter to migrate_task_rq
+Date:   Fri, 21 Sep 2018 23:18:57 +0530
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537552141-27815-1-git-send-email-srikar@linux.vnet.ibm.com>
 References: <1537552141-27815-1-git-send-email-srikar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18092117-0016-0000-0000-00000208E50A
+x-cbid: 18092117-0020-0000-0000-000002C9E6CE
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092117-0017-0000-0000-0000325FEE77
-Message-Id: <1537552141-27815-4-git-send-email-srikar@linux.vnet.ibm.com>
+x-cbparentid: 18092117-0021-0000-0000-00002117F103
+Message-Id: <1537552141-27815-3-git-send-email-srikar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1809210174
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,178 +82,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently task scan rate is reset when NUMA balancer migrates the task
-to a different node. If NUMA balancer initiates a swap, reset is only
-applicable to the task that initiates the swap. Similarly no scan rate
-reset is done if the task is migrated across nodes by traditional load
-balancer.
+This additional parameter (new_cpu) is used later for identifying if
+task migration is across nodes.
 
-Instead move the scan reset to the migrate_task_rq. This ensures the
-task moved out of its preferred node, either gets back to its preferred
-node quickly or finds a new preferred node. Doing so, would be fair to
-all tasks migrating across nodes.
+No functional change.
 
 Specjbb2005 results (8 warehouses)
 Higher bops are better
 
 2 Socket - 2  Node Haswell - X86
 JVMS  Prev    Current  %Change
-4     200668  203370   1.3465
-1     321791  328431   2.06345
+4     203353  200668   -1.32036
+1     328205  321791   -1.95427
 
 2 Socket - 4 Node Power8 - PowerNV
 JVMS  Prev    Current  %Change
-1     204848  206070   0.59654
+1     214384  204848   -4.44809
 
 2 Socket - 2  Node Power9 - PowerNV
 JVMS  Prev    Current  %Change
-4     188098  188386   0.153112
-1     200351  201566   0.606436
+4     188553  188098   -0.241311
+1     196273  200351   2.07772
 
 4 Socket - 4  Node Power7 - PowerVM
 JVMS  Prev     Current  %Change
-8     58145.9  59157.4  1.73959
-1     103798   105495   1.63491
+8     57581.2  58145.9  0.980702
+1     103468   103798   0.318939
+
+Brings out the variance between different specjbb2005 runs.
 
 Some events stats before and after applying the patch.
 
 perf stats 8th warehouse Multi JVM 2 Socket - 2  Node Haswell - X86
 Event                     Before          After
-cs                        13,912,183      13,825,492
-migrations                1,155,931       1,152,509
-faults                    367,139         371,948
-cache-misses              54,240,196,814  55,654,206,041
-sched:sched_move_numa     1,571           1,856
-sched:sched_stick_numa    9               4
-sched:sched_swap_numa     463             428
-migrate:mm_migrate_pages  703             898
+cs                        13,941,377      13,912,183
+migrations                1,157,323       1,155,931
+faults                    382,175         367,139
+cache-misses              54,993,823,500  54,240,196,814
+sched:sched_move_numa     2,005           1,571
+sched:sched_stick_numa    14              9
+sched:sched_swap_numa     529             463
+migrate:mm_migrate_pages  1,573           703
 
 vmstat 8th warehouse Multi JVM 2 Socket - 2  Node Haswell - X86
 Event                   Before  After
-numa_hint_faults        50155   57146
-numa_hint_faults_local  45264   51612
-numa_hit                239652  238164
-numa_huge_pte_updates   36      16
-numa_interleave         68      63
-numa_local              239576  238085
-numa_other              76      79
-numa_pages_migrated     680     883
-numa_pte_updates        71146   67540
+numa_hint_faults        67099   50155
+numa_hint_faults_local  58456   45264
+numa_hit                240416  239652
+numa_huge_pte_updates   18      36
+numa_interleave         65      68
+numa_local              240339  239576
+numa_other              77      76
+numa_pages_migrated     1574    680
+numa_pte_updates        77182   71146
 
 perf stats 8th warehouse Single JVM 2 Socket - 2  Node Haswell - X86
 Event                     Before          After
-cs                        3,156,720       3,288,525
-migrations                30,354          38,652
-faults                    97,261          111,678
-cache-misses              12,400,026,826  12,111,197,376
-sched:sched_move_numa     4               900
+cs                        3,176,453       3,156,720
+migrations                30,238          30,354
+faults                    87,869          97,261
+cache-misses              12,544,479,391  12,400,026,826
+sched:sched_move_numa     23              4
 sched:sched_stick_numa    0               0
-sched:sched_swap_numa     1               5
-migrate:mm_migrate_pages  20              714
+sched:sched_swap_numa     6               1
+migrate:mm_migrate_pages  10              20
 
 vmstat 8th warehouse Single JVM 2 Socket - 2  Node Haswell - X86
 Event                   Before  After
-numa_hint_faults        272     18572
-numa_hint_faults_local  186     14850
-numa_hit                71362   73197
-numa_huge_pte_updates   0       11
-numa_interleave         23      25
-numa_local              71299   73138
-numa_other              63      59
-numa_pages_migrated     2       712
-numa_pte_updates        0       24021
+numa_hint_faults        236     272
+numa_hint_faults_local  201     186
+numa_hit                72293   71362
+numa_huge_pte_updates   0       0
+numa_interleave         26      23
+numa_local              72233   71299
+numa_other              60      63
+numa_pages_migrated     8       2
+numa_pte_updates        0       0
 
 perf stats 8th warehouse Multi JVM 2 Socket - 2  Node Power9 - PowerNV
 Event                     Before       After
-cs                        8,606,824    8,451,543
-migrations                155,352      202,804
-faults                    301,409      310,024
-cache-misses              157,759,224  253,522,507
-sched:sched_move_numa     168          213
+cs                        8,478,820    8,606,824
+migrations                171,323      155,352
+faults                    307,499      301,409
+cache-misses              240,353,599  157,759,224
+sched:sched_move_numa     214          168
 sched:sched_stick_numa    0            0
-sched:sched_swap_numa     3            2
-migrate:mm_migrate_pages  125          88
+sched:sched_swap_numa     4            3
+migrate:mm_migrate_pages  89           125
 
 vmstat 8th warehouse Multi JVM 2 Socket - 2  Node Power9 - PowerNV
 Event                   Before  After
-numa_hint_faults        4650    11830
-numa_hint_faults_local  3946    11301
-numa_hit                90489   90038
+numa_hint_faults        5301    4650
+numa_hint_faults_local  4745    3946
+numa_hit                92943   90489
 numa_huge_pte_updates   0       0
-numa_interleave         892     855
-numa_local              90034   89796
-numa_other              455     242
-numa_pages_migrated     124     88
-numa_pte_updates        4818    12039
+numa_interleave         899     892
+numa_local              92345   90034
+numa_other              598     455
+numa_pages_migrated     88      124
+numa_pte_updates        5505    4818
 
 perf stats 8th warehouse Single JVM 2 Socket - 2  Node Power9 - PowerNV
-Event                     Before     After
-cs                        2,113,167  2,049,153
-migrations                10,533     11,405
-faults                    142,727    162,309
-cache-misses              5,594,192  7,203,343
-sched:sched_move_numa     10         22
-sched:sched_stick_numa    0          0
-sched:sched_swap_numa     0          0
-migrate:mm_migrate_pages  6          1
+Event                     Before      After
+cs                        2,066,172   2,113,167
+migrations                11,076      10,533
+faults                    149,544     142,727
+cache-misses              10,398,067  5,594,192
+sched:sched_move_numa     43          10
+sched:sched_stick_numa    0           0
+sched:sched_swap_numa     0           0
+migrate:mm_migrate_pages  6           6
 
 vmstat 8th warehouse Single JVM 2 Socket - 2  Node Power9 - PowerNV
 Event                   Before  After
-numa_hint_faults        744     1693
-numa_hint_faults_local  584     1669
-numa_hit                25551   25177
+numa_hint_faults        3552    744
+numa_hint_faults_local  3347    584
+numa_hit                25611   25551
 numa_huge_pte_updates   0       0
-numa_interleave         263     194
-numa_local              25302   24993
-numa_other              249     184
-numa_pages_migrated     6       1
-numa_pte_updates        744     1577
+numa_interleave         213     263
+numa_local              25583   25302
+numa_other              28      249
+numa_pages_migrated     6       6
+numa_pte_updates        3535    744
 
 perf stats 8th warehouse Multi JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                     Before           After
-cs                        101,227,352      94,515,937
-migrations                4,151,829        4,203,554
-faults                    745,233          832,697
-cache-misses              224,669,561,766  226,248,698,331
-sched:sched_move_numa     617              1,730
-sched:sched_stick_numa    2                14
-sched:sched_swap_numa     187              432
-migrate:mm_migrate_pages  316              1,398
+cs                        99,358,136       101,227,352
+migrations                4,041,607        4,151,829
+faults                    749,653          745,233
+cache-misses              225,562,543,251  224,669,561,766
+sched:sched_move_numa     771              617
+sched:sched_stick_numa    14               2
+sched:sched_swap_numa     204              187
+migrate:mm_migrate_pages  1,180            316
 
 vmstat 8th warehouse Multi JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                   Before  After
-numa_hint_faults        24195   80079
-numa_hint_faults_local  21639   68620
-numa_hit                238331  241187
+numa_hint_faults        27409   24195
+numa_hint_faults_local  20677   21639
+numa_hit                239988  238331
 numa_huge_pte_updates   0       0
 numa_interleave         0       0
-numa_local              238331  241186
-numa_other              0       1
-numa_pages_migrated     204     1347
-numa_pte_updates        24561   80729
+numa_local              239983  238331
+numa_other              5       0
+numa_pages_migrated     1016    204
+numa_pte_updates        27916   24561
 
 perf stats 8th warehouse Single JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                     Before          After
-cs                        62,738,978      63,704,961
-migrations                562,702         573,404
-faults                    228,465         230,878
-cache-misses              75,778,067,952  76,568,222,781
-sched:sched_move_numa     648             509
-sched:sched_stick_numa    13              31
-sched:sched_swap_numa     137             182
-migrate:mm_migrate_pages  733             541
+cs                        60,899,307      62,738,978
+migrations                544,668         562,702
+faults                    270,834         228,465
+cache-misses              74,543,455,635  75,778,067,952
+sched:sched_move_numa     735             648
+sched:sched_stick_numa    25              13
+sched:sched_swap_numa     174             137
+migrate:mm_migrate_pages  816             733
 
 vmstat 8th warehouse Single JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                   Before  After
-numa_hint_faults        10281   8501
-numa_hint_faults_local  3242    2960
-numa_hit                36338   35526
+numa_hint_faults        11059   10281
+numa_hint_faults_local  4733    3242
+numa_hit                41384   36338
 numa_huge_pte_updates   0       0
 numa_interleave         0       0
-numa_local              36338   35526
-numa_other              0       0
-numa_pages_migrated     706     539
-numa_pte_updates        10176   8433
+numa_local              41383   36338
+numa_other              1       0
+numa_pages_migrated     815     706
+numa_pte_updates        11323   10176
 
 Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 ---
@@ -261,74 +257,64 @@ Changelog v1->v2:
 Rename cpu to CPU
 Rename numa to NUMA
 
- kernel/sched/fair.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ kernel/sched/core.c     | 2 +-
+ kernel/sched/deadline.c | 2 +-
+ kernel/sched/fair.c     | 2 +-
+ kernel/sched/sched.h    | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 625bc98..ad97f3b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1167,7 +1167,7 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+ 
+ 	if (task_cpu(p) != new_cpu) {
+ 		if (p->sched_class->migrate_task_rq)
+-			p->sched_class->migrate_task_rq(p);
++			p->sched_class->migrate_task_rq(p, new_cpu);
+ 		p->se.nr_migrations++;
+ 		rseq_migrate(p);
+ 		perf_event_task_migrate(p);
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 997ea7b..91e4202 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1607,7 +1607,7 @@ select_task_rq_dl(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 	return cpu;
+ }
+ 
+-static void migrate_task_rq_dl(struct task_struct *p)
++static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused)
+ {
+ 	struct rq *rq;
+ 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index bc768156..5cbfb30 100644
+index 3b0b75d..bc768156 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1824,12 +1824,6 @@ static int task_numa_migrate(struct task_struct *p)
- 	if (env.best_cpu == -1)
- 		return -EAGAIN;
- 
--	/*
--	 * Reset the scan period if the task is being rescheduled on an
--	 * alternative node to recheck if the tasks is now properly placed.
--	 */
--	p->numa_scan_period = task_scan_start(p);
--
- 	best_rq = cpu_rq(env.best_cpu);
- 	if (env.best_task == NULL) {
- 		ret = migrate_task_to(p, env.best_cpu);
-@@ -2618,6 +2612,18 @@ void task_tick_numa(struct rq *rq, struct task_struct *curr)
- 	}
- }
- 
-+static void update_scan_period(struct task_struct *p, int new_cpu)
-+{
-+	int src_nid = cpu_to_node(task_cpu(p));
-+	int dst_nid = cpu_to_node(new_cpu);
-+
-+	if (!p->mm || !p->numa_faults || (p->flags & PF_EXITING))
-+		return;
-+
-+	if (src_nid != dst_nid)
-+		p->numa_scan_period = task_scan_start(p);
-+}
-+
- #else
- static void task_tick_numa(struct rq *rq, struct task_struct *curr)
- {
-@@ -2631,6 +2637,10 @@ static inline void account_numa_dequeue(struct rq *rq, struct task_struct *p)
- {
- }
- 
-+static inline void update_scan_period(struct task_struct *p, int new_cpu)
-+{
-+}
-+
- #endif /* CONFIG_NUMA_BALANCING */
- 
- static void
-@@ -6297,7 +6307,7 @@ static void detach_entity_cfs_rq(struct sched_entity *se);
+@@ -6297,7 +6297,7 @@ static void detach_entity_cfs_rq(struct sched_entity *se);
   * cfs_rq_of(p) references at time of call are still valid and identify the
   * previous CPU. The caller guarantees p->pi_lock or task_rq(p)->lock is held.
   */
--static void migrate_task_rq_fair(struct task_struct *p, int new_cpu __maybe_unused)
-+static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
+-static void migrate_task_rq_fair(struct task_struct *p)
++static void migrate_task_rq_fair(struct task_struct *p, int new_cpu __maybe_unused)
  {
  	/*
  	 * As blocked tasks retain absolute vruntime the migration needs to
-@@ -6350,6 +6360,8 @@ static void migrate_task_rq_fair(struct task_struct *p, int new_cpu __maybe_unus
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 0b91612..455fa33 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1524,7 +1524,7 @@ struct sched_class {
  
- 	/* We have migrated, no longer consider this task hot */
- 	p->se.exec_start = 0;
-+
-+	update_scan_period(p, new_cpu);
- }
+ #ifdef CONFIG_SMP
+ 	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int sd_flag, int flags);
+-	void (*migrate_task_rq)(struct task_struct *p);
++	void (*migrate_task_rq)(struct task_struct *p, int new_cpu);
  
- static void task_dead_fair(struct task_struct *p)
+ 	void (*task_woken)(struct rq *this_rq, struct task_struct *task);
+ 
 -- 
 2.7.4
 
