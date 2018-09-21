@@ -2,92 +2,98 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05944C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49343C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFC2921479
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:22:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUFsCE5X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC2921479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A9BE72150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:29:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9BE72150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389493AbeIUMJp (ORCPT
+        id S2389308AbeIUMQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 08:09:45 -0400
-Received: from mail-wm1-f45.google.com ([209.85.128.45]:52784 "EHLO
-        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389203AbeIUMJo (ORCPT
+        Fri, 21 Sep 2018 08:16:47 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:47534 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389220AbeIUMQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 08:09:44 -0400
-Received: by mail-wm1-f45.google.com with SMTP id y139-v6so1770489wmc.2;
-        Thu, 20 Sep 2018 23:22:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=T3IFshJtvhGABS6oxdWf1oWhhiG5UIiOoXvTAD746CU=;
-        b=HUFsCE5XbmqN6eyP04i/qXtI4fE/9XjY2zZgiBr3cKQsOkq5Q+duFyaDwX7gt8Jwr8
-         4VwE3G+q+9w4RzPQOADmuXqq1biyOQG/WHg7K+2b2OKRkECo9JGjZ/BR63Rrp8AOedwS
-         QC+Ntg1MX0Ruj1+/Dmv4Cox8zUC8C5fETQ9f4qvORIe+Nl2WF+5hEonyRx3LOBmY2XVI
-         rM3N6Ke2ekunvCGQTQcw2Ck8DQGFY6e51Yty14d2EGPwzRDP0KrTShUMcBXCniHf2g2A
-         VJPJxIw2sTMKPiDMkc/CQK05PRCXXEo8fqgfZOzBbd7zUk4f3/61/xWvCyXGfLVXrxVs
-         R/CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=T3IFshJtvhGABS6oxdWf1oWhhiG5UIiOoXvTAD746CU=;
-        b=SIUFleM+8JNH8qY+MnkpyfcSoxr3eU0M+uz9GnTQV9Eo00fpvzcJG8zQb/cOZv3Gd7
-         9YIh8Cre4LrAcyaH2fJx0BTUZ/cFgCaAgPrn3fTOV+1sTKJ5a7LfOgGm9F8O3gy57mlh
-         sNOj/uNAfjCBhrE35KjMyCKDGLxvMTclAWNPrC3KOXwlMgq2QGTE44fZWSIwcvFHgGMi
-         YtbftXVjHKGbERYv5AqT8umOc0w8VyBHGpmJIX1LaunfMhdyIqsfI7/FEFeTgjDwKZmi
-         0eEMG0ALpfie8lfMFksuKqtME9N4w0hVmau2ADMVRKrC0PSxizsu/uK+VI4aw8cQfLZX
-         PJfw==
-X-Gm-Message-State: APzg51AeKH7pjubYqcckzQ+1IZ2GY3l7vkpbZF5tXA7ZKpWozhPv5+MC
-        h0OcH08eGFSBepUxQAqle07pwhivUD+u1e/O+0U=
-X-Google-Smtp-Source: ANB0VdbAaubS2yBYHg4FLJqCYD+vz97jPMDFL16kNBNhg+nWBYp0gwQQ+GScFFRkj5ncRYiPC17sKoboCc4SrEyAB2M=
-X-Received: by 2002:a1c:7301:: with SMTP id d1-v6mr5399265wmb.34.1537510941200;
- Thu, 20 Sep 2018 23:22:21 -0700 (PDT)
+        Fri, 21 Sep 2018 08:16:47 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 8209E609B268;
+        Fri, 21 Sep 2018 08:29:21 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id vG4x8QIRNjcc; Fri, 21 Sep 2018 08:29:21 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 23394609B26F;
+        Fri, 21 Sep 2018 08:29:21 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id M12jjFiP8DSM; Fri, 21 Sep 2018 08:29:21 +0200 (CEST)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id C6F6E609B268;
+        Fri, 21 Sep 2018 08:29:20 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        linux-mtd@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        koen.vandeputte@ncentric.com, Eddie James <eajames.ibm@gmail.com>
+Subject: Re: [PATCH] Revert "ubifs: xattr: Don't operate on deleted inodes"
+Date:   Fri, 21 Sep 2018 08:29:20 +0200
+Message-ID: <2219464.2Z2OOz3cfv@blindfold>
+In-Reply-To: <CACPK8XfnV=MOLqLL3UK7FP+oRCt1NLLgB-OdNEGWXwyFWVu_+g@mail.gmail.com>
+References: <20180916215735.31393-1-richard@nod.at> <2090091.R1QOzN4fXt@blindfold> <CACPK8XfnV=MOLqLL3UK7FP+oRCt1NLLgB-OdNEGWXwyFWVu_+g@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a5d:554c:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 23:21:59
- -0700 (PDT)
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Thu, 20 Sep 2018 23:21:59 -0700
-Message-ID: <CAADnVQL8=8O1W8-G-UP1akLijdGN82hnOJAY=sknTH_S0Y1rVQ@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in _decode_session6
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+acffccec848dc13fe459@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 6, 2018 at 12:17 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
->
->> but I have a hard time reproducing the issue, so will appreciate
->> if somebody can test the following patch:
->
-> syzbot can:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
+Am Freitag, 21. September 2018, 03:42:25 CEST schrieb Joel Stanley:
+> On Thu, 20 Sep 2018 at 16:40, Richard Weinberger <richard@nod.at> wrote:
+> >
+> > Am Donnerstag, 20. September 2018, 04:30:41 CEST schrieb Joel Stanley:
+> > > On Mon, 17 Sep 2018 at 07:30, Richard Weinberger <richard@nod.at> wrote:
+> > > >
+> > > > This reverts commit 11a6fc3dc743e22fb50f2196ec55bee5140d3c52.
+> > > > UBIFS wants to assert that xattr operations are only issued on files
+> > > > with positive link count. The said patch made this operations return
+> > > > -ENOENT for unlinked files such that the asserts will no longer trigger.
+> > > > This was wrong since xattr operations are perfectly fine on unlinked
+> > > > files.
+> > > > Instead the assertions need to be fixed/removed.
+> > > >
+> > > > Cc: <stable@vger.kernel.org>
+> > > > Fixes: 11a6fc3dc743 ("ubifs: xattr: Don't operate on deleted inodes")
+> > > > Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+> > > > Signed-off-by: Richard Weinberger <richard@nod.at>
+> > >
+> > > The bad commit 11a6fc3dc743 was included in 4.18.7, and broke our
+> > > systems which use overlayfs on top of ubifs.
+> > >
+> > > This patch didn't apply cleanly for me to 4.18.8 (an encoding issue?),
+> > > but I did a revert of the offending commit which did the trick.
+> > >
+> > > Tested-by: Joel Stanley <joel@jms.id.au>
+> >
+> > Thanks a lot for testing and sorry for the breakage. :-(
+> 
+> No worries. How do you plan to get this fix in? It would be good to
+> get it in master asap, so we can get it backported in the next wave of
+> stable releases.
 
-was the patch tested?
+Since yesterday it is in -next, I'll send a pull request to Linus^WGreg later
+this day.
 
-it seems to me syzbot doesn't care about kernel quality but rather
-about the number of issues syzbot can find.
+Thanks,
+//richard
+
+
