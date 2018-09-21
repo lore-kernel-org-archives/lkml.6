@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC66ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F5DECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3823D21569
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F84921569
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hpka+MSh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3823D21569
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m8GdqSOm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F84921569
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391129AbeIUVDt (ORCPT
+        id S2390787AbeIUVDz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:03:49 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36850 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390754AbeIUVDm (ORCPT
+        Fri, 21 Sep 2018 17:03:55 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38187 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390649AbeIUVDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Sep 2018 17:03:42 -0400
-Received: by mail-wm1-f67.google.com with SMTP id j192-v6so3702355wmj.1
+Received: by mail-wm1-f68.google.com with SMTP id t25-v6so3671480wmi.3
         for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:14:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=w++Y55NGylPJkwQOd0sRStyjOXQaMFLbrYpcwkM4T+I=;
-        b=hpka+MSh3bv1RLlg6CbkbRx9uCzYWmnomN7coyZoaMK7iX420FNswCQFj1ovOLI7Ok
-         9UcJXsflRVHva8SOxJj7YLsoJHSx+AS3OJTaJLZ94FDRvLat1VhJv5g2mQ3KLspZYJ4/
-         sDDL0d/x2he6n3v9DMsdtkN71Xm8GU5TiIqrGXBQBIMHPP8Oj/h9F5rbGl2RwEW32yg0
-         gTIVRpfGEwNagDdXj0vAM+JKsv/rOJjpzwrm9VL6bIMqHC8DY9tPcZPG7fCscQMLj/Im
-         bPSyK5TAPbJtjaaLLTqW5xhberHUFj3iGo+XqbsiCNZYOS8+F8HaReRvm8Y3Is73X0+a
-         b80A==
+        bh=jDukxJPmGmnxF07AIeekcahQjPc7kLNSSxyaJieIYNI=;
+        b=m8GdqSOmd5CXFjTExSQZCW6aHG/XMenyt0sLC3gF7jjmoY1zXm0SyaMJ3Tyt898YIZ
+         uguE5O1dMKwER1tqftwhiyjaf2cLd92yBAxzzX+STCTAkxy8EJ7kW5oWcdtygv4tq4aj
+         i3ObrJwdjqY73kj4WgZx4isfGxrv/2i2u6Li1HNpkmxlFbEpEBYDNaZDTiqZxNvrwlLA
+         pZPKtQ29+QzPBA2q0RyiNyB03YQd6SKkTWXL6ImQDQOAX9Ni0ZLYJVcNHbsO9SddIai+
+         JtMinGrVpLSQF72L0JylvXZRj1KEQud7D7rPMcVuO5cyi8O47tDB3AevWtgPx5+h/veK
+         YNcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=w++Y55NGylPJkwQOd0sRStyjOXQaMFLbrYpcwkM4T+I=;
-        b=Rq7IJ7pWYdW/Pb4PLw9VW7WdgvM5nMPB89xEJGRrKQjXdYRn5/VnM0m2m0O7vC6xvW
-         2Dy0IlRNRW8ON3rzG7wY627LMcHJ4wcMxQQFGmPJQcUno5Nitn8myAGy18jNMYfoBlNJ
-         J7xezr1jZMgla/d1WCiyGD7GqfdSXTkWaPNcbDM9Ec4sQPIJaji6qypmh95e/wiGBOcn
-         5YhnfXeOotDj67to51x6rCb64BEiFLcIgVQ/CqzHznlwyK+Q6qaCJh/YlW1bz/9kJK4R
-         3Ik/FtGam/rk22kN6ea8st1ZzqLv/juBaWLnsaDN8Tn1NyTZ/CrR6D6vzaj2h3U/jWh/
-         bpgg==
-X-Gm-Message-State: APzg51B3OSopHo5clz5zfIoKgeqCqReZONdoGPROZVw5CPqERu1YCokw
-        h+NiC7T8gJ2JbS4j7cNMZa4TmQ==
-X-Google-Smtp-Source: ANB0VdZ0B8+mBiUN0wszxSMKyAoTD737730HNjuVlIvCtfERrKsEasFJEKsJn+YwtJlY6v+Z7xTE7Q==
-X-Received: by 2002:a1c:7711:: with SMTP id t17-v6mr7817415wmi.35.1537542859241;
-        Fri, 21 Sep 2018 08:14:19 -0700 (PDT)
+        bh=jDukxJPmGmnxF07AIeekcahQjPc7kLNSSxyaJieIYNI=;
+        b=rZqm7JqDZbVPzp3SPhvoQT8fAq2Lc4bcY0IZV2ck04aX0v0cLT71GI5RrzwjTtBLuC
+         /ccloihxg9nLW+uydGBoB5ceurVtBLczGgk5HoYc9Cseg5iAdeh9Ya9ClzcpdKiae8+O
+         6vyOZBqp+YysRN/qH7b8QSddiCNJ0YxFGibgsHNtgjv4JvPOv93dhq/ZvfPaKnJ9VboL
+         zQLLh84NVjzsvth1R27dMxPM4KdnWe+YvtzywY/oRxi3ifCr2R12H7pSPwZGzW++aV3/
+         +1qjYeN7/YoWRVNGbnhMzSSJZk1yphWIIQRLzGdxH2uByL47k9q7WQp7s3psLqGRn2wu
+         QY4A==
+X-Gm-Message-State: APzg51AXyhKxEpWpPDpcOeIFIzozsn15zpNG+/rAWmJSQZ0ohd4O0dNC
+        CKU9rDP2Yi1+Zq8y26NN8a+ymA==
+X-Google-Smtp-Source: ANB0VdatQDwfijzBI5XUIj6gq3y5N7O5o4dqU2NWLwluDJedL5n5itBXS3+Q9BV4SR/haxiHAeq8eg==
+X-Received: by 2002:a1c:ef0f:: with SMTP id n15-v6mr7237359wmh.116.1537542860847;
+        Fri, 21 Sep 2018 08:14:20 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm27990271wru.46.2018.09.21.08.14.17
+        by smtp.gmail.com with ESMTPSA id e7-v6sm27990271wru.46.2018.09.21.08.14.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 08:14:18 -0700 (PDT)
+        Fri, 21 Sep 2018 08:14:20 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v9 19/20] kasan: update documentation
-Date:   Fri, 21 Sep 2018 17:13:41 +0200
-Message-Id: <47b386e1715275f60ea55f93eb00deb1f3451b3a.1537542735.git.andreyknvl@google.com>
+Subject: [PATCH v9 20/20] kasan: add SPDX-License-Identifier mark to source files
+Date:   Fri, 21 Sep 2018 17:13:42 +0200
+Message-Id: <6f0b4d6d72028c0745ac044722af07cce6a795c8.1537542735.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
 In-Reply-To: <cover.1537542735.git.andreyknvl@google.com>
 References: <cover.1537542735.git.andreyknvl@google.com>
@@ -109,303 +109,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates KASAN documentation to reflect the addition of the new
-tag-based mode.
+This patch adds a "SPDX-License-Identifier: GPL-2.0" mark to all source
+files under mm/kasan.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- Documentation/dev-tools/kasan.rst | 232 ++++++++++++++++++------------
- 1 file changed, 138 insertions(+), 94 deletions(-)
+ mm/kasan/common.c         | 1 +
+ mm/kasan/generic.c        | 1 +
+ mm/kasan/generic_report.c | 1 +
+ mm/kasan/init.c           | 1 +
+ mm/kasan/quarantine.c     | 1 +
+ mm/kasan/report.c         | 1 +
+ mm/kasan/tags.c           | 1 +
+ mm/kasan/tags_report.c    | 1 +
+ 8 files changed, 8 insertions(+)
 
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index aabc8738b3d8..a407e18afd32 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -4,15 +4,25 @@ The Kernel Address Sanitizer (KASAN)
- Overview
- --------
- 
--KernelAddressSANitizer (KASAN) is a dynamic memory error detector. It provides
--a fast and comprehensive solution for finding use-after-free and out-of-bounds
--bugs.
-+KernelAddressSANitizer (KASAN) is a dynamic memory error detector designed to
-+find out-of-bound and use-after-free bugs. KASAN has two modes: generic KASAN
-+(similar to userspace ASan) and software tag-based KASAN (similar to userspace
-+HWASan).
- 
--KASAN uses compile-time instrumentation for checking every memory access,
--therefore you will need a GCC version 4.9.2 or later. GCC 5.0 or later is
--required for detection of out-of-bounds accesses to stack or global variables.
-+KASAN uses compile-time instrumentation to insert validity checks before every
-+memory access, and therefore requires a compiler version that supports that.
- 
--Currently KASAN is supported only for the x86_64 and arm64 architectures.
-+Generic KASAN is supported in both GCC and Clang. With GCC it requires version
-+4.9.2 or later for basic support and version 5.0 or later for detection of
-+out-of-bounds accesses for stack and global variables and for inline
-+instrumentation mode (see the Usage section). With Clang it requires version
-+3.7.0 or later and it doesn't support detection of out-of-bounds accesses for
-+global variables yet.
-+
-+Tag-based KASAN is only supported in Clang and requires version 7.0.0 or later.
-+
-+Currently generic KASAN is supported for the x86_64, arm64 and xtensa
-+architectures, and tag-based KASAN is supported only for arm64.
- 
- Usage
- -----
-@@ -21,12 +31,14 @@ To enable KASAN configure kernel with::
- 
- 	  CONFIG_KASAN = y
- 
--and choose between CONFIG_KASAN_OUTLINE and CONFIG_KASAN_INLINE. Outline and
--inline are compiler instrumentation types. The former produces smaller binary
--the latter is 1.1 - 2 times faster. Inline instrumentation requires a GCC
--version 5.0 or later.
-+and choose between CONFIG_KASAN_GENERIC (to enable generic KASAN) and
-+CONFIG_KASAN_SW_TAGS (to enable software tag-based KASAN).
- 
--KASAN works with both SLUB and SLAB memory allocators.
-+You also need to choose between CONFIG_KASAN_OUTLINE and CONFIG_KASAN_INLINE.
-+Outline and inline are compiler instrumentation types. The former produces
-+smaller binary while the latter is 1.1 - 2 times faster.
-+
-+Both KASAN modes work with both SLUB and SLAB memory allocators.
- For better bug detection and nicer reporting, enable CONFIG_STACKTRACE.
- 
- To disable instrumentation for specific files or directories, add a line
-@@ -43,85 +55,85 @@ similar to the following to the respective kernel Makefile:
- Error reports
- ~~~~~~~~~~~~~
- 
--A typical out of bounds access report looks like this::
-+A typical out-of-bounds access generic KASAN report looks like this::
- 
-     ==================================================================
--    BUG: AddressSanitizer: out of bounds access in kmalloc_oob_right+0x65/0x75 [test_kasan] at addr ffff8800693bc5d3
--    Write of size 1 by task modprobe/1689
--    =============================================================================
--    BUG kmalloc-128 (Not tainted): kasan error
--    -----------------------------------------------------------------------------
--
--    Disabling lock debugging due to kernel taint
--    INFO: Allocated in kmalloc_oob_right+0x3d/0x75 [test_kasan] age=0 cpu=0 pid=1689
--     __slab_alloc+0x4b4/0x4f0
--     kmem_cache_alloc_trace+0x10b/0x190
--     kmalloc_oob_right+0x3d/0x75 [test_kasan]
--     init_module+0x9/0x47 [test_kasan]
--     do_one_initcall+0x99/0x200
--     load_module+0x2cb3/0x3b20
--     SyS_finit_module+0x76/0x80
--     system_call_fastpath+0x12/0x17
--    INFO: Slab 0xffffea0001a4ef00 objects=17 used=7 fp=0xffff8800693bd728 flags=0x100000000004080
--    INFO: Object 0xffff8800693bc558 @offset=1368 fp=0xffff8800693bc720
--
--    Bytes b4 ffff8800693bc548: 00 00 00 00 00 00 00 00 5a 5a 5a 5a 5a 5a 5a 5a  ........ZZZZZZZZ
--    Object ffff8800693bc558: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc568: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc578: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc588: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc598: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5a8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5b8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5c8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5  kkkkkkkkkkkkkkk.
--    Redzone ffff8800693bc5d8: cc cc cc cc cc cc cc cc                          ........
--    Padding ffff8800693bc718: 5a 5a 5a 5a 5a 5a 5a 5a                          ZZZZZZZZ
--    CPU: 0 PID: 1689 Comm: modprobe Tainted: G    B          3.18.0-rc1-mm1+ #98
--    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
--     ffff8800693bc000 0000000000000000 ffff8800693bc558 ffff88006923bb78
--     ffffffff81cc68ae 00000000000000f3 ffff88006d407600 ffff88006923bba8
--     ffffffff811fd848 ffff88006d407600 ffffea0001a4ef00 ffff8800693bc558
-+    BUG: KASAN: slab-out-of-bounds in kmalloc_oob_right+0xa8/0xbc [test_kasan]
-+    Write of size 1 at addr ffff8801f44ec37b by task insmod/2760
-+    
-+    CPU: 1 PID: 2760 Comm: insmod Not tainted 4.19.0-rc3+ #698
-+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-     Call Trace:
--     [<ffffffff81cc68ae>] dump_stack+0x46/0x58
--     [<ffffffff811fd848>] print_trailer+0xf8/0x160
--     [<ffffffffa00026a7>] ? kmem_cache_oob+0xc3/0xc3 [test_kasan]
--     [<ffffffff811ff0f5>] object_err+0x35/0x40
--     [<ffffffffa0002065>] ? kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffff8120b9fa>] kasan_report_error+0x38a/0x3f0
--     [<ffffffff8120a79f>] ? kasan_poison_shadow+0x2f/0x40
--     [<ffffffff8120b344>] ? kasan_unpoison_shadow+0x14/0x40
--     [<ffffffff8120a79f>] ? kasan_poison_shadow+0x2f/0x40
--     [<ffffffffa00026a7>] ? kmem_cache_oob+0xc3/0xc3 [test_kasan]
--     [<ffffffff8120a995>] __asan_store1+0x75/0xb0
--     [<ffffffffa0002601>] ? kmem_cache_oob+0x1d/0xc3 [test_kasan]
--     [<ffffffffa0002065>] ? kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffffa0002065>] kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffffa00026b0>] init_module+0x9/0x47 [test_kasan]
--     [<ffffffff810002d9>] do_one_initcall+0x99/0x200
--     [<ffffffff811e4e5c>] ? __vunmap+0xec/0x160
--     [<ffffffff81114f63>] load_module+0x2cb3/0x3b20
--     [<ffffffff8110fd70>] ? m_show+0x240/0x240
--     [<ffffffff81115f06>] SyS_finit_module+0x76/0x80
--     [<ffffffff81cd3129>] system_call_fastpath+0x12/0x17
-+     dump_stack+0x94/0xd8
-+     print_address_description+0x73/0x280
-+     kasan_report+0x144/0x187
-+     __asan_report_store1_noabort+0x17/0x20
-+     kmalloc_oob_right+0xa8/0xbc [test_kasan]
-+     kmalloc_tests_init+0x16/0x700 [test_kasan]
-+     do_one_initcall+0xa5/0x3ae
-+     do_init_module+0x1b6/0x547
-+     load_module+0x75df/0x8070
-+     __do_sys_init_module+0x1c6/0x200
-+     __x64_sys_init_module+0x6e/0xb0
-+     do_syscall_64+0x9f/0x2c0
-+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-+    RIP: 0033:0x7f96443109da
-+    RSP: 002b:00007ffcf0b51b08 EFLAGS: 00000202 ORIG_RAX: 00000000000000af
-+    RAX: ffffffffffffffda RBX: 000055dc3ee521a0 RCX: 00007f96443109da
-+    RDX: 00007f96445cff88 RSI: 0000000000057a50 RDI: 00007f9644992000
-+    RBP: 000055dc3ee510b0 R08: 0000000000000003 R09: 0000000000000000
-+    R10: 00007f964430cd0a R11: 0000000000000202 R12: 00007f96445cff88
-+    R13: 000055dc3ee51090 R14: 0000000000000000 R15: 0000000000000000
-+    
-+    Allocated by task 2760:
-+     save_stack+0x43/0xd0
-+     kasan_kmalloc+0xa7/0xd0
-+     kmem_cache_alloc_trace+0xe1/0x1b0
-+     kmalloc_oob_right+0x56/0xbc [test_kasan]
-+     kmalloc_tests_init+0x16/0x700 [test_kasan]
-+     do_one_initcall+0xa5/0x3ae
-+     do_init_module+0x1b6/0x547
-+     load_module+0x75df/0x8070
-+     __do_sys_init_module+0x1c6/0x200
-+     __x64_sys_init_module+0x6e/0xb0
-+     do_syscall_64+0x9f/0x2c0
-+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-+    
-+    Freed by task 815:
-+     save_stack+0x43/0xd0
-+     __kasan_slab_free+0x135/0x190
-+     kasan_slab_free+0xe/0x10
-+     kfree+0x93/0x1a0
-+     umh_complete+0x6a/0xa0
-+     call_usermodehelper_exec_async+0x4c3/0x640
-+     ret_from_fork+0x35/0x40
-+    
-+    The buggy address belongs to the object at ffff8801f44ec300
-+     which belongs to the cache kmalloc-128 of size 128
-+    The buggy address is located 123 bytes inside of
-+     128-byte region [ffff8801f44ec300, ffff8801f44ec380)
-+    The buggy address belongs to the page:
-+    page:ffffea0007d13b00 count:1 mapcount:0 mapping:ffff8801f7001640 index:0x0
-+    flags: 0x200000000000100(slab)
-+    raw: 0200000000000100 ffffea0007d11dc0 0000001a0000001a ffff8801f7001640
-+    raw: 0000000000000000 0000000080150015 00000001ffffffff 0000000000000000
-+    page dumped because: kasan: bad access detected
-+    
-     Memory state around the buggy address:
--     ffff8800693bc300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc380: fc fc 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
--     ffff8800693bc400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc500: fc fc fc fc fc fc fc fc fc fc fc 00 00 00 00 00
--    >ffff8800693bc580: 00 00 00 00 00 00 00 00 00 00 03 fc fc fc fc fc
--                                                 ^
--     ffff8800693bc600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc700: fc fc fc fc fb fb fb fb fb fb fb fb fb fb fb fb
--     ffff8800693bc780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
--     ffff8800693bc800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-+     ffff8801f44ec200: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-+     ffff8801f44ec280: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-+    >ffff8801f44ec300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03
-+                                                                    ^
-+     ffff8801f44ec380: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-+     ffff8801f44ec400: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-     ==================================================================
- 
--The header of the report discribe what kind of bug happened and what kind of
--access caused it. It's followed by the description of the accessed slub object
--(see 'SLUB Debug output' section in Documentation/vm/slub.rst for details) and
--the description of the accessed memory page.
-+The header of the report provides a short summary of what kind of bug happened
-+and what kind of access caused it. It's followed by a stack trace of the bad
-+access, a stack trace of where the accessed memory was allocated (in case bad
-+access happens on a slab object), and a stack trace of where the object was
-+freed (in case of a use-after-free bug report). Next comes a description of
-+the accessed slab object and information about the accessed memory page.
- 
- In the last section the report shows memory state around the accessed address.
- Reading this part requires some understanding of how KASAN works.
-@@ -138,18 +150,24 @@ inaccessible memory like redzones or freed memory (see mm/kasan/kasan.h).
- In the report above the arrows point to the shadow byte 03, which means that
- the accessed address is partially accessible.
- 
-+For tag-based KASAN this last report section shows the memory tags around the
-+accessed address (see Implementation details section).
-+
- 
- Implementation details
- ----------------------
- 
-+Generic KASAN
-+~~~~~~~~~~~~~
-+
- From a high level, our approach to memory error detection is similar to that
- of kmemcheck: use shadow memory to record whether each byte of memory is safe
--to access, and use compile-time instrumentation to check shadow memory on each
--memory access.
-+to access, and use compile-time instrumentation to insert checks of shadow
-+memory on each memory access.
- 
--AddressSanitizer dedicates 1/8 of kernel memory to its shadow memory
--(e.g. 16TB to cover 128TB on x86_64) and uses direct mapping with a scale and
--offset to translate a memory address to its corresponding shadow address.
-+Generic KASAN dedicates 1/8th of kernel memory to its shadow memory (e.g. 16TB
-+to cover 128TB on x86_64) and uses direct mapping with a scale and offset to
-+translate a memory address to its corresponding shadow address.
- 
- Here is the function which translates an address to its corresponding shadow
- address::
-@@ -162,12 +180,38 @@ address::
- 
- where ``KASAN_SHADOW_SCALE_SHIFT = 3``.
- 
--Compile-time instrumentation used for checking memory accesses. Compiler inserts
--function calls (__asan_load*(addr), __asan_store*(addr)) before each memory
--access of size 1, 2, 4, 8 or 16. These functions check whether memory access is
--valid or not by checking corresponding shadow memory.
-+Compile-time instrumentation is used to insert memory access checks. Compiler
-+inserts function calls (__asan_load*(addr), __asan_store*(addr)) before each
-+memory access of size 1, 2, 4, 8 or 16. These functions check whether memory
-+access is valid or not by checking corresponding shadow memory.
- 
- GCC 5.0 has possibility to perform inline instrumentation. Instead of making
- function calls GCC directly inserts the code to check the shadow memory.
- This option significantly enlarges kernel but it gives x1.1-x2 performance
- boost over outline instrumented kernel.
-+
-+Software tag-based KASAN
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+Tag-based KASAN uses the Top Byte Ignore (TBI) feature of modern arm64 CPUs to
-+store a pointer tag in the top byte of kernel pointers. Like generic KASAN it
-+uses shadow memory to store memory tags associated with each 16-byte memory
-+cell (therefore it dedicates 1/16th of the kernel memory for shadow memory).
-+
-+On each memory allocation tag-based KASAN generates a random tag, tags the
-+allocated memory with this tag, and embeds this tag into the returned pointer.
-+Software tag-based KASAN uses compile-time instrumentation to insert checks
-+before each memory access. These checks make sure that tag of the memory that
-+is being accessed is equal to tag of the pointer that is used to access this
-+memory. In case of a tag mismatch tag-based KASAN prints a bug report.
-+
-+Software tag-based KASAN also has two instrumentation modes (outline, that
-+emits callbacks to check memory accesses; and inline, that performs the shadow
-+memory checks inline). With outline instrumentation mode, a bug report is
-+simply printed from the function that performs the access check. With inline
-+instrumentation a brk instruction is emitted by the compiler, and a dedicated
-+brk handler is used to print bug reports.
-+
-+A potential expansion of this mode is a hardware tag-based mode, which would
-+use hardware memory tagging support instead of compiler instrumentation and
-+manual shadow memory manipulation.
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 195ca385cf7a..c469fc4c9e2b 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains common generic and tag-based KASAN code.
+  *
+diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+index b8de6d33c55c..ccb6207276e3 100644
+--- a/mm/kasan/generic.c
++++ b/mm/kasan/generic.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains core generic KASAN code.
+  *
+diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+index a4604cceae59..5e12035888f2 100644
+--- a/mm/kasan/generic_report.c
++++ b/mm/kasan/generic_report.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains generic KASAN specific error reporting code.
+  *
+diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+index 7a2a2f13f86f..b3c068ab2a85 100644
+--- a/mm/kasan/init.c
++++ b/mm/kasan/init.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains some kasan initialization code.
+  *
+diff --git a/mm/kasan/quarantine.c b/mm/kasan/quarantine.c
+index 3a8ddf8baf7d..0e4dc1a22615 100644
+--- a/mm/kasan/quarantine.c
++++ b/mm/kasan/quarantine.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * KASAN quarantine.
+  *
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 214d85035f99..ca9418fe9232 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains common generic and tag-based KASAN error reporting code.
+  *
+diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
+index a3cca11e4fed..7b7c21d40851 100644
+--- a/mm/kasan/tags.c
++++ b/mm/kasan/tags.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains core tag-based KASAN code.
+  *
+diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
+index 573c51d20d09..8eaf5f722271 100644
+--- a/mm/kasan/tags_report.c
++++ b/mm/kasan/tags_report.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * This file contains tag-based KASAN specific error reporting code.
+  *
 -- 
 2.19.0.444.g18242da7ef-goog
 
