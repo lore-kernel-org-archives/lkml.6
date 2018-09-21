@@ -2,125 +2,145 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAAFC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263A3ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE2F2087A
+	by mail.kernel.org (Postfix) with ESMTP id D07E32086E
 	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:40:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GRDz19kC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE2F2087A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A7/wmq7R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D07E32086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389970AbeIUT3b (ORCPT
+        id S2390023AbeIUT3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:29:31 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43745 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389684AbeIUT3b (ORCPT
+        Fri, 21 Sep 2018 15:29:32 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:56010 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389870AbeIUT3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Sep 2018 15:29:31 -0400
-Received: by mail-io1-f66.google.com with SMTP id y10-v6so12199260ioa.10
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:40:35 -0700 (PDT)
+Received: by mail-it1-f196.google.com with SMTP id d10-v6so2002163itj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ffxcvDmJo9Kkl+XpYMWfI5FmARAz2amVWdHtbL6Meeo=;
-        b=GRDz19kC2mfxx+5F0MrrPB5pQX1+uTk89M1juFRb3hiqg0FzNO67jQ7Zd/f8YzkNWy
-         chAh775EGNJGmOJv+rfwdKQ9apc3WHbEfpfYqgRm/oGe8Yib5UIPFjYOjaJiCkQ5QqVV
-         +IsdMfl7L7ds6fp49/1CQxNBaDqlXgr4+KPZk=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TyrJA8rFdaHKp9ncwV+/fPKK1X9mZxeny1nGtBgA+NA=;
+        b=A7/wmq7Rjf/cp8IjDYLIsnASdZYSHpda3l2ZfxhWhr5otQAXBS/FTC51txu0vzdpZ3
+         WPR3R/+DVSkqBvJjSeVQxZtvMyoaHDB9Yu1xnuwMOziiQae37pqHYKhJ0W32HKrjwmMh
+         mIwtAAcFDjVn9Zxy7tU/T3fQnh3Um6SOrAyUY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ffxcvDmJo9Kkl+XpYMWfI5FmARAz2amVWdHtbL6Meeo=;
-        b=dpWqMa7YWX7eOUcdQepMTdKfIC1oPy+er88zzgRAkp4V4s91Eq+HqJueaFJtj+urXa
-         EXdPS1V3zhnyip+FhTYW4Pd5s83c7VcxCJKADRpgxGL+8PhYihN7xa2V6VHSLaQjum3s
-         zmKpBg3TqXYWUqhxtIvPMZgwqeSUOwImJ/StKz9I+WaV7LEMr2wzcg8pxXh3yPhbTvEP
-         q+IPr9qDo1Ic7MZOvZCYlLBeXAr2TT5ATwLoAx8KCkgAJn6Pb6qRpgVmjKN6Fck3Zsm+
-         CCW7ugULqwakqx2ZwAyC+Iub8Lr9GEgkNHgoNmU9wLIv7vx60nm09QjgWgLjGuE4PCJU
-         Iwiw==
-X-Gm-Message-State: APzg51Dnc+8BHBMtQYZLKTzQcocoMC3NTyP4V9QE0mZrkB9F8k6Gjds7
-        K0aSQzlK7Ts+njmM7VJaTRqrfg==
-X-Google-Smtp-Source: ANB0VdbmyfteoyoxvhpDwY2zilhDS55H866XT158G9GrVmU08LDu/NrmsUPExJjc2EQVSukSCUgO/Q==
-X-Received: by 2002:a02:b459:: with SMTP id w25-v6mr38749681jaj.32.1537537235369;
-        Fri, 21 Sep 2018 06:40:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TyrJA8rFdaHKp9ncwV+/fPKK1X9mZxeny1nGtBgA+NA=;
+        b=NhmxoRrgbFHGOK/yzphH6uRX3OG+hVeXAiHiLHXRTsEPz9uwtwHjW5Yk0yEA0KuFmU
+         55OxUsrMYwlMAPlnWJsFA2w6ryC+qvVmEcmQae66zqyz4aAFqw+0WXFSzbY+V2MwmNTn
+         /MEZcG9E+pAwm01qZ3QJVqdNxmkysSrv+yFzPq6nCcarswl3XPkoxLcQ7MMpQk6o4ff0
+         F7/cnGBuIZCtnfugvurBCawKS5PqFc4g7JZiUKSimr3U59c0QjqcEgguvQPrCCkIWPjV
+         BDm+BLHD0nQibMf5T9RGpd1pMWgdzYgbiEoW/S1DlXxuE4o6yW1jEnR6c4iKHrhc7SEF
+         0TxQ==
+X-Gm-Message-State: APzg51C6s6XkEjhFzQiCGIE4k+e0g99HANUGcdNNMhJk/EoOFTuPzAoE
+        WUK7jNr8oVQTygJuVbKcpkTtVQ==
+X-Google-Smtp-Source: ANB0VdbXSj0kLaSP4Mn/fivvLPx3doRFWqHcHN8/PMqskYS0wXheFFTiUkNE1TRTGWTjGu3G+E+OoQ==
+X-Received: by 2002:a24:f60a:: with SMTP id u10-v6mr6038065ith.116.1537537236436;
+        Fri, 21 Sep 2018 06:40:36 -0700 (PDT)
 Received: from localhost.localdomain ([209.82.80.116])
-        by smtp.gmail.com with ESMTPSA id c12-v6sm9896298ioq.81.2018.09.21.06.40.34
+        by smtp.gmail.com with ESMTPSA id c12-v6sm9896298ioq.81.2018.09.21.06.40.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 06:40:34 -0700 (PDT)
+        Fri, 21 Sep 2018 06:40:35 -0700 (PDT)
 From:   srinivas.kandagatla@linaro.org
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 00/26] nvmem: patches for 4.20
-Date:   Fri, 21 Sep 2018 06:40:00 -0700
-Message-Id: <20180921134026.4596-1-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 01/26] eeprom: eeprom_93xx46: use resource management
+Date:   Fri, 21 Sep 2018 06:40:01 -0700
+Message-Id: <20180921134026.4596-2-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.9.3
+In-Reply-To: <20180921134026.4596-1-srinivas.kandagatla@linaro.org>
+References: <20180921134026.4596-1-srinivas.kandagatla@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Hi Greg,
+Use resource managed variants of nvmem_register() and kzalloc().
 
-Here are some cleanup patches and some non device tree support reworked
-by Bartosz. I also included 2 minor changes in to misc/eeprom drivers.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/misc/eeprom/eeprom_93xx46.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-Can you please pick them up for 4.20.
-
-thanks,
-srini
-
-
-Bartosz Golaszewski (24):
-  eeprom: eeprom_93xx46: use resource management
-  eeprom: at25: use devm_nvmem_register()
-  nvmem: provide nvmem_dev_name()
-  nvmem: remove the name field from struct nvmem_device
-  nvmem: use list_for_each_entry_safe in nvmem_device_remove_all_cells()
-  nvmem: remove a stray newline
-  nvmem: check the return value of nvmem_add_cells()
-  nvmem: use kref
-  nvmem: sunxi_sid: return -ENOMEM if kzalloc() fails
-  nvmem: sunxi_sid: use devm_nvmem_register()
-  nvmem: lpc18xx_eeprom: use devm_nvmem_register()
-  nvmem: mxs-ocotp: use devm_nvmem_register()
-  nvmem: change the signature of nvmem_unregister()
-  nvmem: remove the global cell list
-  nvmem: add support for cell info
-  nvmem: resolve cells from DT at registration time
-  nvmem: add support for cell lookups from machine code
-  Documentation: nvmem: document cell tables and lookup entries
-  nvmem: add a notifier chain
-  nvmem: use SPDX license identifiers
-  nvmem: make the naming of arguments in nvmem_cell_get() consistent
-  nvmem: use EOPNOTSUPP instead of ENOSYS
-  nvmem: fix commenting style
-  nvmem: use octal permissions instead of constants
-
-Srinivas Kandagatla (2):
-  nvmem: sunxi_sid: remove unused variable in probe
-  nvmem: make nvmem_add_cells() static
-
- Documentation/nvmem/nvmem.txt       |  31 ++
- drivers/misc/eeprom/at25.c          |   3 +-
- drivers/misc/eeprom/eeprom_93xx46.c |  19 +-
- drivers/nvmem/core.c                | 530 +++++++++++++++++++---------
- drivers/nvmem/lpc18xx_eeprom.c      |   6 +-
- drivers/nvmem/mxs-ocotp.c           |   4 +-
- drivers/nvmem/sunxi_sid.c           |  22 +-
- include/linux/nvmem-consumer.h      | 100 ++++--
- include/linux/nvmem-provider.h      |  50 +--
- 9 files changed, 505 insertions(+), 260 deletions(-)
-
+diff --git a/drivers/misc/eeprom/eeprom_93xx46.c b/drivers/misc/eeprom/eeprom_93xx46.c
+index 38766968bfa2..c6dd9ad9bf7b 100644
+--- a/drivers/misc/eeprom/eeprom_93xx46.c
++++ b/drivers/misc/eeprom/eeprom_93xx46.c
+@@ -439,7 +439,7 @@ static int eeprom_93xx46_probe(struct spi_device *spi)
+ 		return -ENODEV;
+ 	}
+ 
+-	edev = kzalloc(sizeof(*edev), GFP_KERNEL);
++	edev = devm_kzalloc(&spi->dev, sizeof(*edev), GFP_KERNEL);
+ 	if (!edev)
+ 		return -ENOMEM;
+ 
+@@ -449,8 +449,7 @@ static int eeprom_93xx46_probe(struct spi_device *spi)
+ 		edev->addrlen = 6;
+ 	else {
+ 		dev_err(&spi->dev, "unspecified address type\n");
+-		err = -EINVAL;
+-		goto fail;
++		return -EINVAL;
+ 	}
+ 
+ 	mutex_init(&edev->lock);
+@@ -473,11 +472,9 @@ static int eeprom_93xx46_probe(struct spi_device *spi)
+ 	edev->nvmem_config.word_size = 1;
+ 	edev->nvmem_config.size = edev->size;
+ 
+-	edev->nvmem = nvmem_register(&edev->nvmem_config);
+-	if (IS_ERR(edev->nvmem)) {
+-		err = PTR_ERR(edev->nvmem);
+-		goto fail;
+-	}
++	edev->nvmem = devm_nvmem_register(&spi->dev, &edev->nvmem_config);
++	if (IS_ERR(edev->nvmem))
++		return PTR_ERR(edev->nvmem);
+ 
+ 	dev_info(&spi->dev, "%d-bit eeprom %s\n",
+ 		(pd->flags & EE_ADDR8) ? 8 : 16,
+@@ -490,21 +487,15 @@ static int eeprom_93xx46_probe(struct spi_device *spi)
+ 
+ 	spi_set_drvdata(spi, edev);
+ 	return 0;
+-fail:
+-	kfree(edev);
+-	return err;
+ }
+ 
+ static int eeprom_93xx46_remove(struct spi_device *spi)
+ {
+ 	struct eeprom_93xx46_dev *edev = spi_get_drvdata(spi);
+ 
+-	nvmem_unregister(edev->nvmem);
+-
+ 	if (!(edev->pdata->flags & EE_READONLY))
+ 		device_remove_file(&spi->dev, &dev_attr_erase);
+ 
+-	kfree(edev);
+ 	return 0;
+ }
+ 
 -- 
 2.19.0
 
