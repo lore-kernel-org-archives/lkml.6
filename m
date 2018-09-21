@@ -2,91 +2,119 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE77CECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C04EDECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F9032147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:40:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F9032147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A6C721477
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:40:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cKc+i9Mc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6C721477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389918AbeIUQ2i (ORCPT
+        id S2389856AbeIUQ22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:28:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44871 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727681AbeIUQ2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:28:37 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1EE93ECBA553E;
-        Fri, 21 Sep 2018 18:40:18 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
- 18:40:10 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>, <nfont@linux.vnet.ibm.com>
-CC:     <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] powerpc/pseries/memory-hotplug: Fix return value type of find_aa_index
-Date:   Fri, 21 Sep 2018 18:37:59 +0800
-Message-ID: <20180921103759.24976-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Fri, 21 Sep 2018 12:28:28 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50670 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbeIUQ22 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 12:28:28 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8LAdQYc085663;
+        Fri, 21 Sep 2018 10:39:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=0L10St+lienYN6LhonwsS65SroB5R3YqXBF6JDo9OGE=;
+ b=cKc+i9McStG5ljlEhSvUdleiEApefw5HXpZ66gBG/KkpoLcIltjpx9RdbRjoIEWal7q4
+ bIGkJmgVPydQbcz33etTD3HfIzY72wMW51FNjeGBTGXlxmDSWLUlTlbpUTuaAzTJ6Puk
+ bx0z3gR/+FMtKew59828Y61yp3C2Ix9RdQrK8xOixlUadiVxKXu5yBtEVbM3imUzTQZq
+ 51Qpssid6NHeahy7yGwLkMZc2gr0B/bQFUV+j9Vqz848G8Z2xlPb4w83GjskewX923V8
+ UhR5LXmmc6ey3/msIe0nU/RAaImNJHSxNd2pyFVA1cN2nmsCCA+uDRFlIM5DfBmVsx8s ww== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2mmkm22cuu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Sep 2018 10:39:43 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8LAdglK014046
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Sep 2018 10:39:42 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8LAdff4031856;
+        Fri, 21 Sep 2018 10:39:42 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 21 Sep 2018 03:39:41 -0700
+From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <Haakon.Bugge@oracle.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH 1/2] net: if_arp: Fix incorrect indents
+Date:   Fri, 21 Sep 2018 12:39:29 +0200
+Message-Id: <20180921103930.1420679-2-Haakon.Bugge@oracle.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180921103930.1420679-1-Haakon.Bugge@oracle.com>
+References: <20180921103930.1420679-1-Haakon.Bugge@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9022 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=731
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809210112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_aa_index will return -1 when dlpar_clone_property fails,
-its return value type should be int. Also the caller
-update_lmb_associativity_index should use a int variable to
-get it,then compared with 0.
+Fixing incorrect indents and align comments.
 
-Fixes: c05a5a40969e ("powerpc/pseries: Dynamic add entires to associativity lookup array")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
 ---
- arch/powerpc/platforms/pseries/hotplug-memory.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ include/uapi/linux/if_arp.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-index 9a15d39..6aad17c 100644
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -101,13 +101,12 @@ static struct property *dlpar_clone_property(struct property *prop,
- 	return new_prop;
- }
+diff --git a/include/uapi/linux/if_arp.h b/include/uapi/linux/if_arp.h
+index 4605527ca41b..b68b4b3d9172 100644
+--- a/include/uapi/linux/if_arp.h
++++ b/include/uapi/linux/if_arp.h
+@@ -114,18 +114,18 @@
  
--static u32 find_aa_index(struct device_node *dr_node,
-+static int find_aa_index(struct device_node *dr_node,
- 			 struct property *ala_prop, const u32 *lmb_assoc)
- {
- 	u32 *assoc_arrays;
--	u32 aa_index;
- 	int aa_arrays, aa_array_entries, aa_array_sz;
--	int i, index;
-+	int i, index, aa_index;
+ /* ARP ioctl request. */
+ struct arpreq {
+-  struct sockaddr	arp_pa;		/* protocol address		*/
+-  struct sockaddr	arp_ha;		/* hardware address		*/
+-  int			arp_flags;	/* flags			*/
+-  struct sockaddr       arp_netmask;    /* netmask (only for proxy arps) */
+-  char			arp_dev[16];
++	struct sockaddr	arp_pa;		/* protocol address		 */
++	struct sockaddr	arp_ha;		/* hardware address		 */
++	int		arp_flags;	/* flags			 */
++	struct sockaddr arp_netmask;    /* netmask (only for proxy arps) */
++	char		arp_dev[16];
+ };
  
- 	/*
- 	 * The ibm,associativity-lookup-arrays property is defined to be
-@@ -168,7 +167,7 @@ static int update_lmb_associativity_index(struct drmem_lmb *lmb)
- 	struct device_node *parent, *lmb_node, *dr_node;
- 	struct property *ala_prop;
- 	const u32 *lmb_assoc;
--	u32 aa_index;
-+	int aa_index;
+ struct arpreq_old {
+-  struct sockaddr	arp_pa;		/* protocol address		*/
+-  struct sockaddr	arp_ha;		/* hardware address		*/
+-  int			arp_flags;	/* flags			*/
+-  struct sockaddr       arp_netmask;    /* netmask (only for proxy arps) */
++	struct sockaddr	arp_pa;		/* protocol address		 */
++	struct sockaddr	arp_ha;		/* hardware address		 */
++	int		arp_flags;	/* flags			 */
++	struct sockaddr	arp_netmask;    /* netmask (only for proxy arps) */
+ };
  
- 	parent = of_find_node_by_path("/");
- 	if (!parent)
+ /* ARP Flag values. */
 -- 
-2.7.0
-
+2.14.3
 
