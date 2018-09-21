@@ -2,186 +2,475 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AECECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CC9ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37FF421523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:14:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtsOyc0K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FF421523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5891B21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:16:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5891B21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389689AbeIUSDL (ORCPT
+        id S2389634AbeIUSEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:03:11 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53424 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727697AbeIUSDL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:03:11 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b19-v6so2843074wme.3;
-        Fri, 21 Sep 2018 05:14:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=BVRdKJ2LNGoATOOvzXyoqV7KpRdcxoKytOtPJw6OXas=;
-        b=BtsOyc0KxFjlnwlV6vBN6twJ4NzOauQwD9qJXlHBYTid9uEk6td8lLp1yH8itHwxnP
-         QTe35r2OcfRZK2g6HlHAHWopJKPYU4xe/mtQQcoJzT9h5VD3ZukYkaFe0O9i5FdvPxBk
-         sgCl6LZ+VI/RcUw3GbdSqoW4Gy8nZs6eb09j0Ldpei2fs0rnZC3assM2C4XIT4GNFG27
-         b1HShyzNc6XJpEqKUn3Nf4m8JTRo+jq2Vkw3+ayKb0qHsgRxijJQBtA8dZXjhxmGUfk0
-         A5hCy6zkyr84xgTKeo69XxF2vMo1eeGJjxZsisp89wpKIIEX1mj6PIFt36/d/vg0ACjT
-         AynA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=BVRdKJ2LNGoATOOvzXyoqV7KpRdcxoKytOtPJw6OXas=;
-        b=nWZCIA/Ivib8fGLFYotvRgbD/T54AAyRiHmJgZGglYG6JFzMEPT59DXcmbGwIY905j
-         1091TELV+XqHhmJy8MmFzuXt7lK+US7CJHcPEsHkYR1GetT9Lzc/t/s1NWhlYdoyMpZT
-         bwtHn54q2P9+dQn33b/NodV6LhBqYx3qr/1vashyAO+C9QTTzogwDbg9VORd6bK8CpA4
-         zki1aWwtxfZCrCX1pWZXvu1Jamf/XdJFdOr0zyA5OS/TZNL0lLlw8V5K2IJZGwPgzdwf
-         0os8ByK93/JFOgs+Hk2mPxcARaZZvbTUXIu/rijS5YJHbiEV5E1xLpF0HIJ55TXMd2X6
-         eD6A==
-X-Gm-Message-State: APzg51DN8w3ZRKytqxbJZ66pvmYkkgnzGdIEuDZJtc+dYpQ2FzTRmkjj
-        VRs2V8t7aS0RmTPmsNLXZWg=
-X-Google-Smtp-Source: ANB0VdYiYRRIBPGAn2WkHu0OsESiZux/ZjBNzqs35lUx8gMbKLgeg2o8OWXj9XBBEo91wXNQ/Ln54Q==
-X-Received: by 2002:a1c:8e81:: with SMTP id q123-v6mr6743086wmd.56.1537532072612;
-        Fri, 21 Sep 2018 05:14:32 -0700 (PDT)
-Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
-        by smtp.gmail.com with ESMTPSA id g126-v6sm4139081wmg.5.2018.09.21.05.14.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 05:14:32 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     gregkh@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for Linux 4.20-rc5
-Date:   Fri, 21 Sep 2018 14:14:27 +0200
-Message-Id: <1537532067-42759-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 21 Sep 2018 14:04:41 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37532 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728184AbeIUSEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 14:04:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 05:16:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="76197481"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 21 Sep 2018 05:16:00 -0700
+Received: from [10.125.252.15] (abudanko-mobl.ccr.corp.intel.com [10.125.252.15])
+        by linux.intel.com (Postfix) with ESMTP id 85B22580224;
+        Fri, 21 Sep 2018 05:15:58 -0700 (PDT)
+Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>
+References: <20180913125450.21342-1-jolsa@kernel.org>
+ <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
+ <20180914082653.GG24224@krava> <20180914082858.GH24224@krava>
+ <71153c79-f0b9-4bf7-7491-202f46c6b5ed@linux.intel.com>
+ <4f63c3d5-2a33-28ed-4e45-086045e9ab50@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <b2f205a9-2d8d-7cf2-0ed7-b6b1ecff990b@linux.intel.com>
+Date:   Fri, 21 Sep 2018 15:15:56 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <4f63c3d5-2a33-28ed-4e45-086045e9ab50@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg,
+Hello Jiri,
 
-The following changes since commit 7876320f88802b22d4e2daf7eb027dd14175a0f8:
+On 21.09.2018 9:13, Alexey Budankov wrote:
+> Hello Jiri,
+> 
+> On 14.09.2018 12:37, Alexey Budankov wrote:
+>> On 14.09.2018 11:28, Jiri Olsa wrote:
+>>> On Fri, Sep 14, 2018 at 10:26:53AM +0200, Jiri Olsa wrote:
+>>>
+>>> SNIP
+>>>
+>>>>>> The threaded monitoring currently can't monitor backward maps
+>>>>>> and there are probably more limitations which I haven't spotted
+>>>>>> yet.
+>>>>>>
+>>>>>> So far I tested on laptop:
+>>>>>>   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
+>>>>>>
+>>>>>> and a one bigger server:
+>>>>>>   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
+>>>>>>
+>>>>>> I can see decrease in recorded LOST events, but both the benchmark
+>>>>>> and the monitoring must be carefully configured wrt:
+>>>>>>   - number of events (frequency)
+>>>>>>   - size of the memory maps
+>>>>>>   - size of events (callchains)
+>>>>>>   - final perf.data size
+>>>>>>
+>>>>>> It's also available in:
+>>>>>>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+>>>>>>   perf/record_threads
+>>>>>>
+>>>>>> thoughts? ;-) thanks
+>>>>>> jirka
+>>>>>
+>>>>> It is preferable to split into smaller pieces that bring 
+>>>>> some improvement proved by metrics numbers and ready for 
+>>>>> merging and upstream. Do we have more metrics than the 
+>>>>> data loss from trace AIO patches?
+>>>>
+>>>> well the primary focus is to get more events in,
+>>>> so the LOST metric is the main one
+>>>
+>>> actualy I was hoping, could you please run it through the same
+>>> tests as you do for AIO code on some huge server? 
+>>
+>> Yeah, I will, but it takes some time.
+> 
+> Here it is:
+> 
+> Hardware:
+> cat /proc/cpuinfo
+> processor	: 271
+> vendor_id	: GenuineIntel
+> cpu family	: 6
+> model		: 133
+> model name	: Intel(R) Xeon Phi(TM) CPU 7285 @ 1.30GHz
+> stepping	: 0
+> microcode	: 0xe
+> cpu MHz		: 1064.235
+> cache size	: 1024 KB
+> physical id	: 0
+> siblings	: 272
+> core id		: 73
+> cpu cores	: 68
+> apicid		: 295
+> initial apicid	: 295
+> fpu		: yes
+> fpu_exception	: yes
+> cpuid level	: 13
+> wp		: yes
+> flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 fma cx16 xtpr pdcm sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch ring3mwait cpuid_fault epb pti tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms avx512f rdseed adx avx512pf avx512er avx512cd xsaveopt dtherm ida arat pln pts avx512_vpopcntdq avx512_4vnniw avx512_4fmaps
+> bugs		: cpu_meltdown spectre_v1 spectre_v2
+> bogomips	: 2594.07
+> clflush size	: 64
+> cache_alignment	: 64
+> address sizes	: 46 bits physical, 48 bits virtual
+> power management:
+> 
+> uname -a
+> Linux nntpat98-196 4.18.0-rc7+ #2 SMP Thu Sep 6 13:24:37 MSK 2018 x86_64 x86_64 x86_64 GNU/Linux
+> 
+> cat /proc/sys/kernel/perf_event_paranoid
+> 0
+> 
+> cat /proc/sys/kernel/perf_event_mlock_kb 
+> 516
+> 
+> cat /proc/sys/kernel/perf_event_max_sample_rate 
+> 3000
+> 
+> cat /etc/redhat-release 
+> Red Hat Enterprise Linux Server release 7.5 (Maipo)
+> 
+> Metrics:
+> runtime overhead (%) : elapsed_time_under_profiling / elapsed_time
+> data loss (%)        : paused_time / elapsed_time_under_profiling
+> LOST events          : stat from perf report --stats
+> SAMPLE events        : stat from perf report --stats
+> perf.data size (B)   : size of trace file on disk
+> 
+> Events:
+> cpu/period=P,event=0x3c/Duk;CPU_CLK_UNHALTED.THREAD
+> cpu/period=P,umask=0x3/Duk;CPU_CLK_UNHALTED.REF_TSC
+> cpu/period=P,event=0xc0/Duk;INST_RETIRED.ANY
+> cpu/period=0xaae61,event=0xc2,umask=0x10/uk;UOPS_RETIRED.ALL
+> cpu/period=0x11171,event=0xc2,umask=0x20/uk;UOPS_RETIRED.SCALAR_SIMD
+> cpu/period=0x11171,event=0xc2,umask=0x40/uk;UOPS_RETIRED.PACKED_SIMD
+> 
+> =================================================
+> 
+> Command:
+> /usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf.thr record --threads=T \
+> 	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
+>         -e cpu/period=P,event=0x3c/Duk,\
+>            cpu/period=P,umask=0x3/Duk,\
+>            cpu/period=P,event=0xc0/Duk,\
+>            cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
+>            cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
+>            cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
+>          --clockid=monotonic_raw -- ./matrix.(icc|gcc)
+> 
+> Workload: matrix multiplication in 256 threads
+> 
+> /usr/bin/time ./matrix.icc
+> Addr of buf1 = 0x7ff9faa73010
+> Offs of buf1 = 0x7ff9faa73180
+> Addr of buf2 = 0x7ff9f8a72010
+> Offs of buf2 = 0x7ff9f8a721c0
+> Addr of buf3 = 0x7ff9f6a71010
+> Offs of buf3 = 0x7ff9f6a71100
+> Addr of buf4 = 0x7ff9f4a70010
+> Offs of buf4 = 0x7ff9f4a70140
+> Threads #: 256 Pthreads
+> Matrix size: 2048
+> Using multiply kernel: multiply1
+> Freq = 0.997720 GHz
+> Execution time = 9.061 seconds
+> 1639.55user 6.59system 0:07.12elapsed 23094%CPU (0avgtext+0avgdata 100448maxresident)k
+> 96inputs+0outputs (1major+33839minor)pagefaults 0swaps
+> 
+> T : 272
+>         P (period, ms)       : 0.1
+> 	runtime overhead (%) : 45x ~ 323.54 / 7.12
+> 	data loss (%)        : 96
+> 	LOST events          : 323662
+> 	SAMPLE events        : 31885479
+>         perf.data size (GiB) : 42
+> 
+> 	P (period, ms)       : 0.25
+> 	runtime overhead (%) : 25x ~ 180.76 / 7.12
+> 	data loss (%)        : 69 
+> 	LOST events          : 10636
+> 	SAMPLE events        : 18692998
+>         perf.data size (GiB) : 23.5
+> 
+> 	P (period, ms)       : 0.35 
+> 	runtime overhead (%) : 16x ~ 119.49 / 7.12
+> 	data loss (%)        : 1
+> 	LOST events          : 6
+> 	SAMPLE events        : 11178524
+>         perf.data size (GiB) : 14
+> 
+> T : 128
+> 	P (period, ms)       : 0.35 
+> 	runtime overhead (%) : 15x ~ 111.98 / 7.12
+> 	data loss (%)        : 62
+> 	LOST events          : 2825
+> 	SAMPLE events        : 11267247
+>         perf.data size (GiB) : 15
+> 
+> T : 64
+> 	P (period, ms)       : 0.35 
+> 	runtime overhead (%) : 14x ~ 101.55 / 7.12
+> 	data loss (%)        : 67
+> 	LOST events          : 5155
+> 	SAMPLE events        : 10966297
+>         perf.data size (GiB) : 13.7
+> 
+> Workload: matrix multiplication in 128 threads
+> 
+> /usr/bin/time ./matrix.gcc
+> Addr of buf1 = 0x7f072e630010
+> Offs of buf1 = 0x7f072e630180
+> Addr of buf2 = 0x7f072c62f010
+> Offs of buf2 = 0x7f072c62f1c0
+> Addr of buf3 = 0x7f072a62e010
+> Offs of buf3 = 0x7f072a62e100
+> Addr of buf4 = 0x7f072862d010
+> Offs of buf4 = 0x7f072862d140
+> Threads #: 128 Pthreads
+> Matrix size: 2048
+> Using multiply kernel: multiply1
+> Execution time = 6.639 seconds
+> 767.03user 11.17system 0:06.81elapsed 11424%CPU (0avgtext+0avgdata 100756maxresident)k
+> 88inputs+0outputs (0major+139898minor)pagefaults 0swaps
+> 
+> T : 272
+>         P (period, ms)       : 0.1
+> 	runtime overhead (%) : 29x ~ 198.81 / 6.81
+> 	data loss (%)        : 21
+> 	LOST events          : 2502
+> 	SAMPLE events        : 22481062
+>         perf.data size (GiB) : 27.6
+> 
+> 	P (period, ms)       : 0.25
+> 	runtime overhead (%) : 13x ~ 88.47 / 6.81
+> 	data loss (%)        : 0
+> 	LOST events          : 0
+> 	SAMPLE events        : 9572787
+>         perf.data size (GiB) : 11.3
+> 
+> 	P (period, ms)       : 0.35 
+> 	runtime overhead (%) : 10x ~ 67.11 / 6.81
+> 	data loss (%)        : 1
+> 	LOST events          : 137
+> 	SAMPLE events        : 6985930
+>         perf.data size (GiB) : 8
+> 
+> T : 128
+> 	P (period, ms)       : 0.35 
+> 	runtime overhead (%) : 9.5x ~ 64.33 / 6.81
+> 	data loss (%)        : 1
+> 	LOST events          : 3
+> 	SAMPLE events        : 6666903
+>         perf.data size (GiB) : 7.8
+> 
+> T : 64
+> 	P (period, ms)       : 0.25
+> 	runtime overhead (%) : 17x ~ 114.27 / 6.81
+> 	data loss (%)        : 2
+> 	LOST events          : 52
+> 	SAMPLE events        : 12643645
+>         perf.data size (GiB) : 15.5
+> 
+> 	P (period, ms)       : 0.35 
+> 	runtime overhead (%) : 10x ~ 68.60 / 6.81
+> 	data loss (%)        : 1
+> 	LOST events          : 93
+> 	SAMPLE events        : 7164368
+>         perf.data size (GiB) : 8.5
 
-  Linux 4.19-rc4 (2018-09-16 11:52:37 -0700)
+and this is for AIO and serial:
 
-are available in the git repository at:
+Command:
+/usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf.aio record --aio=N \
+	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
+        -e cpu/period=P,event=0x3c/Duk,\
+           cpu/period=P,umask=0x3/Duk,\
+           cpu/period=P,event=0xc0/Duk,\
+           cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
+           cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
+           cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
+         --clockid=monotonic_raw -- ./matrix.(icc|gcc)
 
-  git://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+Workload: matrix multiplication in 256 threads
 
-for you to fetch changes up to 26b471c7e2f7befd0f59c35b257749ca57e0ed70:
+ N : 512
+        P (period, ms)       : 2.5
+ 	runtime overhead (%) : 2.7x ~ 19.21 / 7.12
+ 	data loss (%)        : 42
+ 	LOST events          : 1600
+ 	SAMPLE events        : 1235928
+        perf.data size (GiB) : 1.5
+ 
+ N : 272
+ 	P (period, ms)       : 1.5
+ 	runtime overhead (%) : 2.5x ~ 18.09 / 7.12
+ 	data loss (%)        : 89
+ 	LOST events          : 3457
+ 	SAMPLE events        : 1222143
+        perf.data size (GiB) : 1.5
 
-  KVM: nVMX: Fix bad cleanup on error of get/set nested state IOCTLs (2018-09-20 18:54:08 +0200)
+ 	P (period, ms)       : 2
+ 	runtime overhead (%) : 2.5x ~ 17.93 / 7.12
+ 	data loss (%)        : 65
+ 	LOST events          : 2496
+ 	SAMPLE events        : 1240754
+        perf.data size (GiB) : 1.5
 
-----------------------------------------------------------------
-This pull request is slightly bigger than usual at this stage, but
-I swear I would have sent it the same to Linus!  The main cause for
-this is that I was on vacation until two weeks ago and it took a while
-to sort all the pending patches between 4.20 and 4.21, test them and
-so on.
+ 	P (period, ms)       : 2.5
+ 	runtime overhead (%) : 2.5x ~ 17.87 / 7.12
+ 	data loss (%)        : 44
+ 	LOST events          : 1621
+ 	SAMPLE events        : 1221949
+        perf.data size (GiB) : 1.5
 
-It's mostly small bugfixes and cleanups, mostly around x86 nested
-virtualization.  One important change, not related to nested
-virtualization, is that the ability for the guest kernel to trap CPUID
-instructions (in Linux that's the ARCH_SET_CPUID arch_prctl) is now
-masked by default.  This is because the feature is detected through an
-MSR; a very bad idea that Intel seems to like more and more.  Some
-applications choke if the other fields of that MSR are not initialized
-as on real hardware, hence we have to disable the whole MSR by default,
-as was the case before Linux 4.12.
+ 	P (period, ms)       : 3
+ 	runtime overhead (%) : 2.5x ~ 18.43 / 7.12
+ 	data loss (%)        : 12
+ 	LOST events          : 350
+ 	SAMPLE events        : 1117972
+        perf.data size (GiB) : 1.3
+ 
+ N : 128
+ 	P (period, ms)       : 3
+ 	runtime overhead (%) : 2.4x ~ 17.08 / 7.12
+ 	data loss (%)        : 11
+ 	LOST events          : 335
+ 	SAMPLE events        : 1116832
+        perf.data size (GiB) : 1.3
+ 
+ N : 64
+ 	P (period, ms)       : 3
+ 	runtime overhead (%) : 2.2x ~ 16.03 / 7.12
+ 	data loss (%)        : 11
+ 	LOST events          : 329
+ 	SAMPLE events        : 1108205
+        perf.data size (GiB) : 1.3
+ 
+Workload: matrix multiplication in 128 threads
 
-----------------------------------------------------------------
-Alexey Kardashevskiy (1):
-      KVM: PPC: Avoid marking DMA-mapped pages dirty in real mode
+ N : 512
+        P (period, ms)       : 1
+ 	runtime overhead (%) : 3.5x ~ 23.72 / 6.81
+ 	data loss (%)        : 18
+ 	LOST events          : 1043
+ 	SAMPLE events        : 2015306
+        perf.data size (GiB) : 2.3
 
-Andy Shevchenko (1):
-      KVM: SVM: Switch to bitmap_zalloc()
+ N : 272
+        P (period, ms)       : 0.5
+ 	runtime overhead (%) : 3x ~ 22.72 / 6.81
+ 	data loss (%)        : 90
+ 	LOST events          : 5842
+ 	SAMPLE events        : 2205937
+        perf.data size (GiB) : 2.5
 
-Drew Schmitt (3):
-      KVM: x86: Turbo bits in MSR_PLATFORM_INFO
-      KVM: x86: Control guest reads of MSR_PLATFORM_INFO
-      kvm: selftests: Add platform_info_test
+        P (period, ms)       : 1
+ 	runtime overhead (%) : 3x ~ 22.79 / 6.81
+ 	data loss (%)        : 11
+ 	LOST events          : 481
+ 	SAMPLE events        : 2017099
+        perf.data size (GiB) : 2.5
+ 
+ 	P (period, ms)       : 1.5
+ 	runtime overhead (%) : 3x ~ 19.93 / 6.81
+ 	data loss (%)        : 5
+ 	LOST events          : 190
+ 	SAMPLE events        : 1308692
+        perf.data size (GiB) : 1.5
+ 
+ 	P (period, ms)       : 2
+ 	runtime overhead (%) : 3x ~ 18.95 / 6.81
+ 	data loss (%)        : 0
+ 	LOST events          : 0
+ 	SAMPLE events        : 1010769
+        perf.data size (GiB) : 1.2
+ 
+ N : 128
+ 	P (period, ms)       : 1.5
+ 	runtime overhead (%) : 3x ~ 19.08 / 6.81
+ 	data loss (%)        : 6
+ 	LOST events          : 220
+ 	SAMPLE events        : 1322240
+        perf.data size (GiB) : 1.5
+ 
+ N : 64
+ 	P (period, ms)       : 1.5
+ 	runtime overhead (%) : 3x ~ 19.43 / 6.81
+ 	data loss (%)        : 3
+ 	LOST events          : 130
+ 	SAMPLE events        : 1386521
+        perf.data size (GiB) : 1.6
 
-Janosch Frank (2):
-      s390/mm: Check for valid vma before zapping in gmap_discard
-      KVM: s390: Make huge pages unavailable in ucontrol VMs
+=================================================
 
-Junaid Shahid (1):
-      kvm: mmu: Don't read PDPTEs when paging is not enabled
+Command:
+/usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf record \
+	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
+        -e cpu/period=P,event=0x3c/Duk,\
+           cpu/period=P,umask=0x3/Duk,\
+           cpu/period=P,event=0xc0/Duk,\
+           cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
+           cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
+           cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
+         --clockid=monotonic_raw -- ./matrix.(icc|gcc)
 
-Krish Sadhukhan (2):
-      nVMX x86: check posted-interrupt descriptor addresss on vmentry of L2
-      nVMX x86: Check VPID value on vmentry of L2 guests
+Workload: matrix multiplication in 256 threads
 
-Lei Yang (1):
-      kvm: selftests: use -pthread instead of -lpthread
+	P (period, ms)       : 7.5
+ 	runtime overhead (%) : 1.6x ~ 11.6 / 7.12
+ 	data loss (%)        : 1
+ 	LOST events          : 1
+ 	SAMPLE events        : 451062
+        perf.data size (GiB) : 0.5
 
-Liran Alon (2):
-      KVM: nVMX: Wake blocked vCPU in guest-mode if pending interrupt in virtual APICv
-      KVM: nVMX: Fix bad cleanup on error of get/set nested state IOCTLs
+Workload: matrix multiplication in 128 threads
 
-Nicholas Piggin (1):
-      KVM: PPC: Book3S HV: Don't use compound_order to determine host mapping size
+	P (period, ms)       : 3
+ 	runtime overhead (%) : 1.8x ~ 12.58 / 6.81
+ 	data loss (%)        : 9
+ 	LOST events          : 147
+ 	SAMPLE events        : 673299
+        perf.data size (GiB) : 0.8
 
-Paolo Bonzini (3):
-      Merge tag 'kvm-s390-master-4.19-2' of git://git.kernel.org/.../kvms390/linux into HEAD
-      Merge tag 'kvm-ppc-fixes-4.19-2' of git://git.kernel.org/.../paulus/powerpc into HEAD
-      KVM: VMX: check nested state and CR4.VMXE against SMM
+Thanks,
+Alexey
 
-Sean Christopherson (3):
-      KVM: VMX: immediately mark preemption timer expired only for zero value
-      KVM: VMX: modify preemption timer bit only when arming timer
-      KVM: VMX: use preemption timer to force immediate VMExit
-
-Sebastian Andrzej Siewior (1):
-      kvm: x86: make kvm_{load|put}_guest_fpu() static
-
-Tianyu Lan (1):
-      KVM/MMU: Fix comment in walk_shadow_page_lockless_end()
-
-Vitaly Kuznetsov (2):
-      x86/kvm/lapic: always disable MMIO interface in x2APIC mode
-      x86/hyper-v: rename ipi_arg_{ex,non_ex} structures
-
-Wei Yang (1):
-      KVM: x86: don't reset root in kvm_mmu_setup()
-
- Documentation/virtual/kvm/api.txt                |  12 +-
- arch/powerpc/include/asm/book3s/64/pgtable.h     |   1 -
- arch/powerpc/include/asm/iommu.h                 |   2 -
- arch/powerpc/include/asm/mmu_context.h           |   1 +
- arch/powerpc/kernel/iommu.c                      |  25 ----
- arch/powerpc/kvm/book3s_64_mmu_radix.c           |  91 ++++++---------
- arch/powerpc/kvm/book3s_64_vio_hv.c              |  39 +++++--
- arch/powerpc/mm/init_64.c                        |  49 --------
- arch/powerpc/mm/mmu_context_iommu.c              |  34 +++++-
- arch/s390/kvm/kvm-s390.c                         |   4 +-
- arch/s390/mm/gmap.c                              |   4 +-
- arch/x86/hyperv/hv_apic.c                        |   8 +-
- arch/x86/include/asm/hyperv-tlfs.h               |  16 +--
- arch/x86/include/asm/kvm_host.h                  |   5 +
- arch/x86/include/uapi/asm/kvm.h                  |   1 +
- arch/x86/kvm/lapic.c                             |  22 +++-
- arch/x86/kvm/mmu.c                               |   9 +-
- arch/x86/kvm/svm.c                               |   7 +-
- arch/x86/kvm/vmx.c                               | 138 ++++++++++++++++-------
- arch/x86/kvm/x86.c                               | 101 +++++++++++------
- include/linux/kvm_host.h                         |   2 -
- include/uapi/linux/kvm.h                         |   1 +
- tools/testing/selftests/kvm/.gitignore           |   1 +
- tools/testing/selftests/kvm/Makefile             |   5 +-
- tools/testing/selftests/kvm/include/kvm_util.h   |   4 +
- tools/testing/selftests/kvm/lib/kvm_util.c       |  89 +++++++++++++++
- tools/testing/selftests/kvm/platform_info_test.c | 110 ++++++++++++++++++
- 27 files changed, 537 insertions(+), 244 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/platform_info_test.c
+> 
+> Thanks,
+> Alexey
+> 
+>>
+>>>
+>>> thanks,
+>>> jirka
+>>>
+>>
+> 
