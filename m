@@ -2,156 +2,134 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54592ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B412C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09FEB21476
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:11:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3954A2156E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OwzUuGxA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09FEB21476
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtNp2pQA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3954A2156E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbeIVECY (ORCPT
+        id S1726134AbeIVEDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 00:02:24 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39016 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeIVECY (ORCPT
+        Sat, 22 Sep 2018 00:03:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39336 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbeIVEDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 00:02:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id l15-v6so13340930lji.6;
-        Fri, 21 Sep 2018 15:11:33 -0700 (PDT)
+        Sat, 22 Sep 2018 00:03:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id s14-v6so14157807wrw.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 15:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lzoIxcsvjeuWbBJ2BwMGQddtfd5tWiJc/hW7M9Dqtlc=;
-        b=OwzUuGxAgrSPpzdVu3bs79+yctI/cyjGvsjuhBZJ48+iDm+9UjBAJXwIGhClfYbRZn
-         QxegES7ZiASBhkebknCIZrYNI0TfHmY18qxMY1Q7T0e3XvKhT0Odx898hfg/pLJ29FW4
-         JNSVzByC/PIik+PwkIugFQb14VOr2142s0pm9PTMwzB10nVvGYw4q9ri5iCNiqQrpGEP
-         920PYrMuze3IalW5IfWQvd4PElMHxsPFPAK325daS8SHOVOvXSOrhcdkAzcKHrS3xTpa
-         eVqsX4eYg1QewZ+v9Km+jBOb3i43Ysfny30ue0Hi5sonu19oeLNiQbkJA+FvKOxBWcKG
-         3stQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ePbJ17DjNf7I7zTxOpZuDZhf+LZcpq+S97lhzE0CA5k=;
+        b=MtNp2pQAP92DRhNDhg2vKTqu2+G2d57C92tkk7+bXrNT7tga5FCtmAIk/XX/e1hWBU
+         dOfsPphJ0vY3Khp6+XdS8hFxM5oD2kI4Ay1RjfBfR8CPRqXv8wzcvktrwpqa00EOlqCS
+         p1MJOPoFCXaVEj7OLoSYC9kQMUVx4lSCJTh74OjcUru1dz+oMfTn1LNsqNPuUyQx5KT4
+         6gFSBHepM4w2wihUY+fVHhEYk3P3G1Dop+fKM8+Shh8PCKUOXc1J1SSPKL9KVfhKr+j9
+         0XGtQyF7Bvs+rWURlAJlD86Fst00tyrNF95mYHmND86SzZnM5CIG9DQ/wEqzc9g4wcfU
+         N9Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lzoIxcsvjeuWbBJ2BwMGQddtfd5tWiJc/hW7M9Dqtlc=;
-        b=Yhqj++scMvfH7n1lCawTPmCebGVNeK3oLE7tCm9FgIu0pGhpjh/CE6Tc3pdVjLnmVp
-         1s5dniO2J9u1AL99M5PmWlDha3IYRLKSEOlifzAe+jYkoeaWfitZOaRjrQdLR3FuaLnn
-         qlA1ulRYnJmlQW/qMZJ0b/Mz4dbKPHTxqFOKaY08IcIbTegPfSkVGdYCRiABIbyq3M3f
-         38SDvnx8lgSl+xsFx4vlKuENeagsSbHXp+w6rSV6HHFL1kwWrzHV8/DAbxX5/S/ze2/K
-         sSFpJbMVBDGo9BC3nSc+aG5lqV+UH0lByZRKigtYasofxJtWh6zS5K/usIIbzVfAk1bE
-         yfJQ==
-X-Gm-Message-State: ABuFfohufaIAkNuDSQ1qAlUYPgYIKLsXqynVe5icsSrlP3irVdnKGQ9y
-        8/pEXqqmMH5ed0bjtXkGrRW+6e80
-X-Google-Smtp-Source: ACcGV63QBjentgnsrgEMnkvYrScVYS3Gkpvd7HoHnberIiZ0lPtOV93yHfATMwwkhBxgnWLE+0nPIw==
-X-Received: by 2002:a2e:7014:: with SMTP id l20-v6mr4031231ljc.141.1537567892251;
-        Fri, 21 Sep 2018 15:11:32 -0700 (PDT)
-Received: from [192.168.1.18] (chj43.neoplus.adsl.tpnet.pl. [83.31.7.43])
-        by smtp.gmail.com with ESMTPSA id w202-v6sm1572631lff.17.2018.09.21.15.11.30
+        bh=ePbJ17DjNf7I7zTxOpZuDZhf+LZcpq+S97lhzE0CA5k=;
+        b=mR1ZKAXzVybdf6syNM7jpO/oIqTLXIdz8UnlSqeSVVl45Jjl8DbzqZrv8Hk7WtkYeI
+         S6JYYp5WQW3qyuadJdpZJX6wAT7sdPHsP8mgL8XIovVF5bmp1SgsRFCIUTpf1dkMbb2h
+         v5ggzeTKmMOkl22zxs62/btF4ssWY2C9QvSJyWoLYStkdaMkFWBXynau3fDcNCL792km
+         GP0R2ONpg/Uxioe2No1WGyi24P7tCNj9/EYEoOZ1DfS/NeohhuPIs5s2L0un0Rafbsfi
+         hc1iZ/bmeCGpqQQq1zfwjcjyPLTPvcvywDfg7SA5dComtVZnWdCRnDXQjIvpCKqnmiOW
+         x1RQ==
+X-Gm-Message-State: APzg51BtDS14Xe/FHdOQWtwUpcak9XKMwiKmQddDidVBZYwGgU8k2x9E
+        Feuya2W6Uvporsmv07g5BsUuNY8nh5mvTw==
+X-Google-Smtp-Source: ANB0Vdbm3uTxY9+5uQReds27/+DjB7FNHQPMq1zu5Qvf5Tm7bm7/LAb1Bsy1/MI5GTeN85EV4NhcGg==
+X-Received: by 2002:adf:8367:: with SMTP id 94-v6mr39375430wrd.258.1537567930164;
+        Fri, 21 Sep 2018 15:12:10 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 66-v6sm7243889wmw.34.2018.09.21.15.12.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 15:11:31 -0700 (PDT)
-Subject: Re: [PATCH v12 1/2] leds: core: Introduce LED pattern trigger
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <67ebebf02edd6d8ee42a13b139733e9cc680ea86.1536631975.git.baolin.wang@linaro.org>
- <CAMz4kuJx9twJ=wM5qsucV3JH_VS-AC1aWMqpQOwAMkCuKBHLRg@mail.gmail.com>
- <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com> <20180921211758.GC18062@amd>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <ccac8e5f-e122-9f7d-aa43-fa89c79cb1fe@gmail.com>
-Date:   Sat, 22 Sep 2018 00:11:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 15:12:09 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] staging: rtlwifi: Use proper enumerated types for Wi-Fi only interface
+Date:   Fri, 21 Sep 2018 15:12:02 -0700
+Message-Id: <20180921221202.20448-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180921211758.GC18062@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/21/2018 11:17 PM, Pavel Machek wrote:
-> On Fri 2018-09-21 22:59:40, Jacek Anaszewski wrote:
->> Hi Baolin,
->>
->> On 09/21/2018 05:31 AM, Baolin Wang wrote:
->>> Hi Jacek and Pavel,
->>>
->>> On 11 September 2018 at 10:47, Baolin Wang <baolin.wang@linaro.org> wrote:
->>>> This patch adds one new led trigger that LED device can configure
->>>> the software or hardware pattern and trigger it.
->>>>
->>>> Consumers can write 'pattern' file to enable the software pattern
->>>> which alters the brightness for the specified duration with one
->>>> software timer.
->>>>
->>>> Moreover consumers can write 'hw_pattern' file to enable the hardware
->>>> pattern for some LED controllers which can autonomously control
->>>> brightness over time, according to some preprogrammed hardware
->>>> patterns.
->>>>
->>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
->>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> 
->>> Do you have any comments for the v12 patch set? Thanks.
->>
->> We will probably have to remove hw_pattern from ledtrig-pattern
->> since we are unable to come up with generic interface for it.
->> Unless thread [0] will end up with some brilliant ideas. So far
->> we're waiting for Pavel's reply.
->>
->> [0] https://lkml.org/lkml/2018/9/13/1216
-> 
-> To paint a picture:
-> 
-> brightness
-> 
->    rise hold          lower       hold down
->   ^    XXXXXXXXXXXXXXX
->   |   X               XX
->   |  X                  XX
->   | X                     XXXXXXXXXXXXXXXXXXXXXXXXXX
->   +-------------------------------------------------------> time
-> 
-> This is what Baolin's hardware can do, right?
-> 
-> This is also what pattern trigger can do, right?
-> 
-> So all we need to do is match the two interfaces, so that hw_pattern
-> returns -EINVAL on patterns hardware can not actually do.
-> 
-> I believe I described code to do that in [0] above.
+Clang warns when one enumerated type is implicitly converted to another.
 
-You said that we should get the same effect by writing the
-same series of tuples to either pattern or hw_pattern file.
+drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c:1264:34: warning:
+implicit conversion from enumeration type 'enum btc_chip_interface' to
+different enumeration type 'enum wifionly_chip_interface'
+[-Wenum-conversion]
+                wifionly_cfg->chip_interface = BTC_INTF_PCI;
+                                             ~ ^~~~~~~~~~~~
+drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c:1267:34: warning:
+implicit conversion from enumeration type 'enum btc_chip_interface' to
+different enumeration type 'enum wifionly_chip_interface'
+[-Wenum-conversion]
+                wifionly_cfg->chip_interface = BTC_INTF_USB;
+                                             ~ ^~~~~~~~~~~~
+drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c:1270:34: warning:
+implicit conversion from enumeration type 'enum btc_chip_interface' to
+different enumeration type 'enum wifionly_chip_interface'
+[-Wenum-conversion]
+                wifionly_cfg->chip_interface = BTC_INTF_UNKNOWN;
+                                             ~ ^~~~~~~~~~~~~~~~
+3 warnings generated.
 
-Below command consists of four tuples (marked with brackets
-to highlight), and it will activate breathing mode in Baolin's
-hw_pattern:
+Use the values from the correct enumerated type, wifionly_chip_interface.
 
-"[0 rise_duration] [brightness high_duration] [brightness fall_duration]
-[0   low_duration]"
+BTC_INTF_UNKNOWN = WIFIONLY_INTF_UNKNOWN = 0
+BTC_INTF_PCI = WIFIONLY_INTF_PCI = 0
+BTC_INTF_USB = WIFIONLY_INTF_USB = 0
 
-Now, I can't see how these four tuples could force the software
-fallback to produce breathing effect you depicted.
+Link: https://github.com/ClangBuiltLinux/linux/issues/171
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c
+index 4d1f9bf53c53..85a7490e6bbd 100644
+--- a/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/staging/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -1261,13 +1261,13 @@ bool exhalbtc_initlize_variables_wifi_only(struct rtl_priv *rtlpriv)
+ 
+ 	switch (rtlpriv->rtlhal.interface) {
+ 	case INTF_PCI:
+-		wifionly_cfg->chip_interface = BTC_INTF_PCI;
++		wifionly_cfg->chip_interface = WIFIONLY_INTF_PCI;
+ 		break;
+ 	case INTF_USB:
+-		wifionly_cfg->chip_interface = BTC_INTF_USB;
++		wifionly_cfg->chip_interface = WIFIONLY_INTF_USB;
+ 		break;
+ 	default:
+-		wifionly_cfg->chip_interface = BTC_INTF_UNKNOWN;
++		wifionly_cfg->chip_interface = WIFIONLY_INTF_UNKNOWN;
+ 		break;
+ 	}
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+2.19.0
+
