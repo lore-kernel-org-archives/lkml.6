@@ -3,109 +3,224 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D5FECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE28ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153C121569
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:36:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153C121569
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A9EBF21566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:37:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9EBF21566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390726AbeIUW02 (ORCPT
+        id S2390742AbeIUW1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:26:28 -0400
-Received: from mga07.intel.com ([134.134.136.100]:57258 "EHLO mga07.intel.com"
+        Fri, 21 Sep 2018 18:27:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34900 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390065AbeIUW01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:26:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:36:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="92594668"
-Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga001.jf.intel.com with ESMTP; 21 Sep 2018 09:36:12 -0700
-Subject: Re: [patch V3 04/11] x86/mm/cpa: Allow range check for static
- protections
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180917142906.384767038@linutronix.de>
- <20180917143545.995734490@linutronix.de>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Bin Yang <bin.yang@intel.com>,
-        Mark Gross <mark.gross@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <2408f945-dfb1-252a-1fa2-98d092a918a7@intel.com>
-Date:   Fri, 21 Sep 2018 09:36:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2389683AbeIUW1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:27:31 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C641E30A3139;
+        Fri, 21 Sep 2018 16:37:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3567D600C8;
+        Fri, 21 Sep 2018 16:37:49 +0000 (UTC)
+Subject: [PATCH 0/5] VFS: Introduce filesystem information query syscall
+ [ver #12]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Date:   Fri, 21 Sep 2018 17:37:48 +0100
+Message-ID: <153754786825.19213.16907802981157370740.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20180917143545.995734490@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 21 Sep 2018 16:37:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
-> Checking static protections only page by page is slow especially for huge
-> pages. To allow quick checks over a complete range, add the ability to do
-> that.
-> 
-> Make the checks inclusive so the ranges can be directly used for debug output
-> later.
-> 
-> No functional change.
 
-Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Hi Al,
+
+Here are a set of patches that adds a syscall, fsinfo(), that allows
+attributes of a filesystem/superblock to be queried.  Attributes are of two
+basic types: fixed-length structure and variable-length string.  Attributes
+can also have multiple values in up to two dimensions.
+
+Note that the attributes *are* allowed to vary depending on the specific
+dentry that you're looking at.
+
+I've tried to make the interface as light as possible, so integer/enum
+attribute selector rather than string and the core does all the allocation and
+extensibility support work rather than leaving that to the filesystems.  That
+means sb->s_op->get_fsinfo() may assume that the provided buffer is always
+present and always big enough.
+
+Further, this removes the possibility of the filesystem gaining access to the
+userspace buffer.
+
+
+General superblock attributes include:
+
+ - The amount of space/free space in a filesystem (as statfs()).
+ - Filesystem identifiers (UUID, volume label, device numbers, ...)
+ - The limits on a filesystem's capabilities
+ - A variety single-bit flags indicating supported capabilities.
+ - Information on supported statx fields and attributes and IOC flags.
+ - Timestamp resolution and range.
+ - Sources (as per mount(2), but fsconfig() allows multiple sources).
+ - In-filesystem filename format information.
+ - I/O parameters.
+ - Filesystem parameters ("mount -o xxx"-type things).
+
+Specific network superblock attributes include:
+
+ - Cell and domain names.
+ - Kerberos realm name.
+ - Server names and addresses.
+
+Filesystem configuration metadata attributes include:
+
+ - Filesystem parameter type descriptions.
+ - Name -> parameter mappings.
+ - Simple enumeration name -> value mappings.
+
+fsinfo() also permits you to retrieve information about what the fsinfo()
+syscall itself supports, including the number of attibutes supported and the
+number of capability bits supported.
+
+The system is extensible:
+
+ (1) New attributes can be added.  There is no requirement that a filesystem
+     implement every attribute.  Note that the core VFS keeps a table of types
+     and sizes so it can handle future extensibility rather than delegating
+     this to the filesystems.
+
+ (2) Structure-typed attributes can be made larger and have more information
+     tacked on the end, provided it keeps the layout of the existing fields.
+     If an older process asks for a shorter structure, it will only be given
+     the bits it asks for.  If a newer process asks for a longer structure on
+     an older kernel, the extra space will be set to 0.  In all cases, the
+     size of the data available is returned.
+
+     In essence, the size of a structure is that structure's version: a
+     smaller size is an earlier version and a later version includes
+     everything that the earlier version did.
+
+ (3) New single-bit capability flags can be added.  This is a structure-typed
+     attribute and, as such, (2) applies.  Any bits you wanted but the kernel
+     doesn't support are automatically set to 0.
+
+If a filesystem-specific attribute is added, it should just take up the next
+number in the enumeration.  Currently, I do not intend that the number space
+should be subdivided between interested parties.
+
+fsinfo() may be called like the following, for example:
+
+	struct fsinfo_params params = {
+		.at_flags	= AT_SYMLINK_NOFOLLOW,
+		.request	= FSINFO_ATTR_SERVER_ADDRESS;
+		.Nth		= 2;
+		.Mth		= 1;
+	};
+	struct fsinfo_server_address address;
+
+	len = fsinfo(AT_FDCWD, "/kafs/grand.central.org/doc", &params,
+		     &address, sizeof(address));
+
+The above example would query a network filesystem, such as AFS or NFS, and
+ask what the 2nd address (Mth) of the 3rd server (Nth) that the superblock is
+using is.  Whereas:
+
+	struct fsinfo_params params = {
+		.at_flags	= AT_SYMLINK_NOFOLLOW,
+		.request	= FSINFO_ATTR_CELL_NAME;
+	};
+	char cell_name[256];
+
+	len = fsinfo(AT_FDCWD, "/kafs/grand.central.org/doc", &params,
+		     &cell_name, sizeof(cell_name));
+
+would retrieve the name of an AFS cell as a string.
+
+fsinfo() can also be used to query a context from fsopen() or fspick():
+
+	fd = fsopen("ext4", 0);
+	struct fsinfo_params params = {
+		.request	= FSINFO_ATTR_PARAM_DESCRIPTION;
+	};
+	struct fsinfo_param_description desc;
+	fsinfo(fd, NULL, &params, &desc, sizeof(desc));
+
+even if that context doesn't currently have a superblock attached (though if
+there's no superblock attached, only filesystem-specific things like parameter
+descriptions can be accessed).
+
+The patches can be found here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+
+on branch:
+
+	fsinfo
+
+===================
+SIGNIFICANT CHANGES
+===================
+
+ ver #12:
+
+ (*) Rename ->get_fsinfo() to ->fsinfo().
+
+ (*) Pass the path through to to ->fsinfo() as it's needed for NFS to
+     retrocalculate the source name.
+
+ (*) Indicated which is the source parameter in the param-description
+     attribute.
+
+ (*) Dropped the realm attribute.
+
+David
+---
+David Howells (5):
+      vfs: syscall: Add fsinfo() to query filesystem information
+      afs: Add fsinfo support
+      vfs: Allow fsinfo() to query what's in an fs_context
+      vfs: Allow fsinfo() to be used to query an fs parameter description
+      vfs: Implement parameter value retrieval with fsinfo()
+
+
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/afs/internal.h                      |    1 
+ fs/afs/super.c                         |  168 +++++++++
+ fs/hugetlbfs/inode.c                   |   66 ++++
+ fs/kernfs/mount.c                      |   16 +
+ fs/statfs.c                            |  587 ++++++++++++++++++++++++++++++++
+ include/linux/fs.h                     |    4 
+ include/linux/fsinfo.h                 |   41 ++
+ include/linux/kernfs.h                 |    2 
+ include/linux/syscalls.h               |    4 
+ include/uapi/linux/fsinfo.h            |  303 ++++++++++++++++
+ kernel/cgroup/cgroup-v1.c              |   72 ++++
+ kernel/cgroup/cgroup.c                 |   31 ++
+ samples/vfs/Makefile                   |    6 
+ samples/vfs/test-fs-query.c            |  138 +++++++
+ samples/vfs/test-fsinfo.c              |  589 ++++++++++++++++++++++++++++++++
+ 17 files changed, 2028 insertions(+), 2 deletions(-)
+ create mode 100644 include/linux/fsinfo.h
+ create mode 100644 include/uapi/linux/fsinfo.h
+ create mode 100644 samples/vfs/test-fs-query.c
+ create mode 100644 samples/vfs/test-fsinfo.c
+
