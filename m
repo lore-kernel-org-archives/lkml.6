@@ -2,101 +2,137 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23292ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0B5C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A741821533
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:54:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A741821533
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id F240221545
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:54:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9NEtbBU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F240221545
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388999AbeIUIkl (ORCPT
+        id S2389018AbeIUIlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 04:40:41 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51315 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725898AbeIUIkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 04:40:41 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 20BAD76750ACB;
-        Fri, 21 Sep 2018 10:53:58 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
- 10:53:51 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <linux@armlinux.org.uk>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] net: seeq: fix return type of ndo_start_xmit function
-Date:   Fri, 21 Sep 2018 10:53:47 +0800
-Message-ID: <20180921025347.9208-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Fri, 21 Sep 2018 04:41:22 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45990 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUIlW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 04:41:22 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t70-v6so536136pgd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 19:54:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=W5V790ekTmPiq/s4qHSLLw+0znVIlnT1bGCmYfgL9rg=;
+        b=O9NEtbBUDSaOVMhnB74ISS5LP2O1BlAdwx4jevUQ5bR+at3X8uHaNJExam6jR6lD/L
+         Ihp9eNXRbjvgketTKdAKSpgr6zCO0jhGhcA5nvO1Drg/txG3faWBnoIqmZw+7fcFPqUv
+         g/YSPQ8YAkfoVk9KN/zXiAKU6In2vKO+LwEkIwR6/+hk63kT6N/J9dLGXTeqRY/xdrCI
+         SbECpUhM0NoT3ua6HKtY3iFcnq0ng3CUmAm+wY+9RGX2D4RMMrnyZctUroB4vNEJ+5sz
+         ND7MLMONjNLO8xgI9NIIotzxgexBTLrFiEvhdzfWwQ0RyglEDzgwfgK2j64SS/Gl1swO
+         RBvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=W5V790ekTmPiq/s4qHSLLw+0znVIlnT1bGCmYfgL9rg=;
+        b=K2acDQ1mKSaVAGEosAiHKHZYHJKQevbXixIBPbYZE85210W8GcQVwmxePixiQNz06q
+         NHwVdQKH3X+k5wo3+EjwtmyiNAkCjJ5toRO1b42ywlyAMDrw+wVw+8R3AMzOzTLYR4O3
+         SyJ0zYf+Pr6XNPmiAKFayC+30iDb9qQK63g2peYTzKWonepwgXd8RHRiXfw8zihhBU0m
+         aVp7PS+b73Rq2Qhkd649XcHT9hzGN/IIDdaMM+h/ul8oI8q0nxQbJtWxX3NtQiza8ico
+         SN571Ba6wdtCWyBv+ph+s94FWuGaGT4aG+TSGT57JT6cJJxx6sPqiOzMpEAoDLbm5LPh
+         hkYA==
+X-Gm-Message-State: APzg51DGg0FDpWkxwl9dEwblL6MbIvJWjuf7Zpg7Oe9vR/QZ85IdSOKJ
+        jKcG+/KUwpjx8UpsRTYd8qg=
+X-Google-Smtp-Source: ANB0VdbIbu1R63Hr64yYoI1e/ZdPixyhvolI9dTUi8i8JAYf+b6wOMje8XIMobU6Est8SBK5DZsuDg==
+X-Received: by 2002:a63:f54c:: with SMTP id e12-v6mr39441533pgk.286.1537498480683;
+        Thu, 20 Sep 2018 19:54:40 -0700 (PDT)
+Received: from aurora.jms.id.au ([45.124.203.19])
+        by smtp.gmail.com with ESMTPSA id h4-v6sm26802903pgp.13.2018.09.20.19.54.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 19:54:39 -0700 (PDT)
+Received: by aurora.jms.id.au (sSMTP sendmail emulation); Fri, 21 Sep 2018 12:24:32 +0930
+From:   Joel Stanley <joel@jms.id.au>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe LEROY <christophe.leroy@c-s.fr>,
+        Meelis Roos <mroos@linux.ee>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] lib/xz: Put CRC32_POLY_LE in xz_private.h
+Date:   Fri, 21 Sep 2018 12:24:31 +0930
+Message-Id: <20180921025431.28366-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, so make sure the implementation in
-this driver has returns 'netdev_tx_t' value, and change the function
-return type to netdev_tx_t.
+This fixes a regression introduced by faa16bc404d72a5 ("lib: Use
+existing define with polynomial").
 
-Found by coccinelle.
+The cleanup added a dependency on include/linux, which broke the PowerPC
+boot wrapper/decompresser when KERNEL_XZ is enabled:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+  BOOTCC  arch/powerpc/boot/decompress.o
+ In file included from arch/powerpc/boot/../../../lib/decompress_unxz.c:233,
+                 from arch/powerpc/boot/decompress.c:42:
+ arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error:
+ linux/crc32poly.h: No such file or directory
+  #include <linux/crc32poly.h>
+           ^~~~~~~~~~~~~~~~~~~
+
+The powerpc decompresser is a hairy corner of the kernel. Even while building
+a 64-bit kernel it needs to build a 32-bit binary and therefore avoid including
+files from include/linux.
+
+This allows users of the xz library to avoid including headers from
+'include/linux/' while still achieving the cleanup of the magic number.
+
+Fixes: faa16bc404d72a5 ("lib: Use existing define with polynomial")
+Reported-by: Meelis Roos <mroos@linux.ee>
+Reported-by: kbuild test robot <lkp@intel.com>
+Suggested-by: Christophe LEROY <christophe.leroy@c-s.fr>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/net/ethernet/seeq/ether3.c  | 5 +++--
- drivers/net/ethernet/seeq/sgiseeq.c | 3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ lib/xz/xz_crc32.c   | 1 -
+ lib/xz/xz_private.h | 4 ++++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/seeq/ether3.c b/drivers/net/ethernet/seeq/ether3.c
-index c5bc124..d1bb73b 100644
---- a/drivers/net/ethernet/seeq/ether3.c
-+++ b/drivers/net/ethernet/seeq/ether3.c
-@@ -77,7 +77,8 @@
- static int	ether3_rx(struct net_device *dev, unsigned int maxcnt);
- static void	ether3_tx(struct net_device *dev);
- static int	ether3_open (struct net_device *dev);
--static int	ether3_sendpacket (struct sk_buff *skb, struct net_device *dev);
-+static netdev_tx_t	ether3_sendpacket(struct sk_buff *skb,
-+					  struct net_device *dev);
- static irqreturn_t ether3_interrupt (int irq, void *dev_id);
- static int	ether3_close (struct net_device *dev);
- static void	ether3_setmulticastlist (struct net_device *dev);
-@@ -481,7 +482,7 @@ static void ether3_timeout(struct net_device *dev)
- /*
-  * Transmit a packet
+diff --git a/lib/xz/xz_crc32.c b/lib/xz/xz_crc32.c
+index 25a5d87e2e4c..912aae5fa09e 100644
+--- a/lib/xz/xz_crc32.c
++++ b/lib/xz/xz_crc32.c
+@@ -15,7 +15,6 @@
+  * but they are bigger and use more memory for the lookup table.
   */
--static int
-+static netdev_tx_t
- ether3_sendpacket(struct sk_buff *skb, struct net_device *dev)
- {
- 	unsigned long flags;
-diff --git a/drivers/net/ethernet/seeq/sgiseeq.c b/drivers/net/ethernet/seeq/sgiseeq.c
-index 573691b..70cce63 100644
---- a/drivers/net/ethernet/seeq/sgiseeq.c
-+++ b/drivers/net/ethernet/seeq/sgiseeq.c
-@@ -578,7 +578,8 @@ static inline int sgiseeq_reset(struct net_device *dev)
- 	return 0;
- }
  
--static int sgiseeq_start_xmit(struct sk_buff *skb, struct net_device *dev)
-+static netdev_tx_t
-+sgiseeq_start_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct sgiseeq_private *sp = netdev_priv(dev);
- 	struct hpc3_ethregs *hregs = sp->hregs;
+-#include <linux/crc32poly.h>
+ #include "xz_private.h"
+ 
+ /*
+diff --git a/lib/xz/xz_private.h b/lib/xz/xz_private.h
+index 482b90f363fe..09360ebb510e 100644
+--- a/lib/xz/xz_private.h
++++ b/lib/xz/xz_private.h
+@@ -102,6 +102,10 @@
+ #	endif
+ #endif
+ 
++#ifndef CRC32_POLY_LE
++#define CRC32_POLY_LE 0xedb88320
++#endif
++
+ /*
+  * Allocate memory for LZMA2 decoder. xz_dec_lzma2_reset() must be used
+  * before calling xz_dec_lzma2_run().
 -- 
-1.8.3.1
-
+2.17.1
 
