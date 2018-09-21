@@ -2,217 +2,138 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2BBC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC78ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29ECD2154B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDA5F21536
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:27:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="kdHyVchM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29ECD2154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ohWryXSh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA5F21536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388826AbeIUGMB (ORCPT
+        id S2388833AbeIUGNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 02:12:01 -0400
-Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:42273 "EHLO
-        sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725861AbeIUGMB (ORCPT
+        Fri, 21 Sep 2018 02:13:41 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40268 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbeIUGNk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 02:12:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537489552; bh=NP66JWgDCiwOIWbQRYkw/4e57OLaxZaK6S7EJfawXfI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=kdHyVchMXCsms2+pJE6S3SYFsqlkykEGHrjezP+M9r5t9JvIEbdqaRJ6rVKRZ1YZnccEHCl0TDIVN8ix5PUI7137OPi0Li9izjhzZS4qlTcIV0MaTCMW349LtsTlqry0rQQn9Iwt+jNpl+NZs5dGAYLPyKAqoraJNZH6JeNenK+Lav+WZicMq2vV8nH22u8AbRoHoD0/mmjToay82V7p0aWA9E4ekGhYJAV5B8tpc0YjlN2EHCTxOCKY4cSci1oARJoRMxJo+c+cQypAsUJ8pl9GoqZIDPKQ4aiFkiDfAJ0h0xCEkbTeDlUbzJ/vPpDJidO9sbzTXCkUgy2c2LV3pg==
-X-YMail-OSG: q9TDyjIVM1lIzMKxN2KsrN4oObJXs.zOs6x22PyEP4uBW5GJNYrgA6YifDG6e27
- dOUvCHkHTOM85NJOikGoMqp3F8KMURgC1rCdn2Xf7eLH0lMUYE4se9p6JKARR9w0oZJOMJj6fnmo
- VH_3Gb_2mHbjceLsyjp5V_PTlhkMHBWfWqFFfyJuCfX5OXpv7GJZBhM6Qbt91FBNKUUo5z2ROkrz
- h1FYu8A6ehZXCrbZTlYunE7Us3hm8v5ss6_TU6r9EcCvQaoYSmUSh_fXqOUbLTjWg.zrRTTJVDX.
- cDFY3H4eMKW2SQTUC1qXb9QoQnyaFWtmgAgLkk9l9mi4fwciwNrGrK7hfTU2X8TEngxpTm4FCMkT
- QjWwQf_yi4ShtcDp2Sy2jf.tpU.rac6w6_9xk2Rw5j_6GrHDqPIoFcKcUZh5UM4CmLRLTwE5cxmL
- oeoRsq03WA7QAbcQJ17td3GHEOLhvgNifCsTlw45j_M24O85Th4Ad5Hn_wpcOF73j6coO7AJl0V4
- HalNHw23vl3hokMAe5hj.lO2LXPUh6CF.Yz39NRP0lrO8CiBpucByFt.GgJqiTo7JGUIcs_6oJwd
- 4y4szQcrlgHJXFprfbame3.Qi6kfGJMt.45nbr2mCS.gmsziATXnHYZkPZj9xfOxw8rzvHDmzucl
- 4Kka3Dq7V3CQX9e2mIzkW1BVBt09etkn1riMXnB6GEtXHAPf8ozHwpNqAwi_DP.l2xufTfreRfA8
- CSbzPx2jN7fsk0ozfeGlOONboMrndlxF7l8LbrlvEAX.QYV6N3m1klUKMBP5wY.zjq8FSPHUQVt5
- 4V0x6x211zjAAWTPV2xOHZBjZSamH8alz_BcSdr0qA9H9iPyuOADIXlqCasnmka7bKfwAutJL955
- 4rH6d3bBEhPBL6ynKwebklCgRLfUu9PzvK.lGRj2RwhFiu2yGoqGYMr_22U_3azVYGNb1MeKcttl
- sSbwB_Z__McW_u2o_QblP...HEEtLlOsASKsqTu5pbhD60cf1UIuF.sAL5EzENokk9PJWn0nKJY9
- ziSHZOCO.4Bgw_MLXM7NZnqUrUctpWKWA2aFasDs-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Sep 2018 00:25:52 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp423.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 15678ac77bb764a5b7612219a78407b0;
-          Fri, 21 Sep 2018 00:25:49 +0000 (UTC)
-Subject: Re: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
- ordered initialization
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180920162338.21060-1-keescook@chromium.org>
- <20180920162338.21060-27-keescook@chromium.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
-Date:   Thu, 20 Sep 2018 17:25:45 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 02:13:40 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 207-v6so1292430wme.5;
+        Thu, 20 Sep 2018 17:27:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4c3311Hck8hRg6nWnDQH7QlcCgFYoXhs6RPf6F0rdeM=;
+        b=ohWryXSh/ZIAN2BL5n2ktlh3Jc3Wv1lrVP7UG/O4NmZj30sKDA+ky3Lxyem2o6xHqF
+         9c8mB2Bm0/NwE7hSwH2nLV020uA2Xkaf9eaHaueHMU5XIuZOwzxyKakuMASZFeByGdtt
+         ZU1pWR4VpICGGfRS2X0qHdT0vkPmP4IPbmvVxXvGbM+zjI61ieWfmE0uJFkMkCEjKEsa
+         W+DnPGO9Rd1CY1BGBYilH8zCbT0Xbbtdf7Q7/eesdoAceDC8sFOj4M1UGmWFHUkvhU5k
+         7o+ZbAs/Tig9fS0MK8bTuvq/FXVmwXDL4GN/1Ww2crqHcGb98KLja+2In4b6bAu6BYiL
+         UCNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4c3311Hck8hRg6nWnDQH7QlcCgFYoXhs6RPf6F0rdeM=;
+        b=rUSN8VdkS1bKqw/SiTDzucuS30Owj+tarxfO35H6h9k+wCcsksNOpKsNNzC1hR2yAm
+         LvV2+0WdRpO8NzK1fhpWRxjTXdm9x9mCk1jFonYhuvgn2N8IQxXZowiiUairibxlGC4i
+         WlgZHmdXwYEPvvnhgoZj74UHZlr7kX1dFBSQdu1srZV4gQgI65GfFKqZUerwcCeLWD4L
+         MYZ3EgHvylWSqHvSL6Viqg3EjNXqto6JNd5i3UVuCJCGIK6UtdwIGgJ9pPngpD7ha12c
+         GQYulucpRru15dqJMtDRWdLx5n4gUePN2NRvVZiw7A4g3yUc7sa05Cfd8EWBVy4VSDya
+         K2Lg==
+X-Gm-Message-State: APzg51D/yRxSVZ7aZwQtI5fHUIWMi5NPedM4fW5h8WeU3n/Z2sL8otov
+        EAxJQdi7JvnEI5mddU+ayoo=
+X-Google-Smtp-Source: ANB0VdbSnNlAABW5rit1x05ISaRl2xpxKgOBoaKRrfR4Vr7GNKcwgkksvRINHNXFbSZ/cmmdObeIsw==
+X-Received: by 2002:a1c:1182:: with SMTP id 124-v6mr5019408wmr.75.1537489650403;
+        Thu, 20 Sep 2018 17:27:30 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id e10-v6sm5480752wrw.17.2018.09.20.17.27.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 17:27:29 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     qla2xxx-upstream@qlogic.com,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] scsi: qla2xxx: Simplify conditional check
+Date:   Thu, 20 Sep 2018 17:27:23 -0700
+Message-Id: <20180921002723.16600-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180920162338.21060-27-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/20/2018 9:23 AM, Kees Cook wrote:
-> This removes CONFIG_DEFAULT_SECURITY in favor of the explicit build-time
-> ordering offered by CONFIG_LSM_ORDER, and adds all the exclusive LSMs
-> to the ordered LSM initialization.
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  security/Kconfig    | 39 +--------------------------------------
->  security/security.c | 23 +----------------------
->  2 files changed, 2 insertions(+), 60 deletions(-)
->
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 33c9ac3cb759..a2e365420919 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -239,46 +239,9 @@ source security/yama/Kconfig
->  
->  source security/integrity/Kconfig
->  
-> -choice
-> -	prompt "Default security module"
-> -	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
-> -	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
-> -	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
-> -	default DEFAULT_SECURITY_APPARMOR if SECURITY_APPARMOR
-> -	default DEFAULT_SECURITY_DAC
-> -
-> -	help
-> -	  Select the security module that will be used by default if the
-> -	  kernel parameter security= is not specified.
-> -
-> -	config DEFAULT_SECURITY_SELINUX
-> -		bool "SELinux" if SECURITY_SELINUX=y
-> -
-> -	config DEFAULT_SECURITY_SMACK
-> -		bool "Simplified Mandatory Access Control" if SECURITY_SMACK=y
-> -
-> -	config DEFAULT_SECURITY_TOMOYO
-> -		bool "TOMOYO" if SECURITY_TOMOYO=y
-> -
-> -	config DEFAULT_SECURITY_APPARMOR
-> -		bool "AppArmor" if SECURITY_APPARMOR=y
-> -
-> -	config DEFAULT_SECURITY_DAC
-> -		bool "Unix Discretionary Access Controls"
-> -
-> -endchoice
-> -
-> -config DEFAULT_SECURITY
-> -	string
-> -	default "selinux" if DEFAULT_SECURITY_SELINUX
-> -	default "smack" if DEFAULT_SECURITY_SMACK
-> -	default "tomoyo" if DEFAULT_SECURITY_TOMOYO
-> -	default "apparmor" if DEFAULT_SECURITY_APPARMOR
-> -	default "" if DEFAULT_SECURITY_DAC
-> -
->  config LSM_ORDER
->  	string "Default initialization order of builtin LSMs"
-> -	default "yama,loadpin,integrity"
-> +	default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
+Clang generates a warning when it sees a logical not followed by a
+conditional operator like ==, >, or < because it thinks that the logical
+not should be applied to the whole statement:
 
-If I want to compile all the major modules into my kernel and use
-AppArmor by default would I use
+drivers/scsi/qla2xxx/qla_nx.c:3702:7: warning: logical not is only
+applied to the left hand side of this comparison
+[-Wlogical-not-parentheses]
+                if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
+                    ^
+drivers/scsi/qla2xxx/qla_nx.c:3702:7: note: add parentheses after the
+'!' to evaluate the comparison first
+                if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
+                    ^
+                     (
+drivers/scsi/qla2xxx/qla_nx.c:3702:7: note: add parentheses around left
+hand side expression to silence this warning
+                if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
+                    ^
+                    (
+1 warning generated.
 
-	default "yama,loadpin,integrity,apparmor,selinux,smack,tomoyo"
+It assumes the author might have made a mistake in their logic:
 
-or
+if (!a == b) -> if (!(a == b))
 
-	default "yama,loadpin,integrity,apparmor"
+Sometimes that is the case; other times, it's just a super convoluted
+way of saying 'if (a)' when b = 0:
 
-When we have "blob-sharing" how could I compile in tomoyo,
-but exclude it without a boot line option?
+if (!1 == 0) -> if (0 == 0) -> if (true)
 
-When we have full stacking, how could I compile in selinux
-but exclude it?
+Alternatively:
 
->  	help
->  	  A comma-separated list of LSMs, in initialization order.
->  	  Any LSMs left off this list will be link-order initialized
-> diff --git a/security/security.c b/security/security.c
-> index f076fdc6b451..628e62fda5fe 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -130,7 +130,6 @@ static void __init parse_lsm_order(const char *order, const char *origin)
->  
->  		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
->  			if (lsm->order == LSM_ORDER_MUTABLE &&
-> -			    (lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
->  			    strcmp(lsm->name, name) == 0) {
->  				append_ordered_lsm(lsm, origin);
->  				found = true;
-> @@ -163,8 +162,7 @@ static void __init prepare_lsm_order(void)
->  
->  	/* Add any missing LSMs, in link order. */
->  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> -		if (lsm->order == LSM_ORDER_MUTABLE &&
-> -		    (lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-> +		if (lsm->order == LSM_ORDER_MUTABLE)
->  			append_ordered_lsm(lsm, "link-time");
->  	}
->  
-> @@ -222,18 +220,6 @@ static void __init ordered_lsm_init(void)
->  		maybe_initialize_lsm(*lsm);
->  }
->  
-> -static void __init major_lsm_init(void)
-> -{
-> -	struct lsm_info *lsm;
-> -
-> -	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> -		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-> -			continue;
-> -
-> -		maybe_initialize_lsm(lsm);
-> -	}
-> -}
-> -
->  /**
->   * security_init - initializes the security framework
->   *
-> @@ -253,8 +239,6 @@ int __init security_init(void)
->  				GFP_KERNEL);
->  
->  	/* Process "security=", if given. */
-> -	if (!chosen_major_lsm)
-> -		chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
->  	if (chosen_major_lsm) {
->  		struct lsm_info *lsm;
->  
-> @@ -275,11 +259,6 @@ int __init security_init(void)
->  	prepare_lsm_order();
->  	ordered_lsm_init();
->  
-> -	/*
-> -	 * Load all the remaining security modules.
-> -	 */
-> -	major_lsm_init();
-> -
->  	kfree(ordered_lsms);
->  	return 0;
->  }
+if (!1 == 0) -> if (!!1) -> if (1)
+
+Simplify this comparison so that Clang doesn't complain.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/80
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/scsi/qla2xxx/qla_nx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_nx.c b/drivers/scsi/qla2xxx/qla_nx.c
+index de2bc78449e7..121e18b3b9f8 100644
+--- a/drivers/scsi/qla2xxx/qla_nx.c
++++ b/drivers/scsi/qla2xxx/qla_nx.c
+@@ -3699,8 +3699,8 @@ qla82xx_chip_reset_cleanup(scsi_qla_host_t *vha)
+ 		spin_unlock_irqrestore(&ha->hardware_lock, flags);
+ 
+ 		/* Wait for pending cmds (physical and virtual) to complete */
+-		if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
+-		    WAIT_HOST) == QLA_SUCCESS) {
++		if (qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
++		    WAIT_HOST)) {
+ 			ql_dbg(ql_dbg_init, vha, 0x00b3,
+ 			    "Done wait for "
+ 			    "pending commands.\n");
+-- 
+2.19.0
 
