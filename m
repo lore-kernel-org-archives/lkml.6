@@ -2,281 +2,257 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103C8ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C6CECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A840F21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QOMxQSZ0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A840F21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CC0621523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:27:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC0621523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390013AbeIUSPC (ORCPT
+        id S2389761AbeIUSQ3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:15:02 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53966 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389634AbeIUSPC (ORCPT
+        Fri, 21 Sep 2018 14:16:29 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:39740 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbeIUSQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:15:02 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180921122621euoutp0170fe0b8ecfad27b17771615e40bbbf09~Waes1RlMI0246802468euoutp01G
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:26:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180921122621euoutp0170fe0b8ecfad27b17771615e40bbbf09~Waes1RlMI0246802468euoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537532781;
-        bh=Gc8A4fvoVeATfeVJrujwYupX10uY+pxjztNgKaOOvww=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QOMxQSZ0EdMSuD8Pp/wAq+H1dBNKSxuYy5L1csQ0OFFE1A71prrAaROB+FjSihacA
-         f9CiNPWcNu1MfOcH4MKvxxHe8TIGdsqiBGbYQEcFQ7QlCkIspTi63eApeySkPyw88r
-         A/cebMe0V41mLJ4bXFyJ3p5GsSbupZb1igoUn92Y=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180921122620eucas1p268b98d570a140945ea98e70fb4e51f07~Waer5jTvS1104511045eucas1p2b;
-        Fri, 21 Sep 2018 12:26:20 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 66.7C.04294.C63E4AB5; Fri, 21
-        Sep 2018 13:26:20 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401~Waeq06DpV1393813938eucas1p2k;
-        Fri, 21 Sep 2018 12:26:19 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180921122619eusmtrp1a776d3c7a344257c480150397ea69f62~WaeqjG5Jb2872728727eusmtrp1R;
-        Fri, 21 Sep 2018 12:26:19 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-8e-5ba4e36cdc58
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C9.69.04284.B63E4AB5; Fri, 21
-        Sep 2018 13:26:19 +0100 (BST)
-Received: from AMDC2034.DIGITAL.local (unknown [106.120.51.41]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180921122618eusmtip1c8a2162f57eedac5f8641d35bdde390d~Waep66Eqt2109621096eusmtip1O;
-        Fri, 21 Sep 2018 12:26:18 +0000 (GMT)
-From:   Christoph Manszewski <c.manszewski@samsung.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 3/3] drm/exynos: mixer: Make plane alpha configurable
-Date:   Fri, 21 Sep 2018 14:24:38 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537532678-4276-1-git-send-email-c.manszewski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa0hTYRjm27nsaM1OU/FDQ2NilpWaWJxuZmC0ikKQoPJHnfKkkpuyeTdq
-        WabOuxZ5yTBdafPaUhM1LRXFSxtiiRdMwbJdElNnZXTbdpT+PZf34X3ej49A+FWYIxEujmYk
-        YjpCgFujzb2rmt0Rs4pg79FOe2qiTo1RWep+DvW8sB6j+tqeAOrdygJO5U/nopT2wzBK5cwa
-        EEqjaeBSb5O/cCnV7ChGjbQ+xKlCTQeHqu2Z4lKFBTrcf5NQpUzHhS+/zWDC6Yw+jvCF4qYw
-        u1EJhMsq50D8gvWhECYiPJaRePldsg5rep0DorK84h/pNLgMdLrLgRUBSV/4vTkbkwNrgk9W
-        AZihK+GyxAigsXYGZckygIYOFb4eWV5MQVijEsBS7S2O2bBEJtXxZoyTe+Hk1JIlYEe6wt95
-        SmAOIGQTCl/1j1kCtuQxOK/+a8Eo6QYr04bXNjjDcXU6YsZWpBDW/ZhDWb2ZC++rg8yYR8bC
-        1NF+wOoBUKXWrc3YQn1fI5fFW+BgQablBEjeBnDCOIqxJBfAN9XytcRBqBrTm1oQpno7YH2r
-        Fysfhe33ujGzDEkbODa/2SwjJpjf/ABhZR5Mu8tnp7dBQ2Mjvr5Wu7yyVk0I9Q0dgH2sEgAX
-        ZancXOBS/H9ZGQBK4MDESEWhjNRHzMR5SmmRNEYc6nklUqQCpv8z+KfP2AJaf13uAiQBBBt5
-        3hUVwXyMjpUmiLoAJBCBHa9Drgjm80LohERGEnlREhPBSLuAE4EKHHg2HleD+WQoHc1cY5go
-        RrLucggrRxnYL9uXOS6I6yYPD6Co29z7oER6YnrExb1ooNSvbGj7fP6naX5Bnrb8Tm3RVkXL
-        ruKdp3wC9P03HD6f1Y4niz/61ifUZPUcoe1LA4f8n7aNPDiZumHp63H+ZJyHy2PX8z9PEO7u
-        q9V+NfIk7+uGpBSnxfL20y3nNAd6s4yVC88GziQLUGkYvccDkUjpfyb5Fc07AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42I5/e/4Xd3sx0uiDd7N5ba4te4cq0XvuZNM
-        FhtnrGe1OL57KaPFla/v2Swm3Z/AYvHi3kUWi/7Hr5ktzp/fwG5xtukNu8Wmx9dYLS7vmsNm
-        MeP8PiaLtUfuslvMmPySzYHfY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEXp2RTl
-        l5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZWw90M9Y0Ktf
-        Me/lebYGxv3qXYycHBICJhKfP7YydzFycQgJLGWUmPTsMAtEQkZi3tk+NghbWOLPtS42iKJP
-        jBJvTj5gB0mwCZhK3L77CaxIREBZ4u/EVYwgRcwCB1kkWjaeYQRJCAu4Srw9958JxGYRUJVY
-        3nERrIFXwF1i0Y9fUBvkJG6e62QGsTkFPCTW/XgGdAUH0DZ3iVPrTSYw8i1gZFjFKJJaWpyb
-        nltsqFecmFtcmpeul5yfu4kRGA3bjv3cvIPx0sbgQ4wCHIxKPLwGixdHC7EmlhVX5h5ilOBg
-        VhLh3de1JFqINyWxsiq1KD++qDQntfgQoynQTROZpUST84GRmlcSb2hqaG5haWhubG5sZqEk
-        znveoDJKSCA9sSQ1OzW1ILUIpo+Jg1OqgVH9/brmidE+264oOb1d+dKNJ+sFG28Ox5wbak2N
-        P66aTfr8KzZXi32/R2/PvDXqLjObBU46LI1cvC3lnOSj44XbeZxEb+0t3qEnI7bw0fQ75rcY
-        eq193rxMYxNq2GrlfPHGps/n1fTFhSZ+v7lkwcye104vfMUnZGpLPBR91LlEn2de+3HuikIl
-        luKMREMt5qLiRABsazyrnAIAAA==
-Message-Id: <20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401~Waeq06DpV1393813938eucas1p2k@eucas1p2.samsung.com>
-X-CMS-MailID: 20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401
-References: <1537532678-4276-1-git-send-email-c.manszewski@samsung.com>
-        <CGME20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401@eucas1p2.samsung.com>
+        Fri, 21 Sep 2018 14:16:28 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g3KXD-0005wf-QN; Fri, 21 Sep 2018 06:27:47 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g3KXC-0000Dq-5u; Fri, 21 Sep 2018 06:27:47 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kselftest@vger.kernel.org
+References: <20180919205037.9574-1-dima@arista.com>
+Date:   Fri, 21 Sep 2018 14:27:29 +0200
+In-Reply-To: <20180919205037.9574-1-dima@arista.com> (Dmitry Safonov's message
+        of "Wed, 19 Sep 2018 21:50:17 +0100")
+Message-ID: <874lej6nny.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1g3KXC-0000Dq-5u;;;mid=<874lej6nny.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+oUvqiaONCZEP8u31gjYWzcQt4iTAM4dc=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mixer hardware supports variable plane alpha. Currently planes are
-opaque, make this configurable.
+Dmitry Safonov <dima@arista.com> writes:
 
-Tested on Odroid-U3 with Exynos 4412 CPU, kernel next-20180913
-using modetest.
+> Discussions around time virtualization are there for a long time.
+> The first attempt to implement time namespace was in 2006 by Jeff Dike.
+> From that time, the topic appears on and off in various discussions.
+>
+> There are two main use cases for time namespaces:
+> 1. change date and time inside a container;
+> 2. adjust clocks for a container restored from a checkpoint.
+>
+> “It seems like this might be one of the last major obstacles keeping
+> migration from being used in production systems, given that not all
+> containers and connections can be migrated as long as a time dependency
+> is capable of messing it up.” (by github.com/dav-ell)
+>
+> The kernel provides access to several clocks: CLOCK_REALTIME,
+> CLOCK_MONOTONIC, CLOCK_BOOTTIME. Last two clocks are monotonous, but the
+> start points for them are not defined and are different for each running
+> system. When a container is migrated from one node to another, all
+> clocks have to be restored into consistent states; in other words, they
+> have to continue running from the same points where they have been
+> dumped.
+>
+> The main idea behind this patch set is adding per-namespace offsets for
+> system clocks. When a process in a non-root time namespace requests
+> time of a clock, a namespace offset is added to the current value of
+> this clock on a host and the sum is returned.
+>
+> All offsets are placed on a separate page, this allows up to map it as 
+> part of vvar into user processes and use offsets from vdso calls.
+>
+> Now offsets are implemented for CLOCK_MONOTONIC and CLOCK_BOOTTIME
+> clocks.
+>
+> Questions to discuss:
+>
+> * Clone flags exhaustion. Currently there is only one unused clone flag
+> bit left, and it may be worth to use it to extend arguments of the clone
+> system call.
+>
+> * Realtime clock implementation details:
+>   Is having a simple offset enough?
+>   What to do when date and time is changed on the host?
+>   Is there a need to adjust vfs modification and creation times? 
+>   Implementation for adjtime() syscall.
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 +
- drivers/gpu/drm/exynos/exynos_drm_plane.c |  3 +++
- drivers/gpu/drm/exynos/exynos_mixer.c     | 37 ++++++++++++++++++-------------
- drivers/gpu/drm/exynos/regs-mixer.h       |  5 ++++-
- 4 files changed, 30 insertions(+), 16 deletions(-)
+Overall I support this effort.  In my quick skim this code looked good.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 1cb26d8c66f9..ec1d5bcac61a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -93,6 +93,7 @@ struct exynos_drm_plane {
- #define EXYNOS_DRM_PLANE_CAP_ZPOS	(1 << 2)
- #define EXYNOS_DRM_PLANE_CAP_TILE	(1 << 3)
- #define EXYNOS_DRM_PLANE_CAP_PIX_BLEND	(1 << 4)
-+#define EXYNOS_DRM_PLANE_CAP_WIN_BLEND	(1 << 5)
- 
- /*
-  * Exynos DRM plane configuration structure.
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 236408906f1f..df0508e0e49e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -325,5 +325,8 @@ int exynos_plane_init(struct drm_device *dev,
- 	if (config->capabilities & EXYNOS_DRM_PLANE_CAP_PIX_BLEND)
- 		drm_plane_create_blend_mode_property(plane, supported_modes);
- 
-+	if (config->capabilities & EXYNOS_DRM_PLANE_CAP_WIN_BLEND)
-+		drm_plane_create_alpha_property(plane);
-+
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 721b63e92b28..e3a4ecbc503b 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -132,7 +132,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
- 		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
- 		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE |
- 				EXYNOS_DRM_PLANE_CAP_ZPOS |
--				EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+				EXYNOS_DRM_PLANE_CAP_PIX_BLEND |
-+				EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
- 	}, {
- 		.zpos = 1,
- 		.type = DRM_PLANE_TYPE_CURSOR,
-@@ -140,7 +141,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
- 		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
- 		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE |
- 				EXYNOS_DRM_PLANE_CAP_ZPOS |
--				EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
-+				EXYNOS_DRM_PLANE_CAP_PIX_BLEND |
-+				EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
- 	}, {
- 		.zpos = 2,
- 		.type = DRM_PLANE_TYPE_OVERLAY,
-@@ -148,7 +150,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
- 		.num_pixel_formats = ARRAY_SIZE(vp_formats),
- 		.capabilities = EXYNOS_DRM_PLANE_CAP_SCALE |
- 				EXYNOS_DRM_PLANE_CAP_ZPOS |
--				EXYNOS_DRM_PLANE_CAP_TILE,
-+				EXYNOS_DRM_PLANE_CAP_TILE |
-+				EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
- 	},
- };
- 
-@@ -311,8 +314,9 @@ static void vp_default_filter(struct mixer_context *ctx)
- }
- 
- static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
--				unsigned int pixel_alpha)
-+				unsigned int pixel_alpha, unsigned int alpha)
- {
-+	u32 win_alpha = alpha >> 8;
- 	u32 val;
- 
- 	val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
-@@ -328,21 +332,24 @@ static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
- 		val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
- 		break;
- 	}
-+
-+	if (alpha != DRM_BLEND_ALPHA_OPAQUE) {
-+		val |= MXR_GRP_CFG_WIN_BLEND_EN;
-+		val |= win_alpha;
-+	}
- 	mixer_reg_writemask(ctx, MXR_GRAPHIC_CFG(win),
- 			    val, MXR_GRP_CFG_MISC_MASK);
- }
- 
--static void mixer_cfg_vp_blend(struct mixer_context *ctx)
-+static void mixer_cfg_vp_blend(struct mixer_context *ctx, unsigned int alpha)
- {
--	u32 val;
-+	u32 win_alpha = alpha >> 8;
-+	u32 val = 0;
- 
--	/*
--	 * No blending at the moment since the NV12/NV21 pixelformats don't
--	 * have an alpha channel. However the mixer supports a global alpha
--	 * value for a layer. Once this functionality is exposed, we can
--	 * support blending of the video layer through this.
--	 */
--	val = 0;
-+	if (alpha != DRM_BLEND_ALPHA_OPAQUE) {
-+		val |= MXR_VID_CFG_BLEND_EN;
-+		val |= win_alpha;
-+	}
- 	mixer_reg_write(ctx, MXR_VIDEO_CFG, val);
- }
- 
-@@ -538,7 +545,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
- 	vp_reg_write(ctx, VP_BOT_C_PTR, chroma_addr[1]);
- 
- 	mixer_cfg_layer(ctx, plane->index, priority, true);
--	mixer_cfg_vp_blend(ctx);
-+	mixer_cfg_vp_blend(ctx, state->base.alpha);
- 
- 	spin_unlock_irqrestore(&ctx->reg_slock, flags);
- 
-@@ -631,7 +638,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 	mixer_reg_write(ctx, MXR_GRAPHIC_BASE(win), dma_addr);
- 
- 	mixer_cfg_layer(ctx, win, priority, true);
--	mixer_cfg_gfx_blend(ctx, win, pixel_alpha);
-+	mixer_cfg_gfx_blend(ctx, win, pixel_alpha, state->base.alpha);
- 
- 	/* layer update mandatory for mixer 16.0.33.0 */
- 	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
-diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
-index 189cfa2470a8..d2b8194a07bf 100644
---- a/drivers/gpu/drm/exynos/regs-mixer.h
-+++ b/drivers/gpu/drm/exynos/regs-mixer.h
-@@ -109,12 +109,15 @@
- #define MXR_CFG_SCAN_HD			(1 << 0)
- #define MXR_CFG_SCAN_MASK		0x47
- 
-+/* bits for MXR_VIDEO_CFG */
-+#define MXR_VID_CFG_BLEND_EN		(1 << 16)
-+
- /* bits for MXR_GRAPHICn_CFG */
- #define MXR_GRP_CFG_COLOR_KEY_DISABLE	(1 << 21)
- #define MXR_GRP_CFG_BLEND_PRE_MUL	(1 << 20)
- #define MXR_GRP_CFG_WIN_BLEND_EN	(1 << 17)
- #define MXR_GRP_CFG_PIXEL_BLEND_EN	(1 << 16)
--#define MXR_GRP_CFG_MISC_MASK		((3 << 16) | (3 << 20))
-+#define MXR_GRP_CFG_MISC_MASK		((3 << 16) | (3 << 20) | 0xff)
- #define MXR_GRP_CFG_FORMAT_VAL(x)	MXR_MASK_VAL(x, 11, 8)
- #define MXR_GRP_CFG_FORMAT_MASK		MXR_GRP_CFG_FORMAT_VAL(~0)
- #define MXR_GRP_CFG_ALPHA_VAL(x)	MXR_MASK_VAL(x, 7, 0)
--- 
-2.7.4
+My feeling is that we need to be able to support running ntpd and
+support one namespace doing googles smoothing of leap seconds while
+another namespace takes the leap second.
 
+What I was imagining when I was last thinking about this was one
+instance of struct timekeeper aka tk_core per time namespace.  That
+structure already keeps offsets for all of the various clocks from
+the kerne internal time sources.  What would be needed would be to
+pass in an appropriate time namespace pointer.
+
+I could be completely wrong as I have not take the time to completely
+trace through the code.  Have you looked at pushing the time namespace
+down as far as tk_core?
+
+What I think would be the big advantage (besides ntp working) is that
+the bulk of the code could be reused.  Allowing testing of the kernel's
+time code by setting up a new time namespace.  So a person in production
+could setup a time namespace with the time set ahead a little  bit and
+be able to verify that the kernel handles the upcoming leap second
+properly.
+
+
+
+I don't know about the vfs.  I think the danger is being able to write
+dates in the future or in the past.  It appears that utimes(2) and
+utimesnat(2) already allow this except for status change.  So it is
+possible we simply don't care.  I seem to remember that what nfs does
+is take the time stamp from the host writing to the file.
+
+I think the guide for filesystem timestamps should be to first ensure
+we don't introduce security issues, and then do what distributed
+filesystems do when dealing with hosts with different clocks.
+
+Given those those two guidlines above I don't think there is a need to
+change timestamsp the way the user namespace changes uid when displayed.
+
+
+
+As for the hardware like the real time clock we definitely should not
+let a root in a time namespace change it.  We might even be able to get
+away with leaving the real time clock out of the time namespace.  If not
+we need to be very careful how the real time clock is abstracted.  I
+would start by leaving the real time clock hardware out of the time
+namespace and see if there is any part of userspace that cares.
+
+Eric
+
+> Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+> Cc: Adrian Reber <adrian@lisas.de>
+> Cc: Andrei Vagin <avagin@openvz.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> Cc: Cyrill Gorcunov <gorcunov@openvz.org>
+> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com> 
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Jeff Dike <jdike@addtoit.com>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Pavel Emelyanov <xemul@virtuozzo.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: containers@lists.linux-foundation.org
+> Cc: criu@openvz.org
+> Cc: linux-api@vger.kernel.org
+> Cc: x86@kernel.org
+>
+> Andrei Vagin (12):
+>   ns: Introduce Time Namespace
+>   timens: Add timens_offsets
+>   timens: Introduce CLOCK_MONOTONIC offsets
+>   timens: Introduce CLOCK_BOOTTIME offset
+>   timerfd/timens: Take into account ns clock offsets
+>   kernel: Take into account timens clock offsets in clock_nanosleep
+>   x86/vdso/timens: Add offsets page in vvar
+>   x86/vdso: Use set_normalized_timespec() to avoid 32 bit overflow
+>   posix-timers/timens: Take into account clock offsets
+>   selftest/timens: Add test for timerfd
+>   selftest/timens: Add test for clock_nanosleep
+>   timens/selftest: Add timer offsets test
+>
+> Dmitry Safonov (8):
+>   timens: Shift /proc/uptime
+>   x86/vdso: Restrict splitting vvar vma
+>   x86/vdso: Purge timens page on setns()/unshare()/clone()
+>   x86/vdso: Look for vvar vma to purge timens page
+>   timens: Add align for timens_offsets
+>   timens: Optimize zero-offsets
+>   selftest: Add Time Namespace test for supported clocks
+>   timens/selftest: Add procfs selftest
+>
+>  arch/Kconfig                                     |   5 +
+>  arch/x86/Kconfig                                 |   1 +
+>  arch/x86/entry/vdso/vclock_gettime.c             |  52 +++++
+>  arch/x86/entry/vdso/vdso-layout.lds.S            |   9 +-
+>  arch/x86/entry/vdso/vdso2c.c                     |   3 +
+>  arch/x86/entry/vdso/vma.c                        |  67 +++++++
+>  arch/x86/include/asm/vdso.h                      |   2 +
+>  fs/proc/namespaces.c                             |   3 +
+>  fs/proc/uptime.c                                 |   3 +
+>  fs/timerfd.c                                     |  16 +-
+>  include/linux/nsproxy.h                          |   1 +
+>  include/linux/proc_ns.h                          |   1 +
+>  include/linux/time_namespace.h                   |  72 +++++++
+>  include/linux/timens_offsets.h                   |  25 +++
+>  include/linux/user_namespace.h                   |   1 +
+>  include/uapi/linux/sched.h                       |   1 +
+>  init/Kconfig                                     |   8 +
+>  kernel/Makefile                                  |   1 +
+>  kernel/fork.c                                    |   3 +-
+>  kernel/nsproxy.c                                 |  19 +-
+>  kernel/time/hrtimer.c                            |   8 +
+>  kernel/time/posix-timers.c                       |  89 ++++++++-
+>  kernel/time/posix-timers.h                       |   2 +
+>  kernel/time_namespace.c                          | 230 +++++++++++++++++++++++
+>  tools/testing/selftests/timens/.gitignore        |   5 +
+>  tools/testing/selftests/timens/Makefile          |   6 +
+>  tools/testing/selftests/timens/clock_nanosleep.c |  98 ++++++++++
+>  tools/testing/selftests/timens/config            |   1 +
+>  tools/testing/selftests/timens/log.h             |  21 +++
+>  tools/testing/selftests/timens/procfs.c          | 145 ++++++++++++++
+>  tools/testing/selftests/timens/timens.c          | 196 +++++++++++++++++++
+>  tools/testing/selftests/timens/timer.c           |  95 ++++++++++
+>  tools/testing/selftests/timens/timerfd.c         |  96 ++++++++++
+>  33 files changed, 1272 insertions(+), 13 deletions(-)
+>  create mode 100644 include/linux/time_namespace.h
+>  create mode 100644 include/linux/timens_offsets.h
+>  create mode 100644 kernel/time_namespace.c
+>  create mode 100644 tools/testing/selftests/timens/.gitignore
+>  create mode 100644 tools/testing/selftests/timens/Makefile
+>  create mode 100644 tools/testing/selftests/timens/clock_nanosleep.c
+>  create mode 100644 tools/testing/selftests/timens/config
+>  create mode 100644 tools/testing/selftests/timens/log.h
+>  create mode 100644 tools/testing/selftests/timens/procfs.c
+>  create mode 100644 tools/testing/selftests/timens/timens.c
+>  create mode 100644 tools/testing/selftests/timens/timer.c
+>  create mode 100644 tools/testing/selftests/timens/timerfd.c
