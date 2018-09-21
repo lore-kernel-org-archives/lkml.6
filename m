@@ -2,178 +2,218 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E211DECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7781DC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 993D021547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:02:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TYuXHdbJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993D021547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1ADAA2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:02:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADAA2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389042AbeIUIss (ORCPT
+        id S2389065AbeIUIsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 04:48:48 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:40315 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbeIUIsr (ORCPT
+        Fri, 21 Sep 2018 04:48:51 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:18575 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727252AbeIUIsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 04:48:47 -0400
-Received: by mail-yw1-f67.google.com with SMTP id z143-v6so4644162ywa.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 20:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=pyD3m6E5xpzzgx6cR5aSzJI3I2qIkiqcmrw12FtYyUA=;
-        b=TYuXHdbJe0RBgK90gj1Yb0ScC3ZbfBO/AJ1UCb8S0xGExW4mvDkveDyN50fIA/JagA
-         PtitRVPTGnlvjOkDGIvzbqtx/hfrqQqTKofjA3bopDKHRcTS55ibEuwJQGTkI7Jf4KkG
-         16jjGvhYs0qQAMRtvM8rspSVZzeuwlqPqUXYQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=pyD3m6E5xpzzgx6cR5aSzJI3I2qIkiqcmrw12FtYyUA=;
-        b=A7NE7Qf4i/6W5f4tErqHXjl9CnKej2//uG1tsUu/QRzOMdNZEvxGvZGtNZzJA1LZ1+
-         Mok9YLtRbFsa3G81j9SjNtRkPbvV+QR6STK+ijIW92BmjLonC7oGDmBuHfDFQ8NTsOCG
-         nZFK2VTS2DS3RbGq1RDLEzD0g7ArODcJAHZjSznSfWkegwY9VpoTd6br/kx5v4908cVS
-         bNVaVaphAadVLhX97bzz4AbFChxrXKbDQSKA+9mnIde/3cYL5EXpeF9+3zNkyvaYIjbb
-         uTJFIDl27IvNiBRAfYXuKq23PB8z5TCJTslSHKxBBnWRQ6uzdj0dUbwRwXUPFRGSWOnp
-         1NWA==
-X-Gm-Message-State: APzg51Dw2WD2RTjNZjTVqETFsw8Wuo8y5cbb1SqHEilKuT1cwS/VS9YY
-        dQxG3BmAx51k0oTpArZQKH7rR/XFUQM=
-X-Google-Smtp-Source: ANB0VdafW+t8yjVEG+jusfIq1++sYqcciaCDqvtPTox6VRfIaxMOXOe8KuV0u2rqTRQm6cLRLPizqw==
-X-Received: by 2002:a81:4689:: with SMTP id t131-v6mr19653147ywa.496.1537498924026;
-        Thu, 20 Sep 2018 20:02:04 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm6071166ywj.6.2018.09.20.20.02.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 20:02:02 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id c4-v6so4854834ybl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 20:02:02 -0700 (PDT)
-X-Received: by 2002:a25:238d:: with SMTP id j135-v6mr2067179ybj.137.1537498921935;
- Thu, 20 Sep 2018 20:02:01 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 20:02:01
- -0700 (PDT)
-In-Reply-To: <74ecd4ec-491b-93d7-4e3f-46f92121130b@canonical.com>
-References: <20180920162338.21060-1-keescook@chromium.org> <20180920162338.21060-27-keescook@chromium.org>
- <a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com> <CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
- <7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com> <6c899d9e-45aa-8159-c402-b3c4d1936112@canonical.com>
- <CAGXu5jKzqij5dY2FYm5rafPNPpF1Tx9BPmK+=FvG+=tpFxpscw@mail.gmail.com> <74ecd4ec-491b-93d7-4e3f-46f92121130b@canonical.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 20 Sep 2018 20:02:01 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+QhU2HOicYKqfNo17n9k6DKgt1upa3O2p1b5Gvn6icbQ@mail.gmail.com>
-Message-ID: <CAGXu5j+QhU2HOicYKqfNo17n9k6DKgt1upa3O2p1b5Gvn6icbQ@mail.gmail.com>
-Subject: Re: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
- ordered initialization
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Fri, 21 Sep 2018 04:48:50 -0400
+X-UUID: 1164864181304d9ab78c7e7b51694fda-20180921
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1433483404; Fri, 21 Sep 2018 11:02:03 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 21 Sep 2018 11:02:01 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 21 Sep 2018 11:02:02 +0800
+Message-ID: <1537498922.17379.3.camel@mtksdaap41>
+Subject: Re: [PATCH v2 13/13] drm/mediatek: config component output by
+ device node port
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>
+Date:   Fri, 21 Sep 2018 11:02:02 +0800
+In-Reply-To: <1536213802.4618.41.camel@mtksdaap41>
+References: <20180905083146.14727-1-bibby.hsieh@mediatek.com>
+         <20180905083146.14727-14-bibby.hsieh@mediatek.com>
+         <1536213802.4618.41.camel@mtksdaap41>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 7:14 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 09/20/2018 07:05 PM, Kees Cook wrote:
->> On Thu, Sep 20, 2018 at 6:39 PM, John Johansen
->> <john.johansen@canonical.com> wrote:
->>> On 09/20/2018 06:10 PM, Casey Schaufler wrote:
->>>> On 9/20/2018 5:45 PM, Kees Cook wrote:
->>>>> On Thu, Sep 20, 2018 at 5:25 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>>> On 9/20/2018 9:23 AM, Kees Cook wrote:
->>>>>>>  config LSM_ORDER
->>>>>>>       string "Default initialization order of builtin LSMs"
->>>>>>> -     default "yama,loadpin,integrity"
->>>>>>> +     default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
->>>>>> If I want to compile all the major modules into my kernel and use
->>>>>> AppArmor by default would I use
->>>>>>
->>>>>>         default "yama,loadpin,integrity,apparmor,selinux,smack,tomoyo"
->>>>>>
->>>>>> or
->>>>>>
->>>>>>         default "yama,loadpin,integrity,apparmor"
->>>>> I was expecting the former, but the latter will have the same result.
->>>
->>> t find having the two be equivalent violates expectations. At least
->>> when considering the end goal of full/extreme stacking, its trivially
->>> the same with current major lsms being exclusive
->>
->> This mixes "enablement" with "ordering", though, and I think the past
->> threads have shown this to be largely problematic.
->>
->> However, with CONFIG_LSM_ENABLED, we get the effect you're looking for, IIUC.
->
-> no, I was just stating in a world where we have full stacking those two
-> are not equivalent, as I would assume the order of any lsm not listed
-> may end up being different.
+Hi, CK,
 
-Right, the ordering would be defined first by runtime (lsm.order=)
-followed any missing LSMs then ordered by their order in
-CONFIG_LSM_ORDER=, followed by any still missing LSMs then ordered by
-their order at link-time (which *may* be Makefile order, but could
-change with LTO, etc).
+Thanks for the review comment.
+I will add the description in the binding document in v4.
 
->>>>>> When we have "blob-sharing" how could I compile in tomoyo,
->>>>>> but exclude it without a boot line option?
->>>>> Ooh, yes, this series has no way to do that. Perhaps
->>>>> CONFIG_LSM_DISABLE in the same form as CONFIG_LSM_ORDER? I would
->>>>> totally remove LoadPin's CONFIG for this in favor it.
->>>>
->>>> I would generally prefer an optional CONFIG_LSM_ENABLE to
->>>> CONFIG_LSM_DISABLE, but I understand the logic behind your
->>>> approach. I would be looking for something like
->>>>
->>> +1 on the CONFIG_LSM_ENABLE ove DISABLE
->>>
->>>> CONFIG LSM_ENABLE
->>>>       string "Default set of enabled LSMs"
->>>>       default ""
->>>>
->>>> as opposed to
->>>>
->>>> CONFIG LSM_DISABLE
->>>>       string "Default set of disabled LSMs"
->>>>       default ""
->>>>
->>>> where an empty string is interpreted as "use 'em all"
->>>> in either case.
->>
->> Yes, I like CONFIG_LSM_ENABLE if "empty" means "enable all". Should
->> CONFIG_LSM_ENABLE replace all the other CONFIG-based LSM
->> enabling/disabling?
->
-> I don't particularly like "empty" being "enable all". With that
-> how would I disable all builtin lsms so that I just boot with
-> capability.
->
-> An option of all or even * is more explicit and leaves the empty
-> set to mean disable everything
+I want to send the other changes in v3 first.
 
-Okay, that works. I prefer "all" FWIW.
+Thanks.
 
--Kees
+Bibby
+
+
+On Thu, 2018-09-06 at 14:03 +0800, CK Hu wrote:
+> Hi, Bibby:
+> 
+> On Wed, 2018-09-05 at 16:31 +0800, Bibby Hsieh wrote:
+> > We can select output component by decive node port.
+> > Main path default output component is DSI.
+> > External path default output component is DPI.
+> > 
+> > Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 37 ++++++++++++++++++++++++++++++----
+> >  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  4 ++--
+> >  2 files changed, 35 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > index d961112fa2f5..a477fb878c06 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > @@ -21,7 +21,9 @@
+> >  #include <drm/drm_of.h>
+> >  #include <linux/component.h>
+> >  #include <linux/iommu.h>
+> > +#include <linux/of.h>
+> >  #include <linux/of_address.h>
+> > +#include <linux/of_graph.h>
+> >  #include <linux/of_platform.h>
+> >  #include <linux/pm_runtime.h>
+> >  
+> > @@ -133,7 +135,7 @@ static const struct drm_mode_config_funcs mtk_drm_mode_config_funcs = {
+> >  	.atomic_commit = mtk_atomic_commit,
+> >  };
+> >  
+> > -static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+> > +static enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+> >  	DDP_COMPONENT_OVL0,
+> >  	DDP_COMPONENT_RDMA0,
+> >  	DDP_COMPONENT_COLOR0,
+> > @@ -141,7 +143,7 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+> >  	DDP_COMPONENT_DSI0,
+> >  };
+> >  
+> > -static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+> > +static enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+> >  	DDP_COMPONENT_RDMA1,
+> >  	DDP_COMPONENT_DPI0,
+> >  };
+> > @@ -172,7 +174,7 @@ static const enum mtk_ddp_comp_id mt2712_mtk_ddp_third[] = {
+> >  	DDP_COMPONENT_PWM2,
+> >  };
+> >  
+> > -static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+> > +static enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+> >  	DDP_COMPONENT_OVL0,
+> >  	DDP_COMPONENT_COLOR0,
+> >  	DDP_COMPONENT_AAL0,
+> > @@ -183,7 +185,7 @@ static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+> >  	DDP_COMPONENT_PWM0,
+> >  };
+> >  
+> > -static const enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
+> > +static enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
+> >  	DDP_COMPONENT_OVL1,
+> >  	DDP_COMPONENT_COLOR1,
+> >  	DDP_COMPONENT_GAMMA,
+> > @@ -472,6 +474,7 @@ static int mtk_drm_probe(struct platform_device *pdev)
+> >  
+> >  	/* Iterate over sibling DISP function blocks */
+> >  	for_each_child_of_node(dev->of_node->parent, node) {
+> > +		struct device_node *port, *ep, *remote;
+> >  		const struct of_device_id *of_id;
+> >  		enum mtk_ddp_comp_type comp_type;
+> >  		int comp_id;
+> > @@ -531,6 +534,32 @@ static int mtk_drm_probe(struct platform_device *pdev)
+> >  
+> >  			private->ddp_comp[comp_id] = comp;
+> >  		}
+> > +
+> > +		if (comp_type != MTK_DSI && comp_type != MTK_DPI) {
+> > +			port = of_graph_get_port_by_id(node, 0);
+> > +			if (!port)
+> > +				continue;
+> > +			ep = of_get_child_by_name(port, "endpoint");
+> > +			of_node_put(port);
+> > +			if (!ep)
+> > +				continue;
+> > +			remote = of_graph_get_remote_port_parent(ep);
+> > +			of_node_put(ep);
+> > +			if (!remote)
+> > +				continue;
+> > +			of_id = of_match_node(mtk_ddp_comp_dt_ids, remote);
+> > +			if (!of_id)
+> > +				continue;
+> > +			comp_type = (enum mtk_ddp_comp_type)of_id->data;
+> > +			for (i = 0; i < private->data->main_len - 1; i++)
+> > +				if (private->data->main_path[i] == comp_id)
+> > +					private->data->main_path[i + 1] =
+> > +					mtk_ddp_comp_get_id(node, comp_type);
+> > +			for (i = 0; i < private->data->ext_len - 1; i++)
+> > +				if (private->data->ext_path[i] == comp_id)
+> > +					private->data->ext_path[i + 1] =
+> > +					mtk_ddp_comp_get_id(node, comp_type);
+> > +		}
+> 
+> I think you should add description in binding document
+> (Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt)
+> for this. After the binding document is fully reviewed, we could start
+> to review this patch.
+> 
+> Regards,
+> CK
+> 
+> >  	}
+> >  
+> >  	if (!private->mutex_node) {
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > index ecc00ca3221d..256a3ff2e66e 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> > @@ -29,9 +29,9 @@ struct drm_property;
+> >  struct regmap;
+> >  
+> >  struct mtk_mmsys_driver_data {
+> > -	const enum mtk_ddp_comp_id *main_path;
+> > +	enum mtk_ddp_comp_id *main_path;
+> >  	unsigned int main_len;
+> > -	const enum mtk_ddp_comp_id *ext_path;
+> > +	enum mtk_ddp_comp_id *ext_path;
+> >  	unsigned int ext_len;
+> >  	const enum mtk_ddp_comp_id *third_path;
+> >  	unsigned int third_len;
+> 
+> 
 
 -- 
-Kees Cook
-Pixel Security
+Bibby
+
