@@ -2,113 +2,129 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AD9C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 490C4ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B585421547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B585421547
+	by mail.kernel.org (Postfix) with ESMTP id 064D221547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:19:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064D221547
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389324AbeIUMGx (ORCPT
+        id S2389267AbeIUMHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 08:06:53 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41430 "EHLO mga02.intel.com"
+        Fri, 21 Sep 2018 08:07:06 -0400
+Received: from mga07.intel.com ([134.134.136.100]:51506 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbeIUMGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 08:06:53 -0400
+        id S1725887AbeIUMHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 08:07:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 23:19:32 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 23:19:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,283,1534834800"; 
-   d="scan'208";a="234744635"
+   d="scan'208";a="74798757"
 Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
-  by orsmga004.jf.intel.com with ESMTP; 20 Sep 2018 23:19:28 -0700
+  by orsmga007.jf.intel.com with ESMTP; 20 Sep 2018 23:19:43 -0700
 From:   Chen Yu <yu.c.chen@intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
         Zhimin Gu <kookoo.gu@intel.com>, Chen Yu <yu.c.chen@intel.com>,
         x86@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 00/12][v4] Backport several fixes from 64bits to 32bits hibernation 
-Date:   Fri, 21 Sep 2018 14:24:46 +0800
-Message-Id: <cover.1537448058.git.yu.c.chen@intel.com>
+        linux-kernel@vger.kernel.org, stable@kernel.org
+Subject: [PATCH 01/12][v4] x86, hibernate: Fix nosave_regions setup for hibernation
+Date:   Fri, 21 Sep 2018 14:26:24 +0800
+Message-Id: <9b373ca69c3a1b872874487ad235161314f1172c.1537448058.git.yu.c.chen@intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1537448058.git.yu.c.chen@intel.com>
+References: <cover.1537448058.git.yu.c.chen@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently there are mainly three bugs in 32bits system when doing
-hibernation:
-1. The page copy code is not running in safe page, which might
-   cause hang during resume.
-2. There's no text mapping for the final jump address
-   of the original kernel, which might cause the system jumping
-   into illegal address and causes system hang during resume.
-3. The restore kernel switches to its own kernel page table(swapper_pg_dir)
-   rather than the original kernel page table after all the pages
-   been copied back, which might cause invalid virtual-physical
-   mapping issue during resume.
+From: Zhimin Gu <kookoo.gu@intel.com>
 
-To solve these problems:
+On 32bit systems, nosave_regions(non RAM areas) located between
+max_low_pfn and max_pfn are not excluded from hibernation snapshot
+currently, which may result in a machine check exception when
+trying to access these unsafe regions during hibernation:
 
-1. Copy the code core_restore_code to a safe page, to avoid the instruction
-   code been overwritten when image kernel pages are being copied.
-2. Set up temporary text mapping for the image kernel's jump address,
-   so that after all the pages have been copied back, the system could
-   jump to this address.
-3. Switch to the original kernel page table during resume.
+[  612.800453] Disabling lock debugging due to kernel taint
+[  612.805786] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 6: fe00000000801136
+[  612.814344] mce: [Hardware Error]: RIP !INEXACT! 60:<00000000d90be566> {swsusp_save+0x436/0x560}
+[  612.823167] mce: [Hardware Error]: TSC 1f5939fe276 ADDR dd000000 MISC 30e0000086
+[  612.830677] mce: [Hardware Error]: PROCESSOR 0:306c3 TIME 1529487426 SOCKET 0 APIC 0 microcode 24
+[  612.839581] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+[  612.846394] mce: [Hardware Error]: Machine check: Processor context corrupt
+[  612.853380] Kernel panic - not syncing: Fatal machine check
+[  612.858978] Kernel Offset: 0x18000000 from 0xc1000000 (relocation range: 0xc0000000-0xf7ffdfff)
 
-Furthermore, MD5 hash check for e820 map is also backported from 64bits
-system.
+This is because on 32bit systems, pages above max_low_pfn are regarded
+as high memeory, and accessing unsafe pages might cause expected MCE.
+On the problematic 32bit system, there are reserved memory above low
+memory, which triggered the MCE:
 
-In order to make this patch set more readable, these fixes are splitted
-into several sub patches.
+e820 memory mapping:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009d7ff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009d800-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000d160cfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d160d000-0x00000000d1613fff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x00000000d1614000-0x00000000d1a44fff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d1a45000-0x00000000d1ecffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000d1ed0000-0x00000000d7eeafff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d7eeb000-0x00000000d7ffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000d8000000-0x00000000d875ffff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d8760000-0x00000000d87fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000d8800000-0x00000000d8fadfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000d8fae000-0x00000000d8ffffff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x00000000d9000000-0x00000000da71bfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000da71c000-0x00000000da7fffff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x00000000da800000-0x00000000dbb8bfff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000dbb8c000-0x00000000dbffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000dd000000-0x00000000df1fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed03fff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000041edfffff] usable
 
-And use CONFIG_X86_64 to control the common code to be 'activated' for
-32 bit system during each sub-patch for better maintaining.
+Fix this problem by changing pfn limit from max_low_pfn to max_pfn.
+This fix does not impact 64bit system because on 64bit max_low_pfn
+is the same as max_pfn.
 
-Chen Yu (1):
-  PM / hibernate: Check the success of generating md5 digest before
-    hibernation
+Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@kernel.org
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ arch/x86/kernel/setup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Zhimin Gu (11):
-  x86, hibernate: Fix nosave_regions setup for hibernation
-  x86-32/asm/power: Create stack frames in hibernate_asm_32.S
-  x86, hibernate: Extract the common code of 64/32 bit system
-  x86-32, hibernate: Enable CONFIG_ARCH_HIBERNATION_HEADER on 32bit
-    system
-  x86, hibernate: Rename temp_level4_pgt to temp_pgt
-  x86-32, hibernate: Use temp_pgt as the temporary page table
-  x86-32, hibernate: Use the page size macro instead of constant value
-  x86-32, hibernate: Switch to original page table after resumed
-  x86-32, hibernate: Switch to relocated restore code during resume on
-    32bit system
-  x86-32, hibernate: Set up temporary text mapping for 32bit system
-  x86-32, hibernate: Adjust in_suspend after resumed on 32bit system
-
- arch/x86/Kconfig                  |   2 +-
- arch/x86/include/asm/suspend.h    |   8 +
- arch/x86/include/asm/suspend_32.h |   4 +
- arch/x86/kernel/setup.c           |   2 +-
- arch/x86/power/Makefile           |   2 +-
- arch/x86/power/hibernate.c        | 248 ++++++++++++++++++++++++++++++
- arch/x86/power/hibernate_32.c     |  52 +++++--
- arch/x86/power/hibernate_64.c     | 224 +--------------------------
- arch/x86/power/hibernate_asm_32.S |  37 ++++-
- arch/x86/power/hibernate_asm_64.S |   2 +-
- 10 files changed, 334 insertions(+), 247 deletions(-)
- create mode 100644 arch/x86/power/hibernate.c
-
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index b4866badb235..90ecc108bc8a 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1251,7 +1251,7 @@ void __init setup_arch(char **cmdline_p)
+ 	x86_init.hyper.guest_late_init();
+ 
+ 	e820__reserve_resources();
+-	e820__register_nosave_regions(max_low_pfn);
++	e820__register_nosave_regions(max_pfn);
+ 
+ 	x86_init.resources.reserve_resources();
+ 
 -- 
 2.17.1
 
