@@ -2,49 +2,51 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF32EECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FEFECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77DB721523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:21:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DB721523
+	by mail.kernel.org (Postfix) with ESMTP id 3C29C2150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:21:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C29C2150E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391151AbeIVALw (ORCPT
+        id S2391199AbeIVAL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:11:52 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:41916
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390076AbeIVALw (ORCPT
+        Fri, 21 Sep 2018 20:11:57 -0400
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:52026
+        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390076AbeIVAL4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:11:52 -0400
+        Fri, 21 Sep 2018 20:11:56 -0400
 Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
         by : HOSTING RELAY : with ESMTP
-        id 3Q2pgfJiKM0DP3Q2pgpUIn; Fri, 21 Sep 2018 11:20:47 -0700
+        id 3Q2tgIB4Bsezk3Q2tgLbR1; Fri, 21 Sep 2018 11:20:51 -0700
 x-originating-ip: 107.180.71.197
 Received: from haiyangz by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
         (envelope-from <haiyangz@linuxonhyperv2.linuxonhyperv.com>)
-        id 1g3Q2p-0002dC-86; Fri, 21 Sep 2018 11:20:47 -0700
+        id 1g3Q2s-0002dJ-Tm; Fri, 21 Sep 2018 11:20:50 -0700
 From:   Haiyang Zhang <haiyangz@linuxonhyperv.com>
 To:     davem@davemloft.net, netdev@vger.kernel.org
 Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
         olaf@aepfle.de, vkuznets@redhat.com, devel@linuxdriverproject.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH net-next,v2,0/3] hv_netvsc: Support LRO/RSC in the vSwitch
-Date:   Fri, 21 Sep 2018 18:20:34 +0000
-Message-Id: <20180921182037.10077-1-haiyangz@linuxonhyperv.com>
+Subject: [PATCH net-next,v2,1/3] hv_netvsc: Add support for LRO/RSC in the vSwitch
+Date:   Fri, 21 Sep 2018 18:20:35 +0000
+Message-Id: <20180921182037.10077-2-haiyangz@linuxonhyperv.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180921182037.10077-1-haiyangz@linuxonhyperv.com>
+References: <20180921182037.10077-1-haiyangz@linuxonhyperv.com>
 Reply-To: haiyangz@microsoft.com
-X-CMAE-Envelope: MS4wfC+3JdNliwQv0Y3o5OZk4n4bzMcGaSwbWNnWqctROIV5JTkpTWmzwAk0/G1c+fYduppGJEBBLxoiapw25wZf6dhQU2qE78+OjG5XISkYHqZy/dYOXzPJ
- Tj0F47iMlAoW50Pf2639fWydE688wAOh6KysyfxmMeW47KapMta0ScBjGjSIM9Dj05hjvmH8E0E56rGYXiV7tYXtfazU53e7Q421y2TVFcAO7tTrtvJ+7dIc
- fUeDVIZ57MZnUiQCLVnmHFt8dHxxMZBT+qJrA5xW9YOWBdJYYn/+l2tXqH/C4IcHIdl/MEnjF5V55oS+LaS6CNJFrxKCR5AXB+9v9k9fDPnPOIbAspT3Ew+9
- h4UWABaohN0C9K8HWC63dqIG5O/49hEf+ZZx0eJt+u8td465ASz09FJxhNppHmRK++0YDF3wCkyI7Frc0VukbONxk1tnkgHTBziq2k3vRJ7gOj21F5EtCkMP
- R313WqNU6p7Awhs1MfF06L4APDkIEUWgMGTA2A==
+X-CMAE-Envelope: MS4wfKyHSTB5OQsKWvNn/M0oWwpiX22Y5Nov3QyfICIAN3rIWifllGGNRhNAFpdZ4rAoCfZQsimtrBe1OBZ4hH19+RastSB5zpaKzNBHXviVzBP7pykSHokG
+ dPm36xXzYs8eOZJHiiDc+eOFZgJHoeNIPI6c5PvaIBy0SbTS2zQ7yYJDt8YjRef5yhxJ1bsNUepX1DA5r8KGh4iQIWMXCSrtDAoYGXIhD4DmLyJTiDVx1ZYa
+ 2l2AE1BbGpsUQjQWFzLotH86IXn3s0AwqrXdiBlGNoac9unqAPmDEyuhvDvaRHBEKJiFrNjjZtAUjxaxrl89hiR23fglK5qHJ6lj2kObs+kUF4mmpv2qeJ8Q
+ TfE7qgSBBJMZJ7QHrSyZu2jKUHnbLetWiDrBw57TEuxHxHZvaWnAcxeETKAsVjzQiteoa+5Gf8KPrekXxLJjzI1LAhCnHbiZYVLjIwN1HyJieUveG7CpIVaa
+ 4ZmMaoIClC/AD+twosvUmRfo2NWjxzORJGLZLw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -52,25 +54,447 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Haiyang Zhang <haiyangz@microsoft.com>
 
-The patch adds support for LRO/RSC in the vSwitch feature. It reduces
-the per packet processing overhead by coalescing multiple TCP segments
-when possible. The feature is enabled by default on VMs running on
-Windows Server 2019 and later.
+LRO/RSC in the vSwitch is a feature available in Windows Server 2019
+hosts and later. It reduces the per packet processing overhead by
+coalescing multiple TCP segments when possible. This patch adds netvsc
+driver support for this feature.
 
-The patch set also adds ethtool command handler and documents.
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+---
+ drivers/net/hyperv/hyperv_net.h   | 47 +++++++++++++---
+ drivers/net/hyperv/netvsc.c       | 18 +++++--
+ drivers/net/hyperv/netvsc_drv.c   | 28 +++++-----
+ drivers/net/hyperv/rndis_filter.c | 90 ++++++++++++++++++++++++++-----
+ 4 files changed, 145 insertions(+), 38 deletions(-)
 
-Haiyang Zhang (3):
-  hv_netvsc: Add support for LRO/RSC in the vSwitch
-  hv_netvsc: Add handler for LRO setting change
-  hv_netvsc: Update document for LRO/RSC support
-
- Documentation/networking/netvsc.txt |  9 +++
- drivers/net/hyperv/hyperv_net.h     | 51 ++++++++++++---
- drivers/net/hyperv/netvsc.c         | 18 ++++--
- drivers/net/hyperv/netvsc_drv.c     | 58 ++++++++++++-----
- drivers/net/hyperv/rndis_filter.c   | 97 +++++++++++++++++++++++++----
- 5 files changed, 194 insertions(+), 39 deletions(-)
-
+diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
+index a32ded5b4f41..7f1603dc8128 100644
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -186,6 +186,7 @@ struct rndis_device {
+ /* Interface */
+ struct rndis_message;
+ struct netvsc_device;
++struct netvsc_channel;
+ struct net_device_context;
+ 
+ extern u32 netvsc_ring_bytes;
+@@ -203,10 +204,7 @@ void netvsc_linkstatus_callback(struct net_device *net,
+ 				struct rndis_message *resp);
+ int netvsc_recv_callback(struct net_device *net,
+ 			 struct netvsc_device *nvdev,
+-			 struct vmbus_channel *channel,
+-			 void  *data, u32 len,
+-			 const struct ndis_tcp_ip_checksum_info *csum_info,
+-			 const struct ndis_pkt_8021q_info *vlan);
++			 struct netvsc_channel *nvchan);
+ void netvsc_channel_cb(void *context);
+ int netvsc_poll(struct napi_struct *napi, int budget);
+ 
+@@ -222,7 +220,7 @@ int rndis_filter_set_rss_param(struct rndis_device *rdev,
+ 			       const u8 *key);
+ int rndis_filter_receive(struct net_device *ndev,
+ 			 struct netvsc_device *net_dev,
+-			 struct vmbus_channel *channel,
++			 struct netvsc_channel *nvchan,
+ 			 void *data, u32 buflen);
+ 
+ int rndis_filter_set_device_mac(struct netvsc_device *ndev,
+@@ -524,6 +522,8 @@ struct nvsp_2_vsc_capability {
+ 			u64 ieee8021q:1;
+ 			u64 correlation_id:1;
+ 			u64 teaming:1;
++			u64 vsubnetid:1;
++			u64 rsc:1;
+ 		};
+ 	};
+ } __packed;
+@@ -826,7 +826,7 @@ struct nvsp_message {
+ 
+ #define NETVSC_SUPPORTED_HW_FEATURES (NETIF_F_RXCSUM | NETIF_F_IP_CSUM | \
+ 				      NETIF_F_TSO | NETIF_F_IPV6_CSUM | \
+-				      NETIF_F_TSO6)
++				      NETIF_F_TSO6 | NETIF_F_LRO)
+ 
+ #define VRSS_SEND_TAB_SIZE 16  /* must be power of 2 */
+ #define VRSS_CHANNEL_MAX 64
+@@ -852,6 +852,18 @@ struct multi_recv_comp {
+ 	u32 next;	/* next entry for writing */
+ };
+ 
++#define NVSP_RSC_MAX 562 /* Max #RSC frags in a vmbus xfer page pkt */
++
++struct nvsc_rsc {
++	const struct ndis_pkt_8021q_info *vlan;
++	const struct ndis_tcp_ip_checksum_info *csum_info;
++	u8 is_last; /* last RNDIS msg in a vmtransfer_page */
++	u32 cnt; /* #fragments in an RSC packet */
++	u32 pktlen; /* Full packet length */
++	void *data[NVSP_RSC_MAX];
++	u32 len[NVSP_RSC_MAX];
++};
++
+ struct netvsc_stats {
+ 	u64 packets;
+ 	u64 bytes;
+@@ -955,6 +967,7 @@ struct netvsc_channel {
+ 	struct multi_send_data msd;
+ 	struct multi_recv_comp mrc;
+ 	atomic_t queue_sends;
++	struct nvsc_rsc rsc;
+ 
+ 	struct netvsc_stats tx_stats;
+ 	struct netvsc_stats rx_stats;
+@@ -1136,7 +1149,8 @@ struct rndis_oobd {
+ /* Packet extension field contents associated with a Data message. */
+ struct rndis_per_packet_info {
+ 	u32 size;
+-	u32 type;
++	u32 type:31;
++	u32 internal:1;
+ 	u32 ppi_offset;
+ };
+ 
+@@ -1157,6 +1171,25 @@ enum ndis_per_pkt_info_type {
+ 	MAX_PER_PKT_INFO
+ };
+ 
++enum rndis_per_pkt_info_interal_type {
++	RNDIS_PKTINFO_ID = 1,
++	/* Add more memebers here */
++
++	RNDIS_PKTINFO_MAX
++};
++
++#define RNDIS_PKTINFO_SUBALLOC BIT(0)
++#define RNDIS_PKTINFO_1ST_FRAG BIT(1)
++#define RNDIS_PKTINFO_LAST_FRAG BIT(2)
++
++#define RNDIS_PKTINFO_ID_V1 1
++
++struct rndis_pktinfo_id {
++	u8 ver;
++	u8 flag;
++	u16 pkt_id;
++};
++
+ struct ndis_pkt_8021q_info {
+ 	union {
+ 		struct {
+diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+index fe01e141c8f8..922054c1d544 100644
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -542,6 +542,9 @@ static int negotiate_nvsp_ver(struct hv_device *device,
+ 		init_packet->msg.v2_msg.send_ndis_config.capability.teaming = 1;
+ 	}
+ 
++	if (nvsp_ver >= NVSP_PROTOCOL_VERSION_61)
++		init_packet->msg.v2_msg.send_ndis_config.capability.rsc = 1;
++
+ 	trace_nvsp_send(ndev, init_packet);
+ 
+ 	ret = vmbus_sendpacket(device->channel, init_packet,
+@@ -1111,11 +1114,12 @@ static void enq_receive_complete(struct net_device *ndev,
+ 
+ static int netvsc_receive(struct net_device *ndev,
+ 			  struct netvsc_device *net_device,
+-			  struct vmbus_channel *channel,
++			  struct netvsc_channel *nvchan,
+ 			  const struct vmpacket_descriptor *desc,
+ 			  const struct nvsp_message *nvsp)
+ {
+ 	struct net_device_context *net_device_ctx = netdev_priv(ndev);
++	struct vmbus_channel *channel = nvchan->channel;
+ 	const struct vmtransfer_page_packet_header *vmxferpage_packet
+ 		= container_of(desc, const struct vmtransfer_page_packet_header, d);
+ 	u16 q_idx = channel->offermsg.offer.sub_channel_index;
+@@ -1150,6 +1154,7 @@ static int netvsc_receive(struct net_device *ndev,
+ 		int ret;
+ 
+ 		if (unlikely(offset + buflen > net_device->recv_buf_size)) {
++			nvchan->rsc.cnt = 0;
+ 			status = NVSP_STAT_FAIL;
+ 			netif_err(net_device_ctx, rx_err, ndev,
+ 				  "Packet offset:%u + len:%u too big\n",
+@@ -1160,11 +1165,13 @@ static int netvsc_receive(struct net_device *ndev,
+ 
+ 		data = recv_buf + offset;
+ 
++		nvchan->rsc.is_last = (i == count - 1);
++
+ 		trace_rndis_recv(ndev, q_idx, data);
+ 
+ 		/* Pass it to the upper layer */
+ 		ret = rndis_filter_receive(ndev, net_device,
+-					   channel, data, buflen);
++					   nvchan, data, buflen);
+ 
+ 		if (unlikely(ret != NVSP_STAT_SUCCESS))
+ 			status = NVSP_STAT_FAIL;
+@@ -1223,12 +1230,13 @@ static  void netvsc_receive_inband(struct net_device *ndev,
+ }
+ 
+ static int netvsc_process_raw_pkt(struct hv_device *device,
+-				  struct vmbus_channel *channel,
++				  struct netvsc_channel *nvchan,
+ 				  struct netvsc_device *net_device,
+ 				  struct net_device *ndev,
+ 				  const struct vmpacket_descriptor *desc,
+ 				  int budget)
+ {
++	struct vmbus_channel *channel = nvchan->channel;
+ 	const struct nvsp_message *nvmsg = hv_pkt_data(desc);
+ 
+ 	trace_nvsp_recv(ndev, channel, nvmsg);
+@@ -1240,7 +1248,7 @@ static int netvsc_process_raw_pkt(struct hv_device *device,
+ 		break;
+ 
+ 	case VM_PKT_DATA_USING_XFER_PAGES:
+-		return netvsc_receive(ndev, net_device, channel,
++		return netvsc_receive(ndev, net_device, nvchan,
+ 				      desc, nvmsg);
+ 		break;
+ 
+@@ -1284,7 +1292,7 @@ int netvsc_poll(struct napi_struct *napi, int budget)
+ 		nvchan->desc = hv_pkt_iter_first(channel);
+ 
+ 	while (nvchan->desc && work_done < budget) {
+-		work_done += netvsc_process_raw_pkt(device, channel, net_device,
++		work_done += netvsc_process_raw_pkt(device, nvchan, net_device,
+ 						    ndev, nvchan->desc, budget);
+ 		nvchan->desc = hv_pkt_iter_next(channel, nvchan->desc);
+ 	}
+diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
+index 3af6d8d15233..f8c18370d9d1 100644
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -744,14 +744,16 @@ void netvsc_linkstatus_callback(struct net_device *net,
+ }
+ 
+ static struct sk_buff *netvsc_alloc_recv_skb(struct net_device *net,
+-					     struct napi_struct *napi,
+-					     const struct ndis_tcp_ip_checksum_info *csum_info,
+-					     const struct ndis_pkt_8021q_info *vlan,
+-					     void *data, u32 buflen)
++					     struct netvsc_channel *nvchan)
+ {
++	struct napi_struct *napi = &nvchan->napi;
++	const struct ndis_pkt_8021q_info *vlan = nvchan->rsc.vlan;
++	const struct ndis_tcp_ip_checksum_info *csum_info =
++						nvchan->rsc.csum_info;
+ 	struct sk_buff *skb;
++	int i;
+ 
+-	skb = napi_alloc_skb(napi, buflen);
++	skb = napi_alloc_skb(napi, nvchan->rsc.pktlen);
+ 	if (!skb)
+ 		return skb;
+ 
+@@ -759,7 +761,8 @@ static struct sk_buff *netvsc_alloc_recv_skb(struct net_device *net,
+ 	 * Copy to skb. This copy is needed here since the memory pointed by
+ 	 * hv_netvsc_packet cannot be deallocated
+ 	 */
+-	skb_put_data(skb, data, buflen);
++	for (i = 0; i < nvchan->rsc.cnt; i++)
++		skb_put_data(skb, nvchan->rsc.data[i], nvchan->rsc.len[i]);
+ 
+ 	skb->protocol = eth_type_trans(skb, net);
+ 
+@@ -792,14 +795,11 @@ static struct sk_buff *netvsc_alloc_recv_skb(struct net_device *net,
+  */
+ int netvsc_recv_callback(struct net_device *net,
+ 			 struct netvsc_device *net_device,
+-			 struct vmbus_channel *channel,
+-			 void  *data, u32 len,
+-			 const struct ndis_tcp_ip_checksum_info *csum_info,
+-			 const struct ndis_pkt_8021q_info *vlan)
++			 struct netvsc_channel *nvchan)
+ {
+ 	struct net_device_context *net_device_ctx = netdev_priv(net);
++	struct vmbus_channel *channel = nvchan->channel;
+ 	u16 q_idx = channel->offermsg.offer.sub_channel_index;
+-	struct netvsc_channel *nvchan = &net_device->chan_table[q_idx];
+ 	struct sk_buff *skb;
+ 	struct netvsc_stats *rx_stats;
+ 
+@@ -807,8 +807,8 @@ int netvsc_recv_callback(struct net_device *net,
+ 		return NVSP_STAT_FAIL;
+ 
+ 	/* Allocate a skb - TODO direct I/O to pages? */
+-	skb = netvsc_alloc_recv_skb(net, &nvchan->napi,
+-				    csum_info, vlan, data, len);
++	skb = netvsc_alloc_recv_skb(net, nvchan);
++
+ 	if (unlikely(!skb)) {
+ 		++net_device_ctx->eth_stats.rx_no_memory;
+ 		rcu_read_unlock();
+@@ -825,7 +825,7 @@ int netvsc_recv_callback(struct net_device *net,
+ 	rx_stats = &nvchan->rx_stats;
+ 	u64_stats_update_begin(&rx_stats->syncp);
+ 	rx_stats->packets++;
+-	rx_stats->bytes += len;
++	rx_stats->bytes += nvchan->rsc.pktlen;
+ 
+ 	if (skb->pkt_type == PACKET_BROADCAST)
+ 		++rx_stats->broadcast;
+diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
+index 2a5209f23f29..f3ac66386297 100644
+--- a/drivers/net/hyperv/rndis_filter.c
++++ b/drivers/net/hyperv/rndis_filter.c
+@@ -342,7 +342,8 @@ static void rndis_filter_receive_response(struct net_device *ndev,
+  * Get the Per-Packet-Info with the specified type
+  * return NULL if not found.
+  */
+-static inline void *rndis_get_ppi(struct rndis_packet *rpkt, u32 type)
++static inline void *rndis_get_ppi(struct rndis_packet *rpkt,
++				  u32 type, u8 internal)
+ {
+ 	struct rndis_per_packet_info *ppi;
+ 	int len;
+@@ -355,7 +356,7 @@ static inline void *rndis_get_ppi(struct rndis_packet *rpkt, u32 type)
+ 	len = rpkt->per_pkt_info_len;
+ 
+ 	while (len > 0) {
+-		if (ppi->type == type)
++		if (ppi->type == type && ppi->internal == internal)
+ 			return (void *)((ulong)ppi + ppi->ppi_offset);
+ 		len -= ppi->size;
+ 		ppi = (struct rndis_per_packet_info *)((ulong)ppi + ppi->size);
+@@ -364,17 +365,41 @@ static inline void *rndis_get_ppi(struct rndis_packet *rpkt, u32 type)
+ 	return NULL;
+ }
+ 
++static inline
++void rsc_add_data(struct netvsc_channel *nvchan,
++		  const struct ndis_pkt_8021q_info *vlan,
++		  const struct ndis_tcp_ip_checksum_info *csum_info,
++		  void *data, u32 len)
++{
++	u32 cnt = nvchan->rsc.cnt;
++
++	if (cnt) {
++		nvchan->rsc.pktlen += len;
++	} else {
++		nvchan->rsc.vlan = vlan;
++		nvchan->rsc.csum_info = csum_info;
++		nvchan->rsc.pktlen = len;
++	}
++
++	nvchan->rsc.data[cnt] = data;
++	nvchan->rsc.len[cnt] = len;
++	nvchan->rsc.cnt++;
++}
++
+ static int rndis_filter_receive_data(struct net_device *ndev,
+ 				     struct netvsc_device *nvdev,
+-				     struct vmbus_channel *channel,
++				     struct netvsc_channel *nvchan,
+ 				     struct rndis_message *msg,
+ 				     u32 data_buflen)
+ {
+ 	struct rndis_packet *rndis_pkt = &msg->msg.pkt;
+ 	const struct ndis_tcp_ip_checksum_info *csum_info;
+ 	const struct ndis_pkt_8021q_info *vlan;
++	const struct rndis_pktinfo_id *pktinfo_id;
+ 	u32 data_offset;
+ 	void *data;
++	bool rsc_more = false;
++	int ret;
+ 
+ 	/* Remove the rndis header and pass it back up the stack */
+ 	data_offset = RNDIS_HEADER_SIZE + rndis_pkt->data_offset;
+@@ -393,25 +418,59 @@ static int rndis_filter_receive_data(struct net_device *ndev,
+ 		return NVSP_STAT_FAIL;
+ 	}
+ 
+-	vlan = rndis_get_ppi(rndis_pkt, IEEE_8021Q_INFO);
++	vlan = rndis_get_ppi(rndis_pkt, IEEE_8021Q_INFO, 0);
++
++	csum_info = rndis_get_ppi(rndis_pkt, TCPIP_CHKSUM_PKTINFO, 0);
+ 
+-	csum_info = rndis_get_ppi(rndis_pkt, TCPIP_CHKSUM_PKTINFO);
++	pktinfo_id = rndis_get_ppi(rndis_pkt, RNDIS_PKTINFO_ID, 1);
+ 
+ 	data = (void *)msg + data_offset;
+ 
+-	/*
+-	 * Remove the rndis trailer padding from rndis packet message
++	/* Identify RSC frags, drop erroneous packets */
++	if (pktinfo_id && (pktinfo_id->flag & RNDIS_PKTINFO_SUBALLOC)) {
++		if (pktinfo_id->flag & RNDIS_PKTINFO_1ST_FRAG)
++			nvchan->rsc.cnt = 0;
++		else if (nvchan->rsc.cnt == 0)
++			goto drop;
++
++		rsc_more = true;
++
++		if (pktinfo_id->flag & RNDIS_PKTINFO_LAST_FRAG)
++			rsc_more = false;
++
++		if (rsc_more && nvchan->rsc.is_last)
++			goto drop;
++	} else {
++		nvchan->rsc.cnt = 0;
++	}
++
++	if (unlikely(nvchan->rsc.cnt >= NVSP_RSC_MAX))
++		goto drop;
++
++	/* Put data into per channel structure.
++	 * Also, remove the rndis trailer padding from rndis packet message
+ 	 * rndis_pkt->data_len tell us the real data length, we only copy
+ 	 * the data packet to the stack, without the rndis trailer padding
+ 	 */
+-	return netvsc_recv_callback(ndev, nvdev, channel,
+-				    data, rndis_pkt->data_len,
+-				    csum_info, vlan);
++	rsc_add_data(nvchan, vlan, csum_info, data, rndis_pkt->data_len);
++
++	if (rsc_more)
++		return NVSP_STAT_SUCCESS;
++
++	ret = netvsc_recv_callback(ndev, nvdev, nvchan);
++	nvchan->rsc.cnt = 0;
++
++	return ret;
++
++drop:
++	/* Drop incomplete packet */
++	nvchan->rsc.cnt = 0;
++	return NVSP_STAT_FAIL;
+ }
+ 
+ int rndis_filter_receive(struct net_device *ndev,
+ 			 struct netvsc_device *net_dev,
+-			 struct vmbus_channel *channel,
++			 struct netvsc_channel *nvchan,
+ 			 void *data, u32 buflen)
+ {
+ 	struct net_device_context *net_device_ctx = netdev_priv(ndev);
+@@ -422,7 +481,7 @@ int rndis_filter_receive(struct net_device *ndev,
+ 
+ 	switch (rndis_msg->ndis_msg_type) {
+ 	case RNDIS_MSG_PACKET:
+-		return rndis_filter_receive_data(ndev, net_dev, channel,
++		return rndis_filter_receive_data(ndev, net_dev, nvchan,
+ 						 rndis_msg, buflen);
+ 	case RNDIS_MSG_INIT_C:
+ 	case RNDIS_MSG_QUERY_C:
+@@ -1184,6 +1243,13 @@ static int rndis_netdev_set_hwcaps(struct rndis_device *rndis_device,
+ 		}
+ 	}
+ 
++	if (hwcaps.rsc.ip4 && hwcaps.rsc.ip6) {
++		net->hw_features |= NETIF_F_LRO;
++
++		offloads.rsc_ip_v4 = NDIS_OFFLOAD_PARAMETERS_RSC_ENABLED;
++		offloads.rsc_ip_v6 = NDIS_OFFLOAD_PARAMETERS_RSC_ENABLED;
++	}
++
+ 	/* In case some hw_features disappeared we need to remove them from
+ 	 * net->features list as they're no longer supported.
+ 	 */
 -- 
 2.18.0
 
