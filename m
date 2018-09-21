@@ -2,106 +2,177 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D594DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DF6C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6548521547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965E921547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:43:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="nHr0K/u1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6548521547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qTuXyQN1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965E921547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388950AbeIUH3B (ORCPT
+        id S2388960AbeIUHaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 03:29:01 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40497 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388299AbeIUH3B (ORCPT
+        Fri, 21 Sep 2018 03:30:03 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45817 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387971AbeIUHaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 03:29:01 -0400
-Received: by mail-qt1-f196.google.com with SMTP id h4-v6so306038qtj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 18:42:37 -0700 (PDT)
+        Fri, 21 Sep 2018 03:30:03 -0400
+Received: by mail-pl1-f196.google.com with SMTP id j8-v6so5161283pll.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 18:43:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eps11l9GksCmk4RCNmoRr9bwqHSTGWvkVGBJfrcrGCE=;
-        b=nHr0K/u1cgzardCo6+488bwby6XI8srQqEOY5IMtoc0iF1xaELpB+83rnX48d39E70
-         DClFmf/1Rx4xL0pZh23gIgIw/7I+I/WoMgExcgJIgMd1aSYdamEa4LLEoNuUbmPeTQXx
-         TPakijsiMTFcIpcNvyjm7X8y2Ly8glBfRrYpk=
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m/SEihLXLWty0JneGq3T7K8PQMcvfGwdrxcbd2IMk44=;
+        b=qTuXyQN1zS7AM/ii3H4jyLTsuRpWX+NqtvhFjTC00Kp7uaRil0dHO5jvcfgtAAltWd
+         ve9KssNmGU/8Ocu8zy7vD+43wCnkNuIBdPgbxSNBRuoFmSUyLVxSKBtM/v7TJrDUbFBb
+         mQ5+iDCb2rGpd9mHF++8LrnycHwynN9s0jm35pHi8PZ0VlThsvJNF+PCZNGoBkGU0/A9
+         SMJB/Mqlc0v0YXxn5JMOC7xvGPEEk60I3zzgMBP5DSBZIwCR0ljly9RH8C9BamXr+Ltq
+         J2pUCv8QWvlB36GLqOz1SPB13m72qKjQNTKV+NRMs4FOoUw5M/blHcjyLlKoZYNGFwty
+         SCJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eps11l9GksCmk4RCNmoRr9bwqHSTGWvkVGBJfrcrGCE=;
-        b=S7WVsIQ8dRWXarGVGFnT80xm3HY//xi/7C1v/N/o6Pnes7zD7YCrluhaLmvjHz9B1E
-         D8Li83Gvv9sJteOELrKsSWsyc43iwcnGaDIDdNIw4YCyL+32hzR+UCzDogEP3W3z1zSM
-         aGXRtY4AGQqHLfQjCV1ya3SnjwRdbAF9CAlgPvNsA1FsDUx0GcxAua5XoQA/ftqATFlN
-         IGX+VleKXtArnPUryAb5ipscpYDLWsHr/lLgab5IuJ0NJXJl8aYOWcYsPHGxI0FmheTk
-         yWWTo3clB+TgL8TErBJAP/SSuIBFmBWbKIzrxc1ecrnrwjjqMO6PSffrIa0xwfyTFrRS
-         RX3w==
-X-Gm-Message-State: APzg51DUaynMPM6HlmZ8rIgxLev3SSP3K4NQ3krUvox4YJiV1iKTafnz
-        mfge1aNmELNHvpuzp++ptYDFIo9+N1fp6bRIRB4=
-X-Google-Smtp-Source: ANB0VdZ5nGfufN5f0to9nMbbq/U6/CYInTy31GRMNadohcO4Fl2Dy744hfPblkkoKM2VN6tgaHyvU5FYS9yEEX4lwVQ=
-X-Received: by 2002:ad4:4089:: with SMTP id l9-v6mr30413156qvp.160.1537494156664;
- Thu, 20 Sep 2018 18:42:36 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m/SEihLXLWty0JneGq3T7K8PQMcvfGwdrxcbd2IMk44=;
+        b=hRib+lpOzf0BiHj43R3cQKhrwR4JzAY62FVNloaoY08meM6MqEMzzZu9EnI1Jxf7Lt
+         SOHJhxx72GvvA2VYvWkQI+C9MIROBMwaE9J4eFuueSASkzt4ihXTD05yQ60ze9dRy4ni
+         IRCqQwgJkogy/Lrgkf1Hl0lnncq4K/Hb2ArbeDioDYdKJJHqHkuybTdvgsPiXctUQh5e
+         qIjAdE5/ykizt5waa2ty5jqyvjOBc9SQmom8a17TvrfooTAXe/pN8vsAXVv0jD5hJn6y
+         S9gA1lPhIhldcy8Mda2PoX3EBkb9SOP7nAuinDgrPi0HR2b72Qgd6tQ1uSDBO3+OuRh8
+         YGyA==
+X-Gm-Message-State: APzg51BCTmlw5KwDx8mzGQs9uPSZEJ+0nrX7/yalAqim7utm1w/xppMJ
+        i1vkJXFudxZS5wdH7COYHC4=
+X-Google-Smtp-Source: ANB0VdbV5qb04RDf90e+abJ7kbll5JRlLP0rRCT6j6tphAUB0K8ZHumzOxUajC1xlFF6ZeOVPM+MaA==
+X-Received: by 2002:a17:902:6b83:: with SMTP id p3-v6mr42138915plk.133.1537494218670;
+        Thu, 20 Sep 2018 18:43:38 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2401:fa00:d:10:affa:813f:5380:6613])
+        by smtp.gmail.com with ESMTPSA id e7-v6sm32507226pgc.55.2018.09.20.18.43.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 18:43:38 -0700 (PDT)
+From:   Minchan Kim <minchan.kernel@gmail.com>
+X-Google-Original-From: Minchan Kim <minchan@kernel.org>
+Date:   Fri, 21 Sep 2018 10:43:32 +0900
+To:     Andrew Morton <akpm@linux-foundation.org>, linux@armlinux.org.uk
+Cc:     steve.capper@linaro.org, will.deacon@arm.com,
+        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel-team@android.com,
+        miles.chen@mediatek.com, jian-min.lui@mediatek.com,
+        juju.sung@mediatek.com, Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH v1 1/3] arm: mm: reordering memory type table
+Message-ID: <20180921014332.GA112825@rodete-desktop-imager.corp.google.com>
+References: <20180917004451.174527-1-minchan@kernel.org>
+ <20180917004451.174527-2-minchan@kernel.org>
 MIME-Version: 1.0
-References: <20180916215735.31393-1-richard@nod.at> <CACPK8Xd_fNNEYbtY6HEnB6kOnqTWBC5stPVUbc2gMHpne4J6jQ@mail.gmail.com>
- <2090091.R1QOzN4fXt@blindfold>
-In-Reply-To: <2090091.R1QOzN4fXt@blindfold>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 21 Sep 2018 11:12:25 +0930
-Message-ID: <CACPK8XfnV=MOLqLL3UK7FP+oRCt1NLLgB-OdNEGWXwyFWVu_+g@mail.gmail.com>
-Subject: Re: [PATCH] Revert "ubifs: xattr: Don't operate on deleted inodes"
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        linux-mtd@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        koen.vandeputte@ncentric.com, Eddie James <eajames.ibm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917004451.174527-2-minchan@kernel.org>
+User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Sep 2018 at 16:40, Richard Weinberger <richard@nod.at> wrote:
->
-> Am Donnerstag, 20. September 2018, 04:30:41 CEST schrieb Joel Stanley:
-> > On Mon, 17 Sep 2018 at 07:30, Richard Weinberger <richard@nod.at> wrote:
-> > >
-> > > This reverts commit 11a6fc3dc743e22fb50f2196ec55bee5140d3c52.
-> > > UBIFS wants to assert that xattr operations are only issued on files
-> > > with positive link count. The said patch made this operations return
-> > > -ENOENT for unlinked files such that the asserts will no longer trigger.
-> > > This was wrong since xattr operations are perfectly fine on unlinked
-> > > files.
-> > > Instead the assertions need to be fixed/removed.
-> > >
-> > > Cc: <stable@vger.kernel.org>
-> > > Fixes: 11a6fc3dc743 ("ubifs: xattr: Don't operate on deleted inodes")
-> > > Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-> > > Signed-off-by: Richard Weinberger <richard@nod.at>
-> >
-> > The bad commit 11a6fc3dc743 was included in 4.18.7, and broke our
-> > systems which use overlayfs on top of ubifs.
-> >
-> > This patch didn't apply cleanly for me to 4.18.8 (an encoding issue?),
-> > but I did a revert of the offending commit which did the trick.
-> >
-> > Tested-by: Joel Stanley <joel@jms.id.au>
->
-> Thanks a lot for testing and sorry for the breakage. :-(
+Hi Guys,
 
-No worries. How do you plan to get this fix in? It would be good to
-get it in master asap, so we can get it backported in the next wave of
-stable releases.
+Could you have a chance to review this patchset?
 
-Cheers,
+Thanks!
 
-Joel
+On Mon, Sep 17, 2018 at 09:44:49AM +0900, Minchan Kim wrote:
+> To use bit 5 in page table as L_PTE_SPECIAL, we need a room for that.
+> It seems we don't need 4 bits for the memory type with ARMv6+.
+> If it's true, let's reorder bits to make bit 5 free.
+> 
+> We will use the bit for L_PTE_SPECIAL in next patch.
+> 
+> A note from Catalin
+> "
+> > Anyway, on ARMv7 or ARMv6+LPAE, the non-shared device gets mapped to
+> > shared device in hardware. Looking through the arm32 code, it seems that
+> > MT_DEVICE_NONSHARED is used by arch/arm/mach-shmobile/setup-r8a7779.c
+> > and IIUC that's a v7 platform (R-Car H1, Cortex-A9). I think the above
+> > should be defined to L_PTE_MT_DEV_SHARED, unless I miss any place where
+> > DEV_NONSHARED is relevant on ARMv6 (adding Simon to confirm on shmbile).
+> "
+> 
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Steve Capper <steve.capper@linaro.org>
+> Cc: Simon Horman <horms@verge.net.au>
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  arch/arm/include/asm/pgtable-2level.h | 19 +++++++++++++++----
+>  arch/arm/mm/proc-macros.S             |  4 ++--
+>  2 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
+> index 92fd2c8a9af0..514b13c27b43 100644
+> --- a/arch/arm/include/asm/pgtable-2level.h
+> +++ b/arch/arm/include/asm/pgtable-2level.h
+> @@ -164,14 +164,25 @@
+>  #define L_PTE_MT_BUFFERABLE	(_AT(pteval_t, 0x01) << 2)	/* 0001 */
+>  #define L_PTE_MT_WRITETHROUGH	(_AT(pteval_t, 0x02) << 2)	/* 0010 */
+>  #define L_PTE_MT_WRITEBACK	(_AT(pteval_t, 0x03) << 2)	/* 0011 */
+> +#define L_PTE_MT_DEV_SHARED	(_AT(pteval_t, 0x04) << 2)	/* 0100 */
+> +#define L_PTE_MT_VECTORS	(_AT(pteval_t, 0x05) << 2)	/* 0101 */
+>  #define L_PTE_MT_MINICACHE	(_AT(pteval_t, 0x06) << 2)	/* 0110 (sa1100, xscale) */
+>  #define L_PTE_MT_WRITEALLOC	(_AT(pteval_t, 0x07) << 2)	/* 0111 */
+> -#define L_PTE_MT_DEV_SHARED	(_AT(pteval_t, 0x04) << 2)	/* 0100 */
+> -#define L_PTE_MT_DEV_NONSHARED	(_AT(pteval_t, 0x0c) << 2)	/* 1100 */
+> +#if defined(CONFIG_CPU_V7) || defined (CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K)
+> +/*
+> + * On ARMv7 or ARMv6+LPAE, the non-shared device gets mapped to
+> + * shared device in hardware.
+> + */
+> +#define L_PTE_MT_DEV_NONSHARED	L_PTE_MT_DEV_SHARED
+> +#define L_PTE_MT_DEV_WC		L_PTE_MT_BUFFERABLE
+> +#define L_PTE_MT_DEV_CACHED	L_PTE_MT_WRITEBACK
+> +#define L_PTE_MT_MASK		(_AT(pteval_t, 0x07) << 2)
+> +#else
+>  #define L_PTE_MT_DEV_WC		(_AT(pteval_t, 0x09) << 2)	/* 1001 */
+>  #define L_PTE_MT_DEV_CACHED	(_AT(pteval_t, 0x0b) << 2)	/* 1011 */
+> -#define L_PTE_MT_VECTORS	(_AT(pteval_t, 0x0f) << 2)	/* 1111 */
+> -#define L_PTE_MT_MASK		(_AT(pteval_t, 0x0f) << 2)
+> +#define L_PTE_MT_DEV_NONSHARED	(_AT(pteval_t, 0x0c) << 2)	/* 1100 */
+> +#define L_PTE_MT_MASK           (_AT(pteval_t, 0x0f) << 2)
+> +#endif
+>  
+>  #ifndef __ASSEMBLY__
+>  
+> diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
+> index 81d0efb055c6..367a89d5aeca 100644
+> --- a/arch/arm/mm/proc-macros.S
+> +++ b/arch/arm/mm/proc-macros.S
+> @@ -138,7 +138,7 @@
+>  	.long	PTE_CACHEABLE					@ L_PTE_MT_WRITETHROUGH
+>  	.long	PTE_CACHEABLE | PTE_BUFFERABLE			@ L_PTE_MT_WRITEBACK
+>  	.long	PTE_BUFFERABLE					@ L_PTE_MT_DEV_SHARED
+> -	.long	0x00						@ unused
+> +	.long	PTE_CACHEABLE | PTE_BUFFERABLE | PTE_EXT_APX	@ L_PTE_MT_VECTORS
+>  	.long	0x00						@ L_PTE_MT_MINICACHE (not present)
+>  	.long	PTE_EXT_TEX(1) | PTE_CACHEABLE | PTE_BUFFERABLE	@ L_PTE_MT_WRITEALLOC
+>  	.long	0x00						@ unused
+> @@ -148,7 +148,7 @@
+>  	.long	PTE_EXT_TEX(2)					@ L_PTE_MT_DEV_NONSHARED
+>  	.long	0x00						@ unused
+>  	.long	0x00						@ unused
+> -	.long	PTE_CACHEABLE | PTE_BUFFERABLE | PTE_EXT_APX	@ L_PTE_MT_VECTORS
+> +	.long	0x00						@ unused
+>  	.endm
+>  
+>  	.macro	armv6_set_pte_ext pfx
+> -- 
+> 2.19.0.397.gdd90340f6a-goog
+> 
