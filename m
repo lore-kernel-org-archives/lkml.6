@@ -2,144 +2,160 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85FDECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96746ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6704321568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:15:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="MBhiLhQ3";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="POa59e5Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6704321568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 3992C21568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:17:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3992C21568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391092AbeIUXFE (ORCPT
+        id S2390912AbeIUXHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:05:04 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:33126 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390891AbeIUXE0 (ORCPT
+        Fri, 21 Sep 2018 19:07:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41508 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388909AbeIUXHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:04:26 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LH9K5j022561;
-        Fri, 21 Sep 2018 10:14:16 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=llpyVK8+ryi5pVZjPNAig/m3fC7f+jG+/JRGh9yV3ts=;
- b=MBhiLhQ3PgPm1hkiY7LCXsbjubwOZy0zEzTNxKdUzFNRB3a8JE3I5iO0EptG/XH0iocz
- zAlsAhLcl2YyINRr45u3/LGKR0yWR7w/paUaGXQ6VGmCucjWc1IWXsYTx0ye+6hsRCJe
- vYzd5fdjs+C9kfF2AYYCTm40Idt4YnXuoy0= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2mn1fj8kwr-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 21 Sep 2018 10:14:16 -0700
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.24) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Fri, 21 Sep 2018 13:14:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=llpyVK8+ryi5pVZjPNAig/m3fC7f+jG+/JRGh9yV3ts=;
- b=POa59e5ZTwX5wltSUO71of+StsMGjnOfsUiLD3Ha2kx3x8n+fcai/ris1ambVIHtVFkrpe3/lZoBjUhIsWsiVgwWuOp1hFBTx1txmLlweShSucPmA0b+wYFy5tO94OUoQg8KYIm1k78ON/zLIpB0dVamdlt2AghxB9+EGXJzmDI=
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
- BY2PR15MB0232.namprd15.prod.outlook.com (10.163.64.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Fri, 21 Sep 2018 17:14:11 +0000
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::5c5b:75ea:cae:1e68]) by BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::5c5b:75ea:cae:1e68%2]) with mapi id 15.20.1143.017; Fri, 21 Sep 2018
- 17:14:11 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>, Roman Gushchin <guro@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH bpf-next 4/9] bpf: don't allow create maps of per-cpu cgroup
- local storages
-Thread-Topic: [PATCH bpf-next 4/9] bpf: don't allow create maps of per-cpu
- cgroup local storages
-Thread-Index: AQHUUc6DsXzphRdnBUul4Ah4Hr6Peg==
-Date:   Fri, 21 Sep 2018 17:14:10 +0000
-Message-ID: <20180921171353.11050-4-guro@fb.com>
-References: <20180921171353.11050-1-guro@fb.com>
-In-Reply-To: <20180921171353.11050-1-guro@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR10CA0052.namprd10.prod.outlook.com
- (2603:10b6:300:2c::14) To BY2PR15MB0167.namprd15.prod.outlook.com
- (2a01:111:e400:58e0::13)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::7:15ea]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR15MB0232;20:ApdlnXl4dUnaePrpg+bioF1UAsXDJK1CFfjwCijMTCbMbLNbbulUNEnIgfwC0QPmj9q7d4A6OCK12zHHEofCySOfFHGOqHuMe29Z4Vav8upfmUM8US23akWJieba92C9BoFX/tG6i5H/q19ekKWwNyYGxK6pDzOz8CeOZiuDd5c=
-x-ms-office365-filtering-correlation-id: f870cc57-abb6-46fb-a54a-08d61fe5a576
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0232;
-x-ms-traffictypediagnostic: BY2PR15MB0232:
-x-microsoft-antispam-prvs: <BY2PR15MB0232A531F5FBC826DDEB7E8FBE120@BY2PR15MB0232.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(67672495146484);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302057)(3231355)(11241501184)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051);SRVR:BY2PR15MB0232;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0232;
-x-forefront-prvs: 0802ADD973
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(136003)(396003)(366004)(199004)(189003)(386003)(5640700003)(14444005)(186003)(86362001)(486006)(6512007)(36756003)(99286004)(256004)(6436002)(6486002)(5250100002)(54906003)(6916009)(71200400001)(71190400001)(2900100001)(476003)(11346002)(76176011)(102836004)(2616005)(52116002)(8676002)(46003)(81166006)(305945005)(6506007)(106356001)(25786009)(2351001)(5660300001)(6116002)(97736004)(81156014)(53936002)(316002)(2906002)(4326008)(446003)(1730700003)(1076002)(478600001)(7736002)(68736007)(2501003)(105586002)(8936002)(14454004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0232;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7w+RAhUC9+3DgG/Ma2IowvIg7pI2Lx9kxEXJNI45qFxsQaB19TxTYNIC8U6kWmLQgtDbqrB9d9polDIghsJY9NLKgPCGqBp5t11xRDB3oIJg/ZbU1eLTVqwEeE5ssQ4bQq3LnsBSMnPRW4c2/dhjo4uMrunpZdo6E2d8uokbk/mV5f8+P8E+HpawjGcyBkghPKawdgZJhcq+rq2JWfVHkL9J+pco/lW9fRAykbuMVRfoaHRaogj8rX7OwEICwzqPIQi52293Wg9UvK3mIUBBKB1yYR17q/GxVjtZNQr9xXuKaljQUoYgpcB0jg55hpoVRDpER9kIKu1Da+rMriu19aSyzcv/n0YsuNVMXi1IY1M=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 21 Sep 2018 19:07:41 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LH9pFO118896
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:17:51 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn3jt3dvf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:17:50 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Fri, 21 Sep 2018 13:17:49 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Sep 2018 13:17:45 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LHHiTE43581530
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Sep 2018 17:17:44 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7507AC05B;
+        Fri, 21 Sep 2018 13:17:16 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A97C6AC059;
+        Fri, 21 Sep 2018 13:17:16 -0400 (EDT)
+Received: from sofia.ibm.com (unknown [9.79.178.146])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Sep 2018 13:17:16 -0400 (EDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 6D74C2E2D93; Fri, 21 Sep 2018 22:47:40 +0530 (IST)
+Date:   Fri, 21 Sep 2018 22:47:40 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Michael Neuling <mikey@neuling.org>
+Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/3] powerpc: Detect the presence of big-cores via
+ "ibm,thread-groups"
+Reply-To: ego@linux.vnet.ibm.com
+References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
+ <1537464159-25919-2-git-send-email-ego@linux.vnet.ibm.com>
+ <d1cf1628ed2641140d3508d355cdc172d6b145e9.camel@neuling.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f870cc57-abb6-46fb-a54a-08d61fe5a576
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 17:14:10.8960
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0232
-X-OriginatorOrg: fb.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d1cf1628ed2641140d3508d355cdc172d6b145e9.camel@neuling.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18092117-0064-0000-0000-00000351F5DD
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009747; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01091619; UDB=6.00564045; IPR=6.00871643;
+ MB=3.00023437; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-21 17:17:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092117-0065-0000-0000-00003AB90ED9
+Message-Id: <20180921171740.GA12919@in.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_07:,,
  signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809210170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Explicitly forbid creating map of per-cpu cgroup local storages.
-This behavior matches the behavior of shared cgroup storages.
+Hello Michael,
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
+On Fri, Sep 21, 2018 at 01:02:45PM +1000, Michael Neuling wrote:
+> This doesn't compile for me with:
+> 
+> arch/powerpc/kernel/smp.c: In function ‘smp_prepare_cpus’:
+> arch/powerpc/kernel/smp.c:812:23: error: ‘tg.threads_per_group’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>   struct thread_groups tg;
+>                        ^
+> arch/powerpc/kernel/smp.c:812:23: error: ‘tg.nr_groups’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> cc1: all warnings being treated as errors
+> /home/mikey/src/linux-ozlabs/scripts/Makefile.build:305: recipe for target 'arch/powerpc/kernel/smp.o' failed
+>
+
+I couldn't get this error with gcc 4.8.5 and 8.1.1 with
+pseries_defconfig and powernv_defconfig with CONFIG_PPC_WERROR=y.
+
+Does the following the following delta patch make it work?
+
+-----------------------------X8----------------------------------
+
+From 6699ce20573dddd0d3d45ea79015751880740e9b Mon Sep 17 00:00:00 2001
+From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Date: Fri, 21 Sep 2018 22:43:05 +0530
+Subject: [PATCH] powerpc/smp: Initialize thread_groups local variable
+
+Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
 ---
- kernel/bpf/map_in_map.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/smp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/map_in_map.c b/kernel/bpf/map_in_map.c
-index 3bfbf4464416..99d243e1ad6e 100644
---- a/kernel/bpf/map_in_map.c
-+++ b/kernel/bpf/map_in_map.c
-@@ -24,7 +24,8 @@ struct bpf_map *bpf_map_meta_alloc(int inner_map_ufd)
- 	 * in the verifier is not enough.
- 	 */
- 	if (inner_map->map_type =3D=3D BPF_MAP_TYPE_PROG_ARRAY ||
--	    inner_map->map_type =3D=3D BPF_MAP_TYPE_CGROUP_STORAGE) {
-+	    inner_map->map_type =3D=3D BPF_MAP_TYPE_CGROUP_STORAGE ||
-+	    inner_map->map_type =3D=3D BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE) {
- 		fdput(f);
- 		return ERR_PTR(-ENOTSUPP);
- 	}
---=20
-2.17.1
+diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+index 5cdcf44..356751e 100644
+--- a/arch/powerpc/kernel/smp.c
++++ b/arch/powerpc/kernel/smp.c
+@@ -809,8 +809,9 @@ static int init_cpu_l1_cache_map(int cpu)
+ 
+ {
+ 	struct device_node *dn = of_get_cpu_node(cpu, NULL);
+-	struct thread_groups tg;
+-
++	struct thread_groups tg = {.property = 0,
++				   .nr_groups = 0,
++				   .threads_per_group = 0};
+ 	int first_thread = cpu_first_thread_sibling(cpu);
+ 	int i, cpu_group_start = -1, err = 0;
+ 
+-- 
+1.9.4
+
+
+
+
+
+
+
 
