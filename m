@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B03C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67E1ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7694220867
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FCB21531
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="V/JOSc6f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7694220867
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Akx5S0Z8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FCB21531
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389704AbeIUNSL (ORCPT
+        id S2389542AbeIUNRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 09:18:11 -0400
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:42377 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389528AbeIUNRV (ORCPT
+        Fri, 21 Sep 2018 09:17:18 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41621 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389527AbeIUNRR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 09:17:21 -0400
-Received: by mail-wr1-f46.google.com with SMTP id v17-v6so11785806wrr.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 00:29:46 -0700 (PDT)
+        Fri, 21 Sep 2018 09:17:17 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j15-v6so7712950wrt.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 00:29:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Be+bUwosJuE1ERPG9AJV32lzBv2PqNG4G/ac7NezZwE=;
-        b=V/JOSc6f3QprrAiVwkVbGvMRnOUE+aTmfHSaKRUNuaXTo6/Ah3sCbAIK21+cAiC+zb
-         Mr6ISnUKQoWR6US4BP+pEzOWymXXV4/OPHv6CQJZJ8MgDzPCLTNN9aY8vFsRWypajL/q
-         805M1Z2qy6jK3qx+pTU/zMpZNJOPCDoPZhosgy/E9FLN0M4HSWbFF8WHrPCB9S1u5UcD
-         qGAcnjtWGEpRXjbY6e4yrzaXdMRkUCq67QoASjzUbcNjwuYe4Pt50qKXthavLa28/Z5k
-         strLfKHyG2iMBfB6wN3w1WBmeQDZFOgiV5yvvPtj0gnmRm/FZlikcv4nvwIfKkAwaMSH
-         y0SQ==
+        bh=z6J0lcIe6xsRLogfR590wyd3HYBi8XsWqZR0RfEWiDM=;
+        b=Akx5S0Z82xq1MbncYzTFkwHgy5iwYVtLczSIMjJbOzn8qoos+tGCX4uj52tFfjbB0f
+         GbS0TX1d/VROuNnrJnmprt3qpU8JmbT7d/UyhtDP6l3YU2fQ/cPLDrG7Msekvy62yjxm
+         5EfJxIq4NFZdcOU+DrEeV9PylCbJpcUE0jUi4/hPYFGmJKY2VvicKvNivUl1yORaFI5s
+         Ucq38QsllX1rcSrKMWghsdVvFUOYgQJXa6QX8uSe+jxeOYi+1nGcUGo2RddhuFsNIXeX
+         kGtcgKmlLRmPT1aOff1nHRk2hLph2MqbKDtOBe2+0U0zKPsH6rfT/DrLWi1b+qcvhUSZ
+         I2oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Be+bUwosJuE1ERPG9AJV32lzBv2PqNG4G/ac7NezZwE=;
-        b=fEOUoVtNU5fAEHt0WSa/X4GdUgy6ww7LVpt3tEztmy7mcdNiTbc/r/8d1aijVbZN7G
-         VGW6fbv+sVyXyBmxbv8SmZBR4QYTyOmhcB/qs2YYub9CyNdVwtxAjVi4fWckjRwM8FvY
-         ELIhf2PC1kHtfkjGNf65JS1EbDPbbgv3THx/nQfVzaR9uhEbkC2/yHWtiE12Iy2sQjsk
-         6Cvorr3vMqccwKkgvNLlZ2pBEiKS8/FFlBLd7lVwDxYd0gJBq28P8UXRFWE5MHcJmhXS
-         q4Zj6XEY2eK6NgVcIHor2xOZpwfZJjG8hlq7c0SnGcOSxlhO6rKIbb/68tCvjxfJH2uf
-         F84g==
-X-Gm-Message-State: APzg51CC7vsEiBYovH45ypk/jFNqBPJzP2WgYk222HRlHT3lbhsKLSUI
-        YBZHP70yk77eiLESHl/Ye/UdPA==
-X-Google-Smtp-Source: ANB0VdZlbtXNBEXP3plkysRoacCfIZHCWlGTB0FXAgTCywQptvzi6fUmkpMf0ZyQONIhx6nN69tbEQ==
-X-Received: by 2002:a5d:4e4c:: with SMTP id r12-v6mr36201403wrt.27.1537514985447;
-        Fri, 21 Sep 2018 00:29:45 -0700 (PDT)
+        bh=z6J0lcIe6xsRLogfR590wyd3HYBi8XsWqZR0RfEWiDM=;
+        b=RH/1x3M0Tt3PO9qw91nbFHm57rWCkqgRJ2IJrpzI6DrTR/8k6NuP/YRkdEnNgA2E4b
+         iggkt/D5GoMg2rlaLEh7hzd+19UCcVxusb7FjdK6RFeYwPB9+QURQoD48cvjoH8huhHV
+         M4k4nvIEF0DyLNf3MbyJ8wkWa88WowOKbsMDzxFeYOK5/JEafxFfTUI81It8oQwfEEJx
+         NPoHCV6Wf5tKpwcKps99ahoy8Twgk0FOM1wOeT0XSqEeWK9cOzzh4+fKMNdCZZC7/8qQ
+         X9S3CO8Ab1g3vqYbcPfetG/eKBkijy9qzpLPOzsP9RBpGrEAGKQKrxEfDIVwIyoJe0wU
+         OpHA==
+X-Gm-Message-State: APzg51AgEp1C7AqcBV0OTcMuLFVURm9Q7vuy9gp35gyOl7IBZshOPWEY
+        L9ToCX7Z769xSTRTrxP1nZI1HA==
+X-Google-Smtp-Source: ANB0Vdaq55vrhHmz5f5pWEZkhj14bLhOZoM4CqivPiNClz4+9ymd7vlGk9z6b5ddRtOBnAHIez2TEg==
+X-Received: by 2002:a5d:438d:: with SMTP id i13-v6mr37187271wrq.156.1537514981276;
+        Fri, 21 Sep 2018 00:29:41 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm2841597wmb.33.2018.09.21.00.29.44
+        by smtp.gmail.com with ESMTPSA id d18-v6sm2841597wmb.33.2018.09.21.00.29.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 00:29:44 -0700 (PDT)
+        Fri, 21 Sep 2018 00:29:40 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         "David S . Miller" <davem@davemloft.net>,
@@ -75,9 +75,9 @@ To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 14/22] nvmem: resolve cells from DT at registration time
-Date:   Fri, 21 Sep 2018 09:29:13 +0200
-Message-Id: <20180921072921.19387-15-brgl@bgdev.pl>
+Subject: [PATCH v5 11/22] nvmem: change the signature of nvmem_unregister()
+Date:   Fri, 21 Sep 2018 09:29:10 +0200
+Message-Id: <20180921072921.19387-12-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180921072921.19387-1-brgl@bgdev.pl>
 References: <20180921072921.19387-1-brgl@bgdev.pl>
@@ -88,187 +88,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Currently we're creating a new cell structure everytime a DT user
-calls nvmem_cell_get().
-
-Change this behavior by resolving the cells during nvmem provider
-registration and adding all cells to the provider's list. Make
-of_nvmem_cell_get() just parse the phandle and look the cell up
-in the relevant provider's list.
-
-Don't drop the cell in nvmem_cell_put().
+We switched the nvmem framework to using kref instead of manually
+checking the current number of users in nvmem_unregister() so this
+function can no longer fail. We also converted all remaining users
+that still checked the return value of nvmem_unregister() to using
+devm_nvmem_register(). Make the routine return void.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c | 123 ++++++++++++++++++++++++++-----------------
- 1 file changed, 75 insertions(+), 48 deletions(-)
+ drivers/nvmem/core.c           | 8 ++------
+ include/linux/nvmem-provider.h | 9 +++------
+ 2 files changed, 5 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 8e0108806e65..74b6b97680d5 100644
+index 920b56e500cc..bd14d04782cd 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -456,6 +456,73 @@ static int nvmem_add_cells_from_table(struct nvmem_device *nvmem)
- 	return rval;
- }
- 
-+static struct nvmem_cell *
-+nvmem_find_cell_by_index(struct nvmem_device *nvmem, int index)
-+{
-+	struct nvmem_cell *cell = NULL;
-+	int i = 0;
-+
-+	mutex_lock(&nvmem_mutex);
-+	list_for_each_entry(cell, &nvmem->cells, node) {
-+		if (index == i++)
-+			break;
-+	}
-+	mutex_unlock(&nvmem_mutex);
-+
-+	return cell;
-+}
-+
-+static int nvmem_add_cells_from_of(struct nvmem_device *nvmem)
-+{
-+	struct device_node *parent, *child;
-+	struct device *dev = &nvmem->dev;
-+	struct nvmem_cell *cell;
-+	const __be32 *addr;
-+	int len;
-+
-+	parent = dev->of_node;
-+
-+	for_each_child_of_node(parent, child) {
-+		addr = of_get_property(child, "reg", &len);
-+		if (!addr || (len < 2 * sizeof(u32))) {
-+			dev_err(dev, "nvmem: invalid reg on %pOF\n", child);
-+			return -EINVAL;
-+		}
-+
-+		cell = kzalloc(sizeof(*cell), GFP_KERNEL);
-+		if (!cell)
-+			return -ENOMEM;
-+
-+		cell->nvmem = nvmem;
-+		cell->offset = be32_to_cpup(addr++);
-+		cell->bytes = be32_to_cpup(addr);
-+		cell->name = child->name;
-+
-+		addr = of_get_property(child, "bits", &len);
-+		if (addr && len == (2 * sizeof(u32))) {
-+			cell->bit_offset = be32_to_cpup(addr++);
-+			cell->nbits = be32_to_cpup(addr);
-+		}
-+
-+		if (cell->nbits)
-+			cell->bytes = DIV_ROUND_UP(
-+					cell->nbits + cell->bit_offset,
-+					BITS_PER_BYTE);
-+
-+		if (!IS_ALIGNED(cell->offset, nvmem->stride)) {
-+			dev_err(dev, "cell %s unaligned to nvmem stride %d\n",
-+				cell->name, nvmem->stride);
-+			/* Cells already added will be freed later. */
-+			kfree(cell);
-+			return -EINVAL;
-+		}
-+
-+		nvmem_cell_add(cell);
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * nvmem_register() - Register a nvmem device for given nvmem_config.
-  * Also creates an binary entry in /sys/bus/nvmem/devices/dev-name/nvmem
-@@ -546,6 +613,10 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	if (rval)
- 		goto err_remove_cells;
- 
-+	rval = nvmem_add_cells_from_of(nvmem);
-+	if (rval)
-+		goto err_remove_cells;
-+
- 	return nvmem;
- 
- err_remove_cells:
-@@ -848,10 +919,8 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
- 					    const char *name)
+@@ -553,20 +553,16 @@ static void nvmem_device_release(struct kref *kref)
+  * nvmem_unregister() - Unregister previously registered nvmem device
+  *
+  * @nvmem: Pointer to previously registered nvmem device.
+- *
+- * Return: Will be an negative on error or a zero on success.
+  */
+-int nvmem_unregister(struct nvmem_device *nvmem)
++void nvmem_unregister(struct nvmem_device *nvmem)
  {
- 	struct device_node *cell_np, *nvmem_np;
--	struct nvmem_cell *cell;
- 	struct nvmem_device *nvmem;
--	const __be32 *addr;
--	int rval, len;
-+	struct nvmem_cell *cell;
- 	int index = 0;
- 
- 	/* if cell name exists, find index to the name */
-@@ -871,54 +940,13 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_node *np,
- 	if (IS_ERR(nvmem))
- 		return ERR_CAST(nvmem);
- 
--	addr = of_get_property(cell_np, "reg", &len);
--	if (!addr || (len < 2 * sizeof(u32))) {
--		dev_err(&nvmem->dev, "nvmem: invalid reg on %pOF\n",
--			cell_np);
--		rval  = -EINVAL;
--		goto err_mem;
--	}
+ 	kref_put(&nvmem->refcnt, nvmem_device_release);
 -
--	cell = kzalloc(sizeof(*cell), GFP_KERNEL);
-+	cell = nvmem_find_cell_by_index(nvmem, index);
- 	if (!cell) {
--		rval = -ENOMEM;
--		goto err_mem;
--	}
--
--	cell->nvmem = nvmem;
--	cell->offset = be32_to_cpup(addr++);
--	cell->bytes = be32_to_cpup(addr);
--	cell->name = cell_np->name;
--
--	addr = of_get_property(cell_np, "bits", &len);
--	if (addr && len == (2 * sizeof(u32))) {
--		cell->bit_offset = be32_to_cpup(addr++);
--		cell->nbits = be32_to_cpup(addr);
--	}
--
--	if (cell->nbits)
--		cell->bytes = DIV_ROUND_UP(cell->nbits + cell->bit_offset,
--					   BITS_PER_BYTE);
--
--	if (!IS_ALIGNED(cell->offset, nvmem->stride)) {
--			dev_err(&nvmem->dev,
--				"cell %s unaligned to nvmem stride %d\n",
--				cell->name, nvmem->stride);
--		rval  = -EINVAL;
--		goto err_sanity;
-+		__nvmem_device_put(nvmem);
-+		return ERR_PTR(-ENOENT);
- 	}
- 
--	nvmem_cell_add(cell);
--
- 	return cell;
--
--err_sanity:
--	kfree(cell);
--
--err_mem:
--	__nvmem_device_put(nvmem);
--
--	return ERR_PTR(rval);
+-	return 0;
  }
- EXPORT_SYMBOL_GPL(of_nvmem_cell_get);
- #endif
-@@ -1024,7 +1052,6 @@ void nvmem_cell_put(struct nvmem_cell *cell)
- 	struct nvmem_device *nvmem = cell->nvmem;
+ EXPORT_SYMBOL_GPL(nvmem_unregister);
  
- 	__nvmem_device_put(nvmem);
--	nvmem_cell_drop(cell);
+ static void devm_nvmem_release(struct device *dev, void *res)
+ {
+-	WARN_ON(nvmem_unregister(*(struct nvmem_device **)res));
++	nvmem_unregister(*(struct nvmem_device **)res);
  }
- EXPORT_SYMBOL_GPL(nvmem_cell_put);
+ 
+ /**
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index 24def6ad09bb..0f357d0c1e75 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -70,7 +70,7 @@ struct nvmem_config {
+ #if IS_ENABLED(CONFIG_NVMEM)
+ 
+ struct nvmem_device *nvmem_register(const struct nvmem_config *cfg);
+-int nvmem_unregister(struct nvmem_device *nvmem);
++void nvmem_unregister(struct nvmem_device *nvmem);
+ 
+ struct nvmem_device *devm_nvmem_register(struct device *dev,
+ 					 const struct nvmem_config *cfg);
+@@ -87,10 +87,7 @@ static inline struct nvmem_device *nvmem_register(const struct nvmem_config *c)
+ 	return ERR_PTR(-ENOSYS);
+ }
+ 
+-static inline int nvmem_unregister(struct nvmem_device *nvmem)
+-{
+-	return -ENOSYS;
+-}
++static inline void nvmem_unregister(struct nvmem_device *nvmem) {}
+ 
+ static inline struct nvmem_device *
+ devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
+@@ -101,7 +98,7 @@ devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
+ static inline int
+ devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
+ {
+-	return nvmem_unregister(nvmem);
++	return -ENOSYS;
+ 
+ }
  
 -- 
 2.18.0
