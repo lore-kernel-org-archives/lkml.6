@@ -2,186 +2,312 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF58C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2E2C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A037221547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:14:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XcTHl2Ez"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A037221547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id 91D51206B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:15:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91D51206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389264AbeIUMCL (ORCPT
+        id S2389312AbeIUMCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 08:02:11 -0400
-Received: from m12-13.163.com ([220.181.12.13]:49064 "EHLO m12-13.163.com"
+        Fri, 21 Sep 2018 08:02:34 -0400
+Received: from mga11.intel.com ([192.55.52.93]:15875 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbeIUMCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 08:02:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=b2d5uSng/7avURMx4E
-        1zd6JSybbI6xvh7KaI6QWzlW4=; b=XcTHl2EzIBoHu2vC3kJbiU7pcaczr0dKYN
-        RCT3blu7KLPcOJ0JA7N5x5Xht1QVqPN1Bvu0gZHuV5IB+Pg+M/J4q1P++1/Te1W9
-        ZbNyPNFKXb5+g66kzerjVnJz8774WV1LEackcNTN5unTdVD3VzaNuLh52rok6he7
-        RaY0vifKI=
-Received: from localhost.localdomain (unknown [223.104.3.30])
-        by smtp9 (Coremail) with SMTP id DcCowAAHKXRJjKRblgDEKA--.58179S4;
-        Fri, 21 Sep 2018 14:14:34 +0800 (CST)
-From:   Dongbo Cao <cdbdyx@163.com>
-To:     colyli@suse.de
-Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dongbo Cao <cdbdyx@163.com>
-Subject: [PATCH] bug fix for making cache device failed
-Date:   Fri, 21 Sep 2018 14:14:18 +0800
-Message-Id: <20180921061418.3131-1-cdbdyx@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: DcCowAAHKXRJjKRblgDEKA--.58179S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGw1rWr47AFyktFW5ZFWDArb_yoWrZr1DpF
-        Z3JryYkF4rtw17ZrnxJr40gan8A3929anrGry3Zw1a9rn0gr1Y9F4vyF1YvrW7ZrZ8Jay3
-        JrZ0yw4kGr1DtaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UJUU8UUUUU=
-X-Originating-IP: [223.104.3.30]
-X-CM-SenderInfo: xfgev5r06rljoofrz/1tbiGQbI3FXlgFkZdwABsN
+        id S1725898AbeIUMCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 08:02:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 23:13:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,283,1534834800"; 
+   d="scan'208";a="90690062"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 20 Sep 2018 23:13:11 -0700
+Received: from [10.125.252.15] (unknown [10.125.252.15])
+        by linux.intel.com (Postfix) with ESMTP id D533E5801CF;
+        Thu, 20 Sep 2018 23:13:08 -0700 (PDT)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>
+References: <20180913125450.21342-1-jolsa@kernel.org>
+ <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
+ <20180914082653.GG24224@krava> <20180914082858.GH24224@krava>
+ <71153c79-f0b9-4bf7-7491-202f46c6b5ed@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <4f63c3d5-2a33-28ed-4e45-086045e9ab50@linux.intel.com>
+Date:   Fri, 21 Sep 2018 09:13:08 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <71153c79-f0b9-4bf7-7491-202f46c6b5ed@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1)when the nbuckets of cache device is smaller than 1024, make cache device will trigger BUG_ON in kernel, add a condition to avoid this.
-2)split original if condition code into separate ones to make it clearly to debug.
+Hello Jiri,
 
-Signed-off-by: Dongbo Cao <cdbdyx@163.com>
----
- drivers/md/bcache/super.c | 87 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 73 insertions(+), 14 deletions(-)
+On 14.09.2018 12:37, Alexey Budankov wrote:
+> On 14.09.2018 11:28, Jiri Olsa wrote:
+>> On Fri, Sep 14, 2018 at 10:26:53AM +0200, Jiri Olsa wrote:
+>>
+>> SNIP
+>>
+>>>>> The threaded monitoring currently can't monitor backward maps
+>>>>> and there are probably more limitations which I haven't spotted
+>>>>> yet.
+>>>>>
+>>>>> So far I tested on laptop:
+>>>>>   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
+>>>>>
+>>>>> and a one bigger server:
+>>>>>   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
+>>>>>
+>>>>> I can see decrease in recorded LOST events, but both the benchmark
+>>>>> and the monitoring must be carefully configured wrt:
+>>>>>   - number of events (frequency)
+>>>>>   - size of the memory maps
+>>>>>   - size of events (callchains)
+>>>>>   - final perf.data size
+>>>>>
+>>>>> It's also available in:
+>>>>>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+>>>>>   perf/record_threads
+>>>>>
+>>>>> thoughts? ;-) thanks
+>>>>> jirka
+>>>>
+>>>> It is preferable to split into smaller pieces that bring 
+>>>> some improvement proved by metrics numbers and ready for 
+>>>> merging and upstream. Do we have more metrics than the 
+>>>> data loss from trace AIO patches?
+>>>
+>>> well the primary focus is to get more events in,
+>>> so the LOST metric is the main one
+>>
+>> actualy I was hoping, could you please run it through the same
+>> tests as you do for AIO code on some huge server? 
+> 
+> Yeah, I will, but it takes some time.
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index fa4058e4..47d122ed 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -2017,6 +2017,8 @@ static int cache_alloc(struct cache *ca)
- 	size_t free;
- 	size_t btree_buckets;
- 	struct bucket *b;
-+	int ret = -ENOMEM;
-+	const char *err = NULL;
- 
- 	__module_get(THIS_MODULE);
- 	kobject_init(&ca->kobj, &bch_cache_ktype);
-@@ -2034,27 +2036,82 @@ static int cache_alloc(struct cache *ca)
- 	 */
- 	btree_buckets = ca->sb.njournal_buckets ?: 8;
- 	free = roundup_pow_of_two(ca->sb.nbuckets) >> 10;
-+	if (!free) {
-+		ret = -EPERM;
-+		err = "ca->sb.nbuckets is too small";
-+		goto err_free;
-+	}
- 
--	if (!init_fifo(&ca->free[RESERVE_BTREE], btree_buckets, GFP_KERNEL) ||
--	    !init_fifo_exact(&ca->free[RESERVE_PRIO], prio_buckets(ca), GFP_KERNEL) ||
--	    !init_fifo(&ca->free[RESERVE_MOVINGGC], free, GFP_KERNEL) ||
--	    !init_fifo(&ca->free[RESERVE_NONE], free, GFP_KERNEL) ||
--	    !init_fifo(&ca->free_inc,	free << 2, GFP_KERNEL) ||
--	    !init_heap(&ca->heap,	free << 3, GFP_KERNEL) ||
--	    !(ca->buckets	= vzalloc(array_size(sizeof(struct bucket),
--						     ca->sb.nbuckets))) ||
--	    !(ca->prio_buckets	= kzalloc(array3_size(sizeof(uint64_t),
--						      prio_buckets(ca), 2),
--					  GFP_KERNEL)) ||
--	    !(ca->disk_buckets	= alloc_bucket_pages(GFP_KERNEL, ca)))
--		return -ENOMEM;
-+	if (!init_fifo(&ca->free[RESERVE_BTREE], btree_buckets,
-+						GFP_KERNEL)) {
-+		err = "ca->free[RESERVE_BTREE] alloc failed";
-+		goto err_btree_alloc;
-+	}
-+	if (!init_fifo_exact(&ca->free[RESERVE_PRIO], prio_buckets(ca),
-+							GFP_KERNEL)) {
-+		err = "ca->free[RESERVE_PRIO] alloc failed";
-+		goto err_prio_alloc;
-+	}
-+	if (!init_fifo(&ca->free[RESERVE_MOVINGGC], free, GFP_KERNEL)) {
-+		err = "ca->free[RESERVE_MOVINGGC] alloc failed";
-+		goto err_movinggc_alloc;
-+	}
-+	if (!init_fifo(&ca->free[RESERVE_NONE], free, GFP_KERNEL)) {
-+		err = "ca->free[RESERVE_NONE] alloc failed";
-+		goto err_none_alloc;
-+	}
-+	if (!init_fifo(&ca->free_inc, free << 2, GFP_KERNEL)) {
-+		err = "ca->free_inc alloc failed";
-+		goto err_free_inc_alloc;
-+	}
-+	if (!init_heap(&ca->heap, free << 3, GFP_KERNEL)) {
-+		err = "ca->heap alloc failed";
-+		goto err_heap_alloc;
-+	}
-+	if (!(ca->buckets = vzalloc(array_size(sizeof(struct bucket),
-+						ca->sb.nbuckets)))) {
-+		err = "ca->buckets alloc failed";
-+		goto err_buckets_alloc;
-+	}
-+	if (!(ca->prio_buckets = kzalloc(array3_size(sizeof(uint64_t),
-+						prio_buckets(ca), 2),
-+							GFP_KERNEL))) {
-+		err = "ca->prio_buckets alloc failed";
-+		goto err_prio_buckets_alloc;
-+	}
-+	if (!(ca->disk_buckets = alloc_bucket_pages(GFP_KERNEL, ca))) {
-+		err = "ca->disk_buckets alloc failed";
-+		goto err_disk_buckets_alloc;
-+	}
- 
- 	ca->prio_last_buckets = ca->prio_buckets + prio_buckets(ca);
- 
- 	for_each_bucket(b, ca)
- 		atomic_set(&b->pin, 0);
--
- 	return 0;
-+
-+err_disk_buckets_alloc:
-+	kfree(ca->prio_buckets);
-+err_prio_buckets_alloc:
-+	vfree(ca->buckets);
-+err_buckets_alloc:
-+	free_heap(&ca->heap);
-+err_heap_alloc:
-+	free_fifo(&ca->free_inc);
-+err_free_inc_alloc:
-+	free_fifo(&ca->free[RESERVE_NONE]);
-+err_none_alloc:
-+	free_fifo(&ca->free[RESERVE_MOVINGGC]);
-+err_movinggc_alloc:
-+	free_fifo(&ca->free[RESERVE_PRIO]);
-+err_prio_alloc:
-+	free_fifo(&ca->free[RESERVE_BTREE]);
-+err_btree_alloc:
-+err_free:
-+	module_put(THIS_MODULE);
-+	if (err)
-+		pr_notice("error %s: %s", ca->cache_dev_name, err);
-+	return ret;
- }
- 
- static int register_cache(struct cache_sb *sb, struct page *sb_page,
-@@ -2080,6 +2137,8 @@ static int register_cache(struct cache_sb *sb, struct page *sb_page,
- 		blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
- 		if (ret == -ENOMEM)
- 			err = "cache_alloc(): -ENOMEM";
-+		else if (ret == -EPERM)
-+			err = "cache_alloc(): cache device is too small";
- 		else
- 			err = "cache_alloc(): unknown error";
- 		goto err;
--- 
-2.17.1
+Here it is:
 
+Hardware:
+cat /proc/cpuinfo
+processor	: 271
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 133
+model name	: Intel(R) Xeon Phi(TM) CPU 7285 @ 1.30GHz
+stepping	: 0
+microcode	: 0xe
+cpu MHz		: 1064.235
+cache size	: 1024 KB
+physical id	: 0
+siblings	: 272
+core id		: 73
+cpu cores	: 68
+apicid		: 295
+initial apicid	: 295
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 fma cx16 xtpr pdcm sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch ring3mwait cpuid_fault epb pti tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms avx512f rdseed adx avx512pf avx512er avx512cd xsaveopt dtherm ida arat pln pts avx512_vpopcntdq avx512_4vnniw avx512_4fmaps
+bugs		: cpu_meltdown spectre_v1 spectre_v2
+bogomips	: 2594.07
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 46 bits physical, 48 bits virtual
+power management:
 
+uname -a
+Linux nntpat98-196 4.18.0-rc7+ #2 SMP Thu Sep 6 13:24:37 MSK 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+cat /proc/sys/kernel/perf_event_paranoid
+0
+
+cat /proc/sys/kernel/perf_event_mlock_kb 
+516
+
+cat /proc/sys/kernel/perf_event_max_sample_rate 
+3000
+
+cat /etc/redhat-release 
+Red Hat Enterprise Linux Server release 7.5 (Maipo)
+
+Metrics:
+runtime overhead (%) : elapsed_time_under_profiling / elapsed_time
+data loss (%)        : paused_time / elapsed_time_under_profiling
+LOST events          : stat from perf report --stats
+SAMPLE events        : stat from perf report --stats
+perf.data size (B)   : size of trace file on disk
+
+Events:
+cpu/period=P,event=0x3c/Duk;CPU_CLK_UNHALTED.THREAD
+cpu/period=P,umask=0x3/Duk;CPU_CLK_UNHALTED.REF_TSC
+cpu/period=P,event=0xc0/Duk;INST_RETIRED.ANY
+cpu/period=0xaae61,event=0xc2,umask=0x10/uk;UOPS_RETIRED.ALL
+cpu/period=0x11171,event=0xc2,umask=0x20/uk;UOPS_RETIRED.SCALAR_SIMD
+cpu/period=0x11171,event=0xc2,umask=0x40/uk;UOPS_RETIRED.PACKED_SIMD
+
+=================================================
+
+Command:
+/usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf.thr record --threads=T \
+	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
+        -e cpu/period=P,event=0x3c/Duk,\
+           cpu/period=P,umask=0x3/Duk,\
+           cpu/period=P,event=0xc0/Duk,\
+           cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
+           cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
+           cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
+         --clockid=monotonic_raw -- ./matrix.(icc|gcc)
+
+Workload: matrix multiplication in 256 threads
+
+/usr/bin/time ./matrix.icc
+Addr of buf1 = 0x7ff9faa73010
+Offs of buf1 = 0x7ff9faa73180
+Addr of buf2 = 0x7ff9f8a72010
+Offs of buf2 = 0x7ff9f8a721c0
+Addr of buf3 = 0x7ff9f6a71010
+Offs of buf3 = 0x7ff9f6a71100
+Addr of buf4 = 0x7ff9f4a70010
+Offs of buf4 = 0x7ff9f4a70140
+Threads #: 256 Pthreads
+Matrix size: 2048
+Using multiply kernel: multiply1
+Freq = 0.997720 GHz
+Execution time = 9.061 seconds
+1639.55user 6.59system 0:07.12elapsed 23094%CPU (0avgtext+0avgdata 100448maxresident)k
+96inputs+0outputs (1major+33839minor)pagefaults 0swaps
+
+T : 272
+        P (period, ms)       : 0.1
+	runtime overhead (%) : 45x ~ 323.54 / 7.12
+	data loss (%)        : 96
+	LOST events          : 323662
+	SAMPLE events        : 31885479
+        perf.data size (GiB) : 42
+
+	P (period, ms)       : 0.25
+	runtime overhead (%) : 25x ~ 180.76 / 7.12
+	data loss (%)        : 69 
+	LOST events          : 10636
+	SAMPLE events        : 18692998
+        perf.data size (GiB) : 23.5
+
+	P (period, ms)       : 0.35 
+	runtime overhead (%) : 16x ~ 119.49 / 7.12
+	data loss (%)        : 1
+	LOST events          : 6
+	SAMPLE events        : 11178524
+        perf.data size (GiB) : 14
+
+T : 128
+	P (period, ms)       : 0.35 
+	runtime overhead (%) : 15x ~ 111.98 / 7.12
+	data loss (%)        : 62
+	LOST events          : 2825
+	SAMPLE events        : 11267247
+        perf.data size (GiB) : 15
+
+T : 64
+	P (period, ms)       : 0.35 
+	runtime overhead (%) : 14x ~ 101.55 / 7.12
+	data loss (%)        : 67
+	LOST events          : 5155
+	SAMPLE events        : 10966297
+        perf.data size (GiB) : 13.7
+
+Workload: matrix multiplication in 128 threads
+
+/usr/bin/time ./matrix.gcc
+Addr of buf1 = 0x7f072e630010
+Offs of buf1 = 0x7f072e630180
+Addr of buf2 = 0x7f072c62f010
+Offs of buf2 = 0x7f072c62f1c0
+Addr of buf3 = 0x7f072a62e010
+Offs of buf3 = 0x7f072a62e100
+Addr of buf4 = 0x7f072862d010
+Offs of buf4 = 0x7f072862d140
+Threads #: 128 Pthreads
+Matrix size: 2048
+Using multiply kernel: multiply1
+Execution time = 6.639 seconds
+767.03user 11.17system 0:06.81elapsed 11424%CPU (0avgtext+0avgdata 100756maxresident)k
+88inputs+0outputs (0major+139898minor)pagefaults 0swaps
+
+T : 272
+        P (period, ms)       : 0.1
+	runtime overhead (%) : 29x ~ 198.81 / 6.81
+	data loss (%)        : 21
+	LOST events          : 2502
+	SAMPLE events        : 22481062
+        perf.data size (GiB) : 27.6
+
+	P (period, ms)       : 0.25
+	runtime overhead (%) : 13x ~ 88.47 / 6.81
+	data loss (%)        : 0
+	LOST events          : 0
+	SAMPLE events        : 9572787
+        perf.data size (GiB) : 11.3
+
+	P (period, ms)       : 0.35 
+	runtime overhead (%) : 10x ~ 67.11 / 6.81
+	data loss (%)        : 1
+	LOST events          : 137
+	SAMPLE events        : 6985930
+        perf.data size (GiB) : 8
+
+T : 128
+	P (period, ms)       : 0.35 
+	runtime overhead (%) : 9.5x ~ 64.33 / 6.81
+	data loss (%)        : 1
+	LOST events          : 3
+	SAMPLE events        : 6666903
+        perf.data size (GiB) : 7.8
+
+T : 64
+	P (period, ms)       : 0.25
+	runtime overhead (%) : 17x ~ 114.27 / 6.81
+	data loss (%)        : 2
+	LOST events          : 52
+	SAMPLE events        : 12643645
+        perf.data size (GiB) : 15.5
+
+	P (period, ms)       : 0.35 
+	runtime overhead (%) : 10x ~ 68.60 / 6.81
+	data loss (%)        : 1
+	LOST events          : 93
+	SAMPLE events        : 7164368
+        perf.data size (GiB) : 8.5
+
+Thanks,
+Alexey
+
+> 
+>>
+>> thanks,
+>> jirka
+>>
+> 
