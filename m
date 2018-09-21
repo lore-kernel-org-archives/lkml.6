@@ -3,83 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFB2ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDA5C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64B5221532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:00:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A3A2206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:00:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="0uIrF0+K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B5221532
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ZfJTFzoL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3A2206B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390295AbeIUUtQ (ORCPT
+        id S2390324AbeIUUtu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:49:16 -0400
-Received: from mail-it1-f178.google.com ([209.85.166.178]:51355 "EHLO
-        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390231AbeIUUtQ (ORCPT
+        Fri, 21 Sep 2018 16:49:50 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37348 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390164AbeIUUtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:49:16 -0400
-Received: by mail-it1-f178.google.com with SMTP id e14-v6so2278490itf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:00:00 -0700 (PDT)
+        Fri, 21 Sep 2018 16:49:49 -0400
+Received: by mail-io1-f68.google.com with SMTP id v14-v6so12543184iob.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jamrnX0sFRvEHJX20QnT1GhwLyV16WnRhGsixsSTKqY=;
-        b=0uIrF0+KvQ8ImRKGV0by01j6c/FUCS2hKuX+/eVRSRq1SRsR/NC7O5mHOcBLIbBe+E
-         zNZJbtC4INjqgPBd2uXkviIi8Wazo7f49zsgpg+y0ex+nstTe0UJOv8r86w4pmMRq1pk
-         AbgBSeFZYm1VZLjN/Q82Flw2RnfIGxTpRyODmmxROgP6LE+N+SbQO2CJn4mqVVU8iGTs
-         D6/P4zZUfeUartmQCMAoaxOO1B6Q0HUwS70t/n4eBYTTPLdMmZNMTQnexVAJDtwwafR2
-         gfsSkH8prUWyng6hUsuuK0JnbnbjuBjOZSU/qzh9O2/u/Qc3rNMcaBJuexe/qJyE9hVu
-         k3Zg==
+        bh=xe7Q8DIiNcGuVcVOhi5q07ExrmVZrXiLuYUV2fXfkrI=;
+        b=ZfJTFzoLni/h+Q8mgzFuqksFDlyl7LarsJIw97uKZ7emYfCXzhJpMN0hIm55kVl5o3
+         Z81jJCca1JFJJnwfEviYMYkqrzFC7TVCO4CIozMAPW7FWeEOMgBFvxvZbKkD/cxEZv9w
+         9aPJMhH0k+qLh6ScKlozBlNUHDj1n5y+31gix33KOg9/ikruNdiUhCJhz9kbcpC5Pzbk
+         CYBsoFvWTdS9i7yC6Jy4dLvRkb9nbc9yBwYssTtIqSf//VM4LbyGly9rCMieEUcl8Nhv
+         pz0xjDvWGAA4sZTta4USSxD4mR43ksoENgQaRXRNCAdc6oCI5P6eBjAcU1vpGXeY/TF2
+         D+vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=jamrnX0sFRvEHJX20QnT1GhwLyV16WnRhGsixsSTKqY=;
-        b=LcigR4s4VkIrT6CddTJdk2aeLG6Z7E4Scv/OqSAVJo6PF0ImYxMzaHp5ry8ioyMEGX
-         0WUFW+C4iuq0dXJdPwcqdDLRUghGR8WK9F/t3NGwgbMpkko1MerjkuBIrmnJ1Hwf1Uuz
-         /I4ZiXZSOgdrmUPza5X4LZEHplbU4lANWDqsXb3hxib5h5GfoDWYWasZZVT49miUSrda
-         nFzQNHdMWebh6+GJVWWSLJRYcjnWdiRzb7ryH30y0Ywo79jhgVDNffr+HJQWJtizszvC
-         2djuXBkZL4A5gDIXwyn86X6SQas5fuQJldolzRLNI7pGqVIm2NpGwD+52BWxaLzbg7hb
-         y9Xg==
-X-Gm-Message-State: ABuFfojmVBaP8uj4agPQDjAZUhKgfSmcJG6tJqZ33qjeWECQRuKNqb5d
-        ncSZjRqpcV0zZ7f7eI7s9gCV3AjBmOY=
-X-Google-Smtp-Source: ACcGV63YeXOSFq4C2nCexB9DGm5A/BZbAFPIOrl+1auWP2BTzKTicEMHaFVn+kxnZIgoXRpyuSKVEA==
-X-Received: by 2002:a24:ecc4:: with SMTP id g187-v6mr1827473ith.145.1537541999939;
-        Fri, 21 Sep 2018 07:59:59 -0700 (PDT)
+        bh=xe7Q8DIiNcGuVcVOhi5q07ExrmVZrXiLuYUV2fXfkrI=;
+        b=f1blF7LFz1poF9qwFHH2J+To1Pb9wKd4n54NdK+vlDlyLtdzWHMLUD0spAbbF3yJA6
+         rv4DsWlcufHxToWJNGD0/1eMTVK72eGL9TV6dj1scF7e0UYs+s5AsPsReEFKwRidmura
+         H6UJpiNY89O35QkDZ6uorI5jVJjm+l6vZ6+/Hz97hkq4zTki7XfP9rCNj5XPU6DvRYJm
+         i2CGPMbLGL9NY2jU0PTh2WFfXAkZaMKlmL6o5VXWx0A+hIxjA4APWdROevziyE8I5QLT
+         3CC/Oki1TwFPNk4Ieeksfw8ZsFBOmMFYPLRAQpGYTjQ9M+F9993vMpqTkwrXvCOIr5c9
+         ou1A==
+X-Gm-Message-State: APzg51BIM9/KQV6CEfVpxV1mf50el6QseUgFrWTizaMkzvQ2s3RQAkg1
+        TyGJmgmMd1OArm88ZDHLI2ShQA==
+X-Google-Smtp-Source: ACcGV62stjqul3nA9NSHW7Sy5UFUjlDw6rpgRTU7MbRTxk1GHmetjh9GpjB+iaXu1xOVE/CwxlchbQ==
+X-Received: by 2002:a6b:9142:: with SMTP id t63-v6mr13369415iod.123.1537542033550;
+        Fri, 21 Sep 2018 08:00:33 -0700 (PDT)
 Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id t134-v6sm2420845itb.41.2018.09.21.07.59.58
+        by smtp.gmail.com with ESMTPSA id m123-v6sm2385210itg.29.2018.09.21.08.00.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 07:59:58 -0700 (PDT)
+        Fri, 21 Sep 2018 08:00:32 -0700 (PDT)
 Subject: Re: block: DMA alignment of IO buffer allocated from slab
-To:     Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Ming Lei <tom.leiming@gmail.com>,
+To:     Christoph Hellwig <hch@lst.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
         linux-block <linux-block@vger.kernel.org>,
         linux-mm <linux-mm@kvack.org>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
         Dave Chinner <dchinner@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Christoph Lameter <cl@linux.com>
 References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
- <20180921015608.GA31060@dastard> <20180921070805.GC14529@lst.de>
- <20180921072511.GA8188@ming.t460p>
+ <20180920063129.GB12913@lst.de> <87h8ij0zot.fsf@vitty.brq.redhat.com>
+ <20180921130504.GA22551@lst.de>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <65999732-fc76-bb86-65ed-01aace49b9c7@kernel.dk>
-Date:   Fri, 21 Sep 2018 08:59:57 -0600
+Message-ID: <98996e39-7d29-354c-9009-d4b1a1bbdeb0@kernel.dk>
+Date:   Fri, 21 Sep 2018 09:00:31 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180921072511.GA8188@ming.t460p>
+In-Reply-To: <20180921130504.GA22551@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -88,35 +89,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/21/18 1:25 AM, Ming Lei wrote:
-> On Fri, Sep 21, 2018 at 09:08:05AM +0200, Christoph Hellwig wrote:
->> On Fri, Sep 21, 2018 at 11:56:08AM +1000, Dave Chinner wrote:
->>>> 3) If slab can't guarantee to return 512-aligned buffer, how to fix
->>>> this data corruption issue?
->>>
->>> I think that the block layer needs to check the alignment of memory
->>> buffers passed to it and take appropriate action rather than
->>> corrupting random memory and returning a sucess status to the bad
->>> bio.
+On 9/21/18 7:05 AM, Christoph Hellwig wrote:
+> On Fri, Sep 21, 2018 at 03:04:18PM +0200, Vitaly Kuznetsov wrote:
+>> Christoph Hellwig <hch@lst.de> writes:
 >>
->> Or just reject the I/O.  But yes, we already have the
->> queue_dma_alignment helper in the block layer, we just don't do it
->> in the fast path.  I think generic_make_request_checks needs to
->> check it, and print an error and return a warning if the alignment
->> requirement isn't met.
+>>> On Wed, Sep 19, 2018 at 05:15:43PM +0800, Ming Lei wrote:
+>>>> 1) does kmalloc-N slab guarantee to return N-byte aligned buffer?  If
+>>>> yes, is it a stable rule?
+>>>
+>>> This is the assumption in a lot of the kernel, so I think if somethings
+>>> breaks this we are in a lot of pain.
+>>
+>> It seems that SLUB debug breaks this assumption. Kernel built with
+>>
+>> CONFIG_SLUB_DEBUG=y
+>> CONFIG_SLUB=y
+>> CONFIG_SLUB_DEBUG_ON=y
 > 
-> That can be done in generic_make_request_checks(), but some cost may be
-> introduced, because each bvec needs to be checked in the fast path.
+> Looks like we should fix SLUB debug then..
 
-I think this is all crazy talk. We've never done this, we've always
-assumed that an address of length N, will be N aligned as well. If
-a driver sets queue dma alignment > than its sector size, then we're
-in real trouble and would need to bounce IOs. That's silly enough
-that it doesn't warrant being done in the core code imho, if you're
-hw is that crappy, then do it in your queue_rq(). Could be done with
-a core helper for sure, but I'm really not that interested in
-having a full bvec loop for each bio just to check something that
-(to my knowledge) hasn't been an issue in decades.
+Fully agree, it's such a fundamental property.
 
 -- 
 Jens Axboe
