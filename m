@@ -8,69 +8,67 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE568ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077AEECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 572842154C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67D672154C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:39:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGiikT43"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 572842154C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mt/VztWv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67D672154C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391368AbeIVBXx (ORCPT
+        id S2391333AbeIVB3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 21:23:53 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33781 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391160AbeIVBXx (ORCPT
+        Fri, 21 Sep 2018 21:29:40 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36444 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391102AbeIVB3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 21:23:53 -0400
-Received: by mail-ed1-f68.google.com with SMTP id n8-v6so2775349edo.0;
-        Fri, 21 Sep 2018 12:33:33 -0700 (PDT)
+        Fri, 21 Sep 2018 21:29:40 -0400
+Received: by mail-wm1-f68.google.com with SMTP id j192-v6so4462477wmj.1;
+        Fri, 21 Sep 2018 12:39:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=rrPwB5WK6Ja+Zrc0WKMAwtEMtqbjprwaDXYCO1vI8XE=;
-        b=HGiikT43fDU+Z39LU+rk3/TxywjlnnYCMT5Uc9YZQEyz84jyq4/uLcnY8J+uTKZ83Z
-         2q0nMjmWIsIbtNosP5tX7AuC7qVhRbbqTPD+fsVN2ngTFE3KCL5ZF5+BXLfi1FDLYP8l
-         RG7/l5Vm4h8/PjtcPOJxt2swa4Oa4N20ewKm/SQTDQGzwhN8GSSVCKr+20dbj+NAf4+1
-         zEhEZIcFq+7Mv2nwMcSdkqNE1HougEQPirJjmU6u3M2qmgysDsmP+yfZyOKY2s3+WiqI
-         L60WRbCO30pSS0bW0ILz7oPSdYcKoPZL8U0TILL9XTGag+GE1448X9ygiOcXMcQMVefQ
-         CYHg==
+        bh=FAhlPDumkMGXgOo2/rsfaCLRaM0SPVtVgtCJunyOUig=;
+        b=mt/VztWv3zuy2fDlsKYNJY5nMcr+8usKbyq/7DssLfPa/00bUA+oD/4Ias7FWRQRb8
+         OTo2PkJoa45KCIKMJl9lBPNjQkphVpRVavPngIWH726XMsE4hRuzQEiG707I+RLn2z61
+         qYD8E816DJ+B2fYuPlJJ5v07BZ4Od3hNJWcB7uQVJIFGG0qEtYk9UCGiNAuR7ORWf0zR
+         rwVZTmuH/Osufad7CyWMCmvTLrfk2Jf19YFKQD0pu7miAYncOtaGcmsQkN5Fc2becNZ4
+         nsiFmL8vXSbuDP4Rk34uDbRnX4MZAn4AM5wVmsihW/+Ql0W2SkLgSOSrBVtlwcUwC7qy
+         hOjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=rrPwB5WK6Ja+Zrc0WKMAwtEMtqbjprwaDXYCO1vI8XE=;
-        b=rLfqvzUUed3iuzuf8zLZ18qyqx9urw5ujjuZk6+ZN38JqkgdQtboFTeTr9zGYSeIpA
-         MC/N4XWqqMvQ8lpAgMXUmqe6P9PN7WyA1tQL9vcNQvL45E4Z/eSX4Q2iwCQWcPaUpsH+
-         3nY17GImjcrtys4H9zaWgoSaWfNqaQskEzqIhgJxqG3hpL/7uljOxR9ZS9d0/YGoYcvV
-         fXmstVJ2lNTYQ/Nrc51Fj70VfrySXvgfvbr8yxSc2pSzxf1nVO3bOfZ43CXuBc91wyTt
-         3HiNbHDSjsAAA+eP8GQ3u8WmXYzckHciIs6B+df+Wz7xsrJV8IE8UY3RHUzre930LFus
-         ROIQ==
-X-Gm-Message-State: APzg51BmsJ5co8icKtjqg7+K3seYZVVDN7TduKsmVQwDL6FbnyuUP/lE
-        UsBr3Sb/634plnnlfyFoNrI=
-X-Google-Smtp-Source: ANB0VdZCPz5o0UJt724oiodS2t5QuRFsRS9SFPIr9b3dI4YEef6BlEPsGWus/gtbzZCfCjG1rnNANQ==
-X-Received: by 2002:a50:b2c6:: with SMTP id p64-v6mr7393691edd.293.1537558412140;
-        Fri, 21 Sep 2018 12:33:32 -0700 (PDT)
+        bh=FAhlPDumkMGXgOo2/rsfaCLRaM0SPVtVgtCJunyOUig=;
+        b=Mi3ReDnOQHlvFRRC+FK5zpoTgTL+3dDLoZBDNZPcADiTrZGNAmAINGFbAz9VIYQl9M
+         KfJeAAepKCAnxiHrqtLFgNaaUZFwxkWwgVy2bPhq7nYa3Dna+DOQTBDmu8LGXPqpTD1t
+         DokcP3o9cm6JcZK+t4xtyn5stB6W9Li50BDffNNclFAvoJFKvxsdedWBUhvAiuEJv1If
+         OzmeiI10/Hsbb7zrwnHEufV9XTlJP2qxv4pUMJw242YrEl/nIsmjf9JkBqkm6eUVqBrg
+         AXjbkOm6eW52HREa6cRHlkz3+lGlMBxdTUvW6u2j6bWTyeycAW/fhr9NB3uairxjERK7
+         SVPg==
+X-Gm-Message-State: APzg51Bm1Kop7T6DoQc3rhP4fS2CNVXcvU0EYTo+thrrhNrHSSYcSzVd
+        T6JX6gVAVtvL0b1Ssq0fezc=
+X-Google-Smtp-Source: ANB0VdY9xcr/X4q07H4Pg0q/hcQOKkM7hImoQYV13+RRJJN/zDCka1H4gr7HGusfKkmW2vOnHGYrig==
+X-Received: by 2002:a1c:b984:: with SMTP id j126-v6mr8481409wmf.25.1537558758140;
+        Fri, 21 Sep 2018 12:39:18 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id z56-v6sm5366812edz.54.2018.09.21.12.33.30
+        by smtp.gmail.com with ESMTPSA id z13sm29773086wrw.19.2018.09.21.12.39.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 12:33:31 -0700 (PDT)
+        Fri, 21 Sep 2018 12:39:17 -0700 (PDT)
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jiri Slaby <jirislaby@gmail.com>,
-        Nick Kossifidis <mickflemm@gmail.com>,
-        "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH v2] ath5k: Remove unused BUG_ON
-Date:   Fri, 21 Sep 2018 12:32:36 -0700
-Message-Id: <20180921193235.1723-1-natechancellor@gmail.com>
+Subject: [PATCH] i40e: Remove unnecessary print statement
+Date:   Fri, 21 Sep 2018 12:39:07 -0700
+Message-Id: <20180921193907.4864-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -80,48 +78,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Clang warns that the address of a pointer will always evaluated as true
-in a boolean context:
+in a boolean context.
 
-drivers/net/wireless/ath/ath5k/debug.c:1031:14: warning: address of
-array 'ah->sbands' will always evaluate to 'true'
+drivers/net/ethernet/intel/i40e/i40e_debugfs.c:136:9: warning: address
+of array 'vsi->active_vlans' will always evaluate to 'true'
 [-Wpointer-bool-conversion]
-        BUG_ON(!ah->sbands);
-               ~~~~~^~~~~~
-./include/asm-generic/bug.h:61:45: note: expanded from macro 'BUG_ON'
-#define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
-                                            ^~~~~~~~~
-./include/linux/compiler.h:77:42: note: expanded from macro 'unlikely'
-# define unlikely(x)    __builtin_expect(!!(x), 0)
-                                            ^
+                 vsi->active_vlans ? "<valid>" : "<null>");
+                 ~~~~~^~~~~~~~~~~~ ~
+./include/linux/device.h:1431:33: note: expanded from macro 'dev_info'
+        _dev_info(dev, dev_fmt(fmt), ##__VA_ARGS__)
+                                       ^~~~~~~~~~~
 1 warning generated.
 
-Given that this condition is always false because of the logical not,
-just remove it.
+Given that the statement shows that active_vlans is always valid, just
+remove the statement since it's not giving any useful information.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/130
+Link: https://github.com/ClangBuiltLinux/linux/issues/82
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
-
-v1 -> v2:
-
-* Fix incorrect link
-
- drivers/net/wireless/ath/ath5k/debug.c | 2 --
+ drivers/net/ethernet/intel/i40e/i40e_debugfs.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath5k/debug.c b/drivers/net/wireless/ath/ath5k/debug.c
-index e01faf641288..94f70047d3fc 100644
---- a/drivers/net/wireless/ath/ath5k/debug.c
-+++ b/drivers/net/wireless/ath/ath5k/debug.c
-@@ -1028,8 +1028,6 @@ ath5k_debug_dump_bands(struct ath5k_hw *ah)
- 	if (likely(!(ah->debug.level & ATH5K_DEBUG_DUMPBANDS)))
- 		return;
- 
--	BUG_ON(!ah->sbands);
--
- 	for (b = 0; b < NUM_NL80211_BANDS; b++) {
- 		struct ieee80211_supported_band *band = &ah->sbands[b];
- 		char bname[6];
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
+index 56b911a5dd8b..a20d1cf058ad 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_debugfs.c
+@@ -132,8 +132,6 @@ static void i40e_dbg_dump_vsi_seid(struct i40e_pf *pf, int seid)
+ 		dev_info(&pf->pdev->dev, "        vlan_features = 0x%08lx\n",
+ 			 (unsigned long int)nd->vlan_features);
+ 	}
+-	dev_info(&pf->pdev->dev, "    active_vlans is %s\n",
+-		 vsi->active_vlans ? "<valid>" : "<null>");
+ 	dev_info(&pf->pdev->dev,
+ 		 "    flags = 0x%08lx, netdev_registered = %i, current_netdev_flags = 0x%04x\n",
+ 		 vsi->flags, vsi->netdev_registered, vsi->current_netdev_flags);
 -- 
 2.19.0
 
