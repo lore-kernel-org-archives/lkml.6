@@ -2,138 +2,170 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC78ECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF512ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDA5F21536
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:27:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 499CE21536
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:37:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ohWryXSh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA5F21536
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="gDbks14w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499CE21536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388833AbeIUGNl (ORCPT
+        id S1727247AbeIUGXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 02:13:41 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40268 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeIUGNk (ORCPT
+        Fri, 21 Sep 2018 02:23:07 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43038 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeIUGXH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 02:13:40 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 207-v6so1292430wme.5;
-        Thu, 20 Sep 2018 17:27:31 -0700 (PDT)
+        Fri, 21 Sep 2018 02:23:07 -0400
+Received: by mail-ot1-f67.google.com with SMTP id u20-v6so11322576otk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 17:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4c3311Hck8hRg6nWnDQH7QlcCgFYoXhs6RPf6F0rdeM=;
-        b=ohWryXSh/ZIAN2BL5n2ktlh3Jc3Wv1lrVP7UG/O4NmZj30sKDA+ky3Lxyem2o6xHqF
-         9c8mB2Bm0/NwE7hSwH2nLV020uA2Xkaf9eaHaueHMU5XIuZOwzxyKakuMASZFeByGdtt
-         ZU1pWR4VpICGGfRS2X0qHdT0vkPmP4IPbmvVxXvGbM+zjI61ieWfmE0uJFkMkCEjKEsa
-         W+DnPGO9Rd1CY1BGBYilH8zCbT0Xbbtdf7Q7/eesdoAceDC8sFOj4M1UGmWFHUkvhU5k
-         7o+ZbAs/Tig9fS0MK8bTuvq/FXVmwXDL4GN/1Ww2crqHcGb98KLja+2In4b6bAu6BYiL
-         UCNw==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JNeOw6wF+fyeeK8mgQxBi5JZr4E00CGQeJmbAvqXvdI=;
+        b=gDbks14wF2zD67ClPelGWpWhnSRxVK2Np0nTXdv5pXx6DgE7SwT3UfLLKB3TFdMgDE
+         5cFB5YTHCM/RwjLLbZWXhlahxvNhHpgn3auNA7GPCr2xpaDf3JsgcHZOTYGXNcMr6myD
+         HmcSs9tnCJpmot5fMyHDtznC6Rhmv1tb/G0kUDhk7MPAnSsE63OXGMo1gUc8sEyfmi91
+         bkUfaftLMiTJRGogu0y/l5U2KzjXzyv5PZ0C9oBMlg9p4GUj8JAGG19ylkhXEhpw6vZf
+         0kkdNj3ZxHdwnWjaRxLsdrCe1Fg6Ycn9uhbXPhLkCHek3hjvRRhqtWa8n2u5AKX+x7XU
+         U3Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4c3311Hck8hRg6nWnDQH7QlcCgFYoXhs6RPf6F0rdeM=;
-        b=rUSN8VdkS1bKqw/SiTDzucuS30Owj+tarxfO35H6h9k+wCcsksNOpKsNNzC1hR2yAm
-         LvV2+0WdRpO8NzK1fhpWRxjTXdm9x9mCk1jFonYhuvgn2N8IQxXZowiiUairibxlGC4i
-         WlgZHmdXwYEPvvnhgoZj74UHZlr7kX1dFBSQdu1srZV4gQgI65GfFKqZUerwcCeLWD4L
-         MYZ3EgHvylWSqHvSL6Viqg3EjNXqto6JNd5i3UVuCJCGIK6UtdwIGgJ9pPngpD7ha12c
-         GQYulucpRru15dqJMtDRWdLx5n4gUePN2NRvVZiw7A4g3yUc7sa05Cfd8EWBVy4VSDya
-         K2Lg==
-X-Gm-Message-State: APzg51D/yRxSVZ7aZwQtI5fHUIWMi5NPedM4fW5h8WeU3n/Z2sL8otov
-        EAxJQdi7JvnEI5mddU+ayoo=
-X-Google-Smtp-Source: ANB0VdbSnNlAABW5rit1x05ISaRl2xpxKgOBoaKRrfR4Vr7GNKcwgkksvRINHNXFbSZ/cmmdObeIsw==
-X-Received: by 2002:a1c:1182:: with SMTP id 124-v6mr5019408wmr.75.1537489650403;
-        Thu, 20 Sep 2018 17:27:30 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id e10-v6sm5480752wrw.17.2018.09.20.17.27.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 17:27:29 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     qla2xxx-upstream@qlogic.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: qla2xxx: Simplify conditional check
-Date:   Thu, 20 Sep 2018 17:27:23 -0700
-Message-Id: <20180921002723.16600-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JNeOw6wF+fyeeK8mgQxBi5JZr4E00CGQeJmbAvqXvdI=;
+        b=VmBoPGzzL/GPo5VUYJ+napRaxCh1Z2hG9EpznbKCxEKOFhEYUhC37QuCq/Nm8MnEiW
+         4QKIgvJdmDTospSS72AZ+un0rnzmoHs7KeF7cDFTDtGGh/WTcA+156bBlPRC+TAHDcHL
+         hbQKmedyTiowK5lu+vAEWkuNdp/ihzu6UApOjWqWyBpYVJEJ3kiUwJW4LTTD1PmJjbxN
+         kI8REY2X8vbsepbRSDD0/I1tPIVNM4aSTW026f8peJIP/PdNDg3XB2k0y4oulMHXFxgT
+         ZLgmE+08qnUeIFLipLiYsmkGRafb9aEeSjhTnNouX65q+Tc42u76X0tw9xNGZfrDCa2u
+         3SMw==
+X-Gm-Message-State: APzg51Dx23hDqP0dvHdICzZaLjTFcWKglNwnSbvBZyDQShosIKQypEcy
+        hbwVspUK/P0KgQwhsaEcqtkKnXl0O6PDXWdfmZdLcw==
+X-Google-Smtp-Source: ANB0VdZejopKJKS5A313rhMV/xFPOKSR5e+ewj7IncA2PgLe3q6IIxnkRPXJ3+nqPDmLlIDBGuYxZtUmh0aB/beQq1o=
+X-Received: by 2002:a9d:50ac:: with SMTP id b44-v6mr24736909oth.267.1537490216501;
+ Thu, 20 Sep 2018 17:36:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180920215824.19464.8884.stgit@localhost.localdomain>
+ <20180920222951.19464.39241.stgit@localhost.localdomain> <CAPcyv4hAEOUOBU4GENaFOb-xXi33g_ugCexfmY3DrLH27Z6MKg@mail.gmail.com>
+ <b7e87e64-95d7-5118-6c7d-ad78d68dc92e@linux.intel.com>
+In-Reply-To: <b7e87e64-95d7-5118-6c7d-ad78d68dc92e@linux.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 20 Sep 2018 17:36:44 -0700
+Message-ID: <CAPcyv4iE=mrvdfXQ94O1r_u1geLbxpF0so3_3z4JLky4SuUNdw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] nvdimm: Schedule device registration on node local
+ to the device
+To:     alexander.h.duyck@linux.intel.com
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang generates a warning when it sees a logical not followed by a
-conditional operator like ==, >, or < because it thinks that the logical
-not should be applied to the whole statement:
+On Thu, Sep 20, 2018 at 5:26 PM Alexander Duyck
+<alexander.h.duyck@linux.intel.com> wrote:
+>
+> On 9/20/2018 3:59 PM, Dan Williams wrote:
+> > On Thu, Sep 20, 2018 at 3:31 PM Alexander Duyck
+> > <alexander.h.duyck@linux.intel.com> wrote:
+> >>
+> >> This patch is meant to force the device registration for nvdimm devices to
+> >> be closer to the actual device. This is achieved by using either the NUMA
+> >> node ID of the region, or of the parent. By doing this we can have
+> >> everything above the region based on the region, and everything below the
+> >> region based on the nvdimm bus.
+> >>
+> >> One additional change I made is that we hold onto a reference to the parent
+> >> while we are going through registration. By doing this we can guarantee we
+> >> can complete the registration before we have the parent device removed.
+> >>
+> >> By guaranteeing NUMA locality I see an improvement of as high as 25% for
+> >> per-node init of a system with 12TB of persistent memory.
+> >>
+> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> >> ---
+> >>   drivers/nvdimm/bus.c |   19 +++++++++++++++++--
+> >>   1 file changed, 17 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+> >> index 8aae6dcc839f..ca935296d55e 100644
+> >> --- a/drivers/nvdimm/bus.c
+> >> +++ b/drivers/nvdimm/bus.c
+> >> @@ -487,7 +487,9 @@ static void nd_async_device_register(void *d, async_cookie_t cookie)
+> >>                  dev_err(dev, "%s: failed\n", __func__);
+> >>                  put_device(dev);
+> >>          }
+> >> +
+> >>          put_device(dev);
+> >> +       put_device(dev->parent);
+> >
+> > Good catch. The child does not pin the parent until registration, but
+> > we need to make sure the parent isn't gone while were waiting for the
+> > registration work to run.
+> >
+> > Let's break this reference count fix out into its own separate patch,
+> > because this looks to be covering a gap that may need to be
+> > recommended for -stable.
+>
+> Okay, I guess I can do that.
+>
+> >
+> >>
+> >>   static void nd_async_device_unregister(void *d, async_cookie_t cookie)
+> >> @@ -504,12 +506,25 @@ static void nd_async_device_unregister(void *d, async_cookie_t cookie)
+> >>
+> >>   void __nd_device_register(struct device *dev)
+> >>   {
+> >> +       int node;
+> >> +
+> >>          if (!dev)
+> >>                  return;
+> >> +
+> >>          dev->bus = &nvdimm_bus_type;
+> >> +       get_device(dev->parent);
+> >>          get_device(dev);
+> >> -       async_schedule_domain(nd_async_device_register, dev,
+> >> -                       &nd_async_domain);
+> >> +
+> >> +       /*
+> >> +        * For a region we can break away from the parent node,
+> >> +        * otherwise for all other devices we just inherit the node from
+> >> +        * the parent.
+> >> +        */
+> >> +       node = is_nd_region(dev) ? to_nd_region(dev)->numa_node :
+> >> +                                  dev_to_node(dev->parent);
+> >
+> > Devices already automatically inherit the node of their parent, so I'm
+> > not understanding why this is needed?
+>
+> That doesn't happen until you call device_add, which you don't call
+> until nd_async_device_register. All that has been called on the device
+> up to now is device_initialize which leaves the node at NUMA_NO_NODE.
 
-drivers/scsi/qla2xxx/qla_nx.c:3702:7: warning: logical not is only
-applied to the left hand side of this comparison
-[-Wlogical-not-parentheses]
-                if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
-                    ^
-drivers/scsi/qla2xxx/qla_nx.c:3702:7: note: add parentheses after the
-'!' to evaluate the comparison first
-                if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
-                    ^
-                     (
-drivers/scsi/qla2xxx/qla_nx.c:3702:7: note: add parentheses around left
-hand side expression to silence this warning
-                if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
-                    ^
-                    (
-1 warning generated.
-
-It assumes the author might have made a mistake in their logic:
-
-if (!a == b) -> if (!(a == b))
-
-Sometimes that is the case; other times, it's just a super convoluted
-way of saying 'if (a)' when b = 0:
-
-if (!1 == 0) -> if (0 == 0) -> if (true)
-
-Alternatively:
-
-if (!1 == 0) -> if (!!1) -> if (1)
-
-Simplify this comparison so that Clang doesn't complain.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/80
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/scsi/qla2xxx/qla_nx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_nx.c b/drivers/scsi/qla2xxx/qla_nx.c
-index de2bc78449e7..121e18b3b9f8 100644
---- a/drivers/scsi/qla2xxx/qla_nx.c
-+++ b/drivers/scsi/qla2xxx/qla_nx.c
-@@ -3699,8 +3699,8 @@ qla82xx_chip_reset_cleanup(scsi_qla_host_t *vha)
- 		spin_unlock_irqrestore(&ha->hardware_lock, flags);
- 
- 		/* Wait for pending cmds (physical and virtual) to complete */
--		if (!qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
--		    WAIT_HOST) == QLA_SUCCESS) {
-+		if (qla2x00_eh_wait_for_pending_commands(vha, 0, 0,
-+		    WAIT_HOST)) {
- 			ql_dbg(ql_dbg_init, vha, 0x00b3,
- 			    "Done wait for "
- 			    "pending commands.\n");
--- 
-2.19.0
-
+Ooh, yeah, missed that. I think I'd prefer this policy to moved out to
+where we set the dev->parent before calling __nd_device_register, or
+at least a comment here about *why* we know region devices are special
+(i.e. because the nd_region_desc specified the node at region creation
+time).
