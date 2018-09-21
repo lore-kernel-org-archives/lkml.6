@@ -1,156 +1,133 @@
-Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D2CECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A234C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0549208DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:59:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="eSVwyCor"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0549208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id B5D972156F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:02:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5D972156F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=petrovitsch.priv.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391689AbeIVFul (ORCPT
+        id S1727062AbeIVFx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 01:50:41 -0400
-Received: from sonic304-18.consmr.mail.bf2.yahoo.com ([74.6.128.41]:42299 "EHLO
-        sonic304-18.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725756AbeIVFul (ORCPT
+        Sat, 22 Sep 2018 01:53:26 -0400
+Received: from esgaroth.petrovitsch.at ([78.47.184.11]:1989 "EHLO
+        esgaroth.tuxoid.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeIVFx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 01:50:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537574367; bh=yI3y1RAtSUaa5X1VvZSk6B45eg3cxiuzbkTHwex6+Dg=; h=To:Cc:From:Subject:Date:From:Subject; b=eSVwyCor/lRzgf6+0y+9BIrJSnKB/tZeNCA8eMkBsd+MsJO4lrds+pVZVL9PmB4fIgaj8o67iPuINtvSZ6wVwXtQ6kC7OTePPm94xjrCW0kuq1MPq2dNJFJ12tbr1Fdb4apAh7zdeLy3BrCNB77HzL73zf1MEMePKL34mlwT0/Ili5AeWCQJaGalIqJAyQcylbTfayHn1Oj/eFitH5bmm/txPoHdXyM44TsTKSsfzEp5TeVAbx3RJHHWkeo7LzSGIQvsk6zzzWnjU84Vzp7mwcffKtqAZ91xmFB56PNiXPdp/tyhedkVQSRMiKejkRv7Y3p5t7FvSHtXzziZND+X7A==
-X-YMail-OSG: 2o2_My4VM1nj9fCc.p9RosUdWmqEZxrgtOGjHbebznsNMnV2UR.Ok56w2g4M0FW
- pnlwJdulbpztUwcUke63q1bmNnNLex.MrpGfiSZaJnLIdbLtMf0WlBW8Drb1T6tgSUZ0ucb2HiTy
- 8pfNWIhV5leT15aAidyvawKG47Nhl7VflF25q0WBijcvHgLLZhW4kpBZbpFHRRzIJQj1rpK7rLEV
- p6ITsW25.HQFMDIeWe2rrDORCBu95MP3bWjm.7JIkowWH566NsPRkIsUUJnwY68h6p9_Rw54pLtz
- 6BcKGsQzrYdntliXLV62oMrqNzK_fw1.lZ8z8BblyuxV_dHLoV_.Cz8IB91U1Yq9t3x5TtvSH47v
- BZ1.XWmf7ln9Nh_n2uEnEX59fokuph_6hlGcBoo5sehjzS2qmhy_TB.Dnj1ErTIr3ecZHbf9gXTn
- shNemP7mCPTu4eX4e8LzgEiV9n4B6uJ7sZmAs6xRQ5nH_tO4ny1TKTj7HBolBzYw8A5KQYPIo9Q0
- 8T2oMOvXimHNKyZGzyZHSN05UUuV6WRWCwHxvaCxfYZCSNWlL0dcPQsnfU7SBXRYmVYArwaUFE3M
- d6cKTwiPahzSmdv7pfbedlCCXagEjnlt_OrkeMtxg1B166DxzWFEnVtPfAsC_yVdioLCww7rPr78
- DKGJAjzeKggDrBycgAgw6RI4_wwEVpTY2ywEf9dAvYZVpGzEytBKQ5YXmaYmyXqwNILmo5c0tmVY
- 9BgMEit1X00qzcqxuwS0Su7J3rqAhub2OduCcrAnN3DQ9k21mCYM7fcqclZ8xY2xD4KDy08ByiPL
- yHkt09LgpDajycxyj55ti7y5fsgP58XAfT4Njp9i306pxLgLjbiUJ5KSgESx8OlU5IG9YYjtTh6S
- XS1lQfZK03NQ1EgDGtgDk1Q5oIKiSIbBVtW8FYWJBl14l7II5fvrJuMBpc5DQA3n8clLWhN51tXl
- pXzUXcEENo3riv_hIZzUqAjbb62Oa4S6teUV8gIgGR4Kfp2ZUXgyE6K5ydC_OR4ET9ReRsz2jwZL
- hK3lZDmS8A0qciQhgTCTBbrR5fTidLRRTS9p3nQh1oSnYriIfbHW6B2MbDlOxtw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Sep 2018 23:59:27 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp426.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 2bea0198d08c0840eb41a19b0854a8e4;
-          Fri, 21 Sep 2018 23:59:26 +0000 (UTC)
-To:     LSM <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
-Message-ID: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
-Date:   Fri, 21 Sep 2018 16:59:21 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 22 Sep 2018 01:53:26 -0400
+Received: from thorin.petrovitsch.priv.at (80-110-99-3.cgn.dynamic.surfer.at [80.110.99.3])
+        (authenticated bits=0)
+        by esgaroth.tuxoid.at (8.15.2/8.15.2) with ESMTPSA id w8M0012l002751
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=NO);
+        Sat, 22 Sep 2018 02:00:19 +0200
+Subject: Re: Code of Conduct: Let's revamp it.
+To:     "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
+        riel@surriel.com, ec429@cantab.net,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net>
+ <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
+ <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
+ <87zhwbj8xe.fsf@redhat.com>
+ <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+ <20180921231545.GC2966@thunk.org>
+ <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
+From:   Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Message-ID: <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
+Date:   Sat, 22 Sep 2018 01:59:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
+Content-Type: multipart/mixed;
+ boundary="------------DC8B0EBFA7A8EDBC394FEA40"
 Content-Language: en-US
+X-DCC-MGTINTERNET-Metrics: esgaroth.tuxoid.at 1170; Body=8 Fuz1=8 Fuz2=8
+X-Virus-Scanned: clamav-milter 0.97 at esgaroth.tuxoid.at
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v4: Finer granularity in the patches and other
-    cleanups suggested by Kees Cook.
-    Removed dead code created by the removal of SELinux
-    credential blob poisoning.
-v3: Add ipc blob for SARA and task blob for Landlock.
-    Removing the SELinux cred blob pointer poisoning
-    results selinux_is_enabled() being unused, so it and
-    all it's overhead has been removed.
-    Broke up the cred infrastructure patch.
-v2: Reduce the patchset to what is required to support
-    the proposed SARA and LandLock security modules
+This is a multi-part message in MIME format.
+--------------DC8B0EBFA7A8EDBC394FEA40
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The SARA security module is intended to be used
-in conjunction with other security modules. It requires
-state to be maintained for the credential, which
-in turn requires a mechanism for sharing the credential
-security blob. It also uses the ipc security blob. The
-module also requires mechanism for user space manipulation
-of the credential information, hence an additional
-subdirectory in /proc/.../attr.
+On 22/09/2018 01:31, jonsmirl@gmail.com wrote:
+[...]
+> How does this part apply to email addresses used to commit code?
+>=20
+> * Publishing others=E2=80=99 private information, such as a physical or=
+ electronic
+> address, without explicit permission
 
-The LandLock security module provides user configurable
-policy in the secmark mechanism. It requires data in
-the credential, file, inode and task security blobs. For
-this to be used along side the existing "major" security
-modules mechanism for sharing these blobs are provided.
+I need an (explicit) permission to "publish" an already published email
+address which is already world-wide known because it can be found by the
+simplest and worst search engine as the email address is in public
+mailing list archives and git repos?
 
-A side effect of providing sharing of the crendential
-security blob is that the TOMOYO module can be used at
-the same time as the other "major" modules.
+Sounds pretty absurd as the people themselves already published their
+email address.
 
-The mechanism for configuring which security modules are
-enabled has to change when stacking in enabled. Any
-module that uses just the security blobs that are shared
-can be selected. Additionally, one other "major" module
-can be selected.
+IMHO you cannot "publish" already published stuff.
 
-The security module stacking issues around networking and
-IPC are not addressed here as they are beyond what is
-required for TOMOYO, SARA and LandLock.
+MfG,
+	Bernd, NAL
+--=20
+Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
+                     LUGA : http://www.luga.at
 
-git://github.com/cschaufler/lsm-stacking.git#stacking-4.19-rc2-saralock-v4
+--------------DC8B0EBFA7A8EDBC394FEA40
+Content-Type: application/pgp-keys;
+ name="pEpkey.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="pEpkey.asc"
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- Documentation/admin-guide/LSM/index.rst |  23 +-
- fs/proc/base.c                          |  64 ++++-
- fs/proc/internal.h                      |   1 +
- include/linux/cred.h                    |   1 -
- include/linux/lsm_hooks.h               |  24 +-
- include/linux/security.h                |  15 +-
- include/linux/selinux.h                 |  35 ---
- kernel/cred.c                           |  13 -
- security/Kconfig                        |  92 +++++++
- security/apparmor/domain.c              |   2 +-
- security/apparmor/include/cred.h        |  24 +-
- security/apparmor/include/file.h        |   9 +-
- security/apparmor/include/lib.h         |   4 +
- security/apparmor/include/task.h        |  18 +-
- security/apparmor/lsm.c                 |  68 +++--
- security/apparmor/task.c                |   6 +-
- security/security.c                     | 438 ++++++++++++++++++++++++++++++--
- security/selinux/Makefile               |   2 +-
- security/selinux/exports.c              |  23 --
- security/selinux/hooks.c                | 333 +++++++-----------------
- security/selinux/include/audit.h        |   3 -
- security/selinux/include/objsec.h       |  48 +++-
- security/selinux/selinuxfs.c            |   4 +-
- security/selinux/ss/services.c          |   1 -
- security/selinux/xfrm.c                 |   4 +-
- security/smack/smack.h                  |  55 +++-
- security/smack/smack_access.c           |   4 +-
- security/smack/smack_lsm.c              | 315 ++++++++---------------
- security/smack/smackfs.c                |  18 +-
- security/tomoyo/common.h                |  26 +-
- security/tomoyo/domain.c                |   4 +-
- security/tomoyo/securityfs_if.c         |  15 +-
- security/tomoyo/tomoyo.c                |  57 ++++-
- 33 files changed, 1098 insertions(+), 651 deletions(-)
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
+mQENBFr26nABCAC94WhTqVPMksk/AErK3NqDKXE0sqO5umWIF3f4DYRidk8SIuNq
+Fk3Sc8hqE2HlbCB9lxV9q+eqDQ8bRjMF6ud7rjXortlwmoclRRMUuSJhluKo0C7o
+y2fJIwlQAcAKWNfOKqZBTTz81Mntb4j26MsSL7t7JIibst/G7EfoqyB9CkeoI8R2
+20WVKV7Cb70G5cYZkLrSdjhSZ8FJn0QTb+r/TTYHRCFvU2sv+wvG3LAdWfHVnyaC
+l9rPkglsYXFCtsdx3jW2zvWf+mGEjpANlVc/9M621C/uS7viLzalmFENpgM1UqFx
+TEEt8mwepc7dkiiKlslmDGUWSfc/BAcln8BjABEBAAG0LUJlcm5kIFBldHJvdml0
+c2NoIDxiZXJuZEBwZXRyb3ZpdHNjaC5wcml2LmF0PokBVAQTAQgAPhYhBBp+6uAd
+nwsL14MwOAUgtH2tYL69BQJa9upyAhsDBQkB4TOABQsJCAcCBhUKCQgLAgQWAgMB
+Ah4BAheAAAoJEAUgtH2tYL69e+EH/jL5uerVy/JnSTjM4f6UeWSXCT/RoIACccws
+gvr84g5mwYy23c6TxUNNLgeCSGFWCkGxiF07kWazSvMSaQJ7Jb0cIxgqAQfR4xm3
+g/O2bu8E0ZvMu1naMVdYrA6iXX40fylrEONF85+/93ccU60sa443ZxjzmQy8Hh4/
+Siu0tOPrfvBgdovUcIhJaAAStcPLVocYgQ6zu2A9CCHcBTjaCiRiT4s2IPsooEZU
+chKObAormMXJS2mdYHcH/a/6E6+NKnrvZ4yfhAkPF3K1M0Bc1Nvc0ADj62Ffpice
+Mnrd/ki31ct5yIUeViJzNNxApXFuThxm1Nmpgmn/eRG2eHnlvu25AQ0EWvbqcQEI
+AOnQvBVfytvhpeR96YtYTG2VW85Byv92T/FqG7rPHNm7fVxuJtFXZ8L82LKDTl7r
+WtwwbnWFpha3/OAhb4Hn4fWZveDNSPNN8BUMh5BbTV/EW/053F4pBX4uq4/L1t3M
+JQZH5QJrDRNAEL56JfK0yOOGJOvXBMSNAe1gXfLWiE6gGwtHxsoDZfPbSNYl703d
+f4UaSsG0AleVWw+BGGQuYoeD9/icoy673bca22LdcxcV70SWcNaYcutduwAQYZfe
+OTsDO0x/VpapLm7KsyQuNW2EYSPM8RjwuApet1TZxfU4opInQ7HbIusz/kWAWCr3
+q47TvuD9c0jG8cKM3UP4UdcAEQEAAYkBPAQYAQgAJhYhBBp+6uAdnwsL14MwOAUg
+tH2tYL69BQJa9upxAhsMBQkB4TOAAAoJEAUgtH2tYL69YS0H/21k3QUKHj/m3juD
+X3yIbebr+/SR7Db0yrZXLh0RvS9DN2u0E+V26lb9jq+PDHDOJlqgHoiNK5MeWKBA
+2yhpFvwx65P6DS3EXUhIT+1NN0CwtXcuSCt7DKHwmuSBZq+2FKr6niNllxKGWUhz
+EOYtHE71Xm95LPjVi+ETzONF9Xt1ibjFahioSgx8ld/OrsUKv2nVmWVrHErQ+Ed0
+m2fhBB0V9hhv7oCiKv0dfDeoPmeQWmiwMEqBYMgMMaJBUBs4pVwrHYVYYvWGLTfV
+uyqqdpcKo99ns7ALSI7PGCwM4J9ra77L8PQenc329eEREzhC0Ok/Qgk+rI832lD7
+bxT8MO4=3D
+=3DpFcw
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------DC8B0EBFA7A8EDBC394FEA40--
