@@ -2,60 +2,112 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CC9ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9F6C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5891B21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:16:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5891B21523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B9AE22154B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:16:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwAXo7Fw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9AE22154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389634AbeIUSEl (ORCPT
+        id S2389749AbeIUSEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:04:41 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37532 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728184AbeIUSEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:04:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 05:16:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="76197481"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 21 Sep 2018 05:16:00 -0700
-Received: from [10.125.252.15] (abudanko-mobl.ccr.corp.intel.com [10.125.252.15])
-        by linux.intel.com (Postfix) with ESMTP id 85B22580224;
-        Fri, 21 Sep 2018 05:15:58 -0700 (PDT)
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914082653.GG24224@krava> <20180914082858.GH24224@krava>
- <71153c79-f0b9-4bf7-7491-202f46c6b5ed@linux.intel.com>
- <4f63c3d5-2a33-28ed-4e45-086045e9ab50@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <b2f205a9-2d8d-7cf2-0ed7-b6b1ecff990b@linux.intel.com>
-Date:   Fri, 21 Sep 2018 15:15:56 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Fri, 21 Sep 2018 14:04:47 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53192 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728184AbeIUSEr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 14:04:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y139-v6so2831997wmc.2;
+        Fri, 21 Sep 2018 05:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:from:to:cc:references:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6nxSV/yp3pP1W6UTvaxCsR0C0bepRoAtJBkDPqR/3jg=;
+        b=YwAXo7FwowqgqBbi4Y+6t+7/6jA/SM7co3kgDisD93E+wwCG/cycyMq3vM3aL8Bma5
+         ZA7m+785EHRHneCQYp7FfH4PAPScTkMIPNA4JS5p872sbzlo+tAUh7Quwu/N+5VHipgQ
+         mP6Wz9adn5TPmH/y9hlihUOmWHouac256bAKUR8dL4xXBK+ISXlN0GyYNnsrTFFwziDo
+         1F7yCC8D/x69MJeKjsF1lkU7bM+wglyWLKo0/B9nfZ67ZigFlmnN/2iijCTxFLNxO3IK
+         Ut8KAUELMaAEMn4ZcpqKUlAPCE8C4WSup+UkehdviexHNhKUt3ypZB8A7DePVHzMaqCV
+         O9fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:from:to:cc:references:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=6nxSV/yp3pP1W6UTvaxCsR0C0bepRoAtJBkDPqR/3jg=;
+        b=D0oL7LS0xK0ShFRYV+LYMuIWaQHCOk+mkj8dXjbScfWg5AngZS2E7EabdTTr7pdVRg
+         J8whQiDx8mnD7mvG8BS7xOM2F0RHYzEdF5bYL39kOVCMa4IFaMNRc4ilaSNZxYzfjDTN
+         fBObHYoYQ1CvIJvKPwe2Kiu6ZIwIYV0L8hfxcE+xkOI9ewfR5439dxRjTISiRDW4Ecav
+         M1ziL/xAnThKFbaI+Xvtwx5326/olRGgsYPQAJn85lxKe7UAMi8hn8bhWVSHpIlRe7nK
+         oWxPkf2I23u5Mqqnr9wF0nrHDGyySCa/d9xr0oxPmf12NsAf6UokgMRI1fK7V+meH7nZ
+         kcUw==
+X-Gm-Message-State: APzg51CevK6Z1WSuHN0wPcabbO1qYLJPXM2CfUpp354mt354dHltkwia
+        UpSHj2EUwE1ScnhOFqkEZVN4tmzd
+X-Google-Smtp-Source: ANB0Vda4FyVDwUI0PFMTZi1ZJv+PcBAhmVyczLW6DlKkufCu4DUG/Rldhc3daIqxZ5PnWcvyluYlxg==
+X-Received: by 2002:a1c:760a:: with SMTP id r10-v6mr7116519wmc.86.1537532168472;
+        Fri, 21 Sep 2018 05:16:08 -0700 (PDT)
+Received: from [192.168.10.165] (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
+        by smtp.googlemail.com with ESMTPSA id 124-v6sm6318875wmk.20.2018.09.21.05.16.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 05:16:07 -0700 (PDT)
+Subject: Re: [GIT PULL] KVM changes for Linux 4.20-rc5
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     gregkh@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+References: <1537532067-42759-1-git-send-email-pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <7bc25340-cb12-43d1-aefd-01123407a850@redhat.com>
+Date:   Fri, 21 Sep 2018 14:16:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <4f63c3d5-2a33-28ed-4e45-086045e9ab50@linux.intel.com>
+In-Reply-To: <1537532067-42759-1-git-send-email-pbonzini@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,413 +116,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jiri,
+On 21/09/2018 14:14, Paolo Bonzini wrote:
+> Greg,
+> 
+> The following changes since commit 7876320f88802b22d4e2daf7eb027dd14175a0f8:
+> 
+>   Linux 4.19-rc4 (2018-09-16 11:52:37 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+> 
+> for you to fetch changes up to 26b471c7e2f7befd0f59c35b257749ca57e0ed70:
+> 
+>   KVM: nVMX: Fix bad cleanup on error of get/set nested state IOCTLs (2018-09-20 18:54:08 +0200)
+> 
+> ----------------------------------------------------------------
+> This pull request is slightly bigger than usual at this stage, but
+> I swear I would have sent it the same to Linus!  The main cause for
+> this is that I was on vacation until two weeks ago and it took a while
+> to sort all the pending patches between 4.20 and 4.21, test them and
+> so on.
+> 
+> It's mostly small bugfixes and cleanups, mostly around x86 nested
+> virtualization.  One important change, not related to nested
+> virtualization, is that the ability for the guest kernel to trap CPUID
+> instructions (in Linux that's the ARCH_SET_CPUID arch_prctl) is now
+> masked by default.  This is because the feature is detected through an
+> MSR; a very bad idea that Intel seems to like more and more.  Some
+> applications choke if the other fields of that MSR are not initialized
+> as on real hardware, hence we have to disable the whole MSR by default,
+> as was the case before Linux 4.12.
+> 
+> ----------------------------------------------------------------
 
-On 21.09.2018 9:13, Alexey Budankov wrote:
-> Hello Jiri,
-> 
-> On 14.09.2018 12:37, Alexey Budankov wrote:
->> On 14.09.2018 11:28, Jiri Olsa wrote:
->>> On Fri, Sep 14, 2018 at 10:26:53AM +0200, Jiri Olsa wrote:
->>>
->>> SNIP
->>>
->>>>>> The threaded monitoring currently can't monitor backward maps
->>>>>> and there are probably more limitations which I haven't spotted
->>>>>> yet.
->>>>>>
->>>>>> So far I tested on laptop:
->>>>>>   http://people.redhat.com/~jolsa/record_threads/test-4CPU.txt
->>>>>>
->>>>>> and a one bigger server:
->>>>>>   http://people.redhat.com/~jolsa/record_threads/test-208CPU.txt
->>>>>>
->>>>>> I can see decrease in recorded LOST events, but both the benchmark
->>>>>> and the monitoring must be carefully configured wrt:
->>>>>>   - number of events (frequency)
->>>>>>   - size of the memory maps
->>>>>>   - size of events (callchains)
->>>>>>   - final perf.data size
->>>>>>
->>>>>> It's also available in:
->>>>>>   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->>>>>>   perf/record_threads
->>>>>>
->>>>>> thoughts? ;-) thanks
->>>>>> jirka
->>>>>
->>>>> It is preferable to split into smaller pieces that bring 
->>>>> some improvement proved by metrics numbers and ready for 
->>>>> merging and upstream. Do we have more metrics than the 
->>>>> data loss from trace AIO patches?
->>>>
->>>> well the primary focus is to get more events in,
->>>> so the LOST metric is the main one
->>>
->>> actualy I was hoping, could you please run it through the same
->>> tests as you do for AIO code on some huge server? 
->>
->> Yeah, I will, but it takes some time.
-> 
-> Here it is:
-> 
-> Hardware:
-> cat /proc/cpuinfo
-> processor	: 271
-> vendor_id	: GenuineIntel
-> cpu family	: 6
-> model		: 133
-> model name	: Intel(R) Xeon Phi(TM) CPU 7285 @ 1.30GHz
-> stepping	: 0
-> microcode	: 0xe
-> cpu MHz		: 1064.235
-> cache size	: 1024 KB
-> physical id	: 0
-> siblings	: 272
-> core id		: 73
-> cpu cores	: 68
-> apicid		: 295
-> initial apicid	: 295
-> fpu		: yes
-> fpu_exception	: yes
-> cpuid level	: 13
-> wp		: yes
-> flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 fma cx16 xtpr pdcm sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch ring3mwait cpuid_fault epb pti tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms avx512f rdseed adx avx512pf avx512er avx512cd xsaveopt dtherm ida arat pln pts avx512_vpopcntdq avx512_4vnniw avx512_4fmaps
-> bugs		: cpu_meltdown spectre_v1 spectre_v2
-> bogomips	: 2594.07
-> clflush size	: 64
-> cache_alignment	: 64
-> address sizes	: 46 bits physical, 48 bits virtual
-> power management:
-> 
-> uname -a
-> Linux nntpat98-196 4.18.0-rc7+ #2 SMP Thu Sep 6 13:24:37 MSK 2018 x86_64 x86_64 x86_64 GNU/Linux
-> 
-> cat /proc/sys/kernel/perf_event_paranoid
-> 0
-> 
-> cat /proc/sys/kernel/perf_event_mlock_kb 
-> 516
-> 
-> cat /proc/sys/kernel/perf_event_max_sample_rate 
-> 3000
-> 
-> cat /etc/redhat-release 
-> Red Hat Enterprise Linux Server release 7.5 (Maipo)
-> 
-> Metrics:
-> runtime overhead (%) : elapsed_time_under_profiling / elapsed_time
-> data loss (%)        : paused_time / elapsed_time_under_profiling
-> LOST events          : stat from perf report --stats
-> SAMPLE events        : stat from perf report --stats
-> perf.data size (B)   : size of trace file on disk
-> 
-> Events:
-> cpu/period=P,event=0x3c/Duk;CPU_CLK_UNHALTED.THREAD
-> cpu/period=P,umask=0x3/Duk;CPU_CLK_UNHALTED.REF_TSC
-> cpu/period=P,event=0xc0/Duk;INST_RETIRED.ANY
-> cpu/period=0xaae61,event=0xc2,umask=0x10/uk;UOPS_RETIRED.ALL
-> cpu/period=0x11171,event=0xc2,umask=0x20/uk;UOPS_RETIRED.SCALAR_SIMD
-> cpu/period=0x11171,event=0xc2,umask=0x40/uk;UOPS_RETIRED.PACKED_SIMD
-> 
-> =================================================
-> 
-> Command:
-> /usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf.thr record --threads=T \
-> 	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
->         -e cpu/period=P,event=0x3c/Duk,\
->            cpu/period=P,umask=0x3/Duk,\
->            cpu/period=P,event=0xc0/Duk,\
->            cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
->            cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
->            cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
->          --clockid=monotonic_raw -- ./matrix.(icc|gcc)
-> 
-> Workload: matrix multiplication in 256 threads
-> 
-> /usr/bin/time ./matrix.icc
-> Addr of buf1 = 0x7ff9faa73010
-> Offs of buf1 = 0x7ff9faa73180
-> Addr of buf2 = 0x7ff9f8a72010
-> Offs of buf2 = 0x7ff9f8a721c0
-> Addr of buf3 = 0x7ff9f6a71010
-> Offs of buf3 = 0x7ff9f6a71100
-> Addr of buf4 = 0x7ff9f4a70010
-> Offs of buf4 = 0x7ff9f4a70140
-> Threads #: 256 Pthreads
-> Matrix size: 2048
-> Using multiply kernel: multiply1
-> Freq = 0.997720 GHz
-> Execution time = 9.061 seconds
-> 1639.55user 6.59system 0:07.12elapsed 23094%CPU (0avgtext+0avgdata 100448maxresident)k
-> 96inputs+0outputs (1major+33839minor)pagefaults 0swaps
-> 
-> T : 272
->         P (period, ms)       : 0.1
-> 	runtime overhead (%) : 45x ~ 323.54 / 7.12
-> 	data loss (%)        : 96
-> 	LOST events          : 323662
-> 	SAMPLE events        : 31885479
->         perf.data size (GiB) : 42
-> 
-> 	P (period, ms)       : 0.25
-> 	runtime overhead (%) : 25x ~ 180.76 / 7.12
-> 	data loss (%)        : 69 
-> 	LOST events          : 10636
-> 	SAMPLE events        : 18692998
->         perf.data size (GiB) : 23.5
-> 
-> 	P (period, ms)       : 0.35 
-> 	runtime overhead (%) : 16x ~ 119.49 / 7.12
-> 	data loss (%)        : 1
-> 	LOST events          : 6
-> 	SAMPLE events        : 11178524
->         perf.data size (GiB) : 14
-> 
-> T : 128
-> 	P (period, ms)       : 0.35 
-> 	runtime overhead (%) : 15x ~ 111.98 / 7.12
-> 	data loss (%)        : 62
-> 	LOST events          : 2825
-> 	SAMPLE events        : 11267247
->         perf.data size (GiB) : 15
-> 
-> T : 64
-> 	P (period, ms)       : 0.35 
-> 	runtime overhead (%) : 14x ~ 101.55 / 7.12
-> 	data loss (%)        : 67
-> 	LOST events          : 5155
-> 	SAMPLE events        : 10966297
->         perf.data size (GiB) : 13.7
-> 
-> Workload: matrix multiplication in 128 threads
-> 
-> /usr/bin/time ./matrix.gcc
-> Addr of buf1 = 0x7f072e630010
-> Offs of buf1 = 0x7f072e630180
-> Addr of buf2 = 0x7f072c62f010
-> Offs of buf2 = 0x7f072c62f1c0
-> Addr of buf3 = 0x7f072a62e010
-> Offs of buf3 = 0x7f072a62e100
-> Addr of buf4 = 0x7f072862d010
-> Offs of buf4 = 0x7f072862d140
-> Threads #: 128 Pthreads
-> Matrix size: 2048
-> Using multiply kernel: multiply1
-> Execution time = 6.639 seconds
-> 767.03user 11.17system 0:06.81elapsed 11424%CPU (0avgtext+0avgdata 100756maxresident)k
-> 88inputs+0outputs (0major+139898minor)pagefaults 0swaps
-> 
-> T : 272
->         P (period, ms)       : 0.1
-> 	runtime overhead (%) : 29x ~ 198.81 / 6.81
-> 	data loss (%)        : 21
-> 	LOST events          : 2502
-> 	SAMPLE events        : 22481062
->         perf.data size (GiB) : 27.6
-> 
-> 	P (period, ms)       : 0.25
-> 	runtime overhead (%) : 13x ~ 88.47 / 6.81
-> 	data loss (%)        : 0
-> 	LOST events          : 0
-> 	SAMPLE events        : 9572787
->         perf.data size (GiB) : 11.3
-> 
-> 	P (period, ms)       : 0.35 
-> 	runtime overhead (%) : 10x ~ 67.11 / 6.81
-> 	data loss (%)        : 1
-> 	LOST events          : 137
-> 	SAMPLE events        : 6985930
->         perf.data size (GiB) : 8
-> 
-> T : 128
-> 	P (period, ms)       : 0.35 
-> 	runtime overhead (%) : 9.5x ~ 64.33 / 6.81
-> 	data loss (%)        : 1
-> 	LOST events          : 3
-> 	SAMPLE events        : 6666903
->         perf.data size (GiB) : 7.8
-> 
-> T : 64
-> 	P (period, ms)       : 0.25
-> 	runtime overhead (%) : 17x ~ 114.27 / 6.81
-> 	data loss (%)        : 2
-> 	LOST events          : 52
-> 	SAMPLE events        : 12643645
->         perf.data size (GiB) : 15.5
-> 
-> 	P (period, ms)       : 0.35 
-> 	runtime overhead (%) : 10x ~ 68.60 / 6.81
-> 	data loss (%)        : 1
-> 	LOST events          : 93
-> 	SAMPLE events        : 7164368
->         perf.data size (GiB) : 8.5
+A good way to start sending pull requests to you, all version numbers
+are off-by-one. :/  That vacation mood is still in the air.
 
-and this is for AIO and serial:
-
-Command:
-/usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf.aio record --aio=N \
-	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
-        -e cpu/period=P,event=0x3c/Duk,\
-           cpu/period=P,umask=0x3/Duk,\
-           cpu/period=P,event=0xc0/Duk,\
-           cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
-           cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
-           cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
-         --clockid=monotonic_raw -- ./matrix.(icc|gcc)
-
-Workload: matrix multiplication in 256 threads
-
- N : 512
-        P (period, ms)       : 2.5
- 	runtime overhead (%) : 2.7x ~ 19.21 / 7.12
- 	data loss (%)        : 42
- 	LOST events          : 1600
- 	SAMPLE events        : 1235928
-        perf.data size (GiB) : 1.5
- 
- N : 272
- 	P (period, ms)       : 1.5
- 	runtime overhead (%) : 2.5x ~ 18.09 / 7.12
- 	data loss (%)        : 89
- 	LOST events          : 3457
- 	SAMPLE events        : 1222143
-        perf.data size (GiB) : 1.5
-
- 	P (period, ms)       : 2
- 	runtime overhead (%) : 2.5x ~ 17.93 / 7.12
- 	data loss (%)        : 65
- 	LOST events          : 2496
- 	SAMPLE events        : 1240754
-        perf.data size (GiB) : 1.5
-
- 	P (period, ms)       : 2.5
- 	runtime overhead (%) : 2.5x ~ 17.87 / 7.12
- 	data loss (%)        : 44
- 	LOST events          : 1621
- 	SAMPLE events        : 1221949
-        perf.data size (GiB) : 1.5
-
- 	P (period, ms)       : 3
- 	runtime overhead (%) : 2.5x ~ 18.43 / 7.12
- 	data loss (%)        : 12
- 	LOST events          : 350
- 	SAMPLE events        : 1117972
-        perf.data size (GiB) : 1.3
- 
- N : 128
- 	P (period, ms)       : 3
- 	runtime overhead (%) : 2.4x ~ 17.08 / 7.12
- 	data loss (%)        : 11
- 	LOST events          : 335
- 	SAMPLE events        : 1116832
-        perf.data size (GiB) : 1.3
- 
- N : 64
- 	P (period, ms)       : 3
- 	runtime overhead (%) : 2.2x ~ 16.03 / 7.12
- 	data loss (%)        : 11
- 	LOST events          : 329
- 	SAMPLE events        : 1108205
-        perf.data size (GiB) : 1.3
- 
-Workload: matrix multiplication in 128 threads
-
- N : 512
-        P (period, ms)       : 1
- 	runtime overhead (%) : 3.5x ~ 23.72 / 6.81
- 	data loss (%)        : 18
- 	LOST events          : 1043
- 	SAMPLE events        : 2015306
-        perf.data size (GiB) : 2.3
-
- N : 272
-        P (period, ms)       : 0.5
- 	runtime overhead (%) : 3x ~ 22.72 / 6.81
- 	data loss (%)        : 90
- 	LOST events          : 5842
- 	SAMPLE events        : 2205937
-        perf.data size (GiB) : 2.5
-
-        P (period, ms)       : 1
- 	runtime overhead (%) : 3x ~ 22.79 / 6.81
- 	data loss (%)        : 11
- 	LOST events          : 481
- 	SAMPLE events        : 2017099
-        perf.data size (GiB) : 2.5
- 
- 	P (period, ms)       : 1.5
- 	runtime overhead (%) : 3x ~ 19.93 / 6.81
- 	data loss (%)        : 5
- 	LOST events          : 190
- 	SAMPLE events        : 1308692
-        perf.data size (GiB) : 1.5
- 
- 	P (period, ms)       : 2
- 	runtime overhead (%) : 3x ~ 18.95 / 6.81
- 	data loss (%)        : 0
- 	LOST events          : 0
- 	SAMPLE events        : 1010769
-        perf.data size (GiB) : 1.2
- 
- N : 128
- 	P (period, ms)       : 1.5
- 	runtime overhead (%) : 3x ~ 19.08 / 6.81
- 	data loss (%)        : 6
- 	LOST events          : 220
- 	SAMPLE events        : 1322240
-        perf.data size (GiB) : 1.5
- 
- N : 64
- 	P (period, ms)       : 1.5
- 	runtime overhead (%) : 3x ~ 19.43 / 6.81
- 	data loss (%)        : 3
- 	LOST events          : 130
- 	SAMPLE events        : 1386521
-        perf.data size (GiB) : 1.6
-
-=================================================
-
-Command:
-/usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf record \
-	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
-        -e cpu/period=P,event=0x3c/Duk,\
-           cpu/period=P,umask=0x3/Duk,\
-           cpu/period=P,event=0xc0/Duk,\
-           cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
-           cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
-           cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
-         --clockid=monotonic_raw -- ./matrix.(icc|gcc)
-
-Workload: matrix multiplication in 256 threads
-
-	P (period, ms)       : 7.5
- 	runtime overhead (%) : 1.6x ~ 11.6 / 7.12
- 	data loss (%)        : 1
- 	LOST events          : 1
- 	SAMPLE events        : 451062
-        perf.data size (GiB) : 0.5
-
-Workload: matrix multiplication in 128 threads
-
-	P (period, ms)       : 3
- 	runtime overhead (%) : 1.8x ~ 12.58 / 6.81
- 	data loss (%)        : 9
- 	LOST events          : 147
- 	SAMPLE events        : 673299
-        perf.data size (GiB) : 0.8
-
-Thanks,
-Alexey
-
-> 
-> Thanks,
-> Alexey
-> 
->>
->>>
->>> thanks,
->>> jirka
->>>
->>
-> 
+Paolo
