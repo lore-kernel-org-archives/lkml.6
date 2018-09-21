@@ -6,62 +6,63 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676B8ECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216B5ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1300821523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C365B21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:06:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uqsPjDsZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1300821523
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UoFkHS5r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C365B21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390208AbeIUTzG (ORCPT
+        id S2390274AbeIUTzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:55:06 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38018 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389621AbeIUTzF (ORCPT
+        Fri, 21 Sep 2018 15:55:13 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34123 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389621AbeIUTzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:55:05 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t25-v6so3405174wmi.3;
-        Fri, 21 Sep 2018 07:06:02 -0700 (PDT)
+        Fri, 21 Sep 2018 15:55:12 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t15so5085618wrx.1;
+        Fri, 21 Sep 2018 07:06:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id;
         bh=Ga9LJBhqKr0+ONXckUCgRW1ZIhEbGgPKpmJ/CUUaDtY=;
-        b=uqsPjDsZDtoWqJFdSwQoPLO4c99Hilldk81la1fH0FsemoNjcPfrYFdxqpTPPBZJQt
-         qunmJkQ4blB00HxjNMA39bWjuF+pwC9n08Zu7DC8+0dLZUlHb7xkZC8toTRosF7BfWYm
-         nxtDFNnG5MOBqnUQo8oge6l883mHQZZIelLLtIp6OzJcPigJyryGXHNBAYjZdyhtwrV5
-         VP4wrp7yofjTLpB1mKGHw65dudxzSgzyQpO6IO9j4+Nq2/oMKmb2RLZGAt2TPF+OeUnN
-         lTcslPzizgRjL+ayXk6XU8Pr1pvllBBHpb8FaAELq2MZfKL2kYr+uNxpkX0u694dR5ND
-         WnEQ==
+        b=UoFkHS5rsL9EWG+i+N6aQuwu0D0JI/kpuZD6EewbBSCoC9zYnwniwL6vLyB9n2JCM+
+         x5MbiVSBFTx8dwKRPwbGCBq5tm34yJPDMxRbBAQlyioE/RkELg3S5Q+bEdnbKe3PEFns
+         /B9HSHg13f8Ji7M1oQNUJ3juY7k5vRaj6RR91bELmhmSvUu5kxb9Vi+DfbieO1jwJSxu
+         cKkPRcYw4igMG4Yr8GLpAfkbJa4BNonqcT/zypz7HaAZ8llAWOSOSMZPX4YhuNGa8Ly9
+         B/IqE0a8OFNYjpjB1YNpF9eC6R4bjB8oBMgHLKg+QmCHGMiqYto6+G+z7HYS+/P3Xji+
+         u3oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
         bh=Ga9LJBhqKr0+ONXckUCgRW1ZIhEbGgPKpmJ/CUUaDtY=;
-        b=ChGmX2A/h94CYdNyY9Tlw4DLg7TE9BO9sMskjgUcATV94MUg+8efziYYYiH7whqov6
-         F0QQU44SVJdhGRAobQqi8IPlkt8fFNAkYFgUQniIsihNXP5ZWPRVX1CAjHoqJiCa+wuo
-         ay2IQV23WTLoh5FsHvZURCrSjWA8+7gVsb1Cow/IbYCJQFO5sQmwgjYTfjLfSk1q5APt
-         /V2hvdI9V7F3LXIwZupqdScH1ZyFN1U5tQKFsfojRR6oqsw9wDhW5DQJdLKeODwbtzfn
-         EXmQHkyRecPF6mekKTpb6Tk+mAbDVjHWjUtOwNfPAqVA/vDJ0VVMxWc+PEbixL/3PwQY
-         lhJA==
-X-Gm-Message-State: ABuFfoiaRnw6OQOrW+IpGZCku++YDiUIaX5A7IPHIe2CROSCLEAVJOiG
-        L0LWsWM2F9ZJomT8aRvMjqW6c02P
-X-Google-Smtp-Source: ANB0VdaMkxL0RVSE/4s8+pomMyx/mE0ilDSvg2tAYg+e8PPhVNWRQuRzrAbDgG3DT3u6cTeKsAdylQ==
-X-Received: by 2002:a1c:1203:: with SMTP id 3-v6mr7508969wms.46.1537538760994;
-        Fri, 21 Sep 2018 07:06:00 -0700 (PDT)
+        b=LaeqOmKn2SmGYvOmKTll68exzPBkIxu45g4Welk2dpQEPBPEWiwKsXnTf1Ny9htGcX
+         XR5Xf0QgMG76KcR86ar1R89lMeMsijvH3Z7r2SBYx05h0pnRYuuWq6iuP48pzuX6LwbC
+         rJ8BxwTIyni7POGc8Ht0YNjVVFTkHuEihEAVVLO/g2em65AtPgy/4vh0BZwB56xlD/Ot
+         Up1kEWY44Rs3lba+txaJLsMdAVcUtwwBa6KzQdOpNW0fJtIGjTNFIAPe3w5gGgeMzNsv
+         35isykgqAWsSPOIgGP6ATIQgkVHSJeCe9Ls8YD8M5ZrPfci4HQHMYN2Pqd0Ai0QyQo5Y
+         JNJw==
+X-Gm-Message-State: APzg51DMXnSzZ1rnHj4lYHPvhrr/KioO1PHdd1OuJqZ5nmmYzHeBvTEu
+        Z1LpUJngklSkdXjAkvcAmpbFwgtb
+X-Google-Smtp-Source: ANB0VdYB3f2UNdrFvBwjQlXCc3tYmae6Jp3OXL6ZL+voK8dqbJTma2TbjNx0wj/0SUI79oLK30X8xQ==
+X-Received: by 2002:adf:c684:: with SMTP id j4-v6mr37952241wrg.243.1537538767994;
+        Fri, 21 Sep 2018 07:06:07 -0700 (PDT)
 Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
-        by smtp.gmail.com with ESMTPSA id z80-v6sm11471667wrb.1.2018.09.21.07.05.59
+        by smtp.gmail.com with ESMTPSA id f12-v6sm6193534wrj.55.2018.09.21.07.06.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 07:06:00 -0700 (PDT)
+        Fri, 21 Sep 2018 07:06:07 -0700 (PDT)
 From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     rkrcmar@redhat.com
+To:     gregkh@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
 Subject: [GIT PULL] KVM changes for Linux 4.19-rc5
-Date:   Fri, 21 Sep 2018 16:05:59 +0200
-Message-Id: <1537538759-8160-1-git-send-email-pbonzini@redhat.com>
+Date:   Fri, 21 Sep 2018 16:06:06 +0200
+Message-Id: <1537538766-8252-1-git-send-email-pbonzini@redhat.com>
 X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
