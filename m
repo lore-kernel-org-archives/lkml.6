@@ -2,133 +2,125 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C526AC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0053CECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59B8A21522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:04:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="smV539L7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B8A21522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DAD121522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:09:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DAD121522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389395AbeIUNvy (ORCPT
+        id S2389406AbeIUN4w convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 09:51:54 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58224 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeIUNvx (ORCPT
+        Fri, 21 Sep 2018 09:56:52 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:44303 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUN4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 09:51:53 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8L846Qu118148;
-        Fri, 21 Sep 2018 08:04:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Pk9BmheqWGOwcEvbZUoUkHcmmDR3rja9rGd1XO2j54M=;
- b=smV539L7ZjGB7CXwlxXgFyPCm+fr3Bvhh9dthKLJyN9ViVK+yNGDUXGYZCYPK7enzioH
- ihcSKR9zRkeKfpueqyplsx/IiNpVFvUpbZqaa65GLeP7FSSDS2IVGugs0V2TEVppR8sI
- U5lkuvMo35tLtpb3pNeOoGcxPhlFb0TXPiEA6mQdV94h4SsamAO3UZRdUjQydE6xj948
- YePqJyDImJ11hUVpiNRTRXoii5IEKG5lDbuhjmL4Tz6x/LuzaF1drsNX31S+vacZoT8I
- z3er+d3cPuyZ0OAB6vPb9oloaNGGOChA7X6gK52Bk7s4JLdsXKQWeqA8nXRIAkvikp6H Sg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2mmkm21mbb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Sep 2018 08:04:07 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8L841Rd016290
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Sep 2018 08:04:01 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8L840gA023900;
-        Fri, 21 Sep 2018 08:04:01 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 21 Sep 2018 01:04:00 -0700
-Date:   Fri, 21 Sep 2018 11:03:51 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     valdis.kletnieks@vt.edu
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Aditya Shankar <aditya.shankar@microchip.com>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: wilc1000: Remove unnecessary pointer check
-Message-ID: <20180921080351.ckw727xyznzwemuu@mwanda>
-References: <20180920212648.25181-1-natechancellor@gmail.com>
- <32473.1537507532@turing-police.cc.vt.edu>
+        Fri, 21 Sep 2018 09:56:52 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id DB9853B3080;
+        Fri, 21 Sep 2018 10:09:05 +0200 (CEST)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     Christoph Conrads <contact@christoph-conrads.name>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: Code of Conduct: Let's revamp it.
+Date:   Fri, 21 Sep 2018 10:09:07 +0200
+Message-ID: <2808315.UYOVJ65Qvk@merkaba>
+In-Reply-To: <20180920231823.46d282ce40c91f39988bd34e@christoph-conrads.name>
+References: <20180920231823.46d282ce40c91f39988bd34e@christoph-conrads.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32473.1537507532@turing-police.cc.vt.edu>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9022 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809210085
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 01:25:32AM -0400, valdis.kletnieks@vt.edu wrote:
-> On Thu, 20 Sep 2018 14:26:49 -0700, Nathan Chancellor said:
-> > Clang warns that the address of a pointer will always evaluated as true
-> > in a boolean context:
-> >
-> > drivers/staging/wilc1000/linux_wlan.c:267:20: warning: address of
-> > 'vif->ndev->dev' will always evaluate to 'true'
-> > [-Wpointer-bool-conversion]
-> >         if (!(&vif->ndev->dev))
-> >             ~  ~~~~~~~~~~~^~~
-> > 1 warning generated.
-> >
-> > Since this statement always evaluates to false due to the logical not,
-> > remove it.
-> 
-> Often, "just nuke it because it's now dead code" isn't the best answer...
-> 
-> At one time, that was likely intended to be checking whether ->dev was a null
-> pointer, to make sure we don't pass request_firmware() a null pointer and oops
-> the kernel, or other things that go pear-shaped....
-> 
-> So the question becomes:   Is it safe to just remove it, or was it intended to
-> test for something that could  legitimately be null if we've hit an error along
-> the way (which means we should fix the condition to be proper and acceptable
-> to both gcc and clang)?
-> 
+Hello Christoph.
 
-Obviously, we hope that Nathan considered that.  This driver has new
-competent maintainers so they would think about that too.  I also review
-staging patches and I reviewed it a few minutes after it was sent.  So
-it's not like anyone was going to just merge the patch without thinking
-about whether a different test was intended.
+Christoph Conrads - 20.09.18, 23:18:
+> The CoC is extremely ambiguously written for an enforceable document,
+> any behavior disliked by the maintainers can be punished, and the
+> level of naivete of the maintainers defending it is suprising for
+> such a far reaching document.
 
-I am on the kernel-janitors and we've had one or two of these recently
-where the warning indicate a bug so perhaps we do need to think about it
-from a "process perspective".  The Fixes tag isn't appropiate because
-it's not a bug fix, but we could just say in the comments:
+For me the most important point is this:
 
-    "This unused variable was added in commit 123456789012 ("blah blah")
-     so far as I can see it has never been useful."
+Let Linus have his own experience and insights. It is not up to me 
+telling him that he might be making this all up or may be completely 
+right in his assessment. I do not know how he got to that experience and 
+insights and what talks in person may have contributed to it. And its 
+frankly simply not my business. I just congratulated him for his 
+insights and his courage to speak up like this, seeing the potential in 
+it.
 
-That would help reviewing because now I know that you thought about it
-and I also can just look at the original commit.  For this patch I did
-git log -p and the scrolled to the original commit, and the function
-name had changed so I had to scroll back and forth a bit to see what
-the function was called originally.  It wasn't a huge deal but having
-the original commit would be nice.
+Not my business is also the CoC Linux kernel developers and contributors 
+may or may not give themselves. I am mostly a by-stander. Sure I test rc 
+kernels and give (limited, as I usually do not bisect issues) feedback, 
+report bugs. But that is about it.
 
-regards,
-dan carpenter
+What I see here is that a lot of people who are not even contributing to 
+the Linux kernel in a major way apparently want to make their opinion 
+about Code of Conduct heard loudly.
+
+I ask myself: What the point of it?
+
+Apparently at least some of the major contributors to the Linux kernel 
+see an issue with communication culture on this mailing list and 
+elsewhere. Whether it has been a wise move to just change the CoC to a 
+different text, I read some major contributors opposing this move … I am 
+all for letting people who contribute significantly to the Linux kernel 
+have their own experience and insights.
+
+It is simply not my business to interfere with whether they give 
+themselves and the wider community a Code of Conduct and what would be 
+the content of it. They do the work, one of them cares for the 
+infrastructure that serves this mailing list. Even in case someone would 
+now censor every post I do on LKML or even ban me from using it… I do 
+not think it is to up to me to change or control that behavior. Sure, 
+even small contributions count and I even have a tiny, little commit to 
+kernel documentation, but still for me the major point is:
+
+Some of the major contributors apparently see that the way of 
+communicating here and elsewhere sometimes (!) does not serve Linux 
+kernel development and the community. By just continuing the way it is, 
+it is unlikely to receive a different outcome. So it is important to 
+change *something*.
+
+There is a kernel developer summit where they like to discuss exactly 
+things like this. I do not see it up to me to try to control the outcome 
+of that process.
+
+
+KDE.org has a code of conduct¹. While at the same time they really have 
+a rather friendly and welcoming environment – if you ask me one of the 
+most friendly and welcoming ones I have ever witnessed so far. I also 
+still see honest discussions there where people share their point of 
+view and agree to disagree. They are very productive as well. Plasma and 
+KDE applications become better and more usable with every release – yes, 
+Linus in case you did not decide not to read mails on this list for now, 
+I won´t CC your address, KDE stuff is getting better and better. And 
+they work on making the project even more welcoming for newcomers. I´d 
+say I even found friends within that project. They may not even need the 
+CoC, but I do not see it doing any harm either.
+
+I really don´t see the point of most of the discussion here. What 
+happened now won´t be the end of Linux and that´s about it. There is no 
+point for predicting doom unless you want it to happen.
+
+[1] https://www.kde.org/code-of-conduct/
+
+Thanks,
+-- 
+Martin
+
 
