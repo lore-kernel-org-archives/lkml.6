@@ -3,107 +3,366 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C341FECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E495DECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7622921523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7622921523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 8594521523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:03:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8594521523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390573AbeIUTwf (ORCPT
+        id S2390597AbeIUTwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:52:35 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:27213 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389686AbeIUTwe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:52:34 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8LDx9pW022531;
-        Fri, 21 Sep 2018 16:03:02 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mmkmu4hg8-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 21 Sep 2018 16:03:02 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 60EF234;
-        Fri, 21 Sep 2018 14:03:01 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 39678526A;
-        Fri, 21 Sep 2018 14:03:01 +0000 (GMT)
-Received: from localhost (10.75.127.48) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 21 Sep 2018 16:03:00
- +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <thierry.reding@gmail.com>, <stefan.wahren@i2se.com>,
-        <gohai@sukzessiv.net>
-CC:     <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
-        <loic.pallardy@st.com>, <broonie@kernel.org>,
-        <fabrice.gasnier@st.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-Subject: [RESEND PATCH] Revert "pwm: Set class for exported channels in sysfs"
-Date:   Fri, 21 Sep 2018 16:02:47 +0200
-Message-ID: <1537538567-5377-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 21 Sep 2018 15:52:42 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4635 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390241AbeIUTvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:51:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 07:02:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="71839070"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by fmsmga007.fm.intel.com with ESMTP; 21 Sep 2018 07:02:05 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH v4 07/21] tpm: move tpm_getcap to tpm1-cmd.c
+Date:   Fri, 21 Sep 2018 16:58:06 +0300
+Message-Id: <20180921135820.20549-8-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180921135820.20549-1-tomas.winkler@intel.com>
+References: <20180921135820.20549-1-tomas.winkler@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_05:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
-regression with multiple pwm chip. It creates a new entry in
-'/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
-- 1st time export will create an entry in /sys/class/pwm/pwmX
-- when another export happens on another pwmchip, it can't be created
-(e.g. -EEXIST)
+1. Move tpm_getcap to tpm1-cmd. Rename the function to tpm1_getcap.
+2. Remove unused tpm_getcap_header with unused constant
+as this functionality is already implemented using tpm_buf construct.
 
-This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
-- pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
+Fixes warning:
+drivers/char/tpm/tpm-interface.c:452:38: warning: ‘tpm_getcap_header’ defined but not used [-Wunused-const-variable=]
+ static const struct tpm_input_header tpm_getcap_header = {
+                                      ^~~~~~~~~~~~~~~~~
+3. Drop unused TPM_DIGEST_SIZE. It's already defined in
+include/linux/tpm.h
 
-Example on stm32 (stm32429i-eval) platform:
-$ ls /sys/class/pwm
-pwmchip0 pwmchip4
-
-$ cd /sys/class/pwm/pwmchip0/
-$ echo 0 > export
-$ ls /sys/class/pwm
-pwm0 pwmchip0 pwmchip4
-
-$ cd /sys/class/pwm/pwmchip4/
-$ echo 0 > export
-sysfs: cannot create duplicate filename '/class/pwm/pwm0'
-...Exception stack follows...
-
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/pwm/sysfs.c | 1 -
- 1 file changed, 1 deletion(-)
+V2-V3: Rebase
+V4: Resend
 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 7c71cdb..4726d43 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -263,7 +263,6 @@ static int pwm_export_child(struct device *parent, struct pwm_device *pwm)
- 	export->pwm = pwm;
- 	mutex_init(&export->lock);
+ drivers/char/tpm/tpm-interface.c | 47 +-----------------------------------
+ drivers/char/tpm/tpm-sysfs.c     | 48 ++++++++++++++++++-------------------
+ drivers/char/tpm/tpm.h           |  4 ++--
+ drivers/char/tpm/tpm1-cmd.c      | 51 +++++++++++++++++++++++++++++++++-------
+ drivers/char/tpm/tpm_tis_core.c  |  2 +-
+ 5 files changed, 71 insertions(+), 81 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 163c4da23320..153fee46bec0 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -454,52 +454,6 @@ int tpm_startup(struct tpm_chip *chip)
+ 	return rc;
+ }
  
--	export->child.class = parent->class;
- 	export->child.release = pwm_export_release;
- 	export->child.parent = parent;
- 	export->child.devt = MKDEV(0, 0);
+-#define TPM_DIGEST_SIZE 20
+-#define TPM_RET_CODE_IDX 6
+-#define TPM_INTERNAL_RESULT_SIZE 200
+-#define TPM_ORD_GET_CAP 101
+-#define TPM_ORD_GET_RANDOM 70
+-
+-static const struct tpm_input_header tpm_getcap_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(22),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_CAP)
+-};
+-
+-ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+-		   const char *desc, size_t min_cap_length)
+-{
+-	struct tpm_buf buf;
+-	int rc;
+-
+-	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_CAP);
+-	if (rc)
+-		return rc;
+-
+-	if (subcap_id == TPM_CAP_VERSION_1_1 ||
+-	    subcap_id == TPM_CAP_VERSION_1_2) {
+-		tpm_buf_append_u32(&buf, subcap_id);
+-		tpm_buf_append_u32(&buf, 0);
+-	} else {
+-		if (subcap_id == TPM_CAP_FLAG_PERM ||
+-		    subcap_id == TPM_CAP_FLAG_VOL)
+-			tpm_buf_append_u32(&buf, TPM_CAP_FLAG);
+-		else
+-			tpm_buf_append_u32(&buf, TPM_CAP_PROP);
+-
+-		tpm_buf_append_u32(&buf, 4);
+-		tpm_buf_append_u32(&buf, subcap_id);
+-	}
+-	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+-			      min_cap_length, 0, desc);
+-	if (!rc)
+-		*cap = *(cap_t *)&buf.data[TPM_HEADER_SIZE + 4];
+-
+-	tpm_buf_destroy(&buf);
+-	return rc;
+-}
+-EXPORT_SYMBOL_GPL(tpm_getcap);
+-
+ int tpm_get_timeouts(struct tpm_chip *chip)
+ {
+ 	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
+@@ -857,6 +811,7 @@ int tpm_pm_resume(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(tpm_pm_resume);
+ 
++#define TPM_ORD_GET_RANDOM 70
+ #define TPM_GETRANDOM_RESULT_SIZE	18
+ static const struct tpm_input_header tpm_getrandom_header = {
+ 	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index 83a77a445538..008515314ae3 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -106,9 +106,9 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+ 	char *str = buf;
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_PCR, &cap,
+-			"attempting to determine the number of PCRS",
+-			sizeof(cap.num_pcrs));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
++			 "attempting to determine the number of PCRS",
++			 sizeof(cap.num_pcrs));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -132,9 +132,9 @@ static ssize_t enabled_show(struct device *dev, struct device_attribute *attr,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
+-			"attempting to determine the permanent enabled state",
+-			sizeof(cap.perm_flags));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
++			 "attempting to determine the permanent enabled state",
++			 sizeof(cap.perm_flags));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -149,9 +149,9 @@ static ssize_t active_show(struct device *dev, struct device_attribute *attr,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
+-			"attempting to determine the permanent active state",
+-			sizeof(cap.perm_flags));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_PERM, &cap,
++			 "attempting to determine the permanent active state",
++			 sizeof(cap.perm_flags));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -166,9 +166,9 @@ static ssize_t owned_show(struct device *dev, struct device_attribute *attr,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
+-			"attempting to determine the owner state",
+-			sizeof(cap.owned));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_PROP_OWNER, &cap,
++			 "attempting to determine the owner state",
++			 sizeof(cap.owned));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -183,9 +183,9 @@ static ssize_t temp_deactivated_show(struct device *dev,
+ 	cap_t cap;
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
+-			"attempting to determine the temporary state",
+-			sizeof(cap.stclear_flags));
++	rc = tpm1_getcap(to_tpm_chip(dev), TPM_CAP_FLAG_VOL, &cap,
++			 "attempting to determine the temporary state",
++			 sizeof(cap.stclear_flags));
+ 	if (rc)
+ 		return 0;
+ 
+@@ -202,18 +202,18 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+ 	ssize_t rc;
+ 	char *str = buf;
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
+-			"attempting to determine the manufacturer",
+-			sizeof(cap.manufacturer_id));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_MANUFACTURER, &cap,
++			 "attempting to determine the manufacturer",
++			 sizeof(cap.manufacturer_id));
+ 	if (rc)
+ 		return 0;
+ 	str += sprintf(str, "Manufacturer: 0x%x\n",
+ 		       be32_to_cpu(cap.manufacturer_id));
+ 
+ 	/* Try to get a TPM version 1.2 TPM_CAP_VERSION_INFO */
+-	rc = tpm_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
+-			"attempting to determine the 1.2 version",
+-			sizeof(cap.tpm_version_1_2));
++	rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
++			 "attempting to determine the 1.2 version",
++			 sizeof(cap.tpm_version_1_2));
+ 	if (!rc) {
+ 		str += sprintf(str,
+ 			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
+@@ -223,9 +223,9 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+ 			       cap.tpm_version_1_2.revMinor);
+ 	} else {
+ 		/* Otherwise just use TPM_STRUCT_VER */
+-		rc = tpm_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
+-				"attempting to determine the 1.1 version",
+-				sizeof(cap.tpm_version));
++		rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
++				 "attempting to determine the 1.1 version",
++				 sizeof(cap.tpm_version));
+ 		if (rc)
+ 			return 0;
+ 		str += sprintf(str,
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 3fb268f43955..1c1980c79c30 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -541,8 +541,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ 			 size_t min_rsp_body_length, unsigned int flags,
+ 			 const char *desc);
+ int tpm_startup(struct tpm_chip *chip);
+-ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+-		   const char *desc, size_t min_cap_length);
+ int tpm_get_timeouts(struct tpm_chip *);
+ int tpm_do_selftest(struct tpm_chip *chip);
+ 
+@@ -551,6 +549,8 @@ int tpm1_get_timeouts(struct tpm_chip *chip);
+ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
++ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
++		    const char *desc, size_t min_cap_length);
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 2cf13d92653c..7191bc155d2b 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -314,15 +314,15 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+ 	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
+ 	ssize_t rc;
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
+-			sizeof(cap.timeout));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
++			 sizeof(cap.timeout));
+ 	if (rc == TPM_ERR_INVALID_POSTINIT) {
+ 		if (tpm_startup(chip))
+ 			return rc;
+ 
+-		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
+-				"attempting to determine the timeouts",
+-				sizeof(cap.timeout));
++		rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
++				 "attempting to determine the timeouts",
++				 sizeof(cap.timeout));
+ 	}
+ 
+ 	if (rc) {
+@@ -384,9 +384,9 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+ 	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
+ 	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
+ 
+-	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
+-			"attempting to determine the durations",
+-			sizeof(cap.duration));
++	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
++			 "attempting to determine the durations",
++			  sizeof(cap.duration));
+ 	if (rc)
+ 		return rc;
+ 
+@@ -435,3 +435,38 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
++
++#define TPM_ORD_GET_CAP 101
++ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
++		    const char *desc, size_t min_cap_length)
++{
++	struct tpm_buf buf;
++	int rc;
++
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_CAP);
++	if (rc)
++		return rc;
++
++	if (subcap_id == TPM_CAP_VERSION_1_1 ||
++	    subcap_id == TPM_CAP_VERSION_1_2) {
++		tpm_buf_append_u32(&buf, subcap_id);
++		tpm_buf_append_u32(&buf, 0);
++	} else {
++		if (subcap_id == TPM_CAP_FLAG_PERM ||
++		    subcap_id == TPM_CAP_FLAG_VOL)
++			tpm_buf_append_u32(&buf, TPM_CAP_FLAG);
++		else
++			tpm_buf_append_u32(&buf, TPM_CAP_PROP);
++
++		tpm_buf_append_u32(&buf, 4);
++		tpm_buf_append_u32(&buf, subcap_id);
++	}
++	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
++			      min_cap_length, 0, desc);
++	if (!rc)
++		*cap = *(cap_t *)&buf.data[TPM_HEADER_SIZE + 4];
++
++	tpm_buf_destroy(&buf);
++	return rc;
++}
++EXPORT_SYMBOL_GPL(tpm1_getcap);
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index f9e73d0f9386..ced01ec146b5 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -664,7 +664,7 @@ static int tpm_tis_gen_interrupt(struct tpm_chip *chip)
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		return tpm2_get_tpm_pt(chip, 0x100, &cap2, desc);
+ 	else
+-		return tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, desc,
++		return tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, desc,
+ 				  0);
+ }
+ 
 -- 
-1.9.1
+2.14.4
 
