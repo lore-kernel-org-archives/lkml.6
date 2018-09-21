@@ -2,99 +2,108 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320F2ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE15DECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB2AE21522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FB4E21522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:32:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DwyBz5Es"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2AE21522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="bTijR68F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB4E21522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391625AbeIVEVu (ORCPT
+        id S2391561AbeIVEXC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 00:21:50 -0400
-Received: from mail-lj1-f177.google.com ([209.85.208.177]:33690 "EHLO
-        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391588AbeIVEVu (ORCPT
+        Sat, 22 Sep 2018 00:23:02 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37876 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725833AbeIVEXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 00:21:50 -0400
-Received: by mail-lj1-f177.google.com with SMTP id s12-v6so13396827ljj.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 15:30:54 -0700 (PDT)
+        Sat, 22 Sep 2018 00:23:02 -0400
+Received: by mail-io1-f66.google.com with SMTP id v14-v6so13615697iob.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 15:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n2jvFQjTqMRH8h9dfmz9B+usUOiuChKBPfAil8USXMQ=;
-        b=DwyBz5Es4YJGCw1HmvdWcNw1zOH1s+3lLzPu6vlJc/VVL8DVrbWN27CGlbp5AH71vx
-         p7WRntPrrUir1GrhgX11NhLsBSbZU5Lztm0hYf8I4G5Xd/WkcjgDkZ5WqjokUxRYg9Nu
-         XNzCkUHApG+/jxn3oA4tDo19Tx5ypc4PUlBb1C0EwAriY7kgAX6Rz0uUweAEtp16LIM7
-         ukpjyH6GMXxY+JjZbS84Txx86NEAcYYU++jY5XOqmmLpS0PPrwyUsc+eFZ5nDETc6f4C
-         kYvpI4A7jk5EQ1mN37gvhXGJkJgJ2bZwBajzLYFAYThrcge3og7LZT3RdHxQ8GC7S3Mm
-         pZTw==
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W7G1LyBYm4HSC5qCxaG9wMUa09GRXe4Qr33dj1P3c38=;
+        b=bTijR68FboeRTVFAiAOqUUVXOOXvL8atzI170zC394IEbTNbsAMPfkPwXfsSZjeWKs
+         a5ZgPDElseUuWwDKFLiGWnBxhGs8f/P8ex5DamkFzWyhY8r9Gu4O9ZKbr2Y3F87c2Hn7
+         qgMIu/sIln9Z/vpL7gHx3iWSrcZUsHMpBItXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n2jvFQjTqMRH8h9dfmz9B+usUOiuChKBPfAil8USXMQ=;
-        b=V1g/+T/X4DvDf8yQHm0MzNQc+CGEKx9Duyah9v3Hw7fwyJ7mYkPvVRuQeyO0DgBHPv
-         hhc/pDINwjW/W+WeCbiTsRBU15TpLCmt9kS7zRpQ6yC9Kl5abDPQVf2GYlGvOUD+gh4N
-         ucZiUfzFsD6YFHUFfLhsG26GyjBMzLpgLlFiQHZJBGZkqJ4JHs3iAOXOi66xDrETZQvN
-         sPsygSTO0BfUMJGW9W+sQrTYUREXRALYGkRsvYop59CBK7Hd9pwENgGn6M+/AtGam3PD
-         TdLcpdXQ1cQWuOeainMC41EZMqNs4Gv3iv3BXBqXDYXj6emxfQlvW3+MFPqfaLNTB2pH
-         i5wg==
-X-Gm-Message-State: ABuFfohuquEcunkPFtFAExCDWtL8RTtB1ZkhVvbKf2mIKNjSHaZxVIMK
-        74F1vs8giX1O3QjsGEFdzkA7n4RUlqu0cP6H/4GY6g==
-X-Google-Smtp-Source: ACcGV63JuZ1ZM0WKJZqkSXCz3QCuUga6GNyIagoO6OEdLsKYjm+QHyfj0474TKRsUiN7h2RUM3ErLbQHyTwq2PRT1G8=
-X-Received: by 2002:a2e:21d5:: with SMTP id h82-v6mr3774527lji.46.1537569053736;
- Fri, 21 Sep 2018 15:30:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W7G1LyBYm4HSC5qCxaG9wMUa09GRXe4Qr33dj1P3c38=;
+        b=hvpVIdtRQinYwKzmmdeCcIiAs2ztk0MS08XycnGSnHfM9ahYi/0vSeX7NUpebGOS0n
+         x470QFqa9zCiyOW+3uopoM+ujj8+zagzvjnb/Qo28/q0iApxeVN4PeMYIhSK/TVWFSmU
+         i5z07Vocu+7JcvG2k7AOSoXrLO23vEeFTb2MY8paR+X4JhBAmcDzxWOvFlJFflwjNj3A
+         IeU6QWeUzWTe25W6V9jhbjnVam5Z+eN6m/mTmVhJsNSPFrq8LWtP6CPrQBuB/vDdBD56
+         VEZxsC6OnGrRnK5Iv/kqAYeMXKyH0/ppDbDYVuPAm1PDXAwGKXZU9rvZWHp4oC8+hqJR
+         D6oQ==
+X-Gm-Message-State: ABuFfoizhtz/dS7O2FG0nnXrmh8axAD++d9TgY92No+mruzM0hdiA+OH
+        Y/kymLMjgVX214Fsx3psWbNg7uK/zkt5nw==
+X-Google-Smtp-Source: ACcGV6368inhHgu+ap5tfP0L0acEmPvk/pu4xAZEIOq8KsfmsI5d+1C3/Tj42qXUI1h/0MYOx2cAwA==
+X-Received: by 2002:a6b:d00b:: with SMTP id x11-v6mr4250604ioa.181.1537569126661;
+        Fri, 21 Sep 2018 15:32:06 -0700 (PDT)
+Received: from joelaf-glaptop0.roam.corp.google.com ([207.164.22.36])
+        by smtp.gmail.com with ESMTPSA id b195-v6sm2907320itc.42.2018.09.21.15.32.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 15:32:05 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH RFC] Documentation: RCU: Clarify comment about fanout
+Date:   Fri, 21 Sep 2018 18:31:53 -0400
+Message-Id: <20180921223153.114728-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
 MIME-Version: 1.0
-References: <20180921221025.75003-1-brendanhiggins@google.com> <f5943177-6f1b-9344-3821-2aac001ff45d@linux.intel.com>
-In-Reply-To: <f5943177-6f1b-9344-3821-2aac001ff45d@linux.intel.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 21 Sep 2018 15:30:42 -0700
-Message-ID: <CAFd5g46==5HG2stvuVfOUtsSW37SvLN6cCmOhRSxibrUpxb8aA@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: aspeed: fix invalid clock parameters for very
- large divisors
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        linux-i2c@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 3:26 PM Jae Hyun Yoo
-<jae.hyun.yoo@linux.intel.com> wrote:
->
-<snip>
->
-> > +     if (base_clk_divisor > ASPEED_I2CD_TIME_BASE_DIVISOR_MASK) {
-> > +             base_clk_divisor = ASPEED_I2CD_TIME_BASE_DIVISOR_MASK;
-> > +             clk_low = clk_high_low_mask;
-> > +             clk_high = clk_high_low_mask;
-> > +             dev_err(dev,
-> > +                     "clamping clock divider: divider requested, %u, is greater than largest possible divider, %u.",
->
-> Please put a newline character at the end of the string.
+RCU Data-Structures document describes a trick to test RCU with small
+number of CPUs but with a larger tree. It wasn't immediately clear how
+the document arrived at 16 CPUs which also requires setting the
+FANOUT_LEAF to 2 instead of the default of 16. Clarify that.
 
-I always forget to do that. I wonder if anyone has considered adding a
-warning for this to checkpatch?
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ .../RCU/Design/Data-Structures/Data-Structures.html         | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->
-> Thanks,
-> Jae
->
-> [....]
+diff --git a/Documentation/RCU/Design/Data-Structures/Data-Structures.html b/Documentation/RCU/Design/Data-Structures/Data-Structures.html
+index 1d2051c0c3fc..791348977da7 100644
+--- a/Documentation/RCU/Design/Data-Structures/Data-Structures.html
++++ b/Documentation/RCU/Design/Data-Structures/Data-Structures.html
+@@ -127,9 +127,9 @@ CPUs, RCU would configure the <tt>rcu_node</tt> tree as follows:
+ </p><p>RCU currently permits up to a four-level tree, which on a 64-bit system
+ accommodates up to 4,194,304 CPUs, though only a mere 524,288 CPUs for
+ 32-bit systems.
+-On the other hand, you can set <tt>CONFIG_RCU_FANOUT</tt> to be
+-as small as 2 if you wish, which would permit only 16 CPUs, which
+-is useful for testing.
++On the other hand, you can set <tt>CONFIG_RCU_FANOUT</tt> to be as small as 2
++and set <tt>CONFIG_RCU_FANOUT_LEAF</tt> to 2 if you wish, which would permit
++only 16 CPUs in a 4-level tree. This can be useful for testing.
+ 
+ </p><p>This multi-level combining tree allows us to get most of the
+ performance and scalability
+-- 
+2.19.0.444.g18242da7ef-goog
+
