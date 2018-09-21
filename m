@@ -6,189 +6,214 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40596ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45171ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB51721568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB51721568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E9BA321568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9BA321568
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390685AbeIUU7L (ORCPT
+        id S2390700AbeIUU7N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:59:11 -0400
-Received: from mga05.intel.com ([192.55.52.43]:27306 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390298AbeIUU6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:58:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 08:08:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="71856577"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Sep 2018 08:08:50 -0700
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v4 16/27] mm: Update can_follow_write_pte/pmd for shadow stack
-Date:   Fri, 21 Sep 2018 08:03:40 -0700
-Message-Id: <20180921150351.20898-17-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180921150351.20898-1-yu-cheng.yu@intel.com>
-References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+        Fri, 21 Sep 2018 16:59:13 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12674 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389547AbeIUU7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:59:12 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id BF3AA5E232A87;
+        Fri, 21 Sep 2018 23:09:33 +0800 (CST)
+Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 21 Sep 2018 23:09:28 +0800
+From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+To:     <lorenzo.pieralisi@arm.com>, <robin.murphy@arm.com>
+CC:     <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        <guohanjun@huawei.com>, <john.garry@huawei.com>,
+        <pabba@codeaurora.org>, <vkilari@codeaurora.org>,
+        <rruigrok@codeaurora.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
+        <neil.m.leeder@gmail.com>
+Subject: [PATCH v3 1/3] acpi: arm64: add iort support for PMCG
+Date:   Fri, 21 Sep 2018 16:08:01 +0100
+Message-ID: <20180921150803.25444-2-shameerali.kolothum.thodi@huawei.com>
+X-Mailer: git-send-email 2.12.0.windows.1
+In-Reply-To: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+References: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.237]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-can_follow_write_pte/pmd look for the (RO & DIRTY) PTE/PMD to
-verify an exclusive RO page still exists after a broken COW.
+From: Neil Leeder <nleeder@codeaurora.org>
 
-A shadow stack PTE is RO & PAGE_DIRTY_SW when it is shared,
-otherwise RO & PAGE_DIRTY_HW.
+Add support for the SMMU Performance Monitor Counter Group
+information from ACPI. This is in preparation for its use
+in the SMMUv3 PMU driver.
 
-Introduce pte_exclusive() and pmd_exclusive() to also verify a
-shadow stack PTE is exclusive.
-
-Also rename can_follow_write_pte/pmd() to can_follow_write() to
-make their meaning clear; i.e. "Can we write to the page?", not
-"Is the PTE writable?"
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Signed-off-by: Neil Leeder <nleeder@codeaurora.org>
+Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 ---
- arch/x86/mm/pgtable.c         | 19 +++++++++++++++++++
- include/asm-generic/pgtable.h |  4 ++++
- mm/gup.c                      |  8 +++++---
- mm/huge_memory.c              |  8 +++++---
- 4 files changed, 33 insertions(+), 6 deletions(-)
+ drivers/acpi/arm64/iort.c | 78 +++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 66 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ccdfd3dd7163..e13a020e37db 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -894,4 +894,23 @@ inline bool arch_copy_pte_mapping(vm_flags_t vm_flags)
- {
- 	return (vm_flags & VM_SHSTK);
- }
-+
-+inline bool pte_exclusive(pte_t pte, struct vm_area_struct *vma)
-+{
-+	if (vma->vm_flags & VM_SHSTK)
-+		return pte_dirty_hw(pte);
-+	else
-+		return pte_dirty(pte);
-+}
-+
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+inline bool pmd_exclusive(pmd_t pmd, struct vm_area_struct *vma)
-+{
-+	if (vma->vm_flags & VM_SHSTK)
-+		return pmd_dirty_hw(pmd);
-+	else
-+		return pmd_dirty(pmd);
-+}
-+#endif
-+
- #endif /* CONFIG_X86_INTEL_SHADOW_STACK_USER */
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index a91f07454ced..6223017929be 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1131,10 +1131,14 @@ static inline bool arch_has_pfn_modify_check(void)
- #define pte_set_vma_features(pte, vma) pte
- #define pmd_set_vma_features(pmd, vma) pmd
- #define arch_copy_pte_mapping(vma_flags) false
-+#define pte_exclusive(pte, vma) pte_dirty(pte)
-+#define pmd_exclusive(pmd, vma) pmd_dirty(pmd)
- #else
- inline pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma);
- inline pmd_t pmd_set_vma_features(pmd_t pmd, struct vm_area_struct *vma);
- bool arch_copy_pte_mapping(vm_flags_t vm_flags);
-+bool pte_exclusive(pte_t pte, struct vm_area_struct *vma);
-+bool pmd_exclusive(pmd_t pmd, struct vm_area_struct *vma);
- #endif
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 08f26db..b979c86 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -356,7 +356,8 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
+ 	if (map->flags & ACPI_IORT_ID_SINGLE_MAPPING) {
+ 		if (node->type == ACPI_IORT_NODE_NAMED_COMPONENT ||
+ 		    node->type == ACPI_IORT_NODE_PCI_ROOT_COMPLEX ||
+-		    node->type == ACPI_IORT_NODE_SMMU_V3) {
++		    node->type == ACPI_IORT_NODE_SMMU_V3 ||
++		    node->type == ACPI_IORT_NODE_PMCG) {
+ 			*id_out = map->output_base;
+ 			return parent;
+ 		}
+@@ -394,6 +395,8 @@ static int iort_get_id_mapping_index(struct acpi_iort_node *node)
+ 		}
  
- #endif /* _ASM_GENERIC_PGTABLE_H */
-diff --git a/mm/gup.c b/mm/gup.c
-index 1abc8b4afff6..03cb2e331f80 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -64,10 +64,12 @@ static int follow_pfn_pte(struct vm_area_struct *vma, unsigned long address,
-  * FOLL_FORCE can write to even unwritable pte's, but only
-  * after we've gone through a COW cycle and they are dirty.
-  */
--static inline bool can_follow_write_pte(pte_t pte, unsigned int flags)
-+static inline bool can_follow_write(pte_t pte, unsigned int flags,
-+				    struct vm_area_struct *vma)
- {
- 	return pte_write(pte) ||
--		((flags & FOLL_FORCE) && (flags & FOLL_COW) && pte_dirty(pte));
-+		((flags & FOLL_FORCE) && (flags & FOLL_COW) &&
-+		 pte_exclusive(pte, vma));
- }
- 
- static struct page *follow_page_pte(struct vm_area_struct *vma,
-@@ -105,7 +107,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ 		return smmu->id_mapping_index;
++	case ACPI_IORT_NODE_PMCG:
++		return 0;
+ 	default:
+ 		return -EINVAL;
  	}
- 	if ((flags & FOLL_NUMA) && pte_protnone(pte))
- 		goto no_page;
--	if ((flags & FOLL_WRITE) && !can_follow_write_pte(pte, flags)) {
-+	if ((flags & FOLL_WRITE) && !can_follow_write(pte, flags, vma)) {
- 		pte_unmap_unlock(ptep, ptl);
+@@ -1309,6 +1312,50 @@ static bool __init arm_smmu_is_coherent(struct acpi_iort_node *node)
+ 	return smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK;
+ }
+ 
++static void __init arm_smmu_common_dma_configure(struct device *dev,
++						enum dev_dma_attr attr)
++{
++	/* We expect the dma masks to be equivalent for all SMMUs set-ups */
++	dev->dma_mask = &dev->coherent_dma_mask;
++
++	/* Configure DMA for the page table walker */
++	acpi_dma_configure(dev, attr);
++}
++
++static int __init arm_smmu_v3_pmcg_count_resources(struct acpi_iort_node *node)
++{
++	struct acpi_iort_pmcg *pmcg;
++
++	/* Retrieve PMCG specific data */
++	pmcg = (struct acpi_iort_pmcg *)node->node_data;
++
++	/*
++	 * There are always 2 memory resources.
++	 * If the overflow_gsiv is present then add that for a total of 3.
++	 */
++	return pmcg->overflow_gsiv ? 3 : 2;
++}
++
++static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
++					       struct acpi_iort_node *node)
++{
++	struct acpi_iort_pmcg *pmcg;
++
++	/* Retrieve PMCG specific data */
++	pmcg = (struct acpi_iort_pmcg *)node->node_data;
++
++	res[0].start = pmcg->page0_base_address;
++	res[0].end = pmcg->page0_base_address + SZ_4K - 1;
++	res[0].flags = IORESOURCE_MEM;
++	res[1].start = pmcg->page1_base_address;
++	res[1].end = pmcg->page1_base_address + SZ_4K - 1;
++	res[1].flags = IORESOURCE_MEM;
++
++	if (pmcg->overflow_gsiv)
++		acpi_iort_register_irq(pmcg->overflow_gsiv, "overflow",
++				       ACPI_EDGE_SENSITIVE, &res[2]);
++}
++
+ struct iort_dev_config {
+ 	const char *name;
+ 	int (*dev_init)(struct acpi_iort_node *node);
+@@ -1318,6 +1365,8 @@ struct iort_dev_config {
+ 				     struct acpi_iort_node *node);
+ 	void (*dev_set_proximity)(struct device *dev,
+ 				    struct acpi_iort_node *node);
++	void (*dev_dma_configure)(struct device *dev,
++					enum dev_dma_attr attr);
+ };
+ 
+ static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
+@@ -1326,23 +1375,34 @@ static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
+ 	.dev_count_resources = arm_smmu_v3_count_resources,
+ 	.dev_init_resources = arm_smmu_v3_init_resources,
+ 	.dev_set_proximity = arm_smmu_v3_set_proximity,
++	.dev_dma_configure = arm_smmu_common_dma_configure,
+ };
+ 
+ static const struct iort_dev_config iort_arm_smmu_cfg __initconst = {
+ 	.name = "arm-smmu",
+ 	.dev_is_coherent = arm_smmu_is_coherent,
+ 	.dev_count_resources = arm_smmu_count_resources,
+-	.dev_init_resources = arm_smmu_init_resources
++	.dev_init_resources = arm_smmu_init_resources,
++	.dev_dma_configure = arm_smmu_common_dma_configure,
++};
++
++static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
++	.name = "arm-smmu-v3-pmu",
++	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
++	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
+ };
+ 
+ static __init const struct iort_dev_config *iort_get_dev_cfg(
+ 			struct acpi_iort_node *node)
+ {
++
+ 	switch (node->type) {
+ 	case ACPI_IORT_NODE_SMMU_V3:
+ 		return &iort_arm_smmu_v3_cfg;
+ 	case ACPI_IORT_NODE_SMMU:
+ 		return &iort_arm_smmu_cfg;
++	case ACPI_IORT_NODE_PMCG:
++		return &iort_arm_smmu_v3_pmcg_cfg;
+ 	default:
  		return NULL;
  	}
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index df39ae20fe40..c70aa8fa4cb2 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1387,10 +1387,12 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
-  * FOLL_FORCE can write to even unwritable pmd's, but only
-  * after we've gone through a COW cycle and they are dirty.
-  */
--static inline bool can_follow_write_pmd(pmd_t pmd, unsigned int flags)
-+static inline bool can_follow_write(pmd_t pmd, unsigned int flags,
-+				    struct vm_area_struct *vma)
- {
- 	return pmd_write(pmd) ||
--	       ((flags & FOLL_FORCE) && (flags & FOLL_COW) && pmd_dirty(pmd));
-+	       ((flags & FOLL_FORCE) && (flags & FOLL_COW) &&
-+		pmd_exclusive(pmd, vma));
- }
+@@ -1398,12 +1458,6 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+ 	if (ret)
+ 		goto dev_put;
  
- struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
-@@ -1403,7 +1405,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
+-	/*
+-	 * We expect the dma masks to be equivalent for
+-	 * all SMMUs set-ups
+-	 */
+-	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+-
+ 	fwnode = iort_get_fwnode(node);
  
- 	assert_spin_locked(pmd_lockptr(mm, pmd));
+ 	if (!fwnode) {
+@@ -1413,11 +1467,11 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
  
--	if (flags & FOLL_WRITE && !can_follow_write_pmd(*pmd, flags))
-+	if (flags & FOLL_WRITE && !can_follow_write(*pmd, flags, vma))
- 		goto out;
+ 	pdev->dev.fwnode = fwnode;
  
- 	/* Avoid dumping huge zero page */
+-	attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
++	if (ops->dev_dma_configure) {
++		attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
+ 			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
+-
+-	/* Configure DMA for the page table walker */
+-	acpi_dma_configure(&pdev->dev, attr);
++		ops->dev_dma_configure(&pdev->dev, attr);
++	}
+ 
+ 	iort_set_device_domain(&pdev->dev, node);
+ 
 -- 
-2.17.1
+2.7.4
+
 
