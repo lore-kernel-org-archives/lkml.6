@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A071BECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40F1ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 443A420989
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:55:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85D2E20989
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:55:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="EgtsO7gK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443A420989
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="N9YXyZ4+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D2E20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390140AbeIURn7 (ORCPT
+        id S2390120AbeIURn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 21 Sep 2018 13:43:59 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:28767 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389933AbeIURn6 (ORCPT
+Received: from relmlor3.renesas.com ([210.160.252.173]:43153 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389981AbeIURn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:43:58 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 21 Sep 2018 20:55:23 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id B2FA473191;
-        Fri, 21 Sep 2018 20:55:23 +0900 (JST)
+        Fri, 21 Sep 2018 13:43:57 -0400
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie2.idc.renesas.com with ESMTP; 21 Sep 2018 20:55:22 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id E8FE97412C;
+        Fri, 21 Sep 2018 20:55:22 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.54,284,1534777200"; 
-   d="scan'208";a="291574206"
-Received: from mail-ty1jpn01lp0182.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.182])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Sep 2018 20:55:23 +0900
+   d="scan'208";a="293141292"
+Received: from mail-ty1jpn01lp0179.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.179])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Sep 2018 20:55:22 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XUbvDZYLb/kT8Eb0iW4DhZgbXf2vzyxLYkTo01MSDUc=;
- b=EgtsO7gKeKYcTIDNdtGOI4AjFHAZ8GJqB30Pi6ubPOh2Sp7SUcIrHu1hFjfgcm++OaIKQguWKEdCCG/a+2tMvVlT/uQ9iPd3vVCPXCFkNG10FmxDbcOtyiuXAsGbggCdFq9ekX846CyF/wPVYPdIW/aHnJsW7Oik2TplC98hvZE=
+ bh=vLD1HOx6HwspfHqwjm6K0fXvVhZ5DGJuUhmeZ+yhGmY=;
+ b=N9YXyZ4+LDZsgzuO3E4ktXtiCpulywI7/9YMO1M4AicN16J8lFsar3JlqBJX9D5m/oSmWUFJvIzHNcYrRfO8DeA+6wo6ff8CO2fLeglO1TcfNq2NBHLSgTRreRRqyv16rgRpN6AOOQL3QmP+/hZxjztcmmnpwKjVWJnEuXr4lEI=
 Authentication-Results: spf=none (sender IP is ) smtp.mailfrom=<>; 
 Received: from localhost.localdomain (211.11.155.144) by
  OSBPR01MB2296.jpnprd01.prod.outlook.com (2603:1096:603:26::17) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Fri, 21 Sep 2018 11:55:22 +0000
+ 15.20.1143.18; Fri, 21 Sep 2018 11:55:21 +0000
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 7/8] phy: renesas: rcar-gen3-usb2: add conditions for uses_otg_pins == false
-Date:   Fri, 21 Sep 2018 20:53:23 +0900
-Message-Id: <1537530804-19399-8-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 5/8] phy: renesas: rcar-gen3-usb2: unify OBINTEN handling
+Date:   Fri, 21 Sep 2018 20:53:21 +0900
+Message-Id: <1537530804-19399-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1537530804-19399-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -63,51 +63,51 @@ X-ClientProxiedBy: TYXPR01CA0065.jpnprd01.prod.outlook.com
  (2603:1096:403:a::35) To OSBPR01MB2296.jpnprd01.prod.outlook.com
  (2603:1096:603:26::17)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9e3be216-c74c-44b4-9941-08d61fb91c49
+X-MS-Office365-Filtering-Correlation-Id: e8896231-da84-47f6-82d2-08d61fb91bd0
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(8559020)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2296;
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;3:dwrmM0JIbHkp4j7D1Zm1RE63ELb+Ok//MWBi+JW1osskU3c4kB7apTYGwAPYMKRSxlMwIwvgwrQWUGVA8jk3EFeXrR/NIrzE/aDhCl9tQyOGuN7/dClB3RKKq5KzDm/ZR2RVPk4HdQqcDiwGobkRk7g87HzRn4VPABZ9y9Nc2iGr2XBbvKYkkDnKl3AYkMcbbapfCTRgs28VDRY1Hp5z5TmO7Dl55VGkOtOzfsb/wW21gF/wnKFl1vO7SVrtU7tI;25:U4D3RhQmrApZCyzoObeDd4dJqam50mlioJgPGQPslMeVGRhr5VidZoOHdOBwjW7kgkxa33FYMYHxtRKg+xBrOinrWhIuR6SWNTuBYqAlO8r3CPVHVz8qYrqnLW3+7C60CeIeG0R3HE04MBO/KxDPyKZ1HOg46KND4hDLiJNlVo4WuQow87WB8vcbibIAxL+dKyUfCjmbh1l9ejNs+6K9nIODjKFkb+nAYgZ+qh6PIJUdXg8c1XbbOUSVoBihpboFiG35kopr0OqrNdpLdfAnNTVdcvXGAYbkPU1H1EpJK9VjlfTmvh1iDc4YpFV+C4ucyZD+5jLx9c8ZlBmMIA9aVQ==;31:FlcIbooL0B8aGJ2rv3uDMPUthOxZC/J9DtgkshKu3tlQUGjbUK+WNW68wxgsp8MXnme6ByXyyKqjYbRiElD/BrAjae5VZTFRSYbf4/8BYoJcfHNH3ybIDhb5CKe+4pp7gqBpQ2yUeLxsgp4zXud75mKP3oBgtQZ2ILHFOtSZH0Xb9RWsRZ2cPDIVn2dRZgEMGsUuT74tdGuFTdNDTNoAefmnRU74wvX1f1Jg6/VoW44=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;3:PcKxTgH5RhhOCIFQ87vpF7QfkGlf5fjXEmX3kJCo1q9MbP+CLLPyy69E5gCfLi+9P3XzHo1VhPJtwHnejNAUTbaFEijSi6uMUzmSZtdxf5lcSMq0MRbEF5xdEyh/3QRkoemumdTbJM4K9HEbaYxlzbbcvoHHJ84O4x3LvD8ekn6RbwU9CcKuMR5eVli7gTgMZKRy84sowdoZNf6MnSfwpKJRJJVJVWMhqYVgK6yPY2HDWMekyF0+rktscfgI797Q;25:ZY2eVyQ6MSuvqAcRKAeMOMdeWBp4GZ37Gp/DEjrvEJnFidP9Blvrlcp8NsbWrxZQ98kJlLZ/da8ymWc7EMe1q8dNyx374WW4WR2YWOc9m5ltKRtcHLfhNFsXkrVCgcCa8GuUeo5ZKI77FP6wI2YI5VyaNjWtxaElG+T/8sT2j4CxdBDw990pFSMXe9JAl103flt0ya/Ie/cN/t3nvDLqmVnCIuXfJ6bdBBxwX+Du27x5MT8L7qidzkKqCINcdaR8c8DDiHtTpoqaIjzussfZ/dq8d9lZ4h/aRsfamxC5KirEALxOUSStBxCYuyM3MiqvvnclWMt9ma3ByAciaChsRg==;31:Cv/mIAnsZ36IlNhwmdYuVUldM/4J5TO/9rQIFPYHihIThtNBJUume5G9o5vmPS2CtXFKG8ftBN+Itmq9VEr3kmbNyVJAMQcXuQmnnDZU8w8Y0hTeRNW6xMdwGzM6ZQQ59VncpqCmzeaQZgJLc27tocP81Nto6lJLs8OxEijRGgv9xkJSyVySgLOh7UM6+5h0NzEITFlnCFlBKgn+AL2YxQSczA8kfbBAQ9InCGt1iZ8=
 X-MS-TrafficTypeDiagnostic: OSBPR01MB2296:
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;20:jq2SxECgOhHHrfbISP74IGUY/dBYBSMdkSmAgr8zYknG4E/EUhrTg9t7VHLerFOhGd4qyjX2CS6QLL6TJj/9MRFfxjHT8JAJtlCkAwtwdOBmcwaXwgkvvogxY0/DDl9+bzcKNE6Q3yMX9mFsGAKBnKG6Nj878BuU5ItOyYPgJKX25GJHJQcI9CqrFLsRvhv0viG6U3MK6w1jIIyVo7caffOdkFIgour+khsHjOv/aaGcDg0x6xcaUPxKWXp2PBGFD4ulUAZ8Pxkmaup1Z0GdpQCPTZAHllC3yWzKWn5IcGF/pQmISGCVGWDCXiFNbGGJzRt2O+xXnIceFKSuTL1ipQFFUeyquH9t+S4zdzIV9L9Rvt+M2AbBHR1SInA9ho+KyzIOk0Xnq3VAnsfM9HREoDqMqIysQ2U61RTzHiU/mtnLY7X4eMQ+0r+mdvWr256oXASGCpAAz/F9n89TQ0MYqGxtuo0f/4y3gd9bCMi6PtvmtaXLvSDm3Q8skypRj0WY;4:ki3BH5Qg4h8JEhYGBxLdhfLrqBK4FYrdB/sF6NTdW3xPO93Yq0sJPhDTOrOpIZu17KHV8AJiurqCR2cZJtMgZnJhmefJKTNYNvCiFkiE3WYL0yKzm+XrvfsNgsCBItIN2Xqw/qJTVC/oL/XEPpIhYY7UozvcGIXdj1S9WpZvE7V0XISx1QBk+PdZoccBrBKV0EnaeXiYTbUUg2xMaEP7H8e9+GEgoCoE3DYxwGoEEHEbUuDRUShNwEqbDek3MttsAV7vc0IEJA8q7rJyEUECfA==
-X-Microsoft-Antispam-PRVS: <OSBPR01MB229680EBA6CD70A1B9A8BAA3B8120@OSBPR01MB2296.jpnprd01.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;20:2qlhNL74OiWR3r6bm2bl0EoGs4Pa4nUhObWU4iAwKLc1f601BEG+Q61NQxK0+lsK+wkbbM1QDznpmUgpLSAsVfmAmATvU9sIJUnPu05hP6np2fSjlnyPKP9vdarLIrEu+Fs5HCnU5o/o1sRAr6OjHveI3okCANk4JuNdGRJe8kSk3LBa0WrcODQJ24zxZy7icc9EmtySJpajFntKCEDEccidOsQhVdXiR0HL0rwYyt/e6aFCHYLPZR+fDKY+ae5i5ZhBQPLXRn459BIwdJztUkDqz1952JF3PeWDJVi4z2Au2LtnQXlKh3IU7naf/czZaa+ei1PCMZWdowsJIhTO3WNtyV1dwSYUKkUyR4JKAGI+I8f/gkw5jjv5IM5m5zy/y/iuTeTaSt3exgUsbzeyeg2DPFURLg0BcUd3IlXHtjEE6LbiB/Ot7A2tg+8bPGb1mQdY/dxfwuPUixPrIBoEfNVIWHIRafnCA9qzgeAKuCLkaNAb8hD2RP9n/V70NZv0;4:3CD0P5yK9YxURBqQj91zd/nXXx1N+j5pq2l9swGse4cDbbw2POMW02jDejfz5QQZ8UM35VRdf7fZab+e00ysecASQ6OHqUfXSrH2p+WdEU5/zI4iI4j8zHkq/iS8mxpZRjXk8Qaw+wHeKtvpHIBu7OYV/mAKNr0OAxqsifZORlqKyu4sNxlSFcahKxYbSmctWcX0G6tTEUHCpeKkoXKcIeSzvFS8szUjOmpIdLpgce4KYn+12MGMnuI1xMr9FmwgCwX8eCg9ieXCuDlCGoxivQ==
+X-Microsoft-Antispam-PRVS: <OSBPR01MB22964CB91DB39F88D8E48D1BB8120@OSBPR01MB2296.jpnprd01.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:OSBPR01MB2296;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2296;
 X-Forefront-PRVS: 0802ADD973
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(346002)(376002)(39860400002)(136003)(396003)(366004)(199004)(189003)(66066001)(4326008)(52116002)(107886003)(6512007)(486006)(6506007)(42882007)(51416003)(386003)(47776003)(78352004)(476003)(26005)(6486002)(105586002)(11346002)(956004)(2616005)(53936002)(446003)(36756003)(76176011)(69590400006)(16526019)(25786009)(97736004)(50466002)(81166006)(5660300001)(50226002)(16586007)(8676002)(6116002)(3846002)(81156014)(68736007)(316002)(48376002)(14444005)(106356001)(498600001)(8936002)(305945005)(2906002)(7736002)(3720700003);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2296;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:0;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(346002)(376002)(39860400002)(136003)(396003)(366004)(199004)(189003)(66066001)(4326008)(52116002)(107886003)(6512007)(486006)(6506007)(42882007)(51416003)(386003)(47776003)(78352004)(476003)(26005)(6486002)(105586002)(11346002)(956004)(2616005)(53936002)(446003)(36756003)(76176011)(69590400006)(16526019)(25786009)(97736004)(50466002)(81166006)(5660300001)(50226002)(16586007)(8676002)(6116002)(3846002)(81156014)(68736007)(316002)(48376002)(106356001)(498600001)(8936002)(305945005)(2906002)(7736002)(3720700003);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2296;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:0;
 Received-SPF: None (protection.outlook.com: localhost.localdomain does not
  designate permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB2296;23:ERTng7U/UYeENj3jaGgyEnB0D5jljlcuUbAKYgqqU?=
- =?us-ascii?Q?QL3jXOrjELRa0fJy/FvA1CkHN6vYoSDjiYfif8p3w5G/I5PNXZLqiAuSeyFb?=
- =?us-ascii?Q?mqZvvtMYd6gaxK0Vu4OzUgYYYUwXeGpnY9Tm7aDVpSuiBssBgk0FSaclyOas?=
- =?us-ascii?Q?8vzk4Scuv7oukXOcZCLM6X0e4A3XMgtWE47NGtAOlxKnzn0SGf9XZQa/p3Dd?=
- =?us-ascii?Q?GdbM/g9rJHeUAhO016bWeVNyjVzdfKaqzYossjR011tiA+zBriqC591AjAeH?=
- =?us-ascii?Q?q/DxfHszBOLuuD0kCeACpGjQGPFZHx+qT8/r4+KOrCxJQNOES1YuoH3FdIF7?=
- =?us-ascii?Q?szNErsqnfuAWnn2nQztsIppHW+etlZBOJGq2+kk5jjUFaYnBC3UTh+JaGFoQ?=
- =?us-ascii?Q?ct7v+RlGICWstVlNr+Mw6PssIg1mulMi+umqw7qey9en5fceMMzYuPTbR3pa?=
- =?us-ascii?Q?L1Eb4RgydMw1Wd5Q1Z+OFNWuB9jGEoRd7pSJoggTIp85cQAISLxXh/RoJ2wZ?=
- =?us-ascii?Q?ZGQuHI1qOIdfFY117mFj3GX6QNyphUvu6TpC7R6iXB97O8cyiTUTmmgC/jOE?=
- =?us-ascii?Q?Svf99ClOMVBfptF1QLDlc3p6o8vFq/1JlKX8qhQ8ej0lbsfUni7rq5hQDq4E?=
- =?us-ascii?Q?NQMbEAD+m7KTQx6czQ8DJE/gKYjTpak+TT5DIoJhfDY6FexeSPyOBhyq66on?=
- =?us-ascii?Q?l6s2owrN5BzV+Py3uL1hivsx0ixex2t+sNf8iaRF15PprdSlK363sXkjQcvS?=
- =?us-ascii?Q?vEsmriE2J20ZY2OQdqIE2aP9iIKYcovOR3zfGMlRmk0q97SFEvK12iHKqQ6J?=
- =?us-ascii?Q?6adtrvwG/Gk2wNBZ98KAwuVah+vhaQiWCr1K9vPyp2+Z+WZ02YA9kUciNqwi?=
- =?us-ascii?Q?eGP99Ra6ZqWKyy5YqL7zL4/1sx4NBnK6Fj+ZM1k2o9m8bGKI2/roW6hL6+r4?=
- =?us-ascii?Q?efXITUt1t9ZvJ216gGbsfPQZYZimKqiqBn44JDLBv2HTrIWPT0tvTahiLq9V?=
- =?us-ascii?Q?UQPuQxYAIansT3dv5SijZbNmGy6/egubJczg2WkdBAaZQSnDqxmTq69rhXAx?=
- =?us-ascii?Q?K1Tt7IAhbTpMHmJ0cuy6ce+0ZtpNtpa3DpekywSD0j2mWXVspNRqbSJ1TOaf?=
- =?us-ascii?Q?r1vybBr9XSU8I8BPgbrorHQ4jfs/Rqkq4jqDnL0442LNkSsOfq7DVEHG7IAC?=
- =?us-ascii?Q?R4GgrdJDsybevO7z+jRnb+RKDf1uv7D+E2eGbMWZmYoZHpFjwf2IDO8Xc4Hu?=
- =?us-ascii?Q?l64ZMn26qjMVjroVHY=3D?=
-X-Microsoft-Antispam-Message-Info: EdS5/BVetjGt+dV97rstXFfyOuzbShSd+e3aAbdEmNwN9cwnP7ZEkdVMrIrxOIBGsw6jZd04MhDyzDQ8tTZ4asnkmi4R1yP86JKrJpwPPmzwidzhVv2fQz+jmEh1AYQu4jwE85voA7Iup53cpGwSGYW30MOqpdMn8o0jwTu97PQKZlm0eLN9SfLU2g5AXm5URsT9NGiaSau0t/GVCjGjawuX1bfkbHzCv/egs+kfo0/ov2CGQ9tvms9gCplJND0v0cOmCASgQcatR1YxD5fQzQTmhX/usl/Pz0SlFoAJdNyE8bEOVpupjme3nzroYHkh5WY+9/VQ0+WNpGG2AXgLHPS81UxMGfQZZKgySIv+JaU=
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;6:eTnjEcOKbt0fAzrUJBFA2Hp4ziU4/5F4P8UQaQtUuk2sy9mtT7AAVEZVAJzKT8+hwLbbG4a2plpGBKOjqO6ZM+4eLJJAVb9/+EUmsw8Osqe2UkmqQzJMn61aBB9GXdx1/Vce2o5BHzIhnksGrwOdXE+yRkT2YKR79ghnbMJLY3w7AFHc3wHz+mROwUK+EyEF9n69zYMO/2aOfpT3xLSStxdkiKEwkRWpe5CRHI8xwt6eTiZrgcKqXt9payKTNG6ZM6lVPPVopwF0wE3P2OH5Zzu89/vosBDtScUBOI48E9/b2RQno+nlHDHQu9bMTuiIdyz4iG2n7DNIoTkJBtOYKOXzelPc+POyCS/xbh1Hs5jLzmtcU7VLrg8Wa8Nux+gSLuWeaVz4vA0XO/SexorkZDTHlfLMAcw83LbDUcQWm1o2JDdCX0fecO/IEAc5FKFX8nYpWZ6/YHwK95gCdAzMbg==;5:NEiNp7hgcB5Xcm6gqjlczfk42i9A1xVr5xqXUUna9WDdEjfyNwDBs+Ja1tyKzjybahytXzdyBOAlZcANVPCJzRLNoj6SNI+iKQOsF+/LHHbKhTm5xE0xo5pHdIsBHXsqh2ZccZGl4vSEReJ5BotFZyBXYT70VJbxwSmhuXAewwo=;7:Bn0w7g8CG+qBARtVgkxwaXFy2oMi+3SacrBXsGXXA6+2LWXOA1fY5XyxRiFueNxyBDjg+gXfU3F/5fKSmOI1TjB4PAHNn9q8rcKQWaxSZkp2vcIfiBXAOnZlJlZ4q+ZX/Y6/zpk9ZmbfYIrxJAs0KYb7ACwLNmiBXDGOjOn6z7lIy2a7F7HOKh7wpEXquWAGcwINaLV19R04wOda6ERrKSGggdVdd8BH2d3hn5/KnRkFbqh4tsFt8/VS51HIZ/y7
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB2296;23:ufuDpBs7sYaaL2SYK5FkHHQr79680pXxIEhT2tRUj?=
+ =?us-ascii?Q?8cI2b3JuHajIQSlu5A3HSLw7UoccRfJX6jXsQr6V79GCckR7EWaQMncJQR+d?=
+ =?us-ascii?Q?x8AZIirn9sE0JUo06gpUtn8Wg9OH+bao3XZWUqbzPyGPNsrr6L9F3OfKtNza?=
+ =?us-ascii?Q?rWXY9Jjx9c8Qno8XZ5YOoMTHtywoMW294eHi9NujYGFg2qopOH8fH6xIT8/D?=
+ =?us-ascii?Q?2YyRj4SZXvXlRxsHDdC711cILlkRvtPaPUxwFtIfJ+Z3NoZOMjCVodKwSraN?=
+ =?us-ascii?Q?4USfQx20esfGfWRBLRKr3LQ+OyQPjKxrB0aoTKq0HsYbhrGJHngpyYNIV/T/?=
+ =?us-ascii?Q?NUIfJ6/5eHG+NYgVBTNCSnOWx04k/bTUCRswKdaSS5U7jSt57Cdmt+GDxKWG?=
+ =?us-ascii?Q?pThli8HFIBTxycNS5WY7BMH7tFzpJXwv1vVveyAOh+5q31YGacdhg+3bU6Km?=
+ =?us-ascii?Q?iHEzyrunmIyOaFRQjXpTPEqDg+VyXqxwZqPNaNomGjcp3qYMBy3/UUxuM2A0?=
+ =?us-ascii?Q?S1CK2WvWhArhdEhdTwhztreATdIMUjfszMIirJIIu41DaAxRGhdV5IaxiCrT?=
+ =?us-ascii?Q?Q32F0CuefE92X0RaVBkm/ikdJcv9ESnr7xoEnJCUXNBRF2s6xTB0+bu2zR+K?=
+ =?us-ascii?Q?C0s5UrsfAvWH73kfPPvs1N/NQcc8lVXNgnujm4Z7HztO6bfdPACbhVwB+EyK?=
+ =?us-ascii?Q?PkL60GeHPxSeicTrvNoW+T00iNIvht7HUczPcj1jWeZqOwwF83wDYM6Vu0rr?=
+ =?us-ascii?Q?nOBJdjNEEUatsnN2VEEEzejYznwXLxe6/QcMfzFOgma3KRuENoMTSAI1oW0U?=
+ =?us-ascii?Q?1lc3wHAlLrKB2dKYOna7bpxrdn2gGDS9bU5khZ/gKQP1HLqWEYb8cMNGt7Og?=
+ =?us-ascii?Q?3+kzFwXFlrj6ryUNShpUkEw7fN8qGr2zVusA+q/6+foBLZzAbI/ec/KTFtqV?=
+ =?us-ascii?Q?LA5hXT5qZw1uOHC7C+Mhk68YMHCebI+kT/QUjwTha6vyhV/MKAemsP/9m1Oc?=
+ =?us-ascii?Q?ZIP/2AqfRB/riLeOs64yzb8DyM4dmG46V7vE6Rg3nf8i0o971r3TCU8E92Y5?=
+ =?us-ascii?Q?xuh2fMBLvcqgvk2JxBEf1jfG0Dc9ako7N3Ezql/7UPRV96RPZwC96/IZOGoW?=
+ =?us-ascii?Q?rg7+evFjz0JDwqMUk3Z/Nx1pS5zx/IJqrjkBZr/jUf3iIMimGpKhztuy3/JH?=
+ =?us-ascii?Q?ORTOfNqVtQAF8m0UZYDtnOssuYil03hslcuanVzJl3cFWgAvQInR3Lnig=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: yKBz4zn2fxb70LNSkFpd1i715fPBj32rlLNT0kycG0OL3NnCCbrsC9zbfCnaIDe1xefJkNsS6mE2dyrgPFd1A6MThDGWfirOObbxgFLciYX9kD1y5LRQRUyfkfOOEKqCF2TcNszHQq5TMR43ntiX9OH804pTaMzFZ74p/Vj+bjd5jZU7AihJ1lxWBVJm/qps/Akqv+F6758UYk+HeZ24k6/8yu/kCGsmwqO4H0odKvzPBtN5mikHyuB/VoGXVsXQetE910kkJL2vXyM9/t4LiWr8BdPal6GYccsy4GA7qYio9Q6ajPwShewbJ7SZhl7GavOwmY+nJuCh98kA6Tn+HXlnMAUDa+clkebTiWpYQQM=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;6:AwIChmWMPEswGliRMkaf1kt2GA+MC4KJEoykn0DppfrqbNRN7TxvNrY0j3cPGKTAD5DKqEuPT2IvA3voOkQ/Vb8TZh6V6u91HQSJUdGFKSLtE/7iTZTbhh1Alc4n1VAXhITxRRMhwldx4GQUiyatJ5JrdkpgV9Iq8ECgXu8iD5ayR3GAjBZVANAHcucNcc2JVLYuidC72M+EPXwhwaXzMwDjnbsgt7nrNUbLcLci1lWJFCpGQ6iU3iIcak/rZMVBTK9UhUByi+YFplA97qM7Q8TWOkoIF8/PoXLGqg59Qrj+ZkvqaeLKFNuw5KkhV08HXR0en1l3HN4sYxiGT0Ka8PCfx3gkLUrnFOoBxwnpwceAQsmAtnprbGVwywnaxirLt6bD3CPqhuQq+/sXmQbZCqqfcsQmwWaT7WqCIXRrrXD2JYgZhIKcXLp2DT2XFyNTtQKluG6q4hKLt4JL0Iyuww==;5:eBxf2b6N0p3WYxJNQQBioBgmt1rBsnErSicD1DkOs7GMtJErOzdA9ssXzF1wl09S5FsbBiK2hmqEuMayoG2W7b/QOPH89i8o4r89Vh8CELS6jc04pWiuenkI74U1uZ8UKcxRdcNgXVxmAOcGc42imFpAgEtEBT0Ifk1TaSBXml4=;7:3yErfCIt5mbUJMG1W4hY8Q+KsI09TJS4OC4YQtDuLzrjKQgEDFGORvAwoPKvzE9KhzhyCZGfspdgG5i6ZNkimFKDGDtqnJZyTiyXYHeAudVi1/MsuWFJdlmz2Qjc8M2Akth9I1RzuUsb7GUQ7/sgA3okUwQS5nb2qlWyCiBlF1n5ZCofLq4fXHzerft09PVTXkyOritibHZP4jSXlhArKpCloQyDe8SVKkRn4Gs2IDIuyNw/kJmzBbKgUnICLiB0
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;20:kZx5/CxJHoXw4XFBIwaXzBmYLh+yzMUQbu/XeNGFxJZgDDL0NBhcQNySQYq7U80Ec7kZggKFDmWFHiSKmI2Yb7O54keybBVJPqloYc8o9HMdPvnJNeHxa7Yynm1Pw5ZL4aeWrKFNIKzmaI5bSPbys1oE93W8srhnrd3kAN072hM=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2296;20:a6lSLR0na/RWerwjEZAhb93zIKO204ABsqPz5tKlT2vwxTJ5rEHeNdBoa4bPNQeqciGqBTod9g/E14AgiOWelEZKpkFMH5B+fnSDDvA84jiySWKaDncBqgtQZiJ7G28DCVRdlBfvnfOwTpkRn6k/e9iquzNJ2Uh5TXF2aSdpCEM=
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2018 11:55:22.2119
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2018 11:55:21.4203
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e3be216-c74c-44b4-9941-08d61fb91c49
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8896231-da84-47f6-82d2-08d61fb91bd0
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2296
@@ -116,38 +116,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If uses_otg_pins is set to false, this driver 1) should disable otg
-related interruptions, and 2) should not get ID pin signal, to avoid
-unexpected behaviors. So, this patch adds conditions for it.
+This patch unifies the OBINTEN handling to clean-up the code.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 93ab860..3f2efe5 100644
+index 856056e..e7eaed9 100644
 --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
 +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -148,7 +148,7 @@ static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
- 	void __iomem *usb2_base = ch->base;
- 	u32 val = readl(usb2_base + USB2_OBINTEN);
- 
--	if (enable)
-+	if (ch->uses_otg_pins && enable)
- 		val |= USB2_OBINT_BITS;
- 	else
- 		val &= ~USB2_OBINT_BITS;
-@@ -210,6 +210,9 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- 
- static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
- {
-+	if (!ch->uses_otg_pins)
-+		return (ch->dr_mode == USB_DR_MODE_HOST) ? false : true;
-+
- 	return !!(readl(ch->base + USB2_ADPCTRL) & USB2_ADPCTRL_IDDIG);
+@@ -142,6 +142,18 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+ 	writel(val, usb2_base + USB2_ADPCTRL);
  }
  
++static void rcar_gen3_control_otg_irq(struct rcar_gen3_chan *ch, int enable)
++{
++	void __iomem *usb2_base = ch->base;
++	u32 val = readl(usb2_base + USB2_OBINTEN);
++
++	if (enable)
++		val |= USB2_OBINT_BITS;
++	else
++		val &= ~USB2_OBINT_BITS;
++	writel(val, usb2_base + USB2_OBINTEN);
++}
++
+ static void rcar_gen3_init_for_host(struct rcar_gen3_chan *ch)
+ {
+ 	rcar_gen3_set_linectrl(ch, 1, 1);
+@@ -187,16 +199,12 @@ static void rcar_gen3_init_for_a_peri(struct rcar_gen3_chan *ch)
+ 
+ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
+ {
+-	void __iomem *usb2_base = ch->base;
+-	u32 val;
+-
+-	val = readl(usb2_base + USB2_OBINTEN);
+-	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
++	rcar_gen3_control_otg_irq(ch, 0);
+ 
+ 	rcar_gen3_enable_vbus_ctrl(ch, 1);
+ 	rcar_gen3_init_for_host(ch);
+ 
+-	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
++	rcar_gen3_control_otg_irq(ch, 1);
+ }
+ 
+ static bool rcar_gen3_check_id(struct rcar_gen3_chan *ch)
+@@ -286,8 +294,7 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+ 	val = readl(usb2_base + USB2_VBCTRL);
+ 	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
+ 	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
+-	val = readl(usb2_base + USB2_OBINTEN);
+-	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
++	rcar_gen3_control_otg_irq(ch, 1);
+ 	val = readl(usb2_base + USB2_ADPCTRL);
+ 	writel(val | USB2_ADPCTRL_IDPULLUP, usb2_base + USB2_ADPCTRL);
+ 	val = readl(usb2_base + USB2_LINECTRL1);
 -- 
 1.9.1
 
