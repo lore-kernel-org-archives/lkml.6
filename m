@@ -2,149 +2,232 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC3BECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C04C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0326E21557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0326E21557
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C47921550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:08:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VMykVRHy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QAf9XYrM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C47921550
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390605AbeIUV5Z (ORCPT
+        id S2390658AbeIUV6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:57:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38688 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389545AbeIUV5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:57:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2320418A;
-        Fri, 21 Sep 2018 09:07:51 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.Emea.Arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E4363F557;
-        Fri, 21 Sep 2018 09:07:47 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 17:07:45 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     honghui.zhang@mediatek.com
-Cc:     marc.zyngier@arm.com, bhelgaas@google.com, matthias.bgg@gmail.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        ryder.lee@mediatek.com, ulf.hansson@linaro.org,
-        hongkun.cao@mediatek.com, youlin.pei@mediatek.com,
-        yong.wu@mediatek.com, yt.shen@mediatek.com, sean.wang@mediatek.com,
-        xinping.qian@mediatek.com
-Subject: Re: [PATCH v4 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
-Message-ID: <20180921160745.GB21644@e107981-ln.cambridge.arm.com>
-References: <1536573023-6720-1-git-send-email-honghui.zhang@mediatek.com>
- <1536573023-6720-2-git-send-email-honghui.zhang@mediatek.com>
+        Fri, 21 Sep 2018 17:58:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54708 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389545AbeIUV6W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 17:58:22 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B68DC61275; Fri, 21 Sep 2018 16:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537546128;
+        bh=KPP2Qe5KAlsk1Em555mRgkhGW9P3H05RpL0kE8N/D18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VMykVRHygW8hrRqiVr3XytJ6Jv3+7zFekS8FpUeNZtEGwRtFZZj7tsQ24g9ycD6AX
+         +HWgtiPgDSM1DbTYgK0UzGThYbkikYNppMLCD+ke4ibqRdaeu/5T0VK7GmvcByUEqa
+         GY+5k8iNScW8jL28HKxdSVG586KgcW5QdhX8rq8A=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1CE8E60D7B;
+        Fri, 21 Sep 2018 16:08:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537546127;
+        bh=KPP2Qe5KAlsk1Em555mRgkhGW9P3H05RpL0kE8N/D18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QAf9XYrMd1mgorR3bxFPSCDqwcwKsKmqy4f0KFNLPz1CB+ZCDYRRUH/XfVSdsCGKw
+         aCwE7HqXzN52zcu6UsdoBsUGKE5jlRyNXIHIyuQu7G2c6sisvS2XdmYZxPV8CYtPFW
+         3lR9FXviKKJAyIsHBiLQ3YRa9wojESatpbTGzMAM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CE8E60D7B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Fri, 21 Sep 2018 10:08:46 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     bjorn.andersson@linaro.org, sboyd@kernel.org, evgreen@chromium.org,
+        linus.walleij@linaro.org, rplsssn@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, devicetree@vger.kernel.org,
+        andy.gross@linaro.org, dianders@chromium.org
+Subject: Re: [PATCH v3 1/5] drivers: pinctrl: qcom: add wakeup capability to
+ GPIO
+Message-ID: <20180921160846.GG17420@codeaurora.org>
+References: <20180904211810.5506-1-ilina@codeaurora.org>
+ <20180904211810.5506-2-ilina@codeaurora.org>
+ <86k1nfwyqn.wl-marc.zyngier@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1536573023-6720-2-git-send-email-honghui.zhang@mediatek.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <86k1nfwyqn.wl-marc.zyngier@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 10, 2018 at 05:50:20PM +0800, honghui.zhang@mediatek.com wrote:
-> From: Honghui Zhang <honghui.zhang@mediatek.com>
-> 
-> The Mediatek's host controller has two slots, each with it's own control
-> registers. The host driver need to identify which slot was connected
-> in order to access the device's configuration space. There's problem
-> for current host driver to find out which slot was connected to for
-> a given EP device.
-> 
-> Assuming each slot have connect with one EP device as below:
-> 
->                 host bridge
->   bus 0 --> __________|_______
->            |                  |
->            |                  |
->          slot 0             slot 1
->   bus 1 -->|        bus 2 --> |
->            |                  |
->          EP 0               EP 1
-> 
-> During PCI enumeration, system software will scan all the PCI device
-> starting from devfn 0. So it will get the proper port for slot0 and
-> slot1 device when using PCI_SLOT(devfn) for match. But it will get
-> the wrong slot for EP1: The devfn will be start from 0 when scanning
-> EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
-> for port0's slot value. So the host driver should not using EP's devfn
-> but the slot's devfn(the slot which EP was connected to) for match.
-> 
-> This patch fix the mtk_pcie_find_port's logical by using the slot's
-> devfn for match.
-> 
-> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> Acked-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/pci/controller/pcie-mediatek.c | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index 861dda6..20b9088 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -337,11 +337,26 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
->  {
->  	struct mtk_pcie *pcie = bus->sysdata;
->  	struct mtk_pcie_port *port;
-> +	struct pci_dev *dev;
-> +	struct pci_bus *pbus;
->  
-> -	list_for_each_entry(port, &pcie->ports, list)
-> -		if (port->slot == PCI_SLOT(devfn))
-> +	list_for_each_entry(port, &pcie->ports, list) {
-> +		if (!bus->number && port->slot == PCI_SLOT(devfn))
->  			return port;
->  
-> +		if (bus->number) {
-> +			pbus = bus;
-> +
-> +			while (pbus->number) {
-> +				dev = pbus->self;
-> +				pbus = dev->bus;
-> +			}
-> +
-> +			if (port->slot == PCI_SLOT(dev->devfn))
-> +				return port;
-> +		}
-> +	}
+On Fri, Sep 21 2018 at 17:11 -0600, Marc Zyngier wrote:
+>Hi Lina,
+>
+>On Tue, 04 Sep 2018 22:18:06 +0100,
+>Lina Iyer <ilina@codeaurora.org> wrote:
+[...]
+>> +static irqreturn_t wake_irq_gpio_handler(int irq, void *data)
+>> +{
+>> +	struct irq_data *irqd = data;
+>> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
+>> +	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+>> +	const struct msm_pingroup *g;
+>> +	unsigned long flags;
+>> +	u32 val;
+>> +
+>> +	if (!irqd_is_level_type(irqd)) {
+>> +		g = &pctrl->soc->groups[irqd->hwirq];
+>> +		raw_spin_lock_irqsave(&pctrl->lock, flags);
+>> +		val = BIT(g->intr_status_bit);
+>> +		writel(val, pctrl->regs + g->intr_status_reg);
+>
+>write_relaxed, please.
+>
+>> +		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+>> +	}
+>
+>Overall, this requires some form of documentation (I'll have forgotten
+>about the whole thing quickly enough).
+>
+Sure, I will address them both.
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int msm_gpio_pdc_pin_request(struct irq_data *d)
+>> +{
+>> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>> +	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+>> +	struct platform_device *pdev = to_platform_device(pctrl->dev);
+>> +	const char *pin_name;
+>> +	int irq;
+>> +	int ret;
+>> +
+>> +	pin_name = kasprintf(GFP_KERNEL, "gpio%lu", d->hwirq);
+>> +	if (!pin_name)
+>> +		return -ENOMEM;
+>> +
+>> +	irq = platform_get_irq_byname(pdev, pin_name);
+>> +	if (irq < 0) {
+>> +		kfree(pin_name);
+>> +		return 0;
+>> +	}
+>> +
+>> +	ret = request_irq(irq, wake_irq_gpio_handler, irqd_get_trigger_type(d),
+>> +			  pin_name, d);
+>> +	if (ret) {
+>> +		pr_warn("GPIO-%lu could not be set up as wakeup", d->hwirq);
+>
+>This message doesn't correspond to what you're doing here.
+>
+Well, I thought the message is most relevant because, we will not be
+able to wake up from this GPIO IRQ. But, I will change it.
 
-	/*
-	 * Walk the bus hierarchy to get the devfn value
-	 * of the port in the root bus.
-	 */
-	while (bus && bus->number) {
-		devfn = bus->self->devfn;
-		bus = bus->parent;
-	}
+>> +		kfree(pin_name);
+>> +		return ret;
+>> +	}
+>> +
+>> +	irq_set_handler_data(d->irq, irq_get_irq_data(irq));
+>> +	disable_irq(irq);
+>
+>Who enables this interrupt?
+>
+Suspend/resume code does the swap of enable/disable of PDC IRQ vs GPIO
+IRQ in patch #4.
 
-	list_for_each_entry(port, &pcie->ports, list) {
-		if (port->slot == PCI_SLOT(devfn))
-			return port;
+>There is a gap between request_irq and disable_irq, where you can take
+>the interrupt, and not having set the handler data. Horrible things
+>will happen in this situation.
+>
+>A slightly better way of doing that would be:
+>
+>	// Prevent the interrupt from being enabled on request
+>	irq_set_status_flags(d->irq, IRQ_NOAUTOEN);
+>	ret = request_irq(...);
+>	irq_set_handler(...);
+>
+>and let the enable_irq() do its thing when it happens (where?).
+>
+Oh. This is better. Will amend.
 
-	return NULL;
+Thanks for the review.
 
-Would it work ? Maybe it is a little easier to parse.
+-- Lina
 
-I think this can even be made easier by using struct device_node* as
-comparison (and store it in port->slot instead of the port number), I
-think that the pci_dev representing the port should have the right
-of_node associated with it by core code, so it is just a matter of
-finding the first pci_dev parent with an of_node set and compare it
-against port->slot (that should be converted to a struct device_node*).
-
-This ought to be tested and written but I think that's doable.
-
-Lorenzo
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int msm_gpio_pdc_pin_release(struct irq_data *d)
+>> +{
+>> +	struct irq_data *pdc_irqd = irq_get_handler_data(d->irq);
+>> +	const void *name;
+>> +
+>> +	if (pdc_irqd) {
+>> +		irq_set_handler_data(d->irq, NULL);
+>> +		name = free_irq(pdc_irqd->irq, d);
+>> +		kfree(name);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int msm_gpio_irq_reqres(struct irq_data *d)
+>> +{
+>> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>> +
+>> +	if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
+>> +		dev_err(gc->parent, "unable to lock HW IRQ %lu for IRQ\n",
+>> +			irqd_to_hwirq(d));
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return msm_gpio_pdc_pin_request(d);
+>> +}
+>> +
+>> +static void msm_gpio_irq_relres(struct irq_data *d)
+>> +{
+>> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>> +
+>> +	msm_gpio_pdc_pin_release(d);
+>> +	gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
+>> +}
+>> +
+>>  static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>>  {
+>>  	struct gpio_chip *chip;
+>> @@ -887,6 +983,8 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
+>>  	pctrl->irq_chip.irq_ack = msm_gpio_irq_ack;
+>>  	pctrl->irq_chip.irq_set_type = msm_gpio_irq_set_type;
+>>  	pctrl->irq_chip.irq_set_wake = msm_gpio_irq_set_wake;
+>> +	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
+>> +	pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
+>>
+>>  	ret = gpiochip_add_data(&pctrl->chip, pctrl);
+>>  	if (ret) {
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+>
+>Thanks,
+>
+>	M.
+>
+>--
+>Jazz is not dead, it just smell funny.
