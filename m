@@ -2,79 +2,62 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55E0ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E8DECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F165321547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:49:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F165321547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7381621532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:52:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7381621532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390223AbeIUUiZ (ORCPT
+        id S2390111AbeIUUlQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:38:25 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34230 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728313AbeIUUiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:38:25 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 30E042337D1E1;
-        Fri, 21 Sep 2018 22:49:09 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
- 22:49:09 +0800
-Message-ID: <5BA504E4.90607@huawei.com>
-Date:   Fri, 21 Sep 2018 22:49:08 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Fri, 21 Sep 2018 16:41:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55262 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728184AbeIUUlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:41:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 86FE8C057F20;
+        Fri, 21 Sep 2018 14:52:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8FAD885A4F;
+        Fri, 21 Sep 2018 14:52:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180920151214.15484-4-mszeredi@redhat.com>
+References: <20180920151214.15484-4-mszeredi@redhat.com> <20180920151214.15484-1-mszeredi@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] mount: fix regression in setting "subtype" from legacy API
 MIME-Version: 1.0
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     <airlied@linux.ie>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm: sun4i: Fix a uninitialized variable warning.
-References: <1537255520-41614-1-git-send-email-zhongjiang@huawei.com> <20180919084719.6ymf6h4eftomfab3@flea> <5BA2106C.2080007@huawei.com> <20180921142654.ahuhswypvscjsuyj@flea>
-In-Reply-To: <20180921142654.ahuhswypvscjsuyj@flea>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <15828.1537541521.1@warthog.procyon.org.uk>
+Date:   Fri, 21 Sep 2018 15:52:01 +0100
+Message-ID: <15829.1537541521@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Sep 2018 14:52:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/21 22:26, Maxime Ripard wrote:
-> On Wed, Sep 19, 2018 at 05:01:32PM +0800, zhong jiang wrote:
->> On 2018/9/19 16:47, Maxime Ripard wrote:
->>> On Tue, Sep 18, 2018 at 03:25:20PM +0800, zhong jiang wrote:
->>>> Fix the following compile warning:
->>>>
->>>> drivers/gpu/drm/sun4i/sun4i_tcon.c:1088: warning: 'has_lvds_alt' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>>> bool has_lvds_rst, has_lvds_alt, can_lvds;
->>>>
->>>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->>> I can't see any code path that would lead to an uninitialized usage of
->>> that variable.
->>>
->>> Which compiler produced that warning? I tried building it today with
->>> gcc 8.1.1, and I don't see that warning either.
->> I indeed  hit the issue.  the gcc version is
->> gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
-> I've tested with 4.* gcc, and it didn't report any error. It seems to
-> be a false positive for this particular version, so there's no need to
-> merge that patch. If more people are affected, we'll obviously do
-> something about it though.
-Yep,  it rarely occur.  I just happen once.  Thank you for reply.
+Miklos Szeredi <mszeredi@redhat.com> wrote:
 
-Sincerely,
-zhong jiang
-> Thanks!
-> Maxime
->
+> Subtype was initilized at the wrong place from the wrong source
+> (fstype->fs_type->name, which does not ever contain a subtype).
+> 
+> Set subtype from do_new_mount(), where it actually does something.
+> Verified with fuse.
 
-
+Folded.
