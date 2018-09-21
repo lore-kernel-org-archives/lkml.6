@@ -2,133 +2,129 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76443C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E69C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30CC82147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E18C82154B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:12:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gf6yfDKx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CC82147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R8ylbvqD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E18C82154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388885AbeIUG41 (ORCPT
+        id S2388809AbeIUG6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 02:56:27 -0400
-Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:44590 "EHLO
-        sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388850AbeIUG41 (ORCPT
+        Fri, 21 Sep 2018 02:58:36 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33279 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbeIUG6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 02:56:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537492209; bh=V+yMfFj1ICLwnW5PuD+WMkbCrrB6HKESCNC+Icgaf/8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=gf6yfDKxJPu1rZ2y6gK2+YojlfyczXW+uthqlLkKN6xSYlg10W7bzvwTDqz4os3v4MdC0hXuI1aea6Hi/0Edcru99glQInILRWQFDfpcaXDA0jMCmlNlLKBz2X3W60UbtSxtM1PGzzz2I04Dfk2ZN2NGT3If3NomV7EPmg/QGQUauXseUvifY9ajVLZcFs9YmGGjj+TR5+ydeSjFKqAyAlxXlp+eu9V+6jDYfdD5LpEBODx9eqTkApcspnY6y+Zl5h9y4LTBdmVOEUZkDtmn7Bh1Zk1x1PPuYcTr2h3D2ipFwN5dnhMHHxBPWBandjgKJx5ndRb9CFzeso6P9w7M2w==
-X-YMail-OSG: UGMaS1EVM1mVg6DvyMK1EmLqsRV4q67ttJ9sWrZ5uHyQVEauIeu434aYn7EOPy5
- oqLn2Re34p1fYuJz43q_7N5IjTs6_MyyPwBBGnzs3lmQV.N.w6rSOnLwgOd.3XOvhOVNIlTu9ioZ
- tpKX8czpQZ2PHhbPeqNAEscTIgeuX.xSNkv5tCEOHXdq1RXrszCSyBTqaWOuCezKLaTeBvvxDNp4
- EEwx0vuQr0Smz.BmgQBZ6Ys7yiL0_cfa2ndli0cR6sUkrFgbTPoU6p97RzPG8O0LEPNKNfqspq1R
- v4BKma2vcj9pOQDhYSLN0LaDvru97nrp3oS_C6SnvsbibRpqSOwRO8SxixDuueFgFd_HZ0UElvfM
- exSCnLjbt33veUseBCKAfIiUaK3jg5gv5AvqlLojeCa4Q.Wpv4Wtai3NSmtjT6hfA1kf2o3mvQJt
- DQffE4m3OVNGicI3GcWSXlxi5vLJpCKIoRR6vuKNvSf.Q8x9DRDvq8eUSZnEO4W8ZvaSg90RiGXj
- WP0dE4HrAPE9CoftZuHz643MbJgLYp58StDXMypnikqaTC2qxhsfENozfIriWRDO_Dof6RN8sSfX
- rEmryex33wHRw_OqBaSyINzFLpymKgg4_uub75TVoP03bNKafD3aLH5tRovmI5FMN2Lmi5_VOpFz
- ZENQ3.9Vsv3Y8wHLEhkPVcTVDCOsJTCWoV.mHNaUfG5qBmXtbViiHS9O2XhfMhFQ1wqzmaOtvubK
- Quj_oyqDtGlmRkQmCaiHgvVt.VsI0Fq7YawbLInHPXoaI42jdWwejNzEmJWvec.eMgeIVWxjlvuJ
- T6JGHsM9CoskjM2hDOROqWSKL2Jwp1tTCKc62V.tHEQ5Ze5uS8nnFDOl7Gfb4OLrTF4DYffr3I.b
- Kc_ZHFmugWsa0wOsQtkeObK1g.tsQpifu9imENOJKjk0k7UV4ibUOiKM3HRlNA60Ltupzfj66qnc
- 7U6ZMRFt.48fxOdyuRl2O1Z1nFLYdvtvHZVuC3O6AszZSNQnyrOF_rUz0XDvt.whyX0DbeWgpz3T
- iQG._ctbMREMuySrgojnGsHzgYtJ.y9_r
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Sep 2018 01:10:09 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp428.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6b2b85509dd71181d40a6ba179a93e22;
-          Fri, 21 Sep 2018 01:10:07 +0000 (UTC)
-Subject: Re: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
- ordered initialization
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180920162338.21060-1-keescook@chromium.org>
- <20180920162338.21060-27-keescook@chromium.org>
- <a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
- <CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
-Date:   Thu, 20 Sep 2018 18:10:03 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 02:58:36 -0400
+Received: by mail-io1-f67.google.com with SMTP id r196-v6so10599176iod.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 18:12:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=igI8G2gByOR1QVu3jR/S0ca3gySr/uG/4VCZHJX5Y14=;
+        b=R8ylbvqD69MSJTs4c9ZpdqsUcS7QRIU6mHETrd8ZV351pwh8f9ox8/JBTklLudIWAe
+         Zh+WvsOdtbt6r+f8RVYvu1VQzCkRTjKG/NaAHIFiyveFN90FsAuTNtyHWvtiq8jH488i
+         EkXYZMysp4A/OBJGV3D8E20w/bpXXkCiLuNhs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=igI8G2gByOR1QVu3jR/S0ca3gySr/uG/4VCZHJX5Y14=;
+        b=PqtjrnMajOlY9EZ1feyJuP38QnwYs1pViyPwMJPHPRxhHrdsqph2zUGdJDv1ofuMG8
+         N4Lz2yCdiGT1q2XNmzAQeH8r7UyWZndHvJQlsC522+3tO4B+3Xjjnk7pu7CKgObnY7gA
+         51CH/479j7VvjQLA0W3Ixx1tQBKJuJyn47VCeI3kBPT8QCXs8l5j6o4ak3ao0NCZG4Ii
+         7jpQ/CJL5XuUe2HVjhs+P7PCz7IcUDWvQV2CujlTK97rTZGa7kZGDOsL3b5EQRHnJmxJ
+         bD23V44wA7u3kEMbDb46yPTgClEceAzdzPiYp42+qW79EWDU1zQesZ6I/nkK4JOkGAl6
+         0HvA==
+X-Gm-Message-State: APzg51DWDuG85HvS6Cj6ISdfXttrzLlZvp2eO8MMZOHRSFAtbazvdmdz
+        PnRPIBQhjD1644mMvwCupDdRRA==
+X-Google-Smtp-Source: ANB0VdZPOiXyC6lgWrm5kUcVWgXMFUGZ1LIztPSwnENI7PFxqajJ+IlEuaCCYEdH7+GXElF4Te6mWA==
+X-Received: by 2002:a6b:bbc1:: with SMTP id l184-v6mr25400760iof.83.1537492338500;
+        Thu, 20 Sep 2018 18:12:18 -0700 (PDT)
+Received: from [10.199.96.233] ([209.82.80.116])
+        by smtp.googlemail.com with ESMTPSA id f74-v6sm1574370itf.20.2018.09.20.18.12.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 18:12:17 -0700 (PDT)
+Subject: Re: [PATCH v4 15/22] nvmem: add support for cell lookups from machine
+ code
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Alban Bedel <albeu@free.fr>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180914144011.27614-1-brgl@bgdev.pl>
+ <20180914144011.27614-16-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <822f2631-43e3-b4e8-91f6-8c8e94be3dde@linaro.org>
+Date:   Thu, 20 Sep 2018 18:12:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180914144011.27614-16-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/20/2018 5:45 PM, Kees Cook wrote:
-> On Thu, Sep 20, 2018 at 5:25 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 9/20/2018 9:23 AM, Kees Cook wrote:
->>>  config LSM_ORDER
->>>       string "Default initialization order of builtin LSMs"
->>> -     default "yama,loadpin,integrity"
->>> +     default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
->> If I want to compile all the major modules into my kernel and use
->> AppArmor by default would I use
->>
->>         default "yama,loadpin,integrity,apparmor,selinux,smack,tomoyo"
->>
->> or
->>
->>         default "yama,loadpin,integrity,apparmor"
-> I was expecting the former, but the latter will have the same result.
->
->> When we have "blob-sharing" how could I compile in tomoyo,
->> but exclude it without a boot line option?
-> Ooh, yes, this series has no way to do that. Perhaps
-> CONFIG_LSM_DISABLE in the same form as CONFIG_LSM_ORDER? I would
-> totally remove LoadPin's CONFIG for this in favor it.
 
-I would generally prefer an optional CONFIG_LSM_ENABLE to
-CONFIG_LSM_DISABLE, but I understand the logic behind your
-approach. I would be looking for something like
 
-CONFIG LSM_ENABLE
-	string "Default set of enabled LSMs"
-	default ""
+On 14/09/18 07:40, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add a way for machine code users to associate devices with nvmem cells.
+> 
+> This restores the support for non-DT systems but following a different
+> approach. Cells must now be associated with devices using provided
+> routines and data structures before they can be retrieved using
+> nvmem_cell_get().
+> 
+> It's still possible to define cells statically in nvmem_config but
+> cells created this way still need to be associated with consumers using
+> lookup entries.
+> 
+> Note that nvmem_find() must be moves higher in the source file as we
+> want to call it from __nvmem_device_get() for devices that don't have
+> a device node.
+> 
+> The signature of __nvmem_device_get() is also changed as it's no longer
+> used to retrieve cells.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/nvmem/core.c           | 129 ++++++++++++++++++++++++++-------
+>   include/linux/nvmem-consumer.h |  28 +++++++
+>   2 files changed, 131 insertions(+), 26 deletions(-)
 
-as opposed to
+This patch and other follow on patches for core.c does not apply on top 
+of 
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/log/?h=char-misc-next
 
-CONFIG LSM_DISABLE
-	string "Default set of disabled LSMs"
-	default ""
+Please rebase and send!
 
-where an empty string is interpreted as "use 'em all" 
-in either case.
-
->> When we have full stacking, how could I compile in selinux
->> but exclude it?
-> Yup, same problem. Same suggested solution?
->
-> Should lsm.enable/disable= also become a comma-separated list, or
-> should I leave it as a multi-instance thing like I have it?
-
-I prefer the multi-instance
-	lsm.disable=selinux lsm.disable=yama
-to the list
-	lsm.disable=selinux,yama
-
-but at this point I don't really care all that much.
-
+thanks,
+srini
