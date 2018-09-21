@@ -2,100 +2,97 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EE4C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4069ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3063F21477
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:13:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3063F21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 582282150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:17:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="R/OTCBeu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 582282150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391144AbeIVADi (ORCPT
+        id S2391105AbeIVAH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:03:38 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:45342 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390076AbeIVADi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:03:38 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1g3Pvg-0001PM-0z; Fri, 21 Sep 2018 12:13:24 -0600
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-nvdimm@lists.01.org,
-        linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Stephen Bates <sbates@raithlin.com>,
-        linux-block@vger.kernel.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180913001156.4115-1-logang@deltatee.com>
- <20180913001156.4115-4-logang@deltatee.com>
- <20180921131550.GG224714@bhelgaas-glaptop.roam.corp.google.com>
- <20180921164813.GJ224714@bhelgaas-glaptop.roam.corp.google.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <506dd00c-35e9-e285-bc97-c689c766b4cf@deltatee.com>
-Date:   Fri, 21 Sep 2018 12:13:21 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 20:07:28 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35342 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732114AbeIVAH2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 20:07:28 -0400
+Received: by mail-oi0-f68.google.com with SMTP id m11-v6so12182598oic.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v0bpQO4OEAdC9kjVhyPT67HWRb0inNp8Z3gSwFnIbFg=;
+        b=R/OTCBeuSTesD/MtlMtCjIyqpuP7Uv4TOGSkK9OdT2umr/HypMxHgUnrqAYPKe6PiF
+         9bkQQfq7L52q9UXIWNzH+PcGwooH34FXm4yjdKz4dODtcb10PtGP4V154umUP7AboLmM
+         fL47BXOG0tKlFwYhbP5M/4SCuTPaNEOJPGeJjt2bPQXi6dccyUnVwWPB1YLELoKzS2TK
+         Cp7ox4n45fMy4/ARz/RLJTBte/9hK+tnp/68Q8mfIvHWdFfJcNA251yxFSjJvy1OR8xQ
+         ww2PCcN2HhmLAyQdXpybkPUN/Nru9AtL9Cx7wTpAVbVibU3OT9fm6wu4W9t00FKLD4Rz
+         FASA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v0bpQO4OEAdC9kjVhyPT67HWRb0inNp8Z3gSwFnIbFg=;
+        b=HGct8LfXXmMkSNZEOU0274vEYHSuhyeW19tppDTDro4lpQdf/wOUvGWywqECXptUIO
+         DCBbP5uQSyQUXC6Ueng5ioCe1gydTxmH75DW82d+M1pIlCCGK8AoMefuMEX2yTQFsaKg
+         1bBHTJi21n6Y46kxizwmeSHboOl3UdpXDGNlUXuCvaYvFd5lgqIcitWuPvgOEbJVV8yk
+         5fSg68MQAoDPlHpGc4fZSz9Qlt1+ePStszxgODcjCzS/bkI77hxrStwjQ7UIFr3hx2ob
+         noPEnm7eN5hJvu8AOqlrGF5sXq4Q+EJgDFBdiH/UR8uFlSAaeNjsexzRszfWVsB3KsNX
+         Z2PQ==
+X-Gm-Message-State: APzg51B7j0JhgJCjcg8Gw9ExI/w1KiTxtXseVcBJtn5P65qyyjdjDMvM
+        zBG1u5XVoxnuQJFk72zXOpsyqy3LzOV8IzW03dpL5w==
+X-Google-Smtp-Source: ANB0VdaGghsW/2I+JxDr5LiSCvx9Py8kCjn2OIy7EhDoPbiYJzhPo52FN4F4kDuP8MLOknBnhjl6yKZMwQaaGptHEp8=
+X-Received: by 2002:aca:ce02:: with SMTP id e2-v6mr2255152oig.225.1537553844521;
+ Fri, 21 Sep 2018 11:17:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180921164813.GJ224714@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: hch@lst.de, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, benh@kernel.crashing.org, christian.koenig@amd.com, jgg@mellanox.com, jglisse@redhat.com, linux-block@vger.kernel.org, sbates@raithlin.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, sagi@grimberg.me, alex.williamson@redhat.com, keith.busch@intel.com, axboe@kernel.dk, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v6 03/13] PCI/P2PDMA: Add PCI p2pmem DMA mappings to
- adjust the bus offset
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <cover.1536342881.git.yi.z.zhang@linux.intel.com>
+ <4e8c2e0facd46cfaf4ab79e19c9115958ab6f218.1536342881.git.yi.z.zhang@linux.intel.com>
+ <CAPcyv4ifg2BZMTNfu6mg0xxtPWs3BVgkfEj51v1CQ6jp2S70fw@mail.gmail.com>
+ <fefbd66e-623d-b6a5-7202-5309dd4f5b32@redhat.com> <20180920224953.GA53363@tiger-server>
+ <CAPcyv4g6OS=_uSjJenn5WVmpx7zCRCbzJaBr_m0Bq=qyEyVagg@mail.gmail.com>
+ <20180921224739.GA33892@tiger-server> <c8ad8ed7-ca8c-4dd7-819b-8d9c856fbe04@redhat.com>
+In-Reply-To: <c8ad8ed7-ca8c-4dd7-819b-8d9c856fbe04@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 21 Sep 2018 11:17:13 -0700
+Message-ID: <CAPcyv4j9K-wkq8oK-8_twWViKhyGSHD7cOE5UoRN-09xKXPq7A@mail.gmail.com>
+Subject: Re: [PATCH V5 4/4] kvm: add a check if pfn is from NVDIMM pmem.
+To:     David Hildenbrand <david@redhat.com>
+Cc:     KVM list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        Pankaj Gupta <pagupta@redhat.com>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
+        rkrcmar@redhat.com,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-21 10:48 AM, Bjorn Helgaas wrote:
->> I think the use of "map" in this context is slightly confusing because the
->> general expectation is that map/unmap must be balanced.
+On Fri, Sep 21, 2018 at 7:24 AM David Hildenbrand <david@redhat.com> wrote:
+[..]
+> > Remove the PageReserved flag sounds more reasonable.
+> > And Could we still have a flag to identify it is a device private memory, or
+> > where these pages coming from?
+>
+> We could use a page type for that or what you proposed. (as I said, we
+> might have to change hibernation code to skip the pages once we drop the
+> reserved flag).
 
-Yeah, Jason said the same thing, but having an empty unmap function
-seems wasteful and Christoph said to just remove it. My opinion is that
-it's not that big an issue one way or another -- if we have to add an
-unmap later it's not really that hard.
-
->> If you keep "map", maybe add a sentence or two about why there's no
->> corresponding unmap?
-
-Will do.
-
-> Another wrinkle is that "map" usually takes an A and gives you back a
-> B.  Now the caller has both A and B and both are still valid.
-> Here we pass in an SGL and the SGL is transformed, so the caller only
-> has B and A has been destroyed, i.e., the SGL can no longer be used as
-> it was before, and there's no way to get A back.
-
-I wouldn't say that. Our map_sg function is doing the same thing
-dma_map_sg is: it sets the DMA address and length in the scatter list.
-So B is still A just with other fields set. If the caller wanted to map
-this SG in a different way they can still do so and the new DMA
-address/length would override the old values. (Normally, you'd want to
-unmap before doing something like that, but seeing our unmap is an empty
-operation, we wouldn't have to do that.)
-
-Logan
-
-
+I think it would be reasonable to reject all ZONE_DEVICE pages in
+saveable_page().
