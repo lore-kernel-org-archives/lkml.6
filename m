@@ -6,118 +6,83 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1EEC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEBBECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E3221523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:21:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E3221523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F3CBD21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:22:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3CBD21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389120AbeIULJB (ORCPT
+        id S2389197AbeIULJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 07:09:01 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38332 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeIULJB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 07:09:01 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z186-v6so10385305lfa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 22:21:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=c0TDchje/syqfRtebHaI3EvmqKT532k1o/d7yAmvdw0=;
-        b=OgCgHSdwuE0zNRBmNqwx0IspgD0DmEdVGFl7p1v36+4uKivaQ5w/yvZH9citwSFm98
-         GUtT5PJzASUB/ZpT8xWjIWfxcR7GCrPit+h6Q5ifILpjSNnZmSToNaHyJ0el7A4sHf0z
-         nruACvuX+bhWQpe0dMDMeHtJgPAiG/6eKn3eqGJj4cHSNmuJbFMybxWj0BKIjs/xi4j4
-         kEadCJvRFCTekYtU7hmsX8+wCty19WuEoGPkZ9a7TKZAZ6kNNPmjp/P7juLUTbUBN9UB
-         phVumedWrBt2uwiH3uPK1wlykJvCltmq3PnCyE4HmBUZgbUEMJNTFNsC9WZpMcMi9c0j
-         5bbQ==
-X-Gm-Message-State: APzg51DnWqeETc6AH3p9GcjfL5dzW310IYNdPZHtG1hD72N+Spg4wISP
-        KuQAbAtlUufGSzFDRARikvb0VhZR6yXXfG1iqBkQQA==
-X-Google-Smtp-Source: ANB0Vda0jhcFldMN5QXSRmoibm9tJzcxhPPo5hyDmaVPgjjFqsB2V+S9+ydiC7E4lFqd92SlISXg0TAe6AeI658k1KM=
-X-Received: by 2002:a19:5a8f:: with SMTP id y15-v6mr12594984lfk.15.1537507310232;
- Thu, 20 Sep 2018 22:21:50 -0700 (PDT)
+        Fri, 21 Sep 2018 07:09:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13091 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725898AbeIULJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 07:09:14 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 09A8652E081AE;
+        Fri, 21 Sep 2018 13:22:02 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
+ 13:22:00 +0800
+Message-ID: <5BA47FF7.8090906@huawei.com>
+Date:   Fri, 21 Sep 2018 13:21:59 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Received: by 2002:a2e:9357:0:0:0:0:0 with HTTP; Thu, 20 Sep 2018 22:21:49
- -0700 (PDT)
-In-Reply-To: <1537498098-19171-1-git-send-email-zhongjiang@huawei.com>
-References: <1537498098-19171-1-git-send-email-zhongjiang@huawei.com>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Fri, 21 Sep 2018 10:51:49 +0530
-Message-ID: <CACi5LpMPZiv7zgZLR9SD=2SPPT8W3RuP6=NHD4rzqVnpB4xkaA@mail.gmail.com>
-Subject: Re: [PATCHv2] kernel: kexec_file: remove some duplicated include file
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     Baoquan He <bhe@redhat.com>,
-        kexec mailing list <kexec@lists.infradead.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+CC:     <davem@davemloft.net>, <dirk.vandermerwe@netronome.com>,
+        <simon.horman@netronome.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: netronome: remove redundant continue
+References: <1537430541-37817-1-git-send-email-zhongjiang@huawei.com> <20180920093857.6227710f@cakuba.netronome.com>
+In-Reply-To: <20180920093857.6227710f@cakuba.netronome.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Sep 21, 2018 at 8:18 AM, zhong jiang <zhongjiang@huawei.com> wrote:
-> We include kexec.h and slab.h twice in kexec_file.c. It's unnecessary.
-> hence just remove them.
->
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  kernel/kexec_file.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index c6a3b68..35cf0ad 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -25,8 +25,6 @@
->  #include <linux/elf.h>
->  #include <linux/elfcore.h>
->  #include <linux/kernel.h>
-> -#include <linux/kexec.h>
-> -#include <linux/slab.h>
->  #include <linux/syscalls.h>
->  #include <linux/vmalloc.h>
->  #include "kexec_internal.h"
-> --
-> 1.7.12.4
->
-
-Nice catch.
-Reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
-
-BTW while we are at it, can you also send out a separate patch to list the
-include files in this file (i.e. kexec_file.c) alphabetically (similar
-to other linux source files - see
-<https://patchwork.kernel.org/patch/10258279/> for example). Something
-like:
-
-#include <crypto/hash.h>
-#include <crypto/sha.h>
-#include <linux/capability.h>
-#include <linux/elf.h>
-#include <linux/elfcore.h>
-#include <linux/file.h>
-#include <linux/fs.h>
-#include <linux/ima.h>
-#include <linux/kernel.h>
-#include <linux/kexec.h>
-#include <linux/list.h>
-#include <linux/mm.h>
-#include <linux/mutex.h>
-#include <linux/slab.h>
-#include <linux/syscalls.h>
-#include <linux/vmalloc.h>
-#include "kexec_internal.h"
-
-This will improve readability and also reduce similar instances of
-include files being added twice in this source file in future.
+On 2018/9/21 0:38, Jakub Kicinski wrote:
+> On Thu, 20 Sep 2018 16:02:21 +0800, zhong jiang wrote:
+>> The continue will not truely skip any code. hence it is safe to
+>> remove it.
+>>
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> I think this came up during review at some point.  I still prefer to
+> keep the continue.  The body of the loop performs initialization of
+> objects, if an object is removed we shouldn't carry on with the body.
+> It's easy to miss that the object got freed otherwise, there is no
+> error being set and no warning printed...
+IMO,  we should bring it back when the case truely occur you have said.  At present.
+We should not take too much into account. Maybe it will not occur.
 
 Thanks,
-Bhupesh
+zhong jiang
+>> diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+>> index 0b1ac9c..50d7b58 100644
+>> --- a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+>> +++ b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+>> @@ -230,10 +230,8 @@ static void nfp_net_pf_free_vnics(struct nfp_pf *pf)
+>>  		ctrl_bar += NFP_PF_CSR_SLICE_SIZE;
+>>  
+>>  		/* Kill the vNIC if app init marked it as invalid */
+>> -		if (nn->port && nn->port->type == NFP_PORT_INVALID) {
+>> +		if (nn->port && nn->port->type == NFP_PORT_INVALID)
+>>  			nfp_net_pf_free_vnic(pf, nn);
+>> -			continue;
+>> -		}
+>>  	}
+>>  
+>>  	if (list_empty(&pf->vnics))
+>
+> .
+>
+
+
