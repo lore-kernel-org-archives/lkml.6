@@ -2,115 +2,248 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E42C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517E9ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75E6820C0A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:37:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E6820C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id EE90920C0A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:38:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE90920C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389577AbeIUPZv convert rfc822-to-8bit (ORCPT
+        id S2389586AbeIUP0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:25:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44893 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388944AbeIUPZv (ORCPT
+        Fri, 21 Sep 2018 11:26:50 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:45118 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727392AbeIUP0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:25:51 -0400
-Received: from 1.general.jsalisbury.us.vpn ([10.172.67.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <joseph.salisbury@canonical.com>)
-        id 1g3Hsi-0008Q9-6p; Fri, 21 Sep 2018 09:37:48 +0000
-To:     Jarno Rajahalme <jarno@ovn.org>
-Cc:     gvrose8192@gmail.com, joe@ovn.org, davem@davemloft.net,
-        pshelar@ovn.org, netdev@vger.kernel.org, dev@openvswitch.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        james.page@canonical.com, christian.ehrhardt@canonical.com,
-        1736390@bugs.launchpad.net
-From:   Joseph Salisbury <joseph.salisbury@canonical.com>
-Subject: [Regression] openvswitch: Add eventmask support to CT action.
-Openpgp: preference=signencrypt
-Autocrypt: addr=joseph.salisbury@canonical.com; prefer-encrypt=mutual;
- keydata=
- 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
- p24lPxLL08SuCEzuBw==
-Message-ID: <0d69e5b1-ac17-52c4-04f9-34ad1eb9f2eb@canonical.com>
-Date:   Fri, 21 Sep 2018 11:37:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+        Fri, 21 Sep 2018 11:26:50 -0400
+X-IronPort-AV: E=Sophos;i="5.54,284,1534789800"; 
+   d="scan'208";a="174243"
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 21 Sep 2018 15:08:46 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9022"; a="1493187"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 21 Sep 2018 15:08:45 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id 917232B7A; Fri, 21 Sep 2018 15:08:44 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        akpm@linux-foundation.org, dan.j.williams@intel.com,
+        mhocko@suse.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
+        iamjoonsoo.kim@lge.com, osalvador@suse.de, malat@debian.org,
+        yasu.isimatu@gmail.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org
+Cc:     svaddagi@codeaurora.org, vinmenon@codeaurora.org,
+        Arun KS <arunks@codeaurora.org>
+Subject: [PATCH] memory_hotplug: Free pages as higher order
+Date:   Fri, 21 Sep 2018 15:08:29 +0530
+Message-Id: <1537522709-7519-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jarno,
+When free pages are done with higher order, time spend on
+coalescing pages by buddy allocator can be reduced. With
+section size of 256MB, hot add latency of a single section
+shows improvement from 50-60 ms to less than 1 ms, hence
+improving the hot add latency by 60%.
 
-A kernel bug report was opened against Ubuntu [0].  This bug is a
-regression introduced in v4.12-rc1.  The latest mainline kernel was
-tested and still exhibits the bug.  The following commit was identified
-as the cause of the regression:
+Modify external providers of online callback to align with
+the change.
 
-    120645513f55 ("openvswitch: Add eventmask support to CT action.")
+Signed-off-by: Arun KS <arunks@codeaurora.org>
 
-I was hoping to get your feedback, since you are the patch author.  Do
-you think gathering any additional data will help diagnose this issue?
+---
 
+Changes since RFC:
+- Rebase.
+- As suggested by Michal Hocko remove pages_per_block.
+- Modifed external providers of online_page_callback.
 
-Thanks,
+RFC:
+https://lore.kernel.org/patchwork/patch/984754/
+---
+ drivers/hv/hv_balloon.c        |  6 +++--
+ drivers/xen/balloon.c          | 18 +++++++++++---
+ include/linux/memory_hotplug.h |  2 +-
+ mm/memory_hotplug.c            | 55 +++++++++++++++++++++++++++++++++---------
+ 4 files changed, 63 insertions(+), 18 deletions(-)
 
-Joe
-
-http://pad.lv/1736390
-
+diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+index b1b7880..c5bc0b5 100644
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+ 	}
+ }
+ 
+-static void hv_online_page(struct page *pg)
++static int hv_online_page(struct page *pg, unsigned int order)
+ {
+ 	struct hv_hotadd_state *has;
+ 	unsigned long flags;
+@@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+ 		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+ 			continue;
+ 
+-		hv_page_online_one(has, pg);
++		hv_bring_pgs_online(has, pfn, (1UL << order));
+ 		break;
+ 	}
+ 	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
++
++	return 0;
+ }
+ 
+ static int pfn_covered(unsigned long start_pfn, unsigned long pfn_cnt)
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index e12bb25..010cf4d 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -390,8 +390,8 @@ static enum bp_state reserve_additional_memory(void)
+ 
+ 	/*
+ 	 * add_memory_resource() will call online_pages() which in its turn
+-	 * will call xen_online_page() callback causing deadlock if we don't
+-	 * release balloon_mutex here. Unlocking here is safe because the
++	 * will call xen_bring_pgs_online() callback causing deadlock if we
++	 * don't release balloon_mutex here. Unlocking here is safe because the
+ 	 * callers drop the mutex before trying again.
+ 	 */
+ 	mutex_unlock(&balloon_mutex);
+@@ -422,6 +422,18 @@ static void xen_online_page(struct page *page)
+ 	mutex_unlock(&balloon_mutex);
+ }
+ 
++static int xen_bring_pgs_online(struct page *pg, unsigned int order)
++{
++	unsigned long i, size = (1 << order);
++	unsigned long start_pfn = page_to_pfn(pg);
++
++	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
++	for (i = 0; i < size; i++)
++		xen_online_page(pfn_to_page(start_pfn + i));
++
++	return 0;
++}
++
+ static int xen_memory_notifier(struct notifier_block *nb, unsigned long val, void *v)
+ {
+ 	if (val == MEM_ONLINE)
+@@ -744,7 +756,7 @@ static int __init balloon_init(void)
+ 	balloon_stats.max_retry_count = RETRY_UNLIMITED;
+ 
+ #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+-	set_online_page_callback(&xen_online_page);
++	set_online_page_callback(&xen_bring_pgs_online);
+ 	register_memory_notifier(&xen_memory_nb);
+ 	register_sysctl_table(xen_root);
+ 
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 34a2822..7b04c1d 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 	unsigned long *valid_start, unsigned long *valid_end);
+ extern void __offline_isolated_pages(unsigned long, unsigned long);
+ 
+-typedef void (*online_page_callback_t)(struct page *page);
++typedef int (*online_page_callback_t)(struct page *page, unsigned int order);
+ 
+ extern int set_online_page_callback(online_page_callback_t callback);
+ extern int restore_online_page_callback(online_page_callback_t callback);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 38d94b7..24c2b8e 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -47,7 +47,7 @@
+  * and restore_online_page_callback() for generic callback restore.
+  */
+ 
+-static void generic_online_page(struct page *page);
++static int generic_online_page(struct page *page, unsigned int order);
+ 
+ static online_page_callback_t online_page_callback = generic_online_page;
+ static DEFINE_MUTEX(online_page_callback_lock);
+@@ -655,26 +655,57 @@ void __online_page_free(struct page *page)
+ }
+ EXPORT_SYMBOL_GPL(__online_page_free);
+ 
+-static void generic_online_page(struct page *page)
++static int generic_online_page(struct page *page, unsigned int order)
+ {
+-	__online_page_set_limits(page);
+-	__online_page_increment_counters(page);
+-	__online_page_free(page);
++	unsigned long nr_pages = 1 << order;
++	struct page *p = page;
++	unsigned int loop;
++
++	prefetchw(p);
++	for (loop = 0 ; loop < (nr_pages - 1) ; loop++, p++) {
++		prefetch(p + 1);
++		__ClearPageReserved(p);
++		set_page_count(p, 0);
++	}
++	__ClearPageReserved(p);
++	set_page_count(p, 0);
++
++	adjust_managed_page_count(page, nr_pages);
++	set_page_refcounted(page);
++	__free_pages(page, order);
++
++	return 0;
++}
++
++static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
++{
++	unsigned long end = start + nr_pages;
++	int order, ret, onlined_pages = 0;
++
++	while (start < end) {
++		order = min(MAX_ORDER - 1UL, __ffs(start));
++
++		while (start + (1UL << order) > end)
++			order--;
++
++		ret = (*online_page_callback)(pfn_to_page(start), order);
++		if (!ret)
++			onlined_pages += (1UL << order);
++		else if (ret > 0)
++			onlined_pages += ret;
++
++		start += (1UL << order);
++	}
++	return onlined_pages;
+ }
+ 
+ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *arg)
+ {
+-	unsigned long i;
+ 	unsigned long onlined_pages = *(unsigned long *)arg;
+-	struct page *page;
+ 
+ 	if (PageReserved(pfn_to_page(start_pfn)))
+-		for (i = 0; i < nr_pages; i++) {
+-			page = pfn_to_page(start_pfn + i);
+-			(*online_page_callback)(page);
+-			onlined_pages++;
+-		}
++		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
+ 
+ 	online_mem_sections(start_pfn, start_pfn + nr_pages);
+ 
+-- 
+1.9.1
 
