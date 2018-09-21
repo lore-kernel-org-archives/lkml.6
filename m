@@ -6,116 +6,91 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2350ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFD3ECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65F0206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B65F0206B6
+	by mail.kernel.org (Postfix) with ESMTP id 04C42206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:38:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C42206B6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388885AbeIUHYT (ORCPT
+        id S2388916AbeIUHYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 03:24:19 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12663 "EHLO huawei.com"
+        Fri, 21 Sep 2018 03:24:46 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56872 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388788AbeIUHYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 03:24:19 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 563E5E8431EDA;
-        Fri, 21 Sep 2018 09:37:53 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
- 09:37:53 +0800
-Subject: Re: [PATCH net-next 17/22] hv_netvsc: fix return type of
- ndo_start_xmit function
-To:     Stephen Hemminger <stephen@networkplumber.org>
-References: <20180920123306.14772-1-yuehaibing@huawei.com>
- <20180920123306.14772-18-yuehaibing@huawei.com>
- <20180920074341.3acef75c@xeon-e3>
-CC:     <davem@davemloft.net>, <dmitry.tarnyagin@lockless.no>,
-        <wg@grandegger.com>, <mkl@pengutronix.de>,
-        <michal.simek@xilinx.com>, <hsweeten@visionengravers.com>,
-        <madalin.bucur@nxp.com>, <pantelis.antoniou@gmail.com>,
-        <claudiu.manoil@nxp.com>, <leoyang.li@nxp.com>,
-        <linux@armlinux.org.uk>, <sammy@sammy.net>, <ralf@linux-mips.org>,
-        <nico@fluxnic.net>, <steve.glendinning@shawell.net>,
-        <f.fainelli@gmail.com>, <grygorii.strashko@ti.com>,
-        <w-kwok2@ti.com>, <m-karicheri2@ti.com>, <t.sailer@alumni.ethz.ch>,
-        <jreuter@yaina.de>, <kys@microsoft.com>, <haiyangz@microsoft.com>,
-        <wei.liu2@citrix.com>, <paul.durrant@citrix.com>,
-        <arvid.brodin@alten.se>, <pshelar@ovn.org>, <dev@openvswitch.org>,
-        <linux-mips@linux-mips.org>, <xen-devel@lists.xenproject.org>,
-        <netdev@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <devel@linuxdriverproject.org>, <linux-hams@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-arm-kernel@lists.infradead.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <b9b170c4-caba-928e-4c6f-eb51cb5e4707@huawei.com>
-Date:   Fri, 21 Sep 2018 09:37:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S2388788AbeIUHYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 03:24:46 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4AD67B30D126C;
+        Fri, 21 Sep 2018 09:38:20 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
+ 09:38:18 +0800
+Message-ID: <5BA44B89.6090006@huawei.com>
+Date:   Fri, 21 Sep 2018 09:38:17 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-In-Reply-To: <20180920074341.3acef75c@xeon-e3>
-Content-Type: text/plain; charset="windows-1252"
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     <jdelvare@suse.com>, <linux-hwmon@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] hwmon: remove redundant continue
+References: <1537431070-38261-1-git-send-email-zhongjiang@huawei.com> <20180920173045.GA15272@roeck-us.net>
+In-Reply-To: <20180920173045.GA15272@roeck-us.net>
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
+X-Originating-IP: [10.177.29.68]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/20 22:43, Stephen Hemminger wrote:
-> On Thu, 20 Sep 2018 20:33:01 +0800
-> YueHaibing <yuehaibing@huawei.com> wrote:
-> 
->> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
->> which is a typedef for an enum type, so make sure the implementation in
->> this driver has returns 'netdev_tx_t' value, and change the function
->> return type to netdev_tx_t.
+On 2018/9/21 1:30, Guenter Roeck wrote:
+> On Thu, Sep 20, 2018 at 04:11:10PM +0800, zhong jiang wrote:
+>> The continue will not truely skip any code. hence it is safe to
+>> remove it.
 >>
->> Found by coccinelle.
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> The proper subject line would be
+>
+> hwmon: (scpi-hwmon) <summary>
+>
+> Since it now happened several times that I got a patch without proper
+> subject (ie where the subject does not even mention the affected driver),
+> I am no longer going to accept patches if the affected driver is missing,
+> sorry.
+I will fix that and resend.  Thanks
+
+Sincerely,
+zhong jiang
+> Guenter
+>
 >> ---
->>  drivers/net/hyperv/netvsc_drv.c | 10 +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
+>>  drivers/hwmon/scpi-hwmon.c | 4 +---
+>>  1 file changed, 1 insertion(+), 3 deletions(-)
 >>
->> diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
->> index 3af6d8d..056c472 100644
->> --- a/drivers/net/hyperv/netvsc_drv.c
->> +++ b/drivers/net/hyperv/netvsc_drv.c
->> @@ -511,7 +511,8 @@ static int netvsc_vf_xmit(struct net_device *net, struct net_device *vf_netdev,
->>  	return rc;
->>  }
+>> diff --git a/drivers/hwmon/scpi-hwmon.c b/drivers/hwmon/scpi-hwmon.c
+>> index 7e49da5..111d521 100644
+>> --- a/drivers/hwmon/scpi-hwmon.c
+>> +++ b/drivers/hwmon/scpi-hwmon.c
+>> @@ -286,10 +286,8 @@ static int scpi_hwmon_probe(struct platform_device *pdev)
+>>  		 * any thermal zones or if the thermal subsystem is
+>>  		 * not configured.
+>>  		 */
+>> -		if (IS_ERR(z)) {
+>> +		if (IS_ERR(z))
+>>  			devm_kfree(dev, zone);
+>> -			continue;
+>> -		}
+>>  	}
 >>  
->> -static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
->> +static netdev_tx_t
->> +netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
->>  {
->>  	struct net_device_context *net_device_ctx = netdev_priv(net);
->>  	struct hv_netvsc_packet *packet = NULL;
->> @@ -528,8 +529,11 @@ static int netvsc_start_xmit(struct sk_buff *skb, struct net_device *net)
->>  	 */
->>  	vf_netdev = rcu_dereference_bh(net_device_ctx->vf_netdev);
->>  	if (vf_netdev && netif_running(vf_netdev) &&
->> -	    !netpoll_tx_running(net))
->> -		return netvsc_vf_xmit(net, vf_netdev, skb);
->> +	    !netpoll_tx_running(net)) {
->> +		ret = netvsc_vf_xmit(net, vf_netdev, skb);
->> +		if (ret)
->> +			return NETDEV_TX_BUSY;
->> +	}
-> 
-> Sorry, the new code is wrong. It will fall through if ret == 0 (NETDEV_TX_OK)
-> Please review and test your patches.
+>>  	return 0;
+>> -- 
+>> 1.7.12.4
+>>
+>
 
-I'm sorry for this, will correct it as Haiyang's suggestion.
-
-> 
-> .
-> 
 
