@@ -2,96 +2,158 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A2EECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEA3C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 079892083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:25:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cBtD9vVv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="axCn7es9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079892083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DDC032083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC032083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389241AbeIULNA (ORCPT
+        id S2389145AbeIULQ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 07:13:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36538 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeIULM7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 07:12:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 230DC60FEB; Fri, 21 Sep 2018 05:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537507549;
-        bh=KHT2JQwT6d2tSF6hVKJQqc5lNPccgnOmnW79Oz3MvB8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cBtD9vVvKEATQRxUHF1lJyWfd5WLqvmK0W4ErRIBpS6WUpMs17bM9oyPNW37eMjle
-         7QS3s6/u7pAajTwFK2OE6JjDDjtGd8qxJGDt2gOVpBA/zYluqJL3aeIaXmEBQdDIQe
-         KZzZS2q8GUQfbOpEhL255KC/Ez0BrW8tTGhGgfK8=
-Received: from [192.168.0.114] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 21 Sep 2018 07:16:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbeIULQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 07:16:27 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AB29E60F94;
-        Fri, 21 Sep 2018 05:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537507548;
-        bh=KHT2JQwT6d2tSF6hVKJQqc5lNPccgnOmnW79Oz3MvB8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=axCn7es9VzFnwVBWDgiaaCbEE/aokZtDdk52Fsx/BIMmMMLdyxd297wkCpWRXkC74
-         YKxl7cXP1KjuUf24RRs64ZP0JjzsB229mfz5JAsN3EiJB+tWnj22Zxuf5wwIFb+vzU
-         ry7FzT5hczlKzlAX8FALCv+LAllotJk7Gz+XuTJM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AB29E60F94
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
- (BD_ADDR)
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>
-References: <20180920223436.202454-1-mka@chromium.org>
- <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
- <20180920230121.GT22824@google.com>
- <36e5d881-a45e-c879-c275-e6e18bc99ed5@codeaurora.org>
- <20180920231947.GU22824@google.com>
-From:   Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <124b6f76-a65f-e304-6c60-fbb9104415f4@codeaurora.org>
-Date:   Fri, 21 Sep 2018 01:25:45 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id C6924A6E04;
+        Fri, 21 Sep 2018 05:29:16 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0AD2E106A78A;
+        Fri, 21 Sep 2018 05:29:15 +0000 (UTC)
+Date:   Fri, 21 Sep 2018 13:29:12 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com
+Cc:     linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+        x86@kernel.org, thgarnie@google.com, corbet@lwn.net,
+        linux-doc@vger.kernel.org, peterz@infradead.org
+Subject: [PATCH v3 3/3] x86/doc/kaslr.txt: Create a separate part of document
+ abourt KASLR at the end of file
+Message-ID: <20180921052912.GU2555@MiWiFi-R3L-srv>
+References: <20180921020550.13095-1-bhe@redhat.com>
+ <20180921020550.13095-4-bhe@redhat.com>
+ <20180921032157.GT2555@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <20180920231947.GU22824@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921032157.GT2555@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 21 Sep 2018 05:29:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/20/2018 7:19 PM, Matthias Kaehlcke wrote:
-> If the existing users populate a custom property with the BD address
-> in the bootloader you could roll out a bootloader change. You'd have
-> to make sure that bootloader and kernel match. The bootloader could
-> still populate the custom property to be compatible with 'old'
-> kernels.
+Take the original content as the first part to only list static mm layout
+tables in non-KASLR case. Then add KASLR document at the end.
 
-If there is no standard about the name of the property, this probably
-doesn't belong to property.c but should rather be hosted in bluetooth
-directory for consumption among the bluetooth drivers.
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+ Documentation/x86/x86_64/mm.txt | 64 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 56 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
+index fc1da95e629d..8c03d6ad3623 100644
+--- a/Documentation/x86/x86_64/mm.txt
++++ b/Documentation/x86/x86_64/mm.txt
+@@ -1,4 +1,7 @@
+ 
++MM layout in non-KASLR case:
++=================================
++
+ Virtual memory map with 4 level page tables:
+ 
+ 0000000000000000 - 00007fffffffffff (=47 bits, 128 TB) user space, different per mm
+@@ -12,7 +15,6 @@ ffffea0000000000 - ffffeaffffffffff (=40 bits, 1 TB) virtual memory map (vmemmap
+ ffffeb0000000000 - ffffebffffffffff (=40 bits, 1 TB) unused hole
+ ffffec0000000000 - fffffbffffffffff (=44 bits, 16 TB) kasan shadow memory
+ fffffc0000000000 - fffffdffffffffff (=41 bits, 2 TB) unused hole
+-				    vaddr_end for KASLR
+ fffffe0000000000 - fffffe7fffffffff (=39 bits, 512 GB) cpu_entry_area mapping
+ fffffe8000000000 - fffffeffffffffff (=39 bits, 512 GB) LDT remap for PTI
+ ffffff0000000000 - ffffff7fffffffff (=39 bits, 512 GB) %esp fixup stacks
+@@ -38,7 +40,6 @@ ffd4000000000000 - ffd5ffffffffffff (=49 bits, 512 TB) virtual memory map (vmemm
+ ffd6000000000000 - ffdeffffffffffff (~51 bits, 2304 TB) unused hole
+ ffdf000000000000 - fffffdffffffffff (~53 bits, ~8 PB) kasan shadow memory
+ fffffc0000000000 - fffffdffffffffff (=41 bits, 2 TB) unused hole
+-				    vaddr_end for KASLR
+ fffffe0000000000 - fffffe7fffffffff (=39 bits, 512 GB) cpu_entry_area mapping
+ fffffe8000000000 - fffffeffffffffff (=39 bits, 512 GB) unused hole
+ ffffff0000000000 - ffffff7fffffffff (=39 bits, 512 GB) %esp fixup stacks
+@@ -70,10 +71,57 @@ memory window (this size is arbitrary, it can be raised later if needed).
+ The mappings are not part of any other kernel PGD and are only available
+ during EFI runtime calls.
+ 
+-Note that if CONFIG_RANDOMIZE_MEMORY is enabled, the direct mapping of all
+-physical memory, vmalloc/ioremap space and virtual memory map are randomized.
+-Their order is preserved but their base will be offset early at boot time.
++KASLR
++=========================================================================
++
++Kernel Adress Space Layout Randomization (KASLR) consists of two parts
++which work together to enhance the security of the Linux kernel:
++
++ - Kernel text KASLR
++ - Memory region KASLR
++
++Kernel text KASLR
++-----------------
++The physical address and virtual address of kernel text itself are
++randomized to a different position separately. The physical address of
++the kernel can be anywhere, under 64TB at most in 4-level paging mode,
++and under 4 PB in 5-level paging mode, while the virtual address of the
++kernel is restricted between [0xffffffff80000000, ffffffffbfffffff],
++the 1GB space.
++
++ffffffff80000000 - ffffffffbfffffff (1 GB)  kernel text mapping, from phys 0
++ffffffffc0000000 - fffffffffeffffff (1 GB) module mapping space
++
++Note: The kernel text KASLR uses 1 GB space to randomize the position of
++kernel image, and it's defalutly enabled. If KASLR config option
++CONFIG_RANDOMIZE_BASE is not enabled, the space for kernel image will be
++shrink to 512 MB, increase the size of modules area to 1.5 GB.
++
++Memory region KASLR
++-------------------
++If CONFIG_RANDOMIZE_MEMORY is enabled, the below three memory regions
++are randomized. Their order is preserved but their base will be offset
++early at boot time.
++
++   - direct mapping region
++   - vmalloc region
++   - vmemmap region
++
++The KASLR address range must not overlap with anything except the KASAN
++shadow area, which is correct as KASAN disables KASLR.
++
++So from the original starting address of the direct mapping region for physical
++RAM to the starting address of the cpu_entry_area mapping region, namely
++[0xffff880000000000 - 0xfffffdffffffffff], the scope of 118 TB in all is
++the virtual address space where memory region KASLR can be allowed to move
++those memory regions around. After KASLR manipulation is done, their layout
++looks like:
+ 
+-Be very careful vs. KASLR when changing anything here. The KASLR address
+-range must not overlap with anything except the KASAN shadow area, which is
+-correct as KASAN disables KASLR.
++Name            Starting address        Size                                         Aligned
++-----------------------------------------------------------------------------------------------
++direct mapping  page_offset_base        [actual size of system RAM + 10 TB padding]  1 GB
++*guard hole     random                  random                                       1 GB
++vmalloc         vmalloc_base            32 TB                                        1 GB
++*guard hole     random                  random                                       1 GB
++vmemmap         vmemmap_base            1 TB                                         1 GB
++*guard hole     random                  random                                       1 GB
+-- 
+2.13.6
+
