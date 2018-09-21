@@ -2,144 +2,123 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0FEC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 830DBECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3BE521522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:33:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="okGL05ge"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3BE521522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 298DD21522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:36:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 298DD21522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=christoph-conrads.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389933AbeIURWA (ORCPT
+        id S2389774AbeIURZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 13:22:00 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34120 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389708AbeIURV7 (ORCPT
+        Fri, 21 Sep 2018 13:25:05 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:56143 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728184AbeIURZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:21:59 -0400
-Received: by mail-wm1-f66.google.com with SMTP id j25-v6so3962402wmc.1;
-        Fri, 21 Sep 2018 04:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Rwfhn7cN/qx//wJgbq96vWyhsg0cmvYywmwUb3M8DOI=;
-        b=okGL05gekctPsZoofUFLp7/LKbjAZuNxhPLt/+ciZl7zVrnXv2ixQfeDFK5Om0s/WO
-         7fRHcvB/DpwvsV82agIUuIErAR0u4EqFMThKIffAp/wNV+wrVlKUvTmZaflmRVNyv/qR
-         pJsV1tykkbOm0ryMRDvQyYqmDjU9kSirrgMOO20X9NlyIPE81lJwUrGtbfYkOsIb3aF8
-         /77ujeLiD/cQqKsH9UMb72vMs/9wpCUjnaie3fDRBm+acF6UWRr59fVr9uLCABc8G6Vs
-         TQNKQEYKXzNhPYLXyJ+uAKuuMNo1wtubQMmQ9O7XE7w9ZvsvvcWI0ZU6lT5kEr/Cpf8K
-         cQKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Rwfhn7cN/qx//wJgbq96vWyhsg0cmvYywmwUb3M8DOI=;
-        b=s8N5I9J+I9qEde8WRERpoGlVX12d2+QSL9FWrG0GkPVHj/zRle5J08SiuZe4sUfmaB
-         FWiLBWtEcklgbhM4qMGk9KYY3Whyz5N0VB/Y+IoeT6UkX0xgUpxBgLRQxAgA1cH8ouqL
-         0ufsmHMZebH/uQJAIiGhXlBInVM/MDDhp3Qm8lG8lXz7ZQ7m2UCrpEnpQ+O8CcmKrKub
-         GwstE8DsqExQoLjtUdF+Zc9g6szbLK/FSJq5BwKHqm34zDc0+0OS0JSrgOavWClnXllb
-         Rwp7FOBJOV8H201XnLWDfjpepozBxTHSYH8Hg08YmaFVFYYk3kacjHcl8HoEqLUDv/u9
-         F/jA==
-X-Gm-Message-State: APzg51CsPANlOa3Dhv7ky5wqlPC/HLT/aEVemGUpACwR6hfM4Hi31T3g
-        ZeC5ntZeCYY6G8vFsAgou/0=
-X-Google-Smtp-Source: ANB0Vda4XCjShMTg/d25lxWydirM8bWXQRveC9M+Yt0zkgoH3iwW/PfX3NxyxCm8k83abdTt66b9ZA==
-X-Received: by 2002:a1c:dd05:: with SMTP id u5-v6mr3012704wmg.107.1537529610735;
-        Fri, 21 Sep 2018 04:33:30 -0700 (PDT)
-Received: from inc028000032.lancs.ac.uk (inc028000032.lancs.ac.uk. [148.88.228.92])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm6052593wrs.25.2018.09.21.04.33.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 04:33:30 -0700 (PDT)
-From:   Willy Wolff <willy.mh.wolff.ml@gmail.com>
-X-Google-Original-From: Willy Wolff <willy.mh.wolff@gmail.com>
-Date:   Fri, 21 Sep 2018 12:33:29 +0100
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: exynos: ordering wrong order tmu_cpu on
- Odroid-XU3/4 thermal-zones definition
-Message-ID: <20180921113329.tha5tfrsvdf7dtws@inc028000032.lancs.ac.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 21 Sep 2018 13:25:05 -0400
+Received: from theta ([188.102.174.54]) by mrelayeu.kundenserver.de (mreue107
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1MnZwp-1fKNzf1oKD-00jYPh; Fri, 21
+ Sep 2018 13:36:30 +0200
+Date:   Fri, 21 Sep 2018 13:36:42 +0200
+From:   Christoph Conrads <contact@christoph-conrads.name>
+To:     Martin Steigerwald <martin@lichtvoll.de>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: Code of Conduct: Let's revamp it.
+Message-Id: <20180921133642.f1bbbc2b613f24ae8fbafc0d@christoph-conrads.name>
+In-Reply-To: <2808315.UYOVJ65Qvk@merkaba>
+References: <20180920231823.46d282ce40c91f39988bd34e@christoph-conrads.name>
+        <2808315.UYOVJ65Qvk@merkaba>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:j6mPVex/0Zbtdd4M5COJGk34+cVx2NHvvy8XDVEUEEATcT6yDku
+ aD/bS3vhK2FAoZyvESjfaTWw76ySNWKJGNDsfegs09bgGkILCHcvDee47+7SG35h4YRS9QY
+ ksB47u7yWnEVUgVM4T9tLgRwfnT4mUI4MBb6aslMPZgRjNeSpuDMcHUsmRfZWA5ZG785FNW
+ wrbHHsgGvg8S7MN309tKA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:q4WDsIQeZ0E=:ozk5JHHZx+cz3ciH6fN/YR
+ DphHXMATu0wAdjyy0pwDnECpDIuv0+iyXjXk4iPTS57rvX1syO37fXyH88Hximi+PJJrwx05E
+ DOOojFjalZpAwurYH15WF3tUNQMr5hwD5oHVSwkM5X9wvvXk65R3FzHnQHiGd+uexAJZ/gITs
+ XOGBG2BuB3Sn0ZdMBsnLHZoQ0rZNBs0xuFaT1p/NfR0cFw/AWzsbmc2BjpR+R/569ivbui/zy
+ 4bmJ+hHhYUMt6qCurWXYoZ2ma9lbBy9JWbunMaATsGxtlXARsIqnqr07NaNwz6BDiEVEiGZBU
+ f8V3vCbLWB1KMwD2VXRXVAPbnn1ykLrzENtGPEB7K6eoV126NYoDEA33v1UjfQzghdyg4RyWi
+ 6CZ7hhB7LQ3Z2kQfdjv1fAh+DsUN3ETV7a2DCp5DjV1tzp1mxfoZ566zovEpsY05Sg8Ti9l+q
+ E6ljYVCCa5FP04TV52KM+cVFZMyDLVIhXh4bisGy5wZ2Vhsu9kiOEmsP5rOIFkGQUZR+xsKnl
+ Nz8fxk5CvzuuPPesvjcbP6miPF0kcK6WXjED8VjzPDBs3RD1gtq770g8VXmwXQXDKmBZuiZXe
+ OIumJDU0Rf593U/s5qEXa4FCNXCt5IJEewEi3lw+FGa4VE2U9vYjgj60MZCYzVSBDMquCZfH1
+ MuiOCykkCOo//I7jMxO5ti1KhI9k5kWyJL1myRAFeHwuJt7wVipE7CWEbPD102EMjb/Hcejcn
+ ZPYz7QBAexnb07SB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is to open a discussion about wrong order of tmu_cpu.
+Hallo Martin,
 
-It seems that tmu_cpu1 correspond to cpu3, and tmu_cpu3 match cpu1.
-Note, cpu{0|3} in dtsi correspond to cpu{3|7} in linux and are the big
-cores.
+> What I see here is that a lot of people who are not even contributing to 
+> the Linux kernel in a major way apparently want to make their opinion 
+> about Code of Conduct heard loudly.
+> 
+> I ask myself: What the point of it?
 
-By dependencis from exynos5422-odroidxu3-common.dtsi to
-exynos5800.dtsi -> exynos5420.dtsi, I guess definitions of tmu_cpuX are
-incorrect. However, changing the address, reg interrupts or clocks
-would breack other boards depending on it. As I can't test other boards,
-I've just overload the reference in the thermal-zones node.
+So far, the Contributor Covenant CoC always left a path of destruction
+in its wake, see for example the list posted by Michael Woods [1].
+There is not a single success story to be heard. Add to that the
+very political and very vocal crowd associated with the CoC: These
+people drive away contributors, they do not contribute themselves
+because they are busy policing the behavior of the remaining
+contributors (see OpalGate), and they will not stop until each and
+every software project abides to their CoC. To top it off, none of the
+Linux maintainers seem to be aware of or bothered by the incidents in
+other projects adopting the Contributor Covenant CoC.
 
-To reproduce the problem, I provide two scripts:
-== script_stress:
+> Some of the major contributors apparently see that the way of 
+> communicating here and elsewhere sometimes (!) does not serve Linux 
+> kernel development and the community. By just continuing the way it is, 
+> it is unlikely to receive a different outcome. So it is important to 
+> change *something*.
 
-for i in 0 10 20 40 80; do
-    echo $i
-    taskset $i stress -t 10 -c 1
-done;
+Again, I have yet to see a single success story related to the
+Contributor Covenant CoC.
 
-== script_read_temp:
+Communication issues and the magic word "harassment" are just
+pretexts to establish "investigative" boards operating in secrecy to
+maintain anonymity of accusers and to give a "legal" foundation for
+censorship based on subjective judgement inside and outside of the
+LKML. The Rod Vagg case is a nice example of what can come of this
+secrecy [2]. Note that Node.js applies the same CoC.
 
-while true; do
-    for i in 0 1 2 3 4; do
-	echo $i
-	cat /sys/devices/virtual/thermal/thermal_zone$i/temp
-    done;
-    sleep 1
-    clear
-done;
+> There is a kernel developer summit where they like to discuss exactly 
+> things like this. I do not see it up to me to try to control the outcome 
+> of that process.
 
-Signed-off-by: Willy Wolff <willy.mh.wolff@gmail.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Removing or modifying an existing CoC is very different from agreeing
+to a new one. I bet 10 Dollars that at least one person who proposes the
+remove the CoC at the summit, will be called out for supporting
+harassment -- if you can still attend without signing the CoC.
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-index 96e281c0a118..4512ffad2785 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi
-@@ -135,7 +135,8 @@
- 			};
- 		};
- 		cpu1_thermal: cpu1-thermal {
--			thermal-sensors = <&tmu_cpu1 0>;
-+			// thermal-sensors = <&tmu_cpu1 0>;
-+			thermal-sensors = <&tmu_cpu3 0>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
-@@ -269,7 +270,8 @@
- 			};
- 		};
- 		cpu3_thermal: cpu3-thermal {
--			thermal-sensors = <&tmu_cpu3 0>;
-+			// thermal-sensors = <&tmu_cpu3 0>;
-+			thermal-sensors = <&tmu_cpu1 0>;
- 			polling-delay-passive = <250>;
- 			polling-delay = <0>;
- 			trips {
--- 
-2.11.0
+> KDE.org has a code of conduct¹.
+> [snip]
+> [1] https://www.kde.org/code-of-conduct/
 
+The KDE CoC does not force maintainers to take "corrective action".
+Additionally, the Contributor Covenant CoC may also apply outside of
+development and it gives a carte blanche to the maintainers to punish
+behaviors deemed unfit for contribution. The KDE CoC does stipulate the
+existence of committees operating in secrecy.
+
+> I really don´t see the point of most of the discussion here. What 
+> happened now won´t be the end of Linux and that´s about it. There is no 
+> point for predicting doom unless you want it to happen.
+
+Let's make doom happen with the aid of the Contributor Covenant CoC.
+
+[1] https://lkml.org/lkml/2018/9/17/1147
+[2] https://github.com/nodejs/CTC/issues/165
