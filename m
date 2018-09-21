@@ -2,254 +2,91 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A087ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B8FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC2A21522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:48:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC2A21522
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 702CF21522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:49:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 702CF21522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389381AbeIUNfw (ORCPT
+        id S2389403AbeIUNhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 09:35:52 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42493 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389235AbeIUNfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 09:35:51 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D38953C3E45A5;
-        Fri, 21 Sep 2018 15:48:08 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
- 15:48:06 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix quota info to adjust recovered data
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Chao Yu <chao@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180912195406.GB8356@jaegeuk-macbookpro.roam.corp.google.com>
- <bbdc2ae6-591a-ffaf-ff51-e0884ef475ca@kernel.org>
- <20180918011904.GB79604@jaegeuk-macbookpro.roam.corp.google.com>
- <c60b6e64-04ce-ec7c-24d8-82273e65b5b9@huawei.com>
- <20180918020559.GB83471@jaegeuk-macbookpro.roam.corp.google.com>
- <e6e2b5e7-3b2e-d2f1-57d3-0a13059673db@huawei.com>
- <20180918164556.GC91945@jaegeuk-macbookpro.roam.corp.google.com>
- <a6acc207-440a-3ba3-5e57-54377d47bca3@huawei.com>
- <20180919223819.GA79681@jaegeuk-macbookpro.roam.corp.google.com>
- <157abebb-80e7-d32d-3102-69ddfc5892f2@huawei.com>
- <20180920214213.GD35918@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <0c98ab72-9bc4-093d-707f-9c59a38fc7c7@huawei.com>
-Date:   Fri, 21 Sep 2018 15:48:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180920214213.GD35918@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        Fri, 21 Sep 2018 09:37:17 -0400
+Received: from mga03.intel.com ([134.134.136.65]:46880 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725898AbeIUNhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 09:37:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 00:49:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,284,1534834800"; 
+   d="scan'208";a="90711516"
+Received: from svm-s2600wft.bj.intel.com ([10.240.193.45])
+  by fmsmga004.fm.intel.com with ESMTP; 21 Sep 2018 00:49:30 -0700
+From:   Yi Sun <yi.y.sun@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, tglx@linutronix.de, chao.p.peng@intel.com,
+        chao.gao@intel.com, isaku.yamahata@intel.com,
+        michael.h.kelley@microsoft.com, tianyu.lan@microsoft.com,
+        Yi Sun <yi.y.sun@linux.intel.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: [PATCH v2 1/2] X86/Hyper-V: Add Guest IDLE MSR support
+Date:   Fri, 21 Sep 2018 15:25:11 +0800
+Message-Id: <1537514712-62434-2-git-send-email-yi.y.sun@linux.intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1537514712-62434-1-git-send-email-yi.y.sun@linux.intel.com>
+References: <1537514712-62434-1-git-send-email-yi.y.sun@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/9/21 5:42, Jaegeuk Kim wrote:
-> On 09/20, Chao Yu wrote:
->> On 2018/9/20 6:38, Jaegeuk Kim wrote:
->>> On 09/19, Chao Yu wrote:
->>>> On 2018/9/19 0:45, Jaegeuk Kim wrote:
->>>>> On 09/18, Chao Yu wrote:
->>>>>> On 2018/9/18 10:05, Jaegeuk Kim wrote:
->>>>>>> On 09/18, Chao Yu wrote:
->>>>>>>> On 2018/9/18 9:19, Jaegeuk Kim wrote:
->>>>>>>>> On 09/13, Chao Yu wrote:
->>>>>>>>>> On 2018/9/13 3:54, Jaegeuk Kim wrote:
->>>>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>>>> On 2018/9/12 9:40, Chao Yu wrote:
->>>>>>>>>>>>> On 2018/9/12 9:25, Jaegeuk Kim wrote:
->>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>>>>>>> On 2018/9/12 8:27, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>>> On 09/11, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>>>> On 09/12, Chao Yu wrote:
->>>>>>>>>>>>>>>>>> On 2018/9/12 4:15, Jaegeuk Kim wrote:
->>>>>>>>>>>>>>>>>>> fsck.f2fs is able to recover the quota structure, since roll-forward recovery
->>>>>>>>>>>>>>>>>>> can recover it based on previous user information.
->>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> I didn't get it, both fsck and kernel recover quota file based all inodes'
->>>>>>>>>>>>>>>>>> uid/gid/prjid, if {x}id didn't change, wouldn't those two recovery result be the
->>>>>>>>>>>>>>>>>> same?
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> I thought that, but had to add this, since I was encountering quota errors right
->>>>>>>>>>>>>>>>> after getting some files recovered. And, I thought it'd make it more safe to do
->>>>>>>>>>>>>>>>> fsck after roll-forward recovery.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> Anyway, let me test again without this patch for a while.
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> Hmm, I just got a fsck failure right after some files recovered.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> To make sure, do you test with "f2fs: guarantee journalled quota data by
->>>>>>>>>>>>>>> checkpoint"? if not, I think there is no guarantee that f2fs can recover
->>>>>>>>>>>>>>> quote info into correct quote file, because, in last checkpoint, quota file
->>>>>>>>>>>>>>> may was corrupted/inconsistent. Right?
->>>>>>>>>>>>>
->>>>>>>>>>>>> Oh, I forget to mention that, I add a patch to fsck to let it noticing
->>>>>>>>>>>>> CP_QUOTA_NEED_FSCK_FLAG flag, and by default, fsck will fix corrupted quote
->>>>>>>>>>>>> file if the flag is set, but w/o this flag, quota file is still corrupted
->>>>>>>>>>>>> detected by fsck, I guess there is bug in v8.
->>>>>>>>>>>>
->>>>>>>>>>>> In v8, there are two cases we didn't guarantee quota file's consistence:
->>>>>>>>>>>> 1. flush time in block_operation exceed a threshold.
->>>>>>>>>>>> 2. dquot subsystem error occurs.
->>>>>>>>>>>>
->>>>>>>>>>>> For above case, fsck should repair the quota file by default.
->>>>>>>>>>>
->>>>>>>>>>> Okay, I got another failure and it seems CP_QUOTA_NEED_FSCK_FLAG was not set
->>>>>>>>>>> during the recovery. So, we have something missing in the recovery in terms
->>>>>>>>>>> of quota updates.
->>>>>>>>>>
->>>>>>>>>> Yeah, I checked the code, just found one suspected place:
->>>>>>>>>>
->>>>>>>>>> find_fsync_dnodes()
->>>>>>>>>>  - f2fs_recover_inode_page
->>>>>>>>>>   - inc_valid_node_count
->>>>>>>>>>    - dquot_reserve_block  dquot info is not initialized now
->>>>>>>>>>  - add_fsync_inode
->>>>>>>>>>   - dquot_initialize
->>>>>>>>>>
->>>>>>>>>> I think we should reserve block for inode block after dquot_initialize(), can
->>>>>>>>>> you confirm this?
->>>>>>>>>
->>>>>>>>> Let me test this.
->>>>>>>>>
->>>>>>>>> >From b90260bc577fe87570b1ef7b134554a8295b1f6c Mon Sep 17 00:00:00 2001
->>>>>>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>> Date: Mon, 17 Sep 2018 18:14:41 -0700
->>>>>>>>> Subject: [PATCH] f2fs: count inode block for recovered files
->>>>>>>>>
->>>>>>>>> If a new file is recovered, we missed to reserve its inode block.
->>>>>>>>
->>>>>>>> I remember, in order to keep line with other filesystem, unlike on-disk, we
->>>>>>>> have to keep backward compatibilty, in memory we don't account block number
->>>>>>>> for f2fs' inode block, but only account inode number for it, so here like
->>>>>>>> we did in inc_valid_node_count(), we don't need to do this.
->>>>>>>
->>>>>>> Okay, I just hit the error again w/o your patch. Another one coming to my mind
->>>>>>> is that caused by uid/gid change during recovery. Let me try out your patch.
->>>>>>
->>>>>> I guess we should update dquot and inode's uid/gid atomically under
->>>>>> lock_op() in f2fs_setattr() to prevent corruption on sys quota file.
->>>>>>
->>>>>> v9 can pass all xfstest cases and por_fsstress case w/ sys quota file
->>>>>> enabled, but w/ normal quota file, I got one regression reported by
->>>>>> generic/232, I fixed in v10, will do some tests and release it later.
->>>>>>
->>>>>> Note that, my fsck can fix corrupted quota file automatically once
->>>>>> CP_QUOTA_NEED_FSCK_FLAG is set.
->>>>>
->>>>> I hit failures again with your v9 w/ sysfile quota and modified fsck to detect
->>>>
->>>> That's strange, in my environment, before v9, I always encounter corrupted
->>>> quota sysfile after step 9), after v9, I never hit failure again.
->>>>
->>>> 1) enable fault injection
->>>> 2) run fsstress
->>>> 3) call shutdowon
->>>> 4) kill fsstress
->>>> 5) unmount
->>>> 6) fsck
->>>> 7) mount
->>>> 8) umount
->>>> 9) fsck
->>>> 10) go 1).
->>>>
->>>>> CP_QUOTA_NEED_FSCK_FLAG to fix the partition. Note that, if I set NEED_FSCK
->>>>> flag in roll-forward recovery, everything is fine.
->>>>
->>>> I do the test based on codes in my git tree, could you check the result
->>>> again based on my code? in where I just disable nat_bits recovery, not
->>>> sure, in step 6) fsck can break some thing in image.
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/log/?h=f2fs-dev
->>>>
->>>> Also, I just send the fsck code, could you check that too?
->>>>
->>>> And I'd like to know your mount option and mkfs option, could you list for me?
->>>
->>> I'm just doing this.
->>> https://github.com/jaegeuk/xfstests-f2fs/blob/f2fs/run.sh#L220
->>
->> I just sent one patch to fix POR issue which missed to recover uid/gid of
->> inode.
->>
->> [PATCH] f2fs: fix to recover inode's uid/gid during POR
->>
->> After applying this patch, I can reproduce sys quota file corruption... let
->> me figure out the solution.
-> 
-> Okay.
+Hyper-V may expose a HV_X64_MSR_GUEST_IDLE MSR. We can read
+HYPERV_CPUID_FEATURES eax to check it. Read this MSR can
+trigger the guest's transition to the idle power state which
+can be exited by an IPI even if IF flag is disabled.
 
-Could you try v11, no quota corruption in my test now.
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: Yi Sun <yi.y.sun@linux.intel.com>
+---
+ arch/x86/include/asm/hyperv-tlfs.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Can you test v9 first? I didn't encounter quota corruption with your
->>>>>>>> testcase right now. Will check it in cell phone environment.
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>>> ---
->>>>>>>>>  fs/f2fs/recovery.c | 5 +++++
->>>>>>>>>  1 file changed, 5 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>>>>>>>> index 56d34193a74b..bff5cf730e13 100644
->>>>>>>>> --- a/fs/f2fs/recovery.c
->>>>>>>>> +++ b/fs/f2fs/recovery.c
->>>>>>>>> @@ -84,6 +84,11 @@ static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
->>>>>>>>>  		err = dquot_alloc_inode(inode);
->>>>>>>>>  		if (err)
->>>>>>>>>  			goto err_out;
->>>>>>>>> +		err = dquot_reserve_block(inode, 1);
->>>>>>>>> +		if (err) {
->>>>>>>>> +			dquot_drop(inode);
->>>>>>>>> +			goto err_out;
->>>>>>>>> +		}
->>>>>>>>>  	}
->>>>>>>>>  
->>>>>>>>>  	entry = f2fs_kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
->>>>>>>>>
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index e977b6b..2a2fa17 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -38,6 +38,8 @@
+ #define HV_MSR_TIME_REF_COUNT_AVAILABLE		(1 << 1)
+ /* Partition reference TSC MSR is available */
+ #define HV_MSR_REFERENCE_TSC_AVAILABLE		(1 << 9)
++/* Partition Guest IDLE MSR is available */
++#define HV_X64_MSR_GUEST_IDLE_AVAILABLE		(1 << 10)
+ 
+ /* A partition's reference time stamp counter (TSC) page */
+ #define HV_X64_MSR_REFERENCE_TSC		0x40000021
+@@ -246,6 +248,9 @@
+ #define HV_X64_MSR_STIMER3_CONFIG		0x400000B6
+ #define HV_X64_MSR_STIMER3_COUNT		0x400000B7
+ 
++/* Hyper-V guest idle MSR */
++#define HV_X64_MSR_GUEST_IDLE			0x400000F0
++
+ /* Hyper-V guest crash notification MSR's */
+ #define HV_X64_MSR_CRASH_P0			0x40000100
+ #define HV_X64_MSR_CRASH_P1			0x40000101
+-- 
+1.9.1
 
