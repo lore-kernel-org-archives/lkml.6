@@ -3,54 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 788CAECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAD2C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2817E21557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2817E21557
+	by mail.kernel.org (Postfix) with ESMTP id F35D521568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F35D521568
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391225AbeIUXjr (ORCPT
+        id S2391238AbeIUXjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:39:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52904 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391053AbeIUXjq (ORCPT
+        Fri, 21 Sep 2018 19:39:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33538 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2391053AbeIUXjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:39:46 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LHrbhs047727
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:54:02 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn3m84g07-1
+        Fri, 21 Sep 2018 19:39:52 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LHnSNw016433
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:53 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mn32ex12v-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:54:02 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:53 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Fri, 21 Sep 2018 18:49:46 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 21 Sep 2018 18:49:51 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Sep 2018 18:49:44 +0100
+        Fri, 21 Sep 2018 18:49:47 +0100
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LHnhft63963340
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LHnkcF57868308
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 Sep 2018 17:49:43 GMT
+        Fri, 21 Sep 2018 17:49:46 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56699AE051;
-        Fri, 21 Sep 2018 20:48:48 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 3072AAE051;
+        Fri, 21 Sep 2018 20:48:51 +0100 (BST)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C3483AE04D;
-        Fri, 21 Sep 2018 20:48:46 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id A01E3AE056;
+        Fri, 21 Sep 2018 20:48:49 +0100 (BST)
 Received: from srikart450.in.ibm.com (unknown [9.199.39.50])
         by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Sep 2018 20:48:46 +0100 (BST)
+        Fri, 21 Sep 2018 20:48:49 +0100 (BST)
 From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 To:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
@@ -60,16 +60,16 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jirka Hladky <jhladky@redhat.com>
-Subject: [PATCH v2 5/6] mm/migrate: Use trylock while resetting rate limit
-Date:   Fri, 21 Sep 2018 23:19:00 +0530
+Subject: [PATCH v2 6/6] sched/numa: Avoid task migration for small NUMA improvement
+Date:   Fri, 21 Sep 2018 23:19:01 +0530
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537552141-27815-1-git-send-email-srikar@linux.vnet.ibm.com>
 References: <1537552141-27815-1-git-send-email-srikar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18092117-0020-0000-0000-000002C9E6D0
+x-cbid: 18092117-0016-0000-0000-00000208E50F
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092117-0021-0000-0000-00002117F105
-Message-Id: <1537552141-27815-6-git-send-email-srikar@linux.vnet.ibm.com>
+x-cbparentid: 18092117-0017-0000-0000-0000325FEE7A
+Message-Id: <1537552141-27815-7-git-send-email-srikar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -82,219 +82,245 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since this spinlock will only serialize the migrate rate limiting,
-convert the spinlock to a trylock. If another thread is updating, this
-task can move on.
+If NUMA improvement from the task migration is going to be very
+minimal, then avoid task migration.
 
 Specjbb2005 results (8 warehouses)
 Higher bops are better
 
 2 Socket - 2  Node Haswell - X86
 JVMS  Prev    Current  %Change
-4     205332  198512   -3.32145
-1     319785  313559   -1.94693
+4     198512  205910   3.72673
+1     313559  318491   1.57291
 
 2 Socket - 4 Node Power8 - PowerNV
-JVMS  Prev    Current  %Change
-8     74912   74761.9  -0.200368
-1     206585  214874   4.01239
+JVMS  Prev     Current  %Change
+8     74761.9  74935.9  0.232739
+1     214874   226796   5.54837
 
 2 Socket - 2  Node Power9 - PowerNV
 JVMS  Prev    Current  %Change
-4     189162  180536   -4.56011
-1     213760  210281   -1.62753
+4     180536  189780   5.12031
+1     210281  205695   -2.18089
 
 4 Socket - 4  Node Power7 - PowerVM
 JVMS  Prev     Current  %Change
-8     58736.8  56511.4  -3.78877
-1     105419   104899   -0.49327
+8     56511.4  60370    6.828
+1     104899   108100   3.05151
 
-Avoiding stretching of window intervals may be the reason for the
-regression. Also code now uses READ_ONCE/WRITE_ONCE. That may
-also be hurting performance to some extent.
+1/7 cases is regressing, if we look at events migrate_pages seem
+to vary the most especially in the regressing case. Also some
+amount of variance is expected between different runs of
+Specjbb2005.
 
 Some events stats before and after applying the patch.
 
 perf stats 8th warehouse Multi JVM 2 Socket - 2  Node Haswell - X86
 Event                     Before          After
-cs                        14,285,708      13,818,546
-migrations                1,180,621       1,149,960
-faults                    339,114         385,583
-cache-misses              55,205,631,894  55,259,546,768
-sched:sched_move_numa     843             2,257
-sched:sched_stick_numa    6               9
-sched:sched_swap_numa     219             512
-migrate:mm_migrate_pages  365             2,225
+cs                        13,818,546      13,801,554
+migrations                1,149,960       1,151,541
+faults                    385,583         433,246
+cache-misses              55,259,546,768  55,168,691,835
+sched:sched_move_numa     2,257           2,551
+sched:sched_stick_numa    9               24
+sched:sched_swap_numa     512             904
+migrate:mm_migrate_pages  2,225           1,571
 
 vmstat 8th warehouse Multi JVM 2 Socket - 2  Node Haswell - X86
 Event                   Before  After
-numa_hint_faults        26907   72692
-numa_hint_faults_local  24279   62270
-numa_hit                239771  238762
-numa_huge_pte_updates   0       48
-numa_interleave         68      75
-numa_local              239688  238676
-numa_other              83      86
-numa_pages_migrated     363     2225
-numa_pte_updates        27415   98557
+numa_hint_faults        72692   113682
+numa_hint_faults_local  62270   102163
+numa_hit                238762  240181
+numa_huge_pte_updates   48      36
+numa_interleave         75      64
+numa_local              238676  240103
+numa_other              86      78
+numa_pages_migrated     2225    1564
+numa_pte_updates        98557   134080
 
 perf stats 8th warehouse Single JVM 2 Socket - 2  Node Haswell - X86
 Event                     Before          After
-cs                        3,202,779       3,173,490
-migrations                37,186          36,966
-faults                    106,076         108,776
-cache-misses              12,024,873,744  12,200,075,320
-sched:sched_move_numa     931             1,264
+cs                        3,173,490       3,079,150
+migrations                36,966          31,455
+faults                    108,776         99,081
+cache-misses              12,200,075,320  11,588,126,740
+sched:sched_move_numa     1,264           1
 sched:sched_stick_numa    0               0
-sched:sched_swap_numa     1               0
-migrate:mm_migrate_pages  637             899
+sched:sched_swap_numa     0               0
+migrate:mm_migrate_pages  899             36
 
 vmstat 8th warehouse Single JVM 2 Socket - 2  Node Haswell - X86
 Event                   Before  After
-numa_hint_faults        17409   21109
-numa_hint_faults_local  14367   17120
-numa_hit                73953   72934
-numa_huge_pte_updates   20      42
-numa_interleave         25      33
-numa_local              73892   72866
-numa_other              61      68
-numa_pages_migrated     668     915
-numa_pte_updates        27276   42326
+numa_hint_faults        21109   430
+numa_hint_faults_local  17120   77
+numa_hit                72934   71277
+numa_huge_pte_updates   42      0
+numa_interleave         33      22
+numa_local              72866   71218
+numa_other              68      59
+numa_pages_migrated     915     23
+numa_pte_updates        42326   0
 
 perf stats 8th warehouse Multi JVM 2 Socket - 2  Node Power9 - PowerNV
 Event                     Before       After
-cs                        8,474,013    8,312,022
-migrations                254,934      231,705
-faults                    320,506      310,242
-cache-misses              110,580,458  402,324,573
-sched:sched_move_numa     725          193
-sched:sched_stick_numa    0            0
-sched:sched_swap_numa     7            3
-migrate:mm_migrate_pages  145          93
+cs                        8,312,022    8,707,565
+migrations                231,705      171,342
+faults                    310,242      310,820
+cache-misses              402,324,573  136,115,400
+sched:sched_move_numa     193          215
+sched:sched_stick_numa    0            6
+sched:sched_swap_numa     3            24
+migrate:mm_migrate_pages  93           162
 
 vmstat 8th warehouse Multi JVM 2 Socket - 2  Node Power9 - PowerNV
 Event                   Before  After
-numa_hint_faults        22797   11838
-numa_hint_faults_local  21539   11216
-numa_hit                89308   90689
+numa_hint_faults        11838   8985
+numa_hint_faults_local  11216   8154
+numa_hit                90689   93819
 numa_huge_pte_updates   0       0
-numa_interleave         865     1579
-numa_local              88955   89634
-numa_other              353     1055
-numa_pages_migrated     149     92
-numa_pte_updates        22930   12109
+numa_interleave         1579    882
+numa_local              89634   93496
+numa_other              1055    323
+numa_pages_migrated     92      169
+numa_pte_updates        12109   9217
 
 perf stats 8th warehouse Single JVM 2 Socket - 2  Node Power9 - PowerNV
-Event                     Before     After
-cs                        2,195,628  2,170,481
-migrations                11,179     10,126
-faults                    149,656    160,962
-cache-misses              8,117,515  10,834,845
-sched:sched_move_numa     49         10
-sched:sched_stick_numa    0          0
-sched:sched_swap_numa     0          0
-migrate:mm_migrate_pages  5          2
+Event                     Before      After
+cs                        2,170,481   2,152,072
+migrations                10,126      10,704
+faults                    160,962     164,376
+cache-misses              10,834,845  3,818,437
+sched:sched_move_numa     10          16
+sched:sched_stick_numa    0           0
+sched:sched_swap_numa     0           7
+migrate:mm_migrate_pages  2           199
 
 vmstat 8th warehouse Single JVM 2 Socket - 2  Node Power9 - PowerNV
 Event                   Before  After
-numa_hint_faults        3577    403
-numa_hint_faults_local  3476    358
-numa_hit                26142   25898
+numa_hint_faults        403     2248
+numa_hint_faults_local  358     1666
+numa_hit                25898   25704
 numa_huge_pte_updates   0       0
-numa_interleave         358     207
-numa_local              26042   25860
-numa_other              100     38
-numa_pages_migrated     5       2
-numa_pte_updates        3587    400
+numa_interleave         207     200
+numa_local              25860   25679
+numa_other              38      25
+numa_pages_migrated     2       197
+numa_pte_updates        400     2234
 
 perf stats 8th warehouse Multi JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                     Before           After
-cs                        100,602,296      110,339,633
-migrations                4,135,630        4,139,812
-faults                    789,256          863,622
-cache-misses              226,160,621,058  231,838,045,660
-sched:sched_move_numa     1,366            2,196
-sched:sched_stick_numa    16               33
-sched:sched_swap_numa     374              544
-migrate:mm_migrate_pages  1,350            2,469
+cs                        110,339,633      93,330,595
+migrations                4,139,812        4,122,061
+faults                    863,622          865,979
+cache-misses              231,838,045,660  225,395,083,479
+sched:sched_move_numa     2,196            2,372
+sched:sched_stick_numa    33               24
+sched:sched_swap_numa     544              769
+migrate:mm_migrate_pages  2,469            1,677
 
 vmstat 8th warehouse Multi JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                   Before  After
-numa_hint_faults        47857   85748
-numa_hint_faults_local  39768   66831
-numa_hit                240165  242213
+numa_hint_faults        85748   91638
+numa_hint_faults_local  66831   78096
+numa_hit                242213  242225
 numa_huge_pte_updates   0       0
-numa_interleave         0       0
-numa_local              240165  242211
-numa_other              0       2
-numa_pages_migrated     1224    2376
-numa_pte_updates        48354   86233
+numa_interleave         0       2
+numa_local              242211  242219
+numa_other              2       6
+numa_pages_migrated     2376    1515
+numa_pte_updates        86233   92274
 
 perf stats 8th warehouse Single JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                     Before          After
-cs                        58,515,496      59,331,057
-migrations                564,845         552,019
-faults                    245,807         266,586
-cache-misses              73,603,757,976  73,796,312,990
-sched:sched_move_numa     996             981
-sched:sched_stick_numa    10              54
-sched:sched_swap_numa     193             286
-migrate:mm_migrate_pages  646             713
+cs                        59,331,057      51,487,271
+migrations                552,019         537,170
+faults                    266,586         256,921
+cache-misses              73,796,312,990  70,073,831,187
+sched:sched_move_numa     981             576
+sched:sched_stick_numa    54              24
+sched:sched_swap_numa     286             327
+migrate:mm_migrate_pages  713             726
 
 vmstat 8th warehouse Single JVM 4 Socket - 4  Node Power7 - PowerVM
 Event                   Before  After
-numa_hint_faults        13422   14807
-numa_hint_faults_local  5619    5738
-numa_hit                36118   36230
+numa_hint_faults        14807   12000
+numa_hint_faults_local  5738    5024
+numa_hit                36230   36470
 numa_huge_pte_updates   0       0
 numa_interleave         0       0
-numa_local              36116   36228
-numa_other              2       2
-numa_pages_migrated     616     703
-numa_pte_updates        13374   14742
+numa_local              36228   36465
+numa_other              2       5
+numa_pages_migrated     703     726
+numa_pte_updates        14742   11930
 
 Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
 ---
-Changelog:
-Fix stretch every interval pointed by Peter Zijlstra.
+Changelog v1->v2:
+ - Handle trivial changes due to variable name change. (Rik Van Riel)
+ - Drop changes where subsequent better CPU find was rejected for
+   small NUMA  improvement (Rik Van Riel).
 
- mm/migrate.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Changelog v3->v4:
+ - Refer cpu -> CPU
+ - Refer numa -> NUMA
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index d6a2e89..4f1d894 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1867,16 +1867,24 @@ static unsigned int ratelimit_pages __read_mostly = 128 << (20 - PAGE_SHIFT);
- static bool numamigrate_update_ratelimit(pg_data_t *pgdat,
- 					unsigned long nr_pages)
- {
-+	unsigned long next_window, interval;
+ kernel/sched/fair.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3529bf6..25c7c7e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1568,6 +1568,13 @@ static bool load_too_imbalanced(long src_load, long dst_load,
+ }
+ 
+ /*
++ * Maximum NUMA importance can be 1998 (2*999);
++ * SMALLIMP @ 30 would be close to 1998/64.
++ * Used to deter task migration.
++ */
++#define SMALLIMP	30
 +
-+	next_window = READ_ONCE(pgdat->numabalancing_migrate_next_window);
-+	interval = msecs_to_jiffies(migrate_interval_millisecs);
-+
- 	/*
- 	 * Rate-limit the amount of data that is being migrated to a node.
- 	 * Optimal placement is no good if the memory bus is saturated and
- 	 * all the time is being spent migrating!
- 	 */
--	if (time_after(jiffies, pgdat->numabalancing_migrate_next_window)) {
--		spin_lock(&pgdat->numabalancing_migrate_lock);
-+	if (time_after(jiffies, next_window) &&
-+			spin_trylock(&pgdat->numabalancing_migrate_lock)) {
- 		pgdat->numabalancing_migrate_nr_pages = 0;
--		pgdat->numabalancing_migrate_next_window = jiffies +
--			msecs_to_jiffies(migrate_interval_millisecs);
-+		do {
-+			next_window += interval;
-+		} while (unlikely(time_after(jiffies, next_window)));
-+
-+		WRITE_ONCE(pgdat->numabalancing_migrate_next_window, next_window);
- 		spin_unlock(&pgdat->numabalancing_migrate_lock);
++/*
+  * This checks if the overall compute and NUMA accesses of the system would
+  * be improved if the source tasks was migrated to the target dst_cpu taking
+  * into account that it might be best if task running on the dst_cpu should
+@@ -1600,7 +1607,7 @@ static void task_numa_compare(struct task_numa_env *env,
+ 		goto unlock;
+ 
+ 	if (!cur) {
+-		if (maymove || imp > env->best_imp)
++		if (maymove && moveimp >= env->best_imp)
+ 			goto assign;
+ 		else
+ 			goto unlock;
+@@ -1643,16 +1650,22 @@ static void task_numa_compare(struct task_numa_env *env,
+ 			       task_weight(cur, env->dst_nid, dist);
  	}
- 	if (pgdat->numabalancing_migrate_nr_pages > ratelimit_pages) {
+ 
+-	if (imp <= env->best_imp)
+-		goto unlock;
+-
+ 	if (maymove && moveimp > imp && moveimp > env->best_imp) {
+-		imp = moveimp - 1;
++		imp = moveimp;
+ 		cur = NULL;
+ 		goto assign;
+ 	}
+ 
+ 	/*
++	 * If the NUMA importance is less than SMALLIMP,
++	 * task migration might only result in ping pong
++	 * of tasks and also hurt performance due to cache
++	 * misses.
++	 */
++	if (imp < SMALLIMP || imp <= env->best_imp + SMALLIMP / 2)
++		goto unlock;
++
++	/*
+ 	 * In the overloaded case, try and keep the load balanced.
+ 	 */
+ 	load = task_h_load(env->p) - task_h_load(cur);
 -- 
 2.7.4
 
