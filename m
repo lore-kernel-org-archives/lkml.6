@@ -2,106 +2,149 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1A1C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B20C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10BB2156B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:02:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C7D2156B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:03:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OsJ/2Ggl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10BB2156B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="lJ2xUnVl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C7D2156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391609AbeIVDwr (ORCPT
+        id S2391604AbeIVDy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 23:52:47 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:32845 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391323AbeIVDwr (ORCPT
+        Fri, 21 Sep 2018 23:54:29 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37822 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391318AbeIVDy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 23:52:47 -0400
-Received: by mail-io1-f67.google.com with SMTP id l25-v6so455156ioj.0;
-        Fri, 21 Sep 2018 15:01:59 -0700 (PDT)
+        Fri, 21 Sep 2018 23:54:28 -0400
+Received: by mail-pf1-f193.google.com with SMTP id h69-v6so6545939pfd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 15:03:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=e4d6SUz6jd2Yml7+iF79CF3Q+GxZN3hRxdA7HUKhIP4=;
-        b=OsJ/2Ggl+ckSFSzEKWF9T7LdkGEJLU6CpsGloK8cr1stHpIw0kryPPr5PJVuaVlmDm
-         yfw+w1RJNTtBul51TnSnRRGLg3jF5naGrGg1oqDH6sMKeAJv1VWOce7a6BUlZ92kNGHB
-         OeQIX7N8gyGj+OjRua3F8rD7SFqgfvdB96z9RCJP1lhUZgJEZASlrefDzfjxPWg4G+zb
-         Xe/Ef2Dte4FeWQ5O8CY5JVIAo8mnh2yvO3UmLAZXggFW3v8jKO5GNG9r0NSq7uFsrv0C
-         Kmjmi/PKOM+L9j8UEVPlHhdsj2IzM+NjxGnlPloetfizpoQ34FrbmpP3jouIdCbAq+NT
-         SYtQ==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0L2clyUrWHJarGFHWqMrQJThOI5jgP2+1l9wSj+4op0=;
+        b=lJ2xUnVlSgJW8XwXVdBubvkz7Ei3b5CZn3CgHOwBo135bgURSa6/oHFQNRqd7Yq7UH
+         fY8w9EOC1NgbHx4DS2TAAxiCovC1v5GK+v0Bsay4L66cR9i5TLlG5A/hGIt78Lh9OgZP
+         TSIdr4Doq/4MQEDBvyRDcc5NvtLuFdtDFhATJ+MFlsMT7fZTMFD6OtRHajn1dRq1yyq/
+         FY7/cUYStpVwfK+UtD7lpoWnPO6aIpX/k8/nEsKX2cY05qJV/CUsBrPD0V0TbsNY3J4I
+         nHrYCBhTYEl+NuTrn76wINGlmdCbeFLeSV9hRkWC705rIY8p9VsiSA2lArqcznO9RDmv
+         9iCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=e4d6SUz6jd2Yml7+iF79CF3Q+GxZN3hRxdA7HUKhIP4=;
-        b=nVOrDOArGjfDYGy3W1VKzUuIAVN6+/4pynf0VEYzv5tZZmZ6Km3ur9wm9EslvdaEaK
-         5J5iFmxRP+a5H1ieRBihVkP2JBCB8L/XsezWrioexJPeQb4W6UQMyiZRBqh9X0MYx5Hd
-         jdIElaDS3eTLq6qnKTl1sbxmnbG3vfYakCfehR5ijHXTo6P5Ql9T/5/hW6ABnE+yAAYv
-         rzhkKXeqJlkWFaj3/E1JrnMDN0ZOTW7fNt1vsRSYC7a+Sku4ThN8tfcynV5wxETQJh6z
-         XvGsUqO7M+J+5wZ7Wq8kZgYNUoKj1gL9XJSqj9pyyvISkG3GvAFVRxsI9hLMdtRq96Fd
-         wfSQ==
-X-Gm-Message-State: APzg51B+Syoq1tbBU7iu7egOGdrUQ4f/Wp9AwaKUqwwp+DcGsLJKcHDw
-        /2fKEintF3dsay2VM+P8UzGXQ20+Jg==
-X-Google-Smtp-Source: ANB0VdYwQ6V1x5IxCC5jgVgYRDnOM/gKEclPaK9SFOqyIUOfcdxBlZ2uto3YXG0sMWo5067POVwdcQ==
-X-Received: by 2002:a6b:e15:: with SMTP id 21-v6mr38771075ioo.149.1537567318608;
-        Fri, 21 Sep 2018 15:01:58 -0700 (PDT)
-Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
-        by smtp.gmail.com with ESMTPSA id w140-v6sm223101iof.22.2018.09.21.15.01.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 15:01:57 -0700 (PDT)
-From:   ryang <decatf@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ryang <decatf@gmail.com>
-Subject: [PATCH] clk: tegra: Return the exact clock rate from clk_round_rate
-Date:   Fri, 21 Sep 2018 18:01:49 -0400
-Message-Id: <20180921220149.17136-1-decatf@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0L2clyUrWHJarGFHWqMrQJThOI5jgP2+1l9wSj+4op0=;
+        b=CtOUpOVF/qPsPgTS6ZRQlsTJWHJc06je3ShB+IAMsuzjQWyzR8b8Tf1heOO1i8WpJJ
+         OSV940DPbP6aTg78xtP4OQYjLqWVkNsrmhs/E49hTJjPtnCdIrUBEhnfgmHaR1Fa9t7O
+         C6D6dPmZYhpiBu4po6VPKthzSnDBD7JB8xvqQMuPULE/vFPprsop9VcG/r5LiLWT545v
+         Vd+qn82vmaPoepi18PGTjeVvP9oV6GQzBylIgY0ZPp10k0KRDshRBKf+SHUd8WhuW9s/
+         lTbFjmtI5BnTV2GXu8QK2IMnNgCIwGInE/UcSPwIwoJgTb8twEMn4PRIPeSYq7JYiA3i
+         sdNg==
+X-Gm-Message-State: APzg51C+M6zy/gESTaTD7/APBO8FVj9oyP1b0nUVpz+66bxtgiQyq7tm
+        TaDKllu3TdJc42L66VZdxUkPPg==
+X-Google-Smtp-Source: ANB0VdbVd1GYmsL2zpasnI1oFklj/EsFLulf3i5pzjrQUh418Nvj+PX5C5wg20j/+br1sG3wPeNk5Q==
+X-Received: by 2002:a63:e806:: with SMTP id s6-v6mr6253313pgh.176.1537567419806;
+        Fri, 21 Sep 2018 15:03:39 -0700 (PDT)
+Received: from cisco ([128.107.241.181])
+        by smtp.gmail.com with ESMTPSA id q85-v6sm40219482pfa.151.2018.09.21.15.03.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Sep 2018 15:03:38 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 16:03:36 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v6 4/5] seccomp: add support for passing fds via
+ USER_NOTIF
+Message-ID: <20180921220336.GU4672@cisco>
+References: <20180906152859.7810-5-tycho@tycho.ws>
+ <CALCETrWZmN4FeCSwemfMeayupBmQ-NqpVWQuqSU34CLvzdx8gw@mail.gmail.com>
+ <20180919095536.GM4672@cisco>
+ <C1406292-7496-459F-A76A-20C9EFBB12D6@amacapital.net>
+ <20180919143842.GN4672@cisco>
+ <CALCETrVuP0nQ5B01-iWrcQ87hisz7=jA08-Uisqud_r+zc74NQ@mail.gmail.com>
+ <20180920234240.GR4672@cisco>
+ <CALCETrWEr_VAtJu1mm1akTigsRUXAA7_7RHb-WGHqnyNy=j17Q@mail.gmail.com>
+ <20180921133928.GS4672@cisco>
+ <CALCETrWxjLw6-pMcOydDxbf6KfMrYZcdriTk5g7U3Ba6cRNJNg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWxjLw6-pMcOydDxbf6KfMrYZcdriTk5g7U3Ba6cRNJNg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current behavior is that clk_round_rate would return the same clock
-rate passed to it for valid PLL configurations. This change will return
-the exact rate the PLL will provide in accordance with clk API.
+On Fri, Sep 21, 2018 at 11:27:59AM -0700, Andy Lutomirski wrote:
+> On Fri, Sep 21, 2018 at 6:39 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> >
+> > On Thu, Sep 20, 2018 at 07:18:45PM -0700, Andy Lutomirski wrote:
+> > >
+> > > I think we just want the operation to cover all the cases.  Let PUT_FD
+> > > take a source fd and a dest fd.  If the source fd is -1, the dest is
+> > > closed.  If the source is -1 and the dest is -1, return -EINVAL.  If
+> > > the dest is -1, allocate an fd.  If the dest is >= 0, work like
+> > > dup2().  (The latter could be necessary to emulate things like, say,
+> > > dup2 :))
+> >
+> > ...then if we're going to allow overwriting fds, we'd need to lift out
+> > the logic from do_dup2 somewhere? Is this getting too complicated? :)
+> >
+> 
+> fds are complicated :-p
 
-Signed-off-by: ryang <decatf@gmail.com>
----
- drivers/clk/tegra/clk-pll.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+:D
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 17a058c3bbc1..36014a6ec42e 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 		return -EINVAL;
- 	}
- 
--	cfg->output_rate >>= p_div;
-+	if (cfg->m == 0) {
-+		cfg->output_rate = 0;
-+	} else {
-+		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
-+		cfg->output_rate >>= p_div;
-+	}
- 
- 	if (pll->params->pdiv_tohw) {
- 		ret = _p_div_to_hw(hw, 1 << p_div);
--- 
-2.17.1
+> More seriously, though, I think it's okay if we don't support
+> everything out of the box.  getting the general semantics I suggested
+> is kind of nice because the resulting API is conceptually simple, even
+> if it encapsulates three cases.  But I'd be okay with only supporting
+> add-an-fd-at-an-unused-position and delete-an-fd out of the box --
+> more can be added if there's demand.
 
+It's the delete/replace-an-fd one that has me worried. Anyway, I'll
+take a look and see what I can figure out.
+
+> But I think that exposing an operation that allocates and reserves an
+> fd without putting anything in the slot is awkward, and it opens us up
+> to weird corner cases becoming visible that are currently there but
+> mostly hidden.  For example, what happens if someone overwrites a
+> reserved fd with dup2()?  (The answer is apparently -EBUSY -- see the
+> big comment in do_dup2() in fs/file.c.)  But there's a more
+> significant nastiness: what happens if someone abuses your new
+> mechanism to overwrite a reserved fd that belongs to a different
+> thread?  It looks like you'll hit the BUG_ON(fdt->fd[fd] != NULL); in
+> __fd_install().  So unless you actually track which unused fds you own
+> and enforce that the final installation installs in the right slot,
+> you have a problem.
+> 
+> BTW, socketpair() isn't the only thing that can add two fds.
+> recvmsg() can, too, as can pipe() and pipe2().  Some of the DRM ioctls
+> may as well for all I know.  But socketpair(), pipe(), and recvmsg()
+> can be credibly emulated by adding each fd in sequence and then
+> deleting them all of one fails.  Sure, this could race against dup2(),
+> but I'm not sure we care.
+
+Yup agreed. We need to do the install when the ioctl() is called.
+
+Tycho
