@@ -2,255 +2,198 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65476C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28EAC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1578221547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1578221547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 62ECC21550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="oZ7FGgpQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62ECC21550
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390341AbeIUUqV (ORCPT
+        id S2390368AbeIUUqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:46:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52400 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727392AbeIUUqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:46:21 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E5EE3DE3D;
-        Fri, 21 Sep 2018 14:57:06 +0000 (UTC)
-Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C4E93091325;
-        Fri, 21 Sep 2018 14:57:03 +0000 (UTC)
-Subject: Re: [PATCH v5 14/18] vgic: Add support for 52bit guest physical
- address
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
-        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
-        linux-kernel@vger.kernel.org,
-        Kristina Martsenko <kristina.martsenko@arm.com>
-References: <20180917104144.19188-1-suzuki.poulose@arm.com>
- <20180917104144.19188-15-suzuki.poulose@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <e308a66d-c426-81c0-0c79-ce97773fa090@redhat.com>
-Date:   Fri, 21 Sep 2018 16:57:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 21 Sep 2018 16:46:48 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44931 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390179AbeIUUqr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:46:47 -0400
+Received: by mail-oi0-f68.google.com with SMTP id l82-v6so11619413oih.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 07:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GXa+tTWgvrIt+UaxBmVbUv0K3O1uHDXpe5bgsYkFyqs=;
+        b=oZ7FGgpQyljRAmQ/S1NT6EL5q7zB77URy/gYIrNHJhf9CJXIsdfbSAfGQXCRcUYAQX
+         EjmHMMR3c+GuoX9bzFP+Ov4qEvY4Qtqcfp4gU7enQmYBsBePnwSFwEqIt8h/9D9Y29Up
+         sakhkyuJgzkcNyLQ89zadh0mAK3jlakXRI3Djv4lENra+0dLs94gcu2Pqvw1rTFMgXG6
+         WbIppIdsx4ui+vGhLS2FmulJBFiI7aCX6S1Eq8mpEYFECBrWZy7ndXIRFy72gWztsaxN
+         dMiAMMPjd6/173ZqoJl7nfy2YBJUgNyWYtLH44mmQ5CG+r1ZTR7p9C3ndwxJ9OqGNBZ3
+         PXdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GXa+tTWgvrIt+UaxBmVbUv0K3O1uHDXpe5bgsYkFyqs=;
+        b=pXTS1t/1N97LzEqly/ZGCe73TClH603YoGP6ze6PkfqlU9F5/2RE8dOXeQRmW/+gmC
+         VUjy6zI8rx8ClJgOy6R8KV0OjTsid7PoylYKR/i9p5iZY1ktmdJHpKUPKcCSlsHZEQe8
+         f72RnqIxuboQBQtvR2fvPpnyAWPTh7xXRFN1JY6Vs20Vj41jia/s4ak9JBok6gN69prj
+         D0OQKWl9mPvCCkk5ai6Og00SZvzclWM0OBuvSOtaVfsB8ImelbEobtZbKS9SdJKhZMoH
+         d+HHPCHHrzerQ547JmejdAy5bAUojW0Z5XUZIe64s+c3N/B2z/4eLMwWihuszMRxM+eC
+         5oYA==
+X-Gm-Message-State: APzg51CqnMtYvCWIcR9FixFQyatjbBEc15jK8yY1cPOQULmAXCoxrRg7
+        rsgr3+TuGhCVEAx1DZdmZ2VseD2EydcHGQlzAnOQJQ==
+X-Google-Smtp-Source: ANB0VdaTokJ4vAVVFEyNBPQCAhvSCnt+LIUuNXpimyipAekt6MdZDDLy2qRERkb2bB8NMkuKmzX3uz4HADo5Pwa6D5w=
+X-Received: by 2002:aca:a8c1:: with SMTP id r184-v6mr1499457oie.215.1537541852376;
+ Fri, 21 Sep 2018 07:57:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180917104144.19188-15-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 21 Sep 2018 14:57:06 +0000 (UTC)
+References: <20180920215824.19464.8884.stgit@localhost.localdomain> <20180920222938.19464.34102.stgit@localhost.localdomain>
+In-Reply-To: <20180920222938.19464.34102.stgit@localhost.localdomain>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 21 Sep 2018 07:57:21 -0700
+Message-ID: <CAPcyv4iFs5WXMYgbC6mBSxcHggv5y1kPW5BoZ4JMy5o-bv6cOg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] async: Add support for queueing on specific node
+To:     alexander.h.duyck@linux.intel.com
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-
-On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
-> From: Kristina Martsenko <kristina.martsenko@arm.com>
-> 
-> Add support for handling 52bit guest physical address to the
-> VGIC layer. So far we have limited the guest physical address
-> to 48bits, by explicitly masking the upper bits. This patch
-> removes the restriction. We do not have to check if the host
-> supports 52bit as the gpa is always validated during an access.
-> (e.g, kvm_{read/write}_guest, kvm_is_visible_gfn()).
-> Also, the ITS table save-restore is also not affected with
-> the enhancement. The DTE entries already store the bits[51:8]
-> of the ITT_addr (with a 256byte alignment).
-> 
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
-> [ Macro clean ups, fix PROPBASER and PENDBASER accesses ]
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Thu, Sep 20, 2018 at 3:31 PM Alexander Duyck
+<alexander.h.duyck@linux.intel.com> wrote:
+>
+> This patch introduces two new variants of the async_schedule_ functions
+> that allow scheduling on a specific node. These functions are
+> async_schedule_on and async_schedule_on_domain which end up mapping to
+> async_schedule and async_schedule_domain but provide NUMA node specific
+> functionality. The original functions were moved to inline function
+> definitions that call the new functions while passing NUMA_NO_NODE.
+>
+> The main motivation behind this is to address the need to be able to
+> schedule NVDIMM init work on specific NUMA nodes in order to improve
+> performance of memory initialization.
+>
+> One additional change I made is I dropped the "extern" from the function
+> prototypes in the async.h kernel header since they aren't needed.
+>
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 > ---
->  include/linux/irqchip/arm-gic-v3.h |  5 +++++
->  virt/kvm/arm/vgic/vgic-its.c       | 36 +++++++++---------------------
->  virt/kvm/arm/vgic/vgic-mmio-v3.c   |  2 --
->  3 files changed, 15 insertions(+), 28 deletions(-)
-> 
-> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-> index 8bdbb5f29494..e961f40992d7 100644
-> --- a/include/linux/irqchip/arm-gic-v3.h
-> +++ b/include/linux/irqchip/arm-gic-v3.h
-> @@ -357,6 +357,8 @@
->  #define GITS_CBASER_RaWaWt	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWt)
->  #define GITS_CBASER_RaWaWb	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWb)
->  
-> +#define GITS_CBASER_ADDRESS(cbaser)	((cbaser) & GENMASK_ULL(52, 12))
-nit GENMASK_ULL(51, 12), bit 52 is RES0
+>  include/linux/async.h |   20 +++++++++++++++++---
+>  kernel/async.c        |   36 +++++++++++++++++++++++++-----------
+>  2 files changed, 42 insertions(+), 14 deletions(-)
+>
+> diff --git a/include/linux/async.h b/include/linux/async.h
+> index 6b0226bdaadc..9878b99cbb01 100644
+> --- a/include/linux/async.h
+> +++ b/include/linux/async.h
+> @@ -14,6 +14,7 @@
+>
+>  #include <linux/types.h>
+>  #include <linux/list.h>
+> +#include <linux/numa.h>
+>
+>  typedef u64 async_cookie_t;
+>  typedef void (*async_func_t) (void *data, async_cookie_t cookie);
+> @@ -37,9 +38,22 @@ struct async_domain {
+>         struct async_domain _name = { .pending = LIST_HEAD_INIT(_name.pending), \
+>                                       .registered = 0 }
+>
+> -extern async_cookie_t async_schedule(async_func_t func, void *data);
+> -extern async_cookie_t async_schedule_domain(async_func_t func, void *data,
+> -                                           struct async_domain *domain);
+> +async_cookie_t async_schedule_on(async_func_t func, void *data, int node);
+> +async_cookie_t async_schedule_on_domain(async_func_t func, void *data, int node,
+> +                                       struct async_domain *domain);
+
+I would expect this to take a cpu instead of a node to not surprise
+users coming from queue_work_on() / schedule_work_on()...
+
 > +
->  #define GITS_BASER_NR_REGS		8
->  
->  #define GITS_BASER_VALID			(1ULL << 63)
-> @@ -388,6 +390,9 @@
->  #define GITS_BASER_ENTRY_SIZE_MASK	GENMASK_ULL(52, 48)
->  #define GITS_BASER_PHYS_52_to_48(phys)					\
->  	(((phys) & GENMASK_ULL(47, 16)) | (((phys) >> 48) & 0xf) << 12)
-> +#define GITS_BASER_ADDR_48_to_52(baser)					\
-> +	(((baser) & GENMASK_ULL(47, 16)) | (((baser) >> 12) & 0xf) << 48)
+> +static inline async_cookie_t async_schedule(async_func_t func, void *data)
+> +{
+> +       return async_schedule_on(func, data, NUMA_NO_NODE);
+> +}
 > +
->  #define GITS_BASER_SHAREABILITY_SHIFT	(10)
->  #define GITS_BASER_InnerShareable					\
->  	GIC_BASER_SHAREABILITY(GITS_BASER, InnerShareable)
-> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
-> index 12502251727e..eb2a390a6c86 100644
-> --- a/virt/kvm/arm/vgic/vgic-its.c
-> +++ b/virt/kvm/arm/vgic/vgic-its.c
-> @@ -241,13 +241,6 @@ static struct its_ite *find_ite(struct vgic_its *its, u32 device_id,
->  	list_for_each_entry(dev, &(its)->device_list, dev_list) \
->  		list_for_each_entry(ite, &(dev)->itt_head, ite_list)
->  
-> -/*
-> - * We only implement 48 bits of PA at the moment, although the ITS
-> - * supports more. Let's be restrictive here.
-> - */
-> -#define BASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 16))
-> -#define CBASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 12))
-> -
->  #define GIC_LPI_OFFSET 8192
->  
->  #define VITS_TYPER_IDBITS 16
-> @@ -759,6 +752,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+> +static inline async_cookie_t
+> +async_schedule_domain(async_func_t func, void *data,
+> +                     struct async_domain *domain)
+> +{
+> +       return async_schedule_on_domain(func, data, NUMA_NO_NODE, domain);
+> +}
+> +
+>  void async_unregister_domain(struct async_domain *domain);
+>  extern void async_synchronize_full(void);
+>  extern void async_synchronize_full_domain(struct async_domain *domain);
+> diff --git a/kernel/async.c b/kernel/async.c
+> index a893d6170944..1d7ce81c1949 100644
+> --- a/kernel/async.c
+> +++ b/kernel/async.c
+> @@ -56,6 +56,7 @@ synchronization with the async_synchronize_full() function, before returning
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/cpu.h>
+>
+>  #include "workqueue_internal.h"
+>
+> @@ -149,8 +150,11 @@ static void async_run_entry_fn(struct work_struct *work)
+>         wake_up(&async_done);
+>  }
+>
+> -static async_cookie_t __async_schedule(async_func_t func, void *data, struct async_domain *domain)
+> +static async_cookie_t __async_schedule(async_func_t func, void *data,
+> +                                      struct async_domain *domain,
+> +                                      int node)
 >  {
->  	int l1_tbl_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
->  	u64 indirect_ptr, type = GITS_BASER_TYPE(baser);
-> +	phys_addr_t base = GITS_BASER_ADDR_48_to_52(baser);
->  	int esz = GITS_BASER_ENTRY_SIZE(baser);
->  	int index;
->  	gfn_t gfn;
-> @@ -783,7 +777,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
->  		if (id >= (l1_tbl_size / esz))
->  			return false;
->  
-> -		addr = BASER_ADDRESS(baser) + id * esz;
-> +		addr = base + id * esz;
->  		gfn = addr >> PAGE_SHIFT;
->  
->  		if (eaddr)
-> @@ -798,7 +792,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
->  
->  	/* Each 1st level entry is represented by a 64-bit value. */
->  	if (kvm_read_guest_lock(its->dev->kvm,
-> -			   BASER_ADDRESS(baser) + index * sizeof(indirect_ptr),
-> +			   base + index * sizeof(indirect_ptr),
->  			   &indirect_ptr, sizeof(indirect_ptr)))
->  		return false;
->  
-> @@ -808,11 +802,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
->  	if (!(indirect_ptr & BIT_ULL(63)))
->  		return false;
->  
-> -	/*
-> -	 * Mask the guest physical address and calculate the frame number.
-> -	 * Any address beyond our supported 48 bits of PA will be caught
-> -	 * by the actual check in the final step.
-> -	 */
-> +	/* Mask the guest physical address and calculate the frame number. */
->  	indirect_ptr &= GENMASK_ULL(51, 16);
->  
->  	/* Find the address of the actual entry */
-> @@ -1304,9 +1294,6 @@ static u64 vgic_sanitise_its_baser(u64 reg)
->  				  GITS_BASER_OUTER_CACHEABILITY_SHIFT,
->  				  vgic_sanitise_outer_cacheability);
->  
-> -	/* Bits 15:12 contain bits 51:48 of the PA, which we don't support. */
-> -	reg &= ~GENMASK_ULL(15, 12);
-> -
->  	/* We support only one (ITS) page size: 64K */
->  	reg = (reg & ~GITS_BASER_PAGE_SIZE_MASK) | GITS_BASER_PAGE_SIZE_64K;
->  
-> @@ -1325,11 +1312,8 @@ static u64 vgic_sanitise_its_cbaser(u64 reg)
->  				  GITS_CBASER_OUTER_CACHEABILITY_SHIFT,
->  				  vgic_sanitise_outer_cacheability);
->  
-> -	/*
-> -	 * Sanitise the physical address to be 64k aligned.
-> -	 * Also limit the physical addresses to 48 bits.
-> -	 */
-> -	reg &= ~(GENMASK_ULL(51, 48) | GENMASK_ULL(15, 12));
-> +	/* Sanitise the physical address to be 64k aligned. */
-> +	reg &= ~GENMASK_ULL(15, 12);
->  
->  	return reg;
->  }
-> @@ -1375,7 +1359,7 @@ static void vgic_its_process_commands(struct kvm *kvm, struct vgic_its *its)
->  	if (!its->enabled)
->  		return;
->  
-> -	cbaser = CBASER_ADDRESS(its->cbaser);
-> +	cbaser = GITS_CBASER_ADDRESS(its->cbaser);
->  
->  	while (its->cwriter != its->creadr) {
->  		int ret = kvm_read_guest_lock(kvm, cbaser + its->creadr,
-> @@ -2233,7 +2217,7 @@ static int vgic_its_restore_device_tables(struct vgic_its *its)
->  	if (!(baser & GITS_BASER_VALID))
->  		return 0;
->  
-> -	l1_gpa = BASER_ADDRESS(baser);
-> +	l1_gpa = GITS_BASER_ADDR_48_to_52(baser);
->  
->  	if (baser & GITS_BASER_INDIRECT) {
->  		l1_esz = GITS_LVL1_ENTRY_SIZE;
-> @@ -2305,7 +2289,7 @@ static int vgic_its_save_collection_table(struct vgic_its *its)
->  {
->  	const struct vgic_its_abi *abi = vgic_its_get_abi(its);
->  	u64 baser = its->baser_coll_table;
-> -	gpa_t gpa = BASER_ADDRESS(baser);
-> +	gpa_t gpa = GITS_BASER_ADDR_48_to_52(baser);
->  	struct its_collection *collection;
->  	u64 val;
->  	size_t max_size, filled = 0;
-> @@ -2354,7 +2338,7 @@ static int vgic_its_restore_collection_table(struct vgic_its *its)
->  	if (!(baser & GITS_BASER_VALID))
->  		return 0;
->  
-> -	gpa = BASER_ADDRESS(baser);
-> +	gpa = GITS_BASER_ADDR_48_to_52(baser);
->  
->  	max_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
->  
-> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> index a2a175b08b17..b3d1f0985117 100644
-> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> @@ -364,7 +364,6 @@ static u64 vgic_sanitise_pendbaser(u64 reg)
->  				  vgic_sanitise_outer_cacheability);
->  
->  	reg &= ~PENDBASER_RES0_MASK;
-> -	reg &= ~GENMASK_ULL(51, 48);
->  
->  	return reg;
->  }
-> @@ -382,7 +381,6 @@ static u64 vgic_sanitise_propbaser(u64 reg)
->  				  vgic_sanitise_outer_cacheability);
->  
->  	reg &= ~PROPBASER_RES0_MASK;
-> -	reg &= ~GENMASK_ULL(51, 48);
->  	return reg;
->  }
->  
-> 
-Besides looks good to me.
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> +       int cpu = WORK_CPU_UNBOUND;
+>         struct async_entry *entry;
+>         unsigned long flags;
+>         async_cookie_t newcookie;
+> @@ -194,30 +198,40 @@ static async_cookie_t __async_schedule(async_func_t func, void *data, struct asy
+>         /* mark that this task has queued an async job, used by module init */
+>         current->flags |= PF_USED_ASYNC;
+>
+> +       /* guarantee cpu_online_mask doesn't change during scheduling */
+> +       get_online_cpus();
+> +
+> +       if (node >= 0 && node < MAX_NUMNODES && node_online(node))
+> +               cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
 
-Thanks
+...I think this node to cpu helper should be up-leveled for callers. I
+suspect using get_online_cpus() may cause lockdep problems to take the
+cpu_hotplug_lock() within a "do_something_on()" routine. For example,
+I found this when auditing queue_work_on() users:
 
-Eric
+/*
+ * Doesn't need any cpu hotplug locking because we do rely on per-cpu
+ * kworkers being shut down before our page_alloc_cpu_dead callback is
+ * executed on the offlined cpu.
+ * Calling this function with cpu hotplug locks held can actually lead
+ * to obscure indirect dependencies via WQ context.
+ */
+void lru_add_drain_all(void)
 
+I think it's a gotcha waiting to happen if async_schedule_on() has
+more restrictive calling contexts than queue_work_on().
