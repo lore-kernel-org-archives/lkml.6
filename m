@@ -2,60 +2,59 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B6EC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29634C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 192472154B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D0512147C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cXCj24rb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192472154B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LMqfaklz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0512147C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389289AbeIULsh (ORCPT
+        id S2389305AbeIULsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 07:48:37 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37971 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388826AbeIULse (ORCPT
+        Fri, 21 Sep 2018 07:48:41 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38783 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388826AbeIULsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 07:48:34 -0400
-Received: by mail-it1-f194.google.com with SMTP id p129-v6so752095ite.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 23:01:17 -0700 (PDT)
+        Fri, 21 Sep 2018 07:48:40 -0400
+Received: by mail-io1-f65.google.com with SMTP id y3-v6so11074488ioc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 23:01:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wGYEvk2zx6rWgY3D8bsZeoDg5wDNmwJFSc3ujKqQv+0=;
-        b=cXCj24rbSEPuwl+655/0R9dF3s5Hk5IpruX4ZgUWSacGrSpMa0ciFmVNSs8vpkzPqd
-         0LftSuYL0fFU96aQt35mCid2NFYyW8l5Uip8Wv6+O4BK/KJl43aWr9RwGhwjVNKJBwFn
-         O8y5mfFNYmMNYRC6RJlY7d7dXBtmK6awbBwW8=
+        bh=kOkzk6iuIFPIoctoFXxCP7jxle7e2yFIk2nfs6QxUOw=;
+        b=LMqfaklzywECvI9WXtXxHnJ0seaR542xnjiGiUo0oopoFyuY8Gr65Zd9Q8OzG1uqJv
+         /dAou6P1bCIaZlRi2s6/hqkmSU8qc907+NBFGC/6esE8w+odhWLUbxpCTHxoZb/Xco6P
+         EDRbsbwXcHLJmC2SxHIV7ljlEbJQpZdRpPnkI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wGYEvk2zx6rWgY3D8bsZeoDg5wDNmwJFSc3ujKqQv+0=;
-        b=gacw0NDoYucVzfxm3YEOZpkoNZy/THzydTTHj+nWsc3oLj6N21z2EmGqg4w5YvXl9O
-         Bu7YGSr7dI8sjRsBkp9fspcFM4nr+7ehm/IbMfFoDl09MO4DvNTSkSk0RTA5y0CTWZR8
-         KqIXT4zG+fqo2nmfS+oFtAzGIqhYcnMM15OdPxUUT1hlHHrBIuctrxZ4UAsBAckn2T2y
-         yWfFjdzXLnzQJaVTQoTcyixtN25qEDay/l6G6UDi1VeAvDWqXTSzFrNxBfkGKnl1iPsn
-         xyZWxPbXpZH8cC1NyWFtEi4KUXFVO26MDPcDmp/aarDsCSgUEEYLgiFULQ2+mzpWvBYo
-         iNDw==
-X-Gm-Message-State: APzg51DvA0xd8OVaBA9xPyoTm/5bkI6KlJSRrF9GAxVdpet/sFGygZjO
-        svQnVLRDUHvBOtTLreB4WwQ7
-X-Google-Smtp-Source: ANB0VdZv9KZBhiZHOmTMWc9fLBoiNbaI0zasJhg8xMlra5TGT97zLhIvj29zMfDxs+d662Wdfac38w==
-X-Received: by 2002:a24:d786:: with SMTP id y128-v6mr4881534itg.140.1537509676560;
-        Thu, 20 Sep 2018 23:01:16 -0700 (PDT)
+        bh=kOkzk6iuIFPIoctoFXxCP7jxle7e2yFIk2nfs6QxUOw=;
+        b=B66lszCn+r6vx/O1IX9fW8EjL2YcO3HCv61wMJM37VA9uhMB0ShZG0Qni15lWJznu3
+         sgkuDXj2768dBi+95Wrpl2d1SF6Ni3dka4KT2tAy2NhW8ntKQ/uLuMzIlZzPDKr5Gql7
+         qdY7g9yecvIOR5fsFgBkWgFyy8aDaSmbmifg4ciK2L9h94HoQLoJXdXR7UnSyV2MlsRe
+         JejkiFAewwf8bWahGo72wLfA8M3Zw8UbLY2mU0wcl45JoP72LEUtcaZMeiHjHT2QWCcO
+         37oqb6RGcFCMGZsRaqYRQC6t4Rp98VPX/+t4i/idFlG/jiydxDXDhf8xZDOM8LuBoGNf
+         pIng==
+X-Gm-Message-State: ABuFfoijRAtPBWd5YTaw8rn1AMgf2dlOFSIHj5ZmCiutNVPOIcCrknyz
+        /pp9ZlOhso8MODqL00f71kfH5XvJJg==
+X-Google-Smtp-Source: ACcGV61NoUcVqCBlzyQF2giODGoQ/XHXoMANz+E1huxjHdA+7UxP8LBzz+cZrpKyio93Lg3pQGx7Lw==
+X-Received: by 2002:a6b:3787:: with SMTP id e129-v6mr5205392ioa.60.1537509681014;
+        Thu, 20 Sep 2018 23:01:21 -0700 (PDT)
 Received: from localhost.localdomain ([209.82.80.116])
-        by smtp.gmail.com with ESMTPSA id b195-v6sm1973875itc.42.2018.09.20.23.01.15
+        by smtp.gmail.com with ESMTPSA id b195-v6sm1973875itc.42.2018.09.20.23.01.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 23:01:16 -0700 (PDT)
+        Thu, 20 Sep 2018 23:01:20 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         xuwei5@hisilicon.com
@@ -63,9 +62,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
         linux-clk@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 1/4] dt-bindings: clk: hisilicon: Add bindings for Hi3670 clk
-Date:   Thu, 20 Sep 2018 23:01:00 -0700
-Message-Id: <20180921060103.21370-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 4/4] clk: hisilicon: Add clock driver for Hi3670 SoC
+Date:   Thu, 20 Sep 2018 23:01:03 -0700
+Message-Id: <20180921060103.21370-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
 References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
@@ -74,419 +73,1069 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree bindings for HiSilicon Hi3670 clock controller.
+Add clock driver for HiSilicon Hi3670 SoC utilizing HiSilicon's
+common clk code.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../bindings/clock/hi3670-clock.txt           |  43 +++
- include/dt-bindings/clock/hi3670-clock.h      | 348 ++++++++++++++++++
- 2 files changed, 391 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/hi3670-clock.txt
- create mode 100644 include/dt-bindings/clock/hi3670-clock.h
+ drivers/clk/hisilicon/Kconfig      |    7 +
+ drivers/clk/hisilicon/Makefile     |    1 +
+ drivers/clk/hisilicon/clk-hi3670.c | 1016 ++++++++++++++++++++++++++++
+ 3 files changed, 1024 insertions(+)
+ create mode 100644 drivers/clk/hisilicon/clk-hi3670.c
 
-diff --git a/Documentation/devicetree/bindings/clock/hi3670-clock.txt b/Documentation/devicetree/bindings/clock/hi3670-clock.txt
+diff --git a/drivers/clk/hisilicon/Kconfig b/drivers/clk/hisilicon/Kconfig
+index becdb1dd21b5..30fad7ab0d88 100644
+--- a/drivers/clk/hisilicon/Kconfig
++++ b/drivers/clk/hisilicon/Kconfig
+@@ -21,6 +21,13 @@ config COMMON_CLK_HI3660
+ 	help
+ 	  Build the clock driver for hi3660.
+ 
++config COMMON_CLK_HI3670
++	bool "Hi3670 Clock Driver"
++	depends on ARCH_HISI || COMPILE_TEST
++	default ARCH_HISI
++	help
++	  Build the clock driver for hi3670.
++
+ config COMMON_CLK_HI3798CV200
+ 	tristate "Hi3798CV200 Clock Driver"
+ 	depends on ARCH_HISI || COMPILE_TEST
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index 2a714c0f9657..b2441b99f3d5 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -11,6 +11,7 @@ obj-$(CONFIG_ARCH_HIX5HD2)	+= clk-hix5hd2.o
+ obj-$(CONFIG_COMMON_CLK_HI3516CV300)	+= crg-hi3516cv300.o
+ obj-$(CONFIG_COMMON_CLK_HI3519)	+= clk-hi3519.o
+ obj-$(CONFIG_COMMON_CLK_HI3660) += clk-hi3660.o
++obj-$(CONFIG_COMMON_CLK_HI3670) += clk-hi3670.o
+ obj-$(CONFIG_COMMON_CLK_HI3798CV200)	+= crg-hi3798cv200.o
+ obj-$(CONFIG_COMMON_CLK_HI6220)	+= clk-hi6220.o
+ obj-$(CONFIG_RESET_HISI)	+= reset.o
+diff --git a/drivers/clk/hisilicon/clk-hi3670.c b/drivers/clk/hisilicon/clk-hi3670.c
 new file mode 100644
-index 000000000000..66f3697eca78
+index 000000000000..fd8c837a6ea3
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/hi3670-clock.txt
-@@ -0,0 +1,43 @@
-+* Hisilicon Hi3670 Clock Controller
-+
-+The Hi3670 clock controller generates and supplies clock to various
-+controllers within the Hi3670 SoC.
-+
-+Required Properties:
-+
-+- compatible: the compatible should be one of the following strings to
-+	indicate the clock controller functionality.
-+
-+	- "hisilicon,hi3670-crgctrl"
-+	- "hisilicon,hi3670-pctrl"
-+	- "hisilicon,hi3670-pmuctrl"
-+	- "hisilicon,hi3670-sctrl"
-+	- "hisilicon,hi3670-iomcu"
-+	- "hisilicon,hi3670-media1-crg"
-+	- "hisilicon,hi3670-media2-crg"
-+
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+
-+- #clock-cells: should be 1.
-+
-+Each clock is assigned an identifier and client nodes use this identifier
-+to specify the clock which they consume.
-+
-+All these identifier could be found in <dt-bindings/clock/hi3670-clock.h>.
-+
-+Examples:
-+	crg_ctrl: clock-controller@fff35000 {
-+		compatible = "hisilicon,hi3670-crgctrl", "syscon";
-+		reg = <0x0 0xfff35000 0x0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	uart0: serial@fdf02000 {
-+		compatible = "arm,pl011", "arm,primecell";
-+		reg = <0x0 0xfdf02000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&crg_ctrl HI3670_CLK_GATE_UART0>,
-+			 <&crg_ctrl HI3670_PCLK>;
-+		clock-names = "uartclk", "apb_pclk";
-+	};
-diff --git a/include/dt-bindings/clock/hi3670-clock.h b/include/dt-bindings/clock/hi3670-clock.h
-new file mode 100644
-index 000000000000..fa48583f87d6
---- /dev/null
-+++ b/include/dt-bindings/clock/hi3670-clock.h
-@@ -0,0 +1,348 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/clk/hisilicon/clk-hi3670.c
+@@ -0,0 +1,1016 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Device Tree binding constants for HiSilicon Hi3670 SoC
-+ *
 + * Copyright (c) 2001-2021, Huawei Tech. Co., Ltd.
-+ * Copyright (c) 2018 Linaro Ltd.
++ * Author: chenjun <chenjun14@huawei.com>
++ *
++ * Copyright (c) 2018, Linaro Ltd.
++ * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 + */
 +
-+#ifndef __DT_BINDINGS_CLOCK_HI3670_H
-+#define __DT_BINDINGS_CLOCK_HI3670_H
++#include <dt-bindings/clock/hi3670-clock.h>
++#include <linux/clk-provider.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include "clk.h"
 +
-+/* clk in stub clock */
-+#define HI3670_CLK_STUB_CLUSTER0		0
-+#define HI3670_CLK_STUB_CLUSTER1		1
-+#define HI3670_CLK_STUB_GPU			2
-+#define HI3670_CLK_STUB_DDR			3
-+#define HI3670_CLK_STUB_DDR_VOTE		4
-+#define HI3670_CLK_STUB_DDR_LIMIT		5
-+#define HI3670_CLK_STUB_NUM			6
++static const struct hisi_fixed_rate_clock hi3670_fixed_rate_clks[] = {
++	{ HI3670_CLKIN_SYS, "clkin_sys", NULL, 0, 19200000, },
++	{ HI3670_CLKIN_REF, "clkin_ref", NULL, 0, 32764, },
++	{ HI3670_CLK_FLL_SRC, "clk_fll_src", NULL, 0, 134400000, },
++	{ HI3670_CLK_PPLL0, "clk_ppll0", NULL, 0, 1660000000, },
++	{ HI3670_CLK_PPLL1, "clk_ppll1", NULL, 0, 1866000000, },
++	{ HI3670_CLK_PPLL2, "clk_ppll2", NULL, 0, 1920000000, },
++	{ HI3670_CLK_PPLL3, "clk_ppll3", NULL, 0, 1200000000, },
++	{ HI3670_CLK_PPLL4, "clk_ppll4", NULL, 0, 900000000, },
++	{ HI3670_CLK_PPLL6, "clk_ppll6", NULL, 0, 393216000, },
++	{ HI3670_CLK_PPLL7, "clk_ppll7", NULL, 0, 1008000000, },
++	{ HI3670_CLK_PPLL_PCIE, "clk_ppll_pcie", NULL, 0, 100000000, },
++	{ HI3670_CLK_PCIEPLL_REV, "clk_pciepll_rev", NULL, 0, 100000000, },
++	{ HI3670_CLK_SCPLL, "clk_scpll", NULL, 0, 245760000, },
++	{ HI3670_PCLK, "pclk", NULL, 0, 20000000, },
++	{ HI3670_CLK_UART0_DBG, "clk_uart0_dbg", NULL, 0, 19200000, },
++	{ HI3670_CLK_UART6, "clk_uart6", NULL, 0, 19200000, },
++	{ HI3670_OSC32K, "osc32k", NULL, 0, 32764, },
++	{ HI3670_OSC19M, "osc19m", NULL, 0, 19200000, },
++	{ HI3670_CLK_480M, "clk_480m", NULL, 0, 480000000, },
++	{ HI3670_CLK_INVALID, "clk_invalid", NULL, 0, 10000000, },
++};
 +
-+/* clk in crg clock */
-+#define HI3670_CLKIN_SYS			0
-+#define HI3670_CLKIN_REF			1
-+#define HI3670_CLK_FLL_SRC			2
-+#define HI3670_CLK_PPLL0			3
-+#define HI3670_CLK_PPLL1			4
-+#define HI3670_CLK_PPLL2			5
-+#define HI3670_CLK_PPLL3			6
-+#define HI3670_CLK_PPLL4			7
-+#define HI3670_CLK_PPLL6			8
-+#define HI3670_CLK_PPLL7			9
-+#define HI3670_CLK_PPLL_PCIE			10
-+#define HI3670_CLK_PCIEPLL_REV			11
-+#define HI3670_CLK_SCPLL			12
-+#define HI3670_PCLK				13
-+#define HI3670_CLK_UART0_DBG			14
-+#define HI3670_CLK_UART6			15
-+#define HI3670_OSC32K				16
-+#define HI3670_OSC19M				17
-+#define HI3670_CLK_480M				18
-+#define HI3670_CLK_INVALID			19
-+#define HI3670_CLK_DIV_SYSBUS			20
-+#define HI3670_CLK_FACTOR_MMC			21
-+#define HI3670_CLK_SD_SYS			22
-+#define HI3670_CLK_SDIO_SYS			23
-+#define HI3670_CLK_DIV_A53HPM			24
-+#define HI3670_CLK_DIV_320M			25
-+#define HI3670_PCLK_GATE_UART0			26
-+#define HI3670_CLK_FACTOR_UART0			27
-+#define HI3670_CLK_FACTOR_USB3PHY_PLL		28
-+#define HI3670_CLK_GATE_ABB_USB			29
-+#define HI3670_CLK_GATE_UFSPHY_REF		30
-+#define HI3670_ICS_VOLT_HIGH			31
-+#define HI3670_ICS_VOLT_MIDDLE			32
-+#define HI3670_VENC_VOLT_HOLD			33
-+#define HI3670_VDEC_VOLT_HOLD			34
-+#define HI3670_EDC_VOLT_HOLD			35
-+#define HI3670_CLK_ISP_SNCLK_FAC		36
-+#define HI3670_CLK_FACTOR_RXDPHY		37
-+#define HI3670_AUTODIV_SYSBUS			38
-+#define HI3670_AUTODIV_EMMC0BUS			39
-+#define HI3670_PCLK_ANDGT_MMC1_PCIE		40
-+#define HI3670_CLK_GATE_VCODECBUS_GT		41
-+#define HI3670_CLK_ANDGT_SD			42
-+#define HI3670_CLK_SD_SYS_GT			43
-+#define HI3670_CLK_ANDGT_SDIO			44
-+#define HI3670_CLK_SDIO_SYS_GT			45
-+#define HI3670_CLK_A53HPM_ANDGT			46
-+#define HI3670_CLK_320M_PLL_GT			47
-+#define HI3670_CLK_ANDGT_UARTH			48
-+#define HI3670_CLK_ANDGT_UARTL			49
-+#define HI3670_CLK_ANDGT_UART0			50
-+#define HI3670_CLK_ANDGT_SPI			51
-+#define HI3670_CLK_ANDGT_PCIEAXI		52
-+#define HI3670_CLK_DIV_AO_ASP_GT		53
-+#define HI3670_CLK_GATE_CSI_TRANS		54
-+#define HI3670_CLK_GATE_DSI_TRANS		55
-+#define HI3670_CLK_ANDGT_PTP			56
-+#define HI3670_CLK_ANDGT_OUT0			57
-+#define HI3670_CLK_ANDGT_OUT1			58
-+#define HI3670_CLKGT_DP_AUDIO_PLL_AO		59
-+#define HI3670_CLK_ANDGT_VDEC			60
-+#define HI3670_CLK_ANDGT_VENC			61
-+#define HI3670_CLK_ISP_SNCLK_ANGT		62
-+#define HI3670_CLK_ANDGT_RXDPHY			63
-+#define HI3670_CLK_ANDGT_ICS			64
-+#define HI3670_AUTODIV_DMABUS			65
-+#define HI3670_CLK_MUX_SYSBUS			66
-+#define HI3670_CLK_MUX_VCODECBUS		67
-+#define HI3670_CLK_MUX_SD_SYS			68
-+#define HI3670_CLK_MUX_SD_PLL			69
-+#define HI3670_CLK_MUX_SDIO_SYS			70
-+#define HI3670_CLK_MUX_SDIO_PLL			71
-+#define HI3670_CLK_MUX_A53HPM			72
-+#define HI3670_CLK_MUX_320M			73
-+#define HI3670_CLK_MUX_UARTH			74
-+#define HI3670_CLK_MUX_UARTL			75
-+#define HI3670_CLK_MUX_UART0			76
-+#define HI3670_CLK_MUX_I2C			77
-+#define HI3670_CLK_MUX_SPI			78
-+#define HI3670_CLK_MUX_PCIEAXI			79
-+#define HI3670_CLK_MUX_AO_ASP			80
-+#define HI3670_CLK_MUX_VDEC			81
-+#define HI3670_CLK_MUX_VENC			82
-+#define HI3670_CLK_ISP_SNCLK_MUX0		83
-+#define HI3670_CLK_ISP_SNCLK_MUX1		84
-+#define HI3670_CLK_ISP_SNCLK_MUX2		85
-+#define HI3670_CLK_MUX_RXDPHY_CFG		86
-+#define HI3670_CLK_MUX_ICS			87
-+#define HI3670_CLK_DIV_CFGBUS			88
-+#define HI3670_CLK_DIV_MMC0BUS			89
-+#define HI3670_CLK_DIV_MMC1BUS			90
-+#define HI3670_PCLK_DIV_MMC1_PCIE		91
-+#define HI3670_CLK_DIV_VCODECBUS		92
-+#define HI3670_CLK_DIV_SD			93
-+#define HI3670_CLK_DIV_SDIO			94
-+#define HI3670_CLK_DIV_UARTH			95
-+#define HI3670_CLK_DIV_UARTL			96
-+#define HI3670_CLK_DIV_UART0			97
-+#define HI3670_CLK_DIV_I2C			98
-+#define HI3670_CLK_DIV_SPI			99
-+#define HI3670_CLK_DIV_PCIEAXI			100
-+#define HI3670_CLK_DIV_AO_ASP			101
-+#define HI3670_CLK_DIV_CSI_TRANS		102
-+#define HI3670_CLK_DIV_DSI_TRANS		103
-+#define HI3670_CLK_DIV_PTP			104
-+#define HI3670_CLK_DIV_CLKOUT0_PLL		105
-+#define HI3670_CLK_DIV_CLKOUT1_PLL		106
-+#define HI3670_CLKDIV_DP_AUDIO_PLL_AO		107
-+#define HI3670_CLK_DIV_VDEC			108
-+#define HI3670_CLK_DIV_VENC			109
-+#define HI3670_CLK_ISP_SNCLK_DIV0		110
-+#define HI3670_CLK_ISP_SNCLK_DIV1		111
-+#define HI3670_CLK_ISP_SNCLK_DIV2		112
-+#define HI3670_CLK_DIV_ICS			113
-+#define HI3670_PPLL1_EN_ACPU			114
-+#define HI3670_PPLL2_EN_ACPU			115
-+#define HI3670_PPLL3_EN_ACPU			116
-+#define HI3670_PPLL1_GT_CPU			117
-+#define HI3670_PPLL2_GT_CPU			118
-+#define HI3670_PPLL3_GT_CPU			119
-+#define HI3670_CLK_GATE_PPLL2_MEDIA		120
-+#define HI3670_CLK_GATE_PPLL3_MEDIA		121
-+#define HI3670_CLK_GATE_PPLL4_MEDIA		122
-+#define HI3670_CLK_GATE_PPLL6_MEDIA		123
-+#define HI3670_CLK_GATE_PPLL7_MEDIA		124
-+#define HI3670_PCLK_GPIO0			125
-+#define HI3670_PCLK_GPIO1			126
-+#define HI3670_PCLK_GPIO2			127
-+#define HI3670_PCLK_GPIO3			128
-+#define HI3670_PCLK_GPIO4			129
-+#define HI3670_PCLK_GPIO5			130
-+#define HI3670_PCLK_GPIO6			131
-+#define HI3670_PCLK_GPIO7			132
-+#define HI3670_PCLK_GPIO8			133
-+#define HI3670_PCLK_GPIO9			134
-+#define HI3670_PCLK_GPIO10			135
-+#define HI3670_PCLK_GPIO11			136
-+#define HI3670_PCLK_GPIO12			137
-+#define HI3670_PCLK_GPIO13			138
-+#define HI3670_PCLK_GPIO14			139
-+#define HI3670_PCLK_GPIO15			140
-+#define HI3670_PCLK_GPIO16			141
-+#define HI3670_PCLK_GPIO17			142
-+#define HI3670_PCLK_GPIO20			143
-+#define HI3670_PCLK_GPIO21			144
-+#define HI3670_PCLK_GATE_DSI0			145
-+#define HI3670_PCLK_GATE_DSI1			146
-+#define HI3670_HCLK_GATE_USB3OTG		147
-+#define HI3670_ACLK_GATE_USB3DVFS		148
-+#define HI3670_HCLK_GATE_SDIO			149
-+#define HI3670_PCLK_GATE_PCIE_SYS		150
-+#define HI3670_PCLK_GATE_PCIE_PHY		151
-+#define HI3670_PCLK_GATE_MMC1_PCIE		152
-+#define HI3670_PCLK_GATE_MMC0_IOC		153
-+#define HI3670_PCLK_GATE_MMC1_IOC		154
-+#define HI3670_CLK_GATE_DMAC			155
-+#define HI3670_CLK_GATE_VCODECBUS2DDR		156
-+#define HI3670_CLK_CCI400_BYPASS		157
-+#define HI3670_CLK_GATE_CCI400			158
-+#define HI3670_CLK_GATE_SD			159
-+#define HI3670_HCLK_GATE_SD			160
-+#define HI3670_CLK_GATE_SDIO			161
-+#define HI3670_CLK_GATE_A57HPM			162
-+#define HI3670_CLK_GATE_A53HPM			163
-+#define HI3670_CLK_GATE_PA_A53			164
-+#define HI3670_CLK_GATE_PA_A57			165
-+#define HI3670_CLK_GATE_PA_G3D			166
-+#define HI3670_CLK_GATE_GPUHPM			167
-+#define HI3670_CLK_GATE_PERIHPM			168
-+#define HI3670_CLK_GATE_AOHPM			169
-+#define HI3670_CLK_GATE_UART1			170
-+#define HI3670_CLK_GATE_UART4			171
-+#define HI3670_PCLK_GATE_UART1			172
-+#define HI3670_PCLK_GATE_UART4			173
-+#define HI3670_CLK_GATE_UART2			174
-+#define HI3670_CLK_GATE_UART5			175
-+#define HI3670_PCLK_GATE_UART2			176
-+#define HI3670_PCLK_GATE_UART5			177
-+#define HI3670_CLK_GATE_UART0			178
-+#define HI3670_CLK_GATE_I2C3			179
-+#define HI3670_CLK_GATE_I2C4			180
-+#define HI3670_CLK_GATE_I2C7			181
-+#define HI3670_PCLK_GATE_I2C3			182
-+#define HI3670_PCLK_GATE_I2C4			183
-+#define HI3670_PCLK_GATE_I2C7			184
-+#define HI3670_CLK_GATE_SPI1			185
-+#define HI3670_CLK_GATE_SPI4			186
-+#define HI3670_PCLK_GATE_SPI1			187
-+#define HI3670_PCLK_GATE_SPI4			188
-+#define HI3670_CLK_GATE_USB3OTG_REF		189
-+#define HI3670_CLK_GATE_USB2PHY_REF		190
-+#define HI3670_CLK_GATE_PCIEAUX			191
-+#define HI3670_ACLK_GATE_PCIE			192
-+#define HI3670_CLK_GATE_MMC1_PCIEAXI		193
-+#define HI3670_CLK_GATE_PCIEPHY_REF		194
-+#define HI3670_CLK_GATE_PCIE_DEBOUNCE		195
-+#define HI3670_CLK_GATE_PCIEIO			196
-+#define HI3670_CLK_GATE_PCIE_HP			197
-+#define HI3670_CLK_GATE_AO_ASP			198
-+#define HI3670_PCLK_GATE_PCTRL			199
-+#define HI3670_CLK_CSI_TRANS_GT			200
-+#define HI3670_CLK_DSI_TRANS_GT			201
-+#define HI3670_CLK_GATE_PWM			202
-+#define HI3670_ABB_AUDIO_EN0			203
-+#define HI3670_ABB_AUDIO_EN1			204
-+#define HI3670_ABB_AUDIO_GT_EN0			205
-+#define HI3670_ABB_AUDIO_GT_EN1			206
-+#define HI3670_CLK_GATE_DP_AUDIO_PLL_AO		207
-+#define HI3670_PERI_VOLT_HOLD			208
-+#define HI3670_PERI_VOLT_MIDDLE			209
-+#define HI3670_CLK_GATE_ISP_SNCLK0		210
-+#define HI3670_CLK_GATE_ISP_SNCLK1		211
-+#define HI3670_CLK_GATE_ISP_SNCLK2		212
-+#define HI3670_CLK_GATE_RXDPHY0_CFG		213
-+#define HI3670_CLK_GATE_RXDPHY1_CFG		214
-+#define HI3670_CLK_GATE_RXDPHY2_CFG		215
-+#define HI3670_CLK_GATE_TXDPHY0_CFG		216
-+#define HI3670_CLK_GATE_TXDPHY0_REF		217
-+#define HI3670_CLK_GATE_TXDPHY1_CFG		218
-+#define HI3670_CLK_GATE_TXDPHY1_REF		219
-+#define HI3670_CLK_GATE_MEDIA_TCXO		220
++/* crgctrl */
++static const struct hisi_fixed_factor_clock hi3670_crg_fixed_factor_clks[] = {
++	{ HI3670_CLK_DIV_SYSBUS, "clk_div_sysbus", "clk_mux_sysbus",
++	  1, 7, 0, },
++	{ HI3670_CLK_FACTOR_MMC, "clk_factor_mmc", "clkin_sys",
++	  1, 6, 0, },
++	{ HI3670_CLK_SD_SYS, "clk_sd_sys", "clk_sd_sys_gt",
++	  1, 6, 0, },
++	{ HI3670_CLK_SDIO_SYS, "clk_sdio_sys", "clk_sdio_sys_gt",
++	  1, 6, 0, },
++	{ HI3670_CLK_DIV_A53HPM, "clk_div_a53hpm", "clk_a53hpm_andgt",
++	  1, 4, 0, },
++	{ HI3670_CLK_DIV_320M, "clk_div_320m", "clk_320m_pll_gt",
++	  1, 5, 0, },
++	{ HI3670_PCLK_GATE_UART0, "pclk_gate_uart0", "clk_mux_uartl",
++	  1, 1, 0, },
++	{ HI3670_CLK_FACTOR_UART0, "clk_factor_uart0", "clk_mux_uart0",
++	  1, 1, 0, },
++	{ HI3670_CLK_FACTOR_USB3PHY_PLL, "clk_factor_usb3phy_pll", "clk_ppll0",
++	  1, 60, 0, },
++	{ HI3670_CLK_GATE_ABB_USB, "clk_gate_abb_usb", "clk_gate_usb_tcxo_en",
++	  1, 1, 0, },
++	{ HI3670_CLK_GATE_UFSPHY_REF, "clk_gate_ufsphy_ref", "clkin_sys",
++	  1, 1, 0, },
++	{ HI3670_ICS_VOLT_HIGH, "ics_volt_high", "peri_volt_hold",
++	  1, 1, 0, },
++	{ HI3670_ICS_VOLT_MIDDLE, "ics_volt_middle", "peri_volt_middle",
++	  1, 1, 0, },
++	{ HI3670_VENC_VOLT_HOLD, "venc_volt_hold", "peri_volt_hold",
++	  1, 1, 0, },
++	{ HI3670_VDEC_VOLT_HOLD, "vdec_volt_hold", "peri_volt_hold",
++	  1, 1, 0, },
++	{ HI3670_EDC_VOLT_HOLD, "edc_volt_hold", "peri_volt_hold",
++	  1, 1, 0, },
++	{ HI3670_CLK_ISP_SNCLK_FAC, "clk_isp_snclk_fac", "clk_isp_snclk_angt",
++	  1, 10, 0, },
++	{ HI3670_CLK_FACTOR_RXDPHY, "clk_factor_rxdphy", "clk_andgt_rxdphy",
++	  1, 6, 0, },
++};
 +
-+/* clk in sctrl */
-+#define HI3670_CLK_ANDGT_IOPERI			0
-+#define HI3670_CLKANDGT_ASP_SUBSYS_PERI		1
-+#define HI3670_CLK_ANGT_ASP_SUBSYS		2
-+#define HI3670_CLK_MUX_UFS_SUBSYS		3
-+#define HI3670_CLK_MUX_CLKOUT0			4
-+#define HI3670_CLK_MUX_CLKOUT1			5
-+#define HI3670_CLK_MUX_ASP_SUBSYS_PERI		6
-+#define HI3670_CLK_MUX_ASP_PLL			7
-+#define HI3670_CLK_DIV_AOBUS			8
-+#define HI3670_CLK_DIV_UFS_SUBSYS		9
-+#define HI3670_CLK_DIV_IOPERI			10
-+#define HI3670_CLK_DIV_CLKOUT0_TCXO		11
-+#define HI3670_CLK_DIV_CLKOUT1_TCXO		12
-+#define HI3670_CLK_ASP_SUBSYS_PERI_DIV		13
-+#define HI3670_CLK_DIV_ASP_SUBSYS		14
-+#define HI3670_PPLL0_EN_ACPU			15
-+#define HI3670_PPLL0_GT_CPU			16
-+#define HI3670_CLK_GATE_PPLL0_MEDIA		17
-+#define HI3670_PCLK_GPIO18			18
-+#define HI3670_PCLK_GPIO19			19
-+#define HI3670_CLK_GATE_SPI			20
-+#define HI3670_PCLK_GATE_SPI			21
-+#define HI3670_CLK_GATE_UFS_SUBSYS		22
-+#define HI3670_CLK_GATE_UFSIO_REF		23
-+#define HI3670_PCLK_AO_GPIO0			24
-+#define HI3670_PCLK_AO_GPIO1			25
-+#define HI3670_PCLK_AO_GPIO2			26
-+#define HI3670_PCLK_AO_GPIO3			27
-+#define HI3670_PCLK_AO_GPIO4			28
-+#define HI3670_PCLK_AO_GPIO5			29
-+#define HI3670_PCLK_AO_GPIO6			30
-+#define HI3670_CLK_GATE_OUT0			31
-+#define HI3670_CLK_GATE_OUT1			32
-+#define HI3670_PCLK_GATE_SYSCNT			33
-+#define HI3670_CLK_GATE_SYSCNT			34
-+#define HI3670_CLK_GATE_ASP_SUBSYS_PERI		35
-+#define HI3670_CLK_GATE_ASP_SUBSYS		36
-+#define HI3670_CLK_GATE_ASP_TCXO		37
-+#define HI3670_CLK_GATE_DP_AUDIO_PLL		38
++static const struct hisi_gate_clock hi3670_crgctrl_gate_sep_clks[] = {
++	{ HI3670_PPLL1_EN_ACPU, "ppll1_en_acpu", "clk_ppll1",
++	  CLK_SET_RATE_PARENT, 0x0, 0, 0, },
++	{ HI3670_PPLL2_EN_ACPU, "ppll2_en_acpu", "clk_ppll2",
++	  CLK_SET_RATE_PARENT, 0x0, 3, 0, },
++	{ HI3670_PPLL3_EN_ACPU, "ppll3_en_acpu", "clk_ppll3",
++	  CLK_SET_RATE_PARENT, 0x0, 27, 0, },
++	{ HI3670_PPLL1_GT_CPU, "ppll1_gt_cpu", "clk_ppll1",
++	  CLK_SET_RATE_PARENT, 0x460, 16, 0, },
++	{ HI3670_PPLL2_GT_CPU, "ppll2_gt_cpu", "clk_ppll2",
++	  CLK_SET_RATE_PARENT, 0x460, 18, 0, },
++	{ HI3670_PPLL3_GT_CPU, "ppll3_gt_cpu", "clk_ppll3",
++	  CLK_SET_RATE_PARENT, 0x460, 20, 0, },
++	{ HI3670_CLK_GATE_PPLL2_MEDIA, "clk_gate_ppll2_media", "clk_ppll2",
++	  CLK_SET_RATE_PARENT, 0x410, 27, 0, },
++	{ HI3670_CLK_GATE_PPLL3_MEDIA, "clk_gate_ppll3_media", "clk_ppll3",
++	  CLK_SET_RATE_PARENT, 0x410, 28, 0, },
++	{ HI3670_CLK_GATE_PPLL4_MEDIA, "clk_gate_ppll4_media", "clk_ppll4",
++	  CLK_SET_RATE_PARENT, 0x410, 26, 0, },
++	{ HI3670_CLK_GATE_PPLL6_MEDIA, "clk_gate_ppll6_media", "clk_ppll6",
++	  CLK_SET_RATE_PARENT, 0x410, 30, 0, },
++	{ HI3670_CLK_GATE_PPLL7_MEDIA, "clk_gate_ppll7_media", "clk_ppll7",
++	  CLK_SET_RATE_PARENT, 0x410, 29, 0, },
++	{ HI3670_PCLK_GPIO0, "pclk_gpio0", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 0, 0, },
++	{ HI3670_PCLK_GPIO1, "pclk_gpio1", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 1, 0, },
++	{ HI3670_PCLK_GPIO2, "pclk_gpio2", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 2, 0, },
++	{ HI3670_PCLK_GPIO3, "pclk_gpio3", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 3, 0, },
++	{ HI3670_PCLK_GPIO4, "pclk_gpio4", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 4, 0, },
++	{ HI3670_PCLK_GPIO5, "pclk_gpio5", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 5, 0, },
++	{ HI3670_PCLK_GPIO6, "pclk_gpio6", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 6, 0, },
++	{ HI3670_PCLK_GPIO7, "pclk_gpio7", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 7, 0, },
++	{ HI3670_PCLK_GPIO8, "pclk_gpio8", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 8, 0, },
++	{ HI3670_PCLK_GPIO9, "pclk_gpio9", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 9, 0, },
++	{ HI3670_PCLK_GPIO10, "pclk_gpio10", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 10, 0, },
++	{ HI3670_PCLK_GPIO11, "pclk_gpio11", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 11, 0, },
++	{ HI3670_PCLK_GPIO12, "pclk_gpio12", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 12, 0, },
++	{ HI3670_PCLK_GPIO13, "pclk_gpio13", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 13, 0, },
++	{ HI3670_PCLK_GPIO14, "pclk_gpio14", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 14, 0, },
++	{ HI3670_PCLK_GPIO15, "pclk_gpio15", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 15, 0, },
++	{ HI3670_PCLK_GPIO16, "pclk_gpio16", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 16, 0, },
++	{ HI3670_PCLK_GPIO17, "pclk_gpio17", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 17, 0, },
++	{ HI3670_PCLK_GPIO20, "pclk_gpio20", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 20, 0, },
++	{ HI3670_PCLK_GPIO21, "pclk_gpio21", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x10, 21, 0, },
++	{ HI3670_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
++	{ HI3670_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
++	  CLK_SET_RATE_PARENT, 0x50, 29, 0, },
++	{ HI3670_HCLK_GATE_USB3OTG, "hclk_gate_usb3otg", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0x0, 25, 0, },
++	{ HI3670_ACLK_GATE_USB3DVFS, "aclk_gate_usb3dvfs", "autodiv_emmc0bus",
++	  CLK_SET_RATE_PARENT, 0x40, 1, 0, },
++	{ HI3670_HCLK_GATE_SDIO, "hclk_gate_sdio", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0x0, 21, 0, },
++	{ HI3670_PCLK_GATE_PCIE_SYS, "pclk_gate_pcie_sys", "clk_div_mmc1bus",
++	  CLK_SET_RATE_PARENT, 0x420, 7, 0, },
++	{ HI3670_PCLK_GATE_PCIE_PHY, "pclk_gate_pcie_phy", "pclk_gate_mmc1_pcie",
++	  CLK_SET_RATE_PARENT, 0x420, 9, 0, },
++	{ HI3670_PCLK_GATE_MMC1_PCIE, "pclk_gate_mmc1_pcie", "pclk_div_mmc1_pcie",
++	  CLK_SET_RATE_PARENT, 0x30, 12, 0, },
++	{ HI3670_PCLK_GATE_MMC0_IOC, "pclk_gate_mmc0_ioc", "clk_div_mmc0bus",
++	  CLK_SET_RATE_PARENT, 0x40, 13, 0, },
++	{ HI3670_PCLK_GATE_MMC1_IOC, "pclk_gate_mmc1_ioc", "clk_div_mmc1bus",
++	  CLK_SET_RATE_PARENT, 0x420, 21, 0, },
++	{ HI3670_CLK_GATE_DMAC, "clk_gate_dmac", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0x30, 1, 0, },
++	{ HI3670_CLK_GATE_VCODECBUS2DDR, "clk_gate_vcodecbus2ddr", "clk_div_vcodecbus",
++	  CLK_SET_RATE_PARENT, 0x0, 5, 0, },
++	{ HI3670_CLK_CCI400_BYPASS, "clk_cci400_bypass", "clk_ddrc_freq",
++	  CLK_SET_RATE_PARENT, 0x22C, 28, 0, },
++	{ HI3670_CLK_GATE_CCI400, "clk_gate_cci400", "clk_ddrc_freq",
++	  CLK_SET_RATE_PARENT, 0x50, 14, 0, },
++	{ HI3670_CLK_GATE_SD, "clk_gate_sd", "clk_mux_sd_sys",
++	  CLK_SET_RATE_PARENT, 0x40, 17, 0, },
++	{ HI3670_HCLK_GATE_SD, "hclk_gate_sd", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0x0, 30, 0, },
++	{ HI3670_CLK_GATE_SDIO, "clk_gate_sdio", "clk_mux_sdio_sys",
++	  CLK_SET_RATE_PARENT, 0x40, 19, 0, },
++	{ HI3670_CLK_GATE_A57HPM, "clk_gate_a57hpm", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x050, 9, 0, },
++	{ HI3670_CLK_GATE_A53HPM, "clk_gate_a53hpm", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x050, 13, 0, },
++	{ HI3670_CLK_GATE_PA_A53, "clk_gate_pa_a53", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x480, 10, 0, },
++	{ HI3670_CLK_GATE_PA_A57, "clk_gate_pa_a57", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x480, 9, 0, },
++	{ HI3670_CLK_GATE_PA_G3D, "clk_gate_pa_g3d", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x480, 15, 0, },
++	{ HI3670_CLK_GATE_GPUHPM, "clk_gate_gpuhpm", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x050, 15, 0, },
++	{ HI3670_CLK_GATE_PERIHPM, "clk_gate_perihpm", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x050, 12, 0, },
++	{ HI3670_CLK_GATE_AOHPM, "clk_gate_aohpm", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x050, 11, 0, },
++	{ HI3670_CLK_GATE_UART1, "clk_gate_uart1", "clk_mux_uarth",
++	  CLK_SET_RATE_PARENT, 0x20, 11, 0, },
++	{ HI3670_CLK_GATE_UART4, "clk_gate_uart4", "clk_mux_uarth",
++	  CLK_SET_RATE_PARENT, 0x20, 14, 0, },
++	{ HI3670_PCLK_GATE_UART1, "pclk_gate_uart1", "clk_mux_uarth",
++	  CLK_SET_RATE_PARENT, 0x20, 11, 0, },
++	{ HI3670_PCLK_GATE_UART4, "pclk_gate_uart4", "clk_mux_uarth",
++	  CLK_SET_RATE_PARENT, 0x20, 14, 0, },
++	{ HI3670_CLK_GATE_UART2, "clk_gate_uart2", "clk_mux_uartl",
++	  CLK_SET_RATE_PARENT, 0x20, 12, 0, },
++	{ HI3670_CLK_GATE_UART5, "clk_gate_uart5", "clk_mux_uartl",
++	  CLK_SET_RATE_PARENT, 0x20, 15, 0, },
++	{ HI3670_PCLK_GATE_UART2, "pclk_gate_uart2", "clk_mux_uartl",
++	  CLK_SET_RATE_PARENT, 0x20, 12, 0, },
++	{ HI3670_PCLK_GATE_UART5, "pclk_gate_uart5", "clk_mux_uartl",
++	  CLK_SET_RATE_PARENT, 0x20, 15, 0, },
++	{ HI3670_CLK_GATE_UART0, "clk_gate_uart0", "clk_mux_uart0",
++	  CLK_SET_RATE_PARENT, 0x20, 10, 0, },
++	{ HI3670_CLK_GATE_I2C3, "clk_gate_i2c3", "clk_mux_i2c",
++	  CLK_SET_RATE_PARENT, 0x20, 7, 0, },
++	{ HI3670_CLK_GATE_I2C4, "clk_gate_i2c4", "clk_mux_i2c",
++	  CLK_SET_RATE_PARENT, 0x20, 27, 0, },
++	{ HI3670_CLK_GATE_I2C7, "clk_gate_i2c7", "clk_mux_i2c",
++	  CLK_SET_RATE_PARENT, 0x10, 31, 0, },
++	{ HI3670_PCLK_GATE_I2C3, "pclk_gate_i2c3", "clk_mux_i2c",
++	  CLK_SET_RATE_PARENT, 0x20, 7, 0, },
++	{ HI3670_PCLK_GATE_I2C4, "pclk_gate_i2c4", "clk_mux_i2c",
++	  CLK_SET_RATE_PARENT, 0x20, 27, 0, },
++	{ HI3670_PCLK_GATE_I2C7, "pclk_gate_i2c7", "clk_mux_i2c",
++	  CLK_SET_RATE_PARENT, 0x10, 31, 0, },
++	{ HI3670_CLK_GATE_SPI1, "clk_gate_spi1", "clk_mux_spi",
++	  CLK_SET_RATE_PARENT, 0x20, 9, 0, },
++	{ HI3670_CLK_GATE_SPI4, "clk_gate_spi4", "clk_mux_spi",
++	  CLK_SET_RATE_PARENT, 0x40, 4, 0, },
++	{ HI3670_PCLK_GATE_SPI1, "pclk_gate_spi1", "clk_mux_spi",
++	  CLK_SET_RATE_PARENT, 0x20, 9, 0, },
++	{ HI3670_PCLK_GATE_SPI4, "pclk_gate_spi4", "clk_mux_spi",
++	  CLK_SET_RATE_PARENT, 0x40, 4, 0, },
++	{ HI3670_CLK_GATE_USB3OTG_REF, "clk_gate_usb3otg_ref", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x40, 0, 0, },
++	{ HI3670_CLK_GATE_USB2PHY_REF, "clk_gate_usb2phy_ref", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x410, 19, 0, },
++	{ HI3670_CLK_GATE_PCIEAUX, "clk_gate_pcieaux", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x420, 8, 0, },
++	{ HI3670_ACLK_GATE_PCIE, "aclk_gate_pcie", "clk_gate_mmc1_pcieaxi",
++	  CLK_SET_RATE_PARENT, 0x420, 5, 0, },
++	{ HI3670_CLK_GATE_MMC1_PCIEAXI, "clk_gate_mmc1_pcieaxi", "clk_div_pcieaxi",
++	  CLK_SET_RATE_PARENT, 0x050, 4, 0, },
++	{ HI3670_CLK_GATE_PCIEPHY_REF, "clk_gate_pciephy_ref", "clk_ppll_pcie",
++	  CLK_SET_RATE_PARENT, 0x470, 14, 0, },
++	{ HI3670_CLK_GATE_PCIE_DEBOUNCE, "clk_gate_pcie_debounce", "clk_ppll_pcie",
++	  CLK_SET_RATE_PARENT, 0x470, 12, 0, },
++	{ HI3670_CLK_GATE_PCIEIO, "clk_gate_pcieio", "clk_ppll_pcie",
++	  CLK_SET_RATE_PARENT, 0x470, 13, 0, },
++	{ HI3670_CLK_GATE_PCIE_HP, "clk_gate_pcie_hp", "clk_ppll_pcie",
++	  CLK_SET_RATE_PARENT, 0x470, 15, 0, },
++	{ HI3670_CLK_GATE_AO_ASP, "clk_gate_ao_asp", "clk_div_ao_asp",
++	  CLK_SET_RATE_PARENT, 0x0, 26, 0, },
++	{ HI3670_PCLK_GATE_PCTRL, "pclk_gate_pctrl", "clk_div_ptp",
++	  CLK_SET_RATE_PARENT, 0x20, 31, 0, },
++	{ HI3670_CLK_CSI_TRANS_GT, "clk_csi_trans_gt", "clk_div_csi_trans",
++	  CLK_SET_RATE_PARENT, 0x30, 24, 0, },
++	{ HI3670_CLK_DSI_TRANS_GT, "clk_dsi_trans_gt", "clk_div_dsi_trans",
++	  CLK_SET_RATE_PARENT, 0x30, 25, 0, },
++	{ HI3670_CLK_GATE_PWM, "clk_gate_pwm", "clk_div_ptp",
++	  CLK_SET_RATE_PARENT, 0x20, 0, 0, },
++	{ HI3670_ABB_AUDIO_EN0, "abb_audio_en0", "clk_gate_abb_192",
++	  CLK_SET_RATE_PARENT, 0x30, 8, 0, },
++	{ HI3670_ABB_AUDIO_EN1, "abb_audio_en1", "clk_gate_abb_192",
++	  CLK_SET_RATE_PARENT, 0x30, 9, 0, },
++	{ HI3670_ABB_AUDIO_GT_EN0, "abb_audio_gt_en0", "abb_audio_en0",
++	  CLK_SET_RATE_PARENT, 0x30, 19, 0, },
++	{ HI3670_ABB_AUDIO_GT_EN1, "abb_audio_gt_en1", "abb_audio_en1",
++	  CLK_SET_RATE_PARENT, 0x40, 20, 0, },
++	{ HI3670_CLK_GATE_DP_AUDIO_PLL_AO, "clk_gate_dp_audio_pll_ao", "clkdiv_dp_audio_pll_ao",
++	  CLK_SET_RATE_PARENT, 0x00, 13, 0, },
++	{ HI3670_PERI_VOLT_HOLD, "peri_volt_hold", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0, 1, 0, },
++	{ HI3670_PERI_VOLT_MIDDLE, "peri_volt_middle", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0, 1, 0, },
++	{ HI3670_CLK_GATE_ISP_SNCLK0, "clk_gate_isp_snclk0", "clk_isp_snclk_mux0",
++	  CLK_SET_RATE_PARENT, 0x50, 16, 0, },
++	{ HI3670_CLK_GATE_ISP_SNCLK1, "clk_gate_isp_snclk1", "clk_isp_snclk_mux1",
++	  CLK_SET_RATE_PARENT, 0x50, 17, 0, },
++	{ HI3670_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2", "clk_isp_snclk_mux2",
++	  CLK_SET_RATE_PARENT, 0x50, 18, 0, },
++	{ HI3670_CLK_GATE_RXDPHY0_CFG, "clk_gate_rxdphy0_cfg", "clk_mux_rxdphy_cfg",
++	  CLK_SET_RATE_PARENT, 0x030, 20, 0, },
++	{ HI3670_CLK_GATE_RXDPHY1_CFG, "clk_gate_rxdphy1_cfg", "clk_mux_rxdphy_cfg",
++	  CLK_SET_RATE_PARENT, 0x030, 21, 0, },
++	{ HI3670_CLK_GATE_RXDPHY2_CFG, "clk_gate_rxdphy2_cfg", "clk_mux_rxdphy_cfg",
++	  CLK_SET_RATE_PARENT, 0x030, 22, 0, },
++	{ HI3670_CLK_GATE_TXDPHY0_CFG, "clk_gate_txdphy0_cfg", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x030, 28, 0, },
++	{ HI3670_CLK_GATE_TXDPHY0_REF, "clk_gate_txdphy0_ref", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x030, 29, 0, },
++	{ HI3670_CLK_GATE_TXDPHY1_CFG, "clk_gate_txdphy1_cfg", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x030, 30, 0, },
++	{ HI3670_CLK_GATE_TXDPHY1_REF, "clk_gate_txdphy1_ref", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x030, 31, 0, },
++	{ HI3670_CLK_GATE_MEDIA_TCXO, "clk_gate_media_tcxo", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x40, 6, 0, },
++};
 +
-+/* clk in pmuctrl */
-+#define HI3670_GATE_ABB_192			0
++static const struct hisi_gate_clock hi3670_crgctrl_gate_clks[] = {
++	{ HI3670_AUTODIV_SYSBUS, "autodiv_sysbus", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0x404, 5, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_AUTODIV_EMMC0BUS, "autodiv_emmc0bus", "autodiv_sysbus",
++	  CLK_SET_RATE_PARENT, 0x404, 1, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_PCLK_ANDGT_MMC1_PCIE, "pclk_andgt_mmc1_pcie", "clk_div_320m",
++	  CLK_SET_RATE_PARENT, 0xf8, 13, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_GATE_VCODECBUS_GT, "clk_gate_vcodecbus_gt", "clk_mux_vcodecbus",
++	  CLK_SET_RATE_PARENT, 0x0F0, 8, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_SD, "clk_andgt_sd", "clk_mux_sd_pll",
++	  CLK_SET_RATE_PARENT, 0xF4, 3, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_SD_SYS_GT, "clk_sd_sys_gt", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0xF4, 5, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_SDIO, "clk_andgt_sdio", "clk_mux_sdio_pll",
++	  CLK_SET_RATE_PARENT, 0xF4, 8, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_SDIO_SYS_GT, "clk_sdio_sys_gt", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0xF4, 6, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_A53HPM_ANDGT, "clk_a53hpm_andgt", "clk_mux_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x0F4, 7, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_320M_PLL_GT, "clk_320m_pll_gt", "clk_mux_320m",
++	  CLK_SET_RATE_PARENT, 0xF8, 10, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_UARTH, "clk_andgt_uarth", "clk_div_320m",
++	  CLK_SET_RATE_PARENT, 0xF4, 11, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_UARTL, "clk_andgt_uartl", "clk_div_320m",
++	  CLK_SET_RATE_PARENT, 0xF4, 10, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_UART0, "clk_andgt_uart0", "clk_div_320m",
++	  CLK_SET_RATE_PARENT, 0xF4, 9, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_SPI, "clk_andgt_spi", "clk_div_320m",
++	  CLK_SET_RATE_PARENT, 0xF4, 13, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_PCIEAXI, "clk_andgt_pcieaxi", "clk_mux_pcieaxi",
++	  CLK_SET_RATE_PARENT, 0xfc, 15, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_AO_ASP_GT, "clk_div_ao_asp_gt", "clk_mux_ao_asp",
++	  CLK_SET_RATE_PARENT, 0xF4, 4, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_GATE_CSI_TRANS, "clk_gate_csi_trans", "clk_ppll2",
++	  CLK_SET_RATE_PARENT, 0xF4, 14, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_GATE_DSI_TRANS, "clk_gate_dsi_trans", "clk_ppll2",
++	  CLK_SET_RATE_PARENT, 0xF4, 1, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_PTP, "clk_andgt_ptp", "clk_div_320m",
++	  CLK_SET_RATE_PARENT, 0xF8, 5, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_OUT0, "clk_andgt_out0", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0xF0, 10, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_OUT1, "clk_andgt_out1", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0xF0, 11, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLKGT_DP_AUDIO_PLL_AO, "clkgt_dp_audio_pll_ao", "clk_ppll6",
++	  CLK_SET_RATE_PARENT, 0xF8, 15, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_VDEC, "clk_andgt_vdec", "clk_mux_vdec",
++	  CLK_SET_RATE_PARENT, 0xF0, 13, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_VENC, "clk_andgt_venc", "clk_mux_venc",
++	  CLK_SET_RATE_PARENT, 0xF0, 9, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ISP_SNCLK_ANGT, "clk_isp_snclk_angt", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x108, 2, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_RXDPHY, "clk_andgt_rxdphy", "clk_div_a53hpm",
++	  CLK_SET_RATE_PARENT, 0x0F0, 12, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_ICS, "clk_andgt_ics", "clk_mux_ics",
++	  CLK_SET_RATE_PARENT, 0xf0, 14, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_AUTODIV_DMABUS, "autodiv_dmabus", "autodiv_sysbus",
++	  CLK_SET_RATE_PARENT, 0x404, 3, CLK_GATE_HIWORD_MASK, 0, },
++};
 +
-+/* clk in pctrl */
-+#define HI3670_GATE_UFS_TCXO_EN			0
-+#define HI3670_GATE_USB_TCXO_EN			1
++static const char *const
++clk_mux_sysbus_p[] = { "clk_ppll1", "clk_ppll0", };
++static const char *const
++clk_mux_vcodecbus_p[] = { "clk_invalid", "clk_ppll4", "clk_ppll0",
++			  "clk_invalid", "clk_ppll2", "clk_invalid",
++			  "clk_invalid", "clk_invalid", "clk_ppll3",
++			  "clk_invalid", "clk_invalid", "clk_invalid",
++			  "clk_invalid", "clk_invalid", "clk_invalid",
++			  "clk_invalid", };
++static const char *const
++clk_mux_sd_sys_p[] = { "clk_sd_sys", "clk_div_sd", };
++static const char *const
++clk_mux_sd_pll_p[] = { "clk_ppll0", "clk_ppll3", "clk_ppll2", "clk_ppll2", };
++static const char *const
++clk_mux_sdio_sys_p[] = { "clk_sdio_sys", "clk_div_sdio", };
++static const char *const
++clk_mux_sdio_pll_p[] = { "clk_ppll0", "clk_ppll3", "clk_ppll2", "clk_ppll2", };
++static const char *const
++clk_mux_a53hpm_p[] = { "clk_ppll0", "clk_ppll2", };
++static const char *const
++clk_mux_320m_p[] = { "clk_ppll2", "clk_ppll0", };
++static const char *const
++clk_mux_uarth_p[] = { "clkin_sys", "clk_div_uarth", };
++static const char *const
++clk_mux_uartl_p[] = { "clkin_sys", "clk_div_uartl", };
++static const char *const
++clk_mux_uart0_p[] = { "clkin_sys", "clk_div_uart0", };
++static const char *const
++clk_mux_i2c_p[] = { "clkin_sys", "clk_div_i2c", };
++static const char *const
++clk_mux_spi_p[] = { "clkin_sys", "clk_div_spi", };
++static const char *const
++clk_mux_pcieaxi_p[] = { "clkin_sys", "clk_ppll0", };
++static const char *const
++clk_mux_ao_asp_p[] = { "clk_ppll2", "clk_ppll3", };
++static const char *const
++clk_mux_vdec_p[] = { "clk_invalid", "clk_ppll4", "clk_ppll0", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", };
++static const char *const
++clk_mux_venc_p[] = { "clk_invalid", "clk_ppll4", "clk_ppll0", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", };
++static const char *const
++clk_isp_snclk_mux0_p[] = { "clkin_sys", "clk_isp_snclk_div0", };
++static const char *const
++clk_isp_snclk_mux1_p[] = { "clkin_sys", "clk_isp_snclk_div1", };
++static const char *const
++clk_isp_snclk_mux2_p[] = { "clkin_sys", "clk_isp_snclk_div2", };
++static const char *const
++clk_mux_rxdphy_cfg_p[] = { "clk_factor_rxdphy", "clkin_sys", };
++static const char *const
++clk_mux_ics_p[] = { "clk_invalid", "clk_ppll4", "clk_ppll0", "clk_invalid",
++		    "clk_ppll2", "clk_invalid", "clk_invalid", "clk_invalid",
++		    "clk_ppll3", "clk_invalid", "clk_invalid", "clk_invalid",
++		    "clk_invalid", "clk_invalid", "clk_invalid",
++		    "clk_invalid", };
 +
-+/* clk in iomcu */
-+#define HI3670_CLK_GATE_I2C0			0
-+#define HI3670_CLK_GATE_I2C1			1
-+#define HI3670_CLK_GATE_I2C2			2
-+#define HI3670_CLK_GATE_SPI0			3
-+#define HI3670_CLK_GATE_SPI2			4
-+#define HI3670_CLK_GATE_UART3			5
-+#define HI3670_CLK_I2C0_GATE_IOMCU		6
-+#define HI3670_CLK_I2C1_GATE_IOMCU		7
-+#define HI3670_CLK_I2C2_GATE_IOMCU		8
-+#define HI3670_CLK_SPI0_GATE_IOMCU		9
-+#define HI3670_CLK_SPI2_GATE_IOMCU		10
-+#define HI3670_CLK_UART3_GATE_IOMCU		11
-+#define HI3670_CLK_GATE_PERI0_IOMCU		12
++static const struct hisi_mux_clock hi3670_crgctrl_mux_clks[] = {
++	{ HI3670_CLK_MUX_SYSBUS, "clk_mux_sysbus", clk_mux_sysbus_p,
++	  ARRAY_SIZE(clk_mux_sysbus_p), CLK_SET_RATE_PARENT,
++	  0xAC, 0, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_VCODECBUS, "clk_mux_vcodecbus", clk_mux_vcodecbus_p,
++	  ARRAY_SIZE(clk_mux_vcodecbus_p), CLK_SET_RATE_PARENT,
++	  0x0C8, 0, 4, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_SD_SYS, "clk_mux_sd_sys", clk_mux_sd_sys_p,
++	  ARRAY_SIZE(clk_mux_sd_sys_p), CLK_SET_RATE_PARENT,
++	  0x0B8, 6, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_SD_PLL, "clk_mux_sd_pll", clk_mux_sd_pll_p,
++	  ARRAY_SIZE(clk_mux_sd_pll_p), CLK_SET_RATE_PARENT,
++	  0x0B8, 4, 2, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_SDIO_SYS, "clk_mux_sdio_sys", clk_mux_sdio_sys_p,
++	  ARRAY_SIZE(clk_mux_sdio_sys_p), CLK_SET_RATE_PARENT,
++	  0x0C0, 6, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_SDIO_PLL, "clk_mux_sdio_pll", clk_mux_sdio_pll_p,
++	  ARRAY_SIZE(clk_mux_sdio_pll_p), CLK_SET_RATE_PARENT,
++	  0x0C0, 4, 2, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_A53HPM, "clk_mux_a53hpm", clk_mux_a53hpm_p,
++	  ARRAY_SIZE(clk_mux_a53hpm_p), CLK_SET_RATE_PARENT,
++	  0x0D4, 9, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_320M, "clk_mux_320m", clk_mux_320m_p,
++	  ARRAY_SIZE(clk_mux_320m_p), CLK_SET_RATE_PARENT,
++	  0x100, 0, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_UARTH, "clk_mux_uarth", clk_mux_uarth_p,
++	  ARRAY_SIZE(clk_mux_uarth_p), CLK_SET_RATE_PARENT,
++	  0xAC, 4, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_UARTL, "clk_mux_uartl", clk_mux_uartl_p,
++	  ARRAY_SIZE(clk_mux_uartl_p), CLK_SET_RATE_PARENT,
++	  0xAC, 3, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_UART0, "clk_mux_uart0", clk_mux_uart0_p,
++	  ARRAY_SIZE(clk_mux_uart0_p), CLK_SET_RATE_PARENT,
++	  0xAC, 2, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_I2C, "clk_mux_i2c", clk_mux_i2c_p,
++	  ARRAY_SIZE(clk_mux_i2c_p), CLK_SET_RATE_PARENT,
++	  0xAC, 13, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_SPI, "clk_mux_spi", clk_mux_spi_p,
++	  ARRAY_SIZE(clk_mux_spi_p), CLK_SET_RATE_PARENT,
++	  0xAC, 8, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_PCIEAXI, "clk_mux_pcieaxi", clk_mux_pcieaxi_p,
++	  ARRAY_SIZE(clk_mux_pcieaxi_p), CLK_SET_RATE_PARENT,
++	  0xb4, 5, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_AO_ASP, "clk_mux_ao_asp", clk_mux_ao_asp_p,
++	  ARRAY_SIZE(clk_mux_ao_asp_p), CLK_SET_RATE_PARENT,
++	  0x100, 6, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_VDEC, "clk_mux_vdec", clk_mux_vdec_p,
++	  ARRAY_SIZE(clk_mux_vdec_p), CLK_SET_RATE_PARENT,
++	  0xC8, 8, 4, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_VENC, "clk_mux_venc", clk_mux_venc_p,
++	  ARRAY_SIZE(clk_mux_venc_p), CLK_SET_RATE_PARENT,
++	  0xC8, 4, 4, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_ISP_SNCLK_MUX0, "clk_isp_snclk_mux0", clk_isp_snclk_mux0_p,
++	  ARRAY_SIZE(clk_isp_snclk_mux0_p), CLK_SET_RATE_PARENT,
++	  0x108, 3, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_ISP_SNCLK_MUX1, "clk_isp_snclk_mux1", clk_isp_snclk_mux1_p,
++	  ARRAY_SIZE(clk_isp_snclk_mux1_p), CLK_SET_RATE_PARENT,
++	  0x10C, 13, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_ISP_SNCLK_MUX2, "clk_isp_snclk_mux2", clk_isp_snclk_mux2_p,
++	  ARRAY_SIZE(clk_isp_snclk_mux2_p), CLK_SET_RATE_PARENT,
++	  0x10C, 10, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_RXDPHY_CFG, "clk_mux_rxdphy_cfg", clk_mux_rxdphy_cfg_p,
++	  ARRAY_SIZE(clk_mux_rxdphy_cfg_p), CLK_SET_RATE_PARENT,
++	  0x0C4, 8, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_ICS, "clk_mux_ics", clk_mux_ics_p,
++	  ARRAY_SIZE(clk_mux_ics_p), CLK_SET_RATE_PARENT,
++	  0xc8, 12, 4, CLK_MUX_HIWORD_MASK, },
++};
 +
-+/* clk in media1 */
-+#define HI3670_CLK_GATE_VIVOBUS_ANDGT		0
-+#define HI3670_CLK_ANDGT_EDC0			1
-+#define HI3670_CLK_ANDGT_LDI0			2
-+#define HI3670_CLK_ANDGT_LDI1			3
-+#define HI3670_CLK_MMBUF_PLL_ANDGT		4
-+#define HI3670_PCLK_MMBUF_ANDGT			5
-+#define HI3670_CLK_MUX_VIVOBUS			6
-+#define HI3670_CLK_MUX_EDC0			7
-+#define HI3670_CLK_MUX_LDI0			8
-+#define HI3670_CLK_MUX_LDI1			9
-+#define HI3670_CLK_SW_MMBUF			10
-+#define HI3670_CLK_DIV_VIVOBUS			11
-+#define HI3670_CLK_DIV_EDC0			12
-+#define HI3670_CLK_DIV_LDI0			13
-+#define HI3670_CLK_DIV_LDI1			14
-+#define HI3670_ACLK_DIV_MMBUF			15
-+#define HI3670_PCLK_DIV_MMBUF			16
-+#define HI3670_ACLK_GATE_NOC_DSS		17
-+#define HI3670_PCLK_GATE_NOC_DSS_CFG		18
-+#define HI3670_PCLK_GATE_MMBUF_CFG		19
-+#define HI3670_PCLK_GATE_DISP_NOC_SUBSYS	20
-+#define HI3670_ACLK_GATE_DISP_NOC_SUBSYS	21
-+#define HI3670_PCLK_GATE_DSS			22
-+#define HI3670_ACLK_GATE_DSS			23
-+#define HI3670_CLK_GATE_VIVOBUSFREQ		24
-+#define HI3670_CLK_GATE_EDC0			25
-+#define HI3670_CLK_GATE_LDI0			26
-+#define HI3670_CLK_GATE_LDI1FREQ		27
-+#define HI3670_CLK_GATE_BRG			28
-+#define HI3670_ACLK_GATE_ASC			29
-+#define HI3670_CLK_GATE_DSS_AXI_MM		30
-+#define HI3670_CLK_GATE_MMBUF			31
-+#define HI3670_PCLK_GATE_MMBUF			32
-+#define HI3670_CLK_GATE_ATDIV_VIVO		33
++static const struct hisi_divider_clock hi3670_crgctrl_divider_clks[] = {
++	{ HI3670_CLK_DIV_CFGBUS, "clk_div_cfgbus", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0xEC, 0, 2, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_MMC0BUS, "clk_div_mmc0bus", "autodiv_emmc0bus",
++	  CLK_SET_RATE_PARENT, 0x0EC, 2, 1, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_MMC1BUS, "clk_div_mmc1bus", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0x0EC, 3, 1, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_PCLK_DIV_MMC1_PCIE, "pclk_div_mmc1_pcie", "pclk_andgt_mmc1_pcie",
++	  CLK_SET_RATE_PARENT, 0xb4, 6, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_VCODECBUS, "clk_div_vcodecbus", "clk_gate_vcodecbus_gt",
++	  CLK_SET_RATE_PARENT, 0x0BC, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_SD, "clk_div_sd", "clk_andgt_sd",
++	  CLK_SET_RATE_PARENT, 0xB8, 0, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_SDIO, "clk_div_sdio", "clk_andgt_sdio",
++	  CLK_SET_RATE_PARENT, 0xC0, 0, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_UARTH, "clk_div_uarth", "clk_andgt_uarth",
++	  CLK_SET_RATE_PARENT, 0xB0, 12, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_UARTL, "clk_div_uartl", "clk_andgt_uartl",
++	  CLK_SET_RATE_PARENT, 0xB0, 8, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_UART0, "clk_div_uart0", "clk_andgt_uart0",
++	  CLK_SET_RATE_PARENT, 0xB0, 4, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_I2C, "clk_div_i2c", "clk_div_320m",
++	  CLK_SET_RATE_PARENT, 0xE8, 4, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_SPI, "clk_div_spi", "clk_andgt_spi",
++	  CLK_SET_RATE_PARENT, 0xC4, 12, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_PCIEAXI, "clk_div_pcieaxi", "clk_andgt_pcieaxi",
++	  CLK_SET_RATE_PARENT, 0xb4, 0, 5, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_AO_ASP, "clk_div_ao_asp", "clk_div_ao_asp_gt",
++	  CLK_SET_RATE_PARENT, 0x108, 6, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_CSI_TRANS, "clk_div_csi_trans", "clk_gate_csi_trans",
++	  CLK_SET_RATE_PARENT, 0xD4, 0, 5, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_DSI_TRANS, "clk_div_dsi_trans", "clk_gate_dsi_trans",
++	  CLK_SET_RATE_PARENT, 0xD4, 10, 5, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_PTP, "clk_div_ptp", "clk_andgt_ptp",
++	  CLK_SET_RATE_PARENT, 0xD8, 0, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_CLKOUT0_PLL, "clk_div_clkout0_pll", "clk_andgt_out0",
++	  CLK_SET_RATE_PARENT, 0xe0, 4, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_CLKOUT1_PLL, "clk_div_clkout1_pll", "clk_andgt_out1",
++	  CLK_SET_RATE_PARENT, 0xe0, 10, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLKDIV_DP_AUDIO_PLL_AO, "clkdiv_dp_audio_pll_ao", "clkgt_dp_audio_pll_ao",
++	  CLK_SET_RATE_PARENT, 0xBC, 11, 4, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_VDEC, "clk_div_vdec", "clk_andgt_vdec",
++	  CLK_SET_RATE_PARENT, 0xC4, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_VENC, "clk_div_venc", "clk_andgt_venc",
++	  CLK_SET_RATE_PARENT, 0xC0, 8, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ISP_SNCLK_DIV0, "clk_isp_snclk_div0", "clk_isp_snclk_fac",
++	  CLK_SET_RATE_PARENT, 0x108, 0, 2, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ISP_SNCLK_DIV1, "clk_isp_snclk_div1", "clk_isp_snclk_fac",
++	  CLK_SET_RATE_PARENT, 0x10C, 14, 2, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ISP_SNCLK_DIV2, "clk_isp_snclk_div2", "clk_isp_snclk_fac",
++	  CLK_SET_RATE_PARENT, 0x10C, 11, 2, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_ICS, "clk_div_ics", "clk_andgt_ics",
++	  CLK_SET_RATE_PARENT, 0xE4, 9, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++};
 +
-+/* clk in media2 */
-+#define HI3670_CLK_GATE_VDECFREQ		0
-+#define HI3670_CLK_GATE_VENCFREQ		1
-+#define HI3670_CLK_GATE_ICSFREQ			2
++/* clk_pmuctrl */
++static const struct hisi_gate_clock hi3670_pmu_gate_clks[] = {
++	{ HI3670_GATE_ABB_192, "clk_gate_abb_192", "clkin_sys",
++	  CLK_SET_RATE_PARENT, (0x037 << 2), 0, 0, },
++};
 +
-+#endif /* __DT_BINDINGS_CLOCK_HI3670_H */
++/* clk_pctrl */
++static const struct hisi_gate_clock hi3670_pctrl_gate_clks[] = {
++	{ HI3670_GATE_UFS_TCXO_EN, "clk_gate_ufs_tcxo_en", "clk_gate_abb_192",
++	  CLK_SET_RATE_PARENT, 0x10, 0, CLK_GATE_HIWORD_MASK, },
++	{ HI3670_GATE_USB_TCXO_EN, "clk_gate_usb_tcxo_en", "clk_gate_abb_192",
++	  CLK_SET_RATE_PARENT, 0x10, 1, CLK_GATE_HIWORD_MASK, },
++};
++
++/* clk_sctrl */
++static const struct hisi_gate_clock hi3670_sctrl_gate_sep_clks[] = {
++	{ HI3670_PPLL0_EN_ACPU, "ppll0_en_acpu", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x190, 26, 0, },
++	{ HI3670_PPLL0_GT_CPU, "ppll0_gt_cpu", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x190, 15, 0, },
++	{ HI3670_CLK_GATE_PPLL0_MEDIA, "clk_gate_ppll0_media", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x1b0, 6, 0, },
++	{ HI3670_PCLK_GPIO18, "pclk_gpio18", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x1B0, 9, 0, },
++	{ HI3670_PCLK_GPIO19, "pclk_gpio19", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x1B0, 8, 0, },
++	{ HI3670_CLK_GATE_SPI, "clk_gate_spi", "clk_div_ioperi",
++	  CLK_SET_RATE_PARENT, 0x1B0, 10, 0, },
++	{ HI3670_PCLK_GATE_SPI, "pclk_gate_spi", "clk_div_ioperi",
++	  CLK_SET_RATE_PARENT, 0x1B0, 10, 0, },
++	{ HI3670_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_ufs_subsys",
++	  CLK_SET_RATE_PARENT, 0x1B0, 14, 0, },
++	{ HI3670_CLK_GATE_UFSIO_REF, "clk_gate_ufsio_ref", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x1b0, 12, 0, },
++	{ HI3670_PCLK_AO_GPIO0, "pclk_ao_gpio0", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 11, 0, },
++	{ HI3670_PCLK_AO_GPIO1, "pclk_ao_gpio1", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 12, 0, },
++	{ HI3670_PCLK_AO_GPIO2, "pclk_ao_gpio2", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 13, 0, },
++	{ HI3670_PCLK_AO_GPIO3, "pclk_ao_gpio3", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 14, 0, },
++	{ HI3670_PCLK_AO_GPIO4, "pclk_ao_gpio4", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 21, 0, },
++	{ HI3670_PCLK_AO_GPIO5, "pclk_ao_gpio5", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 22, 0, },
++	{ HI3670_PCLK_AO_GPIO6, "pclk_ao_gpio6", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 25, 0, },
++	{ HI3670_CLK_GATE_OUT0, "clk_gate_out0", "clk_mux_clkout0",
++	  CLK_SET_RATE_PARENT, 0x160, 16, 0, },
++	{ HI3670_CLK_GATE_OUT1, "clk_gate_out1", "clk_mux_clkout1",
++	  CLK_SET_RATE_PARENT, 0x160, 17, 0, },
++	{ HI3670_PCLK_GATE_SYSCNT, "pclk_gate_syscnt", "clk_div_aobus",
++	  CLK_SET_RATE_PARENT, 0x160, 19, 0, },
++	{ HI3670_CLK_GATE_SYSCNT, "clk_gate_syscnt", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x160, 20, 0, },
++	{ HI3670_CLK_GATE_ASP_SUBSYS_PERI, "clk_gate_asp_subsys_peri",
++	  "clk_mux_asp_subsys_peri",
++	  CLK_SET_RATE_PARENT, 0x170, 6, 0, },
++	{ HI3670_CLK_GATE_ASP_SUBSYS, "clk_gate_asp_subsys", "clk_mux_asp_pll",
++	  CLK_SET_RATE_PARENT, 0x170, 4, 0, },
++	{ HI3670_CLK_GATE_ASP_TCXO, "clk_gate_asp_tcxo", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x160, 27, 0, },
++	{ HI3670_CLK_GATE_DP_AUDIO_PLL, "clk_gate_dp_audio_pll",
++	  "clk_gate_dp_audio_pll_ao",
++	  CLK_SET_RATE_PARENT, 0x1B0, 7, 0, },
++};
++
++static const struct hisi_gate_clock hi3670_sctrl_gate_clks[] = {
++	{ HI3670_CLK_ANDGT_IOPERI, "clk_andgt_ioperi", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x270, 6, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLKANDGT_ASP_SUBSYS_PERI, "clkandgt_asp_subsys_peri",
++	  "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x268, 3, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANGT_ASP_SUBSYS, "clk_angt_asp_subsys", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x258, 0, CLK_GATE_HIWORD_MASK, 0, },
++};
++
++static const char *const
++clk_mux_ufs_subsys_p[] = { "clkin_sys", "clk_ppll0", };
++static const char *const
++clk_mux_clkout0_p[] = { "clkin_ref", "clk_div_clkout0_tcxo",
++			"clk_div_clkout0_pll", "clk_div_clkout0_pll", };
++static const char *const
++clk_mux_clkout1_p[] = { "clkin_ref", "clk_div_clkout1_tcxo",
++			"clk_div_clkout1_pll", "clk_div_clkout1_pll", };
++static const char *const
++clk_mux_asp_subsys_peri_p[] = { "clk_ppll0", "clk_fll_src", };
++static const char *const
++clk_mux_asp_pll_p[] = { "clk_ppll0", "clk_fll_src", "clk_gate_ao_asp",
++			"clk_pciepll_rev", };
++
++static const struct hisi_mux_clock hi3670_sctrl_mux_clks[] = {
++	{ HI3670_CLK_MUX_UFS_SUBSYS, "clk_mux_ufs_subsys", clk_mux_ufs_subsys_p,
++	  ARRAY_SIZE(clk_mux_ufs_subsys_p), CLK_SET_RATE_PARENT,
++	  0x274, 8, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_CLKOUT0, "clk_mux_clkout0", clk_mux_clkout0_p,
++	  ARRAY_SIZE(clk_mux_clkout0_p), CLK_SET_RATE_PARENT,
++	  0x254, 12, 2, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_CLKOUT1, "clk_mux_clkout1", clk_mux_clkout1_p,
++	  ARRAY_SIZE(clk_mux_clkout1_p), CLK_SET_RATE_PARENT,
++	  0x254, 14, 2, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_ASP_SUBSYS_PERI, "clk_mux_asp_subsys_peri",
++	  clk_mux_asp_subsys_peri_p, ARRAY_SIZE(clk_mux_asp_subsys_peri_p),
++	  CLK_SET_RATE_PARENT, 0x268, 8, 1, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_ASP_PLL, "clk_mux_asp_pll", clk_mux_asp_pll_p,
++	  ARRAY_SIZE(clk_mux_asp_pll_p), CLK_SET_RATE_PARENT,
++	  0x268, 9, 2, CLK_MUX_HIWORD_MASK, },
++};
++
++static const struct hisi_divider_clock hi3670_sctrl_divider_clks[] = {
++	{ HI3670_CLK_DIV_AOBUS, "clk_div_aobus", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x254, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_UFS_SUBSYS, "clk_div_ufs_subsys", "clk_mux_ufs_subsys",
++	  CLK_SET_RATE_PARENT, 0x274, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_IOPERI, "clk_div_ioperi", "clk_andgt_ioperi",
++	  CLK_SET_RATE_PARENT, 0x270, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_CLKOUT0_TCXO, "clk_div_clkout0_tcxo", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x254, 6, 3, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_CLKOUT1_TCXO, "clk_div_clkout1_tcxo", "clkin_sys",
++	  CLK_SET_RATE_PARENT, 0x254, 9, 3, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ASP_SUBSYS_PERI_DIV, "clk_asp_subsys_peri_div", "clkandgt_asp_subsys_peri",
++	  CLK_SET_RATE_PARENT, 0x268, 0, 3, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_ASP_SUBSYS, "clk_div_asp_subsys", "clk_angt_asp_subsys",
++	  CLK_SET_RATE_PARENT, 0x250, 0, 3, CLK_DIVIDER_HIWORD_MASK, 0, },
++};
++
++/* clk_iomcu */
++static const struct hisi_fixed_factor_clock hi3670_iomcu_fixed_factor_clks[] = {
++	{ HI3670_CLK_GATE_I2C0, "clk_gate_i2c0", "clk_i2c0_gate_iomcu", 1, 4, 0, },
++	{ HI3670_CLK_GATE_I2C1, "clk_gate_i2c1", "clk_i2c1_gate_iomcu", 1, 4, 0, },
++	{ HI3670_CLK_GATE_I2C2, "clk_gate_i2c2", "clk_i2c2_gate_iomcu", 1, 4, 0, },
++	{ HI3670_CLK_GATE_SPI0, "clk_gate_spi0", "clk_spi0_gate_iomcu", 1, 1, 0, },
++	{ HI3670_CLK_GATE_SPI2, "clk_gate_spi2", "clk_spi2_gate_iomcu", 1, 1, 0, },
++	{ HI3670_CLK_GATE_UART3, "clk_gate_uart3", "clk_uart3_gate_iomcu", 1, 16, 0, },
++};
++
++static const struct hisi_gate_clock hi3670_iomcu_gate_sep_clks[] = {
++	{ HI3670_CLK_I2C0_GATE_IOMCU, "clk_i2c0_gate_iomcu", "clk_fll_src",
++	  CLK_SET_RATE_PARENT, 0x10, 3, 0, },
++	{ HI3670_CLK_I2C1_GATE_IOMCU, "clk_i2c1_gate_iomcu", "clk_fll_src",
++	  CLK_SET_RATE_PARENT, 0x10, 4, 0, },
++	{ HI3670_CLK_I2C2_GATE_IOMCU, "clk_i2c2_gate_iomcu", "clk_fll_src",
++	  CLK_SET_RATE_PARENT, 0x10, 5, 0, },
++	{ HI3670_CLK_SPI0_GATE_IOMCU, "clk_spi0_gate_iomcu", "clk_fll_src",
++	  CLK_SET_RATE_PARENT, 0x10, 10, 0, },
++	{ HI3670_CLK_SPI2_GATE_IOMCU, "clk_spi2_gate_iomcu", "clk_fll_src",
++	  CLK_SET_RATE_PARENT, 0x10, 30, 0, },
++	{ HI3670_CLK_UART3_GATE_IOMCU, "clk_uart3_gate_iomcu", "clk_gate_iomcu_peri0",
++	  CLK_SET_RATE_PARENT, 0x10, 11, 0, },
++	{ HI3670_CLK_GATE_PERI0_IOMCU, "clk_gate_iomcu_peri0", "clk_ppll0",
++	  CLK_SET_RATE_PARENT, 0x90, 0, 0, },
++};
++
++/* clk_media1 */
++static const struct hisi_gate_clock hi3670_media1_gate_sep_clks[] = {
++	{ HI3670_ACLK_GATE_NOC_DSS, "aclk_gate_noc_dss", "aclk_gate_disp_noc_subsys",
++	  CLK_SET_RATE_PARENT, 0x10, 21, 0, },
++	{ HI3670_PCLK_GATE_NOC_DSS_CFG, "pclk_gate_noc_dss_cfg", "pclk_gate_disp_noc_subsys",
++	  CLK_SET_RATE_PARENT, 0x10, 22, 0, },
++	{ HI3670_PCLK_GATE_MMBUF_CFG, "pclk_gate_mmbuf_cfg", "pclk_gate_disp_noc_subsys",
++	  CLK_SET_RATE_PARENT, 0x20, 5, 0, },
++	{ HI3670_PCLK_GATE_DISP_NOC_SUBSYS, "pclk_gate_disp_noc_subsys", "clk_div_sysbus",
++	  CLK_SET_RATE_PARENT, 0x10, 18, 0, },
++	{ HI3670_ACLK_GATE_DISP_NOC_SUBSYS, "aclk_gate_disp_noc_subsys", "clk_gate_vivobusfreq",
++	  CLK_SET_RATE_PARENT, 0x10, 17, 0, },
++	{ HI3670_PCLK_GATE_DSS, "pclk_gate_dss", "pclk_gate_disp_noc_subsys",
++	  CLK_SET_RATE_PARENT, 0x00, 14, 0, },
++	{ HI3670_ACLK_GATE_DSS, "aclk_gate_dss", "aclk_gate_disp_noc_subsys",
++	  CLK_SET_RATE_PARENT, 0x00, 19, 0, },
++	{ HI3670_CLK_GATE_VIVOBUSFREQ, "clk_gate_vivobusfreq", "clk_div_vivobus",
++	  CLK_SET_RATE_PARENT, 0x00, 18, 0, },
++	{ HI3670_CLK_GATE_EDC0, "clk_gate_edc0", "clk_div_edc0",
++	  CLK_SET_RATE_PARENT, 0x00, 15, 0, },
++	{ HI3670_CLK_GATE_LDI0, "clk_gate_ldi0", "clk_div_ldi0",
++	  CLK_SET_RATE_PARENT, 0x00, 16, 0, },
++	{ HI3670_CLK_GATE_LDI1FREQ, "clk_gate_ldi1freq", "clk_div_ldi1",
++	  CLK_SET_RATE_PARENT, 0x00, 17, 0, },
++	{ HI3670_CLK_GATE_BRG, "clk_gate_brg", "clk_media_common_div",
++	  CLK_SET_RATE_PARENT, 0x00, 29, 0, },
++	{ HI3670_ACLK_GATE_ASC, "aclk_gate_asc", "clk_gate_mmbuf",
++	  CLK_SET_RATE_PARENT, 0x20, 3, 0, },
++	{ HI3670_CLK_GATE_DSS_AXI_MM, "clk_gate_dss_axi_mm", "clk_gate_mmbuf",
++	  CLK_SET_RATE_PARENT, 0x20, 4, 0, },
++	{ HI3670_CLK_GATE_MMBUF, "clk_gate_mmbuf", "aclk_div_mmbuf",
++	  CLK_SET_RATE_PARENT, 0x20, 0, 0, },
++	{ HI3670_PCLK_GATE_MMBUF, "pclk_gate_mmbuf", "pclk_div_mmbuf",
++	  CLK_SET_RATE_PARENT, 0x20, 1, 0, },
++	{ HI3670_CLK_GATE_ATDIV_VIVO, "clk_gate_atdiv_vivo", "clk_div_vivobus",
++	  CLK_SET_RATE_PARENT, 0x010, 1, 0, },
++};
++
++static const struct hisi_gate_clock hi3670_media1_gate_clks[] = {
++	{ HI3670_CLK_GATE_VIVOBUS_ANDGT, "clk_gate_vivobus_andgt", "clk_mux_vivobus",
++	  CLK_SET_RATE_PARENT, 0x84, 3, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_EDC0, "clk_andgt_edc0", "clk_mux_edc0",
++	  CLK_SET_RATE_PARENT, 0x84, 7, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_LDI0, "clk_andgt_ldi0", "clk_mux_ldi0",
++	  CLK_SET_RATE_PARENT, 0x84, 9, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_ANDGT_LDI1, "clk_andgt_ldi1", "clk_mux_ldi1",
++	  CLK_SET_RATE_PARENT, 0x84, 8, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_CLK_MMBUF_PLL_ANDGT, "clk_mmbuf_pll_andgt", "clk_sw_mmbuf",
++	  CLK_SET_RATE_PARENT, 0x84, 14, CLK_GATE_HIWORD_MASK, 0, },
++	{ HI3670_PCLK_MMBUF_ANDGT, "pclk_mmbuf_andgt", "aclk_div_mmbuf",
++	  CLK_SET_RATE_PARENT, 0x84, 15, CLK_GATE_HIWORD_MASK, 0, },
++};
++
++static const char *const
++clk_mux_vivobus_p[] = { "clk_invalid", "clk_invalid", "clk_gate_ppll0_media",
++			"clk_invalid", "clk_gate_ppll2_media", "clk_invalid",
++			"clk_invalid", "clk_invalid", "clk_gate_ppll3_media",
++			"clk_invalid", "clk_invalid", "clk_invalid",
++			"clk_invalid", "clk_invalid", "clk_invalid",
++			"clk_invalid", };
++static const char *const
++clk_mux_edc0_p[] = { "clk_invalid", "clk_invalid", "clk_gate_ppll0_media",
++		     "clk_invalid", "clk_gate_ppll2_media", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_gate_ppll3_media",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", };
++static const char *const
++clk_mux_ldi0_p[] = { "clk_invalid", "clk_gate_ppll7_media",
++		     "clk_gate_ppll0_media", "clk_invalid",
++		     "clk_gate_ppll2_media", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_gate_ppll3_media", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", };
++static const char *const
++clk_mux_ldi1_p[] = { "clk_invalid", "clk_gate_ppll7_media",
++		     "clk_gate_ppll0_media", "clk_invalid",
++		     "clk_gate_ppll2_media", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_gate_ppll3_media", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", };
++static const char *const
++clk_sw_mmbuf_p[] = { "clk_invalid", "clk_invalid", "clk_gate_ppll0_media",
++		     "clk_invalid", "clk_gate_ppll2_media", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_gate_ppll3_media",
++		     "clk_invalid", "clk_invalid", "clk_invalid", "clk_invalid",
++		     "clk_invalid", "clk_invalid", "clk_invalid", };
++
++static const struct hisi_mux_clock hi3670_media1_mux_clks[] = {
++	{ HI3670_CLK_MUX_VIVOBUS, "clk_mux_vivobus", clk_mux_vivobus_p,
++	  ARRAY_SIZE(clk_mux_vivobus_p), CLK_SET_RATE_PARENT,
++	  0x74, 6, 4, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_EDC0, "clk_mux_edc0", clk_mux_edc0_p,
++	  ARRAY_SIZE(clk_mux_edc0_p), CLK_SET_RATE_PARENT,
++	  0x68, 6, 4, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_LDI0, "clk_mux_ldi0", clk_mux_ldi0_p,
++	  ARRAY_SIZE(clk_mux_ldi0_p), CLK_SET_RATE_PARENT,
++	  0x60, 6, 4, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_MUX_LDI1, "clk_mux_ldi1", clk_mux_ldi1_p,
++	  ARRAY_SIZE(clk_mux_ldi1_p), CLK_SET_RATE_PARENT,
++	  0x64, 6, 4, CLK_MUX_HIWORD_MASK, },
++	{ HI3670_CLK_SW_MMBUF, "clk_sw_mmbuf", clk_sw_mmbuf_p,
++	  ARRAY_SIZE(clk_sw_mmbuf_p), CLK_SET_RATE_PARENT,
++	  0x88, 0, 4, CLK_MUX_HIWORD_MASK, },
++};
++
++static const struct hisi_divider_clock hi3670_media1_divider_clks[] = {
++	{ HI3670_CLK_DIV_VIVOBUS, "clk_div_vivobus", "clk_gate_vivobus_andgt",
++	  CLK_SET_RATE_PARENT, 0x74, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_EDC0, "clk_div_edc0", "clk_andgt_edc0",
++	  CLK_SET_RATE_PARENT, 0x68, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_LDI0, "clk_div_ldi0", "clk_andgt_ldi0",
++	  CLK_SET_RATE_PARENT, 0x60, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_CLK_DIV_LDI1, "clk_div_ldi1", "clk_andgt_ldi1",
++	  CLK_SET_RATE_PARENT, 0x64, 0, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_ACLK_DIV_MMBUF, "aclk_div_mmbuf", "clk_mmbuf_pll_andgt",
++	  CLK_SET_RATE_PARENT, 0x7C, 10, 6, CLK_DIVIDER_HIWORD_MASK, 0, },
++	{ HI3670_PCLK_DIV_MMBUF, "pclk_div_mmbuf", "pclk_mmbuf_andgt",
++	  CLK_SET_RATE_PARENT, 0x78, 0, 2, CLK_DIVIDER_HIWORD_MASK, 0, },
++};
++
++/* clk_media2 */
++static const struct hisi_gate_clock hi3670_media2_gate_sep_clks[] = {
++	{ HI3670_CLK_GATE_VDECFREQ, "clk_gate_vdecfreq", "clk_div_vdec",
++	  CLK_SET_RATE_PARENT, 0x00, 8, 0, },
++	{ HI3670_CLK_GATE_VENCFREQ, "clk_gate_vencfreq", "clk_div_venc",
++	  CLK_SET_RATE_PARENT, 0x00, 5, 0, },
++	{ HI3670_CLK_GATE_ICSFREQ, "clk_gate_icsfreq", "clk_div_ics",
++	  CLK_SET_RATE_PARENT, 0x00, 2, 0, },
++};
++
++static void hi3670_clk_crgctrl_init(struct device_node *np)
++{
++	struct hisi_clock_data *clk_data;
++
++	int nr = ARRAY_SIZE(hi3670_fixed_rate_clks) +
++		 ARRAY_SIZE(hi3670_crgctrl_gate_sep_clks) +
++		 ARRAY_SIZE(hi3670_crgctrl_gate_clks) +
++		 ARRAY_SIZE(hi3670_crgctrl_mux_clks) +
++		 ARRAY_SIZE(hi3670_crg_fixed_factor_clks) +
++		 ARRAY_SIZE(hi3670_crgctrl_divider_clks);
++
++	clk_data = hisi_clk_init(np, nr);
++	if (!clk_data)
++		return;
++
++	hisi_clk_register_fixed_rate(hi3670_fixed_rate_clks,
++				     ARRAY_SIZE(hi3670_fixed_rate_clks),
++				     clk_data);
++	hisi_clk_register_gate_sep(hi3670_crgctrl_gate_sep_clks,
++				   ARRAY_SIZE(hi3670_crgctrl_gate_sep_clks),
++				   clk_data);
++	hisi_clk_register_gate(hi3670_crgctrl_gate_clks,
++			       ARRAY_SIZE(hi3670_crgctrl_gate_clks),
++			       clk_data);
++	hisi_clk_register_mux(hi3670_crgctrl_mux_clks,
++			      ARRAY_SIZE(hi3670_crgctrl_mux_clks),
++			      clk_data);
++	hisi_clk_register_fixed_factor(hi3670_crg_fixed_factor_clks,
++				       ARRAY_SIZE(hi3670_crg_fixed_factor_clks),
++				       clk_data);
++	hisi_clk_register_divider(hi3670_crgctrl_divider_clks,
++				  ARRAY_SIZE(hi3670_crgctrl_divider_clks),
++				  clk_data);
++}
++
++static void hi3670_clk_pctrl_init(struct device_node *np)
++{
++	struct hisi_clock_data *clk_data;
++	int nr = ARRAY_SIZE(hi3670_pctrl_gate_clks);
++
++	clk_data = hisi_clk_init(np, nr);
++	if (!clk_data)
++		return;
++	hisi_clk_register_gate(hi3670_pctrl_gate_clks,
++			       ARRAY_SIZE(hi3670_pctrl_gate_clks), clk_data);
++}
++
++static void hi3670_clk_pmuctrl_init(struct device_node *np)
++{
++	struct hisi_clock_data *clk_data;
++	int nr = ARRAY_SIZE(hi3670_pmu_gate_clks);
++
++	clk_data = hisi_clk_init(np, nr);
++	if (!clk_data)
++		return;
++
++	hisi_clk_register_gate(hi3670_pmu_gate_clks,
++			       ARRAY_SIZE(hi3670_pmu_gate_clks), clk_data);
++}
++
++static void hi3670_clk_sctrl_init(struct device_node *np)
++{
++	struct hisi_clock_data *clk_data;
++	int nr = ARRAY_SIZE(hi3670_sctrl_gate_sep_clks) +
++		 ARRAY_SIZE(hi3670_sctrl_gate_clks) +
++		 ARRAY_SIZE(hi3670_sctrl_mux_clks) +
++		 ARRAY_SIZE(hi3670_sctrl_divider_clks);
++
++	clk_data = hisi_clk_init(np, nr);
++	if (!clk_data)
++		return;
++
++	hisi_clk_register_gate_sep(hi3670_sctrl_gate_sep_clks,
++				   ARRAY_SIZE(hi3670_sctrl_gate_sep_clks),
++				   clk_data);
++	hisi_clk_register_gate(hi3670_sctrl_gate_clks,
++			       ARRAY_SIZE(hi3670_sctrl_gate_clks),
++			       clk_data);
++	hisi_clk_register_mux(hi3670_sctrl_mux_clks,
++			      ARRAY_SIZE(hi3670_sctrl_mux_clks),
++			      clk_data);
++	hisi_clk_register_divider(hi3670_sctrl_divider_clks,
++				  ARRAY_SIZE(hi3670_sctrl_divider_clks),
++				  clk_data);
++}
++
++static void hi3670_clk_iomcu_init(struct device_node *np)
++{
++	struct hisi_clock_data *clk_data;
++	int nr = ARRAY_SIZE(hi3670_iomcu_gate_sep_clks) +
++			ARRAY_SIZE(hi3670_iomcu_fixed_factor_clks);
++
++	clk_data = hisi_clk_init(np, nr);
++	if (!clk_data)
++		return;
++
++	hisi_clk_register_gate(hi3670_iomcu_gate_sep_clks,
++			       ARRAY_SIZE(hi3670_iomcu_gate_sep_clks), clk_data);
++
++	hisi_clk_register_fixed_factor(hi3670_iomcu_fixed_factor_clks,
++				       ARRAY_SIZE(hi3670_iomcu_fixed_factor_clks),
++				       clk_data);
++}
++
++static void hi3670_clk_media1_init(struct device_node *np)
++{
++	struct hisi_clock_data *clk_data;
++
++	int nr = ARRAY_SIZE(hi3670_media1_gate_sep_clks) +
++		 ARRAY_SIZE(hi3670_media1_gate_clks) +
++		 ARRAY_SIZE(hi3670_media1_mux_clks) +
++		 ARRAY_SIZE(hi3670_media1_divider_clks);
++
++	clk_data = hisi_clk_init(np, nr);
++	if (!clk_data)
++		return;
++
++	hisi_clk_register_gate_sep(hi3670_media1_gate_sep_clks,
++				   ARRAY_SIZE(hi3670_media1_gate_sep_clks),
++				   clk_data);
++	hisi_clk_register_gate(hi3670_media1_gate_clks,
++			       ARRAY_SIZE(hi3670_media1_gate_clks),
++			       clk_data);
++	hisi_clk_register_mux(hi3670_media1_mux_clks,
++			      ARRAY_SIZE(hi3670_media1_mux_clks),
++			      clk_data);
++	hisi_clk_register_divider(hi3670_media1_divider_clks,
++				  ARRAY_SIZE(hi3670_media1_divider_clks),
++				  clk_data);
++}
++
++static void hi3670_clk_media2_init(struct device_node *np)
++{
++	struct hisi_clock_data *clk_data;
++
++	int nr = ARRAY_SIZE(hi3670_media2_gate_sep_clks);
++
++	clk_data = hisi_clk_init(np, nr);
++	if (!clk_data)
++		return;
++
++	hisi_clk_register_gate_sep(hi3670_media2_gate_sep_clks,
++				   ARRAY_SIZE(hi3670_media2_gate_sep_clks),
++				   clk_data);
++}
++
++static const struct of_device_id hi3670_clk_match_table[] = {
++	{ .compatible = "hisilicon,hi3670-crgctrl",
++	  .data = hi3670_clk_crgctrl_init },
++	{ .compatible = "hisilicon,hi3670-pctrl",
++	  .data = hi3670_clk_pctrl_init },
++	{ .compatible = "hisilicon,hi3670-pmuctrl",
++	  .data = hi3670_clk_pmuctrl_init },
++	{ .compatible = "hisilicon,hi3670-sctrl",
++	  .data = hi3670_clk_sctrl_init },
++	{ .compatible = "hisilicon,hi3670-iomcu",
++	  .data = hi3670_clk_iomcu_init },
++	{ .compatible = "hisilicon,hi3670-media1-crg",
++	  .data = hi3670_clk_media1_init },
++	{ .compatible = "hisilicon,hi3670-media2-crg",
++	  .data = hi3670_clk_media2_init },
++	{ }
++};
++
++static int hi3670_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = pdev->dev.of_node;
++	void (*init_func)(struct device_node *np);
++
++	init_func = of_device_get_match_data(dev);
++	if (!init_func)
++		return -ENODEV;
++
++	init_func(np);
++
++	return 0;
++}
++
++static struct platform_driver hi3670_clk_driver = {
++	.probe          = hi3670_clk_probe,
++	.driver         = {
++		.name   = "hi3670-clk",
++		.of_match_table = hi3670_clk_match_table,
++	},
++};
++
++static int __init hi3670_clk_init(void)
++{
++	return platform_driver_register(&hi3670_clk_driver);
++}
++core_initcall(hi3670_clk_init);
 -- 
 2.17.1
 
