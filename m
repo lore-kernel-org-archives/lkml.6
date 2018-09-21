@@ -2,164 +2,117 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0985FC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4414FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86E1B206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:20:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfgKBVwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E1B206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 975DE206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:22:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975DE206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390506AbeIUWJw (ORCPT
+        id S2390445AbeIUWMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:09:52 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34952 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeIUWJv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:09:51 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x20-v6so11954618lfg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fN2MyFbI6pwyHbFgq1mWh1sheEyEx/X06GhcwDaS3tY=;
-        b=DfgKBVwbtkBqYDc9RHOXR/uRcb4rY7dgwel0sK0DLY+Q4HlMqHFdZkoBqevyaiXgp6
-         2q5nFC0/6dhZ7hOjwjMqoQKOX0+gXSFORtQvvXIJf85u7CqViZ1etD/79m2n9bcOOCEU
-         gfglQw4f94wvxT3naXYvxVz7+HrMmwlcFya26hXAl3CK1VCD3PAdXpmK1uH2kzo+MAaO
-         Ew/Q+CJq08LJktMu5eqmL9b23x1iLMbbR1/kOTCIVG1b4CpkTeq1s8uAw0JMFzKqvd50
-         nM2zYWFDGpTe9+W0aUNfzSx0PJrCDxhPzT719m2tRyBmegjoZvXYIo9jaVhnPVcfVaAW
-         bolA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fN2MyFbI6pwyHbFgq1mWh1sheEyEx/X06GhcwDaS3tY=;
-        b=tXe7cDbZAvjdUcfr1UJC+TdTsGeRGKeswmCj25ZNnIiSNTNQ9qaharSjiYHdgEyrW5
-         QMQlejn7XQrUwgWK9hBuUle3eOYHGMxCh5+AtdCPdSsmLqz127pXtSjKytxzhLf3sVCW
-         fq6lw6K8MyXXvKN8JDD4RofahmkOFWTZrOe3OB/EPu56t05+BOydpArNHG7txNNzQfjK
-         ptZj53bq7UGw0HpJE1TM5ZSsjlMwm/dOsjU8styelN+p04VqPgej97gsjEriAtQQyNjT
-         uH3ktLTz3j1u1gIrmUR05IEIiYIDt95vVV+JYTqw3PT69mBF9/l30jc7tvTW4OP5MV7B
-         qFDw==
-X-Gm-Message-State: APzg51Dq6X3L8IX3Ild4zAQUBUBMEvzQlUZVWEnoRAAwXH6S0+jiTwv5
-        oeRuM30zvluN99oSV6yiUZgvLG9XII0YfgFoTf4=
-X-Google-Smtp-Source: ANB0Vdb+b+ooholNc2yR8buXuBglYz5faRgV1CVPOJoHaaMEhcM5D3Lhys+5Fq6O3phQtVtAEx9AAhr6LRdL1SPQa4E=
-X-Received: by 2002:a19:6719:: with SMTP id b25-v6mr6587546lfc.54.1537546813432;
- Fri, 21 Sep 2018 09:20:13 -0700 (PDT)
+        Fri, 21 Sep 2018 18:12:15 -0400
+Received: from mga17.intel.com ([192.55.52.151]:4566 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728149AbeIUWMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:12:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:22:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="92590881"
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga001.jf.intel.com with ESMTP; 21 Sep 2018 09:22:29 -0700
+Subject: Re: [patch V3 02/11] x86/mm/cpa: Split, rename and clean up
+ try_preserve_large_page()
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180917142906.384767038@linutronix.de>
+ <20180917143545.830507216@linutronix.de>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Bin Yang <bin.yang@intel.com>,
+        Mark Gross <mark.gross@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <6837c585-3504-8652-f700-6cd4829565cb@intel.com>
+Date:   Fri, 21 Sep 2018 09:22:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180920191254.GA22764@jordon-HP-15-Notebook-PC>
- <6fa7d32b-07f0-ab6d-8053-021b171153e6@virtuozzo.com> <CAFqt6zbp8wynKqFRyp3Q55Scoi9ojfdCVkMrxC4w9qxPxWMXGQ@mail.gmail.com>
- <68b8cbf3-1b5a-2311-ac09-a8676280e85e@virtuozzo.com> <CAFqt6za6VJ7vmWEqg4JGWqRiqbfc6GYDnpUeBQ+03xdY51-GQA@mail.gmail.com>
- <0c3d2ba2-29dc-ed02-0919-54d1d76a1eb1@virtuozzo.com>
-In-Reply-To: <0c3d2ba2-29dc-ed02-0919-54d1d76a1eb1@virtuozzo.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 21 Sep 2018 21:50:00 +0530
-Message-ID: <CAFqt6zbzikDrj5+o=YpbQF3OQtSUiXL=7WTq1KF8GE5WVvz-8w@mail.gmail.com>
-Subject: Re: [PATCH] kernel/kcov: Replace vm_insert_page with vmf_insert_page
-To:     aryabinin@virtuozzo.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>, tchibo@google.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180917143545.830507216@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 8:14 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->
->
->
-> On 09/21/2018 04:25 PM, Souptick Joarder wrote:
-> > On Fri, Sep 21, 2018 at 5:22 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
-> >> On 09/21/2018 01:03 PM, Souptick Joarder wrote:
-> >>> On Fri, Sep 21, 2018 at 3:06 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
-> >>>>
-> >>>> On 09/20/2018 10:12 PM, Souptick Joarder wrote:
-> >>>>> @@ -293,8 +293,9 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
-> >>>>>               spin_unlock(&kcov->lock);
-> >>>>>               for (off = 0; off < size; off += PAGE_SIZE) {
-> >>>>>                       page = vmalloc_to_page(kcov->area + off);
-> >>>>> -                     if (vm_insert_page(vma, vma->vm_start + off, page))
-> >>>>> -                             WARN_ONCE(1, "vm_insert_page() failed");
-> >>>>> +                     if (vmf_insert_page(vma, vma->vm_start + off, page)
-> >>>>> +                                     != VM_FAULT_NOPAGE)
-> >>>>> +                             WARN_ONCE(1, "vmf_insert_page() failed");
-> >>>>
-> >>>> Nack, don't see the reason for such change, it only makes code worse.
-> >>>
-> >>> Yes, it needed.
-> >>
-> >> No, it's not needed. vm_insert_page() works perfectly fine here.
-> >>
-> >>> Going forward vm_insert_page will be converted to
-> >>> vmf_insert_page. As part of it, this code has to be converted to use
-> >>> vmf_insert_page().
-> >>
-> >> This doesn't explain why such conversion would make sense for kcov_mmap().
-> >
-> > vm_insert_page used to return errno which individual drivers have to
-> > map to VM_FAULT_CODE.
-> > There were also places where return value of vm_insert_page was
-> > ignored and return a
-> > TRUE value.
-> >
-> > As part of vm_fault_t migration patches, we have identified and clean
-> > up all these.
-> > The plan was to introduce inline wrapper vmf_insert_page(), convert all
-> > the page fault handlers to use it and then convert vm_insert_page to
-> > vmf_insert_page. By now we have converted all the page fault handlers
-> > to use this API.
-> >
-> > Still their are few places where vm_insert_page is called outside fault handlers
-> > context to map kernel page to user vma and kernel/kcov.c is one of them.
-> >
-> > Now removing vm_insert_page from those few places one by one.
-> >
-> > Going forward vm_insert_page will be removed from kernel permanently,
-> > so that new drivers can't use this API and create new errno to VM_FAULT_CODE
-> > mapping code.
-> >
->
-> So, to avoid addition of new code that converts errno->VM_FAULT_* you propose to add
-> new code that does the opposite - converts VM_FAULT_* to errno? How is that better?
+On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
+> Avoid the extra variable and gotos by splitting the function into the
+> actual algorithm and a callable function which contains the lock
+> protection.
+> 
+> Rename it to should_split_large_page() while at it so the return values make
+> actually sense.
+> 
+> Clean up the code flow, comments and general whitespace damage while at it. No
+> functional change.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-I didn't propose that. It's not a better idea.
-And from fault handlers prospective, with these changes, fault handlers code
-will only return VM_FAULT_CODE not errno.
+This one is getting a wee bit hard to follow from the diff, but the
+cleanup and rename looks nice.
 
->
-> And what function is going to be next? pte_none()? It is also used in fault handlers.
-> Are there going to be vmf_pte_none() and complete removal of pte_none() "so that new drivers
-> can't use pte_none() and create new pte_none() to VM_FAULT_CODE mapping code"?
-
-vmf_insert_{pfn, page, mixed} are the functions which are planned to change.
-vmf_insert_{pfn,mixed} are merged into linux-next.
-There is no plan for any other functions.
-
->
-
-> Don't you see that how that doesn't make any sense?
-> Want vmf_insert_page() for easier error handling in fault handlers? - fine, use it in fault handlers.
-> But leave the vm_insert_page() for the code that has nothing to do with fault handling.
-
-If we leave vm_insert_page() for the code other than fault handling,
-then drivers writer will
-have choice to use this API in fault handlers context in future which
-need to be blocked.
-
-How can we block driver writer not to use vm_insert_page in fault
-handlers context ??
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
