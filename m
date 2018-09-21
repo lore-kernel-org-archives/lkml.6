@@ -2,145 +2,128 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76205C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD591ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2267121568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67C2921477
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:11:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8ePzOsj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2267121568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="CsjcEkpO";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="cjmq50Lb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C2921477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391131AbeIUXzB (ORCPT
+        id S2391053AbeIVABk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:55:01 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53064 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389545AbeIUXzB (ORCPT
+        Fri, 21 Sep 2018 20:01:40 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43254 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390180AbeIVABj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:55:01 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y139-v6so3915986wmc.2;
-        Fri, 21 Sep 2018 11:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ncB+MGwqY7VHZh1ATcJuf5QPS2cGQq1ixMcF/IGDplY=;
-        b=e8ePzOsjkH54ywyv6nd8tY3615XPpSTGyHoIOXIWyw9fGgE36dteGLaUOKpSlH2zpZ
-         KvhencsM5PSg4MSeSZ2q6ZEb+FXsVENlywLXUJCeEwETAKi16uzvd8KZlzBzoMo/M/Ge
-         IKVUQMl7bZtdACIHAZ9exlaAiY2pS5E3Hk+zrCtF2j19ORu1Pcg3bglm7Z0qUpP3/217
-         YL0D5i/ApOllEs8S8bq4Bpv0kr5YSqP/Gr1Rt7JaFIpQIL4ZCvikwTHkRTrunpsIDn8f
-         CMQjbImDZp0a1u8ZP4LhTvdPGnsUC1BLPRVhBrlWlFWJSU0eBC+UEyIK9H0lSm6k6Jz+
-         Ezqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ncB+MGwqY7VHZh1ATcJuf5QPS2cGQq1ixMcF/IGDplY=;
-        b=ccBL2VASy1D0fBStyHgJzAee3rru/+ppAyLstiK9iFKIdcLeCZCCXX+ATgYpjP95uB
-         03U5QhNyuLeIbIQmNZSU9W3S8XPx3PGOyJQqhRwthsuLg3QX5V8EeLFgr3Uw+DIzo2Q2
-         yeQKOhcUVBONudr632YXvEDXUGyswAHvFEhwgvCTQqWv96mLvjAyOOMAxhCesJuTH5TN
-         A+Vx23jG1LcLYjzBsc8p8arK5Y3isUVyUzMSmFGAx1DoZomfD4TJ0sAW/Eydi/ECPd87
-         sQG2eINyW3tc8ORhEaBK7zwEfmb8k/JhoV/V9aDqFF/gaWgmBm03SFREgo1fQswVc76I
-         h6KQ==
-X-Gm-Message-State: APzg51CrH71a2wJ1U/hXBP8Q2INWmKiv4Emuy9XaaTTWPNN9Yh4B9tYk
-        jdkDYR4U1wXRVw/ZeGyq3Gs=
-X-Google-Smtp-Source: ANB0VdbyYUWSaTo1DdT8HRWt6xVUla9v0Drm/lXNDfgkWqXoiOaG5WiFa9QuUQUDEjNd1ZJ8HAGaiw==
-X-Received: by 2002:a1c:66d5:: with SMTP id a204-v6mr1638770wmc.159.1537553098602;
-        Fri, 21 Sep 2018 11:04:58 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id q200-v6sm8322606wmd.2.2018.09.21.11.04.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 11:04:57 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] RDS: IB: Use DEFINE_PER_CPU_SHARED_ALIGNED for rds_ib_stats
-Date:   Fri, 21 Sep 2018 11:04:51 -0700
-Message-Id: <20180921180451.18711-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 20:01:39 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LI8iqB024381;
+        Fri, 21 Sep 2018 11:11:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=Zj5CiHThsVkmX/0oR8TSf7mAicLUayJgRSkMFigYYRk=;
+ b=CsjcEkpOibG7cS7H8aM+MFthjAHz4/m+MP788w37rKUriL7vpp9oDIP8Y0dZn8IZvimJ
+ 3EwL31Bly0pkNT1NLRUCBTvb9vs2zKTGlzdDDPHDMY1PAJwP1u9Np+NM/89SfrwkhJyk
+ T7ooi1bwtGozIsy8MaFPvyozTqK25TOLqAQ= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2mn5e5g215-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 21 Sep 2018 11:11:21 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.19) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Fri, 21 Sep 2018 11:11:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zj5CiHThsVkmX/0oR8TSf7mAicLUayJgRSkMFigYYRk=;
+ b=cjmq50LbxauFyDQTuOrpu/GaZy+YouwTHXuBROj5c2NEF33q9jwiUjwHHTvRV5eVvTuBu6KanIgELUe6yP+2cZsKswJmhItaclc0fOpYQdQG2rA28nSjUbAx/b6aQ6Ndx+bN+fyroAVaE5PZrqdWDsvP88TjBZ2vqhd/RE5psTU=
+Received: from MWHPR15MB1216.namprd15.prod.outlook.com (10.175.2.146) by
+ MWHPR15MB1725.namprd15.prod.outlook.com (10.174.254.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.17; Fri, 21 Sep 2018 18:11:18 +0000
+Received: from MWHPR15MB1216.namprd15.prod.outlook.com
+ ([fe80::65d8:2dfe:e7cf:8a9c]) by MWHPR15MB1216.namprd15.prod.outlook.com
+ ([fe80::65d8:2dfe:e7cf:8a9c%12]) with mapi id 15.20.1143.017; Fri, 21 Sep
+ 2018 18:11:16 +0000
+From:   Tao Ren <taoren@fb.com>
+To:     Lei YU <mine260309@gmail.com>, Joel Stanley <joel@jms.id.au>
+CC:     Christopher Covington <cov@fb.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Subject: Re: [PATCH] clocksource/drivers/fttmr010: fix set_next_event handler
+Thread-Topic: [PATCH] clocksource/drivers/fttmr010: fix set_next_event handler
+Thread-Index: AQHUUGYZopGOJgtP6kqMuhqvXVxY+KT5UT6A///lFQCAAOBzAIAALz2AgABO5YA=
+Date:   Fri, 21 Sep 2018 18:11:16 +0000
+Message-ID: <11647FAC-EF61-43F5-BBED-567AADA1D2C2@fb.com>
+References: <20180919221331.2511558-1-taoren@fb.com>
+ <CACRpkdZGjvLZY7snev5W2rRGgO7bQsSqn5u2v5Nw0tH9sa4yBw@mail.gmail.com>
+ <84F9ED20-0964-462E-B389-39B107A232D3@fb.com>
+ <CACPK8XeEZeMskkxNChhNSO+brpoPJ5FqweWNXe22BpyytwCwFw@mail.gmail.com>
+ <CAARXrtmpUn3DKguiQSubZvCM3sJ--QxtzoYVoEvC-81udH7BLA@mail.gmail.com>
+In-Reply-To: <CAARXrtmpUn3DKguiQSubZvCM3sJ--QxtzoYVoEvC-81udH7BLA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.e.1.180613
+x-originating-ip: [2620:10d:c090:200::6:ffc5]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1725;20:Xkj7bjJxbFN2cimJ+7HTbta1g/P0jjZhgV7dRvm5jAlFcZp9gj9WkkBufY9+tQDa3Z/wlR7ckhQIztakkmH0TA27vPEJE89r+YiCPjT5cFMy3dqIr6SCnIYdHBJLPDjWmD1e3+p+GhZ5bL7/B1J9K4+oprm0pulL9UJlUPFehSw=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(39860400002)(396003)(346002)(136003)(366004)(376002)(189003)(199004)(68736007)(81156014)(256004)(33656002)(305945005)(106356001)(46003)(99286004)(86362001)(105586002)(25786009)(6436002)(8936002)(81166006)(6486002)(36756003)(102836004)(6506007)(186003)(478600001)(53546011)(14454004)(8676002)(229853002)(110136005)(4326008)(5660300001)(11346002)(7736002)(54906003)(316002)(446003)(5250100002)(93886005)(58126008)(82746002)(2900100001)(6512007)(6246003)(486006)(97736004)(53936002)(39060400002)(6116002)(2616005)(2906002)(76176011)(476003)(71200400001)(71190400001)(83716004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1725;H:MWHPR15MB1216.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 77f5a86f-868c-4e4a-e63b-08d61fed9fdd
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1725;
+x-ms-traffictypediagnostic: MWHPR15MB1725:
+x-microsoft-antispam-prvs: <MWHPR15MB1725ACBF8FC6A63FF73CC79EB2120@MWHPR15MB1725.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231355)(11241501184)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(201708071742011)(7699051);SRVR:MWHPR15MB1725;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1725;
+x-forefront-prvs: 0802ADD973
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: VS/NEwZLNdntHuwtPytNis8c9ksgBWR2uVsMLHA8SGUDlLG4vyHEyCaR2Yv516Ft4Z61JDmSaqUb9wVCcm1eFSBdrTS0Z2MmIrXUqp7SfxCnOWiC5x+YdcIAz0zFuoMHlFglPRhUIe7yv/OVGj/sFOcFBVXkz42iaavX8D6QC+ZK0vIWOh5nJETgOsfU+Yi0izzmyvjpImoG03pCCeKy5FWN9i87uXwpW65w4ng0upG/5qeYCmSMqR3hJeUpl23X0TrUyaKGuzZgRYsGRC+U4wIMSBZueFKoDkwSLlValwlXmnGYZx369Ef3t1xvgPs2tpt7Fx0yMd3zieFm5oXNaDUv0qNJTBTH2eqeHjdedLo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <076479100D4B994ABF1D1B704762DB9B@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77f5a86f-868c-4e4a-e63b-08d61fed9fdd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 18:11:16.5730
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1725
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when two declarations' section attributes don't match.
-
-net/rds/ib_stats.c:40:1: warning: section does not match previous
-declaration [-Wsection]
-DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
-^
-./include/linux/percpu-defs.h:142:2: note: expanded from macro
-'DEFINE_PER_CPU_SHARED_ALIGNED'
-        DEFINE_PER_CPU_SECTION(type, name,
-PER_CPU_SHARED_ALIGNED_SECTION) \
-        ^
-./include/linux/percpu-defs.h:93:9: note: expanded from macro
-'DEFINE_PER_CPU_SECTION'
-        extern __PCPU_ATTRS(sec) __typeof__(type) name;
-\
-               ^
-./include/linux/percpu-defs.h:49:26: note: expanded from macro
-'__PCPU_ATTRS'
-        __percpu __attribute__((section(PER_CPU_BASE_SECTION sec)))
-\
-                                ^
-net/rds/ib.h:446:1: note: previous attribute is here
-DECLARE_PER_CPU(struct rds_ib_statistics, rds_ib_stats);
-^
-./include/linux/percpu-defs.h:111:2: note: expanded from macro
-'DECLARE_PER_CPU'
-        DECLARE_PER_CPU_SECTION(type, name, "")
-        ^
-./include/linux/percpu-defs.h:87:9: note: expanded from macro
-'DECLARE_PER_CPU_SECTION'
-        extern __PCPU_ATTRS(sec) __typeof__(type) name
-               ^
-./include/linux/percpu-defs.h:49:26: note: expanded from macro
-'__PCPU_ATTRS'
-        __percpu __attribute__((section(PER_CPU_BASE_SECTION sec)))
-\
-                                ^
-1 warning generated.
-
-The initial definition was added in commit ec16227e1414 ("RDS/IB:
-Infiniband transport") and the cache aligned definition was added in
-commit e6babe4cc4ce ("RDS/IB: Stats and sysctls") right after. The
-definition probably should have been updated in net/rds/ib.h, which is
-what this patch does.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/114
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- net/rds/ib.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/rds/ib.h b/net/rds/ib.h
-index 73427ff439f9..fd483760c910 100644
---- a/net/rds/ib.h
-+++ b/net/rds/ib.h
-@@ -443,7 +443,7 @@ int rds_ib_send_grab_credits(struct rds_ib_connection *ic, u32 wanted,
- int rds_ib_xmit_atomic(struct rds_connection *conn, struct rm_atomic_op *op);
- 
- /* ib_stats.c */
--DECLARE_PER_CPU(struct rds_ib_statistics, rds_ib_stats);
-+DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
- #define rds_ib_stats_inc(member) rds_stats_inc_which(rds_ib_stats, member)
- #define rds_ib_stats_add(member, count) \
- 		rds_stats_add_which(rds_ib_stats, member, count)
--- 
-2.19.0
-
+T24gOS8yMC8xOCwgMTE6MjIgUE0sICJMZWkgWVUiIDxtaW5lMjYwMzA5QGdtYWlsLmNvbT4gd3Jv
+dGU6DQoNCj4gVGVzdGVkIG9uIFBhbG1ldHRvIChPcGVuUE9XRVIgUDggd2l0aCBBU1QyNDAwKSwg
+YW5kIGl0IGRvZXMgc2hvdyB0aGUgZml4IGlzDQo+IHdvcmtpbmcgb24gQVNUMjQwMCBhcyB3ZWxs
+Lg0KPiBXaXRob3V0IHRoZSBwYXRjaCwgdXNsZWVwKDEwMCkgdGFrZXMgdGVucyBvZiBtaWxsaXNl
+Y29uZHMgcmFuZG9tbHk7DQo+IFdpdGggdGhlIHBhdGNoLCB1c2xlZXAoMTAwKSB0YWtlcyBhYm91
+dCA2MDB+NzAwIG1pY3Jvc2Vjb25kcyBzdGFibHkuIA0KPg0KPiBUZXN0ZWQtYnk6IExlaSBZVSA8
+bWluZTI2MDMwOUBnbWFpbC5jb20+DQoNClRoYW5rIHlvdSBMZWkgZm9yIHRoZSB0ZXN0aW5nIQ0K
+DQoNClRoYW5rcywNClRhbyBSZW4NCiAgICANCg0K
