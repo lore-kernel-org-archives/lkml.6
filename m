@@ -2,164 +2,107 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B245ECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41859C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07F321547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8FE72154B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:24:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBByRskv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07F321547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jXPWyvDc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8FE72154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388784AbeIUGIl (ORCPT
+        id S2388801AbeIUGLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 02:08:41 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40892 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbeIUGIk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 02:08:40 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 207-v6so1285334wme.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 17:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Hh6HTNy35PJxwngHAefSZoSMPmBidzJyODDsLqBzl6E=;
-        b=MBByRskvpWJCaxryLF5DLKsfmDtYGgYzL6VqJ5NHiGyFGv0IsFvU8FE3OlTt6ydhzM
-         eBwcNpR9hyhna9HtNVNnAfDk/Ws2Oc2IF8+E8JDHYOrGDxL/oj0fyDW4tSbboNGELVlA
-         QaUkTgd43zjMjTVanICV0AYhWtnrnLAXBFjWCg1mL22CSk6sjrhuqWNLwgVGOVi+RL4o
-         NZHZG85SYwvN1vOkgRM1vGKbpeSV/CcMp9RUZqfyEijXyFTwsEJKDLb7ORz5djIULKg/
-         tKzgkEnvZ/O8pWqeayHDvA/0DhSRoxXcXTFtO06TVlsCXFTeRgMYI9V7OJ12nRE0dbYt
-         fIXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Hh6HTNy35PJxwngHAefSZoSMPmBidzJyODDsLqBzl6E=;
-        b=Qj/4F6cGMCrZ6n3nr+XdARMto+uWmuX2ordaDD27sygyi2+AP2rbhCBHH3NXhs5onI
-         Y0aA06S4qEQ+CE7fT9t+B2S8d6jzHIauO9acVDBXStZe1zyciV0JCgvLwieO8hObpUiT
-         0h3/UjL8f0gq3cFYu1RDbLRodgWUDT5II8yBkn2euqKMTOTXJ/GxAQopMHDnBm4E8AUK
-         ta/4yKeD81dLvT6UtE+TnS00sfy+1qRK3mKOIGLYM/1r6JX7/XvbfJT+ZqoZmHUyAKER
-         YXryYU7FwaIMxnHcRX4g20GWOou/N6ChER4FNoY8KdhzYPqAd1q3+Hs7+4KGWDfY3nPV
-         wXYQ==
-X-Gm-Message-State: APzg51CYPavRf5QlmLiVBknkx1znKNcCvr05wl/QPPlmvncuo78TJhPY
-        iM2/FveVAp5GbvH8dU0Q+MQ=
-X-Google-Smtp-Source: ANB0VdZKn+eIoG0q7vHY7oSmd8XUpw+hsamDAfr+wX9SQloQZmfug+9WMGwy6veKB/BOtDYtOjngAA==
-X-Received: by 2002:a1c:ac1:: with SMTP id 184-v6mr4644133wmk.119.1537489351307;
-        Thu, 20 Sep 2018 17:22:31 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm6556376wmb.10.2018.09.20.17.22.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 17:22:30 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: Simplify memcmp logical checks
-Date:   Thu, 20 Sep 2018 17:22:21 -0700
-Message-Id: <20180921002221.14424-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 02:11:04 -0400
+Received: from ozlabs.org ([203.11.71.1]:49947 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725855AbeIUGLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 02:11:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42GZ9c6b0tz9sBJ;
+        Fri, 21 Sep 2018 10:24:52 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537489494;
+        bh=e6lkNMgSJU9LWVisD4XKHSdM/ZLMRmnQDqGFSltQGgM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jXPWyvDcrjnm/CdvsdZb3+jhKGjtf0o96JvPqFnWc8kdeUdVP6/73r6d2baqh0E7g
+         siWIGX02hmMnHfNwS8tY0b7FaSGagLF6DfxpLz/JACl8G6znm1TqgLl/lNg1J19r+i
+         EK/QHVs5SmMt/zfHYJJa5hJJz0NlL6VnrZnQoLWAScOfeJFcZpakk3Vc7nYP8L8GMe
+         TapswL0WHLpIX7kr60d3Udc+ymK8apiLEpLUOuZ7DuwQIFOipE8VAt6VvLP5LL4GzZ
+         /ddduxI9BmcX+ge3ua7qllX3iKlXZjv37CE2mUvfn4w1bb5BCoJ5B3aBeNrK2UseNk
+         2Bj12FKiXxsHw==
+Date:   Fri, 21 Sep 2018 10:24:52 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20180921102452.3dc420eb@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/oQeBqtk5vkmsq5NRg7ZB/pV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang generates a warning when it sees a logical not followed by a
-conditional operator like ==, >, or < because it thinks that the logical
-not should be applied to the whole statement:
+--Sig_/oQeBqtk5vkmsq5NRg7ZB/pV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/staging/rtl8188eu/core/rtw_ieee80211.c:293:8: warning: logical
-not is only applied to the left hand side of this comparison
-[-Wlogical-not-parentheses]
+Hi all,
 
-It assumes the author might have made a mistake in their logic:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-if (!a == b) -> if (!(a == b))
+  net/batman-adv/main.h
 
-Sometimes that is the case; other times, it's just a super convoluted
-way of saying 'if (a)' when b = 0:
+between commit:
 
-if (!1 == 0) -> if (0 == 0) -> if (true)
+  dabeb13eee81 ("batman-adv: Increase version number to 2018.3")
 
-Alternatively:
+from the net tree and commit:
 
-if (!1 == 0) -> if (!!1) -> if (1)
+  138c72efbd5d ("batman-adv: Start new development cycle")
 
-Simplify these comparisons so that Clang doesn't complain.
+from the net-next tree.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/161
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_ieee80211.c | 2 +-
- drivers/staging/rtl8188eu/core/rtw_mlme.c      | 2 +-
- drivers/staging/rtl8188eu/core/rtw_recv.c      | 4 ++--
- drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+I fixed it up (I used the net-next tree version) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-index 9e5c7e62d26f..20f34d25c369 100644
---- a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-@@ -284,7 +284,7 @@ unsigned char *rtw_get_wpa_ie(unsigned char *pie, uint *wpa_ie_len, int limit)
- 
- 		if (pbuf) {
- 			/* check if oui matches... */
--			if (!memcmp((pbuf + 2), wpa_oui_type, sizeof(wpa_oui_type)) == false)
-+			if (memcmp((pbuf + 2), wpa_oui_type, sizeof(wpa_oui_type)))
- 				goto check_next_ie;
- 
- 			/* check version... */
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index ef8a7dc4bd34..43d6513484c5 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -1437,7 +1437,7 @@ static int rtw_check_join_candidate(struct mlme_priv *pmlmepriv
- 	/* check ssid, if needed */
- 	if (pmlmepriv->assoc_ssid.SsidLength) {
- 		if (competitor->network.Ssid.SsidLength != pmlmepriv->assoc_ssid.SsidLength ||
--		    !memcmp(competitor->network.Ssid.Ssid, pmlmepriv->assoc_ssid.Ssid, pmlmepriv->assoc_ssid.SsidLength) == false)
-+		    memcmp(competitor->network.Ssid.Ssid, pmlmepriv->assoc_ssid.Ssid, pmlmepriv->assoc_ssid.SsidLength))
- 			goto exit;
- 	}
- 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_recv.c b/drivers/staging/rtl8188eu/core/rtw_recv.c
-index ab9638d618a9..f3eb63f8cf0b 100644
---- a/drivers/staging/rtl8188eu/core/rtw_recv.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_recv.c
-@@ -1283,8 +1283,8 @@ static int wlanhdr_to_ethhdr(struct recv_frame *precvframe)
- 	psnap_type = ptr+pattrib->hdrlen + pattrib->iv_len+SNAP_SIZE;
- 	/* convert hdr + possible LLC headers into Ethernet header */
- 	if ((!memcmp(psnap, rtw_rfc1042_header, SNAP_SIZE) &&
--	     (!memcmp(psnap_type, SNAP_ETH_TYPE_IPX, 2) == false) &&
--	     (!memcmp(psnap_type, SNAP_ETH_TYPE_APPLETALK_AARP, 2) == false)) ||
-+	     memcmp(psnap_type, SNAP_ETH_TYPE_IPX, 2) &&
-+	     memcmp(psnap_type, SNAP_ETH_TYPE_APPLETALK_AARP, 2)) ||
- 	     !memcmp(psnap, rtw_bridge_tunnel_header, SNAP_SIZE)) {
- 		/* remove RFC1042 or Bridge-Tunnel encapsulation and replace EtherType */
- 		bsnaphdr = true;
-diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-index fb496ab5a862..51cf78150168 100644
---- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-@@ -856,7 +856,7 @@ int rtw_check_bcn_info(struct adapter  *Adapter, u8 *pframe, u32 packet_len)
- 		return _FAIL;
- 	}
- 
--	if (!memcmp(cur_network->network.MacAddress, pbssid, 6) == false) {
-+	if (memcmp(cur_network->network.MacAddress, pbssid, 6) {
- 		DBG_88E("Oops: rtw_check_network_encrypt linked but recv other bssid bcn\n%pM %pM\n",
- 			(pbssid), (cur_network->network.MacAddress));
- 		return true;
--- 
-2.19.0
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/oQeBqtk5vkmsq5NRg7ZB/pV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlukOlQACgkQAVBC80lX
+0GygNAf9GTl6GKZUf94KAp77yBer0PyPtBCpvEwjl5omlFQ+q3t2j0MeH+8xSt2d
+n9O+E4xjcA01AR4DjWW80V/HS0elKA2Mt3fum5Whzo0pG+zor04Vjc5S6KDH+XXC
+lPSfTnFqrQQprPe45UHdJ4A3OifvPDJ4yaBuYZT1SMvED+gnOqFdnOq/cx0bhl6y
+CPpCSOlwyVYaOP3Z3duS7DROQ+ZiagQzjKYHpk0usvJI1LMk8sJ1bbiAVgL55qZW
++rkDL0u4rWP54yY3wZhaIZIQ3IazwjonaJTsjPU06gneMKssTAlgNYDisrJcYsUu
+Ikysj+n4qtOuF08pMuie1bGzzTEHtg==
+=KFIg
+-----END PGP SIGNATURE-----
+
+--Sig_/oQeBqtk5vkmsq5NRg7ZB/pV--
