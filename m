@@ -2,102 +2,133 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AF6C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76443C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89FC821547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30CC82147C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:10:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0T0fVjg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89FC821547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gf6yfDKx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CC82147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388841AbeIUG4M (ORCPT
+        id S2388885AbeIUG41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 02:56:12 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45080 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbeIUG4M (ORCPT
+        Fri, 21 Sep 2018 02:56:27 -0400
+Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:44590 "EHLO
+        sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388850AbeIUG41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 02:56:12 -0400
-Received: by mail-yb1-f195.google.com with SMTP id d9-v6so4757172ybr.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 18:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=vVqP0ZWyf01ZJq/LrATf0sGns5mN1Fx+TbfLIQLpbB4=;
-        b=X0T0fVjgqz83GOjjV3YixCZVhl48S/FHWNetLDzUFgTHfxUOriPlA4aYW00ufi39kw
-         EUVEI99L3EslTMqhNBJcorSa6PfpDnAqpgnLKjeLtTccU5spPamGfbQcl5QPvDH0QjRu
-         SL5ANGNufuqnruz8AoQ7bU0AxWv3bR0LXPvsH8g7xtuMHp4gD2JHUb3bFVpxjXri8aWT
-         Lksas93fD59LwgO7josi/3YPPlsnuKVeqXlqUCaM2KPcHTOFxyHlU64FLxVPJyacvp9B
-         57g8lRPloOxiTS5xOz5bf4oTkvTWaoE5xoB/J8VBIgAkq2OFIDnDKr3AE6qacUmANt9P
-         sdzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vVqP0ZWyf01ZJq/LrATf0sGns5mN1Fx+TbfLIQLpbB4=;
-        b=t2vAuGpOwt/uDr5A1PugYzZG20cGasXU6nFHv3gd9ms0w8Jb09/u9WGznPQ7hLVq/V
-         G4qJpiLIvCkylldVidv8P4/tjJ2JBECBWJqybpF1ansjHnSxqCebpqZIotNVHUaWO0il
-         VH+F4GYW0ZwqTJkaSwWWI9zXiGD1novG4n4Mgso31yQuzDmSz0tddmpj+bq2IZ/JOpx8
-         e3ytitBzV4yj6FM+oLxAGQC7cEW1CJhia//pbZA366oQGW1eBSqXKgHzgb38Rw+S4CSC
-         HkuosGmcLW+0WyzYYmzaxkI3sJ27WZ2BbGdgTBd/GyCV4hik6ppFKvbJ2wGd5yjG4QTg
-         sBtQ==
-X-Gm-Message-State: APzg51A00D0+vs9hNK98BU1DOVpVDQRWhIaOtDFGo0tsL+VFoahTwG1F
-        qbPPCkUO0Ft/QyY423nTgI79px4=
-X-Google-Smtp-Source: ANB0VdbGuWjyLmcHd3VhXqJDKmd93iuYk7CUmRKaWNVSDSbw9SU27d4AhFy0q+830SIqsK1V6arx5w==
-X-Received: by 2002:a25:b906:: with SMTP id x6-v6mr19722055ybj.309.1537492195784;
-        Thu, 20 Sep 2018 18:09:55 -0700 (PDT)
-Received: from gabell.redhat.com ([2601:18f:600:d880:b4e9:4651:58aa:d5a3])
-        by smtp.gmail.com with ESMTPSA id v126-v6sm5270594ywe.45.2018.09.20.18.09.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 18:09:54 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] perf/x86/intel/uncore: Use boot_cpu_data.logical_proc_id as the pkg id
-Date:   Thu, 20 Sep 2018 21:07:46 -0400
-Message-Id: <20180921010746.32118-1-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Sep 2018 02:56:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537492209; bh=V+yMfFj1ICLwnW5PuD+WMkbCrrB6HKESCNC+Icgaf/8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=gf6yfDKxJPu1rZ2y6gK2+YojlfyczXW+uthqlLkKN6xSYlg10W7bzvwTDqz4os3v4MdC0hXuI1aea6Hi/0Edcru99glQInILRWQFDfpcaXDA0jMCmlNlLKBz2X3W60UbtSxtM1PGzzz2I04Dfk2ZN2NGT3If3NomV7EPmg/QGQUauXseUvifY9ajVLZcFs9YmGGjj+TR5+ydeSjFKqAyAlxXlp+eu9V+6jDYfdD5LpEBODx9eqTkApcspnY6y+Zl5h9y4LTBdmVOEUZkDtmn7Bh1Zk1x1PPuYcTr2h3D2ipFwN5dnhMHHxBPWBandjgKJx5ndRb9CFzeso6P9w7M2w==
+X-YMail-OSG: UGMaS1EVM1mVg6DvyMK1EmLqsRV4q67ttJ9sWrZ5uHyQVEauIeu434aYn7EOPy5
+ oqLn2Re34p1fYuJz43q_7N5IjTs6_MyyPwBBGnzs3lmQV.N.w6rSOnLwgOd.3XOvhOVNIlTu9ioZ
+ tpKX8czpQZ2PHhbPeqNAEscTIgeuX.xSNkv5tCEOHXdq1RXrszCSyBTqaWOuCezKLaTeBvvxDNp4
+ EEwx0vuQr0Smz.BmgQBZ6Ys7yiL0_cfa2ndli0cR6sUkrFgbTPoU6p97RzPG8O0LEPNKNfqspq1R
+ v4BKma2vcj9pOQDhYSLN0LaDvru97nrp3oS_C6SnvsbibRpqSOwRO8SxixDuueFgFd_HZ0UElvfM
+ exSCnLjbt33veUseBCKAfIiUaK3jg5gv5AvqlLojeCa4Q.Wpv4Wtai3NSmtjT6hfA1kf2o3mvQJt
+ DQffE4m3OVNGicI3GcWSXlxi5vLJpCKIoRR6vuKNvSf.Q8x9DRDvq8eUSZnEO4W8ZvaSg90RiGXj
+ WP0dE4HrAPE9CoftZuHz643MbJgLYp58StDXMypnikqaTC2qxhsfENozfIriWRDO_Dof6RN8sSfX
+ rEmryex33wHRw_OqBaSyINzFLpymKgg4_uub75TVoP03bNKafD3aLH5tRovmI5FMN2Lmi5_VOpFz
+ ZENQ3.9Vsv3Y8wHLEhkPVcTVDCOsJTCWoV.mHNaUfG5qBmXtbViiHS9O2XhfMhFQ1wqzmaOtvubK
+ Quj_oyqDtGlmRkQmCaiHgvVt.VsI0Fq7YawbLInHPXoaI42jdWwejNzEmJWvec.eMgeIVWxjlvuJ
+ T6JGHsM9CoskjM2hDOROqWSKL2Jwp1tTCKc62V.tHEQ5Ze5uS8nnFDOl7Gfb4OLrTF4DYffr3I.b
+ Kc_ZHFmugWsa0wOsQtkeObK1g.tsQpifu9imENOJKjk0k7UV4ibUOiKM3HRlNA60Ltupzfj66qnc
+ 7U6ZMRFt.48fxOdyuRl2O1Z1nFLYdvtvHZVuC3O6AszZSNQnyrOF_rUz0XDvt.whyX0DbeWgpz3T
+ iQG._ctbMREMuySrgojnGsHzgYtJ.y9_r
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Sep 2018 01:10:09 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp428.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6b2b85509dd71181d40a6ba179a93e22;
+          Fri, 21 Sep 2018 01:10:07 +0000 (UTC)
+Subject: Re: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
+ ordered initialization
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180920162338.21060-1-keescook@chromium.org>
+ <20180920162338.21060-27-keescook@chromium.org>
+ <a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
+ <CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
+Date:   Thu, 20 Sep 2018 18:10:03 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+On 9/20/2018 5:45 PM, Kees Cook wrote:
+> On Thu, Sep 20, 2018 at 5:25 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/20/2018 9:23 AM, Kees Cook wrote:
+>>>  config LSM_ORDER
+>>>       string "Default initialization order of builtin LSMs"
+>>> -     default "yama,loadpin,integrity"
+>>> +     default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
+>> If I want to compile all the major modules into my kernel and use
+>> AppArmor by default would I use
+>>
+>>         default "yama,loadpin,integrity,apparmor,selinux,smack,tomoyo"
+>>
+>> or
+>>
+>>         default "yama,loadpin,integrity,apparmor"
+> I was expecting the former, but the latter will have the same result.
+>
+>> When we have "blob-sharing" how could I compile in tomoyo,
+>> but exclude it without a boot line option?
+> Ooh, yes, this series has no way to do that. Perhaps
+> CONFIG_LSM_DISABLE in the same form as CONFIG_LSM_ORDER? I would
+> totally remove LoadPin's CONFIG for this in favor it.
 
-Physical package id 0 is not always exists. We should use
-boot_cpu_data.logical_proc_id directly as the pkg id here.
+I would generally prefer an optional CONFIG_LSM_ENABLE to
+CONFIG_LSM_DISABLE, but I understand the logic behind your
+approach. I would be looking for something like
 
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
----
- arch/x86/events/intel/uncore_snbep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+CONFIG LSM_ENABLE
+	string "Default set of enabled LSMs"
+	default ""
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 51d7c11..edaadac 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3061,7 +3061,7 @@ static struct event_constraint bdx_uncore_pcu_constraints[] = {
- 
- void bdx_uncore_cpu_init(void)
- {
--	int pkg = topology_phys_to_logical_pkg(0);
-+	int pkg = boot_cpu_data.logical_proc_id;
- 
- 	if (bdx_uncore_cbox.num_boxes > boot_cpu_data.x86_max_cores)
- 		bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
--- 
-2.19.0
+as opposed to
+
+CONFIG LSM_DISABLE
+	string "Default set of disabled LSMs"
+	default ""
+
+where an empty string is interpreted as "use 'em all" 
+in either case.
+
+>> When we have full stacking, how could I compile in selinux
+>> but exclude it?
+> Yup, same problem. Same suggested solution?
+>
+> Should lsm.enable/disable= also become a comma-separated list, or
+> should I leave it as a multi-instance thing like I have it?
+
+I prefer the multi-instance
+	lsm.disable=selinux lsm.disable=yama
+to the list
+	lsm.disable=selinux,yama
+
+but at this point I don't really care all that much.
 
