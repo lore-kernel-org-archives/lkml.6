@@ -2,270 +2,148 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625BFECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7FBC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFFAF20645
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:19:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFFAF20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AA2C21568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:20:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGJM6RkU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA2C21568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391311AbeIVFKK (ORCPT
+        id S2391549AbeIVFLw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 01:10:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53670 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725756AbeIVFKK (ORCPT
+        Sat, 22 Sep 2018 01:11:52 -0400
+Received: from mail-pg1-f175.google.com ([209.85.215.175]:35953 "EHLO
+        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbeIVFLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 01:10:10 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LNMvtC105225
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 19:23:28 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn89gkrkb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 19:23:28 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Fri, 21 Sep 2018 19:19:03 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Sep 2018 19:19:00 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LNIwfS27132068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 Sep 2018 23:18:58 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3217112061;
-        Fri, 21 Sep 2018 19:18:25 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C203B112064;
-        Fri, 21 Sep 2018 19:18:24 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Sep 2018 19:18:24 -0400 (EDT)
-Subject: Re: [PATCH v10 03/26] KVM: s390: refactor crypto initialization
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Fri, 21 Sep 2018 19:18:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Sat, 22 Sep 2018 01:11:52 -0400
+Received: by mail-pg1-f175.google.com with SMTP id d1-v6so6696734pgo.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 16:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=svdaMWwqpAS1oNT5kjabS4qPDgxbZdzSZEt2yzmIv28=;
+        b=SGJM6RkUeqa55Dqy/ZShrWe2IjkfTVXF6xqKIAiJgm0ta/cr1sQXUANcQe4ivJaXw2
+         lz+XT2AEoAC7fp1q5qU4bYwvIekDdsYlmiFIpK6JOZl3prr4musZhjCDQpPaLMWco+7h
+         Ya0uhWo920yv/7vSu/f2bZzbqoiZ32AFD2pDZh/Dowqp8IsU0E7w7oG6yNvkTu+X4mpy
+         at0gaWQMIa10SxtOfBM/RG9EYHdatHWBrVT93eZafQKbtQlk6NzGA/xMLLLvorr0d4o1
+         Q0rzUWBqXWUQlSoBH3/UEmTKAKYhuRO4f3MEhlp0rTK7g9FSoGPVhM3bJuXGyTI0d0c4
+         Ugpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=svdaMWwqpAS1oNT5kjabS4qPDgxbZdzSZEt2yzmIv28=;
+        b=NvApygZla7mJjDNSCA6OwYiFdBht6Dm3PU/yd2kcTyYIugLBItwdYR2FxRM1t+FIpc
+         QoVF75Y5oQNorWpT5vhtV/+gHRw5/fzeVw4LJhsTcMyqzdMrJVFNRgJAKJ7E14cV2mzj
+         5oNfnKViJCx26TjdqTFDj6Ge0VTiAYLaZ3jx4qdswENApJmDR5rPVsJY1hpwlVYXBqqb
+         ++pTBAG6tkH06Br/WsNFGRPbRV+pSqs9fLHLjqnkzEP1VOBd/LcFHz9m0+hVanF57oVK
+         vDJFzLwCVpJp/0UeaJfCtT1E5Nj+90QaZZNHhIqrv9HMaZVcm7tk8paGQXI2L8f5o5S7
+         f+5w==
+X-Gm-Message-State: APzg51BWAaHIEJEPb9Xi6yWcOUS5R4vtOe0DvrsDmZloshgvBioyuB48
+        UV1LFJx3w7oSlCZ+3m8R5qs=
+X-Google-Smtp-Source: ANB0VdYsK/H3Pg1uIEC0FR8daWdgE0kKNHYEsOKNAGrB2NvmUGSXr6vTb/Drb76ypOht0AVE/plFOw==
+X-Received: by 2002:a62:4f94:: with SMTP id f20-v6mr9546760pfj.60.1537572046919;
+        Fri, 21 Sep 2018 16:20:46 -0700 (PDT)
+Received: from gmail.com ([2605:e000:1117:c128:2e0:1bff:fe70:ea])
+        by smtp.gmail.com with ESMTPSA id u11-v6sm17436714pgj.71.2018.09.21.16.20.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Sep 2018 16:20:46 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 13:20:43 -1000
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "\\0xDynamite" <dreamingforward@gmail.com>,
+        "Frank Ch. Eigler" <fche@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Edward Cree <ec429@cantab.net>,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: Re: Code of Conduct: Let's revamp it.
+Message-ID: <20180921232043.zerybmhxgrjqimun@gmail.com>
+Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "\\0xDynamite" <dreamingforward@gmail.com>,
+        "Frank Ch. Eigler" <fche@redhat.com>,
+        Rik van Riel <riel@surriel.com>, Edward Cree <ec429@cantab.net>,
+        Olof Johansson <olof@lixom.net>, Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net>
+ <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
+ <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
+ <87zhwbj8xe.fsf@redhat.com>
+ <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+ <20180921231545.GC2966@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <1536781396-13601-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092123-0040-0000-0000-000004741CD3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009748; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01091739; UDB=6.00564117; IPR=6.00871764;
- MB=3.00023443; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-21 23:19:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092123-0041-0000-0000-0000087C1E45
-Message-Id: <e340e3ec-4f8f-1f7b-b2f5-6fec77c4c5f9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809210224
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ipavtfg5tcb2eg3b"
+Content-Disposition: inline
+In-Reply-To: <20180921231545.GC2966@thunk.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/12/2018 03:42 PM, Tony Krowiak wrote:
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> 
-> This patch refactors the code that initializes and sets up the
-> crypto configuration for a guest. The following changes are
-> implemented via this patch:
-> 
-> 1. Prior to the introduction of AP device virtualization, it
->     was not necessary to provide guest access to the CRYCB
->     unless the MSA extension 3 (MSAX3) facility was installed
->     on the host system. With the introduction of AP device
->     virtualization, the CRYCB must be made accessible to the
->     guest if the AP instructions are installed on the host
->     and are to be provided to the guest.
-> 
-> 2. Introduces a flag indicating AP instructions executed on
->     the guest shall be interpreted by the firmware. It is
->     initialized to indicate AP instructions are to be
->     to be interpreted and is used to set the SIE bit for
->     each vcpu during vcpu setup.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Acked-by: Janosch Frank <frankja@linux.ibm.com>
-> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->   arch/s390/include/asm/kvm_host.h |    2 +
->   arch/s390/include/uapi/asm/kvm.h |    1 +
->   arch/s390/kvm/kvm-s390.c         |   71 ++++++++++++++++++--------------------
->   3 files changed, 37 insertions(+), 37 deletions(-)
-> 
 
-(...)
+--ipavtfg5tcb2eg3b
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
-> index 9a50f02..8c23afc 100644
-> --- a/arch/s390/include/uapi/asm/kvm.h
-> +++ b/arch/s390/include/uapi/asm/kvm.h
-> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
->   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
->   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
->   #define KVM_S390_VM_CPU_FEAT_KSS	13
-> +#define KVM_S390_VM_CPU_FEAT_AP		14
->   struct kvm_s390_vm_cpu_feat {
->   	__u64 feat[16];
->   };
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 876fbb2..d717041 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -40,6 +40,7 @@
->   #include <asm/sclp.h>
->   #include <asm/cpacf.h>
->   #include <asm/timex.h>
-> +#include <asm/ap.h>
->   #include "kvm-s390.h"
->   #include "gaccess.h"
->   
+On Fri, Sep 21, 2018 at 07:15:45PM -0400, Theodore Y. Ts'o wrote:
+> People can decide who they want to respond to, but I'm going to gently
+> suggest that before people think about responding to a particular
+> e-mail, that they do a quick check using "git log --author=3Dxyzzy@exampl=
+e.com"
+> then decide how much someone appears to be a member of the community
+> before deciding how and whether their thoughts are relevant.
+>=20
+> There are a lot of strong feelings on this issue, and allowing people
+> who aren't members of the Linux kernel development community, to
+> escalate the rhetoric --- either in the pro- or anti- CoC direction,
+> and whether on mailing lists, github comment threads, Twitter, or
+> Reddit --- is not helpful.
 
-(...)
+I completely agree with this; very eagerly seconded.
 
-> @@ -2586,17 +2575,25 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->   
->   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->   {
-> -	if (!test_kvm_facility(vcpu->kvm, 76))
-> +	/*
-> +	 * If neither the AP instructions nor the MSAX3 facility are configured
-> +	 * for the guest, there is nothing to set up.
-> +	 */
-> +	if (!test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP) &&
-> +	    !test_kvm_facility(vcpu->kvm, 76))
->   		return;
->   
-> +	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->   	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
->   
-> +	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
-> +		vcpu->arch.sie_block->eca |= ECA_APIE;
-> +
-> +	/* Set up protected key support */
->   	if (vcpu->kvm->arch.crypto.aes_kw)
->   		vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->   	if (vcpu->kvm->arch.crypto.dea_kw)
->   		vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
-> -
-> -	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->   }
->   
->   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
-> 
+--=20
+Cheers,
+Joey Pabalinas
 
-The fixup! patch below modifies this patch (03/26) to illustrate how
+--ipavtfg5tcb2eg3b
+Content-Type: application/pgp-signature; name="signature.asc"
 
-David's recommendation will be implemented for v11 of the series. It
+-----BEGIN PGP SIGNATURE-----
 
-is one of three fixup! patches (the other two are in responses to
-11/26
-  and 25/26) included to generate discussion in v10 rather than
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlulfMsACgkQruvLfWhy
+VBmIbg/+M6N4c6HJWvt0fywaTLshk7d1aYJe5qUSSjRtGHwzwwinsVLgckUZI0as
+e+gGSuq8GqvNjNJ0Ux5ADszlOlcdn+ru6Bgt+vZwptwpoGvpVhsuJI6ooxcUwbTK
+OinFaujWn7cq7Mn1sqyctfmL239lGl22jkux+1JCK9igpvtniu3jnri4qKXuLThX
+OsR4CmvGQknPoxvqxFbQwqHTMFnswHwvIPieSUcZrlxvo3ZokPTUL42G/wf/WuBp
+ZOhbd6ASRWlPvpGarVG1WF/o7Nn6676VfTbY70cB7YSZFfPdHVaH9xgEArFfK/7U
+ZcRO02B5coQ4RocZNPzmXp+ApnKhK0vFKC9Rl1UqibvDY8QlFMLP2zEj89xvGGK+
+/6Dek7/rsJVgGQyOtUqA0vSF3C11ubOjGPKkkND6vhcz+4+59V30dCyb3h5GsmUS
+QrYKwvs24R8+Ayijak7R2/CqUFfQYb4jmFD/FTm+vWtAVIcRjeU5xrmiRPyASXXO
+TdqOvTbhsGTgKRq92YpOj4SXn9KUuEn05gNn+SDcydNXI6lkJ/j1CDsEJkCnVeBf
+UmrMT71zRKsUeimRNmqK/K6J3eVAWfNbS7y5SbQ7/5EZ5A9PAJ2pqnUSs9y5cZNN
+r38aYJsZYzilvkMQJGES5eGcO2vGwsgNVR8U3UVSQP3Msp533gA=
+=3Th7
+-----END PGP SIGNATURE-----
 
-waiting until v11 for comments.
-
------------------------------------8<-----------------------------------
-
-From: Tony Krowiak <akrowiak@linux.ibm.com>
-Date: Thu, 20 Sep 2018 12:26:08 -0400
-Subject: [FIXUP v10] fixup!: KVM: s390: refactor crypto initialization
-
----
-  arch/s390/include/asm/kvm_host.h |    1 +
-  arch/s390/include/uapi/asm/kvm.h |    1 -
-  arch/s390/kvm/kvm-s390.c         |    9 ++++-----
-  3 files changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/arch/s390/include/asm/kvm_host.h 
-b/arch/s390/include/asm/kvm_host.h
-index 423cce7..79fa0a3 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -718,6 +718,7 @@ struct kvm_s390_crypto {
-  	__u32 crycbd;
-  	__u8 aes_kw;
-  	__u8 dea_kw;
-+	__u8 apie;
-  };
-
-  #define APCB0_MASK_SIZE 1
-diff --git a/arch/s390/include/uapi/asm/kvm.h 
-b/arch/s390/include/uapi/asm/kvm.h
-index 8c23afc..9a50f02 100644
---- a/arch/s390/include/uapi/asm/kvm.h
-+++ b/arch/s390/include/uapi/asm/kvm.h
-@@ -130,7 +130,6 @@ struct kvm_s390_vm_cpu_machine {
-  #define KVM_S390_VM_CPU_FEAT_PFMFI	11
-  #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
-  #define KVM_S390_VM_CPU_FEAT_KSS	13
--#define KVM_S390_VM_CPU_FEAT_AP		14
-  struct kvm_s390_vm_cpu_feat {
-  	__u64 feat[16];
-  };
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index d717041..ae4769b 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -2576,17 +2576,16 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
-  static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
-  {
-  	/*
--	 * If neither the AP instructions nor the MSAX3 facility are configured
--	 * for the guest, there is nothing to set up.
-+	 * If the AP instructions are not available and the MSAX3 facility
-+	 * is not configured for the guest, there is nothing to set up.
-  	 */
--	if (!test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP) &&
--	    !test_kvm_facility(vcpu->kvm, 76))
-+	if (!ap_instructions_available() && !test_kvm_facility(vcpu->kvm, 76))
-  		return;
-
-  	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
-  	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
-
--	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
-+	if (vcpu->kvm->arch.crypto.apie)
-  		vcpu->arch.sie_block->eca |= ECA_APIE;
-
-  	/* Set up protected key support */
--- 
-1.7.1
-
+--ipavtfg5tcb2eg3b--
