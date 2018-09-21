@@ -2,136 +2,152 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3CAC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C5AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6912150F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:23:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQYU3awB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6912150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9993021568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:24:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9993021568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391455AbeIVCOQ (ORCPT
+        id S2391461AbeIVCOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 22:14:16 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36324 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390726AbeIVCOQ (ORCPT
+        Fri, 21 Sep 2018 22:14:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390726AbeIVCOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 22:14:16 -0400
-Received: by mail-wm1-f68.google.com with SMTP id j192-v6so4563063wmj.1;
-        Fri, 21 Sep 2018 13:23:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l+Q4nbAPG+AKCx3ox3Duk67TzkMct+wKOkbghER5E/E=;
-        b=JQYU3awBHfoGUdA06KPbHY4yWwqyGcNDYIf6XmGcd/LGMm0v1UXvLLBWf77DKgVWxj
-         5bJHF3pSnvLp6AKZzT1GpluRkuDADB2O9sshBiiX0hs/9RZW5vKXlfLCVsX5J7cVGJoK
-         nVrorLKMpZfjq7XbbIoW9JFEf9CJ3BnbYV2ElPL39pRDxCFqoeq7KHiBBKuilg2AQV8w
-         uOGuzfn/GlMIxikpFL99ffO6lHEmOVWVwMmn4jJLMtSUzTkslZWpxsV0yTd96i8VrVh7
-         mHc+oirFALDNVlb5wO/WgkpVXOgTDwN6sg27QC1sXmlAhrjIxCxtkrtDFwu95i7qQdzB
-         lFgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l+Q4nbAPG+AKCx3ox3Duk67TzkMct+wKOkbghER5E/E=;
-        b=oqLwS8DbYt9AcP6I6yAM+gMMFoxL1WOSgVywg87jHhpocNz41LUUnixc96SeOOkWZZ
-         n1m2mfIZ8Fg0uWgfw41kCmKbdcj58FNSVyXvjxaKqIGqyxtREan8rs4FdQ2Jaw20BbL+
-         6lbFHbinDUB/w9CjZezL70Tj/ComqvT8o793Jkb7MR6l4LsM2u/i833s76RX4uBqIScd
-         oQc1KUhSqfnAS/GxSkYCpwVBH6gtEjNYj5t7IspK9Cx1wLpKqasYdpMPNKalSX9Y9LkS
-         jYiL0JujDXH3IsBoNzpOpDbDEjuA5jSFiWxSlLt2gNFvfDXW2D8OHOiCErMNoksR2rzL
-         PQOA==
-X-Gm-Message-State: ABuFfogj04Jz28QHZxTNHIKBQ8siTXwj8a5Hmz1L+8c771YXY+1XF53t
-        jBN8XdYsTvOZzB+iY/s2kzg=
-X-Google-Smtp-Source: ANB0VdaTKVyEeHiyQvzzY2t5n29DFGvwNK+e2vMwX+72UYcgL3jBnnbcQjb7tVUQMVUjZovN2FpUjA==
-X-Received: by 2002:a1c:545d:: with SMTP id p29-v6mr8426260wmi.94.1537561425218;
-        Fri, 21 Sep 2018 13:23:45 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm7141076wrs.25.2018.09.21.13.23.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 13:23:44 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] backlight: lm3639: Unconditionally call led_classdev_unregister
-Date:   Fri, 21 Sep 2018 13:21:31 -0700
-Message-Id: <20180921202130.12480-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 22:14:53 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LKOEnN012990
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 16:24:23 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn5eydbha-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 16:24:23 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Fri, 21 Sep 2018 14:24:22 -0600
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Sep 2018 14:24:20 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LKOJdd6160536
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Sep 2018 13:24:19 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 24570BE054;
+        Fri, 21 Sep 2018 14:24:19 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7CF1CBE059;
+        Fri, 21 Sep 2018 14:24:18 -0600 (MDT)
+Received: from localhost (unknown [9.80.102.110])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Fri, 21 Sep 2018 14:24:18 -0600 (MDT)
+Date:   Fri, 21 Sep 2018 17:24:15 -0300
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 1/3] powerpc/process: fix casting and missing header
+References: <113d4a559f6eec448b253bf5f0b4f2a8ffb187af.1536327756.git.christophe.leroy@c-s.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <113d4a559f6eec448b253bf5f0b4f2a8ffb187af.1536327756.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18092120-0012-0000-0000-000016B93741
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009747; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01091682; UDB=6.00564082; IPR=6.00871705;
+ MB=3.00023441; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-21 20:24:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092120-0013-0000-0000-0000547CB6E1
+Message-Id: <20180921202415.GA19940@kermit-br-ibm-com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809210197
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context.
+On Fri, Sep 07, 2018 at 01:47:29PM +0000, Christophe Leroy wrote:
+> This patch fixes the following warnings. The first ones are leftovers
+> from when __get_user() was replaced by probe_kernel_address().
+> 
+> The last one is from when show_user_instructions() was added.
+> 
+> arch/powerpc/kernel/process.c:1287:22: warning: incorrect type in argument 2 (different address spaces)
+> arch/powerpc/kernel/process.c:1287:22:    expected void const *src
+> arch/powerpc/kernel/process.c:1287:22:    got unsigned int [noderef] <asn:1>*<noident>
+> arch/powerpc/kernel/process.c:1319:21: warning: incorrect type in argument 2 (different address spaces)
+> arch/powerpc/kernel/process.c:1319:21:    expected void const *src
+> arch/powerpc/kernel/process.c:1319:21:    got unsigned int [noderef] <asn:1>*<noident>
+> arch/powerpc/kernel/process.c:1302:6: warning: symbol 'show_user_instructions' was not declared. Should it be static?
+> 
+> Fixes: 7b051f665c32d ("powerpc: Use probe_kernel_address in show_instructions")
+> Fixes: 88b0fe1757359 ("powerpc: Add show_user_instructions()")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-drivers/video/backlight/lm3639_bl.c:403:14: warning: address of
-'pchip->cdev_torch' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (&pchip->cdev_torch)
-        ~~   ~~~~~~~^~~~~~~~~~
-drivers/video/backlight/lm3639_bl.c:405:14: warning: address of
-'pchip->cdev_flash' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-        if (&pchip->cdev_flash)
-        ~~   ~~~~~~~^~~~~~~~~~
-2 warnings generated.
+Smoke test passed.  Thank you.
 
-These statements have been present since 2012, introduced by
-commit 0f59858d5119 ("backlight: add new lm3639 backlight
-driver"). Given that they have been called unconditionally since
-then presumably without any issues, removing the always true if
-statements to fix the warnings without any real world changes.
+Reviewed-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/119
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+> ---
+>  v3: new in v3 to fix sparse warnings reported by snowpatch on the serie
+> 
+>  arch/powerpc/kernel/process.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index 913c5725cdb2..e108e1ef2b85 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -65,6 +65,7 @@
+>  #include <asm/livepatch.h>
+>  #include <asm/cpu_has_feature.h>
+>  #include <asm/asm-prototypes.h>
+> +#include <asm/stacktrace.h>
+>  
+>  #include <linux/kprobes.h>
+>  #include <linux/kdebug.h>
+> @@ -1284,7 +1285,7 @@ static void show_instructions(struct pt_regs *regs)
+>  #endif
+>  
+>  		if (!__kernel_text_address(pc) ||
+> -		     probe_kernel_address((unsigned int __user *)pc, instr)) {
+> +		    probe_kernel_address((const void *)pc, instr)) {
+>  			pr_cont("XXXXXXXX ");
+>  		} else {
+>  			if (regs->nip == pc)
+> @@ -1316,7 +1317,7 @@ void show_user_instructions(struct pt_regs *regs)
+>  			pr_info("%s[%d]: code: ", current->comm, current->pid);
+>  		}
+>  
+> -		if (probe_kernel_address((unsigned int __user *)pc, instr)) {
+> +		if (probe_kernel_address((const void *)pc, instr)) {
+>  			pr_cont("XXXXXXXX ");
+>  		} else {
+>  			if (regs->nip == pc)
+> -- 
+> 2.13.3
+> 
 
-Alternatively, it's possible the address wasn't supposed to be taken or
-the dev in these structs should be checked instead. I don't have this
-hardware to make that call so I would appreciate some review and
-opinions on what was intended here.
-
-Thanks!
-
- drivers/video/backlight/lm3639_bl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/video/backlight/lm3639_bl.c b/drivers/video/backlight/lm3639_bl.c
-index cd50df5807ea..086611c7bc03 100644
---- a/drivers/video/backlight/lm3639_bl.c
-+++ b/drivers/video/backlight/lm3639_bl.c
-@@ -400,10 +400,8 @@ static int lm3639_remove(struct i2c_client *client)
- 
- 	regmap_write(pchip->regmap, REG_ENABLE, 0x00);
- 
--	if (&pchip->cdev_torch)
--		led_classdev_unregister(&pchip->cdev_torch);
--	if (&pchip->cdev_flash)
--		led_classdev_unregister(&pchip->cdev_flash);
-+	led_classdev_unregister(&pchip->cdev_torch);
-+	led_classdev_unregister(&pchip->cdev_flash);
- 	if (pchip->bled)
- 		device_remove_file(&(pchip->bled->dev), &dev_attr_bled_mode);
- 	return 0;
 -- 
-2.19.0
+Murilo
 
