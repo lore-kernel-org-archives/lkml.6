@@ -2,123 +2,96 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89557ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A2EECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF8F2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:25:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF8F2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 079892083A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:25:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cBtD9vVv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="axCn7es9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079892083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389223AbeIULMv (ORCPT
+        id S2389241AbeIULNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 07:12:51 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:60112 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725887AbeIULMu (ORCPT
+        Fri, 21 Sep 2018 07:13:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36538 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388909AbeIULM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 07:12:50 -0400
-Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w8L5PdG7025913
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 01:25:39 -0400
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w8L5PYVR028368
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 01:25:39 -0400
-Received: by mail-qk1-f198.google.com with SMTP id p192-v6so9373680qke.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 22:25:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=A6LjSWrrRMU4EJFlKYSkYGIjPDgO/+XpDm40JiXJc7I=;
-        b=T/GWi/so5+yZza9qe9WSNjB9aO3rpapB3ccu2ubtkOiUz2wN9JCxwNF62zqNyQ5kPT
-         t8vMdfP4eVJDKRi+3+KS6ftNl1RJjjg+Yb7z6dVhCxmswIt/aliJb5ocXXirDM/wIHvh
-         FIgSU3wcN4k7Krbg0LGiTIQxP/T2M/lDz6uZle1Ty5CBPX0ijFydT85aT7x6QWF18A+W
-         RwNpWooTSHkutRwTx0dg1NwVQcbnL/B6ZJKzSpyClIYfOgllETVIVE91sKXCzCrTjxws
-         yF+76P0SnQiQLj/w0WoNaWcdXTnZytpjv/ytvc7jkDG+qi20nG9zdvrtkrBBa4K80iqB
-         mX8w==
-X-Gm-Message-State: ABuFfoiyWkhySoja/NCscWrogGNEXNNVv27xpukBVrmx7rrxutX840Hr
-        P3XM9B/+vcb1mMIZ6Gkq8vClGifeCSnkkonyFS4wSPaVb8hb6GTxvhBiB32+DJWNJKRiSR1SyMq
-        CZ7mzQyCZ509nrNgIcK5ZQiagNQlLO0/LHSY=
-X-Received: by 2002:a37:b101:: with SMTP id a1-v6mr398065qkf.222.1537507534612;
-        Thu, 20 Sep 2018 22:25:34 -0700 (PDT)
-X-Google-Smtp-Source: ACcGV60yg4yNNbL5T1QwhVZ6udDU0r1wYUgTpI0mKUZTSuuxJNkmPYRQQvAu63d+iMVRWDOvUBiLnQ==
-X-Received: by 2002:a37:b101:: with SMTP id a1-v6mr398059qkf.222.1537507534400;
-        Thu, 20 Sep 2018 22:25:34 -0700 (PDT)
-Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4340::d53])
-        by smtp.gmail.com with ESMTPSA id o15-v6sm18508192qtj.46.2018.09.20.22.25.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Sep 2018 22:25:32 -0700 (PDT)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Aditya Shankar <aditya.shankar@microchip.com>,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: wilc1000: Remove unnecessary pointer check
-In-Reply-To: <20180920212648.25181-1-natechancellor@gmail.com>
-References: <20180920212648.25181-1-natechancellor@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1537507531_3004P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
+        Fri, 21 Sep 2018 07:12:59 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 230DC60FEB; Fri, 21 Sep 2018 05:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537507549;
+        bh=KHT2JQwT6d2tSF6hVKJQqc5lNPccgnOmnW79Oz3MvB8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cBtD9vVvKEATQRxUHF1lJyWfd5WLqvmK0W4ErRIBpS6WUpMs17bM9oyPNW37eMjle
+         7QS3s6/u7pAajTwFK2OE6JjDDjtGd8qxJGDt2gOVpBA/zYluqJL3aeIaXmEBQdDIQe
+         KZzZS2q8GUQfbOpEhL255KC/Ez0BrW8tTGhGgfK8=
+Received: from [192.168.0.114] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AB29E60F94;
+        Fri, 21 Sep 2018 05:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537507548;
+        bh=KHT2JQwT6d2tSF6hVKJQqc5lNPccgnOmnW79Oz3MvB8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=axCn7es9VzFnwVBWDgiaaCbEE/aokZtDdk52Fsx/BIMmMMLdyxd297wkCpWRXkC74
+         YKxl7cXP1KjuUf24RRs64ZP0JjzsB229mfz5JAsN3EiJB+tWnj22Zxuf5wwIFb+vzU
+         ry7FzT5hczlKzlAX8FALCv+LAllotJk7Gz+XuTJM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AB29E60F94
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
+ (BD_ADDR)
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+References: <20180920223436.202454-1-mka@chromium.org>
+ <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
+ <20180920230121.GT22824@google.com>
+ <36e5d881-a45e-c879-c275-e6e18bc99ed5@codeaurora.org>
+ <20180920231947.GU22824@google.com>
+From:   Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <124b6f76-a65f-e304-6c60-fbb9104415f4@codeaurora.org>
+Date:   Fri, 21 Sep 2018 01:25:45 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180920231947.GU22824@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 21 Sep 2018 01:25:32 -0400
-Message-ID: <32473.1537507532@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1537507531_3004P
-Content-Type: text/plain; charset=us-ascii
+On 9/20/2018 7:19 PM, Matthias Kaehlcke wrote:
+> If the existing users populate a custom property with the BD address
+> in the bootloader you could roll out a bootloader change. You'd have
+> to make sure that bootloader and kernel match. The bootloader could
+> still populate the custom property to be compatible with 'old'
+> kernels.
 
-On Thu, 20 Sep 2018 14:26:49 -0700, Nathan Chancellor said:
-> Clang warns that the address of a pointer will always evaluated as true
-> in a boolean context:
->
-> drivers/staging/wilc1000/linux_wlan.c:267:20: warning: address of
-> 'vif->ndev->dev' will always evaluate to 'true'
-> [-Wpointer-bool-conversion]
->         if (!(&vif->ndev->dev))
->             ~  ~~~~~~~~~~~^~~
-> 1 warning generated.
->
-> Since this statement always evaluates to false due to the logical not,
-> remove it.
-
-Often, "just nuke it because it's now dead code" isn't the best answer...
-
-At one time, that was likely intended to be checking whether ->dev was a null
-pointer, to make sure we don't pass request_firmware() a null pointer and oops
-the kernel, or other things that go pear-shaped....
-
-So the question becomes:   Is it safe to just remove it, or was it intended to
-test for something that could  legitimately be null if we've hit an error along
-the way (which means we should fix the condition to be proper and acceptable
-to both gcc and clang)?
-
-
-
---==_Exmh_1537507531_3004P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBW6SAy40DS38y7CIcAQJHIggAmsE27bK1qtrpnn8vS0CpNAe8Il5BdTsU
-Ykt1ANM5C47PvWStiA/zTBFDXIvN9WEBj9rcH4x18tQltHu50Prsk83EmBPHQXmn
-d/8+xJiqoLbAd3cmCHajIvIBRfzyc6lw+Cq64PX8vgYXdcf5VBfIklQJ0e/2GsEA
-8gfunfMfDUNUf/28gMXhbmAs9I6se8oICtb9GRDlreVOeAlDwPyEMihgmU+kUD+2
-KYFDR65aHv6dE33145XLKivYqAaFaD/VGUWElbCAkjA5jGym9uILA3x8IurTZJML
-8DeDPWza1YRkzK/rYJNVSm+UGOHp4mEf1eZW1ITUMx1pJjE6VwzpMQ==
-=F6B6
------END PGP SIGNATURE-----
-
---==_Exmh_1537507531_3004P--
+If there is no standard about the name of the property, this probably
+doesn't belong to property.c but should rather be hosted in bluetooth
+directory for consumption among the bluetooth drivers.
