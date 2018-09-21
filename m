@@ -2,104 +2,148 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E0AECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AC4ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F1120877
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E70E20877
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:40:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="BgL7dlRo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F1120877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wb8AnIO+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E70E20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391270AbeIVA0z (ORCPT
+        id S2391263AbeIVAae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:26:55 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33210 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391184AbeIVA0z (ORCPT
+        Fri, 21 Sep 2018 20:30:34 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42968 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391184AbeIVAae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:26:55 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y18-v6so3132221pge.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:36:47 -0700 (PDT)
+        Fri, 21 Sep 2018 20:30:34 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l9-v6so6344430pff.9
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:40:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lD1HJzkjStdB5/4Tpf3D08ik3IEhfeONrfbEwvYZ+cg=;
-        b=BgL7dlRof3reWDSczslWoY2foxgt9kZexljZMzGw8INaNt1vegudCxlceohscPIYDL
-         EsRDxwV2GmaXEU2HSsVZm/q7CC4fxdRgrKuTWPX3wG35t38+CBxro/21PxbHC66L8Jfw
-         jVhVbzm+kBuvAHIPRinViH2QGA1aFbXC/oM35BwujKIWJHIGtIyV3wugCx0/bZ2l2VMK
-         OLO2t1yj4W+LlU7OEjWRWLv5+vZEsw6FcYu9yeiiQQSArcKCFx7zUr9Si7dlhe2bt9EA
-         wWn7lj3CIN76zU9tOLz9Ikx9Ua+m7RvzufEndwoikKT+OCJ/6D9McIymZ2PyJErWF9E8
-         Rf9g==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=aJg3mbLuMaDZipfaa9zO8WUvakVHAM/Ns2IURjBoX4s=;
+        b=Wb8AnIO+YP3hKheDnFqRRU2DaBxIRzV86W4zXS4FpykrPaQmwkvUcqiMSz8ZvxlPlj
+         nIA+PfUSbvnaQxHOaYLbqSNQ1dz1ROqizDS0tLQuQsjfX/V5fqgCiVKRrzLzTjoK0HcC
+         5SGtTg78cNUSmNKVNAQlnpyV3+TrPAQ48Jq/w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lD1HJzkjStdB5/4Tpf3D08ik3IEhfeONrfbEwvYZ+cg=;
-        b=ubBoRbGgsDYpf4CRPVu6xuNuUlaga6opOsoajGE4xVDA81HursuodIpV0f+Svmxhf+
-         HVS3L26Zjfq3xu22uVLpTkEmpVPjKG3J3n8Z9J3s5OMl0J/nj6/WJ+nyMn+R6REw6Xa7
-         iMuMwLN9vWpayHnNYK07Aeoxl9rqH4qko2nbpD7vOPAc9hR1sj894KMbdxMIAbbiVNM8
-         pbVTIvnvR27BZ8cIYfpZX0cEn8Mif171cCnimpLFxHexpmkfMxhEQ/90L68b33XYJuUA
-         et/sGvPl9Uhh2NnLxcB8o4UBC4yMBwueJDEIkiQSwIGvsxQK82Oo0z4J2B4JhX/1Z/uB
-         1W3Q==
-X-Gm-Message-State: APzg51CdybvD2ztFBf6OEcqeBsNeQTZnLqQUfOGjnu48CNtr/QACfnWj
-        TAATYGjB7gJQarZnTrebPRkM+tyJdqY=
-X-Google-Smtp-Source: ANB0VdbupWyo8VWx6FBptjQR0af8RY2I/zOryFTvuXHVSiHb9q6jsITXZMSVlBf+4tA3aaecE2vnZw==
-X-Received: by 2002:a65:6455:: with SMTP id s21-v6mr43379290pgv.25.1537555007445;
-        Fri, 21 Sep 2018 11:36:47 -0700 (PDT)
-Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id d7-v6sm18473247pfg.1.2018.09.21.11.36.47
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=aJg3mbLuMaDZipfaa9zO8WUvakVHAM/Ns2IURjBoX4s=;
+        b=iSl7k8cn05dW/PvEANzXC6zq7FhuijqMVYGVy/fbQM1Gn5w9XatdQHLYzkMkopJgZX
+         KpC4XLhqkoq7CxBe/rvV1GxYu/8FK/uW6NbVI1zky7HEG6Lekypvj22VEa6nPen+LzjE
+         3t5zZFqZLENSwugI0XHaPjc1OHpV1yCzTFILkpnSm++in2Jlgvh72nHDdn4BS2azchQ0
+         Y2oTYTT6xqWXs/uHd4nHvgQznbMZ6tyJY0ZQ+Cy4j8/zcwLJdwWlh9WrLxjS2ZrGj8VY
+         DN6zOOeVFOLt0H7wuAZtD+gsGYaAKnrlA/cKPxnibi6X9ydRLAm2wXJgo0fRjs+7Ryc9
+         haaA==
+X-Gm-Message-State: APzg51Bg4P8v5fImD5JmJzfHqAiRdhreoxiGCSl7aAzu9awNl8G+ovZ4
+        hTcQSTZOU1miokp4OK2cGQMhcw==
+X-Google-Smtp-Source: ANB0VdZfIzOc2txX9qv5rfJUmm0rRJhxssBATwd/c5I5n3ic3j0UuAG1KLWbfL5KbKt7E0InHHLEWg==
+X-Received: by 2002:a62:1605:: with SMTP id 5-v6mr47691256pfw.11.1537555225423;
+        Fri, 21 Sep 2018 11:40:25 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id x82-v6sm49842957pfe.129.2018.09.21.11.40.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 11:36:47 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 11:36:39 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Haiyang Zhang <haiyangz@linuxonhyperv.com>
-Cc:     haiyangz@microsoft.com, davem@davemloft.net,
-        netdev@vger.kernel.org, olaf@aepfle.de,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        vkuznets@redhat.com
-Subject: Re: [PATCH net-next, v2, 1/3] hv_netvsc: Add support for LRO/RSC in
- the vSwitch
-Message-ID: <20180921113620.62a004cb@xeon-e3>
-In-Reply-To: <20180921182037.10077-2-haiyangz@linuxonhyperv.com>
-References: <20180921182037.10077-1-haiyangz@linuxonhyperv.com>
-        <20180921182037.10077-2-haiyangz@linuxonhyperv.com>
+        Fri, 21 Sep 2018 11:40:24 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Doug Anderson <dianders@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <CAD=FV=Wbj+bgdSBeHSFr+nz6fzCMcmQS-D9oyzkR0yVkxiRb8A@mail.gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, ryandcase@chromium.org,
+        boris.brezillon@bootlin.com,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180920224055.164856-1-ryandcase@chromium.org>
+ <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
+ <CAD=FV=Wbj+bgdSBeHSFr+nz6fzCMcmQS-D9oyzkR0yVkxiRb8A@mail.gmail.com>
+Message-ID: <153755522409.119890.5471037050114193@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
+Date:   Fri, 21 Sep 2018 11:40:24 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018 18:20:35 +0000
-Haiyang Zhang <haiyangz@linuxonhyperv.com> wrote:
+Quoting Doug Anderson (2018-09-21 10:40:14)
+> Hi,
+> =
 
-Overall, this looks good. Some minor suggestions.
+> On Fri, Sep 21, 2018 at 10:31 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > Quoting Ryan Case (2018-09-20 15:40:54)
+> > > diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi=
+.txt b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+> > > new file mode 100644
+> > > index 000000000000..ecfb1e2bd520
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+> > > @@ -0,0 +1,36 @@
+> > > +Qualcomm Quad Serial Peripheral Interface (QSPI)
+> > > +
+> > > +The QSPI controller allows SPI protocol communication in single, dua=
+l, or quad
+> > > +wire transmission modes for read/write access to slaves such as NOR =
+flash.
+> > > +
+> > > +Required properties:
+> > > +- compatible:  Should contain:
+> > > +               "qcom,sdm845-qspi"
+> >
+> > Does someone have a more generic compatible string that can be added
+> > here to indicate the type of quad SPI controller this is? I really doubt
+> > this is a one-off hardware block for the specific SDM845 SoC.
+> =
 
-> +struct nvsc_rsc {
-> +	const struct ndis_pkt_8021q_info *vlan;
-> +	const struct ndis_tcp_ip_checksum_info *csum_info;
-> +	u8 is_last; /* last RNDIS msg in a vmtransfer_page */
-> +	u32 cnt; /* #fragments in an RSC packet */
-> +	u32 pktlen; /* Full packet length */
-> +	void *data[NVSP_RSC_MAX];
-> +	u32 len[NVSP_RSC_MAX];
-> +};
-> +
+> The compatible string used to be "qcom,qspi-v1".  ...but Rob Herring
+> requested [1] "an SoC specific compatible string".  While we could do
+> a compatible string like:
+> =
 
-This new state structure is state on a per-channel basis.
-Do you really need this to be persistent across packets?
+>   "qcom,sdm845-qspi", "qcom,qspi-v1".
+> =
 
-Could this be on stack or do you need it to handle split packets
-arriving in different polls? Or is the stack space a problem?
+> I'm curious if that buys us anything.  From all my previous experience
+> with device tree it is fine to name a compatible string for a
+> component based on the first SoC that used it.  If we later find that
+> this is also used in an "msm1234" we could always later do the
+> compatible string for that device as:
+> =
 
-Also, maybe data and length could be in one structure since they
-are related.
+>   "qcom, msm1234-qspi", "qcom,sdm845-qspi"
+> =
+
+> ...and we don't need to try to come up with a generic name.
+> Obviously, though, I'll cede to whatever Rob says here though.
+> =
+
+
+It seems that everybody has misunderstood my email. Let me try to
+clarify.
+
+I'm not saying to replace the sdm845 qspi compatible with a generic one.
+I'm recommending that a generic one is added in addition to the SoC
+specific one. That way, we get to put the generic compatible string in
+the driver and not need to update the driver compatible string array
+each time a new SoC comes out with a new compatible string.
+
+If it turns out later that we need to handle some bug in that specific
+SoC compatible string then we're good to go and we can handle it by
+matching the more specific SoC version compatible.
+
