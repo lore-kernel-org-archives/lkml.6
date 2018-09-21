@@ -6,99 +6,93 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D70ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE39ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B542B21568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B542B21568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DF02B21568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF02B21568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390856AbeIUWjg (ORCPT
+        id S2390719AbeIUWmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:39:36 -0400
-Received: from mga03.intel.com ([134.134.136.65]:45512 "EHLO mga03.intel.com"
+        Fri, 21 Sep 2018 18:42:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57124 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390619AbeIUWjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:39:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:49:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="259212511"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.50]) ([10.24.14.50])
-  by orsmga005.jf.intel.com with ESMTP; 21 Sep 2018 09:49:52 -0700
-Subject: Re: [PATCH V5 0/6] perf and x86/intel_rdt: Fix lack of coordination
- with perf
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        mingo@redhat.com, acme@kernel.org, gavin.hindman@intel.com,
-        jithu.joseph@intel.com, dave.hansen@intel.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1537377064.git.reinette.chatre@intel.com>
- <20180920141150.GY24124@hirez.programming.kicks-ass.net>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <77383a1e-f343-7529-24cf-874f0999507d@intel.com>
-Date:   Fri, 21 Sep 2018 09:49:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2390076AbeIUWmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:42:22 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C97931E308;
+        Fri, 21 Sep 2018 16:52:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 923B887E23;
+        Fri, 21 Sep 2018 16:52:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180921155455.flkf5vdrm3vgn6do@brauner.io>
+References: <20180921155455.flkf5vdrm3vgn6do@brauner.io> <20180920151214.15484-6-mszeredi@redhat.com> <20180920151214.15484-1-mszeredi@redhat.com> <17157.1537542475@warthog.procyon.org.uk>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     dhowells@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] fsmount: do not use legacy MS_ flags
 MIME-Version: 1.0
-In-Reply-To: <20180920141150.GY24124@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <20310.1537548756.1@warthog.procyon.org.uk>
+Date:   Fri, 21 Sep 2018 17:52:36 +0100
+Message-ID: <20311.1537548756@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 21 Sep 2018 16:52:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Maintainers,
+Christian Brauner <christian@brauner.io> wrote:
 
-On 9/20/2018 7:11 AM, Peter Zijlstra wrote:
-> On Wed, Sep 19, 2018 at 10:29:05AM -0700, Reinette Chatre wrote:
->> Reinette Chatre (6):
->>   perf/core: Add sanity check to deal with pinned event failure
->>   perf/x86: Add helper to obtain performance counter index
->>   x86/intel_rdt: Remove local register variables
->>   x86/intel_rdt: Create required perf event attributes
->>   x86/intel_rdt: Use perf infrastructure for measurements
->>   x86/intel_rdt: Re-enable pseudo-lock measurements
->>
->>  Documentation/x86/intel_rdt_ui.txt          |  22 +-
->>  arch/x86/events/core.c                      |  21 ++
->>  arch/x86/include/asm/perf_event.h           |   1 +
->>  arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 372 ++++++++++++--------
->>  kernel/events/core.c                        |   6 +
->>  5 files changed, 261 insertions(+), 161 deletions(-)
+> So from reading the patch I got the impression that superblock mount
+> options passed via fsconfig() are passed as strings like "ro" and are
+> translated into approriate objects (e.g. flags etc.) by the kernel.
+
+I'm having second throughts about that - at least for "ro": that one is
+particularly problematic as it governs how source devices are opened.  I'm
+kind of tempted to pass that as a flag to fsopen().
+
+What I'd like to do in btrfs, ext4, etc. is open blockdevs as I get the
+parameters that enumerate them - but I have to hold the looked-up paths till
+the validate/get_tree stage so that I know the final ro/rw state before I can
+do the opening.
+
+> That seems like a future proof mechanism to extend mount options for
+> userspace without having to worry about exceeding any integer types in the
+> future. Maybe this would make sense for non-superblock options as well? I
+> can see that this is less performant that checking flags and string parsing
+> is a thing that is not particularly nice but it would be one option to solve
+> the running out of flags problem.
+
+Al disliked the idea of setting up a separate context to define the mount
+options.
+
+> > 	mount_setattr(int dfd, const char *path, unsigned int atflags,
+> > 		      unsigned int attr_values,
+> > 		      unsigned int attr_mask);
 > 
-> Yeah, these look good, thanks!
+> If we go with the flag arguments wouldn't it make sense to use a larger
+> integer type?
+
+You can't - at least not directly through syscall args.  They are 32-bit on a
+32-bit system.
+
+> > where atflags can potentially include AT_RECURSIVE.
 > 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
+> Very much in favor of having this operate recursively!
 
-Could you please consider this series for inclusion into v4.19?
+It gets complicated with propagation.
 
-- This series is needed to complete the initial cache pseudo-locking
-enabling that is first introduced in v4.19. Without this series users
-are able to create pseudo-locked regions but unable to accurately
-measure their success.
-- This is not adding a new feature of pseudo-locked region measurement
-but fixing the existing measurement code that was disabled after found
-to be poorly integrated.
-- This series consists out of 6 patches. Patches 2 to 6 are either new
-code in support of this fix or fixes to code that does not exist in
-kernels before v4.19.
-- Patch 1 is a fix to existing code. It is small, was suggested by, and
-does have support from maintainer. Even so, if it is felt that this is
-too risky then patches 2 to 6 could still be merged since it does not
-actually depend on patch 1. In retrospect I should have submitted it
-separately.
-
-Your consideration would be greatly appreciated.
-
-Thank you
-
-Reinette
+David
