@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7442C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F348AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C17F2150E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C17F2150E
+	by mail.kernel.org (Postfix) with ESMTP id B37152154E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B37152154E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390133AbeIUTPh (ORCPT
+        id S2390150AbeIUTPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:15:37 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37653 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeIUTPh (ORCPT
+        Fri, 21 Sep 2018 15:15:40 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54737 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbeIUTPi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:15:37 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u12-v6so12859191wrr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:26:44 -0700 (PDT)
+        Fri, 21 Sep 2018 15:15:38 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c14-v6so3063473wmb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:26:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RCTTXVkL71qkxGQmeRTBKaL8TjPr8oGCumoctB9DgDA=;
-        b=cOZZq94eVYe5zfZ7vOUsKvbJbjHm1PsVw3vr04CZmrkCPTxrkflJX3ZK1sIueglvoH
-         sqpb38cX1hpaE0T+6Dcf6mv7TTNTTb50h1dnCTFD/BomAraRFU3RPgEuV0aF/sIiV7S4
-         P9Nti3h3HaTuMWEAJGU4uDVpy2Skm2a1+w5LZda/1ydosuQEfVINiMK4tDUXeYDMQQlb
-         CKowcaf+Ss3BFRyyBgNCM+CYhlqkhghT7Nf2/eGY3UsR+jS6rzKIeNJkHzlnFctuvIqc
-         ht4HDv64KkCf5pfOBDTbqfdJzzC7j54ZjkB5zjb0tzyHll8Ozbl9DNXboe4XeVLJJAGY
-         CqGQ==
-X-Gm-Message-State: APzg51BwWROuaZw2tV5wRqpFl/YADYwBTCxO3lx0MKeu8hesc9gFdTDn
-        9vkXn462zmqf6sRqHrdH4is=
-X-Google-Smtp-Source: ANB0VdbdQH2QGULdBiqI2bwJ+Av8EaBk4PfgnTPNz4WhXo+tilr8wkafVPnOGz47MIFZJcrZPhzqNA==
-X-Received: by 2002:adf:fc44:: with SMTP id e4-v6mr11704736wrs.9.1537536403548;
-        Fri, 21 Sep 2018 06:26:43 -0700 (PDT)
+        bh=Qxl2mXI3o+wV6JwzDlazHiKHGPEuy6rtVwzXjk1okdE=;
+        b=YK7piOuJf+DMNmfcMPWeA9TGzAGlJwjqfK2Cv/inOpXiPxw2/gdEOtBm4gDNuhE5pT
+         kvB+y3g42qhkcNjoFo8KG2AIg/jRafey0mOeXptRSgP4PUa7RZBtpi/kw3U/l7nshMtZ
+         F3Lw+mgGndAaLIvzKRLaDuDMoZuwmzuTiy2yGn/RuLHmnL1hX8vFDTBh3anl0OTOuWYa
+         POZE15LwM1EH1bU2C3KvRhk5ZEs3R9rrfSyZWWSEAISxBKNvDPs/+kaZ07N2gC+dj3Yg
+         rbfoCsN5+PGDRdFMtdvcUxN4rBkjVt458kc3JwUbDBrRVb0aCuM55fXyCrO9a6q4LRZx
+         2GVw==
+X-Gm-Message-State: APzg51A4PIfcNAWZKqPrMLx+SQEup3swso0dQFXOX/5bRjlQGv1hpbHA
+        3s014HXa3ViWAf1uS/Obdv8=
+X-Google-Smtp-Source: ANB0VdYJqGQbcR5DVFKfPLIbcC0Qyje79CqbHhvieO3dVpxWazGjanFWB/C4Azg2y2ezAqVxUyaVHw==
+X-Received: by 2002:a1c:b5d3:: with SMTP id e202-v6mr7170862wmf.23.1537536401935;
+        Fri, 21 Sep 2018 06:26:41 -0700 (PDT)
 Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id y17-v6sm23774170wrh.49.2018.09.21.06.26.41
+        by smtp.gmail.com with ESMTPSA id 75-v6sm7858782wml.21.2018.09.21.06.26.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 06:26:42 -0700 (PDT)
+        Fri, 21 Sep 2018 06:26:41 -0700 (PDT)
 Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id C655E12533E;
+        by techadventures.net (Postfix) with ESMTPA id 0DA31125332;
         Fri, 21 Sep 2018 15:26:40 +0200 (CEST)
 From:   Oscar Salvador <osalvador@techadventures.net>
 To:     akpm@linux-foundation.org
@@ -54,9 +54,9 @@ Cc:     mhocko@suse.com, dan.j.williams@intel.com, david@redhat.com,
         Pavel.Tatashin@microsoft.com, Jonathan.Cameron@huawei.com,
         yasu.isimatu@gmail.com, malat@debian.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v2 3/4] mm/memory_hotplug: Simplify node_states_check_changes_online
-Date:   Fri, 21 Sep 2018 15:26:33 +0200
-Message-Id: <20180921132634.10103-4-osalvador@techadventures.net>
+Subject: [PATCH v2 1/4] mm/memory_hotplug: Spare unnecessary calls to node_set_state
+Date:   Fri, 21 Sep 2018 15:26:31 +0200
+Message-Id: <20180921132634.10103-2-osalvador@techadventures.net>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180921132634.10103-1-osalvador@techadventures.net>
 References: <20180921132634.10103-1-osalvador@techadventures.net>
@@ -67,112 +67,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oscar Salvador <osalvador@suse.de>
 
-While looking at node_states_check_changes_online, I stumbled
-upon some confusing things.
+In node_states_check_changes_online, we check if the node will
+have to be set for any of the N_*_MEMORY states after the pages
+have been onlined.
 
-Right after entering the function, we find this:
+Later on, we perform the activation in node_states_set_node.
+Currently, in node_states_set_node we set the node to N_MEMORY
+unconditionally.
+This means that we call node_set_state for N_MEMORY every time
+pages go online, but we only need to do it if the node has not yet been
+set for N_MEMORY.
 
-if (N_MEMORY == N_NORMAL_MEMORY)
-        zone_last = ZONE_MOVABLE;
-
-This is wrong.
-N_MEMORY cannot really be equal to N_NORMAL_MEMORY.
-My guess is that this wanted to be something like:
-
-if (N_NORMAL_MEMORY == N_HIGH_MEMORY)
-
-to check if we have CONFIG_HIGHMEM.
-
-Later on, in the CONFIG_HIGHMEM block, we have:
-
-if (N_MEMORY == N_HIGH_MEMORY)
-        zone_last = ZONE_MOVABLE;
-
-Again, this is wrong, and will never be evaluated to true.
-
-Besides removing these wrong if statements, I simplified
-the function a bit.
+Fix this by checking status_change_nid.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
-Suggested-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
 ---
- mm/memory_hotplug.c | 57 +++++++----------------------------------------------
- 1 file changed, 7 insertions(+), 50 deletions(-)
+ mm/memory_hotplug.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 561c44761f95..eadd149eb7bc 100644
+index 38d94b703e9d..63facfc57224 100644
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -687,62 +687,19 @@ static void node_states_check_changes_online(unsigned long nr_pages,
- 	struct zone *zone, struct memory_notify *arg)
- {
- 	int nid = zone_to_nid(zone);
--	enum zone_type zone_last = ZONE_NORMAL;
+@@ -753,7 +753,8 @@ static void node_states_set_node(int node, struct memory_notify *arg)
+ 	if (arg->status_change_nid_high >= 0)
+ 		node_set_state(node, N_HIGH_MEMORY);
  
--	/*
--	 * If we have HIGHMEM or movable node, node_states[N_NORMAL_MEMORY]
--	 * contains nodes which have zones of 0...ZONE_NORMAL,
--	 * set zone_last to ZONE_NORMAL.
--	 *
--	 * If we don't have HIGHMEM nor movable node,
--	 * node_states[N_NORMAL_MEMORY] contains nodes which have zones of
--	 * 0...ZONE_MOVABLE, set zone_last to ZONE_MOVABLE.
--	 */
--	if (N_MEMORY == N_NORMAL_MEMORY)
--		zone_last = ZONE_MOVABLE;
-+	arg->status_change_nid = -1;
-+	arg->status_change_nid_normal = -1;
-+	arg->status_change_nid_high = -1;
- 
--	/*
--	 * if the memory to be online is in a zone of 0...zone_last, and
--	 * the zones of 0...zone_last don't have memory before online, we will
--	 * need to set the node to node_states[N_NORMAL_MEMORY] after
--	 * the memory is online.
--	 */
--	if (zone_idx(zone) <= zone_last && !node_state(nid, N_NORMAL_MEMORY))
-+	if (!node_state(nid, N_MEMORY))
-+		arg->status_change_nid = nid;
-+	if (zone_idx(zone) <= ZONE_NORMAL && !node_state(nid, N_NORMAL_MEMORY))
- 		arg->status_change_nid_normal = nid;
--	else
--		arg->status_change_nid_normal = -1;
--
- #ifdef CONFIG_HIGHMEM
--	/*
--	 * If we have movable node, node_states[N_HIGH_MEMORY]
--	 * contains nodes which have zones of 0...ZONE_HIGHMEM,
--	 * set zone_last to ZONE_HIGHMEM.
--	 *
--	 * If we don't have movable node, node_states[N_NORMAL_MEMORY]
--	 * contains nodes which have zones of 0...ZONE_MOVABLE,
--	 * set zone_last to ZONE_MOVABLE.
--	 */
--	zone_last = ZONE_HIGHMEM;
--	if (N_MEMORY == N_HIGH_MEMORY)
--		zone_last = ZONE_MOVABLE;
--
--	if (zone_idx(zone) <= zone_last && !node_state(nid, N_HIGH_MEMORY))
-+	if (zone_idx(zone) <= N_HIGH_MEMORY && !node_state(nid, N_HIGH_MEMORY))
- 		arg->status_change_nid_high = nid;
--	else
--		arg->status_change_nid_high = -1;
--#else
--	arg->status_change_nid_high = arg->status_change_nid_normal;
- #endif
--
--	/*
--	 * if the node don't have memory befor online, we will need to
--	 * set the node to node_states[N_MEMORY] after the memory
--	 * is online.
--	 */
--	if (!node_state(nid, N_MEMORY))
--		arg->status_change_nid = nid;
--	else
--		arg->status_change_nid = -1;
+-	node_set_state(node, N_MEMORY);
++	if (arg->status_change_nid >= 0)
++		node_set_state(node, N_MEMORY);
  }
  
- static void node_states_set_node(int node, struct memory_notify *arg)
+ static void __meminit resize_zone_range(struct zone *zone, unsigned long start_pfn,
 -- 
 2.13.6
 
