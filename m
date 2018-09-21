@@ -2,287 +2,137 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C501ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CFBC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2EC82147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2EC82147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id E9EF52147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:05:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9EF52147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389668AbeIUPxa (ORCPT
+        id S2389680AbeIUPx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:53:30 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60989 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727554AbeIUPx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:53:29 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CE684D20F6838;
-        Fri, 21 Sep 2018 18:05:18 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 21 Sep
- 2018 18:05:14 +0800
-Date:   Fri, 21 Sep 2018 18:03:14 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Joerg Roedel <joro@8bytes.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <iommu@lists.linux-foundation.org>,
-        <kvm@vger.kernel.org>, <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>, <linuxarm@huawei.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180921100314.GH207969@Turing-Arch-b>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180917014244.GA27596@redhat.com>
+        Fri, 21 Sep 2018 11:53:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58692 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389022AbeIUPx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:53:57 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 765F720798; Fri, 21 Sep 2018 12:05:47 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 487F520720;
+        Fri, 21 Sep 2018 12:05:47 +0200 (CEST)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     jason@lakedaemon.net, andrew@lunn.ch,
+        sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk,
+        ylefloch@online.net, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] ARM: mvebu: use dt_fixup to provide fallback for enable-method
+References: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz>
+Date:   Fri, 21 Sep 2018 12:05:48 +0200
+In-Reply-To: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz> (Chris
+        Packham's message of "Thu, 26 Jul 2018 15:48:56 +1200")
+Message-ID: <8736u3jhc3.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180917014244.GA27596@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
-> Received: from POPSCN.huawei.com [10.3.17.45] by Turing-Arch-b with POP3
->  (fetchmail-6.3.26) for <kenny@localhost> (single-drop); Mon, 17 Sep 2018
->  09:45:02 +0800 (CST)
-> Received: from DGGEMM406-HUB.china.huawei.com (10.3.20.214) by
->  dggeml421-hub.china.huawei.com (10.1.199.38) with Microsoft SMTP Server
->  (TLS) id 14.3.399.0; Mon, 17 Sep 2018 09:43:07 +0800
-> Received: from dggwg01-in.huawei.com (172.30.65.32) by
->  DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server id
->  14.3.399.0; Mon, 17 Sep 2018 09:43:00 +0800
-> Received: from mx1.redhat.com (unknown [209.132.183.28])	by Forcepoint
->  Email with ESMTPS id A15E04AB7D1C3;	Mon, 17 Sep 2018 09:42:56 +0800 (CST)
-> Received: from smtp.corp.redhat.com
->  (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])	(using
->  TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))	(No client
->  certificate requested)	by mx1.redhat.com (Postfix) with ESMTPS id
->  EC621308212D;	Mon, 17 Sep 2018 01:42:52 +0000 (UTC)
-> Received: from redhat.com (ovpn-121-3.rdu2.redhat.com [10.10.121.3])	by
->  smtp.corp.redhat.com (Postfix) with ESMTPS id 8874530912F4;	Mon, 17 Sep
->  2018 01:42:46 +0000 (UTC)
-> Date: Sun, 16 Sep 2018 21:42:44 -0400
-> From: Jerome Glisse <jglisse@redhat.com>
-> To: Kenneth Lee <nek.in.cn@gmail.com>
-> CC: Jonathan Corbet <corbet@lwn.net>, Herbert Xu
->  <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
->  Joerg Roedel <joro@8bytes.org>, Alex Williamson
->  <alex.williamson@redhat.com>, Kenneth Lee <liguozhu@hisilicon.com>, Hao
->  Fang <fanghao11@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, Philippe Ombredanne <pombredanne@nexb.com>, Greg
->  Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
->  <tglx@linutronix.de>, linux-doc@vger.kernel.org,
->  linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
->  iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>,
->  Sanjay Kumar <sanjay.k.kumar@intel.com>, linuxarm@huawei.com
-> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> Message-ID: <20180917014244.GA27596@redhat.com>
-> References: <20180903005204.26041-1-nek.in.cn@gmail.com>
-> Content-Type: text/plain; charset="iso-8859-1"
-> Content-Disposition: inline
-> Content-Transfer-Encoding: 8bit
-> In-Reply-To: <20180903005204.26041-1-nek.in.cn@gmail.com>
-> User-Agent: Mutt/1.10.1 (2018-07-13)
-> X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-> X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16
->  (mx1.redhat.com [10.5.110.42]); Mon, 17 Sep 2018 01:42:53 +0000 (UTC)
-> Return-Path: jglisse@redhat.com
-> X-MS-Exchange-Organization-AuthSource: DGGEMM406-HUB.china.huawei.com
-> X-MS-Exchange-Organization-AuthAs: Anonymous
-> MIME-Version: 1.0
-> 
-> So i want to summarize issues i have as this threads have dig deep into
-> details. For this i would like to differentiate two cases first the easy
-> one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
-> In both cases your objectives as i understand them:
-> 
-> [R1]- expose a common user space API that make it easy to share boiler
->       plate code accross many devices (discovering devices, opening
->       device, creating context, creating command queue ...).
-> [R2]- try to share the device as much as possible up to device limits
->       (number of independant queues the device has)
-> [R3]- minimize syscall by allowing user space to directly schedule on the
->       device queue without a round trip to the kernel
-> 
-> I don't think i missed any.
-> 
-> 
-> (1) Device with SVA/SVM
-> 
-> For that case it is easy, you do not need to be in VFIO or part of any
-> thing specific in the kernel. There is no security risk (modulo bug in
-> the SVA/SVM silicon). Fork/exec is properly handle and binding a process
-> to a device is just couple dozen lines of code.
-> 
-> 
-> (2) Device does not have SVA/SVM (or it is disabled)
-> 
-> You want to still allow device to be part of your framework. However
-> here i see fundamentals securities issues and you move the burden of
-> being careful to user space which i think is a bad idea. We should
-> never trus the userspace from kernel space.
-> 
-> To keep the same API for the user space code you want a 1:1 mapping
-> between device physical address and process virtual address (ie if
-> device access device physical address A it is accessing the same
-> memory as what is backing the virtual address A in the process.
-> 
-> Security issues are on two things:
-> [I1]- fork/exec, a process who opened any such device and created an
->       active queue can transfer without its knowledge control of its
->       commands queue through COW. The parent map some anonymous region
->       to the device as a command queue buffer but because of COW the
->       parent can be the first to copy on write and thus the child can
->       inherit the original pages that are mapped to the hardware.
->       Here parent lose control and child gain it.
-> 
+Hi Chris,
+ 
+ On jeu., juil. 26 2018, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-Hi, Jerome, 
+> We need to maintain backwards compatibility with device trees that don't
+> define an enable method. At the same time we want the device tree to be
+> able to specify an enable-method and have it stick.
+>
+> Previously by having smp assigned in the DT_MACHINE definition this
+> would be picked up by setup_arch() and override whatever
+> arm_dt_init_cpu_maps() had configured. Now we move the initial
+> assignment of default smp_ops to a dt_fixup and let
+> arm_dt_init_cpu_maps() override that if the device tree defines an
+> enable-method.
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-I reconsider your logic. I think the problem can be solved. Let us separate the
-SVA/SVM feature into two: fault-from-device and device-va-awareness. A device
-with iommu can support only device-va-awareness or both.
+I made several tests on an Armada XP based board: OpenBlock AX3: I
+modify the enable-method in the decvice tree, and I confirm that without
+your patch it is not taken into account whereas with this patch the
+enable-method is applied form the device tree. I also didn't see any
+regression with the original dtb.
 
-VFIO works on top of iommu, so it will support at least device-va-awareness. For
-the COW problem, it can be taken as a mmu synchronization issue. If the mmu page
-table is changed, it should be synchronize to iommu (via iommu_notifier). In the
-case that the device support fault-from-device, it will work fine. In the case
-that it supports only device-va-awareness, we can prefault (handle_mm_fault)
-also via iommu_notifier and reset to iommu page table.
+So I added my:
+Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-So this can be considered as a bug of VFIO, cannot it?
+and applied on mvebu/soc
 
-> [I2]- Because of [R3] you want to allow userspace to schedule commands
->       on the device without doing an ioctl and thus here user space
->       can schedule any commands to the device with any address. What
->       happens if that address have not been mapped by the user space
->       is undefined and in fact can not be defined as what each IOMMU
->       does on invalid address access is different from IOMMU to IOMMU.
-> 
->       In case of a bad IOMMU, or simply an IOMMU improperly setup by
->       the kernel, this can potentialy allow user space to DMA anywhere.
-> 
-> [I3]- By relying on GUP in VFIO you are not abiding by the implicit
->       contract (at least i hope it is implicit) that you should not
->       try to map to the device any file backed vma (private or share).
-> 
->       The VFIO code never check the vma controlling the addresses that
->       are provided to VFIO_IOMMU_MAP_DMA ioctl. Which means that the
->       user space can provide file backed range.
-> 
->       I am guessing that the VFIO code never had any issues because its
->       number one user is QEMU and QEMU never does that (and that's good
->       as no one should ever do that).
-> 
->       So if process does that you are opening your self to serious file
->       system corruption (depending on file system this can lead to total
->       data loss for the filesystem).
-> 
->       Issue is that once you GUP you never abide to file system flushing
->       which write protect the page before writing to the disk. So
->       because the page is still map with write permission to the device
->       (assuming VFIO_IOMMU_MAP_DMA was a write map) then the device can
->       write to the page while it is in the middle of being written back
->       to disk. Consult your nearest file system specialist to ask him
->       how bad that can be.
+Thanks,
 
-In the case, we cannot do anything if the device do not support
-fault-from-device. But we can reject write map with file-backed mapping.
+Gregory
 
-It seems both issues can be solved under VFIO framework:) (But of cause, I don't
-mean it has to)
+> ---
+> Pervious versions
+>
+> v1: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300182.html
+> v2: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300480.html
+> v3: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/302945.html
+> v4: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/303899.html
+>
+> Changes since v4:
+> - drop "RFC"
+>
+>  arch/arm/mach-mvebu/board-v7.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
+> index ccca95173e17..5bbde5e5258e 100644
+> --- a/arch/arm/mach-mvebu/board-v7.c
+> +++ b/arch/arm/mach-mvebu/board-v7.c
+> @@ -145,6 +145,11 @@ static void __init mvebu_dt_init(void)
+>  		i2c_quirk();
+>  }
+>  
+> +static void __init armada_370_xp_dt_fixup(void)
+> +{
+> +	smp_set_ops(smp_ops(armada_xp_smp_ops));
+> +}
+> +
+>  static const char * const armada_370_xp_dt_compat[] __initconst = {
+>  	"marvell,armada-370-xp",
+>  	NULL,
+> @@ -153,17 +158,12 @@ static const char * const armada_370_xp_dt_compat[] __initconst = {
+>  DT_MACHINE_START(ARMADA_370_XP_DT, "Marvell Armada 370/XP (Device Tree)")
+>  	.l2c_aux_val	= 0,
+>  	.l2c_aux_mask	= ~0,
+> -/*
+> - * The following field (.smp) is still needed to ensure backward
+> - * compatibility with old Device Trees that were not specifying the
+> - * cpus enable-method property.
+> - */
+> -	.smp		= smp_ops(armada_xp_smp_ops),
+>  	.init_machine	= mvebu_dt_init,
+>  	.init_irq       = mvebu_init_irq,
+>  	.restart	= mvebu_restart,
+>  	.reserve        = mvebu_memblock_reserve,
+>  	.dt_compat	= armada_370_xp_dt_compat,
+> +	.dt_fixup	= armada_370_xp_dt_fixup,
+>  MACHINE_END
+>  
+>  static const char * const armada_375_dt_compat[] __initconst = {
+> -- 
+> 2.18.0
+>
 
-> 
-> [I4]- Design issue, mdev design As Far As I Understand It is about
->       sharing a single device to multiple clients (most obvious case
->       here is again QEMU guest). But you are going against that model,
->       in fact AFAIUI you are doing the exect opposite. When there is
->       no SVA/SVM you want only one mdev device that can not be share.
-> 
->       So this is counter intuitive to the mdev existing design. It is
->       not about sharing device among multiple users but about giving
->       exclusive access to the device to one user.
-> 
-> 
-> 
-> All the reasons above is why i believe a different model would serve
-> you and your user better. Below is a design that avoids all of the
-> above issues and still delivers all of your objectives with the
-> exceptions of the third one [R3] when there is no SVA/SVM.
-> 
-> 
-> Create a subsystem (very much boiler plate code) which allow device to
-> register themself against (very much like what you do in your current
-> patchset but outside of VFIO).
-> 
-> That subsystem will create a device file for each registered system and
-> expose a common API (ie set of ioctl) for each of those device files.
-> 
-> When user space create a queue (through an ioctl after opening the device
-> file) the kernel can return -EBUSY if all the device queue are in use,
-> or create a device queue and return a flag like SYNC_ONLY for device that
-> do not have SVA/SVM.
-> 
-> For device with SVA/SVM at the time the process create a queue you bind
-> the process PASID to the device queue. From there on the userspace can
-> schedule commands and use the device without going to kernel space.
-> 
-> For device without SVA/SVM you create a fake queue that is just pure
-> memory is not related to the device. From there on the userspace must
-> call an ioctl every time it wants the device to consume its queue
-> (hence why the SYNC_ONLY flag for synchronous operation only). The
-> kernel portion read the fake queue expose to user space and copy
-> commands into the real hardware queue but first it properly map any
-> of the process memory needed for those commands to the device and
-> adjust the device physical address with the one it gets from dma_map
-> API.
-> 
-> With that model it is "easy" to listen to mmu_notifier and to abide by
-> them to avoid issues [I1], [I3] and [I4]. You obviously avoid the [I2]
-> issue by only mapping a fake device queue to userspace.
-> 
-> So yes with that models it means that every device that wish to support
-> the non SVA/SVM case will have to do extra work (ie emulate its command
-> queue in software in the kernel). But by doing so, you support an
-> unlimited number of process on your device (ie all the process can share
-> one single hardware command queues or multiple hardware queues).
-> 
-> The big advantages i see here is that the process do not have to worry
-> about doing something wrong. You are protecting yourself and your user
-> from stupid mistakes.
-> 
-> 
-> I hope this is useful to you.
-> 
-> Cheers,
-> Jérôme
-
-Cheers
 -- 
-			-Kenneth(Hisilicon)
-
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
