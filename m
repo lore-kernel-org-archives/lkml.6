@@ -3,121 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE19ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC9BECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A080B21532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A080B21532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AF5F72154C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:23:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5F72154C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391323AbeIVBC6 (ORCPT
+        id S2391258AbeIVBK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 21:02:58 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34649 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390726AbeIVBC5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 21:02:57 -0400
-Received: by mail-wr1-f65.google.com with SMTP id t15so5932845wrx.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:12:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AsvpqIPUQZicoJiDjKAW6ZuncNweFxUUeLoqQl48ZFM=;
-        b=tT4j+0TV2PAomj+QiHHfXDIWQq0pT6e5wjiQ+emuOTeKtiYlGYcLdnLIhZZGZegu9t
-         og+pqyWEvTpZirvW5l0cIOYvsa1Vgmdg7Pg/ucgFDnQqmTelWD/RKeYahI+kgtt97nAS
-         wpHUwh4+HnolkMLGGjj1uzkyferTEc2jbFdVa6HKT55vAdZo75NCTC1PN1M12MSDN6iE
-         +2cC65JeIfHQxYNVUzfCBmvyK5WL/tJ6/t1zgCCq9JIyHFecu9F6KbgyX5vj7clZJGHI
-         uRBLaLrIqisaGiwmf2f8c06cxNolFncbLvzJeWbcaWm8QZ/C08QHxMQp/lo80QXAlSBu
-         uw3w==
-X-Gm-Message-State: APzg51Ae0KMRP3QzOVwSgPO4zyIPL1LTpkgDLKQOFJZXLYNlrdgsg0xB
-        zlsV/1LeRg9le3aaYUZL7wjLboj+8S8AVawxrjdbhA==
-X-Google-Smtp-Source: ANB0VdbQTgdZuFmne6DxJQOAWZlrSXzOOY1huw8dRpO+KpkgCi5BKzTxZhcbdaMu1i8mpNdVCEra5L7NONoskJjg054=
-X-Received: by 2002:adf:9ae5:: with SMTP id a92-v6mr41514327wrc.125.1537557161920;
- Fri, 21 Sep 2018 12:12:41 -0700 (PDT)
+        Fri, 21 Sep 2018 21:10:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728456AbeIVBK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 21:10:56 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A25C20989;
+        Fri, 21 Sep 2018 19:20:39 +0000 (UTC)
+Date:   Fri, 21 Sep 2018 15:20:37 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>
+Subject: [PATCH v2] tools/lib/traceevent: Replace str_error_r() with an open
+ coded implementation
+Message-ID: <20180921152037.1e23c7f4@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a1c:918b:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 12:12:41
- -0700 (PDT)
-In-Reply-To: <20180914204407.1214-1-lyude@redhat.com>
-References: <20180914204407.1214-1-lyude@redhat.com>
-From:   Karol Herbst <kherbst@redhat.com>
-Date:   Fri, 21 Sep 2018 21:12:41 +0200
-Message-ID: <CACO55tsK+hUds6HWTFXhuzAoozafs3E=LPfsjo=HskozvTpq8Q@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH] drm/nouveau: Grab runtime PM ref in nv50_mstc_detect()
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     nouveau <nouveau@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Sean Paul <seanpaul@chromium.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Karol Herbst <kherbst@redhat.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-On Fri, Sep 14, 2018 at 10:44 PM, Lyude Paul <lyude@redhat.com> wrote:
-> While we currently grab a runtime PM ref in nouveau's normal connector
-> detection code, we apparently don't do this for MST. This means if we're
-> in a scenario where the GPU is suspended and userspace attempts to do a
-> connector probe on an MSTC connector, the probe will fail entirely due
-> to the DP aux channel and GPU not being woken up:
->
-> [  316.633489] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
-> [  316.635713] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
-> [  316.637785] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
-> ...
->
-> So, grab a runtime PM ref here.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/gpu/drm/nouveau/dispnv50/disp.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> index c94b7f42d62d..9da0bdfe1e1c 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> @@ -938,9 +938,22 @@ static enum drm_connector_status
->  nv50_mstc_detect(struct drm_connector *connector, bool force)
->  {
->         struct nv50_mstc *mstc = nv50_mstc(connector);
-> +       enum drm_connector_status conn_status;
-> +       int ret;
-> +
->         if (!mstc->port)
->                 return connector_status_disconnected;
-> -       return drm_dp_mst_detect_port(connector, mstc->port->mgr, mstc->port);
-> +
-> +       ret = pm_runtime_get_sync(connector->dev->dev);
-> +       if (ret < 0 && ret != -EACCES)
-> +               return connector_status_disconnected;
-> +
-> +       conn_status = drm_dp_mst_detect_port(connector, mstc->port->mgr,
-> +                                            mstc->port);
-> +
-> +       pm_runtime_mark_last_busy(connector->dev->dev);
-> +       pm_runtime_put_autosuspend(connector->dev->dev);
-> +       return conn_status;
->  }
->
->  static void
-> --
-> 2.17.1
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+While working on having PowerTop use libtracevent as a shared object
+library, Tzvetomir hit "str_error_r not defined". This was added by commit
+c3cec9e68f12d ("tools lib traceevent: Use str_error_r()") because
+strerror_r() has two definitions, where one is GNU specific, and the other
+is XSI complient. The strerror_r() is in a wrapper str_error_r() to keep the
+code from having to worry about which compiler is being used.
+
+The problem is that str_error_r() is external to libtraceevent, and not part
+of the library. If it is used as a shared object then the tools using it
+will need to define that function. I do not want that function defined in
+libtraceevent itself, as it is out of scope for that library.
+
+As there's only a single instance of this call, I replaced it with an open
+coded algorithm that just uses strerror() and strncpy() to place the error
+message in the given buffer. We don't need to worry about the errors that
+strerror_r() returns. If the buffer isn't big enough, we simply truncate it.
+
+Reported-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+
+Changes from v1:
+
+ - Account for buflen being zero (do nothing).
+
+ tools/lib/traceevent/event-parse.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 7980fc6c3bac..ba7570646d2c 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -18,7 +18,6 @@
+ #include <errno.h>
+ #include <stdint.h>
+ #include <limits.h>
+-#include <linux/string.h>
+ #include <linux/time64.h>
+ 
+ #include <netinet/in.h>
+@@ -6215,7 +6214,12 @@ int tep_strerror(struct tep_handle *pevent __maybe_unused,
+ 	const char *msg;
+ 
+ 	if (errnum >= 0) {
+-		str_error_r(errnum, buf, buflen);
++		const char *error_str = strerror(errnum);
++
++		if (buflen > 0) {
++			strncpy(buf, error_str, buflen);
++			buf[buflen - 1] = 0;
++		}
+ 		return 0;
+ 	}
+ 
+-- 
+2.13.6
+
