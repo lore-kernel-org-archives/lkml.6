@@ -5,257 +5,118 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCFCECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA125ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976A321536
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4617421533
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sHU0I/yr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976A321536
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iY4I7LYa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4617421533
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388815AbeIUFyW (ORCPT
+        id S1727405AbeIUF4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:54:22 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35006 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388795AbeIUFyV (ORCPT
+        Fri, 21 Sep 2018 01:56:23 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:34101 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbeIUF4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:54:21 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p12-v6so5121388pfh.2;
-        Thu, 20 Sep 2018 17:08:16 -0700 (PDT)
+        Fri, 21 Sep 2018 01:56:22 -0400
+Received: by mail-yw1-f66.google.com with SMTP id y80-v6so139398ywd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 17:10:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lQpG/Nl0x9DvMs9MlFGsNHInv2vOjzi+DpmvyozQgTM=;
-        b=sHU0I/yrGQlFPtmJTv2l2kfBArXCLYKAs+aBItHMVf7Evrpeig1fpwSRv1Zp6dY2yQ
-         9I/hTuGAhEZXFBC3/ZScx0h2s5geXKb+pAeaXI5S4MBifZT47QpSRX25DBlPREX0KeXG
-         Ol/qXDNhCqXuhGZHpAt3gQipvtiYvrDbu2FN9AEia0HQlPj9kJcCAmqLu30JUplty3zL
-         sbRzisgEszGNtkQS6u5s8kls3N8Uze+NJxIZcKKfd0mkyjfmvKBsYOJkj2tfH8TJ/mIC
-         8i4tYYHMwfA1v+TM48xIrQrzz0yJN4+TTvUtQcMryWKJ3eXY2vvjsSVygWwRLxaq+ou0
-         VQCA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WllNu+pbRdF2q98vs6KDwSMbulmE+Xe6lJIGoge+JCA=;
+        b=iY4I7LYaqIUVAzl/+XDn5YjkQDFEl5w/6FG4pWenCpJT9Q6WKeDXU1VtswEEXxyiPl
+         UkgNuqQdiVnEX9+7A+vwhZyr49ri6xW9JCGRZdVYdh+4EBZu63yQcfdHkORTojNKXXGT
+         EOCF9ENVdvsp8+4YiwNVlcMDK2+sjTyhtdFWnW5lZ5oW6TNTUdgIePmXyelQHX1yAigT
+         wmKnae11xRMRiykglWaqCndF7apayv3lpiXYSwUZdJdCThJsGTfqjQuwwxZ0a0jELmMG
+         9WT5VOec1KwhQmSSbEhmrsCYV4mKY+6uiRwl2995r3K/OB2tKGd3tbbkr0lHdA44a2Ea
+         q26w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lQpG/Nl0x9DvMs9MlFGsNHInv2vOjzi+DpmvyozQgTM=;
-        b=Lr973p/34KlXDbuNR01gmHlkpJpv+z90stzDJ8oi4ECStyJ9fCvlZNqhgR6ihFhW9X
-         8qOjciBFUn2LHZYi2Dd9EtK24qy0YjjFgLhunK9WjCtegtzp+tlWHgDZ5UqW5nLGTKxV
-         6FwWUEPZYlfE+fskLRKfJdnJxgFIPmX7S+fAmAGJxXS3VPPOie2Q58u8oHP0jwjMIrPI
-         hhTekgrPYYeDYa26f5hJAEL5w9unD+Xzflvj8o1VD+VGpIT1JNEjDO0g1DmYFUlAMOSc
-         K6A6f3Wg0h1uMNmuKIwwlcCZlH241b2ZlSDL66JsZzKnp8RTLDWe+Pa/siaQY6GT83kv
-         WJaw==
-X-Gm-Message-State: APzg51Dc5sRuohoar2XADGgRyTm9ZxleNqO+aEEji6mvBdKd2A2yZKuY
-        xUPKI3oARM8ljJDlpTNM6GuB6nNE
-X-Google-Smtp-Source: ANB0VdYHJnyRlCD44j1x92IUY0Q3vxLJ6jS932oidZT9bbTpyjLRPedMO/y2Q9iMytZWCHotPubDAw==
-X-Received: by 2002:a62:808c:: with SMTP id j134-v6mr43549271pfd.120.1537488495896;
-        Thu, 20 Sep 2018 17:08:15 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id q26-v6sm43355083pfj.127.2018.09.20.17.08.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 17:08:15 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] hwmon: ina3221: Get channel names from DT node
-Date:   Thu, 20 Sep 2018 17:07:53 -0700
-Message-Id: <20180921000753.21846-3-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180921000753.21846-1-nicoleotsuka@gmail.com>
-References: <20180921000753.21846-1-nicoleotsuka@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WllNu+pbRdF2q98vs6KDwSMbulmE+Xe6lJIGoge+JCA=;
+        b=kvYrPKnAyYy4RYbX2wofoEHOzEzw/C3eY1QYWjAOZcydgvr5Vb6D5lVmF4nQUt0Td3
+         043HDLq8v4CzDXyvNHjyrrvTc/G/3p548RRDYlShl+hQPH6/SMgPePjToMdqVFFVdr1i
+         48Qg5f0qFF7/HcOgAiXexwrghK9zOGiAf3Fu8HJJ29zq5AGvFLUQyeAV+midsFICp5ia
+         MoIFqrk1Id8GGBskTJYheQFbra79njMLyJTo2d+tly07ySP7uIkK8Hd0rILifVAUGlD1
+         YehwWTLtjC0B77QPLdfzROayVAp9S0Q9XWE+GO01KuBDhWrix/5QqLVzjoqb9deGfXIQ
+         Fd9A==
+X-Gm-Message-State: APzg51DRsCGdpawpmEy5FwQe3/eJ555eNhIYznzGIZdpVkcH8dmofitE
+        PMYIpFqdMiOJGcsD3QqN1A==
+X-Google-Smtp-Source: ANB0VdZ5ozA9aizsTdIQuTjC36uoCTgu+jLA/bdfaWjLmoaTSpcyPR+726ZwxVGwp0fQ/j3/10iZ6A==
+X-Received: by 2002:a81:3507:: with SMTP id c7-v6mr18763209ywa.162.1537488617680;
+        Thu, 20 Sep 2018 17:10:17 -0700 (PDT)
+Received: from gabell ([2601:18f:600:d880:b4e9:4651:58aa:d5a3])
+        by smtp.gmail.com with ESMTPSA id m82-v6sm13281070ywm.19.2018.09.20.17.10.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Sep 2018 17:10:16 -0700 (PDT)
+Date:   Thu, 20 Sep 2018 20:10:09 -0400
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kan Liang <kan.liang@intel.com>
+Subject: Re: [RESEND] [PATCH] perf/x86/intel/uncore: Use
+ boot_cpu_data.phys_proc_id instead of hardcorded phy id 0
+Message-ID: <20180921001008.juiscfeq32blygi5@gabell>
+References: <20180910144750.6782-1-msys.mizuma@gmail.com>
+ <alpine.DEB.2.21.1809202254530.1434@nanos.tec.linutronix.de>
+ <7fb7e563-d911-d325-ec48-8b153bece071@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7fb7e563-d911-d325-ec48-8b153bece071@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The connection of channels are usually descirbed in the
-schematics, which then should be indicated in DT binding
-as well, and further should get exposed to sysfs so as
-to help driver users understand what channels are really
-monitoring respectively.
+On Thu, Sep 20, 2018 at 05:10:18PM -0400, Liang, Kan wrote:
+> 
+> 
+> On 9/20/2018 4:55 PM, Thomas Gleixner wrote:
+> > On Mon, 10 Sep 2018, Masayoshi Mizuma wrote:
+> > 
+> > CC+ Kan
+> > 
+> > > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > > 
+> > > Physical package id 0 is not always exists. We should use
+> > > boot_cpu_data.phys_proc_id here.
+> > > 
+> > > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > > ---
+> > >   arch/x86/events/intel/uncore_snbep.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+> > > index 51d7c11..53b981d 100644
+> > > --- a/arch/x86/events/intel/uncore_snbep.c
+> > > +++ b/arch/x86/events/intel/uncore_snbep.c
+> > > @@ -3061,7 +3061,7 @@ static struct event_constraint bdx_uncore_pcu_constraints[] = {
+> > >   void bdx_uncore_cpu_init(void)
+> > >   {
+> > > -	int pkg = topology_phys_to_logical_pkg(0);
+> > > +	int pkg = topology_phys_to_logical_pkg(boot_cpu_data.phys_proc_id);
+> 
+> I think it's better to use logical_proc_id directly.
+> 
+> +	int pkg = boot_cpu_data.logical_proc_id;
 
-Meanwhile, channels could be left unconnected based on
-the hardware design. So the channel name should support
-NC so the driver could disable the channel accordingly.
+Thanks! I'll send the v2.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- drivers/hwmon/ina3221.c | 88 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 80 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-index e6b49500c52a..5d487e205260 100644
---- a/drivers/hwmon/ina3221.c
-+++ b/drivers/hwmon/ina3221.c
-@@ -41,9 +41,12 @@
- #define INA3221_CONFIG_MODE_SHUNT	BIT(1)
- #define INA3221_CONFIG_MODE_BUS		BIT(2)
- #define INA3221_CONFIG_MODE_CONTINUOUS	BIT(3)
-+#define INA3221_CONFIG_CHx_EN(x)	BIT(14 - (x))
- 
- #define INA3221_RSHUNT_DEFAULT		10000
- 
-+#define INA3221_NOT_CONNECTED		"NC"
-+
- enum ina3221_fields {
- 	/* Configuration */
- 	F_RST,
-@@ -91,11 +94,20 @@ static const unsigned int register_channel[] = {
-  * @regmap: Register map of the device
-  * @fields: Register fields of the device
-  * @shunt_resistors: Array of resistor values per channel
-+ * @attr_group: attribute groups for sysfs node
-+ *              (leave one space at the end for NULL termination)
-+ * @channel_name: channel names
-+ * @enable: enable or disable channels
-  */
- struct ina3221_data {
- 	struct regmap *regmap;
- 	struct regmap_field *fields[F_MAX_FIELDS];
- 	int shunt_resistors[INA3221_NUM_CHANNELS];
-+
-+	const struct attribute_group *attr_group[INA3221_NUM_CHANNELS + 1];
-+	const char *channel_name[INA3221_NUM_CHANNELS];
-+
-+	bool enable[INA3221_NUM_CHANNELS];
- };
- 
- static int ina3221_read_value(struct ina3221_data *ina, unsigned int reg,
-@@ -253,6 +265,24 @@ static ssize_t ina3221_show_alert(struct device *dev,
- 	return snprintf(buf, PAGE_SIZE, "%d\n", regval);
- }
- 
-+static ssize_t ina3221_show_name(struct device *dev,
-+				  struct device_attribute *attr, char *buf)
-+{
-+	struct sensor_device_attribute *sd_attr = to_sensor_dev_attr(attr);
-+	struct ina3221_data *ina = dev_get_drvdata(dev);
-+	unsigned int channel = sd_attr->index;
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n", ina->channel_name[channel]);
-+}
-+
-+/* channel name */
-+static SENSOR_DEVICE_ATTR(name1_input, 0444,
-+		ina3221_show_name, NULL, INA3221_CHANNEL1);
-+static SENSOR_DEVICE_ATTR(name2_input, 0444,
-+		ina3221_show_name, NULL, INA3221_CHANNEL2);
-+static SENSOR_DEVICE_ATTR(name3_input, 0444,
-+		ina3221_show_name, NULL, INA3221_CHANNEL3);
-+
- /* bus voltage */
- static SENSOR_DEVICE_ATTR(in1_input, S_IRUGO,
- 		ina3221_show_bus_voltage, NULL, INA3221_BUS1);
-@@ -317,8 +347,8 @@ static SENSOR_DEVICE_ATTR(in5_input, S_IRUGO,
- static SENSOR_DEVICE_ATTR(in6_input, S_IRUGO,
- 		ina3221_show_shunt_voltage, NULL, INA3221_SHUNT3);
- 
--static struct attribute *ina3221_attrs[] = {
--	/* channel 1 */
-+static struct attribute *ina3221_channel1_attrs[] = {
-+	&sensor_dev_attr_name1_input.dev_attr.attr,
- 	&sensor_dev_attr_in1_input.dev_attr.attr,
- 	&sensor_dev_attr_curr1_input.dev_attr.attr,
- 	&sensor_dev_attr_shunt1_resistor.dev_attr.attr,
-@@ -328,7 +358,11 @@ static struct attribute *ina3221_attrs[] = {
- 	&sensor_dev_attr_curr1_max_alarm.dev_attr.attr,
- 	&sensor_dev_attr_in4_input.dev_attr.attr,
- 
--	/* channel 2 */
-+	NULL,
-+};
-+
-+static struct attribute *ina3221_channel2_attrs[] = {
-+	&sensor_dev_attr_name2_input.dev_attr.attr,
- 	&sensor_dev_attr_in2_input.dev_attr.attr,
- 	&sensor_dev_attr_curr2_input.dev_attr.attr,
- 	&sensor_dev_attr_shunt2_resistor.dev_attr.attr,
-@@ -338,7 +372,11 @@ static struct attribute *ina3221_attrs[] = {
- 	&sensor_dev_attr_curr2_max_alarm.dev_attr.attr,
- 	&sensor_dev_attr_in5_input.dev_attr.attr,
- 
--	/* channel 3 */
-+	NULL,
-+};
-+
-+static struct attribute *ina3221_channel3_attrs[] = {
-+	&sensor_dev_attr_name3_input.dev_attr.attr,
- 	&sensor_dev_attr_in3_input.dev_attr.attr,
- 	&sensor_dev_attr_curr3_input.dev_attr.attr,
- 	&sensor_dev_attr_shunt3_resistor.dev_attr.attr,
-@@ -350,7 +388,12 @@ static struct attribute *ina3221_attrs[] = {
- 
- 	NULL,
- };
--ATTRIBUTE_GROUPS(ina3221);
-+
-+static const struct attribute_group ina3221_group[INA3221_NUM_CHANNELS] = {
-+	{ .attrs = ina3221_channel1_attrs, },
-+	{ .attrs = ina3221_channel2_attrs, },
-+	{ .attrs = ina3221_channel3_attrs, },
-+};
- 
- static const struct regmap_range ina3221_yes_ranges[] = {
- 	regmap_reg_range(INA3221_SHUNT1, INA3221_BUS3),
-@@ -373,10 +416,14 @@ static const struct regmap_config ina3221_regmap_config = {
- static int ina3221_probe(struct i2c_client *client,
- 			 const struct i2c_device_id *id)
- {
-+	const struct device_node *np = client->dev.of_node;
- 	struct device *dev = &client->dev;
- 	struct ina3221_data *ina;
- 	struct device *hwmon_dev;
--	int i, ret;
-+	u16 mask = 0, val = 0;
-+	const char *str;
-+	char prop[32];
-+	int i, g, ret;
- 
- 	ina = devm_kzalloc(dev, sizeof(*ina), GFP_KERNEL);
- 	if (!ina)
-@@ -407,9 +454,34 @@ static int ina3221_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
-+	/* Fetch hardware information from Device Tree */
-+	for (i = 0, g = 0; i < INA3221_NUM_CHANNELS; i++) {
-+		/* Fetch the channel name */
-+		sprintf(prop, "ti,channel%d-name", i + 1);
-+		/* Set a default name on failure */
-+		if (of_property_read_string(np, prop, &str))
-+			str = "unknown";
-+		/* Ignore unconnected channels */
-+		if (!strcmp(str, INA3221_NOT_CONNECTED))
-+			continue;
-+		/* Log connected channels */
-+		ina->attr_group[g++] = &ina3221_group[i];
-+		ina->channel_name[i] = str;
-+		ina->enable[i] = true;
-+	}
-+
-+	/* Disable unconnected channels */
-+	for (i = 0; i < INA3221_NUM_CHANNELS; i++) {
-+		mask |= INA3221_CONFIG_CHx_EN(i);
-+		val |= ina->enable[i] ? INA3221_CONFIG_CHx_EN(i) : 0;
-+	}
-+	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG, mask, val);
-+	if (ret)
-+		return ret;
-+
- 	hwmon_dev = devm_hwmon_device_register_with_groups(dev,
--							   client->name,
--							   ina, ina3221_groups);
-+							   client->name, ina,
-+							   ina->attr_group);
- 	if (IS_ERR(hwmon_dev)) {
- 		dev_err(dev, "Unable to register hwmon device\n");
- 		return PTR_ERR(hwmon_dev);
--- 
-2.17.1
-
+- Masa
