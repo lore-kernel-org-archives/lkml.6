@@ -2,103 +2,97 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D80C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F82DC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 281A121522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE2C21545
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:13:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lAG4WKcU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 281A121522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5r+QLnhJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE2C21545
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388973AbeIUI6y (ORCPT
+        id S2389047AbeIUI7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 04:58:54 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59022 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbeIUI6x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 04:58:53 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8L3AAD4139560;
-        Fri, 21 Sep 2018 03:12:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=oNf6GCK/JcT3kDLIAzgtrz8wMYc3lphOyHqbHHFVRIA=;
- b=lAG4WKcUofcJ3klXea6nSdqKaxMhZ9qiDPJzBOe+IJDybqld8/+VYdNIHcyy0lCZASxB
- qFwUvcx4sCXix77S0UitHNjgKCoxtM7293rre0y4SP7i92jaQd/eHAmX0l3uwgqRk18X
- zMFy64T/45v1MHysHLHyW9e+Aq4XbVMxTHr0Mc91mwj3vPzZ3bz25Xh/HKoodVOhpZZP
- Usct65vkr7e7GrsW5smFSEnhcmdauDxfvizY7AfOJfu8WsWjCm8lmrZJd//xDNuBME9r
- t6D9lMmARYFzvJP5PfMrgki6iaLNLBZUi4+xxKxeSVXEtjSEQVPjIAUEgDOfNlH/2wAR rg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2mmkm20r6q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Sep 2018 03:12:03 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8L3C3eL024454
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Sep 2018 03:12:03 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w8L3C2uS029398;
-        Fri, 21 Sep 2018 03:12:02 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Sep 2018 20:12:01 -0700
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Matthew Wilcox <matthew@wil.cx>, Hannes Reinecke <hare@suse.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: advansys: Remove unnecessary parentheses
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180920205858.6035-1-natechancellor@gmail.com>
-Date:   Thu, 20 Sep 2018 23:11:59 -0400
-In-Reply-To: <20180920205858.6035-1-natechancellor@gmail.com> (Nathan
-        Chancellor's message of "Thu, 20 Sep 2018 13:58:58 -0700")
-Message-ID: <yq11s9nmtmo.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 21 Sep 2018 04:59:46 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40761 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725887AbeIUI7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 04:59:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=3j2QySAFHtDQaPPWeq4lDGbGd4vQAVpGQ3t1XKx/6r4=;
+        b=5r+QLnhJV2pW4+RlfEOBlYkA7nVwdnMSWYYVj7IeQU0WwVSBAFGHlbzGeG6AXLtByL5wuIFrn4nQodJYAP3RXnVYq6Fs2Ni99/NIDuivnU4wZShn04VoSYpUL5wyCXnKqh/P0wUvXI7QMhn6DRgUqCqYeID3jBcdiVnt8ua5EbI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1g3BsF-00037K-C0; Fri, 21 Sep 2018 05:12:55 +0200
+Date:   Fri, 21 Sep 2018 05:12:55 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+Subject: Re: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography
+ library
+Message-ID: <20180921031255.GB11109@lunn.ch>
+References: <20180918161646.19105-1-Jason@zx2c4.com>
+ <20180918161646.19105-3-Jason@zx2c4.com>
+ <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com>
+ <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com>
+ <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9022 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=802
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809210031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 21, 2018 at 02:11:43AM +0200, Jason A. Donenfeld wrote:
+> Hey Arnd,
+> 
+> On Thu, Sep 20, 2018 at 6:02 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > Right, if you hit a stack requirement like this, it's usually the compiler
+> > doing something bad, not just using too much stack but also generating
+> > rather slow object code in the process. It's better to fix the bug by
+> > optimizing the code to not spill registers to the stack.
+> >
+> > In the long run, I'd like to reduce the stack frame size further, so
+> > best assume that anything over 1024 bytes (on 32-bit) or 1280 bytes
+> > (on 64-bit) is a bug in the code, and stay below that.
+> >
+> > For prototyping, you can just mark the broken functions individually
+> > by setting the warning limit for a specific function that is known to
+> > be misoptimized by the compiler (with a comment about which compiler
+> > and architectures are affected), but not override the limit for the
+> > entire file.
+> 
+> Thanks for the explanation. Fortunately in my case, the issues were
+> trivially fixable to get it under 1024/1280. (By the way, why does
+> 64-bit have a slightly larger stack frame? To account for 32 pointers
+> taking double the space or something?) That will be rectified in v6.
 
-Nathan,
+Hi Jason
 
-> Clang warns when multiple pairs of parentheses are used for a single
-> conditional statement.
->
-> drivers/scsi/advansys.c:6451:20: warning: equality comparison with
-> extraneous parentheses [-Wparentheses-equality]
->                                 if ((sdtr_data == 0xFF)) {
->                                      ~~~~~~~~~~^~~~~~~
-> drivers/scsi/advansys.c:6451:20: note: remove extraneous parentheses
-> around the comparison to silence this warning
->                                 if ((sdtr_data == 0xFF)) {
->                                     ~          ^      ~
-> drivers/scsi/advansys.c:6451:20: note: use '=' to turn this equality
-> comparison into an assignment
->                                 if ((sdtr_data == 0xFF)) {
->                                                ^~
->                                                =
-> 1 warning generated.
+Do you any stack usage information?
 
-Applied to 4.20/scsi-queue, thanks!
+A VPN can be at the bottom of some deep stack calls. Swap on NFS over
+the VPN? If you have one frame of 1K, you might be O.K. But if you
+have a few of these, i can see there might be issues of overflowing
+the stack.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+    Andrew
