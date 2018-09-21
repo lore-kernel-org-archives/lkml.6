@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95F8C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 731EBC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE8E21533
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:28:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DE8E21533
+	by mail.kernel.org (Postfix) with ESMTP id 39BD921533
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39BD921533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389145AbeIUJP0 (ORCPT
+        id S2389193AbeIUJP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 05:15:26 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:15649 "EHLO
+        Fri, 21 Sep 2018 05:15:28 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:17142 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389091AbeIUJPZ (ORCPT
+        with ESMTP id S2389111AbeIUJP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 05:15:25 -0400
-X-UUID: 013d3ab200e1434fa125534697e32f01-20180921
+        Fri, 21 Sep 2018 05:15:28 -0400
+X-UUID: 8101115220b34b048121ff59ad40422e-20180921
 Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1917021068; Fri, 21 Sep 2018 11:28:33 +0800
+        with ESMTP id 999576182; Fri, 21 Sep 2018 11:28:34 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Fri, 21 Sep 2018 11:28:27 +0800
 Received: from mtkslt209.mediatek.inc (10.21.15.96) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
@@ -51,71 +51,137 @@ CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>
-Subject: [PATCH v3 10/12] drm/mediatek: implement connection from BLS to DPI0
-Date:   Fri, 21 Sep 2018 11:28:20 +0800
-Message-ID: <20180921032822.30771-11-bibby.hsieh@mediatek.com>
+Subject: [PATCH v3 12/12] drm/mediatek: config component output by device node port
+Date:   Fri, 21 Sep 2018 11:28:22 +0800
+Message-ID: <20180921032822.30771-13-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 In-Reply-To: <20180921032822.30771-1-bibby.hsieh@mediatek.com>
 References: <20180921032822.30771-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 4C0129BF2A6DAC310B14925DEA0185CB191E5EAD028317658889D1C092F2DBB42000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify display driver to support connection from BLS to DPI.
+We can select output component by decive node port.
+Main path default output component is DSI.
+External path default output component is DPI.
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 37 ++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h |  4 ++--
+ 2 files changed, 35 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 87e4191c250e..f3068c62ed48 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -39,6 +39,7 @@
- #define DISP_REG_CONFIG_DISP_OVL_MOUT_EN	0x030
- #define DISP_REG_CONFIG_OUT_SEL			0x04c
- #define DISP_REG_CONFIG_DSI_SEL			0x050
-+#define DISP_REG_CONFIG_DPI_SEL			0x064
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index d961112fa2f5..a477fb878c06 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -21,7 +21,9 @@
+ #include <drm/drm_of.h>
+ #include <linux/component.h>
+ #include <linux/iommu.h>
++#include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_graph.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
  
- #define DISP_REG_MUTEX_EN(n)	(0x20 + 0x20 * (n))
- #define DISP_REG_MUTEX(n)	(0x24 + 0x20 * (n))
-@@ -132,7 +133,10 @@
+@@ -133,7 +135,7 @@ static const struct drm_mode_config_funcs mtk_drm_mode_config_funcs = {
+ 	.atomic_commit = mtk_atomic_commit,
+ };
  
- #define OVL_MOUT_EN_RDMA		0x1
- #define BLS_TO_DSI_RDMA1_TO_DPI1	0x8
-+#define BLS_TO_DPI_RDMA1_TO_DSI		0x2
- #define DSI_SEL_IN_BLS			0x0
-+#define DPI_SEL_IN_BLS			0x0
-+#define DSI_SEL_IN_RDMA			0x1
+-static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
++static enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+ 	DDP_COMPONENT_OVL0,
+ 	DDP_COMPONENT_RDMA0,
+ 	DDP_COMPONENT_COLOR0,
+@@ -141,7 +143,7 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_main[] = {
+ 	DDP_COMPONENT_DSI0,
+ };
  
- struct mtk_disp_mutex {
- 	int id;
-@@ -323,9 +327,17 @@ static void mtk_ddp_sout_sel(void __iomem *config_regs,
- 			     enum mtk_ddp_comp_id cur,
- 			     enum mtk_ddp_comp_id next)
- {
--	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
-+	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0) {
- 		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
- 			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-+	} else if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DPI0) {
-+		writel_relaxed(BLS_TO_DPI_RDMA1_TO_DSI,
-+			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-+		writel_relaxed(DSI_SEL_IN_RDMA,
-+			       config_regs + DISP_REG_CONFIG_DSI_SEL);
-+		writel_relaxed(DPI_SEL_IN_BLS,
-+			       config_regs + DISP_REG_CONFIG_DPI_SEL);
-+	}
- }
+-static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
++static enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+ 	DDP_COMPONENT_RDMA1,
+ 	DDP_COMPONENT_DPI0,
+ };
+@@ -172,7 +174,7 @@ static const enum mtk_ddp_comp_id mt2712_mtk_ddp_third[] = {
+ 	DDP_COMPONENT_PWM2,
+ };
  
- void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+-static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
++static enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+ 	DDP_COMPONENT_OVL0,
+ 	DDP_COMPONENT_COLOR0,
+ 	DDP_COMPONENT_AAL0,
+@@ -183,7 +185,7 @@ static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+ 	DDP_COMPONENT_PWM0,
+ };
+ 
+-static const enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
++static enum mtk_ddp_comp_id mt8173_mtk_ddp_ext[] = {
+ 	DDP_COMPONENT_OVL1,
+ 	DDP_COMPONENT_COLOR1,
+ 	DDP_COMPONENT_GAMMA,
+@@ -472,6 +474,7 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 
+ 	/* Iterate over sibling DISP function blocks */
+ 	for_each_child_of_node(dev->of_node->parent, node) {
++		struct device_node *port, *ep, *remote;
+ 		const struct of_device_id *of_id;
+ 		enum mtk_ddp_comp_type comp_type;
+ 		int comp_id;
+@@ -531,6 +534,32 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 
+ 			private->ddp_comp[comp_id] = comp;
+ 		}
++
++		if (comp_type != MTK_DSI && comp_type != MTK_DPI) {
++			port = of_graph_get_port_by_id(node, 0);
++			if (!port)
++				continue;
++			ep = of_get_child_by_name(port, "endpoint");
++			of_node_put(port);
++			if (!ep)
++				continue;
++			remote = of_graph_get_remote_port_parent(ep);
++			of_node_put(ep);
++			if (!remote)
++				continue;
++			of_id = of_match_node(mtk_ddp_comp_dt_ids, remote);
++			if (!of_id)
++				continue;
++			comp_type = (enum mtk_ddp_comp_type)of_id->data;
++			for (i = 0; i < private->data->main_len - 1; i++)
++				if (private->data->main_path[i] == comp_id)
++					private->data->main_path[i + 1] =
++					mtk_ddp_comp_get_id(node, comp_type);
++			for (i = 0; i < private->data->ext_len - 1; i++)
++				if (private->data->ext_path[i] == comp_id)
++					private->data->ext_path[i + 1] =
++					mtk_ddp_comp_get_id(node, comp_type);
++		}
+ 	}
+ 
+ 	if (!private->mutex_node) {
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index ecc00ca3221d..256a3ff2e66e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -29,9 +29,9 @@ struct drm_property;
+ struct regmap;
+ 
+ struct mtk_mmsys_driver_data {
+-	const enum mtk_ddp_comp_id *main_path;
++	enum mtk_ddp_comp_id *main_path;
+ 	unsigned int main_len;
+-	const enum mtk_ddp_comp_id *ext_path;
++	enum mtk_ddp_comp_id *ext_path;
+ 	unsigned int ext_len;
+ 	const enum mtk_ddp_comp_id *third_path;
+ 	unsigned int third_len;
 -- 
 2.12.5.2.gbdf23ab
 
