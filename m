@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244B7ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11906ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D17D821547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFC13206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Re3B76MC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17D821547
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gqsgEOJC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC13206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390283AbeIUQNl (ORCPT
+        id S2390298AbeIUQNn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:13:41 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51542 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389264AbeIUQNk (ORCPT
+        Fri, 21 Sep 2018 12:13:43 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35248 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389264AbeIUQNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:13:40 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8LAP6A1033570;
-        Fri, 21 Sep 2018 05:25:06 -0500
+        Fri, 21 Sep 2018 12:13:43 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8LANArJ030404;
+        Fri, 21 Sep 2018 05:23:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537525506;
-        bh=oXmEv3zbJKHI1VttjoVtSvRnozSnUYt2kr8MS+fRUlw=;
+        s=ti-com-17Q1; t=1537525390;
+        bh=Tx6crUFHjIFfhVg0MJIsh4FzqRvbQya9eH07cZOnHRc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Re3B76MCmwzUr5IOuEAPKWPlkF+ZLpbJiWCP+VMk9vMTrtALBvuyE5vbRnWI/AMWB
-         snd7JXBZ6yQu5at3sz5RkC+blw9daORvsiQWhxddI+ZVAFe6R9t7FNTChohgEWf0yf
-         g8D5u8CBqa0EFb0/BJY4XMB77RU6R56cXpeStC6I=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LAP6El032092;
-        Fri, 21 Sep 2018 05:25:06 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+        b=gqsgEOJC94wFAJOyCacvdGuLmjeAmKFeDoPkcWCPy8mXfCF0xSLU0LJIrEnQWLVma
+         pLzqIDzHYSxUT/M72D7QTf0XnPOrrgUJY94FYlP3Kwygmq50UD+n4FjuFofYZEuUIu
+         T9MCo/jM8ssPFG+qYURgTSk+chT/gv4NYPOZmLRw=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LANAhd018296;
+        Fri, 21 Sep 2018 05:23:10 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 21
- Sep 2018 05:25:06 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ Sep 2018 05:23:09 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 21 Sep 2018 05:25:06 -0500
+ Fri, 21 Sep 2018 05:23:09 -0500
 Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LAMEte032280;
-        Fri, 21 Sep 2018 05:25:02 -0500
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LAMEtF032280;
+        Fri, 21 Sep 2018 05:23:05 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Jingoo Han <jingoohan1@gmail.com>,
         Joao Pinto <Joao.Pinto@synopsys.com>,
@@ -65,9 +65,9 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH 36/40] arm64: dts: k3-am6: Add "socionext,synquacer-pre-its" property to gic_its
-Date:   Fri, 21 Sep 2018 15:51:51 +0530
-Message-ID: <20180921102155.22839-37-kishon@ti.com>
+Subject: [RFC PATCH 11/40] dt-bindings: PCI: keystone: Add bindings to get device control module
+Date:   Fri, 21 Sep 2018 15:51:26 +0530
+Message-ID: <20180921102155.22839-12-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180921102155.22839-1-kishon@ti.com>
 References: <20180921102155.22839-1-kishon@ti.com>
@@ -79,27 +79,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GIC_ITS used in AM65x platform has the same configuration as that of
-GIC_ITS used in Socionext SoCs. Add "socionext,synquacer-pre-its"
-property to get PCI MSI working.
+Add bindings to get device control module which has the device id and
+vendor id to be configured in the keystone PCIe controller.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/pci/pci-keystone.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index adcd6341e40c..2df4acb198bd 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -24,6 +24,7 @@
- 		gic_its: gic-its@18200000 {
- 			compatible = "arm,gic-v3-its";
- 			reg = <0x00 0x01820000 0x00 0x10000>;
-+			socionext,synquacer-pre-its = <0x1000000 0x400000>;
- 			msi-controller;
- 			#msi-cells = <1>;
- 		};
+diff --git a/Documentation/devicetree/bindings/pci/pci-keystone.txt b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+index 4dd17de549a7..2030ee0dc4f9 100644
+--- a/Documentation/devicetree/bindings/pci/pci-keystone.txt
++++ b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+@@ -19,6 +19,9 @@ pcie_msi_intc : Interrupt controller device node for MSI IRQ chip
+ 	interrupt-cells: should be set to 1
+ 	interrupts: GIC interrupt lines connected to PCI MSI interrupt lines
+ 
++ti,syscon-pcie-id : phandle to the device control module required to set device
++		    id and vendor id.
++
+  Example:
+ 	pcie_msi_intc: msi-interrupt-controller {
+ 			interrupt-controller;
 -- 
 2.17.1
 
