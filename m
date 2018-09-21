@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 463CFC04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F949C070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3D62156B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18A8A21569
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UVkz6KYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3D62156B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iP8uqVhJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A8A21569
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390991AbeIUVDW (ORCPT
+        id S2391003AbeIUVDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:03:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40843 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390827AbeIUVDV (ORCPT
+        Fri, 21 Sep 2018 17:03:23 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42617 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390865AbeIUVDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:03:21 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y8-v6so9568663wrh.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:14:01 -0700 (PDT)
+        Fri, 21 Sep 2018 17:03:22 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v17-v6so13207962wrr.9
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:14:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KVgtsbYbOvSjPEIUjVgdN3S6L/UK1zoaSGlGEjw8FgY=;
-        b=UVkz6KYMs1jt6BNhhHjCnPFd4+RJOvztwmajx7c1R34dBVPpZdcX1KOPK8VUDzdGjD
-         I19WjqNH+Az78D2uPI2wWpTdoBPn+/YzwHu6ZDUQQ3t3rXw4pg/sEMMGv2T47ALQ70V2
-         XtzbKNv7LbJ9SIQL2qhBimllGqf0KW/C+/83JZJkiVcYOZMNFStl0BtrUuIdqvUIrD/g
-         SHKFAx+nm5L8Vyb694Jt6hzSMO4tNja18/aGZebA7xQk9H4JAj37d89p43Xird77eTHT
-         qriKa1do9sZKhWy+Kv0xEOWAz9/StLdiFG5qH3z7vGorbrPzOsc5F/+xNS+669Q+VFKd
-         e0Tg==
+        bh=mjTJMND2InMYoPSUJVvHZluvejsOaOH9BQkiQvHv+tc=;
+        b=iP8uqVhJGEXg6tZRqMuU9Q7HePNsCduoH/q7Aw1X/zYOwPA0bolayCWyXePfTy7zJp
+         vCrPFVZA3OfJblBv7fEQ5Wj64KRmCWAF1iMIV+qyobMXa/WsvTJOtSp+vFKnbrVbriEP
+         0KCjR1cLDCo3eHlhUpiVkjZaW+hlmNewj8FTFsjYGn63b0wWJdAePM2mBJR+xBnLO53q
+         bmw++1JEHafERQZ7w/pyE3pv7akhaNozJHz/rBu1JHSvly1AqKW2UlHQqYmZHxPb+smO
+         DZR1w1WqwZ7hm4SnzIEY1xcHQqixqSxPeEe5Djkg99PW60K6BMEknQmTgfoIbYPvrP05
+         XzkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KVgtsbYbOvSjPEIUjVgdN3S6L/UK1zoaSGlGEjw8FgY=;
-        b=btqUC1uFljmtXiMRoQY/2xK7cJXBBbaI+El1CzEqobiV71DqZ2S/37cV9hM6uw+/V0
-         DYIE5sNtf62+B2IqCYYyZ3i3mB69TDZw5SkcM1AylH/m7fVWTrMr0zF4aZxWjD6qcqHw
-         56+LCND9pG/SQq4YcwZiDGRU4iRoUnKQZGhpl1ezR7dCleLNYKDPAbznpKcghc/wBxAf
-         ozeV/tRDO2VaT/vxgFbYWwsOwR/sPYGy2nMR8yBPHb7ii4urOSyTSqWzCkwZ0YHR+YYc
-         YBpML6Rya3Kwq25x5neFvHufPHLZISp+kZi5QFDlShE6bBxblEFPq9q3Txw09MbkAvmn
-         gElQ==
-X-Gm-Message-State: APzg51BQyxQSvpS6c3Db1ihmAwRxzZOhBKp1uRJK63wF1UncifHMDPwN
-        iHMRf7RdxIb0t5rLk1+f/10xpQ==
-X-Google-Smtp-Source: ANB0VdY9DhoHxOj8lVeZe6dprtekKU7u8Y5gEjmNrsoZiG6uhCvRL6CiJbT48sjsEaIZfB8CzJQ/kQ==
-X-Received: by 2002:a05:6000:108:: with SMTP id o8mr36830902wrx.196.1537542840292;
-        Fri, 21 Sep 2018 08:14:00 -0700 (PDT)
+        bh=mjTJMND2InMYoPSUJVvHZluvejsOaOH9BQkiQvHv+tc=;
+        b=cNE9z5eWREvCcBlSW3xzQ8AkmrcFqxeiSvvZxodOnzHWL6kVlqHTPgAwUtjU8Wc8yV
+         CfXz4JWDJtZZ9rrIiTVjFC2nXKLo3z0ETubATjf8zpgJOJHD/080xqoSJrwrorYMVYow
+         c80Y1CFW8saS1TsY/aMyh6WBhSjXt7Owl7nHC3i9bKyHCM00JFnYZhEtocshLlsYjeCc
+         kCdXtNz8dqQ10H5/yS1me/lIEFfA+Q/f7Mm4L9tXvjo7U550ZIUZp5QUyxNy93owd5HE
+         rFjcrlDKY2jpK06thTh+qUcQF2aVg4dzgCnBGShepu12zOgYwAZgUV3UqYjC/IDRyaO/
+         1UXQ==
+X-Gm-Message-State: APzg51CifhdQI9HnhyV7i/urOcktzrO5PXR7jCpaQ3ZOzJDqolRbtz1w
+        ZTN1LcYeZ5daQ1yi7BCnWCMiRg==
+X-Google-Smtp-Source: ANB0VdahIErwHyxu6qlRT7K4dJtmr7FgqGiVYl/UxD7i/B9elu+PCdd/MlOQK3vhfJ9Gyi/7uXOBSw==
+X-Received: by 2002:a5d:438d:: with SMTP id i13-v6mr39162425wrq.156.1537542842008;
+        Fri, 21 Sep 2018 08:14:02 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm27990271wru.46.2018.09.21.08.13.58
+        by smtp.gmail.com with ESMTPSA id e7-v6sm27990271wru.46.2018.09.21.08.14.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 08:13:59 -0700 (PDT)
+        Fri, 21 Sep 2018 08:14:01 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,190 +96,124 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v9 08/20] kasan: add tag related helper functions
-Date:   Fri, 21 Sep 2018 17:13:30 +0200
-Message-Id: <bf39aab9397f18b104f0343f7b577e7c7ef037d6.1537542735.git.andreyknvl@google.com>
+Subject: [PATCH v9 09/20] kasan: preassign tags to objects with ctors or SLAB_TYPESAFE_BY_RCU
+Date:   Fri, 21 Sep 2018 17:13:31 +0200
+Message-Id: <9ea379b38a763adeae0e43638a9769c96eea767f.1537542735.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
 In-Reply-To: <cover.1537542735.git.andreyknvl@google.com>
 References: <cover.1537542735.git.andreyknvl@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds a few helper functions, that are meant to be used to
-work with tags embedded in the top byte of kernel pointers: to set, to
-get or to reset (set to 0xff) the top byte.
+An object constructor can initialize pointers within this objects based on
+the address of the object. Since the object address might be tagged, we
+need to assign a tag before calling constructor.
+
+The implemented approach is to assign tags to objects with constructors
+when a slab is allocated and call constructors once as usual. The
+downside is that such object would always have the same tag when it is
+reallocated, so we won't catch use-after-frees on it.
+
+Also pressign tags for objects from SLAB_TYPESAFE_BY_RCU caches, since
+they can be validy accessed after having been freed.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/mm/kasan_init.c |  2 ++
- include/linux/kasan.h      | 13 +++++++++
- mm/kasan/kasan.h           | 55 ++++++++++++++++++++++++++++++++++++++
- mm/kasan/tags.c            | 37 +++++++++++++++++++++++++
- 4 files changed, 107 insertions(+)
+ mm/slab.c |  2 +-
+ mm/slub.c | 24 ++++++++++++++----------
+ 2 files changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index 7a31e8ccbad2..ecd3f25cc323 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -250,6 +250,8 @@ void __init kasan_init(void)
- 	memset(kasan_zero_page, KASAN_SHADOW_INIT, PAGE_SIZE);
- 	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+diff --git a/mm/slab.c b/mm/slab.c
+index 6fdca9ec2ea4..fe0ddf08aa2c 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -2574,7 +2574,7 @@ static void cache_init_objs(struct kmem_cache *cachep,
  
-+	kasan_init_tags();
-+
- 	/* At this point kasan is fully initialized. Enable error messages */
- 	init_task.kasan_depth = 0;
- 	pr_info("KernelAddressSanitizer initialized\n");
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 7f6574c35c62..4c9d6f9029f2 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -169,6 +169,19 @@ static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
+ 	for (i = 0; i < cachep->num; i++) {
+ 		objp = index_to_obj(cachep, page, i);
+-		kasan_init_slab_obj(cachep, objp);
++		objp = kasan_init_slab_obj(cachep, objp);
  
- #define KASAN_SHADOW_INIT 0xFF
- 
-+void kasan_init_tags(void);
-+
-+void *kasan_reset_tag(const void *addr);
-+
-+#else /* CONFIG_KASAN_SW_TAGS */
-+
-+static inline void kasan_init_tags(void) { }
-+
-+static inline void *kasan_reset_tag(const void *addr)
-+{
-+	return (void *)addr;
-+}
-+
- #endif /* CONFIG_KASAN_SW_TAGS */
- 
- #endif /* LINUX_KASAN_H */
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index 19b950eaccff..f16bee55b610 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -8,6 +8,10 @@
- #define KASAN_SHADOW_SCALE_SIZE (1UL << KASAN_SHADOW_SCALE_SHIFT)
- #define KASAN_SHADOW_MASK       (KASAN_SHADOW_SCALE_SIZE - 1)
- 
-+#define KASAN_TAG_KERNEL	0xFF /* native kernel pointers tag */
-+#define KASAN_TAG_INVALID	0xFE /* inaccessible memory tag */
-+#define KASAN_TAG_MAX		0xFD /* maximum value for random tags */
-+
- #define KASAN_FREE_PAGE         0xFF  /* page was freed */
- #define KASAN_PAGE_REDZONE      0xFE  /* redzone for kmalloc_large allocations */
- #define KASAN_KMALLOC_REDZONE   0xFC  /* redzone inside slub object */
-@@ -126,6 +130,57 @@ static inline void quarantine_reduce(void) { }
- static inline void quarantine_remove_cache(struct kmem_cache *cache) { }
+ 		/* constructor could break poison info */
+ 		if (DEBUG == 0 && cachep->ctor) {
+diff --git a/mm/slub.c b/mm/slub.c
+index c4d5f4442ff1..75fc76e42a1e 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1413,16 +1413,17 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
  #endif
+ }
  
-+#ifdef CONFIG_KASAN_SW_TAGS
-+
-+#define KASAN_PTR_TAG_SHIFT 56
-+#define KASAN_PTR_TAG_MASK (0xFFUL << KASAN_PTR_TAG_SHIFT)
-+
-+u8 random_tag(void);
-+
-+static inline void *set_tag(const void *addr, u8 tag)
-+{
-+	u64 a = (u64)addr;
-+
-+	a &= ~KASAN_PTR_TAG_MASK;
-+	a |= ((u64)tag << KASAN_PTR_TAG_SHIFT);
-+
-+	return (void *)a;
-+}
-+
-+static inline u8 get_tag(const void *addr)
-+{
-+	return (u8)((u64)addr >> KASAN_PTR_TAG_SHIFT);
-+}
-+
-+static inline void *reset_tag(const void *addr)
-+{
-+	return set_tag(addr, KASAN_TAG_KERNEL);
-+}
-+
-+#else /* CONFIG_KASAN_SW_TAGS */
-+
-+static inline u8 random_tag(void)
-+{
-+	return 0;
-+}
-+
-+static inline void *set_tag(const void *addr, u8 tag)
-+{
-+	return (void *)addr;
-+}
-+
-+static inline u8 get_tag(const void *addr)
-+{
-+	return 0;
-+}
-+
-+static inline void *reset_tag(const void *addr)
-+{
-+	return (void *)addr;
-+}
-+
-+#endif /* CONFIG_KASAN_SW_TAGS */
-+
- /*
-  * Exported functions for interfaces called from assembly or from generated
-  * code. Declarations here to avoid warning about missing declarations.
-diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
-index 04194923c543..700323946867 100644
---- a/mm/kasan/tags.c
-+++ b/mm/kasan/tags.c
-@@ -38,6 +38,43 @@
- #include "kasan.h"
- #include "../slab.h"
- 
-+static DEFINE_PER_CPU(u32, prng_state);
-+
-+void kasan_init_tags(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu)
-+		per_cpu(prng_state, cpu) = get_random_u32();
-+}
-+
-+/*
-+ * If a preemption happens between this_cpu_read and this_cpu_write, the only
-+ * side effect is that we'll give a few allocated in different contexts objects
-+ * the same tag. Since tag-based KASAN is meant to be used a probabilistic
-+ * bug-detection debug feature, this doesn’t have significant negative impact.
-+ *
-+ * Ideally the tags use strong randomness to prevent any attempts to predict
-+ * them during explicit exploit attempts. But strong randomness is expensive,
-+ * and we did an intentional trade-off to use a PRNG. This non-atomic RMW
-+ * sequence has in fact positive effect, since interrupts that randomly skew
-+ * PRNG at unpredictable points do only good.
-+ */
-+u8 random_tag(void)
-+{
-+	u32 state = this_cpu_read(prng_state);
-+
-+	state = 1664525 * state + 1013904223;
-+	this_cpu_write(prng_state, state);
-+
-+	return (u8)(state % (KASAN_TAG_MAX + 1));
-+}
-+
-+void *kasan_reset_tag(const void *addr)
-+{
-+	return reset_tag(addr);
-+}
-+
- void check_memory_region(unsigned long addr, size_t size, bool write,
- 				unsigned long ret_ip)
+-static void setup_object(struct kmem_cache *s, struct page *page,
++static void *setup_object(struct kmem_cache *s, struct page *page,
+ 				void *object)
  {
+ 	setup_object_debug(s, page, object);
+-	kasan_init_slab_obj(s, object);
++	object = kasan_init_slab_obj(s, object);
+ 	if (unlikely(s->ctor)) {
+ 		kasan_unpoison_object_data(s, object);
+ 		s->ctor(object);
+ 		kasan_poison_object_data(s, object);
+ 	}
++	return object;
+ }
+ 
+ /*
+@@ -1530,16 +1531,16 @@ static bool shuffle_freelist(struct kmem_cache *s, struct page *page)
+ 	/* First entry is used as the base of the freelist */
+ 	cur = next_freelist_entry(s, page, &pos, start, page_limit,
+ 				freelist_count);
++	cur = setup_object(s, page, cur);
+ 	page->freelist = cur;
+ 
+ 	for (idx = 1; idx < page->objects; idx++) {
+-		setup_object(s, page, cur);
+ 		next = next_freelist_entry(s, page, &pos, start, page_limit,
+ 			freelist_count);
++		next = setup_object(s, page, next);
+ 		set_freepointer(s, cur, next);
+ 		cur = next;
+ 	}
+-	setup_object(s, page, cur);
+ 	set_freepointer(s, cur, NULL);
+ 
+ 	return true;
+@@ -1561,7 +1562,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
+ 	struct page *page;
+ 	struct kmem_cache_order_objects oo = s->oo;
+ 	gfp_t alloc_gfp;
+-	void *start, *p;
++	void *start, *p, *next;
+ 	int idx, order;
+ 	bool shuffle;
+ 
+@@ -1613,13 +1614,16 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
+ 
+ 	if (!shuffle) {
+ 		for_each_object_idx(p, idx, s, start, page->objects) {
+-			setup_object(s, page, p);
+-			if (likely(idx < page->objects))
+-				set_freepointer(s, p, p + s->size);
+-			else
++			if (likely(idx < page->objects)) {
++				next = p + s->size;
++				next = setup_object(s, page, next);
++				set_freepointer(s, p, next);
++			} else
+ 				set_freepointer(s, p, NULL);
+ 		}
+-		page->freelist = fixup_red_left(s, start);
++		start = fixup_red_left(s, start);
++		start = setup_object(s, page, start);
++		page->freelist = start;
+ 	}
+ 
+ 	page->inuse = page->objects;
 -- 
 2.19.0.444.g18242da7ef-goog
 
