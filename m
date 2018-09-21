@@ -2,199 +2,150 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A14ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A6AECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E23821567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E23821567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BFA321550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:03:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="NsthUV2c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BFA321550
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390566AbeIUWwJ (ORCPT
+        id S2390742AbeIUWw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:52:09 -0400
-Received: from mga06.intel.com ([134.134.136.31]:35009 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728149AbeIUWwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:52:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 10:02:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="234880956"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.152]) ([10.7.198.152])
-  by orsmga004.jf.intel.com with ESMTP; 21 Sep 2018 10:02:14 -0700
-Subject: Re: [PATCH v4 4/5] async: Add support for queueing on specific node
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180920215824.19464.8884.stgit@localhost.localdomain>
- <20180920222938.19464.34102.stgit@localhost.localdomain>
- <CAPcyv4iFs5WXMYgbC6mBSxcHggv5y1kPW5BoZ4JMy5o-bv6cOg@mail.gmail.com>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <f900a0b7-546f-7273-420c-112cb4b30e11@linux.intel.com>
-Date:   Fri, 21 Sep 2018 10:02:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iFs5WXMYgbC6mBSxcHggv5y1kPW5BoZ4JMy5o-bv6cOg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 21 Sep 2018 18:52:56 -0400
+Received: from mail-bn3nam01on0104.outbound.protection.outlook.com ([104.47.33.104]:48486
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390615AbeIUWw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:52:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KXpAmZ7S9hN0UFaOifx36jSnUjOV0+zQayvClqWDIP4=;
+ b=NsthUV2ciy5cM1dD2kDyvUK19pV4dFR0fOLAy8Z5s4gQce9o2ZNEMCJJp8Yn4zhyl2gvEpWSy3+fQZpiZXxfXvmSSqFDTU6VwTK8HdCcJMifpiOeKViMjBaQr8kdqD1vwv9rBb/gHrM+q53dIjCHXI4Tda3JJMFIcynvJWtp050=
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
+ CY4PR21MB0117.namprd21.prod.outlook.com (10.173.189.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.4; Fri, 21 Sep 2018 17:02:54 +0000
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::d1f6:46cd:d8b4:880c]) by CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::d1f6:46cd:d8b4:880c%5]) with mapi id 15.20.1185.010; Fri, 21 Sep 2018
+ 17:02:54 +0000
+From:   "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+To:     Yi Sun <yi.y.sun@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
+        "chao.gao@intel.com" <chao.gao@intel.com>,
+        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: RE: [PATCH v2 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
+ Hyper-V
+Thread-Topic: [PATCH v2 2/2] locking/pvqspinlock, hv: Enable PV qspinlock for
+ Hyper-V
+Thread-Index: AQHUUX+pyi/oxQXiE0uwSTGHRUFOXaT69BVg
+Date:   Fri, 21 Sep 2018 17:02:54 +0000
+Message-ID: <CY4PR21MB0773F63A6367C5C1CE26F5ADDC120@CY4PR21MB0773.namprd21.prod.outlook.com>
+References: <1537514712-62434-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1537514712-62434-3-git-send-email-yi.y.sun@linux.intel.com>
+In-Reply-To: <1537514712-62434-3-git-send-email-yi.y.sun@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-09-21T17:02:52.7266697Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [2001:4898:80e8:1:990c:85a5:5aae:c0fc]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0117;6:KLj0pvCuFp/6pskABxKUyjSjhh9JGb4AGNBuomhEiXOMi5j4NbG2pULUTnxqgr44olIuPBICvB3mYGOO+Iis64uEQ15Xbjxb4rOsAvA8/ErVjq+sM0weIvgVxf5h3r6x8W09hODgCVZab4IRWJIoJfCt00T7NPydgtK3OcT1SeWdSFhz4WIfxhItJpXB6pArGZwsU6IYuFshIPHEvv65VsDS3eBQbuUiFR2V1FicuidYTexOv5gcMFjKbzYdRcLPpK1+Ytb0BeDts7MOBFAvW29X0Ve7zT1u8eZ0yn/yhL1DJ/WEBLIh5Kzrut/0LR4bVLFYWj/328ES0kGrxv84wieiXjuIqSk2TKGeQzfyivXWz1Zm1/XQFHJpT/T6AXa+JGt7WTl7Wb6PYfjBA/Bl0zCnxuW++JnTyIP2JsFSNam7z68BHUrKzBoUzvqsisUQ671g/7MWPD9Uz5JCvNGTmw==;5:780c2TjzDWrDJZrJwNwcBJw1F0HE/nZjUeEv+kzDzWKkZ5V1z1glmVoonUOhYrO2rCAPQlt96Y0EGP2X0Zl6wSpOPoCnzBKFFtU+UkZsLRZ/ch7mHNYlDyULwBs01fjZ0JQuITDTfIyxt40GZ5QbyNgdoXQ42cMAuKicmtxGVaE=;7:eNAqImBPvh+PMZYkaucX0DNkyakrijQwGWfbfcxl8dxAkeop+6s3r7e24obn8/pOWGWsLvckqIlydVixup4hX8Ls6sS4OnqN5q+GRIOnQO7jHWJIabq6WdjcXJTHZJu3tlvIDWo85DQBnxnzE8w7CwR3cRqY9kx+dJSEp9Ej9L79fUqrgbMZg6iXstycnyJZsDPfAoCgFJQHaWqP4wTUqcicOl63zTbvQIVLA04XLMOSmnTUrUE8AU8uUtTQfMUa
+x-ms-office365-filtering-correlation-id: 56c0bbdb-b4f9-44c5-1457-08d61fe4127a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0117;
+x-ms-traffictypediagnostic: CY4PR21MB0117:
+x-microsoft-antispam-prvs: <CY4PR21MB0117822FF92485EC8245A75ADC120@CY4PR21MB0117.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0117;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0117;
+x-forefront-prvs: 0802ADD973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(136003)(346002)(396003)(376002)(199004)(189003)(81166006)(110136005)(6506007)(54906003)(81156014)(305945005)(8676002)(14444005)(256004)(2501003)(6436002)(68736007)(5250100002)(102836004)(74316002)(105586002)(476003)(53936002)(8936002)(5660300001)(10090500001)(8990500004)(22452003)(106356001)(33656002)(9686003)(46003)(55016002)(316002)(6116002)(6246003)(107886003)(97736004)(486006)(229853002)(71190400001)(71200400001)(186003)(10290500003)(86362001)(446003)(478600001)(7736002)(6346003)(76176011)(25786009)(4326008)(2906002)(7696005)(99286004)(14454004)(72206003)(2900100001)(86612001)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0117;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Michael.H.Kelley@microsoft.com; 
+x-microsoft-antispam-message-info: u8A0CYGyX8Yehs7bJ+rfoVu3zV43aOQuCkvS0qGq1ne8Aem+1Ro78eQezWQkRPNnEJ6/TVPLB7njwv6ioueM4DxKHp0BLBa0utqg8nXUul3XVO0Jop7F+LMzW35K6382A3zhtDV2t+yeY4caNYZYPA3EnvscdeLSzzUGbof86skrhSzhVRdSNFo1gg1NGdn4HmqJ0J4xcsnMNnN3/2VDP5vSwq3ZHcGUzY4GLzZgOaYxSotptJ2HE/+XhXk+vlU5VoFl5gTNPsGfG9/IrK3s8TuPccrWXgdYj49fNWOCdKHOOZiutivcMt4Z2Ve8kB1c2SNyK1lrYQdjX7YfFcOaFmxIN052vYbpOvk/4ny6u8U=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56c0bbdb-b4f9-44c5-1457-08d61fe4127a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 17:02:54.2038
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Yi Sun <yi.y.sun@linux.intel.com> Sent: Friday, September 21, 2018 12=
+:25 AM
+> +
+> +#define pr_fmt(fmt) "hv: " fmt
 
+Other Hyper-V messages use "Hyper-V: " as the prefix, not "hv: ".  Take
+a quick look at 'dmesg' output for reference.
 
-On 9/21/2018 7:57 AM, Dan Williams wrote:
-> On Thu, Sep 20, 2018 at 3:31 PM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
->>
->> This patch introduces two new variants of the async_schedule_ functions
->> that allow scheduling on a specific node. These functions are
->> async_schedule_on and async_schedule_on_domain which end up mapping to
->> async_schedule and async_schedule_domain but provide NUMA node specific
->> functionality. The original functions were moved to inline function
->> definitions that call the new functions while passing NUMA_NO_NODE.
->>
->> The main motivation behind this is to address the need to be able to
->> schedule NVDIMM init work on specific NUMA nodes in order to improve
->> performance of memory initialization.
->>
->> One additional change I made is I dropped the "extern" from the function
->> prototypes in the async.h kernel header since they aren't needed.
->>
->> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->> ---
->>   include/linux/async.h |   20 +++++++++++++++++---
->>   kernel/async.c        |   36 +++++++++++++++++++++++++-----------
->>   2 files changed, 42 insertions(+), 14 deletions(-)
->>
->> diff --git a/include/linux/async.h b/include/linux/async.h
->> index 6b0226bdaadc..9878b99cbb01 100644
->> --- a/include/linux/async.h
->> +++ b/include/linux/async.h
->> @@ -14,6 +14,7 @@
->>
->>   #include <linux/types.h>
->>   #include <linux/list.h>
->> +#include <linux/numa.h>
->>
->>   typedef u64 async_cookie_t;
->>   typedef void (*async_func_t) (void *data, async_cookie_t cookie);
->> @@ -37,9 +38,22 @@ struct async_domain {
->>          struct async_domain _name = { .pending = LIST_HEAD_INIT(_name.pending), \
->>                                        .registered = 0 }
->>
->> -extern async_cookie_t async_schedule(async_func_t func, void *data);
->> -extern async_cookie_t async_schedule_domain(async_func_t func, void *data,
->> -                                           struct async_domain *domain);
->> +async_cookie_t async_schedule_on(async_func_t func, void *data, int node);
->> +async_cookie_t async_schedule_on_domain(async_func_t func, void *data, int node,
->> +                                       struct async_domain *domain);
-> 
-> I would expect this to take a cpu instead of a node to not surprise
-> users coming from queue_work_on() / schedule_work_on()...
+> +
+> +#include <linux/kernel_stat.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/log2.h>
+> +#include <linux/gfp.h>
 
-The thing is queue_work_on actually queues the work on a cpu in most 
-cases. The problem is that we are running on an unbound workqueue so 
-what we actually get is node specific behavior instead of CPU specific. 
-That is why I opted for this.
-https://elixir.bootlin.com/linux/v4.19-rc4/source/kernel/workqueue.c#L1390
+Some of these #includes look like they might be leftovers from
+some other code.  Please check and see whether kernel_stat.h,
+debugsfs.h, log2.h, and gfp.h are actually needed.
 
->> +
->> +static inline async_cookie_t async_schedule(async_func_t func, void *data)
->> +{
->> +       return async_schedule_on(func, data, NUMA_NO_NODE);
->> +}
->> +
->> +static inline async_cookie_t
->> +async_schedule_domain(async_func_t func, void *data,
->> +                     struct async_domain *domain)
->> +{
->> +       return async_schedule_on_domain(func, data, NUMA_NO_NODE, domain);
->> +}
->> +
->>   void async_unregister_domain(struct async_domain *domain);
->>   extern void async_synchronize_full(void);
->>   extern void async_synchronize_full_domain(struct async_domain *domain);
->> diff --git a/kernel/async.c b/kernel/async.c
->> index a893d6170944..1d7ce81c1949 100644
->> --- a/kernel/async.c
->> +++ b/kernel/async.c
->> @@ -56,6 +56,7 @@ synchronization with the async_synchronize_full() function, before returning
->>   #include <linux/sched.h>
->>   #include <linux/slab.h>
->>   #include <linux/workqueue.h>
->> +#include <linux/cpu.h>
->>
->>   #include "workqueue_internal.h"
->>
->> @@ -149,8 +150,11 @@ static void async_run_entry_fn(struct work_struct *work)
->>          wake_up(&async_done);
->>   }
->>
->> -static async_cookie_t __async_schedule(async_func_t func, void *data, struct async_domain *domain)
->> +static async_cookie_t __async_schedule(async_func_t func, void *data,
->> +                                      struct async_domain *domain,
->> +                                      int node)
->>   {
->> +       int cpu = WORK_CPU_UNBOUND;
->>          struct async_entry *entry;
->>          unsigned long flags;
->>          async_cookie_t newcookie;
->> @@ -194,30 +198,40 @@ static async_cookie_t __async_schedule(async_func_t func, void *data, struct asy
->>          /* mark that this task has queued an async job, used by module init */
->>          current->flags |= PF_USED_ASYNC;
->>
->> +       /* guarantee cpu_online_mask doesn't change during scheduling */
->> +       get_online_cpus();
->> +
->> +       if (node >= 0 && node < MAX_NUMNODES && node_online(node))
->> +               cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
-> 
-> ...I think this node to cpu helper should be up-leveled for callers. I
-> suspect using get_online_cpus() may cause lockdep problems to take the
-> cpu_hotplug_lock() within a "do_something_on()" routine. For example,
-> I found this when auditing queue_work_on() users:
+> +static void hv_qlock_wait(u8 *byte, u8 val)
+> +{
+> +	unsigned long msr_val;
+> +
+> +	if (READ_ONCE(*byte) !=3D val)
+> +		return;
+> +
+> +	/*
+> +	 * Read HV_X64_MSR_GUEST_IDLE MSR can trigger the guest's
+> +	 * transition to the idle power state which can be exited
+> +	 * by an IPI even if IF flag is disabled.
+> +	 */
+> +	if (ms_hyperv.features & HV_X64_MSR_GUEST_IDLE_AVAILABLE)
 
-Yeah, after looking over the code I think I do see an issue. I will 
-probably need to add something like a "unbound_cpu_by_node" type of 
-function in order to pair it up with the unbound_pwq_by_node call that 
-is in __queue_work. Otherwise I run the risk of scheduling on a CPU that 
-I shouldn't be scheduling on.
+I can't see a case where this test is actually needed.  hv_qlock_wait()
+can only get called if the flag is set when hv_init_spinlocks() is run, and
+the flag value doesn't change after it is set.
 
-> /*
->   * Doesn't need any cpu hotplug locking because we do rely on per-cpu
->   * kworkers being shut down before our page_alloc_cpu_dead callback is
->   * executed on the offlined cpu.
->   * Calling this function with cpu hotplug locks held can actually lead
->   * to obscure indirect dependencies via WQ context.
->   */
-> void lru_add_drain_all(void)
-> 
-> I think it's a gotcha waiting to happen if async_schedule_on() has
-> more restrictive calling contexts than queue_work_on().
-I can look into that. If nothing else it looks like queue_work_on does 
-put the onus on the caller to make certain the CPU cannot go away so I 
-can push the responsibility up the call chain in order to maintain parity.
+> +		rdmsrl(HV_X64_MSR_GUEST_IDLE, msr_val);
+> +}
 
+Michael
