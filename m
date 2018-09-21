@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5319C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEECFC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A9A1206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:51:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A9A1206B6
+	by mail.kernel.org (Postfix) with ESMTP id 92AA521571
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:51:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92AA521571
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbeIVEmG (ORCPT
+        id S1727431AbeIVEmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 00:42:06 -0400
-Received: from mga09.intel.com ([134.134.136.24]:6776 "EHLO mga09.intel.com"
+        Sat, 22 Sep 2018 00:42:38 -0400
+Received: from mga06.intel.com ([134.134.136.31]:7096 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725750AbeIVEmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 00:42:05 -0400
+        id S1725750AbeIVEmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 00:42:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 15:51:06 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 15:51:38 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,286,1534834800"; 
-   d="scan'208";a="234948580"
+   d="scan'208";a="234948599"
 Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga004.jf.intel.com with ESMTP; 21 Sep 2018 15:50:23 -0700
-From:   Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH 0/8] x86/mm/cpa: Further optimizations
+  by orsmga004.jf.intel.com with ESMTP; 21 Sep 2018 15:50:54 -0700
+Subject: Re: [PATCH 0/8] x86/mm/cpa: Further optimizations
 To:     Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>
 References: <20180919085016.164552924@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
         Bin Yang <bin.yang@intel.com>,
         Mark Gross <mark.gross@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -82,38 +82,21 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <3c91a770-566c-5ac0-b899-18bc4e339e4e@intel.com>
-Date:   Fri, 21 Sep 2018 15:50:23 -0700
+Message-ID: <86f47905-8190-10fb-458e-868a1873a646@intel.com>
+Date:   Fri, 21 Sep 2018 15:50:54 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
 In-Reply-To: <20180919085016.164552924@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/19/2018 01:50 AM, Peter Zijlstra wrote:
-> Dave, can you have a wee look at the Atom errata thing; this does grow the
-> amount of code between the page-table update and the TLB flush a bit, but all
-> that PTI crud we did a while back already made it a non-trivial amount of code.
+BTW, on all of these:
 
-Oh, were you worried that the act of sending the IPIs widens the window
-vs. just doing the local flush?  We definitely do the
-smp_call_function() dance *before* we do the local TLB invalidation in
-in on_each_cpu().
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
 
-But, the existing flush was not a "true" fix anyway.  It just tended to
-work around things.
-
-If the issue pops back up, I'd prefer that we just do:
-
-	__flush_tlb_all();
-	flush_tlb_all();
-
-Preferably with an actual model/family check for the "AAH41" workaround.
- The real value of what you did was moving the flush_tlb_all() closer,
-and that remains either way.
