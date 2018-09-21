@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1224ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9BAECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D09D20833
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D09D20833
+	by mail.kernel.org (Postfix) with ESMTP id 0B16F20833
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B16F20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389936AbeIUQSq (ORCPT
+        id S2389743AbeIUQT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:18:46 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36091 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389215AbeIUQSq (ORCPT
+        Fri, 21 Sep 2018 12:19:58 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38440 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388909AbeIUQT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:18:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e1-v6so12358080wrt.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 03:30:31 -0700 (PDT)
+        Fri, 21 Sep 2018 12:19:58 -0400
+Received: by mail-wm1-f67.google.com with SMTP id t25-v6so2665025wmi.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 03:31:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Okn+4k5hRHBx3TD6ErfmaJ0Y9e9n7x98Pj1Dvrx5AqU=;
-        b=Io1oCFM6Eol8Hpa6Mj3m63JZyZSr2nYXbWW1jc2WwvL3cmssyT5T5DCAKQv6B/Zi8A
-         eNKjfyN2kHSjOqdxtucYKroTyvpY4BVi3ce4YmGzeyYFXdH0siPi5VEk44m/8zXiyces
-         6soJ5Na61iKF4SZBxFros9NclBYGuN0QV4wW06t1COcHNZSZe6xXEo01qPU89Iwpj9YZ
-         g6798uYlZIJZDbOptBm2equZALq6eMCpES97121i/eRSXiM0vYwNKaGUfKAJ3GZ6BnPm
-         2wYFXGOSqX9RzzduX6UF4c3hROw4pYs7uL7EEobkk2w3iSo2iQh40n5Vh9XGaSzCqwta
-         /KLg==
-X-Gm-Message-State: APzg51ARth+VjOYA//Gp4id31hHIzswPCcETHNWRVI8GY4PQSlo9BDHb
-        I9hQ0G61RqtrhSCjA97klka/fNxl45g=
-X-Google-Smtp-Source: ANB0VdbKFvhH3TDNw2TgmqGA+FSbJOaE+bqyPXQgH4futEGOzfzZQU5MRk+vxYiA3PfY7xAD+QFvig==
-X-Received: by 2002:adf:fa4d:: with SMTP id y13-v6mr38834309wrr.155.1537525830833;
-        Fri, 21 Sep 2018 03:30:30 -0700 (PDT)
+        bh=MLQbbVAShPqtFPqB39xtt1JSukJPaV6UDF7X/Wx0anE=;
+        b=VcWwtDqkYTfBe9BDds2HzG1FUfnwiknxCGVQCoAWerBHtVTg0DWodxvQ11398txrC4
+         y3G09JZlkNPXWKVg98SxM1qR7mu9vNcyWwIitRADXwL/21DjjopZH3w+XeT1zfncIALS
+         l2euRBGJO4mHjXxyEJOINnVbPy6Gk2zxJ+OL15HrmLGn9Hlcpxfyln6G8KfgWso/mPWo
+         vns+Yf/JbWmUTEcnWmD/vhRVRhYB5BXxGNBN2TNw151y0aDzAL6B/ZNje1VRf7YczuOM
+         E2nSwVaT5vq8k4GBqZT3bxy0AmVXhX0FKkWq3IdWm4Ft0soaiZYfzsf8idybo3a2rSHv
+         t0Ww==
+X-Gm-Message-State: APzg51BPb0ntRdHL/ls5/TcScPIIGbMLQfxPs+Ol4+q5W7y6kC/r3l0K
+        SdfnXWKtJWkmU6Vi0K5g03Q=
+X-Google-Smtp-Source: ANB0VdZUxttlTRVenjMctyk0x4zyZs7lr6DiZq5D8v5bdkeyO6b5QC7M0uE3HaW+F1WEYN1HU7ME0w==
+X-Received: by 2002:a1c:3906:: with SMTP id g6-v6mr6324382wma.50.1537525902380;
+        Fri, 21 Sep 2018 03:31:42 -0700 (PDT)
 Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id e141-v6sm9356369wmd.32.2018.09.21.03.30.30
+        by smtp.gmail.com with ESMTPSA id b74-v6sm9550622wma.8.2018.09.21.03.31.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 03:30:30 -0700 (PDT)
+        Fri, 21 Sep 2018 03:31:41 -0700 (PDT)
 Received: by techadventures.net (Postfix, from userid 1000)
-        id 7BF50125424; Fri, 21 Sep 2018 12:30:29 +0200 (CEST)
-Date:   Fri, 21 Sep 2018 12:30:29 +0200
+        id 304E1125426; Fri, 21 Sep 2018 12:31:41 +0200 (CEST)
+Date:   Fri, 21 Sep 2018 12:31:41 +0200
 From:   Oscar Salvador <osalvador@techadventures.net>
 To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>
 Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
@@ -60,61 +60,32 @@ Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 4/5] mm/memory_hotplug: Simplify
- node_states_check_changes_online
-Message-ID: <20180921103029.GA15555@techadventures.net>
+Subject: Re: [PATCH 2/5] mm/memory_hotplug: Avoid
+ node_set/clear_state(N_HIGH_MEMORY) when !CONFIG_HIGHMEM
+Message-ID: <20180921103141.GB15555@techadventures.net>
 References: <20180919100819.25518-1-osalvador@techadventures.net>
- <20180919100819.25518-5-osalvador@techadventures.net>
- <71676241-8aa5-2b58-b2fa-706bf21b9cfb@microsoft.com>
+ <20180919100819.25518-3-osalvador@techadventures.net>
+ <e66c7d55-7145-dd6c-4b11-27893ed7a7d0@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <71676241-8aa5-2b58-b2fa-706bf21b9cfb@microsoft.com>
+In-Reply-To: <e66c7d55-7145-dd6c-4b11-27893ed7a7d0@microsoft.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 12:15:53AM +0000, Pasha Tatashin wrote:
+On Thu, Sep 20, 2018 at 08:59:18PM +0000, Pasha Tatashin wrote:
+> This is a rare case where I think comments are unnecessary as the code
+> is self explanatory. So, I would remove the comments before:
 
-Hi Pavel,
+Fair enough.
+I just wanted to make clear why it was not needed.
 
-> But what if that changes, will this function need to change as well?
+I will remove it in the next version.
 
-That's true.
-
-> Should not we have:
-> 			else
-> 				arg->status_change_nid_high = -1; ?
-> 
-> > +		} else
-> > +			arg->status_change_nid_high = -1;
-
-Yes, I forgot about that else.
-
-> I think it is simpler to have something like this:
-> 
->         int nid = zone_to_nid(zone);
-> 
->         arg->status_change_nid_high = -1;
->         arg->status_change_nid = -1;
->         arg->status_change_nid = -1;
-> 
->         if (!node_state(nid, N_MEMORY))
->                 arg->status_change_nid = nid; 
->         if (zone_idx(zone) <= ZONE_NORMAL && !node_state(nid, N_NORMAL_MEMORY))
->                 arg->status_change_nid_normal = nid; 
-> #ifdef CONFIG_HIGHMEM
->         if (zone_idx(zone) <= N_HIGH_MEMORY && !node_state(nid, N_HIGH_MEMORY))
->                 arg->status_change_nid_high = nid; 
-> #endif
-
-I can write it that way, I also like it more.
-
-I will send it in V2.
-
-Thanks for reviewing it!
+Thanks
 -- 
 Oscar Salvador
 SUSE L3
