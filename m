@@ -2,113 +2,146 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C25BECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B19BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7112146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:07:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7112146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 18C4E2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:13:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDmKNVd0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C4E2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389531AbeIUOzV (ORCPT
+        id S2389542AbeIUPBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 10:55:21 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35498 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbeIUOzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 10:55:21 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id W4ueZbSjZezx; Fri, 21 Sep 2018 11:07:25 +0200 (CEST)
-Received: from nazgul.tnic (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 60DFE1EC0118;
-        Fri, 21 Sep 2018 11:07:25 +0200 (CEST)
-Date:   Fri, 21 Sep 2018 11:07:21 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Manish Narani <MNARANI@xilinx.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v7 2/7] edac: synps: Add platform specific structures for
- ddrc controller
-Message-ID: <20180921090721.GB30439@nazgul.tnic>
-References: <1537194305-9243-1-git-send-email-manish.narani@xilinx.com>
- <1537194305-9243-3-git-send-email-manish.narani@xilinx.com>
- <20180918075522.GC22202@nazgul.tnic>
- <DM6PR02MB5227F5B1B329C903BA64A27CC11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
- <20180919111553.GA9140@nazgul.tnic>
- <DM6PR02MB52279753E7FD04587393DC08C11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
+        Fri, 21 Sep 2018 11:01:22 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42572 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389022AbeIUPBW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:01:22 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l9-v6so5699408pff.9;
+        Fri, 21 Sep 2018 02:13:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KzZd453GUuIu0SX8RHhASXACzk7RqyOC4TCjCGWKCnY=;
+        b=MDmKNVd0ab3ekACfqJbHx6FWFujNuzFmvCYu8MviPaM3S0vsQtuVp/NhdQORwRCWqG
+         OT0fIGrHqvOale2a5irpc1OjOcDgUibzYPH44pQekw3QmCh2JZ43sJDhrriW3NV5TYiE
+         gd9P8BHZiMZQHKnCRmPdYAnCdONvFW8Wo8hCAsIcd+v/+NLGFaUB0dpXDuM/aU7Yqwx7
+         yj/fGr9F783+jvdsilmYIJF3G7lOJwNiTLvqowdPCEv8mjXyUO9ibbrKZpnXQImkFiOJ
+         uALYsooCf1qitrAi0m2/lf/ablhUeiCHHC9U0ZoO1remSH5vJidP803n/MSas3qRUiru
+         ww/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KzZd453GUuIu0SX8RHhASXACzk7RqyOC4TCjCGWKCnY=;
+        b=XIvb3whIooryCdMHjtpSzgB8a22dSXX8TDNU9U+MVyzcYsFzql6t3HMcmnaK7Ac0Ln
+         NaoSlzQ2jDAMIsA0QrmtNhrKWDAigVUqbocOoBBeC7LXxF21ICCugBBcMRuyGsi2OjGD
+         sFmDa5Yyc3Qc96Nc3GHB/MtIjzHveJcu9GK+eaWRNiukgoDDrmE2dzqNK8QBJa0xDR5a
+         e4STTPVpWKCJ7mVsqVZFuou3TFL69iyFwOCzN9rnduKrBRIUJUzs6vHhFg7f/ouqO5+N
+         UiDRnxRiFmXxcIkB4Yjo+kyahgtrbk0IUORptHv+vwg1O+2hzch8GVu8Z8PZtHN1NBpR
+         XwLw==
+X-Gm-Message-State: APzg51B2WImATvxlK5KBpwsHBzEsG69yl2iSdmCoc4cH1G9g0CfGyWgJ
+        Q3g9Hk97zOK4cGQidRa44HQ=
+X-Google-Smtp-Source: ANB0VdaFJdMjHK36rgKbC0Yu78LQFzuAQXuRRapEOdbyjYXl0V4lBmdidKpZXl04CkEY7S2jYdbucw==
+X-Received: by 2002:a62:174a:: with SMTP id 71-v6mr46075549pfx.217.1537521206174;
+        Fri, 21 Sep 2018 02:13:26 -0700 (PDT)
+Received: from Eros (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
+        by smtp.gmail.com with ESMTPSA id c1-v6sm34330732pfi.142.2018.09.21.02.13.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Sep 2018 02:13:25 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 17:13:18 +0800
+From:   Song Qiang <songqiang1304521@gmail.com>
+To:     Phil Reid <preid@electromag.com.au>
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: magnetometer: Add support for PNI RM3100 9-axis
+ magnetometer
+Message-ID: <20180921091318.GA2151@Eros>
+References: <20180920131340.6699-1-songqiang1304521@gmail.com>
+ <4633d30b-b493-d70b-dd7b-3f5bc3e16e78@electromag.com.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM6PR02MB52279753E7FD04587393DC08C11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <4633d30b-b493-d70b-dd7b-3f5bc3e16e78@electromag.com.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 01:33:58PM +0000, Manish Narani wrote:
-> Apart from this one, I have covered all the comments from the previous review.
+On Fri, Sep 21, 2018 at 10:05:38AM +0800, Phil Reid wrote:
+> On 20/09/2018 9:13 PM, Song Qiang wrote:
+> > PNI RM3100 magnetometer is a high resolution, large signal immunity
+> > magnetometer, composed of 3 single sensors and a processing chip.
+> > PNI is currently not in the vendors list, so this is also adding it.
+> > 
+> 
+> In the subject: Isn't the RM3100 a 3axis mag.
+> The 9axis bit comes when you combine it with an accel / gryo I think.
+> 
+> ... snip
+> 
 
-Are you sure?
+Hi Phil,
 
-Let's see. I said:
+That's right!
+The first time I got this sensor I googled it on the internet and the
+abstract of the first webpage told me that it's a 9-axis sensor, and
+it's from its offcial website! I just googled it and saw it's still
+there, but after I entered the website, there isn't anything on the
+webpage about '9-axis', maybe I just saw the old wrong web cache of 
+google. Newer websites do say it's a 3-axis magnetometer sensor, and 
+it only has three channels of data can be read. 3-axis it is.
 
-| Kill all that "function pointer" fluff. Here's how I've changed it:
-| 
-| /**
-|  * struct synps_platform_data -  synps platform data structure
-|  * @edac_geterror_info: edac error info
-|  * @edac_get_mtype:     get mtype
-|  * @edac_get_dtype:     get dtype
-|  * @edac_get_eccstate:  get ECC state
-			  ^^^^^^^^^^^^^
+> > +++ b/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+> > @@ -0,0 +1,57 @@
+> > +* PNI RM3100 9-axis magnetometer sensor
+> > +
+> > +I2C Bus:
+> > +
+> > +Required properties:
+> > +
+> > +- compatible : should be "pni,rm3100-i2c"
+> > +- reg : the I2C address of the magnetometer
+> > +
+> 
+> ... snip
+> 
+> > +SPI Bus:
+> > +
+> > +Required properties:
+> > +
+> > +- compatible : should be "pni,rm3100-spi"
+> > +- reg : address of sensor, usually 0 or 1.
+> > +
+> 
+> Looking at other drivers supporting i2c / spi.
+> They use the same compatible for both.
+> 
+> eg: see iio/accel/adxl345_*.c
+> 
+> and it's binding doc:
+> 
+> Required properties:
+>  - compatible : should be "adi,adxl345"
+>  - reg : the I2C address or SPI chip select number of the sensor
+> 
 
-This is supposed to denote that this function returns whether ECC
-checking is enabled on the controller or not.
+Agreed, since nodes of this sensor should be already on the bus where it
+should be in DT, there's no need for compitable string to identify which
+bus it's on.
 
-Your patch has:
-
-+ * struct synps_platform_data -  synps platform data structure.
-+ * @geterror_info:     Get error info.
-+ * @get_mtype:         Get mtype.
-+ * @get_dtype:         Get dtype.
-+ * @get_eccstate:      Get eccstate.
-
-So what is "eccstate"? Is it a struct or a variable or ...?
-
-Do you see my point?
-
-I know, it is a small thing but documenting our code properly is
-something which people would be thanking us for. Even you will be
-thanking yourself when you look at this months from now after having
-forgotten it all.
-
-Please check the rest of your additions for similar discrepancies.
-
-Thanks.
-
--- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+yours,
+Song Qiang
