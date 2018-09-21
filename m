@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DA5ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE26ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FC921479
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:21:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FC921479
+	by mail.kernel.org (Postfix) with ESMTP id 3838E2150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:21:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3838E2150E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389452AbeIUMJB (ORCPT
+        id S2389463AbeIUMJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 08:09:01 -0400
-Received: from mga01.intel.com ([192.55.52.88]:32150 "EHLO mga01.intel.com"
+        Fri, 21 Sep 2018 08:09:12 -0400
+Received: from mga03.intel.com ([134.134.136.65]:36448 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389205AbeIUMJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 08:09:00 -0400
+        id S2389203AbeIUMJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 08:09:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 23:21:39 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2018 23:21:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,283,1534834800"; 
-   d="scan'208";a="74799022"
+   d="scan'208";a="74799032"
 Received: from chenyu-desktop.sh.intel.com ([10.239.160.116])
-  by orsmga007.jf.intel.com with ESMTP; 20 Sep 2018 23:21:37 -0700
+  by orsmga007.jf.intel.com with ESMTP; 20 Sep 2018 23:21:46 -0700
 From:   Chen Yu <yu.c.chen@intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         "Rafael J. Wysocki" <rafael@kernel.org>
@@ -39,9 +39,9 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
         x86@kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: [PATCH 10/12][v4] x86-32, hibernate: Switch to relocated restore code during resume on 32bit system
-Date:   Fri, 21 Sep 2018 14:28:22 +0800
-Message-Id: <c573824cf57dda457d62188885457f0a9d18c44c.1537448058.git.yu.c.chen@intel.com>
+Subject: [PATCH 11/12][v4] x86-32, hibernate: Set up temporary text mapping for 32bit system
+Date:   Fri, 21 Sep 2018 14:28:32 +0800
+Message-Id: <05908fe04f02898ba36def9b3cf1cd72fb4750a6.1537448058.git.yu.c.chen@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1537448058.git.yu.c.chen@intel.com>
 References: <cover.1537448058.git.yu.c.chen@intel.com>
@@ -52,78 +52,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhimin Gu <kookoo.gu@intel.com>
 
-On 64bit system, code should be executed in a safe page
-during page restoring, as the page where instruction is
-running during resume might be scribbled and causes issues.
+Set up the temporary text mapping for the final jump address
+so that the system could jump to the right address after all
+the pages have been copied back to their original address -
+otherwise the final mapping for the jump address is invalid.
 
-Although on 32 bit, we only suspend resuming by same kernel
-that did the suspend, we'd like to remove that restriction
-in the future.
-
-Porting corresponding code from
-64bit system: Allocate a safe page, and copy the restore
-code to it, then jump to the safe page to run the code.
+Analogous changes were made for 64-bit in:
+Commit 65c0554b73c9 ('x86/power/64: Fix kernel text mapping
+corruption during image restoration')
 
 Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- arch/x86/power/hibernate.c        | 2 --
- arch/x86/power/hibernate_32.c     | 4 ++++
- arch/x86/power/hibernate_asm_32.S | 7 +++++++
- 3 files changed, 11 insertions(+), 2 deletions(-)
+ arch/x86/power/hibernate.c        |  4 ----
+ arch/x86/power/hibernate_32.c     | 31 +++++++++++++++++++++++++++++++
+ arch/x86/power/hibernate_asm_32.S |  3 +++
+ 3 files changed, 34 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/power/hibernate.c b/arch/x86/power/hibernate.c
-index 4935b8139229..7383cb67ffd7 100644
+index 7383cb67ffd7..bcddf09b5aa3 100644
 --- a/arch/x86/power/hibernate.c
 +++ b/arch/x86/power/hibernate.c
-@@ -212,7 +212,6 @@ int arch_hibernation_header_restore(void *addr)
- 	return 0;
- }
+@@ -157,10 +157,8 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
+ 	if (max_size < sizeof(struct restore_data_record))
+ 		return -EOVERFLOW;
+ 	rdr->magic = RESTORE_MAGIC;
+-#ifdef CONFIG_X86_64
+ 	rdr->jump_address = (unsigned long)restore_registers;
+ 	rdr->jump_address_phys = __pa_symbol(restore_registers);
+-#endif
+ 
+ 	/*
+ 	 * The restore code fixes up CR3 and CR4 in the following sequence:
+@@ -198,10 +196,8 @@ int arch_hibernation_header_restore(void *addr)
+ 		return -EINVAL;
+ 	}
  
 -#ifdef CONFIG_X86_64
- int relocate_restore_code(void)
- {
- 	pgd_t *pgd;
-@@ -251,4 +250,3 @@ int relocate_restore_code(void)
- 	__flush_tlb_all();
- 	return 0;
- }
+ 	restore_jump_address = rdr->jump_address;
+ 	jump_address_phys = rdr->jump_address_phys;
 -#endif
+ 	restore_cr3 = rdr->cr3;
+ 
+ 	if (hibernation_e820_mismatch(rdr->e820_digest)) {
 diff --git a/arch/x86/power/hibernate_32.c b/arch/x86/power/hibernate_32.c
-index a44bdada4e4e..a9861095fbb8 100644
+index a9861095fbb8..15695e30f982 100644
 --- a/arch/x86/power/hibernate_32.c
 +++ b/arch/x86/power/hibernate_32.c
-@@ -158,6 +158,10 @@ asmlinkage int swsusp_arch_resume(void)
+@@ -143,6 +143,32 @@ static inline void resume_init_first_level_page_table(pgd_t *pg_dir)
+ #endif
+ }
  
- 	temp_pgt = __pa(resume_pg_dir);
++static int set_up_temporary_text_mapping(pgd_t *pgd_base)
++{
++	pgd_t *pgd;
++	pmd_t *pmd;
++	pte_t *pte;
++
++	pgd = pgd_base + pgd_index(restore_jump_address);
++
++	pmd = resume_one_md_table_init(pgd);
++	if (!pmd)
++		return -ENOMEM;
++
++	if (boot_cpu_has(X86_FEATURE_PSE)) {
++		set_pmd(pmd + pmd_index(restore_jump_address),
++		__pmd((jump_address_phys & PMD_MASK) | pgprot_val(PAGE_KERNEL_LARGE_EXEC)));
++	} else {
++		pte = resume_one_page_table_init(pmd);
++		if (!pte)
++			return -ENOMEM;
++		set_pte(pte + pte_index(restore_jump_address),
++		__pte((jump_address_phys & PAGE_MASK) | pgprot_val(PAGE_KERNEL_EXEC)));
++	}
++
++	return 0;
++}
++
+ asmlinkage int swsusp_arch_resume(void)
+ {
+ 	int error;
+@@ -152,6 +178,11 @@ asmlinkage int swsusp_arch_resume(void)
+ 		return -ENOMEM;
  
-+	error = relocate_restore_code();
+ 	resume_init_first_level_page_table(resume_pg_dir);
++
++	error = set_up_temporary_text_mapping(resume_pg_dir);
 +	if (error)
 +		return error;
 +
- 	/* We have got enough memory and from now on we cannot recover */
- 	restore_image();
- 	return 0;
+ 	error = resume_physical_mapping_init(resume_pg_dir);
+ 	if (error)
+ 		return error;
 diff --git a/arch/x86/power/hibernate_asm_32.S b/arch/x86/power/hibernate_asm_32.S
-index 6b2b94937113..e9adda6b6b02 100644
+index e9adda6b6b02..01f653fae7bd 100644
 --- a/arch/x86/power/hibernate_asm_32.S
 +++ b/arch/x86/power/hibernate_asm_32.S
-@@ -39,6 +39,13 @@ ENTRY(restore_image)
+@@ -36,6 +36,8 @@ ENTRY(swsusp_arch_suspend)
+ ENDPROC(swsusp_arch_suspend)
+ 
+ ENTRY(restore_image)
++	/* prepare to jump to the image kernel */
++	movl	restore_jump_address, %ebx
  	movl	restore_cr3, %ebp
  
  	movl	mmu_cr4_features, %ecx
-+
-+	/* jump to relocated restore code */
-+	movl	relocated_restore_code, %eax
-+	jmpl	*%eax
-+
-+/* code below has been relocated to a safe page */
-+ENTRY(core_restore_code)
- 	movl	temp_pgt, %eax
- 	movl	%eax, %cr3
+@@ -74,6 +76,7 @@ copy_loop:
+ 	.p2align 4,,7
  
+ done:
++	jmpl	*%ebx
+ 
+ 	/* code below belongs to the image kernel */
+ 	.align PAGE_SIZE
 -- 
 2.17.1
 
