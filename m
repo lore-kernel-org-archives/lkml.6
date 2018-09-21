@@ -2,150 +2,94 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F3FC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D726C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4D32159D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:18:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4D32159D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id D1B6E2159B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:18:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WSGXuhFV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1B6E2159B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbeIVEJH (ORCPT
+        id S1726292AbeIVEJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 00:09:07 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60371 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbeIVEJH (ORCPT
+        Sat, 22 Sep 2018 00:09:36 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39605 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbeIVEJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 00:09:07 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id B47D380724; Sat, 22 Sep 2018 00:18:13 +0200 (CEST)
-Date:   Sat, 22 Sep 2018 00:18:13 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20180921221813.GA20355@amd>
-References: <67ebebf02edd6d8ee42a13b139733e9cc680ea86.1536631975.git.baolin.wang@linaro.org>
- <CAMz4kuJx9twJ=wM5qsucV3JH_VS-AC1aWMqpQOwAMkCuKBHLRg@mail.gmail.com>
- <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com>
- <20180921211758.GC18062@amd>
- <ccac8e5f-e122-9f7d-aa43-fa89c79cb1fe@gmail.com>
+        Sat, 22 Sep 2018 00:09:36 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so13358287lji.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 15:18:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J3OhHuPECveKDJDZ5tXvJbEZVsYgC8HZFyLc+N7hJWQ=;
+        b=WSGXuhFVU1bBTKup0hmvrtHsCX3ryYBoUmao/HI7G9NiM15IJavD/JgyJRMQW3WoUX
+         e8204iJOV0kVbRosIPdlBTFGkfwgu0JTB0i+7AZdJo9vlRzTldPufqr+TOZns1fFyTcT
+         REzw6KqADxPhPKcYaZMKfBG3I4npP/EHx3j0FALLTNYfxCl2Gp4dwVU/EtCx+e4esPHg
+         kdKFP2VBYGI9jtgF+0wf4CqijoQ3z/ZBhXizzl2NEe1OemTQwNMICokd2NE77/nhUWkL
+         WEuS2k8Vx5KGqm1aBXELqP8582X9Es16YMzHGCPKk8uSwcP217RPlqMvZV5cWKDA64F5
+         BaXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J3OhHuPECveKDJDZ5tXvJbEZVsYgC8HZFyLc+N7hJWQ=;
+        b=OYi0dCIEZEGSr6nrW6kn7/KDVhRvUPvHAu937uMfsTA3RSJDO27gF71pX5qEDI6+mW
+         Jo1L7s+1YZtBPzTheJ8yVs/J5pWTR1KAuOdtODxY7Pfe+544n+rwSylMPLQzaJDLZXVV
+         3J9+xhwWt+XCITzhkwEm43n3jEfd9nANxkdu8yQ7yJgDAk0YpMENpeW7v80XuYd9xFn0
+         m9TBJqTfXuv5A4HgdaDBkVf3QgU9FL/vxDLyvmzaxnmApW1jNyC43y7RPmORvqSTtnjz
+         TxdaOvhD58FqLXqOTt2LF2d5eWsmSmNyS1oONRNIj/cNCtYepyXLJGJrOnwIqTHUsGc5
+         QmZQ==
+X-Gm-Message-State: ABuFfog6DcwdNQa2HTVi57z/LDob6JmII/2pKINiMxWLw7Keb7KqaiNB
+        jIOmuQywtQIACcaOIPnGAfeaHh5pW7XkLAoxnYwCIJeQ
+X-Google-Smtp-Source: ANB0VdZnhWxWB0FQpcbZk5Wcrf++hTXIWk1xPNJnpVNcc84p7AtigQESbnjVOz5IP1NLQQJbQXGdldNqlQmz8dUiGMg=
+X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr4006976ljh.18.1537568323046;
+ Fri, 21 Sep 2018 15:18:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Content-Disposition: inline
-In-Reply-To: <ccac8e5f-e122-9f7d-aa43-fa89c79cb1fe@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180920232820.243734-1-brendanhiggins@google.com> <07af0253-1efc-2ae1-93fb-ebcc1996d768@linux.intel.com>
+In-Reply-To: <07af0253-1efc-2ae1-93fb-ebcc1996d768@linux.intel.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 21 Sep 2018 15:18:31 -0700
+Message-ID: <CAFd5g455kDnOQfkZK=U-gs2JrPVXdnA0GViRuWEcHrvjFASOEw@mail.gmail.com>
+Subject: Re: [PATCH] i2c: aspeed: fixed invalid clock parameters for very
+ large divisors
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 21, 2018 at 10:46 AM Jae Hyun Yoo
+<jae.hyun.yoo@linux.intel.com> wrote:
+>
+> Hi Brendan,
+>
+> nit:
+> Title in imperative mood. I'd put 'fix' instead of 'fixed'.
+>
+<snip>
+>
+> One minor issue is, 'base_clk_divisor' instead of 'base_clk' could avoid
+> misreading on this code.
+>
+> With that, it looks nice to me. Thanks!
+>
+> Reviewed-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat 2018-09-22 00:11:29, Jacek Anaszewski wrote:
-> On 09/21/2018 11:17 PM, Pavel Machek wrote:
-> > On Fri 2018-09-21 22:59:40, Jacek Anaszewski wrote:
-> >> Hi Baolin,
-> >>
-> >> On 09/21/2018 05:31 AM, Baolin Wang wrote:
-> >>> Hi Jacek and Pavel,
-> >>>
-> >>> On 11 September 2018 at 10:47, Baolin Wang <baolin.wang@linaro.org> w=
-rote:
-> >>>> This patch adds one new led trigger that LED device can configure
-> >>>> the software or hardware pattern and trigger it.
-> >>>>
-> >>>> Consumers can write 'pattern' file to enable the software pattern
-> >>>> which alters the brightness for the specified duration with one
-> >>>> software timer.
-> >>>>
-> >>>> Moreover consumers can write 'hw_pattern' file to enable the hardware
-> >>>> pattern for some LED controllers which can autonomously control
-> >>>> brightness over time, according to some preprogrammed hardware
-> >>>> patterns.
-> >>>>
-> >>>> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
-> >>>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> >=20
-> >>> Do you have any comments for the v12 patch set? Thanks.
-> >>
-> >> We will probably have to remove hw_pattern from ledtrig-pattern
-> >> since we are unable to come up with generic interface for it.
-> >> Unless thread [0] will end up with some brilliant ideas. So far
-> >> we're waiting for Pavel's reply.
-> >>
-> >> [0] https://lkml.org/lkml/2018/9/13/1216
-> >=20
-> > To paint a picture:
-> >=20
-> > brightness
-> >=20
-> >    rise hold          lower       hold down
-> >   ^    XXXXXXXXXXXXXXX
-> >   |   X               XX
-> >   |  X                  XX
-> >   | X                     XXXXXXXXXXXXXXXXXXXXXXXXXX
-> >   +-------------------------------------------------------> time
-> >=20
-> > This is what Baolin's hardware can do, right?
-> >=20
-> > This is also what pattern trigger can do, right?
-> >=20
-> > So all we need to do is match the two interfaces, so that hw_pattern
-> > returns -EINVAL on patterns hardware can not actually do.
-> >=20
-> > I believe I described code to do that in [0] above.
->=20
-> You said that we should get the same effect by writing the
-> same series of tuples to either pattern or hw_pattern file.
->=20
-> Below command consists of four tuples (marked with brackets
-> to highlight), and it will activate breathing mode in Baolin's
-> hw_pattern:
->=20
-> "[0 rise_duration] [brightness high_duration] [brightness fall_duration]
-> [0   low_duration]"
->=20
-> Now, I can't see how these four tuples could force the software
-> fallback to produce breathing effect you depicted.
-
-I really should get some sleep now. But my intention was that software
-fallback produces just that with those four tuples. (If it does not,
-we can fix the software fallback to do just that).
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlulbiUACgkQMOfwapXb+vLpaACggmR+oeYCbtw3v9Gq/QnUSUFq
-lSwAnRdIJvbgzFlxnLLnybXGAVRjwiLP
-=DfIo
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
+Thanks for the review!
