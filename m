@@ -2,138 +2,173 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A32ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A645C46470
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95EAF21568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:40:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD9F21479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:41:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WLUMkU73"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95EAF21568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tj6qTXSp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CD9F21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391139AbeIUXaX (ORCPT
+        id S2391153AbeIUXbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:30:23 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:40430 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390726AbeIUXaX (ORCPT
+        Fri, 21 Sep 2018 19:31:08 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38773 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390433AbeIUXbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:30:23 -0400
-Received: by mail-vs1-f65.google.com with SMTP id w138-v6so397122vsw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:40:27 -0700 (PDT)
+        Fri, 21 Sep 2018 19:31:07 -0400
+Received: by mail-lf1-f66.google.com with SMTP id z186-v6so12133301lfa.5;
+        Fri, 21 Sep 2018 10:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DMq2LjXCYVs8OMEP76EiqATN+P77az8zBB+g9RZHhqg=;
-        b=WLUMkU73Q6hFS5bPSNPVirMZrjR2GMWZebanhMlpsuOpuYQQMZtxroCuUmxZS12+mt
-         Ncj/cWjF01xSd9DFw4LYeyrGnzspSBtH0SeCbV4g5TEsfsDj7/MEhciTdgNlcsNEdc8Z
-         r6iVhjMd56tyK28XT1CTX4sAnkNoDgsWZBR04=
+        bh=hdn0FP0mzVeQeT3EBawRAzkjQsRIZaRd6cBM7471M2Q=;
+        b=Tj6qTXSpe65h7mulLbspqBQwgA3wEAUZ67XZzpjJ5xUSn6Yy9bRiyGe78+8XWhtGzO
+         a72rWYa6c9FMiineQyAVyvZrkD5vbF1PDugEpjhwmjn3oxOu6Uix5MIl6MpP6/kyRUJB
+         hJZrWlHZDqIRfhEFSmJMIr400dAsdq4ydEz+A3ej2AFzzVvhEh4lGc5wQYSfRRf4+1F9
+         ljUPaYjef/vIU/MH9Xg/7YaJIfeVDvdJE933ZX80C4diDEi0/ST3NycwLcdav8wBckny
+         icf03keObbygZr+hJfMrc30rQcV8nfeIqwj9RKQ/6YuiE4Ho5egggEGU3QUDyYEonYyR
+         azXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DMq2LjXCYVs8OMEP76EiqATN+P77az8zBB+g9RZHhqg=;
-        b=dRSp6gblRnZLKCvOWm35GCCwvXMv0VeFFVODImed5yM1u9weeGBVfk2WG2ufx/Ex4Y
-         5iQ9+3ragFbRYfE1t7BJhvfQxAaOkMDs5TcXfSQWNTdnbOII/zXcu9ch4tayYEZwkdx7
-         148Si/bpmN3VY9bXQnE2ifOLObcKqNgaBHO03joef75OJj0FkfnorqvERZeQQOCOkVqy
-         5OPgR6v1NPkge1aQDQ3sjW/UiLq9nBLX09ww+Jvg946OTqoRmSy2gHia0Ud4Nwgba+vm
-         /BrBfhyigehRnvMyazF+NHj8++z2FMrUlQLcuIG++y8P8Q6UWk0J5qSJzSRqlG0pL9nT
-         kdBA==
-X-Gm-Message-State: APzg51D5pQYiDCpX633VejnSB+ik8rZwe+VLGjx9jzd0CWrz2gLXCNnU
-        Bto28G2IkI+VheFgAyMrTFTy8Nh7c2Q=
-X-Google-Smtp-Source: ANB0VdZKF1wQoWjoZprW+990aaVC5Y4ikspjoz7CUAmgtXZkHlgEfOKfAVoBskYBVn5wzQqQy+QnUw==
-X-Received: by 2002:a67:6844:: with SMTP id d65-v6mr13579403vsc.17.1537551626987;
-        Fri, 21 Sep 2018 10:40:26 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id 29-v6sm805171vkd.42.2018.09.21.10.40.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 10:40:26 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id q7-v6so6102012uam.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:40:25 -0700 (PDT)
-X-Received: by 2002:ab0:1601:: with SMTP id k1-v6mr13782085uae.83.1537551625587;
- Fri, 21 Sep 2018 10:40:25 -0700 (PDT)
+        bh=hdn0FP0mzVeQeT3EBawRAzkjQsRIZaRd6cBM7471M2Q=;
+        b=qanDICcGXMO5YeyG7BGwE61rE9tDiWs4e9mjyExCZBQg+TwAj8xb4Jobka7uGUui8i
+         NQnwX8Eta0XDHrPeCqsz0RqHZuFtEkzBAFito000VKgX8bi8P91GewIsMwuNjF13jnbo
+         wO3/mcxIQys8gYFdmPogWLjn91fyFbwB79ZU3QR6PvsGdwQ1NgTAjiaPFX/Y6ofGzV+A
+         crX+5xNMu9qSC+6ESi25fv3vRy/EpI9a26hbDQoi251Ln7p5Lt6lSwB1Y9x14gmxOj6w
+         qjw7bpVWZFkIWbmI4Znv9f7ZkrYe6BKDl/aQtpmB9UKDrUIDvHxdjSUb1TLPVklgoTu1
+         uD7A==
+X-Gm-Message-State: APzg51BWAa8JAnmFtwkDBAoaKA52Pt9jVafeoN86JoxCfZ+Ilm7gaWF9
+        AxZDHAkTQPhPHAZ4CbJTQsi+bOUopWmHyNcjhO0=
+X-Google-Smtp-Source: ANB0VdaS+KhPGgshhjjSSL4Hn6mNRb3uwcg8C7HVBw4u7XtWO+w3PLfGG8YR6dMJcNe7CFP1SYqvkqmVo/Rr4d2nte8=
+X-Received: by 2002:a19:2583:: with SMTP id l125-v6mr17348646lfl.135.1537551670390;
+ Fri, 21 Sep 2018 10:41:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180920224055.164856-1-ryandcase@chromium.org> <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
-In-Reply-To: <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 21 Sep 2018 10:40:14 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Wbj+bgdSBeHSFr+nz6fzCMcmQS-D9oyzkR0yVkxiRb8A@mail.gmail.com>
-Message-ID: <CAD=FV=Wbj+bgdSBeHSFr+nz6fzCMcmQS-D9oyzkR0yVkxiRb8A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Mark Brown <broonie@kernel.org>, ryandcase@chromium.org,
-        boris.brezillon@bootlin.com,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
+ <1537367527-20773-5-git-send-email-jim2101024@gmail.com> <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
+ <7fa897cf-4d58-c63f-afdd-a3ec5a6a56bf@gmail.com> <CAKv+Gu8aJRV4nqq1e-5HRLvbrANQsYuMf-pwWB53BhxLgX7iWg@mail.gmail.com>
+ <b74d3c16-a512-73dc-c94a-ef6adde5f757@gmail.com> <CAKv+Gu8ZbN3BDRyuFzt4o--SSUmhuOh+jnpq8ZR-Ay13DJrAqg@mail.gmail.com>
+ <fa285694-c3e1-adf8-032a-202e7598de41@gmail.com>
+In-Reply-To: <fa285694-c3e1-adf8-032a-202e7598de41@gmail.com>
+From:   Jim Quinlan <jim2101024@gmail.com>
+Date:   Fri, 21 Sep 2018 13:40:58 -0400
+Message-ID: <CANCKTBsypcVS_iC1+sbW5fMKfj+tTsxbQv9CvDwcO8GV3a8_Yg@mail.gmail.com>
+Subject: Re: [PATCH v5 04/12] PCI: brcmstb: add dma-range mapping for inbound traffic
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Sep 21, 2018 at 10:31 AM Stephen Boyd <swboyd@chromium.org> wrote:
+On Thu, Sep 20, 2018 at 5:39 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
 >
-> Quoting Ryan Case (2018-09-20 15:40:54)
-> > diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
-> > new file mode 100644
-> > index 000000000000..ecfb1e2bd520
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
-> > @@ -0,0 +1,36 @@
-> > +Qualcomm Quad Serial Peripheral Interface (QSPI)
-> > +
-> > +The QSPI controller allows SPI protocol communication in single, dual, or quad
-> > +wire transmission modes for read/write access to slaves such as NOR flash.
-> > +
-> > +Required properties:
-> > +- compatible:  Should contain:
-> > +               "qcom,sdm845-qspi"
+> On 09/20/2018 02:33 PM, Ard Biesheuvel wrote:
+> > On 20 September 2018 at 14:31, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >> On 09/20/2018 02:04 PM, Ard Biesheuvel wrote:
+> >>> On 20 September 2018 at 13:55, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >>>> On 09/19/2018 07:19 PM, Ard Biesheuvel wrote:
+> >>>>> On 19 September 2018 at 07:31, Jim Quinlan <jim2101024@gmail.com> wrote:
+> >>>>>> The Broadcom STB PCIe host controller is intimately related to the
+> >>>>>> memory subsystem.  This close relationship adds complexity to how cpu
+> >>>>>> system memory is mapped to PCIe memory.  Ideally, this mapping is an
+> >>>>>> identity mapping, or an identity mapping off by a constant.  Not so in
+> >>>>>> this case.
+> >>>>>>
+> >>>>>> Consider the Broadcom reference board BCM97445LCC_4X8 which has 6 GB
+> >>>>>> of system memory.  Here is how the PCIe controller maps the
+> >>>>>> system memory to PCIe memory:
+> >>>>>>
+> >>>>>>   memc0-a@[        0....3fffffff] <=> pci@[        0....3fffffff]
+> >>>>>>   memc0-b@[100000000...13fffffff] <=> pci@[ 40000000....7fffffff]
+> >>>>>>   memc1-a@[ 40000000....7fffffff] <=> pci@[ 80000000....bfffffff]
+> >>>>>>   memc1-b@[300000000...33fffffff] <=> pci@[ c0000000....ffffffff]
+> >>>>>>   memc2-a@[ 80000000....bfffffff] <=> pci@[100000000...13fffffff]
+> >>>>>>   memc2-b@[c00000000...c3fffffff] <=> pci@[140000000...17fffffff]
+> >>>>>>
+> >>>>>
+> >>>>> So is describing this as
+> >>>>>
+> >>>>> dma-ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>,
+> >>>>>              <0x0 0x40000000 0x1 0x0 0x0 0x40000000>,
+> >>>>>              <0x0 0x80000000 0x0 0x40000000 0x0 0x40000000>,
+> >>>>>              <0x0 0xc0000000 0x3 0x0 0x0 0x40000000>,
+> >>>>>              <0x1 0x0 0x0 0x80000000 0x0 0x40000000>,
+> >>>>>              <0x1 0x40000000 0x0 0xc0000000 0x0 0x40000000>;
+> >>>>>
+> >>>>> not working for you? I haven't tried this myself, but since DT permits
+> >>>>> describing the inbound mappings this way, we should fix the code if it
+> >>>>> doesn't work at the moment.
+> >>>>
+> >>>> You mean encoding the memory controller index in the first cell? If that
+> >>>> works, that's indeed a much cleaner solution, though is it standard
+> >>>> compliant in any form?
+> >>>
+> >>> No those are just memory addresses (although I may have screwed up the
+> >>> order). From Documentation/devicetree/booting-without-of.txt:
+> >>>
+> >>> """
+> >>> Optional property:
+> >>> - dma-ranges: <prop-encoded-array> encoded as arbitrary number of triplets of
+> >>>         (child-bus-address, parent-bus-address, length). Each triplet specified
+> >>>         describes a contiguous DMA address range.
+> >>> """
+> >>>
+> >>
+> >> Then I am confused by your comment, that's what this patch does, it adds
+> >> support for reading "dma-ranges" from Device Tree and setting up inbound
+> >> windows using that. The only caveat is that because the PCIe root
+> >> complex has some ties with the memory bus architecture it is connected
+> >> to (SCB in our case) there is still a requirement to know the
+> >> translation between a given physical address and its backing memory
+> >> controller/aperture.
+> >>
+> >
+> > Ah ok, apologies for the noise then.
+> >
+> > I was hoping that having working support for dma-ranges would remove
+> > the need for the special phys<->dma conversion routines.
 >
-> Does someone have a more generic compatible string that can be added
-> here to indicate the type of quad SPI controller this is? I really doubt
-> this is a one-off hardware block for the specific SDM845 SoC.
+> What you describe definitively works with platform devices, but I am not
+> sure this is working for PCIe devices, although, conceptually it should,
+> yes.
+Sorry for my delay in responding.  One problem is that
+of_dma_configure() only looks at the first dma-range given and then
+converts it to dev->dma_pfn_offset which is respected by the DMA API.
+However, we often have multiple dma-ranges, not just one.  This is the
+big issue.
 
-The compatible string used to be "qcom,qspi-v1".  ...but Rob Herring
-requested [1] "an SoC specific compatible string".  While we could do
-a compatible string like:
+There is another issue with of_dma_configure() being invoked by the EP
+driver on "bridge->parent->of_node", which is our RC device,
+Of_dma_configure() calls of_dma_range() on the of_get_next_parent() of
+our RC's device node and this misses the dma-ranges property which is
+contained within the RC.  I think I could workaround this but there is
+no getting around the first problem.
 
-  "qcom,sdm845-qspi", "qcom,qspi-v1".
+Thanks,
+Jim
 
-I'm curious if that buys us anything.  From all my previous experience
-with device tree it is fine to name a compatible string for a
-component based on the first SoC that used it.  If we later find that
-this is also used in an "msm1234" we could always later do the
-compatible string for that device as:
-
-  "qcom, msm1234-qspi", "qcom,sdm845-qspi"
-
-...and we don't need to try to come up with a generic name.
-Obviously, though, I'll cede to whatever Rob says here though.
-
--Doug
-
-
-[1] http://lkml.kernel.org/r/20180716222721.GA12854@rob-hp-laptop
-
-
->
-> > +- reg:         Should contain the base register location and length.
-> > +- interrupts:  Interrupt number used by the controller.
-> > +- clocks:      Should contain the core and AHB clock.
-> > +- clock-names: Should be "core" for core clock and "iface" for AHB clock.
-> > +
+> --
+> Florian
