@@ -2,116 +2,104 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E48ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F8AECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A437E2156D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:10:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A437E2156D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 280072156E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:11:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280072156E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390898AbeIUU7s (ORCPT
+        id S2390560AbeIUVAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:59:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:13767 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390777AbeIUU7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:59:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 08:10:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="88187974"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Sep 2018 08:10:28 -0700
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v4 5/9] x86/cet/ibt: ELF header parsing for IBT
-Date:   Fri, 21 Sep 2018 08:05:49 -0700
-Message-Id: <20180921150553.21016-6-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180921150553.21016-1-yu-cheng.yu@intel.com>
-References: <20180921150553.21016-1-yu-cheng.yu@intel.com>
+        Fri, 21 Sep 2018 17:00:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13097 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390278AbeIUVAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 17:00:16 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8BB96645FF501;
+        Fri, 21 Sep 2018 23:09:28 +0800 (CST)
+Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.399.0; Fri, 21 Sep 2018 23:09:24 +0800
+From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+To:     <lorenzo.pieralisi@arm.com>, <robin.murphy@arm.com>
+CC:     <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        <guohanjun@huawei.com>, <john.garry@huawei.com>,
+        <pabba@codeaurora.org>, <vkilari@codeaurora.org>,
+        <rruigrok@codeaurora.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
+        <neil.m.leeder@gmail.com>
+Subject: [PATCH v3 0/3] arm64 SMMUv3 PMU driver with IORT support
+Date:   Fri, 21 Sep 2018 16:08:00 +0100
+Message-ID: <20180921150803.25444-1-shameerali.kolothum.thodi@huawei.com>
+X-Mailer: git-send-email 2.12.0.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.237]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Look in .note.gnu.property of an ELF file and check if Indirect
-Branch Tracking needs to be enabled for the task.
+This adds a driver for the SMMUv3 PMU into the perf framework.
+It includes an IORT update to support PM Counter Groups.
 
-Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- arch/x86/include/uapi/asm/elf_property.h | 1 +
- arch/x86/kernel/elf.c                    | 8 +++++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+This is based on the initial work done by Neil Leeder[1]
 
-diff --git a/arch/x86/include/uapi/asm/elf_property.h b/arch/x86/include/uapi/asm/elf_property.h
-index af361207718c..343a871b8fc1 100644
---- a/arch/x86/include/uapi/asm/elf_property.h
-+++ b/arch/x86/include/uapi/asm/elf_property.h
-@@ -11,5 +11,6 @@
-  * Bits for GNU_PROPERTY_X86_FEATURE_1_AND
-  */
- #define GNU_PROPERTY_X86_FEATURE_1_SHSTK	(0x00000002)
-+#define GNU_PROPERTY_X86_FEATURE_1_IBT		(0x00000001)
- 
- #endif /* _UAPI_ASM_X86_ELF_PROPERTY_H */
-diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
-index 2fddd0bc545b..13358026cd64 100644
---- a/arch/x86/kernel/elf.c
-+++ b/arch/x86/kernel/elf.c
-@@ -300,7 +300,8 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 
- 	struct elf64_hdr *ehdr64 = ehdr_p;
- 
--	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
-+	    !cpu_feature_enabled(X86_FEATURE_IBT))
- 		return 0;
- 
- 	if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64) {
-@@ -335,6 +336,11 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 		}
- 	}
- 
-+	if (cpu_feature_enabled(X86_FEATURE_IBT)) {
-+		if (feature & GNU_PROPERTY_X86_FEATURE_1_IBT)
-+			err = cet_setup_ibt();
-+	}
-+
- out:
- 	return err;
- }
+SMMUv3 PMCG devices are named as smmuv3_pmcg_<phys_addr_page>
+where <phys_addr_page> is the physical page address of the SMMU PMCG.
+For example, the PMCG at 0xff88840000 is named smmuv3_pmcg_ff88840
+
+Usage example:
+For common arch supported events:
+perf stat -e smmuv3_pmcg_ff88840/transaction,filter_enable=1,
+ filter_span=1,filter_stream_id=0x42/ -a pwd
+
+For IMP DEF events:
+perf stat -e smmuv3_pmcg_ff88840/event=id/ -a pwd
+
+Sanity tested on HiSilicon platform. Further testing on supported
+platforms are very much welcome.
+
+v2 --> v3
+
+-Addressed comments from Robin.
+-Removed iort helper function to retrieve the PMCG reference smmu.
+-PMCG devices are now named using the base address
+
+v1 --> v2
+
+- Addressed comments from Robin.
+- Added an helper to retrieve the associated smmu dev and named PMUs
+  to make the association visible to user.
+- Added MSI support  for overflow irq
+
+[1]https://www.spinics.net/lists/arm-kernel/msg598591.html
+
+Neil Leeder (2):
+  acpi: arm64: add iort support for PMCG
+  perf: add arm64 smmuv3 pmu driver
+
+Shameer Kolothum (1):
+  perf/smmuv3: Add MSI irq support
+
+ drivers/acpi/arm64/iort.c     |  78 ++++-
+ drivers/perf/Kconfig          |   9 +
+ drivers/perf/Makefile         |   1 +
+ drivers/perf/arm_smmuv3_pmu.c | 794 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 870 insertions(+), 12 deletions(-)
+ create mode 100644 drivers/perf/arm_smmuv3_pmu.c
+
 -- 
-2.17.1
+2.7.4
+
 
