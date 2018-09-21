@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AB1C04AB8
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775ACC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A65A42156D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A65A42156D
+	by mail.kernel.org (Postfix) with ESMTP id 3D40921568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:09:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D40921568
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390610AbeIUU6k (ORCPT
+        id S2390640AbeIUU6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:58:40 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19987 "EHLO mga09.intel.com"
+        Fri, 21 Sep 2018 16:58:52 -0400
+Received: from mga09.intel.com ([134.134.136.24]:19983 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390454AbeIUU6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:58:10 -0400
+        id S2390453AbeIUU6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:58:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 08:08:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="71856568"
+   d="scan'208";a="71856565"
 Received: from 2b52.sc.intel.com ([143.183.136.51])
   by fmsmga007.fm.intel.com with ESMTP; 21 Sep 2018 08:08:49 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
@@ -54,9 +54,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v4 13/27] x86/mm: Shadow stack page fault error checking
-Date:   Fri, 21 Sep 2018 08:03:37 -0700
-Message-Id: <20180921150351.20898-14-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v4 12/27] x86/mm: Modify ptep_set_wrprotect and pmdp_set_wrprotect for _PAGE_DIRTY_SW
+Date:   Fri, 21 Sep 2018 08:03:36 -0700
+Message-Id: <20180921150351.20898-13-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180921150351.20898-1-yu-cheng.yu@intel.com>
 References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
@@ -65,74 +65,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a page fault is triggered by a shadow stack access (e.g.
-call/ret) or shadow stack management instructions (e.g.
-wrussq), then bit[6] of the page fault error code is set.
+When Shadow Stack is enabled, the [R/O + PAGE_DIRTY_HW] setting is
+reserved only for the Shadow Stack.  For non-Shadow Stack R/O PTEs,
+we use [R/O + PAGE_DIRTY_SW].
 
-In access_error(), we check if a shadow stack page fault
-is within a shadow stack memory area.
+When a PTE goes from [R/W + PAGE_DIRTY_HW] to [R/O + PAGE_DIRTY_SW],
+it could become a transient Shadow Stack PTE in two cases.
+
+The first case is that some processors can start a write but end up
+seeing a read-only PTE by the time they get to the Dirty bit,
+creating a transient Shadow Stack PTE.  However, this will not occur
+on processors supporting Shadow Stack therefore we don't need a TLB
+flush here.
+
+The second case is that when the software, without atomic, tests &
+replaces PAGE_DIRTY_HW with PAGE_DIRTY_SW, a transient Shadow Stack
+PTE can exist.  This is prevented with cmpxchg.
+
+Dave Hansen, Jann Horn, Andy Lutomirski, and Peter Zijlstra provided
+many insights to the issue.  Jann Horn provided the cmpxchg solution.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/asm/traps.h |  2 ++
- arch/x86/mm/fault.c          | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+)
+ arch/x86/include/asm/pgtable.h | 58 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 5196050ff3d5..58ea2f5722e9 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -157,6 +157,7 @@ enum {
-  *   bit 3 ==				1: use of reserved bit detected
-  *   bit 4 ==				1: fault was an instruction fetch
-  *   bit 5 ==				1: protection keys block access
-+ *   bit 6 ==				1: shadow stack access fault
-  */
- enum x86_pf_error_code {
- 	X86_PF_PROT	=		1 << 0,
-@@ -165,5 +166,6 @@ enum x86_pf_error_code {
- 	X86_PF_RSVD	=		1 << 3,
- 	X86_PF_INSTR	=		1 << 4,
- 	X86_PF_PK	=		1 << 5,
-+	X86_PF_SHSTK	=		1 << 6,
- };
- #endif /* _ASM_X86_TRAPS_H */
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 47bebfe6efa7..7c3877a982f4 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1162,6 +1162,17 @@ access_error(unsigned long error_code, struct vm_area_struct *vma)
- 				       (error_code & X86_PF_INSTR), foreign))
- 		return 1;
- 
-+	/*
-+	 * Verify X86_PF_SHSTK is within a shadow stack VMA.
-+	 * It is always an error if there is a shadow stack
-+	 * fault outside a shadow stack VMA.
-+	 */
-+	if (error_code & X86_PF_SHSTK) {
-+		if (!(vma->vm_flags & VM_SHSTK))
-+			return 1;
-+		return 0;
-+	}
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 3ee554d81480..b6e0ee5c5503 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1203,7 +1203,36 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
+ static inline void ptep_set_wrprotect(struct mm_struct *mm,
+ 				      unsigned long addr, pte_t *ptep)
+ {
++#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
++	pte_t new_pte, pte = READ_ONCE(*ptep);
 +
- 	if (error_code & X86_PF_WRITE) {
- 		/* write, present and write, not present: */
- 		if (unlikely(!(vma->vm_flags & VM_WRITE)))
-@@ -1300,6 +1311,13 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
- 
 +	/*
-+	 * If the fault is caused by a shadow stack access,
-+	 * i.e. CALL/RET/SAVEPREVSSP/RSTORSSP, then set
-+	 * FAULT_FLAG_WRITE to effect copy-on-write.
++	 * Some processors can start a write, but end up
++	 * seeing a read-only PTE by the time they get
++	 * to the Dirty bit.  In this case, they will
++	 * set the Dirty bit, leaving a read-only, Dirty
++	 * PTE which looks like a Shadow Stack PTE.
++	 *
++	 * However, this behavior has been improved and
++	 * will not occur on processors supporting
++	 * Shadow Stacks.  Without this guarantee, a
++	 * transition to a non-present PTE and flush the
++	 * TLB would be needed.
++	 *
++	 * When changing a writable PTE to read-only and
++	 * if the PTE has _PAGE_DIRTY_HW set, we move
++	 * that bit to _PAGE_DIRTY_SW so that the PTE is
++	 * not a valid Shadow Stack PTE.
 +	 */
-+	if (error_code & X86_PF_SHSTK)
-+		flags |= FAULT_FLAG_WRITE;
- 	if (error_code & X86_PF_WRITE)
- 		flags |= FAULT_FLAG_WRITE;
- 	if (error_code & X86_PF_INSTR)
++	do {
++		new_pte = pte_wrprotect(pte);
++		new_pte.pte |= (new_pte.pte & _PAGE_DIRTY_HW) >>
++				_PAGE_BIT_DIRTY_HW << _PAGE_BIT_DIRTY_SW;
++		new_pte.pte &= ~_PAGE_DIRTY_HW;
++	} while (!try_cmpxchg(ptep, &pte, new_pte));
++#else
+ 	clear_bit(_PAGE_BIT_RW, (unsigned long *)&ptep->pte);
++#endif
+ }
+ 
+ #define flush_tlb_fix_spurious_fault(vma, address) do { } while (0)
+@@ -1266,7 +1295,36 @@ static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
+ static inline void pmdp_set_wrprotect(struct mm_struct *mm,
+ 				      unsigned long addr, pmd_t *pmdp)
+ {
++#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
++	pmd_t new_pmd, pmd = READ_ONCE(*pmdp);
++
++	/*
++	 * Some processors can start a write, but end up
++	 * seeing a read-only PMD by the time they get
++	 * to the Dirty bit.  In this case, they will
++	 * set the Dirty bit, leaving a read-only, Dirty
++	 * PMD which looks like a Shadow Stack PMD.
++	 *
++	 * However, this behavior has been improved and
++	 * will not occur on processors supporting
++	 * Shadow Stacks.  Without this guarantee, a
++	 * transition to a non-present PMD and flush the
++	 * TLB would be needed.
++	 *
++	 * When changing a writable PMD to read-only and
++	 * if the PMD has _PAGE_DIRTY_HW set, we move
++	 * that bit to _PAGE_DIRTY_SW so that the PMD is
++	 * not a valid Shadow Stack PMD.
++	 */
++	do {
++		new_pmd = pmd_wrprotect(pmd);
++		new_pmd.pmd |= (new_pmd.pmd & _PAGE_DIRTY_HW) >>
++				_PAGE_BIT_DIRTY_HW << _PAGE_BIT_DIRTY_SW;
++		new_pmd.pmd &= ~_PAGE_DIRTY_HW;
++	} while (!try_cmpxchg(pmdp, &pmd, new_pmd));
++#else
+ 	clear_bit(_PAGE_BIT_RW, (unsigned long *)pmdp);
++#endif
+ }
+ 
+ #define pud_write pud_write
 -- 
 2.17.1
 
