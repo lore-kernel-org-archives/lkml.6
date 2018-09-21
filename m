@@ -2,107 +2,109 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C28DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC2EECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5973C2156B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D88821479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="pMQMoUs6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5973C2156B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VFYoQPnR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D88821479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390999AbeIUXUB (ORCPT
+        id S2391018AbeIUXUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:20:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57770 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732114AbeIUXUB (ORCPT
+        Fri, 21 Sep 2018 19:20:52 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35643 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390693AbeIUXUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:20:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=F1bi4/JaU8RMuusTSrnwdTafSYC84/kpl580wMlyg84=; b=pMQMoUs67KRhKcMFD2mKubh2w
-        um25Khpbcz0P6t2eP0Xgdxf6kpEv7HJoF8Iqt4ydeb+88eT3wJBvc6cwQTQyYAVq7LtqdWj16SV5s
-        BLztMtW6BhgmQhF3t+MxuJ0ZTLwyZN6xd2g+YWZOlf61+YpTDcbJCTZkH2dVLek+L2lsE=;
-Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1g3PFi-0000ih-2B; Fri, 21 Sep 2018 17:30:02 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id F11CD440078; Fri, 21 Sep 2018 18:29:59 +0100 (BST)
-Date:   Fri, 21 Sep 2018 10:29:59 -0700
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, sboyd@kernel.org, mazziesaccount@gmail.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power
- management IC
-Message-ID: <20180921172959.GG20825@sirena.org.uk>
-References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
- <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+        Fri, 21 Sep 2018 19:20:52 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 205-v6so5413557pgd.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:30:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=md5rIgo9mqWlgXa285vg9lW1AXrcZqkAaFIy8gWCins=;
+        b=VFYoQPnRSBOsR+JGpBWO7tKFn5dDtCWFxeLYRoRQf6C9ZSmO8Mg+0Sjovwrve56CLh
+         f0FWA51Zhy5cj0VFX09WOdTth+4aiGY6bEydYIstcrdFTV6iT5fl2tXmkuvE4EAilxMW
+         waq7HPkODowRAjvaEtm7UCzZjC3XYx//TB1JQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=md5rIgo9mqWlgXa285vg9lW1AXrcZqkAaFIy8gWCins=;
+        b=r8fb7tm/fNWuY1U+k44IhWCcApwQ41KHSRynVr9W0mJmShbCG6CXwIC9GG1tL6oD+o
+         qFnu1IDqI/PlPgL9rFgJiZ4tLqbb2xmpob3Eit0J/7l6RICN9G0whuGK9ndXIISAJEWH
+         /xEBPClQURvD3eRUmnTRANFajksM1sAfHvvKTumvYSYgVH9JE42v/eXQLSjHS71ETv32
+         eubJ9dJYBZ/psGph46UFU19WU3KgpbnX/V4h8xup82KObSefiQ+9L2Tg8+n6lE7EPBOm
+         bPvbN1hDcZuZ9Jhhqcae684yv74ZFJPY/FG8HuAwz7ptcZFX3lzlAvBaQKrKEeOAMEfd
+         YLGw==
+X-Gm-Message-State: APzg51BPLqjhYwaJJdE2goKxqYmkNHPsDnSh7e/MX90FOa7MxBPqepxv
+        3YQLIu3Hhpm3EQy6zOGr4Gn7Kw==
+X-Google-Smtp-Source: ANB0VdYbcN8kzEh4m9dgCu1OvxVBH02m5v1gABK/qT9Pxyd+Miv37uXu4UJH1ijoR6FIKq6s3nrCUg==
+X-Received: by 2002:a65:4043:: with SMTP id h3-v6mr42039715pgp.207.1537551059128;
+        Fri, 21 Sep 2018 10:30:59 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id 16-v6sm38589298pfp.6.2018.09.21.10.30.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Sep 2018 10:30:58 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uc35eWnScqDcQrv5"
-Content-Disposition: inline
-In-Reply-To: <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
-X-Cookie: Disc space -- the final frontier!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Mark Brown <broonie@kernel.org>, Ryan Case <ryandcase@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180920224055.164856-1-ryandcase@chromium.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Ryan Case <ryandcase@chromium.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180920224055.164856-1-ryandcase@chromium.org>
+Message-ID: <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
+Date:   Fri, 21 Sep 2018 10:30:57 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Ryan Case (2018-09-20 15:40:54)
+> diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt=
+ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+> new file mode 100644
+> index 000000000000..ecfb1e2bd520
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+> @@ -0,0 +1,36 @@
+> +Qualcomm Quad Serial Peripheral Interface (QSPI)
+> +
+> +The QSPI controller allows SPI protocol communication in single, dual, o=
+r quad
+> +wire transmission modes for read/write access to slaves such as NOR flas=
+h.
+> +
+> +Required properties:
+> +- compatible:  Should contain:
+> +               "qcom,sdm845-qspi"
 
---uc35eWnScqDcQrv5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Does someone have a more generic compatible string that can be added
+here to indicate the type of quad SPI controller this is? I really doubt
+this is a one-off hardware block for the specific SDM845 SoC. =
 
-On Fri, Sep 14, 2018 at 11:27:46AM +0300, Matti Vaittinen wrote:
-> BD71847 is reduced version of BD71837. DVS bucks 3 and 4 are
-> removed as is LDO7. Voltage ranges of some regulators are
-> expanded.
->=20
-> Add initial support for BD71847 with BD71837 driver.
->=20
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  drivers/mfd/rohm-bd718x7.c            |   70 +--
->  drivers/regulator/bd71837-regulator.c | 1055 +++++++++++++++++++++++----=
-------
->  include/linux/mfd/rohm-bd718x7.h      |  271 ++++-----
->  3 files changed, 879 insertions(+), 517 deletions(-)
 
-This looks OK to me - Lee, the patch is almost entirely a regulator one,
-are you OK with me applying it?
-
---uc35eWnScqDcQrv5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlulKpcACgkQJNaLcl1U
-h9Ds+Af+Lj7+qfn9ha/iNYcNJJyfbCS97JSlbC2n5I0h1L/B3wO2ZTUj153Q2vxC
-vrpjpex/2m5i99Xg1a/fIV1y09dM4M8Ets6lLxYmmUeZ/1LRUR80/rsX/UjqS0J6
-+TZZ+PO/vUPNHXW38DfyoEyeG/znETXQQdHrktZWFn4fKgDXZVC2BwePGdOYEynC
-b5AL3auAx62FvwO4m2oW7vSegj2QIBuQbZx8o1C9/YpjwHI1RYCjdY2NBtsHklH0
-/x/uOdmmtUP/8MoAkG7uDZyliJD+rn2QVrUxVOlcpnCvI+8XfAnDO0OjVF/0ijaW
-P5pa+noqz28U+7dSALRdMR1/1237tA==
-=C2rq
------END PGP SIGNATURE-----
-
---uc35eWnScqDcQrv5--
+> +- reg:         Should contain the base register location and length.
+> +- interrupts:  Interrupt number used by the controller.
+> +- clocks:      Should contain the core and AHB clock.
+> +- clock-names: Should be "core" for core clock and "iface" for AHB clock.
+> +
