@@ -2,93 +2,131 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65EA6C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82EFC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28A4B2154C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:46:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mvista-com.20150623.gappssmtp.com header.i=@mvista-com.20150623.gappssmtp.com header.b="e2T3d8wN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A4B2154C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mvista.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E3E72154C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:46:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3E72154C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389663AbeIUPeG (ORCPT
+        id S2389676AbeIUPey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:34:06 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40630 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389489AbeIUPeG (ORCPT
+        Fri, 21 Sep 2018 11:34:54 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:29161 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389010AbeIUPey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:34:06 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j19-v6so11047019ljc.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 02:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gm0nVpDcXwRqfbIJtSk7HIEi8uw4KdWhfb+8mOjjB10=;
-        b=e2T3d8wNREefSF5AA4sQMMY5CI8FlKZI0t9o80SiWEJFewL0hyULwBRE2d1UVFXSB1
-         Y6ePsorVhxm0xwxlqbuyfr7KqK9DA06f5haj8h3qcb5jqQAxmdUtCbQumTN4TFSKqX+v
-         vDcQP1fZ+KY2OVR1ggQcWmK5j/YRMXmfATK7a/MiWruffV72baeI13ctgRJyPSNEZADF
-         C7bHuRT90iPOsNq/SsEVkAidjsXoSRSAtqUr4eknDT/qFuns8iK07OosKdWqnJsMctsC
-         FUuXs0scsXJguh94c1iznRl9UNSyL7FdPuw+IBKVckLyyqdqOOX8XVbSjbqoJI+22Uot
-         QMjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gm0nVpDcXwRqfbIJtSk7HIEi8uw4KdWhfb+8mOjjB10=;
-        b=nJ+ptSsxURX9Bat8VkkAdc2LVGBxyPOSxy9u0TqisKUWjTbOsrRxoTaguPoSVRubvI
-         pcXSKiea0meRFIATqlR+wKVw+GoL3Vx9m803Kbjhb8SdqChX4KzD6KvtZ+/RE8b6965Z
-         QlGgNjCF+i4LB9CBcaHX0BagVZT0VXzHuBS2o4GLOk6VB98AQ4VsWrkCpvaLUFR/QDf/
-         QFaD7it7WzJ6ruiRnhipPZwb4b77gXI7SfzKQdpBRj3GCfULuhoasShaX2Eb1WUNIR5j
-         7PRyyyS1gunxQxb830m68/KhmnJiyV0li71Z5zOTZCRImqFq9YhTpaTSo2rvEd/Mg6zq
-         ezUA==
-X-Gm-Message-State: ABuFfogJizUuX+NzohJW2h+mXazV5EGW7B9ptoy+I0hk2Z0YHPCmjou9
-        3PjHW0YXrZ+E3aMJavf2g29dX4hYfidxQ/gKNGTWOQKEAuE=
-X-Google-Smtp-Source: ACcGV63jBgpPdUle95bxZIoUpwBVfMMjbzaw13pBXPgaP2/37yynfycGZzclup2Y+CbTZl1GGYRAJy46N4kQtcZy5tI=
-X-Received: by 2002:a2e:1609:: with SMTP id w9-v6mr1139188ljd.120.1537523161749;
- Fri, 21 Sep 2018 02:46:01 -0700 (PDT)
+        Fri, 21 Sep 2018 11:34:54 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8L9iYMa008894;
+        Fri, 21 Sep 2018 11:46:30 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mmkmu38k0-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 21 Sep 2018 11:46:30 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9E57B38;
+        Fri, 21 Sep 2018 09:46:29 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 76A822AC3;
+        Fri, 21 Sep 2018 09:46:29 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 21 Sep
+ 2018 11:46:29 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 21 Sep
+ 2018 11:46:28 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <benjamin.gaignard@linaro.org>, Gerald Baeza <gerald.baeza@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V2 00/27] mmc: mmci: add sdmmc variant for stm32
+Date:   Fri, 21 Sep 2018 11:45:54 +0200
+Message-ID: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <1537422122-6166-1-git-send-email-svellattu@mvista.com>
- <CAJZ5v0j05v+69cCJ1jzekdC_2kqXu6SQaNLeOhk=04b08pT6YQ@mail.gmail.com>
- <CALabi0HOSbsemnw=v7h+arstXMMqaAYGmRPFNQDSE_U0+Kg0KQ@mail.gmail.com> <CAJZ5v0ivF_HopaUXJVBkTJj3XLVk-7NPcW5JE-OmyrsQG+O2NA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0ivF_HopaUXJVBkTJj3XLVk-7NPcW5JE-OmyrsQG+O2NA@mail.gmail.com>
-From:   Silesh C V <svellattu@mvista.com>
-Date:   Fri, 21 Sep 2018 15:15:53 +0530
-Message-ID: <CALabi0EkqtHpyXrK=yTUW3aHUAH_CGJ5Yg_kUiqyax3tqjKbqg@mail.gmail.com>
-Subject: Re: [PATCH] Driver core: add bus_find_device_by_of_node
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rafael,
+From: Ludovic Barre <ludovic.barre@st.com>
 
-On Fri, Sep 21, 2018 at 2:47 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> >
-> > >
-> > > Second, what about a more generic bus_find_device_by_fwnode() ?
-> >
-> > If you think that the above requirement warrants the inclusion of
-> > bus_find_device_by_of_node, I can try implementing this in v2.
->
-> I'm not really sure what you mean, but if there is
-> bus_find_device_by_fwnode(), it will be useful not just for DT code,
-> but generally, and getting an of_node from fwnode is trivial.
->
+The goal of this serie is to add support of sdmmc for stm32.
+Be to able to add this new variant it is needed to do some changes in
+mmci core:
+-Internalize specific needs of legacy dmaengine.
+-Create and setup dma_priv pointer
+-Create generic callbacks which share some features (like cookie...)
+ and call specific needs
 
-OK. Will do this and send out a patch soon.
+change v3:
+-remove __dma_inprogress rename
+-remove bad space at end of "st,use-ckin"
 
-Thanks,
-Silesh
+change v2:
+-rename to mmci_prep/unprep_data
+-rename specific dma engine structure to mmci_dmae_next/priv
+-follow "_" recommandation
+-remove dma prefixe of mmci_dmae_priv fields
+
+Ludovic Barre (27):
+  mmc: mmci: internalize dma map/unmap into mmci dma functions
+  mmc: mmci: internalize dma_inprogress into mmci dma functions
+  mmc: mmci: convert dma_setup callback to return an int
+  mmc: mmci: introduce dma_priv pointer to mmci_host
+  mmc: mmci: move mmci next cookie to mci host
+  mmc: mmci: merge prepare data functions
+  mmc: mmci: add prepare/unprepare_data callbacks
+  mmc: mmci: add get_next_data callback
+  mmc: mmci: modify dma_setup callback
+  mmc: mmci: add dma_release callback
+  mmc: mmci: add dma_start callback
+  mmc: mmci: add dma_finalize callback
+  mmc: mmci: add dma_error callback
+  mmc: mmci: add validate_data callback
+  mmc: mmci: add set_clk/pwrreg callbacks
+  mmc: mmci: add datactrl block size variant property
+  mmc: mmci: expand startbiterr to irqmask and error check
+  mmc: mmci: add variant properties to define cpsm & cmdresp bits
+  mmc: mmci: add variant property to define dpsm bit
+  mmc: mmci: add variant property to define irq pio mask
+  mmc: mmci: add variant property to write datactrl before command
+  mmc: mmci: add variant property to not read datacnt
+  mmc: mmci: add variant property to request a reset
+  mmc: mmci: add clock divider for stm32 sdmmc
+  mmc: mmci: add stm32 sdmmc registers
+  mmc: mmci: add DT bindings for STM32 sdmmc
+  mmc: mmci: add stm32 sdmmc variant
+
+ Documentation/devicetree/bindings/mmc/mmci.txt |  11 +
+ drivers/mmc/host/Kconfig                       |  10 +
+ drivers/mmc/host/Makefile                      |   1 +
+ drivers/mmc/host/mmci.c                        | 646 +++++++++++++++++--------
+ drivers/mmc/host/mmci.h                        | 147 +++++-
+ drivers/mmc/host/mmci_qcom_dml.c               |  15 +-
+ drivers/mmc/host/mmci_stm32_sdmmc.c            | 282 +++++++++++
+ 7 files changed, 880 insertions(+), 232 deletions(-)
+ create mode 100644 drivers/mmc/host/mmci_stm32_sdmmc.c
+
+-- 
+2.7.4
+
