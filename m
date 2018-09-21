@@ -2,110 +2,99 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B990C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5F3C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA33821547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA33821547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 7522A21547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:30:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7522A21547
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390238AbeIUUR4 convert rfc822-to-8bit (ORCPT
+        id S2390040AbeIUUTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:17:56 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:55275 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389657AbeIUUR4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:17:56 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 13849725-1500050 
-        for multiple; Fri, 21 Sep 2018 15:28:40 +0100
-Content-Type: text/plain; charset="utf-8"
+        Fri, 21 Sep 2018 16:19:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41723 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728313AbeIUUTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:19:11 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C0851208F3; Fri, 21 Sep 2018 16:30:00 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 975DE208B0;
+        Fri, 21 Sep 2018 16:29:50 +0200 (CEST)
+Date:   Fri, 21 Sep 2018 16:29:41 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Rodrigo =?utf-8?B?RXh0ZXJja8O2dHRlciBUasOkZGVy?= 
+        <rodrigo@tjader.xyz>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: allwinner: Olimex A64-OLinuXino: fix
+ ethernet
+Message-ID: <20180921142941.5ymp7ksphgboxrwz@flea>
+References: <20180919141938.18791-1-rodrigo@tjader.xyz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     "Chenfeng \(puck\)" <puck.chen@hisilicon.com>,
-        "Liuxinliang \(Matthew Liu\)" <z.liuxinliang@hisilicon.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "zourongrong@gmail.com" <zourongrong@gmail.com>,
-        John Garry <john.garry@huawei.com>
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <e8f99d84-422f-f79f-f207-e9658b190800@huawei.com>
-Cc:     Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        daniel.vetter@ffwll.ch
-References: <d390c2df-64f6-484e-e48f-953e88cc4501@huawei.com>
- <40ead141-6d9d-31bf-4b62-639b31db9793@huawei.com>
- <5BA48650.7050505@hisilicon.com>
- <e8f99d84-422f-f79f-f207-e9658b190800@huawei.com>
-Message-ID: <153754012047.21139.481244931312769112@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: Bug report: HiBMC crash
-Date:   Fri, 21 Sep 2018 15:28:40 +0100
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vttrmrupjt5ob2dm"
+Content-Disposition: inline
+In-Reply-To: <20180919141938.18791-1-rodrigo@tjader.xyz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting John Garry (2018-09-21 09:11:19)
-> On 21/09/2018 06:49, Liuxinliang (Matthew Liu) wrote:
-> > Hi John,
-> > Thank you for reporting bug.
-> > I am now using 4.18.7. I haven't found this issue yet.
-> > I will try linux-next and figure out what's wrong with it.
-> >
-> > Thanks,
-> > Xinliang
-> >
-> >
-> 
-> As mentioned in internal mail, the issue may be that the surface 
-> depth/bpp we were using the in the driver was previously invalid, but 
-> code has since been added in v4.19 to reject this. Specifically it looks 
-> like this patch:
-> 
-> commit 70109354fed232dfce8fb2c7cadf635acbe03e19
-> Author: Chris Wilson <chris@chris-wilson.co.uk>
-> Date:   Wed Sep 5 16:31:16 2018 +0100
-> 
->      drm: Reject unknown legacy bpp and depth for drm_mode_addfb ioctl
 
+--vttrmrupjt5ob2dm
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c
-index b92595c477ef..f3e7f41e6781 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c
-@@ -71,7 +71,6 @@ static int hibmc_drm_fb_create(struct drm_fb_helper *helper,
-        DRM_DEBUG_DRIVER("surface width(%d), height(%d) and bpp(%d)\n",
-                         sizes->surface_width, sizes->surface_height,
-                         sizes->surface_bpp);
--       sizes->surface_depth = 32;
+On Wed, Sep 19, 2018 at 11:19:36AM -0300, Rodrigo Exterck=F6tter Tj=E4der w=
+rote:
+> Without "allwinner,tx-delay-ps =3D <600>;" on the DTP it can receive pack=
+ets
+> but not send.
+>=20
+> Signed-off-by: Rodrigo Exterck=F6tter Tj=E4der <rodrigo@tjader.xyz>
 
-        bytes_per_pixel = DIV_ROUND_UP(sizes->surface_bpp, 8);
+Again, that commit log would be nice if it was a bit more
+explicit. What is a DTP? How did you come up with that value? What is
+the value used by Allwinner/Olimex, and why did you use another one if
+you did?
 
-@@ -192,7 +191,6 @@ int hibmc_fbdev_init(struct hibmc_drm_private *priv)
-                return -ENOMEM;
-        }
+Thanks!
+Maxime
 
--       priv->fbdev = hifbdev;
-        drm_fb_helper_prepare(priv->dev, &hifbdev->helper,
-                              &hibmc_fbdev_helper_funcs);
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-@@ -246,6 +244,7 @@ int hibmc_fbdev_init(struct hibmc_drm_private *priv)
-                         fix->ypanstep, fix->ywrapstep, fix->line_length,
-                         fix->accel, fix->capabilities);
+--vttrmrupjt5ob2dm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-+       priv->fbdev = hifbdev;
-        return 0;
+-----BEGIN PGP SIGNATURE-----
 
- fini:
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlulAFQACgkQ0rTAlCFN
+r3QmZA/+Lc8bhiH5aWZXAbd91kWJaxdmHhDLH93kD5TpHZSXVtlRA4in0NYjPyus
+tO60+vUYt3VbOWeMxV+C0kDr3WgQoCSuDjWbhoKn8CA9W1jW6XRhUqgjIznLobQj
+6Ab6dXEBCRsgpVXeN1rIWJZ0sed2HycZ3fy3IGbgF8CeXEgCQGRbN60wsVHEeSE8
+wELOlD4KmNeMzdBkUbjeE/vqVkyNrBvhiMpB/m9iUCZaD/1TCmJLYosIMit85TuB
+Sb1Ax93jj8NXx1n20s1UzxqTBTsu7GPylOrrdDRoF4elvZd3b38W0fWAvxwsYXrm
+3fAfkcRQDffMzm8r1wjVfqfcw1JOzHHTckB9JssBmNh37nlIPOLIlp/uFG89auIu
+WStFgcwwggeQKtSBHQw0XyvqbOk6IY1Eue8T9QYAezwhLYM6Ra4uwX6BzNnNepVK
+RKOXGqbh3Hg812jwZEkGlHQw4n3HKI7n8Fw7hZHBxxcOBXax10CZhHVWKCPUiFN6
+GRLt2x0oETFscyf+gL57o/qgFHrTfjCA/greRrMXxfC5KB6/kWFQ/uJtZVQueRSq
+GELr47eusgVDfRv4jIpvf5TjCGBVxsoIPZaFBXGIj8RX4/EqH57KEtRZEb3DXvJB
+5APnyDAJ99pyci7XQjK3h31vYOso9y5nVkOXAa1UKq/K++z4Gxs=
+=Czs8
+-----END PGP SIGNATURE-----
 
-Apply chunks 2&3 first to confirm they fix the GPF.
--Chris
+--vttrmrupjt5ob2dm--
