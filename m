@@ -2,111 +2,180 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BA5ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706ADECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F60B21568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:27:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F60B21568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CE49421522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:29:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Srvr665R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE49421522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391445AbeIVCRa (ORCPT
+        id S2391436AbeIVCTe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 22:17:30 -0400
-Received: from mga12.intel.com ([192.55.52.136]:37384 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391251AbeIVCRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 22:17:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 13:27:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,286,1534834800"; 
-   d="scan'208";a="75227731"
-Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga008.jf.intel.com with ESMTP; 21 Sep 2018 13:26:59 -0700
-Subject: Re: [patch V3 10/11] x86/mm/cpa: Do the range check early
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180917142906.384767038@linutronix.de>
- <20180917143546.507259989@linutronix.de>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Bin Yang <bin.yang@intel.com>,
-        Mark Gross <mark.gross@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <a13b7491-c0ee-1ddb-f612-b462459b0f29@intel.com>
-Date:   Fri, 21 Sep 2018 13:26:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180917143546.507259989@linutronix.de>
-Content-Type: text/plain; charset=utf-8
+        Fri, 21 Sep 2018 22:19:34 -0400
+Received: from mail-by2nam01on0113.outbound.protection.outlook.com ([104.47.34.113]:27036
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391089AbeIVCTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 22:19:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=adfEtzKTxk4T8UyEAQoXLBd9heI5Mq6b23GXwbbekp0=;
+ b=Srvr665RQqTwPAIYNZvZ/dhxmfRjEY2NIStatIT5hyx6bK3CdPfXKKFGSqg8Yc550VnkozBB43iu4LYvwvQqRpAg7N/C//btQTLzb/YoMmS08ZSlBrA6YFPHz+iG5JuJSY9Np86r2BVqtXDbtve/tgtYt9hFhE8w4mW7WjH0An4=
+Received: from BN6PR21MB0161.namprd21.prod.outlook.com (10.173.200.7) by
+ BN6PR21MB0737.namprd21.prod.outlook.com (10.173.199.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.4; Fri, 21 Sep 2018 20:29:00 +0000
+Received: from BN6PR21MB0161.namprd21.prod.outlook.com
+ ([fe80::2dba:ece1:ce16:551a]) by BN6PR21MB0161.namprd21.prod.outlook.com
+ ([fe80::2dba:ece1:ce16:551a%4]) with mapi id 15.20.1185.010; Fri, 21 Sep 2018
+ 20:29:00 +0000
+From:   Haiyang Zhang <haiyangz@microsoft.com>
+To:     Stephen Hemminger <stephen@networkplumber.org>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        vkuznets <vkuznets@redhat.com>
+Subject: RE: [PATCH net-next, v2, 1/3] hv_netvsc: Add support for LRO/RSC in
+ the vSwitch
+Thread-Topic: [PATCH net-next, v2, 1/3] hv_netvsc: Add support for LRO/RSC in
+ the vSwitch
+Thread-Index: AQHUUdoPKfeeW+WL/UOZ5UolOzJblaT7EbCAgAAcIwCAAAFfAA==
+Date:   Fri, 21 Sep 2018 20:29:00 +0000
+Message-ID: <BN6PR21MB0161724984CA29DE89C64505CA120@BN6PR21MB0161.namprd21.prod.outlook.com>
+References: <20180921182037.10077-1-haiyangz@linuxonhyperv.com>
+        <20180921182037.10077-2-haiyangz@linuxonhyperv.com>
+        <20180921113620.62a004cb@xeon-e3>
+        <BN6PR21MB0161160A6A07055B24473327CA120@BN6PR21MB0161.namprd21.prod.outlook.com>
+ <20180921132206.417f3714@xeon-e3>
+In-Reply-To: <20180921132206.417f3714@xeon-e3>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=haiyangz@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-09-21T20:28:59.2467758Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [96.61.92.94]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR21MB0737;6:qyjz+GcMGKn1I1Xpxv6kWZ7GCm15SdeCo+NIFmQkPz/4rk0GLa/R5BynYROqJFhHpMqsp//hjpPQ/qSc5KBHWiJwxc2wT7lH3h0TYteB3uRfLPdkJxLHs0GE6fLZ3OydQHERLdOUa/VpQeH1HDcKU31yceudJa9FmBwoUIzEknyOp1FoN09qN4LMfy7iIfLTHFFaDHx2iDQSg2EWAY3AJNoBQJu3L9fVUGfScZGFprt71IiSMZ1HagJ3YV1RlPDtuHy1X+ltlkNls4QADr9UqF6DjS0u0ltYN6rHSGFIU0mPpU5m3f19VcnPL58mkT11cwUzy/LP6l/O24Y5B5uUBDSGUnmNBMYUhoWoqrgFt8AYqVauTJ77IMQa2JIYBB1AjdNzAmbxy/FDEeKuTQvXmkbtf+GYKJ+q19uiqpEUqaqih2f4PCGQIE2L4xWzstAXi1VM6pV2oDzhhHXSPuIXNQ==;5:vOybtdSL/Yd4hGriOkghRL1Ao5Ol8AIl6+Z9zs+pSSusCqyaRBEarWAiHsFrDP3H3QBKjYNQ+hzA0cegM9IfFs3MiftlHkq97ih5mL/9r2NVIo2+F9GC63AkLfgdRXsieTljBYaVlYLPTTwXhrjBlfp4x1gl3QVf9ct42TgbviU=;7:5iBxIcyKzNMi2HC0mNmSXJblTZoTd7JsVJugJF7gCNUVbCjoOQVkjnc89iLYMpcWm5eWbn8OD/8M0P2efGSHdOin5Iu7RhuEw5+AwdAo0gdi6+e3GwGiXmmeJ5o1Lgmmt7xi4IhBmbyJynUeMezkTTXHbrQEO/a9vcSYoSYRk2gEWjWQy3JUIczNXgqFeUQ7Cf/rCTK5U07YDCSpGFbR5O65Ra0jPrQ6Bt4n5Ljm92ok933SVGs828MlS1s7/lB3
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a89d5fff-525f-4d74-7ee0-08d62000dd94
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:BN6PR21MB0737;
+x-ms-traffictypediagnostic: BN6PR21MB0737:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <BN6PR21MB073758DFBE9B4152B6F9A262CA120@BN6PR21MB0737.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149051)(150027)(6041310)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:BN6PR21MB0737;BCL:0;PCL:0;RULEID:;SRVR:BN6PR21MB0737;
+x-forefront-prvs: 0802ADD973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(376002)(396003)(346002)(39860400002)(199004)(13464003)(189003)(256004)(102836004)(93886005)(6506007)(7696005)(53546011)(99286004)(76176011)(5660300001)(11346002)(446003)(486006)(186003)(6916009)(8990500004)(476003)(10090500001)(54906003)(26005)(10290500003)(478600001)(22452003)(14454004)(316002)(14444005)(6346003)(105586002)(229853002)(4326008)(6116002)(3846002)(106356001)(2900100001)(81166006)(68736007)(97736004)(5250100002)(8936002)(25786009)(86362001)(8676002)(33656002)(86612001)(71190400001)(6246003)(71200400001)(7736002)(9686003)(305945005)(55016002)(66066001)(2906002)(81156014)(74316002)(6436002)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR21MB0737;H:BN6PR21MB0161.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=haiyangz@microsoft.com; 
+x-microsoft-antispam-message-info: SkuSDMOmuoHSgdhOtc3GkROfCwEX4hHVRhAruq8mNwm7Q9OuNFZ89i/LZVlmSkQQZ0Vkl4VuCOxyADVek9nZNb/r0TlRJrNW/Gg2L27T1BOMqGs4DVWnLZ3AhBUMeAIG6HEE8rfcpPdnFLea5o5hxTSnWUyKobhz8X+XPyK7hvPyo8V5EVEn4CFGLWzCOo2V4juLwzJeL6yhmHTPLZ5UBatREW4S8DM0Eno98sydsOiCqROzLhJsYPHbWWKpn3tjxLsGUbyM8cm6aBDrh/HMv4d2L8GhLJpdPcmMTNaMLlQRNu27d1aX+3qTgokMZ5m+yq39MffxROzBPnsjA8Un44r6SLReVTbSnpyL8hLtYfE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a89d5fff-525f-4d74-7ee0-08d62000dd94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 20:29:00.7878
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR21MB0737
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
-> To avoid excessive 4k wise checks in the common case do a quick check first
-> whether the requested new page protections conflict with a static
-> protection area in the large page. If there is no conflict then the
-> decision whether to preserve or to split the page can be made immediately.
-> 
-> If the requested range covers the full large page, preserve it. Otherwise
-> split it up. No point in doing a slow crawl in 4k steps.
 
-That's the big one...
 
-Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Friday, September 21, 2018 4:22 PM
+> To: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: davem@davemloft.net; netdev@vger.kernel.org; olaf@aepfle.de; linux-
+> kernel@vger.kernel.org; devel@linuxdriverproject.org; vkuznets
+> <vkuznets@redhat.com>
+> Subject: Re: [PATCH net-next, v2, 1/3] hv_netvsc: Add support for LRO/RSC=
+ in
+> the vSwitch
+>=20
+> On Fri, 21 Sep 2018 18:51:54 +0000
+> Haiyang Zhang <haiyangz@microsoft.com> wrote:
+>=20
+> > > -----Original Message-----
+> > > From: Stephen Hemminger <stephen@networkplumber.org>
+> > > Sent: Friday, September 21, 2018 2:37 PM
+> > > To: Haiyang Zhang <haiyangz@linuxonhyperv.com>
+> > > Cc: Haiyang Zhang <haiyangz@microsoft.com>; davem@davemloft.net;
+> > > netdev@vger.kernel.org; olaf@aepfle.de;
+> > > linux-kernel@vger.kernel.org; devel@linuxdriverproject.org; vkuznets
+> > > <vkuznets@redhat.com>
+> > > Subject: Re: [PATCH net-next, v2, 1/3] hv_netvsc: Add support for
+> > > LRO/RSC in the vSwitch
+> > >
+> > > On Fri, 21 Sep 2018 18:20:35 +0000
+> > > Haiyang Zhang <haiyangz@linuxonhyperv.com> wrote:
+> > >
+> > > Overall, this looks good. Some minor suggestions.
+> > >
+> > > > +struct nvsc_rsc {
+> > > > +	const struct ndis_pkt_8021q_info *vlan;
+> > > > +	const struct ndis_tcp_ip_checksum_info *csum_info;
+> > > > +	u8 is_last; /* last RNDIS msg in a vmtransfer_page */
+> > > > +	u32 cnt; /* #fragments in an RSC packet */
+> > > > +	u32 pktlen; /* Full packet length */
+> > > > +	void *data[NVSP_RSC_MAX];
+> > > > +	u32 len[NVSP_RSC_MAX];
+> > > > +};
+> > > > +
+> > >
+> > > This new state structure is state on a per-channel basis.
+> > > Do you really need this to be persistent across packets?
+> > >
+> > > Could this be on stack or do you need it to handle split packets
+> > > arriving in different polls? Or is the stack space a problem?
+> > >
+> > > Also, maybe data and length could be in one structure since they are
+> related.
+> >
+> > The stack space is a problem. NVSP_RSC_MAX is 562, which is defined by =
+host.
+> > It will be too large for limited stack space.
+> >
+> > struct nvsc_rsc includes the data, len, cnt, chksum, vlan for one RSC
+> > packet. They are all related to construction of one SKB and its meta
+> > data. So I put them in one structure.
+> >
+> > Thanks,
+> > - Haiyang
+> >
+>=20
+> That makes sense. How big is sizeof(struct net_device) + netdev_priv now?
+> Need to make sure it doesn't become an order 2 (ie keep it less than 4K).
+
+This patch does not change struct net_device or netdev_priv, so their size
+stays the same. Thanks.
+
