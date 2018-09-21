@@ -2,142 +2,122 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C01BEECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE19ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3D521568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:12:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TmgWEPZb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3D521568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id A080B21532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:12:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A080B21532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391301AbeIVBCt (ORCPT
+        id S2391323AbeIVBC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 21:02:49 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:45349 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390726AbeIVBCt (ORCPT
+        Fri, 21 Sep 2018 21:02:58 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34649 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390726AbeIVBC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 21:02:49 -0400
-Received: by mail-yw1-f66.google.com with SMTP id p206-v6so5601016ywg.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=yQn0zHFpqULn0bK3B6Gan6jnMfKsWdjQXBQ05cqv1M8=;
-        b=TmgWEPZbBcXXtNjYBoE2BnYl5edbUEi1H6ZGvgPeSwjsMn6Ti187tHHt+1u+/nt85j
-         QwJdROG6zbNzAWnf7O3ap1zkFrFd3Di/A8S2GaROh+akNdjHC6XRjSaKquZI4fF+bDtw
-         a1ljNbtR55IWGiFIT6+BnTPxMROSub9Xsq8Zw=
+        Fri, 21 Sep 2018 21:02:57 -0400
+Received: by mail-wr1-f65.google.com with SMTP id t15so5932845wrx.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:12:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=yQn0zHFpqULn0bK3B6Gan6jnMfKsWdjQXBQ05cqv1M8=;
-        b=fDr4ZJXkze2d6CnLT+bqym1Y7Fs1jTLuhtcwlYbxyZFXFnzajd8bPNYqQq0uscbkvt
-         pz2A2XInp4wQxy6RuamULzcJEy0iKkFjdrx4HQ0i8YCchFg6Ehg7PTuBT4Zg7pbvNJkO
-         23Qa9vcD+DomsiCfYa2+xAIw801n50u6EuNMeCN+dXx2AygA6RpZmUYO5xuY7i3AmEpr
-         q2uYMgzgTPTEWl3RK0+FIWsQXGNeHvmpZUvF44RKnVN1qLKO9CUVqhOdBhh6Bwsdlr/c
-         0wT0Ev1IDcM8mmKzkSqGrfCLmYYvxIPOH6fgaxZU/cGwi5QkPhoWo6wZplLnE14IQ+ho
-         3P5A==
-X-Gm-Message-State: APzg51CI2YAqKTShtlqXyQLz1yFCr+Tg/lqsUqzh+gB/eCil99on8Xb0
-        Zh+sQ9avXNmbQxnOLDCYf9Uj3NYAPEk=
-X-Google-Smtp-Source: ANB0VdY23TVloHcN+b/CLEO9cpFMB3o5iQQafhWZKjGjIxVoJ/zn+Jbw2zQL+yVPZQao3rN+XBtlQw==
-X-Received: by 2002:a0d:cfc2:: with SMTP id r185-v6mr21599178ywd.337.1537557153514;
-        Fri, 21 Sep 2018 12:12:33 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id m82-v6sm16494902ywm.19.2018.09.21.12.12.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 12:12:32 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id w7-v6so5872138ybm.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:12:32 -0700 (PDT)
-X-Received: by 2002:a25:19c3:: with SMTP id 186-v6mr21581913ybz.410.1537557151666;
- Fri, 21 Sep 2018 12:12:31 -0700 (PDT)
+        bh=AsvpqIPUQZicoJiDjKAW6ZuncNweFxUUeLoqQl48ZFM=;
+        b=tT4j+0TV2PAomj+QiHHfXDIWQq0pT6e5wjiQ+emuOTeKtiYlGYcLdnLIhZZGZegu9t
+         og+pqyWEvTpZirvW5l0cIOYvsa1Vgmdg7Pg/ucgFDnQqmTelWD/RKeYahI+kgtt97nAS
+         wpHUwh4+HnolkMLGGjj1uzkyferTEc2jbFdVa6HKT55vAdZo75NCTC1PN1M12MSDN6iE
+         +2cC65JeIfHQxYNVUzfCBmvyK5WL/tJ6/t1zgCCq9JIyHFecu9F6KbgyX5vj7clZJGHI
+         uRBLaLrIqisaGiwmf2f8c06cxNolFncbLvzJeWbcaWm8QZ/C08QHxMQp/lo80QXAlSBu
+         uw3w==
+X-Gm-Message-State: APzg51Ae0KMRP3QzOVwSgPO4zyIPL1LTpkgDLKQOFJZXLYNlrdgsg0xB
+        zlsV/1LeRg9le3aaYUZL7wjLboj+8S8AVawxrjdbhA==
+X-Google-Smtp-Source: ANB0VdbQTgdZuFmne6DxJQOAWZlrSXzOOY1huw8dRpO+KpkgCi5BKzTxZhcbdaMu1i8mpNdVCEra5L7NONoskJjg054=
+X-Received: by 2002:adf:9ae5:: with SMTP id a92-v6mr41514327wrc.125.1537557161920;
+ Fri, 21 Sep 2018 12:12:41 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 12:12:30
+Received: by 2002:a1c:918b:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 12:12:41
  -0700 (PDT)
-In-Reply-To: <20180917161245.c4bb8546d2c6069b0506c5dd@linux-foundation.org>
-References: <153702858249.1603922.12913911825267831671.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180917161245.c4bb8546d2c6069b0506c5dd@linux-foundation.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 21 Sep 2018 12:12:30 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLRuWOMPTfXAFFiVSb6CUKaa_TD4gncef+MT84pcazW6w@mail.gmail.com>
-Message-ID: <CAGXu5jLRuWOMPTfXAFFiVSb6CUKaa_TD4gncef+MT84pcazW6w@mail.gmail.com>
-Subject: Re: [PATCH 0/3] mm: Randomize free memory
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180914204407.1214-1-lyude@redhat.com>
+References: <20180914204407.1214-1-lyude@redhat.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Fri, 21 Sep 2018 21:12:41 +0200
+Message-ID: <CACO55tsK+hUds6HWTFXhuzAoozafs3E=LPfsjo=HskozvTpq8Q@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH] drm/nouveau: Grab runtime PM ref in nv50_mstc_detect()
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     nouveau <nouveau@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Sean Paul <seanpaul@chromium.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 4:12 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Sat, 15 Sep 2018 09:23:02 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
+Reviewed-by: Karol Herbst <kherbst@redhat.com>
+
+On Fri, Sep 14, 2018 at 10:44 PM, Lyude Paul <lyude@redhat.com> wrote:
+> While we currently grab a runtime PM ref in nouveau's normal connector
+> detection code, we apparently don't do this for MST. This means if we're
+> in a scenario where the GPU is suspended and userspace attempts to do a
+> connector probe on an MSTC connector, the probe will fail entirely due
+> to the DP aux channel and GPU not being woken up:
 >
->> Data exfiltration attacks via speculative execution and
->> return-oriented-programming attacks rely on the ability to infer the
->> location of sensitive data objects. The kernel page allocator, has
->> predictable first-in-first-out behavior for physical pages. Pages are
->> freed in physical address order when first onlined. There are also
->> mechanisms like CMA that can free large contiguous areas at once
->> increasing the predictability of allocations in physical memory.
->>
->> In addition to the security implications this randomization also
->> stabilizes the average performance of direct-mapped memory-side caches.
->> This includes memory-side caches like the one on the Knights Landing
->> processor and those generally described by the ACPI HMAT (Heterogeneous
->> Memory Attributes Table [1]). Cache conflicts are spread over a random
->> distribution rather than localized.
->>
->> Given the performance sensitivity of the page allocator this
->> randomization is only performed for MAX_ORDER (4MB by default) pages. A
->> kernel parameter, page_alloc.shuffle_page_order, is included to change
->> the page size where randomization occurs.
->>
->> [1]: See ACPI 6.2 Section 5.2.27.5 Memory Side Cache Information Structure
+> [  316.633489] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
+> [  316.635713] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
+> [  316.637785] nouveau 0000:01:00.0: i2c: aux 000a: begin idle timeout ffffffff
+> ...
 >
-> I'm struggling to understand the justification of all of this.  Are
-> such attacks known to exist?  Or reasonably expected to exist in the
-> future?  What is the likelihood and what is their cost?  Or is this all
-> academic and speculative and possibly pointless?
-
-While we already have a base-address randomization
-(CONFIG_RANDOMIZE_MEMORY), attacks against the same hardware and
-memory layouts would certainly be using the predictability of
-allocation ordering (i.e. for attacks where the base address isn't
-important: only the relative positions between allocated memory). This
-is common in lots of heap-style attacks. They try to gain control over
-ordering by spraying allocations, etc.
-
-I'd really like to see this because it gives us something similar to
-CONFIG_SLAB_FREELIST_RANDOM but for the page allocator. (This may be
-worth mentioning in the series, especially as a comparison to its
-behavior and this.)
-
-> ie, something must have motivated you to do this work rather than
-> <something-else>.  Please spell out that motivation.
-
-I'd be curious to hear more about the mentioned cache performance
-improvements. I love it when a security feature actually _improves_
-performance. :)
-
-Thanks for working on this!
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+> So, grab a runtime PM ref here.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> index c94b7f42d62d..9da0bdfe1e1c 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> @@ -938,9 +938,22 @@ static enum drm_connector_status
+>  nv50_mstc_detect(struct drm_connector *connector, bool force)
+>  {
+>         struct nv50_mstc *mstc = nv50_mstc(connector);
+> +       enum drm_connector_status conn_status;
+> +       int ret;
+> +
+>         if (!mstc->port)
+>                 return connector_status_disconnected;
+> -       return drm_dp_mst_detect_port(connector, mstc->port->mgr, mstc->port);
+> +
+> +       ret = pm_runtime_get_sync(connector->dev->dev);
+> +       if (ret < 0 && ret != -EACCES)
+> +               return connector_status_disconnected;
+> +
+> +       conn_status = drm_dp_mst_detect_port(connector, mstc->port->mgr,
+> +                                            mstc->port);
+> +
+> +       pm_runtime_mark_last_busy(connector->dev->dev);
+> +       pm_runtime_put_autosuspend(connector->dev->dev);
+> +       return conn_status;
+>  }
+>
+>  static void
+> --
+> 2.17.1
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
