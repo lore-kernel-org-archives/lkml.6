@@ -2,184 +2,136 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBD6ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A437C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E4D21567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:08:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqdA+kH2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E4D21567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2494421547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2494421547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390726AbeIUW6C (ORCPT
+        id S2390651AbeIUXDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:58:02 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36707 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732114AbeIUW6C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:58:02 -0400
-Received: by mail-qt1-f195.google.com with SMTP id t5-v6so2408236qtn.3;
-        Fri, 21 Sep 2018 10:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6tfFrySvThHWLKdjkG9wKPwMAPFyHlwZwH97b01uqwo=;
-        b=ZqdA+kH2VTjdjkc8pwgLA2NRNQDMsNUdOEfwnHIYRk9ppr3+ZlN4F2rdiGyakay78J
-         NaBadKtPOMfLYe2k/M/7APZrvrHLnm82uxyTTBBDzJt/ujKCEb6dVerLbBcaiuRITV+A
-         Gs4uo/3ozhGKeuejaHwLV/RpIXLsHDaRey+ZHURPr7eJjARzp7TtgjKmB/hpX/Iq6mqq
-         4WFfhGXaBSP9yTWIWIicSQc/4HRUx9Te31T/YLsbJ6d6K5efNBDQsunGtlRg1cQrhdLy
-         aV2+91xTcr8Thxn4Qe2NGpmUk8HT/BB11GRUC3WAy82btIFRagr/mL5oboedagxBoY1q
-         /anA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6tfFrySvThHWLKdjkG9wKPwMAPFyHlwZwH97b01uqwo=;
-        b=OvsANHj0z3eN29YCn2zz4e8XvAmsoqj5hhPULG7iS2dqFkZWKP8Q3rtg5WIrnSDs3y
-         KqIByG/agARdOlnTaotWzUKgH5fV77v3a28ftbhmRd1yycO/qk6O4wtM2/+5d1v1m8rH
-         nv1UccvKHSt9fIGXRANi09XnzxfECm/1q9+hv5zhlKzladNXC11hCSa5dhE08GWblesH
-         RqxCUMLdheRIgaQiVzVCy9xaIjok+7Y55D6SagknCYetZ5mHPAdE5xa41m1Pm9NH295t
-         t/tcHvcncWc/PinsLovvvJyMMwMYzQAFZbPzG3kiV/ORJXOaVerl+owWKkHlDbEZE+qE
-         SDUw==
-X-Gm-Message-State: APzg51CRnoiu2NA/X62V0nqWnh7fbmYHnAMmUQIEN3KlJJFnl92v4dhd
-        yJc0ydYJUoDdAn8jUfvE0P3HeBPh0VmMW8i3ux8=
-X-Google-Smtp-Source: ANB0VdYmK2ku2RTM88rIUNGcHk64+O6jCv+SmMmkugxgF5vsGWf3gmHQ6jBDvsTGlJ192jVm7eeCsRVaIj/kM7Nqqgg=
-X-Received: by 2002:ac8:16c5:: with SMTP id y5-v6mr33139471qtk.187.1537549693783;
- Fri, 21 Sep 2018 10:08:13 -0700 (PDT)
+        Fri, 21 Sep 2018 19:03:54 -0400
+Received: from mga04.intel.com ([192.55.52.120]:7734 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728149AbeIUXDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 19:03:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 10:14:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="234883760"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga004.jf.intel.com with ESMTP; 21 Sep 2018 10:14:05 -0700
+Subject: Re: [PATCH 0/2] Provide options to enable spectre_v2
+ userspace-userspace protection
+To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+References: <cover.1537392876.git.tim.c.chen@linux.intel.com>
+ <3609a852-1477-a5b2-3858-c2cbfb3999a9@amd.com>
+ <52076088-a97e-d43e-7a75-40059fc394da@amd.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f0308518-6444-815a-cdcf-9e7d43887727@linux.intel.com>
+Date:   Fri, 21 Sep 2018 10:14:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-References: <5D685053-1A33-4553-8678-A50C542466FD@canonical.com>
- <alpine.DEB.2.21.1809120826310.1427@nanos.tec.linutronix.de>
- <BF554FD5-17BA-4F16-9FDF-705D1FC76C12@canonical.com> <CAPpJ_edB_G5QPj-by9Y6Zjj36Xm9dmKXy8Kv5gXMf4YfybvuwA@mail.gmail.com>
-In-Reply-To: <CAPpJ_edB_G5QPj-by9Y6Zjj36Xm9dmKXy8Kv5gXMf4YfybvuwA@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 21 Sep 2018 20:08:02 +0300
-Message-ID: <CAHp75VcCLvb+LvE49YNWnptTMFpUNuj+Jao7udhQeLfOuHh2vg@mail.gmail.com>
-Subject: Re: Regression caused by commit 7bb05b85bc2d ("r8169: don't use MSI-X
- on RTL8106e")
-To:     Jian-Hong Pan <jian-hong@endlessm.com>
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Daniel Drake <drake@endlessm.com>, steved424@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <52076088-a97e-d43e-7a75-40059fc394da@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 8:53 AM Jian-Hong Pan <jian-hong@endlessm.com> wrote:
->
-> 2018-09-12 16:19 GMT+08:00 Kai-Heng Feng <kai.heng.feng@canonical.com>:
-> > at 14:32, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> >> On Wed, 12 Sep 2018, Kai-Heng Feng wrote:
-> >>
-> >>> There's a Dell machine with RTL8106e stops to work after S3 since the
-> >>> commit introduced. So I am wondering if it's possible to revert the
-> >>> commit and use DMI/subsystem id based quirk table?
-> >>
-> >>
-> >> Probably.
-
-Have you seen this thread:
-https://patchwork.ozlabs.org/cover/968924/
-
-and this one:
-https://patchwork.kernel.org/patch/10583229/
-
-?
-
-> >
-> >
-> > Hopefully Jian-Hong can cook up a quirk table for the issue.
->
-> Module r8169 gets nothing in the PCI BAR after system resumes which
-> makes MSI-X fail on some ASUS laptops equipped with RTL8106e chip.
-> https://www.spinics.net/lists/linux-pci/msg75598.html
->
-> Actually, I am waiting for the patch "PCI: Reprogram bridge prefetch
-> registers on resume" being merged.
-> https://marc.info/?l=linux-pm&m=153680987814299&w=2
->
-> It resolves the drivers which get nothing in PCI BAR after system resumes.
->
-> After that, I can remove the falling back code of RTL8106e.
->
-> Heiner, any comment?
->
-> Regards,
-> Jian-Hong Pan
->
-> >>
-> >>> It's because of commit bc976233a872 ("genirq/msi, x86/vector: Prevent
-> >>> reservation mode for non maskable MSI") cleared the reservation mode, and
-> >>> I
-> >>> can see this after S3:
-> >>>
-> >>> [   94.872838] do_IRQ: 3.33 No irq handler for vector
-> >>
-> >>
-> >> It's not because of that commit, really. There is a interrupt sent after
-> >> resume to the wrong vector for whatever reason. The MSI vector cannot be
-> >> masked it seems in the device, but the driver should quiescen the device
-> >> to
-> >> a point where it does not send interrupts.
-> >
-> >
-> > Understood.
-> >
-> >>
-> >>> If the device uses MSI-X instead of MSI, the issue doesn't happen because
-> >>> of
-> >>> reservation mode.
-> >>
-> >>
-> >> Reservation mode has absolutely nothing to do with that. What prevents the
-> >> issue is the fact that MSI-X can be masked by the IRQ core.
-> >
-> >
-> > So in this case I think keep the device using MSI-X is a better route, it's
-> > MSI-X capable anyway.
-> >
-> >>
-> >>> Is it something should be handled by x86 BIOS? Because I don't see this
-> >>> issue
-> >>> when I use Suspend-to-Idle, which doesn't use BIOS to do suspend.
-> >>
-> >>
-> >> Suspend to idle works completely different and I don't see the BIOS at
-> >> fault here. it's more an issue of MSI not being maskable on that device,
-> >> which can't be fixed in BIOS or it's some half quiescened state which is
-> >> used when suspending and that's a pure driver issue.
-> >
-> >
-> > Understood.
-> > Thanks for all the info!
-> >
-> > Kai-Heng
-> >
-> >>
-> >> Thanks,
-> >>
-> >>         tglx
-> >
-> >
-> >
+On 09/21/2018 08:44 AM, Lendacky, Thomas wrote:
 
 
+> +	if (static_cpu_has(X86_FEATURE_SSBD))
+> +		x86_spec_ctrl_base |= ssbd_tif_to_spec_ctrl(tifn);
+> +
+> +	x86_spec_ctrl_base |= stibp_tif_to_spec_ctrl(tifn);
+>  
+>  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+>  }
+>  
 
--- 
-With Best Regards,
-Andy Shevchenko
+Should this part be s/x86_spec_ctrl_base/msr/  ?
+
+Tim
