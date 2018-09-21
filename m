@@ -2,107 +2,198 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F73ECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C956ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAA52154E
+	by mail.kernel.org (Postfix) with ESMTP id D3B3A2154F
 	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:15:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CAA52154E
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KF15LKb9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B3A2154F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389998AbeIUTEl (ORCPT
+        id S2390060AbeIUTEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:04:41 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35811 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728313AbeIUTEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:04:41 -0400
-Received: by mail-oi0-f68.google.com with SMTP id m11-v6so11354950oic.2;
-        Fri, 21 Sep 2018 06:15:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pr2VGYt7cscNKaIlBAzAGjG56ZnRsJp4bZYgylJmbN8=;
-        b=XUs7nukO35H5x5BEIa3UF5Oc4TKVcYiIy6Y7etcAeaYVbVWFVEZW/MNaf7IqNCugVt
-         d8fwW8/4F9yV1c4Z4EncNSiFJ7R+lCHwMinBAZrFqVuNNwmFx7UC3kCK6cupHnHLmtni
-         EvnV5zXn/EK45uWK1s1lgO6AINkBhk+d+9pouQK4oeFqJDApaj2WpCgyEYFL0la8OEfg
-         CuZQRN/ErrgPQTiqH5/ArDsRUHSlYil1um2IiRO3ZD+yf8ydMDZaqP5RpFfAk7hfmWvs
-         EjxsIhV7HaEIZKt3sYZvhF3xB6FJqG9pc1D1ZJzAXIXEC7Z4rvhWblCSIBMx9n9YBe4P
-         kyAA==
-X-Gm-Message-State: APzg51DDcIliVYBix2P4LhNVE+ivupU2+we118EnnwREz1T3uR9cY0x0
-        7eCR50tsjAcMA7nG529o6JaSIWUVQ1u4Wd2aj0I=
-X-Google-Smtp-Source: ANB0VdbfbFMUXyGXcUOnVzcScpQXppjmEZ6UdtwL70btki4Lr3DOIfZbj31CIGRZ5jNRiR3en1vY85v9dUz//bOirok=
-X-Received: by 2002:aca:7c2:: with SMTP id 185-v6mr1434693oih.31.1537535751404;
- Fri, 21 Sep 2018 06:15:51 -0700 (PDT)
+        Fri, 21 Sep 2018 15:04:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728384AbeIUTEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:04:43 -0400
+Received: from localhost (252.sub-174-234-146.myvzw.com [174.234.146.252])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC14A21523;
+        Fri, 21 Sep 2018 13:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537535752;
+        bh=vxNz/xPtDKNHX2rmVttBcWKSaFTNhqfaSjbc0/3Dc48=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KF15LKb962uDg+WACf9NSXfH1WMgax9eWYdgAMM0Zcsep8FQrb2XsEfCEA8xWBPk8
+         NprJ3VQ8r2eeb+axrO2aQKLROCL7g1qDcy301wI9oNfCqmspyC7TfNP3k7mf8hG0qS
+         yfk6XZ7sCpMHjnHrvHr1jvm9BdzcropIKcamcwiM=
+Date:   Fri, 21 Sep 2018 08:15:50 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v6 03/13] PCI/P2PDMA: Add PCI p2pmem DMA mappings to
+ adjust the bus offset
+Message-ID: <20180921131550.GG224714@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180913001156.4115-1-logang@deltatee.com>
+ <20180913001156.4115-4-logang@deltatee.com>
 MIME-Version: 1.0
-References: <20180913160851.18169-1-vkuznets@redhat.com> <4793718.OcKebjM5bH@aspire.rjw.lan>
- <87d0tg88l3.fsf@vitty.brq.redhat.com> <20180914162103.GA11171@redhat.com>
- <CAJZ5v0jpK-KWE7Pv1fKAWFXweW7jNH26fFDM=sXMPRNPJ96u7g@mail.gmail.com>
- <20180917165518.GA25931@redhat.com> <87d0t70zdn.fsf@vitty.brq.redhat.com>
-In-Reply-To: <87d0t70zdn.fsf@vitty.brq.redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 21 Sep 2018 15:15:40 +0200
-Message-ID: <CAJZ5v0jumjrJN2YgeuXK9eZ-JM2Vv73SFoH_71qZxyax24C+-Q@mail.gmail.com>
-Subject: Re: [PATCH] kernel/hung_task.c: disable on suspend
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180913001156.4115-4-logang@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 3:11 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> Oleg Nesterov <oleg@redhat.com> writes:
->
-> > On 09/17, Rafael J. Wysocki wrote:
-> >>
-> >> On Fri, Sep 14, 2018 at 6:21 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> >> >
-> >> > > > Since you are adding the notifier anyway, what about designing it to make
-> >> > > > the thread wait on _PREPARE until the notifier kicks it again on exit
-> >> > > > fron suspend/hibernation?
-> >> >
-> >> > Well. I agree that freezable kthreads are not nice, but it seems you are
-> >> > going to add another questionable interface ;)
-> >>
-> >> Why would it be questionable?
-> >>
-> >> The watchdog needs to be disarmed somehow before tasks are frozen and
-> >> re-armed after they have been thawed or it may report false-positives
-> >> on the way out.  PM notifiers can be used for that.
-> >
-> > Or watchdog() can simply use set_freezable/freezing interface we already
-> > have, without additional complications.
-> >
-> > Yes, this is not "before tasks are frozen", but probably should work?
-> >
-> > OK, I won't argue.
->
-> I was hoping you and Rafael will come to an agreement but the discussion
-> just died ... so where do we stand on this? I see the following options:
->
-> 1) The v1 patch is good, no freezing/disabling/parking required.
+On Wed, Sep 12, 2018 at 06:11:46PM -0600, Logan Gunthorpe wrote:
+> The DMA address used when mapping PCI P2P memory must be the PCI bus
+> address. Thus, introduce pci_p2pmem_map_sg() to map the correct
+> addresses when using P2P memory. Memory mapped in this way does not
+> need to be unmapped.
 
-This would work IMO, but it also is somewhat wasteful to run this
-thread when "suspended", because it doesn't do anything then.
+I think the use of "map" in this context is slightly confusing because the
+general expectation is that map/unmap must be balanced.
 
-Maybe you could simply force "timeout" to be zero for the "suspension"
-time?  That should effectively make the thread sleep then, right?
+I assume it's because the "mapping" consumes no resources, e.g., requires
+no page table entries.  Possibly there's a better verb than "map", e.g.,
+"convert", "convert_to_p2pdma", etc?
 
-Thanks,
-Rafael
+If you keep "map", maybe add a sentence or two about why there's no
+corresponding unmap?
+
+> For this, we assume that an SGL passed to these functions contain all
+> P2P memory or no P2P memory.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> ---
+>  drivers/pci/p2pdma.c       | 43 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/memremap.h   |  1 +
+>  include/linux/pci-p2pdma.h |  7 +++++++
+>  3 files changed, 51 insertions(+)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 67c1daf1189e..29bd40a87768 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -191,6 +191,8 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+>  	pgmap->res.flags = pci_resource_flags(pdev, bar);
+>  	pgmap->ref = &pdev->p2pdma->devmap_ref;
+>  	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
+> +	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
+> +		pci_resource_start(pdev, bar);
+>  
+>  	addr = devm_memremap_pages(&pdev->dev, pgmap);
+>  	if (IS_ERR(addr)) {
+> @@ -813,3 +815,44 @@ void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
+>  	pdev->p2pdma->p2pmem_published = publish;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
+> +
+> +/**
+> + * pci_p2pdma_map_sg - map a PCI peer-to-peer scatterlist for DMA
+> + * @dev: device doing the DMA request
+> + * @sg: scatter list to map
+> + * @nents: elements in the scatterlist
+> + * @dir: DMA direction
+> + *
+> + * Scatterlists mapped with this function should not be unmapped in any way.
+> + *
+> + * Returns the number of SG entries mapped or 0 on error.
+> + */
+> +int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +		      enum dma_data_direction dir)
+> +{
+> +	struct dev_pagemap *pgmap;
+> +	struct scatterlist *s;
+> +	phys_addr_t paddr;
+> +	int i;
+> +
+> +	/*
+> +	 * p2pdma mappings are not compatible with devices that use
+> +	 * dma_virt_ops. If the upper layers do the right thing
+> +	 * this should never happen because it will be prevented
+> +	 * by the check in pci_p2pdma_add_client()
+> +	 */
+> +	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_DMA_VIRT_OPS) &&
+> +			 dev->dma_ops == &dma_virt_ops))
+> +		return 0;
+> +
+> +	for_each_sg(sg, s, nents, i) {
+> +		pgmap = sg_page(s)->pgmap;
+> +		paddr = sg_phys(s);
+> +
+> +		s->dma_address = paddr - pgmap->pci_p2pdma_bus_offset;
+> +		sg_dma_len(s) = s->length;
+> +	}
+> +
+> +	return nents;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg);
+> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+> index 9553370ebdad..0ac69ddf5fc4 100644
+> --- a/include/linux/memremap.h
+> +++ b/include/linux/memremap.h
+> @@ -125,6 +125,7 @@ struct dev_pagemap {
+>  	struct device *dev;
+>  	void *data;
+>  	enum memory_type type;
+> +	u64 pci_p2pdma_bus_offset;
+>  };
+>  
+>  #ifdef CONFIG_ZONE_DEVICE
+> diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+> index 7b2b0f547528..2f03dbbf5af6 100644
+> --- a/include/linux/pci-p2pdma.h
+> +++ b/include/linux/pci-p2pdma.h
+> @@ -36,6 +36,8 @@ struct scatterlist *pci_p2pmem_alloc_sgl(struct pci_dev *pdev,
+>  					 unsigned int *nents, u32 length);
+>  void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl);
+>  void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
+> +int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +		      enum dma_data_direction dir);
+>  #else /* CONFIG_PCI_P2PDMA */
+>  static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
+>  		size_t size, u64 offset)
+> @@ -98,5 +100,10 @@ static inline void pci_p2pmem_free_sgl(struct pci_dev *pdev,
+>  static inline void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
+>  {
+>  }
+> +static inline int pci_p2pdma_map_sg(struct device *dev,
+> +		struct scatterlist *sg, int nents, enum dma_data_direction dir)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_PCI_P2PDMA */
+>  #endif /* _LINUX_PCI_P2P_H */
+> -- 
+> 2.19.0
+> 
