@@ -2,104 +2,97 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1829BC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9895ECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EA321565
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:30:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="kyLOwXdO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EA321565
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 3CDF12146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 02:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CDF12146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388875AbeIUIR0 (ORCPT
+        id S2388770AbeIUIWK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 04:17:26 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40658 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeIUIRZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 04:17:25 -0400
-Received: by mail-qk1-f195.google.com with SMTP id c126-v6so7395066qkd.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 19:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y7s7oNbhT7E/XWLpCd7qRAG2IDeU2SwlRsyKvMpjqLc=;
-        b=kyLOwXdOI8TT+kiBRzDynLAF0O2m6Vw17WPB6C5xNwkVuhtCZcOdr7MDyjG/BFiNLr
-         Sx6n9wx29gBoVy3hEn+ls8nD107TPqVNn5Y5WG8tyWD/vxK60FjDyWG7wg98bpEG1QFy
-         n8PdcSbN5QlcrLXMUz0CoU3Jnf6p/Zs4UAvY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y7s7oNbhT7E/XWLpCd7qRAG2IDeU2SwlRsyKvMpjqLc=;
-        b=XRLdVOI2tzr+Lpd3TU1S80meJo2Z7tIeJEmXVNDJEE3v2WTRrxNYXpokfsnsHf8/kP
-         MSOTh0G9YbdoEWX82qqf5PrB1pX3vXBWMbBM441M9akGLHtQcz+xiN975leyuB1aAeM1
-         tjTSLxgZxreIsdsrDr906gpNmtdOr8B3GNqQHe9zdNbCIjSNOJwfbjaoU3tLIZQyGBHd
-         yE3dmU0g4FnDrlH7nArmUvlHCPgt32YLAEu74b/u40z3OLlFMZpY4Q44p4gSU7I2HskT
-         6qYQ6Bfhs1f8Lzes3HJgoUgob/W7mVUYSEQClA402EjFPPZxglDwoQ0JSvkIL8niJ0Nh
-         EWyg==
-X-Gm-Message-State: APzg51AKFHBtU7pnes5b1A8e8DqYUX1CCP5C1JqQM7z+fTLbzGQ8kwt1
-        9sp23ZGuRel70rYrF3MENhZ+gbhj7GMmyOEJX8s=
-X-Google-Smtp-Source: ANB0Vdazxsa3KelbzNFd8QCeC6IYg3E0ca5x7y1lulmcOIjXrt30/w0X6jy2kjLksyKxOriXbuRexnVl6U2BwCci9GI=
-X-Received: by 2002:a37:642:: with SMTP id 63-v6mr28805831qkg.11.1537497048398;
- Thu, 20 Sep 2018 19:30:48 -0700 (PDT)
+        Fri, 21 Sep 2018 04:22:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57520 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727141AbeIUIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 04:22:10 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44A10308624E;
+        Fri, 21 Sep 2018 02:35:33 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 97E78DAA82;
+        Fri, 21 Sep 2018 02:35:32 +0000 (UTC)
+Date:   Fri, 21 Sep 2018 10:35:29 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     ebiederm@xmission.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel: kexec_file: remove some duplicated include file
+Message-ID: <20180921023529.GQ2555@MiWiFi-R3L-srv>
+References: <1537420323-30658-1-git-send-email-zhongjiang@huawei.com>
+ <20180921021524.GP2555@MiWiFi-R3L-srv>
+ <5BA4570F.6050700@huawei.com>
 MIME-Version: 1.0
-References: <20180918230756.26035-1-joel@jms.id.au> <CAJKOXPd4dCyuXKxAz-V=ujtiuKcumHzAx28y5J+6m+L7ZRLsZQ@mail.gmail.com>
-In-Reply-To: <CAJKOXPd4dCyuXKxAz-V=ujtiuKcumHzAx28y5J+6m+L7ZRLsZQ@mail.gmail.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 21 Sep 2018 12:00:36 +0930
-Message-ID: <CACPK8Xcx7i_pe65PH+ECA6z0M_h5H1uW3wdUKS3RG5HYxEhgpg@mail.gmail.com>
-Subject: Re: [PATCH] lib/xz: Fix powerpc build with KERNEL_XZ
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, christophe.leroy@c-s.fr
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5BA4570F.6050700@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 21 Sep 2018 02:35:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Sep 2018 at 16:09, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Wed, 19 Sep 2018 at 01:08, Joel Stanley <joel@jms.id.au> wrote:
-> >
-> > This partially reverts faa16bc404d72a5 ("lib: Use existing define with
-> > polynomial").
-> >
-> > The cleanup added a dependency on include/linux, which broke the PowerPC
-> > boot wrapper/decompresser when KERNEL_XZ is enabled:
-> >
-> >   BOOTCC  arch/powerpc/boot/decompress.o
-> >  In file included from arch/powerpc/boot/../../../lib/decompress_unxz.c:233,
-> >                  from arch/powerpc/boot/decompress.c:42:
-> >  arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error:
-> >  linux/crc32poly.h: No such file or directory
-> >   #include <linux/crc32poly.h>
-> >            ^~~~~~~~~~~~~~~~~~~
-> >
-> > The powerpc decompressor is a hairy corner of the kernel. Even while building
-> > a 64-bit kernel it needs to build a 32-bit binary and therefore avoid including
-> > files from include/linux.
->
-> I fixed the build error here:
-> https://lkml.org/lkml/2018/8/29/179
->
-> If you choose to remove any includes from /linux, then go ahead but
-> please use original reported-by :)
+On 09/21/18 at 10:27am, zhong jiang wrote:
+> On 2018/9/21 10:15, Baoquan He wrote:
+> > On 09/20/18 at 01:12pm, zhong jiang wrote:
+> >> kexec.h and slab.h have duplicated include. hence just remove
+> >> redundant file.
+> > They have duplicated include, why do you remove both of them?
+> because we include the kexec.h and slab.h twice in kexec_file.c. It's unnecessary.
 
-Okay. I'll try Christophe's suggestion instead.
+OK, Could you rewrite the log with this? The old log makes me think
+kexec.h and slab.h themselves have duplicated include.
 
-Cheers,
-
-Joel
+> 
+> Thanks,
+> zhong jiang
+> >> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> >> ---
+> >>  kernel/kexec_file.c | 2 --
+> >>  1 file changed, 2 deletions(-)
+> >>
+> >> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> >> index c6a3b68..35cf0ad 100644
+> >> --- a/kernel/kexec_file.c
+> >> +++ b/kernel/kexec_file.c
+> >> @@ -25,8 +25,6 @@
+> >>  #include <linux/elf.h>
+> >>  #include <linux/elfcore.h>
+> >>  #include <linux/kernel.h>
+> >> -#include <linux/kexec.h>
+> >> -#include <linux/slab.h>
+> >>  #include <linux/syscalls.h>
+> >>  #include <linux/vmalloc.h>
+> >>  #include "kexec_internal.h"
+> >> -- 
+> >> 1.7.12.4
+> >>
+> >>
+> >> _______________________________________________
+> >> kexec mailing list
+> >> kexec@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/kexec
+> > .
+> >
+> 
+> 
