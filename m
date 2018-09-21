@@ -3,180 +3,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D281EECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB748ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8979021532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:18:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8979021532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 88B4D21532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:19:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B4D21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gonehiking.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390591AbeIUVHu (ORCPT
+        id S2390440AbeIUVJL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:07:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60358 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390420AbeIUVHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:07:50 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 428CE792BB;
-        Fri, 21 Sep 2018 15:18:29 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 907132010D0D;
-        Fri, 21 Sep 2018 15:18:24 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH] kernel/hung_task.c: disable on suspend
-References: <20180913160851.18169-1-vkuznets@redhat.com>
-        <4793718.OcKebjM5bH@aspire.rjw.lan>
-        <87d0tg88l3.fsf@vitty.brq.redhat.com>
-        <20180914162103.GA11171@redhat.com>
-        <CAJZ5v0jpK-KWE7Pv1fKAWFXweW7jNH26fFDM=sXMPRNPJ96u7g@mail.gmail.com>
-        <20180917165518.GA25931@redhat.com>
-        <87d0t70zdn.fsf@vitty.brq.redhat.com>
-        <CAJZ5v0jumjrJN2YgeuXK9eZ-JM2Vv73SFoH_71qZxyax24C+-Q@mail.gmail.com>
-Date:   Fri, 21 Sep 2018 17:18:23 +0200
-In-Reply-To: <CAJZ5v0jumjrJN2YgeuXK9eZ-JM2Vv73SFoH_71qZxyax24C+-Q@mail.gmail.com>
-        (Rafael J. Wysocki's message of "Fri, 21 Sep 2018 15:15:40 +0200")
-Message-ID: <878t3u281s.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 21 Sep 2018 17:09:11 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:52902 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390076AbeIUVJK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 17:09:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 77F3F21760;
+        Fri, 21 Sep 2018 15:19:47 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id LcDoBpOJYK_T; Fri, 21 Sep 2018 15:19:47 +0000 (UTC)
+Received: from mail.gonehiking.org (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        by mailout.easymail.ca (Postfix) with ESMTPA id D7DA02131D;
+        Fri, 21 Sep 2018 15:19:41 +0000 (UTC)
+Received: from [192.168.1.4] (rhapsody.internal [192.168.1.4])
+        by mail.gonehiking.org (Postfix) with ESMTP id B82EB9F2E8;
+        Fri, 21 Sep 2018 09:19:40 -0600 (MDT)
+Subject: Re: [PATCH] scsi: FlashPoint: Remove unnecessary parentheses
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180920211032.21840-1-natechancellor@gmail.com>
+From:   Khalid Aziz <khalid@gonehiking.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=khalid@gonehiking.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <bb9c20c4-f13a-497a-0ad1-73978a9f4f3b@gonehiking.org>
+Date:   Fri, 21 Sep 2018 09:19:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 21 Sep 2018 15:18:29 +0000 (UTC)
+In-Reply-To: <20180920211032.21840-1-natechancellor@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Rafael J. Wysocki" <rafael@kernel.org> writes:
+On 09/20/2018 03:10 PM, Nathan Chancellor wrote:
+> Clang warns when multiple pairs of parentheses are used for a single
+> conditional statement.
+> 
+> In file included from drivers/scsi/BusLogic.c:57:
+> drivers/scsi/FlashPoint.c:2947:34: warning: equality comparison with extraneous parentheses [-Wparentheses-equality]
+>                                 if ((currSCCB->Sccb_scsistat == SELECT_SN_ST)) {
+>                                      ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+> drivers/scsi/FlashPoint.c:2947:34: note: remove extraneous parentheses around the comparison to silence this warning
+>                                 if ((currSCCB->Sccb_scsistat == SELECT_SN_ST)) {
+>                                     ~                        ^              ~
+> drivers/scsi/FlashPoint.c:2947:34: note: use '=' to turn this equality comparison into an assignment
+>                                 if ((currSCCB->Sccb_scsistat == SELECT_SN_ST)) {
+>                                                              ^~
+>                                                              =
+> drivers/scsi/FlashPoint.c:2956:39: warning: equality comparison with extraneous parentheses [-Wparentheses-equality]
+>                                 else if ((currSCCB->Sccb_scsistat ==
+>                                           ~~~~~~~~~~~~~~~~~~~~~~~~^~
+> drivers/scsi/FlashPoint.c:2956:39: note: remove extraneous parentheses around the comparison to silence this warning
+>                                 else if ((currSCCB->Sccb_scsistat ==
+>                                          ~                        ^
+> drivers/scsi/FlashPoint.c:2956:39: note: use '=' to turn this equality comparison into an assignment
+>                                 else if ((currSCCB->Sccb_scsistat ==
+>                                                                   ^~
+>                                                                   =
+> 2 warnings generated.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/156
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/scsi/FlashPoint.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
 
-> On Fri, Sep 21, 2018 at 3:11 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->>
->> Oleg Nesterov <oleg@redhat.com> writes:
->>
->> > On 09/17, Rafael J. Wysocki wrote:
->> >>
->> >> On Fri, Sep 14, 2018 at 6:21 PM Oleg Nesterov <oleg@redhat.com> wrote:
->> >> >
->> >> > > > Since you are adding the notifier anyway, what about designing it to make
->> >> > > > the thread wait on _PREPARE until the notifier kicks it again on exit
->> >> > > > fron suspend/hibernation?
->> >> >
->> >> > Well. I agree that freezable kthreads are not nice, but it seems you are
->> >> > going to add another questionable interface ;)
->> >>
->> >> Why would it be questionable?
->> >>
->> >> The watchdog needs to be disarmed somehow before tasks are frozen and
->> >> re-armed after they have been thawed or it may report false-positives
->> >> on the way out.  PM notifiers can be used for that.
->> >
->> > Or watchdog() can simply use set_freezable/freezing interface we already
->> > have, without additional complications.
->> >
->> > Yes, this is not "before tasks are frozen", but probably should work?
->> >
->> > OK, I won't argue.
->>
->> I was hoping you and Rafael will come to an agreement but the discussion
->> just died ... so where do we stand on this? I see the following options:
->>
->> 1) The v1 patch is good, no freezing/disabling/parking required.
->
-> This would work IMO, but it also is somewhat wasteful to run this
-> thread when "suspended", because it doesn't do anything then.
->
-> Maybe you could simply force "timeout" to be zero for the "suspension"
-> time?  That should effectively make the thread sleep then, right?
->
+There are more places in this file with extraneous parentheses, for example:
 
-Right, we'll have to zero both interval and timeout (if we want to keep
-the current logic picking the minimum of two). The following patch seems
-to be working for me, I'll send it out as v2 if there're no objections:
+ 952         if ((RD_HARPOON(ioport + hp_vendor_id_1) != ORION_VEND_1))
+ 953                 return (int)FAILURE;
+ 954
+ 955         if ((RD_HARPOON(ioport + hp_device_id_0) != ORION_DEV_0))
+ 956                 return (int)FAILURE;
+ 957
+ 958         if ((RD_HARPOON(ioport + hp_device_id_1) != ORION_DEV_1))
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index b9132d1269ef..ac6e8c9306bd 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -15,6 +15,7 @@
- #include <linux/lockdep.h>
- #include <linux/export.h>
- #include <linux/sysctl.h>
-+#include <linux/suspend.h>
- #include <linux/utsname.h>
- #include <linux/sched/signal.h>
- #include <linux/sched/debug.h>
-@@ -242,12 +243,14 @@ void reset_hung_task_detector(void)
- }
- EXPORT_SYMBOL_GPL(reset_hung_task_detector);
- 
-+static unsigned long hung_last_checked;
-+
- /*
-  * kthread which checks for tasks stuck in D state
-  */
- static int watchdog(void *dummy)
- {
--	unsigned long hung_last_checked = jiffies;
-+	hung_last_checked = jiffies;
- 
- 	set_user_nice(current, 0);
- 
-@@ -272,9 +275,40 @@ static int watchdog(void *dummy)
- 	return 0;
- }
- 
-+static int hungtask_pm_notify(struct notifier_block *self,
-+			      unsigned long action, void *hcpu)
-+{
-+	static unsigned long saved_timeout, saved_interval;
-+
-+	switch (action) {
-+	case PM_SUSPEND_PREPARE:
-+	case PM_HIBERNATION_PREPARE:
-+		saved_timeout = sysctl_hung_task_timeout_secs;
-+		saved_interval = sysctl_hung_task_check_interval_secs;
-+		sysctl_hung_task_timeout_secs = 0;
-+		sysctl_hung_task_check_interval_secs = 0;
-+		wake_up_process(watchdog_task);
-+		break;
-+	case PM_POST_SUSPEND:
-+	case PM_POST_HIBERNATION:
-+		sysctl_hung_task_timeout_secs = saved_timeout;
-+		sysctl_hung_task_check_interval_secs = saved_interval;
-+		hung_last_checked = jiffies;
-+		wake_up_process(watchdog_task);
-+		break;
-+	default:
-+		break;
-+	}
-+	return NOTIFY_OK;
-+}
-+
- static int __init hung_task_init(void)
- {
- 	atomic_notifier_chain_register(&panic_notifier_list, &panic_block);
-+
-+	/* Disable hung task detector on suspend */
-+	pm_notifier(hungtask_pm_notify, 0);
-+
- 	watchdog_task = kthread_run(watchdog, NULL, "khungtaskd");
- 
- 	return 0;
+Wonder why the compiler does not complain about these, but this patch is
+good for now. I will clean up the rest in another patch.
 
--- 
-  Vitaly
+James, Martin, please pull this patch into the scsi tree.
+
+Acked-by: Khalid Aziz <khalid@gonehiking.org>
