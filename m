@@ -2,594 +2,149 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D83C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A14FECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF5321566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF5321566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DA4921566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKF6Gwn+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DA4921566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391139AbeIUWXq (ORCPT
+        id S2391148AbeIUWXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:23:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47932 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388909AbeIUWXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:23:46 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 293B02E6060;
-        Fri, 21 Sep 2018 16:34:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AD9784FE;
-        Fri, 21 Sep 2018 16:34:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 29/34] vfs: syscall: Add fsconfig() for configuring and
- managing a context [ver #12]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        dhowells@redhat.com, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-Date:   Fri, 21 Sep 2018 17:34:04 +0100
-Message-ID: <153754764427.17872.5178644065689468378.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
-References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Fri, 21 Sep 2018 18:23:50 -0400
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:38135 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388909AbeIUWXu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:23:50 -0400
+Received: by mail-lj1-f180.google.com with SMTP id p6-v6so12216942ljc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=0qZuSNRjTgYirOzOAIQG/TiFiArsyn9V+cq/LV9yDT0=;
+        b=JKF6Gwn+yqtrkXTlzed277AefSJsnn0QCr5gm6GruTz2rEkFHDVp1U0yZDcd45q+DB
+         A6DepYii71nftsY+Ulu+uWv5p7sHkJpypYr3bkgfglfMaSFB+2u8fb8fkhXU5absCtza
+         wWWL2F1Yv8vD7cChA5obRRt09HtQuUE8wJY9Yd+e1LUKyFOwUzYs+XxzZSEePR4av6z9
+         zZ6Jn4jrLh/jeqkZ9aMZqJ3d/01/LliJhtDvv/0GUi3Zg74IAPDogyD6RoIDkA6AfoJj
+         3AVr5TFEikKh0pZ4pYJE7iEqn4A1h14v4U3ZFkwnN4PdyUBa2Ob4SU28vM9ZzdQstv76
+         oX6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=0qZuSNRjTgYirOzOAIQG/TiFiArsyn9V+cq/LV9yDT0=;
+        b=trMd0B8uvzPdsxlLx84FOxbSZVuIdjojNybE7ldoUyzF9WxNNPynUbs3LRdkL3L0rv
+         WRcyLLBA8L7vFtpkqIfIuYXLE42sb8jRQqGoMPF5k9wS2e+4fEF1a+oGKLRMh+KFb7Qf
+         ZhzGuLzG7uo+i++xJKnuZ6mf+yJs6VtOR6qI2NfbUVbB4vY9UvM9AXAsRBEsm0JrTIdF
+         h0kxtpAXaCf2Z8W+E2jJV8nSZGR+caU68vJIt6EcsNm6DoWiauMrqGBxjbrummQEvs7o
+         MtkBkK183Y08NquCLVeqTJKvf5iyeQfzjaH9DVYvvPGtieus4K6cbiDzIY9LAR7hYSJv
+         qFMQ==
+X-Gm-Message-State: APzg51Duwje4tXwEM+68M44H+Ipt2j82uouOM5IzwYM6NpTRMbvZq5/T
+        ZlrAvFQaLjI7jMEjB6P1e4edUuA99FKqge9Fi6YISw==
+X-Google-Smtp-Source: ANB0VdY0idYwoIByR3nQ3EFxcV5mdJLTFX/aRZ8jaPXpVpyjoXd1BHdCkXOYVdqEphuP3LWHm1ctH8jAS5TXt3y/I6M=
+X-Received: by 2002:a2e:752:: with SMTP id i18-v6mr2444453ljd.118.1537547648632;
+ Fri, 21 Sep 2018 09:34:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 21 Sep 2018 16:34:07 +0000 (UTC)
+Received: by 2002:a19:278e:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 09:34:07
+ -0700 (PDT)
+In-Reply-To: <87zhwbj8xe.fsf@redhat.com>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net> <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net> <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
+ <87zhwbj8xe.fsf@redhat.com>
+From:   "\\0xDynamite" <dreamingforward@gmail.com>
+Date:   Fri, 21 Sep 2018 11:34:07 -0500
+Message-ID: <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+Subject: Re: Code of Conduct: Let's revamp it.
+To:     "Frank Ch. Eigler" <fche@redhat.com>
+Cc:     Rik van Riel <riel@surriel.com>, Edward Cree <ec429@cantab.net>,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a syscall for configuring a filesystem creation context and triggering
-actions upon it, to be used in conjunction with fsopen, fspick and fsmount.
+Ahem...
 
-    long fsconfig(int fs_fd, unsigned int cmd, const char *key,
-		  const void *value, int aux);
+Of course, the linux community, like ALL communities, needs more
+political correctness, because we wouldn't want others to feel left
+out merely because they are wrong.   FALSE || TRUE = more
+participation and diversity!
 
-Where fs_fd indicates the context, cmd indicates the action to take, key
-indicates the parameter name for parameter-setting actions and, if needed,
-value points to a buffer containing the value and aux can give more
-information for the value.
+>Our Pledge
+>In the interest of fostering an open and welcoming environment, we as
+>contributors and maintainers pledge to making participation in our project and
+>our community a harassment-free experience for everyone, regardless of age, body
+>size, disability, ethnicity, sex characteristics, gender identity and
+>expression, level of experience, education, socio-economic status, nationality,
+>personal appearance, race, religion, or sexual identity and orientation.
 
-The following command IDs are proposed:
+As soon as you start to enumerate a list of communities that you're
+including, you have set yourself up for failure, because you will,
+LOGICALLY, leave out an endless number of groups that could
+conceivably want to participate, too:  necrophiliacs (NO harm, NO
+foul!), small animal lovers, balloon sculpturers, magicians, etc.
+These people may feel ostracized when trying to participate, too.
 
- (*) FSCONFIG_SET_FLAG: No value is specified.  The parameter must be
-     boolean in nature.  The key may be prefixed with "no" to invert the
-     setting. value must be NULL and aux must be 0.
+No, all you need to do is say that everyone are invited to
+participate, but that this is a kernel development community -- you
+are expected to be able to code in C (is that exclusory?), know some
+OS theory, done some research, etc. before bothering the participants
+of the list, who do not have endless amounts of time.
 
- (*) FSCONFIG_SET_STRING: A string value is specified.  The parameter can
-     be expecting boolean, integer, string or take a path.  A conversion to
-     an appropriate type will be attempted (which may include looking up as
-     a path).  value points to a NUL-terminated string and aux must be 0.
+Our Standards
+=============
 
- (*) FSCONFIG_SET_BINARY: A binary blob is specified.  value points to
-     the blob and aux indicates its size.  The parameter must be expecting
-     a blob.
+Examples of behavior that contributes to creating a positive environment
+include:
 
- (*) FSCONFIG_SET_PATH: A non-empty path is specified.  The parameter must
-     be expecting a path object.  value points to a NUL-terminated string
-     that is the path and aux is a file descriptor at which to start a
-     relative lookup or AT_FDCWD.
+>* Using welcoming and inclusive language
 
- (*) FSCONFIG_SET_PATH_EMPTY: As fsconfig_set_path, but with AT_EMPTY_PATH
-     implied.
+Something like:
 
- (*) FSCONFIG_SET_FD: An open file descriptor is specified.  value must
-     be NULL and aux indicates the file descriptor.
+Hello, thank you for contributing your code.  Of course, we'd love to
+add your recipe for fruit cake into our code base.
 
- (*) FSCONFIG_CMD_CREATE: Trigger superblock creation.
+>* Being respectful of differing viewpoints and experiences
 
- (*) FSCONFIG_CMD_RECONFIGURE: Trigger superblock reconfiguration.
+Consider:
+I respect that you think we should make linux include gay and
+lesbian-friendly (or other minority group) themed fonts and logos,
 
-For the "set" command IDs, the idea is that the file_system_type will point
-to a list of parameters and the types of value that those parameters expect
-to take.  The core code can then do the parse and argument conversion and
-then give the LSM and FS a cooked option or array of options to use.
+>* Focusing on what is best for the community
 
-Source specification is also done the same way same way, using special keys
-"source", "source1", "source2", etc..
+When the community is made infinitely large, we'll be PERFECT!
 
-[!] Note that, for the moment, the key and value are just glued back
-together and handed to the filesystem.  Every filesystem that uses options
-uses match_token() and co. to do this, and this will need to be changed -
-but not all at once.
+>* Showing empathy towards other community members
 
-Example usage:
+Your pussy hurts?  Maybe you should have just accepted that your a boy!
 
-    fd = fsopen("ext4", FSOPEN_CLOEXEC);
-    fsconfig(fd, fsconfig_set_path, "source", "/dev/sda1", AT_FDCWD);
-    fsconfig(fd, fsconfig_set_path_empty, "journal_path", "", journal_fd);
-    fsconfig(fd, fsconfig_set_fd, "journal_fd", "", journal_fd);
-    fsconfig(fd, fsconfig_set_flag, "user_xattr", NULL, 0);
-    fsconfig(fd, fsconfig_set_flag, "noacl", NULL, 0);
-    fsconfig(fd, fsconfig_set_string, "sb", "1", 0);
-    fsconfig(fd, fsconfig_set_string, "errors", "continue", 0);
-    fsconfig(fd, fsconfig_set_string, "data", "journal", 0);
-    fsconfig(fd, fsconfig_set_string, "context", "unconfined_u:...", 0);
-    fsconfig(fd, fsconfig_cmd_create, NULL, NULL, 0);
-    mfd = fsmount(fd, FSMOUNT_CLOEXEC, MS_NOEXEC);
+I think Linus is perfectly fine in conduct.   I mean, this bullshit
+pressure comes from corporations and other wierd places (<subtext>all
+seeing eye</subtext>) that want to "help".  Do not even be fooled that
+this is somehow become the accepted standard that EVERYONE BUT YOU is
+accepting.  It is utterly political and based on POWER, not community.
 
-or:
+Please, most of these people are still sitting on land that belonged
+to the Native Americans who have never been given justice at all.  It
+is an utter joke that these people actually think that they are
+"politically correct".  They are as delusional as gunnuts who want to
+carry assault rifles into Walmart.  Do not pander to them.  Consider
+them TROLLS.
 
-    fd = fsopen("ext4", FSOPEN_CLOEXEC);
-    fsconfig(fd, fsconfig_set_string, "source", "/dev/sda1", 0);
-    fsconfig(fd, fsconfig_cmd_create, NULL, NULL, 0);
-    mfd = fsmount(fd, FSMOUNT_CLOEXEC, MS_NOEXEC);
-
-or:
-
-    fd = fsopen("afs", FSOPEN_CLOEXEC);
-    fsconfig(fd, fsconfig_set_string, "source", "#grand.central.org:root.cell", 0);
-    fsconfig(fd, fsconfig_cmd_create, NULL, NULL, 0);
-    mfd = fsmount(fd, FSMOUNT_CLOEXEC, MS_NOEXEC);
-
-or:
-
-    fd = fsopen("jffs2", FSOPEN_CLOEXEC);
-    fsconfig(fd, fsconfig_set_string, "source", "mtd0", 0);
-    fsconfig(fd, fsconfig_cmd_create, NULL, NULL, 0);
-    mfd = fsmount(fd, FSMOUNT_CLOEXEC, MS_NOEXEC);
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
----
-
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/fsopen.c                            |  355 ++++++++++++++++++++++++++++++++
- include/linux/syscalls.h               |    2 
- include/uapi/linux/fs.h                |   14 +
- 5 files changed, 373 insertions(+)
-
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 1647fefd2969..f9970310c126 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -401,3 +401,4 @@
- 387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
- 388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
- 389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
-+390	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 235d33dbccb2..4185d36e03bb 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -346,6 +346,7 @@
- 335	common	open_tree		__x64_sys_open_tree
- 336	common	move_mount		__x64_sys_move_mount
- 337	common	fsopen			__x64_sys_fsopen
-+338	common	fsconfig		__x64_sys_fsconfig
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index 1b966b0c15f7..5955a6b65596 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <linux/syscalls.h>
-@@ -17,6 +18,7 @@
- #include <linux/anon_inodes.h>
- #include <linux/namei.h>
- #include <linux/file.h>
-+#include "internal.h"
- #include "mount.h"
- 
- /*
-@@ -152,3 +154,356 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
- 	put_fs_context(fc);
- 	return ret;
- }
-+
-+/*
-+ * Check the state and apply the configuration.  Note that this function is
-+ * allowed to 'steal' the value by setting param->xxx to NULL before returning.
-+ */
-+static int vfs_fsconfig(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	int ret;
-+
-+	/* We need to reinitialise the context if we have reconfiguration
-+	 * pending after creation or a previous reconfiguration.
-+	 */
-+	if (fc->phase == FS_CONTEXT_AWAITING_RECONF) {
-+		if (fc->fs_type->init_fs_context) {
-+			ret = fc->fs_type->init_fs_context(fc, fc->root);
-+			if (ret < 0) {
-+				fc->phase = FS_CONTEXT_FAILED;
-+				return ret;
-+			}
-+			fc->need_free = true;
-+		} else {
-+			/* Leave legacy context ops in place */
-+		}
-+
-+		/* Do the security check last because ->init_fs_context may
-+		 * change the namespace subscriptions.
-+		 */
-+		ret = security_fs_context_alloc(fc, fc->root);
-+		if (ret < 0) {
-+			fc->phase = FS_CONTEXT_FAILED;
-+			return ret;
-+		}
-+
-+		fc->phase = FS_CONTEXT_RECONF_PARAMS;
-+	}
-+
-+	if (fc->phase != FS_CONTEXT_CREATE_PARAMS &&
-+	    fc->phase != FS_CONTEXT_RECONF_PARAMS)
-+		return -EBUSY;
-+
-+	return vfs_parse_fs_param(fc, param);
-+}
-+
-+/*
-+ * Reconfigure a superblock.
-+ */
-+int vfs_reconfigure_sb(struct fs_context *fc)
-+{
-+	struct super_block *sb = fc->root->d_sb;
-+	int ret;
-+
-+	if (fc->ops->validate) {
-+		ret = fc->ops->validate(fc);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	ret = security_fs_context_validate(fc);
-+	if (ret)
-+		return ret;
-+
-+	if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	down_write(&sb->s_umount);
-+	ret = reconfigure_super(fc);
-+	up_write(&sb->s_umount);
-+	return ret;
-+}
-+
-+/*
-+ * Clean up a context after performing an action on it and put it into a state
-+ * from where it can be used to reconfigure a superblock.
-+ */
-+void vfs_clean_context(struct fs_context *fc)
-+{
-+	if (fc->ops && fc->ops->free)
-+		fc->ops->free(fc);
-+	fc->need_free = false;
-+	fc->fs_private = NULL;
-+	fc->s_fs_info = NULL;
-+	fc->sb_flags = 0;
-+	fc->sloppy = false;
-+	fc->silent = false;
-+	security_fs_context_free(fc);
-+	fc->security = NULL;
-+	kfree(fc->subtype);
-+	fc->subtype = NULL;
-+	kfree(fc->source);
-+	fc->source = NULL;
-+
-+	fc->purpose = FS_CONTEXT_FOR_RECONFIGURE;
-+	fc->phase = FS_CONTEXT_AWAITING_RECONF;
-+}
-+
-+/*
-+ * Perform an action on a context.
-+ */
-+static int vfs_fsconfig_action(struct fs_context *fc, enum fsconfig_command cmd)
-+{
-+	int ret = -EINVAL;
-+
-+	switch (cmd) {
-+	case FSCONFIG_CMD_CREATE:
-+		if (fc->phase != FS_CONTEXT_CREATE_PARAMS)
-+			return -EBUSY;
-+		fc->phase = FS_CONTEXT_CREATING;
-+		ret = vfs_get_tree(fc);
-+		if (ret == 0)
-+			fc->phase = FS_CONTEXT_AWAITING_MOUNT;
-+		else
-+			fc->phase = FS_CONTEXT_FAILED;
-+		return ret;
-+
-+	case FSCONFIG_CMD_RECONFIGURE:
-+		if (fc->phase == FS_CONTEXT_AWAITING_RECONF) {
-+			/* This is probably pointless, since no changes have
-+			 * been proposed.
-+			 */
-+			if (fc->fs_type->init_fs_context) {
-+				ret = fc->fs_type->init_fs_context(fc, fc->root);
-+				if (ret < 0) {
-+					fc->phase = FS_CONTEXT_FAILED;
-+					return ret;
-+				}
-+				fc->need_free = true;
-+			}
-+			fc->phase = FS_CONTEXT_RECONF_PARAMS;
-+		}
-+
-+		fc->phase = FS_CONTEXT_RECONFIGURING;
-+		ret = vfs_reconfigure_sb(fc);
-+		if (ret == 0)
-+			vfs_clean_context(fc);
-+		else
-+			fc->phase = FS_CONTEXT_FAILED;
-+		return ret;
-+
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+/**
-+ * sys_fsconfig - Set parameters and trigger actions on a context
-+ * @fd: The filesystem context to act upon
-+ * @cmd: The action to take
-+ * @_key: Where appropriate, the parameter key to set
-+ * @_value: Where appropriate, the parameter value to set
-+ * @aux: Additional information for the value
-+ *
-+ * This system call is used to set parameters on a context, including
-+ * superblock settings, data source and security labelling.
-+ *
-+ * Actions include triggering the creation of a superblock and the
-+ * reconfiguration of the superblock attached to the specified context.
-+ *
-+ * When setting a parameter, @cmd indicates the type of value being proposed
-+ * and @_key indicates the parameter to be altered.
-+ *
-+ * @_value and @aux are used to specify the value, should a value be required:
-+ *
-+ * (*) fsconfig_set_flag: No value is specified.  The parameter must be boolean
-+ *     in nature.  The key may be prefixed with "no" to invert the
-+ *     setting. @_value must be NULL and @aux must be 0.
-+ *
-+ * (*) fsconfig_set_string: A string value is specified.  The parameter can be
-+ *     expecting boolean, integer, string or take a path.  A conversion to an
-+ *     appropriate type will be attempted (which may include looking up as a
-+ *     path).  @_value points to a NUL-terminated string and @aux must be 0.
-+ *
-+ * (*) fsconfig_set_binary: A binary blob is specified.  @_value points to the
-+ *     blob and @aux indicates its size.  The parameter must be expecting a
-+ *     blob.
-+ *
-+ * (*) fsconfig_set_path: A non-empty path is specified.  The parameter must be
-+ *     expecting a path object.  @_value points to a NUL-terminated string that
-+ *     is the path and @aux is a file descriptor at which to start a relative
-+ *     lookup or AT_FDCWD.
-+ *
-+ * (*) fsconfig_set_path_empty: As fsconfig_set_path, but with AT_EMPTY_PATH
-+ *     implied.
-+ *
-+ * (*) fsconfig_set_fd: An open file descriptor is specified.  @_value must be
-+ *     NULL and @aux indicates the file descriptor.
-+ */
-+SYSCALL_DEFINE5(fsconfig,
-+		int, fd,
-+		unsigned int, cmd,
-+		const char __user *, _key,
-+		const void __user *, _value,
-+		int, aux)
-+{
-+	struct fs_context *fc;
-+	struct fd f;
-+	int ret;
-+
-+	struct fs_parameter param = {
-+		.type	= fs_value_is_undefined,
-+	};
-+
-+	if (fd < 0)
-+		return -EINVAL;
-+
-+	switch (cmd) {
-+	case FSCONFIG_SET_FLAG:
-+		if (!_key || _value || aux)
-+			return -EINVAL;
-+		break;
-+	case FSCONFIG_SET_STRING:
-+		if (!_key || !_value || aux)
-+			return -EINVAL;
-+		break;
-+	case FSCONFIG_SET_BINARY:
-+		if (!_key || !_value || aux <= 0 || aux > 1024 * 1024)
-+			return -EINVAL;
-+		break;
-+	case FSCONFIG_SET_PATH:
-+	case FSCONFIG_SET_PATH_EMPTY:
-+		if (!_key || !_value || (aux != AT_FDCWD && aux < 0))
-+			return -EINVAL;
-+		break;
-+	case FSCONFIG_SET_FD:
-+		if (!_key || _value || aux < 0)
-+			return -EINVAL;
-+		break;
-+	case FSCONFIG_CMD_CREATE:
-+	case FSCONFIG_CMD_RECONFIGURE:
-+		if (_key || _value || aux)
-+			return -EINVAL;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	f = fdget(fd);
-+	if (!f.file)
-+		return -EBADF;
-+	ret = -EINVAL;
-+	if (f.file->f_op != &fscontext_fops)
-+		goto out_f;
-+
-+	fc = f.file->private_data;
-+	if (fc->ops == &legacy_fs_context_ops) {
-+		switch (cmd) {
-+		case FSCONFIG_SET_BINARY:
-+		case FSCONFIG_SET_PATH:
-+		case FSCONFIG_SET_PATH_EMPTY:
-+		case FSCONFIG_SET_FD:
-+			ret = -EOPNOTSUPP;
-+			goto out_f;
-+		}
-+	}
-+
-+	if (_key) {
-+		param.key = strndup_user(_key, 256);
-+		if (IS_ERR(param.key)) {
-+			ret = PTR_ERR(param.key);
-+			goto out_f;
-+		}
-+	}
-+
-+	switch (cmd) {
-+	case FSCONFIG_SET_STRING:
-+		param.type = fs_value_is_string;
-+		param.string = strndup_user(_value, 256);
-+		if (IS_ERR(param.string)) {
-+			ret = PTR_ERR(param.string);
-+			goto out_key;
-+		}
-+		param.size = strlen(param.string);
-+		break;
-+	case FSCONFIG_SET_BINARY:
-+		param.type = fs_value_is_blob;
-+		param.size = aux;
-+		param.blob = memdup_user_nul(_value, aux);
-+		if (IS_ERR(param.blob)) {
-+			ret = PTR_ERR(param.blob);
-+			goto out_key;
-+		}
-+		break;
-+	case FSCONFIG_SET_PATH:
-+		param.type = fs_value_is_filename;
-+		param.name = getname_flags(_value, 0, NULL);
-+		if (IS_ERR(param.name)) {
-+			ret = PTR_ERR(param.name);
-+			goto out_key;
-+		}
-+		param.dirfd = aux;
-+		param.size = strlen(param.name->name);
-+		break;
-+	case FSCONFIG_SET_PATH_EMPTY:
-+		param.type = fs_value_is_filename_empty;
-+		param.name = getname_flags(_value, LOOKUP_EMPTY, NULL);
-+		if (IS_ERR(param.name)) {
-+			ret = PTR_ERR(param.name);
-+			goto out_key;
-+		}
-+		param.dirfd = aux;
-+		param.size = strlen(param.name->name);
-+		break;
-+	case FSCONFIG_SET_FD:
-+		param.type = fs_value_is_file;
-+		ret = -EBADF;
-+		param.file = fget(aux);
-+		if (!param.file)
-+			goto out_key;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	ret = mutex_lock_interruptible(&fc->uapi_mutex);
-+	if (ret == 0) {
-+		switch (cmd) {
-+		case FSCONFIG_CMD_CREATE:
-+		case FSCONFIG_CMD_RECONFIGURE:
-+			ret = vfs_fsconfig_action(fc, cmd);
-+			break;
-+		default:
-+			ret = vfs_fsconfig(fc, &param);
-+			break;
-+		}
-+		mutex_unlock(&fc->uapi_mutex);
-+	}
-+
-+	/* Clean up the our record of any value that we obtained from
-+	 * userspace.  Note that the value may have been stolen by the LSM or
-+	 * filesystem, in which case the value pointer will have been cleared.
-+	 */
-+	switch (cmd) {
-+	case FSCONFIG_SET_STRING:
-+	case FSCONFIG_SET_BINARY:
-+		kfree(param.string);
-+		break;
-+	case FSCONFIG_SET_PATH:
-+	case FSCONFIG_SET_PATH_EMPTY:
-+		if (param.name)
-+			putname(param.name);
-+		break;
-+	case FSCONFIG_SET_FD:
-+		if (param.file)
-+			fput(param.file);
-+		break;
-+	default:
-+		break;
-+	}
-+out_key:
-+	kfree(param.key);
-+out_f:
-+	fdput(f);
-+	return ret;
-+}
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 650d99c91987..4ab15fdf8aea 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -911,6 +911,8 @@ asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
- 			       int to_dfd, const char __user *to_path,
- 			       unsigned int ms_flags);
- asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
-+asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
-+			     const void __user *value, int aux);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index f8818e6cddd6..fecbae30a30d 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -349,4 +349,18 @@ typedef int __bitwise __kernel_rwf_t;
-  */
- #define FSOPEN_CLOEXEC		0x00000001
- 
-+/*
-+ * The type of fsconfig() call made.
-+ */
-+enum fsconfig_command {
-+	FSCONFIG_SET_FLAG	= 0,	/* Set parameter, supplying no value */
-+	FSCONFIG_SET_STRING	= 1,	/* Set parameter, supplying a string value */
-+	FSCONFIG_SET_BINARY	= 2,	/* Set parameter, supplying a binary blob value */
-+	FSCONFIG_SET_PATH	= 3,	/* Set parameter, supplying an object by path */
-+	FSCONFIG_SET_PATH_EMPTY	= 4,	/* Set parameter, supplying an object by (empty) path */
-+	FSCONFIG_SET_FD		= 5,	/* Set parameter, supplying an object by fd */
-+	FSCONFIG_CMD_CREATE	= 6,	/* Invoke superblock creation */
-+	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
-+};
-+
- #endif /* _UAPI_LINUX_FS_H */
-
+Mark Janssen
