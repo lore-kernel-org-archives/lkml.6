@@ -2,114 +2,102 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D13CFECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B84BCC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F90421557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7036C21568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:47:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKvrDRDy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F90421557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1e9r1vF1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7036C21568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391034AbeIUXhN (ORCPT
+        id S2391114AbeIUXhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:37:13 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40077 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390619AbeIUXhM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:37:12 -0400
-Received: by mail-ot1-f65.google.com with SMTP id g14-v6so166032otj.7;
-        Fri, 21 Sep 2018 10:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=uHhEAyyEH/JXSfBP7u9H9CJKC9aPf+TdqcrqXGxpmuQ=;
-        b=kKvrDRDy2TckOJdtvIZtwN1SoXP3z7GR3swFjFcrX/N93kF4RiNWFA0JFqGgZRLBtO
-         pXQDAnYzQrVdxKTyD7f94B/rkEqIK4rBEOBXqfKwISpIUd9QgpeRlF6sA7iyoqnqoqtq
-         cRTVgEID+sgUxJ+7rZFVimr1KbgaQSary05oYKC1Bef2AFEOi+tJHXlDIwyuAnu97Y9X
-         TRW69sKsv4HOk0fuBkGFnii1oT0BtXDWUgQAuXppulyW/5sXc4uJDGLjT41Vb0zOIOkU
-         M4tqbDAZt0SCoE1w4NAw2I7Bz/OiA3GidE0z8eDMhV0qBbJN42/vMQgQFYt16JptFbMK
-         z81Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=uHhEAyyEH/JXSfBP7u9H9CJKC9aPf+TdqcrqXGxpmuQ=;
-        b=mGwVa8myHA747H16VGHHYcWkRzHY3pwpn5Tn6OqxSLxG7l58TqAwBTynOMcZhLxhqf
-         GXGLKgQKbeP684AYsmnK7pzwuIAgt1RFvWH9E6uAcDn5hLsbMk+qgQK+zWALaLhwocJb
-         q7iKGa78pr+3kAH3YHen7RvbeQrQetWtloB7I8kN2+QNlS8A9eYstUBvv/gql6WQnhvW
-         jRP9bTUrYl4koFy1pTO3DBSveASxY3ZrtBFqajm4KyPzmUZswPU2zF+GGVw6cLTgD+Lh
-         zUdszIZ06cS5NPMDECAW2ylzzxBUK6TT8hnY+BJnogvHooZNRXUwQ2ZJXRo+Yunaaa3m
-         axgw==
-X-Gm-Message-State: APzg51CguKMPr5V2bmbyBlXLNFfCffMiV/K8MB1MBkrhULMXIP2v2T0Z
-        2koQusmFM7yZ+7ptmtSJKXntfyaKG4qIDUlkdq0=
-X-Google-Smtp-Source: ANB0VdaRh8MvHi6RN/q2BSP1NY3MCPopnq69lRu0rcox0ccQBuQDwJOIQoy8rZz+QIUu+PENeN62SFhHIoStHGobqWA=
-X-Received: by 2002:a9d:3677:: with SMTP id w110-v6mr26948097otb.394.1537552035445;
- Fri, 21 Sep 2018 10:47:15 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:2d28:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 10:47:15
- -0700 (PDT)
-In-Reply-To: <163d1af7d51bfa330f4cc685c5c493cd38aa584b.1537541211.git.leonard.crestez@nxp.com>
-References: <163d1af7d51bfa330f4cc685c5c493cd38aa584b.1537541211.git.leonard.crestez@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 21 Sep 2018 14:47:15 -0300
-Message-ID: <CAOMZO5CpXjoh0r+HXY7UWCrusbqL-F+oKU1iKKvJ_sLfHhdq+w@mail.gmail.com>
-Subject: Re: [PATCH] crypto: mxs-dcp - Fix wait logic on chan threads
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 21 Sep 2018 19:37:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390433AbeIUXhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 19:37:33 -0400
+Received: from localhost.localdomain (unknown [178.38.103.27])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B48821557;
+        Fri, 21 Sep 2018 17:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537552056;
+        bh=bXlsAOe+hLY9g1g5WTZiuoKX8skEXTS86lH3gMy7oAA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1e9r1vF1v94vxtLvDvcDUZfqG/FXoWFYcUNIOm+7pXeKOTPEl+p0V7vGham+MHa09
+         iN44hGuXKOSLukHJyEVeNmbe8Nv6mM9s48fVvOH9RBhNeovCRPbup0SPPP8mxKTQ9X
+         lRIKSU8hBg1DUxIlcLMZqjC6YuNPmO9ylzVlwXnE=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL 1/2] ARM: exynos: mach/soc for v4.20 (or 5.0)
+Date:   Fri, 21 Sep 2018 19:45:20 +0200
+Message-Id: <20180921174520.9126-2-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180921174520.9126-1-krzk@kernel.org>
+References: <20180921174520.9126-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leonard,
+Hi,
 
-On Fri, Sep 21, 2018 at 12:03 PM, Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
-> When compiling with CONFIG_DEBUG_ATOMIC_SLEEP=y the mxs-dcp driver
-> prints warnings such as:
->
-> WARNING: CPU: 0 PID: 120 at kernel/sched/core.c:7736 __might_sleep+0x98/0x9c
-> do not call blocking ops when !TASK_RUNNING; state=1 set at [<8081978c>] dcp_chan_thread_sha+0x3c/0x2ec
->
-> The problem is that blocking ops will manipulate current->state
-> themselves so it is not allowed to call them between
-> set_current_state(TASK_INTERRUPTIBLE) and schedule().
->
-> Fix this by converting the per-chan mutex to a spinlock (it only
-> protects tiny list ops anyway) and rearranging the wait logic so that
-> callbacks are called current->state as TASK_RUNNING. Those callbacks
-> will indeed call blocking ops themselves so this is required.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Nothing special, description in tag.
 
-Do you have extra patches to allow this driver to probe?
 
-I see the following probe error for a long time with mainline:
+Best regards,
+Krzysztof
 
-[   25.611780] mxs-dcp 80028000.dcp: Failed to register sha1 hash!
-[   25.620798] mxs-dcp: probe of 80028000.dcp failed with error -22
 
-Do you have a fix for this?
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-Thanks
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.20
+
+for you to fetch changes up to f30858439e7db9ce9847eaedf440635fc6349c6e:
+
+  ARM: s3c24xx: Restore proper usage of pr_info/pr_cont (2018-09-19 19:11:17 +0200)
+
+----------------------------------------------------------------
+Samsung mach/soc changes for v4.20
+
+1. Fix imprecise abort during Odroid XU3-family suspend to RAM (but it
+   is not end of work needed for suspend).
+2. Cleanup and fix of SD card write protect on MINI2440.
+
+----------------------------------------------------------------
+Cedric Roux (3):
+      ARM: s3c24xx: formatting cleanup in mach-mini2440.c
+      ARM: s3c24xx: Correct SD card write protect detection on Mini2440
+      ARM: s3c24xx: Restore proper usage of pr_info/pr_cont
+
+Krzysztof Kozlowski (4):
+      ARM: exynos: Store Exynos5420 register state in one variable
+      ARM: exynos: Fix imprecise abort during Exynos5422 suspend to RAM
+      ARM: s3c24xx: Remove empty gta02_pmu children probe
+      ARM: s3c24xx: Consistently use tab for indenting member assignments
+
+ Documentation/arm/Samsung/Bootloader-interface.txt |   1 +
+ arch/arm/mach-exynos/common.h                      |   1 +
+ arch/arm/mach-exynos/firmware.c                    |  14 ++-
+ arch/arm/mach-exynos/suspend.c                     |  34 +++++--
+ arch/arm/mach-s3c24xx/mach-gta02.c                 |  42 --------
+ arch/arm/mach-s3c24xx/mach-mini2440.c              | 113 +++++++++++----------
+ 6 files changed, 97 insertions(+), 108 deletions(-)
