@@ -2,66 +2,78 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F673C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E049ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C9721522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:29:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C9721522
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C9B3321522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 06:30:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B3321522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389354AbeIUMRN (ORCPT
+        id S2389372AbeIUMR3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 08:17:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45800 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389220AbeIUMRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 08:17:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B61FCB093;
-        Fri, 21 Sep 2018 06:29:48 +0000 (UTC)
-Date:   Fri, 21 Sep 2018 08:29:47 +0200
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] scsi: sd: don't crash the host on invalid commands
-Message-ID: <20180921062947.GA4913@linux-x5ow.site>
-References: <20180920071907.10102-1-jthumshirn@suse.de>
- <1537467499.224533.21.camel@acm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1537467499.224533.21.camel@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 21 Sep 2018 08:17:29 -0400
+Received: from piie.net ([80.82.223.85]:36678 "EHLO piie.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389203AbeIUMR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 08:17:29 -0400
+X-Greylist: delayed 577 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Sep 2018 08:17:28 EDT
+Received: from mail.piie.net (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
+        (Client did not present a certificate)
+        by piie.net (Postfix) with ESMTPSA id 2D308194A;
+        Fri, 21 Sep 2018 08:20:27 +0200 (CEST)
+Mime-Version: 1.0
+Date:   Fri, 21 Sep 2018 06:20:27 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: RainLoop/1.11.3
+From:   "Peter Feuerer" <peter@piie.net>
+Message-ID: <f401b6fed813afb86f5442c7707bf9fb@piie.net>
+Subject: Re: [PATCH 0/6] platform/x86: acerhdf: new BIOS string, better
+ modparam handling
+To:     "Paul Gortmaker" <paul.gortmaker@windriver.com>,
+        platform-driver-x86@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, "Darren Hart" <dvhart@infradead.org>,
+        "Andy Shevchenko" <andy@infradead.org>
+In-Reply-To: <20180921014421.30804-1-paul.gortmaker@windriver.com>
+References: <20180921014421.30804-1-paul.gortmaker@windriver.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 11:18:19AM -0700, Bart Van Assche wrote:
-> On Thu, 2018-09-20 at 09:19 +0200, Johannes Thumshirn wrote:
+Hi,
+
+21. September 2018 03:45, "Paul Gortmaker" <paul.gortmaker@windriver.com> schrieb:
+
+> I came across this older netbook over the xmas holidays, and noticed the
+> acerhdf driver wouldn't load. Turns out the BIOS string was too new,
+> and not listed in the driver. There were module params for overrides,
+> but I found their use isn't quite clear without reading the source.
 > 
-> Have you considered to use WARN_ON_ONCE() instead of WARN_ON(1)? Otherwise
-> this patch looks good to me.
+> Here I clarify some of the module parameter usage, and then add the new
+> BIOS string, so they won't be needed for this particular platform. Some
+> probe code is also shifted out to be __init to reduce the driver size a
+> bit. Further details can be found in the respective commit logs.
+> 
+> Since it was months ago when I created these patches, I retested on top
+> of tree to ensure things still work, as can be seen below.
 
-Indeed I did and then forgot to 'git commit --amend' it befroe sending it out.
-I'll do so now.
+Thanks a lot for your work and this set of changes.  This improves quality.
+I reviewed all 6 patches.
 
-	Johannes
+Reviewed-by: Peter Feuerer <peter@piie.net>
+
+Please also add CC: Boris Petkov <bp@suse.de> for review.
+
+[...]
+
 -- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+kind regards,
+--peter;
