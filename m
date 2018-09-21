@@ -2,236 +2,123 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_DBL_ABUSE_MALW autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF274C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60381C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44DCA206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:53:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DCA206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 15C4E206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:54:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C4E206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbeIVEow (ORCPT
+        id S2391511AbeIVEpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 00:44:52 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:50116 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725750AbeIVEow (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 00:44:52 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id B4293C13DF;
-        Fri, 21 Sep 2018 22:53:50 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9kd2_r0P_uQ4; Fri, 21 Sep 2018 22:53:50 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 768A9C0D4A;
-        Fri, 21 Sep 2018 22:53:44 +0000 (UTC)
-Subject: Re: [PATCH v4] selftests: membarrier: reorganized test for LTS
- supportability
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-References: <1a86c3c5-66f5-24d8-4fcc-367302ecec35@kernel.org>
- <20180903190457.27088-1-rafael.tinoco@linaro.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <dcc20b51-3069-6854-3190-b8958e2f9b96@kernel.org>
-Date:   Fri, 21 Sep 2018 16:53:44 -0600
+        Sat, 22 Sep 2018 00:45:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:32515 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725786AbeIVEpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 00:45:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 15:54:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,286,1534834800"; 
+   d="scan'208";a="234948955"
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga004.jf.intel.com with ESMTP; 21 Sep 2018 15:53:08 -0700
+Subject: Re: [RFC PATCH v4 00/27] Control Flow Enforcement: Shadow Stack
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <1ca5178d-60f3-ae70-ce95-7026ac0429b4@linux.intel.com>
+Date:   Fri, 21 Sep 2018 15:53:08 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180903190457.27088-1-rafael.tinoco@linaro.org>
+In-Reply-To: <20180921150351.20898-1-yu-cheng.yu@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/03/2018 01:04 PM, Rafael David Tinoco wrote:
-> This commit re-organizes membarrier test, solving issues when testing
-> LTS kernels. Now, the code:
+On 09/21/2018 08:03 AM, Yu-cheng Yu wrote:
+> The previous version of CET patches can be found in the following
+> link:
 > 
->  - always run the same amount of tests (even on older kernels).
->  - allows each test to succeed, fail or be skipped independently.
->  - allows testing features even when explicitly unsupported (force=1).
->  - able to consider different return codes for diff kernel versions.
->  - checks false positive/negative by checking ret code and errno.
->  - can be extended easily: to expand an array with commands.
-> 
-> Link: https://bugs.linaro.org/show_bug.cgi?id=3771
-> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
-> ---
->  .../selftests/membarrier/membarrier_test.c    | 482 +++++++++---------
->  1 file changed, 241 insertions(+), 241 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/membarrier/membarrier_test.c b/tools/testing/selftests/membarrier/membarrier_test.c
-> index 6793f8ecc8e7..151bc8a944a3 100644
-> --- a/tools/testing/selftests/membarrier/membarrier_test.c
-> +++ b/tools/testing/selftests/membarrier/membarrier_test.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #define _GNU_SOURCE
->  #include <linux/membarrier.h>
-> +#include <sys/utsname.h>
->  #include <syscall.h>
->  #include <stdio.h>
->  #include <errno.h>
-> @@ -8,305 +9,304 @@
->  
->  #include "../kselftest.h"
->  
-> -static int sys_membarrier(int cmd, int flags)
-> +#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-> +#define KERNEL_VERSION(a, b, c) (((a) << 16) + ((b) << 8) + (c))
-> +
-> +struct memb_tests {
-> +	char testname[80];
-> +	int command;
-> +	int flags;
-> +	int exp_ret;
-> +	int exp_errno;
-> +	int enabled;
-> +	int force;
-> +	int force_exp_errno;
-> +	int above;
-> +	int bellow;
-> +};
-> +
-> +struct memb_tests mbt[] = {
-> +	{
-> +	 .testname = "cmd_fail\0",
-> +	 .command = -1,
-> +	 .exp_ret = -1,
-> +	 .exp_errno = EINVAL,
-> +	 .enabled = 1,
-> +	 },
-> +	{
-> +	 .testname = "cmd_flags_fail\0",
-> +	 .command = MEMBARRIER_CMD_QUERY,
-> +	 .flags = 1,
-> +	 .exp_ret = -1,
-> +	 .exp_errno = EINVAL,
-> +	 .enabled = 1,
-> +	 },
-> +	{
-> +	 .testname = "cmd_global_success\0",
-> +	 .command = MEMBARRIER_CMD_GLOBAL,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 },
-> +	/*
-> +	 * PRIVATE EXPEDITED (forced)
-> +	 */
-> +	{
-> +	 .testname = "cmd_private_expedited_fail\0",
-> +	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = -1,
-> +	 .exp_errno = EPERM,
-> +	 .force = 1,
-> +	 .force_exp_errno = EINVAL,
-> +	 .bellow = KERNEL_VERSION(4, 10, 0),
-> +	 },
-> +	{
-> +	 .testname = "cmd_private_expedited_fail\0",
-> +	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = -1,
-> +	 .exp_errno = EPERM,
-> +	 .force = 1,
-> +	 .force_exp_errno = EPERM,
-> +	 .above = KERNEL_VERSION(4, 10, 0),
-> +	 },
-> +	{
-> +	 .testname = "cmd_register_private_expedited_success\0",
-> +	 .command = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 .force = 1,
-> +	 .force_exp_errno = EINVAL,
-> +	 },
-> +	{
-> +	 .testname = "cmd_private_expedited_success\0",
-> +	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 .force = 1,
-> +	 .force_exp_errno = EINVAL,
-> +	 },
-> +	 /*
-> +	  * PRIVATE EXPEDITED SYNC CORE
-> +	  */
-> +	{
-> +	 .testname = "cmd_private_expedited_sync_core_fail\0",
-> +	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE,
-> +	 .flags = 0,
-> +	 .exp_ret = -1,
-> +	 .exp_errno = EPERM,
-> +	 },
-> +	{
-> +	 .testname = "cmd_register_private_expedited_sync_core_success\0",
-> +	 .command = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 },
-> +	{
-> +	 .testname = "cmd_private_expedited_sync_core_success\0",
-> +	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 },
-> +	/*
-> +	 * GLOBAL EXPEDITED
-> +	 * global membarrier from a non-registered process is valid
-> +	 */
-> +	{
-> +	 .testname = "cmd_global_expedited_success\0",
-> +	 .command = MEMBARRIER_CMD_GLOBAL_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 },
-> +	{
-> +	 .testname = "cmd_register_global_expedited_success\0",
-> +	 .command = MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 },
-> +	{
-> +	 .testname = "cmd_global_expedited_success\0",
-> +	 .command = MEMBARRIER_CMD_GLOBAL_EXPEDITED,
-> +	 .flags = 0,
-> +	 .exp_ret = 0,
-> +	 },
-> +};
-> +
-> +static void
-> +info_passed_ok(struct memb_tests test)
->  {
-> -	return syscall(__NR_membarrier, cmd, flags);
-> +	ksft_test_result_pass("sys_membarrier(): %s succeeded.\n",
-> +			test.testname);
->  }
->  
+>   https://lkml.org/lkml/2018/8/30/608
 
-Why do we need to add new routines for these conditions. Why can't handle
-these strings in array. For example you can define an array of strings for
+So, this is an RFC, but there no mention of what you want comments *on*. :)
 
-passed unexpectedly etc. and the pass the string to appropriate ksft_* interface
-instead of adding of these routines. Also it is hard to review the code this way.
-
-I do like the direction though. Also please run get_maintainer.pl and cc everybody
-it suggests.
-
-thanks,
--- Shuah
-
+What do you want folks to review?  What needs to get settled before this
+is merged?
