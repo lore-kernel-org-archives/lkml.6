@@ -2,65 +2,91 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC79C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C4EC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86AE21532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86AE21532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 873C321532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:21:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="We8XySgK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 873C321532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389007AbeIUJGS (ORCPT
+        id S2389042AbeIUJIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 05:06:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53210 "EHLO mx1.redhat.com"
+        Fri, 21 Sep 2018 05:08:15 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:45751 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbeIUJGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 05:06:17 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CDA46308402B;
-        Fri, 21 Sep 2018 03:19:31 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EEB145C54F;
-        Fri, 21 Sep 2018 03:19:30 +0000 (UTC)
-Date:   Fri, 21 Sep 2018 11:19:27 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com
-Cc:     linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
-        x86@kernel.org, thgarnie@google.com, corbet@lwn.net,
-        linux-doc@vger.kernel.org, peterz@infradead.org
-Subject: Re: [PATCH 3/3] x86/doc/kaslr.txt: Create a separate part of
- document abourt KASLR at the end of file
-Message-ID: <20180921031927.GS2555@MiWiFi-R3L-srv>
-References: <20180921020550.13095-1-bhe@redhat.com>
- <20180921020550.13095-4-bhe@redhat.com>
+        id S1725892AbeIUJIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 05:08:14 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d6414b89;
+        Fri, 21 Sep 2018 03:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=qdBZm+bCMXbqziUyqMAN82K9JXU=; b=We8XyS
+        gKQsKJkfNwAdgVm2wsJlboESXdrjvxmmpL19RZnWTSOdubJd7bigD/z2Q64YitkO
+        0aBMT6S2qlhHJ0Jbkf9gSqVggt8/GS9elCRDTqhRQH4AREYzPSylqu068gKx0VeL
+        xTgmdBxB9GnrMTGWo5EnQyC7i2N3cbUvuaoz9OySLcnm1AFa0WlHWr05T6SM2mdF
+        gD8fVXgk6iFRfM9yUyTCIrReY9VunAu6Nvtp+iEMn0QjlclBqMgz9eXB8hFc0qnI
+        PZeNWCUwl4pbFNFNQgrf4tkyJHitdjOIVNMj/oZnppNTTs5yO2KcBHWTd0YiiCaI
+        93rEChnNX2G+ZXEg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4c14d2ab (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Fri, 21 Sep 2018 03:03:33 +0000 (UTC)
+Received: by mail-ot1-x333.google.com with SMTP id j9-v6so11657737otl.2;
+        Thu, 20 Sep 2018 20:21:26 -0700 (PDT)
+X-Gm-Message-State: APzg51CgJZpau8iP9YvfzjKZA1FezmrDuVv+6MmOnRfnDEwI/QVxBpci
+        yMpVxCdFVrUOge+uIBfl0Kjx9bEsIDWISdENxFA=
+X-Google-Smtp-Source: ANB0VdavM5TENL1YAnHQE/rZ3576FwEhKFj8UVn+1qMLmZr7pnT4ZZKXj/FHE8OKyThAEuf8bvZlb9g5nEFHaJM0jXY=
+X-Received: by 2002:a9d:6554:: with SMTP id q20-v6mr24751122otl.209.1537499783441;
+ Thu, 20 Sep 2018 20:16:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921020550.13095-4-bhe@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 21 Sep 2018 03:19:32 +0000 (UTC)
+References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-3-Jason@zx2c4.com>
+ <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com>
+ <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com>
+ <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com> <20180921031255.GB11109@lunn.ch>
+In-Reply-To: <20180921031255.GB11109@lunn.ch>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 21 Sep 2018 05:16:11 +0200
+X-Gmail-Original-Message-ID: <CAHmME9p-abAV-depcb+8wjAayv8WaGRqPXBswseH+ovsRbfJ-Q@mail.gmail.com>
+Message-ID: <CAHmME9p-abAV-depcb+8wjAayv8WaGRqPXBswseH+ovsRbfJ-Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography library
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/21/18 at 10:05am, Baoquan He wrote:
-> +Name 		Starting address	   Size						Aligned
-> +-----------------------------------------------------------------------------------------------
-> +direct mapping  page_offset_base	[actual size of system RAM + 10 TB padding]	1 GB
-> +*guard hole	random			random						1 GB
-> +vmalloc		vmalloc_base		32 TB						1 GB
-> +*guard hole	random			random						1 GB
-> +vmemmap		vmemmap_base		1 TB						1 GB
-> +*guard hole	random			random						1 GB
+Hi Andrew,
 
-OK, seems tab is uncontrollable, I will use space instead.
+On Fri, Sep 21, 2018 at 5:13 AM Andrew Lunn <andrew@lunn.ch> wrote:
+> Do you any stack usage information?
+>
+> A VPN can be at the bottom of some deep stack calls. Swap on NFS over
+> the VPN? If you have one frame of 1K, you might be O.K. But if you
+> have a few of these, i can see there might be issues of overflowing
+> the stack.
+
+It's pretty small, and most of the work is punted onto workqueues
+pretty early, so the depth isn't as much of an issue as it would be if
+I did everything from ndo_start_xmit. I've done some stack tracking
+using the debug option for that, and it's generally far from the
+deepest thing running.
+
+Jason
