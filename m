@@ -2,187 +2,135 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05328ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA6AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B5E21557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:48:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VNxVaqk8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B5E21557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E67BC21557
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:49:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67BC21557
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391144AbeIUXi3 (ORCPT
+        id S2391018AbeIUXjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:38:29 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36256 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeIUXi2 (ORCPT
+        Fri, 21 Sep 2018 19:39:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53744 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390365AbeIUXjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:38:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1-v6so6381807pgo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:in-reply-to
-         :references;
-        bh=rC4Rj3P1k/Q6QD7WX93Els8mh/I6lZrdcdTj1aL5lPo=;
-        b=VNxVaqk89fuASli0i598dlUGJAgaYNnxg1qgYLN6eNYHPJ5pc67dgVPwnT1Oi5D7H4
-         LRjCkCBS2zP9VIot8+ZDaemdv4T10n9MoxvzcLiJcle2lKYib0qZPUFr2gxDFuudxcQ2
-         97ud0VlsA7aSAP42HOeFLoGH7IPaXP1nPp6Hw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=rC4Rj3P1k/Q6QD7WX93Els8mh/I6lZrdcdTj1aL5lPo=;
-        b=g2oGttMwbfkREsKxiyRgdxtCUWeH3bMkURJbF/mlBE9poibmn1JflWgtgnSZUCauFl
-         NzZjOmNt357bWn2Gysoyap9BK2LiFknkxSer43GOpzjvXnxrx9Mh8z2Z5qQAzv0/cGEs
-         7uL7s80NuMThc/9FQza6aSBsf3u3grsVHpo2tAs7lzQ4AwHU120NFj5d1h+KHwqrwGPL
-         4dpACcfx4m/hx5ZIyxhzdaFRz4cm5id2ZGo4YIFqzhMTN1D9HJ1X+22B2GGrb/n4ebHx
-         VC/IBoBluWT9b1paaonO5vxLQNjHeFUTBbANMal0Gko51TNJrWHBZeV+jrfqXNOF+5WE
-         6qEQ==
-X-Gm-Message-State: APzg51CNyHnHnadUCBNd29FSsrZd5hr8wlDvLfNmhKIecdEQ6RGQYIJc
-        VCS8nmicqIS2QyaoGEJic95r/HuuOlo4Bg==
-X-Google-Smtp-Source: ANB0VdYVWaBV1GO0pFL8Jgh5q0PimrQofQs4kINfv2pvERAN9R3idzLwt4FAwV3dJ+yecFKj2WcwQQ==
-X-Received: by 2002:a63:cf52:: with SMTP id b18-v6mr41651596pgj.194.1537552110891;
-        Fri, 21 Sep 2018 10:48:30 -0700 (PDT)
-Received: from localhost ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id x4-v6sm34082224pfm.119.2018.09.21.10.48.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 10:48:29 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Subject: [PATCH v4 07/16] thermal: tsens: Pass register offsets as private data
-Date:   Fri, 21 Sep 2018 10:25:11 -0700
-Message-Id:
- <0d972069de14750f76b8545af6abfa44aad9c485.1537547011.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180918193448.GA1367@tuxbook-pro>
-References: <20180918193448.GA1367@tuxbook-pro>
-In-Reply-To: <cover.1537547011.git.amit.kucheria@linaro.org>
-References: <cover.1537547011.git.amit.kucheria@linaro.org>
+        Fri, 21 Sep 2018 19:39:32 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LHnIT2176938
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:34 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mn3snm2aw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:33 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 21 Sep 2018 18:49:32 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Sep 2018 18:49:29 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LHnSdw62128224
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Sep 2018 17:49:28 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 93567AE055;
+        Fri, 21 Sep 2018 20:48:33 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D07DAE051;
+        Fri, 21 Sep 2018 20:48:32 +0100 (BST)
+Received: from srikart450.in.ibm.com (unknown [9.199.39.50])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Sep 2018 20:48:31 +0100 (BST)
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jirka Hladky <jhladky@redhat.com>
+Subject: [PATCH v2 0/6] numabalancing patches
+Date:   Fri, 21 Sep 2018 23:18:55 +0530
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18092117-4275-0000-0000-000002BDE7A2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092117-4276-0000-0000-000037C7EE42
+Message-Id: <1537552141-27815-1-git-send-email-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809210174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20180921172511.diKyVyZa11PLqA5DIA3YEWhUBUhy8KTPyXh09MwXd_E@z>
 
-Registers have moved around across TSENS generations. For example, the
-CTRL register was at offset 0x0 in the SROT region on msm8916 but is at
-offset 0x4 in newer v2 based TSENS HW blocks.
+This patchset provides left out patches from the previous series.
+http://lore.kernel.org/lkml/1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com
 
-Allow passing offsets of important registers so that we can continue to
-use common functions.
+Changes from previous posting:
+Rebased the patchset to 4.19-rc4.
+Handled comments from Ingo Molnar,Peter Peter Zijlstra and Mel Gorman.
+Reorder to keep the most discussed patches at the end.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+Some of the Ack/Reviewed-by carried from
+http://lore.kernel.org/lkml/1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com
 
-Here is a fixup patch. Eduardo, if you like I can resend the entire series
-or you can find the entire series hosted with all tags applied here:
-https://git.linaro.org/people/amit.kucheria/kernel.git/log/?h=up/thermal/tsens-preirq-cleanup-v4
+Please refer to previous postings
+http://lore.kernel.org/lkml/1533276841-16341-1-git-send-email-srikar@linux.vnet.ibm.com
+http://lore.kernel.org/lkml/1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com
+http://lore.kernel.org/lkml/1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com
 
- drivers/thermal/qcom/tsens-8916.c | 1 +
- drivers/thermal/qcom/tsens-8974.c | 1 +
- drivers/thermal/qcom/tsens-v2.c   | 2 ++
- drivers/thermal/qcom/tsens.c      | 2 ++
- drivers/thermal/qcom/tsens.h      | 9 +++++++++
- 5 files changed, 15 insertions(+)
+Specjbb2005 results (8 warehouses)
+Higher bops are better
 
-diff --git a/drivers/thermal/qcom/tsens-8916.c b/drivers/thermal/qcom/tsens-8916.c
-index c4955c85e922..c6dd620ac029 100644
---- a/drivers/thermal/qcom/tsens-8916.c
-+++ b/drivers/thermal/qcom/tsens-8916.c
-@@ -100,5 +100,6 @@ static const struct tsens_ops ops_8916 = {
- const struct tsens_data data_8916 = {
- 	.num_sensors	= 5,
- 	.ops		= &ops_8916,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x0 },
- 	.hw_ids		= (unsigned int []){0, 1, 2, 4, 5 },
- };
-diff --git a/drivers/thermal/qcom/tsens-8974.c b/drivers/thermal/qcom/tsens-8974.c
-index 7e149edbfeb6..3d3fda3d731b 100644
---- a/drivers/thermal/qcom/tsens-8974.c
-+++ b/drivers/thermal/qcom/tsens-8974.c
-@@ -232,4 +232,5 @@ static const struct tsens_ops ops_8974 = {
- const struct tsens_data data_8974 = {
- 	.num_sensors	= 11,
- 	.ops		= &ops_8974,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x0 },
- };
-diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
-index 1bdef92e4521..381a212872bf 100644
---- a/drivers/thermal/qcom/tsens-v2.c
-+++ b/drivers/thermal/qcom/tsens-v2.c
-@@ -68,10 +68,12 @@ static const struct tsens_ops ops_generic_v2 = {
- 
- const struct tsens_data data_tsens_v2 = {
- 	.ops            = &ops_generic_v2,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x4 },
- };
- 
- /* Kept around for backward compatibility with old msm8996.dtsi */
- const struct tsens_data data_8996 = {
- 	.num_sensors	= 13,
- 	.ops		= &ops_generic_v2,
-+	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x4 },
- };
-diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-index 9a8e8f7b4ae1..3c8776e55252 100644
---- a/drivers/thermal/qcom/tsens.c
-+++ b/drivers/thermal/qcom/tsens.c
-@@ -144,6 +144,8 @@ static int tsens_probe(struct platform_device *pdev)
- 		else
- 			tmdev->sensor[i].hw_id = i;
- 	}
-+	for (i = 0; i < REG_ARRAY_SIZE; i++)
-+		tmdev->reg_offsets[i] = data->reg_offsets[i];
- 
- 	if (!tmdev->ops || !tmdev->ops->init || !tmdev->ops->get_temp)
- 		return -EINVAL;
-diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
-index b9c4bcf255fa..f62d2b6281da 100644
---- a/drivers/thermal/qcom/tsens.h
-+++ b/drivers/thermal/qcom/tsens.h
-@@ -48,15 +48,23 @@ struct tsens_ops {
- 	int (*get_trend)(struct tsens_device *, int, enum thermal_trend *);
- };
- 
-+enum reg_list {
-+	SROT_CTRL_OFFSET,
-+
-+	REG_ARRAY_SIZE,
-+};
-+
- /**
-  * struct tsens_data - tsens instance specific data
-  * @num_sensors: Max number of sensors supported by platform
-  * @ops: operations the tsens instance supports
-+ * @reg_offsets: Register offsets for commonly used registers
-  * @hw_ids: Subset of sensors ids supported by platform, if not the first n
-  */
- struct tsens_data {
- 	const u32		num_sensors;
- 	const struct tsens_ops	*ops;
-+	const u16		reg_offsets[REG_ARRAY_SIZE];
- 	unsigned int		*hw_ids;
- };
- 
-@@ -72,6 +80,7 @@ struct tsens_device {
- 	struct regmap			*tm_map;
- 	struct regmap			*srot_map;
- 	u32				tm_offset;
-+	u16				reg_offsets[REG_ARRAY_SIZE];
- 	struct tsens_context		ctx;
- 	const struct tsens_ops		*ops;
- 	struct tsens_sensor		sensor[0];
+2 Socket - 2  Node Haswell - X86
+JVMS  Prev    Current  %Change
+4     200194  205910   2.85523
+1     311331  318491   2.2998
+
+2 Socket - 4 Node Power8 - PowerNV
+JVMS  Prev    Current  %Change
+1     197654  226796   14.7439
+
+4 Socket - 4  Node Power7 - PowerVM
+JVMS  Prev     Current  %Change
+8     52227.1  60370    15.5913
+1     102529   108100   5.43358
+
+Mel Gorman (1):
+  sched/numa: Limit the conditions where scan period is reset
+
+Srikar Dronamraju (5):
+  sched/numa: Stop multiple tasks from moving to the CPU at the same
+    time
+  sched/numa: Pass destination CPU as a parameter to migrate_task_rq
+  sched/numa: Reset scan rate whenever task moves across nodes
+  mm/migrate: Use trylock while resetting rate limit
+  sched/numa: Avoid task migration for small NUMA improvement
+
+ kernel/sched/core.c     |  2 +-
+ kernel/sched/deadline.c |  2 +-
+ kernel/sched/fair.c     | 92 ++++++++++++++++++++++++++++++++++++++++++-------
+ kernel/sched/sched.h    |  3 +-
+ mm/migrate.c            | 16 ++++++---
+ 5 files changed, 96 insertions(+), 19 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
