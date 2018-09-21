@@ -2,99 +2,102 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B31A1ECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE908C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3023821523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:59:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="iBLegTX2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3023821523
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 8C1CE21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:00:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1CE21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389804AbeIUTsf (ORCPT
+        id S2389978AbeIUTtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:48:35 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:54280 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728098AbeIUTse (ORCPT
+        Fri, 21 Sep 2018 15:49:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55166 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727554AbeIUTtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:48:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5uaSylfbfLi6kI0jHSRGFH9EWLBbXQcBFY+uD4X453Q=; b=iBLegTX2NS/pqE3tyUZ/nv2Bb
-        VmYMPYJzbcUzxTXB6TJ0oGIv/tXWpe7xKF+AeZQ6VSaXC7ux4dGKZx2/uqVTxIXqR2lpPQQZ9ILnJ
-        xz9EYTnL4+x/dzNdoUuEayW0cB8XnAHS37niXvkxtLuIabIiRU8J0Q2620ZIYnFELz7+U=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:49226)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g3Lxq-0001Bm-PT; Fri, 21 Sep 2018 14:59:22 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g3Lxl-0001SX-KI; Fri, 21 Sep 2018 14:59:18 +0100
-Date:   Fri, 21 Sep 2018 14:59:14 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Subject: Re: [PATCH] ARM: add serial.h and set BASE_BAUD to 0
-Message-ID: <20180921135913.GM30658@n2100.armlinux.org.uk>
-References: <20180920201357.16426-1-zajec5@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Fri, 21 Sep 2018 15:49:16 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LE0C8A026740
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:00:15 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mn0stuesc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:00:12 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 21 Sep 2018 15:00:05 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Sep 2018 15:00:02 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LE01fZ43450524
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Sep 2018 14:00:01 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 714F542042;
+        Fri, 21 Sep 2018 16:59:47 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F4B542041;
+        Fri, 21 Sep 2018 16:59:46 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.102.161])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Sep 2018 16:59:46 +0100 (BST)
+Subject: Re: [PATCH v2, RESEND 2/3] tpm: modify tpm_pcr_read() definition to
+ pass TPM hash algorithms
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>
+Date:   Fri, 21 Sep 2018 09:59:49 -0400
+In-Reply-To: <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
+References: <20180917093820.20500-1-roberto.sassu@huawei.com>
+         <20180917093820.20500-3-roberto.sassu@huawei.com>
+         <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180920201357.16426-1-zajec5@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18092114-4275-0000-0000-000002BDCF0C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092114-4276-0000-0000-000037C7D51C
+Message-Id: <1537538389.3830.336.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=790 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809210142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 10:13:57PM +0200, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
+On Fri, 2018-09-21 at 12:24 +0200, Roberto Sassu wrote:
+> On 9/17/2018 11:38 AM, Roberto Sassu wrote:
+> > Currently the TPM driver allows other kernel subsystems to read only the
+> > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+> > tpm2_pcr_read() to pass an array of tpm_digest structures, which contains
+> > the desired hash algorithms. Initially, the array size is limited to 1.
 > 
-> For years arm has been using serial.h from asm-generic which sets
-> BASE_BAUD value to the (1843200 / 16). This is incorrect as:
-> 1) This value obviously isn't correct for all devices
-> 2) There are no device specific serial.h with CONFIG_ARCH_MULTIPLATFORM
+> Jarkko, is this patch ok?
+> 
+> Mimi, I wait for your review of the IMA part.
 
-This goes back a long way.  The BASE_BAUD definition is the base baud
-for 8250 compatible UARTs _only_, no others.
+Yes, I know.  I've been on vacation and am hoping to review your, Eric
+Bigger's and Nayna's patches soon.  Sorry for the delay!
 
-However, as of 182ead3e418a ("earlycon: Remove hardcoded port->uartclk
-initialization in of_setup_earlycon"), port->uartclk is no longer
-initialised using BASE_BAUD.  As acknowledged in 814453adea7d
-("earlycon: Initialize port->uartclk based on clock-frequency property")
-the initialisation using BASE_BAUD was bogus, and there is now the
-clock-frequency DT property which should be present to set this up.
+Mimi
 
-Now, setting BASE_BAUD to zero as per your patch will break the
-8250 serial driver - this relies on BASE_BAUD being set to the
-current value, and yes, ARM hardware that uses this will break.  So
-this is not a solution.
-
-The only solution is that BASE_BAUD must not be abused - it must not
-be used by non-8250 hardware, and thankfully there are already
-solutions in the kernel (such as clock-frequency) to allow the clock
-rate to be specified.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
