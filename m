@@ -2,102 +2,111 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B849DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B66ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E9F2147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:56:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E9F2147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 57E3D2086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:00:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bZatlGjb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57E3D2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389616AbeIUPoS (ORCPT
+        id S2389463AbeIUPtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:44:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60048 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbeIUPoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:44:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED44980D;
-        Fri, 21 Sep 2018 02:56:11 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.Emea.Arm.com [10.4.12.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E8C93F5C0;
-        Fri, 21 Sep 2018 02:56:10 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 10:56:07 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Chintan Pandya <cpandya@codeaurora.org>
-Cc:     mark.rutland@arm.com, toshi.kani@hpe.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v13 3/3] arm64: Implement page table free interfaces
-Message-ID: <20180921095607.GA166997@arrakis.emea.arm.com>
-References: <1528268481-19299-1-git-send-email-cpandya@codeaurora.org>
- <1528268481-19299-4-git-send-email-cpandya@codeaurora.org>
- <20180920172527.GB18934@arrakis.emea.arm.com>
+        Fri, 21 Sep 2018 11:49:04 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40795 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727391AbeIUPtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:49:03 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 207-v6so2538027wme.5;
+        Fri, 21 Sep 2018 03:00:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RSx0ef2TUQP4ehNpFQ+0t0PfkVB4oEWMntfqZJFNvGw=;
+        b=bZatlGjbPqcFLYaeupyWX5ek3OgW9FC0I5U6zteZo3e0fiDR5rKYavOTl8BLrLT27d
+         WKzspsllAs+AP15jNrV8zZMQwAluVJ95jKoK0Yq9RMzvnpD09mqDuL+n4aIr+pqPlivd
+         LgPAxwvIayDUfSG0lRlQqNZ7G55R6JOw5QB5CKG9p/z+xcSxHIEPJKdM3NS5gDqP8Mpw
+         OFnXpchrMkAgNweMkLI82FbCfq33Ptul6GMBIQpV5hJooWD/sfQhNagKfyPmX4dtKdDD
+         4J0acwmpua+Kh7xEn8OlIbQ9xNHO9L2ZaZqXbSDTxSsgjA+Ia7tdav8s8EnGcp9sxgDj
+         qiDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RSx0ef2TUQP4ehNpFQ+0t0PfkVB4oEWMntfqZJFNvGw=;
+        b=KgdwvASnfoYCcy3TWssrZUPDMX8NZin2uo9FJodj073k3WbnIfkPScDSrZVDL9J+T0
+         /yupRCpnrSPhpui2ShICAuiyPDN5oKsGLgTjp3Gd+3wkYQDnNvgpihYGacvAQezYH/Rd
+         kgGFuoa3GwRLeDlZu/Tc0ODLnJEolpRzCmkbCDybYk3Cee1Ub3xNi/vUsVZfXyuTw2Mt
+         u5xOWvUSAg10I5uEu6jJkAq8rZb1NrSRO4QgVB+vcDUlefmTrE/yYdX+ixVSmiuaxc/0
+         cnFNX7Bc3n+ZY6Hyh29UOGk8H877pmrr9axN3lWbVjDVen+SKXQKvQf7bvgm1pLO7x0m
+         pdlw==
+X-Gm-Message-State: APzg51C8kOc5kPvCCrgK7NK3MPaS7f+0mKB28FtbBsncH9A0yYfXwuMF
+        hY9HZGGfr/YLoyjiwL31+XQ=
+X-Google-Smtp-Source: ANB0VdaNCVtXkPqbcKgqaApmyShMRCJ8M1YDtsqz4p8jA4h/nFKPAfOjYuUvafsU5MfuYgL63fLpwA==
+X-Received: by 2002:a1c:ac1:: with SMTP id 184-v6mr6060079wmk.119.1537524055440;
+        Fri, 21 Sep 2018 03:00:55 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id m68-v6sm8894354wmb.10.2018.09.21.03.00.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 03:00:54 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] media: pxa_camera: Fix check for pdev->dev.of_node
+Date:   Fri, 21 Sep 2018 03:00:45 -0700
+Message-Id: <20180921100045.20181-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920172527.GB18934@arrakis.emea.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 06:25:29PM +0100, Catalin Marinas wrote:
-> On Wed, Jun 06, 2018 at 12:31:21PM +0530, Chintan Pandya wrote:
-> > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> > index 8ae5d7a..65f8627 100644
-> > --- a/arch/arm64/mm/mmu.c
-> > +++ b/arch/arm64/mm/mmu.c
-> > @@ -45,6 +45,7 @@
-> >  #include <asm/memblock.h>
-> >  #include <asm/mmu_context.h>
-> >  #include <asm/ptdump.h>
-> > +#include <asm/tlbflush.h>
-> >  
-> >  #define NO_BLOCK_MAPPINGS	BIT(0)
-> >  #define NO_CONT_MAPPINGS	BIT(1)
-> > @@ -977,12 +978,51 @@ int pmd_clear_huge(pmd_t *pmdp)
-> >  	return 1;
-> >  }
-> >  
-> > -int pud_free_pmd_page(pud_t *pud, unsigned long addr)
-> > +int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
-> >  {
-> > -	return pud_none(*pud);
-> > +	pte_t *table;
-> > +	pmd_t pmd;
-> > +
-> > +	pmd = READ_ONCE(*pmdp);
-> > +
-> > +	/* No-op for empty entry and WARN_ON for valid entry */
-> > +	if (!pmd_present(pmd) || !pmd_table(pmd)) {
-> > +		VM_WARN_ON(!pmd_table(pmd));
-> > +		return 1;
-> > +	}
-> 
-> What's this VM_WARN_ON supposed to do here? If the pmd is 0, we trigger
-> it all the time. Did you actually mean something like:
-> 
-> 		VM_WARN_ON(!pmd_none(pmd));
-> 
-> or pmd_present(pmd)?
-> 
-> Since the comment mentions empty entry, I'd rather make it explicit:
-> 
-> 	if (pmd_none(pmd) || !pmd_table(pmd))
-> 		VM_WARN_ON(!pmd_none(pmd));
-> 		return 1;
-> 	}
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context.
 
-Ignore this, fixed in -rc4 (fac880c7d074 "arm64: fix erroneous warnings
-in page freeing functions").
+drivers/media/platform/pxa_camera.c:2400:17: warning: address of
+'pdev->dev.of_node' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (&pdev->dev.of_node && !pcdev->pdata) {
+             ~~~~~~~~~~^~~~~~~ ~~
+1 warning generated.
 
+Judging from the rest of the kernel, it seems like this was an error and
+just the value of of_node should be checked rather than the address.
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/media/platform/pxa_camera.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
+index 3288d22de2a0..6717834e8041 100644
+--- a/drivers/media/platform/pxa_camera.c
++++ b/drivers/media/platform/pxa_camera.c
+@@ -2397,7 +2397,7 @@ static int pxa_camera_probe(struct platform_device *pdev)
+ 	pcdev->res = res;
+ 
+ 	pcdev->pdata = pdev->dev.platform_data;
+-	if (&pdev->dev.of_node && !pcdev->pdata) {
++	if (pdev->dev.of_node && !pcdev->pdata) {
+ 		err = pxa_camera_pdata_from_dt(&pdev->dev, pcdev, &pcdev->asd);
+ 	} else {
+ 		pcdev->platform_flags = pcdev->pdata->flags;
 -- 
-Catalin
+2.19.0
+
