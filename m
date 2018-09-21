@@ -2,132 +2,988 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06161ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 04:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3759ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A0421547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 04:58:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="4g+TUu/M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A0421547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FD0521522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:07:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD0521522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electromag.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389093AbeIUKp2 (ORCPT
+        id S2389035AbeIUKy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 06:45:28 -0400
-Received: from mail-bl2nam02on0049.outbound.protection.outlook.com ([104.47.38.49]:11863
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727795AbeIUKp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 06:45:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ibWmHN57ILrwpYv1tNg7uyh3pNeHJc0uVFGLhbrhS80=;
- b=4g+TUu/MCraqMMEadRLeJcVkdP91cHzK79euPU1CB50bRBfoO/Zb16x7iGRfpvLLl44+7sZl4+vzzouwsZ1W+T3YPTyrqpXizlsXnyNf/ucjPxeIxrTfq5LGku6S9QTc6ukYU8jkHnsoR3fDZzZNBqGqjjew3u531dCZXg6J/Gk=
-Received: from CY4PR1201MB2534.namprd12.prod.outlook.com (10.172.121.7) by
- CY4PR1201MB0246.namprd12.prod.outlook.com (10.172.79.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Fri, 21 Sep 2018 04:58:18 +0000
-Received: from CY4PR1201MB2534.namprd12.prod.outlook.com
- ([fe80::b08f:8c8e:9b73:a942]) by CY4PR1201MB2534.namprd12.prod.outlook.com
- ([fe80::b08f:8c8e:9b73:a942%9]) with mapi id 15.20.1143.017; Fri, 21 Sep 2018
- 04:58:18 +0000
-From:   Jiandi An <jiandi@amd.com>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-CC:     Dave Airlie <airlied@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        Dave Airlie <airlied@linux.ie>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>
-Subject: Re: [virtio-dev] [PATCH 2/2] drm/virtio: add iommu support.
-Thread-Topic: [virtio-dev] [PATCH 2/2] drm/virtio: add iommu support.
-Thread-Index: AQHUP5Ky9o6EaoAaAUKshOjpemWQV6TfQrMAgAyj3wCAAG3ngIAKHNIAgAC24gCAACmmAIAASX+AgACvr4CAAI0ggIABeCMA
-Date:   Fri, 21 Sep 2018 04:58:18 +0000
-Message-ID: <95778dd4-8aca-eff6-f84a-c8efdd3b355d@amd.com>
-References: <20180829122026.27012-1-kraxel@redhat.com>
- <20180829122026.27012-3-kraxel@redhat.com>
- <CAPM=9tyXc41DAkgjCRojrqH28qkirxgrpgNmrwu4WAeLpg7tAw@mail.gmail.com>
- <9bf20fa1-3752-edd1-588c-e38cd166c3af@amd.com>
- <20180912072541.nagfrr2dgy34szcx@sirius.home.kraxel.org>
- <5684a3fc-3605-7bb0-b0be-418c2ae702b5@amd.com>
- <20180919044600.utvnu5l6fvvi2qi4@sirius.home.kraxel.org>
- <d4c25272-9df8-33d6-d310-964b17a8c80d@amd.com>
- <20180919113807.6mwqxkdg6f55h6fg@sirius.home.kraxel.org>
- <bb7b8676-cf39-3144-2de1-389f4b0a70b3@amd.com>
- <20180920063201.nt7kw555s4clshzr@sirius.home.kraxel.org>
-In-Reply-To: <20180920063201.nt7kw555s4clshzr@sirius.home.kraxel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DM6PR05CA0001.namprd05.prod.outlook.com
- (2603:10b6:5:f8::14) To CY4PR1201MB2534.namprd12.prod.outlook.com
- (2603:10b6:903:da::7)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jiandi.An@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR1201MB0246;20:WrKfpOQ34BP8vGSLcBfEAC8dJxYZ2nELXX5Mqn/vJ/W09kgHOaEsj03pztoISthGRfzKtOHIZx8uALaU9aew68OZOLoZky91gD1CVXJJgxJ1IFNZ/F2cuuAwZeaW4jStz9P8YwCowQEGt9BkOmKEUb9V5KfmntAcyy43bo02+KpruTcEyOSE/24/mJ/n63+gM7Ld8aavt/ojpATsrFODMG0uK8hXmRO4jmA6lCPgWTrR4D71gB/6etd7qkY5SBmQ
-x-ms-office365-filtering-correlation-id: 130927ec-3f6f-474f-c39a-08d61f7ed8d5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:CY4PR1201MB0246;
-x-ms-traffictypediagnostic: CY4PR1201MB0246:
-x-microsoft-antispam-prvs: <CY4PR1201MB0246DA1E8F06B0CC03A45682FD120@CY4PR1201MB0246.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:CY4PR1201MB0246;BCL:0;PCL:0;RULEID:;SRVR:CY4PR1201MB0246;
-x-forefront-prvs: 0802ADD973
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(346002)(39860400002)(376002)(199004)(189003)(476003)(52116002)(99286004)(5250100002)(4326008)(2900100001)(93886005)(6116002)(3846002)(6916009)(76176011)(6436002)(5660300001)(316002)(36756003)(54906003)(6246003)(6512007)(53936002)(305945005)(7736002)(31696002)(66066001)(25786009)(6486002)(97736004)(8936002)(39060400002)(6506007)(386003)(26005)(2616005)(229853002)(102836004)(486006)(68736007)(81166006)(106356001)(478600001)(81156014)(72206003)(8676002)(446003)(11346002)(186003)(53546011)(14454004)(256004)(105586002)(31686004)(2906002)(71200400001)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR1201MB0246;H:CY4PR1201MB2534.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: pV/X4nl1KSJLIqSxA/WBREpVSQ7jjfHmzoiTLGXSD0xOH2m2mKxDEkxpI/hqVoK1WxouS4fgvEdtV0cbOOrR6XVrgCWE4meYqQ/kbBMbKgDBDgucF8O45hK3mIsOtqerAmujnEzLw7O/dl5Ycf9zHf+ZgSQIlx/Ubogf3WYr7qc/CFfFf6R6gLrY/vbT4LcJIeSqG1KJXhScU0m+RyF0DCehHMpLYm7v2eUcFzK1LqKiMm8eyKFJ1xRu/K6CPv6i6tW3YGVA1b0X4I3N2jf3K3CvH7OniwJgakdavguZ7qmNTcjM/u6H1S3RW3DerhlabWlxT+AXsST1+uHcZuJSL5CWNT3uTt3leS1UcCwNhtE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A55590094CBC3D46ABD4777523194B0A@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 21 Sep 2018 06:54:28 -0400
+Received: from anchovy3.45ru.net.au ([203.30.46.155]:50766 "EHLO
+        anchovy3.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbeIUKy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 06:54:27 -0400
+Received: (qmail 27172 invoked by uid 5089); 21 Sep 2018 05:07:18 -0000
+Received: by simscan 1.2.0 ppid: 27085, pid: 27086, t: 0.1382s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+Received: from unknown (HELO ?192.168.0.122?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy2.45ru.net.au with ESMTPA; 21 Sep 2018 05:07:18 -0000
+Subject: Re: [PATCH] iio: magnetometer: Add support for PNI RM3100 9-axis
+ magnetometer
+To:     Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Song Qiang <songqiang1304521@gmail.com>
+Cc:     jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180920131340.6699-1-songqiang1304521@gmail.com>
+ <alpine.DEB.2.21.1809201522370.1482@vps.pmeerw.net>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <5a4d3868-902c-494e-76e4-4141ff5ec855@electromag.com.au>
+Date:   Fri, 21 Sep 2018 13:07:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 130927ec-3f6f-474f-c39a-08d61f7ed8d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 04:58:18.7545
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0246
+In-Reply-To: <alpine.DEB.2.21.1809201522370.1482@vps.pmeerw.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA5LzIwLzIwMTggMDE6MzIgQU0sIEdlcmQgSG9mZm1hbm4gd3JvdGU6DQo+ICAgSGks
-DQo+IA0KPj4gdm9pZCB2aXJ0aW9fZ3B1X2NtZF90cmFuc2Zlcl90b19ob3N0XzJkKHN0cnVjdCB2
-aXJ0aW9fZ3B1X2RldmljZSAqdmdkZXYsDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgdWludDMyX3QgcmVzb3VyY2VfaWQsIHVpbnQ2NF90IG9mZnNldCwNCj4+IC4u
-Lg0KPj4gICAgICBzdHJ1Y3QgdmlydGlvX2dwdV9mYmRldiAqdmdmYmRldiA9IHZnZGV2LT52Z2Zi
-ZGV2Ow0KPj4gICAgICBzdHJ1Y3QgdmlydGlvX2dwdV9mcmFtZWJ1ZmZlciAqZmIgPSAmdmdmYmRl
-di0+dmdmYjsNCj4+ICAgICAgc3RydWN0IHZpcnRpb19ncHVfb2JqZWN0ICpvYmogPSBnZW1fdG9f
-dmlydGlvX2dwdV9vYmooZmItPmJhc2Uub2JqWzBdKTsNCj4gDQo+IEFoLCByaWdodC4gIFNob3Vs
-ZCBoYXZlIG5vdGljZWQgdGhpcyBvbiByZXZpZXcuICBZb3Ugc3luYyB0aGUgZmJjb24NCj4gZnJh
-bWVidWZmZXIgdW5jb25maXRpb25hbGx5IC4uLg0KPiANCj4+IElzIHRoZXJlIGJldHRlciB3YXkg
-dG8gZ2V0IHRvIHRoZSB2aXJ0aW9fZ3B1X29iamVjdCBjcmVhdGVkIGluIHRoZQ0KPj4gdmlydGlv
-X2dwdV9tb2RlX2R1bWJfY3JlYXRlKCkgcGF0aCBmcm9tIHZpcnRpb19ncHVfZGV2aWNlIG9yIHNv
-bWVob3cgZnJvbSBkcm1fZmlsZQ0KPj4gdmlhIGdlbV9oYW5kbGUgZG93biBhdCB0aGUgbGF5ZXIg
-b2YgdmlydGlvX2dwdV9jbWRfdHJhbnNmZXJfdG9faG9zdCgpPw0KPiANCj4gSnVzdCBwYXNzIGl0
-IGRvd24sIHRoZSBjYWxsIHNpdGVzIGFsbCBrbm93IGl0IChzZWUgcGF0Y2gganVzdCBzZW50KS4N
-Cg0KVGVzdGVkIHRoYXQgcGF0Y2ggeW91IHNlbnQuICBUb2dldGhlciB3aXRoIHRoaXMgcGF0Y2gg
-aXQgYWxzbyByZXNvbHZlcw0KdGhlIHZpcnRpbyBncHUgZ3JhcGhpY2FsIGRpc3BsYXkgaXNzdWUg
-Zm9yIFNFViBndWVzdC4NCg0KSXMgdGhlcmUgYSB3YXkgdG8gb3B0aW1pemUgdGhlIGRtYV9zeW5j
-X3NnIHRvIG9ubHkgc3luYyBvbiB0aGUgcGFnZXMNCmJlaW5nIHVwZGF0ZWQgaW5zdGVhZCBvZiBh
-bGwgdGhlIHBhZ2VzIGluIHRoZSBvYmogc2dsIGxpc3QgZXZlcnkgdGltZT8NCg0KVGhhbmtzLg0K
-LSBKaWFuZGkNCg0KPiANCj4gY2hlZXJzLA0KPiAgIEdlcmQNCj4gDQo=
+G'day Song,
+
+One more comment below.
+On 20/09/2018 9:46 PM, Peter Meerwald-Stadler wrote:
+> On Thu, 20 Sep 2018, Song Qiang wrote:
+> 
+>> PNI RM3100 magnetometer is a high resolution, large signal immunity
+>> magnetometer, composed of 3 single sensors and a processing chip.
+>> PNI is currently not in the vendors list, so this is also adding it.
+> 
+> comments below
+> 
+>>
+>> Following functions are available:
+>>   - Single-shot measurement from
+>>     /sys/bus/iio/devices/iio:deviceX/in_magn_{axis}_raw
+>>   - Triggerd buffer measurement.
+>>   - Both i2c and spi interface are supported.
+>>   - Both interrupt and polling measurement is supported, depands on if
+>>     the 'interrupts' in DT is declared.
+>>
+>> Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
+>> ---
+>>   .../bindings/iio/magnetometer/pni,rm3100.txt  |  57 +++
+>>   .../devicetree/bindings/vendor-prefixes.txt   |   1 +
+>>   MAINTAINERS                                   |  10 +
+>>   drivers/iio/magnetometer/Kconfig              |  29 ++
+>>   drivers/iio/magnetometer/Makefile             |   4 +
+>>   drivers/iio/magnetometer/rm3100-core.c        | 399 ++++++++++++++++++
+>>   drivers/iio/magnetometer/rm3100-i2c.c         |  66 +++
+>>   drivers/iio/magnetometer/rm3100-spi.c         |  72 ++++
+>>   drivers/iio/magnetometer/rm3100.h             |  90 ++++
+>>   9 files changed, 728 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+>>   create mode 100644 drivers/iio/magnetometer/rm3100-core.c
+>>   create mode 100644 drivers/iio/magnetometer/rm3100-i2c.c
+>>   create mode 100644 drivers/iio/magnetometer/rm3100-spi.c
+>>   create mode 100644 drivers/iio/magnetometer/rm3100.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt b/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+>> new file mode 100644
+>> index 000000000000..d0d2063e943f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+>> @@ -0,0 +1,57 @@
+>> +* PNI RM3100 9-axis magnetometer sensor
+>> +
+>> +I2C Bus:
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "pni,rm3100-i2c"
+>> +- reg : the I2C address of the magnetometer
+>> +
+>> +Optional properties:
+>> +
+>> +- interrupts: data ready (DRDY) from the chip.
+>> +  The interrupts can be triggered on rising edges.
+>> +
+>> +	Refer to interrupt-controller/interrupts.txt for generic
+>> +	interrupt client node bindings.
+>> +
+>> +- pinctrl-*: pinctrl setup for DRDY line.
+>> +
+>> +Example:
+>> +
+>> +rm3100: rm3100@20 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&rm3100_pins>;
+>> +
+>> +	compatible = "pni,rm3100-i2c";
+>> +	reg = <0x20>;
+>> +	interrupt-parent = <&gpio0>;
+>> +	interrupts = <4 IRQ_TYPE_EDGE_RISING>;
+>> +};
+>> +
+>> +SPI Bus:
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "pni,rm3100-spi"
+>> +- reg : address of sensor, usually 0 or 1.
+>> +
+>> +Optional properties:
+>> +
+>> +- interrupts: data ready (DRDY) from the chip.
+>> +  The interrupts can be triggered on rising edges.
+>> +
+>> +	Refer to interrupt-controller/interrupts.txt for generic
+>> +	interrupt client node bindings.
+>> +
+>> +- pinctrl-*: pinctrl setup for DRDY line, depands on archtechture.
+> 
+> depends
+> architecture
+> 
+>> +
+>> +Example:
+>> +
+>> +rm3100: rm3100@0{
+>> +	compatible = "pni,rm3100-spi";
+>> +	reg = <0>;
+>> +
+>> +	interrupt-parent = <&gpio0>;
+>> +	interrupts = <4 IRQ_TYPE_EDGE_RISING>;
+>> +};
+>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> index 41f0b97eb933..5bf3395fe9ae 100644
+>> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+>> @@ -288,6 +288,7 @@ pine64	Pine64
+>>   pixcir  PIXCIR MICROELECTRONICS Co., Ltd
+>>   plathome	Plat'Home Co., Ltd.
+>>   plda	PLDA
+>> +pni     PNI
+>>   portwell	Portwell Inc.
+>>   poslab	Poslab Technology Co., Ltd.
+>>   powervr	PowerVR (deprecated, use img)
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 967ce8cdd1cc..30ee8cf98312 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -11393,6 +11393,16 @@ M:	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+>>   S:	Maintained
+>>   F:	drivers/pnp/
+>>   
+>> +PNI RM3100 IIO DRIVER
+>> +M:	Song Qiang <songqiang1304521@gmail.com>
+>> +L:	linux-iio@vger.kernel.org
+>> +S:	Maintained
+>> +F:	drivers/iio/magnetometer/rm3100-core.c
+>> +F:	drivers/iio/magnetometer/rm3100-i2c.c
+>> +F:	drivers/iio/magnetometer/rm3100-spi.c
+>> +F:	drivers/iio/magnetometer/rm3100.h
+>> +F:	Documentation/devicetree/bindings/iio/magnetometer/rm3100.txt
+>> +
+>>   POSIX CLOCKS and TIMERS
+>>   M:	Thomas Gleixner <tglx@linutronix.de>
+>>   L:	linux-kernel@vger.kernel.org
+>> diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
+>> index ed9d776d01af..f130b866a4fc 100644
+>> --- a/drivers/iio/magnetometer/Kconfig
+>> +++ b/drivers/iio/magnetometer/Kconfig
+>> @@ -175,4 +175,33 @@ config SENSORS_HMC5843_SPI
+>>   	  - hmc5843_core (core functions)
+>>   	  - hmc5843_spi (support for HMC5983)
+>>   
+>> +config SENSORS_RM3100
+>> +	tristate
+>> +	select IIO_BUFFER
+>> +	select IIO_TRIGGERED_BUFFER
+>> +
+>> +config SENSORS_RM3100_I2C
+>> +	tristate "PNI RM3100 9-Axis Magnetometer (I2C)"
+>> +	depends on I2C
+>> +	select SENSORS_RM3100
+>> +	select REGMAP_I2C
+>> +	help
+>> +	  Say Y here to add support for the PNI RM3100 9-Axis Magnetometer.
+>> +
+>> +	  This driver can also be compiled as a module.
+>> +	  To compile this driver as a module, choose M here: the module
+>> +	  will be called rm3100-i2c.
+>> +
+>> +config SENSORS_RM3100_SPI
+>> +	tristate "PNI RM3100 9-Axis Magnetometer (SPI)"
+>> +	depends on SPI_MASTER
+>> +	select SENSORS_RM3100
+>> +	select REGMAP_SPI
+>> +	help
+>> +	  Say Y here to add support for the PNI RM3100 9-Axis Magnetometer.
+>> +
+>> +	  This driver can also be compiled as a module.
+>> +	  To compile this driver as a module, choose M here: the module
+>> +	  will be called rm3100-spi.
+>> +
+>>   endmenu
+>> diff --git a/drivers/iio/magnetometer/Makefile b/drivers/iio/magnetometer/Makefile
+>> index 664b2f866472..ba1bc34b82fa 100644
+>> --- a/drivers/iio/magnetometer/Makefile
+>> +++ b/drivers/iio/magnetometer/Makefile
+>> @@ -24,3 +24,7 @@ obj-$(CONFIG_IIO_ST_MAGN_SPI_3AXIS) += st_magn_spi.o
+>>   obj-$(CONFIG_SENSORS_HMC5843)		+= hmc5843_core.o
+>>   obj-$(CONFIG_SENSORS_HMC5843_I2C)	+= hmc5843_i2c.o
+>>   obj-$(CONFIG_SENSORS_HMC5843_SPI)	+= hmc5843_spi.o
+>> +
+>> +obj-$(CONFIG_SENSORS_RM3100)		+= rm3100-core.o
+>> +obj-$(CONFIG_SENSORS_RM3100_I2C)	+= rm3100-i2c.o
+>> +obj-$(CONFIG_SENSORS_RM3100_SPI)	+= rm3100-spi.o
+>> diff --git a/drivers/iio/magnetometer/rm3100-core.c b/drivers/iio/magnetometer/rm3100-core.c
+>> new file mode 100644
+>> index 000000000000..55d515e0fe67
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100-core.c
+>> @@ -0,0 +1,399 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * PNI RM3100 9-axis geomagnetic sensor driver core.
+>> + *
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + *
+>> + * User Manual available at
+>> + * <https://www.pnicorp.com/download/rm3100-user-manual/>
+>> + *
+>> + * TODO: Scale channel, event generaton, pm.
+> 
+> at least read support for _SCALE is mandatory, IMHO
+> 
+>> + */
+>> +
+>> +#include <linux/delay.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include <linux/iio/iio.h>
+>> +#include <linux/iio/triggered_buffer.h>
+>> +#include <linux/iio/trigger_consumer.h>
+>> +#include <linux/iio/buffer.h>
+>> +#include <linux/iio/kfifo_buf.h>
+>> +
+>> +#include "rm3100.h"
+>> +
+>> +static const struct regmap_range rm3100_readable_ranges[] = {
+>> +		regmap_reg_range(RM_W_REG_START, RM_W_REG_END),
+>> +};
+>> +
+>> +const struct regmap_access_table rm3100_readable_table = {
+> 
+> static
+> 
+>> +		.yes_ranges = rm3100_readable_ranges,
+>> +		.n_yes_ranges = ARRAY_SIZE(rm3100_readable_ranges),
+>> +};
+>> +
+>> +static const struct regmap_range rm3100_writable_ranges[] = {
+>> +		regmap_reg_range(RM_R_REG_START, RM_R_REG_END),
+>> +};
+>> +
+>> +const struct regmap_access_table rm3100_writable_table = {
+> 
+> static
+> 
+>> +		.yes_ranges = rm3100_writable_ranges,
+>> +		.n_yes_ranges = ARRAY_SIZE(rm3100_writable_ranges),
+>> +};
+>> +
+>> +static const struct regmap_range rm3100_volatile_ranges[] = {
+>> +		regmap_reg_range(RM_V_REG_START, RM_V_REG_END),
+>> +};
+>> +
+>> +const struct regmap_access_table rm3100_volatile_table = {
+> 
+> static
+> 
+>> +		.yes_ranges = rm3100_volatile_ranges,
+>> +		.n_yes_ranges = ARRAY_SIZE(rm3100_volatile_ranges),
+>> +};
+>> +
+>> +static irqreturn_t rm3100_measurement_irq_handler(int irq, void *d)
+>> +{
+>> +	struct rm3100_data *data = d;
+>> +
+>> +	complete(&data->measuring_done);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int rm3100_wait_measurement(struct rm3100_data *data)
+>> +{
+>> +	struct regmap *regmap = data->regmap;
+>> +	unsigned int val;
+>> +	u16 tries = 20;
+> 
+> why not use int for tries?
+> 
+>> +	int ret;
+>> +
+>> +	/* A read cycle of 400kbits i2c bus is about 20us, plus the time
+>> +	 * used for schduling, a read cycle of fast mode of this device
+> 
+> scheduling
+> 
+>> +	 * can reach 1.7ms, it may be possible for data arrives just
+> 
+> to arrive
+> 
+>> +	 * after we check the RM_REG_STATUS. In this case, irq_handler is
+>> +	 * called before measuring_done is reinitialized, it will wait
+>> +	 * forever for a data that has already been ready.
+> 
+> for data
+> 
+>> +	 * Reinitialize measuring_done before looking up makes sure we
+>> +	 * will always capture interrupt no matter when it happened.
+>> +	 */
+>> +	if (data->use_interrupt)
+>> +		reinit_completion(&data->measuring_done);
+>> +
+>> +	ret = regmap_read(regmap, RM_REG_STATUS, &val);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if ((val & RM_STATUS_DRDY) != RM_STATUS_DRDY) {
+>> +		if (data->use_interrupt) {
+>> +			ret = wait_for_completion_timeout(&data->measuring_done,
+>> +				msecs_to_jiffies(data->conversion_time));
+>> +			if (!ret)
+>> +				return -ETIMEDOUT;
+>> +		} else {
+>> +			do {
+>> +				ret = regmap_read(regmap, RM_REG_STATUS, &val);
+>> +				if (ret < 0)
+>> +					return ret;
+>> +
+>> +				if (val & RM_STATUS_DRDY)
+>> +					break;
+>> +
+>> +				usleep_range(1000, 5000);
+>> +			} while (--tries);
+>> +			if (!tries)
+>> +				return -ETIMEDOUT;
+>> +		}
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static int rm3100_read_mag(struct rm3100_data *data, int idx, int *val)
+>> +{
+>> +	struct regmap *regmap = data->regmap;
+>> +	u8 buffer[3];
+>> +	int ret;
+>> +
+>> +	mutex_lock(&data->lock);
+>> +	ret = rm3100_wait_measurement(data);
+>> +	if (ret < 0) {
+>> +		mutex_unlock(&data->lock);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regmap_bulk_read(regmap, RM_REG_MX2 + 3 * idx, buffer, 3);
+> 
+> sizeof(buf)
+> 
+>> +	mutex_unlock(&data->lock);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	*val = le32_to_cpu((buffer[0] << 16) + (buffer[1] << 8) + buffer[2]);
+> 
+> no need for le32_to_cpu()
+> 
+>> +	*val = sign_extend32(*val, 23);
+>> +
+>> +	return IIO_VAL_INT;
+>> +}
+>> +
+>> +#define RM_CHANNEL(axis, idx)					\
+> 
+> use RM3100_ prefix please
+> 
+>> +	{								\
+>> +		.type = IIO_MAGN,					\
+>> +		.modified = 1,						\
+>> +		.channel2 = IIO_MOD_##axis,				\
+>> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+>> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
+>> +		.scan_index = idx,					\
+>> +		.scan_type = {						\
+>> +			.sign = 's',					\
+>> +			.realbits = 24,					\
+>> +			.storagebits = 32,				\
+>> +			.shift = 8,					\
+>> +			.endianness = IIO_LE,				\
+>> +		},							\
+>> +	}
+>> +
+>> +static const struct iio_chan_spec rm3100_channels[] = {
+>> +	RM_CHANNEL(X, 0),
+>> +	RM_CHANNEL(Y, 1),
+>> +	RM_CHANNEL(Z, 2),
+>> +	IIO_CHAN_SOFT_TIMESTAMP(3),
+>> +};
+>> +
+>> +static const unsigned long rm3100_scan_masks[] = {GENMASK(2, 0), 0};
+>> +
+>> +#define RM_SAMP_NUM	14
+> 
+> prefix
+> 
+>> +
+>> +/* Frequency : rm3100_samp_rates[][0].rm3100_samp_rates[][1]Hz.
+>> + * Time between reading: rm3100_sam_rates[][2]ms (The first on is actially 1.7).
+> 
+> one
+> actually
+> 1.7 what unit?
+> 
+> 
+>> + */
+>> +static const int rm3100_samp_rates[RM_SAMP_NUM][3] = {
+>> +	{600, 0, 2}, {300, 0, 3}, {150, 0, 7}, {75, 0, 13}, {37, 0, 27},
+>> +	{18, 0, 55}, {9, 0, 110}, {4, 500000, 220}, {2, 300000, 440},
+>> +	{1, 200000, 800}, {0, 600000, 1600}, {0, 300000, 3300},
+>> +	{0, 15000, 6700},  {0, 75000, 13000}
+>> +};
+>> +
+>> +static int rm3100_get_samp_freq(struct rm3100_data *data, int *val, int *val2)
+>> +{
+>> +	int ret;
+>> +	int tmp;
+>> +
+>> +	ret = regmap_read(data->regmap, RM_REG_TMRC, &tmp);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +	*val = rm3100_samp_rates[tmp-RM_TMRC_OFFSET][0];
+> 
+> space around - operator
+> 
+>> +	*val2 = rm3100_samp_rates[tmp-RM_TMRC_OFFSET][1];
+>> +
+>> +	return IIO_VAL_INT_PLUS_MICRO;
+>> +}
+>> +
+>> +static int rm3100_set_samp_freq(struct rm3100_data *data, int val, int val2)
+>> +{
+>> +	struct regmap *regmap = data->regmap;
+>> +	int cycle_count;
+>> +	int ret;
+>> +	int i;
+>> +
+>> +	/* All cycle count registers use the same value. */
+>> +	ret = regmap_read(regmap, RM_REG_CCXL, &cycle_count);
+> 
+> check ret?
+> 
+>> +	if (cycle_count < 0)
+>> +		return cycle_count;
+>> +
+>> +	for (i = 0; i < RM_SAMP_NUM; i++) {
+>> +		if (val == rm3100_samp_rates[i][0] &&
+>> +			val2 == rm3100_samp_rates[i][1])
+>> +			break;
+>> +	}
+>> +
+>> +	if (i != RM_SAMP_NUM) {
+>> +		mutex_lock(&data->lock);
+>> +		ret = regmap_write(regmap, RM_REG_TMRC, i + RM_TMRC_OFFSET);
+>> +		if (ret < 0)
+> 
+> unlock?
+> 
+>> +			return ret;
+>> +
+>> +		/* Checking if cycle count registers need changing. */
+>> +		if (val == 600 && cycle_count == 200) {
+>> +			for (i = 0; i < 3; i++) {
+>> +				regmap_write(regmap, RM_REG_CCXL + 2 * i, 100);
+>> +				if (ret < 0)
+> 
+> unlock?
+> 
+>> +					return ret;
+>> +			}
+>> +		} else if (val != 600 && cycle_count == 100) {
+>> +			for (i = 0; i < 3; i++) {
+>> +				regmap_write(regmap, RM_REG_CCXL + 2 * i, 200);
+>> +				if (ret < 0)
+> 
+> unlock?
+> 
+>> +					return ret;
+>> +			}
+>> +		}
+>> +		/* Writing TMRC registers requires CMM reset. */
+>> +		ret = regmap_write(regmap, RM_REG_CMM, 0);
+>> +		if (ret < 0)
+> 
+> unlock?
+> 
+>> +			return ret;
+>> +		ret = regmap_write(regmap, RM_REG_CMM, RM_CMM_PMX |
+>> +			RM_CMM_PMY | RM_CMM_PMZ | RM_CMM_START);
+>> +		if (ret < 0)
+> 
+> unlock?
+> 
+>> +			return ret;
+>> +		mutex_unlock(&data->lock);
+>> +
+>> +		data->conversion_time = rm3100_samp_rates[i][2] + 3000;
+>> +		return 0;
+>> +	}
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +static int rm3100_read_raw(struct iio_dev *indio_dev,
+>> +			   const struct iio_chan_spec *chan,
+>> +			   int *val, int *val2, long mask)
+>> +{
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +	int ret;
+>> +
+>> +	switch (mask) {
+>> +	case IIO_CHAN_INFO_RAW:
+>> +		ret = iio_device_claim_direct_mode(indio_dev);
+>> +		if (ret < 0)
+> 
+> release_direct_mode() here?
+> 
+>> +			return ret;
+>> +		ret = rm3100_read_mag(data, chan->scan_index, val);
+>> +		iio_device_release_direct_mode(indio_dev);
+>> +
+>> +		return ret;
+>> +	case IIO_CHAN_INFO_SAMP_FREQ:
+>> +		return ret = rm3100_get_samp_freq(data, val, val2);
+> 
+> return ret = ???, just
+> return rm3100_...
+> 
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>> +static int rm3100_write_raw(struct iio_dev *indio_dev,
+>> +			    struct iio_chan_spec const *chan,
+>> +			    int val, int val2, long mask)
+>> +{
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +	int ret;
+>> +
+>> +	switch (mask) {
+>> +	case IIO_CHAN_INFO_SAMP_FREQ:
+>> +		ret = rm3100_set_samp_freq(data, val, val2);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +		return 0;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +}
+>> +
+>> +static const struct iio_info rm3100_info = {
+>> +	.read_raw = rm3100_read_raw,
+>> +	.write_raw = rm3100_write_raw,
+>> +};
+>> +
+>> +static irqreturn_t rm3100_trigger_handler(int irq, void *p)
+>> +{
+>> +	struct iio_poll_func *pf = p;
+>> +	struct iio_dev *indio_dev = pf->indio_dev;
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +	struct regmap *regmap = data->regmap;
+>> +	u8 *buffer;
+>> +	int ret;
+>> +	int i;
+>> +
+>> +	buffer = devm_kzalloc(data->dev, indio_dev->scan_bytes, GFP_KERNEL);
+> 
+> try to allocate the maximum needed amount of memory beforehand, in
+> _probe() perhaps
+> 
+>> +	if (!buffer)
+>> +		goto done;
+>> +
+>> +	mutex_lock(&data->lock);
+>> +	ret = rm3100_wait_measurement(data);
+>> +	if (ret < 0) {
+>> +		mutex_unlock(&data->lock);
+>> +		goto done;
+>> +	}
+>> +
+>> +	for (i = 0; i < 3; i++) {
+>> +		ret = regmap_bulk_read(regmap, RM_REG_MX2 + 3 * i,
+>> +				buffer + 4 * i, 3);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +	}
+
+Wouldn't it be better to read the 3 axis with one transaction here.
+And if required shuffle the data into the iio buffer.
+
+
+>> +	mutex_unlock(&data->lock);
+>> +
+>> +	iio_push_to_buffers_with_timestamp(indio_dev, buffer,
+>> +			iio_get_time_ns(indio_dev));
+>> +done:
+>> +	iio_trigger_notify_done(indio_dev->trig);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +int rm3100_common_probe(struct device *dev, struct regmap *regmap, int irq)
+>> +{
+>> +	struct iio_dev *indio_dev;
+>> +	struct rm3100_data *data;
+>> +	int tmp;
+>> +	int ret;
+>> +
+>> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+>> +	if (!indio_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	data = iio_priv(indio_dev);
+>> +	dev_set_drvdata(dev, indio_dev);
+>> +	data->dev = dev;
+>> +	data->regmap = regmap;
+>> +
+>> +	mutex_init(&data->lock);
+>> +
+>> +	indio_dev->dev.parent = dev;
+>> +	indio_dev->name = "rm3100";
+>> +	indio_dev->info = &rm3100_info;
+>> +	indio_dev->channels = rm3100_channels;
+>> +	indio_dev->num_channels = ARRAY_SIZE(rm3100_channels);
+>> +	indio_dev->modes = INDIO_DIRECT_MODE;
+>> +	indio_dev->available_scan_masks = rm3100_scan_masks;
+>> +
+>> +	if (!irq)
+>> +		data->use_interrupt = false;
+>> +	else {
+>> +		data->use_interrupt = true;
+>> +		ret = devm_request_irq(dev,
+>> +			irq,
+>> +			rm3100_measurement_irq_handler,
+>> +			IRQF_TRIGGER_RISING,
+>> +			indio_dev->name,
+>> +			data);
+>> +		if (ret < 0) {
+>> +			dev_err(dev,
+>> +			"request irq line failed.");
+> 
+> \n
+> 
+>> +			return -ret;
+>> +		}
+>> +		init_completion(&data->measuring_done);
+>> +	}
+>> +
+>> +	ret = iio_triggered_buffer_setup(indio_dev, NULL,
+>> +					rm3100_trigger_handler, NULL);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	/* 3sec more wait time. */
+>> +	ret = regmap_read(data->regmap, RM_REG_TMRC, &tmp);
+> 
+> check ret
+> 
+>> +	data->conversion_time = rm3100_samp_rates[tmp-RM_TMRC_OFFSET][2] + 3000;
+>> +
+>> +	/* Starting all channels' conversion. */
+>> +	ret = regmap_write(regmap, RM_REG_CMM,
+>> +		RM_CMM_PMX | RM_CMM_PMY | RM_CMM_PMZ | RM_CMM_START);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	return devm_iio_device_register(dev, indio_dev);
+>> +}
+>> +EXPORT_SYMBOL(rm3100_common_probe);
+>> +
+>> +int rm3100_common_remove(struct device *dev)
+>> +{
+>> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>> +	struct rm3100_data *data = iio_priv(indio_dev);
+>> +	struct regmap *regmap = data->regmap;
+>> +
+>> +	regmap_write(regmap, RM_REG_CMM, 0x00);
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL(rm3100_common_remove);
+>> +
+>> +MODULE_AUTHOR("Song Qiang <songqiang1304521@gmail.com>");
+>> +MODULE_DESCRIPTION("PNI RM3100 9-axis magnetometer i2c driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/iio/magnetometer/rm3100-i2c.c b/drivers/iio/magnetometer/rm3100-i2c.c
+>> new file mode 100644
+>> index 000000000000..b50dc5b1b30b
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100-i2c.c
+>> @@ -0,0 +1,66 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Support for PNI RM3100 9-axis geomagnetic sensor a i2c bus.
+>> + *
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + *
+>> + * User Manual available at
+>> + * <https://www.pnicorp.com/download/rm3100-user-manual/>
+>> + *
+>> + * i2c slave address 0x20 + SA1 << 1 + SA0.
+>> + */
+>> +
+>> +#include <linux/i2c.h>
+>> +
+>> +#include "rm3100.h"
+>> +
+>> +static const struct regmap_config rm3100_regmap_config = {
+>> +		.reg_bits = 8,
+>> +		.val_bits = 8,
+>> +
+>> +		.rd_table = &rm3100_readable_table,
+>> +		.wr_table = &rm3100_writable_table,
+>> +		.volatile_table = &rm3100_volatile_table,
+>> +
+>> +		.cache_type = REGCACHE_RBTREE,
+>> +};
+>> +
+>> +static int rm3100_probe(struct i2c_client *client)
+>> +{
+>> +	struct regmap *regmap;
+>> +
+>> +	if (!i2c_check_functionality(client->adapter,
+>> +		I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_BYTE_DATA))
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	regmap =  devm_regmap_init_i2c(client, &rm3100_regmap_config);
+>> +	if (IS_ERR(regmap))
+>> +		return PTR_ERR(regmap);
+>> +
+>> +	return rm3100_common_probe(&client->dev, regmap, client->irq);
+>> +}
+>> +
+>> +static int rm3100_remove(struct i2c_client *client)
+>> +{
+>> +	return rm3100_common_remove(&client->dev);
+>> +}
+>> +
+>> +static const struct of_device_id rm3100_dt_match[] = {
+>> +	{ .compatible = "pni,rm3100-i2c", },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rm3100_dt_match);
+>> +
+>> +static struct i2c_driver rm3100_driver = {
+>> +	.driver = {
+>> +		.name = "rm3100-i2c",
+>> +		.of_match_table = rm3100_dt_match,
+>> +	},
+>> +	.probe_new = rm3100_probe,
+>> +	.remove = rm3100_remove,
+>> +};
+>> +module_i2c_driver(rm3100_driver);
+>> +
+>> +MODULE_AUTHOR("Song Qiang <songqiang1304521@gmail.com>");
+>> +MODULE_DESCRIPTION("PNI RM3100 9-axis magnetometer i2c driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/iio/magnetometer/rm3100-spi.c b/drivers/iio/magnetometer/rm3100-spi.c
+>> new file mode 100644
+>> index 000000000000..2c7dd9e3a1a2
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100-spi.c
+>> @@ -0,0 +1,72 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Support for PNI RM3100 9-axis geomagnetic sensor a spi bus.
+>> + *
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + *
+>> + * User Manual available at
+>> + * <https://www.pnicorp.com/download/rm3100-user-manual/>
+>> + */
+>> +
+>> +#include <linux/spi/spi.h>
+>> +
+>> +#include "rm3100.h"
+>> +
+>> +static const struct regmap_config rm3100_regmap_config = {
+>> +		.reg_bits = 8,
+>> +		.val_bits = 8,
+>> +
+>> +		.rd_table = &rm3100_readable_table,
+>> +		.wr_table = &rm3100_writable_table,
+>> +		.volatile_table = &rm3100_volatile_table,
+>> +
+>> +		.read_flag_mask = 0x80,
+>> +
+>> +		.cache_type = REGCACHE_RBTREE,
+>> +};
+>> +
+>> +static int rm3100_probe(struct spi_device *spi)
+>> +{
+>> +	struct regmap *regmap;
+>> +	int ret;
+>> +
+>> +	/* Actually this device supports both mode 0 and mode 3. */
+>> +	spi->mode = SPI_MODE_0;
+>> +	/* data rates cannot exceeds 1Mbits. */
+> 
+> exceed
+> 
+>> +	spi->max_speed_hz = 1000000;
+>> +	spi->bits_per_word = 8;
+>> +	ret = spi_setup(spi);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	regmap =  devm_regmap_init_spi(spi, &rm3100_regmap_config);
+>> +	if (IS_ERR(regmap))
+>> +		return PTR_ERR(regmap);
+>> +
+>> +	return rm3100_common_probe(&spi->dev, regmap, spi->irq);
+>> +}
+>> +
+>> +static int rm3100_remove(struct spi_device *spi)
+>> +{
+>> +	return rm3100_common_remove(&spi->dev);
+>> +}
+>> +
+>> +static const struct of_device_id rm3100_dt_match[] = {
+>> +	{ .compatible = "pni,rm3100-spi", },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rm3100_dt_match);
+>> +
+>> +static struct spi_driver rm3100_driver = {
+>> +		.driver = {
+>> +				.name = "rm3100-spi",
+>> +				.of_match_table = rm3100_dt_match,
+>> +		},
+>> +		.probe = rm3100_probe,
+>> +		.remove = rm3100_remove,
+>> +};
+>> +module_spi_driver(rm3100_driver);
+>> +
+>> +MODULE_AUTHOR("Song Qiang <songqiang1304521@gmail.com>");
+>> +MODULE_DESCRIPTION("PNI RM3100 9-axis magnetometer spi driver");
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/iio/magnetometer/rm3100.h b/drivers/iio/magnetometer/rm3100.h
+>> new file mode 100644
+>> index 000000000000..5e30bc0f5149
+>> --- /dev/null
+>> +++ b/drivers/iio/magnetometer/rm3100.h
+>> @@ -0,0 +1,90 @@
+>> +/* SPDX-License-Identifier: GPL-2.0+ */
+>> +/*
+>> + * Header file for PNI RM3100 driver
+>> + *
+>> + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+>> + */
+>> +
+>> +#ifndef RM3100_CORE_H
+>> +#define RM3100_CORE_H
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +#define RM_REG_REV_ID		0x36
+>> +
+>> +/* Cycle Count Registers MSBs and LSBs. */
+>> +#define RM_REG_CCXM		0x04
+>> +#define RM_REG_CCXL		0x05
+>> +#define RM_REG_CCYM		0x06
+>> +#define RM_REG_CCYL		0x07
+>> +#define RM_REG_CCZM		0x08
+>> +#define RM_REG_CCZL		0x09
+>> +
+>> +/* Single Measurement Mode register. */
+>> +#define RM_REG_POLL		0x00
+>> +#define RM_POLL_PMX		BIT(4)
+>> +#define RM_POLL_PMY		BIT(5)
+>> +#define RM_POLL_PMZ		BIT(6)
+>> +
+>> +/* Continues Measurement Mode register. */
+>> +#define RM_REG_CMM		0x01
+>> +#define RM_CMM_START		BIT(0)
+>> +#define RM_CMM_DRDM		BIT(2)
+>> +#define RM_CMM_PMX		BIT(4)
+>> +#define RM_CMM_PMY		BIT(5)
+>> +#define RM_CMM_PMZ		BIT(6)
+>> +
+>> +/* TiMe Rate Configuration register. */
+>> +#define RM_REG_TMRC		0x0B
+>> +#define RM_TMRC_OFFSET		0x92
+>> +
+>> +/* Result Status register. */
+>> +#define RM_REG_STATUS		0x34
+>> +#define RM_STATUS_DRDY		BIT(7)
+>> +
+>> +/* Measurement result registers. */
+>> +#define RM_REG_MX2		0x24
+>> +#define RM_REG_MX1		0x25
+>> +#define RM_REG_MX0		0x26
+>> +#define RM_REG_MY2		0x27
+>> +#define RM_REG_MY1		0x28
+>> +#define RM_REG_MY0		0x29
+>> +#define RM_REG_MZ2		0x2a
+>> +#define RM_REG_MZ1		0x2b
+>> +#define RM_REG_MZ0		0x2c
+>> +
+>> +#define RM_REG_HSHAKE		0x35
+>> +
+>> +#define RM_W_REG_START		RM_REG_POLL
+>> +#define RM_W_REG_END		RM_REG_REV_ID
+>> +#define RM_R_REG_START		RM_REG_POLL
+>> +#define RM_R_REG_END		RM_REG_HSHAKE
+>> +#define RM_V_REG_START		RM_REG_MX2
+>> +#define RM_V_REG_END		RM_REG_HSHAKE
+>> +
+>> +/* Built-In Self Test reigister. */
+>> +#define RM_REG_BIST		0x33
+>> +
+>> +struct rm3100_data {
+>> +	struct device *dev;
+>> +	struct regmap *regmap;
+>> +	struct completion measuring_done;
+>> +	bool use_interrupt;
+>> +
+>> +	int conversion_time;
+>> +
+>> +	/* To protect consistency of every measurement and sampling
+>> +	 * frequency change operations.
+>> +	 */
+>> +	struct mutex lock;
+>> +};
+>> +
+>> +extern const struct regmap_access_table rm3100_readable_table;
+>> +extern const struct regmap_access_table rm3100_writable_table;
+>> +extern const struct regmap_access_table rm3100_volatile_table;
+>> +
+>> +int rm3100_common_probe(struct device *dev, struct regmap *regmap, int irq);
+>> +int rm3100_common_remove(struct device *dev);
+>> +
+>> +#endif /* RM3100_CORE_H */
+>>
+> 
+
+
+-- 
+Regards
+Phil Reid
+
