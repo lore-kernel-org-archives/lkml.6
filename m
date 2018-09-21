@@ -2,164 +2,75 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD946C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF32EECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F7F22150E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:18:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S4Mf5O7V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7F22150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 77DB721523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:21:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DB721523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391231AbeIVAIO (ORCPT
+        id S2391151AbeIVALw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:08:14 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41676 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391092AbeIVAIO (ORCPT
+        Fri, 21 Sep 2018 20:11:52 -0400
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:41916
+        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390076AbeIVALw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:08:14 -0400
-Received: by mail-pf1-f196.google.com with SMTP id h79-v6so6327857pfk.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:18:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PnL1sJkLcMPkiObGig82HmU2FMBBkb4mBsdnODpA+oI=;
-        b=S4Mf5O7Vu/aKpV2GlqRjpvbWyqyRMh4o4zTsyoiylGpL9Kvuo1OYyEhF820J2wffJM
-         7p7uO9BpJDUqLMoqBCdPJN4nYPhbBcrjz/geODh9Y4JM4jpYftr7OMbzt1cUB5ywv1rq
-         lXAlaAMAYQ6L5UDTvsm7thUT+6l7oZdeCNzHPHkju7OBApg4yM3uVHHgEOkyF9CD/b29
-         XvWJd35Wax3jIJlRuJik3tPpFPfv52gaj6OMLq0fa2/Y0IeY2c3U2v2EsfcTapOqFVkY
-         b9vYn+8G+C8vLMBcoIJuyHg4VPObUT1+h3MIZCZpnWbqr/qrYytbTp66GedXe9+6q/+Z
-         aOpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PnL1sJkLcMPkiObGig82HmU2FMBBkb4mBsdnODpA+oI=;
-        b=FSjwrLDmvGb4pphm4VLA3ER+94TjRnaUIpihtn2LJ7HReLN77ZYPHbDAXoKbyjCdV8
-         lte+nxe8rJgaVoCMdZJ+rbWBNEbme7d1fkMHR/T2HwT7lPkvsAWtKQeSi2i3ElgMSEEh
-         FssBfpl8O7Z3ojibgUs2KZKH7H2XjMwidxCs2HQrB8MTRry2fGCeXYcDGSQP3KxzcRmm
-         3qj1BdCXIHSjBBBSSAVebwiAph8yQlTDZWYBIuzGCVe5T+QGgNHT9FswfKAzAw0DW2oC
-         azM4rULbZ38KuJhW6h+qWgk3kZOHayHieKq+kF6KdyiaC2AD6kxsjfH1PDxc6WzzZsZj
-         u25g==
-X-Gm-Message-State: APzg51BSAZ31iw3Yk4u/Z5isP+AZAQzztAz1elMjdz11sHryX2DMhL/Z
-        YzSLxONC7lz+9BqKgPen4JCYMhVQvFsZ4APy8Mx8iA==
-X-Google-Smtp-Source: ANB0VdbZNK2cxV5v+gRHGGRlO9A+DhaOjw4pDEKA65QEHLdOnsrddW5ekWoVmU6Nuw47FSKF69nRxsAkblkl5Os0X4U=
-X-Received: by 2002:a62:8559:: with SMTP id u86-v6mr47899451pfd.32.1537553890077;
- Fri, 21 Sep 2018 11:18:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180921001513.12504-1-Jason@zx2c4.com> <CALCETrULOFr=oQFMVT4qxPTWEQ++G82HCuxRoA=Sr4Z8kmMbYQ@mail.gmail.com>
- <5b94d2f4-eb4a-e00e-5fdf-7f770c26f0da@virtuozzo.com> <CACT4Y+bEf3GQ7zyfFd_PDOW3Cgh0Ot+KbUo4rHij5oSPYPJUNQ@mail.gmail.com>
- <CAKwvOd=g2cyFa6MF+Zr6Sg5wPticby8BBxWN7_Zb4aKihJ3_Yw@mail.gmail.com>
-In-Reply-To: <CAKwvOd=g2cyFa6MF+Zr6Sg5wPticby8BBxWN7_Zb4aKihJ3_Yw@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 21 Sep 2018 11:17:58 -0700
-Message-ID: <CAKwvOd=j7nnpuhdZFuPuWfk76znFJ8sbkg2JGDi26mpfQY9Kog@mail.gmail.com>
-Subject: Re: [PATCH] framewarn: expand KASAN_EXTRA exception to KASAN
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>, luto@kernel.org,
-        Jason@zx2c4.com, Alexander Potapenko <glider@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 21 Sep 2018 20:11:52 -0400
+Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
+        by : HOSTING RELAY : with ESMTP
+        id 3Q2pgfJiKM0DP3Q2pgpUIn; Fri, 21 Sep 2018 11:20:47 -0700
+x-originating-ip: 107.180.71.197
+Received: from haiyangz by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
+        (envelope-from <haiyangz@linuxonhyperv2.linuxonhyperv.com>)
+        id 1g3Q2p-0002dC-86; Fri, 21 Sep 2018 11:20:47 -0700
+From:   Haiyang Zhang <haiyangz@linuxonhyperv.com>
+To:     davem@davemloft.net, netdev@vger.kernel.org
+Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
+        olaf@aepfle.de, vkuznets@redhat.com, devel@linuxdriverproject.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next,v2,0/3] hv_netvsc: Support LRO/RSC in the vSwitch
+Date:   Fri, 21 Sep 2018 18:20:34 +0000
+Message-Id: <20180921182037.10077-1-haiyangz@linuxonhyperv.com>
+X-Mailer: git-send-email 2.18.0
+Reply-To: haiyangz@microsoft.com
+X-CMAE-Envelope: MS4wfC+3JdNliwQv0Y3o5OZk4n4bzMcGaSwbWNnWqctROIV5JTkpTWmzwAk0/G1c+fYduppGJEBBLxoiapw25wZf6dhQU2qE78+OjG5XISkYHqZy/dYOXzPJ
+ Tj0F47iMlAoW50Pf2639fWydE688wAOh6KysyfxmMeW47KapMta0ScBjGjSIM9Dj05hjvmH8E0E56rGYXiV7tYXtfazU53e7Q421y2TVFcAO7tTrtvJ+7dIc
+ fUeDVIZ57MZnUiQCLVnmHFt8dHxxMZBT+qJrA5xW9YOWBdJYYn/+l2tXqH/C4IcHIdl/MEnjF5V55oS+LaS6CNJFrxKCR5AXB+9v9k9fDPnPOIbAspT3Ew+9
+ h4UWABaohN0C9K8HWC63dqIG5O/49hEf+ZZx0eJt+u8td465ASz09FJxhNppHmRK++0YDF3wCkyI7Frc0VukbONxk1tnkgHTBziq2k3vRJ7gOj21F5EtCkMP
+ R313WqNU6p7Awhs1MfF06L4APDkIEUWgMGTA2A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 10:59 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Fri, Sep 21, 2018 at 2:45 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > On Fri, Sep 21, 2018 at 11:25 AM, Andrey Ryabinin
-> > <aryabinin@virtuozzo.com> wrote:
-> > > On 09/21/2018 04:50 AM, Andy Lutomirski wrote:
-> > >> This patch seems reasonable, but you emailed the wrong people :)
-> > >>
-> > >> On Thu, Sep 20, 2018 at 5:15 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> > >>>
-> > >>> It turns out that KASAN in general will bloat stack frames in unexpected
-> > >>> ways, not just KASAN_EXTRA. So, this patch trivially changes that
-> > >>> default to be associated with KASAN instead of KASAN_EXTRA.
-> > >>>
-> > >
-> > > KASAN_EXTRA bloats stack more than just KASAN, that's why the limit is higher than just for KASAN.
-> > > If want more details, tead the changelog from commit e7c52b84fb18f08ce49b6067ae6285aca79084a8
-> > >
-> > > If anything causes "stack frame > 2048" warning for KASAN we should at least try to fix it,
-> > > I mean reduce stack usage.
-> >
-> >
-> > +Nick who is also hitting these warnings on clang/arm64 build. As far
-> > as I understand the situation there is much worse.
-> >
-> > I would be good to understand/fix the worst offenders. But the stack
-> > size increase with KASAN is a real, inherent thing. So if we live very
-> > close the edge, we can get people using different compilers and/or
-> > versions of compilers constantly breaking each other. And clang hits
-> > this warnings in lots of places today just because the current code
-> > was tailored to gcc over long period, i.e. allowing more locals where
-> > gcc happened to handle that better and having fewer locals where gcc
-> > happened to handle it worse. But for another compiler all these
-> > assumptions are significantly perturbed.
-> >
-> > Nick, do you know what frame size limit eliminates the bulk of
-> > warnings on clang? Is 3072 a reasonable limit allowing to fix the
-> > remaining outliners?
->
-> Here's a plot of the distribution from an arm64 clang build with
-> allyesconfig minus LSE_ATOMICS, BIG_ENDIAN, and GCOV:
-> https://github.com/ClangBuiltLinux/linux/issues/39#issuecomment-423621655
->
-> A value of 3072 would ignore 79 out of the 128 instances (62%).
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-A value of 4614 would ignore 95% of the instances (2 standard
-deviations of the distribution of current warnings).
+The patch adds support for LRO/RSC in the vSwitch feature. It reduces
+the per packet processing overhead by coalescing multiple TCP segments
+when possible. The feature is enabled by default on VMs running on
+Windows Server 2019 and later.
 
->
-> Some values are huge outliers.
->
-> >
-> >
-> > >>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> > >>> ---
-> > >>>  lib/Kconfig.debug | 2 +-
-> > >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>>
-> > >>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > >>> index 4966c4fbe7f7..39078a080e29 100644
-> > >>> --- a/lib/Kconfig.debug
-> > >>> +++ b/lib/Kconfig.debug
-> > >>> @@ -222,7 +222,7 @@ config ENABLE_MUST_CHECK
-> > >>>  config FRAME_WARN
-> > >>>         int "Warn for stack frames larger than (needs gcc 4.4)"
-> > >>>         range 0 8192
-> > >>> -       default 3072 if KASAN_EXTRA
-> > >>> +       default 3072 if KASAN
-> > >>>         default 2048 if GCC_PLUGIN_LATENT_ENTROPY
-> > >>>         default 1280 if (!64BIT && PARISC)
-> > >>>         default 1024 if (!64BIT && !PARISC)
-> > >>> --
-> > >>> 2.19.0
->
->
->
-> --
-> Thanks,
-> ~Nick Desaulniers
+The patch set also adds ethtool command handler and documents.
 
+Haiyang Zhang (3):
+  hv_netvsc: Add support for LRO/RSC in the vSwitch
+  hv_netvsc: Add handler for LRO setting change
+  hv_netvsc: Update document for LRO/RSC support
 
+ Documentation/networking/netvsc.txt |  9 +++
+ drivers/net/hyperv/hyperv_net.h     | 51 ++++++++++++---
+ drivers/net/hyperv/netvsc.c         | 18 ++++--
+ drivers/net/hyperv/netvsc_drv.c     | 58 ++++++++++++-----
+ drivers/net/hyperv/rndis_filter.c   | 97 +++++++++++++++++++++++++----
+ 5 files changed, 194 insertions(+), 39 deletions(-)
 
 -- 
-Thanks,
-~Nick Desaulniers
+2.18.0
+
