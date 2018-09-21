@@ -2,147 +2,255 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09201ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65476C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F3521532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:56:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Y79RRmat"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5F3521532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 1578221547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1578221547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390309AbeIUUqL (ORCPT
+        id S2390341AbeIUUqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:46:11 -0400
-Received: from mail-eopbgr720119.outbound.protection.outlook.com ([40.107.72.119]:31820
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727392AbeIUUqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:46:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fnk7NlYoJH6BS7iJLzqysAkNkqXUKK7hZ5phmbw1wj0=;
- b=Y79RRmat8ywF5yYc120C4hzpYvYvVlRoqRGpoG/YZI0wRvdUWtbIGT+j3kOMhL0xqiDjINcmJOLf/Waunjo4swYnagrPYJCtoadiujFXeZ+ISA7QzdVLu5NAYyDeEi4p1nazBcNAo4J9Oe7ATCVvCFJ4E6r0sxc54ybObyIxrs8=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.5; Fri, 21 Sep 2018 14:56:54 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Fri, 21 Sep 2018
- 14:56:54 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-CC:     Song Qiang <songqiang1304521@gmail.com>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v6 1/2] iio: proximity: Add driver support for ST's
- VL53L0X ToF ranging sensor.
-Thread-Topic: [PATCH v6 1/2] iio: proximity: Add driver support for ST's
- VL53L0X ToF ranging sensor.
-Thread-Index: AQHUUErFdRcR/Rbme0KsaP7mPS15JKT42umAgAH7KYA=
-Date:   Fri, 21 Sep 2018 14:56:54 +0000
-Message-ID: <20180921145651.GS3821@sasha-vm>
-References: <20180918082422.13050-1-songqiang1304521@gmail.com>
- <CY4PR21MB07761FEA1CDDC87FBE5568B4FB1C0@CY4PR21MB0776.namprd21.prod.outlook.com>
- <20180920094139.000065fe@huawei.com>
-In-Reply-To: <20180920094139.000065fe@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0773;6:UcO04TPUxL5xE2Sx+K84UMhayupoKwYwbLhFg87DHNQcItgLJ2gA+O0m0FjRd8AFc9ZlRO1LcczP2G1YDAgg3SV2HhQFqfhqzwLrtlF9TgevJIZ7dGwJSDfiWwbwfshX8WjWDtV2sk0PbrTeV73lz2IiUdeqrUwPVOJ2g1iiGUfvAscWifjGOrA9vqIgZszHB5LdWI4qdgkNnrwUgxKxxJ0YWyKDMabz47WNvQqReqMStjePRgyfWsSA044rntmLY/+WycK9IekhBAmFAGgMuI03o0KgtpwqNTYPMYtT85vBC5UW0RQWLzM08MotlgAzwN7Nw1Nmq575uMxWMTylmt5yZf4pB64dpBdqtfMLz1wNZCwnGVXwSWwb745HINCPdmpyMjNi6lebxHKHvZi1ks/3ENsuWepnhkQtmnG/nHBH4++hvzEoE6hP2iW6Mupn5iHMRagxzRLk+ut/N1nKOA==;5:dEw3YTfhgaWSOXuyo08aLHdE9pJOiFrmjOjiotTgW5ezwa8SlaWs3exAutAZnaVSXR3N3LDwoG+u/Y+Ggl88510Qium1eS5WY+ANvmuM2XCib6x8lEvOvMXJFFnL65bH8jIp3MJpQQtESoN+DVau2G1sfCtcVQLvDsg+l/h/Z1U=;7:4UfiFQb2AZbq6fldDqbpZJAoMnbTthZwYsOMIrziEjPZpWoZJAuGjRXVYb+bB3odPFHcTV7C8+kf8KL4/qwYsiQwgzI0Xust7aDSdIiuiVTA1RQ7v13bVX8VdJzM+b8KWBdL4t2pfLaimZLrfeTYn+1GMwPDYejLqUpNq+pyhyhJfPs4p/C+BlJSrCGjicExgEPAL7mH1OjSS/k+MhtXFybiZLNU7nzDmdOprElYjsu7ZzsNBPxBAiil0yX/8JiC
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 83497569-a618-4c8c-274c-08d61fd2786e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0773;
-x-ms-traffictypediagnostic: CY4PR21MB0773:
-x-microsoft-antispam-prvs: <CY4PR21MB07730DADF1B447A0C7D911C1FB120@CY4PR21MB0773.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0773;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0773;
-x-forefront-prvs: 0802ADD973
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(346002)(39860400002)(136003)(396003)(366004)(189003)(199004)(6346003)(22452003)(33896004)(7736002)(33656002)(76176011)(305945005)(2906002)(72206003)(3846002)(1076002)(6116002)(14454004)(54906003)(97736004)(316002)(99286004)(5660300001)(10290500003)(5250100002)(81156014)(2900100001)(81166006)(478600001)(8936002)(575784001)(86362001)(86612001)(33716001)(229853002)(6486002)(106356001)(68736007)(8676002)(186003)(4326008)(486006)(71190400001)(71200400001)(39060400002)(6916009)(11346002)(476003)(25786009)(6246003)(6436002)(53936002)(105586002)(6512007)(10090500001)(102836004)(66066001)(9686003)(256004)(26005)(6506007)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0773;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: zZX+EeyCX6egOiBq+pNUS+EjhQT0fHkfaX5tG0uvQrtscoAuXlPjlo2V8j8Rc6rqcZsBkT+OjK0ltAQsr9WoCMdd9op8fYOCLf+75xgn8NXmUEKbcZIo1UN4frTncCT9XtFb5OE1sgs1Hc4sswPQaRKgWmzZKHrc8QgYyHriyVglDFvP00wFD8TJSXlFqdPaQryiw8mbBJbIA1zSeZ6cjyIVL6PpWmGziRzl5TLR9pLqXOdRUVTD3bdPB+lKXfxAaqyiflwrYt2u4QfAw1+JtziMJEKE4zePlIbHHB3zLeGg35n3ZCao7q/bAtyqJgVT1zfGlEtb91CiwRQuHC9cZ8/d1lkYliTZlhsNywks6K8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <EB11B80F5676D44DBF67ACDD1133AB32@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 21 Sep 2018 16:46:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52400 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727392AbeIUUqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:46:21 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E5EE3DE3D;
+        Fri, 21 Sep 2018 14:57:06 +0000 (UTC)
+Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7C4E93091325;
+        Fri, 21 Sep 2018 14:57:03 +0000 (UTC)
+Subject: Re: [PATCH v5 14/18] vgic: Add support for 52bit guest physical
+ address
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
+        marc.zyngier@arm.com, cdall@kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        james.morse@arm.com, dave.martin@arm.com, julien.grall@arm.com,
+        linux-kernel@vger.kernel.org,
+        Kristina Martsenko <kristina.martsenko@arm.com>
+References: <20180917104144.19188-1-suzuki.poulose@arm.com>
+ <20180917104144.19188-15-suzuki.poulose@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <e308a66d-c426-81c0-0c79-ce97773fa090@redhat.com>
+Date:   Fri, 21 Sep 2018 16:57:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83497569-a618-4c8c-274c-08d61fd2786e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 14:56:54.2332
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0773
+In-Reply-To: <20180917104144.19188-15-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 21 Sep 2018 14:57:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 09:41:39AM +0100, Jonathan Cameron wrote:
->On Wed, 19 Sep 2018 18:58:37 +0000
->Sasha Levin <Alexander.Levin@microsoft.com> wrote:
->
->> Hi,
->>
->> [This is an automated email]
->>
->> This commit has been processed because it contains a -stable tag.
->> The stable tag indicates that it's relevant for the following trees: all
->>
->> The bot has tested the following trees: v4.18.8, v4.14.70, v4.9.127, v4.=
-4.156, v3.18.122,
->>
->> v4.18.8: Build OK!
->> v4.14.70: Failed to apply! Possible dependencies:
->>     22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
->>
->> v4.9.127: Failed to apply! Possible dependencies:
->>     22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
->>     78f839029e1d ("iio: distance: srf08: add IIO driver for us ranger")
->>
->> v4.4.156: Failed to apply! Possible dependencies:
->>     22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
->>     78f839029e1d ("iio: distance: srf08: add IIO driver for us ranger")
->>
->> v3.18.122: Failed to apply! Possible dependencies:
->>     22aac3eb0c46 ("MAINTAINERS: add entry for STM32 I2C driver")
->>     4193c0f1d863 ("iio: driver for Semtech SX9500 proximity solution")
->>     78f839029e1d ("iio: distance: srf08: add IIO driver for us ranger")
->>
->>
->> Please let us know how to resolve this.
->>
->> --
->> Thanks,
->> Sasha
->Hi Sasha,
->
->This is a false detection.  The stable tag is in the context of the
->additions to MAINTAINERS.   I guess that is a rare enough case it's not
->worth fixing in your scripts, but thought I'd point it out incase you
->want to do so!
+Hi Suzuki,
 
-Hah, interesting!
+On 9/17/18 12:41 PM, Suzuki K Poulose wrote:
+> From: Kristina Martsenko <kristina.martsenko@arm.com>
+> 
+> Add support for handling 52bit guest physical address to the
+> VGIC layer. So far we have limited the guest physical address
+> to 48bits, by explicitly masking the upper bits. This patch
+> removes the restriction. We do not have to check if the host
+> supports 52bit as the gpa is always validated during an access.
+> (e.g, kvm_{read/write}_guest, kvm_is_visible_gfn()).
+> Also, the ITS table save-restore is also not affected with
+> the enhancement. The DTE entries already store the bits[51:8]
+> of the ITT_addr (with a 256byte alignment).
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+> [ Macro clean ups, fix PROPBASER and PENDBASER accesses ]
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  include/linux/irqchip/arm-gic-v3.h |  5 +++++
+>  virt/kvm/arm/vgic/vgic-its.c       | 36 +++++++++---------------------
+>  virt/kvm/arm/vgic/vgic-mmio-v3.c   |  2 --
+>  3 files changed, 15 insertions(+), 28 deletions(-)
+> 
+> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+> index 8bdbb5f29494..e961f40992d7 100644
+> --- a/include/linux/irqchip/arm-gic-v3.h
+> +++ b/include/linux/irqchip/arm-gic-v3.h
+> @@ -357,6 +357,8 @@
+>  #define GITS_CBASER_RaWaWt	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWt)
+>  #define GITS_CBASER_RaWaWb	GIC_BASER_CACHEABILITY(GITS_CBASER, INNER, RaWaWb)
+>  
+> +#define GITS_CBASER_ADDRESS(cbaser)	((cbaser) & GENMASK_ULL(52, 12))
+nit GENMASK_ULL(51, 12), bit 52 is RES0
+> +
+>  #define GITS_BASER_NR_REGS		8
+>  
+>  #define GITS_BASER_VALID			(1ULL << 63)
+> @@ -388,6 +390,9 @@
+>  #define GITS_BASER_ENTRY_SIZE_MASK	GENMASK_ULL(52, 48)
+>  #define GITS_BASER_PHYS_52_to_48(phys)					\
+>  	(((phys) & GENMASK_ULL(47, 16)) | (((phys) >> 48) & 0xf) << 12)
+> +#define GITS_BASER_ADDR_48_to_52(baser)					\
+> +	(((baser) & GENMASK_ULL(47, 16)) | (((baser) >> 12) & 0xf) << 48)
+> +
+>  #define GITS_BASER_SHAREABILITY_SHIFT	(10)
+>  #define GITS_BASER_InnerShareable					\
+>  	GIC_BASER_SHAREABILITY(GITS_BASER, InnerShareable)
+> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+> index 12502251727e..eb2a390a6c86 100644
+> --- a/virt/kvm/arm/vgic/vgic-its.c
+> +++ b/virt/kvm/arm/vgic/vgic-its.c
+> @@ -241,13 +241,6 @@ static struct its_ite *find_ite(struct vgic_its *its, u32 device_id,
+>  	list_for_each_entry(dev, &(its)->device_list, dev_list) \
+>  		list_for_each_entry(ite, &(dev)->itt_head, ite_list)
+>  
+> -/*
+> - * We only implement 48 bits of PA at the moment, although the ITS
+> - * supports more. Let's be restrictive here.
+> - */
+> -#define BASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 16))
+> -#define CBASER_ADDRESS(x)	((x) & GENMASK_ULL(47, 12))
+> -
+>  #define GIC_LPI_OFFSET 8192
+>  
+>  #define VITS_TYPER_IDBITS 16
+> @@ -759,6 +752,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  {
+>  	int l1_tbl_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
+>  	u64 indirect_ptr, type = GITS_BASER_TYPE(baser);
+> +	phys_addr_t base = GITS_BASER_ADDR_48_to_52(baser);
+>  	int esz = GITS_BASER_ENTRY_SIZE(baser);
+>  	int index;
+>  	gfn_t gfn;
+> @@ -783,7 +777,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  		if (id >= (l1_tbl_size / esz))
+>  			return false;
+>  
+> -		addr = BASER_ADDRESS(baser) + id * esz;
+> +		addr = base + id * esz;
+>  		gfn = addr >> PAGE_SHIFT;
+>  
+>  		if (eaddr)
+> @@ -798,7 +792,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  
+>  	/* Each 1st level entry is represented by a 64-bit value. */
+>  	if (kvm_read_guest_lock(its->dev->kvm,
+> -			   BASER_ADDRESS(baser) + index * sizeof(indirect_ptr),
+> +			   base + index * sizeof(indirect_ptr),
+>  			   &indirect_ptr, sizeof(indirect_ptr)))
+>  		return false;
+>  
+> @@ -808,11 +802,7 @@ static bool vgic_its_check_id(struct vgic_its *its, u64 baser, u32 id,
+>  	if (!(indirect_ptr & BIT_ULL(63)))
+>  		return false;
+>  
+> -	/*
+> -	 * Mask the guest physical address and calculate the frame number.
+> -	 * Any address beyond our supported 48 bits of PA will be caught
+> -	 * by the actual check in the final step.
+> -	 */
+> +	/* Mask the guest physical address and calculate the frame number. */
+>  	indirect_ptr &= GENMASK_ULL(51, 16);
+>  
+>  	/* Find the address of the actual entry */
+> @@ -1304,9 +1294,6 @@ static u64 vgic_sanitise_its_baser(u64 reg)
+>  				  GITS_BASER_OUTER_CACHEABILITY_SHIFT,
+>  				  vgic_sanitise_outer_cacheability);
+>  
+> -	/* Bits 15:12 contain bits 51:48 of the PA, which we don't support. */
+> -	reg &= ~GENMASK_ULL(15, 12);
+> -
+>  	/* We support only one (ITS) page size: 64K */
+>  	reg = (reg & ~GITS_BASER_PAGE_SIZE_MASK) | GITS_BASER_PAGE_SIZE_64K;
+>  
+> @@ -1325,11 +1312,8 @@ static u64 vgic_sanitise_its_cbaser(u64 reg)
+>  				  GITS_CBASER_OUTER_CACHEABILITY_SHIFT,
+>  				  vgic_sanitise_outer_cacheability);
+>  
+> -	/*
+> -	 * Sanitise the physical address to be 64k aligned.
+> -	 * Also limit the physical addresses to 48 bits.
+> -	 */
+> -	reg &= ~(GENMASK_ULL(51, 48) | GENMASK_ULL(15, 12));
+> +	/* Sanitise the physical address to be 64k aligned. */
+> +	reg &= ~GENMASK_ULL(15, 12);
+>  
+>  	return reg;
+>  }
+> @@ -1375,7 +1359,7 @@ static void vgic_its_process_commands(struct kvm *kvm, struct vgic_its *its)
+>  	if (!its->enabled)
+>  		return;
+>  
+> -	cbaser = CBASER_ADDRESS(its->cbaser);
+> +	cbaser = GITS_CBASER_ADDRESS(its->cbaser);
+>  
+>  	while (its->cwriter != its->creadr) {
+>  		int ret = kvm_read_guest_lock(kvm, cbaser + its->creadr,
+> @@ -2233,7 +2217,7 @@ static int vgic_its_restore_device_tables(struct vgic_its *its)
+>  	if (!(baser & GITS_BASER_VALID))
+>  		return 0;
+>  
+> -	l1_gpa = BASER_ADDRESS(baser);
+> +	l1_gpa = GITS_BASER_ADDR_48_to_52(baser);
+>  
+>  	if (baser & GITS_BASER_INDIRECT) {
+>  		l1_esz = GITS_LVL1_ENTRY_SIZE;
+> @@ -2305,7 +2289,7 @@ static int vgic_its_save_collection_table(struct vgic_its *its)
+>  {
+>  	const struct vgic_its_abi *abi = vgic_its_get_abi(its);
+>  	u64 baser = its->baser_coll_table;
+> -	gpa_t gpa = BASER_ADDRESS(baser);
+> +	gpa_t gpa = GITS_BASER_ADDR_48_to_52(baser);
+>  	struct its_collection *collection;
+>  	u64 val;
+>  	size_t max_size, filled = 0;
+> @@ -2354,7 +2338,7 @@ static int vgic_its_restore_collection_table(struct vgic_its *its)
+>  	if (!(baser & GITS_BASER_VALID))
+>  		return 0;
+>  
+> -	gpa = BASER_ADDRESS(baser);
+> +	gpa = GITS_BASER_ADDR_48_to_52(baser);
+>  
+>  	max_size = GITS_BASER_NR_PAGES(baser) * SZ_64K;
+>  
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> index a2a175b08b17..b3d1f0985117 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> @@ -364,7 +364,6 @@ static u64 vgic_sanitise_pendbaser(u64 reg)
+>  				  vgic_sanitise_outer_cacheability);
+>  
+>  	reg &= ~PENDBASER_RES0_MASK;
+> -	reg &= ~GENMASK_ULL(51, 48);
+>  
+>  	return reg;
+>  }
+> @@ -382,7 +381,6 @@ static u64 vgic_sanitise_propbaser(u64 reg)
+>  				  vgic_sanitise_outer_cacheability);
+>  
+>  	reg &= ~PROPBASER_RES0_MASK;
+> -	reg &= ~GENMASK_ULL(51, 48);
+>  	return reg;
+>  }
+>  
+> 
+Besides looks good to me.
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-I'll get it fixed, thanks!=
+Thanks
+
+Eric
+
