@@ -2,175 +2,147 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19942ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85566C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC4FD21531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:47:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC4FD21531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 4092921531
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:47:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4092921531
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389887AbeIUPfl (ORCPT
+        id S2389901AbeIUPfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:35:41 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:24714 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389624AbeIUPfj (ORCPT
+        Fri, 21 Sep 2018 11:35:51 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:56625 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389561AbeIUPfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:35:39 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8L9iDMD027894;
-        Fri, 21 Sep 2018 11:46:49 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mmkmtu81s-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 21 Sep 2018 11:46:49 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BDED33D;
-        Fri, 21 Sep 2018 09:46:48 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 86B582ACD;
-        Fri, 21 Sep 2018 09:46:48 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 21 Sep
- 2018 11:46:47 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 21 Sep
- 2018 11:46:47 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <benjamin.gaignard@linaro.org>, Gerald Baeza <gerald.baeza@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
+        Fri, 21 Sep 2018 11:35:50 -0400
+X-UUID: 1dd9c9f1bd47468bad98d77e75e3c936-20180921
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 960274248; Fri, 21 Sep 2018 17:47:37 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 21 Sep 2018 17:47:34 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 21 Sep 2018 17:47:34 +0800
+Message-ID: <1537523254.20660.9.camel@mtksdaap41>
+Subject: Re: [PATCH v3 05/12] drm/mediatek: convert dpi driver to use
+ drm_of_find_panel_or_bridge
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        Mao Huang <littlecvr@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 17/27] mmc: mmci: expand startbiterr to irqmask and error check
-Date:   Fri, 21 Sep 2018 11:46:11 +0200
-Message-ID: <1537523181-14578-18-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
-References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
+        <linux-kernel@vger.kernel.org>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date:   Fri, 21 Sep 2018 17:47:34 +0800
+In-Reply-To: <20180921032822.30771-6-bibby.hsieh@mediatek.com>
+References: <20180921032822.30771-1-bibby.hsieh@mediatek.com>
+         <20180921032822.30771-6-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_04:,,
- signatures=0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 967759F6189D651CC4D543760CDD515C112CB9E2E49E741EEB3A2A02F60CD2672000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+Hi, Bibby:
 
-All variants don't pretend to have a startbiterr.
--While data error check, if status register return an error
-(like  MCI_DATACRCFAIL) we must avoid to check MCI_STARTBITERR
-(if not desired).
--expand start_err to MCI_IRQENABLE to avoid to set this bit by default.
+On Fri, 2018-09-21 at 11:28 +0800, Bibby Hsieh wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> Convert dpi driver to use drm_of_find_panel_or_bridge.
+> This changes some error messages to debug messages (in the graph core).
+> Graph connections are often "no connects" depending on the particular
+> board, so we want to avoid spurious messages. Plus the kernel is not a
+> DT validator.
+> related links:
+> [1] https://lkml.org/lkml/2017/2/3/716
+> [2] https://lkml.org/lkml/2017/2/3/719
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dpi.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> index 022ccec49cea..7a4868a0afec 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
+> @@ -14,6 +14,7 @@
+>  #include <drm/drmP.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+> +#include <drm/drm_of.h>
+>  #include <linux/kernel.h>
+>  #include <linux/component.h>
+>  #include <linux/platform_device.h>
+> @@ -697,7 +698,6 @@ static int mtk_dpi_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct mtk_dpi *dpi;
+>  	struct resource *mem;
+> -	struct device_node *bridge_node;
+>  	int comp_id;
+>  	int ret;
+>  
+> @@ -743,16 +743,14 @@ static int mtk_dpi_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> -	bridge_node = of_graph_get_remote_node(dev->of_node, 0, 0);
+> -	if (!bridge_node)
+> -		return -ENODEV;
+> -
+> -	dev_info(dev, "Found bridge node: %pOF\n", bridge_node);
+> -
+> -	dpi->bridge = of_drm_find_bridge(bridge_node);
+> -	of_node_put(bridge_node);
+> -	if (!dpi->bridge)
+> +	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
+> +					  NULL, &dpi->bridge);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to find panel or bridge: %d\n", ret);
+>  		return -EPROBE_DEFER;
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/mmc/host/mmci.c | 27 ++++++++++++++++-----------
- drivers/mmc/host/mmci.h |  6 +++---
- 2 files changed, 19 insertions(+), 14 deletions(-)
+I've traced into drm_of_find_panel_or_bridge(), it may return -ENODEV
+when device tree has error, why do you treat this error to
+-EPROBE_DEFER? I think you may modify this as
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index e2272c7..53f613f 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -1014,14 +1014,18 @@ static void
- mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
- 	      unsigned int status)
- {
-+	unsigned int status_err;
-+
- 	/* Make sure we have data to handle */
- 	if (!data)
- 		return;
- 
- 	/* First check for errors */
--	if (status & (MCI_DATACRCFAIL | MCI_DATATIMEOUT |
--		      host->variant->start_err |
--		      MCI_TXUNDERRUN | MCI_RXOVERRUN)) {
-+	status_err = status & (host->variant->start_err |
-+			       MCI_DATACRCFAIL | MCI_DATATIMEOUT |
-+			       MCI_TXUNDERRUN | MCI_RXOVERRUN);
-+
-+	if (status_err) {
- 		u32 remain, success;
- 
- 		/* Terminate the DMA transfer */
-@@ -1038,18 +1042,18 @@ mmci_data_irq(struct mmci_host *host, struct mmc_data *data,
- 		success = data->blksz * data->blocks - remain;
- 
- 		dev_dbg(mmc_dev(host->mmc), "MCI ERROR IRQ, status 0x%08x at 0x%08x\n",
--			status, success);
--		if (status & MCI_DATACRCFAIL) {
-+			status_err, success);
-+		if (status_err & MCI_DATACRCFAIL) {
- 			/* Last block was not successful */
- 			success -= 1;
- 			data->error = -EILSEQ;
--		} else if (status & MCI_DATATIMEOUT) {
-+		} else if (status_err & MCI_DATATIMEOUT) {
- 			data->error = -ETIMEDOUT;
--		} else if (status & MCI_STARTBITERR) {
-+		} else if (status_err & MCI_STARTBITERR) {
- 			data->error = -ECOMM;
--		} else if (status & MCI_TXUNDERRUN) {
-+		} else if (status_err & MCI_TXUNDERRUN) {
- 			data->error = -EIO;
--		} else if (status & MCI_RXOVERRUN) {
-+		} else if (status_err & MCI_RXOVERRUN) {
- 			if (success > host->variant->fifosize)
- 				success -= host->variant->fifosize;
- 			else
-@@ -1911,7 +1915,7 @@ static int mmci_probe(struct amba_device *dev,
- 			goto clk_disable;
- 	}
- 
--	writel(MCI_IRQENABLE, host->base + MMCIMASK0);
-+	writel(MCI_IRQENABLE | variant->start_err, host->base + MMCIMASK0);
- 
- 	amba_set_drvdata(dev, mmc);
- 
-@@ -2000,7 +2004,8 @@ static void mmci_restore(struct mmci_host *host)
- 		writel(host->datactrl_reg, host->base + MMCIDATACTRL);
- 		writel(host->pwr_reg, host->base + MMCIPOWER);
- 	}
--	writel(MCI_IRQENABLE, host->base + MMCIMASK0);
-+	writel(MCI_IRQENABLE | host->variant->start_err,
-+	       host->base + MMCIMASK0);
- 	mmci_reg_delay(host);
- 
- 	spin_unlock_irqrestore(&host->lock, flags);
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 46c8862..fcb332d 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -181,9 +181,9 @@
- #define MMCIFIFO		0x080 /* to 0x0bc */
- 
- #define MCI_IRQENABLE	\
--	(MCI_CMDCRCFAILMASK|MCI_DATACRCFAILMASK|MCI_CMDTIMEOUTMASK|	\
--	MCI_DATATIMEOUTMASK|MCI_TXUNDERRUNMASK|MCI_RXOVERRUNMASK|	\
--	MCI_CMDRESPENDMASK|MCI_CMDSENTMASK|MCI_STARTBITERRMASK)
-+	(MCI_CMDCRCFAILMASK | MCI_DATACRCFAILMASK | MCI_CMDTIMEOUTMASK | \
-+	MCI_DATATIMEOUTMASK | MCI_TXUNDERRUNMASK | MCI_RXOVERRUNMASK |	\
-+	MCI_CMDRESPENDMASK | MCI_CMDSENTMASK)
- 
- /* These interrupts are directed to IRQ1 when two IRQ lines are available */
- #define MCI_IRQ1MASK \
--- 
-2.7.4
+if (ret)
+	return ret;
+
+Regards,
+CK
+
+> +	}
+> +
+> +	dev_info(dev, "Found bridge node: %pOF\n", dpi->bridge->of_node);
+>  
+>  	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DPI);
+>  	if (comp_id < 0) {
+
 
