@@ -2,105 +2,251 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5559C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AC2ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FAC221565
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:45:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UL7q7gHn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FAC221565
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D28921565
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:46:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D28921565
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbeIUWfZ (ORCPT
+        id S2390838AbeIUWgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:35:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41329 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeIUWfZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:35:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id h79-v6so6226261pfk.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:45:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v3OKyYqIkHvpvzLFzz16EZV13E/xj6Hl40nSAfQrzqQ=;
-        b=UL7q7gHnH3yzs+UtJ459rDyLujTVKtoZcusz18w6Oo0ewykoQl5pvr+rWt6MyJ4PdD
-         a9PSHw+z3Of70C9TlJ/bkovO4TptpBlQVzJd7qd+OIgEJidn8ZRTWY2nhKUKc8ZSQGPK
-         I436Jk0EqtvUtPICVuS1onGAEAM828KHRbXY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v3OKyYqIkHvpvzLFzz16EZV13E/xj6Hl40nSAfQrzqQ=;
-        b=F5zD3DdlV+TQXsodNwNohfw/uvKRW9kTBLsIu61Nj2y3zd/hx3fxbxRosz7uV8Tw0c
-         v+m2uhpkdTdtU0Ih9LSmVcZCOg4lWTdaZYHbkjAoaAZ63w0EUoDrB7AvUsx6WOjUeUiD
-         2ZF5/SX8oEexZAQiKaYLWBbvdZolISxzIf6DmmomX1Csi8Xd9H9IKiNO/VECOOz4i1qi
-         LWcWQbRKKehbFZ7fT5obzgYJ5Q9mlGc6jgz9S17cnRnw8vGuSFtDofWGq9+2EcO3ognJ
-         6gjfvjCApP0WZ18WtcriAUekNCsenUROyYi6ZXxX8tVFg3/Qy+23ednyytT0eZh3Rk3V
-         fdNw==
-X-Gm-Message-State: APzg51C9757+Q8PS0KTZnepIDbrfspqvM1o9kg77TIMbLbTmXsotGZyf
-        uKLVVZJFvFLUBDSCbBQQ4xHKaw==
-X-Google-Smtp-Source: ANB0VdY2AeT2rVAfRh9/chzctT4gI2KAniUUoltMnbtujGYQDIR3XUYo+yH5Wvh0+trrpcBpC/wrdw==
-X-Received: by 2002:a62:5d54:: with SMTP id r81-v6mr20266856pfb.88.1537548342407;
-        Fri, 21 Sep 2018 09:45:42 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id t123-v6sm34483256pfd.51.2018.09.21.09.45.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 09:45:41 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 09:45:41 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
- (BD_ADDR)
-Message-ID: <20180921164541.GX22824@google.com>
-References: <20180920223436.202454-1-mka@chromium.org>
- <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
- <20180920230121.GT22824@google.com>
- <36e5d881-a45e-c879-c275-e6e18bc99ed5@codeaurora.org>
- <20180920231947.GU22824@google.com>
- <124b6f76-a65f-e304-6c60-fbb9104415f4@codeaurora.org>
+        Fri, 21 Sep 2018 18:36:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:39376 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388909AbeIUWgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:36:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1E3A7A9;
+        Fri, 21 Sep 2018 09:46:20 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.Emea.Arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBFC23F557;
+        Fri, 21 Sep 2018 09:46:17 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 17:46:12 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     honghui.zhang@mediatek.com
+Cc:     marc.zyngier@arm.com, bhelgaas@google.com, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, ulf.hansson@linaro.org,
+        hongkun.cao@mediatek.com, youlin.pei@mediatek.com,
+        yong.wu@mediatek.com, yt.shen@mediatek.com, sean.wang@mediatek.com,
+        xinping.qian@mediatek.com
+Subject: Re: [PATCH v4 2/4] PCI: mediatek: enable msi after clock enabled
+Message-ID: <20180921164612.GA27651@e107981-ln.cambridge.arm.com>
+References: <1536573023-6720-1-git-send-email-honghui.zhang@mediatek.com>
+ <1536573023-6720-3-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <124b6f76-a65f-e304-6c60-fbb9104415f4@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1536573023-6720-3-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 01:25:45AM -0400, Sinan Kaya wrote:
-> On 9/20/2018 7:19 PM, Matthias Kaehlcke wrote:
-> > If the existing users populate a custom property with the BD address
-> > in the bootloader you could roll out a bootloader change. You'd have
-> > to make sure that bootloader and kernel match. The bootloader could
-> > still populate the custom property to be compatible with 'old'
-> > kernels.
+On Mon, Sep 10, 2018 at 05:50:21PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
 > 
-> If there is no standard about the name of the property, this probably
-> doesn't belong to property.c but should rather be hosted in bluetooth
-> directory for consumption among the bluetooth drivers.
+> The clocks was not enabled when enable MSI. This patch fix this
+> issue by calling mtk_pcie_enable_msi in mtk_pcie_startup_port_v2
+> since the clock was all enabled at that time.
+> 
+> The function of mtk_pcie_startup_port_v2's define location is
+> re-arranged to avoid mtk_pcie_enable_msi's forward declaration.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 143 +++++++++++++++++----------------
+>  1 file changed, 72 insertions(+), 71 deletions(-)
 
-Well, there is a generic binding
-(https://elixir.bootlin.com/linux/v4.18/source/Documentation/devicetree/bindings/net/bluetooth.txt),
-the fact that there are drivers that aren't adhering to it doesn't
-change that.
+Can you read:
+
+https://marc.info/?l=linux-pci&m=150905742808166&w=2
+
+follow it and adapt this patch and the others accordingly please ?
+
+Thanks,
+Lorenzo
+
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 20b9088..5aba43a 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -398,75 +398,6 @@ static struct pci_ops mtk_pcie_ops_v2 = {
+>  	.write = mtk_pcie_config_write,
+>  };
+>  
+> -static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> -{
+> -	struct mtk_pcie *pcie = port->pcie;
+> -	struct resource *mem = &pcie->mem;
+> -	const struct mtk_pcie_soc *soc = port->pcie->soc;
+> -	u32 val;
+> -	size_t size;
+> -	int err;
+> -
+> -	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+> -	if (pcie->base) {
+> -		val = readl(pcie->base + PCIE_SYS_CFG_V2);
+> -		val |= PCIE_CSR_LTSSM_EN(port->slot) |
+> -		       PCIE_CSR_ASPM_L1_EN(port->slot);
+> -		writel(val, pcie->base + PCIE_SYS_CFG_V2);
+> -	}
+> -
+> -	/* Assert all reset signals */
+> -	writel(0, port->base + PCIE_RST_CTRL);
+> -
+> -	/*
+> -	 * Enable PCIe link down reset, if link status changed from link up to
+> -	 * link down, this will reset MAC control registers and configuration
+> -	 * space.
+> -	 */
+> -	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
+> -
+> -	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
+> -	val = readl(port->base + PCIE_RST_CTRL);
+> -	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
+> -	       PCIE_MAC_SRSTB | PCIE_CRSTB;
+> -	writel(val, port->base + PCIE_RST_CTRL);
+> -
+> -	/* Set up vendor ID and class code */
+> -	if (soc->need_fix_class_id) {
+> -		val = PCI_VENDOR_ID_MEDIATEK;
+> -		writew(val, port->base + PCIE_CONF_VEND_ID);
+> -
+> -		val = PCI_CLASS_BRIDGE_HOST;
+> -		writew(val, port->base + PCIE_CONF_CLASS_ID);
+> -	}
+> -
+> -	/* 100ms timeout value should be enough for Gen1/2 training */
+> -	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
+> -				 !!(val & PCIE_PORT_LINKUP_V2), 20,
+> -				 100 * USEC_PER_MSEC);
+> -	if (err)
+> -		return -ETIMEDOUT;
+> -
+> -	/* Set INTx mask */
+> -	val = readl(port->base + PCIE_INT_MASK);
+> -	val &= ~INTX_MASK;
+> -	writel(val, port->base + PCIE_INT_MASK);
+> -
+> -	/* Set AHB to PCIe translation windows */
+> -	size = mem->end - mem->start;
+> -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+> -	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+> -
+> -	val = upper_32_bits(mem->start);
+> -	writel(val, port->base + PCIE_AHB_TRANS_BASE0_H);
+> -
+> -	/* Set PCIe to AXI translation memory space.*/
+> -	val = fls(0xffffffff) | WIN_ENABLE;
+> -	writel(val, port->base + PCIE_AXI_WINDOW0);
+> -
+> -	return 0;
+> -}
+> -
+>  static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+>  {
+>  	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
+> @@ -643,8 +574,6 @@ static int mtk_pcie_init_irq_domain(struct mtk_pcie_port *port,
+>  		ret = mtk_pcie_allocate_msi_domains(port);
+>  		if (ret)
+>  			return ret;
+> -
+> -		mtk_pcie_enable_msi(port);
+>  	}
+>  
+>  	return 0;
+> @@ -711,6 +640,78 @@ static int mtk_pcie_setup_irq(struct mtk_pcie_port *port,
+>  	return 0;
+>  }
+>  
+> +static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> +{
+> +	struct mtk_pcie *pcie = port->pcie;
+> +	struct resource *mem = &pcie->mem;
+> +	const struct mtk_pcie_soc *soc = port->pcie->soc;
+> +	u32 val;
+> +	size_t size;
+> +	int err;
+> +
+> +	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+> +	if (pcie->base) {
+> +		val = readl(pcie->base + PCIE_SYS_CFG_V2);
+> +		val |= PCIE_CSR_LTSSM_EN(port->slot) |
+> +		       PCIE_CSR_ASPM_L1_EN(port->slot);
+> +		writel(val, pcie->base + PCIE_SYS_CFG_V2);
+> +	}
+> +
+> +	/* Assert all reset signals */
+> +	writel(0, port->base + PCIE_RST_CTRL);
+> +
+> +	/*
+> +	 * Enable PCIe link down reset, if link status changed from link up to
+> +	 * link down, this will reset MAC control registers and configuration
+> +	 * space.
+> +	 */
+> +	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
+> +
+> +	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
+> +	val = readl(port->base + PCIE_RST_CTRL);
+> +	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
+> +	       PCIE_MAC_SRSTB | PCIE_CRSTB;
+> +	writel(val, port->base + PCIE_RST_CTRL);
+> +
+> +	/* Set up vendor ID and class code */
+> +	if (soc->need_fix_class_id) {
+> +		val = PCI_VENDOR_ID_MEDIATEK;
+> +		writew(val, port->base + PCIE_CONF_VEND_ID);
+> +
+> +		val = PCI_CLASS_BRIDGE_HOST;
+> +		writew(val, port->base + PCIE_CONF_CLASS_ID);
+> +	}
+> +
+> +	/* 100ms timeout value should be enough for Gen1/2 training */
+> +	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
+> +				 !!(val & PCIE_PORT_LINKUP_V2), 20,
+> +				 100 * USEC_PER_MSEC);
+> +	if (err)
+> +		return -ETIMEDOUT;
+> +
+> +	/* Set INTx mask */
+> +	val = readl(port->base + PCIE_INT_MASK);
+> +	val &= ~INTX_MASK;
+> +	writel(val, port->base + PCIE_INT_MASK);
+> +
+> +	if (IS_ENABLED(CONFIG_PCI_MSI))
+> +		mtk_pcie_enable_msi(port);
+> +
+> +	/* Set AHB to PCIe translation windows */
+> +	size = mem->end - mem->start;
+> +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+> +	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+> +
+> +	val = upper_32_bits(mem->start);
+> +	writel(val, port->base + PCIE_AHB_TRANS_BASE0_H);
+> +
+> +	/* Set PCIe to AXI translation memory space.*/
+> +	val = fls(0xffffffff) | WIN_ENABLE;
+> +	writel(val, port->base + PCIE_AXI_WINDOW0);
+> +
+> +	return 0;
+> +}
+> +
+>  static void __iomem *mtk_pcie_map_bus(struct pci_bus *bus,
+>  				      unsigned int devfn, int where)
+>  {
+> -- 
+> 2.6.4
+> 
