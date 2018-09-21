@@ -2,295 +2,133 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D2DECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F628C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B4921531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:16:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B4921531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 46FD82154B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:17:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=percona.com header.i=@percona.com header.b="YK889Ti0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46FD82154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=percona.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389298AbeIUOEW (ORCPT
+        id S2389375AbeIUOEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 10:04:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39136 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388909AbeIUOEV (ORCPT
+        Fri, 21 Sep 2018 10:04:54 -0400
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:37595 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388909AbeIUOEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 10:04:21 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8L8DlJ4060729
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 04:16:36 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mmvrt8rxa-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 04:16:35 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Fri, 21 Sep 2018 09:16:33 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Sep 2018 09:16:30 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8L8GT9v57081934
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 Sep 2018 08:16:29 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F8FD42041;
-        Fri, 21 Sep 2018 11:16:16 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9D4A242042;
-        Fri, 21 Sep 2018 11:16:15 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.207.248])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri, 21 Sep 2018 11:16:15 +0100 (BST)
-Date:   Fri, 21 Sep 2018 11:16:27 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Pintu Kumar <pintu.ping@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
-Subject: Re: KSM not working in 4.9 Kernel
-References: <CAOuPNLj1wx4sznrtLdKjcvuTf0dECPWzPaR946FoYRXB6YAGCw@mail.gmail.com>
- <20180916153237.GC15699@rapoport-lnx>
- <CAOuPNLj0HyC+yzwTpN-EWpzHTJ58u7pBfOja1MyweF4pbct1eQ@mail.gmail.com>
- <20180917043724.GA12866@rapoport-lnx>
- <CAOuPNLidXFHgkBmwOPj_xFkU_OpLaXbpJg04Le7MPxu8cYg_RQ@mail.gmail.com>
- <CAOuPNLj+4pMnEy5EyZmzDWszqMb_PQb3q7t_hvG_50BTz1He2Q@mail.gmail.com>
- <20180917145936.GA20945@rapoport-lnx>
- <CAOuPNLiqntJspBgAyP4OSEiajbg1mWmeFBb6j4akPp-OULQpUw@mail.gmail.com>
+        Fri, 21 Sep 2018 10:04:53 -0400
+Received: by mail-wr1-f50.google.com with SMTP id u12-v6so11923154wrr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 01:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=percona.com; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=cy2E0BJJNO6YKN2PQbDR8Z6ENHt/fAXt3XAor1jAo44=;
+        b=YK889Ti0APsCSUwS/dhXq0VoQRdWwR2zkYjBB7GG5EUIrOycYINFiBzJQXCPstSeSU
+         4VcCUbfMmdGtuB9ZUfR/jmTTx+xmNkJmwLutxFZy4vcKu+mk1j70AuozTSZfLoMe+Knj
+         SoscP4AKAD3XuW3qtYCLQ7f3PvoCCRrzz0OeA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=cy2E0BJJNO6YKN2PQbDR8Z6ENHt/fAXt3XAor1jAo44=;
+        b=RaAyN/Fx70ANLUlv0doKvADaNoh2iQl7mBmBEQ0EQTmBekflnR/2Onnl8cmkl4llm1
+         AjmSxBY3HJJBOeXEnSKTgI8J0PnkMMQdHzOp6aJ+MPvRiZM/VepXoya75Y1enLoDWM2U
+         hilGUzQMB8VnVqMjQVhhczUPumIf8KUcU9MsZbZXJjprrQCLFADC0gTD34ZMer5cx82z
+         Ord99FU/IrULEjTLCO9f0XtELKDwkxoyZgjPiSJ9a0GZdO2R0P6NC9lZsyHuTs98jLtt
+         GT4KjR25r8X+MXmZ8rhSi3RQw1gWpWFQUzXh/4o/g/8x+odAeqXYUnO9dIkcWL3phICt
+         1X4g==
+X-Gm-Message-State: APzg51C9p6sBE8mh8nO2vyob85s6LwU22+vLpgelIkPdJVs6+4I60a0P
+        XERJYRbbKNndfQzygd7bPsr3G4m4MFiLEAxK723K4XFdUjFEog==
+X-Google-Smtp-Source: ANB0Vda8U2QjE/V9oT6ZW1GxA6sNjKt6a2wSvxloK6ccpEUh3eqxZz3nzNwY38Z+yHICcasyvrFQp5326g6lKc8L47k=
+X-Received: by 2002:a5d:68c9:: with SMTP id p9-v6mr36980440wrw.108.1537517827097;
+ Fri, 21 Sep 2018 01:17:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOuPNLiqntJspBgAyP4OSEiajbg1mWmeFBb6j4akPp-OULQpUw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18092108-4275-0000-0000-000002BDA45F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092108-4276-0000-0000-000037C7A916
-Message-Id: <20180921081626.GA12492@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809210087
+Received: by 2002:a1c:57cc:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 01:16:26
+ -0700 (PDT)
+From:   Roel Van de Paar <roel.vandepaar@percona.com>
+Date:   Fri, 21 Sep 2018 18:16:26 +1000
+Message-ID: <CAGQTitMPcrHRhFVLfApe21T7hYyeX05ffuSJj452+f+ZksmQqg@mail.gmail.com>
+Subject: Bug: getcwd: cannot access parent directories
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 05:21:20PM +0530, Pintu Kumar wrote:
-> Hi,
-> 
-> Thank you so much for all your reply so far.
-> I have few more doubts to understand the output from ksm sysfs.
-> Device: Hikey620 - ARM64 - Linux 4.9.20
-> With HUGE page enabled:
-> CONFIG_TRANSPARENT_HUGEPAGE=y
-> CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=y
-> # CONFIG_TRANSPARENT_HUGEPAGE_MADVISE is not set
-> 
-> Currently, I get this output, when I run below program with ksm:
-> 
-> ~ # grep -H '' /sys/kernel/mm/ksm/*
-> /sys/kernel/mm/ksm/full_scans:29
-> /sys/kernel/mm/ksm/page_comparisons:39584
-> /sys/kernel/mm/ksm/pages_hashed:11672
-> /sys/kernel/mm/ksm/pages_scanned:21766
-> /sys/kernel/mm/ksm/pages_shared:3
-> /sys/kernel/mm/ksm/pages_sharing:10097
-> /sys/kernel/mm/ksm/pages_to_scan:200
-> /sys/kernel/mm/ksm/pages_unshared:53
-> /sys/kernel/mm/ksm/pages_volatile:1
-> /sys/kernel/mm/ksm/run:0
-> /sys/kernel/mm/ksm/sleep_millisecs:1000
-> ---------------------------
-> 
-> int main(int argc, char *argv[])
-> {
->         int i, n, size, ret;
->         char *buffer;
->         void *addr;
-> 
->         n = 100;
->         size = 100 * getpagesize();
->         for (i = 0; i < n; i++) {
->                 buffer = (char *)malloc(size);
->                 memset(buffer, 0xff, size);
->                 madvise(buffer, size, MADV_MERGEABLE);
->                 if (ret < 0) {
->                         fprintf(stderr, "malloc madvise failed: ret:
-> %d, reason: %s\n", ret, strerror(errno));
->                 }
->                 usleep(500);
->         }
->         printf("Done....press ^C\n");
->         pause();
->         return 0;
-> }
-> Note: madvise() system call is not failing here, as mentioned earlier.
-> I guess the page is aligned with getpagesize().
-> Then I do this to invoke ksm:
-> # echo 1 > /sys/kernel/mm/ksm/run
-> # ./malloc-test.out &
-> # sleep 5
-> # echo 0 > /sys/kernel/mm/ksm/run
-> #
-> 
-> Also, the anon pages in the system shows like this:
-> BEFORE:
-> -------------
-> ~ # cat /proc/meminfo | grep -i anon
-> Active(anon):      40740 kB
-> Inactive(anon):        0 kB
-> AnonPages:         40760 kB
-> AnonHugePages:         0 kB
-> 
-> AFTER MERGING:
-> --------------------------
-> ~ # cat /proc/meminfo | grep -i anon
-> Active(anon):        440 kB
-> Inactive(anon):        0 kB
-> AnonPages:           188 kB
-> AnonHugePages:         0 kB
-> 
-> I want to understand the KSM output w.r.t to the above program, and
-> cross-check if the output is correct.
-> Can someone help me to understand it?
-> 
-> As of now, what I understood is that:
-> - I am allocating around 400KB of memory 100 times. That is: 100 * 100
-> * 4K = 10000 pages (which are all with similar content).
-> - Output says: 10097 page_sharing happened.
-> - Pages currently shared is: 3
-> - So total pages are: 10097 + 3 = 10100
-> 
-> I could not understand from where the additional 100 pages came from?
-> Also, why some pages are shown as: pages_unshared ?
-> What can I interpret from this?
-> And, what does it mean by: pages_volatile:1 ?
-> 
-> Basically, I wanted to understand, is there any problem with the above
-> output, or it is fine.
-> If it is fine, how to prove it?
+[1.] One line summary of the problem:
 
-The ksm sysfs attributes are described at
-Documentation/admin-guide/mm/ksm.rst or online at [1].
+"cd: error retrieving current directory: getcwd: cannot access parent
+directories: No such file or directory" on move of directories to
+another volume
 
-The numbers look sane in general. The additional pages may come from malloc
-metadata that is created by libc when you allocate memory.
+[2.] Full description of the problem/report:
 
-I'd recommend to use mmap() or posix_memalign() with page size alignment to
-get exact amount of page aligned memory.
+Example output (testcase below):
 
-[1] https://www.kernel.org/doc/html/latest/admin-guide/mm/ksm.html
- 
- 
- 
-> Thanks,
-> Pintu
-> 
-> On Mon, Sep 17, 2018 at 8:29 PM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
-> >
-> > On Mon, Sep 17, 2018 at 05:25:27PM +0530, Pintu Kumar wrote:
-> > > On Mon, Sep 17, 2018 at 11:46 AM Pintu Kumar <pintu.ping@gmail.com> wrote:
-> > > > > > But still no effect.
-> > > > > > And I checked LTP test cases. It almost doing the same thing.
-> > > > > >
-> > > > > > I observed that [ksmd] thread is not waking up at all.
-> > > > > > I gave some print inside it, but I could never saw that prints coming.
-> > > > > > I could not find it running either in top command during the operation.
-> > > > > > Is there anything needs to be done, to wakw up ksmd?
-> > > > > > I already set: echo 1 > /sys/kernel/mm/ksm.
-> > > > >
-> > > > > It should be echo 1 > /sys/kernel/mm/ksm/run
-> > > > >
-> > > >
-> > > > Oh yes, sorry for the typo.
-> > > > I tried the same, but still ksm is not getting invoked.
-> > > > Could someone confirm if KSM was working in 4.9 kernel?
-> > > >
-> > >
-> > > Ok, it's working now. I have to explicitly stop the ksm thread to see
-> > > the statistics.
-> > > Also there was some internal patch that was setting vm_flags to
-> > > VM_MERGABLE thus causing ksm_advise call to return.
-> > >
-> > > # echo 1 > /sys/kernel/mm/ksm/run
-> > > # ./malloc-test.out &
-> > > # echo 0 > /sys/kernel/mm/ksm/run
-> > >
-> > > ~ # grep -H '' /sys/kernel/mm/ksm/*
-> > > /sys/kernel/mm/ksm/full_scans:105
-> > > /sys/kernel/mm/ksm/pages_shared:1
-> > > /sys/kernel/mm/ksm/pages_sharing:999
-> > > /sys/kernel/mm/ksm/pages_to_scan:100
-> > > /sys/kernel/mm/ksm/pages_unshared:0
-> > > /sys/kernel/mm/ksm/pages_volatile:0
-> > > /sys/kernel/mm/ksm/run:0
-> > > /sys/kernel/mm/ksm/sleep_millisecs:20
-> > >
-> > >
-> > > However, I have one doubt.
-> > > Is the above data correct, for the below program?
-> >
-> > You have 1 shared page and 999 additional references to that page
-> >
-> > > int main(int argc, char *argv[])
-> > > {
-> > >         int i, n, size, ret;
-> > >         char *buffer;
-> > >         void *addr;
-> > >
-> > >         n = 10;
-> > >         size = 100 * getpagesize();
-> > >         for (i = 0; i < n; i++) {
-> > >                 buffer = (char *)malloc(size);
-> > >                 memset(buffer, 0xff, size);
-> > >                 madvise(buffer, size, MADV_MERGEABLE);o
-> >
-> > This madvise() call should fail because buffer won't be page aligned
-> >
-> > >                 addr =  mmap(NULL, size,
-> > >                            PROT_READ | PROT_EXEC | PROT_WRITE,
-> > > MAP_PRIVATE | MAP_ANONYMOUS,
-> > >                            -1, 0);
-> > >                 memset(addr, 0xff, size);
-> > >                 ret = madvise(addr, size, MADV_MERGEABLE);
-> > >                 if (ret < 0) {
-> > >                         fprintf(stderr, "madvise failed: ret: %d,
-> > > reason: %s\n", ret, strerror(errno));
-> > >                 }
-> > >                 usleep(500);
-> > >         }
-> > >         printf("Done....press ^C\n");
-> > >
-> > >         pause();
-> > >
-> > >         return 0;
-> > > }
-> > >
-> > >
-> > > Thanks,
-> > > Pintu
-> > >
-> >
-> > --
-> > Sincerely yours,
-> > Mike.
-> >
-> 
+/tmp/1/2$ cd ..
+cd: error retrieving current directory: getcwd: cannot access parent
+directories: No such file or directory
+/tmp/1/2/..$ cd ..
+cd: error retrieving current directory: getcwd: cannot access parent
+directories: No such file or directory
+/tmp/1/2/../..$ cd ..
+cd: error retrieving current directory: getcwd: cannot access parent
+directories: No such file or directory
+/tmp/1/2/../../..$ cd ..
+cd: error retrieving current directory: getcwd: cannot access parent
+directories: No such file or directory
+/tmp/1/2/../../../..$ cd ..
+cd: error retrieving current directory: getcwd: cannot access parent
+directories: No such file or directory
+/tmp/1/2/../../../../..$ cd ..
+cd: error retrieving current directory: getcwd: cannot access parent
+directories: No such file or directory
+/tmp/1/2/../../../../../..$ cd ..
+/tmp$
 
--- 
-Sincerely yours,
-Mike.
+- The number of ".." required is not correct
+- The number of ".." matches the number of subdirs (see below)
 
+[4.] Kernel information
+
+Tested on latest updates of:
+* Ubuntu Xenial
+* Ubuntu Bionic
+* Centos 7
+
+[7.] A small shell script or example program which triggers the
+problem (if possible)
+
+In session 1
+  cd /tmp
+  mkdir -p 1/2
+  cd 1/2
+
+In session 2 (another terminal session)
+  cd /tmp
+  mkdir -p 3/4/5/6/7
+  mv 1 3/4/5/6/7
+  mv 3 /dev/shm   # where /dev/shm is some other disk. /dev/shm
+reproduction works too. If the disk is the same, the issue will not
+show.
+
+Back to session 1
+  cd ..   # fail
+  cd ..   # fail
+  cd ..   # fail
+  cd ..   # fail
+  cd ..   # fail
+  cd ..   # fail
+  cd ..   # works, but to completely incorrect directory given the
+many 'cd ..'```
+
+The problem is made more clear here by using 3/4/5/6/7 but you can
+also just use a single subdir to see it
