@@ -2,132 +2,121 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4357BC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D3AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFC1021547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:38:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFC1021547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 5186F206B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:44:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A4ydsM++"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5186F206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389808AbeIUS0s (ORCPT
+        id S2389683AbeIUSdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:26:48 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:64630 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727391AbeIUS0r (ORCPT
+        Fri, 21 Sep 2018 14:33:09 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:60074 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727697AbeIUSdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:26:47 -0400
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="20383203"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Sep 2018 05:38:05 -0700
-Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch02.mchp-main.com
- (10.10.76.38) with Microsoft SMTP Server id 14.3.352.0; Fri, 21 Sep 2018
- 05:38:04 -0700
-Subject: Re: [PATCH] net: macb: Clean 64b dma addresses if they are not
- detected
-To:     Michal Simek <michal.simek@xilinx.com>,
-        "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>
-CC:     <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
-        "Edgar E. Iglesias" <edgari@xilinx.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <u-boot@lists.denx.de>, Joe Hershberger <joe.hershberger@ni.com>
-References: <0997a0e77b5e5c04c9a4d277d702d93a1a8a7448.1537373294.git.michal.simek@xilinx.com>
- <20180919180806.3tps6yukhm3ry43i@toto>
- <7e641346-dd4c-4e2a-637f-1b666f13485c@xilinx.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <20eb98a9-edbd-c613-1f76-eccd7e06e052@microchip.com>
-Date:   Fri, 21 Sep 2018 14:38:02 +0200
+        Fri, 21 Sep 2018 14:33:09 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8LCiIC3063129;
+        Fri, 21 Sep 2018 07:44:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1537533859;
+        bh=RrJgsigsRqZ5+kY2WBYBqcFtOdKxa65nus+h2sXqqt0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=A4ydsM++A3gHuxl+Pg/7RaueAKd/GZ6eHUT8DMndjVYTj0OiYTJevmE7mZwRQ+e0e
+         rm8lE9vueZD2yOiVeyB5WISIlm+c6Y2tQ6j+CuBYQ1gEJ3oJQ75/2eEcBxSiqmpgeZ
+         3TTvykuHFMewsiCTiBdfQIe9i78DFuh8E9hlGAQU=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LCiI1G013436;
+        Fri, 21 Sep 2018 07:44:18 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 21
+ Sep 2018 07:44:18 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 21 Sep 2018 07:44:18 -0500
+Received: from [172.22.169.25] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LCiI3j018666;
+        Fri, 21 Sep 2018 07:44:18 -0500
+Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lee.jones@linaro.org>,
+        <linux-omap@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <20180911170825.17789-2-dmurphy@ti.com>
+ <20180911200530.GA28290@amd> <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
+ <20180912214938.GA30654@amd> <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
+ <20180914081822.GA21830@amd> <9c14ee7c-f172-bb0c-d9a8-8aeee408f716@gmail.com>
+ <20180914214220.GA2081@amd> <be2ee681-7ae0-6545-0208-6ae5c1b7affd@gmail.com>
+ <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
+ <20180920220443.GB27468@xo-6d-61-c0.localdomain>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <50e9aa50-99fb-0a1f-e395-c52bf91e8a7f@ti.com>
+Date:   Fri, 21 Sep 2018 07:44:00 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <7e641346-dd4c-4e2a-637f-1b666f13485c@xilinx.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20180920220443.GB27468@xo-6d-61-c0.localdomain>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal,
+Pavel
 
-On 20/09/2018 at 08:23, Michal Simek wrote:
-> On 19.9.2018 20:08, Edgar E. Iglesias wrote:
->> On Wed, Sep 19, 2018 at 06:08:18PM +0200, Michal Simek wrote:
->>> Clear ADDR64 dma bit in DMACFG register in case that HW_DMA_CAP_64B
->>> is not detected on 64bit system.
->>> The issue was observed when bootloader(u-boot) does not check macb
->>> feature at DCFG6 register (DAW64_OFFSET) and enabling 64bit dma support
->>> by default. Then macb driver is reading DMACFG register back and only
->>> adding 64bit dma configuration but not cleaning it out.
->>>
->>> This is also align with other features which are also cleared if they are not
->>> present.
->>
->> Hi Michal,
->>
->>>
->>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
->>> ---
->>>
->>>   drivers/net/ethernet/cadence/macb_main.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
->>> index 16e4ef7d7185..79707dff3f13 100644
->>> --- a/drivers/net/ethernet/cadence/macb_main.c
->>> +++ b/drivers/net/ethernet/cadence/macb_main.c
->>> @@ -2163,6 +2163,8 @@ static void macb_configure_dma(struct macb *bp)
->>>   #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->>>   		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
->>>   			dmacfg |= GEM_BIT(ADDR64);
->>> +		else
->>> +			dmacfg &= ~GEM_BIT(ADDR64);
->>>   #endif
->>
->> I think you might want to do this clearing outside of the #ifdef.
->> If CONFIG_ARCH_DMA_ADDR_T_64BIT is not defined, we'd want to make
->> sure the ADDR64 is cleared. E.g something like:
->>
->>               dmacfg &= ~GEM_BIT(ADDR64);
->> #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->>               if (bp->hw_dma_cap & HW_DMA_CAP_64B)
->>                       dmacfg |= GEM_BIT(ADDR64);
->> #endif
->>
->>
->> Same thing for the USE_HWSTAMP/PTP flags below.
+On 09/20/2018 05:04 PM, Pavel Machek wrote:
+> Hi!
 > 
-> Origin patch, which introduce this read with mask,
-> macfg = gem_readl(bp, DMACFG) & ~GEM_BF(RXBS, -1L);
-> was done in 2011 and from that time this function was extended a little
-> bit. I am even not quite sure if make sense to read this reg and apply
-> setting on the top of it.
+>>>>> Easy to maintain will be a dedicated LED class driver.
+>>>>
+>>>> You mean, 3 dedicated LED class drivers and 3 MFD drivers with LED
+>>>> parts? We'll need complex driver anyway, and I'd really like to have
+>>>> just one.
+>>>
+>>> In the LED subsystem we can wrap common functionalities
+>>> into a library object. MFD driver will be able to reuse it then.
+>>
+>> I am currently working on that code now.  I expect a RFC on this this week.
 > 
-> Nicolas: Isn't it better simply compose that reg from scratch?
+> Looking forward to that.
+> 
+> But you really need acks for the bindings, and since Rob is usually quite slow
+> acking them, it is easiest to use the existing binding... if it is wrong it
+> needs to be fixed, anyway.
+> 
 
-I have several arguments against composing this register from scratch:
+OK I am in the midst of creating the code now. I have the common code done I just need to
+make sure that it scales to other devices in the list.
 
-1/ the reset value of this register is non-null for both of our 
-platforms and it could be meaningful to keep some of these values.
+The bindings will need to be updated to follow the LED bindings binding style.
 
-2/ one bitfield could use different values between Zynq and AT91: RXBMS 
-(1kB to 8kB for Zynq and 512 to 4KB for AT91), with same encoding.
+I am wondering for the non-MFD parts if we should move the bindings to the LED
+directory to make them easier to find.
 
-3/ and well, this is the type of register with multiple bits that are 
-marked as "reserved" and that experience tells that they might be 
-connected to something...
+Dan 
 
-So, I'm all for correcting the code like what Edgar suggests.
+> THanks,
+> 
+> 									Pavel
+> 
 
-Best regards,
+
 -- 
-Nicolas Ferre
+------------------
+Dan Murphy
