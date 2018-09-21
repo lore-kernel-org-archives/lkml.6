@@ -1,129 +1,100 @@
 Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0F2ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E19C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAC021532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:16:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EAC021532
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl
+	by mail.kernel.org (Postfix) with ESMTP id 4518B21532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:17:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bsr1CF9V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4518B21532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390634AbeIUVFr (ORCPT
+        id S2390541AbeIUVGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:05:47 -0400
-Received: from 5.mo177.mail-out.ovh.net ([46.105.39.154]:57664 "EHLO
-        5.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390361AbeIUVFq (ORCPT
+        Fri, 21 Sep 2018 17:06:46 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52029 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390337AbeIUVGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:05:46 -0400
-X-Greylist: delayed 1810 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Sep 2018 17:05:46 EDT
-Received: from player798.ha.ovh.net (unknown [10.109.160.12])
-        by mo177.mail-out.ovh.net (Postfix) with ESMTP id 13DEDCB0D8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 16:37:14 +0200 (CEST)
-Received: from RCM-web3.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
-        (Authenticated sender: rafal@milecki.pl)
-        by player798.ha.ovh.net (Postfix) with ESMTPSA id 441275400CB;
-        Fri, 21 Sep 2018 16:36:51 +0200 (CEST)
-Received: from ip-194-187-74-233.konfederacka.maverick.com.pl
- ([194.187.74.233])
- via ip-194-187-74-233.konfederacka.maverick.com.pl
- ([194.187.74.233])
- by mail.ovh.net
- with HTTP (HTTP/1.1 POST); Fri, 21 Sep 2018 16:36:51 +0200
+        Fri, 21 Sep 2018 17:06:46 -0400
+Received: by mail-it1-f193.google.com with SMTP id e14-v6so2343029itf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:17:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x6eAUIgNab0k/Q9xXDDkBXzMjrapMC/rfJODkTmEaWs=;
+        b=Bsr1CF9VW/a4Cn6GzpBkiOUYBOYOiftCdsuW2WKlEwMLm88LI09x6Lt7JCKr3nkHiK
+         dNlIBQnRdmG+qqn2HmEINcNU24j1m5pU1seFFb9V43hFJUHn4PWdpz+n1Rh0PPANTVBy
+         lTFBNiukGnpZkH13y0MqQ7edXd5sylgrzzSao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x6eAUIgNab0k/Q9xXDDkBXzMjrapMC/rfJODkTmEaWs=;
+        b=G+sDUP1iAfZBAWGmN3tP7OgpWD2D0/3BOeab3fJ9l/eBU5fD8XZfpcFZHTvC3lHjq+
+         5qABpSjMUI1dqHfjaUjk4qYfxn/qdbunJPOQi4/iGo0EqQTl/8kRrecnsyTxah0CLF2a
+         x19Sk0Vvd7YYMLZCXVdRi/TkuaGaZJdxklRa8UzEgcvqEuHqnux1GSnxXbxx/CLZ+c46
+         vEmGn/T680dvEEeGbRCU2OzsOStYwhZtBOIlu89RU2eccWzjxPhTjMM2TNzf8Hz/IANZ
+         pJ0CfH0x57vWWpTEwjFgZO9TSVUfby1KzE/PlYSTM3XNArkotO26lIo8OzqOJgtvluUN
+         uzkA==
+X-Gm-Message-State: APzg51BA72qifP46KtasUkL8NWzn6hjKWwNnz5CUQeqFKVbNg93DwJ/H
+        7TXEPYxALnnmQM4uKTrJjCTtPwoXhKCYsU6hmCJkmFk1
+X-Google-Smtp-Source: ANB0VdaXQBFFmuJb7gQesqUh9FcQWNRCcsznNqd/uwJ4c442cQDerxwDAc9fMsdxwTHP0fbHb3D04f98WK2ruDu2lfo=
+X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr6493078itc.16.1537543045676;
+ Fri, 21 Sep 2018 08:17:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Fri, 21 Sep 2018 16:36:51 +0200
-From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH] ARM: add serial.h and set BASE_BAUD to 0
-In-Reply-To: <20180921135913.GM30658@n2100.armlinux.org.uk>
-References: <20180920201357.16426-1-zajec5@gmail.com>
- <20180921135913.GM30658@n2100.armlinux.org.uk>
-Message-ID: <45c1302d81faf4e77555c3710b793d36@milecki.pl>
-X-Sender: rafal@milecki.pl
-User-Agent: Roundcube Webmail/1.3.7
-X-Originating-IP: 194.187.74.233
-X-Webmail-UserID: rafal@milecki.pl
-X-Ovh-Tracer-Id: 151433538525236868
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrledvgdekudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+References: <20180920013712.2361-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20180920013712.2361-1-bjorn.andersson@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Sep 2018 08:17:13 -0700
+Message-ID: <CACRpkdYxh+cSKPO4JUF2uJZ=xVuNsNHe5eSWjy2N+qibGaDfSA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Qualcomm QCS404 TLMM pinctrl driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-21 15:59, Russell King - ARM Linux wrote:
-> On Thu, Sep 20, 2018 at 10:13:57PM +0200, Rafał Miłecki wrote:
->> From: Rafał Miłecki <rafal@milecki.pl>
->> 
->> For years arm has been using serial.h from asm-generic which sets
->> BASE_BAUD value to the (1843200 / 16). This is incorrect as:
->> 1) This value obviously isn't correct for all devices
->> 2) There are no device specific serial.h with 
->> CONFIG_ARCH_MULTIPLATFORM
-> 
-> This goes back a long way.  The BASE_BAUD definition is the base baud
-> for 8250 compatible UARTs _only_, no others.
-> 
-> However, as of 182ead3e418a ("earlycon: Remove hardcoded port->uartclk
-> initialization in of_setup_earlycon"), port->uartclk is no longer
-> initialised using BASE_BAUD.  As acknowledged in 814453adea7d
-> ("earlycon: Initialize port->uartclk based on clock-frequency 
-> property")
-> the initialisation using BASE_BAUD was bogus, and there is now the
-> clock-frequency DT property which should be present to set this up.
+On Wed, Sep 19, 2018 at 6:34 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-Thanks a lot for looking at that. I was not aware of the commit
-182ead3e418a ("earlycon: Remove hardcoded port->uartclk initialization
-in of_setup_earlycon"), too bad it wasn't marked for stable.
+> This series introduces register accessor functions and a level of indirection
+> for these, in order to handle dispersed tiles. It then adds the TLMM binder and
+> driver for the QCS404 platform.
+>
+> Avaneesh Kumar Dwivedi (1):
+>   pinctrl: qcom: Add qcs404 pinctrl driver
+>
+> Bjorn Andersson (3):
+>   pinctrl: qcom: Introduce readl/writel accessors
+>   pinctrl: qcom: Support dispersed tiles
+>   dt-bindings: pinctrl: qcom: Add QCS404 pinctrl binding
 
-I simply assumed that
-port->uartclk = BASE_BAUD * 16;
-is correct and that has poisoned all my further reasoning.
+I tested to apply the patches but they don't apply cleanly on my
+pin control devel branch, proably because some other qcom
+pinctrl fuzz.
 
-I've just confirmed that backporting 182ead3e418a to the 4.14 fixes the
-problem for me (it results in the same 8250_early.c behavior as setting
-BASE_BAUD to 0).
+When resending, it'd be great if you could just rebase it on top
+of whatever is in the pinctrl "devel" branch and it'll likely apply
+cleanly.
 
-I'm planning to backport both:
-182ead3e418a ("earlycon: Remove hardcoded port->uartclk initialization 
-in of_setup_earlycon")
-814453adea7d ("earlycon: Initialize port->uartclk based on 
-clock-frequency property")
-to 4.14+ as they fix regression triggered (not to say "caused") by the
-commit 31cb9a8575ca0 ("earlycon: initialise baud field of earlycon
-device structure").
-
-Please DROP my serial.h patch and thanks again.
-
-
-> Now, setting BASE_BAUD to zero as per your patch will break the
-> 8250 serial driver - this relies on BASE_BAUD being set to the
-> current value, and yes, ARM hardware that uses this will break.  So
-> this is not a solution.
-> 
-> The only solution is that BASE_BAUD must not be abused - it must not
-> be used by non-8250 hardware, and thankfully there are already
-> solutions in the kernel (such as clock-frequency) to allow the clock
-> rate to be specified.
-
-Somehow my serial console kept working with BASE_BAUD set to 0. I'm not
-sure why.
+Yours,
+Linus Walleij
