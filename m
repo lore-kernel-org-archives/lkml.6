@@ -2,106 +2,104 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF29ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 04:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBFDC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 04:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16F9B21522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 04:16:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="zL900dMg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F9B21522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A6A221522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 04:22:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6A221522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389095AbeIUKC7 (ORCPT
+        id S2388944AbeIUKJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 06:02:59 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:48265 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389010AbeIUKC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 06:02:59 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id dabe48db;
-        Fri, 21 Sep 2018 03:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type:content-transfer-encoding; s=mail; bh=8QfnaCuM0dxs
-        CaigjyeDr2rFBOQ=; b=zL900dMgclMhLbdwavVM29VwlonNqk+Yej9EnsgIbcrg
-        4JHHasX+DXpFAjeIIbuLCBs0t5eSG3LsLWU7zPT3Gdenj5Jwo/PDYtwX6fgKn/KT
-        sTaQTazTvY1ji9y+5uyAQma9KkIWBPPRMuZy0vlWD01g2qoQ6ti0Fdz/fnwxNnMH
-        oPsQ9v5R/Xb+/9hwlST6X66+ppzP4tcEK+vaAcfugw3FF2UhwegOjHp6R6J6cYzH
-        llceJKqY4jfIbQjsw+8/h5yl3G+sAuT7b5c4AuXO1yuIiwj6wpjh5uRm1W9n6uuW
-        y8cVrdjDPxznM/cLd7bJRjPK5fxoJifJ4fBlARLDYQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a69cae28 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Fri, 21 Sep 2018 03:58:06 +0000 (UTC)
-Received: by mail-ot1-f46.google.com with SMTP id j9-v6so11757716otl.2;
-        Thu, 20 Sep 2018 21:15:59 -0700 (PDT)
-X-Gm-Message-State: APzg51DAp4tVn4mqbd676vSuDM1LoGUJpg6+BK4hFp5mv54KRUuiPonU
-        Ssrii+mxt//oV7f+4Nex9zGYvqrKjuM3wXfbQ7Q=
-X-Google-Smtp-Source: ANB0VdaFwWGYoUtcsRpNehvXL3aikTsRIJOHQULoxhD+I7obob+7OqSc1FLjscZd+EeCBBxEZvDiDueWyq3tutlYHh4=
-X-Received: by 2002:a9d:6554:: with SMTP id q20-v6mr24856004otl.209.1537503358074;
- Thu, 20 Sep 2018 21:15:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-3-Jason@zx2c4.com>
- <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com>
- <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com>
- <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com>
- <20180921031255.GB11109@lunn.ch> <8FA361E3-FBCB-469E-88DC-F4085BD91175@amacapital.net>
-In-Reply-To: <8FA361E3-FBCB-469E-88DC-F4085BD91175@amacapital.net>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 21 Sep 2018 06:15:46 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rF=FfOf-_EOB-BeT-BM=B9Q9YzFAoUimaPiM2RKb5sGA@mail.gmail.com>
-Message-ID: <CAHmME9rF=FfOf-_EOB-BeT-BM=B9Q9YzFAoUimaPiM2RKb5sGA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography library
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
+        Fri, 21 Sep 2018 06:09:49 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:3755 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725898AbeIUKJt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 06:09:49 -0400
+X-UUID: 4320813f10de40d387ccdc2a384bcea1-20180921
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 889984817; Fri, 21 Sep 2018 12:22:42 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 21 Sep 2018 12:22:41 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 21 Sep 2018 12:22:41 +0800
+Message-ID: <1537503761.9654.17.camel@mtkswgap22>
+Subject: Re: [PATCH v2 00/22] Unify MediaTek pinctrl in preparation for
+ MT8183 and MT6765
+From:   Sean Wang <sean.wang@mediatek.com>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Fri, 21 Sep 2018 12:22:41 +0800
+In-Reply-To: <20180919043722.GA14181@Mani-XPS-13-9360>
+References: <cover.1536404280.git.sean.wang@mediatek.com>
+         <CACRpkdZtVBjYGs5C7-HWEyX7f7pnCqvnRYBH=fFmLKhN4FGymA@mail.gmail.com>
+         <1537325650.572.9.camel@mtkswgap22>
+         <20180919043722.GA14181@Mani-XPS-13-9360>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: 2233477D5B90D583037ADDB6734464641C4088D7182CD258BDE426DE9AF2344A2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Tue, 2018-09-18 at 21:37 -0700, Manivannan Sadhasivam wrote:
+> On Wed, Sep 19, 2018 at 10:54:10AM +0800, Sean Wang wrote:
+> > On Tue, 2018-09-18 at 15:07 -0700, Linus Walleij wrote:
+> > > On Sat, Sep 8, 2018 at 4:07 AM <sean.wang@mediatek.com> wrote:
+> > > 
+> > > > v2 and changes since v1:
+> > > 
+> > > I had trouble applying the last patches in the series so I applied
+> > > all on an immutable branch (ib-mtk) then merged that into devel
+> > > and added a patch on top to fix up some GPIO includes (just sent).
+> > > 
+> > > Please check the result!
+> > > 
+> > 
+> > Sure, I'll take a look and and test on the devel branch.
+> > 
+> > On the top, I'll add a fix for the issue recently reported by kbuild
+> > test robot about implicit declaration and a new MT6765 driver based
+> > on the series.
+> >
+> 
+> Hi Sean,
+> 
+> Do you have any plans to add support for MT6797?
+> 
 
-On Fri, Sep 21, 2018 at 5:23 AM Andy Lutomirski <luto@amacapital.net> wrote=
-:
-> At the risk on suggesting something awful: on x86_64, since we turn preem=
-ption off for simd, it wouldn=E2=80=99t be *completely* insane to do the cr=
-ypto on the irq stack. It would look like:
->
-> kernel_fpu_call(func, arg);
->
-> And this helper would disable preemption, enable FPU, switch to the irq s=
-tack, call func(arg), disable FPU, enable preemption, and return. And we ca=
-n have large IRQ stacks.
->
-> I refuse to touch this with a ten-foot pole until the lazy FPU restore pa=
-tches land.
+I personally have no the plan to add support to MT6797 because I have no
+the device, but as I knew some of people in mediatek have interest to
+add them by volunteers and thus there is no clear schedule. Eventually,
+if they're really done, they would be still based on vendor binding not
+by generic binding.
 
-Haha. That's fun, and maybe we'll do that at some point, but I have
-some other reasons too for being on a workqueue now.
+> Thanks,
+> Mani
+> 
+> > > Yours,
+> > > Linus Walleij
+> > 
+> > 
 
->
-> All that being said, why are these frames so large?  It sounds like somet=
-hing may be spilling that ought not to.
 
-They're not. Well, they're not anymore. I had a silly thing before
-like "u8 buffer[1 << 12]" in some debugging code, which is what
-prompted the ccflag-y addition. I cleaned up the mistakes like that
-and frames are now reasonable everywhere. Non-issue.
-
-Jason
