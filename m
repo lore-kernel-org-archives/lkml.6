@@ -2,89 +2,96 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5878DECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72692C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D7F21550
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9XDpnjk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D7F21550
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 365F921557
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:56:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 365F921557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390529AbeIUVpx (ORCPT
+        id S2390568AbeIUVqU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:45:53 -0400
-Received: from mail-it1-f171.google.com ([209.85.166.171]:38562 "EHLO
-        mail-it1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeIUVpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:45:53 -0400
-Received: by mail-it1-f171.google.com with SMTP id p129-v6so2400826ite.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=Dq+kH7/SBYemj/NZlgBSMkoqmF654/WNfntgJrxJ7hM=;
-        b=F9XDpnjkM9VFXUnmCvGzSPavpxXOv6rTfwm8w968nHR6Xg+7Q+UG0sAvbFY/uqNHQp
-         ceI/V3imxh0ckvGR7CEWHCQGV8iTuGOlXoHy+6PYbLF37Eu03er6fbPNh44moYv1y9m4
-         rrFMuIymKBaoeml065sA/sZ2liOFwyKN3ShRF/8+CGrDRDfnEwf0srvYdJ9JqigkC1je
-         Qz8qoRhIBfTvAoqnU1XhZgcyqc1gdMzbX5oSP4Iw1KHDphSjab5kKKIcl+bLV4JCAIwM
-         ExY7BPiMXnZDBafdjyCc/bShE6F/2N2S1m9xx6ayVNdr722QG7d8c90S5hchJU/roOsG
-         BxqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=Dq+kH7/SBYemj/NZlgBSMkoqmF654/WNfntgJrxJ7hM=;
-        b=EEZ/v6d8ErU+LOmS9C2+y3mUMwIBPUX+JqF4/oTzL0dvst4IB4qVfhyX3d5ZyVJL4g
-         dv/5EbBnec2UkVLRm4f6H+4QUw785Z/EeqBE/cYuLEB27qkgiPBSTAIIf6ZrzKxfDhiB
-         evUgWB6++9Xz/Id7NKb83jWXyQyTRje406gF9vDVil9MB2sdEzAzyZeWX2UX+JKSWiyc
-         /fnbHNMTvnyYasvCvJaok0bUH7eUwS8j9Rfu5CHnldbn2apBHdypwNPf3rsc6yoj/E21
-         l65lgtLRxOEW9BGxWF1BkoEd1P3J6aZr52jHddYqVySWM+vWEL/0W3ZjMuD3RpylB73p
-         jlkw==
-X-Gm-Message-State: APzg51D+/wGMZGMamJNzOtCRg1PxXtxwARLvJ9V/ORaVQIOve/9WeFUm
-        D1XE52CDeSPgubGsp617jhCNEUGU7FLo48Lcl6l/vq9B
-X-Google-Smtp-Source: ANB0VdYar1+sh8HMe38lpGfSdwN0l4q3ohp/ftfvDIFO81Y7KUFmXm6I6ygK12x5hLw7jwokPcBqpP9iWZnxJvexI34=
-X-Received: by 2002:a24:c48a:: with SMTP id v132-v6mr6766332itf.72.1537545382959;
- Fri, 21 Sep 2018 08:56:22 -0700 (PDT)
-MIME-Version: 1.0
-From:   John Lumby <jylumby@gmail.com>
-Date:   Fri, 21 Sep 2018 11:56:12 -0400
-Message-ID: <CAN55p+JXBO0OO_zbn9V-OnSKMQWhJDQb98yuVPC3XZD3kjo3rg@mail.gmail.com>
-Subject: BUG - (suspected) - ORC unwinder with elfutils-0.174 causes ld
- failure during make
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 21 Sep 2018 17:46:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38490 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388909AbeIUVqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 17:46:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD90718A;
+        Fri, 21 Sep 2018 08:56:49 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E8A53F557;
+        Fri, 21 Sep 2018 08:56:49 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 16:56:47 +0100
+Message-ID: <86h8iix2rk.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <mark.rutland@arm.com>,
+        <christoffer.dall@arm.com>, <james.morse@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: [PATCH v5 01/27] arm64: cpufeature: Set SYSREG_GIC_CPUIF as a boot system feature
+In-Reply-To: <1535471497-38854-2-git-send-email-julien.thierry@arm.com>
+References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
+        <1535471497-38854-2-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.config has CONFIG_UNWINDER_ORC=y
+On Tue, 28 Aug 2018 16:51:11 +0100,
+Julien Thierry <julien.thierry@arm.com> wrote:
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  arch/arm64/kernel/cpufeature.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index e238b79..1e433ac 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1039,7 +1039,7 @@ static void cpu_has_fwb(const struct arm64_cpu_capabilities *__unused)
+>  	{
+>  		.desc = "GIC system register CPU interface",
+>  		.capability = ARM64_HAS_SYSREG_GIC_CPUIF,
+> -		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
+>  		.matches = has_useable_gicv3_cpuif,
+>  		.sys_reg = SYS_ID_AA64PFR0_EL1,
+>  		.field_pos = ID_AA64PFR0_GIC_SHIFT,
+> -- 
+> 1.9.1
+> 
 
-elfutils version 0.174  (latest)
+This definitely deserves a commit message, such as:
 
-make of the kernel source fails with errors such as this
-arch/x86/kvm/../../../virt/kvm/kvm_main.o: file not recognized: file
-format not recognized
-emitted by ld
+"We do not support systems where some CPUs have an operational GICv3
+ CPU interface, and some don't. Let's make this requirement obvious by
+ flagging the GICv3 capability as being strict."
 
-ld is from latest binutils version 2.31
-gcc is version 7.3
+Thanks,
 
-Found in kernel kver 4.17.10 and also in latest 4.19-rc4
+	M.
 
-problem is caused by this transformation directed from the Makefile
-
-        ./tools/objtool/objtool orc generate  --module --no-fp
---retpoline "arch/x86/kvm/../../../virt/kvm/kvm_main.o";
-
-make succeeds when CONFIG_UNWINDER_ORC is not set
-
-Cheers,  John Lumby
+-- 
+Jazz is not dead, it just smell funny.
