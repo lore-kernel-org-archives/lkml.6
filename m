@@ -2,198 +2,110 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28EAC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE21C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62ECC21550
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B8FA21532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:57:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="oZ7FGgpQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62ECC21550
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Gj4I+RrQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B8FA21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390368AbeIUUqs (ORCPT
+        id S2390387AbeIUUqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:46:48 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44931 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390179AbeIUUqr (ORCPT
+        Fri, 21 Sep 2018 16:46:55 -0400
+Received: from sonic306-9.consmr.mail.bf2.yahoo.com ([74.6.132.48]:41789 "EHLO
+        sonic306-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390227AbeIUUqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:46:47 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l82-v6so11619413oih.11
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 07:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GXa+tTWgvrIt+UaxBmVbUv0K3O1uHDXpe5bgsYkFyqs=;
-        b=oZ7FGgpQyljRAmQ/S1NT6EL5q7zB77URy/gYIrNHJhf9CJXIsdfbSAfGQXCRcUYAQX
-         EjmHMMR3c+GuoX9bzFP+Ov4qEvY4Qtqcfp4gU7enQmYBsBePnwSFwEqIt8h/9D9Y29Up
-         sakhkyuJgzkcNyLQ89zadh0mAK3jlakXRI3Djv4lENra+0dLs94gcu2Pqvw1rTFMgXG6
-         WbIppIdsx4ui+vGhLS2FmulJBFiI7aCX6S1Eq8mpEYFECBrWZy7ndXIRFy72gWztsaxN
-         dMiAMMPjd6/173ZqoJl7nfy2YBJUgNyWYtLH44mmQ5CG+r1ZTR7p9C3ndwxJ9OqGNBZ3
-         PXdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GXa+tTWgvrIt+UaxBmVbUv0K3O1uHDXpe5bgsYkFyqs=;
-        b=pXTS1t/1N97LzEqly/ZGCe73TClH603YoGP6ze6PkfqlU9F5/2RE8dOXeQRmW/+gmC
-         VUjy6zI8rx8ClJgOy6R8KV0OjTsid7PoylYKR/i9p5iZY1ktmdJHpKUPKcCSlsHZEQe8
-         f72RnqIxuboQBQtvR2fvPpnyAWPTh7xXRFN1JY6Vs20Vj41jia/s4ak9JBok6gN69prj
-         D0OQKWl9mPvCCkk5ai6Og00SZvzclWM0OBuvSOtaVfsB8ImelbEobtZbKS9SdJKhZMoH
-         d+HHPCHHrzerQ547JmejdAy5bAUojW0Z5XUZIe64s+c3N/B2z/4eLMwWihuszMRxM+eC
-         5oYA==
-X-Gm-Message-State: APzg51CqnMtYvCWIcR9FixFQyatjbBEc15jK8yY1cPOQULmAXCoxrRg7
-        rsgr3+TuGhCVEAx1DZdmZ2VseD2EydcHGQlzAnOQJQ==
-X-Google-Smtp-Source: ANB0VdaTokJ4vAVVFEyNBPQCAhvSCnt+LIUuNXpimyipAekt6MdZDDLy2qRERkb2bB8NMkuKmzX3uz4HADo5Pwa6D5w=
-X-Received: by 2002:aca:a8c1:: with SMTP id r184-v6mr1499457oie.215.1537541852376;
- Fri, 21 Sep 2018 07:57:32 -0700 (PDT)
+        Fri, 21 Sep 2018 16:46:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537541858; bh=NZxr5DvYFN7iF1Ir6w85jsFCYmP6N+scR2Oj4Q3VULM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Gj4I+RrQKyw9iwnlSEO9A+/B3lRYouiP2+swJGlPHueRCmTUcZoh2IrjvPSFpUe1zHAaKYLVoybP/EWpIcmA/p+oW5LR0lFx7j2xzyRnTISe4b9A5zbhEfCBnew9HxM7QyR6yIw7RRzB2X5/jBuV+EfCPXEsZEj83XKV3qHb8JieFDN03VH0xLatL3hM/yuWUsOhYkGAMnx8KEc7TRxMYEV+5kU+eXaZuizYVbCYhO66+yL6jHjeoftT8NnZgAZuCp3317flT5Bj1SDErSDrI1Ahrh2oT2Ql4QNNNQNl2VMyX2/BOzMM10beMXaahcnZI9NWFS0TFR8ugUbAwp55wQ==
+X-YMail-OSG: 3tH6jrgVM1lo6tiIeVzVZLXYFsp4V4T7tuogD66fi5oDxXc9hiepkqx6IcTO482
+ cXAYQwzu5Fz8qZoxHVhz5kSr231skKhml.dIONfU6gdZcQ7t4HkpnK_rMwWmF4T0P3inAAEskTaM
+ GQii7XPp1AnKG6hLroHOrJTS41Sqo0VwOkbzqKZXPDC.Ef5wQu7YAvlm7CQo4LvnDaFfYLJcgiNu
+ bBdb9XY0TA9tz05EnzOsoxvgn9FrvCEMLUfN8mP94dxlrbOxgGxm3HRrk3VQ.46PTGhHAMAlTe0C
+ 2RnxBU59JVXvSsZ1BLTxqJQ2UWmPA6m8CCC2S6DqjOg4KOTP5aF7LGHTX8kyQA5iXVAQqMyBjJPH
+ _GVBDC1iI7Hp84vxDh1AKQOExL1t1A8poxgw._aHi9lHZ3mzlL0fyYucyr_u1rnBD_9.PUrH0QH6
+ hPiUeSjNA7EIAPP8IsPaeBFyETTlTpL1OyXVbLKl_3Y6PChdxgS00HOlnYTX_nXlaxE_K.0wFuNd
+ 3G.XbLbqZf3NFvgRFcOQAt3.I7sZf36I7sDX87TO_oNLTKkZc_vDqF3JiLlz8bcd0_TZn9_NUalB
+ Yq3R7xXgMpJC08p_TLs.KlGrtXlBiyRxhiYYMV05eURcsyynZmvmVWlHcL.akZSGK9wRl7ykALaU
+ RpSywYrADu3D77Vyf.cU2Bdu9RqA_sLKoqEhwdg943xLZtUMafKdgQLE3_KODceFdCn.Ol5ABTIV
+ uyxe5WTg1fpEzHUlcr9WMHJeDWt2wm3nzDMg0dhn91fy5JR2X_lpUR6I6sBX94AXdE56GT_dLYJR
+ R9DfNT3N7feQ52zqpGhRJFxVNrZ.N.SrgOQnvpDCgwclb7xK69nEayz_YCdnORQ74oOD8JX6.tno
+ u1Z4BF6f_R_1OSVMU2CsOVS.r5OwBbhB0.ywKai2vWG1dfYtjD.loF0tCxUjMk2gu4eYBlQHeyau
+ mpgGTmugcN51Zunftajwd.KhbvaCq5aEB3yRTVbb6sMX4BUbkX60xUp.8GytnHCvBUnAvmsyO4Xf
+ bwkivyUGvmt6W4KeTb8zXXks7M_xx4td9gzaIEOFx7UHMjV8B
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Sep 2018 14:57:38 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp402.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b1ea943c7e117406b472149e3b4ed37f;
+          Fri, 21 Sep 2018 14:57:34 +0000 (UTC)
+Subject: Re: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
+ ordered initialization
+To:     John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180920162338.21060-1-keescook@chromium.org>
+ <20180920162338.21060-27-keescook@chromium.org>
+ <a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
+ <CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
+ <7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
+ <6c899d9e-45aa-8159-c402-b3c4d1936112@canonical.com>
+ <CAGXu5jKzqij5dY2FYm5rafPNPpF1Tx9BPmK+=FvG+=tpFxpscw@mail.gmail.com>
+ <74ecd4ec-491b-93d7-4e3f-46f92121130b@canonical.com>
+ <CAGXu5j+QhU2HOicYKqfNo17n9k6DKgt1upa3O2p1b5Gvn6icbQ@mail.gmail.com>
+ <915ba7e5-0e10-87ef-f0a9-1d8db2e6de90@canonical.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <78fc6ba1-881a-9c82-ebc1-64311279050c@schaufler-ca.com>
+Date:   Fri, 21 Sep 2018 07:57:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180920215824.19464.8884.stgit@localhost.localdomain> <20180920222938.19464.34102.stgit@localhost.localdomain>
-In-Reply-To: <20180920222938.19464.34102.stgit@localhost.localdomain>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 21 Sep 2018 07:57:21 -0700
-Message-ID: <CAPcyv4iFs5WXMYgbC6mBSxcHggv5y1kPW5BoZ4JMy5o-bv6cOg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] async: Add support for queueing on specific node
-To:     alexander.h.duyck@linux.intel.com
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <915ba7e5-0e10-87ef-f0a9-1d8db2e6de90@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 3:31 PM Alexander Duyck
-<alexander.h.duyck@linux.intel.com> wrote:
->
-> This patch introduces two new variants of the async_schedule_ functions
-> that allow scheduling on a specific node. These functions are
-> async_schedule_on and async_schedule_on_domain which end up mapping to
-> async_schedule and async_schedule_domain but provide NUMA node specific
-> functionality. The original functions were moved to inline function
-> definitions that call the new functions while passing NUMA_NO_NODE.
->
-> The main motivation behind this is to address the need to be able to
-> schedule NVDIMM init work on specific NUMA nodes in order to improve
-> performance of memory initialization.
->
-> One additional change I made is I dropped the "extern" from the function
-> prototypes in the async.h kernel header since they aren't needed.
->
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> ---
->  include/linux/async.h |   20 +++++++++++++++++---
->  kernel/async.c        |   36 +++++++++++++++++++++++++-----------
->  2 files changed, 42 insertions(+), 14 deletions(-)
->
-> diff --git a/include/linux/async.h b/include/linux/async.h
-> index 6b0226bdaadc..9878b99cbb01 100644
-> --- a/include/linux/async.h
-> +++ b/include/linux/async.h
-> @@ -14,6 +14,7 @@
->
->  #include <linux/types.h>
->  #include <linux/list.h>
-> +#include <linux/numa.h>
->
->  typedef u64 async_cookie_t;
->  typedef void (*async_func_t) (void *data, async_cookie_t cookie);
-> @@ -37,9 +38,22 @@ struct async_domain {
->         struct async_domain _name = { .pending = LIST_HEAD_INIT(_name.pending), \
->                                       .registered = 0 }
->
-> -extern async_cookie_t async_schedule(async_func_t func, void *data);
-> -extern async_cookie_t async_schedule_domain(async_func_t func, void *data,
-> -                                           struct async_domain *domain);
-> +async_cookie_t async_schedule_on(async_func_t func, void *data, int node);
-> +async_cookie_t async_schedule_on_domain(async_func_t func, void *data, int node,
-> +                                       struct async_domain *domain);
+On 9/21/2018 6:19 AM, John Johansen wrote:
+> On 09/20/2018 08:02 PM, Kees Cook wrote:
+>> On Thu, Sep 20, 2018 at 7:14 PM, John Johansen
+>> <john.johansen@canonical.com> wrote:
+>>> On 09/20/2018 07:05 PM, Kees Cook wrote:
+>>>> On Thu, Sep 20, 2018 at 6:39 PM, John Johansen
+>>>> <john.johansen@canonical.com> wrote:
+>>>>
+>>>> Yes, I like CONFIG_LSM_ENABLE if "empty" means "enable all". Should
+>>>> CONFIG_LSM_ENABLE replace all the other CONFIG-based LSM
+>>>> enabling/disabling?
+>>> I don't particularly like "empty" being "enable all". With that
+>>> how would I disable all builtin lsms so that I just boot with
+>>> capability.
+>>>
+>>> An option of all or even * is more explicit and leaves the empty
+>>> set to mean disable everything
+>> Okay, that works. I prefer "all" FWIW.
+>>
+> me too, I was just trying to throw out options.
 
-I would expect this to take a cpu instead of a node to not surprise
-users coming from queue_work_on() / schedule_work_on()...
+I'll buy that. "all" is fine by me, although it means we
+can't have an LSM named "all". :) We should also allow "none"
+to mean no LSMs. I know lots of people who love using security=none.
 
-> +
-> +static inline async_cookie_t async_schedule(async_func_t func, void *data)
-> +{
-> +       return async_schedule_on(func, data, NUMA_NO_NODE);
-> +}
-> +
-> +static inline async_cookie_t
-> +async_schedule_domain(async_func_t func, void *data,
-> +                     struct async_domain *domain)
-> +{
-> +       return async_schedule_on_domain(func, data, NUMA_NO_NODE, domain);
-> +}
-> +
->  void async_unregister_domain(struct async_domain *domain);
->  extern void async_synchronize_full(void);
->  extern void async_synchronize_full_domain(struct async_domain *domain);
-> diff --git a/kernel/async.c b/kernel/async.c
-> index a893d6170944..1d7ce81c1949 100644
-> --- a/kernel/async.c
-> +++ b/kernel/async.c
-> @@ -56,6 +56,7 @@ synchronization with the async_synchronize_full() function, before returning
->  #include <linux/sched.h>
->  #include <linux/slab.h>
->  #include <linux/workqueue.h>
-> +#include <linux/cpu.h>
->
->  #include "workqueue_internal.h"
->
-> @@ -149,8 +150,11 @@ static void async_run_entry_fn(struct work_struct *work)
->         wake_up(&async_done);
->  }
->
-> -static async_cookie_t __async_schedule(async_func_t func, void *data, struct async_domain *domain)
-> +static async_cookie_t __async_schedule(async_func_t func, void *data,
-> +                                      struct async_domain *domain,
-> +                                      int node)
->  {
-> +       int cpu = WORK_CPU_UNBOUND;
->         struct async_entry *entry;
->         unsigned long flags;
->         async_cookie_t newcookie;
-> @@ -194,30 +198,40 @@ static async_cookie_t __async_schedule(async_func_t func, void *data, struct asy
->         /* mark that this task has queued an async job, used by module init */
->         current->flags |= PF_USED_ASYNC;
->
-> +       /* guarantee cpu_online_mask doesn't change during scheduling */
-> +       get_online_cpus();
-> +
-> +       if (node >= 0 && node < MAX_NUMNODES && node_online(node))
-> +               cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
-
-...I think this node to cpu helper should be up-leveled for callers. I
-suspect using get_online_cpus() may cause lockdep problems to take the
-cpu_hotplug_lock() within a "do_something_on()" routine. For example,
-I found this when auditing queue_work_on() users:
-
-/*
- * Doesn't need any cpu hotplug locking because we do rely on per-cpu
- * kworkers being shut down before our page_alloc_cpu_dead callback is
- * executed on the offlined cpu.
- * Calling this function with cpu hotplug locks held can actually lead
- * to obscure indirect dependencies via WQ context.
- */
-void lru_add_drain_all(void)
-
-I think it's a gotcha waiting to happen if async_schedule_on() has
-more restrictive calling contexts than queue_work_on().
