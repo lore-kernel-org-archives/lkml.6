@@ -2,128 +2,112 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B39F9ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A76C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F50121522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:31:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MjM8zYft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F50121522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 5631521522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:32:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5631521522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391455AbeIVCWU (ORCPT
+        id S2391486AbeIVCWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 22:22:20 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41222 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391279AbeIVCWU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 22:22:20 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b12-v6so6433625plr.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rlfmL3v4zMM0JptUg6QODZyirUCL2nG0gpoHsyY18fU=;
-        b=MjM8zYft4xvhoRxeavD1fRDEcj80rug6ZCTEViX8wtdUzHL2Y54165l2lnCSO0ile2
-         6FsuhmMxNHCG/5O2BlEIAj4zYEBM8Oak2UWt9WYHfrBYQwUXcyqRV5WSUsOYJVQUCWEt
-         V8qK28spJWSZpt8vqnb54rliDbT0DaAuCFoNb5Y8sXmZJ7RveSffofeC524YGTOeg30+
-         pWBcIJbtyoIBbVkHvA6TolUIoA5ZyDib7A+WmEc/1qHJjhkWRyjFEL8MXnWGl677TKBv
-         mMGP5jbs4iwiTWz0e34RBEPROhbyOoUVFdQkQ1F+6BwKtnHSl6AUiKjpq+VhXfMpZVUr
-         SCqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rlfmL3v4zMM0JptUg6QODZyirUCL2nG0gpoHsyY18fU=;
-        b=nvp3aZd7KkFSN9pFe+YzqIOV2UTvr2br1YQiLSOeFFnmjum2xv7lh3T2AF5PwSpAKD
-         m3arWUPUH16WNYZ6zdLujxK7ATIa+oarDCGfJH5fsYHoAfIBAodHRFg0LnT9rWZodYuW
-         ifyaZBA453gmJuLhmkTd7V2fl1n6lPdRppqdOlC676ECkPOmCe3uv3TywS3OCg3o4Pj5
-         CpswjZ4MeY8ZQf4eK9xpSLd/tuj4KweDm3AGUkFXBTfQcRwS0JzMM8iaCFfBMVBWPQ7/
-         OcNdzgH+rWHkBVEKC2nVHOknW7wvoT+evkzjfiv6LCj8rY6Fce+u9dXmzHtyZQbBKlgL
-         AWSg==
-X-Gm-Message-State: APzg51ClQyCHpcF7h1x2bZGp4/c8HiD2aSta6BCz0vYn8YNKd96TjPi4
-        9qudXOjS5WyS93Hv9vpee3y9W3Iszh2xRFOrtdcKFQ==
-X-Google-Smtp-Source: ANB0VdZQy9axGHJIaNVd0dyPmHG+g5VSrhk1JUOQi9lCtGnF2dbkRWv16JS5qzr0TJ8YlTjkVESrqpWZgTP2K103zUA=
-X-Received: by 2002:a17:902:561:: with SMTP id 88-v6mr45604959plf.320.1537561908726;
- Fri, 21 Sep 2018 13:31:48 -0700 (PDT)
+        Fri, 21 Sep 2018 22:22:44 -0400
+Received: from mga04.intel.com ([192.55.52.120]:28889 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391279AbeIVCWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 22:22:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 13:32:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,286,1534834800"; 
+   d="scan'208";a="75228442"
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga008.jf.intel.com with ESMTP; 21 Sep 2018 13:32:12 -0700
+Subject: Re: [patch V3 11/11] x86/mm/cpa: Avoid the 4k pages check completely
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180917142906.384767038@linutronix.de>
+ <20180917143546.589642503@linutronix.de>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Bin Yang <bin.yang@intel.com>,
+        Mark Gross <mark.gross@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <8b83d5e2-2374-1986-5fae-9e898eee1a7b@intel.com>
+Date:   Fri, 21 Sep 2018 13:32:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180921195736.7977-1-natechancellor@gmail.com>
-In-Reply-To: <20180921195736.7977-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 21 Sep 2018 13:31:37 -0700
-Message-ID: <CAKwvOdk-w04qavrzeOg_yCH6gYRE4UEX49TJBEb8wMjRssPDdQ@mail.gmail.com>
-Subject: Re: [PATCH] media: cx18: Don't check for address of video_dev
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     awalls@md.metrocast.net,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180917143546.589642503@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 1:03 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns that the address of a pointer will always evaluated as true
-> in a boolean context.
->
-> drivers/media/pci/cx18/cx18-driver.c:1255:23: warning: address of
-> 'cx->streams[i].video_dev' will always evaluate to 'true'
-> [-Wpointer-bool-conversion]
->                 if (&cx->streams[i].video_dev)
->                 ~~   ~~~~~~~~~~~~~~~^~~~~~~~~
-> 1 warning generated.
->
-> Presumably, the contents of video_dev should have been checked, not the
-> address. This check has been present since 2009, introduced by commit
-> 21a278b85d3c ("V4L/DVB (11619): cx18: Simplify the work handler for
-> outgoing mailbox commands")
->
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> Alternatively, this if statement could just be removed since it has
-> evaluated to true since 2009 and I assume some issue with this would
-> have been discovered by now.
->
->  drivers/media/pci/cx18/cx18-driver.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
-> index 56763c4ea1a7..753a37c7100a 100644
-> --- a/drivers/media/pci/cx18/cx18-driver.c
-> +++ b/drivers/media/pci/cx18/cx18-driver.c
-> @@ -1252,7 +1252,7 @@ static void cx18_cancel_out_work_orders(struct cx18 *cx)
->  {
->         int i;
->         for (i = 0; i < CX18_MAX_STREAMS; i++)
-> -               if (&cx->streams[i].video_dev)
-> +               if (cx->streams[i].video_dev)
+On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
+> +	 * There used to be a 4k wise evaluation trying really hard to
+> +	 * preserve the large pages, but experimentation has shown, that this
+> +	 * does not help at all. There might be corner cases which would
+> +	 * preserve one large page occasionally, but it's really not worth the
+> +	 * extra code and cycles for the common case.
 
-cx->streams[i].video_dev has the type `struct video_device video_dev`.
-So wouldn't this change always be true as well, since the struct is
-embedded?
+My only concern with this is that if this goes bad, it will be silently
+bad and we'll just have an unnecessarily fractured direct map.
 
->                         cancel_work_sync(&cx->streams[i].out_work_order);
->  }
->
-> --
-> 2.19.0
->
+But, writing code to go verify the page tables and make sure they're
+sane is a task for another day.
 
-
--- 
-Thanks,
-~Nick Desaulniers
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
