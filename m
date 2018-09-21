@@ -6,133 +6,277 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CFBC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884C0C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9EF52147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:05:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9EF52147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F11F21531
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F11F21531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389680AbeIUPx5 (ORCPT
+        id S2389486AbeIUPz0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:53:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58692 "EHLO mail.bootlin.com"
+        Fri, 21 Sep 2018 11:55:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41198 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389022AbeIUPx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:53:57 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 765F720798; Fri, 21 Sep 2018 12:05:47 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 487F520720;
-        Fri, 21 Sep 2018 12:05:47 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     jason@lakedaemon.net, andrew@lunn.ch,
-        sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk,
-        ylefloch@online.net, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] ARM: mvebu: use dt_fixup to provide fallback for enable-method
-References: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz>
-Date:   Fri, 21 Sep 2018 12:05:48 +0200
-In-Reply-To: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz> (Chris
-        Packham's message of "Thu, 26 Jul 2018 15:48:56 +1200")
-Message-ID: <8736u3jhc3.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1726479AbeIUPzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:55:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3B9EBC0587D2;
+        Fri, 21 Sep 2018 10:07:17 +0000 (UTC)
+Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F3D7017AFC;
+        Fri, 21 Sep 2018 10:07:10 +0000 (UTC)
+Subject: Re: [PATCH v5 10/23] iommu: introduce device fault data
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     Yi L <yi.l.liu@linux.intel.com>, Raj Ashok <ashok.raj@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Liu@mail.linuxfoundation.org, Jean Delvare <khali@linux-fr.org>
+References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
+ <1526072055-86990-11-git-send-email-jacob.jun.pan@linux.intel.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <72b3e4d8-de99-11d3-c725-1211fc64b262@redhat.com>
+Date:   Fri, 21 Sep 2018 12:07:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1526072055-86990-11-git-send-email-jacob.jun.pan@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Sep 2018 10:07:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chris,
- 
- On jeu., juil. 26 2018, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+Hi Jacob,
 
-> We need to maintain backwards compatibility with device trees that don't
-> define an enable method. At the same time we want the device tree to be
-> able to specify an enable-method and have it stick.
->
-> Previously by having smp assigned in the DT_MACHINE definition this
-> would be picked up by setup_arch() and override whatever
-> arm_dt_init_cpu_maps() had configured. Now we move the initial
-> assignment of default smp_ops to a dt_fixup and let
-> arm_dt_init_cpu_maps() override that if the device tree defines an
-> enable-method.
->
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-
-I made several tests on an Armada XP based board: OpenBlock AX3: I
-modify the enable-method in the decvice tree, and I confirm that without
-your patch it is not taken into account whereas with this patch the
-enable-method is applied form the device tree. I also didn't see any
-regression with the original dtb.
-
-So I added my:
-Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-
-and applied on mvebu/soc
-
-Thanks,
-
-Gregory
-
+On 5/11/18 10:54 PM, Jacob Pan wrote:
+> Device faults detected by IOMMU can be reported outside IOMMU
+> subsystem for further processing. This patch intends to provide
+> a generic device fault data such that device drivers can be
+> communicated with IOMMU faults without model specific knowledge.
+> 
+> The proposed format is the result of discussion at:
+> https://lkml.org/lkml/2017/11/10/291
+> Part of the code is based on Jean-Philippe Brucker's patchset
+> (https://patchwork.kernel.org/patch/9989315/).
+> 
+> The assumption is that model specific IOMMU driver can filter and
+> handle most of the internal faults if the cause is within IOMMU driver
+> control. Therefore, the fault reasons can be reported are grouped
+> and generalized based common specifications such as PCI ATS.
+> 
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 > ---
-> Pervious versions
->
-> v1: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300182.html
-> v2: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/300480.html
-> v3: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/302945.html
-> v4: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-November/303899.html
->
-> Changes since v4:
-> - drop "RFC"
->
->  arch/arm/mach-mvebu/board-v7.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
-> index ccca95173e17..5bbde5e5258e 100644
-> --- a/arch/arm/mach-mvebu/board-v7.c
-> +++ b/arch/arm/mach-mvebu/board-v7.c
-> @@ -145,6 +145,11 @@ static void __init mvebu_dt_init(void)
->  		i2c_quirk();
->  }
+>  include/linux/iommu.h | 101 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 99 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index e8cadb6..aeadb4f 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -49,13 +49,17 @@ struct bus_type;
+>  struct device;
+>  struct iommu_domain;
+>  struct notifier_block;
+> +struct iommu_fault_event;
 >  
-> +static void __init armada_370_xp_dt_fixup(void)
-> +{
-> +	smp_set_ops(smp_ops(armada_xp_smp_ops));
-> +}
-> +
->  static const char * const armada_370_xp_dt_compat[] __initconst = {
->  	"marvell,armada-370-xp",
->  	NULL,
-> @@ -153,17 +158,12 @@ static const char * const armada_370_xp_dt_compat[] __initconst = {
->  DT_MACHINE_START(ARMADA_370_XP_DT, "Marvell Armada 370/XP (Device Tree)")
->  	.l2c_aux_val	= 0,
->  	.l2c_aux_mask	= ~0,
-> -/*
-> - * The following field (.smp) is still needed to ensure backward
-> - * compatibility with old Device Trees that were not specifying the
-> - * cpus enable-method property.
-> - */
-> -	.smp		= smp_ops(armada_xp_smp_ops),
->  	.init_machine	= mvebu_dt_init,
->  	.init_irq       = mvebu_init_irq,
->  	.restart	= mvebu_restart,
->  	.reserve        = mvebu_memblock_reserve,
->  	.dt_compat	= armada_370_xp_dt_compat,
-> +	.dt_fixup	= armada_370_xp_dt_fixup,
->  MACHINE_END
+>  /* iommu fault flags */
+> -#define IOMMU_FAULT_READ	0x0
+> -#define IOMMU_FAULT_WRITE	0x1
+> +#define IOMMU_FAULT_READ		(1 << 0)
+> +#define IOMMU_FAULT_WRITE		(1 << 1)
+> +#define IOMMU_FAULT_EXEC		(1 << 2)
+> +#define IOMMU_FAULT_PRIV		(1 << 3)
 >  
->  static const char * const armada_375_dt_compat[] __initconst = {
-> -- 
-> 2.18.0
->
+>  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
+>  			struct device *, unsigned long, int, void *);
+> +typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *, void *);
+>  
+>  struct iommu_domain_geometry {
+>  	dma_addr_t aperture_start; /* First address that can be mapped    */
+> @@ -264,6 +268,98 @@ struct iommu_device {
+>  	struct device *dev;
+>  };
+>  
+> +/*  Generic fault types, can be expanded IRQ remapping fault */
+> +enum iommu_fault_type {
+> +	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault */
+> +	IOMMU_FAULT_PAGE_REQ,		/* page request fault */
+> +};
 
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+While doing the exercise of mapping the SMMUv3 events to this, I failed
+to map some event types to iommu_fault_reason enum values.
+> +
+> +enum iommu_fault_reason {
+> +	IOMMU_FAULT_REASON_UNKNOWN = 0,
+> +
+> +	/* IOMMU internal error, no specific reason to report out */
+> +	IOMMU_FAULT_REASON_INTERNAL,
+> +
+> +	/* Could not access the PASID table */
+> +	IOMMU_FAULT_REASON_PASID_FETCH,
+
+Would it be possible to add
+ /* could not access the device context (fetch caused external abort) */
+IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH,
+
+> +
+> +	/*
+> +	 * PASID is out of range (e.g. exceeds the maximum PASID
+> +	 * supported by the IOMMU) or disabled.
+> +	 */
+> +	IOMMU_FAULT_REASON_PASID_INVALID,
+Would it be possible to add
+/* source id is out of range */
+IOMMU_FAULT_REASON_SOURCEID_INVALID,
+
+or alike
+on ARM the sourceid matches the streamid and pasid matches the substreamid.
+
+It would be useful to have:
+/* pasid entry is invalid or has configuration errors */
+IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
+
+/* device context entry is invalid or has configuration errors */
+IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY,
+
+This typically allows to return information to the guest about fields in
+device context entry or pasid entry that are incorrect, not matching the
+physical IOMMU capability
+> +
+> +	/* Could not access the page directory (Invalid PASID entry) */
+> +	IOMMU_FAULT_REASON_PGD_FETCH,
+I was unsure about this one. On my side I needed something more general
+such as:
+/*
+* An external abort occurred fetching (or updating) a translation
+* table descriptor
+*/
+IOMMU_FAULT_REASON_WALK_EABT,
+
+> +
+> +	/* Could not access the page table entry (Bad address) */
+> +	IOMMU_FAULT_REASON_PTE_FETCH,
+I interpreted this one as the actual translation failure but that's not
+obvious to me either. Is it a fetch abort or is it that the PTE is
+marked invalid. Maybe if we have the former we can just have a
+translation fault reason instead.
+> +
+> +	/* Protection flag check failed */
+> +	IOMMU_FAULT_REASON_PERMISSION,
+On ARM we also have:
+
+/* access flag check failed */
+IOMMU_FAULT_REASON_ACCESS,
+
+and
+
+/* Output address of a translation stage caused Address Size fault */
+ IOMMU_FAULT_REASON_OOR_ADDRESS
+
+I am aware all those suggestions do not match the original goal of your
+series, mostly targeted at SVA support. However in the prospect to make
+those APIs as generic as possible it may be useful to take those
+requirements as well.
+
+Hope it does not bring extra noise to the topic ;-)
+
+Thanks
+
+Eric
+
+
+
+
+> +};
+> +
+> +/**
+> + * struct iommu_fault_event - Generic per device fault data
+> + *
+> + * - PCI and non-PCI devices
+> + * - Recoverable faults (e.g. page request), information based on PCI ATS
+> + * and PASID spec.
+> + * - Un-recoverable faults of device interest
+> + * - DMA remapping and IRQ remapping faults
+> +
+> + * @type contains fault type.
+> + * @reason fault reasons if relevant outside IOMMU driver, IOMMU driver internal
+> + *         faults are not reported
+> + * @addr: tells the offending page address
+> + * @pasid: contains process address space ID, used in shared virtual memory(SVM)
+> + * @page_req_group_id: page request group index
+> + * @last_req: last request in a page request group
+> + * @pasid_valid: indicates if the PRQ has a valid PASID
+> + * @prot: page access protection flag, e.g. IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
+> + * @device_private: if present, uniquely identify device-specific
+> + *                  private data for an individual page request.
+> + * @iommu_private: used by the IOMMU driver for storing fault-specific
+> + *                 data. Users should not modify this field before
+> + *                 sending the fault response.
+> + */
+> +struct iommu_fault_event {
+> +	enum iommu_fault_type type;
+> +	enum iommu_fault_reason reason;
+> +	u64 addr;
+> +	u32 pasid;
+> +	u32 page_req_group_id;
+> +	u32 last_req : 1;
+> +	u32 pasid_valid : 1;
+> +	u32 prot;
+> +	u64 device_private;
+> +	u64 iommu_private;
+> +};
+> +
+> +/**
+> + * struct iommu_fault_param - per-device IOMMU fault data
+> + * @dev_fault_handler: Callback function to handle IOMMU faults at device level
+> + * @data: handler private data
+> + *
+> + */
+> +struct iommu_fault_param {
+> +	iommu_dev_fault_handler_t handler;
+> +	void *data;
+> +};
+> +
+> +/**
+> + * struct iommu_param - collection of per-device IOMMU data
+> + *
+> + * @fault_param: IOMMU detected device fault reporting data
+> + *
+> + * TODO: migrate other per device data pointers under iommu_dev_data, e.g.
+> + *	struct iommu_group	*iommu_group;
+> + *	struct iommu_fwspec	*iommu_fwspec;
+> + */
+> +struct iommu_param {
+> +	struct iommu_fault_param *fault_param;
+> +};
+> +
+>  int  iommu_device_register(struct iommu_device *iommu);
+>  void iommu_device_unregister(struct iommu_device *iommu);
+>  int  iommu_device_sysfs_add(struct iommu_device *iommu,
+> @@ -437,6 +533,7 @@ struct iommu_ops {};
+>  struct iommu_group {};
+>  struct iommu_fwspec {};
+>  struct iommu_device {};
+> +struct iommu_fault_param {};
+>  
+>  static inline bool iommu_present(struct bus_type *bus)
+>  {
+> 
