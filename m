@@ -2,206 +2,128 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2EFECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF3BECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83BCB21546
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:04:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FB4721536
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:04:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bdiOQDSs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83BCB21546
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSwk+f8I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB4721536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388735AbeIUFuO (ORCPT
+        id S2388761AbeIUFuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:50:14 -0400
-Received: from sonic306-10.consmr.mail.bf2.yahoo.com ([74.6.132.49]:43311 "EHLO
-        sonic306-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388299AbeIUFuO (ORCPT
+        Fri, 21 Sep 2018 01:50:37 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51731 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbeIUFug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:50:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537488249; bh=lL4CpPjC9K0O3d5lLk3CNEYmcKIZDt855zbcHoxfDZs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=bdiOQDSsJPMNxmkxGjswv6Bu4W4LkNZVjQ9ZxULNbsjvsBgz52eHBsDUxS+3iXkVYGA9qURdO0FfYOZGxlUvtF51ZWNhx6bZNjO5EY4gxF/aGKLxXrCyHICPNgXGNhQ5HFrjGhk2+nx8jsp54F0phhHcM26rmPBpbcudWRGiPHgezH4lIx9acYLwIp8A+GEacVCm40S2eC4fq/iyzXRvaQ7dxcxeTaWmW1rpgTDj8lKJOAM6ojbWTDB/egqvpqxKlgiU12rdd1OqRrMCrnx5o4Ev9BHkUyLOpN1E5LPZIrmoUQFPJd/SC9CiBPYbXezdFCodKfo6CZoxi7w5bBKlVg==
-X-YMail-OSG: oGoTMioVM1nP3S6yNaEPZtbQbz9zQp8eSrtHFHv0Z3iS1jW0uPxUS98zrCyLzpI
- RVndyy54ObL0iTkHyWcEqSsOmpD_yMP1MxAKYttCo1gX76kz0sbkhyt8tNLVtrV2NDdsXmZaoFy6
- v1gd7AcwJsJflmjnW_2enOSa9yNphmLHmVZOdgbxNXYk5gr09.tcL0dtnZOxYwBcX8AOlnjrBZ75
- wtx3MSsM.al8ANpJKuRJH0S4oLHF.3IywqAFZak.Je8AjE3BlfPAl4p4IeRhsLLAplcSKfv0xWna
- pPHkhFVBGOxSYU8cdQ.UvkqmYk1Casbx.EVLeIHPPzRwRWvzfvXzUyAqkmF22hUZX0mW3JtOHdyN
- diY3zBHfzwyHCKixody24ypBY7gl5NGSI2CZnbrnDpgehcscPt_cT48GgCcOhSw_ThSRx7R8FsBY
- SLYeO7R2_u78GG81G3mvQx_OQHLYZWIoj26ulASo51t.pvPOa3IRnBxYXSAYXT25goHsXbHzThHn
- wZlF_jsvgYtuy_IDBQCqwxmcgBrz7JCub9R4o0bDUicCnn8r9nARWUtK9udBKBPaX2p1.tLpL0EZ
- 9yYYKEUHvOGl_GSpDa_.oNq10FHRRju7ZGLP3662cXtV2uXxzjfWsgS9ugn0.QKv8r7vjZ1phQs6
- 97sUQbeacNaY5SJPz.1_2eZz_7CRxmlfdsDY6zKKh.BkwQXZjVaWo8p1Wx1ulFMnWoYyvzfrgOm1
- xv3fdlPfovTZ8_OVQTDc0uTZ7KWFVXHIfEcNshwen3x62DfYofpVFJ2rfsmDLrtl7vxfKYGuHySd
- sq44iSPzJNuTIKQBQzLuChSr3L8zekFDqtmMganoolBVyq_cnYx5rzdiEMBh1JDip4MUWGarR1xt
- 08PsxktQDHXBSUkVf9QjIP7AWa23vB_F6Rlj_IsKtJKg3qKqkw.dIuFOLGeaa_DvdUVj6Kaexgpq
- ORp7yrDR1xSxaPI1_38qKx.r9Kzq.ma_6rpfKp3fqViuzTnKI_Q3KWucowhcYuS.KidURT6OowWb
- 2UnQG3XklWVzYYZ3I2bKC958Wat0gfvrUqTnnBA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Sep 2018 00:04:09 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp425.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0edf393cd6d1cfd83fb5ca04c5ded83b;
-          Fri, 21 Sep 2018 00:04:07 +0000 (UTC)
-Subject: Re: [PATCH security-next v2 18/26] LSM: Build ordered list of ordered
- LSMs for init
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180920162338.21060-1-keescook@chromium.org>
- <20180920162338.21060-19-keescook@chromium.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <d12fc06e-ff16-63c9-34ba-7303205b0a1d@schaufler-ca.com>
-Date:   Thu, 20 Sep 2018 17:04:03 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 01:50:36 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y2-v6so1231439wma.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 17:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0VWtOhxSxcDkhKHKAPN3U6d1ZKz+2t9Z+u5cjxlXx8s=;
+        b=RSwk+f8If/aOGWJ2yeelFjPyTGluKSA1Jb8d109fSdphkmGDdh3eXOrz2EGZ/hCFVC
+         pAhoZ9A9lQPT03JwQBAnnVegTHVHJZkNXYaDicAL+mlk8Y0JspXDoVfxwiP7iI7EVxHl
+         QfrwEZesQVGKMv8y6nmK+npH9Xo8ejm2JJQjzNmuqLI6gAqZOmDSTMdZAOKzv9V0Q4Fv
+         hZv9UJhwzgIu/nobOjpyVOETxo+78LA0jmQn2UDUNAXmSqc9t3AU+RbgkA2ejUe4YCG+
+         vYRhO1Mqbbls8hCmL/w3koatfkby0oRmZQFQIoMAhrJZ62kM42qnlevZ6WKzP6ivZFq2
+         uxwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0VWtOhxSxcDkhKHKAPN3U6d1ZKz+2t9Z+u5cjxlXx8s=;
+        b=uDuQSddFHY826b7Ziv7NMM8p67AkuWCE3WJdLje5NOBFu5+r8SPyi//Gp8O35ACKme
+         0o6vTePRnwDocZSoyrAm9v2ejAY0AQhnXXQNsyWjgDhk27Y0z/2vhK9HdQUVGjAyV/gM
+         lsjn3ym52cnti4ocoMTDjaPMjObVmv1bPiLeTyIm1F51UcI8PoqX4kqiBwQ9YDX0PQtM
+         QD4PTLXo2fqPZJ1PuuXB1cLrvGzgt3NuInJb+RKtvkdQZvFai+lRbtT3ztdWwVkCHZaM
+         BXJs1NtbisnFFz2ZslZVwmHcHac6N60jJJLX5AHakcE7NbYt5f0TT8UGPZFFMF+99Rdi
+         vKfg==
+X-Gm-Message-State: APzg51C9CfzTNbq3B+6mgEitUgroXKaobRYDpRQdgrgUtH8+HjB/mxQH
+        XhY4HBulqo5Eio7KxoqohIGtfg+uib2OUg==
+X-Google-Smtp-Source: ANB0VdbOFmkHqEXNH9HxJezdIqjRRR+DJWaSXKJDVIULM5nSqg43DxbUAlVF3mDw72pNtwPEm3E7bQ==
+X-Received: by 2002:a1c:8f0e:: with SMTP id r14-v6mr4700022wmd.79.1537488271391;
+        Thu, 20 Sep 2018 17:04:31 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm24813921wru.79.2018.09.20.17.04.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Sep 2018 17:04:30 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] regulator: da905{2,5}: Remove unnecessary array check
+Date:   Thu, 20 Sep 2018 17:04:20 -0700
+Message-Id: <20180921000420.8740-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180920162338.21060-19-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/20/2018 9:23 AM, Kees Cook wrote:
-> This constructs a list of ordered LSMs to initialize, using a hard-coded
-> list of only "integrity": minor LSMs continue to have direct hook calls,
-> and major LSMs continue to initialize separately.
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context:
 
-Do you think that this mechanism will be sufficiently
-flexible to accommodate dynamically loaded security modules
-in the future? While I am not personally an advocate of
-dynamically loaded security modules I have been working to
-ensure that I haven't done anything that would actively
-interfere with someone who did.
+drivers/regulator/da9052-regulator.c:423:22: warning: address of array
+'pdata->regulators' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (pdata && pdata->regulators) {
+                  ~~ ~~~~~~~^~~~~~~~~~
+drivers/regulator/da9055-regulator.c:615:22: warning: address of array
+'pdata->regulators' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (pdata && pdata->regulators) {
+                  ~~ ~~~~~~~^~~~~~~~~~
 
-> ---
->  security/security.c | 59 +++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 52 insertions(+), 7 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index 25a019cc4a2b..2541a512a0f7 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -34,6 +34,9 @@
->  
->  #define MAX_LSM_EVM_XATTR	2
->  
-> +/* How many LSMs were built into the kernel? */
-> +#define LSM_COUNT (__end_lsm_info - __start_lsm_info)
-> +
->  struct security_hook_heads security_hook_heads __lsm_ro_after_init;
->  static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
->  
-> @@ -41,6 +44,9 @@ char *lsm_names;
->  /* Boot-time LSM user choice */
->  static __initdata const char *chosen_major_lsm;
->  
-> +/* Ordered list of LSMs to initialize. */
-> +static __initdata struct lsm_info **ordered_lsms;
-> +
->  static bool debug __initdata;
->  #define init_debug(...)						\
->  	do {							\
-> @@ -74,6 +80,45 @@ static void __init set_enabled(struct lsm_info *lsm, bool enabled)
->  	}
->  }
->  
-> +/* Is an LSM already listed in the ordered LSMs list? */
-> +static bool __init exists_ordered_lsm(struct lsm_info *lsm)
-> +{
-> +	struct lsm_info **check;
-> +
-> +	for (check = ordered_lsms; *check; check++)
-> +		if (*check == lsm)
-> +			return true;
-> +
-> +	return false;
-> +}
-> +
-> +/* Append an LSM to the list of ordered LSMs to initialize. */
-> +static int last_lsm __initdata;
-> +static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
-> +{
-> +	/* Ignore duplicate selections. */
-> +	if (exists_ordered_lsm(lsm))
-> +		return;
-> +
-> +	if (WARN(last_lsm == LSM_COUNT, "%s: out of LSM slots!?\n", from))
-> +		return;
-> +
-> +	ordered_lsms[last_lsm++] = lsm;
-> +	init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
-> +		   (!lsm->enabled || *lsm->enabled) ? "en" : "dis");
-> +}
-> +
-> +/* Populate ordered LSMs list from hard-coded list of LSMs. */
-> +static void __init prepare_lsm_order(void)
-> +{
-> +	struct lsm_info *lsm;
-> +
-> +	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +		if (strcmp(lsm->name, "integrity") == 0)
-> +			append_ordered_lsm(lsm, "builtin");
-> +	}
-> +}
-> +
->  /* Is an LSM allowed to be enabled? */
->  static bool __init lsm_allowed(struct lsm_info *lsm)
->  {
-> @@ -104,14 +149,10 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
->  
->  static void __init ordered_lsm_init(void)
->  {
-> -	struct lsm_info *lsm;
-> -
-> -	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> -		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
-> -			continue;
-> +	struct lsm_info **lsm;
->  
-> -		maybe_initialize_lsm(lsm);
-> -	}
-> +	for (lsm = ordered_lsms; *lsm; lsm++)
-> +		maybe_initialize_lsm(*lsm);
->  }
->  
->  static void __init major_lsm_init(void)
-> @@ -141,6 +182,8 @@ int __init security_init(void)
->  	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
->  	     i++)
->  		INIT_HLIST_HEAD(&list[i]);
-> +	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
-> +				GFP_KERNEL);
->  
->  	/* Process "security=", if given. */
->  	if (!chosen_major_lsm)
-> @@ -169,6 +212,7 @@ int __init security_init(void)
->  	loadpin_add_hooks();
->  
->  	/* Load LSMs in specified order. */
-> +	prepare_lsm_order();
->  	ordered_lsm_init();
->  
->  	/*
-> @@ -176,6 +220,7 @@ int __init security_init(void)
->  	 */
->  	major_lsm_init();
->  
-> +	kfree(ordered_lsms);
->  	return 0;
->  }
->  
+Link: https://github.com/ClangBuiltLinux/linux/issues/142
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/regulator/da9052-regulator.c | 2 +-
+ drivers/regulator/da9055-regulator.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/regulator/da9052-regulator.c b/drivers/regulator/da9052-regulator.c
+index 9ececfef42d6..37e4025203e3 100644
+--- a/drivers/regulator/da9052-regulator.c
++++ b/drivers/regulator/da9052-regulator.c
+@@ -420,7 +420,7 @@ static int da9052_regulator_probe(struct platform_device *pdev)
+ 	config.dev = &pdev->dev;
+ 	config.driver_data = regulator;
+ 	config.regmap = da9052->regmap;
+-	if (pdata && pdata->regulators) {
++	if (pdata) {
+ 		config.init_data = pdata->regulators[cell->id];
+ 	} else {
+ #ifdef CONFIG_OF
+diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
+index f40c3b8644ae..588c3d2445cf 100644
+--- a/drivers/regulator/da9055-regulator.c
++++ b/drivers/regulator/da9055-regulator.c
+@@ -612,7 +612,7 @@ static int da9055_regulator_probe(struct platform_device *pdev)
+ 	config.driver_data = regulator;
+ 	config.regmap = da9055->regmap;
+ 
+-	if (pdata && pdata->regulators) {
++	if (pdata) {
+ 		config.init_data = pdata->regulators[pdev->id];
+ 	} else {
+ 		ret = da9055_regulator_dt_init(pdev, regulator, &config,
+-- 
+2.19.0
 
