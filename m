@@ -2,116 +2,135 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A63ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0419EECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627E621571
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:21:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdAu4uRp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627E621571
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A9E5A21571
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E5A21571
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391582AbeIVDL7 (ORCPT
+        id S2391561AbeIVDPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 23:11:59 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36927 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391538AbeIVDL6 (ORCPT
+        Fri, 21 Sep 2018 23:15:18 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:47870 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390726AbeIVDPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 23:11:58 -0400
-Received: by mail-qk1-f195.google.com with SMTP id c13-v6so8855509qkm.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 14:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8k0z+neWnT3E0Kj3SIHbyCIj0OoFwbYBzDgipnvG3bw=;
-        b=UdAu4uRpIFx5/rQGJ9PcBi1kW34OiyEIbptNr0mYYK7s0hDaaTzAAIHyO//YGng61n
-         ete3YeSVgONi4NIEDrZnE6TphkPvp4URZuhFKsQg2dm+lXnRgZh39EvPa2S25ikMIHs8
-         PvLP0U3mDqEpLK4Gi7xfOl36/KcXVdbVWVfghfLfZmCcWhg6pE34Qu1WqF8N0Ja8yJ8m
-         OIi9yOnpEROamM/V3CFXJoAEZB6Ybd66heckpyXFw6JD+yw7NTwQqsMZNgCj3OmCjIAO
-         AdGRmoGI07HrD/Tzhq1hZkBx1lBXXWgdPb+2s2Ix1dv3O3Vif1RcYskTbO01cPNYcFm8
-         Okrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8k0z+neWnT3E0Kj3SIHbyCIj0OoFwbYBzDgipnvG3bw=;
-        b=JpUfl9OGDjA8D+Zv+lLkt9+gQNQQ/ar/Zg4ETE+JCC/rwzrBvSHrHthJQDiNzt5Xq/
-         u1bbL6dVMstWozOcgbQBmRA8ThIWLnUGOuXkyY3IyqTaPUDIqM9cBbMBvFzqpJNJwXyN
-         KuAR7Bj1GVE3FtybrXXhTAJaB9q/hzfVlpqgZmxQk5DrSZMjQAaqPlqVNKtIXbOic7xo
-         SwiRCNJ9syRb/rUIbhPnLO1roS0jjP1bosgXu25kik+OmFU1LhEvheMmsJ6kkt6NlB6z
-         do9VKw3hoVXjPbb9em3JRpakiHOoXyQJ5LaRqvrdNE5TNrLE9D3HWsbBpfnXlPseh9jk
-         y19Q==
-X-Gm-Message-State: APzg51CQblhByNJulzw+ScBtZtH5TX1N+zI10mw/b1G+K70OlbQ3F7JG
-        FFI+rkwHtH2+VEOCydN9a94glvo=
-X-Google-Smtp-Source: ANB0VdZvHIaGbZKcyrm6w1sIqoiOK7S6KxHCSTVNQMQuEWMLV/r0Qjs0W4B3uBvkJhtE42pMAmgtyA==
-X-Received: by 2002:ae9:f10c:: with SMTP id k12-v6mr32175816qkg.342.1537564876779;
-        Fri, 21 Sep 2018 14:21:16 -0700 (PDT)
-Received: from localhost.localdomain ([2603:3003:4107:8d00::5ce6])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm16740401qke.77.2018.09.21.14.21.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 14:21:15 -0700 (PDT)
-From:   Matthew Whitehead <tedheadster@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, tglx@linutronix.de, peterz@infradead.org,
-        luto@amacapital.net, bp@alien8.de, hpa@zytor.com,
-        Matthew Whitehead <tedheadster@gmail.com>
-Subject: [PATCH v2 2/2] x86/cpu: Change query logic so cpuid is enabled before testing
-Date:   Fri, 21 Sep 2018 17:20:41 -0400
-Message-Id: <20180921212041.13096-3-tedheadster@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180921212041.13096-1-tedheadster@gmail.com>
-References: <20180921212041.13096-1-tedheadster@gmail.com>
+        Fri, 21 Sep 2018 23:15:18 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 92C01C0CA4;
+        Fri, 21 Sep 2018 21:24:35 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id F4ROzxTE5X6N; Fri, 21 Sep 2018 21:24:35 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 141B2C0588;
+        Fri, 21 Sep 2018 21:24:26 +0000 (UTC)
+Subject: Re: [PATCH v3 00/28] selftests/ftrace: Improve ftracetest with
+ coverage check
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <153563834333.29700.11242968505215651399.stgit@devbox>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <9cf69344-5dfc-4961-163e-1e14bbe80647@kernel.org>
+Date:   Fri, 21 Sep 2018 15:24:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <153563834333.29700.11242968505215651399.stgit@devbox>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Presently we check for cpuid to be enabled first. If it is not already
-enabled, then we next call identify_cpu_without_cpuid() and clear
-X86_FEATURE_CPUID.
+Hi Masami,
 
-Unfortunately, identify_cpu_without_cpuid() is the function where cpuid
-becomes _enabled_ on Cyrix 6x86/6x86L cpus. So we must reverse the
-calling sequence so that cpuid is first enabled, and then check a second
-time to see if the feature has now been activated.
+On 08/30/2018 08:12 AM, Masami Hiramatsu wrote:
+> Hi,
+> 
+> Here is the 3rd version of the series for improving ftracetest
+> testcase using gcov/lcov. In this version I just fixed some
+> reported issues and dropped some tests which is not needed.
+> I also dropped a testcase for blktrace from this version.
+> It will be discussed separated thread.
+> 
+> Previous version is here;
+> 
+> https://lkml.org/lkml/2018/8/16/393
+> 
+> GCOV_PROFILE_FTRACE has already been merged through tracing
+> tree.
+> 
+> Ftracetest framework improvements:
+>  - Add --stop-fail for detecting failure soon.
+>  - Add --console for interactively debugging a testcase by shell.
+>  - Add testcase-number prefix to logfile for finding log easier.
+>  - Improve general init function
+>  - Add SPDX license identifiers
+>  - Call general init function after all testcases.
+>  - Remove init/cleanup code from all testcase (since general init
+>    function will fixed it up)
+> 
+> Testcase fixes:
+>  - Fix to check $comm availability.
+>  - Make checkbashisms clean
+> 
+> Testcase improvements:
+>  - Use loopback address instead of localhost
+>  - Improve kprobe on module testcase to load/unload module
+>  - Improve kprobe testcase to check log data
+>  - Improve kretprobe testcase to check log data
+>  - Test kprobe-event argument with various bitsize
+>  - Check set_event_pid result
+> 
+> Adding testcases:
+>  - Add kprobe event with $comm argument testcase
+>  - Add kprobe profile testcase
+>  - Add kprobe-event with symbol argument testcase
+>  - Add trace_printk sample module testcase
+>  - Add ringbuffer size changing testcase
+>  - Add function profiling statistics testcase
+>  - Add max stack tracer testcase
+>  - Add function filter on module testcase
+>  - Add trace_pipe testcase
+>  - Add stacktrace ftrace filter command testcase
+>  - Add wakeup tracer testcase
+>  - Add wakeup_rt tracer testcase
+>  - Add ftrace cpumask testcase
+> 
+> TBD:
+> Following testcase improvements are remaining.
+>  - Checking of various supported types (like u8, u64 etc.)
+>    testcases
+> 
+> Tested on x86-64 qemu.
+> 
+> # of passed:  84
+> # of failed:  0
+> # of unresolved:  0
+> # of untested:  0
+> # of unsupported:  0
+> # of xfailed:  0
+> # of undefined(test bug):  0
+> 
+> Thank you,
+> 
 
-Reviewed-by: Andy Lutomirski <luto@amacapital.net>
-Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
----
- arch/x86/kernel/cpu/common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for the patches. Sorry for the delay. I am applying the series to linux-kselftest
+next for 4.20 release.
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index eb4cb3efd20e..60c7c5ce7e55 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1040,6 +1040,9 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 	memset(&c->x86_capability, 0, sizeof c->x86_capability);
- 	c->extended_cpuid_level = 0;
- 
-+	if (!have_cpuid_p())
-+		identify_cpu_without_cpuid(c);
-+	
- 	/* cyrix could have cpuid enabled via c_identify()*/
- 	if (have_cpuid_p()) {
- 		cpu_detect(c);
-@@ -1057,7 +1060,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 		if (this_cpu->c_bsp_init)
- 			this_cpu->c_bsp_init(c);
- 	} else {
--		identify_cpu_without_cpuid(c);
- 		setup_clear_cpu_cap(X86_FEATURE_CPUID);
- 	}
- 
--- 
-2.16.4
+thanks,
+-- Shuah
 
