@@ -2,122 +2,150 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A1BC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B262C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A3E21537
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D823221536
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:12:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ldyGK/3y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A3E21537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="fOZKjSch"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D823221536
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388780AbeIUF6E (ORCPT
+        id S2388796AbeIUF6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:58:04 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:57769 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbeIUF6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:58:04 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d94cd457;
-        Thu, 20 Sep 2018 23:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=68QzLuBMy3Wmpn8zaTvNKarwaok=; b=ldyGK/
-        3y2o5/1+tFiI573cT958zqOf4fI49Z/KHjwyuCf/3V1mI/pKs7cHtg4hSZdlK+KM
-        SGzWPnb+OX/u4QTIHN3fiTQr8n6mjmKKdASmrhkX2g3DYH0E9LYylQmYTDevrKTR
-        g3f8Suh3g3C1BlWiBaOdhL/98mem93Foww6qjIq50FS9Q68QZztuWst/zHgAEgcs
-        l9vdiYvdghzMvybKaizt3zy9gv6VCtUlIWdG8PqxXasvoaMw4NHqJ2DBzS7dqfO5
-        E2/EFwGnAueLeNxAVCANnbyPxYDtKyZMJFe5uyWr8P60vuvACTm+OF02jcq4gAea
-        sx/bEex/RSnI43Lg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2e0b2dbc (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Thu, 20 Sep 2018 23:54:04 +0000 (UTC)
-Received: by mail-ot1-f52.google.com with SMTP id 36-v6so11280492oth.11;
-        Thu, 20 Sep 2018 17:11:55 -0700 (PDT)
-X-Gm-Message-State: APzg51Df7+ctAifO2mXfz7r0rvmlGUSTzIBNPqFZBS/TlEyopTxowlrh
-        NDGx/qPR1++N+cbVyi9GaXro9dLw3Qk3fv0DS0o=
-X-Google-Smtp-Source: ANB0VdY4FETggX6Zriz/1zOay3g8AhgG9ONUM1Y8wx1GY768pLEswBTCpYIY7l6cf9EIbhhuUuFeWqlbKgB3cJx3Los=
-X-Received: by 2002:a9d:56b6:: with SMTP id o51-v6mr22536761oth.393.1537488714434;
- Thu, 20 Sep 2018 17:11:54 -0700 (PDT)
+        Fri, 21 Sep 2018 01:58:46 -0400
+Received: from sonic306-10.consmr.mail.bf2.yahoo.com ([74.6.132.49]:35556 "EHLO
+        sonic306-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725892AbeIUF6o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 01:58:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537488757; bh=ddFYN2AxpEaOilHUU7cEDEP26gxa6oxv3prcGOIDDE4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=fOZKjSchBRTRm5DcfZLoZh1rDXlgklSqRt2E2PErz2PQURgRrCj4SyWTtD0+a9Yw/c9L9NLFNDrrnhVNstpVDmSsB0xzgShexMVPZL/EpBJbl2hbtQy/IvvY0XNJJvJ0ESk2q+N59YCBXzeaIbQm4DLWAQ7op7lNZdvC3NUDbkjrWz3ylslevyG//1aWpowAX+z60RDBYgLWthtO10rCuC/9YSZVrNq9Kn4bktZyplDY6BwiU1zVNyK3RbI+7azy6mFwgdkGJaGrL9j+yeMAIGpIDW0Z9/HIHvrTVb/VeMFVbxFTb3ry0d6EP1ZetJ5nwM3QLihlDQy9PKPJ1OY5KA==
+X-YMail-OSG: n.zNBgcVM1mYLgpIeANomFbVXLbR7OHsk4mGIK5S_NBFa50E0cj.76ifoj9Yf1j
+ ChnSlIvW53_eSy89nGA2mC0U.PmGY53Ibw2Up_JnTZDwjq30MB_KnzEzng_MU.Keqaqh2mFUbOwX
+ u9bg_C_PRx7KzMs_ML.UMRGTafpYF8_Q3KjPn52gaDpLh2eGR6azOQ6nV9pndmXTWg0l2.LW4paC
+ hOrlR556uLlPmdjVBE.qSSWCf1BQ.Ortq7NaLWVe.MFAM.GvZsvWIBGR7ZB3xe_tU7AzWBzRLb9e
+ o8Nm08PnqpLSB4WA3XYB0UG_rpt8sRFhJL9IWPHPMNq3m47LCyUuFl68_S4RyTAGxU5l2aqGEi1n
+ krUtGMA0fHF4ya8p4uo8XsMcqcK8.JlxH9gCPN5dNPaKwz1jTszX2EP5YzK82EWcp_xXiOS8kO5n
+ w1gPKMNTcovvzKjv.bd08K_nmBPLxT5BDoJFzGZTbp6BW_ADDsqu11TzFX9FXJyvCH6wIx9acUJQ
+ f9bG39r_9RyQgZQw0oqqNEC4BE7tXOx0.dZTK75W3pUkT5Olc9WHAw8vU_mVvCSPXzg6NFIPwqKp
+ Aau_639bTW1yhG1awkeUESeciEeESiNZvtrwpdDa3j2.rclsrN0I6L1OX4J1R1bIX59QVXkBMOLT
+ t1.bPlt8wFfgkq4TPkoC1ZdgKB5ShxFb.582RVclHcgyOkZpshN.qI3lQrlYsjhSlVSAR9lcykLu
+ kpe66m9brbvQWFg1L7AHhYxoRytN2ehQgHGW9c7eACIDVh6YSFg.1FG0DUitVeB6GUiW6DPnJsnc
+ 2L1z48rBNpVHwAs0aDocdQyF0nxSVvBSxZer4AHj19Mi9dFnQfh6eJJNXuVoTLsbmkEDUUJdGkMe
+ jNGnJkHtUE9dVbQUXlJKo4evWegFo.p0BJDfuF9VElZkK0kUWtTq6hfxyjQVHf7J21XsCwBRRE4v
+ hD7gXr8_BKOWruD3zZ3XE6ACOoMqPLr0jTuv2zzNfk28BGPcQAcLlSyTr9KzECWmfosYF2fwssjW
+ 4qa9OV8Nv7Bs5LmvZxXvV.jCOuvYAsRuhVSKClQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Fri, 21 Sep 2018 00:12:37 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp402.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 075318250b282495fa2ab4dcaba9543a;
+          Fri, 21 Sep 2018 00:12:34 +0000 (UTC)
+Subject: Re: [PATCH security-next v2 20/26] LSM: Introduce "lsm.order=" for
+ boottime ordering
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180920162338.21060-1-keescook@chromium.org>
+ <20180920162338.21060-21-keescook@chromium.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <71f833b8-40cb-83f8-6803-7df26e8fa460@schaufler-ca.com>
+Date:   Thu, 20 Sep 2018 17:12:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-3-Jason@zx2c4.com>
- <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com> <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com>
-In-Reply-To: <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 21 Sep 2018 02:11:43 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com>
-Message-ID: <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography library
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180920162338.21060-21-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Arnd,
-
-On Thu, Sep 20, 2018 at 6:02 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> Right, if you hit a stack requirement like this, it's usually the compiler
-> doing something bad, not just using too much stack but also generating
-> rather slow object code in the process. It's better to fix the bug by
-> optimizing the code to not spill registers to the stack.
+On 9/20/2018 9:23 AM, Kees Cook wrote:
+> Provide a way to reorder LSM initialization using the new "lsm.order="
+> comma-separated list of LSMs. Any LSMs not listed will be added in builtin
+> order.
 >
-> In the long run, I'd like to reduce the stack frame size further, so
-> best assume that anything over 1024 bytes (on 32-bit) or 1280 bytes
-> (on 64-bit) is a bug in the code, and stay below that.
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  5 +++++
+>  security/security.c                             | 15 ++++++++++++++-
+>  2 files changed, 19 insertions(+), 1 deletion(-)
 >
-> For prototyping, you can just mark the broken functions individually
-> by setting the warning limit for a specific function that is known to
-> be misoptimized by the compiler (with a comment about which compiler
-> and architectures are affected), but not override the limit for the
-> entire file.
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 32d323ee9218..5ac4c1056ffa 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2276,6 +2276,11 @@
+>  
+>  	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
+>  
+> +	lsm.order=lsm1,...,lsmN
+> +			[SECURITY] Choose order of LSM initialization. Any
+> +			builtin LSMs not listed here will be implicitly
+> +			added to the list in builtin order.
 
-Thanks for the explanation. Fortunately in my case, the issues were
-trivially fixable to get it under 1024/1280. (By the way, why does
-64-bit have a slightly larger stack frame? To account for 32 pointers
-taking double the space or something?) That will be rectified in v6.
+Added at the end of the list, or beginning of the list?
 
-There is one exception though: sometimes KASAN bloats the frame on
-64-bit compiles. How would you feel about me adding
-'ccflags-$(CONFIG_KASAN) += -Wframe-larger-than=16384' in my makefile?
-I'm not remotely close to reaching that limit (it's just a tiny bit
-over 1280), but it does seem like telling gcc to quiet down about
-stack frames when KASAN is being used might make sense. Alternatively,
-I see the defaults for FRAME_WARN are:
+> +
+>  	machvec=	[IA-64] Force the use of a particular machine-vector
+>  			(machvec) in a generic kernel.
+>  			Example: machvec=hpzx1_swiotlb
+> diff --git a/security/security.c b/security/security.c
+> index 063ee2466e58..4db194f81419 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -43,6 +43,7 @@ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+>  char *lsm_names;
+>  /* Boot-time LSM user choice */
+>  static __initdata const char *chosen_major_lsm;
+> +static __initdata const char *chosen_lsm_order;
+>  
+>  static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
+>  
+> @@ -136,11 +137,15 @@ static void __init parse_lsm_order(const char *order, const char *origin)
+>  	kfree(sep);
+>  }
+>  
+> -/* Populate ordered LSMs list from builtin list of LSMs. */
+> +/* Populate ordered LSMs list from commandline and builtin list of LSMs. */
+>  static void __init prepare_lsm_order(void)
+>  {
+>  	struct lsm_info *lsm;
+>  
+> +	/* Parse order from commandline, if present. */
+> +	if (chosen_lsm_order)
+> +		parse_lsm_order(chosen_lsm_order, "cmdline");
+> +
+>  	/* Parse order from builtin list. */
+>  	parse_lsm_order(builtin_lsm_order, "builtin");
+>  
+> @@ -264,6 +269,14 @@ static int __init choose_major_lsm(char *str)
+>  }
+>  __setup("security=", choose_major_lsm);
+>  
+> +/* Explicitly choose LSM initialization order. */
+> +static int __init choose_lsm_order(char *str)
+> +{
+> +	chosen_lsm_order = str;
+> +	return 1;
+> +}
+> +__setup("lsm.order=", choose_lsm_order);
+> +
+>  /* Enable LSM order debugging. */
+>  static int __init enable_debug(char *str)
+>  {
 
-config FRAME_WARN
-       int "Warn for stack frames larger than (needs gcc 4.4)"
-       range 0 8192
-       default 3072 if KASAN_EXTRA
-       default 2048 if GCC_PLUGIN_LATENT_ENTROPY
-       default 1280 if (!64BIT && PARISC)
-       default 1024 if (!64BIT && !PARISC)
-       default 2048 if 64BIT
-
-What about changing that KASAN_EXTRA into just KASAN? This seems
-cleanest; I'll send a patch for it.
-
-On the other hand, this KASAN behavior is only observable on 64-bit
-systems when I force it to be 1280, whereas the default is still 2048,
-so probably this isn't a problem *now* for this patchset. But it is
-something to think about for down the road when you lower the default
-frame.
-
-Regards,
-Jason
