@@ -2,147 +2,192 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC13ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E0AECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41DAA20870
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:44:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41DAA20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DC97021547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:45:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="DrMG4xu1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC97021547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390129AbeIUUdO (ORCPT
+        id S2390195AbeIUUeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:33:14 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:41363 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbeIUUdO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:33:14 -0400
-Received: by mail-io1-f70.google.com with SMTP id q24-v6so21554348iog.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 07:44:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Ph0iYBgSUponKlP/8jBBCW8HpYlXDq99uoPqsCwQXOg=;
-        b=aOHci111+Qpblo9jPSHWrKeKFEs/MAdQ2+RV36OfpkQb11cUg6P5C12fZHijOzWWcu
-         kfNZ4mfZpRqlrtih+rkm7ZVguF2Dpm950zXneKEGNsEmLBojZVQg5K+u6q9Uun57uy00
-         BIle0c4y5ulqnPw8RINsW9C5degqCNnCgKyZ2htqXL9bhxDcJhY6Wtrrr3YVKvqQxbQw
-         kyzSUCiwHtSZdwhIsmGAK6bPU4adZ8JGgtVEjcicmtN/Gitfr9OGKms7/c0aF91DotWn
-         2md2GmH0mQgOFvHXXoCPenzyMroKDY44oGg9jRJqfVF9qW8ufxglkVbKMnE1h9lvM627
-         DkAw==
-X-Gm-Message-State: APzg51Cw678eAmzCGi4bJ0fzs9L0XAquZLZw2j7VZbb9DUdlDUlVyoYW
-        YQh6btsJruRPnOSElZZ40jaTlzIZM1Vs68Bcwhc7KW9aA4YK
-X-Google-Smtp-Source: ANB0VdaiN5sXE7+hjDyKQ1rVgjW0JX4Q+Eg1MUumwhlgNAMh3dTnX7jpdL426tLsKm/Swq0ZJIhxdgHnHDRPFn3h9Pir9LD8/thR
+        Fri, 21 Sep 2018 16:34:11 -0400
+Received: from mail-eopbgr70117.outbound.protection.outlook.com ([40.107.7.117]:2432
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727392AbeIUUeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:34:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ek3HUrozDXXZYlJqs3whXBC/FNGxhYLHcDoTP/k/wD4=;
+ b=DrMG4xu1e/1OXW6ujm35mGasKfNpI+QwfMRbG1/FWhMY7K6XXG/UfLPTDMlIVJqGOr/cTp7HWroGw73eIYOduGl4RckA/vSf8nLmUEZQSNYZda0dvep0ugZWwl9Gfh0aI0JcYGqIttWJTB1qiP1mu2JjiFbXO61FH7OGpakteB0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=aryabinin@virtuozzo.com; 
+Received: from [172.16.25.12] (185.231.240.5) by
+ AM6PR08MB3256.eurprd08.prod.outlook.com (2603:10a6:209:47::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Fri, 21 Sep 2018 14:44:53 +0000
+Subject: Re: [PATCH] kernel/kcov: Replace vm_insert_page with vmf_insert_page
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>, tchibo@google.com,
+        linux-kernel@vger.kernel.org
+References: <20180920191254.GA22764@jordon-HP-15-Notebook-PC>
+ <6fa7d32b-07f0-ab6d-8053-021b171153e6@virtuozzo.com>
+ <CAFqt6zbp8wynKqFRyp3Q55Scoi9ojfdCVkMrxC4w9qxPxWMXGQ@mail.gmail.com>
+ <68b8cbf3-1b5a-2311-ac09-a8676280e85e@virtuozzo.com>
+ <CAFqt6za6VJ7vmWEqg4JGWqRiqbfc6GYDnpUeBQ+03xdY51-GQA@mail.gmail.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <0c3d2ba2-29dc-ed02-0919-54d1d76a1eb1@virtuozzo.com>
+Date:   Fri, 21 Sep 2018 17:45:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e017:: with SMTP id z23-v6mr33231733iog.86.1537541042939;
- Fri, 21 Sep 2018 07:44:02 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 07:44:02 -0700
-In-Reply-To: <0000000000006af1a90573251240@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b12d4c057662aba3@google.com>
-Subject: Re: general protection fault in kvm_lapic_hv_timer_in_use
-From:   syzbot <syzbot+1c69d94fe42901b029c1@syzkaller.appspotmail.com>
-To:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CAFqt6za6VJ7vmWEqg4JGWqRiqbfc6GYDnpUeBQ+03xdY51-GQA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [185.231.240.5]
+X-ClientProxiedBy: HE1PR0701CA0064.eurprd07.prod.outlook.com
+ (2603:10a6:3:9e::32) To AM6PR08MB3256.eurprd08.prod.outlook.com
+ (2603:10a6:209:47::21)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 54c4cc74-e6c2-4d84-3741-08d61fd0cb25
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3256;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;3:gzE4aLKvtEDV8GvXaVrzTYtW6hqU+T4rwgcy3FwsFNG45poCP30mynJRmxxUKTpK2NUdFiTYAv5USx2CtMHavyCdaEXp1Y5/SRYQbYO8+JkZTdxi0IA9as2FE+Hgr1kjableJGsVb68HdIWbVoOSv/JQo6xeSVtfQfxNxzSArpc1AELDdkSAtJsTyH+Ax9ocOqtI5gZqxTcFE7SJOXAn6rNJIjpJytIt1/MWrKY1GND/DCGWNjOh6ZSnBrBnL8w1;25:FnCdWXGLdlMStbtthdLNp/2kyXOfjAkp8O1l2bGHWAg972hFOeYabEXNDB52Cbk5MFV2yV5a/jBioE8WKmTi0tDq2DN449GiNPPXKQVQFlQWnWeFVjvreJP5C9wlMfA3hz8BemoaCQI167xtLtItH+MJAmT73xTdA6BUaLnZn0SjuRDDPq7ELQ17cfseu7NsHoL5iadJL9uM6Ai/eTgUDXrVwLj4/v/E8u8H2iCncSRVUEf5r1OE37Bs8gaosM+X+Cg+tKJ0eUITRS4tamR01LRG7p0eCrYIpMucDxCNZMUUMznqt++jGppqkTvAcim8cpR/ssYKf03dNlM1ahdihA==;31:LDQq4+K/MFbfgIIBZx6/il1FEkMjMRbJnsBb0CnB6h6pdfV+/FjgAaTfUisX7AMDSqKpPYKc2ByMDb43JbpcGgSQR1j9iqnTbEN7RvFpKkeWEScAJwS82Dc6EnLwqqKtRLRNXW3U3Z+8YfnRfv2Q/tJRlWlMxWujbuSkGfRBp0nGqmBeGWEnOF8AI68iHdhG8wPsSWU+hzf5RB4fRZNS/VtdzNK5LdRQuO+H9l+RRMw=
+X-MS-TrafficTypeDiagnostic: AM6PR08MB3256:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;20:KujWf0/YyeKZVjAiW+LMzXYY6N/UdlwbgB3x961TYYwe0XoCpMovQuJUzT30ln+HLpZdhKSLD/4KJOP1XqIy9ESH2k6bco0Lu8CGkQLTSS3xsjVRe9R26MnVJrZb3QFcPv/mu4+VOqjbnhbu8D/gMAjnSaXl3KCWh0xJOEt0EGIw0k+EOyOL5rsGQOpK7loQg4kKRPrQgaazepxnOtIZZBFhkdUiuZwC6ZCeoLBQYUYZJ9E74y1zDFlSRgRRFf2twkB7tZDwMLHw3oFNbZY4ZVK8fksi0v9UgLOOwX+IIgPwv/CcAA8sj/S7AZOi6fKCLM0fR5NHNneMyGZng02/9tBchAyFU5zMRYXdPf+iHOn/lXQbek3bNpshjgC/hBKVZNn5KxakPvn+2jIKZ2Yf2HWy8o/84DzfircdoyJh8hynBAqoakqpiGGr292XlfMsFDPn7We2yDhJyLjxXt/pfO5TLLe+MBU5a5WiJtjhOi1mu+3aFuqGgrn17FsYfjTA;4:7FDxQNsw5xShFiTQGfEenuovjdMQKl8Skx59rJ5NRbNGA/zSIDJbm8kycnKlTa5pHw4QGq5xYrtABDdDqmKImTeFYNL+mhEvS8Gtoo6ZNZ0V4E7YmrN84vnZU7gnouo0EqktQulHtbgKUmvXO6O9nPPDkMB+cRjNL9xItApQXPx6wztmp2wI1btGT8RKbDa0FB5Xw/yTXxYvSdP8o3JQ91seuUrIgr+AejeTdnq66zth9Z9o+rsLeOz11THh0ys2bu0kkt5tjOrksaO/srMdojNY4C9bB73QD1iE0yl0k+O6QWrQ5kYlx1q/D7Sq7DcG
+X-Microsoft-Antispam-PRVS: <AM6PR08MB32565F91E01E6EA03E07CECBB0120@AM6PR08MB3256.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231355)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:AM6PR08MB3256;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3256;
+X-Forefront-PRVS: 0802ADD973
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(346002)(366004)(136003)(396003)(376002)(39850400004)(199004)(189003)(93886005)(47776003)(6246003)(66066001)(65806001)(230700001)(2906002)(86362001)(14444005)(53936002)(105586002)(3846002)(53546011)(6116002)(52116002)(486006)(386003)(64126003)(476003)(81156014)(81166006)(31696002)(446003)(2616005)(316002)(956004)(2486003)(7736002)(305945005)(6666003)(6916009)(11346002)(25786009)(50466002)(31686004)(8676002)(76176011)(54906003)(8936002)(68736007)(23676004)(36756003)(4326008)(77096007)(65826007)(16526019)(58126008)(186003)(229853002)(65956001)(97736004)(106356001)(39060400002)(26005)(16576012)(478600001)(5660300001)(52146003)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR08MB3256;H:[172.16.25.12];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTZQUjA4TUIzMjU2OzIzOmlpYXUzYWtKbTRKU2NiVXliWUl3WDdhK0Zi?=
+ =?utf-8?B?bUdzWU5xNGNORmFDUmZlWStPYXdJR00rbVVqaHRDaG9wT3JSdTg4OXU2TGMr?=
+ =?utf-8?B?UmxVUTNSeU93aFA0VHpkYm9WUzlobWVtMXFnVStweHh6eXpuMVFwYklBQlUx?=
+ =?utf-8?B?bTdQdE9HeXcvOGY0N3B6OFdhZGI4bzlhNmR5b0c0RUZpU1AwVGVXam9GUCtJ?=
+ =?utf-8?B?allWek5LV3BMRkk2QlRaNm8vK0dsVXBXYkQzQ1pSZ1RzOGJocGppS1AzWkk1?=
+ =?utf-8?B?ZjRFVExvUlZ2a3BWL3JOMlhOamUwcDB1VkRrYmlOZFJZN3ZHQ3MvL2dqL1Fr?=
+ =?utf-8?B?QjRDK2VCc1F1VkRDTEVKUkxMVzRWTE81VnFtT3cxck5IYzRuSWVoTXpCVS80?=
+ =?utf-8?B?cU9ucDZHQ1VTOURCZ2swekY2Yk1oM2hJdXZJYmo5SGNKSXg1Y2pRT0QxRG5B?=
+ =?utf-8?B?Tnd2Y0dzSWoyN2ZISGhxM0lmd3VNSVZpNCtYaXp0cmo0ZXFid0wwR0FTZlBw?=
+ =?utf-8?B?RmhoZjkwUGExbjRCK3RvcnFETVk1dnc3ZDgybFNzNi9rUitzNGlGQlBHVmZ4?=
+ =?utf-8?B?MXlCUmdKVWkyaU9PS3EzN1dGUlFqVXRkRmhENjQxa1pKd1lUZjd4Z2NySjVK?=
+ =?utf-8?B?Nm9ZaDhZM0dKUnJhd01qOXZad3ZHQzRLajQyNC96ZTVjdUowaTZJblQ3aWlu?=
+ =?utf-8?B?Y2lRTWs1L3pCV0s1MVZYMGFKOWJsVHNEdEJwZmh1WDhLNjhrak50Ykk3TlJO?=
+ =?utf-8?B?T3pSaFg4RzR1clI5WTdpK1lqeWttMUJsMDU1cmM0OXVoQ0JHOEVwQWR6S2g4?=
+ =?utf-8?B?aXpEZGVWQjdJQzZPeTUyRG5iVGxCa3BLTDR2MzlTYVkvZFNmWTl5eUpCVits?=
+ =?utf-8?B?cEdqem9md1lGZ1R6NjZ4aG1LT2RiT25Ra0RRY2lNTitRK25NZHVVL2duc2dJ?=
+ =?utf-8?B?MU1kM2VlZkJEcmN5QzR1cWh6RnJiRElPdms5RVI0K0xkZUN0bDBEY2RRNUNm?=
+ =?utf-8?B?TXJ6TFJ6TC9qSHRkUXh0L2E3NGRYK1hBTVdNOEVRM2R3dVpuTFArQlVyZjdR?=
+ =?utf-8?B?Z1ZQZXRTQVdNWnI2YmI3YmhQdTM2V3VzZytUTkRobFVmZEU1QXFZWDJvbnBz?=
+ =?utf-8?B?L0dSWHNNektNeUVqcGRjaGQ1SVVoRDBXa2tmczJFQ25JUFRZOE1pL25Gc0VJ?=
+ =?utf-8?B?VllYR01TZGJYbXN5UjFTcEZKclJadDdjZktWS2hFQm5KdFZmdTFrU0RoczhV?=
+ =?utf-8?B?bmJ1WkNjdFBqR3JyTG9rN29tT29rQVlBTGdvYlkwc21qOUJBSjg3dndTWWNM?=
+ =?utf-8?B?NDU4NitxSS84YVlFOHVocGRHQjNZdW4rOVFQRVVyM3p4c2lGSDdpSWZ3NUxn?=
+ =?utf-8?B?ZHNDWG9EZmlqWTY3ZklRWkFIQVp5VjJnNGJkV2plQUZGM0E5UVQ5aURCQnJt?=
+ =?utf-8?B?YzFKUW1SQUh1OEVkRk83eDlBSlhOVi9kOXd4OHJiVlJwZ1IwWnpOZU0wczNY?=
+ =?utf-8?B?Y01nbUVERVRuY29BZUhMWXUyWnhJQm9hckZoWTRzaEVQYmJ2WHB6ay9mZzBF?=
+ =?utf-8?B?V2hwQXdFaFJLMmVYSEN2c0w4eFFEZlpRcmZCa2dHM2QzeEg3aVNRb3daVzRz?=
+ =?utf-8?B?azV4b05uaDVtTFBwV1h3T2hzQWZMVllMS0lSNjJia09YbitTaTI0RGxCSFNP?=
+ =?utf-8?B?NUhsTHJIalRxTjdaK1hFVXBSWGUxdmllOU5sUENHMVB1NjlDZXY3a2o3SkZ0?=
+ =?utf-8?B?NnYweE05MGJnbnNXdit6TVJhOUZBQjljY1dHVkFVUVlQTVNRMUZzRzJZaTBN?=
+ =?utf-8?B?NVI2T3NFay9xTm9vR0xudjdNK1V2NjM5dit4TE1zLzZqQUNQNVJ0ckw4amlF?=
+ =?utf-8?B?M2xQWE8zS21iNnVqU1RaRGRBRkdMNXQ5WVpHOWI4K0JWVzdVZkdEOXRydCsz?=
+ =?utf-8?B?elB3N0tGTVZQOFJxQ3JkKzdHODRSQWNwWGlBMVBvSGdETWJocHd1TGEwZWdu?=
+ =?utf-8?B?RjVoM0FESU5VSmZzWEQ0SmtlZko2Z1NKUjFZUT09?=
+X-Microsoft-Antispam-Message-Info: RBDNJ4anyU1RsWz3FalmCSkKmxJgIVCjS99kk/67xMpJMTrafdVM9ywFI62KRo8Ir+ol7fw70WYJO8eiSGoYmqUMnf0bbKjY+Jj4kTZsIPQBf8SeScOyA8QAqa8yPU38mSNJRuvr13KRWyPtsAgjbUz6Mwqg+7enY0DpPlQr4JuAnIGJ1v7yY4Kp8y91P5GbNYih2TE8n3nWQM7/mePTPfifYMnyAoRzGZkGE9WTI6sbpaUEEWNNlXLAshmqzjWtByqwGe6Rh4MBWqwqWYu3hLFv18942FgXTZF6qluu2DWZ0uwn5Ri6TUscEtOQc8n1ZSCL2XZzWZZpxL27xoticgA6Nz1WXKZPIwoCBv4ek3g=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;6:eDetUBg8CPr3N7sDHBwhDWIXcgecvYBDMro+5AYICOVmM42nNpSsfsAf7N3wIZE7luruXzb1nSdfYS7r9pRFmzB71iVTauQy7obe6ZeSSD8mRtQEErRcoj8GZFbIcY5v61fB6MtF03ceBD8iK+zXJjHzbz23oAkKm35fiGklhI0qatb5IWLUBdsSbn9l5+k/yY9WdGnAfqIWEaPahmh5Gf1V8H/PfdsI6nwgPpM7p/QxoCmOHe7hHz+cEsY1vtRMie/Noa5L763hSF6PLVnYCvf/WTutjIdWhtj9ktJlc3A6TWItdNddUEX9/mf4kJE9ReLfjr+3auS6DrWsjWYiUcMaWmkt1EyN70ULedCtmBzUmMooilQWkOYTKIY94fow0jz7AUjJzhsZUxCdrYZxIKRIYSXsTKOGa4lu8vWUvT8I9DCdKLypnxwSG1n+xA9BAL8HLwlYTBGOjPrxm6mJ1g==;5:9kqvcyZHhWpei1KN3Vi2jSUc27yLiFi7yy4XNALwRSryFWcjkTY9nr4aRYVT89UFB1pL1h6RVYj9mHA8wjuF+kYXy7zoqWQaJ9QiSBc+NGfV9lEW/JuxAaYHw8tBQy6SiLxqK8TBEO6FuqqlbxgUeaJV9PZdePHaMP67MbUwp44=;7:b4CULJgwpQU6s1MU+e2Z0WI6wjKeWqOrTsfocJzVAOon6n0P+5fcdWmRsoDP2IsgRhi2omgwmbHr0WThOoys/H2xL6upH0L2CIFj4dpPwUM3MkDykn0fitfISlhxGl2n7abx1Xf30kCjr2zhB6ZU9f05UsV/V4AwaUv9sJKFMyKUBRLznKFml6fbI3zDNPEL3cTqT4PVa/W8yxsKtjc9gN+3FLbeg01hJAOVW6XVZhU2QsVrbdWOGY6ZTzhtnPJN
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3256;20:qhBZ+MA08ZYKkktyXhj/0LJ+mGmaJucMesyymzxaLLtVvEcLbg0wKviKVKCwKXWWRDP24s6z5aQKPKvm9TMtjUCPw8i3XKWBSTqADd6VWkEFj1pOSbL6TZswW8chNASD+Isa7sdKCj403BsCBTiOoLFT54VjLEsneuvebjmoWR8=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2018 14:44:53.2470 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54c4cc74-e6c2-4d84-3741-08d61fd0cb25
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
 
-HEAD commit:    234b69e3e089 ocfs2: fix ocfs2 read block panic
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=151d6511400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c69d94fe42901b029c1
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e14956400000
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1c69d94fe42901b029c1@syzkaller.appspotmail.com
+On 09/21/2018 04:25 PM, Souptick Joarder wrote:
+> On Fri, Sep 21, 2018 at 5:22 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>> On 09/21/2018 01:03 PM, Souptick Joarder wrote:
+>>> On Fri, Sep 21, 2018 at 3:06 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>>>>
+>>>> On 09/20/2018 10:12 PM, Souptick Joarder wrote:
+>>>>> @@ -293,8 +293,9 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+>>>>>               spin_unlock(&kcov->lock);
+>>>>>               for (off = 0; off < size; off += PAGE_SIZE) {
+>>>>>                       page = vmalloc_to_page(kcov->area + off);
+>>>>> -                     if (vm_insert_page(vma, vma->vm_start + off, page))
+>>>>> -                             WARN_ONCE(1, "vm_insert_page() failed");
+>>>>> +                     if (vmf_insert_page(vma, vma->vm_start + off, page)
+>>>>> +                                     != VM_FAULT_NOPAGE)
+>>>>> +                             WARN_ONCE(1, "vmf_insert_page() failed");
+>>>>
+>>>> Nack, don't see the reason for such change, it only makes code worse.
+>>>
+>>> Yes, it needed.
+>>
+>> No, it's not needed. vm_insert_page() works perfectly fine here.
+>>
+>>> Going forward vm_insert_page will be converted to
+>>> vmf_insert_page. As part of it, this code has to be converted to use
+>>> vmf_insert_page().
+>>
+>> This doesn't explain why such conversion would make sense for kcov_mmap().
+> 
+> vm_insert_page used to return errno which individual drivers have to
+> map to VM_FAULT_CODE.
+> There were also places where return value of vm_insert_page was
+> ignored and return a
+> TRUE value.
+> 
+> As part of vm_fault_t migration patches, we have identified and clean
+> up all these.
+> The plan was to introduce inline wrapper vmf_insert_page(), convert all
+> the page fault handlers to use it and then convert vm_insert_page to
+> vmf_insert_page. By now we have converted all the page fault handlers
+> to use this API.
+> 
+> Still their are few places where vm_insert_page is called outside fault handlers
+> context to map kernel page to user vma and kernel/kcov.c is one of them.
+> 
+> Now removing vm_insert_page from those few places one by one.
+> 
+> Going forward vm_insert_page will be removed from kernel permanently,
+> so that new drivers can't use this API and create new errno to VM_FAULT_CODE
+> mapping code.
+> 
 
-RBP: 000000000072c040 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000072c04c
-R13: 00007ffc0845277f R14: 00007f1c1a1f89c0 R15: 0000000000000002
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5601 Comm: syz-executor0 Not tainted 4.19.0-rc4+ #248
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:kvm_lapic_hv_timer_in_use+0x56/0xd0 arch/x86/kvm/lapic.c:1622
-Code: c1 ea 03 80 3c 02 00 75 7a 48 8b 9b e0 03 00 00 e8 cf 7a 66 00 48 8d  
-7b 7c 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 51 0f b6 5b 7c
-RSP: 0018:ffff8801b8d0f098 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff810f00fe
-RDX: 000000000000000f RSI: ffffffff811859b1 RDI: 000000000000007c
-RBP: ffff8801b8d0f0a0 R08: ffff8801d1ea60c0 R09: ffffed00371cfb6c
-R10: ffffed00371cfb6c R11: ffff8801b8e7db67 R12: 0000000000000001
-R13: 1ffff100371a1e1a R14: 0000000000000000 R15: ffff8801b8e78060
-FS:  00007f1c1a1f8700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f63d064f000 CR3: 00000001c23f2000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  kvm_arch_vcpu_load+0x516/0x970 arch/x86/kvm/x86.c:3128
-  kvm_sched_in+0x82/0xa0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3975
-  __fire_sched_in_preempt_notifiers kernel/sched/core.c:2481 [inline]
-  fire_sched_in_preempt_notifiers kernel/sched/core.c:2487 [inline]
-  finish_task_switch+0x56e/0x900 kernel/sched/core.c:2679
-  context_switch kernel/sched/core.c:2828 [inline]
-  __schedule+0x874/0x1ed0 kernel/sched/core.c:3473
-  preempt_schedule_common+0x1f/0xd0 kernel/sched/core.c:3597
-  preempt_schedule+0x4d/0x60 kernel/sched/core.c:3623
-  ___preempt_schedule+0x16/0x18
-  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:161 [inline]
-  _raw_spin_unlock_irqrestore+0xbb/0xd0 kernel/locking/spinlock.c:184
-  try_to_wake_up+0x10a/0x12f0 kernel/sched/core.c:2055
-  wake_up_process kernel/sched/core.c:2123 [inline]
-  wake_up_q+0xa4/0x100 kernel/sched/core.c:441
-  futex_wake+0x61f/0x760 kernel/futex.c:1556
-  do_futex+0x2e4/0x26d0 kernel/futex.c:3533
-  __do_sys_futex kernel/futex.c:3589 [inline]
-  __se_sys_futex kernel/futex.c:3557 [inline]
-  __x64_sys_futex+0x472/0x6a0 kernel/futex.c:3557
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457679
-Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f1c1a1f7cf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: ffffffffffffffda RBX: 000000000072c048 RCX: 0000000000457679
-RDX: 0000000000000016 RSI: 0000000000000081 RDI: 000000000072c04c
-RBP: 000000000072c040 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000072c04c
-R13: 00007ffc0845277f R14: 00007f1c1a1f89c0 R15: 0000000000000002
-Modules linked in:
----[ end trace 107e9054540c67ea ]---
-RIP: 0010:kvm_lapic_hv_timer_in_use+0x56/0xd0 arch/x86/kvm/lapic.c:1622
-Code: c1 ea 03 80 3c 02 00 75 7a 48 8b 9b e0 03 00 00 e8 cf 7a 66 00 48 8d  
-7b 7c 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 04 84 c0 75 51 0f b6 5b 7c
-RSP: 0018:ffff8801b8d0f098 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff810f00fe
-RDX: 000000000000000f RSI: ffffffff811859b1 RDI: 000000000000007c
-RBP: ffff8801b8d0f0a0 R08: ffff8801d1ea60c0 R09: ffffed00371cfb6c
-R10: ffffed00371cfb6c R11: ffff8801b8e7db67 R12: 0000000000000001
-R13: 1ffff100371a1e1a R14: 0000000000000000 R15: ffff8801b8e78060
-FS:  00007f1c1a1f8700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f63d064f000 CR3: 00000001c23f2000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+So, to avoid addition of new code that converts errno->VM_FAULT_* you propose to add
+new code that does the opposite - converts VM_FAULT_* to errno? How is that better?
 
+And what function is going to be next? pte_none()? It is also used in fault handlers.
+Are there going to be vmf_pte_none() and complete removal of pte_none() "so that new drivers
+can't use pte_none() and create new pte_none() to VM_FAULT_CODE mapping code"?
+
+Don't you see that how that doesn't make any sense?
+Want vmf_insert_page() for easier error handling in fault handlers? - fine, use it in fault handlers.
+But leave the vm_insert_page() for the code that has nothing to do with fault handling.
