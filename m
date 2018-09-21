@@ -2,61 +2,186 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FDBECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AECECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0133C21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:13:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0133C21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 37FF421523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:14:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtsOyc0K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37FF421523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389901AbeIUSCB (ORCPT
+        id S2389689AbeIUSDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:02:01 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39760 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388850AbeIUSCB (ORCPT
+        Fri, 21 Sep 2018 14:03:11 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53424 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727697AbeIUSDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:02:01 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1g3KJG-0000r9-PL; Fri, 21 Sep 2018 14:13:23 +0200
-Date:   Fri, 21 Sep 2018 14:13:19 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc:     linux-kernel@vger.kernel.org,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [Problem] Cache line starvation
-In-Reply-To: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
-Message-ID: <alpine.DEB.2.21.1809211411030.14736@nanos.tec.linutronix.de>
-References: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 21 Sep 2018 14:03:11 -0400
+Received: by mail-wm1-f66.google.com with SMTP id b19-v6so2843074wme.3;
+        Fri, 21 Sep 2018 05:14:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=BVRdKJ2LNGoATOOvzXyoqV7KpRdcxoKytOtPJw6OXas=;
+        b=BtsOyc0KxFjlnwlV6vBN6twJ4NzOauQwD9qJXlHBYTid9uEk6td8lLp1yH8itHwxnP
+         QTe35r2OcfRZK2g6HlHAHWopJKPYU4xe/mtQQcoJzT9h5VD3ZukYkaFe0O9i5FdvPxBk
+         sgCl6LZ+VI/RcUw3GbdSqoW4Gy8nZs6eb09j0Ldpei2fs0rnZC3assM2C4XIT4GNFG27
+         b1HShyzNc6XJpEqKUn3Nf4m8JTRo+jq2Vkw3+ayKb0qHsgRxijJQBtA8dZXjhxmGUfk0
+         A5hCy6zkyr84xgTKeo69XxF2vMo1eeGJjxZsisp89wpKIIEX1mj6PIFt36/d/vg0ACjT
+         AynA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=BVRdKJ2LNGoATOOvzXyoqV7KpRdcxoKytOtPJw6OXas=;
+        b=nWZCIA/Ivib8fGLFYotvRgbD/T54AAyRiHmJgZGglYG6JFzMEPT59DXcmbGwIY905j
+         1091TELV+XqHhmJy8MmFzuXt7lK+US7CJHcPEsHkYR1GetT9Lzc/t/s1NWhlYdoyMpZT
+         bwtHn54q2P9+dQn33b/NodV6LhBqYx3qr/1vashyAO+C9QTTzogwDbg9VORd6bK8CpA4
+         zki1aWwtxfZCrCX1pWZXvu1Jamf/XdJFdOr0zyA5OS/TZNL0lLlw8V5K2IJZGwPgzdwf
+         0os8ByK93/JFOgs+Hk2mPxcARaZZvbTUXIu/rijS5YJHbiEV5E1xLpF0HIJ55TXMd2X6
+         eD6A==
+X-Gm-Message-State: APzg51DN8w3ZRKytqxbJZ66pvmYkkgnzGdIEuDZJtc+dYpQ2FzTRmkjj
+        VRs2V8t7aS0RmTPmsNLXZWg=
+X-Google-Smtp-Source: ANB0VdYiYRRIBPGAn2WkHu0OsESiZux/ZjBNzqs35lUx8gMbKLgeg2o8OWXj9XBBEo91wXNQ/Ln54Q==
+X-Received: by 2002:a1c:8e81:: with SMTP id q123-v6mr6743086wmd.56.1537532072612;
+        Fri, 21 Sep 2018 05:14:32 -0700 (PDT)
+Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
+        by smtp.gmail.com with ESMTPSA id g126-v6sm4139081wmg.5.2018.09.21.05.14.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 05:14:32 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     gregkh@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM changes for Linux 4.20-rc5
+Date:   Fri, 21 Sep 2018 14:14:27 +0200
+Message-Id: <1537532067-42759-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018, Sebastian Andrzej Siewior wrote:
-> We reproducibly observe cache line starvation on a Core2Duo E6850 (2
-> cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
-> cores).
+Greg,
 
-We tried to reproduce on AMD, but so far no failure.
+The following changes since commit 7876320f88802b22d4e2daf7eb027dd14175a0f8:
 
-Thanks,
+  Linux 4.19-rc4 (2018-09-16 11:52:37 -0700)
 
-	tglx
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/virt/kvm/kvm.git queue
+
+for you to fetch changes up to 26b471c7e2f7befd0f59c35b257749ca57e0ed70:
+
+  KVM: nVMX: Fix bad cleanup on error of get/set nested state IOCTLs (2018-09-20 18:54:08 +0200)
+
+----------------------------------------------------------------
+This pull request is slightly bigger than usual at this stage, but
+I swear I would have sent it the same to Linus!  The main cause for
+this is that I was on vacation until two weeks ago and it took a while
+to sort all the pending patches between 4.20 and 4.21, test them and
+so on.
+
+It's mostly small bugfixes and cleanups, mostly around x86 nested
+virtualization.  One important change, not related to nested
+virtualization, is that the ability for the guest kernel to trap CPUID
+instructions (in Linux that's the ARCH_SET_CPUID arch_prctl) is now
+masked by default.  This is because the feature is detected through an
+MSR; a very bad idea that Intel seems to like more and more.  Some
+applications choke if the other fields of that MSR are not initialized
+as on real hardware, hence we have to disable the whole MSR by default,
+as was the case before Linux 4.12.
+
+----------------------------------------------------------------
+Alexey Kardashevskiy (1):
+      KVM: PPC: Avoid marking DMA-mapped pages dirty in real mode
+
+Andy Shevchenko (1):
+      KVM: SVM: Switch to bitmap_zalloc()
+
+Drew Schmitt (3):
+      KVM: x86: Turbo bits in MSR_PLATFORM_INFO
+      KVM: x86: Control guest reads of MSR_PLATFORM_INFO
+      kvm: selftests: Add platform_info_test
+
+Janosch Frank (2):
+      s390/mm: Check for valid vma before zapping in gmap_discard
+      KVM: s390: Make huge pages unavailable in ucontrol VMs
+
+Junaid Shahid (1):
+      kvm: mmu: Don't read PDPTEs when paging is not enabled
+
+Krish Sadhukhan (2):
+      nVMX x86: check posted-interrupt descriptor addresss on vmentry of L2
+      nVMX x86: Check VPID value on vmentry of L2 guests
+
+Lei Yang (1):
+      kvm: selftests: use -pthread instead of -lpthread
+
+Liran Alon (2):
+      KVM: nVMX: Wake blocked vCPU in guest-mode if pending interrupt in virtual APICv
+      KVM: nVMX: Fix bad cleanup on error of get/set nested state IOCTLs
+
+Nicholas Piggin (1):
+      KVM: PPC: Book3S HV: Don't use compound_order to determine host mapping size
+
+Paolo Bonzini (3):
+      Merge tag 'kvm-s390-master-4.19-2' of git://git.kernel.org/.../kvms390/linux into HEAD
+      Merge tag 'kvm-ppc-fixes-4.19-2' of git://git.kernel.org/.../paulus/powerpc into HEAD
+      KVM: VMX: check nested state and CR4.VMXE against SMM
+
+Sean Christopherson (3):
+      KVM: VMX: immediately mark preemption timer expired only for zero value
+      KVM: VMX: modify preemption timer bit only when arming timer
+      KVM: VMX: use preemption timer to force immediate VMExit
+
+Sebastian Andrzej Siewior (1):
+      kvm: x86: make kvm_{load|put}_guest_fpu() static
+
+Tianyu Lan (1):
+      KVM/MMU: Fix comment in walk_shadow_page_lockless_end()
+
+Vitaly Kuznetsov (2):
+      x86/kvm/lapic: always disable MMIO interface in x2APIC mode
+      x86/hyper-v: rename ipi_arg_{ex,non_ex} structures
+
+Wei Yang (1):
+      KVM: x86: don't reset root in kvm_mmu_setup()
+
+ Documentation/virtual/kvm/api.txt                |  12 +-
+ arch/powerpc/include/asm/book3s/64/pgtable.h     |   1 -
+ arch/powerpc/include/asm/iommu.h                 |   2 -
+ arch/powerpc/include/asm/mmu_context.h           |   1 +
+ arch/powerpc/kernel/iommu.c                      |  25 ----
+ arch/powerpc/kvm/book3s_64_mmu_radix.c           |  91 ++++++---------
+ arch/powerpc/kvm/book3s_64_vio_hv.c              |  39 +++++--
+ arch/powerpc/mm/init_64.c                        |  49 --------
+ arch/powerpc/mm/mmu_context_iommu.c              |  34 +++++-
+ arch/s390/kvm/kvm-s390.c                         |   4 +-
+ arch/s390/mm/gmap.c                              |   4 +-
+ arch/x86/hyperv/hv_apic.c                        |   8 +-
+ arch/x86/include/asm/hyperv-tlfs.h               |  16 +--
+ arch/x86/include/asm/kvm_host.h                  |   5 +
+ arch/x86/include/uapi/asm/kvm.h                  |   1 +
+ arch/x86/kvm/lapic.c                             |  22 +++-
+ arch/x86/kvm/mmu.c                               |   9 +-
+ arch/x86/kvm/svm.c                               |   7 +-
+ arch/x86/kvm/vmx.c                               | 138 ++++++++++++++++-------
+ arch/x86/kvm/x86.c                               | 101 +++++++++++------
+ include/linux/kvm_host.h                         |   2 -
+ include/uapi/linux/kvm.h                         |   1 +
+ tools/testing/selftests/kvm/.gitignore           |   1 +
+ tools/testing/selftests/kvm/Makefile             |   5 +-
+ tools/testing/selftests/kvm/include/kvm_util.h   |   4 +
+ tools/testing/selftests/kvm/lib/kvm_util.c       |  89 +++++++++++++++
+ tools/testing/selftests/kvm/platform_info_test.c | 110 ++++++++++++++++++
+ 27 files changed, 537 insertions(+), 244 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/platform_info_test.c
