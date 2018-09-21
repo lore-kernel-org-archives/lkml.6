@@ -2,112 +2,379 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60398ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF92ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B3E21550
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53BC321567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:05:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="JnSD29D0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B3E21550
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dno7iZDM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53BC321567
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391270AbeIVAyq (ORCPT
+        id S2391292AbeIVAzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:54:46 -0400
-Received: from mail-eopbgr720119.outbound.protection.outlook.com ([40.107.72.119]:3424
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391156AbeIVAyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:54:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rAfCIhTcO6YmPIodxy7eRDn1JkKw0Bf85t3jdLwvPWs=;
- b=JnSD29D0FMi9C2wXCXH964GWufRupo8BRFcXI8sWmLvCRxW1TbWzyw8KgFlm7fnTqFIk3F0VlS08+WtLmh1LGT7OZrWhgGVEfd69/jluLbki823Z/M/+sizll8OlCG7lKqW8NWC52Q96rr6P6HDffROI+OvdYWVQSML8+BsHcJk=
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
- DM5PR21MB0635.namprd21.prod.outlook.com (10.175.111.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.12; Fri, 21 Sep 2018 19:04:30 +0000
-Received: from DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::88e6:fdc:1d8e:71f5]) by DM5PR21MB0508.namprd21.prod.outlook.com
- ([fe80::88e6:fdc:1d8e:71f5%4]) with mapi id 15.20.1185.010; Fri, 21 Sep 2018
- 19:04:30 +0000
-From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
-CC:     "mhocko@suse.com" <mhocko@suse.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "jglisse@redhat.com" <jglisse@redhat.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "logang@deltatee.com" <logang@deltatee.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 1/5] mm: Provide kernel parameter to allow disabling
- page init poisoning
-Thread-Topic: [PATCH v4 1/5] mm: Provide kernel parameter to allow disabling
- page init poisoning
-Thread-Index: AQHUUTEJUetFnXyPxkiXMreNCU4+e6T7GXWA
-Date:   Fri, 21 Sep 2018 19:04:30 +0000
-Message-ID: <a40a78c0-207b-03b7-344c-847b12a4f896@microsoft.com>
-References: <20180920215824.19464.8884.stgit@localhost.localdomain>
- <20180920222415.19464.38400.stgit@localhost.localdomain>
-In-Reply-To: <20180920222415.19464.38400.stgit@localhost.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.117.57.82]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR21MB0635;6:TXZw0stgLbtJ6LkBCcQFzL4NlPLevGjfQ87i5KHkvzN7PHhmwZ+zTW6VKWjPDz1Pataf3FZQn6Mqi4V9HgoE0BGIThBfZOfJEnOzSxPc3NpyaaHUKNd4jb1fHe3CHBI2bwIbsRyuBLedsKqVar8EjrBnmcgZCLM2nYCONBMi6yTFVDyeJJCbm2UFrDWJIYl8Y8rXkZ/skH1okE01jObqHkFi0MlOzDuArUN2mFmsqTGNSXIydFyuc8CdW44nsVZ4LeStVvgetMFcmIHB7tbPjhJfMZsCrjMo2FNFzNhMaWvYlvYkX9CCJs/3j3fzoPSuDCk5ZdadoOEmj6b+HzZD1wbr7STNwyNvb148Ys/8btk0pVC4uF8O2iZ2AKCsK3UaKIARrZtcT5RMZNOdKXJDwfNEu1A1Tlu0VA6aHfmZLfOJC2APlQ/x090yoBc5rIk5vvUxDZioIBRXQfIK9DCAaw==;5:I5D0+CFUFaUdDN/SC95Fsx7XCGqzQ6kQtWrS3Lv7bPr9ZWrGkcBlGCtC5/6XCjErBGRXdHO+Jaiy5CSYyasr/a+owqZr1z8BCwIbi4ujmXGsN+CsrRIMHv8j5GhHjnsHZLAJnDUPrhUK542H6KgaqeKHzYO1YdZKD7VK6QiXuj4=;7:e2LrVOV/DAGBHfOuPmUM1DdkQO4zJV9w65SbszMmulbjPz69Can9tuU21B2L8U3+B/vQuVYG3xFEj65brQcrQ+7NEaSGlKZ54UR/Mjm4KGYzCOI1tlBQWDZ24IF55hIk6iZq2YTkPYYR2SpenRxPP4OwpsUm/nK8Xw5l9bAplW+c6gtnxefP/0P0Vy1ChlFGy8ctkpHCeoTMFrfExwjcsdzROxjpXBrDhmJV/WL6CA1uQeUYSTHNgqPSS6da28xR
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: b78df5d6-26ba-4643-178b-08d61ff50f50
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0635;
-x-ms-traffictypediagnostic: DM5PR21MB0635:
-x-microsoft-antispam-prvs: <DM5PR21MB063556E99B2FF37757EC84F89D120@DM5PR21MB0635.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(6055026)(149050)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:DM5PR21MB0635;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0635;
-x-forefront-prvs: 0802ADD973
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(346002)(396003)(376002)(366004)(189003)(199004)(4326008)(105586002)(106356001)(186003)(22452003)(6346003)(102836004)(31686004)(110136005)(26005)(54906003)(316002)(2900100001)(8936002)(7416002)(53936002)(68736007)(2906002)(7736002)(81156014)(81166006)(36756003)(305945005)(66066001)(6436002)(6512007)(229853002)(72206003)(6486002)(8676002)(5660300001)(99286004)(486006)(6246003)(97736004)(476003)(11346002)(14444005)(256004)(3846002)(6116002)(478600001)(2501003)(2616005)(76176011)(5250100002)(31696002)(86612001)(86362001)(2201001)(446003)(25786009)(6506007)(14454004)(10090500001)(71200400001)(10290500003)(71190400001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0635;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
-x-microsoft-antispam-message-info: 9C2BvYWcuYdnf0nJu15zXwYidwfwWDQbTJD2qGNgbEFuYEnPs+ggaR8pgoCiceeHsnHHhBQ5b9UMQaF3Y+FSjjdn1zAIcVazQaUT8J6Z+KmT/BC07AQ+S6eEqYnZDoL6JtYhafCgN/LVUyT2b+Nu/UcnzS12mWkIs8EvdJkYIQAN3H6J/EEYVvJcVljO+pfQ2NiVfPt8TumtzirTzd01HTL4eL6RHdTLmqB1/GhGsok6OO1cjUnFlnQAN9oqdt1GOFRYBIxagpUPZNENS93NvSSRl/xHqEX1geIY6Biok7lD14uAq+zmgpXoCvJ1pNTVs3we0KlZZ0qHcSX8Ph6a5wgWLZcson5rb70BEdHVuOc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FC10A7A3A3CEBF40AA05D8612D8B3C0C@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 21 Sep 2018 20:55:19 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:42013 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390726AbeIVAzT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 20:55:19 -0400
+Received: by mail-yw1-f68.google.com with SMTP id h134-v6so2439948ywc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:05:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cK5idXKvsIT0hId20fRSIUuLPavH33cK9f1KSdAS5Dk=;
+        b=Dno7iZDMXGv0vL1zfYsRO1+xUVG+KjUhnKohCDMDc9Q2Egz/DuAD6Uk2Z183XFVnvy
+         s2DV5IY5uLcnKaohR63Gba45XuEgFQsFT1Nv7xb4iZ0gS79DtHHwXj0woeXCWX29Z64H
+         ZBaIQDaoqs2+ZimgtiT5GblcSZGWoDr5WOto4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cK5idXKvsIT0hId20fRSIUuLPavH33cK9f1KSdAS5Dk=;
+        b=Xqlzl65vg3XQQlpCsqUklCv+RX8GPjPJnCadDp9hvJwOYHxVtlMRumz1ZEkD6J1MMN
+         9JWVsdFStAxLV/bNyLdB2R9hRkcS6xxdSEcI5/JU8/XAdcBHWreLOkHuDIkhrSs0jkox
+         zRAV5moduuYefdi6+kGttN0STEubSnpHhJ7bIGOuGmQsZvLsK5rW20yGZeSQ5l5QGXz0
+         6n2dtsnIvUrUZffY905rr7yBpDTMyyCqmUW3jRxO2VuCG2+RL8hMNpL5RMPIZJ8DTwFq
+         al/zPpJxzHo9ir9929nOEy48kWi55/Jk4NtvG8kId1RLlmZHIJxdF0UYXl/ksNV9mBtr
+         OzkA==
+X-Gm-Message-State: APzg51AYAPKDhwal6FRYPpD2NljqE7JeTMTBTStZGZ5Q0msoP0D9bht6
+        FbiUoD3/QksPLDqkifgMNECQjrX2maw=
+X-Google-Smtp-Source: ANB0VdY40LXFjKTEghGdbmOYHZu6YjIcJvZ1D/B9Hj4KojOGNEAuCJDE8yKGIN+O732xRc+W0or3Sw==
+X-Received: by 2002:a81:a282:: with SMTP id z124-v6mr20761362ywg.150.1537556705673;
+        Fri, 21 Sep 2018 12:05:05 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id i190-v6sm5017205ywc.60.2018.09.21.12.05.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 12:05:05 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 184-v6so5882611ybg.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:05:04 -0700 (PDT)
+X-Received: by 2002:a25:e5c3:: with SMTP id c186-v6mr21169932ybh.209.1537556704459;
+ Fri, 21 Sep 2018 12:05:04 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b78df5d6-26ba-4643-178b-08d61ff50f50
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 19:04:30.3479
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0635
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 12:05:03
+ -0700 (PDT)
+In-Reply-To: <1536874298-23492-3-git-send-email-rick.p.edgecombe@intel.com>
+References: <1536874298-23492-1-git-send-email-rick.p.edgecombe@intel.com> <1536874298-23492-3-git-send-email-rick.p.edgecombe@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 21 Sep 2018 12:05:03 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJ9nZYbVn5xdi7nsMJRD6ScLeWP2DWjrD8yEfwi-XXcRw@mail.gmail.com>
+Message-ID: <CAGXu5jJ9nZYbVn5xdi7nsMJRD6ScLeWP2DWjrD8yEfwi-XXcRw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] x86/modules: Increase randomization for modules
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jann Horn <jannh@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+ICsJCQlwcl9lcnIoInZtX2RlYnVnIG9wdGlvbiAnJWMnIHVua25vd24uIHNraXBwZWRcbiIs
-DQo+ICsJCQkgICAgICAgKnN0cik7DQo+ICsJCX0NCj4gKw0KPiArCQlzdHIrKzsNCj4gKwl9DQo+
-ICtvdXQ6DQo+ICsJaWYgKHBhZ2VfaW5pdF9wb2lzb25pbmcgJiYgIV9fcGFnZV9pbml0X3BvaXNv
-bmluZykNCj4gKwkJcHJfd2FybigiUGFnZSBzdHJ1Y3QgcG9pc29uaW5nIGRpc2FibGVkIGJ5IGtl
-cm5lbCBjb21tYW5kIGxpbmUgb3B0aW9uICd2bV9kZWJ1ZydcbiIpOw0KDQpOZXcgbGluZXMgJ1xu
-JyBjYW4gYmUgcmVtb3ZlZCwgdGhleSBhcmUgbm90IG5lZWRlZCBmb3Iga3ByaW50ZnMuDQoNCg0K
-UmV2aWV3ZWQtYnk6IFBhdmVsIFRhdGFzaGluIDxwYXZlbC50YXRhc2hpbkBtaWNyb3NvZnQuY29t
-Pg==
+On Thu, Sep 13, 2018 at 2:31 PM, Rick Edgecombe
+<rick.p.edgecombe@intel.com> wrote:
+> This changes the behavior of the KASLR logic for allocating memory for the text
+> sections of loadable modules. It randomizes the location of each module text
+> section with about 17 bits of entropy in typical use. This is enabled on X86_64
+> only. For 32 bit, the behavior is unchanged.
+>
+> It refactors existing code around module randomization somewhat. There are now
+> three different behaviors for x86 module_alloc depending on config.
+> RANDOMIZE_BASE=n, and RANDOMIZE_BASE=y ARCH=x86_64, and RANDOMIZE_BASE=y
+> ARCH=i386. The refactor of the existing code is to try to clearly show what
+> those behaviors are without having three separate versions or threading the
+> behaviors in a bunch of little spots. The reason it is not enabled on 32 bit
+> yet is because the module space is much smaller and simulations haven't been
+> run to see how it performs.
+>
+> The new algorithm breaks the module space in two, a random area and a backup
+> area. It first tries to allocate at a number of randomly located starting pages
+> inside the random section without purging any lazy free vmap areas and
+> triggering the associated TLB flush. If this fails, it will try again a number
+> of times allowing for purges if needed. It also saves any position that could
+> have succeeded if it was allowed to purge, which doubles the chances of finding
+> a spot that would fit. Finally if those both fail to find a position it will
+> allocate in the backup area. The backup area base will be offset in the same
+> way as the current algorithm does for the base area, 1024 possible locations.
+>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+
+I'm excited to get fine-grained module randomization. I think it's a
+good first step to getting other fine-grained KASLR in other places.
+Thanks for working on this!
+
+> ---
+>  arch/x86/include/asm/pgtable_64_types.h |   7 ++
+>  arch/x86/kernel/module.c                | 165 +++++++++++++++++++++++++++-----
+>  2 files changed, 149 insertions(+), 23 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+> index 04edd2d..5e26369 100644
+> --- a/arch/x86/include/asm/pgtable_64_types.h
+> +++ b/arch/x86/include/asm/pgtable_64_types.h
+> @@ -143,6 +143,13 @@ extern unsigned int ptrs_per_p4d;
+>  #define MODULES_END            _AC(0xffffffffff000000, UL)
+>  #define MODULES_LEN            (MODULES_END - MODULES_VADDR)
+>
+> +/*
+> + * Dedicate the first part of the module space to a randomized area when KASLR
+> + * is in use.  Leave the remaining part for a fallback if we are unable to
+> + * allocate in the random area.
+> + */
+> +#define MODULES_RAND_LEN       PAGE_ALIGN((MODULES_LEN/3)*2)
+> +
+>  #define ESPFIX_PGD_ENTRY       _AC(-2, UL)
+>  #define ESPFIX_BASE_ADDR       (ESPFIX_PGD_ENTRY << P4D_SHIFT)
+>
+> diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+> index f58336a..d50a0a0 100644
+> --- a/arch/x86/kernel/module.c
+> +++ b/arch/x86/kernel/module.c
+> @@ -48,34 +48,151 @@ do {                                                       \
+>  } while (0)
+>  #endif
+>
+> -#ifdef CONFIG_RANDOMIZE_BASE
+> +#if defined(CONFIG_X86_64) && defined(CONFIG_RANDOMIZE_BASE)
+> +static inline unsigned long get_modules_rand_len(void)
+> +{
+> +       return MODULES_RAND_LEN;
+> +}
+> +#else
+> +static inline unsigned long get_modules_rand_len(void)
+> +{
+> +       BUILD_BUG();
+> +       return 0;
+> +}
+> +
+> +inline bool kaslr_enabled(void);
+> +#endif
+> +
+> +static inline int kaslr_randomize_each_module(void)
+> +{
+> +       return IS_ENABLED(CONFIG_RANDOMIZE_BASE)
+> +               && IS_ENABLED(CONFIG_X86_64)
+> +               && kaslr_enabled();
+> +}
+> +
+> +static inline int kaslr_randomize_base(void)
+> +{
+> +       return IS_ENABLED(CONFIG_RANDOMIZE_BASE)
+> +               && !IS_ENABLED(CONFIG_X86_64)
+> +               && kaslr_enabled();
+> +}
+> +
+>  static unsigned long module_load_offset;
+> +static const unsigned long NR_NO_PURGE = 5000;
+> +static const unsigned long NR_TRY_PURGE = 5000;
+>
+>  /* Mutex protects the module_load_offset. */
+>  static DEFINE_MUTEX(module_kaslr_mutex);
+>
+>  static unsigned long int get_module_load_offset(void)
+>  {
+> -       if (kaslr_enabled()) {
+> -               mutex_lock(&module_kaslr_mutex);
+> -               /*
+> -                * Calculate the module_load_offset the first time this
+> -                * code is called. Once calculated it stays the same until
+> -                * reboot.
+> -                */
+> -               if (module_load_offset == 0)
+> -                       module_load_offset =
+> -                               (get_random_int() % 1024 + 1) * PAGE_SIZE;
+> -               mutex_unlock(&module_kaslr_mutex);
+> -       }
+> +       mutex_lock(&module_kaslr_mutex);
+> +       /*
+> +        * Calculate the module_load_offset the first time this
+> +        * code is called. Once calculated it stays the same until
+> +        * reboot.
+> +        */
+> +       if (module_load_offset == 0)
+> +               module_load_offset = (get_random_int() % 1024 + 1) * PAGE_SIZE;
+> +       mutex_unlock(&module_kaslr_mutex);
+> +
+>         return module_load_offset;
+>  }
+> -#else
+> -static unsigned long int get_module_load_offset(void)
+> +
+> +static unsigned long get_module_vmalloc_start(void)
+>  {
+> -       return 0;
+> +       if (kaslr_randomize_each_module())
+> +               return MODULES_VADDR + get_modules_rand_len()
+> +                                       + get_module_load_offset();
+> +       else if (kaslr_randomize_base())
+> +               return MODULES_VADDR + get_module_load_offset();
+> +
+> +       return MODULES_VADDR;
+> +}
+
+I would find this much more readable as:
+
+static unsigned long get_module_vmalloc_start(void)
+{
+       unsigned long addr = MODULES_VADDR;
+
+       if (kaslr_randomize_base())
+              addr += get_module_load_offset();
+
+       if (kaslr_randomize_each_module())
+               addr += get_modules_rand_len();
+
+       return addr;
+}
+
+
+
+> +
+> +static void *try_module_alloc(unsigned long addr, unsigned long size,
+> +                                       int try_purge)
+> +{
+> +       const unsigned long vm_flags = 0;
+> +
+> +       return __vmalloc_node_try_addr(addr, size, GFP_KERNEL, PAGE_KERNEL_EXEC,
+> +                                       vm_flags, NUMA_NO_NODE, try_purge,
+> +                                       __builtin_return_address(0));
+> +}
+> +
+> +/*
+> + * Find a random address to try that won't obviously not fit. Random areas are
+> + * allowed to overflow into the backup area
+> + */
+> +static unsigned long get_rand_module_addr(unsigned long size)
+> +{
+> +       unsigned long nr_max_pos = (MODULES_LEN - size) / MODULE_ALIGN + 1;
+> +       unsigned long nr_rnd_pos = get_modules_rand_len() / MODULE_ALIGN;
+> +       unsigned long nr_pos = min(nr_max_pos, nr_rnd_pos);
+> +
+> +       unsigned long module_position_nr = get_random_long() % nr_pos;
+> +       unsigned long offset = module_position_nr * MODULE_ALIGN;
+> +
+> +       return MODULES_VADDR + offset;
+> +}
+> +
+> +/*
+> + * Try to allocate in the random area. First 5000 times without purging, then
+> + * 5000 times with purging. If these fail, return NULL.
+> + */
+> +static void *try_module_randomize_each(unsigned long size)
+> +{
+> +       void *p = NULL;
+> +       unsigned int i;
+> +       unsigned long last_lazy_free_blocked = 0;
+> +
+> +       /* This will have a guard page */
+> +       unsigned long va_size = PAGE_ALIGN(size) + PAGE_SIZE;
+> +
+> +       if (!kaslr_randomize_each_module())
+> +               return NULL;
+> +
+> +       /* Make sure there is at least one address that might fit. */
+> +       if (va_size < PAGE_ALIGN(size) || va_size > MODULES_LEN)
+> +               return NULL;
+> +
+> +       /* Try to find a spot that doesn't need a lazy purge */
+> +       for (i = 0; i < NR_NO_PURGE; i++) {
+> +               unsigned long addr = get_rand_module_addr(va_size);
+> +
+> +               /* First try to avoid having to purge */
+> +               p = try_module_alloc(addr, size, 0);
+> +
+> +               /*
+> +                * Save the last value that was blocked by a
+> +                * lazy purge area.
+> +                */
+> +               if (IS_ERR(p) && PTR_ERR(p) == -EUCLEAN)
+> +                       last_lazy_free_blocked = addr;
+> +               else if (!IS_ERR(p))
+> +                       return p;
+> +       }
+> +
+> +       /* Try the most recent spot that could be used after a lazy purge */
+> +       if (last_lazy_free_blocked) {
+> +               p = try_module_alloc(last_lazy_free_blocked, size, 1);
+> +
+> +               if (!IS_ERR(p))
+> +                       return p;
+> +       }
+> +
+> +       /* Look for more spots and allow lazy purges */
+> +       for (i = 0; i < NR_TRY_PURGE; i++) {
+> +               unsigned long addr = get_rand_module_addr(va_size);
+> +
+> +               /* Give up and allow for purges */
+> +               p = try_module_alloc(addr, size, 1);
+> +
+> +               if (!IS_ERR(p))
+> +                       return p;
+> +       }
+> +       return NULL;
+>  }
+> -#endif
+>
+>  void *module_alloc(unsigned long size)
+>  {
+> @@ -84,16 +201,18 @@ void *module_alloc(unsigned long size)
+>         if (PAGE_ALIGN(size) > MODULES_LEN)
+>                 return NULL;
+>
+> -       p = __vmalloc_node_range(size, MODULE_ALIGN,
+> -                                   MODULES_VADDR + get_module_load_offset(),
+> -                                   MODULES_END, GFP_KERNEL,
+> -                                   PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+> -                                   __builtin_return_address(0));
+> +       p = try_module_randomize_each(size);
+> +
+> +       if (!p)
+> +               p = __vmalloc_node_range(size, MODULE_ALIGN,
+> +                               get_module_vmalloc_start(), MODULES_END,
+> +                               GFP_KERNEL, PAGE_KERNEL_EXEC, 0,
+> +                               NUMA_NO_NODE, __builtin_return_address(0));
+
+Instead of having two open-coded __vmalloc_node_range() calls left in
+this after the change, can this be done in terms of a call to
+try_module_alloc() instead? I see they're slightly different, but it
+might be nice for making the two paths share more code.
+
+> +
+>         if (p && (kasan_module_alloc(p, size) < 0)) {
+>                 vfree(p);
+>                 return NULL;
+>         }
+> -
+>         return p;
+>  }
+>
+> --
+> 2.7.4
+>
+
+Looks promising!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
