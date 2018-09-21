@@ -2,105 +2,78 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEBCC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC74ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EEC220858
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B802820858
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:36:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdC4Sc3c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EEC220858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="1q3QWf8M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B802820858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389781AbeIUQY0 (ORCPT
+        id S2389825AbeIUQYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:24:26 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46190 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeIUQY0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:24:26 -0400
-Received: by mail-ed1-f68.google.com with SMTP id k14-v6so10302012edr.13;
-        Fri, 21 Sep 2018 03:36:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6fncp2wBKiaAhFqes5VbfWoYDTuWvL2B06DeOxEt5SM=;
-        b=SdC4Sc3c1H+O8OJTrSmV9MNm9SmoO/lrebyfMRX9FWmHF8czXdSYPIQZPJxb4SldoD
-         CL1Wo7PGKxAzY+4RcBxmvfMXaov3brxpQ8ht+aQtzSrzfm1ANllzJuhV3HLXDPZEbegq
-         78QA/beyhhcYkbI0BL4IGU0pY/IWl3YW8s58aLDHyR7IiSPVNsCseAbJJJ8tdiW2we1c
-         FmUPU4hVlquDneN3wfopugIW0iCz7T8WVoAwJdWfaSiPrw0cDTlJK1RwLVdGXIxiqGzt
-         PQk91lBjqnWLybGEJCkGYtibZnUgrBwtPNnUf/HPvRKugiIjDtsetmuBtbs41i9A1ZuC
-         scRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6fncp2wBKiaAhFqes5VbfWoYDTuWvL2B06DeOxEt5SM=;
-        b=IfJ/m2y6/6DpgOXfJbJdeyfjFZWifx8l62WEWs8n17piIWMsXwewXYw/RMzcOhl2V1
-         iyTDLkDXBsWbWX97pUDf6m2k1+xqGxU8uZzHsyf/UArddvJrkRJgr3V3/NONYk4h6V3J
-         1iiI+Q97I38To9sZbLA7S0og0nFOv+HUxYTLaSRmqdQDRFJyROIs0g259aR802iFSFGt
-         DBgDblsjyz2UsG9buPq5D0GLTzmty/WnaRVbqU+4B3UZWeqNf9s86J9zPWWcEGcqCLHZ
-         uEJnKFe4Ft4JOQE3SPLavu2iG84H083XkviqPKLQX+4Ji2AMJsEKG8lA1mT3+t/Y5UHU
-         8gVw==
-X-Gm-Message-State: APzg51C6uZ9PDeBYIOCLf8OgFh+zKQKtHoZb8FAkyrH0xF1JoYze0ubv
-        PmTDfIN1FqyV1C+uyhFvwA0=
-X-Google-Smtp-Source: ANB0VdaMYaqVZYfnfcbwYllJrScMAXrUOTKp8YNY7WGqsdaa/s1BmCin6FP11AiWAEt5Wh2yp3BMpQ==
-X-Received: by 2002:a50:8345:: with SMTP id 63-v6mr10583836edh.5.1537526168721;
-        Fri, 21 Sep 2018 03:36:08 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id k28-v6sm1900871ede.11.2018.09.21.03.36.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 03:36:07 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@codeaurora.org>, swboyd@chromium.org,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v2] gpiolib: Show correct direction from the beginning
-Date:   Fri, 21 Sep 2018 12:36:04 +0200
-Message-Id: <20180921103604.13361-2-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
-References: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+        Fri, 21 Sep 2018 12:24:30 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:46429 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727554AbeIUQYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 12:24:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=a8IA34wmYB8AEBehNeHKtHVDVpBmHq9BGpyi+/Fop28=; b=1q3QWf8MKs0QWp2jHUWFIb6ytk
+        7AySfeGtJOBAIMeuvcHeAz+a/h/znoZgxoM9cxk+DVPkUxVf3j+xdelWilXca9KUWBD+rE41NKbSQ
+        cbvBJvS4MWFiKqBNF1Pb12WLpECxO94QpcFMR6GQFfj86ME585bwje8yn+WjLOiciqv+f67Ek9C9O
+        5vE+FJJHybx/rqyasR8Ol8Zs27F/TuPYiUkOC4RQa2vVW7ZwlBCXyWZa1XKs85qBPFvxV0k9pioog
+        9rlEpirZs1ED7iVOpoKXhssbgIEYeJSU5hgltdKDTQUK/po+kl+gu7QSCOP6WhnUgO09+FkN+z9Xj
+        dP0BiEFQ==;
+Received: from [39.110.237.146] (helo=[10.19.62.132])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1g3InC-0005eJ-8a; Fri, 21 Sep 2018 13:36:10 +0300
+Subject: Re: [PATCH 3/9] soc/tegra: pmc: Add wake event support
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180921102546.12745-1-thierry.reding@gmail.com>
+ <20180921102546.12745-4-thierry.reding@gmail.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <62b40f71-a731-24d5-14c9-c3bdb4305695@kapsi.fi>
+Date:   Fri, 21 Sep 2018 19:35:59 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180921102546.12745-4-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 39.110.237.146
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current code assumes that the direction is input if direction_input
-function is set.
-This might not be the case on GPIOs with programmable direction.
+On 21/09/2018 19.25, Thierry Reding wrote:
+> ...
+> +	/* route wake to tier 2 (XXX conditionally enable this) */
+> +	value = readl(pmc->wake + WAKE_AOWAKE_TIER2_CTRL);
+> +	writel(0x1, pmc->wake + WAKE_AOWAKE_TIER2_CTRL);
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
----
- drivers/gpio/gpiolib.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+This doesn't seem right
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4b45de883ada..00c17f64d9ff 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1352,7 +1352,12 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 		 * it does, and in case chip->get_direction is not set, we may
- 		 * expose the wrong direction in sysfs.
- 		 */
--		desc->flags = !chip->direction_input ? (1 << FLAG_IS_OUT) : 0;
-+		if (chip->get_direction && gpiochip_line_is_valid(chip, i))
-+			desc->flags = !chip->get_direction(chip, i) ?
-+					(1 << FLAG_IS_OUT) : 0;
-+		else
-+			desc->flags = !chip->direction_input ?
-+					(1 << FLAG_IS_OUT) : 0;
- 	}
- 
- #ifdef CONFIG_PINCTRL
--- 
-2.18.0
-
+Cheers,
+Mikko
