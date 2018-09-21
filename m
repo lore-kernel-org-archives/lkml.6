@@ -3,370 +3,149 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C22ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD4BECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21982087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:30:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21982087A
+	by mail.kernel.org (Postfix) with ESMTP id C30A32087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:30:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30A32087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390735AbeIUWUI (ORCPT
+        id S2390751AbeIUWUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:20:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44786 "EHLO mx1.redhat.com"
+        Fri, 21 Sep 2018 18:20:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60154 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390076AbeIUWUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:20:08 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S2390076AbeIUWUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:20:15 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B1128307D930;
-        Fri, 21 Sep 2018 16:30:29 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 583FF3097082;
+        Fri, 21 Sep 2018 16:30:37 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 240591949F;
-        Fri, 21 Sep 2018 16:30:27 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 001732010CF7;
+        Fri, 21 Sep 2018 16:30:35 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 02/34] vfs: syscall: Add move_mount(2) to move mounts around
- [ver #12]
+Subject: [PATCH 03/34] teach move_mount(2) to work with OPEN_TREE_CLONE [ver
+ #12]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        dhowells@redhat.com, ebiederm@xmission.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mszeredi@redhat.com
-Date:   Fri, 21 Sep 2018 17:30:27 +0100
-Message-ID: <153754742742.17872.16129779012348942880.stgit@warthog.procyon.org.uk>
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Date:   Fri, 21 Sep 2018 17:30:34 +0100
+Message-ID: <153754743491.17872.12115848333103740766.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
 References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 21 Sep 2018 16:30:29 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 21 Sep 2018 16:30:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a move_mount() system call that will move a mount from one place to
-another and, in the next commit, allow to attach an unattached mount tree.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-The new system call looks like the following:
+Allow a detached tree created by open_tree(..., OPEN_TREE_CLONE) to be
+attached by move_mount(2).
 
-	int move_mount(int from_dfd, const char *from_path,
-		       int to_dfd, const char *to_path,
-		       unsigned int flags);
+If by the time of final fput() of OPEN_TREE_CLONE-opened file its tree is
+not detached anymore, it won't be dissolved.  move_mount(2) is adjusted
+to handle detached source.
 
+That gives us equivalents of mount --bind and mount --rbind.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
 ---
 
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/namespace.c                         |  102 ++++++++++++++++++++++++++------
- include/linux/lsm_hooks.h              |    6 ++
- include/linux/security.h               |    7 ++
- include/linux/syscalls.h               |    3 +
- include/uapi/linux/mount.h             |   11 +++
- security/security.c                    |    5 ++
- 8 files changed, 118 insertions(+), 18 deletions(-)
+ fs/namespace.c |   26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index ea1b413afd47..76d092b7d1b0 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -399,3 +399,4 @@
- 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
- 387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
-+388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 0545bed581dc..37ba4e65eee6 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -344,6 +344,7 @@
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
- 335	common	open_tree		__x64_sys_open_tree
-+336	common	move_mount		__x64_sys_move_mount
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
 diff --git a/fs/namespace.c b/fs/namespace.c
-index ded1a970ec40..dd38141b1723 100644
+index dd38141b1723..caf5c55ef555 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -2386,43 +2386,37 @@ static inline int tree_contains_unbindable(struct mount *mnt)
- 	return 0;
- }
- 
--static int do_move_mount(struct path *path, const char *old_name)
-+static int do_move_mount(struct path *old_path, struct path *new_path)
+@@ -1785,8 +1785,10 @@ void dissolve_on_fput(struct vfsmount *mnt)
  {
--	struct path old_path, parent_path;
-+	struct path parent_path = {.mnt = NULL, .dentry = NULL};
- 	struct mount *p;
+ 	namespace_lock();
+ 	lock_mount_hash();
+-	mntget(mnt);
+-	umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
++	if (!real_mount(mnt)->mnt_ns) {
++		mntget(mnt);
++		umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
++	}
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+ }
+@@ -2393,6 +2395,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
  	struct mount *old;
  	struct mountpoint *mp;
  	int err;
--	if (!old_name || !*old_name)
--		return -EINVAL;
--	err = kern_path(old_name, LOOKUP_FOLLOW, &old_path);
--	if (err)
--		return err;
++	bool attached;
  
--	mp = lock_mount(path);
-+	mp = lock_mount(new_path);
+ 	mp = lock_mount(new_path);
  	err = PTR_ERR(mp);
- 	if (IS_ERR(mp))
- 		goto out;
- 
--	old = real_mount(old_path.mnt);
--	p = real_mount(path->mnt);
-+	old = real_mount(old_path->mnt);
-+	p = real_mount(new_path->mnt);
+@@ -2403,10 +2406,19 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 	p = real_mount(new_path->mnt);
  
  	err = -EINVAL;
- 	if (!check_mnt(p) || !check_mnt(old))
- 		goto out1;
- 
--	if (old->mnt.mnt_flags & MNT_LOCKED)
-+	if (!mnt_has_parent(old))
- 		goto out1;
- 
--	err = -EINVAL;
--	if (old_path.dentry != old_path.mnt->mnt_root)
-+	if (old->mnt.mnt_flags & MNT_LOCKED)
+-	if (!check_mnt(p) || !check_mnt(old))
++	/* The mountpoint must be in our namespace. */
++	if (!check_mnt(p))
++		goto out1;
++	/* The thing moved should be either ours or completely unattached. */
++	if (old->mnt_ns && !check_mnt(old))
  		goto out1;
  
 -	if (!mnt_has_parent(old))
-+	if (old_path->dentry != old_path->mnt->mnt_root)
++	attached = mnt_has_parent(old);
++	/*
++	 * We need to allow open_tree(OPEN_TREE_CLONE) followed by
++	 * move_mount(), but mustn't allow "/" to be moved.
++	 */
++	if (old->mnt_ns && !attached)
  		goto out1;
  
--	if (d_is_dir(path->dentry) !=
--	      d_is_dir(old_path.dentry))
-+	if (d_is_dir(new_path->dentry) !=
-+	    d_is_dir(old_path->dentry))
- 		goto out1;
+ 	if (old->mnt.mnt_flags & MNT_LOCKED)
+@@ -2421,7 +2433,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
  	/*
  	 * Don't move a mount residing in a shared parent.
-@@ -2440,7 +2434,8 @@ static int do_move_mount(struct path *path, const char *old_name)
- 		if (p == old)
+ 	 */
+-	if (IS_MNT_SHARED(old->mnt_parent))
++	if (attached && IS_MNT_SHARED(old->mnt_parent))
+ 		goto out1;
+ 	/*
+ 	 * Don't move a mount tree containing unbindable mounts to a destination
+@@ -2435,7 +2447,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
  			goto out1;
  
--	err = attach_recursive_mnt(old, real_mount(path->mnt), mp, &parent_path);
-+	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
-+				   &parent_path);
+ 	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
+-				   &parent_path);
++				   attached ? &parent_path : NULL);
  	if (err)
  		goto out1;
  
-@@ -2452,6 +2447,22 @@ static int do_move_mount(struct path *path, const char *old_name)
- out:
- 	if (!err)
- 		path_put(&parent_path);
-+	return err;
-+}
-+
-+static int do_move_mount_old(struct path *path, const char *old_name)
-+{
-+	struct path old_path;
-+	int err;
-+
-+	if (!old_name || !*old_name)
-+		return -EINVAL;
-+
-+	err = kern_path(old_name, LOOKUP_FOLLOW, &old_path);
-+	if (err)
-+		return err;
-+
-+	err = do_move_mount(&old_path, path);
- 	path_put(&old_path);
- 	return err;
- }
-@@ -2873,7 +2884,7 @@ long do_mount(const char *dev_name, const char __user *dir_name,
- 	else if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
- 		retval = do_change_type(&path, flags);
- 	else if (flags & MS_MOVE)
--		retval = do_move_mount(&path, dev_name);
-+		retval = do_move_mount_old(&path, dev_name);
- 	else
- 		retval = do_new_mount(&path, type_page, sb_flags, mnt_flags,
- 				      dev_name, data_page, data_size);
-@@ -3108,6 +3119,61 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
- 	return ksys_mount(dev_name, dir_name, type, flags, data);
- }
+@@ -3121,6 +3133,8 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
  
-+/*
-+ * Move a mount from one place to another.
-+ *
-+ * Note the flags value is a combination of MOVE_MOUNT_* flags.
-+ */
-+SYSCALL_DEFINE5(move_mount,
-+		int, from_dfd, const char *, from_pathname,
-+		int, to_dfd, const char *, to_pathname,
-+		unsigned int, flags)
-+{
-+	struct path from_path, to_path;
-+	unsigned int lflags;
-+	int ret = 0;
-+
-+	if (!may_mount())
-+		return -EPERM;
-+
-+	if (flags & ~MOVE_MOUNT__MASK)
-+		return -EINVAL;
-+
-+	/* If someone gives a pathname, they aren't permitted to move
-+	 * from an fd that requires unmount as we can't get at the flag
-+	 * to clear it afterwards.
-+	 */
-+	lflags = 0;
-+	if (flags & MOVE_MOUNT_F_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-+	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+	if (flags & MOVE_MOUNT_F_EMPTY_PATH)	lflags |= LOOKUP_EMPTY;
-+
-+	ret = user_path_at(from_dfd, from_pathname, lflags, &from_path);
-+	if (ret < 0)
-+		return ret;
-+
-+	lflags = 0;
-+	if (flags & MOVE_MOUNT_T_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-+	if (flags & MOVE_MOUNT_T_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+	if (flags & MOVE_MOUNT_T_EMPTY_PATH)	lflags |= LOOKUP_EMPTY;
-+
-+	ret = user_path_at(to_dfd, to_pathname, lflags, &to_path);
-+	if (ret < 0)
-+		goto out_from;
-+
-+	ret = security_move_mount(&from_path, &to_path);
-+	if (ret < 0)
-+		goto out_to;
-+
-+	ret = do_move_mount(&from_path, &to_path);
-+
-+out_to:
-+	path_put(&to_path);
-+out_from:
-+	path_put(&from_path);
-+	return ret;
-+}
-+
  /*
-  * Return true if path is reachable from root
+  * Move a mount from one place to another.
++ * In combination with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be
++ * used to copy a mount subtree.
   *
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8a44075347ac..d052db1a1565 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -147,6 +147,10 @@
-  *	Parse a string of security data filling in the opts structure
-  *	@options string containing all mount options known by the LSM
-  *	@opts binary data structure usable by the LSM
-+ * @move_mount:
-+ *	Check permission before a mount is moved.
-+ *	@from_path indicates the mount that is going to be moved.
-+ *	@to_path indicates the mountpoint that will be mounted upon.
-  * @dentry_init_security:
-  *	Compute a context for a dentry as the inode is not yet available
-  *	since NFSv4 has no label backed by an EA anyway.
-@@ -1484,6 +1488,7 @@ union security_list_options {
- 					unsigned long kern_flags,
- 					unsigned long *set_kern_flags);
- 	int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
-+	int (*move_mount)(const struct path *from_path, const struct path *to_path);
- 	int (*dentry_init_security)(struct dentry *dentry, int mode,
- 					const struct qstr *name, void **ctx,
- 					u32 *ctxlen);
-@@ -1816,6 +1821,7 @@ struct security_hook_heads {
- 	struct hlist_head sb_set_mnt_opts;
- 	struct hlist_head sb_clone_mnt_opts;
- 	struct hlist_head sb_parse_opts_str;
-+	struct hlist_head move_mount;
- 	struct hlist_head dentry_init_security;
- 	struct hlist_head dentry_create_files_as;
- #ifdef CONFIG_SECURITY_PATH
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 30a3db9f284b..a306061d2197 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -266,6 +266,7 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 				unsigned long kern_flags,
- 				unsigned long *set_kern_flags);
- int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
-+int security_move_mount(const struct path *from_path, const struct path *to_path);
- int security_dentry_init_security(struct dentry *dentry, int mode,
- 					const struct qstr *name, void **ctx,
- 					u32 *ctxlen);
-@@ -621,6 +622,12 @@ static inline int security_sb_parse_opts_str(char *options, struct security_mnt_
- 	return 0;
- }
- 
-+static inline int security_move_mount(const struct path *from_path,
-+				      const struct path *to_path)
-+{
-+	return 0;
-+}
-+
- static inline int security_inode_alloc(struct inode *inode)
- {
- 	return 0;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 6978f3c76d41..79042396f7e5 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -907,6 +907,9 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
- 			 int flags, uint32_t sig);
- asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
-+asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
-+			       int to_dfd, const char __user *to_path,
-+			       unsigned int ms_flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index e8db2911adca..89adf0d731ab 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -7,4 +7,15 @@
- #define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
- #define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
- 
-+/*
-+ * move_mount() flags.
-+ */
-+#define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
-+#define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
-+#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
-+#define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
-+#define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
-+#define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
-+#define MOVE_MOUNT__MASK		0x00000077
-+
- #endif /* _UAPI_LINUX_MOUNT_H */
-diff --git a/security/security.c b/security/security.c
-index 3d99ed8d9ddd..96a061cecb39 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -444,6 +444,11 @@ int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts)
- }
- EXPORT_SYMBOL(security_sb_parse_opts_str);
- 
-+int security_move_mount(const struct path *from_path, const struct path *to_path)
-+{
-+	return call_int_hook(move_mount, 0, from_path, to_path);
-+}
-+
- int security_inode_alloc(struct inode *inode)
- {
- 	inode->i_security = NULL;
+  * Note the flags value is a combination of MOVE_MOUNT_* flags.
+  */
 
