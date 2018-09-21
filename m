@@ -6,352 +6,351 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF57ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB5BECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E296321566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E296321566
+	by mail.kernel.org (Postfix) with ESMTP id 264C621566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264C621566
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391117AbeIUWXQ (ORCPT
+        id S2391120AbeIUWXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:23:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50356 "EHLO mx1.redhat.com"
+        Fri, 21 Sep 2018 18:23:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47778 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389683AbeIUWXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:23:16 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S2389683AbeIUWXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:23:23 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 753F1307C81E;
-        Fri, 21 Sep 2018 16:33:36 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CA263D13;
+        Fri, 21 Sep 2018 16:33:44 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E60655C23B;
-        Fri, 21 Sep 2018 16:33:34 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D9F06C00B;
+        Fri, 21 Sep 2018 16:33:42 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 25/34] Make anon_inodes unconditional [ver #12]
+Subject: [PATCH 26/34] vfs: syscall: Add fsopen() to prepare for superblock
+ creation [ver #12]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
-Date:   Fri, 21 Sep 2018 17:33:34 +0100
-Message-ID: <153754761417.17872.5654918693471310181.stgit@warthog.procyon.org.uk>
+Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        dhowells@redhat.com, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Date:   Fri, 21 Sep 2018 17:33:41 +0100
+Message-ID: <153754762168.17872.8158019966378388627.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
 References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 21 Sep 2018 16:33:36 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 21 Sep 2018 16:33:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the anon_inodes facility unconditional so that it can be used by core
-VFS code.
+Provide an fsopen() system call that starts the process of preparing to
+create a superblock that will then be mountable, using an fd as a context
+handle.  fsopen() is given the name of the filesystem that will be used:
+
+	int mfd = fsopen(const char *fsname, unsigned int flags);
+
+where flags can be 0 or FSOPEN_CLOEXEC.
+
+For example:
+
+	sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+	fsconfig(sfd, FSCONFIG_SET_PATH, "source", "/dev/sda1", AT_FDCWD);
+	fsconfig(sfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
+	fsconfig(sfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+	fsconfig(sfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+	fsconfig(sfd, FSCONFIG_SET_STRING, "sb", "1", 0);
+	fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+	fsinfo(sfd, NULL, ...); // query new superblock attributes
+	mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
+	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+	sfd = fsopen("afs", -1);
+	fsconfig(fd, FSCONFIG_SET_STRING, "source",
+		 "#grand.central.org:root.cell", 0);
+	fsconfig(fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+	mfd = fsmount(sfd, 0, MS_NODEV);
+	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+If an error is reported at any step, an error message may be available to be
+read() back (ENODATA will be reported if there isn't an error available) in
+the form:
+
+	"e <subsys>:<problem>"
+	"e SELinux:Mount on mountpoint not permitted"
+
+Once fsmount() has been called, further fsconfig() calls will incur EBUSY,
+even if the fsmount() fails.  read() is still possible to retrieve error
+information.
+
+The fsopen() syscall creates a mount context and hangs it of the fd that it
+returns.
+
+Netlink is not used because it is optional and would make the core VFS
+dependent on the networking layer and also potentially add network
+namespace issues.
+
+Note that, for the moment, the caller must have SYS_CAP_ADMIN to use
+fsopen().
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-api@vger.kernel.org
 ---
 
- arch/arm/kvm/Kconfig       |    1 -
- arch/arm64/kvm/Kconfig     |    1 -
- arch/mips/kvm/Kconfig      |    1 -
- arch/powerpc/kvm/Kconfig   |    1 -
- arch/s390/kvm/Kconfig      |    1 -
- arch/x86/Kconfig           |    1 -
- arch/x86/kvm/Kconfig       |    1 -
- drivers/base/Kconfig       |    1 -
- drivers/char/tpm/Kconfig   |    1 -
- drivers/dma-buf/Kconfig    |    1 -
- drivers/gpio/Kconfig       |    1 -
- drivers/iio/Kconfig        |    1 -
- drivers/infiniband/Kconfig |    1 -
- drivers/vfio/Kconfig       |    1 -
- fs/Makefile                |    2 +-
- fs/notify/fanotify/Kconfig |    1 -
- fs/notify/inotify/Kconfig  |    1 -
- init/Kconfig               |   10 ----------
- 18 files changed, 1 insertion(+), 27 deletions(-)
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/Makefile                            |    2 -
+ fs/fs_context.c                        |    4 +
+ fs/fsopen.c                            |   87 ++++++++++++++++++++++++++++++++
+ include/linux/fs_context.h             |   18 +++++++
+ include/linux/syscalls.h               |    1 
+ include/uapi/linux/fs.h                |    5 ++
+ 8 files changed, 118 insertions(+), 1 deletion(-)
+ create mode 100644 fs/fsopen.c
 
-diff --git a/arch/arm/kvm/Kconfig b/arch/arm/kvm/Kconfig
-index e2bd35b6780c..c09fcc092a54 100644
---- a/arch/arm/kvm/Kconfig
-+++ b/arch/arm/kvm/Kconfig
-@@ -22,7 +22,6 @@ config KVM
- 	bool "Kernel-based Virtual Machine (KVM) support"
- 	depends on MMU && OF
- 	select PREEMPT_NOTIFIERS
--	select ANON_INODES
- 	select ARM_GIC
- 	select ARM_GIC_V3
- 	select ARM_GIC_V3_ITS
-diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-index 47b23bf617c7..86fe9b3e3ff8 100644
---- a/arch/arm64/kvm/Kconfig
-+++ b/arch/arm64/kvm/Kconfig
-@@ -23,7 +23,6 @@ config KVM
- 	depends on OF
- 	select MMU_NOTIFIER
- 	select PREEMPT_NOTIFIERS
--	select ANON_INODES
- 	select HAVE_KVM_CPU_RELAX_INTERCEPT
- 	select HAVE_KVM_ARCH_TLB_FLUSH_ALL
- 	select KVM_MMIO
-diff --git a/arch/mips/kvm/Kconfig b/arch/mips/kvm/Kconfig
-index 76b93a9c8c9b..4d06a29bc13b 100644
---- a/arch/mips/kvm/Kconfig
-+++ b/arch/mips/kvm/Kconfig
-@@ -20,7 +20,6 @@ config KVM
- 	depends on HAVE_KVM
- 	select EXPORT_UASM
- 	select PREEMPT_NOTIFIERS
--	select ANON_INODES
- 	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
- 	select HAVE_KVM_VCPU_ASYNC_IOCTL
- 	select KVM_MMIO
-diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
-index 68a0e9d5b440..e058d02ee819 100644
---- a/arch/powerpc/kvm/Kconfig
-+++ b/arch/powerpc/kvm/Kconfig
-@@ -20,7 +20,6 @@ if VIRTUALIZATION
- config KVM
- 	bool
- 	select PREEMPT_NOTIFIERS
--	select ANON_INODES
- 	select HAVE_KVM_EVENTFD
- 	select HAVE_KVM_VCPU_ASYNC_IOCTL
- 	select SRCU
-diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
-index a3dbd459cce9..600e4fd11a67 100644
---- a/arch/s390/kvm/Kconfig
-+++ b/arch/s390/kvm/Kconfig
-@@ -21,7 +21,6 @@ config KVM
- 	prompt "Kernel-based Virtual Machine (KVM) support"
- 	depends on HAVE_KVM
- 	select PREEMPT_NOTIFIERS
--	select ANON_INODES
- 	select HAVE_KVM_CPU_RELAX_INTERCEPT
- 	select HAVE_KVM_VCPU_ASYNC_IOCTL
- 	select HAVE_KVM_EVENTFD
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a0be022f91d..d02baf335d98 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -46,7 +46,6 @@ config X86
- 	#
- 	select ACPI_LEGACY_TABLES_LOOKUP	if ACPI
- 	select ACPI_SYSTEM_POWER_STATES_SUPPORT	if ACPI
--	select ANON_INODES
- 	select ARCH_CLOCKSOURCE_DATA
- 	select ARCH_DISCARD_MEMBLOCK
- 	select ARCH_HAS_ACPI_TABLE_UPGRADE	if ACPI
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 1bbec387d289..f3f2e547484b 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -27,7 +27,6 @@ config KVM
- 	depends on X86_LOCAL_APIC
- 	select PREEMPT_NOTIFIERS
- 	select MMU_NOTIFIER
--	select ANON_INODES
- 	select HAVE_KVM_IRQCHIP
- 	select HAVE_KVM_IRQFD
- 	select IRQ_BYPASS_MANAGER
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 3e63a900b330..ae213ed2a7c8 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -174,7 +174,6 @@ source "drivers/base/regmap/Kconfig"
- config DMA_SHARED_BUFFER
- 	bool
- 	default n
--	select ANON_INODES
- 	select IRQ_WORK
- 	help
- 	  This option enables the framework for buffer-sharing between
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index 18c81cbe4704..4819874b5523 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -157,7 +157,6 @@ config TCG_CRB
- config TCG_VTPM_PROXY
- 	tristate "VTPM Proxy Interface"
- 	depends on TCG_TPM
--	select ANON_INODES
- 	---help---
- 	  This driver proxies for an emulated TPM (vTPM) running in userspace.
- 	  A device /dev/vtpmx is provided that creates a device pair
-diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
-index ed3b785bae37..b0194c8c251c 100644
---- a/drivers/dma-buf/Kconfig
-+++ b/drivers/dma-buf/Kconfig
-@@ -3,7 +3,6 @@ menu "DMABUF options"
- config SYNC_FILE
- 	bool "Explicit Synchronization Framework"
- 	default n
--	select ANON_INODES
- 	select DMA_SHARED_BUFFER
- 	---help---
- 	  The Sync File Framework adds explicit syncronization via
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 4f52c3a8ec99..392fd95b3734 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -12,7 +12,6 @@ config ARCH_HAVE_CUSTOM_GPIO_H
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 76d092b7d1b0..1647fefd2969 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -400,3 +400,4 @@
+ 386	i386	rseq			sys_rseq			__ia32_sys_rseq
+ 387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
+ 388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
++389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 37ba4e65eee6..235d33dbccb2 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -345,6 +345,7 @@
+ 334	common	rseq			__x64_sys_rseq
+ 335	common	open_tree		__x64_sys_open_tree
+ 336	common	move_mount		__x64_sys_move_mount
++337	common	fsopen			__x64_sys_fsopen
  
- menuconfig GPIOLIB
- 	bool "GPIO Support"
--	select ANON_INODES
- 	help
- 	  This enables GPIO support through the generic GPIO library.
- 	  You only need to enable this, if you also want to enable
-diff --git a/drivers/iio/Kconfig b/drivers/iio/Kconfig
-index d08aeb41cd07..1dec0fecb6ef 100644
---- a/drivers/iio/Kconfig
-+++ b/drivers/iio/Kconfig
-@@ -4,7 +4,6 @@
- 
- menuconfig IIO
- 	tristate "Industrial I/O support"
--	select ANON_INODES
- 	help
- 	  The industrial I/O subsystem provides a unified framework for
- 	  drivers for many different types of embedded sensors using a
-diff --git a/drivers/infiniband/Kconfig b/drivers/infiniband/Kconfig
-index abb6660c099c..176b943dfec9 100644
---- a/drivers/infiniband/Kconfig
-+++ b/drivers/infiniband/Kconfig
-@@ -25,7 +25,6 @@ config INFINIBAND_USER_MAD
- 
- config INFINIBAND_USER_ACCESS
- 	tristate "InfiniBand userspace access (verbs and CM)"
--	select ANON_INODES
- 	---help---
- 	  Userspace InfiniBand access support.  This enables the
- 	  kernel side of userspace verbs and the userspace
-diff --git a/drivers/vfio/Kconfig b/drivers/vfio/Kconfig
-index c84333eb5eb5..9aa91e736023 100644
---- a/drivers/vfio/Kconfig
-+++ b/drivers/vfio/Kconfig
-@@ -22,7 +22,6 @@ menuconfig VFIO
- 	tristate "VFIO Non-Privileged userspace driver framework"
- 	depends on IOMMU_API
- 	select VFIO_IOMMU_TYPE1 if (X86 || S390 || ARM_SMMU || ARM_SMMU_V3)
--	select ANON_INODES
- 	help
- 	  VFIO provides a framework for secure userspace device drivers.
- 	  See Documentation/vfio.txt for more details.
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
 diff --git a/fs/Makefile b/fs/Makefile
-index 9a0b8003f069..ae681523b4b1 100644
+index ae681523b4b1..e3ea8093b178 100644
 --- a/fs/Makefile
 +++ b/fs/Makefile
-@@ -25,7 +25,7 @@ obj-$(CONFIG_PROC_FS) += proc_namespace.o
+@@ -13,7 +13,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		seq_file.o xattr.o libfs.o fs-writeback.o \
+ 		pnode.o splice.o sync.o utimes.o d_path.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+-		fs_context.o fs_parser.o
++		fs_context.o fs_parser.o fsopen.o
  
- obj-y				+= notify/
- obj-$(CONFIG_EPOLL)		+= eventpoll.o
--obj-$(CONFIG_ANON_INODES)	+= anon_inodes.o
-+obj-y				+= anon_inodes.o
- obj-$(CONFIG_SIGNALFD)		+= signalfd.o
- obj-$(CONFIG_TIMERFD)		+= timerfd.o
- obj-$(CONFIG_EVENTFD)		+= eventfd.o
-diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-index 41355ce74ac0..f5b0b3af32dd 100644
---- a/fs/notify/fanotify/Kconfig
-+++ b/fs/notify/fanotify/Kconfig
-@@ -1,7 +1,6 @@
- config FANOTIFY
- 	bool "Filesystem wide access notification"
- 	select FSNOTIFY
--	select ANON_INODES
- 	default n
- 	---help---
- 	   Say Y here to enable fanotify support.  fanotify is a file access
-diff --git a/fs/notify/inotify/Kconfig b/fs/notify/inotify/Kconfig
-index b981fc0c8379..0161c74e76e2 100644
---- a/fs/notify/inotify/Kconfig
-+++ b/fs/notify/inotify/Kconfig
-@@ -1,6 +1,5 @@
- config INOTIFY_USER
- 	bool "Inotify support for userspace"
--	select ANON_INODES
- 	select FSNOTIFY
- 	default y
- 	---help---
-diff --git a/init/Kconfig b/init/Kconfig
-index 1e234e2f1cba..275534995f78 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1114,9 +1114,6 @@ config LD_DEAD_CODE_DATA_ELIMINATION
- config SYSCTL
- 	bool
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 328fcb764667..5d93c86c649d 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -267,6 +267,8 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 	fc->fs_type	= get_filesystem(fs_type);
+ 	fc->cred	= get_current_cred();
  
--config ANON_INODES
--	bool
--
- config HAVE_UID16
- 	bool
++	mutex_init(&fc->uapi_mutex);
++
+ 	switch (purpose) {
+ 	case FS_CONTEXT_FOR_KERNEL_MOUNT:
+ 		fc->sb_flags |= SB_KERNMOUNT;
+@@ -334,6 +336,8 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc,
+ 	if (!fc)
+ 		return ERR_PTR(-ENOMEM);
  
-@@ -1321,14 +1318,12 @@ config HAVE_FUTEX_CMPXCHG
- config EPOLL
- 	bool "Enable eventpoll support" if EXPERT
- 	default y
--	select ANON_INODES
- 	help
- 	  Disabling this option will cause the kernel to be built without
- 	  support for epoll family of system calls.
++	mutex_init(&fc->uapi_mutex);
++
+ 	fc->fs_private	= NULL;
+ 	fc->s_fs_info	= NULL;
+ 	fc->source	= NULL;
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+new file mode 100644
+index 000000000000..a9a36f61d76c
+--- /dev/null
++++ b/fs/fsopen.c
+@@ -0,0 +1,87 @@
++/* Filesystem access-by-fd.
++ *
++ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/fs_context.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/syscalls.h>
++#include <linux/security.h>
++#include <linux/anon_inodes.h>
++#include <linux/namei.h>
++#include <linux/file.h>
++#include "mount.h"
++
++static int fscontext_release(struct inode *inode, struct file *file)
++{
++	struct fs_context *fc = file->private_data;
++
++	if (fc) {
++		file->private_data = NULL;
++		put_fs_context(fc);
++	}
++	return 0;
++}
++
++const struct file_operations fscontext_fops = {
++	.release	= fscontext_release,
++	.llseek		= no_llseek,
++};
++
++/*
++ * Attach a filesystem context to a file and an fd.
++ */
++static int fscontext_create_fd(struct fs_context *fc, unsigned int o_flags)
++{
++	int fd;
++
++	fd = anon_inode_getfd("fscontext", &fscontext_fops, fc,
++			      O_RDWR | o_flags);
++	if (fd < 0)
++		put_fs_context(fc);
++	return fd;
++}
++
++/*
++ * Open a filesystem by name so that it can be configured for mounting.
++ *
++ * We are allowed to specify a container in which the filesystem will be
++ * opened, thereby indicating which namespaces will be used (notably, which
++ * network namespace will be used for network filesystems).
++ */
++SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
++{
++	struct file_system_type *fs_type;
++	struct fs_context *fc;
++	const char *fs_name;
++
++	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (flags & ~FSOPEN_CLOEXEC)
++		return -EINVAL;
++
++	fs_name = strndup_user(_fs_name, PAGE_SIZE);
++	if (IS_ERR(fs_name))
++		return PTR_ERR(fs_name);
++
++	fs_type = get_fs_type(fs_name);
++	kfree(fs_name);
++	if (!fs_type)
++		return -ENODEV;
++
++	fc = vfs_new_fs_context(fs_type, NULL, 0, 0, FS_CONTEXT_FOR_USER_MOUNT);
++	put_filesystem(fs_type);
++	if (IS_ERR(fc))
++		return PTR_ERR(fc);
++
++	fc->phase = FS_CONTEXT_CREATE_PARAMS;
++	return fscontext_create_fd(fc, flags & FSOPEN_CLOEXEC ? O_CLOEXEC : 0);
++}
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 0415510f64ed..37f8bafaaec3 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -14,6 +14,7 @@
  
- config SIGNALFD
- 	bool "Enable signalfd() system call" if EXPERT
--	select ANON_INODES
- 	default y
- 	help
- 	  Enable the signalfd() system call that allows to receive signals
-@@ -1338,7 +1333,6 @@ config SIGNALFD
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
++#include <linux/mutex.h>
  
- config TIMERFD
- 	bool "Enable timerfd() system call" if EXPERT
--	select ANON_INODES
- 	default y
- 	help
- 	  Enable the timerfd() system call that allows to receive timer
-@@ -1348,7 +1342,6 @@ config TIMERFD
+ struct cred;
+ struct dentry;
+@@ -37,6 +38,19 @@ enum fs_context_purpose {
+ 	FS_CONTEXT_FOR_EMERGENCY_RO,	/* Emergency reconfiguration to R/O */
+ };
  
- config EVENTFD
- 	bool "Enable eventfd() system call" if EXPERT
--	select ANON_INODES
- 	default y
- 	help
- 	  Enable the eventfd() system call that allows to receive both
-@@ -1450,7 +1443,6 @@ config KALLSYMS_BASE_RELATIVE
- # syscall, maps, verifier
- config BPF_SYSCALL
- 	bool "Enable bpf() system call"
--	select ANON_INODES
- 	select BPF
- 	select IRQ_WORK
- 	default n
-@@ -1467,7 +1459,6 @@ config BPF_JIT_ALWAYS_ON
++/*
++ * Userspace usage phase for fsopen/fspick.
++ */
++enum fs_context_phase {
++	FS_CONTEXT_CREATE_PARAMS,	/* Loading params for sb creation */
++	FS_CONTEXT_CREATING,		/* A superblock is being created */
++	FS_CONTEXT_AWAITING_MOUNT,	/* Superblock created, awaiting fsmount() */
++	FS_CONTEXT_AWAITING_RECONF,	/* Awaiting initialisation for reconfiguration */
++	FS_CONTEXT_RECONF_PARAMS,	/* Loading params for reconfiguration */
++	FS_CONTEXT_RECONFIGURING,	/* Reconfiguring the superblock */
++	FS_CONTEXT_FAILED,		/* Failed to correctly transition a context */
++};
++
+ /*
+  * Type of parameter value.
+  */
+@@ -77,6 +91,7 @@ struct fs_parameter {
+  */
+ struct fs_context {
+ 	const struct fs_context_operations *ops;
++	struct mutex		uapi_mutex;	/* Userspace access mutex */
+ 	struct file_system_type	*fs_type;
+ 	void			*fs_private;	/* The filesystem's context */
+ 	struct dentry		*root;		/* The root and superblock */
+@@ -91,6 +106,7 @@ struct fs_context {
+ 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+ 	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
+ 	enum fs_context_purpose	purpose:8;
++	enum fs_context_phase	phase:8;	/* The phase the context is in */
+ 	bool			sloppy:1;	/* T if unrecognised options are okay */
+ 	bool			silent:1;	/* T if "o silent" specified */
+ 	bool			need_free:1;	/* Need to call ops->free() */
+@@ -136,6 +152,8 @@ extern int vfs_get_super(struct fs_context *fc,
+ 			 int (*fill_super)(struct super_block *sb,
+ 					   struct fs_context *fc));
  
- config USERFAULTFD
- 	bool "Enable userfaultfd() system call"
--	select ANON_INODES
- 	depends on MMU
- 	help
- 	  Enable the userfaultfd() system call that allows to intercept and
-@@ -1534,7 +1525,6 @@ config PERF_EVENTS
- 	bool "Kernel performance events and counters"
- 	default y if PROFILING
- 	depends on HAVE_PERF_EVENTS
--	select ANON_INODES
- 	select IRQ_WORK
- 	select SRCU
- 	help
++extern const struct file_operations fscontext_fops;
++
+ #define logfc(FC, FMT, ...) pr_notice(FMT, ## __VA_ARGS__)
+ 
+ /**
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 79042396f7e5..650d99c91987 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -910,6 +910,7 @@ asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
+ asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
+ 			       int to_dfd, const char __user *to_path,
+ 			       unsigned int ms_flags);
++asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 1c982eb44ff4..f8818e6cddd6 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -344,4 +344,9 @@ typedef int __bitwise __kernel_rwf_t;
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+ 			 RWF_APPEND)
+ 
++/*
++ * Flags for fsopen() and co.
++ */
++#define FSOPEN_CLOEXEC		0x00000001
++
+ #endif /* _UAPI_LINUX_FS_H */
 
