@@ -1,312 +1,107 @@
 Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB0DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932D0C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C0921557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C0921557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3537C21557
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:51:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j5o15cXr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3537C21557
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391199AbeIUXjp (ORCPT
+        id S2391053AbeIUXlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:39:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59350 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391097AbeIUXjp (ORCPT
+        Fri, 21 Sep 2018 19:41:06 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46362 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390820AbeIUXlF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:39:45 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8LHnHcD044640
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:46 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mn40qkbah-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:49:46 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Fri, 21 Sep 2018 18:49:44 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Sep 2018 18:49:41 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8LHne6c52691000
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 Sep 2018 17:49:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7870AAE051;
-        Fri, 21 Sep 2018 20:48:45 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E53FFAE055;
-        Fri, 21 Sep 2018 20:48:43 +0100 (BST)
-Received: from srikart450.in.ibm.com (unknown [9.199.39.50])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Sep 2018 20:48:43 +0100 (BST)
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
+        Fri, 21 Sep 2018 19:41:05 -0400
+Received: by mail-vs1-f65.google.com with SMTP id h23-v6so5136617vsk.13
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LP7++yJL5J5YpVwbAXbhuGpJ10eOgWNvRuLTZ3I+3to=;
+        b=j5o15cXr7qZdiD0n9M7qZ5NEYavtENX7oNO8MnGtYU/OimVDAp4f4iVSzWAXcl5Ooj
+         SRFgSIrOPXJchkOFmPOAc5vLeJnmD58pLSav/3raYCWbhl/8hH7GsD/SoLFYuqAAFWJN
+         0YbN2mtqjaYMzm3e1c2BAxH1DNG++1Fciq43g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LP7++yJL5J5YpVwbAXbhuGpJ10eOgWNvRuLTZ3I+3to=;
+        b=n5AQcaRt2b4uZUeprJGlSdsBBD8zAP48LbPL9IwENHwTd8s8SajTgP2K+/jjnWhPHo
+         kjgzGd9B8ACXLu9cCRSNxsr2jxSkf77LMw82k9MetikwI6urq5P+JwSgVEDVDW3HP+L3
+         QoSkmwXWTW2ZY5SPIuP26GuP496b7sPqiRPZJJeodBbxQlyNfLW0v9UwW6iTNdclYw6/
+         qLzytlMW2+cQa9qNoHucMenQZJ0VTT4yM9wkyyar0VhmjoLbcyVtafoBi4A46vdOODev
+         q+IgJJ/uG0cQ/189oGc9mLaLOGCNT9zpHg8GweZ7YvDRFyRfow8DrTm9GvQ+piYv4ygX
+         ZsoA==
+X-Gm-Message-State: APzg51CWgpsGG4wHZypg4rOl82FSMcQvem2gaHtqXk41nRZUHotuOA1Z
+        OAjGJApKB0zl02jk/x2ZCOwHzRTZtMB0TvAG00kSJg==
+X-Google-Smtp-Source: ANB0VdZZl+9yQBX0SN9wxmLmP2U03Vd6Aq/yU5XMKIDFnE6vM6arom3FuNfXmIL/59wVTxq8RnAvwWZ8ocvKvFCZE6U=
+X-Received: by 2002:a67:7cc9:: with SMTP id x192-v6mr14164651vsc.9.1537552266891;
+ Fri, 21 Sep 2018 10:51:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1536744310.git.amit.kucheria@linaro.org> <20180920190243.GF19253@hector.localdomain>
+In-Reply-To: <20180920190243.GF19253@hector.localdomain>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Fri, 21 Sep 2018 10:48:45 -0700
+Message-ID: <CAHLCerN0fjPS+3Ydak4tcxqVFzn4sSokYhiG_=2Vi6q_qmEprg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] Another round of tsens cleanups
+To:     Andy Gross <andy.gross@linaro.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jirka Hladky <jhladky@redhat.com>
-Subject: [PATCH v2 4/6] sched/numa: Limit the conditions where scan period is reset
-Date:   Fri, 21 Sep 2018 23:18:59 +0530
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537552141-27815-1-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1537552141-27815-1-git-send-email-srikar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18092117-0020-0000-0000-000002C9E6CF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092117-0021-0000-0000-00002117F104
-Message-Id: <1537552141-27815-5-git-send-email-srikar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809210174
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        smohanad@codeaurora.org, Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        gregkh@linuxfoundation.org, mchehab+samsung@kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mel Gorman <mgorman@techsingularity.net>
+On Thu, Sep 20, 2018 at 12:02 PM Andy Gross <andy.gross@linaro.org> wrote:
+>
+> On Wed, Sep 12, 2018 at 03:22:45PM +0530, Amit Kucheria wrote:
+> > This is another series of tsens cleanups before we add interrupt support. This applies on top of 4.19-rc2.
+> >
+> > Patches [1-6] can directly be applied by Eduardo.
+> > Patches [9-16] can directly be applied by Andy.
+>
+> Eduardo,
+>
+> I ACKed the DTS patches for this.  Can you take 9-16 along with the 1-6 through
+> your tree?
+>
 
-migrate_task_rq_fair resets the scan rate for NUMA balancing on every
-cross-node migration. In the event of excessive load balancing due to
-saturation, this may result in the scan rate being pegged at maximum and
-further overloading the machine.
+Thanks Andy.
 
-This patch only resets the scan if NUMA balancing is active, a preferred
-node has been selected and the task is being migrated from the preferred
-node as these are the most harmful. For example, a migration to the preferred
-node does not justify a faster scan rate. Similarly, a migration between two
-nodes that are not preferred is probably bouncing due to over-saturation of
-the machine.  In that case, scanning faster and trapping more NUMA faults
-will further overload the machine.
+Eduardo, I've send a fixup patch 07/16. If you like, I can resend the
+entire series
+or you can find the entire series hosted with all tags applied here:
+https://git.linaro.org/people/amit.kucheria/kernel.git/log/?h=up/thermal/tsens-preirq-cleanup-v4
 
-Specjbb2005 results (8 warehouses)
-Higher bops are better
-
-2 Socket - 2  Node Haswell - X86
-JVMS  Prev    Current  %Change
-4     203370  205332   0.964744
-1     328431  319785   -2.63252
-
-2 Socket - 4 Node Power8 - PowerNV
-JVMS  Prev    Current  %Change
-1     206070  206585   0.249915
-
-2 Socket - 2  Node Power9 - PowerNV
-JVMS  Prev    Current  %Change
-4     188386  189162   0.41192
-1     201566  213760   6.04963
-
-4 Socket - 4  Node Power7 - PowerVM
-JVMS  Prev     Current  %Change
-8     59157.4  58736.8  -0.710985
-1     105495   105419   -0.0720413
-
-Some events stats before and after applying the patch.
-
-perf stats 8th warehouse Multi JVM 2 Socket - 2  Node Haswell - X86
-Event                     Before          After
-cs                        13,825,492      14,285,708
-migrations                1,152,509       1,180,621
-faults                    371,948         339,114
-cache-misses              55,654,206,041  55,205,631,894
-sched:sched_move_numa     1,856           843
-sched:sched_stick_numa    4               6
-sched:sched_swap_numa     428             219
-migrate:mm_migrate_pages  898             365
-
-vmstat 8th warehouse Multi JVM 2 Socket - 2  Node Haswell - X86
-Event                   Before  After
-numa_hint_faults        57146   26907
-numa_hint_faults_local  51612   24279
-numa_hit                238164  239771
-numa_huge_pte_updates   16      0
-numa_interleave         63      68
-numa_local              238085  239688
-numa_other              79      83
-numa_pages_migrated     883     363
-numa_pte_updates        67540   27415
-
-perf stats 8th warehouse Single JVM 2 Socket - 2  Node Haswell - X86
-Event                     Before          After
-cs                        3,288,525       3,202,779
-migrations                38,652          37,186
-faults                    111,678         106,076
-cache-misses              12,111,197,376  12,024,873,744
-sched:sched_move_numa     900             931
-sched:sched_stick_numa    0               0
-sched:sched_swap_numa     5               1
-migrate:mm_migrate_pages  714             637
-
-vmstat 8th warehouse Single JVM 2 Socket - 2  Node Haswell - X86
-Event                   Before  After
-numa_hint_faults        18572   17409
-numa_hint_faults_local  14850   14367
-numa_hit                73197   73953
-numa_huge_pte_updates   11      20
-numa_interleave         25      25
-numa_local              73138   73892
-numa_other              59      61
-numa_pages_migrated     712     668
-numa_pte_updates        24021   27276
-
-perf stats 8th warehouse Multi JVM 2 Socket - 2  Node Power9 - PowerNV
-Event                     Before       After
-cs                        8,451,543    8,474,013
-migrations                202,804      254,934
-faults                    310,024      320,506
-cache-misses              253,522,507  110,580,458
-sched:sched_move_numa     213          725
-sched:sched_stick_numa    0            0
-sched:sched_swap_numa     2            7
-migrate:mm_migrate_pages  88           145
-
-vmstat 8th warehouse Multi JVM 2 Socket - 2  Node Power9 - PowerNV
-Event                   Before  After
-numa_hint_faults        11830   22797
-numa_hint_faults_local  11301   21539
-numa_hit                90038   89308
-numa_huge_pte_updates   0       0
-numa_interleave         855     865
-numa_local              89796   88955
-numa_other              242     353
-numa_pages_migrated     88      149
-numa_pte_updates        12039   22930
-
-perf stats 8th warehouse Single JVM 2 Socket - 2  Node Power9 - PowerNV
-Event                     Before     After
-cs                        2,049,153  2,195,628
-migrations                11,405     11,179
-faults                    162,309    149,656
-cache-misses              7,203,343  8,117,515
-sched:sched_move_numa     22         49
-sched:sched_stick_numa    0          0
-sched:sched_swap_numa     0          0
-migrate:mm_migrate_pages  1          5
-
-vmstat 8th warehouse Single JVM 2 Socket - 2  Node Power9 - PowerNV
-Event                   Before  After
-numa_hint_faults        1693    3577
-numa_hint_faults_local  1669    3476
-numa_hit                25177   26142
-numa_huge_pte_updates   0       0
-numa_interleave         194     358
-numa_local              24993   26042
-numa_other              184     100
-numa_pages_migrated     1       5
-numa_pte_updates        1577    3587
-
-perf stats 8th warehouse Multi JVM 4 Socket - 4  Node Power7 - PowerVM
-Event                     Before           After
-cs                        94,515,937       100,602,296
-migrations                4,203,554        4,135,630
-faults                    832,697          789,256
-cache-misses              226,248,698,331  226,160,621,058
-sched:sched_move_numa     1,730            1,366
-sched:sched_stick_numa    14               16
-sched:sched_swap_numa     432              374
-migrate:mm_migrate_pages  1,398            1,350
-
-vmstat 8th warehouse Multi JVM 4 Socket - 4  Node Power7 - PowerVM
-Event                   Before  After
-numa_hint_faults        80079   47857
-numa_hint_faults_local  68620   39768
-numa_hit                241187  240165
-numa_huge_pte_updates   0       0
-numa_interleave         0       0
-numa_local              241186  240165
-numa_other              1       0
-numa_pages_migrated     1347    1224
-numa_pte_updates        80729   48354
-
-perf stats 8th warehouse Single JVM 4 Socket - 4  Node Power7 - PowerVM
-Event                     Before          After
-cs                        63,704,961      58,515,496
-migrations                573,404         564,845
-faults                    230,878         245,807
-cache-misses              76,568,222,781  73,603,757,976
-sched:sched_move_numa     509             996
-sched:sched_stick_numa    31              10
-sched:sched_swap_numa     182             193
-migrate:mm_migrate_pages  541             646
-
-vmstat 8th warehouse Single JVM 4 Socket - 4  Node Power7 - PowerVM
-Event                   Before  After
-numa_hint_faults        8501    13422
-numa_hint_faults_local  2960    5619
-numa_hit                35526   36118
-numa_huge_pte_updates   0       0
-numa_interleave         0       0
-numa_local              35526   36116
-numa_other              0       2
-numa_pages_migrated     539     616
-numa_pte_updates        8433    13374
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
----
-Changelog v1->v2:
-Rename numa to NUMA
-
- kernel/sched/fair.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5cbfb30..3529bf6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2617,11 +2617,32 @@ static void update_scan_period(struct task_struct *p, int new_cpu)
- 	int src_nid = cpu_to_node(task_cpu(p));
- 	int dst_nid = cpu_to_node(new_cpu);
- 
-+	if (!static_branch_likely(&sched_numa_balancing))
-+		return;
-+
- 	if (!p->mm || !p->numa_faults || (p->flags & PF_EXITING))
- 		return;
- 
--	if (src_nid != dst_nid)
--		p->numa_scan_period = task_scan_start(p);
-+	if (src_nid == dst_nid)
-+		return;
-+
-+	/*
-+	 * Allow resets if faults have been trapped before one scan
-+	 * has completed. This is most likely due to a new task that
-+	 * is pulled cross-node due to wakeups or load balancing.
-+	 */
-+	if (p->numa_scan_seq) {
-+		/*
-+		 * Avoid scan adjustments if moving to the preferred
-+		 * node or if the task was not previously running on
-+		 * the preferred node.
-+		 */
-+		if (dst_nid == p->numa_preferred_nid ||
-+		    (p->numa_preferred_nid != -1 && src_nid != p->numa_preferred_nid))
-+			return;
-+	}
-+
-+	p->numa_scan_period = task_scan_start(p);
- }
- 
- #else
--- 
-2.7.4
-
+Regards,
+Amit
