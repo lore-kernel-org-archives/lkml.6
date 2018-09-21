@@ -2,167 +2,85 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C55ECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2ACECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF4A62150E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:09:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF4A62150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B999E2150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:13:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B999E2150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390076AbeIUT6n (ORCPT
+        id S2389955AbeIUUCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:58:43 -0400
-Received: from mga07.intel.com ([134.134.136.100]:40753 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728149AbeIUT6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:58:43 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 07:09:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="92107733"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Sep 2018 07:08:27 -0700
-Received: from tiger-server (dazhang1-ssd.sh.intel.com [10.239.48.163])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 05CFF5805BB;
-        Fri, 21 Sep 2018 07:08:24 -0700 (PDT)
-Date:   Sat, 22 Sep 2018 06:47:39 +0800
-From:   Yi Zhang <yi.z.zhang@linux.intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
-        rkrcmar@redhat.com,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Subject: Re: [PATCH V5 4/4] kvm: add a check if pfn is from NVDIMM pmem.
-Message-ID: <20180921224739.GA33892@tiger-server>
-Mail-Followup-To: Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@lst.de>, Linux MM <linux-mm@kvack.org>,
-        rkrcmar@redhat.com,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>
-References: <cover.1536342881.git.yi.z.zhang@linux.intel.com>
- <4e8c2e0facd46cfaf4ab79e19c9115958ab6f218.1536342881.git.yi.z.zhang@linux.intel.com>
- <CAPcyv4ifg2BZMTNfu6mg0xxtPWs3BVgkfEj51v1CQ6jp2S70fw@mail.gmail.com>
- <fefbd66e-623d-b6a5-7202-5309dd4f5b32@redhat.com>
- <20180920224953.GA53363@tiger-server>
- <CAPcyv4g6OS=_uSjJenn5WVmpx7zCRCbzJaBr_m0Bq=qyEyVagg@mail.gmail.com>
+        Fri, 21 Sep 2018 16:02:19 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13096 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728149AbeIUUCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:02:18 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 434F3C3FF006D;
+        Fri, 21 Sep 2018 22:13:10 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
+ 22:13:10 +0800
+Message-ID: <5BA4FC75.7040902@huawei.com>
+Date:   Fri, 21 Sep 2018 22:13:09 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4g6OS=_uSjJenn5WVmpx7zCRCbzJaBr_m0Bq=qyEyVagg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+To:     <airlied@linux.ie>, <alexander.deucher@amd.com>
+CC:     <oded.gabbay@gmail.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+        "Harry Wentland" <harry.wentland@amd.com>
+Subject: Re: [PATCH] drm: amd: Use kmemdup instead of duplicating its function
+References: <1537284932-62278-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1537284932-62278-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-20 at 14:19:17 -0700, Dan Williams wrote:
-> On Thu, Sep 20, 2018 at 7:11 AM Yi Zhang <yi.z.zhang@linux.intel.com> wrote:
-> >
-> > On 2018-09-19 at 09:20:25 +0200, David Hildenbrand wrote:
-> > > Am 19.09.18 um 04:53 schrieb Dan Williams:
-> > > >
-> > > > Should we consider just not setting PageReserved for
-> > > > devm_memremap_pages()? Perhaps kvm is not be the only component making
-> > > > these assumptions about this flag?
-> > >
-> > > I was asking the exact same question in v3 or so.
-> > >
-> > > I was recently going through all PageReserved users, trying to clean up
-> > > and document how it is used.
-> > >
-> > > PG_reserved used to be a marker "not available for the page allocator".
-> > > This is only partially true and not really helpful I think. My current
-> > > understanding:
-> > >
-> > > "
-> > > PG_reserved is set for special pages, struct pages of such pages should
-> > > in general not be touched except by their owner. Pages marked as
-> > > reserved include:
-> > > - Kernel image (including vDSO) and similar (e.g. BIOS, initrd)
-> > > - Pages allocated early during boot (bootmem, memblock)
-> > > - Zero pages
-> > > - Pages that have been associated with a zone but were not onlined
-> > >   (e.g. NVDIMM/pmem, online_page_callback used by XEN)
-> > > - Pages to exclude from the hibernation image (e.g. loaded kexec images)
-> > > - MCA (memory error) pages on ia64
-> > > - Offline pages
-> > > Some architectures don't allow to ioremap RAM pages that are not marked
-> > > as reserved. Allocated pages might have to be set reserved to allow for
-> > > that - if there is a good reason to enforce this. Consequently,
-> > > PG_reserved part of a user space table might be the indicator for the
-> > > zero page, pmem or MMIO pages.
-> > > "
-> > >
-> > > Swapping code does not care about PageReserved at all as far as I
-> > > remember. This seems to be fine as it only looks at the way pages have
-> > > been mapped into user space.
-> > >
-> > > I don't really see a good reason to set pmem pages as reserved. One
-> > > question would be, how/if to exclude them from the hibernation image.
-> > > But that could also be solved differently (we would have to double check
-> > > how they are handled in hibernation code).
-> > >
-> > >
-> > > A similar user of PageReserved to look at is:
-> > >
-> > > drivers/vfio/vfio_iommu_type1.c:is_invalid_reserved_pfn()
-> > >
-> > > It will not mark pages dirty if they are reserved. Similar to KVM code.
-> > Yes, kvm is not the only one user of the dax reserved page.
-> > >
-> > > >
-> > > > Why is MEMORY_DEVICE_PUBLIC memory specifically excluded?
-> > > >
-> > > > This has less to do with "dax" pages and more to do with
-> > > > devm_memremap_pages() established ranges. P2PDMA is another producer
-> > > > of these pages. If either MEMORY_DEVICE_PUBLIC or P2PDMA pages can be
-> > > > used in these kvm paths then I think this points to consider clearing
-> > > > the Reserved flag.
-> >
-> > Thanks Dan/David's comments.
-> > for MEMORY_DEVICE_PUBLIC memory, since host driver could manager the
-> > memory resource to share to guest, Jerome says we could ignore it at
-> > this time.
-> >
-> > And p2pmem, it seems mapped in a PCI bar space which should most likely
-> > a mmio. I think kvm should treated as a reserved page.
-> 
-> Ok, but the question you left unanswered is whether it would be better
-> for devm_memremap_pages() to clear the PageReserved flag for
-> MEMORY_DEVICE_{FS,DEV}_DAX rather than introduce a local kvm-only hack
-> for what looks like a global problem.
++cc  amd-gfx@lists.freedesktop.org
 
-Remove the PageReserved flag sounds more reasonable. 
-And Could we still have a flag to identify it is a device private memory, or
-where these pages coming from?
-> _______________________________________________
-> Linux-nvdimm mailing list
-> Linux-nvdimm@lists.01.org
-> https://lists.01.org/mailman/listinfo/linux-nvdimm
+Thanks,
+zhong jiang
+
+On 2018/9/18 23:35, zhong jiang wrote:
+> kmemdup has implemented the function that kmalloc() + memcpy().
+> We prefer to kmemdup rather than code opened implementation.
+>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_crat.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
+> index ee49960..8ddd585 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
+> @@ -747,12 +747,10 @@ int kfd_create_crat_image_acpi(void **crat_image, size_t *size)
+>  		return -ENODATA;
+>  	}
+>  
+> -	pcrat_image = kmalloc(crat_table->length, GFP_KERNEL);
+> +	pcrat_image = kmemdup(crat_table, crat_table->length, GFP_KERNEL);
+>  	if (!pcrat_image)
+>  		return -ENOMEM;
+>  
+> -	memcpy(pcrat_image, crat_table, crat_table->length);
+> -
+>  	*crat_image = pcrat_image;
+>  	*size = crat_table->length;
+>  
+
+
