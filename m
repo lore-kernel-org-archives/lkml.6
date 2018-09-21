@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42B4ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BA7ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7240A21568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:10:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7240A21568
+	by mail.kernel.org (Postfix) with ESMTP id D2819215EC
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:10:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2819215EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390762AbeIUU7e (ORCPT
+        id S2390825AbeIUU7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:59:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:22414 "EHLO mga06.intel.com"
+        Fri, 21 Sep 2018 16:59:44 -0400
+Received: from mga11.intel.com ([192.55.52.93]:13761 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390405AbeIUU6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:58:08 -0400
+        id S2390794AbeIUU7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:59:43 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 08:08:49 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 08:10:24 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="71856555"
+   d="scan'208";a="71856869"
 Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Sep 2018 08:08:48 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 21 Sep 2018 08:09:54 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -54,9 +54,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v4 09/27] x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
-Date:   Fri, 21 Sep 2018 08:03:33 -0700
-Message-Id: <20180921150351.20898-10-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v4 24/27] mm/mmap: Create a guard area between VMAs
+Date:   Fri, 21 Sep 2018 08:03:48 -0700
+Message-Id: <20180921150351.20898-25-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180921150351.20898-1-yu-cheng.yu@intel.com>
 References: <20180921150351.20898-1-yu-cheng.yu@intel.com>
@@ -65,148 +65,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are going to create _PAGE_DIRTY_SW for non-hardware, memory
-management purposes.  Rename _PAGE_DIRTY to _PAGE_DIRTY_HW and
-_PAGE_BIT_DIRTY to _PAGE_BIT_DIRTY_HW to make these PTE dirty
-bits more clear.  There are no functional changes in this
-patch.
+Create a guard area between VMAs, to detect memory corruption.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/asm/pgtable.h       |  6 +++---
- arch/x86/include/asm/pgtable_types.h | 17 +++++++++--------
- arch/x86/kernel/relocate_kernel_64.S |  2 +-
- arch/x86/kvm/vmx.c                   |  2 +-
- 4 files changed, 14 insertions(+), 13 deletions(-)
+ include/linux/mm.h | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 690c0307afed..95c918ad84ed 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -316,7 +316,7 @@ static inline pte_t pte_mkexec(pte_t pte)
- 
- static inline pte_t pte_mkdirty(pte_t pte)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c4cc07baccda..3a823bdae09d 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2443,24 +2443,34 @@ static inline struct vm_area_struct * find_vma_intersection(struct mm_struct * m
+ static inline unsigned long vm_start_gap(struct vm_area_struct *vma)
  {
--	return pte_set_flags(pte, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
-+	return pte_set_flags(pte, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+ 	unsigned long vm_start = vma->vm_start;
++	unsigned long gap;
++
++	if (vma->vm_flags & VM_GROWSDOWN)
++		gap = stack_guard_gap;
++	else
++		gap = PAGE_SIZE;
++
++	vm_start -= gap;
++	if (vm_start > vma->vm_start)
++		vm_start = 0;
+ 
+-	if (vma->vm_flags & VM_GROWSDOWN) {
+-		vm_start -= stack_guard_gap;
+-		if (vm_start > vma->vm_start)
+-			vm_start = 0;
+-	}
+ 	return vm_start;
  }
  
- static inline pte_t pte_mkyoung(pte_t pte)
-@@ -390,7 +390,7 @@ static inline pmd_t pmd_wrprotect(pmd_t pmd)
- 
- static inline pmd_t pmd_mkdirty(pmd_t pmd)
+ static inline unsigned long vm_end_gap(struct vm_area_struct *vma)
  {
--	return pmd_set_flags(pmd, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
-+	return pmd_set_flags(pmd, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+ 	unsigned long vm_end = vma->vm_end;
++	unsigned long gap;
++
++	if (vma->vm_flags & VM_GROWSUP)
++		gap = stack_guard_gap;
++	else
++		gap = PAGE_SIZE;
++
++	vm_end += gap;
++	if (vm_end < vma->vm_end)
++		vm_end = -PAGE_SIZE;
+ 
+-	if (vma->vm_flags & VM_GROWSUP) {
+-		vm_end += stack_guard_gap;
+-		if (vm_end < vma->vm_end)
+-			vm_end = -PAGE_SIZE;
+-	}
+ 	return vm_end;
  }
  
- static inline pmd_t pmd_mkdevmap(pmd_t pmd)
-@@ -444,7 +444,7 @@ static inline pud_t pud_wrprotect(pud_t pud)
- 
- static inline pud_t pud_mkdirty(pud_t pud)
- {
--	return pud_set_flags(pud, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
-+	return pud_set_flags(pud, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
- }
- 
- static inline pud_t pud_mkdevmap(pud_t pud)
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index b64acb08a62b..0657a22d5216 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -15,7 +15,7 @@
- #define _PAGE_BIT_PWT		3	/* page write through */
- #define _PAGE_BIT_PCD		4	/* page cache disabled */
- #define _PAGE_BIT_ACCESSED	5	/* was accessed (raised by CPU) */
--#define _PAGE_BIT_DIRTY		6	/* was written to (raised by CPU) */
-+#define _PAGE_BIT_DIRTY_HW	6	/* was written to (raised by CPU) */
- #define _PAGE_BIT_PSE		7	/* 4 MB (or 2MB) page */
- #define _PAGE_BIT_PAT		7	/* on 4KB pages */
- #define _PAGE_BIT_GLOBAL	8	/* Global TLB entry PPro+ */
-@@ -45,7 +45,7 @@
- #define _PAGE_PWT	(_AT(pteval_t, 1) << _PAGE_BIT_PWT)
- #define _PAGE_PCD	(_AT(pteval_t, 1) << _PAGE_BIT_PCD)
- #define _PAGE_ACCESSED	(_AT(pteval_t, 1) << _PAGE_BIT_ACCESSED)
--#define _PAGE_DIRTY	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY)
-+#define _PAGE_DIRTY_HW	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY_HW)
- #define _PAGE_PSE	(_AT(pteval_t, 1) << _PAGE_BIT_PSE)
- #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
- #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
-@@ -73,7 +73,7 @@
- 			 _PAGE_PKEY_BIT3)
- 
- #if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)
--#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY | _PAGE_ACCESSED)
-+#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY_HW | _PAGE_ACCESSED)
- #else
- #define _PAGE_KNL_ERRATUM_MASK 0
- #endif
-@@ -112,9 +112,9 @@
- #define _PAGE_PROTNONE	(_AT(pteval_t, 1) << _PAGE_BIT_PROTNONE)
- 
- #define _PAGE_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |\
--				 _PAGE_ACCESSED | _PAGE_DIRTY)
-+				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
- #define _KERNPG_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW |		\
--				 _PAGE_ACCESSED | _PAGE_DIRTY)
-+				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
- 
- /*
-  * Set of bits not changed in pte_modify.  The pte's
-@@ -123,7 +123,7 @@
-  * pte_modify() does modify it.
-  */
- #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
--			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
-+			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY_HW |	\
- 			 _PAGE_SOFT_DIRTY)
- #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
- 
-@@ -168,7 +168,8 @@ enum page_cache_mode {
- 					 _PAGE_ACCESSED)
- 
- #define __PAGE_KERNEL_EXEC						\
--	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)
-+	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY_HW | _PAGE_ACCESSED | \
-+	 _PAGE_GLOBAL)
- #define __PAGE_KERNEL		(__PAGE_KERNEL_EXEC | _PAGE_NX)
- 
- #define __PAGE_KERNEL_RO		(__PAGE_KERNEL & ~_PAGE_RW)
-@@ -187,7 +188,7 @@ enum page_cache_mode {
- #define _PAGE_ENC	(_AT(pteval_t, sme_me_mask))
- 
- #define _KERNPG_TABLE	(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED |	\
--			 _PAGE_DIRTY | _PAGE_ENC)
-+			 _PAGE_DIRTY_HW | _PAGE_ENC)
- #define _PAGE_TABLE	(_KERNPG_TABLE | _PAGE_USER)
- 
- #define __PAGE_KERNEL_ENC	(__PAGE_KERNEL | _PAGE_ENC)
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 11eda21eb697..e7665a4767b3 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -17,7 +17,7 @@
-  */
- 
- #define PTR(x) (x << 3)
--#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY)
-+#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY_HW)
- 
- /*
-  * control_page + KEXEC_CONTROL_CODE_MAX_SIZE
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 533a327372c8..35f01203a14b 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5848,7 +5848,7 @@ static int init_rmode_identity_map(struct kvm *kvm)
- 	/* Set up identity-mapping pagetable for EPT in real mode */
- 	for (i = 0; i < PT32_ENT_PER_PAGE; i++) {
- 		tmp = (i << 22) + (_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |
--			_PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_PSE);
-+			_PAGE_ACCESSED | _PAGE_DIRTY_HW | _PAGE_PSE);
- 		r = kvm_write_guest_page(kvm, identity_map_pfn,
- 				&tmp, i * sizeof(tmp), sizeof(tmp));
- 		if (r < 0)
 -- 
 2.17.1
 
