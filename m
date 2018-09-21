@@ -2,164 +2,104 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F85BECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E0AECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F06206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3F1120877
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:36:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AAfeTLz0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F06206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="BgL7dlRo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F1120877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391263AbeIVAZH (ORCPT
+        id S2391270AbeIVA0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:25:07 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:47082 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391089AbeIVAZH (ORCPT
+        Fri, 21 Sep 2018 20:26:55 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33210 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391184AbeIVA0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:25:07 -0400
-Received: by mail-yb1-f193.google.com with SMTP id y20-v6so5809207ybi.13
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:35:00 -0700 (PDT)
+        Fri, 21 Sep 2018 20:26:55 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y18-v6so3132221pge.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:36:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=sExD8i4jvCOL4Zp3pZc8aNg2i3wRkgAenXJfeRMHAeU=;
-        b=AAfeTLz0anYwKN6H2xdtOLNgrcV1q07Bv5nYNs564RK8hzB3Z3lppjfmamIOxnJQH9
-         MkhrlIFgCbwlevlKQjT/QQLXvbKqLz1D3W+gsPjS/RZ/iZ6wwtd8t7ZvgDyztiZ5C/O/
-         hJ+AzsehDFo2uxv4db6IuIkW3YO+ydmkfMGkg=
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=lD1HJzkjStdB5/4Tpf3D08ik3IEhfeONrfbEwvYZ+cg=;
+        b=BgL7dlRof3reWDSczslWoY2foxgt9kZexljZMzGw8INaNt1vegudCxlceohscPIYDL
+         EsRDxwV2GmaXEU2HSsVZm/q7CC4fxdRgrKuTWPX3wG35t38+CBxro/21PxbHC66L8Jfw
+         jVhVbzm+kBuvAHIPRinViH2QGA1aFbXC/oM35BwujKIWJHIGtIyV3wugCx0/bZ2l2VMK
+         OLO2t1yj4W+LlU7OEjWRWLv5+vZEsw6FcYu9yeiiQQSArcKCFx7zUr9Si7dlhe2bt9EA
+         wWn7lj3CIN76zU9tOLz9Ikx9Ua+m7RvzufEndwoikKT+OCJ/6D9McIymZ2PyJErWF9E8
+         Rf9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sExD8i4jvCOL4Zp3pZc8aNg2i3wRkgAenXJfeRMHAeU=;
-        b=Gi24vNw1fEr5KlOD23D5LQanUQVzkSKlPiC8zcq8kIVP+LpZ10u9YVu7KNZVvgvyf9
-         jjTkKUTCZX6zM9KE8I7uOSV1BwB3cXQxhEeCmelNu160igklZbxQeZSRlT1pO5TBThvg
-         17jTU8jgnFNTStJLDV+CT2IGWC9NAIeGKekR7ThttBbI0jDnRHavGsv8QCUbFYR8l15y
-         wR4BiA4ZvY/mfJTDLgM8M6t3W+0kLXGVfOnr1vDEQD6FQxZpCpRJwBAj+9vZirADy7L0
-         2YY1ofhcZCOmfranBeu0UDR0GAEuoLjxVjwd/6DfvoyUEXvGUNfqRHfvKUokRVby3ao6
-         s8mQ==
-X-Gm-Message-State: APzg51A/E1u2wfYu9DQs43jkZI3QQTKAWnMkdi/suRaHfYST7ML7RPrC
-        P4uX0cNX/BNWHDyJA6ZQVS7+WGaMjeY=
-X-Google-Smtp-Source: ANB0VdY2IJKVN+vCU3a/dY6WVHJEjzlgiBXbfLmwwdmRzbVMHulqw6i+dzmJVfXmr3KhD3e//HVbDA==
-X-Received: by 2002:a25:5485:: with SMTP id i127-v6mr4303285ybb.23.1537554899533;
-        Fri, 21 Sep 2018 11:34:59 -0700 (PDT)
-Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
-        by smtp.gmail.com with ESMTPSA id p126-v6sm7321440ywf.22.2018.09.21.11.34.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 11:34:59 -0700 (PDT)
-Received: by mail-yw1-f41.google.com with SMTP id x83-v6so5573872ywd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:34:59 -0700 (PDT)
-X-Received: by 2002:a0d:fe87:: with SMTP id o129-v6mr4468409ywf.237.1537554398910;
- Fri, 21 Sep 2018 11:26:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=lD1HJzkjStdB5/4Tpf3D08ik3IEhfeONrfbEwvYZ+cg=;
+        b=ubBoRbGgsDYpf4CRPVu6xuNuUlaga6opOsoajGE4xVDA81HursuodIpV0f+Svmxhf+
+         HVS3L26Zjfq3xu22uVLpTkEmpVPjKG3J3n8Z9J3s5OMl0J/nj6/WJ+nyMn+R6REw6Xa7
+         iMuMwLN9vWpayHnNYK07Aeoxl9rqH4qko2nbpD7vOPAc9hR1sj894KMbdxMIAbbiVNM8
+         pbVTIvnvR27BZ8cIYfpZX0cEn8Mif171cCnimpLFxHexpmkfMxhEQ/90L68b33XYJuUA
+         et/sGvPl9Uhh2NnLxcB8o4UBC4yMBwueJDEIkiQSwIGvsxQK82Oo0z4J2B4JhX/1Z/uB
+         1W3Q==
+X-Gm-Message-State: APzg51CdybvD2ztFBf6OEcqeBsNeQTZnLqQUfOGjnu48CNtr/QACfnWj
+        TAATYGjB7gJQarZnTrebPRkM+tyJdqY=
+X-Google-Smtp-Source: ANB0VdbupWyo8VWx6FBptjQR0af8RY2I/zOryFTvuXHVSiHb9q6jsITXZMSVlBf+4tA3aaecE2vnZw==
+X-Received: by 2002:a65:6455:: with SMTP id s21-v6mr43379290pgv.25.1537555007445;
+        Fri, 21 Sep 2018 11:36:47 -0700 (PDT)
+Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id d7-v6sm18473247pfg.1.2018.09.21.11.36.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Sep 2018 11:36:47 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 11:36:39 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Haiyang Zhang <haiyangz@linuxonhyperv.com>
+Cc:     haiyangz@microsoft.com, davem@davemloft.net,
+        netdev@vger.kernel.org, olaf@aepfle.de,
+        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
+        vkuznets@redhat.com
+Subject: Re: [PATCH net-next, v2, 1/3] hv_netvsc: Add support for LRO/RSC in
+ the vSwitch
+Message-ID: <20180921113620.62a004cb@xeon-e3>
+In-Reply-To: <20180921182037.10077-2-haiyangz@linuxonhyperv.com>
+References: <20180921182037.10077-1-haiyangz@linuxonhyperv.com>
+        <20180921182037.10077-2-haiyangz@linuxonhyperv.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 11:26:38
- -0700 (PDT)
-In-Reply-To: <20180918212847.199085-1-namit@vmware.com>
-References: <20180918212847.199085-1-namit@vmware.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 21 Sep 2018 11:26:38 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jK307b+bs6h-1f6dhRCj3HfoQQmbACuurOE9RbhzijHAQ@mail.gmail.com>
-Message-ID: <CAGXu5jK307b+bs6h-1f6dhRCj3HfoQQmbACuurOE9RbhzijHAQ@mail.gmail.com>
-Subject: Re: [PATCH v8 00/10] x86: macrofying inline asm for better compilation
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 2:28 PM, Nadav Amit <namit@vmware.com> wrote:
-> This patch-set deals with an interesting yet stupid problem: kernel code
-> that does not get inlined despite its simplicity. There are several
-> causes for this behavior: "cold" attribute on __init, different function
-> optimization levels; conditional constant computations based on
-> __builtin_constant_p(); and finally large inline assembly blocks.
->
-> This patch-set deals with the inline assembly problem. I separated these
-> patches from the others (that were sent in the RFC) for easier
-> inclusion. I also separated the removal of unnecessary new-lines which
-> would be sent separately.
->
-> The problem with inline assembly is that inline assembly is often used
-> by the kernel for things that are other than code - for example,
-> assembly directives and data. GCC however is oblivious to the content of
-> the blocks and assumes their cost in space and time is proportional to
-> the number of the perceived assembly "instruction", according to the
-> number of newlines and semicolons. Alternatives, paravirt and other
-> mechanisms are affected, causing code not to be inlined, and degrading
-> compilation quality in general.
->
-> The solution that this patch-set carries for this problem is to create
-> an assembly macro, and then call it from the inline assembly block.  As
-> a result, the compiler sees a single "instruction" and assigns the more
-> appropriate cost to the code.
->
-> To avoid uglification of the code, as many noted, the macros are first
-> precompiled into an assembly file, which is later assembled together
-> with the C files. This also enables to avoid duplicate implementation
-> that was set before for the asm and C code. This can be seen in the
-> exception table changes.
->
-> Overall this patch-set slightly increases the kernel size (my build was
-> done using my Ubuntu 18.04 config + localyesconfig for the record):
->
->    text    data     bss     dec     hex filename
-> 18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-> 18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
->
-> The number of static functions in the image is reduced by 379, but
-> actually inlining is even better, which does not always shows in these
-> numbers: a function may be inlined causing the calling function not to
-> be inlined.
->
-> I ran some limited number of benchmarks, and in general the performance
-> impact is not very notable. You can still see >10 cycles shaved off some
-> syscalls that manipulate page-tables (e.g., mprotect()), in which
-> paravirt caused many functions not to be inlined. In addition this
-> patch-set can prevent issues such as [1], and improves code readability
-> and maintainability.
->
-> [1] https://patchwork.kernel.org/patch/10450037/
->
-> v7->v8: * Add acks (Masahiro, Max)
->         * Rebase on 4.19 (Ingo)
+On Fri, 21 Sep 2018 18:20:35 +0000
+Haiyang Zhang <haiyangz@linuxonhyperv.com> wrote:
 
-I've tested the series for booting and with the refcount lkdtm tests.
-Looks good, thanks!
+Overall, this looks good. Some minor suggestions.
 
-Tested-by: Kees Cook <keescook@chromium.org>
+> +struct nvsc_rsc {
+> +	const struct ndis_pkt_8021q_info *vlan;
+> +	const struct ndis_tcp_ip_checksum_info *csum_info;
+> +	u8 is_last; /* last RNDIS msg in a vmtransfer_page */
+> +	u32 cnt; /* #fragments in an RSC packet */
+> +	u32 pktlen; /* Full packet length */
+> +	void *data[NVSP_RSC_MAX];
+> +	u32 len[NVSP_RSC_MAX];
+> +};
+> +
 
--Kees
+This new state structure is state on a per-channel basis.
+Do you really need this to be persistent across packets?
 
--- 
-Kees Cook
-Pixel Security
+Could this be on stack or do you need it to handle split packets
+arriving in different polls? Or is the stack space a problem?
+
+Also, maybe data and length could be in one structure since they
+are related.
