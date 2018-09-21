@@ -2,119 +2,152 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A404C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3459C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC3DE2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:03:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOuOlsvm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC3DE2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ACDD2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:03:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ACDD2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391388AbeIVByJ (ORCPT
+        id S2391430AbeIVByL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 21:54:09 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44896 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391089AbeIVByI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 21:54:08 -0400
-Received: by mail-wr1-f67.google.com with SMTP id v16-v6so13941033wro.11;
-        Fri, 21 Sep 2018 13:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3YW34xB6QhhNdcA+S9Z/6kjLx1NyQmg3AOL8sBhSXm4=;
-        b=cOuOlsvmtSB5jpywS1e7AjPXTNNXsloNPexvABETr1D5LbznjIq5e4G+2PvmmJcMCU
-         x0Nb4iVhB9t20nuFWaHzhJ+hdSBIunivxXV4YTSw2Z+u7zUmEtt0jJV6lMLKXzq3EaL7
-         5XDhKoyFTXOUaKEYWqcGgCdVhSEV/zWRFxvt6XoayiNND0DNG7+ofM7tNDsX3mUUGqEu
-         YngSD95Dg/9wstmI3+Lqh5fAmqYDZ9ErJYz3oFYeCEssNzODJLE0HVIlhsQXMiEpDDOo
-         /pyLgwI8AvqVpvJfutLmN/1npbdRjhyIz0IWCrPVOh5pfcGrFad9Un3fJu1RpDio/4cu
-         SpQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3YW34xB6QhhNdcA+S9Z/6kjLx1NyQmg3AOL8sBhSXm4=;
-        b=nuWcbpRgk7hbOcI4as32sLE6w2JwVlGpuEV+vOAHD/+AFPb75TuIkda31AIPx8wv8d
-         hXE9YNSTxAFkHtT+msgJcW4cjaOuxVRFa7NWJBmlFqOhoNmH/UbdNTm5H7vCFx9Vr29J
-         BHysKbwJhmuW8XXAf+jHcMTb8Fp8nG54RDTuyPyRxhkaw+VqSTgI8jSD5P10y46pDJGz
-         aCI903HooIcRfCRzvkg2gQljEW97+2klneoVqku1/B2StTER1bxkQIjtS6cN0WXwK/3g
-         U0w89psgmneR+NU9y3LLXUq0HEQ7KAL0gDmz3lbiSvRalKmtdB2bVrdf/EIhW2Gu33jv
-         JNPA==
-X-Gm-Message-State: APzg51A59K/gmyttHUbndRRNO3CfmQ++sZE9kr62MCapbxS2zMYJieJQ
-        l08QLzRJ0k7hxER1rlB4D0lzc39d0C5cxw==
-X-Google-Smtp-Source: ANB0Vdb1wkdQsqH0esNz6rcr6+HwXCtX1J0atIvoJaDcb0WA++0e9/FBLtq52iZzUYd7sjKV2Q8/rQ==
-X-Received: by 2002:a5d:4849:: with SMTP id n9-v6mr20203053wrs.234.1537560221793;
-        Fri, 21 Sep 2018 13:03:41 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm33425817wrn.83.2018.09.21.13.03.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 13:03:41 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Andy Walls <awalls@md.metrocast.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] media: cx18: Don't check for address of video_dev
-Date:   Fri, 21 Sep 2018 12:57:37 -0700
-Message-Id: <20180921195736.7977-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 21:54:11 -0400
+Received: from mga14.intel.com ([192.55.52.115]:26225 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391089AbeIVByK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 21:54:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 13:03:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,286,1534834800"; 
+   d="scan'208";a="74961313"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.7.198.152]) ([10.7.198.152])
+  by orsmga007.jf.intel.com with ESMTP; 21 Sep 2018 13:03:44 -0700
+Subject: Re: [PATCH v4 3/5] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Pasha Tatashin <Pavel.Tatashin@microsoft.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Cc:     "mhocko@suse.com" <mhocko@suse.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "jglisse@redhat.com" <jglisse@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "logang@deltatee.com" <logang@deltatee.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+References: <20180920215824.19464.8884.stgit@localhost.localdomain>
+ <20180920222758.19464.83992.stgit@localhost.localdomain>
+ <2254cfe1-5cd3-eedc-1f24-8e011dcf3575@microsoft.com>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <f4d5ace6-9657-746b-9448-064a4b7cfb8d@linux.intel.com>
+Date:   Fri, 21 Sep 2018 13:03:44 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <2254cfe1-5cd3-eedc-1f24-8e011dcf3575@microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns that the address of a pointer will always evaluated as true
-in a boolean context.
 
-drivers/media/pci/cx18/cx18-driver.c:1255:23: warning: address of
-'cx->streams[i].video_dev' will always evaluate to 'true'
-[-Wpointer-bool-conversion]
-                if (&cx->streams[i].video_dev)
-                ~~   ~~~~~~~~~~~~~~~^~~~~~~~~
-1 warning generated.
 
-Presumably, the contents of video_dev should have been checked, not the
-address. This check has been present since 2009, introduced by commit
-21a278b85d3c ("V4L/DVB (11619): cx18: Simplify the work handler for
-outgoing mailbox commands")
+On 9/21/2018 12:50 PM, Pasha Tatashin wrote:
+> 
+> 
+> On 9/20/18 6:29 PM, Alexander Duyck wrote:
+>> The ZONE_DEVICE pages were being initialized in two locations. One was with
+>> the memory_hotplug lock held and another was outside of that lock. The
+>> problem with this is that it was nearly doubling the memory initialization
+>> time. Instead of doing this twice, once while holding a global lock and
+>> once without, I am opting to defer the initialization to the one outside of
+>> the lock. This allows us to avoid serializing the overhead for memory init
+>> and we can instead focus on per-node init times.
+>>
+>> One issue I encountered is that devm_memremap_pages and
+>> hmm_devmmem_pages_create were initializing only the pgmap field the same
+>> way. One wasn't initializing hmm_data, and the other was initializing it to
+>> a poison value. Since this is something that is exposed to the driver in
+>> the case of hmm I am opting for a third option and just initializing
+>> hmm_data to 0 since this is going to be exposed to unknown third party
+>> drivers.
+>>
+>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> 
+>> +void __ref memmap_init_zone_device(struct zone *zone,
+>> +				   unsigned long start_pfn,
+>> +				   unsigned long size,
+>> +				   struct dev_pagemap *pgmap)
+>> +{
+>> +	unsigned long pfn, end_pfn = start_pfn + size;
+>> +	struct pglist_data *pgdat = zone->zone_pgdat;
+>> +	unsigned long zone_idx = zone_idx(zone);
+>> +	unsigned long start = jiffies;
+>> +	int nid = pgdat->node_id;
+>> +
+>> +	if (WARN_ON_ONCE(!pgmap || !is_dev_zone(zone)))
+>> +		return;
+>> +
+>> +	/*
+>> +	 * The call to memmap_init_zone should have already taken care
+>> +	 * of the pages reserved for the memmap, so we can just jump to
+>> +	 * the end of that region and start processing the device pages.
+>> +	 */
+>> +	if (pgmap->altmap_valid) {
+>> +		struct vmem_altmap *altmap = &pgmap->altmap;
+>> +
+>> +		start_pfn = altmap->base_pfn + vmem_altmap_offset(altmap);
+>> +		size = end_pfn - start_pfn;
+>> +	}
+>> +
+>> +	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+>> +		struct page *page = pfn_to_page(pfn);
+>> +
+>> +		__init_single_page(page, pfn, zone_idx, nid);
+>> +
+>> +		/*
+>> +		 * Mark page reserved as it will need to wait for onlining
+>> +		 * phase for it to be fully associated with a zone.
+>> +		 *
+>> +		 * We can use the non-atomic __set_bit operation for setting
+>> +		 * the flag as we are still initializing the pages.
+>> +		 */
+>> +		__SetPageReserved(page);
+>> +
+>> +		/*
+>> +		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
+>> +		 * pointer and hmm_data.  It is a bug if a ZONE_DEVICE
+>> +		 * page is ever freed or placed on a driver-private list.
+>> +		 */
+>> +		page->pgmap = pgmap;
+>> +		page->hmm_data = 0;
+> 
+> __init_single_page()
+>    mm_zero_struct_page()
+> 
+> Takes care of zeroing, no need to do another store here.
 
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+The problem is __init_singe_page also calls INIT_LIST_HEAD which I 
+believe sets the prev pointer which overlaps with hmm_data.
 
-Alternatively, this if statement could just be removed since it has
-evaluated to true since 2009 and I assume some issue with this would
-have been discovered by now.
+> 
+> Looks good otherwise.
+> 
+> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> 
 
- drivers/media/pci/cx18/cx18-driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
-index 56763c4ea1a7..753a37c7100a 100644
---- a/drivers/media/pci/cx18/cx18-driver.c
-+++ b/drivers/media/pci/cx18/cx18-driver.c
-@@ -1252,7 +1252,7 @@ static void cx18_cancel_out_work_orders(struct cx18 *cx)
- {
- 	int i;
- 	for (i = 0; i < CX18_MAX_STREAMS; i++)
--		if (&cx->streams[i].video_dev)
-+		if (cx->streams[i].video_dev)
- 			cancel_work_sync(&cx->streams[i].out_work_order);
- }
- 
--- 
-2.19.0
-
+Thanks for the review.
