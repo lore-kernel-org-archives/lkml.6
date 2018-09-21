@@ -2,338 +2,144 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F5FECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B1FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4493A21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4493A21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 9277321547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:09:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5e/08F2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9277321547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389661AbeIUPzp (ORCPT
+        id S2389670AbeIUP5e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:55:45 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33634 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726479AbeIUPzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:55:45 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0E10BB083E23E;
-        Fri, 21 Sep 2018 18:07:33 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 21 Sep
- 2018 18:07:26 +0800
-Date:   Fri, 21 Sep 2018 18:05:26 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Kenneth Lee <nek.in.cn@gmail.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joerg Roedel <joro@8bytes.org>, <linux-doc@vger.kernel.org>,
-        Sanjay Kumar <sanjay.k.kumar@intel.com>,
-        "Hao Fang" <fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <iommu@lists.linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        <linux-crypto@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        <linux-accelerators@lists.ozlabs.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-Message-ID: <20180921100526.GI207969@Turing-Arch-b>
-References: <20180903005204.26041-1-nek.in.cn@gmail.com>
- <20180917014244.GA27596@redhat.com>
- <20180917083940.GE207969@Turing-Arch-b>
- <20180917123744.GA3605@redhat.com>
- <20180918060014.GF207969@Turing-Arch-b>
- <20180918130314.GA3500@redhat.com>
- <20180920055543.GG207969@Turing-Arch-b>
- <20180920142340.GA3341@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180920142340.GA3341@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+        Fri, 21 Sep 2018 11:57:34 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42932 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbeIUP5e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:57:34 -0400
+Received: by mail-ed1-f68.google.com with SMTP id l5so10250823edw.9;
+        Fri, 21 Sep 2018 03:09:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=+xp1tHYgcqmK5vJcXbbULWl6T/5gevxAd+xabl7FRRA=;
+        b=U5e/08F2rRvGXoV8XIdXH4tYNY/6P+QtjsObEuaeNKb7Ok66vi98tntC1MN4cILJ+2
+         rnYNH2emjkvPC5INYpysn2j8FHlqW/gc1ZLB2V7IdxKvtwykhG92pBHxd7BHqqFQmkSv
+         1yaBNUuG+9jIW6KU023b5Hz1XVLAPpOdM7/Z99VFIZAWt5p+MqTUcBNgLlyf+D52oteB
+         Aqwb4kZNZXvoIvy5Tunm02Zy5xHq9pp0xRHQPB6DmVwZ4YYFX+TEBNeN8459WdQT/26k
+         0ducix8wA8AXu5opdVAdRztdNKlsBXwWPg67jPmapSB5M6cOv+CH/MZ40vttC5FTJMvM
+         WZYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+xp1tHYgcqmK5vJcXbbULWl6T/5gevxAd+xabl7FRRA=;
+        b=HbjtSjSF8be79upQhkJReQ2wW8J+9RfTSmZgoDzEqm2RyalPG6SafddH+2cdPo5btV
+         C7GJhMt6R5tx/tdka1WocCbHdUTz2kRRYrNN4wZeGxtXWWxe+Bwi2g3t7KEUtw9fzGp0
+         r1TF7lESTKaEpCdlyU7YY8ATzdLJNm/HIleyl+rJRf6hiLSbROlnIGI04yyRPl2lJKe9
+         cwX3+hYEibaw4ZoSPe1y00QVeQok6RZBlhSX1s7TkvOzDXwmfNUY34e9UKNhgDE66ftq
+         ua2zCCjwmKSSOrnCPzvCAzlzxZ4HgcNm7m0EJprjVcsPORoTWaWRsVkFWPtzIMpyU3Nm
+         9i+A==
+X-Gm-Message-State: APzg51AvtqdeBMAvV4h3OYaIsrxbygFEBS98IV4M9aHshxfmmsTX6GNd
+        PCqUvzQOoAmdsqDvORdrMU0=
+X-Google-Smtp-Source: ANB0VdYG15FKeVdHfPvFtBs25Iu0ct01SoN+ehWZVxoW4gh7eDxwSFJJE9t+B9XKizkuz8MS4BE72Q==
+X-Received: by 2002:a50:d798:: with SMTP id w24-v6mr11149734edi.19.1537524563557;
+        Fri, 21 Sep 2018 03:09:23 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id g38-v6sm2103451edc.40.2018.09.21.03.09.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 03:09:21 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 1/2] [media] imx214: device tree binding
+Date:   Fri, 21 Sep 2018 12:09:19 +0200
+Message-Id: <20180921100920.8656-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 10:23:40AM -0400, Jerome Glisse wrote:
-> Received: from popscn.huawei.com [10.3.17.45] by Turing-Arch-b with POP3
->  (fetchmail-6.3.26) for <kenny@localhost> (single-drop); Thu, 20 Sep 2018
->  22:30:01 +0800 (CST)
-> Received: from DGGEMM401-HUB.china.huawei.com (10.3.20.209) by
->  dggeml405-hub.china.huawei.com (10.3.17.49) with Microsoft SMTP Server
->  (TLS) id 14.3.382.0; Thu, 20 Sep 2018 22:23:57 +0800
-> Received: from dggwg01-in.huawei.com (172.30.65.35) by
->  DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server id
->  14.3.399.0; Thu, 20 Sep 2018 22:23:56 +0800
-> Received: from mx1.redhat.com (unknown [209.132.183.28])	by Forcepoint
->  Email with ESMTPS id 18963FA9B6FA9;	Thu, 20 Sep 2018 22:23:50 +0800 (CST)
-> Received: from smtp.corp.redhat.com
->  (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])	(using
->  TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))	(No client
->  certificate requested)	by mx1.redhat.com (Postfix) with ESMTPS id
->  CF1D9C058CBE;	Thu, 20 Sep 2018 14:23:47 +0000 (UTC)
-> Received: from redhat.com (unknown [10.20.6.215])	by
->  smtp.corp.redhat.com (Postfix) with ESMTPS id 1B030106A780;	Thu, 20 Sep
->  2018 14:23:41 +0000 (UTC)
-> Date: Thu, 20 Sep 2018 10:23:40 -0400
-> From: Jerome Glisse <jglisse@redhat.com>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Kenneth Lee <nek.in.cn@gmail.com>, Alex Williamson
->  <alex.williamson@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>,
->  kvm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman
->  <gregkh@linuxfoundation.org>, Joerg Roedel <joro@8bytes.org>,
->  linux-doc@vger.kernel.org, Sanjay Kumar <sanjay.k.kumar@intel.com>, Hao
->  Fang <fanghao11@huawei.com>, linux-kernel@vger.kernel.org,
->  linuxarm@huawei.com, iommu@lists.linux-foundation.org, "David S . Miller"
->  <davem@davemloft.net>, linux-crypto@vger.kernel.org, Zhou Wang
->  <wangzhou1@hisilicon.com>, Philippe Ombredanne <pombredanne@nexb.com>,
->  Thomas Gleixner <tglx@linutronix.de>, Zaibo Xu <xuzaibo@huawei.com>,
->  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>
-> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
-> Message-ID: <20180920142340.GA3341@redhat.com>
-> References: <20180903005204.26041-1-nek.in.cn@gmail.com>
->  <20180917014244.GA27596@redhat.com>
->  <20180917083940.GE207969@Turing-Arch-b> <20180917123744.GA3605@redhat.com>
->  <20180918060014.GF207969@Turing-Arch-b> <20180918130314.GA3500@redhat.com>
->  <20180920055543.GG207969@Turing-Arch-b>
-> Content-Type: text/plain; charset="iso-8859-1"
-> Content-Disposition: inline
-> Content-Transfer-Encoding: 8bit
-> In-Reply-To: <20180920055543.GG207969@Turing-Arch-b>
-> User-Agent: Mutt/1.10.0 (2018-05-17)
-> X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-> X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16
->  (mx1.redhat.com [10.5.110.32]); Thu, 20 Sep 2018 14:23:48 +0000 (UTC)
-> Return-Path: jglisse@redhat.com
-> X-MS-Exchange-Organization-AuthSource: DGGEMM401-HUB.china.huawei.com
-> X-MS-Exchange-Organization-AuthAs: Anonymous
-> MIME-Version: 1.0
-> 
-> On Thu, Sep 20, 2018 at 01:55:43PM +0800, Kenneth Lee wrote:
-> > On Tue, Sep 18, 2018 at 09:03:14AM -0400, Jerome Glisse wrote:
-> > > On Tue, Sep 18, 2018 at 02:00:14PM +0800, Kenneth Lee wrote:
-> > > > On Mon, Sep 17, 2018 at 08:37:45AM -0400, Jerome Glisse wrote:
-> > > > > On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
-> > > > > > On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
-> > > > > > > So i want to summarize issues i have as this threads have dig deep into
-> > > > > > > details. For this i would like to differentiate two cases first the easy
-> > > > > > > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
-> > > > > > 
-> > > > > > Thank you very much for the summary.
-> > > > > > 
-> > > > > > > In both cases your objectives as i understand them:
-> > > > > > > 
-> > > > > > > [R1]- expose a common user space API that make it easy to share boiler
-> > > > > > >       plate code accross many devices (discovering devices, opening
-> > > > > > >       device, creating context, creating command queue ...).
-> > > > > > > [R2]- try to share the device as much as possible up to device limits
-> > > > > > >       (number of independant queues the device has)
-> > > > > > > [R3]- minimize syscall by allowing user space to directly schedule on the
-> > > > > > >       device queue without a round trip to the kernel
-> > > > > > > 
-> > > > > > > I don't think i missed any.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > (1) Device with SVA/SVM
-> > > > > > > 
-> > > > > > > For that case it is easy, you do not need to be in VFIO or part of any
-> > > > > > > thing specific in the kernel. There is no security risk (modulo bug in
-> > > > > > > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
-> > > > > > > to a device is just couple dozen lines of code.
-> > > > > > > 
-> > > > > > 
-> > > > > > This is right...logically. But the kernel has no clear definition about "Device
-> > > > > > with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
-> > > > > > boiler plate.
-> > > > > > 
-> > > > > > VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
-> > > > > > one. If we add that support within VFIO, which solve most of the problem of
-> > > > > > SVA/SVM, it will save a lot of work in the future.
-> > > > > 
-> > > > > You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
-> > > > > all do the SVA/SVM setup in couple dozen lines and i failed to see how it
-> > > > > would require any more than that in your case.
-> > > > > 
-> > > > > 
-> > > > > > I think this is the key confliction between us. So could Alex please say
-> > > > > > something here? If the VFIO is going to take this into its scope, we can try
-> > > > > > together to solve all the problem on the way. If it it is not, it is also
-> > > > > > simple, we can just go to another way to fulfill this part of requirements even
-> > > > > > we have to duplicate most of the code.
-> > > > > > 
-> > > > > > Another point I need to emphasis here: because we have to replace the hardware
-> > > > > > queue when fork, so it won't be very simple even in SVA/SVM case.
-> > > > > 
-> > > > > I am assuming hardware queue can only be setup by the kernel and thus
-> > > > > you are totaly safe forkwise as the queue is setup against a PASID and
-> > > > > the child does not bind to any PASID and you use VM_DONTCOPY on the
-> > > > > mmap of the hardware MMIO queue because you should really use that flag
-> > > > > for that.
-> > > > > 
-> > > > > 
-> > > > > > > (2) Device does not have SVA/SVM (or it is disabled)
-> > > > > > > 
-> > > > > > > You want to still allow device to be part of your framework. However
-> > > > > > > here i see fundamentals securities issues and you move the burden of
-> > > > > > > being careful to user space which i think is a bad idea. We should
-> > > > > > > never trus the userspace from kernel space.
-> > > > > > > 
-> > > > > > > To keep the same API for the user space code you want a 1:1 mapping
-> > > > > > > between device physical address and process virtual address (ie if
-> > > > > > > device access device physical address A it is accessing the same
-> > > > > > > memory as what is backing the virtual address A in the process.
-> > > > > > > 
-> > > > > > > Security issues are on two things:
-> > > > > > > [I1]- fork/exec, a process who opened any such device and created an
-> > > > > > >       active queue can transfer without its knowledge control of its
-> > > > > > >       commands queue through COW. The parent map some anonymous region
-> > > > > > >       to the device as a command queue buffer but because of COW the
-> > > > > > >       parent can be the first to copy on write and thus the child can
-> > > > > > >       inherit the original pages that are mapped to the hardware.
-> > > > > > >       Here parent lose control and child gain it.
-> > > > > > 
-> > > > > > This is indeed an issue. But it remains an issue only if you continue to use the
-> > > > > > queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
-> > > > > > user space.
-> > > > > 
-> > > > > Trusting user space is a no go from my point of view.
-> > > > 
-> > > > Can we dive deeper on this? Maybe we have different understanding on "Trusting
-> > > > user space". As my understanding, "trusting user space" means "no matter what
-> > > > the user process does, it should only hurt itself and anything give to it, no
-> > > > the kernel and the other process".
-> > > > 
-> > > > In our case, we create a channel between a process and the hardware. The process
-> > > > can do whateven it like to its own memory the channel itself. It won't hurt the
-> > > > other process and the kernel. And if the process fork a child and give the
-> > > > channel to the child, it should the freedom on those resource remain within the
-> > > > parent and the child. We are not trust another else.
-> > > > 
-> > > > So do you refer to something else here?
-> > > > 
-> > > 
-> > > I am refering to COW giving control to the child on to what happens
-> > > in the parent from device point of view. A process hurting itself is
-> > > fine, but if process now has to do special steps to protect from
-> > > its child ie make sure that its childs can not hurt it, then i see
-> > > that as a kernel bug. We can not ask user space process to know about
-> > > all the thousands things that needs to be done to avoid issues with
-> > > each device driver that the process may use (process can be totaly
-> > > ignorant it is using a device if that device is use by a library it
-> > > links to).
-> > > 
-> > > 
-> > > Maybe what needs to happen will explain it better. So if userspace
-> > > wants to be secure and protect itself from its child taking over the
-> > > device through COW:
-> > > 
-> > >     - parent opened a device and is using it
-> > > 
-> > >     ... when parent wants to fork/exec it must:
-> > > 
-> > >     - parent _must_ flush device command queue and wait for the
-> > >       device to finish all pending jobs
-> > > 
-> > >     - parent _must_ unmap all range mapped to the device
-> > > 
-> > >     - parent should first close device file (unless you force set
-> > >       the CLOEXEC flag in the kernel)/it could also just flush
-> > >       but if you are not mapping the device command queue with
-> > >       VM_DONTCOPY then you should really be closing the device
-> > > 
-> > >     - now parent can fork/exec
-> > > 
-> > >     - parent must force COW ie write at least one byte to _all_
-> > >       pages in the range it wants to use with the device
-> > > 
-> > >     - parent re-open the device and re-initialize everything
-> > > 
-> > > 
-> > > So this is putting quite a burden on a number of steps the parent
-> > > _must_ do in order to keep control of memory exposed to the device.
-> > > Not doing so can potentialy lead (it depends on who does the COW
-> > > first) to the child taking control of memory use by the device,
-> > > memory which was mapped by the parent before the child was created.
-> > > 
-> > > Forcing CLOEXEC and VM_DONTCOPY somewhat help to simplify this,
-> > > but you still need to stop, flush, unmap, before fork/exec and then
-> > > re-init everything after.
-> > > 
-> > > 
-> > > This is only when not using SVA/SVM, SVA/SVM is totaly fine from
-> > > that point of view, no issues whatsoever.
-> > > 
-> > > The solution i outlined in previous email do not have that above
-> > > issue either, no need to rely on user space doing that dance.
-> > 
-> > Thank you. I get the point. I'm now trying to see if I can solve the problem by
-> > seting the vma to VM_SHARED when the portiong is "shared to the hardware".
-> > 
-> 
-> FYI you can not convert a private anonymous vma to a share one it is
-> illegal AFAIK at least i never heard of it and i am pretty sure the
-> mm code would break if that happens. The user space is the one that
-> decide what flags a vma has, not the kernel. Modulo few flags like
-> DONTCOPY that can be force set by device driver for their vma ie vma
-> of an mmap against the device file.
-> 
-> If you don't like my solution here is another one but it is ugly and
-> i think it is a bad idea. Again this is for the non SVA/SVM case and
-> it assumes that the command queue is a mmap() of the device file:
->   (A) register mmu_notifier
->   (B) on _every_ invalidate range callback (_no matter_ what is the
->       range) you zap the command queue mapped to user space (this is
->       because you can't tell if the callback happens for a fork or
->       something else) wait for the hardware queue to finish and clear
->       all the iommu/dma mapping and you unpin all the pages ie
->       put_page()
->   (C) in device file vma page fault handler (vm_operations_struct.
->       fault) you redo all the GUP and redo all the iommu/dma mapping
->       and you remap the command queue to the userspace
-> 
-> In (C) you can remap different command queue if you are in the child
-> than in the parent (just look at current->mm and compare it to the
-> one the command queue was created against).
-> 
-> Note that this solution will be much __slower__ than what i described
-> in my previous email. You will see that mmu notifier callbacks happens
-> often and for tons of reasons and you will be _constantly_ undoing and
-> redoing tons of work.
-> 
-> This can be mitigated if you can differentiate reasons behind a mmu
-> notifier callback. I posted patchset to do that a while ago and i
-> intend to post it again in the next month or so. But this would still
-> be a bad idea and solution i described previously is much more sane.
-> 
-> Trying to pretend you can have the same thing as SVA/SVM without SVA
-> is not a good idea. The non SVA case can still expose same API (like
-> i described previously) but should go through kernel for _every_
-> hardware submission (you can batch multiple commands in one submission).
-> Not doing so is way too risky from my POV.
-> 
-> Cheers,
-> Jérôme
+Document bindings for imx214 v4l2 driver.
 
-You are quite right. I tried all the way to find a leak in the mm system and
-fail to. I will tried other way or maybe discard the non-SVA scenario.
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ .../devicetree/bindings/media/i2c/imx214.txt  | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/imx214.txt
 
-Cheers,
+diff --git a/Documentation/devicetree/bindings/media/i2c/imx214.txt b/Documentation/devicetree/bindings/media/i2c/imx214.txt
+new file mode 100644
+index 000000000000..4ff76d96332e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/imx214.txt
+@@ -0,0 +1,51 @@
++* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
++
++The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor with
++an active array size of 4224H x 3176V. It is programmable through I2C
++interface. The I2C address can be configured to to 0x1a or 0x10, depending on
++how is wired.
++Image data is sent through MIPI CSI-2, which is configured as 4 lanes
++at 1440 Mbps.
++
++
++Required Properties:
++- compatible: value should be "sony,imx214" for imx214 sensor
++- reg: I2C bus address of the device
++- enable-gpios: Sensor enable GPIO
++- vdddo-supply: Chip digital IO regulator (1.8V).
++- vdda-supply: Chip analog regulator (2.7V).
++- vddd-supply: Chip digital core regulator (1.12V).
++- clocks = Reference to the xclk clock.
++- clock-names = Should be "xclk".
++- clock-frequency = Frequency of the xclk clock. Should be <24000000>;
++
++Optional Properties:
++- flash-leds: See ../video-interfaces.txt
++- lens-focus: See ../video-interfaces.txt
++
++The imx274 device node should contain one 'port' child node with
++an 'endpoint' subnode. For further reading on port node refer to
++Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++Example:
++
++	camera_rear@1a {
++		status = "okay";
++		compatible = "sony,imx214";
++		reg = <0x1a>;
++		vdddo-supply = <&pm8994_lvs1>;
++		vddd-supply = <&camera_vddd_1v12>;
++		vdda-supply = <&pm8994_l17>;
++		lens-focus = <&ad5820>;
++		enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
++		clocks = <&mmcc CAMSS_MCLK0_CLK>;
++		clock-names = "xclk";
++		clock-frequency = <24000000>;
++		port {
++				imx214_ep: endpoint {
++				clock-lanes = <1>;
++				data-lanes = <0 2 3 4>;
++				remote-endpoint = <&csiphy0_ep>;
++			};
++		};
++	};
 -- 
-			-Kenneth(Hisilicon)
+2.18.0
 
