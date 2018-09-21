@@ -2,244 +2,387 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD16ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C129DC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8081721479
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:39:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zw+BfZI7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8081721479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 71EDD21479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:40:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71EDD21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391072AbeIUX3u (ORCPT
+        id S2391102AbeIUXaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:29:50 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33324 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389545AbeIUX3t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:29:49 -0400
-Received: by mail-pg1-f194.google.com with SMTP id y18-v6so3069855pge.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=V+cxAXiVMnX2b70SkcgiptOz0EzyE+5rO61ahVGZR7E=;
-        b=Zw+BfZI7RNzPSrccU2BNVq8o9p1qb3hfTO7kp8rG2gcsJ0L6dA8ISYoatE16hPL71O
-         PrKx9Zl+AdNw5w2OXoXyqXpxYd9lkcNf91A0W+QDZWejJdVmpLvGpA2aP1ET3vrS3Q/4
-         YvH7BLMplIxT5iPL5F7e/st7n391Uye2zmCsI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=V+cxAXiVMnX2b70SkcgiptOz0EzyE+5rO61ahVGZR7E=;
-        b=JLOh6V12Y/Tbp4rgh6maDvjOizrXcwmlm/syB14WS/v6oQWPeISjowbzjZLlzbmXPR
-         SAAyBo2FofSdWURu3Xgp9OyyWinV/8LlL1f0kGel326TcovoTrHScYuDWIMuyi5KQFZL
-         mmMKXOkBpKwMZ4qpKptoK7lSZvBfmpJm7MkyNgsTQ9UoqF8ITJuYxUUUxASl4nHhZBO5
-         unSnXJQbZXTbZ9QjFQqwCQwcfNo/H9FDDTqHajcf7T1p9bGnrFkM71NiNtbSKIVjA/In
-         dwem2hSRyDiN9tNLOdOo+5mMJwyXh7+/3s53TGKe9+MrT59AFRKNbdmnLkJsdwfjm8gt
-         KRkg==
-X-Gm-Message-State: APzg51ARzNcf4o+q1UCnylI/RuEh8WpHhNKrDKqEKAlJoJA2W8RWnri1
-        uyiWlybj9ZuwhTLyP5Lz2jYz3w==
-X-Google-Smtp-Source: ANB0VdYRuhlbjIBVFVI4v2YEMSujvJI+L4WCUO+TL2Ik6/lj6/bUWgG03+/Fk89mo+HLOJ5ffnxWbw==
-X-Received: by 2002:a63:dc17:: with SMTP id s23-v6mr42549041pgg.40.1537551594526;
-        Fri, 21 Sep 2018 10:39:54 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm60187717pfe.42.2018.09.21.10.39.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 10:39:54 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 21 Sep 2018 19:30:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39890 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389545AbeIUXaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 19:30:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4CBB7A9;
+        Fri, 21 Sep 2018 10:40:07 -0700 (PDT)
+Received: from [10.4.13.92] (e112298-lin.emea.arm.com [10.4.13.92])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9BC03F557;
+        Fri, 21 Sep 2018 10:40:05 -0700 (PDT)
+Subject: Re: [PATCH v5 15/27] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
+ <1535471497-38854-16-git-send-email-julien.thierry@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <1675f220-e4c3-b1e2-7842-901bec8eee19@arm.com>
+Date:   Fri, 21 Sep 2018 18:39:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <ef22f1b4-a2c5-25a4-451e-9191b3579a26@arm.com>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20180920223559.136915-1-swboyd@chromium.org>
- <ef22f1b4-a2c5-25a4-451e-9191b3579a26@arm.com>
-Message-ID: <153755159334.119890.13825040401066852769@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] dma-debug: Check for drivers mapping vmalloc addresses
-Date:   Fri, 21 Sep 2018 10:39:53 -0700
+In-Reply-To: <1535471497-38854-16-git-send-email-julien.thierry@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Robin Murphy (2018-09-21 04:09:50)
-> Hi Stephen,
-> =
+Hi,
 
-> On 20/09/18 23:35, Stephen Boyd wrote:
-> > I recently debugged a DMA mapping oops where a driver was trying to map
-> > a buffer returned from request_firmware() with dma_map_single(). Memory
-> > returned from request_firmware() is mapped into the vmalloc region and
-> > this isn't a valid region to map with dma_map_single() per the DMA
-> > documentation's "What memory is DMA'able?" section.
-> > =
+On 28/08/18 16:51, Julien Thierry wrote:
+> Instead disabling interrupts by setting the PSR.I bit, use a priority
+> higher than the one used for interrupts to mask them via PMR.
+> 
+> The value chosen for PMR to enable/disable interrupts encodes the status
+> of interrupts on a single bit. This information is stored in the irqflags
+> values used when saving/restoring IRQ status.
+> 
+> Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> ---
+>   arch/arm64/include/asm/assembler.h | 17 ++++++-
+>   arch/arm64/include/asm/efi.h       |  3 +-
+>   arch/arm64/include/asm/irqflags.h  | 97 ++++++++++++++++++++++++++++++--------
+>   arch/arm64/include/asm/ptrace.h    | 10 ++--
+>   arch/arm64/kernel/entry.S          |  2 +-
+>   5 files changed, 102 insertions(+), 27 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+> index 0bcc98d..0b2dcfd 100644
+> --- a/arch/arm64/include/asm/assembler.h
+> +++ b/arch/arm64/include/asm/assembler.h
+> @@ -23,6 +23,7 @@
+>   #ifndef __ASM_ASSEMBLER_H
+>   #define __ASM_ASSEMBLER_H
+> 
+> +#include <asm/alternative.h>
+>   #include <asm/asm-offsets.h>
+>   #include <asm/cpufeature.h>
+>   #include <asm/debug-monitors.h>
+> @@ -62,12 +63,24 @@
+>   /*
+>    * Enable and disable interrupts.
+>    */
+> -	.macro	disable_irq
+> +	.macro	disable_irq, tmp
+> +	mov	\tmp, #ICC_PMR_EL1_MASKED
+> +alternative_if_not ARM64_HAS_IRQ_PRIO_MASKING
+>   	msr	daifset, #2
+> +alternative_else
+> +	msr_s	SYS_ICC_PMR_EL1, \tmp
+> +alternative_endif
+>   	.endm
+> 
+> -	.macro	enable_irq
+> +	.macro	enable_irq, tmp
+> +	mov     \tmp, #ICC_PMR_EL1_UNMASKED
+> +alternative_if_not ARM64_HAS_IRQ_PRIO_MASKING
+>   	msr	daifclr, #2
+> +	nop
+> +alternative_else
+> +	msr_s	SYS_ICC_PMR_EL1, \tmp
+> +	dsb	sy
+> +alternative_endif
+>   	.endm
+> 
+>   	.macro	save_and_disable_irq, flags
+> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+> index 7ed3208..3e06891 100644
+> --- a/arch/arm64/include/asm/efi.h
+> +++ b/arch/arm64/include/asm/efi.h
+> @@ -42,7 +42,8 @@
+> 
+>   efi_status_t __efi_rt_asm_wrapper(void *, const char *, ...);
+> 
+> -#define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
+> +#define ARCH_EFI_IRQ_FLAGS_MASK \
+> +	(PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT | ARCH_FLAG_PMR_EN)
+> 
+>   /* arch specific definitions used by the stub code */
+> 
+> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
+> index 24692ed..193cfd0 100644
+> --- a/arch/arm64/include/asm/irqflags.h
+> +++ b/arch/arm64/include/asm/irqflags.h
+> @@ -18,7 +18,27 @@
+> 
+>   #ifdef __KERNEL__
+> 
+> +#include <asm/alternative.h>
+> +#include <asm/cpufeature.h>
+>   #include <asm/ptrace.h>
+> +#include <asm/sysreg.h>
+> +
+> +
+> +/*
+> + * When ICC_PMR_EL1 is used for interrupt masking, only the bit indicating
+> + * whether the normal interrupts are masked is kept along with the daif
+> + * flags.
+> + */
+> +#define ARCH_FLAG_PMR_EN 0x1
+> +
+> +#define MAKE_ARCH_FLAGS(daif, pmr)					\
+> +	((daif) | (((pmr) >> ICC_PMR_EL1_EN_SHIFT) & ARCH_FLAG_PMR_EN))
+> +
+> +#define ARCH_FLAGS_GET_PMR(flags)				\
+> +	((((flags) & ARCH_FLAG_PMR_EN) << ICC_PMR_EL1_EN_SHIFT) \
+> +		| ICC_PMR_EL1_MASKED)
+> +
+> +#define ARCH_FLAGS_GET_DAIF(flags) ((flags) & ~ARCH_FLAG_PMR_EN)
+> 
+>   /*
+>    * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
+> @@ -38,31 +58,50 @@
+>    */
+>   static inline unsigned long arch_local_irq_save(void)
+>   {
+> -	unsigned long flags;
+> -	asm volatile(
+> +	unsigned long flags, masked = ICC_PMR_EL1_MASKED;
+> +	unsigned long pmr = 0;
+> +
+> +	asm volatile(ALTERNATIVE(
+>   		"mrs	%0, daif		// arch_local_irq_save\n"
+> -		"msr	daifset, #2"
+> -		: "=r" (flags)
+> -		:
+> +		"msr	daifset, #2\n"
+> +		"mov	%1, #" __stringify(ICC_PMR_EL1_UNMASKED),
+> +		/* --- */
+> +		"mrs	%0, daif\n"
+> +		"mrs_s  %1, " __stringify(SYS_ICC_PMR_EL1) "\n"
+> +		"msr_s	" __stringify(SYS_ICC_PMR_EL1) ", %2",
+> +		ARM64_HAS_IRQ_PRIO_MASKING)
+> +		: "=&r" (flags), "=&r" (pmr)
+> +		: "r" (masked)
+>   		: "memory");
+> -	return flags;
+> +
+> +	return MAKE_ARCH_FLAGS(flags, pmr);
+>   }
+> 
+>   static inline void arch_local_irq_enable(void)
+>   {
+> -	asm volatile(
+> -		"msr	daifclr, #2		// arch_local_irq_enable"
+> -		:
+> +	unsigned long unmasked = ICC_PMR_EL1_UNMASKED;
+> +
+> +	asm volatile(ALTERNATIVE(
+> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
+> +		"nop",
+> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
+> +		"dsb	sy",
+> +		ARM64_HAS_IRQ_PRIO_MASKING)
+>   		:
+> +		: "r" (unmasked)
+>   		: "memory");
+>   }
+> 
+>   static inline void arch_local_irq_disable(void)
+>   {
+> -	asm volatile(
+> -		"msr	daifset, #2		// arch_local_irq_disable"
+> -		:
+> +	unsigned long masked = ICC_PMR_EL1_MASKED;
+> +
+> +	asm volatile(ALTERNATIVE(
+> +		"msr	daifset, #2		// arch_local_irq_disable",
+> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0",
+> +		ARM64_HAS_IRQ_PRIO_MASKING)
+>   		:
+> +		: "r" (masked)
+>   		: "memory");
+>   }
+> 
+> @@ -72,12 +111,19 @@ static inline void arch_local_irq_disable(void)
+>   static inline unsigned long arch_local_save_flags(void)
+>   {
+>   	unsigned long flags;
+> -	asm volatile(
+> -		"mrs	%0, daif		// arch_local_save_flags"
+> -		: "=r" (flags)
+> +	unsigned long pmr = 0;
+> +
+> +	asm volatile(ALTERNATIVE(
+> +		"mrs	%0, daif		// arch_local_save_flags\n"
+> +		"mov	%1, #" __stringify(ICC_PMR_EL1_UNMASKED),
+> +		"mrs	%0, daif\n"
+> +		"mrs_s  %1, " __stringify(SYS_ICC_PMR_EL1),
+> +		ARM64_HAS_IRQ_PRIO_MASKING)
+> +		: "=r" (flags), "=r" (pmr)
+>   		:
+>   		: "memory");
+> -	return flags;
+> +
+> +	return MAKE_ARCH_FLAGS(flags, pmr);
+>   }
+> 
+>   /*
+> @@ -85,16 +131,27 @@ static inline unsigned long arch_local_save_flags(void)
+>    */
+>   static inline void arch_local_irq_restore(unsigned long flags)
+>   {
+> -	asm volatile(
+> -		"msr	daif, %0		// arch_local_irq_restore"
+> +	unsigned long pmr = ARCH_FLAGS_GET_PMR(flags);
+> +
+> +	flags = ARCH_FLAGS_GET_DAIF(flags);
+> +
+> +	asm volatile(ALTERNATIVE(
+> +		"msr	daif, %0		// arch_local_irq_restore\n"
+> +		"nop\n"
+> +		"nop",
+> +		"msr	daif, %0\n"
+> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%1\n"
+> +		"dsb	sy",
 
-> > Unfortunately, we don't really check that in the DMA debugging code, so
-> > enabling DMA debugging doesn't help catch this problem. Let's add a new
-> > DMA debug function to check for a vmalloc address and print a warning if
-> > this happens. This makes it a little easier to debug these sorts of
-> > problems, instead of seeing odd behavior or crashes when drivers attempt
-> > to map the vmalloc space for DMA.
-> =
+I've come to realize there is an issue with that sequence. If the CPU 
+has { PSR.I = 1, PMR = unmasked }, attempting attempting to restore 
+flags { PSR.I = 0, PMR = masked }, there will be that ever so small 
+window between the two instructions where interrupts get re-enabled 
+while both contexts (the current one and the one being restored) have 
+interrupts disabled...
 
-> Good idea!
-> =
+Does that ever happen? Yes, when coming from a kernel entry or coming 
+back from a VHE guest and doing "local_daif_retore(DAIF_PROCCTX_NOIRQ)".
 
-> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Cc: Robin Murphy <robin.murphy@arm.com>
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > ---
-> >   include/linux/dma-debug.h   |  8 ++++++++
-> >   include/linux/dma-mapping.h |  1 +
-> >   kernel/dma/debug.c          | 12 ++++++++++++
-> >   3 files changed, 21 insertions(+)
-> =
+An obvious, always working solution would be to do:
+	msr daifset, #2
+	msr ICC_PMR_EL1, %1
+	msr daif, %0
+	dsb sy
 
-> However I can't help thinking this looks a little heavyweight for a =
+This however has some heavy performance hit on hackbench (~4-5%).
 
-> single specific check. It seems like it would be enough to simply pass =
+So I'd suggest:
+	msr ICC_PMR_EL1, %1
+	msr daif, %0
+	dsb sy
 
-> the VA as an extra argument to debug_dma_map_page(), since we already =
+So, this only reverses the issue to the case where we restore { PSR.I = 
+1, PMR = unmasked } while CPU has { PSR.I = 0, PMR = masked }?
+Yes, *but* there is no reason this should happen:
 
-> have the map_single argument which would indicate when it's valid. What =
+- There is no pre-defined flags values that provide { PSR.I = 1, PMR = 
+unmasked } (and there is no reason to be one once we start using priorities)
 
-> do you reckon?
+- If flags { PMR = unmasked, PSR.I = 1 } where obtained through 
+local_irq_save() or local_irq_save_flags(), from that point one would 
+need to mask PMR *and* explicitly modify PSR.I since local_enable_irq() 
+no longer touches PSR.
+The only code that has a reason to do this explicit change is PMR setup 
+code at CPU startup and when coming from exception entry. And code doing 
+such action has no reason to be between local_irq_save/restore() calls 
+since that would simply undo its action...
 
-I thought about augmenting debug_dma_map_page() but that has another
-problem where those checks are done after the page has been mapped. The
-kernel can oops when it's operating on the incorrect page so we need to
-check things before calling the dma ops.
+So my take is that restoring the PMR register first is fine without 
+masking PSR.I with the following comment:
 
-So I split that check up into pre_map and post_map parts but then that
-seemed like overkill just to check for this vmalloc problem. Here's the
-patch if you're interested. I can make it a little nicer if you think
-it's also worthwhile.
+/*
+  * Code switching from PSR.I interrupt disabling to PMR masking
+  * should not lie between consecutive calls to local_irq_save()
+  * and local_irq_restore() in the same context.
+  */
 
----8<----
- include/linux/dma-debug.h   |  8 ++++++++
- include/linux/dma-mapping.h |  3 +++
- kernel/dma/debug.c          | 24 ++++++++++++++++--------
- 3 files changed, 27 insertions(+), 8 deletions(-)
+Does this approach seem sound? (If my explanation was not to confusing)
+Am I missing some corner case?
+Any suggestions for better approach? Or better wording?
 
-diff --git a/include/linux/dma-debug.h b/include/linux/dma-debug.h
-index 5aec2ca8a426..3287240a474c 100644
---- a/include/linux/dma-debug.h
-+++ b/include/linux/dma-debug.h
-@@ -35,6 +35,9 @@ extern int dma_debug_resize_entries(u32 num_entries);
- extern void debug_dma_check_vmalloc(struct device *dev, const void *addr,
- 				    unsigned long len);
- =
+Thanks,
 
-+extern void debug_dma_pre_map_page(struct device *dev, struct page *page,
-+				   size_t offset, size_t size);
-+
- extern void debug_dma_map_page(struct device *dev, struct page *page,
- 			       size_t offset, size_t size,
- 			       int direction, dma_addr_t dma_addr,
-@@ -111,6 +114,11 @@ static inline void debug_dma_check_vmalloc(struct devi=
-ce *dev, const void *addr,
- {
- }
- =
+> +		ARM64_HAS_IRQ_PRIO_MASKING)
+>   	:
+> -	: "r" (flags)
+> +	: "r" (flags), "r" (pmr)
+>   	: "memory");
+>   }
+> 
+>   static inline int arch_irqs_disabled_flags(unsigned long flags)
+>   {
+> -	return flags & PSR_I_BIT;
+> +	return (ARCH_FLAGS_GET_DAIF(flags) & (PSR_I_BIT)) |
+> +		!(ARCH_FLAGS_GET_PMR(flags) & ICC_PMR_EL1_EN_BIT);
+>   }
+>   #endif
+>   #endif
+> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+> index 29ec217..67df46e 100644
+> --- a/arch/arm64/include/asm/ptrace.h
+> +++ b/arch/arm64/include/asm/ptrace.h
+> @@ -25,8 +25,11 @@
+>   #define CurrentEL_EL1		(1 << 2)
+>   #define CurrentEL_EL2		(2 << 2)
+> 
+> -/* PMR value use to unmask interrupts */
+> +/* PMR values used to mask/unmask interrupts */
+>   #define ICC_PMR_EL1_UNMASKED    0xf0
+> +#define ICC_PMR_EL1_EN_SHIFT	6
+> +#define ICC_PMR_EL1_EN_BIT	(1 << ICC_PMR_EL1_EN_SHIFT) // PMR IRQ enable
+> +#define ICC_PMR_EL1_MASKED      (ICC_PMR_EL1_UNMASKED ^ ICC_PMR_EL1_EN_BIT)
+> 
+>   /* AArch32-specific ptrace requests */
+>   #define COMPAT_PTRACE_GETREGS		12
+> @@ -201,8 +204,9 @@ static inline void forget_syscall(struct pt_regs *regs)
+>   #define processor_mode(regs) \
+>   	((regs)->pstate & PSR_MODE_MASK)
+> 
+> -#define interrupts_enabled(regs) \
+> -	(!((regs)->pstate & PSR_I_BIT))
+> +#define interrupts_enabled(regs)			\
+> +	((!((regs)->pstate & PSR_I_BIT)) &&		\
+> +	 ((regs)->pmr_save & ICC_PMR_EL1_EN_BIT))
+> 
+>   #define fast_interrupts_enabled(regs) \
+>   	(!((regs)->pstate & PSR_F_BIT))
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index 79b06af..91e1e3d 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -912,7 +912,7 @@ work_pending:
+>    * "slow" syscall return path.
+>    */
+>   ret_to_user:
+> -	disable_irq				// disable interrupts
+> +	disable_irq x21				// disable interrupts
+>   	ldr	x1, [tsk, #TSK_TI_FLAGS]
+>   	and	x2, x1, #_TIF_WORK_MASK
+>   	cbnz	x2, work_pending
+> --
+> 1.9.1
+> 
 
-+static inline void debug_dma_pre_map_page(struct device *dev, struct page =
-*page,
-+					  size_t offset, size_t size)
-+{
-+}
-+
- static inline void debug_dma_map_page(struct device *dev, struct page *pag=
-e,
- 				      size_t offset, size_t size,
- 				      int direction, dma_addr_t dma_addr,
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index a0e67fd5433c..4839bbb4fdc7 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -233,6 +233,8 @@ static inline dma_addr_t dma_map_single_attrs(struct de=
-vice *dev, void *ptr,
- =
-
- 	BUG_ON(!valid_dma_direction(dir));
- 	debug_dma_check_vmalloc(dev, ptr, size);
-+	debug_dma_pre_map_page(dev, virt_to_page(ptr),
-+			       offset_in_page(ptr), size);
- 	addr =3D ops->map_page(dev, virt_to_page(ptr),
- 			     offset_in_page(ptr), size,
- 			     dir, attrs);
-@@ -296,6 +298,7 @@ static inline dma_addr_t dma_map_page_attrs(struct devi=
-ce *dev,
- 	dma_addr_t addr;
- =
-
- 	BUG_ON(!valid_dma_direction(dir));
-+	debug_dma_pre_map_page(dev, page, offset, size);
- 	addr =3D ops->map_page(dev, page, offset, size, dir, attrs);
- 	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
- =
-
-diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-index 7ee7978868d4..dd1ff9f7d783 100644
---- a/kernel/dma/debug.c
-+++ b/kernel/dma/debug.c
-@@ -1324,6 +1324,22 @@ void debug_dma_check_vmalloc(struct device *dev, con=
-st void *addr,
- }
- EXPORT_SYMBOL(debug_dma_check_vmalloc);
- =
-
-+void debug_dma_pre_map_page(struct device *dev, struct page *page, size_t =
-offset,
-+			    size_t size)
-+{
-+	if (unlikely(dma_debug_disabled()))
-+		return;
-+
-+	check_for_stack(dev, page, offset);
-+
-+	if (!PageHighMem(page)) {
-+		void *addr =3D page_address(page) + offset;
-+
-+		check_for_illegal_area(dev, addr, size);
-+	}
-+}
-+EXPORT_SYMBOL(debug_dma_pre_map_page);
-+
- void debug_dma_map_page(struct device *dev, struct page *page, size_t offs=
-et,
- 			size_t size, int direction, dma_addr_t dma_addr,
- 			bool map_single)
-@@ -1352,14 +1368,6 @@ void debug_dma_map_page(struct device *dev, struct p=
-age *page, size_t offset,
- 	if (map_single)
- 		entry->type =3D dma_debug_single;
- =
-
--	check_for_stack(dev, page, offset);
--
--	if (!PageHighMem(page)) {
--		void *addr =3D page_address(page) + offset;
--
--		check_for_illegal_area(dev, addr, size);
--	}
--
- 	add_dma_entry(entry);
- }
- EXPORT_SYMBOL(debug_dma_map_page);
--- =
-
-Sent by a computer through tubes
-
+-- 
+Julien Thierry
