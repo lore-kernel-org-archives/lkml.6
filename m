@@ -2,81 +2,107 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CA3ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E4EECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA012154B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:46:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA012154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 890FF21547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:46:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 890FF21547
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389073AbeIUHc6 (ORCPT
+        id S2389078AbeIUHdW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 03:32:58 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:53988 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389064AbeIUHc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 03:32:58 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id w8L1j5QU030705
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Thu, 20 Sep 2018 18:45:47 -0700
-Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 20 Sep 2018 18:45:41 -0700
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     <platform-driver-x86@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Peter Feuerer <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Subject: [PATCH 4/6] platform/x86: acerhdf: Add BIOS entry for Gateway LT31 v1.3307
-Date:   Thu, 20 Sep 2018 21:44:19 -0400
-Message-ID: <20180921014421.30804-5-paul.gortmaker@windriver.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20180921014421.30804-1-paul.gortmaker@windriver.com>
-References: <20180921014421.30804-1-paul.gortmaker@windriver.com>
+        Fri, 21 Sep 2018 03:33:22 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13086 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725892AbeIUHdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 03:33:21 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D52848E35BE2;
+        Fri, 21 Sep 2018 09:46:53 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
+ 09:46:54 +0800
+Message-ID: <5BA44D8E.3070708@huawei.com>
+Date:   Fri, 21 Sep 2018 09:46:54 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-Content-Type: text/plain
+To:     <jikos@kernel.org>, <benjamin.tissoires@redhat.com>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] HID: logitech: fix a used uninitialized GCC warning
+References: <1536824470-36659-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1536824470-36659-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To fix:
+Hi Jiri
 
-  acerhdf: unknown (unsupported) BIOS version Gateway  /LT31   /v1.3307 , please report, aborting!
+Can you pick up the patch?
 
-As can be seen in the context, the BIOS registers haven't changed in
-the previous versions, so the assumption is they won't have changed
-in this last update for this somewhat older platform either.
+Thanks
+zhong jiang
 
-Cc: Peter Feuerer <peter@piie.net>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/platform/x86/acerhdf.c | 1 +
- 1 file changed, 1 insertion(+)
+On 2018/9/13 15:41, zhong jiang wrote:
+> Fix the following compile warning:
+>
+> drivers/hid/hid-logitech-hidpp.c: In function 'hi_res_scroll_enable':
+> drivers/hid/hid-logitech-hidpp.c:2714:54: warning: 'multiplier' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   hidpp->vertical_wheel_counter.resolution_multiplier = multiplier;
+>
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+> v1->v2:
+>      According to Benjamin's suggestion, To initialize the value
+> and remove the duplicated assignement. 
+>
+>  drivers/hid/hid-logitech-hidpp.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+> index 5f0c080..f012808 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -1231,7 +1231,6 @@ static int hidpp_hrw_get_wheel_capability(struct hidpp_device *hidpp,
+>  	*multiplier = response.fap.params[0];
+>  	return 0;
+>  return_default:
+> -	*multiplier = 8;
+>  	hid_warn(hidpp->hid_dev,
+>  		 "Couldn't get wheel multiplier (error %d), assuming %d.\n",
+>  		 ret, *multiplier);
+> @@ -2696,7 +2695,7 @@ static int hi_res_scroll_look_up_microns(__u32 product_id)
+>  static int hi_res_scroll_enable(struct hidpp_device *hidpp)
+>  {
+>  	int ret;
+> -	u8 multiplier;
+> +	u8 multiplier = 8;
+>  
+>  	if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_X2121) {
+>  		ret = hidpp_hrw_set_wheel_mode(hidpp, false, true, false);
+> @@ -2704,10 +2703,9 @@ static int hi_res_scroll_enable(struct hidpp_device *hidpp)
+>  	} else if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_X2120) {
+>  		ret = hidpp_hrs_set_highres_scrolling_mode(hidpp, true,
+>  							   &multiplier);
+> -	} else /* if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_1P0) */ {
+> +	} else /* if (hidpp->quirks & HIDPP_QUIRK_HI_RES_SCROLL_1P0) */
+>  		ret = hidpp10_enable_scrolling_acceleration(hidpp);
+> -		multiplier = 8;
+> -	}
+> +
+>  	if (ret)
+>  		return ret;
+>  
 
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index fef3b727bc24..eddcd8e94a88 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -236,6 +236,7 @@ static const struct bios_settings bios_tbl[] = {
- 	{"Gateway", "LT31",   "v1.3201",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3302",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3303t", 0x55, 0x58, {0x9e, 0x00}, 0},
-+	{"Gateway", "LT31",   "v1.3307",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	/* Packard Bell */
- 	{"Packard Bell", "DOA150",  "v0.3104",  0x55, 0x58, {0x21, 0x00}, 0},
- 	{"Packard Bell", "DOA150",  "v0.3105",  0x55, 0x58, {0x20, 0x00}, 0},
--- 
-2.15.0
 
