@@ -2,143 +2,127 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C942AECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8DAECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 606D92156F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:33:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUYzb3A+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 606D92156F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DEB12156B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:34:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DEB12156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391614AbeIVFYr (ORCPT
+        id S2391659AbeIVFZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 01:24:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34878 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeIVFYr (ORCPT
+        Sat, 22 Sep 2018 01:25:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55148 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeIVFZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 01:24:47 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p12-v6so6624420pfh.2;
-        Fri, 21 Sep 2018 16:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=axLDuYefmA2uvjmcj61BjT6ReXudzQM9K2iLPqRpKuU=;
-        b=ZUYzb3A+vlzfUGao83ThvO+XyWO0OHan2TcQQFojCggl/5xyGsh1hOtahyQlbNlAqf
-         cDUzU0fCtQTvlYmyOxvh9PF9Apuu3C+AtgwylJglJBjuLN1JwXOj6NOvF4ACvGd7slWo
-         iOd7eGifXC7uxhdyL9N70LJqxQRenZDYzwxwFGyoX49gNIzsr0d0W3ul/iU3MjWxTmHN
-         VnTKna/r4kgddZJgr9Dkd//TksM0AWPf0Zs3mDJYqdSekOK/MODtUpf0cyZVVlVq5RFY
-         y/STMnEHbs78ppTf8+DkpMxnu55GnEChBVHyxI/FWmUf9kylw261FAERH4/TT2Z66P32
-         EIHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=axLDuYefmA2uvjmcj61BjT6ReXudzQM9K2iLPqRpKuU=;
-        b=FQ7bK7Y7skM4/naDkp2frsLmiWECUaWfEm8vJQhBMalix230lu7ot0OXNAnJ+mVe9o
-         8+juYAOglRo9Z+MgRKRlYVLexuKGdeVLvREEmtHRJqvSHIuuIsSiXV5v7gfMeAeJP9cH
-         3E6DHTkfqOKcRqh4qA3/qtiljjoyzwzlm3tYdKUiH5glp1grgseFCxTJh8oHCEFQDBqL
-         qdJ6rnaYG791m5jLHh2bYfj/yeCxQN1DoD/mKXBtjDblVwVPAt06UreGfoe/erEkjR1e
-         k6D4b/iUXSkG3YTohySuCrBpYpawzlS8p66Q6WHdWb1zpjinnb7XxQ1E/WHTUMrdvZqu
-         uieA==
-X-Gm-Message-State: ABuFfohd3lmx9CdX7OQBjGCPCnkNaAuNtupFHprFutFPqvjV3WT5okmH
-        Njw7juNe/ryPE5hBJcNJytY=
-X-Google-Smtp-Source: ACcGV63mgUZgDxrokMuxj2zPYGVv6e04cEHUWpnF8vDA7L+OXk+dYClMoHcuRcERDL9AQ0lhsschDg==
-X-Received: by 2002:a63:7e1c:: with SMTP id z28-v6mr19427pgc.246.1537572819185;
-        Fri, 21 Sep 2018 16:33:39 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm47337471pfk.134.2018.09.21.16.33.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 16:33:38 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 16:33:36 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
- for legacy boards
-Message-ID: <20180921233336.GB44099@dtor-ws>
-References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
- <20180917181603.125492-3-dmitry.torokhov@gmail.com>
- <20180919151026.GB11965@kuha.fi.intel.com>
- <20180919171326.GB116719@dtor-ws>
- <20180920101648.GC11965@kuha.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180920101648.GC11965@kuha.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 22 Sep 2018 01:25:21 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFC378D7;
+        Fri, 21 Sep 2018 23:34:13 +0000 (UTC)
+Date:   Fri, 21 Sep 2018 16:34:12 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Aaron Tomlin <atomlin@redhat.com>
+Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] slub: extend slub debug to handle multiple slabs
+Message-Id: <20180921163412.de1b331a639a8031aaf85d4f@linux-foundation.org>
+In-Reply-To: <20180920200016.11003-1-atomlin@redhat.com>
+References: <20180920200016.11003-1-atomlin@redhat.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 01:16:48PM +0300, Heikki Krogerus wrote:
-> On Wed, Sep 19, 2018 at 10:13:26AM -0700, Dmitry Torokhov wrote:
-> > > > diff --git a/drivers/base/pset_property.c b/drivers/base/pset_property.c
-> > > > index 08ecc13080ae..63f2377aefe8 100644
-> > > > --- a/drivers/base/pset_property.c
-> > > > +++ b/drivers/base/pset_property.c
-> > > > @@ -18,6 +18,11 @@ struct property_set {
-> > > >  	struct device *dev;
-> > > >  	struct fwnode_handle fwnode;
-> > > >  	const struct property_entry *properties;
-> > > > +
-> > > > +	struct property_set *parent;
-> > > > +	/* Entry in parent->children list */
-> > > > +	struct list_head child_node;
-> > > > +	struct list_head children;
-> > > 
-> > > Add
-> > > 
-> > >         const char *name;
-> > > 
-> > > and you can implement also pset_get_named_child_node().
-> > 
-> > Or
-> > 	char name[];
-> > 
-> > to avoid separate allocation.
-> 
-> Let's not do that, especially if you are planning on exporting this
-> structure.
+On Thu, 20 Sep 2018 21:00:16 +0100 Aaron Tomlin <atomlin@redhat.com> wrote:
 
-Can you please elaborate why? Not using pointer saves us 4/8 bytes +
-however much memory we need for bookkeeping for the extra chunk. Given
-that majority of pset nodes are unnamed this seems wasteful.
-
-> If the name is coming from .rodata, there is no need to
-> allocate anything for the name. Check kstrdup_const().
-
-The data is most likely coming as __initconst so we do need to copy it.
-
+> Extend the slub_debug syntax to "slub_debug=<flags>[,<slub>]*", where <slub>
+> may contain an asterisk at the end.  For example, the following would poison
+> all kmalloc slabs:
 > 
-> > Alternatively, we can add it later when we need it, and add
-> > device_add_named_child_properties().
-> > 
-> > I'll leave it up to Rafael to decide.
+> 	slub_debug=P,kmalloc*
 > 
-> Fair enough.
+> and the following would apply the default flags to all kmalloc and all block IO
+> slabs:
 > 
+> 	slub_debug=,bio*,kmalloc*
 > 
-> Thanks,
+> Please note that a similar patch was posted by Iliyan Malchev some time ago but
+> was never merged:
 > 
-> -- 
-> heikki
+> 	https://marc.info/?l=linux-mm&m=131283905330474&w=2
 
-Thanks.
+Fair enough, I guess.
 
--- 
-Dmitry
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1283,9 +1283,37 @@ slab_flags_t kmem_cache_flags(unsigned int object_size,
+>  	/*
+>  	 * Enable debugging if selected on the kernel commandline.
+>  	 */
+
+The above comment is in a strange place.  Can we please move it to
+above the function definition in the usual fashion?  And make it
+better, if anything seems to be missing.
+
+> -	if (slub_debug && (!slub_debug_slabs || (name &&
+> -		!strncmp(slub_debug_slabs, name, strlen(slub_debug_slabs)))))
+> -		flags |= slub_debug;
+> +
+> +	char *end, *n, *glob;
+
+`end' and `glob' could be local to the loop which uses them, which I
+find a bit nicer.
+
+`n' is a rotten identifier.  Can't we think of something which
+communicates meaning?
+
+> +	int len = strlen(name);
+> +
+> +	/* If slub_debug = 0, it folds into the if conditional. */
+> +	if (!slub_debug_slabs)
+> +		return flags | slub_debug;
+
+If we take the above return, the call to strlen() was wasted cycles. 
+Presumably gcc is smart enough to prevent that, but why risk it.
+
+> +	n = slub_debug_slabs;
+> +	while (*n) {
+> +		int cmplen;
+> +
+> +		end = strchr(n, ',');
+> +		if (!end)
+> +			end = n + strlen(n);
+> +
+> +		glob = strnchr(n, end - n, '*');
+> +		if (glob)
+> +			cmplen = glob - n;
+> +		else
+> +			cmplen = max(len, (int)(end - n));
+
+max_t() exists for this.  Or maybe make `len' size_t, but I expect that
+will still warn - that subtraction returns a ptrdiff_t, yes?
+
+> +
+> +		if (!strncmp(name, n, cmplen)) {
+> +			flags |= slub_debug;
+> +			break;
+> +		}
+> +
+> +		if (!*end)
+> +			break;
+> +		n = end + 1;
+> +	}
+
+The code in this loop hurts my brain a bit. I hope it's correct ;)
