@@ -2,127 +2,104 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8DAECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144E9C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DEB12156B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DEB12156B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8AEEC2156F
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 23:38:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuDH6zd4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AEEC2156F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391659AbeIVFZW (ORCPT
+        id S2391628AbeIVFaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 01:25:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55148 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeIVFZV (ORCPT
+        Sat, 22 Sep 2018 01:30:06 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36727 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725756AbeIVFaF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 01:25:21 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AFC378D7;
-        Fri, 21 Sep 2018 23:34:13 +0000 (UTC)
-Date:   Fri, 21 Sep 2018 16:34:12 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Aaron Tomlin <atomlin@redhat.com>
-Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] slub: extend slub debug to handle multiple slabs
-Message-Id: <20180921163412.de1b331a639a8031aaf85d4f@linux-foundation.org>
-In-Reply-To: <20180920200016.11003-1-atomlin@redhat.com>
-References: <20180920200016.11003-1-atomlin@redhat.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 22 Sep 2018 01:30:05 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v17-v6so8518458lfe.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 16:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dCaiOk3F/KGB7VVMwtkjn1h1KxQNoK32W3u0wilmq9Q=;
+        b=cuDH6zd44UYdeOzj8DSrwKFqQlzpnTrkQPG3jqu5/n/Jo92X7cPhteyjs4ojgHl31H
+         9ohv90ic0lkHTJ6vvO42yQqcMc74JPjZQm7cOdGsTXp5Mtgav2nC0D8nA/nc0kVxZ7hF
+         DAiLPcbfGGekmWvvEdKcDYmKVg2rPz/7UgaR7P5kcp+l3SNkBaCqLw3aa4GTEaJCxtdj
+         ttYEJ69sZVbGRn11d01VGT2HBzfyNhHroxaNefwAsPAUy0eC7pIHGYsDl2ViIX1j2Dru
+         K1ihHpPZhdyo4Mry6G+C753/Ab6W7hdK1wBYT9rcwAmoEJnpg35R2MimyQ3EecW7t5uA
+         LwIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dCaiOk3F/KGB7VVMwtkjn1h1KxQNoK32W3u0wilmq9Q=;
+        b=NVhcQnL9lpoB+H3abHW7yauaQbSTwBzR/DDplFhAC+7N5hFlHCJkkns+OcdpRf+ipB
+         Tr6fjO7AFeFJefRQEMuIZIwd29ILEKE8mTLyGuUAMdDg/mE+zNujsQeyn2iI03reI7BZ
+         AdCS+gLTgVDMg8uwZo+SfFVomk6UINF5YQJcZUfdwc+xlSPs8srHGoH6S89rW+BVgTo4
+         1roo7m3ZM6eyq1nHJQyQWmoXoQf4pgZiJ9X/6eVtlbjEWHxkSmb8RMBgS3lK4TBczFEd
+         rzaCB7MiOG6vDInUaEJHmgEnP3jcJiGkCXQQT9SFoklj84hHkQQxOB+cygcpOJkm+Abk
+         SZQg==
+X-Gm-Message-State: APzg51CGtZK00jUVkktNPCbQI84jLG8Blk3KgwHFK1OoOclLUuVJbLS2
+        SMAFIk9m0e1c2ANDYEW9Eks=
+X-Google-Smtp-Source: ANB0Vdb/LJiWC5TVMOd2UNgNHiSAU2ykMSsm15rF5c2+tHphS5RH3erzbW7lgFhs1SrrEyqXp9Gq1g==
+X-Received: by 2002:a19:109e:: with SMTP id 30-v6mr16075lfq.96.1537573135479;
+        Fri, 21 Sep 2018 16:38:55 -0700 (PDT)
+Received: from VB.local (89-64-36-36.dynamic.chello.pl. [89.64.36.36])
+        by smtp.gmail.com with ESMTPSA id o67-v6sm2479986lff.36.2018.09.21.16.38.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 16:38:54 -0700 (PDT)
+From:   =?UTF-8?q?Przemys=C5=82aw=20G=C5=82=C4=99bocki?= 
+        <glebocki.przemyslaw@gmail.com>
+To:     paul@paul-moore.com
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Przemys=C5=82aw=20G=C5=82=C4=99bocki?= 
+        <glebocki.przemyslaw@gmail.com>
+Subject: [PATCH] audit: fixed a braces coding style issue
+Date:   Sat, 22 Sep 2018 01:38:22 +0200
+Message-Id: <20180921233822.4362-1-glebocki.przemyslaw@gmail.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Sep 2018 21:00:16 +0100 Aaron Tomlin <atomlin@redhat.com> wrote:
+Fixed a coding style issue.
 
-> Extend the slub_debug syntax to "slub_debug=<flags>[,<slub>]*", where <slub>
-> may contain an asterisk at the end.  For example, the following would poison
-> all kmalloc slabs:
-> 
-> 	slub_debug=P,kmalloc*
-> 
-> and the following would apply the default flags to all kmalloc and all block IO
-> slabs:
-> 
-> 	slub_debug=,bio*,kmalloc*
-> 
-> Please note that a similar patch was posted by Iliyan Malchev some time ago but
-> was never merged:
-> 
-> 	https://marc.info/?l=linux-mm&m=131283905330474&w=2
+Signed-off-by: Przemysław Głębocki <glebocki.przemyslaw@gmail.com>
+---
+ kernel/audit_tree.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Fair enough, I guess.
+diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
+index ea43181cde4a..3d0e45fa765d 100644
+--- a/kernel/audit_tree.c
++++ b/kernel/audit_tree.c
+@@ -112,10 +112,9 @@ static void free_chunk(struct audit_chunk *chunk)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < chunk->count; i++) {
++	for (i = 0; i < chunk->count; i++)
+ 		if (chunk->owners[i].owner)
+ 			put_tree(chunk->owners[i].owner);
+-	}
+ 	kfree(chunk);
+ }
+ 
+-- 
+2.17.1
 
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1283,9 +1283,37 @@ slab_flags_t kmem_cache_flags(unsigned int object_size,
->  	/*
->  	 * Enable debugging if selected on the kernel commandline.
->  	 */
-
-The above comment is in a strange place.  Can we please move it to
-above the function definition in the usual fashion?  And make it
-better, if anything seems to be missing.
-
-> -	if (slub_debug && (!slub_debug_slabs || (name &&
-> -		!strncmp(slub_debug_slabs, name, strlen(slub_debug_slabs)))))
-> -		flags |= slub_debug;
-> +
-> +	char *end, *n, *glob;
-
-`end' and `glob' could be local to the loop which uses them, which I
-find a bit nicer.
-
-`n' is a rotten identifier.  Can't we think of something which
-communicates meaning?
-
-> +	int len = strlen(name);
-> +
-> +	/* If slub_debug = 0, it folds into the if conditional. */
-> +	if (!slub_debug_slabs)
-> +		return flags | slub_debug;
-
-If we take the above return, the call to strlen() was wasted cycles. 
-Presumably gcc is smart enough to prevent that, but why risk it.
-
-> +	n = slub_debug_slabs;
-> +	while (*n) {
-> +		int cmplen;
-> +
-> +		end = strchr(n, ',');
-> +		if (!end)
-> +			end = n + strlen(n);
-> +
-> +		glob = strnchr(n, end - n, '*');
-> +		if (glob)
-> +			cmplen = glob - n;
-> +		else
-> +			cmplen = max(len, (int)(end - n));
-
-max_t() exists for this.  Or maybe make `len' size_t, but I expect that
-will still warn - that subtraction returns a ptrdiff_t, yes?
-
-> +
-> +		if (!strncmp(name, n, cmplen)) {
-> +			flags |= slub_debug;
-> +			break;
-> +		}
-> +
-> +		if (!*end)
-> +			break;
-> +		n = end + 1;
-> +	}
-
-The code in this loop hurts my brain a bit. I hope it's correct ;)
