@@ -2,111 +2,149 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FEBECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC3BECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7DF21550
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:07:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OSApUQ1z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7DF21550
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0326E21557
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0326E21557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390505AbeIUV5Y (ORCPT
+        id S2390605AbeIUV5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 21 Sep 2018 17:57:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38688 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389545AbeIUV5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Sep 2018 17:57:24 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37651 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeIUV5Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:57:24 -0400
-Received: by mail-it1-f194.google.com with SMTP id h20-v6so2442728itf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ufKt1o6XZWWhy3FWmpYRN0ahckMTjd9MIhEaFudp5K8=;
-        b=OSApUQ1zEDDwwZ0GeHcXSxIWexaztneKskDPc+pbnAtP0kezLMvVPYZo+QqcjAUCkA
-         a52Y8jyMaffid5eizbWYTu2Y+l7fYAI71+ZZmjxk6Lwj+S5UgZkOzDGJWc/s+TetD8Bg
-         UdMZXvPQtdxCRXiCk4MZO40bhU2adaLZ0Y/cM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ufKt1o6XZWWhy3FWmpYRN0ahckMTjd9MIhEaFudp5K8=;
-        b=Jxdd8H1fAEz6d85928dFv9SyIBe8R9WruskdCo6nJ/v8zOZ3xvn4aXiZaCFmz+wHcl
-         N4ZpfRZnE6lnKf7Wl1oqTJjioLM4bZtyoiCKBRTDofWHNzmP3oKXg2Fji7/36NkpiSTr
-         zsZGw2uxLPUyPjW/r+McBlAK9VMdFcnDAUJBh2ygGGuWhrAQxMgpeYoSF42VTxsF9jFM
-         7OLUINSARCqOTsZOasuOcGnSOFVL/vgNDPL/LS74QvBIAJoZSRFDsDQSu/SXw87DKIw6
-         4pgMSFTkV5gl2dS7CPQYSf6GgW/Ixrc/Q+j10d0PI2CssN/oKre3UyeM7/GuboxScRj2
-         H7oQ==
-X-Gm-Message-State: APzg51DgojKlG/HUWFKPHMeiC5u+ru1RdwCI6SHAtMPu3Fxp4rf52aSC
-        AhE9ZY4lYx8GHFPdhZIsocg2HFsAkb5w2rhDjwIneA==
-X-Google-Smtp-Source: ANB0VdbBRhKxCUMOBmi+e0LiNpZFNHhuXAe+aPNDISxjHrogJMMoqOr67cOPgxQNC5VxgYZo5L1PhyDssynID1uSmX4=
-X-Received: by 2002:a24:9d84:: with SMTP id f126-v6mr6588665itd.130.1537546070708;
- Fri, 21 Sep 2018 09:07:50 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2320418A;
+        Fri, 21 Sep 2018 09:07:51 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.Emea.Arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E4363F557;
+        Fri, 21 Sep 2018 09:07:47 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 17:07:45 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     honghui.zhang@mediatek.com
+Cc:     marc.zyngier@arm.com, bhelgaas@google.com, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, ulf.hansson@linaro.org,
+        hongkun.cao@mediatek.com, youlin.pei@mediatek.com,
+        yong.wu@mediatek.com, yt.shen@mediatek.com, sean.wang@mediatek.com,
+        xinping.qian@mediatek.com
+Subject: Re: [PATCH v4 1/4] PCI: mediatek: fixup mtk_pcie_find_port logical
+Message-ID: <20180921160745.GB21644@e107981-ln.cambridge.arm.com>
+References: <1536573023-6720-1-git-send-email-honghui.zhang@mediatek.com>
+ <1536573023-6720-2-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-References: <20180914070839.4667-1-ricardo.ribalda@gmail.com>
- <20180914070839.4667-2-ricardo.ribalda@gmail.com> <CACRpkdbqmK=MzGsOYLdtFO3AAbKHhzy_RD=Gr6wj3WnQunyCGg@mail.gmail.com>
- <CAPybu_0iDqSn02iGLEg8Ge9EdyCCNhRVV3JgHg180qrXK+bcdw@mail.gmail.com>
- <d84ee082-f578-3ed3-32be-dbeb9562980e@kernel.org> <CACRpkdYGpEVG9gqPxNaOsD55k9idEfGaxOUrObbN9VZS06x5jw@mail.gmail.com>
- <bcb79947-dfe0-e5e2-fb48-3b6992720f01@kernel.org> <CACRpkdbz0hyjy5U3-xo8Oi-ojB_H3=DEwuJtmoqJTJQNiAYYaA@mail.gmail.com>
- <27c8e13a-44bf-18b5-083b-25b87d7b8605@kernel.org>
-In-Reply-To: <27c8e13a-44bf-18b5-083b-25b87d7b8605@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Sep 2018 09:07:38 -0700
-Message-ID: <CACRpkdYV+A9rUZvYN_Vh3wD6Vb73qj8=SkHJCJ0ZiTWP5Ojw1A@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: Show correct direction from the beginning
-To:     timur@kernel.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536573023-6720-2-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 7:05 PM Timur Tabi <timur@kernel.org> wrote:
-> On 9/20/18 5:36 PM, Linus Walleij wrote:
-> > What I mean is that $SUBJECT patch might not hurt Qualcomms
-> > GPIOs (not crash the platform) if and only if it is augmented to not
-> > try to get the initial direction from lines masked off in .valid_mask
-> > if .need_valid_mask is true.
-> >
-> > Whether it makes sense semantically is a different debate, but it
-> > seems possible to reintroduce calling .get_direction() without
-> > hurting anyone.
->
-> That means that all the logic for checking valid_mask needs to be added
-> to the chip driver's .get_direction() function.  We can add that logic
-> to msm_gpio_get_direction (at one point, I had a patch that did that,
-> but it was rejected).
+On Mon, Sep 10, 2018 at 05:50:20PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> The Mediatek's host controller has two slots, each with it's own control
+> registers. The host driver need to identify which slot was connected
+> in order to access the device's configuration space. There's problem
+> for current host driver to find out which slot was connected to for
+> a given EP device.
+> 
+> Assuming each slot have connect with one EP device as below:
+> 
+>                 host bridge
+>   bus 0 --> __________|_______
+>            |                  |
+>            |                  |
+>          slot 0             slot 1
+>   bus 1 -->|        bus 2 --> |
+>            |                  |
+>          EP 0               EP 1
+> 
+> During PCI enumeration, system software will scan all the PCI device
+> starting from devfn 0. So it will get the proper port for slot0 and
+> slot1 device when using PCI_SLOT(devfn) for match. But it will get
+> the wrong slot for EP1: The devfn will be start from 0 when scanning
+> EP1 behind slot1, it will get port0 since the PCI_SLOT(EP1) is match
+> for port0's slot value. So the host driver should not using EP's devfn
+> but the slot's devfn(the slot which EP was connected to) for match.
+> 
+> This patch fix the mtk_pcie_find_port's logical by using the slot's
+> devfn for match.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 861dda6..20b9088 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -337,11 +337,26 @@ static struct mtk_pcie_port *mtk_pcie_find_port(struct pci_bus *bus,
+>  {
+>  	struct mtk_pcie *pcie = bus->sysdata;
+>  	struct mtk_pcie_port *port;
+> +	struct pci_dev *dev;
+> +	struct pci_bus *pbus;
+>  
+> -	list_for_each_entry(port, &pcie->ports, list)
+> -		if (port->slot == PCI_SLOT(devfn))
+> +	list_for_each_entry(port, &pcie->ports, list) {
+> +		if (!bus->number && port->slot == PCI_SLOT(devfn))
+>  			return port;
+>  
+> +		if (bus->number) {
+> +			pbus = bus;
+> +
+> +			while (pbus->number) {
+> +				dev = pbus->self;
+> +				pbus = dev->bus;
+> +			}
+> +
+> +			if (port->slot == PCI_SLOT(dev->devfn))
+> +				return port;
+> +		}
+> +	}
 
-Nah, what is in patch v2 is better, just checking it when we need to.
+	/*
+	 * Walk the bus hierarchy to get the devfn value
+	 * of the port in the root bus.
+	 */
+	while (bus && bus->number) {
+		devfn = bus->self->devfn;
+		bus = bus->parent;
+	}
 
-> My concern is: what if a driver depends on a .request call being made
-> (in order to configure muxes, for example) before touching the hardware?
+	list_for_each_entry(port, &pcie->ports, list) {
+		if (port->slot == PCI_SLOT(devfn))
+			return port;
 
-Hm. That is a good question.
+	return NULL;
 
-I wonder if we have that problem in practice. If this happens, maybe the
-driver needs to keep track of stuff a bit. I think if we just loop request
-over everything we could disturb other mux set-up.
+Would it work ? Maybe it is a little easier to parse.
 
-> I wonder if this is something that really should be handled in the
-> driver's .probe function.  The driver should collect that information
-> and pass it to add_data.
+I think this can even be made easier by using struct device_node* as
+comparison (and store it in port->slot instead of the port number), I
+think that the pci_dev representing the port should have the right
+of_node associated with it by core code, so it is just a matter of
+finding the first pci_dev parent with an of_node set and compare it
+against port->slot (that should be converted to a struct device_node*).
 
-I see the idea, but it seems complicated compared to just calling
-the callbacks. Let's try the v2 patch approach first.
+This ought to be tested and written but I think that's doable.
 
-Yours,
-Linus Walleij
+Lorenzo
