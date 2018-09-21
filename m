@@ -2,106 +2,116 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0F9ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF96AC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0738D21522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:28:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0738D21522
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+	by mail.kernel.org (Postfix) with ESMTP id 5FB9C21522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 22:30:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfLx+7Wd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB9C21522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391585AbeIVETS (ORCPT
+        id S1726316AbeIVEVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 00:19:18 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:58414 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725750AbeIVETR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 00:19:17 -0400
-Received: from MUA
-        by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <mail@maciej.szmigiero.name>)
-        id 1g3TuO-0006uG-7I; Sat, 22 Sep 2018 00:28:20 +0200
-Subject: Re: kernel 4.18.5 Realtek 8111G network adapter stops responding
- under high system load
-Cc:     David Arendt <admin@prnet.org>, linux-kernel@vger.kernel.org,
-        nic_swsd@realtek.com, netdev@vger.kernel.org
-References: <20180918102349.Horde.yHctatUod-_SC696oYKmySa@cloud.luxmemories.lu>
- <039cc66f-13b0-e745-b6ec-68f4580e90ef@maciej.szmigiero.name>
- <c37b0548-518c-f022-b407-6f71943b9db2@prnet.org>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b46072fb-755e-b1d0-c417-adc3e2030ef2@maciej.szmigiero.name>
-Date:   Sat, 22 Sep 2018 00:28:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <c37b0548-518c-f022-b407-6f71943b9db2@prnet.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 22 Sep 2018 00:21:04 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42623 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725756AbeIVEVE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 00:21:04 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l9-v6so6559405pff.9;
+        Fri, 21 Sep 2018 15:30:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=H9cNT0Tp13nJ+GUwoMH9aBG19QPMRXS/35BiURGEFTU=;
+        b=BfLx+7WdhRRX2TwqZjzPThcXyk4lbFc48g0oSGe0t/vWtidjeLMX0edTs4pTlk9yc7
+         xoC8MN3moONBcg955jhIb+n31cBPFUjtYrn+Y13TXPe7ZQ26VJ75zK2xXyv4QswWp2NC
+         92nmg5tTTkHZVG1qQA7fzrtsfPlQj+IqX2OF2JQBF2hxrs5lmXzCL0PW6oA24DrZoxwl
+         XoHSb51tXreg6H7KWhq+l10O7hM7BepQ+ZBOapwlZY57e1vYH7mJrXUwxlxy1+BcYIEt
+         BdyJwU8DuS6NjIZC6h8WtuVpj0+XEXsYgoaY09+2aqXWt7SIt61GKLzBmnH9WOrnAn42
+         2cUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=H9cNT0Tp13nJ+GUwoMH9aBG19QPMRXS/35BiURGEFTU=;
+        b=Xm1JoikkXMIQ/QA1gUAkUC7MwoX4gFXqF2Wo75I1ctP3n3Y4FO3ZybXRy1QZkcH5bW
+         MlHZ1kHnXE0CbVRN9jMLazxaz6umnuh3Et6UDhhuYIUX8lGccWkY5uYgEiYjp0uO/QNS
+         iKp6Fd3F2NPYQ6ichcuO6INfLsQaj4WEbelRi4ffrViy7zKy5XwCSLjXwSZbRfLVTsI8
+         LQAWuF6HiQeuEXx6p1/C/KLiF6Lwps2piVUa02n/sGzZdzE75gliJ5H85gqNAsHCZYRn
+         9Awi+lql9V9k8xFIBrhiAw2JxUkeJkgEmSDXY6MDIszRFp/EaOvxfJtcz7cdIgUPA0n0
+         fG0Q==
+X-Gm-Message-State: APzg51C/2F15f4/6H9T1eVLVVh9z2NtdD2eGN1KMM18GDCzLHgk7FMW3
+        cd5Y2OKLmgEcQirINsygQjOrDKk/
+X-Google-Smtp-Source: ANB0Vdb/ZeMoxm8x/7uEP0hUzQSyQKqMXo8XeWqXzM0UgkHpw+obWNBPojl0rKH+o2U7J/DAbhq0Yw==
+X-Received: by 2002:a62:464f:: with SMTP id t76-v6mr48398507pfa.118.1537569009397;
+        Fri, 21 Sep 2018 15:30:09 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id n83-v6sm60042676pfk.19.2018.09.21.15.30.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 15:30:08 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     rmk+kernel@armlinux.org.uk,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: dsa: b53: Don't assign autonegotiation enabled
+Date:   Fri, 21 Sep 2018 15:30:05 -0700
+Message-Id: <20180921223005.24969-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.09.2018 18:34, David Arendt wrote:
-> Hi,
-> 
-> the networking problem did not occur for 12 hours now, so I think this
-> patch resolved the problem.
+PHYLINK takes care of filing the right information into
+state->an_enabled, get rid of the read from the SerDes's BMCR register.
 
-@Heiner:
-It seems that the regression was introduced by your
-commit 4fd48c4ac0a0 ("r8169: move common initializations to tp->hw_start").
+Fixes: 0e01491de646 ("net: dsa: b53: Add SerDes support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/dsa/b53/b53_serdes.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Will you submit a fix for it?
+diff --git a/drivers/net/dsa/b53/b53_serdes.c b/drivers/net/dsa/b53/b53_serdes.c
+index b45c55e0b8b4..629bf14128a2 100644
+--- a/drivers/net/dsa/b53/b53_serdes.c
++++ b/drivers/net/dsa/b53/b53_serdes.c
+@@ -100,15 +100,13 @@ int b53_serdes_link_state(struct b53_device *dev, int port,
+ 			  struct phylink_link_state *state)
+ {
+ 	u8 lane = b53_serdes_map_lane(dev, port);
+-	u16 dig, bmcr, bmsr;
++	u16 dig, bmsr;
+ 
+ 	if (lane == B53_INVALID_LANE)
+ 		return 1;
+ 
+ 	dig = b53_serdes_read(dev, lane, B53_SERDES_DIGITAL_STATUS,
+ 			      SERDES_DIGITAL_BLK);
+-	bmcr = b53_serdes_read(dev, lane, B53_SERDES_MII_REG(MII_BMCR),
+-			       SERDES_MII_BLK);
+ 	bmsr = b53_serdes_read(dev, lane, B53_SERDES_MII_REG(MII_BMSR),
+ 			       SERDES_MII_BLK);
+ 
+@@ -129,7 +127,6 @@ int b53_serdes_link_state(struct b53_device *dev, int port,
+ 	}
+ 
+ 	state->duplex = dig & DUPLEX_STATUS ? DUPLEX_FULL : DUPLEX_HALF;
+-	state->an_enabled = !!(bmcr & BMCR_ANENABLE);
+ 	state->an_complete = !!(bmsr & BMSR_ANEGCOMPLETE);
+ 	state->link = !!(dig & LINK_STATUS);
+ 	if (dig & PAUSE_RESOLUTION_RX_SIDE)
+-- 
+2.17.1
 
-Thanks,
-Maciej
