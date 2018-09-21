@@ -2,98 +2,99 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92282ECE567
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935AEC46471
 	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DE92159B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:40:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DE92159B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 839D721580
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:40:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NDZ4dr9c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 839D721580
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390298AbeIUVaQ (ORCPT
+        id S2390414AbeIUVaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:30:16 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38220 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728221AbeIUVaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:30:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95D9F18A;
-        Fri, 21 Sep 2018 08:40:50 -0700 (PDT)
-Received: from e110365-lin.cambridge.arm.com (e110365-lin.cambridge.arm.com [10.1.129.209])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1E0413F557;
-        Fri, 21 Sep 2018 08:40:48 -0700 (PDT)
-From:   vincent.donnefort@arm.com
-To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        cw00.choi@samsung.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     john.reitan@arm.com, beata.michalska@arm.com,
-        Vincent Donnefort <vincent.donnefort@arm.com>
-Subject: [PATCH v2] PM / devfreq: Stop the governor before device_unregister()
-Date:   Fri, 21 Sep 2018 16:40:32 +0100
-Message-Id: <1537544432-34712-1-git-send-email-vincent.donnefort@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <5B8901D7.5040301@samsung.com>
-References: <5B8901D7.5040301@samsung.com>
+        Fri, 21 Sep 2018 17:30:23 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44282 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390316AbeIUVaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 17:30:22 -0400
+Received: by mail-io1-f65.google.com with SMTP id u12-v6so7645640ioc.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pkFDCul34hIhWd7S2ibRl0Dwd0s0rGpS2Nwb4spgIzU=;
+        b=NDZ4dr9ccjiGoWSNT9X7ScBVIxj6npmaS7gLwKVe3jgp6kv2bogRBad2GKCl8hAHqt
+         WMOASTXPpXXCSISfCgdvbPfy+/0gLjZBTyEUmcu4M2pTXA172AVebPb37A7RMdSLBjbG
+         mhtQIx9/PRQ0idma8GCg7Z7XbvbXeC5lps9Nw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pkFDCul34hIhWd7S2ibRl0Dwd0s0rGpS2Nwb4spgIzU=;
+        b=ObV3Xb7qLqPeTff3x/eDdjYy65hFDYtIA50jbapeEJoLlknzKLF5gb5smWMeI6pb0X
+         5s7E+znoSCh76Xc6DeFVImXYhR7oHCNbDeWk3mMXXlpJ1ZcKmhRqfYKyD7EaXOH8HOsH
+         mGs69qxoO6XfXDpSGpRZ+HU3l2pIjB+V8ALiaxxueZZ+WCiBVi8cmjByQKkRxCCZpUUG
+         0PHDmR2nTvmr4Cn83UnKL/E/tPUh1zZjMV/pEMIn3lHCDGLd9YvDAMS7ZzglngSCNGwQ
+         vBB9dQphhgnIAM3v63/GDfhAsvKYQNUpWq/5WvGtEEY0BZvY7sj9vTvLfFQP8hyMLuQB
+         d8vQ==
+X-Gm-Message-State: APzg51BRifj3bRkcpj5ygpkJ2VWrkJcwbcMXBsYHe2d0EpfX4VnBoE3/
+        mXcQDbuUGWJ5ChnZ7PMwDRuO+JTDOWEjC3B7HVTZZQ==
+X-Google-Smtp-Source: ANB0VdYfAAbV3+xsZGFCzkI11JRDXQeUrR2q8WXrWmakIGc+QNrlo0v05X2gxjiGf9B9DVXeMJr3V5BZ/oyvTskCz+Y=
+X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr37197316iog.175.1537544456576;
+ Fri, 21 Sep 2018 08:40:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180407135934.26122-1-ctatlor97@gmail.com> <20180614151435.6471-1-ctatlor97@gmail.com>
+ <20180614151435.6471-3-ctatlor97@gmail.com> <20180916121045.aptj6nciwskfg4st@earth.universe>
+ <4BBA3F28-A769-4F09-86DC-1E3906C53B26@gmail.com> <20180920165847.6xqzeoqzqkyotshx@earth.universe>
+In-Reply-To: <20180920165847.6xqzeoqzqkyotshx@earth.universe>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Sep 2018 08:40:43 -0700
+Message-ID: <CACRpkda70HAnnQ6a06E-VZwPUveb-OPDYrKYzm+XFAC1LP+rqw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] dt-bindings: power: supply: qcom_bms: Add bindings
+To:     sebastian.reichel@collabora.com
+Cc:     Craig Tatlor <ctatlor97@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Donnefort <vincent.donnefort@arm.com>
+On Thu, Sep 20, 2018 at 9:58 AM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
 
-device_release() is freeing the resources before calling the device
-specific release callback which is, in the case of devfreq, stopping
-the governor.
+> I prefer the second binding (with mV -> uV), but I think it becomes
+> messy when temperature is added. What do you think about the
+> following proposal (derived from pinctrl style):
+>
+> Proposal C:
+>
+> ocv-capacity-table-temperatures = <(-10) 0 10>;
+> ocv-capacity-table-0 = <4185000 100>, <4113000 95>, <4066000 90>, ...;
+> ocv-capacity-table-1 = <4200000 100>, <4185000 95>, <4113000 90>, ...;
+> ocv-capacity-table-2 = <4250000 100>, <4200000 95>, <4185000 90>, ...;
 
-It is a problem as some governors are using the device resources. e.g.
-simpleondemand which is using the devfreq deferrable monitoring work. If it
-is not stopped before the resources are freed, it might lead to a use after
-free.
+I think this looks very elegant. It's going to be very
+easy and intuitive for people who need to maintain these
+device trees and it will be easy to handle in centralized code
+for all platforms. Even with the microvolt notation.
 
-Signed-off-by: Vincent Donnefort <vincent.donnefort@arm.com>
-Reviewed-by: John Einar Reitan <john.reitan@arm.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+If possible could we go with this?
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 4c49bb1..4e43830 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -534,10 +534,6 @@ static void devfreq_dev_release(struct device *dev)
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
--	if (devfreq->governor)
--		devfreq->governor->event_handler(devfreq,
--						 DEVFREQ_GOV_STOP, NULL);
--
- 	if (devfreq->profile->exit)
- 		devfreq->profile->exit(devfreq->dev.parent);
- 
-@@ -672,7 +668,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
--	device_unregister(&devfreq->dev);
-+	devfreq_remove_device(devfreq);
- 	devfreq = NULL;
- err_dev:
- 	if (devfreq)
-@@ -693,6 +689,9 @@ int devfreq_remove_device(struct devfreq *devfreq)
- 	if (!devfreq)
- 		return -EINVAL;
- 
-+	if (devfreq->governor)
-+		devfreq->governor->event_handler(devfreq,
-+						 DEVFREQ_GOV_STOP, NULL);
- 	device_unregister(&devfreq->dev);
- 
- 	return 0;
--- 
-1.9.1
-
+Yours,
+Linus Walleij
