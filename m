@@ -2,63 +2,64 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808ADECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F56DECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 328F02154D
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29C3B21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fW1cpt7O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328F02154D
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rwN+sLo+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29C3B21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389892AbeIUSOu (ORCPT
+        id S2389944AbeIUSOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:14:50 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47656 "EHLO
+        Fri, 21 Sep 2018 14:14:55 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47675 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389835AbeIUSOu (ORCPT
+        with ESMTP id S2389835AbeIUSOy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:14:50 -0400
+        Fri, 21 Sep 2018 14:14:54 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180921122609euoutp021c02fc8ecb7d7850ce5790a086542b3f~Waehrqc6W2161621616euoutp02v
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:26:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180921122609euoutp021c02fc8ecb7d7850ce5790a086542b3f~Waehrqc6W2161621616euoutp02v
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180921122614euoutp02640cf0ba8c47389d8884289a41ccdd42~WaembavZ22217422174euoutp02L
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:26:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180921122614euoutp02640cf0ba8c47389d8884289a41ccdd42~WaembavZ22217422174euoutp02L
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537532769;
-        bh=qNeEP+7HXq9SGE+CjBE6vlpUiMCq7UfYYHsClMC0LFk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=fW1cpt7Ocq8Lgw3P/69fcloomrWujslw5lXw5Sb3j2x7+ryRYNBSgJ9iMQsPhPXZO
-         D3zrSqdTdjw2Rms8WUDk8R4HtYqp8c+kQBon5zbGBvZ9Aw/r+jRBbrvpB0Q+qduOHZ
-         tcuJWEGfi6LtUn7yUuF3GMkkXNJxiZLXZ4SX+Tek=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180921122608eucas1p1d539d21124d479810ea7ce3a37c85442~Waegg55510407704077eucas1p1S;
-        Fri, 21 Sep 2018 12:26:08 +0000 (GMT)
+        s=mail20170921; t=1537532774;
+        bh=LBpKXbnunUglxzbvvMAhAm9CB5cgys0I/Av0KmEUEkg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rwN+sLo+u1gKX07UZAPC/sG6mYSh6Ggd9MIpdpzXGC5+lPr7cVUew048qUMmABco1
+         IZ5flcPIftU+wraWwFRcK5lLlXuJo+10S2c3owikrTHWvgKBVnZw8nZoPcKuAKEcQ2
+         zWFTzr9bgBfaPgOetC0zwOyDr0Wg6yGKVRivjK0k=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180921122614eucas1p294ac4ea64377f75dd8d2ee1eaf16b30f~WaelsrcR81399713997eucas1p2c;
+        Fri, 21 Sep 2018 12:26:14 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id BE.7A.04806.063E4AB5; Fri, 21
-        Sep 2018 13:26:08 +0100 (BST)
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 66.9F.04441.563E4AB5; Fri, 21
+        Sep 2018 13:26:13 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20180921122607eucas1p1d8d56bd57fcfc8285469208b1db3fa3b~WaefRJq8x0332003320eucas1p1W;
-        Fri, 21 Sep 2018 12:26:07 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180921122612eucas1p2f3e0b6cf2e15553bd4d7114722c2a217~WaeklfEj21399713997eucas1p2a;
+        Fri, 21 Sep 2018 12:26:12 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180921122606eusmtrp1e8cdc647be8fb08c25b10a0e686c7159~Waee-EYlQ2872728727eusmtrp17;
-        Fri, 21 Sep 2018 12:26:06 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-64-5ba4e360be09
+        20180921122612eusmtrp19a799c50bbac74ea16730323753ae702~WaekTlLuu2872728727eusmtrp1F;
+        Fri, 21 Sep 2018 12:26:12 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-ba-5ba4e365c61f
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 41.69.04284.E53E4AB5; Fri, 21
-        Sep 2018 13:26:06 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 34.69.04284.463E4AB5; Fri, 21
+        Sep 2018 13:26:12 +0100 (BST)
 Received: from AMDC2034.DIGITAL.local (unknown [106.120.51.41]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180921122606eusmtip1b5f5ca0078fcfe949b292c51c99d161e~WaeeRnRNy2133221332eusmtip1Y;
-        Fri, 21 Sep 2018 12:26:06 +0000 (GMT)
+        20180921122611eusmtip16207611fc884677872ac111ebe737ae2~WaejstnyO2133221332eusmtip1b;
+        Fri, 21 Sep 2018 12:26:11 +0000 (GMT)
 From:   Christoph Manszewski <c.manszewski@samsung.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
@@ -73,73 +74,83 @@ Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/3] drm/exynos: mixer: Cleanup and add properties 
-Date:   Fri, 21 Sep 2018 14:24:35 +0200
+Subject: [PATCH 1/3] drm/exynos: drm_plane: Correct exynos_drm_plane_reset
+Date:   Fri, 21 Sep 2018 14:24:36 +0200
 X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSbUhTYRjtvV+7jmbXKfqmIbLKUkot0y4Zkmi4fgT9TYtceVNzm7KrS6XQ
-        CiNvmVMTJTQSDU3xa/OLiZKfU8yNLMQsM1sw01bQnH2g0rar9e885znnPeeBl0TFNbgvmabM
-        YlRKmVxCCLHusd+mw0nm+sSw1kUhPddqxOli4wRCd1S14bSh7xmg39i/E3TZggajlz68wugS
-        8wpKm0ztAnrq9lcBrTXP4PRrfTVBV5kGELplZF5AV5V/IU7tkmqbighpz9pHXLpw34BIdfX5
-        0oedTUBq0/qfIxKEJ5MZeZqaUYVGJwlTOVM1kmkmcqwWC1IAJnAOuJGQOgaLp7sRDghJMdUI
-        4JyxbGtYBfD58DecH2wAzrduINsW+3oNwS8aABxtfYn/s9RWlBJOFUFFwHfzP1zYi9oLN0qb
-        gFOEUl0Y7J+YdT3lScXCDavV1QSj9sPJT/0EH+EP3xqLUKcBUuUCWN0+hzoXIkoNdY+sW9Xj
-        4C3DMMpjT7hs6BTweA+cLH+A8eY7jpNWZ3B+0AA42MxhvCoKameXHTVIR6cg2KYP5ekYqOPe
-        u2hIucNZq4eTRh2wrLsS5WkRvHdXzKsD4UpnJ7Edu2SzAx5LYYduxHWjmLoIm/80ohrg//h/
-        1lMAmoAPk80qUhg2XMlcD2FlCjZbmRJyJUOhBY5PM7lpsPeCgfXLQ4AigWSnKKyuLlGMy9Rs
-        rmIIQBKVeIkGuPpEsShZlpvHqDIuqbLlDDsE/EhM4iNyD76aKKZSZFlMOsNkMqrtLUK6+RaA
-        FznDmT9tlkh5TFAs6Jk7Gumed7C2ML56fPNAvCL/zMKNwc+kckcCFW4LUI6NcmeXnkzdTK8L
-        ZE8Haqb7Rrh94wFRDQnnDS2Veq9eM+FRqEtdy2Abji9WdJ2IYBZHfYtKYn4d8jPWe2vQlgsW
-        9W69XWEvjov2Lr6Wq6ppiJuWYGyq7EgwqmJlfwGs4ZeUMAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsVy+t/xu7pxj5dEG6x+YWBxa905VovecyeZ
-        LDbOWM9qcXz3UkaLK1/fs1lMuj+BxeLFvYssFv2PXzNbnD+/gd3ibNMbdotNj6+xWlzeNYfN
-        Ysb5fUwWa4/cZbeYMfklmwO/x6ZVnWwe2789YPW4332cyWPzknqPvi2rGD0+b5ILYIvSsynK
-        Ly1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy+g6P4ep4DFb
-        xdvnz5kaGE+ydjFyckgImEh8/TOXrYuRi0NIYCmjxN+uYywQCRmJeWf72CBsYYk/17qgij4x
-        Shzb+h4swSZgKnH77icwW0RAWeLvxFWMIEXMAgdZJFo2nmEESQgLOEv8ffsWbB2LgKrE6Ud7
-        wRp4BdwlGhcsgNogJ3HzXCfzBEaeBYwMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQLDe9ux
-        n5t3MF7aGHyIUYCDUYmH12Dx4mgh1sSy4srcQ4wSHMxKIrz7upZEC/GmJFZWpRblxxeV5qQW
-        H2I0BVo+kVlKNDkfGHt5JfGGpobmFpaG5sbmxmYWSuK85w0qo4QE0hNLUrNTUwtSi2D6mDg4
-        pRoYmYMX7BLIFA5xZL8VkxPQZTLJcIPj63X++RF1Ryp2aV10XlH0NtplDiML8/c9gQr1+5kd
-        haWFmPlspm+Jk9BVlQkw/6Tad+OC5EuzzbzvjqjN38VySWD5rOJkk/+PT8syC7yLWb70IEvf
-        fL1Hu9TdLtuy1c6YmNE8myNo0aI9eULP3vn027YpsRRnJBpqMRcVJwIAYQPB94UCAAA=
-Message-Id: <20180921122607eucas1p1d8d56bd57fcfc8285469208b1db3fa3b~WaefRJq8x0332003320eucas1p1W@eucas1p1.samsung.com>
-X-CMS-MailID: 20180921122607eucas1p1d8d56bd57fcfc8285469208b1db3fa3b
+In-Reply-To: <1537532678-4276-1-git-send-email-c.manszewski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSeyxVcRzf754nuZwum180bVdq3qS2s2WNpu0i05LVaOPECYvL7kFpbSyt
+        5eK6+IMlWx6FGy7XzXNJN5HMK2UeE8vmdUl5lT9SjpP13+f3eX2/++5HIpIKzIaMkyezCjkT
+        L8VN0eaenSFXdq4y3KNmx5WerB/E6NzBPhHdWKzF6N6OZ4D+tLWG0wUzapRe/DKC0nlzRoQe
+        Gmog6IH7KwStmxvD6NH2JzhdPNQpouu6pwm6uHAJ97GQ6TRZuKxlexaTzWT3imRNlekylV4D
+        ZBs6u0t4mKl3NBsfl8oq3M9FmsauatdAUofJnbV5FZIBVKQSmJCQOg1L5xYIJTAlJVQ1gMbM
+        MpQXJNQmgMOv/QS8AeDzUXslIPcDfTOBAl0FYJfhpJDds2v0dTgv4NQZODW9vo+tKHv4O18D
+        eBNCvUThq75xEV9kSQXAtyuxvAelHGBtT7lIWMgOTgxmITw2oWSw/tc8ymch1UzAoqqc/ayY
+        SoUbCxeFffzg8MR5IWoJl3v1hICPwv7CnH/RTAAnN8cw4aEG8M0LJSq4zkLd+PJ+J0I5Qm27
+        u0D7ws9LRajQbw7HVw/zNLIHC5qLEIEWw0cPJYL7BDTq9fjB2MWNLSBgGXzQlo0L5ykBsEyp
+        JtTg2OP/w54CoAHWbAqXEMNynnL2thvHJHAp8hi3qMQEHdj7Ov27veutYOvjDQOgSCA1E3tU
+        VIRLMCaVS0swAEgiUitxp7IyXCKOZtLusorECEVKPMsZgC2JSq3F5k43wyVUDJPM3mLZJFZx
+        oIpIE5sMQDhYtvycPpXbFjr1Lp7L9w76OqKYlV8Pcla5XwspTC/xCPaq/pHv7XJlYJPxc7fz
+        raAKQkNU08UXXC6PXj1eQ6RHqevydo90eLX6z2rNs60DSo1hiT67zofK79n7e5o1hmV1f8Pe
+        6x3+fIipbooMbNAE1zh2WUTUzmzn2Y58tzVIUS6W8XRCFBzzF49+4lE2AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42I5/e/4Xd2Ux0uiDT5PVLS4te4cq0XvuZNM
+        FhtnrGe1OL57KaPFla/v2Swm3Z/AYvHi3kUWi/7Hr5ktzp/fwG5xtukNu8Wmx9dYLS7vmsNm
+        MeP8PiaLtUfuslvMmPySzYHfY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEXp2RTl
+        l5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZbxd/56xYDdn
+        xftnfcwNjH0cXYwcHBICJhIn73t3MXJyCAksZZS4/K8OxJYQkJGYd7aPDcIWlvhzrQvI5gKq
+        +cQosWLmJnaQBJuAqcTtu5/AikQElCX+TlzFCFLELHCQRaJl4xlGkAXCAl4Sh99kgNSwCKhK
+        rDm2iAnE5hVwl9hxppkVYoGcxM1zncwgNqeAh8S6H89YQFqFgGpOrTeZwMi3gJFhFaNIamlx
+        bnpusaFecWJucWleul5yfu4mRmAcbDv2c/MOxksbgw8xCnAwKvHwGixeHC3EmlhWXJl7iFGC
+        g1lJhHdf15JoId6UxMqq1KL8+KLSnNTiQ4ymQDdNZJYSTc4HxmheSbyhqaG5haWhubG5sZmF
+        kjjveYPKKCGB9MSS1OzU1ILUIpg+Jg5OqQbG5o8Jca/8ZXM8U3980srj9hIu/ba4/xSDYOVB
+        vayc+PmbNuw5Ou3N09W7jut9vH75jabVo4hX67Zd69PeMfVgt/9DC3MV9ur4NbGPvY7kSE+8
+        23NU8G2qyskbotMSuQ7M6Xr7Ym3M8UB2j/bk4PQsic2Ll82tcJ6RnHtENUDkVYnlWoeppVt+
+        KrEUZyQaajEXFScCAHAMzcSZAgAA
+Message-Id: <20180921122612eucas1p2f3e0b6cf2e15553bd4d7114722c2a217~WaeklfEj21399713997eucas1p2a@eucas1p2.samsung.com>
+X-CMS-MailID: 20180921122612eucas1p2f3e0b6cf2e15553bd4d7114722c2a217
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180921122607eucas1p1d8d56bd57fcfc8285469208b1db3fa3b
+X-RootMTR: 20180921122612eucas1p2f3e0b6cf2e15553bd4d7114722c2a217
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180921122607eucas1p1d8d56bd57fcfc8285469208b1db3fa3b
-References: <CGME20180921122607eucas1p1d8d56bd57fcfc8285469208b1db3fa3b@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20180921122612eucas1p2f3e0b6cf2e15553bd4d7114722c2a217
+References: <1537532678-4276-1-git-send-email-c.manszewski@samsung.com>
+        <CGME20180921122612eucas1p2f3e0b6cf2e15553bd4d7114722c2a217@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Make use of helper functions in exynos_drm_plane_reset in order to set
+all default values. Currently alpha isn't set during reset.
 
-This patch series adds two new configurable properties to exynos_mixer,
-and introduces use of helper functions in exynos_drm_plane_reset.
+Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Patch 1 incorporate use of helper functions, to correctly initialize
-parameters used in following patches.
-Patch 2 add pixel blend mode property.
-Patch 3 add window alpha property.
-
-Regards,
-Chris
-
-Christoph Manszewski (3):
-  drm/exynos: drm_plane: Correct exynos_drm_plane_reset
-  drm/exynos: mixer: Make pixel blend mode configurable
-  drm/exynos: mixer: Make plane alpha configurable
-
- drivers/gpu/drm/exynos/exynos_drm_drv.h   |  2 ++
- drivers/gpu/drm/exynos/exynos_drm_plane.c | 16 ++++++---
- drivers/gpu/drm/exynos/exynos_mixer.c     | 56 +++++++++++++++++++++----------
- drivers/gpu/drm/exynos/regs-mixer.h       |  5 ++-
- 4 files changed, 57 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index dba29aec59b4..755ca0e9ead2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -131,16 +131,14 @@ static void exynos_drm_plane_reset(struct drm_plane *plane)
+ 
+ 	if (plane->state) {
+ 		exynos_state = to_exynos_plane_state(plane->state);
+-		if (exynos_state->base.fb)
+-			drm_framebuffer_put(exynos_state->base.fb);
++		__drm_atomic_helper_plane_destroy_state(plane->state);
+ 		kfree(exynos_state);
+ 		plane->state = NULL;
+ 	}
+ 
+ 	exynos_state = kzalloc(sizeof(*exynos_state), GFP_KERNEL);
+ 	if (exynos_state) {
+-		plane->state = &exynos_state->base;
+-		plane->state->plane = plane;
++		__drm_atomic_helper_plane_reset(plane, &exynos_state->base);
+ 		plane->state->zpos = exynos_plane->config->zpos;
+ 	}
+ }
 -- 
 2.7.4
 
