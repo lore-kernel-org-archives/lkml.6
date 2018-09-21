@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7ADBC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364DAECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B39021533
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:29:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B39021533
+	by mail.kernel.org (Postfix) with ESMTP id EF9AB21545
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:29:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9AB21545
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389247AbeIUJPu (ORCPT
+        id S2389260AbeIUJQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 05:15:50 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:15649 "EHLO
+        Fri, 21 Sep 2018 05:16:03 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:17142 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389091AbeIUJP2 (ORCPT
+        with ESMTP id S2389112AbeIUJP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 05:15:28 -0400
-X-UUID: b28d8c4fd5304236b191155e83d16df7-20180921
+        Fri, 21 Sep 2018 05:15:26 -0400
+X-UUID: 25d5f86e5cf64cbbba4a45ba0ee1e8c9-20180921
 Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 860154289; Fri, 21 Sep 2018 11:28:33 +0800
+        with ESMTP id 231677273; Fri, 21 Sep 2018 11:28:33 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
  mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Fri, 21 Sep 2018 11:28:26 +0800
@@ -52,15 +52,15 @@ CC:     Yingjoe Chen <yingjoe.chen@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
         chunhui dai <chunhui.dai@mediatek.com>
-Subject: [PATCH v3 04/12] drm/mediatek: add clock factor for different IC
-Date:   Fri, 21 Sep 2018 11:28:14 +0800
-Message-ID: <20180921032822.30771-5-bibby.hsieh@mediatek.com>
+Subject: [PATCH v3 06/12] drm/mediatek: add dpi driver for mt2701 and mt7623
+Date:   Fri, 21 Sep 2018 11:28:16 +0800
+Message-ID: <20180921032822.30771-7-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5.2.gbdf23ab
 In-Reply-To: <20180921032822.30771-1-bibby.hsieh@mediatek.com>
 References: <20180921032822.30771-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: A345D91ACD21587670C94CD62DD174317C3473260263CE050BD97B452B02155F2000:8
+X-TM-SNTS-SMTP: 3D0511E19037F0F990DBDDFC9F0C02ACAA400706D7D457F5AB3A2B4E4610EB142000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -69,65 +69,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: chunhui dai <chunhui.dai@mediatek.com>
 
-different IC has different clock designed in HDMI, the factor for
-calculate clock should be different. Usinng the data in of_node
-to find this factor.
+This patch adds dpi dirver suppot for both mt2701 and mt7623.
+And also support other (existing or future) chips that use
+the same binding and driver.
 
 Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_dpi.c     | 21 +++++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c |  2 ++
+ 2 files changed, 23 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 1e7369e0d91c..022ccec49cea 100644
+index 7a4868a0afec..a9d8231a0a9e 100644
 --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
 +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -120,6 +120,7 @@ struct mtk_dpi_yc_limit {
- };
+@@ -688,11 +688,29 @@ static unsigned int mt8173_calculate_factor(int clock)
+ 		return 3 << 1;
+ }
  
- struct mtk_dpi_conf {
-+	unsigned int (*cal_factor)(int clock);
- 	u32 reg_h_fre_con;
- 	bool edge_sel_en;
- };
-@@ -460,15 +461,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
- 	unsigned int factor;
- 
- 	/* let pll_rate can fix the valid range of tvdpll (1G~2GHz) */
--
--	if (mode->clock <= 27000)
--		factor = 3 << 4;
--	else if (mode->clock <= 84000)
--		factor = 3 << 3;
--	else if (mode->clock <= 167000)
--		factor = 3 << 2;
--	else
--		factor = 3 << 1;
-+	factor = dpi->conf->cal_factor(mode->clock);
- 	drm_display_mode_to_videomode(mode, &vm);
- 	pll_rate = vm.pixelclock * factor;
- 
-@@ -682,7 +675,20 @@ static const struct component_ops mtk_dpi_component_ops = {
- 	.unbind = mtk_dpi_unbind,
- };
- 
-+static unsigned int mt8173_calculate_factor(int clock)
++static unsigned int mt2701_calculate_factor(int clock)
 +{
-+	if (clock <= 27000)
-+		return 3 << 4;
-+	else if (clock <= 84000)
-+		return 3 << 3;
-+	else if (clock <= 167000)
-+		return 3 << 2;
++	if (clock <= 64000)
++		return 16;
++	else if (clock <= 128000)
++		return 8;
++	else if (clock <= 256000)
++		return 4;
 +	else
-+		return 3 << 1;
++		return 2;
 +}
 +
  static const struct mtk_dpi_conf mt8173_conf = {
-+	.cal_factor = mt8173_calculate_factor,
+ 	.cal_factor = mt8173_calculate_factor,
  	.reg_h_fre_con = 0xe0,
  };
  
++static const struct mtk_dpi_conf mt2701_conf = {
++	.cal_factor = mt2701_calculate_factor,
++	.reg_h_fre_con = 0xb0,
++	.edge_sel_en = true,
++};
++
+ static int mtk_dpi_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -784,6 +802,9 @@ static int mtk_dpi_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id mtk_dpi_of_ids[] = {
++	{ .compatible = "mediatek,mt2701-dpi",
++	  .data = &mt2701_conf,
++	},
+ 	{ .compatible = "mediatek,mt8173-dpi",
+ 	  .data = &mt8173_conf,
+ 	},
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 39721119713b..d961112fa2f5 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -424,6 +424,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
+ 	  .data = (void *)MTK_DSI },
+ 	{ .compatible = "mediatek,mt8173-dsi",
+ 	  .data = (void *)MTK_DSI },
++	{ .compatible = "mediatek,mt2701-dpi",
++	  .data = (void *)MTK_DPI },
+ 	{ .compatible = "mediatek,mt8173-dpi",
+ 	  .data = (void *)MTK_DPI },
+ 	{ .compatible = "mediatek,mt2701-disp-mutex",
 -- 
 2.12.5.2.gbdf23ab
 
