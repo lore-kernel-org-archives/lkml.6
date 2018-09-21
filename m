@@ -2,111 +2,128 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6FFECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D15FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3A021547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 094BB206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:25:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DBry1INq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3A021547
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXhv4+xD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 094BB206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390326AbeIUQNr (ORCPT
+        id S2390330AbeIUQOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:13:47 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46458 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389264AbeIUQNq (ORCPT
+        Fri, 21 Sep 2018 12:14:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32832 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUQOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:13:46 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8LAPB6A008174;
-        Fri, 21 Sep 2018 05:25:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537525511;
-        bh=+EYr+DKnTLrhAJbl6n8B3m2RDG0kHLAobqVuL07Op2E=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=DBry1INqH9vjNuULwvgOqlLshEt4ujq215x7iZSZ817h+cbJN83TKjHXUt3wWuZdd
-         QG6y+PCKhhLpmDJbCPXNGZeBzTrF3LnNNWg2/9IiP8u93o4cUf37Vul2vQ0pZ3IuLU
-         Arrz4Uc75L/wiCRG7K7gljM+F3DiKnkfmL0aFl9s=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LAPBKo032206;
-        Fri, 21 Sep 2018 05:25:11 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 21
- Sep 2018 05:25:10 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 21 Sep 2018 05:25:10 -0500
-Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LAMEtf032280;
-        Fri, 21 Sep 2018 05:25:06 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        <Gustavo.Pimentel@synopsys.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Benoit Parrot <bparrot@ti.com>
-Subject: [RFC PATCH 37/40] arm64: dts: k3-am6: Add Main System Control Module node
-Date:   Fri, 21 Sep 2018 15:51:52 +0530
-Message-ID: <20180921102155.22839-38-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180921102155.22839-1-kishon@ti.com>
-References: <20180921102155.22839-1-kishon@ti.com>
+        Fri, 21 Sep 2018 12:14:03 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n11-v6so1103526wro.0;
+        Fri, 21 Sep 2018 03:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8k9rGRkBKmUalmlPNgE7G1YhIeZTdJ1E2ctaQaUHbgc=;
+        b=nXhv4+xD/X/n+fvJs0sWff46ScJgJ89XXcrbAovHCNb1Kzrruu2mkPNSlxVwZ1ileD
+         a2QlbrW/apwu3ma4CxxxgREe4c6jpbEhNa+ABX+3/IUzwO/g1m3CEyTcsaMBtlCCog0S
+         hhFyMm1sES0dVyhSnIUADk9IWIpnMKG7cHbhHRo6CoK+BsYNGRLVlMUG+cjmhyHTxoqI
+         2003niKvo741sm9OR/XzW1UuKJ6pzYOgx0KU7sDvJ+EBRvNFGWZ0FvWtYnsdBfNS572v
+         GCslxLp/ThByyfo7pNMfhptfr/t7Tg16J6MuUVZ67kbIyFOpHZ/GcaNmSSHuNP0Ouf0S
+         IMhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8k9rGRkBKmUalmlPNgE7G1YhIeZTdJ1E2ctaQaUHbgc=;
+        b=MIGX/5WslqxRVK/LSqj07rYQg6SGuCVYcXZM533Pw0KtEQuZN9dw41FomfebxDEqmP
+         7xg8vlr/BN46Io3dI0uANLcqGHgNFC+5K0tE6RJFEsOKp4GsDitECq4EjbG2uB/+6+Mj
+         dt2QdEOeBiShtnCpGdn16KwJEwG5InQxc9uAOtkaBO+2qdBWZ/oSsbwCFCpLWovGd/f/
+         4JDcZAVk7Z2Hj1KXQYd2MM5Wq9WMsQ5iDhWDY3Yrz/Yw48U9HAjALsZyYx9lHAJ6BhJ0
+         bbVZIQdFFjtnxTS8yvUSWJgzR4ctEDdjXice2eTVFUwZWoST5p2tDqEgO7xxxBVFiGrP
+         KumQ==
+X-Gm-Message-State: APzg51B/X9PlTRwVzHJZCzyzkNQUDP2GQ067VuClVNDz8hqxj2eXOcd7
+        rHu/YAgu2lUitXonBSNVqqQ=
+X-Google-Smtp-Source: ANB0VdaOq2WIq+IdaE2+H/Cvh/r7sVHdHZMaRDqmgc2HxT+Ysw8pB36NsCdTsBbbtoMdiwqDVyqEug==
+X-Received: by 2002:a5d:61c1:: with SMTP id q1-v6mr39099483wrv.33.1537525548490;
+        Fri, 21 Sep 2018 03:25:48 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id 14-v6sm11455622wmp.32.2018.09.21.03.25.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Sep 2018 03:25:48 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] Implement wake event support on Tegra186 and later
+Date:   Fri, 21 Sep 2018 12:25:37 +0200
+Message-Id: <20180921102546.12745-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benoit Parrot <bparrot@ti.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Main System control module support is added to the device tree to allow
-driver to access to their control module registers.
+Hi,
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+The following is a set of patches that allow certain interrupts to be
+used as wakeup sources on Tegra186 and later. To implement this, each
+of the GPIO controllers' IRQ domain needs to become hierarchical, and
+parented to the PMC domain. The PMC domain in turn implements a new
+IRQ domain that is a child to the GIC IRQ domain.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 2df4acb198bd..957c9125a453 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -6,6 +6,11 @@
-  */
- 
- &cbass_main {
-+	scm_conf: scm_conf@100000 {
-+		compatible = "syscon";
-+		reg = <0 0x00100000 0 0x1c000>;
-+	};
-+
- 	gic500: interrupt-controller@1800000 {
- 		compatible = "arm,gic-v3";
- 		#address-cells = <2>;
+The above ensures that the interrupt chip implementation of the PMC is
+called at the correct time. The ->irq_set_type() and ->irq_set_wake()
+implementations program the PMC wake registers in a way to enable the
+given interrupts as wakeup sources.
+
+This is based on a suggestion from Thomas Gleixner that resulted from
+the following thread:
+
+	https://lkml.org/lkml/2018/9/13/1042
+
+Linus, I'm sending this as one series, but both the GPIO and PMC patches
+should be applicable separately. There are no build-time dependencies in
+the series. So once this has been duly reviewed, I think patches 1-5 can
+go through the Tegra tree, while patches 6-9 should go through the GPIO
+tree.
+
+Thierry
+
+Thierry Reding (9):
+  dt-bindings: tegra186-pmc: Add interrupt controller properties
+  soc/tegra: pmc: Add Tegra194 support
+  soc/tegra: pmc: Add wake event support
+  soc/tegra: pmc: Add initial Tegra186 wake events
+  soc/tegra: pmc: Add initial Tegra194 wake events
+  gpio: Add support for hierarchical IRQ domains
+  dt-bindings: tegra186-gpio: Add wakeup parent support
+  gpio: tegra186: Rename flow variable to type
+  gpio: tegra186: Implement wake event support
+
+ .../arm/tegra/nvidia,tegra186-pmc.txt         |   3 +
+ .../bindings/gpio/nvidia,tegra186-gpio.txt    |   7 +
+ drivers/gpio/gpio-tegra186.c                  | 109 +++++-
+ drivers/gpio/gpiolib.c                        |  15 +-
+ drivers/soc/tegra/pmc.c                       | 312 +++++++++++++++++-
+ include/linux/gpio/driver.h                   |   6 +
+ include/soc/tegra/pmc.h                       |  21 ++
+ 7 files changed, 451 insertions(+), 22 deletions(-)
+
 -- 
-2.17.1
+2.19.0
 
