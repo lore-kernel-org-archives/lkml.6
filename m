@@ -2,376 +2,91 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B94C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD47ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1EF821550
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:17:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1EF821550
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1348621565
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:18:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M8awrdLj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1348621565
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390602AbeIUWHD (ORCPT
+        id S2390687AbeIUWIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:07:03 -0400
-Received: from mga17.intel.com ([192.55.52.151]:3932 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728221AbeIUWHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:07:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:17:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="75174295"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga008.jf.intel.com with ESMTP; 21 Sep 2018 09:17:14 -0700
-Date:   Fri, 21 Sep 2018 09:18:37 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, yi.l.liu@linux.intel.com,
-        jean-philippe.brucker@arm.com, will.deacon@arm.com,
-        robin.murphy@arm.com, tianyu.lan@intel.com, ashok.raj@intel.com,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        peter.maydell@linaro.org, jacob.jun.pan@linux.intel.com
-Subject: Re: [RFC v2 14/20] iommu: introduce device fault data
-Message-ID: <20180921091837.1edd4e82@jacob-builder>
-In-Reply-To: <a1801e0f-b3f2-16cb-a5fe-48fef411fc02@redhat.com>
-References: <20180918142457.3325-1-eric.auger@redhat.com>
-        <20180918142457.3325-15-eric.auger@redhat.com>
-        <20180920150653.567287c5@jacob-builder>
-        <a1801e0f-b3f2-16cb-a5fe-48fef411fc02@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 21 Sep 2018 18:08:11 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37426 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728221AbeIUWIL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:08:11 -0400
+Received: by mail-io1-f67.google.com with SMTP id v14-v6so12819879iob.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:18:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5be9Yy44zxfcpBkhC2jQQmdEFjrUOIB6gvfsNDQ+kNA=;
+        b=M8awrdLjO4LXfzo0d/iAgpEjkZP5wtoPEy/+36TlxGtEzMKvaslDZ79+aJy3dmiPuQ
+         eTXNRE5xX2mxcbfMWARNQPInyvdjUs+hqQVfihUoxdRUENdmVZ82AVLQCPspgFhGklHD
+         A2h0F67HqSkqOFLyzbCODmxZMtOlGdD8NkuU0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5be9Yy44zxfcpBkhC2jQQmdEFjrUOIB6gvfsNDQ+kNA=;
+        b=IOgf3CRk0sVQ470kl/r3aeq4b8fkjvefsQkCwTtG8Lgwy7Hg2vqyRbFmn4dJGR9q2Z
+         0B7TmDSPvUk8wtXmFCV8yF7Az66aVS/FseBzuCJmD7uJw4yeMvGA6wbVDlO1SfftSBnf
+         y+O3PYT1vZlIk7rxdWSeVPWwNHCAL2qpiREBeJZECFG98nt+vWymao++7SoC9D8/uDKV
+         SVSZVGCWDkFOgfX9aq8lbxxUB64UHN8wVC4HATqrkOmNS3Eb2WMUXAQyPau9HzhhdZ2e
+         7axX0CWQ7JpQuU3BTA/KHeW6+MIxfNopoDP9uaKsL0kLDpmTHmzqHjQ2i5wJPUTyondT
+         ih8Q==
+X-Gm-Message-State: APzg51BzzI+Si2rmyzyJFgwYAw3f0CXEshG0aWCq+csPDdrORuqgOVmX
+        cjboxsIau8BUuY/KhObNZ2GHdGjXohsJoKEbZIvS7w==
+X-Google-Smtp-Source: ANB0VdaenSWISoDJf0wDu6rWd19lxF6WqdwMjcZRUeLQ6bhH4nSNm36dKvTM1yKqQChzgRweiTlCoYkqQug40XhhAm0=
+X-Received: by 2002:a02:5916:: with SMTP id p22-v6mr39486211jab.113.1537546715458;
+ Fri, 21 Sep 2018 09:18:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180921015941.28468-1-yuehaibing@huawei.com>
+In-Reply-To: <20180921015941.28468-1-yuehaibing@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Sep 2018 09:18:22 -0700
+Message-ID: <CACRpkdbHALf7m2uQ091dBmD9aTctzN2ym5=vZ1wFbE_ayJ-8Fw@mail.gmail.com>
+Subject: Re: [PATCH -next] pinctrl: sunxi: fix 'pctrl->functions' allocation
+ in sunxi_pinctrl_build_state
+To:     yuehaibing@huawei.com
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018 11:54:56 +0200
-Auger Eric <eric.auger@redhat.com> wrote:
+On Thu, Sep 20, 2018 at 7:00 PM YueHaibing <yuehaibing@huawei.com> wrote:
 
-> Hi Jacob,
-> 
-> On 9/21/18 12:06 AM, Jacob Pan wrote:
-> > On Tue, 18 Sep 2018 16:24:51 +0200
-> > Eric Auger <eric.auger@redhat.com> wrote:
-> >   
-> >> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >>
-> >> Device faults detected by IOMMU can be reported outside IOMMU
-> >> subsystem for further processing. This patch intends to provide
-> >> a generic device fault data such that device drivers can be
-> >> communicated with IOMMU faults without model specific knowledge.
-> >>
-> >> The proposed format is the result of discussion at:
-> >> https://lkml.org/lkml/2017/11/10/291
-> >> Part of the code is based on Jean-Philippe Brucker's patchset
-> >> (https://patchwork.kernel.org/patch/9989315/).
-> >>
-> >> The assumption is that model specific IOMMU driver can filter and
-> >> handle most of the internal faults if the cause is within IOMMU
-> >> driver control. Therefore, the fault reasons can be reported are
-> >> grouped and generalized based common specifications such as PCI
-> >> ATS.
-> >>
-> >> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >> Signed-off-by: Jean-Philippe Brucker
-> >> <jean-philippe.brucker@arm.com> Signed-off-by: Liu, Yi L
-> >> <yi.l.liu@linux.intel.com> Signed-off-by: Ashok Raj
-> >> <ashok.raj@intel.com> Signed-off-by: Eric Auger
-> >> <eric.auger@redhat.com> [moved part of the iommu_fault_event
-> >> struct in the uapi, enriched the fault reasons to be able to map
-> >> unrecoverable SMMUv3 errors]  
-> > Sounds good to me.
-> > There are also other "enrichment" we need to do to support mdev or
-> > finer granularity fault reporting below physical device. e.g. PASID
-> > level.  
-> 
-> Actually I intended to send you an email about those
-> iommu_fault_reason enum value changes. To attach this discussion to
-> your original series, I will send a separate email in the "[PATCH v5
-> 00/23] IOMMU and VT-d driver support for Shared Virtual Address
-> (SVA)" thread.
-> > 
-> > The current scheme works for PCIe physical device level, where each
-> > device registers a single handler only once. When device fault is
-> > detected by the IOMMU, it will find the matching handler and private
-> > data to report back. However, for devices partitioned by PASID and
-> > represented by mdev this may not work. Since IOMMU is not mdev aware
-> > and only works at physical device level.
-> > So I am thinking we should allow multiple registration of fault
-> > handler with different data and ID. i.e.
-> > 
-> > int iommu_register_device_fault_handler(struct device *dev,
-> > 					iommu_dev_fault_handler_t
-> > handler, int id,
-> > 					void *data)
-> > 
-> > where the new "id field" is
-> >  * @id: Identification of the handler private data, will be used by
-> > fault
-> >  *      reporting code to match the handler data to be returned.
-> > For page
-> >  *      request, this can be the PASID. ID must be unique per
-> > device, i.e.
-> >  *      each ID can only be registered once per device.
-> >  *      - IOMMU_DEV_FAULT_ID_UNRECOVERY (~0U) is reserved for fault
-> > reporting
-> >  *      w/o ID. e.g. unrecoverable faults.  
-> I don't get this last sentence. Don't you need the feature also for
-> unrecoverable faults, ie. isn't it requested to report an
-> unrecoverable fault on a specific id?
-> 
-For unrecoverable faults which are not associated with a specific PASID,
-we reserve a range of special IDs for them. Let me rewrite the
-comments.
-The usage would be:
-For Handler registration by vfio or device driver
-1.  PRQ of PASID1
-iommu_register_device_fault_handler(pdev, handler, pasid1, data1);
-2.  PRQ of PASID2
-iommu_register_device_fault_handler(pdev, handler, pasid2, data2);
-3. unrecoverable fault
-iommu_register_device_fault_handler(pdev, handler,
-IOMMU_DEV_FAULT_ID_UNRECOVERY, NULL);
+> fixes following Smatch static check warning:
+>
+>  ./drivers/pinctrl/sunxi/pinctrl-sunxi.c:1112 sunxi_pinctrl_build_state()
+>  warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
+>
+> As we will be calling krealloc() on pointer 'pctrl->functions', which means
+> kfree() will be called in there, devm_kzalloc() shouldn't be used with
+> the allocation in the first place.  Fix the warning by calling kcalloc()
+> and managing the free procedure in error path on our own.
+>
+> Fixes: 0e37f88d9ad8 ("ARM: sunxi: Add pinctrl driver for Allwinner SoCs")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-For IOMMU driver reporting fault back to vfio or kernel driver:
-1. PRQ of PASID1
-iommu_report_device_fault(dev, evt1)
-where evt1->data = data1, evt1->pasid = pasid1
-2. PRQ of PASID2
-iommu_report_device_fault(dev, evt2)
-where evt2->data = data2, evt2->pasid = pasid2
-3. unrecoverable fault
-iommu_report_device_fault(dev, evt)
-where evt2->data = NULL, evt->pasid = IOMMU_DEV_FAULT_ID_UNRECOVERY
+Patch applied with Maxime's ACK.
 
-where evt is of struct iommu_fault_event.
-
-> Otherwise looks OK; but I still need to carefully review "[RFC PATCH
-> v2 00/10] vfio/mdev: IOMMU aware mediated device".
-> 
-> Thanks
-> 
-> Eric
-> > 
-> > I am still testing, but just wanted to have feedback on this idea.
-> > 
-> > Thanks,
-> > 
-> > Jacob
-> > 
-> >   
-> >> ---
-> >>  include/linux/iommu.h      | 55 ++++++++++++++++++++++++-
-> >>  include/uapi/linux/iommu.h | 83
-> >> ++++++++++++++++++++++++++++++++++++++ 2 files changed, 136
-> >> insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> >> index 9bd3e63d562b..7529c14ff506 100644
-> >> --- a/include/linux/iommu.h
-> >> +++ b/include/linux/iommu.h
-> >> @@ -49,13 +49,17 @@ struct bus_type;
-> >>  struct device;
-> >>  struct iommu_domain;
-> >>  struct notifier_block;
-> >> +struct iommu_fault_event;
-> >>  
-> >>  /* iommu fault flags */
-> >> -#define IOMMU_FAULT_READ	0x0
-> >> -#define IOMMU_FAULT_WRITE	0x1
-> >> +#define IOMMU_FAULT_READ		(1 << 0)
-> >> +#define IOMMU_FAULT_WRITE		(1 << 1)
-> >> +#define IOMMU_FAULT_EXEC		(1 << 2)
-> >> +#define IOMMU_FAULT_PRIV		(1 << 3)
-> >>  
-> >>  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
-> >>  			struct device *, unsigned long, int, void
-> >> *); +typedef int (*iommu_dev_fault_handler_t)(struct
-> >> iommu_fault_event *, void *); 
-> >>  struct iommu_domain_geometry {
-> >>  	dma_addr_t aperture_start; /* First address that can be
-> >> mapped    */ @@ -262,6 +266,52 @@ struct iommu_device {
-> >>  	struct device *dev;
-> >>  };
-> >>  
-> >> +/**
-> >> + * struct iommu_fault_event - Generic per device fault data
-> >> + *
-> >> + * - PCI and non-PCI devices
-> >> + * - Recoverable faults (e.g. page request), information based on
-> >> PCI ATS
-> >> + * and PASID spec.
-> >> + * - Un-recoverable faults of device interest
-> >> + * - DMA remapping and IRQ remapping faults
-> >> + *
-> >> + * @fault: fault descriptor
-> >> + * @device_private: if present, uniquely identify device-specific
-> >> + *                  private data for an individual page request.
-> >> + * @iommu_private: used by the IOMMU driver for storing
-> >> fault-specific
-> >> + *                 data. Users should not modify this field before
-> >> + *                 sending the fault response.
-> >> + */
-> >> +struct iommu_fault_event {
-> >> +	struct iommu_fault fault;
-> >> +	u64 device_private;
-> >> +	u64 iommu_private;
-> >> +};
-> >> +
-> >> +/**
-> >> + * struct iommu_fault_param - per-device IOMMU fault data
-> >> + * @dev_fault_handler: Callback function to handle IOMMU faults at
-> >> device level
-> >> + * @data: handler private data
-> >> + *
-> >> + */
-> >> +struct iommu_fault_param {
-> >> +	iommu_dev_fault_handler_t handler;
-> >> +	void *data;
-> >> +};
-> >> +
-> >> +/**
-> >> + * struct iommu_param - collection of per-device IOMMU data
-> >> + *
-> >> + * @fault_param: IOMMU detected device fault reporting data
-> >> + *
-> >> + * TODO: migrate other per device data pointers under
-> >> iommu_dev_data, e.g.
-> >> + *	struct iommu_group	*iommu_group;
-> >> + *	struct iommu_fwspec	*iommu_fwspec;
-> >> + */
-> >> +struct iommu_param {
-> >> +	struct iommu_fault_param *fault_param;
-> >> +};
-> >> +
-> >>  int  iommu_device_register(struct iommu_device *iommu);
-> >>  void iommu_device_unregister(struct iommu_device *iommu);
-> >>  int  iommu_device_sysfs_add(struct iommu_device *iommu,
-> >> @@ -429,6 +479,7 @@ struct iommu_ops {};
-> >>  struct iommu_group {};
-> >>  struct iommu_fwspec {};
-> >>  struct iommu_device {};
-> >> +struct iommu_fault_param {};
-> >>  
-> >>  static inline bool iommu_present(struct bus_type *bus)
-> >>  {
-> >> diff --git a/include/uapi/linux/iommu.h
-> >> b/include/uapi/linux/iommu.h index 21adb2a964e5..a0fe5c2fb236
-> >> 100644 --- a/include/uapi/linux/iommu.h
-> >> +++ b/include/uapi/linux/iommu.h
-> >> @@ -150,5 +150,88 @@ struct iommu_guest_msi_binding {
-> >>  	__u64		gpa;
-> >>  	__u32		granule;
-> >>  };
-> >> +
-> >> +/*  Generic fault types, can be expanded IRQ remapping fault */
-> >> +enum iommu_fault_type {
-> >> +	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable
-> >> fault */
-> >> +	IOMMU_FAULT_PAGE_REQ,		/* page request
-> >> fault */ +};
-> >> +
-> >> +enum iommu_fault_reason {
-> >> +	IOMMU_FAULT_REASON_UNKNOWN = 0,
-> >> +
-> >> +	/* IOMMU internal error, no specific reason to report out
-> >> */
-> >> +	IOMMU_FAULT_REASON_INTERNAL,
-> >> +
-> >> +	/* Could not access the PASID table (fetch caused external
-> >> abort) */
-> >> +	IOMMU_FAULT_REASON_PASID_FETCH,
-> >> +
-> >> +	/* could not access the device context (fetch caused
-> >> external abort) */
-> >> +	IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH,
-> >> +
-> >> +	/* pasid entry is invalid or has configuration errors */
-> >> +	IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
-> >> +
-> >> +	/* device context entry is invalid or has configuration
-> >> errors */
-> >> +	IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY,
-> >> +	/*
-> >> +	 * PASID is out of range (e.g. exceeds the maximum PASID
-> >> +	 * supported by the IOMMU) or disabled.
-> >> +	 */
-> >> +	IOMMU_FAULT_REASON_PASID_INVALID,
-> >> +
-> >> +	/* source id is out of range */
-> >> +	IOMMU_FAULT_REASON_SOURCEID_INVALID,
-> >> +
-> >> +	/*
-> >> +	 * An external abort occurred fetching (or updating) a
-> >> translation
-> >> +	 * table descriptor
-> >> +	 */
-> >> +	IOMMU_FAULT_REASON_WALK_EABT,
-> >> +
-> >> +	/*
-> >> +	 * Could not access the page table entry (Bad address),
-> >> +	 * actual translation fault
-> >> +	 */
-> >> +	IOMMU_FAULT_REASON_PTE_FETCH,
-> >> +
-> >> +	/* Protection flag check failed */
-> >> +	IOMMU_FAULT_REASON_PERMISSION,
-> >> +
-> >> +	/* access flag check failed */
-> >> +	IOMMU_FAULT_REASON_ACCESS,
-> >> +
-> >> +	/* Output address of a translation stage caused Address
-> >> Size fault */
-> >> +	IOMMU_FAULT_REASON_OOR_ADDRESS
-> >> +};
-> >> +
-> >> +/**
-> >> + * struct iommu_fault - Generic fault data
-> >> + *
-> >> + * @type contains fault type
-> >> + * @reason fault reasons if relevant outside IOMMU driver.
-> >> + * IOMMU driver internal faults are not reported.
-> >> + * @addr: tells the offending page address
-> >> + * @fetch_addr: tells the address that caused an abort, if any
-> >> + * @pasid: contains process address space ID, used in shared
-> >> virtual memory
-> >> + * @page_req_group_id: page request group index
-> >> + * @last_req: last request in a page request group
-> >> + * @pasid_valid: indicates if the PRQ has a valid PASID
-> >> + * @prot: page access protection flag:
-> >> + *	IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
-> >> + */
-> >> +
-> >> +struct iommu_fault {
-> >> +	__u32	type;   /* enum iommu_fault_type */
-> >> +	__u32	reason; /* enum iommu_fault_reason */
-> >> +	__u64	addr;
-> >> +	__u64	fetch_addr;
-> >> +	__u32	pasid;
-> >> +	__u32	page_req_group_id;
-> >> +	__u32	last_req;
-> >> +	__u32	pasid_valid;
-> >> +	__u32	prot;
-> >> +	__u32	access;
-> >> +};
-> >>  #endif /* _UAPI_IOMMU_H */
-> >>    
-> > 
-> > [Jacob Pan]
-> >   
-
-[Jacob Pan]
+Yours,
+Linus Walleij
