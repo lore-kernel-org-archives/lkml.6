@@ -2,130 +2,133 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBCAC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2800ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F4521523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE6F321550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:30:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="vdKGzHtY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F4521523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hD7NrFDO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6F321550
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391228AbeIVASS (ORCPT
+        id S2391251AbeIVAUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:18:18 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38804 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391102AbeIVASS (ORCPT
+        Fri, 21 Sep 2018 20:20:05 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34370 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391102AbeIVAUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:18:18 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t25-v6so4257941wmi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:28:11 -0700 (PDT)
+        Fri, 21 Sep 2018 20:20:05 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f8-v6so12635545ljk.1;
+        Fri, 21 Sep 2018 11:29:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DvL0MV040r5tEUQ0TdSiIDqY2QERNLaT9IjeENG3iXw=;
-        b=vdKGzHtY+7oOfNdK/ocq6nnV0qac0jWv7jB+C7ONrUoLlasdO1RR4t/GuPd5B6h0nJ
-         suh50CVWr0LIr8u5MWNpb0Q1SsHE+2b4+PsBRqrCkovR8zR2SmO8xKoc1jNzzs0nrehq
-         hDKZ7aPzQ6EjQyM04RNovChnnZkGvfShYlYFzJJSremHjKmBPacps0vO3Gqz84aOwNSX
-         edpqGogzH2Rn9Uy2cZ0iCYQLizxc9mGO3/YZ7Mo+67Y95eeq/muk3cNL0cinPq2j0hT9
-         CweXQPtAK2iRkPP9C48XLXIOuiNKpRVjr7f96uR+OQ8lVTRK2soUqwQkrWm/rqOtGbkc
-         jQfw==
+        bh=YrQvvcrtp+YsrQUUYV9NQjLrTZsOfxmULuttgxfa06w=;
+        b=hD7NrFDOYqrJNnP4oVz+R6sil6Py/TE+Zcy8nbIoxuBBApAb3Qvjmb/Xo0gOIx/FMo
+         GxtmBeCyauzftJ83A/wQcOLr82vcdirMoDfNcdSV1/WwJ4H2ql65YTkO3D2iHGnEDxi4
+         88D93MZiqOF4MXdfLe+QejO92DddXiC3u5nJMIH2LNTIubXwk7JF0bjQTyHxi0J1PNAU
+         UA2QbuMdTLn7FnuIROADYHYaUjq8wYArYPgapKGrrrT9MESBjbEK65YY9KL8pTZNqqFc
+         7xOorUrAmFQDGX0gfSYUSr52RQZF7OS4eVR02VOFYrgXpqQplEL//vl2i5WEgGfbLUCU
+         oc2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DvL0MV040r5tEUQ0TdSiIDqY2QERNLaT9IjeENG3iXw=;
-        b=Xwp47+YuKvTbuzZ937UVCHOxqKOVizvVHGqABzTGRfUPDIMkq12z6/LbVo86YKgrNr
-         vNkq9b5UuJOQF/GRcPC3WyecK+o4xTh3W9Ke/tQLC04fAnus+kpH5mc2uZGjFX//TH5F
-         DuQBunkA3zXVIL1yw2a5J6qT7781t5tiu6E9KsiVWwrP5jTn6vJsAI5cyJbJ2eall9Mh
-         JxSx39K9tBF8X5tOZ00Tqn9wG2ouZgB+wo/5V3R4wUQc9DpxYMyMjoSn9jVvk+cl7N6E
-         YmHNEiD+XIFy3ukXiqpFngDzJ3UKnoSN0Mgs19ZdslkN3727tx3MbCYb5vQZA2J+iLJd
-         yJ1A==
-X-Gm-Message-State: APzg51CCQp8yQZrocU6RHiXMqBEN5R7p+GxmVSSQVwW4j15gaqanhuIP
-        NXWrHAaleYqGft+Rt9a6ilAjjnEn66j7ouJFIAntnA==
-X-Google-Smtp-Source: ANB0VdaI347KRWLqgu7sb3f+qWDWz8kMGOaMcMIKC7kDyxFSiI4X2S2A4kI2hBgfyIhB11Ie1qlm9WQHJsgqYN1wAdo=
-X-Received: by 2002:a1c:ac04:: with SMTP id v4-v6mr8182070wme.51.1537554491101;
- Fri, 21 Sep 2018 11:28:11 -0700 (PDT)
+        bh=YrQvvcrtp+YsrQUUYV9NQjLrTZsOfxmULuttgxfa06w=;
+        b=WpvE6XwU/EZIuLNGAG+ADsy/0EvGBjt6JCGOr8Y3a/ISfFlDEJmEkx0OEWobsFntd9
+         30skTrz5uw08cN3e12p0WR3BClkSdpQMMqttTk37BmEG/uH54HjsdqKVyZjjVq9xL7Ao
+         dy7lzEKnJh7Fo9GGSHvCfKXc1xww9lbE/dp5Su+++uncgjQJ70bKcX8egq7PjDwAWP9t
+         5r2WykDH0bWQohJvfRGFxy41+ULooOZTfJ4UtsxXvF8pPyZD5FKzyWJVELoloQWMZmUO
+         Ygzl3rl4D61qDDpttLa1VlJQ2nkuVfzlRMGDiUw7K9o42ZuPd5YjcW57RYMON336IthJ
+         yxSA==
+X-Gm-Message-State: ABuFfojxvkfPCdB/2VEXqTSes0bXTnpY8/F+yfXSzafx4pHsqbr3T3NU
+        X8fUWfLrgGyg/4nUFYICDKMGKtoXjDlV0odZiyo=
+X-Google-Smtp-Source: ACcGV627TlH8OZD6CAJAHXwx5Le9vBIw3W/yMKoNNlvUYEPvP36VzCVFIPTkSPZn4O0PgTorVreQ67zsI+Eyq7m5oJ0=
+X-Received: by 2002:a2e:93c4:: with SMTP id p4-v6mr2922836ljh.150.1537554596501;
+ Fri, 21 Sep 2018 11:29:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180906152859.7810-1-tycho@tycho.ws> <20180906152859.7810-5-tycho@tycho.ws>
- <CALCETrWZmN4FeCSwemfMeayupBmQ-NqpVWQuqSU34CLvzdx8gw@mail.gmail.com>
- <20180919095536.GM4672@cisco> <C1406292-7496-459F-A76A-20C9EFBB12D6@amacapital.net>
- <20180919143842.GN4672@cisco> <CALCETrVuP0nQ5B01-iWrcQ87hisz7=jA08-Uisqud_r+zc74NQ@mail.gmail.com>
- <20180920234240.GR4672@cisco> <CALCETrWEr_VAtJu1mm1akTigsRUXAA7_7RHb-WGHqnyNy=j17Q@mail.gmail.com>
- <20180921133928.GS4672@cisco>
-In-Reply-To: <20180921133928.GS4672@cisco>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Fri, 21 Sep 2018 11:27:59 -0700
-Message-ID: <CALCETrWxjLw6-pMcOydDxbf6KfMrYZcdriTk5g7U3Ba6cRNJNg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] seccomp: add support for passing fds via USER_NOTIF
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>
+References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
+ <1537367527-20773-12-git-send-email-jim2101024@gmail.com> <20180919144119.GB29096@lst.de>
+In-Reply-To: <20180919144119.GB29096@lst.de>
+From:   Jim Quinlan <jim2101024@gmail.com>
+Date:   Fri, 21 Sep 2018 14:29:45 -0400
+Message-ID: <CANCKTBuk9KyabrL7u6RvCp4eu+3mT=9Dvo4wvo99KF6iKVwWRw@mail.gmail.com>
+Subject: Re: [PATCH v5 11/12] ARM64: add dma remap for BrcmSTB PCIe
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 6:39 AM Tycho Andersen <tycho@tycho.ws> wrote:
+On Wed, Sep 19, 2018 at 10:41 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> On Thu, Sep 20, 2018 at 07:18:45PM -0700, Andy Lutomirski wrote:
-> >
-> > I think we just want the operation to cover all the cases.  Let PUT_FD
-> > take a source fd and a dest fd.  If the source fd is -1, the dest is
-> > closed.  If the source is -1 and the dest is -1, return -EINVAL.  If
-> > the dest is -1, allocate an fd.  If the dest is >= 0, work like
-> > dup2().  (The latter could be necessary to emulate things like, say,
-> > dup2 :))
+> On Wed, Sep 19, 2018 at 10:32:06AM -0400, Jim Quinlan wrote:
+> > +#if defined(CONFIG_ARM64)
 >
-> ...then if we're going to allow overwriting fds, we'd need to lift out
-> the logic from do_dup2 somewhere? Is this getting too complicated? :)
+> Please use plain #ifdef where possible.
 >
+> > +dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
+> > +{
+> > +     return brcm_phys_to_dma(dev, paddr);
+> > +}
+> > +
+> > +phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t dev_addr)
+> > +{
+> > +     return brcm_dma_to_phys(dev, dev_addr);
+> > +}
+> > +#endif
+>
+> How is this going to work for a kernel with BrcmSTB built in, but running
+> on a more standard arm64 SOC?
 
-fds are complicated :-p
+Sorry for the delay in my response.  It would work because the
+dma_ranges would be empty/null and identity mapping would happen, but
+yes, all __dma_to_phys and __phys_to_dma calls would be wasting time
+going through the brcm functions.  We would have to take BRCMSTB=y out
+of the defconfig.  Florian would probably NAK that idea.
 
-More seriously, though, I think it's okay if we don't support
-everything out of the box.  getting the general semantics I suggested
-is kind of nice because the resulting API is conceptually simple, even
-if it encapsulates three cases.  But I'd be okay with only supporting
-add-an-fd-at-an-unused-position and delete-an-fd out of the box --
-more can be added if there's demand.
+Please remember that the reason for this approach is because in your
+response to V4 you suggested that "Override phys_to_dma and
+dma_to_phys as mips and x86 [sta2x11] do for similar situations"  and
+"Overriding phys_to_dma and dma_to_phys is required if you need to
+support swiotlb, and chances are with a broken PCIe controller on
+arm64 or mips64 you eventuall will".
 
-But I think that exposing an operation that allocates and reserves an
-fd without putting anything in the slot is awkward, and it opens us up
-to weird corner cases becoming visible that are currently there but
-mostly hidden.  For example, what happens if someone overwrites a
-reserved fd with dup2()?  (The answer is apparently -EBUSY -- see the
-big comment in do_dup2() in fs/file.c.)  But there's a more
-significant nastiness: what happens if someone abuses your new
-mechanism to overwrite a reserved fd that belongs to a different
-thread?  It looks like you'll hit the BUG_ON(fdt->fd[fd] != NULL); in
-__fd_install().  So unless you actually track which unused fds you own
-and enforce that the final installation installs in the right slot,
-you have a problem.
+>
+> I suspect we really just want a set of ranges hanging off struct device
+> (conditional on a config option).  Each SoC can then fill it at boot
+> time, and if it is non-NULL the DMA code will use it instead of
+> calling __phys_to_dma and __dma_to_phys.  In fact the single range
+> version could probably just replace the existing dma_pfn_offset
+> field.
+If this was a config option then BRCMSTB=y in defconfig would set this
+for all ARM64, just like the above case, correct?  And would this work
+with SWIOTLB?   Also, do you think others would use it, or would I be
+adding code in the DMA API only because of one unusual PCIe host
+controller design?   Keep in mind that although you didn't like the
+approach of V4 --  which intercepted DMA ops to make the appropriate
+mapping and was not compatible with SWIOTLB -- at least it kept the
+code restricted to oru driver.
 
-BTW, socketpair() isn't the only thing that can add two fds.
-recvmsg() can, too, as can pipe() and pipe2().  Some of the DRM ioctls
-may as well for all I know.  But socketpair(), pipe(), and recvmsg()
-can be credibly emulated by adding each fd in sequence and then
-deleting them all of one fails.  Sure, this could race against dup2(),
-but I'm not sure we care.
-
---Andy
+Thanks,
+Jim
