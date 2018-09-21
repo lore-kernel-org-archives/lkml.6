@@ -2,70 +2,98 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1FCC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFF1C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A4F2154B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:53:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E8o463AI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A4F2154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A96E21522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:57:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A96E21522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389190AbeIULkW (ORCPT
+        id S2389212AbeIULov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 07:40:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59246 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbeIULkV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 07:40:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4tpoPIPKAK/JoHNg1gVC2fj6KQOk0L5ij5wjmbGS9fU=; b=E8o463AIY/TDP4mPEEpTWF69+
-        z65KbeLVyERGxaOiUWwyB6drBwJi35K0+ccHJ96H3XlQMzr85G7xuJjvU4XOwXhw/cV285MpW8ATx
-        ogaNhbfKelsY/erTvp2iRbaTtA9kJxi6cKedu+SHn5dAp1QIcVVDWTz07o7dgkiB4Hp2oUs/M59DI
-        VGDpuxMC4wj54q3UDLG1GHbER19IEhW6Ju1rMyrrzv6tfURuI5iVIDAxJBW2tOdoV1NJMEB3e5m2j
-        9N7cr43s/DbZjKK+hgh0gXgV/qgmwZuQm+c6l379d2Riz7rheq1KeGlxSoV30TK4hFrwegJXpTsbS
-        +0VvpFChw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g3ENF-0003LH-65; Fri, 21 Sep 2018 05:53:05 +0000
-Date:   Thu, 20 Sep 2018 22:53:04 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, ashok.raj@intel.com, gage.eads@intel.com,
-        gnomes@lxorguk.ukuu.org.uk, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] vfio/pci: Mask buggy SR-IOV VF INTx support
-Message-ID: <20180921055304.GA12584@infradead.org>
-References: <153747346143.7344.14634545723456004489.stgit@gimli.home>
+        Fri, 21 Sep 2018 07:44:51 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:54485 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbeIULov (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 21 Sep 2018 07:44:51 -0400
+Received: from [10.160.4.48] (charybdis-ext.suse.de [195.135.221.2])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 21 Sep 2018 07:57:32 +0200
+Subject: Re: [PATCH] scsi: advansys: Remove unnecessary parentheses
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Matthew Wilcox <matthew@wil.cx>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180920205858.6035-1-natechancellor@gmail.com>
+From:   Hannes Reinecke <hare@suse.com>
+Message-ID: <9432dde7-c63f-9c0c-fc9b-8728a0715ff3@suse.com>
+Date:   Fri, 21 Sep 2018 07:57:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <153747346143.7344.14634545723456004489.stgit@gimli.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180920205858.6035-1-natechancellor@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/*
-> + * Nag about hardware bugs, hopefully to have vendors fix them, but at least
-> + * to collect a list of dependencies for the VF INTx pin quirk below.
-> + */
-> +static const struct pci_device_id known_bogus_vf_intx_pin[] = {
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x270c) },
-> +	{}
-> +};
+On 9/20/18 10:58 PM, Nathan Chancellor wrote:
+> Clang warns when multiple pairs of parentheses are used for a single
+> conditional statement.
+> 
+> drivers/scsi/advansys.c:6451:20: warning: equality comparison with
+> extraneous parentheses [-Wparentheses-equality]
+>                                  if ((sdtr_data == 0xFF)) {
+>                                       ~~~~~~~~~~^~~~~~~
+> drivers/scsi/advansys.c:6451:20: note: remove extraneous parentheses
+> around the comparison to silence this warning
+>                                  if ((sdtr_data == 0xFF)) {
+>                                      ~          ^      ~
+> drivers/scsi/advansys.c:6451:20: note: use '=' to turn this equality
+> comparison into an assignment
+>                                  if ((sdtr_data == 0xFF)) {
+>                                                 ^~
+>                                                 =
+> 1 warning generated.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/155
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>   drivers/scsi/advansys.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+> index 713f69033f20..44c96199e00a 100644
+> --- a/drivers/scsi/advansys.c
+> +++ b/drivers/scsi/advansys.c
+> @@ -6448,7 +6448,7 @@ static void AscIsrChipHalted(ASC_DVC_VAR *asc_dvc)
+>   				sdtr_data =
+>   				    AscCalSDTRData(asc_dvc, ext_msg.xfer_period,
+>   						   ext_msg.req_ack_offset);
+> -				if ((sdtr_data == 0xFF)) {
+> +				if (sdtr_data == 0xFF) {
+>   
+>   					q_cntl |= QC_MSG_OUT;
+>   					asc_dvc->init_sdtr &= ~target_id;
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-What device is this? We don't have the device ID anywhere, so I guess
-it is something match by the class code?
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke		               zSeries & Storage
+hare@suse.com			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
