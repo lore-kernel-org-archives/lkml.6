@@ -2,89 +2,181 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C189AC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AD9ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1250C21532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1250C21532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EE2B2156D
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:08:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE2B2156D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390292AbeIUU5P (ORCPT
+        id S2390349AbeIUU6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:57:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:13657 "EHLO mx1.redhat.com"
+        Fri, 21 Sep 2018 16:58:05 -0400
+Received: from mga07.intel.com ([134.134.136.100]:47279 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728184AbeIUU5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:57:15 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EFF7F3091D54;
-        Fri, 21 Sep 2018 15:07:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AD2F230912F4;
-        Fri, 21 Sep 2018 15:07:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180920151214.15484-6-mszeredi@redhat.com>
-References: <20180920151214.15484-6-mszeredi@redhat.com> <20180920151214.15484-1-mszeredi@redhat.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] fsmount: do not use legacy MS_ flags
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17156.1537542475.1@warthog.procyon.org.uk>
-Date:   Fri, 21 Sep 2018 16:07:55 +0100
-Message-ID: <17157.1537542475@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 21 Sep 2018 15:07:58 +0000 (UTC)
+        id S1728184AbeIUU6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:58:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 08:08:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="71856527"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by fmsmga007.fm.intel.com with ESMTP; 21 Sep 2018 08:08:46 -0700
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v4 00/27] Control Flow Enforcement: Shadow Stack
+Date:   Fri, 21 Sep 2018 08:03:24 -0700
+Message-Id: <20180921150351.20898-1-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <mszeredi@redhat.com> wrote:
+The previous version of CET patches can be found in the following
+link:
 
-> What happens if we introduce new flags for fsmount(2) and are already out
-> of flags for mount(2)?  I see a big mess that way.
-> 
-> So let's instead start a clean new set, to be used in the new API.
+  https://lkml.org/lkml/2018/8/30/608
 
-If we must.  But let's not call them just M_* please.  Let's call them
-MOUNT_ATTR_* or something.
+Summary of changes from v3:
 
-> The MS_RELATIME flag was accepted but ignored.  Simply leave this out of
-> the new set, since "relatime" is the default.
+  Fixed an issue in page fault handling in do_swap_page().
+  Fixed issues in ptep_set_wrprotect/pmdp_set_wrprotect.
+  Changed WRUSS fault handling to asm_goto.
+  Added shadow stack to memory accounting.
+  Added a patch to create a guard gap between VMAs.
+  Added a patch to prevent merging of shadow stack areas.
+  Other small fixes in ELF header parsing and typos.
 
-Can we make RELATIME, STRICTATIME and NOATIME an enum rather than individual
-flags?
+Yu-cheng Yu (27):
+  x86/cpufeatures: Add CPUIDs for Control-flow Enforcement Technology
+    (CET)
+  x86/fpu/xstate: Change some names to separate XSAVES system and user
+    states
+  x86/fpu/xstate: Enable XSAVES system states
+  x86/fpu/xstate: Add XSAVES system states for shadow stack
+  Documentation/x86: Add CET description
+  x86/cet: Control protection exception handler
+  x86/cet/shstk: Add Kconfig option for user-mode shadow stack
+  mm: Introduce VM_SHSTK for shadow stack memory
+  x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
+  drm/i915/gvt: Update _PAGE_DIRTY to _PAGE_DIRTY_BITS
+  x86/mm: Introduce _PAGE_DIRTY_SW
+  x86/mm: Modify ptep_set_wrprotect and pmdp_set_wrprotect for
+    _PAGE_DIRTY_SW
+  x86/mm: Shadow stack page fault error checking
+  mm: Handle shadow stack page fault
+  mm: Handle THP/HugeTLB shadow stack page fault
+  mm: Update can_follow_write_pte/pmd for shadow stack
+  mm: Introduce do_mmap_locked()
+  x86/cet/shstk: User-mode shadow stack support
+  x86/cet/shstk: Introduce WRUSS instruction
+  x86/cet/shstk: Signal handling for shadow stack
+  x86/cet/shstk: ELF header parsing of Shadow Stack
+  x86/cet/shstk: Handle thread shadow stack
+  mm/map: Add Shadow stack pages to memory accounting
+  mm/mmap: Create a guard area between VMAs
+  mm/mmap: Prevent Shadow Stack VMA merges
+  x86/cet/shstk: Add arch_prctl functions for Shadow Stack
+  x86/cet/shstk: Add Shadow Stack instructions to opcode map
 
-	#define MOUNT_ATTR_RDONLY	0x01
-	#define MOUNT_ATTR_NOSUID	0x02
-	#define MOUNT_ATTR_NODEV	0x04
-	#define MOUNT_ATTR_NOEXEC	0x08
-	#define MOUNT_ATTR_RELATIME	0x00
-	#define MOUNT_ATTR_NOATIME	0x10
-	#define MOUNT_ATTR_STRICTATIME	0x20
-	#define MOUNT_ATTR_ATIME_MASK	0x30
-	#define MOUNT_ATTR_NODIRATIME	0x40
+ .../admin-guide/kernel-parameters.txt         |   6 +
+ Documentation/index.rst                       |   1 +
+ Documentation/x86/index.rst                   |  11 +
+ Documentation/x86/intel_cet.rst               | 259 +++++++++++++
+ arch/x86/Kconfig                              |  28 ++
+ arch/x86/Makefile                             |   7 +
+ arch/x86/entry/entry_64.S                     |   2 +-
+ arch/x86/ia32/ia32_signal.c                   |  13 +
+ arch/x86/include/asm/cet.h                    |  42 +++
+ arch/x86/include/asm/cpufeatures.h            |   2 +
+ arch/x86/include/asm/disabled-features.h      |   8 +-
+ arch/x86/include/asm/elf.h                    |   5 +
+ arch/x86/include/asm/fpu/internal.h           |   6 +-
+ arch/x86/include/asm/fpu/types.h              |  22 ++
+ arch/x86/include/asm/fpu/xstate.h             |  31 +-
+ arch/x86/include/asm/mmu_context.h            |   3 +
+ arch/x86/include/asm/msr-index.h              |  14 +
+ arch/x86/include/asm/pgtable.h                | 191 ++++++++--
+ arch/x86/include/asm/pgtable_types.h          |  31 +-
+ arch/x86/include/asm/processor.h              |   5 +
+ arch/x86/include/asm/sighandling.h            |   5 +
+ arch/x86/include/asm/special_insns.h          |  32 ++
+ arch/x86/include/asm/traps.h                  |   5 +
+ arch/x86/include/uapi/asm/elf_property.h      |  15 +
+ arch/x86/include/uapi/asm/prctl.h             |   5 +
+ arch/x86/include/uapi/asm/processor-flags.h   |   2 +
+ arch/x86/include/uapi/asm/sigcontext.h        |  17 +
+ arch/x86/kernel/Makefile                      |   4 +
+ arch/x86/kernel/cet.c                         | 285 +++++++++++++++
+ arch/x86/kernel/cet_prctl.c                   |  79 ++++
+ arch/x86/kernel/cpu/common.c                  |  24 ++
+ arch/x86/kernel/cpu/scattered.c               |   1 +
+ arch/x86/kernel/elf.c                         | 340 ++++++++++++++++++
+ arch/x86/kernel/fpu/core.c                    |  11 +-
+ arch/x86/kernel/fpu/init.c                    |  10 -
+ arch/x86/kernel/fpu/signal.c                  |   6 +-
+ arch/x86/kernel/fpu/xstate.c                  | 152 +++++---
+ arch/x86/kernel/idt.c                         |   4 +
+ arch/x86/kernel/process.c                     |   8 +
+ arch/x86/kernel/process_64.c                  |   7 +
+ arch/x86/kernel/relocate_kernel_64.S          |   2 +-
+ arch/x86/kernel/signal.c                      |  96 +++++
+ arch/x86/kernel/traps.c                       |  58 +++
+ arch/x86/kvm/vmx.c                            |   2 +-
+ arch/x86/lib/x86-opcode-map.txt               |  26 +-
+ arch/x86/mm/fault.c                           |  27 ++
+ arch/x86/mm/pgtable.c                         |  42 +++
+ drivers/gpu/drm/i915/gvt/gtt.c                |   2 +-
+ fs/binfmt_elf.c                               |  15 +
+ fs/proc/task_mmu.c                            |   3 +
+ include/asm-generic/pgtable.h                 |  14 +
+ include/linux/mm.h                            |  56 ++-
+ include/uapi/linux/elf.h                      |   1 +
+ mm/gup.c                                      |   8 +-
+ mm/huge_memory.c                              |  12 +-
+ mm/memory.c                                   |   7 +-
+ mm/mmap.c                                     |  11 +
+ tools/objtool/arch/x86/lib/x86-opcode-map.txt |  26 +-
+ 58 files changed, 1946 insertions(+), 161 deletions(-)
+ create mode 100644 Documentation/x86/index.rst
+ create mode 100644 Documentation/x86/intel_cet.rst
+ create mode 100644 arch/x86/include/asm/cet.h
+ create mode 100644 arch/x86/include/uapi/asm/elf_property.h
+ create mode 100644 arch/x86/kernel/cet.c
+ create mode 100644 arch/x86/kernel/cet_prctl.c
+ create mode 100644 arch/x86/kernel/elf.c
 
-We can also use these for a mount_setattr() syscall:
+-- 
+2.17.1
 
-	mount_setattr(int dfd, const char *path, unsigned int atflags,
-		      unsigned int attr_values,
-		      unsigned int attr_mask);
-
-where atflags can potentially include AT_RECURSIVE.
-
-David
