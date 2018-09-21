@@ -2,121 +2,249 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D3AC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CA5ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5186F206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:44:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A4ydsM++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5186F206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 077282150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:45:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077282150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389683AbeIUSdJ (ORCPT
+        id S2389843AbeIUSd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:33:09 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:60074 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727697AbeIUSdJ (ORCPT
+        Fri, 21 Sep 2018 14:33:58 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:47196 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbeIUSd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:33:09 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8LCiIC3063129;
-        Fri, 21 Sep 2018 07:44:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537533859;
-        bh=RrJgsigsRqZ5+kY2WBYBqcFtOdKxa65nus+h2sXqqt0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=A4ydsM++A3gHuxl+Pg/7RaueAKd/GZ6eHUT8DMndjVYTj0OiYTJevmE7mZwRQ+e0e
-         rm8lE9vueZD2yOiVeyB5WISIlm+c6Y2tQ6j+CuBYQ1gEJ3oJQ75/2eEcBxSiqmpgeZ
-         3TTvykuHFMewsiCTiBdfQIe9i78DFuh8E9hlGAQU=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LCiI1G013436;
-        Fri, 21 Sep 2018 07:44:18 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 21
- Sep 2018 07:44:18 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 21 Sep 2018 07:44:18 -0500
-Received: from [172.22.169.25] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LCiI3j018666;
-        Fri, 21 Sep 2018 07:44:18 -0500
-Subject: Re: [PATCH v7 1/6] dt-bindings: ti-lmu: Remove LM3697
-To:     Pavel Machek <pavel@ucw.cz>
-CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lee.jones@linaro.org>,
-        <linux-omap@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20180911170825.17789-2-dmurphy@ti.com>
- <20180911200530.GA28290@amd> <85ab3bf4-21d4-dda9-a7c8-5ed68f15c611@ti.com>
- <20180912214938.GA30654@amd> <7950fa32-c8f9-52bb-06b0-0c1cc93b6bc9@ti.com>
- <20180914081822.GA21830@amd> <9c14ee7c-f172-bb0c-d9a8-8aeee408f716@gmail.com>
- <20180914214220.GA2081@amd> <be2ee681-7ae0-6545-0208-6ae5c1b7affd@gmail.com>
- <5a249ae3-e3f7-8eff-4022-ed982e364326@ti.com>
- <20180920220443.GB27468@xo-6d-61-c0.localdomain>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <50e9aa50-99fb-0a1f-e395-c52bf91e8a7f@ti.com>
-Date:   Fri, 21 Sep 2018 07:44:00 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 14:33:58 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g3Ko5-0007gp-S9; Fri, 21 Sep 2018 06:45:13 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g3Ko4-0001vV-J7; Fri, 21 Sep 2018 06:45:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org
+References: <87y3bzk6yv.fsf@xmission.com>
+        <20180918000546.12552-8-ebiederm@xmission.com>
+        <alpine.DEB.2.21.1809182228350.1468@nanos.tec.linutronix.de>
+Date:   Fri, 21 Sep 2018 14:45:01 +0200
+In-Reply-To: <alpine.DEB.2.21.1809182228350.1468@nanos.tec.linutronix.de>
+        (Thomas Gleixner's message of "Tue, 18 Sep 2018 22:33:15 +0200
+        (CEST)")
+Message-ID: <877ejf58aa.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180920220443.GB27468@xo-6d-61-c0.localdomain>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-XM-SPF: eid=1g3Ko4-0001vV-J7;;;mid=<877ejf58aa.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/uthwH7/VXwynng47GZg8uz3XH1Q3fjMg=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [REVIEW][PATCH 08/20] signal/x86/traps: Move setting error_code and trap_nr into do_trap_no_signal
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel
+Thomas Gleixner <tglx@linutronix.de> writes:
 
-On 09/20/2018 05:04 PM, Pavel Machek wrote:
-> Hi!
-> 
->>>>> Easy to maintain will be a dedicated LED class driver.
->>>>
->>>> You mean, 3 dedicated LED class drivers and 3 MFD drivers with LED
->>>> parts? We'll need complex driver anyway, and I'd really like to have
->>>> just one.
->>>
->>> In the LED subsystem we can wrap common functionalities
->>> into a library object. MFD driver will be able to reuse it then.
->>
->> I am currently working on that code now.  I expect a RFC on this this week.
-> 
-> Looking forward to that.
-> 
-> But you really need acks for the bindings, and since Rob is usually quite slow
-> acking them, it is easiest to use the existing binding... if it is wrong it
-> needs to be fixed, anyway.
-> 
+> On Tue, 18 Sep 2018, Eric W. Biederman wrote:
+>
+>> Half of the times when error_code and trap_nr are set are already in
+>
+> s/when// I think
 
-OK I am in the midst of creating the code now. I have the common code done I just need to
-make sure that it scales to other devices in the list.
+Yes that changelog was not a good description of why I was changing
+things.
 
-The bindings will need to be updated to follow the LED bindings binding style.
+>> do_trap_no_signal.  Move the other time these are set into do_trap_no_signal,
+>
+> Please write function as do_trap_no_signal() so it's more obvious what you
+> are talking about.
 
-I am wondering for the non-MFD parts if we should move the bindings to the LED
-directory to make them easier to find.
+That feels quite unnatural to me.
 
-Dan 
+>> and give do_trap_no_signal a single exit where a signals are sent.
+>
+> s/a/// or s/a/all/ Not sure what you wanted to do here.
+>
+>> After the move the comment documeting this all is much easier to follow
+>> as everything is together in one place.
+>> 
+>> Also update the string that is passed in to const.  The only user of that
+>> str is die and it already takes a const string, so this just makes it explicit
+>
+> string
+>
+>> that the string won't change.
+>> 
+>> This prepares the way for adding a second caller to do_trap_no_signal.
+>> 
+>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> ---
+>>  arch/x86/kernel/traps.c | 29 ++++++++++++++---------------
+>>  1 file changed, 14 insertions(+), 15 deletions(-)
+>> 
+>> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+>> index 31a689b67be3..f31c0ddee278 100644
+>> --- a/arch/x86/kernel/traps.c
+>> +++ b/arch/x86/kernel/traps.c
+>> @@ -189,7 +189,7 @@ int fixup_bug(struct pt_regs *regs, int trapnr)
+>>  }
+>>  
+>>  static nokprobe_inline int
+>> -do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
+>> +do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+>>  		  struct pt_regs *regs,	long error_code)
+>>  {
+>>  	if (v8086_mode(regs)) {
+>> @@ -202,10 +202,8 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
+>>  						error_code, trapnr))
+>>  				return 0;
+>>  		}
+>> -		return -1;
+>>  	}
+>> -
+>> -	if (!user_mode(regs)) {
+>> +	else if (!user_mode(regs)) {
+>
+> Please put that 'else if' right after the closing bracket, i.e.
+>
+> 	} else if (...) {
+>
+>>  		if (fixup_exception(regs, trapnr))
+>>  			return 0;
+>
+> With that fixed:
+>
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-> THanks,
-> 
-> 									Pavel
-> 
+Done.  The upated patch is below.
 
+I also realized for clarity of the code I could have moved show_signal
+into do_trap_no_signal as well.  I will post a follow up change where I
+do that.
 
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+Date: Fri, 4 Aug 2017 14:01:50 -0500
+Subject: [PATCH] signal/x86/traps: Move more code into do_trap_no_signal so it can be reused
+
+The function do_trap_no_signal embodies almost all of the work of the
+function do_trap.  The exceptions are setting of thread.error_code and
+thread.trap_nr in the case when the signal will be sent, and reporting
+which signal will be sent with show_signal.
+
+Filling in struct siginfo and then calling do_trap is problematic as
+filling in struct siginfo is an fiddly process that can through
+inattention has resulted in fields not initialized and the wrong
+fields being filled in.
+
+To avoid this error prone situation I am replacing force_sig_info with
+a set of functions that take as arguments the information needed to
+send a specific kind of signal.
+
+The function do_trap is called in the context of several different
+kinds of signals today.  Having a solid do_trap_no_signal that
+can be reused allows call sites that send different kinds of
+signals to reuse all of the code in do_trap_no_signal.
+
+Modify do_trap_no_signal to have a single exit there signals
+where be sent (aka returning -1) to allow more of the signal
+sending path to be moved to from do_trap to do_trap_no_signal.
+
+Move setting thread.trap_nr and thread.error_code into do_trap_no_signal
+so the code does not need to be duplicated.
+
+Make the type of the string that is passed into do_trap_no_signal to
+const.  The only user of that str is die and it already takes a const
+string, so this just makes it explicit that the string won't change.
+
+All of this prepares the way for using do_trap_no_signal outside
+of do_trap.
+
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ arch/x86/kernel/traps.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 31a689b67be3..f31c0ddee278 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -189,7 +189,7 @@ int fixup_bug(struct pt_regs *regs, int trapnr)
+ }
+ 
+ static nokprobe_inline int
+-do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
++do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+ 		  struct pt_regs *regs,	long error_code)
+ {
+ 	if (v8086_mode(regs)) {
+@@ -202,10 +202,8 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
+ 						error_code, trapnr))
+ 				return 0;
+ 		}
+-		return -1;
+ 	}
+-
+-	if (!user_mode(regs)) {
++	else if (!user_mode(regs)) {
+ 		if (fixup_exception(regs, trapnr))
+ 			return 0;
+ 
+@@ -214,6 +212,18 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, char *str,
+ 		die(str, regs, error_code);
+ 	}
+ 
++	/*
++	 * We want error_code and trap_nr set for userspace faults and
++	 * kernelspace faults which result in die(), but not
++	 * kernelspace faults which are fixed up.  die() gives the
++	 * process no chance to handle the signal and notice the
++	 * kernel fault information, so that won't result in polluting
++	 * the information about previously queued, but not yet
++	 * delivered, faults.  See also do_general_protection below.
++	 */
++	tsk->thread.error_code = error_code;
++	tsk->thread.trap_nr = trapnr;
++
+ 	return -1;
+ }
+ 
+@@ -271,17 +281,6 @@ do_trap(int trapnr, int signr, char *str, struct pt_regs *regs,
+ 
+ 	if (!do_trap_no_signal(tsk, trapnr, str, regs, error_code))
+ 		return;
+-	/*
+-	 * We want error_code and trap_nr set for userspace faults and
+-	 * kernelspace faults which result in die(), but not
+-	 * kernelspace faults which are fixed up.  die() gives the
+-	 * process no chance to handle the signal and notice the
+-	 * kernel fault information, so that won't result in polluting
+-	 * the information about previously queued, but not yet
+-	 * delivered, faults.  See also do_general_protection below.
+-	 */
+-	tsk->thread.error_code = error_code;
+-	tsk->thread.trap_nr = trapnr;
+ 
+ 	show_signal(tsk, signr, "trap ", str, regs, error_code);
+ 
 -- 
-------------------
-Dan Murphy
+2.17.1
+
+
