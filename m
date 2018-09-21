@@ -2,446 +2,233 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AA4C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D011C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232822154F
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:06:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232822154F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 173AE2154E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:07:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="vRokIr7u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173AE2154E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390223AbeIUTzy (ORCPT
+        id S2390305AbeIUT4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:55:54 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51528 "EHLO huawei.com"
+        Fri, 21 Sep 2018 15:56:03 -0400
+Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:40864
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389434AbeIUTzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:55:54 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4D64DBEE061EE;
-        Fri, 21 Sep 2018 22:06:48 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.42) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Fri, 21 Sep 2018
- 22:06:42 +0800
-Subject: Re: [PATCH v2 03/11] arm64: dts: hi6220: Update coresight bindings
- for hardware ports
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180912135352.19722-1-suzuki.poulose@arm.com>
- <20180912135352.19722-4-suzuki.poulose@arm.com>
-CC:     <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh@kernel.org>,
-        <frowand.list@gmail.com>, <coresight@lists.linaro.org>,
-        <leo.yan@linaro.org>, <lipengcheng8@huawei.com>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5BA4FAEA.3010502@hisilicon.com>
-Date:   Fri, 21 Sep 2018 15:06:34 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        id S2389547AbeIUT4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:56:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uAodmlzKx8pFW4uJElq3pP1bvJtJvCQHLYSnkvTSjJA=;
+ b=vRokIr7uBeEeYiapgE6XgnseyMLxg4vg9LwFrzKa+x3O9wFoZ3wgHWEmQsCP6clqgISEDxuxVIaGc4LTaDBZZHcj9pfvkRdQN54Iq8m6X4GS0jP7fJxjyXJp60slc8/s/3mSj1XFTN4YZAMzBGDhC3amVzZsmsycy2TgpObOmLg=
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com (10.169.135.8) by
+ VI1PR0501MB2591.eurprd05.prod.outlook.com (10.168.137.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Fri, 21 Sep 2018 14:06:37 +0000
+Received: from VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::2851:14bb:c7f4:56ce]) by VI1PR0501MB2271.eurprd05.prod.outlook.com
+ ([fe80::2851:14bb:c7f4:56ce%4]) with mapi id 15.20.1143.017; Fri, 21 Sep 2018
+ 14:06:37 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Parav Pandit <parav@mellanox.com>,
+        syzbot <syzbot+20c32fa6ff84a2d28c36@syzkaller.appspotmail.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        "dledford@redhat.com" <dledford@redhat.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>, "leon@kernel.org" <leon@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
+Subject: RE: general protection fault in addr_resolve
+Thread-Topic: general protection fault in addr_resolve
+Thread-Index: AQHUUYX/WBgJn3+i9Ei6L3cuU6RNGKT6wYQggAAD2jA=
+Date:   Fri, 21 Sep 2018 14:06:36 +0000
+Message-ID: <VI1PR0501MB2271CEE47389D5F207CD41DED1120@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+References: <0000000000000d23fc05765d8484@google.com>
+ <VI1PR0501MB22714EAD25134A294431290ED1120@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+In-Reply-To: <VI1PR0501MB22714EAD25134A294431290ED1120@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [68.203.16.89]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2591;6:6/+9+mk400CNlYy18m6oZKUyW1+TpMLaL3KVBX/tpebn9fMf91WAy++h8yhKvQfG0kD//paRaEJq2yRQeGn/3KMqnV/8oJ5yADJU4I7vGmsNMjskMDY6R+4NpF36n3G5rl4jtN14aavaMbOlBcfa32EJrBfhAsifWrKw9erhjdvPc2je+b2+A2GSm7bL0oCcFhe4WGG/EQEN0jzDt6SgR7ar8yfhLGKt0rfD8wdd7nlNFRZgMgPwPogGqKoG9o6ShXAI6SPgR50aelqFWnkWb/elTve8C8ZVJ+/Ikh7IE/PnDJxjxGAv1CIRGsE2Rv/iuqielUGwYkTMfbFziUcT3VNphkLlMSYN0RJ4FeHlNpt5JwofPrYIBsJMwxDQ4aBMtkyBi/7HhvJwFf0GkcGQN2lRiBbmSWI/yNPOZ/EwkyaWPa1Cydn8eo8wAUe5v+O0R0Br61wOipryv/uKinrZSw==;5:HeA7LcvYeoQQBYKh/AFhyi0bEUfkITwcXxhaCWxnNN5BgGZTFxdXu4Cs5g0Q0FGAnRC7ghp1mhvK1DU/bErc2eM4M0CGew7uakUR4Wa3lNB+zQFnua8XFH3m+egeFWck+diCAOSGSX3/eT7GSM8mNm4lGgfZh6NT1P70bZPjBfA=;7:4YM9MDRc+QVuZXDvxz3ziIlk2bqGGqVYNTB9alhdgKX01V3LCx4Cxd3fzMfa+iV8OHkerQHbGqQRT9RNjaRxw4TumxKp+A/ChJUeFuoagW2yXpAxL3CwA7qupNrxgMDvFrBqkKIpno5YIYfkNTNfnwaxy0Lylbc6yaerZpFa9KaEllPFO/mP1LcEM0LZSkpm7xyN3P14ujNDD+tBzWC7vJJqITZ28Gs4ZFCE19GhtDH4RBgZBrlVQjUiCgVoppzH
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: fa5788ab-d57f-4c01-db12-08d61fcb7204
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2591;
+x-ms-traffictypediagnostic: VI1PR0501MB2591:
+x-microsoft-antispam-prvs: <VI1PR0501MB2591DBDCD1759C146DBB6B8ED1120@VI1PR0501MB2591.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(215639381216008)(9452136761055)(148501403981450);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:VI1PR0501MB2591;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2591;
+x-forefront-prvs: 0802ADD973
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(39860400002)(366004)(13464003)(199004)(189003)(7736002)(966005)(53546011)(6506007)(81166006)(316002)(66066001)(81156014)(33656002)(7696005)(53936002)(8676002)(45080400002)(25786009)(68736007)(99286004)(8936002)(76176011)(5250100002)(305945005)(6306002)(93156006)(6116002)(3846002)(256004)(105586002)(2940100002)(229853002)(14444005)(26005)(9686003)(110136005)(2906002)(478600001)(55016002)(106356001)(476003)(446003)(97736004)(2900100001)(5660300001)(102836004)(2501003)(575784001)(6436002)(11609785009)(14454004)(486006)(86362001)(2201001)(6246003)(11346002)(74316002)(71200400001)(71190400001)(99710200001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2591;H:VI1PR0501MB2271.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: qWqf4JaL2K2OtR7ATnRPwMcTpcBYTPfWyEfRtu93VWye2BdqwbbHFpGA0+6oC//Lz0XsDJoMDFVQ3l5iLQG5n2Z6l1IdjNousaLG4dFsgWfnUtzG1ozfYxt5pBuj6maU4RRHTZjqUu3NP8BbRxowYYrmFOqAeJvc6w9WW1FgT/Zw7wBQl+G0C8vTiCfWvHUgmpX+75xXu8SSlBnCRB5J0kI4UCYa1pTlerT0/gwkJMGt/Emq6fLDfnoVti6RnKH8+2mCdhtUQygd/Alw9FkFJqRkc9698gzJx92yz1T2p79fXidMQ0y4ACHGfkmDAqrl2S7oeuySHRf5n4ku6kH8Dfr7DdTPNrEGE2o3XW4lrvU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20180912135352.19722-4-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa5788ab-d57f-4c01-db12-08d61fcb7204
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 14:06:36.9655
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2591
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-
-On 2018/9/12 14:53, Suzuki K Poulose wrote:
-> Switch to updated coresight bindings for hw ports.
-> 
-> Cc: xuwei5@hisilicon.com
-> Cc: lipengcheng8@huawei.com
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Tested-by: Leo Yan <leo.yan@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-Thanks!
-Applied to the hisilicon dt tree.
-
-Best Regards,
-Wei
-
-> ---
->  .../boot/dts/hisilicon/hi6220-coresight.dtsi  | 181 +++++++++---------
->  1 file changed, 86 insertions(+), 95 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
-> index 7afee5d5087b..68c52f1149be 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi6220-coresight.dtsi
-> @@ -20,22 +20,18 @@
->  			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
->  			clock-names = "apb_pclk";
->  
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->  					soc_funnel_out: endpoint {
->  						remote-endpoint =
->  							<&etf_in>;
->  					};
->  				};
-> +			};
->  
-> -				port@1 {
-> -					reg = <0>;
-> +			in-ports {
-> +				port {
->  					soc_funnel_in: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&acpu_funnel_out>;
->  					};
-> @@ -49,21 +45,17 @@
->  			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
->  			clock-names = "apb_pclk";
->  
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			in-ports {
-> +				port {
->  					etf_in: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&soc_funnel_out>;
->  					};
->  				};
-> +			};
->  
-> -				port@1 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->  					etf_out: endpoint {
->  						remote-endpoint =
->  							<&replicator_in>;
-> @@ -77,20 +69,20 @@
->  			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
->  			clock-names = "apb_pclk";
->  
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			in-ports {
-> +				port {
->  					replicator_in: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etf_out>;
->  					};
->  				};
-> +			};
->  
-> -				port@1 {
-> +			out-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
->  					reg = <0>;
->  					replicator_out0: endpoint {
->  						remote-endpoint =
-> @@ -98,7 +90,7 @@
->  					};
->  				};
->  
-> -				port@2 {
-> +				port@1 {
->  					reg = <1>;
->  					replicator_out1: endpoint {
->  						remote-endpoint =
-> @@ -114,14 +106,9 @@
->  			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
->  			clock-names = "apb_pclk";
->  
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			in-ports {
-> +				port {
->  					etr_in: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&replicator_out0>;
->  					};
-> @@ -135,14 +122,9 @@
->  			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
->  			clock-names = "apb_pclk";
->  
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			in-ports {
-> +				port {
->  					tpiu_in: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&replicator_out1>;
->  					};
-> @@ -156,85 +138,78 @@
->  			clocks = <&acpu_sctrl HI6220_ACPU_SFT_AT_S>;
->  			clock-names = "apb_pclk";
->  
-> -			ports {
-> -				#address-cells = <1>;
-> -				#size-cells = <0>;
-> -
-> -				port@0 {
-> -					reg = <0>;
-> +			out-ports {
-> +				port {
->  					acpu_funnel_out: endpoint {
->  						remote-endpoint =
->  							<&soc_funnel_in>;
->  					};
->  				};
-> +			};
->  
-> -				port@1 {
-> +			in-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
->  					reg = <0>;
->  					acpu_funnel_in0: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm0_out>;
->  					};
->  				};
->  
-> -				port@2 {
-> +				port@1 {
->  					reg = <1>;
->  					acpu_funnel_in1: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm1_out>;
->  					};
->  				};
->  
-> -				port@3 {
-> +				port@2 {
->  					reg = <2>;
->  					acpu_funnel_in2: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm2_out>;
->  					};
->  				};
->  
-> -				port@4 {
-> +				port@3 {
->  					reg = <3>;
->  					acpu_funnel_in3: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm3_out>;
->  					};
->  				};
->  
-> -				port@5 {
-> +				port@4 {
->  					reg = <4>;
->  					acpu_funnel_in4: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm4_out>;
->  					};
->  				};
->  
-> -				port@6 {
-> +				port@5 {
->  					reg = <5>;
->  					acpu_funnel_in5: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm5_out>;
->  					};
->  				};
->  
-> -				port@7 {
-> +				port@6 {
->  					reg = <6>;
->  					acpu_funnel_in6: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm6_out>;
->  					};
->  				};
->  
-> -				port@8 {
-> +				port@7 {
->  					reg = <7>;
->  					acpu_funnel_in7: endpoint {
-> -						slave-mode;
->  						remote-endpoint =
->  							<&etm7_out>;
->  					};
-> @@ -251,10 +226,12 @@
->  
->  			cpu = <&cpu0>;
->  
-> -			port {
-> -				etm0_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in0>;
-> +			out-ports {
-> +				port {
-> +					etm0_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in0>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -268,10 +245,12 @@
->  
->  			cpu = <&cpu1>;
->  
-> -			port {
-> -				etm1_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in1>;
-> +			out-ports {
-> +				port {
-> +					etm1_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in1>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -285,10 +264,12 @@
->  
->  			cpu = <&cpu2>;
->  
-> -			port {
-> -				etm2_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in2>;
-> +			out-ports {
-> +				port {
-> +					etm2_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in2>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -302,10 +283,12 @@
->  
->  			cpu = <&cpu3>;
->  
-> -			port {
-> -				etm3_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in3>;
-> +			out-ports {
-> +				port {
-> +					etm3_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in3>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -319,10 +302,12 @@
->  
->  			cpu = <&cpu4>;
->  
-> -			port {
-> -				etm4_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in4>;
-> +			out-ports {
-> +				port {
-> +					etm4_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in4>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -336,10 +321,12 @@
->  
->  			cpu = <&cpu5>;
->  
-> -			port {
-> -				etm5_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in5>;
-> +			out-ports {
-> +				port {
-> +					etm5_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in5>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -353,10 +340,12 @@
->  
->  			cpu = <&cpu6>;
->  
-> -			port {
-> -				etm6_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in6>;
-> +			out-ports {
-> +				port {
-> +					etm6_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in6>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -370,10 +359,12 @@
->  
->  			cpu = <&cpu7>;
->  
-> -			port {
-> -				etm7_out: endpoint {
-> -					remote-endpoint =
-> -						<&acpu_funnel_in7>;
-> +			out-ports {
-> +				port {
-> +					etm7_out: endpoint {
-> +						remote-endpoint =
-> +							<&acpu_funnel_in7>;
-> +					};
->  				};
->  			};
->  		};
-> 
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtcmRtYS1vd25l
+ckB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LXJkbWEtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4g
+T24gQmVoYWxmIE9mIFBhcmF2IFBhbmRpdA0KPiBTZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMSwg
+MjAxOCA4OjUzIEFNDQo+IFRvOiBzeXpib3QgPHN5emJvdCsyMGMzMmZhNmZmODRhMmQyOGMzNkBz
+eXprYWxsZXIuYXBwc3BvdG1haWwuY29tPjsNCj4gRGFuaWVsIEp1cmdlbnMgPGRhbmllbGpAbWVs
+bGFub3guY29tPjsgZGxlZGZvcmRAcmVkaGF0LmNvbTsNCj4gamdnQHppZXBlLmNhOyBsZW9uQGtl
+cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiByZG1hQHZn
+ZXIua2VybmVsLm9yZzsgc3l6a2FsbGVyLWJ1Z3NAZ29vZ2xlZ3JvdXBzLmNvbQ0KPiBTdWJqZWN0
+OiBSRTogZ2VuZXJhbCBwcm90ZWN0aW9uIGZhdWx0IGluIGFkZHJfcmVzb2x2ZQ0KPiANCj4gDQo+
+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogc3l6Ym90IDxzeXpi
+b3QrMjBjMzJmYTZmZjg0YTJkMjhjMzZAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNvbT4NCj4gPiBT
+ZW50OiBGcmlkYXksIFNlcHRlbWJlciAyMSwgMjAxOCAzOjM1IEFNDQo+ID4gVG86IERhbmllbCBK
+dXJnZW5zIDxkYW5pZWxqQG1lbGxhbm94LmNvbT47IGRsZWRmb3JkQHJlZGhhdC5jb207DQo+ID4g
+amdnQHppZXBlLmNhOyBsZW9uQGtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmc7IGxpbnV4LQ0KPiA+IHJkbWFAdmdlci5rZXJuZWwub3JnOyBQYXJhdiBQYW5kaXQgPHBhcmF2
+QG1lbGxhbm94LmNvbT47IHN5emthbGxlci0NCj4gPiBidWdzQGdvb2dsZWdyb3Vwcy5jb20NCj4g
+PiBTdWJqZWN0OiBnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQgaW4gYWRkcl9yZXNvbHZlDQo+ID4N
+Cj4gPiBIZWxsbywNCj4gPg0KPiA+IHN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9u
+Og0KPiA+DQo+ID4gSEVBRCBjb21taXQ6ICAgIGEwY2IwY2FiZTRiYiBBZGQgbGludXgtbmV4dCBz
+cGVjaWZpYyBmaWxlcyBmb3IgMjAxODA5MjANCj4gPiBnaXQgdHJlZTogICAgICAgbGludXgtbmV4
+dA0KPiA+IGNvbnNvbGUgb3V0cHV0Og0KPiA+IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29t
+L3gvbG9nLnR4dD94PTE0YjE0ZTJhNDAwMDAwDQo+ID4ga2VybmVsIGNvbmZpZzoNCj4gPiBodHRw
+czovL3N5emthbGxlci5hcHBzcG90LmNvbS94Ly5jb25maWc/eD03ODYwMDZjNWRhZmJhZGY2DQo+
+ID4gZGFzaGJvYXJkIGxpbms6DQo+ID4gaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20vYnVn
+P2V4dGlkPTIwYzMyZmE2ZmY4NGEyZDI4YzM2DQo+ID4gY29tcGlsZXI6ICAgICAgIGdjYyAoR0ND
+KSA4LjAuMSAyMDE4MDQxMyAoZXhwZXJpbWVudGFsKQ0KPiA+DQo+ID4gVW5mb3J0dW5hdGVseSwg
+SSBkb24ndCBoYXZlIGFueSByZXByb2R1Y2VyIGZvciB0aGlzIGNyYXNoIHlldC4NCj4gPg0KPiA+
+IElNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dpbmcg
+dGFnIHRvIHRoZSBjb21taXQ6DQo+ID4gUmVwb3J0ZWQtYnk6IHN5emJvdCsyMGMzMmZhNmZmODRh
+MmQyOGMzNkBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tDQo+ID4NCj4gPiBrYXNhbjogR1BGIGNv
+dWxkIGJlIGNhdXNlZCBieSBOVUxMLXB0ciBkZXJlZiBvciB1c2VyIG1lbW9yeSBhY2Nlc3MNCj4g
+PiBnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQ6IDAwMDAgWyMxXSBQUkVFTVBUIFNNUCBLQVNBTg0K
+PiA+IENQVTogMCBQSUQ6IDk3NiBDb21tOiBzeXotZXhlY3V0b3I0IE5vdCB0YWludGVkDQo+ID4g
+NC4xOS4wLXJjNC1uZXh0LTIwMTgwOTIwKw0KPiA+ICM3Ng0KPiA+IEhhcmR3YXJlIG5hbWU6IEdv
+b2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLA0KPiA+IEJJ
+T1MgR29vZ2xlIDAxLzAxLzIwMTENCj4gPiBSSVA6IDAwMTA6Y29weV9zcmNfbDJfYWRkciBkcml2
+ZXJzL2luZmluaWJhbmQvY29yZS9hZGRyLmM6NDg5IFtpbmxpbmVdDQo+ID4gUklQOiAwMDEwOnJk
+bWFfc2V0X3NyY19hZGRyX3JjdSBkcml2ZXJzL2luZmluaWJhbmQvY29yZS9hZGRyLmM6NTE4DQo+
+ID4gW2lubGluZV0NCj4gPiBSSVA6IDAwMTA6YWRkcl9yZXNvbHZlKzB4N2M0LzB4MWM5MCBkcml2
+ZXJzL2luZmluaWJhbmQvY29yZS9hZGRyLmM6NTkzDQo+ID4gQ29kZTogMGYgODQgZGQgMDEgMDAg
+MDAgZTggOWIgNmMgZTkgZmIgNDggOGIgODUgZDggZmQgZmYgZmYgNDggOGQgYjgNCj4gPiA1NCAw
+Mg0KPiA+IDAwIDAwIDQ4IGI4IDAwIDAwIDAwIDAwIDAwIGZjIGZmIGRmIDQ4IDg5IGZhIDQ4IGMx
+IGVhIDAzIDwwZj4gYjYgMTQgMDINCj4gPiA0OA0KPiA+IDg5IGY4IDgzIGUwIDA3IDgzIGMwIDAx
+IDM4IGQwIDdjIDA4IDg0IGQyIDBmIDg1IDI0DQo+ID4gUlNQOiAwMDE4OmZmZmY4ODAxYzg2M2Yz
+NjAgRUZMQUdTOiAwMDAxMDIwMg0KPiA+IFJBWDogZGZmZmZjMDAwMDAwMDAwMCBSQlg6IGZmZmY4
+ODAxYzg2M2Y1NzggUkNYOiBmZmZmYzkwMDAzZTc2MDAwDQo+ID4gUkRYOiAwMDAwMDAwMDAwMDAw
+MDNlIFJTSTogZmZmZmZmZmY4NTkzZTM1NSBSREk6IDAwMDAwMDAwMDAwMDAxZjENCj4gPiBSQlA6
+IGZmZmY4ODAxYzg2M2Y1YTAgUjA4OiBmZmZmODgwMWQ5NTcyMmMwIFIwOTogZmZmZmVkMDAzYjU4
+NWI1Nw0KPiA+IFIxMDogZmZmZmVkMDAzYjU4NWI1NyBSMTE6IGZmZmY4ODAxZGFjMmRhYmIgUjEy
+OiBmZmZmODgwMWQ3OGExNTYwDQo+ID4gUjEzOiAwMDAwMDAwMDAwMDAwMDAxIFIxNDogMDAwMDAw
+MDAwMDAwMDAwYSBSMTU6IDAwMDAwMDAwMDAwMDAwMDANCj4gPiBrb2JqZWN0OiAnbG9vcDUnICgw
+MDAwMDAwMDlhNGEwMzgzKToga29iamVjdF91ZXZlbnRfZW52DQo+ID4gRlM6ICAwMDAwN2ZlZmNl
+OWNhNzAwKDAwMDApIEdTOmZmZmY4ODAxZGFjMDAwMDAoMDAwMCkNCj4gPiBrbmxHUzowMDAwMDAw
+MDAwMDAwMDAwDQo+ID4gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4
+MDA1MDAzMw0KPiA+IENSMjogMDAwMDAwMDAwMDcwNjE1OCBDUjM6IDAwMDAwMDAxZDM3MGEwMDAg
+Q1I0OiAwMDAwMDAwMDAwMTQwNmYwDQo+IENhbGwNCj4gPiBUcmFjZToNCj4gPiBrb2JqZWN0OiAn
+bG9vcDUnICgwMDAwMDAwMDlhNGEwMzgzKTogZmlsbF9rb2JqX3BhdGg6IHBhdGggPQ0KPiA+ICcv
+ZGV2aWNlcy92aXJ0dWFsL2Jsb2NrL2xvb3A1Jw0KPiA+ICAgcmRtYV9yZXNvbHZlX2lwKzB4NDk5
+LzB4NzkwIGRyaXZlcnMvaW5maW5pYmFuZC9jb3JlL2FkZHIuYzo2OTcNCj4gPiAgIHJkbWFfcmVz
+b2x2ZV9hZGRyKzB4MmQ2LzB4Mjg3MCBkcml2ZXJzL2luZmluaWJhbmQvY29yZS9jbWEuYzoyOTky
+DQo+ID4ga29iamVjdDogJ2xvb3AzJyAoMDAwMDAwMDBmMTU4Yzg1OSk6IGtvYmplY3RfdWV2ZW50
+X2Vudg0KPiA+IGtvYmplY3Q6ICdsb29wMycgKDAwMDAwMDAwZjE1OGM4NTkpOiBmaWxsX2tvYmpf
+cGF0aDogcGF0aCA9DQo+ID4gJy9kZXZpY2VzL3ZpcnR1YWwvYmxvY2svbG9vcDMnDQo+ID4gICB1
+Y21hX3Jlc29sdmVfaXArMHgyNDIvMHgyYTAgZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvdWNtYS5j
+OjcxMw0KPiA+ICAgdWNtYV93cml0ZSsweDMzNi8weDQyMCBkcml2ZXJzL2luZmluaWJhbmQvY29y
+ZS91Y21hLmM6MTY4Ng0KPiA+ICAgX192ZnNfd3JpdGUrMHgxMTkvMHg5ZjAgZnMvcmVhZF93cml0
+ZS5jOjQ4NQ0KPiA+IGtvYmplY3Q6ICdsb29wMicgKDAwMDAwMDAwZWQxYjE5OWQpOiBrb2JqZWN0
+X3VldmVudF9lbnYNCj4gPiAgIHZmc193cml0ZSsweDFmYy8weDU2MCBmcy9yZWFkX3dyaXRlLmM6
+NTQ5DQo+ID4ga29iamVjdDogJ2xvb3AyJyAoMDAwMDAwMDBlZDFiMTk5ZCk6IGZpbGxfa29ial9w
+YXRoOiBwYXRoID0NCj4gPiAnL2RldmljZXMvdmlydHVhbC9ibG9jay9sb29wMicNCj4gPiAgIGtz
+eXNfd3JpdGUrMHgxMDEvMHgyNjAgZnMvcmVhZF93cml0ZS5jOjU5OA0KPiA+ICAgX19kb19zeXNf
+d3JpdGUgZnMvcmVhZF93cml0ZS5jOjYxMCBbaW5saW5lXQ0KPiA+ICAgX19zZV9zeXNfd3JpdGUg
+ZnMvcmVhZF93cml0ZS5jOjYwNyBbaW5saW5lXQ0KPiA+ICAgX194NjRfc3lzX3dyaXRlKzB4NzMv
+MHhiMCBmcy9yZWFkX3dyaXRlLmM6NjA3DQo+ID4gICBkb19zeXNjYWxsXzY0KzB4MWI5LzB4ODIw
+IGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjI5MA0KPiA+ICAgZW50cnlfU1lTQ0FMTF82NF9hZnRl
+cl9od2ZyYW1lKzB4NDkvMHhiZQ0KPiA+IFJJUDogMDAzMzoweDQ1NzY3OQ0KPiA+IENvZGU6IDFk
+IGI0IGZiIGZmIGMzIDY2IDJlIDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAwIDY2IDkwIDQ4IDg5IGY4
+IDQ4DQo+ID4gODkgZjcNCj4gPiA0OCA4OSBkNiA0OCA4OSBjYSA0ZCA4OSBjMiA0ZCA4OSBjOCA0
+YyA4YiA0YyAyNCAwOCAwZiAwNSA8NDg+IDNkIDAxIGYwDQo+ID4gZmYgZmYgMGYNCj4gPiA4MyBl
+YiBiMyBmYiBmZiBjMyA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMA0KPiA+IFJTUDogMDAyYjow
+MDAwN2ZlZmNlOWM5Yzc4IEVGTEFHUzogMDAwMDAyNDYgT1JJR19SQVg6DQo+ID4gMDAwMDAwMDAw
+MDAwMDAwMQ0KPiA+IFJBWDogZmZmZmZmZmZmZmZmZmZkYSBSQlg6IDAwMDA3ZmVmY2U5Y2E2ZDQg
+UkNYOiAwMDAwMDAwMDAwNDU3Njc5DQo+ID4gUkRYOiAwMDAwMDAwMDAwMDAwMDQ4IFJTSTogMDAw
+MDAwMDAyMDAwMDEwMCBSREk6IDAwMDAwMDAwMDAwMDAwMDQNCj4gPiBSQlA6IDAwMDAwMDAwMDA3
+MmJmMDAgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMA0KPiA+IFIx
+MDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAwMDAwMDAwMGZm
+ZmZmZmZmDQo+ID4gUjEzOiAwMDAwMDAwMDAwNGQ4YTQ4IFIxNDogMDAwMDAwMDAwMDRjYjY5OCBS
+MTU6IDAwMDAwMDAwMDAwMDAwMDANCj4gPiBNb2R1bGVzIGxpbmtlZCBpbjoNCj4gPiAtLS1bIGVu
+ZCB0cmFjZSA0MTZlMjk5MjRkYmRjMWEwIF0tLS0NCj4gPiBSSVA6IDAwMTA6Y29weV9zcmNfbDJf
+YWRkciBkcml2ZXJzL2luZmluaWJhbmQvY29yZS9hZGRyLmM6NDg5IFtpbmxpbmVdDQo+ID4gUklQ
+OiAwMDEwOnJkbWFfc2V0X3NyY19hZGRyX3JjdSBkcml2ZXJzL2luZmluaWJhbmQvY29yZS9hZGRy
+LmM6NTE4DQo+ID4gW2lubGluZV0NCj4gPiBSSVA6IDAwMTA6YWRkcl9yZXNvbHZlKzB4N2M0LzB4
+MWM5MCBkcml2ZXJzL2luZmluaWJhbmQvY29yZS9hZGRyLmM6NTkzDQo+ID4gQ29kZTogMGYgODQg
+ZGQgMDEgMDAgMDAgZTggOWIgNmMgZTkgZmIgNDggOGIgODUgZDggZmQgZmYgZmYgNDggOGQgYjgN
+Cj4gPiA1NCAwMg0KPiA+IDAwIDAwIDQ4IGI4IDAwIDAwIDAwIDAwIDAwIGZjIGZmIGRmIDQ4IDg5
+IGZhIDQ4IGMxIGVhIDAzIDwwZj4gYjYgMTQgMDINCj4gPiA0OA0KPiA+IDg5IGY4IDgzIGUwIDA3
+IDgzIGMwIDAxIDM4IGQwIDdjIDA4IDg0IGQyIDBmIDg1IDI0DQo+ID4ga29iamVjdDogJ2xvb3A1
+JyAoMDAwMDAwMDA5YTRhMDM4Myk6IGtvYmplY3RfdWV2ZW50X2Vudg0KPiA+IGtvYmplY3Q6ICds
+b29wNScgKDAwMDAwMDAwOWE0YTAzODMpOiBmaWxsX2tvYmpfcGF0aDogcGF0aCA9DQo+ID4gJy9k
+ZXZpY2VzL3ZpcnR1YWwvYmxvY2svbG9vcDUnDQo+ID4gUlNQOiAwMDE4OmZmZmY4ODAxYzg2M2Yz
+NjAgRUZMQUdTOiAwMDAxMDIwMg0KPiA+IFJBWDogZGZmZmZjMDAwMDAwMDAwMCBSQlg6IGZmZmY4
+ODAxYzg2M2Y1NzggUkNYOiBmZmZmYzkwMDAzZTc2MDAwDQo+ID4gUkRYOiAwMDAwMDAwMDAwMDAw
+MDNlIFJTSTogZmZmZmZmZmY4NTkzZTM1NSBSREk6IDAwMDAwMDAwMDAwMDAxZjENCj4gPiBSQlA6
+IGZmZmY4ODAxYzg2M2Y1YTAgUjA4OiBmZmZmODgwMWQ5NTcyMmMwIFIwOTogZmZmZmVkMDAzYjU4
+NWI1Nw0KPiA+IFIxMDogZmZmZmVkMDAzYjU4NWI1NyBSMTE6IGZmZmY4ODAxZGFjMmRhYmIgUjEy
+OiBmZmZmODgwMWQ3OGExNTYwDQo+ID4gUjEzOiAwMDAwMDAwMDAwMDAwMDAxIFIxNDogMDAwMDAw
+MDAwMDAwMDAwYSBSMTU6IDAwMDAwMDAwMDAwMDAwMDANCj4gPiBGUzogIDAwMDA3ZmVmY2U5Y2E3
+MDAoMDAwMCkgR1M6ZmZmZjg4MDFkYWMwMDAwMCgwMDAwKQ0KPiA+IGtubEdTOjAwMDAwMDAwMDAw
+MDAwMDANCj4gPiBDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUw
+MDMzDQo+ID4gQ1IyOiBmZmZmZmZmZmZmZmZmZmVmIENSMzogMDAwMDAwMDFkMzcwYTAwMCBDUjQ6
+IDAwMDAwMDAwMDAxNDA2ZjANCj4gPg0KPiA+DQo+ID4gLS0tDQo+ID4gVGhpcyBidWcgaXMgZ2Vu
+ZXJhdGVkIGJ5IGEgYm90LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQo+ID4gU2VlIGh0dHBzOi8v
+Z29vLmdsL3Rwc21FSiBmb3IgbW9yZSBpbmZvcm1hdGlvbiBhYm91dCBzeXpib3QuDQo+ID4gc3l6
+Ym90IGVuZ2luZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNv
+bS4NCj4gPg0KPiA+IHN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBT
+ZWU6DQo+ID4gaHR0cHM6Ly9nb28uZ2wvdHBzbUVKI2J1Zy1zdGF0dXMtdHJhY2tpbmcgZm9yIGhv
+dyB0byBjb21tdW5pY2F0ZSB3aXRoDQo+ID4gc3l6Ym90Lg0KPiANCj4gSSB0aGluayB0aGUgZml4
+IGlzIGJlbG93Lg0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW5maW5pYmFuZC9jb3JlL2Fk
+ZHIuYyBiL2RyaXZlcnMvaW5maW5pYmFuZC9jb3JlL2FkZHIuYw0KPiBpbmRleCA3YTAzNTZjLi4z
+ZWRkMTBhIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2luZmluaWJhbmQvY29yZS9hZGRyLmMNCj4g
+KysrIGIvZHJpdmVycy9pbmZpbmliYW5kL2NvcmUvYWRkci5jDQo+IEBAIC01MTEsNyArNTExLDcg
+QEAgc3RhdGljIGludCByZG1hX3NldF9zcmNfYWRkcl9yY3Uoc3RydWN0DQo+IHJkbWFfZGV2X2Fk
+ZHIgKmRldl9hZGRyLA0KPiAgICAgICAgICAgICAgICAgICogbG9vcGJhY2sgSVAgYWRkcmVzcy4N
+Cj4gICAgICAgICAgICAgICAgICAqLw0KPiAgICAgICAgICAgICAgICAgbmRldiA9IHJkbWFfZmlu
+ZF9uZGV2X2Zvcl9zcmNfaXBfcmN1KGRldl9uZXQobmRldiksIGRzdF9pbik7DQo+IC0gICAgICAg
+ICAgIGlmICghbmRldikNCj4gKyAgICAgICAgIGlmIChJU19FUlIoZGV2KSkNCj4gICAgICAgICAg
+ICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ICAgICAgICAgfQ0KDQpDb3JyZWN0ZWQg
+dGhlIHR5cG8gb2YgcHJldmlvdXMgZW1haWwgcGF0Y2guDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJz
+L2luZmluaWJhbmQvY29yZS9hZGRyLmMgYi9kcml2ZXJzL2luZmluaWJhbmQvY29yZS9hZGRyLmMN
+CmluZGV4IDdhMDM1NmMuLmJlOTJlOTUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2luZmluaWJhbmQv
+Y29yZS9hZGRyLmMNCisrKyBiL2RyaXZlcnMvaW5maW5pYmFuZC9jb3JlL2FkZHIuYw0KQEAgLTUx
+MSw3ICs1MTEsNyBAQCBzdGF0aWMgaW50IHJkbWFfc2V0X3NyY19hZGRyX3JjdShzdHJ1Y3QgcmRt
+YV9kZXZfYWRkciAqZGV2X2FkZHIsDQogICAgICAgICAgICAgICAgICogbG9vcGJhY2sgSVAgYWRk
+cmVzcy4NCiAgICAgICAgICAgICAgICAgKi8NCiAgICAgICAgICAgICAgICBuZGV2ID0gcmRtYV9m
+aW5kX25kZXZfZm9yX3NyY19pcF9yY3UoZGV2X25ldChuZGV2KSwgZHN0X2luKTsNCi0gICAgICAg
+ICAgIGlmICghbmRldikNCisgICAgICAgICBpZiAoSVNfRVJSKG5kZXYpKQ0KICAgICAgICAgICAg
+ICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQogICAgICAgIH0NCg==
