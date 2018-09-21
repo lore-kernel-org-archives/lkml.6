@@ -3,147 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AC4ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50662ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E70E20877
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFEEF20877
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 18:46:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wb8AnIO+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E70E20877
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j/BkhFos"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFEEF20877
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391263AbeIVAae (ORCPT
+        id S2391206AbeIVAgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 20:30:34 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42968 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391184AbeIVAae (ORCPT
+        Fri, 21 Sep 2018 20:36:52 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:43907 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732114AbeIVAgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 20:30:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l9-v6so6344430pff.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:40:25 -0700 (PDT)
+        Fri, 21 Sep 2018 20:36:52 -0400
+Received: by mail-yb1-f196.google.com with SMTP id w80-v6so5836107ybe.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=aJg3mbLuMaDZipfaa9zO8WUvakVHAM/Ns2IURjBoX4s=;
-        b=Wb8AnIO+YP3hKheDnFqRRU2DaBxIRzV86W4zXS4FpykrPaQmwkvUcqiMSz8ZvxlPlj
-         nIA+PfUSbvnaQxHOaYLbqSNQ1dz1ROqizDS0tLQuQsjfX/V5fqgCiVKRrzLzTjoK0HcC
-         5SGtTg78cNUSmNKVNAQlnpyV3+TrPAQ48Jq/w=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=qCK72VeMWE/9vyG/fGb20p9vYpUoxqRNNblAZ0ZuoQE=;
+        b=j/BkhFoswnA5OKnkLMCzOPAUb98dNSyi6khX/bcWBmPMK9p2uOF1ogq17Eevrpkcro
+         Hv2uqlvfFWC0prTdxxyGZI0IWArHYGVdqFViAaWnBlosKy6xn8LLQ21V+aclofH9Z7y0
+         wzO8Sn+xFBvUETTbO9SpSaFqPVAnb8YlL9iHE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=aJg3mbLuMaDZipfaa9zO8WUvakVHAM/Ns2IURjBoX4s=;
-        b=iSl7k8cn05dW/PvEANzXC6zq7FhuijqMVYGVy/fbQM1Gn5w9XatdQHLYzkMkopJgZX
-         KpC4XLhqkoq7CxBe/rvV1GxYu/8FK/uW6NbVI1zky7HEG6Lekypvj22VEa6nPen+LzjE
-         3t5zZFqZLENSwugI0XHaPjc1OHpV1yCzTFILkpnSm++in2Jlgvh72nHDdn4BS2azchQ0
-         Y2oTYTT6xqWXs/uHd4nHvgQznbMZ6tyJY0ZQ+Cy4j8/zcwLJdwWlh9WrLxjS2ZrGj8VY
-         DN6zOOeVFOLt0H7wuAZtD+gsGYaAKnrlA/cKPxnibi6X9ydRLAm2wXJgo0fRjs+7Ryc9
-         haaA==
-X-Gm-Message-State: APzg51Bg4P8v5fImD5JmJzfHqAiRdhreoxiGCSl7aAzu9awNl8G+ovZ4
-        hTcQSTZOU1miokp4OK2cGQMhcw==
-X-Google-Smtp-Source: ANB0VdZfIzOc2txX9qv5rfJUmm0rRJhxssBATwd/c5I5n3ic3j0UuAG1KLWbfL5KbKt7E0InHHLEWg==
-X-Received: by 2002:a62:1605:: with SMTP id 5-v6mr47691256pfw.11.1537555225423;
-        Fri, 21 Sep 2018 11:40:25 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id x82-v6sm49842957pfe.129.2018.09.21.11.40.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 11:40:24 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=qCK72VeMWE/9vyG/fGb20p9vYpUoxqRNNblAZ0ZuoQE=;
+        b=anzB7RY4i9j/ZH0AMmLIgNFSBhVVP9gxmqC+e638GPljjagdYnP7NTx0bhhjzZOxez
+         lF5aPkESrsDbOc9vll35/G/PUDgM9SqyrtURNFPliznforlvjSQuz3Cbk67EEs6ngOmz
+         eJwvnSre+mA0N96JugIBPMckSQtS7NH3XCRAVBLYQljjvvSogIFI+iS2e5nUZsGtWnCe
+         9Rt4RuCcCtigEzu5chGKaze53l2hgBtZMRXf85FEifdx+O/f2bWUP1nVZh315D2gkNGR
+         WfieRNmPZDWNwC7oOR/jNjZhpzrZxHBC6UogbbdysZ418G26v4uMRtRs+9RbzTz8lBFR
+         px9w==
+X-Gm-Message-State: APzg51C+O8Zc9cbqgenvYSmhQkS6/I/PtIsPPJu/Ui+jcy/cnyJ1P7ly
+        W1mRa2P3SgdoSUgCF4sAB/ATTj2wnNE=
+X-Google-Smtp-Source: ANB0VdY1R347mAWVLs+UAB41DTOUJZ/9jB2+9kLnkHf9D2GvjR+EgR8+ODMUgy9fAVpIegnKuzE8/w==
+X-Received: by 2002:a25:2042:: with SMTP id g63-v6mr21929101ybg.123.1537555602131;
+        Fri, 21 Sep 2018 11:46:42 -0700 (PDT)
+Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com. [209.85.161.45])
+        by smtp.gmail.com with ESMTPSA id g126-v6sm5407634ywd.41.2018.09.21.11.46.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 11:46:40 -0700 (PDT)
+Received: by mail-yw1-f45.google.com with SMTP id z143-v6so5577744ywa.7
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 11:46:40 -0700 (PDT)
+X-Received: by 2002:a0d:fe87:: with SMTP id o129-v6mr4507067ywf.237.1537555600000;
+ Fri, 21 Sep 2018 11:46:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Doug Anderson <dianders@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <CAD=FV=Wbj+bgdSBeHSFr+nz6fzCMcmQS-D9oyzkR0yVkxiRb8A@mail.gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, ryandcase@chromium.org,
-        boris.brezillon@bootlin.com,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180920224055.164856-1-ryandcase@chromium.org>
- <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
- <CAD=FV=Wbj+bgdSBeHSFr+nz6fzCMcmQS-D9oyzkR0yVkxiRb8A@mail.gmail.com>
-Message-ID: <153755522409.119890.5471037050114193@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
-Date:   Fri, 21 Sep 2018 11:40:24 -0700
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 11:46:39
+ -0700 (PDT)
+In-Reply-To: <1536874298-23492-2-git-send-email-rick.p.edgecombe@intel.com>
+References: <1536874298-23492-1-git-send-email-rick.p.edgecombe@intel.com> <1536874298-23492-2-git-send-email-rick.p.edgecombe@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 21 Sep 2018 11:46:39 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKTiPioDjC7rrjN+fG=ZK8mdQ542GwEJW6Fa7GUA8x2uQ@mail.gmail.com>
+Message-ID: <CAGXu5jKTiPioDjC7rrjN+fG=ZK8mdQ542GwEJW6Fa7GUA8x2uQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] vmalloc: Add __vmalloc_node_try_addr function
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jann Horn <jannh@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Doug Anderson (2018-09-21 10:40:14)
-> Hi,
-> =
+On Thu, Sep 13, 2018 at 2:31 PM, Rick Edgecombe
+<rick.p.edgecombe@intel.com> wrote:
+> Create __vmalloc_node_try_addr function that tries to allocate at a specific
+> address and supports caller specified behavior for whether any lazy purging
+> happens if there is a collision.
+>
+> This new function draws from the __vmalloc_node_range implementation. Attempts
+> to merge the two into a single allocator resulted in logic that was difficult
+> to follow, so they are left separate.
+>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-> On Fri, Sep 21, 2018 at 10:31 AM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Quoting Ryan Case (2018-09-20 15:40:54)
-> > > diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi=
-.txt b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
-> > > new file mode 100644
-> > > index 000000000000..ecfb1e2bd520
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
-> > > @@ -0,0 +1,36 @@
-> > > +Qualcomm Quad Serial Peripheral Interface (QSPI)
-> > > +
-> > > +The QSPI controller allows SPI protocol communication in single, dua=
-l, or quad
-> > > +wire transmission modes for read/write access to slaves such as NOR =
-flash.
-> > > +
-> > > +Required properties:
-> > > +- compatible:  Should contain:
-> > > +               "qcom,sdm845-qspi"
-> >
-> > Does someone have a more generic compatible string that can be added
-> > here to indicate the type of quad SPI controller this is? I really doubt
-> > this is a one-off hardware block for the specific SDM845 SoC.
-> =
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-> The compatible string used to be "qcom,qspi-v1".  ...but Rob Herring
-> requested [1] "an SoC specific compatible string".  While we could do
-> a compatible string like:
-> =
+I'd love to get some more mm folks to look this over too.
 
->   "qcom,sdm845-qspi", "qcom,qspi-v1".
-> =
+-Kees
 
-> I'm curious if that buys us anything.  From all my previous experience
-> with device tree it is fine to name a compatible string for a
-> component based on the first SoC that used it.  If we later find that
-> this is also used in an "msm1234" we could always later do the
-> compatible string for that device as:
-> =
-
->   "qcom, msm1234-qspi", "qcom,sdm845-qspi"
-> =
-
-> ...and we don't need to try to come up with a generic name.
-> Obviously, though, I'll cede to whatever Rob says here though.
-> =
-
-
-It seems that everybody has misunderstood my email. Let me try to
-clarify.
-
-I'm not saying to replace the sdm845 qspi compatible with a generic one.
-I'm recommending that a generic one is added in addition to the SoC
-specific one. That way, we get to put the generic compatible string in
-the driver and not need to update the driver compatible string array
-each time a new SoC comes out with a new compatible string.
-
-If it turns out later that we need to handle some bug in that specific
-SoC compatible string then we're good to go and we can handle it by
-matching the more specific SoC version compatible.
-
+-- 
+Kees Cook
+Pixel Security
