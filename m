@@ -2,257 +2,125 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C6CECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF56C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CC0621523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:27:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC0621523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id AADAB2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:30:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGra0IY8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AADAB2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389761AbeIUSQ3 convert rfc822-to-8bit (ORCPT
+        id S2389778AbeIUSTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:16:29 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:39740 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728098AbeIUSQ2 (ORCPT
+        Fri, 21 Sep 2018 14:19:13 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:40400 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbeIUSTN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:16:28 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g3KXD-0005wf-QN; Fri, 21 Sep 2018 06:27:47 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g3KXC-0000Dq-5u; Fri, 21 Sep 2018 06:27:47 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-kselftest@vger.kernel.org
-References: <20180919205037.9574-1-dima@arista.com>
-Date:   Fri, 21 Sep 2018 14:27:29 +0200
-In-Reply-To: <20180919205037.9574-1-dima@arista.com> (Dmitry Safonov's message
-        of "Wed, 19 Sep 2018 21:50:17 +0100")
-Message-ID: <874lej6nny.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 21 Sep 2018 14:19:13 -0400
+Received: by mail-oi0-f68.google.com with SMTP id l202-v6so11240579oig.7;
+        Fri, 21 Sep 2018 05:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JD0C/xVL+zj8EEDuuU4RL25rciELr13+UwCgXOw96dc=;
+        b=ZGra0IY8BJOlLoqVoE/EcWKWZIJNSSSvh38cTEVCW51pUzk4D3igZLE/wmEVBJ2cwt
+         KqEqVl6OyQxZCvkhtUPE6HtSjP8LQ0usHWhcXEuks6dNgVbCnZbHW/cO5N3B223KWg89
+         L46p4PVO7/qBYLuF+MlfRWjA0vDvTg8dG4oiKB68EodC/mIBOxxTuseOWrqbzKoDh6db
+         GfnrhaQB69tFtRSai5No51Slds0hHnF9mcAZj/yAVtMxaKlcSAAuLbIcXVTMAjQNNqfa
+         9R5zoL7rVs3h19Dor073MQd+4uhuU/9ym6d5Fe3c5zf0ZrUxHVho9uOUv/25nNYm2MBk
+         Q8VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JD0C/xVL+zj8EEDuuU4RL25rciELr13+UwCgXOw96dc=;
+        b=F8WOPOEUShscOf3uGRcLhE7NoP8sTNeTJv9Jx5Eh2101zYhB0WXsZ32fSfpeYsMTeM
+         bspCFb4WPCBTfYRLAeM/DKrSecRqJtvy6LohFakLNyghMjyMW/p9lDA5PbtaGTPiIgVG
+         Sdk3u0JN8JmvtvF3Wi9dI9/4ANtej0TiAfXAPrihYNA8tJjg0UD5918IwWsdv/TbUps+
+         ZJcEyKg2SEAHA5HJUttCW/nb9L4+p9/lPJhgwePtLPqI/CC0kP165B1p7UHebbsDszGa
+         uRp2XFIMLPFFHyFcUQVKOSOdPJMU0JtTTKiAXzanPPBxn9AQocw0FlSMxO67VH8e/LjH
+         M5sw==
+X-Gm-Message-State: APzg51BaJBzjTLsdwWIyyiWyRo0/U/g0OvO0VZCeispjO2OAWa4BHYnF
+        msSSg6jbjDMBvKtHhdbv0AeUhmycIX9bEEw07Tiw4rSk
+X-Google-Smtp-Source: ANB0Vda65sHFKZ9nwXVtfJ8fcYwKlSKlt2Cul49ABdKY8weAv0h1Y6gktvPvZBG+Q5All95aFeZESJfPvwCo93bB5Po=
+X-Received: by 2002:aca:b585:: with SMTP id e127-v6mr1369474oif.119.1537533032461;
+ Fri, 21 Sep 2018 05:30:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1g3KXC-0000Dq-5u;;;mid=<874lej6nny.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+oUvqiaONCZEP8u31gjYWzcQt4iTAM4dc=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20180920175826.1284-1-linux.amoon@gmail.com> <CAJKOXPdsAK1_9JRzq7_pVfDwBK6WGkFbYUsbcsujCh31Fzsz6g@mail.gmail.com>
+In-Reply-To: <CAJKOXPdsAK1_9JRzq7_pVfDwBK6WGkFbYUsbcsujCh31Fzsz6g@mail.gmail.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Fri, 21 Sep 2018 18:00:18 +0530
+Message-ID: <CANAwSgT-1pz-NQMb68F7m0rAFNkpCOyFqFPf7-HbZe+92+sPPQ@mail.gmail.com>
+Subject: Re: [PATCHv3 0/7] Add support for UHS-I on Exynos5422 odroid boards
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Safonov <dima@arista.com> writes:
+Hi Krzysztof,
 
-> Discussions around time virtualization are there for a long time.
-> The first attempt to implement time namespace was in 2006 by Jeff Dike.
-> From that time, the topic appears on and off in various discussions.
+On Fri, 21 Sep 2018 at 16:26, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> There are two main use cases for time namespaces:
-> 1. change date and time inside a container;
-> 2. adjust clocks for a container restored from a checkpoint.
+> On Thu, 20 Sep 2018 at 19:58, Anand Moon <linux.amoon@gmail.com> wrote:
+> >
+> > This is series v3 since my previous patches we incomplete with driver
+> > changes missing.
+> >
+> > These changes add UHS-I tuning for dw_mmc-exynos driver.
+> > Some new patches are added to enhance the performace.
 >
-> “It seems like this might be one of the last major obstacles keeping
-> migration from being used in production systems, given that not all
-> containers and connections can be migrated as long as a time dependency
-> is capable of messing it up.” (by github.com/dav-ell)
+> Patches look like based on some older version of kernel tree (or
+> current mainline) and probably they will not apply on my tree. The
+> easiest is to base on top of linux-next or, for DTS patches, on my
+> next/dt branch.
 >
-> The kernel provides access to several clocks: CLOCK_REALTIME,
-> CLOCK_MONOTONIC, CLOCK_BOOTTIME. Last two clocks are monotonous, but the
-> start points for them are not defined and are different for each running
-> system. When a container is migrated from one node to another, all
-> clocks have to be restored into consistent states; in other words, they
-> have to continue running from the same points where they have been
-> dumped.
+> Best regards,
+> Krzysztof
 >
-> The main idea behind this patch set is adding per-namespace offsets for
-> system clocks. When a process in a non-root time namespace requests
-> time of a clock, a namespace offset is added to the current value of
-> this clock on a host and the sum is returned.
->
-> All offsets are placed on a separate page, this allows up to map it as 
-> part of vvar into user processes and use offsets from vdso calls.
->
-> Now offsets are implemented for CLOCK_MONOTONIC and CLOCK_BOOTTIME
-> clocks.
->
-> Questions to discuss:
->
-> * Clone flags exhaustion. Currently there is only one unused clone flag
-> bit left, and it may be worth to use it to extend arguments of the clone
-> system call.
->
-> * Realtime clock implementation details:
->   Is having a simple offset enough?
->   What to do when date and time is changed on the host?
->   Is there a need to adjust vfs modification and creation times? 
->   Implementation for adjtime() syscall.
+Yes this patch is based on current mainline.
+I will try to re-base on your next/dt branch and resend them.
 
-Overall I support this effort.  In my quick skim this code looked good.
-
-My feeling is that we need to be able to support running ntpd and
-support one namespace doing googles smoothing of leap seconds while
-another namespace takes the leap second.
-
-What I was imagining when I was last thinking about this was one
-instance of struct timekeeper aka tk_core per time namespace.  That
-structure already keeps offsets for all of the various clocks from
-the kerne internal time sources.  What would be needed would be to
-pass in an appropriate time namespace pointer.
-
-I could be completely wrong as I have not take the time to completely
-trace through the code.  Have you looked at pushing the time namespace
-down as far as tk_core?
-
-What I think would be the big advantage (besides ntp working) is that
-the bulk of the code could be reused.  Allowing testing of the kernel's
-time code by setting up a new time namespace.  So a person in production
-could setup a time namespace with the time set ahead a little  bit and
-be able to verify that the kernel handles the upcoming leap second
-properly.
-
-
-
-I don't know about the vfs.  I think the danger is being able to write
-dates in the future or in the past.  It appears that utimes(2) and
-utimesnat(2) already allow this except for status change.  So it is
-possible we simply don't care.  I seem to remember that what nfs does
-is take the time stamp from the host writing to the file.
-
-I think the guide for filesystem timestamps should be to first ensure
-we don't introduce security issues, and then do what distributed
-filesystems do when dealing with hosts with different clocks.
-
-Given those those two guidlines above I don't think there is a need to
-change timestamsp the way the user namespace changes uid when displayed.
-
-
-
-As for the hardware like the real time clock we definitely should not
-let a root in a time namespace change it.  We might even be able to get
-away with leaving the real time clock out of the time namespace.  If not
-we need to be very careful how the real time clock is abstracted.  I
-would start by leaving the real time clock hardware out of the time
-namespace and see if there is any part of userspace that cares.
-
-Eric
-
-> Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-> Cc: Adrian Reber <adrian@lisas.de>
-> Cc: Andrei Vagin <avagin@openvz.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> Cc: Cyrill Gorcunov <gorcunov@openvz.org>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Jeff Dike <jdike@addtoit.com>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Pavel Emelyanov <xemul@virtuozzo.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: containers@lists.linux-foundation.org
-> Cc: criu@openvz.org
-> Cc: linux-api@vger.kernel.org
-> Cc: x86@kernel.org
->
-> Andrei Vagin (12):
->   ns: Introduce Time Namespace
->   timens: Add timens_offsets
->   timens: Introduce CLOCK_MONOTONIC offsets
->   timens: Introduce CLOCK_BOOTTIME offset
->   timerfd/timens: Take into account ns clock offsets
->   kernel: Take into account timens clock offsets in clock_nanosleep
->   x86/vdso/timens: Add offsets page in vvar
->   x86/vdso: Use set_normalized_timespec() to avoid 32 bit overflow
->   posix-timers/timens: Take into account clock offsets
->   selftest/timens: Add test for timerfd
->   selftest/timens: Add test for clock_nanosleep
->   timens/selftest: Add timer offsets test
->
-> Dmitry Safonov (8):
->   timens: Shift /proc/uptime
->   x86/vdso: Restrict splitting vvar vma
->   x86/vdso: Purge timens page on setns()/unshare()/clone()
->   x86/vdso: Look for vvar vma to purge timens page
->   timens: Add align for timens_offsets
->   timens: Optimize zero-offsets
->   selftest: Add Time Namespace test for supported clocks
->   timens/selftest: Add procfs selftest
->
->  arch/Kconfig                                     |   5 +
->  arch/x86/Kconfig                                 |   1 +
->  arch/x86/entry/vdso/vclock_gettime.c             |  52 +++++
->  arch/x86/entry/vdso/vdso-layout.lds.S            |   9 +-
->  arch/x86/entry/vdso/vdso2c.c                     |   3 +
->  arch/x86/entry/vdso/vma.c                        |  67 +++++++
->  arch/x86/include/asm/vdso.h                      |   2 +
->  fs/proc/namespaces.c                             |   3 +
->  fs/proc/uptime.c                                 |   3 +
->  fs/timerfd.c                                     |  16 +-
->  include/linux/nsproxy.h                          |   1 +
->  include/linux/proc_ns.h                          |   1 +
->  include/linux/time_namespace.h                   |  72 +++++++
->  include/linux/timens_offsets.h                   |  25 +++
->  include/linux/user_namespace.h                   |   1 +
->  include/uapi/linux/sched.h                       |   1 +
->  init/Kconfig                                     |   8 +
->  kernel/Makefile                                  |   1 +
->  kernel/fork.c                                    |   3 +-
->  kernel/nsproxy.c                                 |  19 +-
->  kernel/time/hrtimer.c                            |   8 +
->  kernel/time/posix-timers.c                       |  89 ++++++++-
->  kernel/time/posix-timers.h                       |   2 +
->  kernel/time_namespace.c                          | 230 +++++++++++++++++++++++
->  tools/testing/selftests/timens/.gitignore        |   5 +
->  tools/testing/selftests/timens/Makefile          |   6 +
->  tools/testing/selftests/timens/clock_nanosleep.c |  98 ++++++++++
->  tools/testing/selftests/timens/config            |   1 +
->  tools/testing/selftests/timens/log.h             |  21 +++
->  tools/testing/selftests/timens/procfs.c          | 145 ++++++++++++++
->  tools/testing/selftests/timens/timens.c          | 196 +++++++++++++++++++
->  tools/testing/selftests/timens/timer.c           |  95 ++++++++++
->  tools/testing/selftests/timens/timerfd.c         |  96 ++++++++++
->  33 files changed, 1272 insertions(+), 13 deletions(-)
->  create mode 100644 include/linux/time_namespace.h
->  create mode 100644 include/linux/timens_offsets.h
->  create mode 100644 kernel/time_namespace.c
->  create mode 100644 tools/testing/selftests/timens/.gitignore
->  create mode 100644 tools/testing/selftests/timens/Makefile
->  create mode 100644 tools/testing/selftests/timens/clock_nanosleep.c
->  create mode 100644 tools/testing/selftests/timens/config
->  create mode 100644 tools/testing/selftests/timens/log.h
->  create mode 100644 tools/testing/selftests/timens/procfs.c
->  create mode 100644 tools/testing/selftests/timens/timens.c
->  create mode 100644 tools/testing/selftests/timens/timer.c
->  create mode 100644 tools/testing/selftests/timens/timerfd.c
+Best Regards
+-Anand
+> >
+> > Anand Moon (7):
+> >   ARM: dts: exynos5422: Added UHS-I bus speed support
+> >   ARM: dts: exynos5422: fix regulator min values of LDO13 for Odroid
+> >     XU3/XU4
+> >   ARM: dts: exynos5422: update maximum frequency for sdcard to 200MHz
+> >   ARM: dts: exynos5422: use cd-gpio method to detect sd-card
+> >   ARM: dts: exynos5422: use wp-gpio method to detect sd-card
+> >   ARM: dts: exynos5422: update maximum frequency for emmc to 200MHz
+> >   mmc: dw_mmc-exynos: Add tuning for sdr and ddr timing for USH-I mode
+> >
+> >  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 +++++++-
+> >  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  1 +
+> >  drivers/mmc/host/dw_mmc-exynos.c                   | 11 +++++++++++
+> >  3 files changed, 19 insertions(+), 1 deletion(-)
+> >
+> > --
+> > 2.17.1
+> >
