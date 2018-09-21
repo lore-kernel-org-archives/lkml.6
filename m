@@ -2,214 +2,207 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB28ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9849BECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3565920C0A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:39:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="HCDvPQ+l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3565920C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 44A2920666
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A2920666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389610AbeIUP1O (ORCPT
+        id S2389624AbeIUP2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:27:14 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35445 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389434AbeIUP1N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:27:13 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y20-v6so10222276edq.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 02:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oSAHoG/a6415PxtuE+QzDq5QP9XDfyoeGZ6LrJoVhfY=;
-        b=HCDvPQ+lvHVLcIG7H8CorWa6iSpijUHJsbx1d/9PMIutM88mKFEHgPUO8CfG40zvp0
-         4BOiZhbHVICXTRaI/OC/iIcJ337oJtn0al78PZd31+uSJfcnkOLarulRqe2q+ZOIeuTL
-         MzPgyWJAYQtKIj7Sj8Kczbng75YhHaIhTsr6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=oSAHoG/a6415PxtuE+QzDq5QP9XDfyoeGZ6LrJoVhfY=;
-        b=ES7zhjzReeAexE9EDzVXQ+IuLoWzOlEXWp1ETRP8Rm/bEYnFJcUSEKJBEB+BuEd2KU
-         elZErok1S0cb4GRTuSuXYU8hTF2l3LgIcQVVnG/Qcv04lOlhzjcYu2O0NcxMrOm/XUfw
-         1fG+6zYx1XQdAo7ajLYOE8hq3LY8PDOuFCYY4c4OSEkBHXXMNz3Qbn839JkwYBZaaLCG
-         pdW/OEUjP0bShkjDS7kC7rYZEl/SpG8pW1eDahptn+c4+EZijJaX810jsw5tTJzSIEn+
-         sD0UmoqAPS4MWnDxXUhrzuo7kwgg/Vroh00uOEdbYzNEdV7mkRtoHeI0ACQCYdBQwgNd
-         S1AA==
-X-Gm-Message-State: APzg51AhRZwPYKeNPYx+PCuPCoJBxXDHFmuMiqKum5MxCX90v6eqod2/
-        bTUmxpPlvuc/J/UQKLX6IE/ubg==
-X-Google-Smtp-Source: ANB0VdZ2KKGa7pRlgMqZYL7NDfTsAPbLZABcD4x9ECb/c9w3pt+ErQ80J2D4/H81UW93QL0PWnsjTQ==
-X-Received: by 2002:a50:90c5:: with SMTP id d5-v6mr3113498eda.76.1537522750532;
-        Fri, 21 Sep 2018 02:39:10 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm2082113edw.83.2018.09.21.02.39.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 02:39:09 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 11:39:07 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        michel@daenzer.net, open list <linux-kernel@vger.kernel.org>,
-        Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v3 1/5] drm: move native byte order quirk to new
- drm_mode_legacy_fb_format2 function
-Message-ID: <20180921093907.GE11082@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        michel@daenzer.net, open list <linux-kernel@vger.kernel.org>,
-        Sean Paul <sean@poorly.run>
-References: <20180919111252.7932-1-kraxel@redhat.com>
- <20180919111252.7932-2-kraxel@redhat.com>
+        Fri, 21 Sep 2018 11:28:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47818 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389022AbeIUP2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:28:19 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 136573002C77;
+        Fri, 21 Sep 2018 09:40:18 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 72B58106A78C;
+        Fri, 21 Sep 2018 09:40:11 +0000 (UTC)
+Date:   Fri, 21 Sep 2018 11:40:09 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v10 06/26] s390: vfio-ap: sysfs interfaces to configure
+ adapters
+Message-ID: <20180921114009.24e928d9.cohuck@redhat.com>
+In-Reply-To: <1536781396-13601-7-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1536781396-13601-7-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180919111252.7932-2-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 21 Sep 2018 09:40:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 01:12:48PM +0200, Gerd Hoffmann wrote:
-> Turns out we need the pixel format fixup not only for the addfb ioctl,
-> but also for fbdev emulation code.
+On Wed, 12 Sep 2018 15:42:56 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
 > 
-> Ideally we would place it in drm_mode_legacy_fb_format().  That would
-> create alot of churn though, and most drivers don't care because they
-> never ever run on a big endian platform.  So add a new
-> drm_mode_legacy_fb_format2() function instead.
+> Introduces two new sysfs attributes for the VFIO mediated
+> matrix device for assigning AP adapters to and unassigning
+> AP adapters from a mediated matrix device. The IDs of the
+> AP adapters assigned to the mediated matrix device will be
+> stored in an AP mask (APM).
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> The bits in the APM, from most significant to least significant
+> bit, correspond to AP adapter IDs (APID) 0 to 255. On
+> some systems, the maximum allowable adapter number may be less
+> than 255 - depending upon the host's AP configuration - and
+> assignment may be rejected if the input adapter ID exceeds the
+> limit.
+> 
+> When an adapter is assigned, the bit corresponding to the APID
+> will be set in the APM. Likewise, when an adapter is
+> unassigned, the bit corresponding to the APID will be cleared
+> from the APM.
+> 
+> In order to successfully assign an adapter, the APQNs derived from
+> the adapter ID being assigned and the queue indexes of all domains
+> previously assigned:
+> 
+> 1. Must be bound to the vfio_ap device driver.
+> 
+> 2. Must not be assigned to any other mediated matrix device
+> 
+> If there are no domains assigned to the mdev, then there must
+> be an AP queue bound to the vfio_ap device driver with an
+> APQN containing the APID, otherwise all domains
+> subsequently assigned will fail because there will be no
+> AP queues bound with an APQN containing the adapter ID.
+> 
+> Assigning or un-assigning an AP adapter will be rejected if
+> a guest using the mediated matrix device is running.
+> 
+> The relevant sysfs structures are:
+> 
+> /sys/devices/vfio_ap/matrix/
+> ...... [mdev_supported_types]
+> ......... [vfio_ap-passthrough]
+> ............ [devices]
+> ...............[$uuid]
+> .................. assign_adapter
+> .................. unassign_adapter
+> 
+> To assign an adapter to the $uuid mediated matrix device's APM,
+> write the APID to the assign_adapter file. To unassign an adapter,
+> write the APID to the unassign_adapter file. The APID is specified
+> using conventional semantics: If it begins with 0x the number will
+> be parsed as a hexadecimal number; if it begins with a 0 the number
+> will be parsed as an octal number; otherwise, it will be parsed as a
+> decimal number.
+> 
+> For example, to assign adapter 173 (0xad) to the mediated matrix
+> device $uuid:
+> 
+> 	echo 173 > assign_adapter
+> 
+> 	or
+> 
+> 	echo 0xad > assign_adapter
+> 
+> 	or
+> 
+> 	echo 0255 > assign_adapter
+> 
+> To unassign adapter 173 (0xad):
+> 
+> 	echo 173 > unassign_adapter
+> 
+> 	or
+> 
+> 	echo 0xad > unassign_adapter
+> 
+> 	or
+> 
+> 	echo 0255 > unassign_adapter
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 > ---
->  include/drm/drm_fourcc.h          |  2 ++
->  drivers/gpu/drm/drm_fourcc.c      | 28 ++++++++++++++++++++++++++++
->  drivers/gpu/drm/drm_framebuffer.c | 15 +++------------
->  3 files changed, 33 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-> index fac831c401..4b82bb6576 100644
-> --- a/include/drm/drm_fourcc.h
-> +++ b/include/drm/drm_fourcc.h
-> @@ -88,6 +88,8 @@ const struct drm_format_info *
->  drm_get_format_info(struct drm_device *dev,
->  		    const struct drm_mode_fb_cmd2 *mode_cmd);
->  uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
-> +uint32_t drm_mode_legacy_fb_format2(uint32_t bpp, uint32_t depth,
-> +				    bool native);
->  int drm_format_num_planes(uint32_t format);
->  int drm_format_plane_cpp(uint32_t format, int plane);
->  int drm_format_horz_chroma_subsampling(uint32_t format);
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index be1d6aaef6..1c1aaa8b23 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -96,6 +96,34 @@ uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth)
->  EXPORT_SYMBOL(drm_mode_legacy_fb_format);
->  
->  /**
-> + * drm_mode_legacy_fb_format2 - compute drm fourcc code from legacy description
-> + * @bpp: bits per pixels
-> + * @depth: bit depth per pixel
-> + * @native: use host native byte order
-> + *
-> + * Computes a drm fourcc pixel format code for the given @bpp/@depth values.
-> + * Useful in fbdev emulation code, since that deals in those values.
-> + */
-> +uint32_t drm_mode_legacy_fb_format2(uint32_t bpp, uint32_t depth,
-> +				    bool native)
+>  drivers/s390/crypto/vfio_ap_ops.c |  295 +++++++++++++++++++++++++++++++++++++
+>  1 files changed, 295 insertions(+), 0 deletions(-)
 
-A _2 function is a bit meh imo. What about legacy_fb_format_native()
-instead, which unconditionally gives you the native format, and then
-pulling the if (native) out?
+(...)
 
-Or slightly more future proof (given that we have the nouveau hack too):
-
-drm_device_legacy_fb_format(drm_device *dev, bpp, depth);
-
-to make it clear that this is the device-specific conversion function.
--Daniel
-
-> +{
-> +	uint32_t fmt = drm_mode_legacy_fb_format(bpp, depth);
-> +
-> +	if (native) {
-> +		if (fmt == DRM_FORMAT_XRGB8888)
-> +			fmt = DRM_FORMAT_HOST_XRGB8888;
-> +		if (fmt == DRM_FORMAT_ARGB8888)
-> +			fmt = DRM_FORMAT_HOST_ARGB8888;
-> +		if (fmt == DRM_FORMAT_RGB565)
-> +			fmt = DRM_FORMAT_HOST_RGB565;
-> +		if (fmt == DRM_FORMAT_XRGB1555)
-> +			fmt = DRM_FORMAT_HOST_XRGB1555;
-> +	}
-> +	return fmt;
-> +}
-> +EXPORT_SYMBOL(drm_mode_legacy_fb_format2);
-> +
 > +/**
->   * drm_get_format_name - fill a string with a drm fourcc format's name
->   * @format: format to compute name of
->   * @buf: caller-supplied buffer
-> diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-> index 1ee3d6b442..f72e3dffc7 100644
-> --- a/drivers/gpu/drm/drm_framebuffer.c
-> +++ b/drivers/gpu/drm/drm_framebuffer.c
-> @@ -111,12 +111,14 @@ int drm_mode_addfb(struct drm_device *dev, struct drm_mode_fb_cmd *or,
->  		   struct drm_file *file_priv)
->  {
->  	struct drm_mode_fb_cmd2 r = {};
-> +	bool native = dev->mode_config.quirk_addfb_prefer_host_byte_order;
->  	int ret;
->  
->  	if (!drm_core_check_feature(dev, DRIVER_MODESET))
->  		return -EOPNOTSUPP;
->  
-> -	r.pixel_format = drm_mode_legacy_fb_format(or->bpp, or->depth);
-> +	r.pixel_format = drm_mode_legacy_fb_format2(or->bpp, or->depth,
-> +						    native);
->  	if (r.pixel_format == DRM_FORMAT_INVALID) {
->  		DRM_DEBUG("bad {bpp:%d, depth:%d}\n", or->bpp, or->depth);
->  		return -EINVAL;
-> @@ -133,17 +135,6 @@ int drm_mode_addfb(struct drm_device *dev, struct drm_mode_fb_cmd *or,
->  	    r.pixel_format == DRM_FORMAT_XRGB2101010)
->  		r.pixel_format = DRM_FORMAT_XBGR2101010;
->  
-> -	if (dev->mode_config.quirk_addfb_prefer_host_byte_order) {
-> -		if (r.pixel_format == DRM_FORMAT_XRGB8888)
-> -			r.pixel_format = DRM_FORMAT_HOST_XRGB8888;
-> -		if (r.pixel_format == DRM_FORMAT_ARGB8888)
-> -			r.pixel_format = DRM_FORMAT_HOST_ARGB8888;
-> -		if (r.pixel_format == DRM_FORMAT_RGB565)
-> -			r.pixel_format = DRM_FORMAT_HOST_RGB565;
-> -		if (r.pixel_format == DRM_FORMAT_XRGB1555)
-> -			r.pixel_format = DRM_FORMAT_HOST_XRGB1555;
-> -	}
-> -
->  	ret = drm_mode_addfb2(dev, &r, file_priv);
->  	if (ret)
->  		return ret;
-> -- 
-> 2.9.3
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> + * vfio_ap_mdev_verify_no_sharing
+> + *
+> + * Verifies that the APQNs derived from the cross product of the AP adapter IDs
+> + * and AP queue indexes comprising the AP matrix are not configured for another
+> + * mediated device. AP queue sharing is not allowed.
+> + *
+> + * @kvm: the KVM guest
+> + * @matrix: the AP matrix
+> + *
+> + * Returns 0 if the APQNs are not shared, otherwise; returns -EADDRINUSE.
+> + */
+> +static int vfio_ap_mdev_verify_no_sharing(struct ap_matrix_mdev *matrix_mdev)
+> +{
+> +	int nbits;
+> +	struct ap_matrix_mdev *lstdev;
+> +	unsigned long apm[BITS_TO_LONGS(matrix_mdev->matrix.apm_max + 1)];
+> +	unsigned long aqm[BITS_TO_LONGS(matrix_mdev->matrix.aqm_max + 1)];
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Can you please convert this to use a fixed-size array? I think
+{apm,aqm}_max has an upper bound of 255?
+
+(Also, this can use DECLARE_BITMAP.)
+
+> +
+> +	list_for_each_entry(lstdev, &matrix_dev->mdev_list, node) {
+> +		if (matrix_mdev == lstdev)
+> +			continue;
+> +
+> +		memset(apm, 0, sizeof(apm));
+> +		memset(aqm, 0, sizeof(aqm));
+> +
+> +		/*
+> +		 * We work on full longs, as we can only exclude the leftover
+> +		 * bits in non-inverse order. The leftover is all zeros.
+> +		 */
+> +		nbits = sizeof(apm) * BITS_PER_BYTE;
+> +		if (!bitmap_and(apm, matrix_mdev->matrix.apm,
+> +				lstdev->matrix.apm, nbits))
+> +			continue;
+> +
+> +		nbits = sizeof(aqm) * BITS_PER_BYTE;
+> +		if (!bitmap_and(aqm, matrix_mdev->matrix.aqm,
+> +				lstdev->matrix.aqm, nbits))
+> +			continue;
+> +
+> +		return -EADDRINUSE;
+> +	}
+> +
+> +	return 0;
+> +}
