@@ -1,171 +1,315 @@
-Return-Path: <SRS0=4ISz=MC=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7904EECE566
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E53ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D68821535
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Sep 2018 23:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3950421536
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:02:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hWwFs/hN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D68821535
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJ+qj7A8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3950421536
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388725AbeIUFnb (ORCPT
+        id S2388677AbeIUFsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:43:31 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43348 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbeIUFnb (ORCPT
+        Fri, 21 Sep 2018 01:48:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37433 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbeIUFsO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:43:31 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 38-v6so5077055plc.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 16:57:30 -0700 (PDT)
+        Fri, 21 Sep 2018 01:48:14 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n11-v6so1281915wmc.2;
+        Thu, 20 Sep 2018 17:02:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dhClBqP/Ljz1lJD7ND2S3D4MHxFuo3tnUmUwiTE2ap4=;
-        b=hWwFs/hNEbbg5zhIsin4DaDbSU3CPpPVpeeP7M2wzPdfes08uPYE8L8svqdVLvrBnl
-         pF5GWQeFhEmRRwfY/ohH+fAJkIq5DsN2svEYbHFWpW5X919Kq2x10YpT3uyS50sobPLG
-         vznx6I179W7VQCO9rhs9vKXc2OkwtarVsKs+4=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OxdzRiwupch4uAYvazx5GeFQ/Da6DMSdXrfODXODYrQ=;
+        b=HJ+qj7A8sslzON4VDmkCB3BppTkLqeb7AGoohDQwYiva2uTX50UFpeoDmTb/jbgblP
+         WVgiYuixbhbXJzU8q08ka/gOQA6EVecyJp4xPZI9HfxJMV5d5iHQVESGD3pWehGznPNd
+         Kl41uzLuoRcDL6hiNqntOlSkECPCHPTdyBk8mAU1Z4F7l3ceKM73MZj+VTGHn00vXnpt
+         E7G6C/e7CPH3Bw57Xev6PKtjVlu1V5AO3HyBnUcRWG7FOuKIdPsfvRVkLeFH5CYKckPy
+         NzjHabQJ2hNiU+U1QFR6ygz8jmrAitkDzHCEMj4vLSR2uI3GONuaYOk9oP2OsVXndmOl
+         rC1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dhClBqP/Ljz1lJD7ND2S3D4MHxFuo3tnUmUwiTE2ap4=;
-        b=EIsgwWsDS81lRoQuR87M5pINAHt932RZ+tmE6JuP0d9Q0KNl+h4AetEU5Xh/RQW9NB
-         IJUYJApNj5An4IFLnq0MWXc4QaQng24WnidH/1yYDknvKc0A5O6yrEeUTakj4TF/0oSS
-         Qd3QpW1LiJGh2NIQkz/kJLmdf3EXfPnpPVksksAnrDq/wafWtP3d5KcpX9/fmpbjuaiv
-         tAhtx1US8/sKxoMlyzN3VKtrZK6PqReQpQAXUsaPO9lSSAc5njkBNWkC1Z98akBBQz5n
-         8yvIKmGpPubpUn0eiJgy9D3ZGk3es4K/OimV3a2qi2fcPRQFiSXVUMJWLRcopwBoc5mw
-         z/XQ==
-X-Gm-Message-State: APzg51ASy4CiwzBVP+0X+gpSUhe3HUU0zIAgFz9o0B7RVhmp7bc9VMjL
-        oRj+HchbMe6SymRYHyYsPpONQw==
-X-Google-Smtp-Source: ANB0VdYVUlFxGypSG04C5GXCRkOYqYVaKvSP9fVF+ugC3pOY2GgmdqxLDM+H65sk6cwkB2f4ZfDq2A==
-X-Received: by 2002:a17:902:bcc6:: with SMTP id o6-v6mr41640554pls.117.1537487849373;
-        Thu, 20 Sep 2018 16:57:29 -0700 (PDT)
-Received: from [10.21.2.196] ([209.121.128.187])
-        by smtp.googlemail.com with ESMTPSA id p4-v6sm35062991pgs.75.2018.09.20.16.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 16:57:28 -0700 (PDT)
-Subject: Re: [PATCH V8 1/2] clocksource: add gx6605s SOC system timer
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
-        green.hu@gmail.com
-References: <cover.1537412072.git.ren_guo@c-sky.com>
- <4d409a1fdecf1c376e8cc6b55308cd3c522047b0.1537412072.git.ren_guo@c-sky.com>
- <6c31f9b2-d536-1cee-8024-b52eb862fd9d@linaro.org>
- <20180920233103.GA8891@guoren-Inspiron-7460>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <271900ce-0019-b96d-7833-4ea5ae0721a6@linaro.org>
-Date:   Fri, 21 Sep 2018 01:57:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OxdzRiwupch4uAYvazx5GeFQ/Da6DMSdXrfODXODYrQ=;
+        b=TR1hVPJvYB/QbWJXYMsHIhMYxhzTtBXYCLekNnK1TFFq3ADrmH0t/U+zNBp9IKIHiS
+         3dJZvmAu0tVPZnBz2GcAT5/EbeCE9XWIrqVRF3ACrl/MbfYZIyAadhq8rEaT4RHGKJ63
+         hupfBYsR50uFamJOfFA2h7PcLMpQ1rYWy9oVDVxlZheYvhMfluCFiws5cejILNDTJgvV
+         S7/AmI7jryDqeBraGuJF7BwBqU897ZZk8sXMLh2728yHwtrG9v0PfZLA4+gTolWykYM+
+         j8gO3ucn120FBEXdarUrjipAGBDiLef+syHXkyN1k7E4yXMPzNn2HUpF0jO9CrscaLFA
+         yU/g==
+X-Gm-Message-State: APzg51AiqaEwdV4w6DbmGzvAiP7pMSKl7/y32DT4JUvIp43fy9m7XMQ2
+        PFbcVbge0o/TPvEi7qLUo916fVeJ5Z2BzLuofCE=
+X-Google-Smtp-Source: ANB0VdbIWVm+Pc+SK88gNKqig5gquOQw6J2DN1sr0xt3oUIeMIVaR8Xp5n8Yf70AbpL4aJNStWS77N2m+68rxneexOE=
+X-Received: by 2002:a1c:f30d:: with SMTP id q13-v6mr4518909wmq.36.1537488128689;
+ Thu, 20 Sep 2018 17:02:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180920233103.GA8891@guoren-Inspiron-7460>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1537438000-20313-1-git-send-email-abel.vesa@nxp.com> <1537438000-20313-5-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1537438000-20313-5-git-send-email-abel.vesa@nxp.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 20 Sep 2018 17:01:56 -0700
+Message-ID: <CAHQ1cqEZ4_xR+Xhbt6Deiqn9dFPx7hfVKfsMXjfGTe6QisVG_A@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] clk: imx: add imx composite clock
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Rob Herring <robh@kernel.org>, linux-imx@nxp.com,
+        abelvesa@linux.com, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/09/2018 01:31, Guo Ren wrote:
-> On Thu, Sep 20, 2018 at 06:06:19PM +0200, Daniel Lezcano wrote:
->> On 20/09/2018 10:03, Guo Ren wrote:
->>> Changelog:
->>>  - Add License and Copyright
->>>  - Use timer-of framework
->>>  - Change name with upstream feedback
->>>  - Use clksource_mmio framework
->>>
->>> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
->>> ---
->>>  drivers/clocksource/Kconfig         |   8 ++
->>>  drivers/clocksource/Makefile        |   1 +
->>>  drivers/clocksource/timer-gx6605s.c | 150 ++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 159 insertions(+)
->>>  create mode 100644 drivers/clocksource/timer-gx6605s.c
->>>
->>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->>> index a11f4ba..6d0f18d 100644
->>> --- a/drivers/clocksource/Kconfig
->>> +++ b/drivers/clocksource/Kconfig
->>> @@ -620,4 +620,12 @@ config RISCV_TIMER
->>>  	  is accessed via both the SBI and the rdcycle instruction.  This is
->>>  	  required for all RISC-V systems.
->>>  
->>> +config GX6605S_TIMER
->>> +	bool "Gx6605s SOC system timer driver"
->>> +	depends on CSKY
->>> +	select CLKSRC_MMIO
->>> +	select TIMER_OF
->>> +	help
->>> +	  This option enables support for gx6605s SOC's timer.
->>> +
->>>  endmenu
->>
->> Please make the option not visible as default. There are currently two
->> approaches look at MTK_TIMER and SPRD_TIMER.
-> Em ... (ot sure why COMPILE_TEST?):
-> 	bool "Gx6605s SOC system timer driver" if COMPILE_TEST
-> Hmm?
+On Thu, Sep 20, 2018 at 3:07 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+>
+> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
+> divider, the idea here is to combine all of those into one composite clock,
+> but we need to deal with both predivider and divider at the same time and
+> therefore we add the imx_clk_composite_divider_ops and register the composite
+> clock with those.
+>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/clk/imx/Makefile        |   1 +
+>  drivers/clk/imx/clk-composite.c | 155 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h           |  11 +++
+>  3 files changed, 167 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-composite.c
+>
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index b87513c..4fabb0a 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -3,6 +3,7 @@
+>  obj-y += \
+>         clk.o \
+>         clk-busy.o \
+> +       clk-composite.o \
+>         clk-cpu.o \
+>         clk-fixup-div.o \
+>         clk-fixup-mux.o \
+> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+> new file mode 100644
+> index 0000000..40c2aa8
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-composite.c
+> @@ -0,0 +1,155 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2018 NXP
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+> +
+> +#include "clk.h"
+> +
+> +#define PCG_PREDIV_SHIFT       16
+> +#define PCG_PREDIV_WIDTH       3
+> +
+> +#define PCG_DIV_SHIFT          0
+> +#define PCG_DIV_WIDTH          6
+> +
+> +#define PCG_PCS_SHIFT          24
+> +#define PCG_PCS_MASK           0x7
+> +
+> +#define PCG_CGC_SHIFT          28
+> +
+> +static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw *hw,
+> +                                               unsigned long parent_rate)
+> +{
+> +       struct clk_divider *divider = to_clk_divider(hw);
+> +       unsigned long prediv_rate;
+> +       unsigned int prediv_value;
+> +       unsigned int div_value;
+> +
+> +       prediv_value = clk_readl(divider->reg) >> divider->shift;
+> +       prediv_value &= clk_div_mask(divider->width);
+> +
+> +       prediv_rate = divider_recalc_rate(hw, parent_rate, prediv_value,
+> +                                               NULL, divider->flags,
+> +                                               divider->width);
+> +
+> +       div_value = clk_readl(divider->reg) >> PCG_DIV_SHIFT;
+> +       div_value &= clk_div_mask(PCG_DIV_WIDTH);
+> +
+> +       return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
+> +                                  divider->flags, PCG_DIV_WIDTH);
+> +}
+> +
+> +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
+> +                                               unsigned long rate,
+> +                                               unsigned long *prate)
+> +{
+> +       struct clk_divider *divider = to_clk_divider(hw);
+> +       unsigned long prediv_rate;
+> +
+> +       prediv_rate = divider_round_rate(hw, rate, prate, divider->table,
+> +                                 divider->width, divider->flags);
+> +       return divider_round_rate(hw, rate, &prediv_rate, divider->table,
+> +                                 PCG_DIV_WIDTH, divider->flags);
+> +}
+> +
+> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
+> +                                       unsigned long rate,
+> +                                       unsigned long parent_rate)
+> +{
+> +       struct clk_divider *divider = to_clk_divider(hw);
+> +       unsigned long prediv_rate;
+> +       unsigned long flags = 0;
+> +       int prediv_value;
+> +       int div_value;
+> +       u32 val;
+> +
+> +       prediv_value = divider_get_val(rate, parent_rate, NULL,
+> +                               PCG_PREDIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
+> +       if (prediv_value < 0)
+> +               return prediv_value;
+> +
+> +       prediv_rate = DIV_ROUND_UP_ULL((u64)parent_rate, prediv_value + 1);
+> +
+> +       div_value = divider_get_val(rate, prediv_rate, NULL,
+> +                               PCG_DIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
+> +       if (div_value < 0)
+> +               return div_value;
+> +
+> +       spin_lock_irqsave(divider->lock, flags);
+> +
+> +       val = clk_readl(divider->reg);
+> +       val &= ~((clk_div_mask(divider->width) << divider->shift) |
+> +                       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+> +
+> +       val |= (u32)prediv_value << divider->shift;
+> +       val |= (u32)div_value << PCG_DIV_SHIFT;
+> +       clk_writel(val, divider->reg);
+> +
+> +       spin_unlock_irqrestore(divider->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct clk_ops imx_clk_composite_divider_ops = {
+> +       .recalc_rate = imx_clk_composite_divider_recalc_rate,
+> +       .round_rate = imx_clk_composite_divider_round_rate,
+> +       .set_rate = imx_clk_composite_divider_set_rate,
+> +};
+> +
+> +struct clk *imx_clk_composite_flags(const char *name,
+> +                                       const char **parent_names,
+> +                                       int num_parents, void __iomem *reg,
+> +                                       unsigned long flags)
+> +{
+> +       struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
+> +       struct clk_divider *div = NULL;
+> +       struct clk_gate *gate = NULL;
+> +       struct clk_mux *mux = NULL;
+> +       struct clk *clk;
+> +
+> +       mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+> +       if (!mux)
+> +               return ERR_PTR(-ENOMEM);
+> +       mux_hw = &mux->hw;
+> +       mux->reg = reg;
+> +       mux->shift = PCG_PCS_SHIFT;
+> +       mux->mask = PCG_PCS_MASK;
+> +
+> +       div = kzalloc(sizeof(*div), GFP_KERNEL);
+> +       if (!div) {
+> +               kfree(mux);
+> +               return ERR_PTR(-ENOMEM);
+> +       }
+> +       div_hw = &div->hw;
+> +       div->reg = reg;
+> +       div->shift = PCG_PREDIV_SHIFT;
+> +       div->width = PCG_PREDIV_WIDTH;
+> +       div->lock = &imx_ccm_lock;
+> +       div->flags = CLK_DIVIDER_ROUND_CLOSEST;
+> +
+> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +       if (!gate) {
+> +               kfree(mux);
+> +               kfree(div);
+> +               return ERR_PTR(-ENOMEM);
+> +       }
+> +       gate_hw = &gate->hw;
+> +       gate->reg = reg;
+> +       gate->bit_idx = PCG_CGC_SHIFT;
+> +
+> +       clk = clk_register_composite(NULL, name, parent_names, num_parents,
+> +                                       mux_hw, &clk_mux_ops, div_hw,
+> +                                       &imx_clk_composite_divider_ops, gate_hw,
+> +                                       &clk_gate_ops, flags);
+> +       if (IS_ERR(clk)) {
+> +               kfree(mux);
+> +               kfree(div);
+> +               kfree(gate);
 
-Because by enabling the COMPILE_TEST, you give the opportunity to
-someone without the hardware to cross-compile test your driver and catch
-errors very soon before the changes hit your tree.
+Minor suggestion: using goto to free resource in this case might be
+more straightforward and require less repeatition.
 
-There are several Continuous Integration loop around running the latest
-changes in the kernel (kernelci, 01.org, etc ...) and all drivers with
-this flag are compiled tested.
+> +       }
+> +
+> +       return clk;
+> +}
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 12b3fd6..74d8d46 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -232,4 +232,15 @@ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+>                 struct clk *div, struct clk *mux, struct clk *pll,
+>                 struct clk *step);
+>
+> +struct clk *imx_clk_composite_flags(const char *name, const char **parent_names,
+> +               int num_parents, void __iomem *reg, unsigned long flags);
+> +
+> +#define imx_clk_composite(name, parent_names, reg) \
+> +       imx_clk_composite_flags(name, parent_names, ARRAY_SIZE(parent_names), reg, \
+> +                                       CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
+> +
+> +#define imx_clk_composite_critical(name, parent_names, reg) \
+> +       imx_clk_composite_flags(name, parent_names, ARRAY_SIZE(parent_names), reg, \
+> +                               CLK_IS_CRITICAL | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
 
-If the option is not set, the timer is silently selected by your
-platform's Kconfig only, without giving the opportunity to an non-expert
-user to unselect the timer leading to, maybe, an unbootable board.
+Another minor suggestion is to define a intermediary macro and define
+both imx_clk_composite_critical() and imx_clk_composite() in terms of
+it. Say:
 
+#define __imx_clk_composite(name, parent_names, reg, flags) \
+    imx_clk_composite_flags(name, parent_names, ARRAY_SIZE(parent_names), reg, \
+                                             flags |
+CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
 
->>> +static irqreturn_t gx6605s_timer_interrupt(int irq, void *dev)
->>> +{
->>> +	struct clock_event_device *ce = (struct clock_event_device *) dev;
->>
->> nit: no cast is needed.
-> Yes, change to:
-> 	struct clock_event_device *ce = dev;
-> 
-> 
->>> +static u64 notrace gx6605s_sched_clock_read(void)
->>> +{
->>> +	void __iomem *base;
->>> +
->>> +	base = timer_of_base(&to) + CLKSRC_OFFSET;
->>> +
->>> +	return (u64) readl_relaxed(base + TIMER_VALUE);
->>
->> nit: extra space after '(u64)'
-> Ok
-> 	return (u64)readl_relaxed(base + TIMER_VALUE);
-> 
-> Best Regards
->  Guo Ren
-> 
+#define imx_clk_composite(name, parent_names, reg)
+__imx_clk_composite_flags(name, parent_names, reg, 0)
+#define imx_clk_composite_critical(name, parent_names, reg)
+__imx_clk_composite_flags(name, parent_names, reg, CLK_IS_CRITICAL)
 
+this way it might be a bit easier to spot that the only difference
+between the two is CLK_IS_CRITICAL.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Thanks,
+Andrey Smirnov
