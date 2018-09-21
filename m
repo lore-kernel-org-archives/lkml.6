@@ -2,245 +2,202 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5016C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE51ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8266521536
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF09921536
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 00:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RPvL8pXl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8266521536
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fO59yKst"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF09921536
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388773AbeIUFwK (ORCPT
+        id S2388757AbeIUFxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 01:52:10 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38785 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbeIUFwK (ORCPT
+        Fri, 21 Sep 2018 01:53:15 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39597 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbeIUFxP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 01:52:10 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r77-v6so47410pgr.5;
-        Thu, 20 Sep 2018 17:06:06 -0700 (PDT)
+        Fri, 21 Sep 2018 01:53:15 -0400
+Received: by mail-qt1-f195.google.com with SMTP id o15-v6so183496qtk.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 17:07:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wLEa9L9+uIpVjMdvxvvuhRN0Lx0zc0BWe2klPFWo4dM=;
-        b=RPvL8pXl4kxwCq4rG1WicHc3cGKaqDzzQdQxM9k6kTBfyH+xQEBBHrwbqQMj92Cvdb
-         sRxgHtPwLfpz6ldnuDwy+xC9FZvgoyjCb8tbFXPeuRmuubesBSzaKL+mVe7r5DxXUjdL
-         8eJRIXZUwXzjDTn9pLNK/cSp15IcWM9K7V09Lt8JzX33CvVZt0hrvNaUcNSBjR26iYb5
-         JT6c9FUAT43tiLN4fz5+0tH6Tg1yIT2BWM/HQB+fa6W6SSPM2ti2oTW5n452mGIvD2yt
-         sHAfDKSOAQ1S6vJvaguZWRhhiqhCBkjR8k/jYs78xu190gF/RQVhCaSxrxQhG88ink9/
-         /JQg==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=GmOOir3QzQCgZ48pzs34w6vqrBQOL0u0wBqrv39hdnk=;
+        b=fO59yKstvyG94qukhHM/tTdxP4n8KY677NlVOiZG7TeOf3ERgmdY8og+Sj6qNlvvyU
+         KgUYoInmj2cEbEecGlIxHgfc1jgsCsreYnN2hsZttY5pRmxCv+2mjmqs++3f/HvsSTkw
+         8zxhiro3ZXuzeVSfCigpUzg+NCuq5hKitAmNcIMVLz+biozyREpWg0/AxbRiHgyy5/RB
+         e/3UdajBxyOmu6r7F5lcgIrTPdMFca7TR/H7nQYJ0zJJcFEfp490AJu1pHKAXqx/4bKh
+         /wevF9CjWxE8iPZZFv/od6tvcQNGMdnwCNjdqejmyG4rr67OMfrkwWes8F1JUaxk/ccv
+         RusQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wLEa9L9+uIpVjMdvxvvuhRN0Lx0zc0BWe2klPFWo4dM=;
-        b=COrgMhpuThY/NOImiWS0omNr8Ba/+thERPS6fQLFHWJt8ExIdPlIdhOwQvkJ/LmdZD
-         K4Ov3oHfHYmj5hAYwkpYHWzlVx3tfa9ZrCJv+lX7SxEO81fVnHQwpOn5EIFfjzoVVsYi
-         w6z1E0HJ2Iot6SLbwKY1QeEpdGylqrjaEJFFjFh6Aq56TsAnYgrnYAoVFlZqXoRj9h+m
-         H8UnebQyL2Wj42V0wHhGljMfXhgrZIJ0uMEEVCdeUf6xesC+VvDrTBD8IqLVIjEyD8Xg
-         eioo+8f4ovp3dpADb45YtU57HIopJ5xVbesIbJ3L7EmnWS9eb1+WTGnI6UPP6JwtpDZu
-         oCdw==
-X-Gm-Message-State: APzg51CB6lWKGj94HAvQwZg7pXbgvktJ6f5zDZ96STd7vZtEAH0Pg5AU
-        6Bjq8ZH4Qqxnk2jfgmuyqig+Pbfd
-X-Google-Smtp-Source: ANB0VdYCWVjmnmXuQbUmSDi8LJbCbN8EPwKL5TuUy8RY6aAjj4CfxwsfcANz6ow6B6x992ag1tcN1g==
-X-Received: by 2002:a63:10c:: with SMTP id 12-v6mr38478606pgb.62.1537488365178;
-        Thu, 20 Sep 2018 17:06:05 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 130-v6sm6630508pgd.66.2018.09.20.17.06.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Sep 2018 17:06:04 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: phy: mdio-bcm-unimac: Allow configuring MDIO clock divider
-Date:   Thu, 20 Sep 2018 17:05:40 -0700
-Message-Id: <20180921000542.26022-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=GmOOir3QzQCgZ48pzs34w6vqrBQOL0u0wBqrv39hdnk=;
+        b=GM9QZzy3cHUkHEoyA+0esjj+G+9r5eLSMVIJykV3dUaAwf3ANX8fIqU83eHAXHahp3
+         7oIp4FKOtaS15FJBBT8UOCS3Tw5RWdvnTxqMUilRLiVQYXw0WTFQ42xEalLUqHlML25m
+         6dUTkOs50SkjQvI3/hr6ojrNu9yuc7jwrf8W1V6RLRAEcRZvQCVBSTG6WPpLlah0znUu
+         MzCtRkGnUH+rRm3140TscZXz3kTnlLqWdl7uzZBwMvbDFp4rOIAZZGCJLYWn0q7WcVWk
+         rK+HdoevJLayy+yWYbWlrVAbfH07Kh0MTVg4m+TPRnfYoYYXN6eh+YpclJR3IAb/Nnk+
+         Soyw==
+X-Gm-Message-State: APzg51DRuDA1Rwfmdi99PuQoNq/VOtfG4HFkiTWIxMIc/8sooa1+Nc7E
+        uHC3mFdkPfSmK5TQRkJ9VbisWscCpVXRW3bgshY=
+X-Google-Smtp-Source: ANB0VdbAOlBErbOALBZJqYburuHCroScr2lpCqSVZeoDZ+CFQfyMZFYHZ+qXYWoMRPs77+aVL541J9GP5IPc0zeqaH0=
+X-Received: by 2002:ac8:d02:: with SMTP id q2-v6mr4301729qti.182.1537488429994;
+ Thu, 20 Sep 2018 17:07:09 -0700 (PDT)
+MIME-Version: 1.0
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 21 Sep 2018 10:06:58 +1000
+Message-ID: <CAPM=9tz2sHYqjTMUnzr_SQ1J9qrWAGDs56y_2CrFhCCJOeYgjA@mail.gmail.com>
+Subject: [git pull] drm fixes for 4.19-rc5
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow the configuration of the MDIO clock divider when the Device Tree
-contains 'clock-frequency' property (similar to I2C and SPI buses).
-Because the hardware may have lost its state during suspend/resume,
-re-apply the MDIO clock divider upon resumption.
+Hey Greg,
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- .../bindings/net/brcm,unimac-mdio.txt         |  3 +
- drivers/net/phy/mdio-bcm-unimac.c             | 83 ++++++++++++++++++-
- 2 files changed, 84 insertions(+), 2 deletions(-)
+Looks like a pretty run of the mill set of fixes for this stage,
 
-diff --git a/Documentation/devicetree/bindings/net/brcm,unimac-mdio.txt b/Documentation/devicetree/bindings/net/brcm,unimac-mdio.txt
-index 4648948f7c3b..e15589f47787 100644
---- a/Documentation/devicetree/bindings/net/brcm,unimac-mdio.txt
-+++ b/Documentation/devicetree/bindings/net/brcm,unimac-mdio.txt
-@@ -19,6 +19,9 @@ Optional properties:
- - interrupt-names: must be "mdio_done_error" when there is a share interrupt fed
-   to this hardware block, or must be "mdio_done" for the first interrupt and
-   "mdio_error" for the second when there are separate interrupts
-+- clocks: A reference to the clock supplying the MDIO bus controller
-+- clock-frequency: the MDIO bus clock that must be output by the MDIO bus
-+  hardware, if absent, the default hardware values are used
- 
- Child nodes of this MDIO bus controller node are standard Ethernet PHY device
- nodes as described in Documentation/devicetree/bindings/net/phy.txt
-diff --git a/drivers/net/phy/mdio-bcm-unimac.c b/drivers/net/phy/mdio-bcm-unimac.c
-index 8d370667fa1b..80b9583eaa95 100644
---- a/drivers/net/phy/mdio-bcm-unimac.c
-+++ b/drivers/net/phy/mdio-bcm-unimac.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/clk.h>
- 
- #include <linux/of.h>
- #include <linux/of_platform.h>
-@@ -45,6 +46,8 @@ struct unimac_mdio_priv {
- 	void __iomem		*base;
- 	int (*wait_func)	(void *wait_func_data);
- 	void			*wait_func_data;
-+	struct clk		*clk;
-+	u32			clk_freq;
- };
- 
- static inline u32 unimac_mdio_readl(struct unimac_mdio_priv *priv, u32 offset)
-@@ -189,6 +192,35 @@ static int unimac_mdio_reset(struct mii_bus *bus)
- 	return 0;
- }
- 
-+static void unimac_mdio_clk_set(struct unimac_mdio_priv *priv)
-+{
-+	unsigned long rate;
-+	u32 reg, div;
-+
-+	/* Keep the hardware default values */
-+	if (!priv->clk_freq)
-+		return;
-+
-+	if (!priv->clk)
-+		rate = 250000000;
-+	else
-+		rate = clk_get_rate(priv->clk);
-+
-+	div = (rate / (2 * priv->clk_freq)) - 1;
-+	if (div & ~MDIO_CLK_DIV_MASK) {
-+		pr_warn("Incorrect MDIO clock frequency, ignoring\n");
-+		return;
-+	}
-+
-+	/* The MDIO clock is the reference clock (typicaly 250Mhz) divided by
-+	 * 2 x (MDIO_CLK_DIV + 1)
-+	 */
-+	reg = unimac_mdio_readl(priv, MDIO_CFG);
-+	reg &= ~(MDIO_CLK_DIV_MASK << MDIO_CLK_DIV_SHIFT);
-+	reg |= div << MDIO_CLK_DIV_SHIFT;
-+	unimac_mdio_writel(priv, reg, MDIO_CFG);
-+}
-+
- static int unimac_mdio_probe(struct platform_device *pdev)
- {
- 	struct unimac_mdio_pdata *pdata = pdev->dev.platform_data;
-@@ -217,9 +249,26 @@ static int unimac_mdio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	priv->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (PTR_ERR(priv->clk) == -EPROBE_DEFER)
-+		return PTR_ERR(priv->clk);
-+	else
-+		priv->clk = NULL;
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	if (of_property_read_u32(np, "clock-frequency", &priv->clk_freq))
-+		priv->clk_freq = 0;
-+
-+	unimac_mdio_clk_set(priv);
-+
- 	priv->mii_bus = mdiobus_alloc();
--	if (!priv->mii_bus)
--		return -ENOMEM;
-+	if (!priv->mii_bus) {
-+		ret = -ENOMEM;
-+		goto out_clk_disable;
-+	}
- 
- 	bus = priv->mii_bus;
- 	bus->priv = priv;
-@@ -253,6 +302,8 @@ static int unimac_mdio_probe(struct platform_device *pdev)
- 
- out_mdio_free:
- 	mdiobus_free(bus);
-+out_clk_disable:
-+	clk_disable_unprepare(priv->clk);
- 	return ret;
- }
- 
-@@ -262,10 +313,37 @@ static int unimac_mdio_remove(struct platform_device *pdev)
- 
- 	mdiobus_unregister(priv->mii_bus);
- 	mdiobus_free(priv->mii_bus);
-+	clk_disable_unprepare(priv->clk);
-+
-+	return 0;
-+}
-+
-+static int unimac_mdio_suspend(struct device *d)
-+{
-+	struct unimac_mdio_priv *priv = dev_get_drvdata(d);
-+
-+	clk_disable_unprepare(priv->clk);
-+
-+	return 0;
-+}
-+
-+static int unimac_mdio_resume(struct device *d)
-+{
-+	struct unimac_mdio_priv *priv = dev_get_drvdata(d);
-+	int ret;
-+
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret)
-+		return ret;
-+
-+	unimac_mdio_clk_set(priv);
- 
- 	return 0;
- }
- 
-+static SIMPLE_DEV_PM_OPS(unimac_mdio_pm_ops,
-+			 unimac_mdio_suspend, unimac_mdio_resume);
-+
- static const struct of_device_id unimac_mdio_ids[] = {
- 	{ .compatible = "brcm,genet-mdio-v5", },
- 	{ .compatible = "brcm,genet-mdio-v4", },
-@@ -281,6 +359,7 @@ static struct platform_driver unimac_mdio_driver = {
- 	.driver = {
- 		.name = UNIMAC_MDIO_DRV_NAME,
- 		.of_match_table = unimac_mdio_ids,
-+		.pm = &unimac_mdio_pm_ops,
- 	},
- 	.probe	= unimac_mdio_probe,
- 	.remove	= unimac_mdio_remove,
--- 
-2.17.1
+core: fix debugfs for atomic, fix the check for atomic for
+non-modesetting drivers
+amdgpu: adds a new PCI id, some kfd fixes and a sdma fix
+i915: a bunch of GVT fixes.
+vc4: scaling fix
+vmwgfx: modesetting fixes and a old buffer eviction fix
+udl: framebuffer destruction fix
+sun4i: disable on R40 fix until next kernel
+pl111: NULL termination on table fix
 
+Thanks,
+Dave.
+
+drm-fixes-2018-09-21:
+amdgpu, vwmgfx, i915, sun4i, vgem, vc4, udl and core fixes.
+The following changes since commit 7876320f88802b22d4e2daf7eb027dd14175a0f8:
+
+  Linux 4.19-rc4 (2018-09-16 11:52:37 -0700)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-09-21
+
+for you to fetch changes up to 4fcb7f8be829d21bcbb24eef2204fb6b34ed1f80:
+
+  Merge branch 'drm-fixes-4.19' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes (2018-09-21
+09:52:27 +1000)
+
+----------------------------------------------------------------
+amdgpu, vwmgfx, i915, sun4i, vgem, vc4, udl and core fixes.
+
+----------------------------------------------------------------
+Alex Deucher (1):
+      drm/amdgpu: add new polaris pci id
+
+Amber Lin (1):
+      drm/amdgpu: Fix SDMA HQD destroy error on gfx_v7
+
+Boris Brezillon (1):
+      drm/vc4: Fix the "no scaling" case on multi-planar YUV formats
+
+Chen-Yu Tsai (1):
+      drm/sun4i: Remove R40 display pipeline compatibles
+
+Colin Xu (2):
+      drm/i915/gvt: Init PHY related registers for BXT
+      drm/i915/gvt: Add GEN9_CLKGATE_DIS_4 to default BXT mmio handler
+
+Dave Airlie (5):
+      drm: fix drm_drv_uses_atomic_modeset on non modesetting drivers.
+      Merge tag 'drm-misc-fixes-2018-09-19' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge tag 'drm-intel-fixes-2018-09-19' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge branch 'vmwgfx-fixes-4.19' of
+git://people.freedesktop.org/~thomash/linux into drm-fixes
+      Merge branch 'drm-fixes-4.19' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+
+Deepak Rawat (4):
+      drm/vmwgfx: don't check for old_crtc_state enable status
+      drm/vmwgfx: limit screen size to stdu_max during check_modeset
+      drm/vmwgfx: limit mode size for all display unit to texture_max
+      drm/vmwgfx: Don't impose STDU limits on framebuffer size
+
+Emil Lundmark (1):
+      drm: udl: Destroy framebuffer only if it was initialized
+
+Icenowy Zheng (1):
+      drm: sun4i: drop second PLL from A64 HDMI PHY
+
+Lyude Paul (1):
+      drm/atomic: Use drm_drv_uses_atomic_modeset() for debugfs creation
+
+Rodrigo Vivi (1):
+      Merge tag 'gvt-fixes-2018-09-18' of
+https://github.com/intel/gvt-linux into drm-intel-fixes
+
+Thomas Hellstrom (1):
+      drm/vmwgfx: Fix buffer object eviction
+
+Weinan Li (1):
+      drm/i915/gvt: request srcu_read_lock before checking if one gfn is valid
+
+Yong Zhao (2):
+      drm/amdkfd: Change the control stack MTYPE from UC to NC on GFX9
+      drm/amdkfd: Fix ATS capablity was not reported correctly on some APUs
+
+YueHaibing (1):
+      drm/fb-helper: Remove set but not used variable 'connector_funcs'
+
+Zhipeng Gong (1):
+      drm/i915/gvt: clear ggtt entries when destroy vgpu
+
+zhong jiang (1):
+      drm/pl111: Make sure of_device_id tables are NULL terminated
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c        |  6 +++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h        |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v7.c |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c           | 14 ++++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c           |  1 +
+ drivers/gpu/drm/amd/amdkfd/kfd_device.c           |  3 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_iommu.c            | 13 ++++++-
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c   |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_priv.h             |  1 +
+ drivers/gpu/drm/amd/amdkfd/kfd_topology.c         | 21 +++++++++---
+ drivers/gpu/drm/amd/include/kgd_kfd_interface.h   |  2 +-
+ drivers/gpu/drm/drm_atomic.c                      |  2 +-
+ drivers/gpu/drm/drm_debugfs.c                     |  2 +-
+ drivers/gpu/drm/drm_fb_helper.c                   |  3 --
+ drivers/gpu/drm/i915/gvt/handlers.c               |  1 +
+ drivers/gpu/drm/i915/gvt/kvmgt.c                  |  7 +++-
+ drivers/gpu/drm/i915/gvt/mmio.c                   | 28 +++++++++++++++
+ drivers/gpu/drm/i915/gvt/vgpu.c                   |  1 +
+ drivers/gpu/drm/pl111/pl111_vexpress.c            |  3 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c                 |  1 -
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c            |  1 -
+ drivers/gpu/drm/sun4i/sun8i_mixer.c               | 24 -------------
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c            |  1 -
+ drivers/gpu/drm/udl/udl_fb.c                      |  8 +++--
+ drivers/gpu/drm/vc4/vc4_plane.c                   | 25 +++++++-------
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c           |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c               | 42 ++++++++++++++++-------
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c              | 25 --------------
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c           | 24 +++++++------
+ include/drm/drm_drv.h                             |  2 +-
+ 30 files changed, 152 insertions(+), 117 deletions(-)
