@@ -2,537 +2,197 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77604C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67ACDECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C6072154C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE2C521479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:39:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kHtCLb2z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6072154C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="S9uXydVJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE2C521479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389879AbeIUR0h (ORCPT
+        id S2389938AbeIUR2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 13:26:37 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45915 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389717AbeIUR0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:26:36 -0400
-Received: by mail-io1-f66.google.com with SMTP id e12-v6so11816051iok.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 04:38:07 -0700 (PDT)
+        Fri, 21 Sep 2018 13:28:18 -0400
+Received: from mail-co1nam03on0077.outbound.protection.outlook.com ([104.47.40.77]:40394
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389643AbeIUR2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 13:28:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wOFHlzjfzVTho6ybAlDHXiapIYkOLEfItGHti9bOMoA=;
-        b=kHtCLb2zpFXDJbTQ7YdHDUrmbgrwY5150a0941G2h5IW7ZI8A426mLZQEwnNNOKVei
-         GA5ExFu/R3cTVTyOzfsgMVozJoRqxDzx/gmmYZbnqKlUT1lE6IDh5Ab8CCaKdjURtvbP
-         oqvSbIlj/0208pABO7qbbDnwA0NbFh+3Ra3PwpZgJ5A3k9oBfWvXionfuJ8xj/gyL97M
-         AFmyqKOFhABoHWRWBr6cnGEvK0L5IyXnqgB0hhzFuQJ0FleMnz+G5VOPKuUTJO4B4Xrj
-         Z1nzG3wxq1ovY8RLpfdEEi91nv0tm55zLt29KVYl4onimDXF3GAKpPsNVw/vGyOgDvYu
-         QF4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wOFHlzjfzVTho6ybAlDHXiapIYkOLEfItGHti9bOMoA=;
-        b=EdwVdMa3o1XVM/Pc/uuEIiKYYGfj40dEmeCQKBEGky9B4OB8rCAqU8xfaQCr8BOaVO
-         jXSHeDCmn1lr8BEAumrjEDACYgvt7ObT2tTFs+s1P+xrsqW2KGXZ2lCkm330YsZzsW70
-         aSKrrPrS50KOfMsigKRZ4EKV5njtWT5ygI0cLm7U+U0eI6odGskPGbL8d6CDDECoiBrm
-         KOowV9DWq0k7jTkAAuh6q/HjbEROpIEldSX04anWdvVNaRJUmjyprDzDwBKB05Z5KHx2
-         ptMBKSgS3IuWUmkGYDZSu/k1+UWDrp/1z6SdkOdh63/A0bZza2saJW/LHe4LpQFVpMFo
-         NfPw==
-X-Gm-Message-State: APzg51Ai/mBAccOqDxjHIjqGaR8uVLTaZeSP/Tv309EYkd2oYXedl2EJ
-        NIvdCmkqe6mI6Ki67VD88UsG1QXFBVwDqeOO8bceGQ==
-X-Google-Smtp-Source: ANB0VdZWF73U4Gy5yDOJz+ifN0qGji+B85PxHfpN50aRucHHBUxvQqcrewJeyAuSiDgGgDCHpbVgQBnr7iKFal7kp80=
-X-Received: by 2002:a6b:6209:: with SMTP id f9-v6mr36172508iog.11.1537529887136;
- Fri, 21 Sep 2018 04:38:07 -0700 (PDT)
+ d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fl4nA7y38JqVh0y+9ZOMbkjwdwVWwGqmHHlXCB8czHs=;
+ b=S9uXydVJ7d8ZNxku5ZGhiU5YpTPXSUmk/dWKH+UiPzmZPzoAnIXpOwtz58sjuO1DL0050M0bP+0grUyg/MzHs9yHsS5gYvAs8yBMkdZ4nal3ILjySCagEN3N6lNwvXuh9n5hSd9PI4a1Ip50e08lC5mB6vCH7gzLlpfHGb8GT20=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jampala.Srikanth@cavium.com; 
+Received: from hyd1621.caveonetworks.com (115.113.156.2) by
+ SN6PR07MB4622.namprd07.prod.outlook.com (2603:10b6:805:3a::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.15; Fri, 21 Sep 2018 11:39:09 +0000
+From:   Srikanth Jampala <Jampala.Srikanth@cavium.com>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sgadam@cavium.com, Jampala.Srikanth@cavium.com
+Subject: [PATCH cryptodev-2.6 2/3] crypto: cavium/nitrox - add support for per device request statistics.
+Date:   Fri, 21 Sep 2018 17:08:01 +0530
+Message-Id: <20180921113802.26475-2-Jampala.Srikanth@cavium.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180921113802.26475-1-Jampala.Srikanth@cavium.com>
+References: <20180921113802.26475-1-Jampala.Srikanth@cavium.com>
 MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 04:37:46
- -0700 (PDT)
-In-Reply-To: <d3f5102da9792370158ed02203d8066dd5e07ff7.1537383101.git.andreyknvl@google.com>
-References: <cover.1537383101.git.andreyknvl@google.com> <d3f5102da9792370158ed02203d8066dd5e07ff7.1537383101.git.andreyknvl@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 21 Sep 2018 13:37:46 +0200
-Message-ID: <CACT4Y+aD=ghemsrBaw2N_FJWtrWNf3r=BWxjWLkKBjNB-s=4Vg@mail.gmail.com>
-Subject: Re: [PATCH v8 16/20] kasan: add hooks implementation for tag-based mode
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [115.113.156.2]
+X-ClientProxiedBy: MA1PR01CA0100.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:1::16) To SN6PR07MB4622.namprd07.prod.outlook.com
+ (2603:10b6:805:3a::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 868abcd5-ee16-4bd7-fc0d-08d61fb6d9c1
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4622;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4622;3:SqaaQ6xTmDVMe25y57DWSxCXGkC9RdGwtAebPXj7Mqz9CGmaEx5+KKrGpWrEsPUDpMhNGCspWBYwcBkMrmLXjtBLNoMt2+vMuOy7+iw6LH9Sce0J/Nh0IYJ8jlDexvc/gkMfQWVKnJcfN6CMoBfslZx+a1C2qtJ9ilc3ZfqDTAkLz7NzGYWQJWMs/mK8aSDHps02nnHcFzSPMyMXFXuo5W/eGjYFUEIkM6hLGB8Q53cWQPSXaDLcFYKgcnrdl93j;25:CQ1pVeQm29UNMeINEfpaj5Pza871DaFO90b23zCFFt1lmI/S/+ZpTfkZfJ1DWZ1dNzj5EcVidtQEhtRnwsdHivpQ1lNHYEt8+UOd4TpyJT9of9/JuTnwwSUhzLwT7QgyhIlgaTRe4RbW1FbKFag0RAbSGeavET6e8aaFMPxcrw3lO2EPfNpcYXo58xczqrA2R52gbxbwhCXFYWAZSbMFM9P/n0Q/RohVUSZLuu9/1s7CiomaMxFZrY6596NaLvoVzLd7dMlYLmb5/0vAVMURrHh2qCFvh0waEaQpw9B7dCA1N8TP/9IXdQK6AGFavS4XwEmgIl4sC4i7BaaG6z5i2A==;31:GQTz39vt2O7Ef1FebRwLjyptao7E+Kt7IKyOuyhrSiheUwilWeYjKixypWsoloC4/s1DfzAgqLLkTrxZuGMommq6yM+6TcON549/0TscQyZE+/cznUpOCZESPGDM87udzra8S/aLIyQsztSynyri4OpFZJ8BGBcqiBDBQhrI5ZYhRt4GEy+aXJyq/NyTMVei7jAQrfTBLJAVF/tAga+HNEp40JxtZyVW1iDVGYAbtnc=
+X-MS-TrafficTypeDiagnostic: SN6PR07MB4622:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4622;20:+bK6ZYZUMMV0biQYtUAUWInZm0ZcJbdMCzFpNonH4k5nWf+sYrRdLHzl2PuA/lykqtfC+TZyQK6RWKG2Y+uerQs/pBaKgcPDrgLSHllaTwiLNohATC370wZxyAk19WGeb8V1rrom6Ijjpsc58/rFZrPENVJKC5kiCXe9Mvs4jvpdIkgrzwt36vsqg+mQFoVPL3KpSD5NVRw6QUFZt9QbC0YZQJ3fx1tHS+CCQpZHU8wOlq/a/+Gvx6l15zNEbN7xdnayx26jhXUDyB7z9YG3euHxLXhHqTI/iLri/5OPmmj64RBh1+A26AKVoSaG1yHH7LjoXgPJ4ciZjc2JlGyY9xlK9kTSwNe7EsmQVoPf+VpnzjoShXSxZaP7U5qA803TDPgMZInCHhipfC0h237MzlnxHPVv4/bdKafX5Dt+rrCaw38x+eZOUHpSZGd6eSdozP9Lt6TYgKXuhDRllL2iq5Qih1WOQl7+t/QQFKwXMeD3rYxQeMAcpUlvz7+riP2N;4:/bfb/Bhmmf9fp278V3TdOtoXR+IzYBlF4i+dowGkkuRLg0xTy17XERqDGWvKd3qNwm9l0NcEs1z4EQ4DpG3y8wrC5H9UQNxiLmILE9upYTK+AyweS12G754oxPV2/9gOIT5BTblUfwqAHCKjcuVoZ20acrlFPriFuILgNSikyzvp+wK0UQY/u4VgiQkd5c8/bg/r/z4l4D7MrY76qMS8xk/vVuAEHpnXjhA4sGwBbDwvVPLoyPnR/EEK2EMzyKJl67d7lXbX+kQgXeJ4n2MOIQ==
+X-Microsoft-Antispam-PRVS: <SN6PR07MB46228FA28BD048202007605FF4120@SN6PR07MB4622.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051);SRVR:SN6PR07MB4622;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4622;
+X-Forefront-PRVS: 0802ADD973
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(376002)(39860400002)(136003)(366004)(396003)(346002)(189003)(199004)(316002)(97736004)(16586007)(6506007)(47776003)(16526019)(8936002)(76176011)(107886003)(106356001)(81166006)(53416004)(5660300001)(3846002)(69596002)(52116002)(51416003)(14444005)(575784001)(1076002)(105586002)(4326008)(86362001)(8676002)(6486002)(6116002)(305945005)(6512007)(186003)(6666003)(7736002)(476003)(72206003)(26005)(478600001)(446003)(48376002)(486006)(50466002)(11346002)(956004)(2616005)(25786009)(66066001)(386003)(81156014)(68736007)(36756003)(50226002)(2906002)(55236004)(53936002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4622;H:hyd1621.caveonetworks.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: cavium.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR07MB4622;23:yW9GV96Gb6wdqWrOtzeBB2/wvqt6sWncphIRQ5Rnc?=
+ =?us-ascii?Q?81sZ/88M28Wi1lJSt7cagA1deNaF38Sbb4z8/T26hnsovuDFHvV9dVKusp8b?=
+ =?us-ascii?Q?aUCte8Oe2XxbTFVtFyfNBYkG/WaAyQW3jGKaGpknMMIoKx4JoDsT0Z6wh514?=
+ =?us-ascii?Q?V1nHtu/iKA9bZkhDnKlasY5b4CMDXL5uh6GDQGgbMVWkVMEASdu5tMoa63m+?=
+ =?us-ascii?Q?nxwNU/fzab10jYP5ityqLv94aW/Tzlek4gmrq6xVrsBK0AGRo5bxw5/YoX5E?=
+ =?us-ascii?Q?pvdJcesnnTY+ky8NNg4gfn+RlQkpVsLS+zYmbfV6TDFwSSdgzWoi4BpmOm5g?=
+ =?us-ascii?Q?yUlrO3qPO+aW7uOtj4UuTCNwz3fzOsOE94Wsj671ocH8VQQbdDAJPOptmpWx?=
+ =?us-ascii?Q?e/r8tyAPf+w9V5Pv216/eQPM2DTkva+o9HrqhEa88O/hx4gehXfIsxlR9S8H?=
+ =?us-ascii?Q?PaR1uK3lngaYg2S3ptyf/cOdezUbkTCvVFmARWTb+OK+TokaVNloYsrPpWOB?=
+ =?us-ascii?Q?3xL21RZ6KHu5mZC2VnOwMgsxhoFFWoWN5uzglULdsEEq0+HbvgU+N3B/N16b?=
+ =?us-ascii?Q?A53B2Z3hKNTZOLPq6ZQiore+2mFSkVCrApTW0Kep6+asSH4cT5BS8XlcCAI9?=
+ =?us-ascii?Q?VlEGltaNzeNS7oBJlC70lZaqvFkclDwJ9NxKl8Fuhsjq6ohcAWMBHF7sfcbB?=
+ =?us-ascii?Q?2D4cAzCnKobBX7IWrUjGUyw4/fWINXjFjIHdIICxVlbwWIW85DM8nr+/lPot?=
+ =?us-ascii?Q?1S6wNxZ1APDOAWFOhvHxvOH+k636l+NHyIvFKP3greDPk4JEIVqicirJNWKj?=
+ =?us-ascii?Q?frML07KScIEpeUfLO/UM2XoZ+q99MUeTUolzUb8crf2ji7GrXRXwOjYqI7P7?=
+ =?us-ascii?Q?fao/cJFeFXOUX6p8SK6ATl5LgTFHxDduoZtm71xW+TaGcUjEoNqHee8/Tg6v?=
+ =?us-ascii?Q?L99Dr+lR3YP+n5qTTP5azjWhC1AL41r0bp/jl5EHomfTQkQ+KYtt2lPSrBYu?=
+ =?us-ascii?Q?NYRDGXELQrrvplfPSTjbwEZNcGHwdg4EeKgOQDHSNgeaGoN55VnlRJ3pjZ19?=
+ =?us-ascii?Q?Iy9GM+jIULFeDWXXYNEk/i1io2OCGxiTDmXOenXyI1QQcPVkNDBzDsrlVhk2?=
+ =?us-ascii?Q?qHhuBNaF2sdQTsOJISQuSFh7p7QxIlp1o4quGQ4S/6+CEQ82i6P1dGY+iaxV?=
+ =?us-ascii?Q?rhIB5cY6US7j+Bk5HqeBawVj3IQkTZmLAB1J6QWt5eSITiy3j98v2edg9nox?=
+ =?us-ascii?Q?2cwRFsyxMZZTpu5GBgGJ4iN7LYDaGeVn1leMpHQQq3yVWTp/0agPm0OS05UO?=
+ =?us-ascii?Q?8wFnWoLomswNVianaCugk+esTkZzs9EZod+KzW5D47Y+f/vWId3QJn/yhUYj?=
+ =?us-ascii?Q?pT1CFisY2179MVpiTtDN5zue5OBc0mvFscYHx55i/k5YO85UfuZRh9gspCD1?=
+ =?us-ascii?Q?reLYMwIRw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: jdEz9PtLSJXrkD2BP/+Y9A90X0Y5soFUyOv6bS+cPZPoHSHxTzMeGJ2qzmRapiIrkHYyrfjH90r+khJtDLF7Nk9AgwhWNX5xP/+aouz/yMSrRJFKcH0hj0YBWeKDH3gjnTsKDKV+0sVTHXG6ZS8rWEtIpN495MNjJj9SlhhqBjJBjNDKkNa0R2q2f4FlyAj5L2KhVVPqBM1qXHbT4XpZKnwbU0KCLIvq4djrfHQGx1bMDLsF75aGW5NtSQi97af1Th5K8blO/Uw1L2BS/nfnk9Wlz5xw/TGnTTyJJVnEQIe0KehpR6t27vzvtYvQV+4UqcyWRjmdqqAaBQcVEn+W1RbJt8Xk8ooHTWxsTBT3l0w=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4622;6:lFgQScMky3poty1ErjtVoblzhZ+6gaFz2Yj9IeZzCaLbBg6YBQGh9QIAYPO9r1xB1td78pS64bBC1Pr4Rxcj4+A4lLerss0JUtcUyP2cLVG4MNiNxtzd+mUQYMgcTPIW0vELMSNAwmX0CTBpN5X8n14jWzPy3LXPx4K/mi8N6LDlodc8SeZa8+Qwv9qGRgaTP7vqrSApw2t86oIgHNuq5j0y5pyYbWCRXyueRoUmJyu1lc7VwgqX7FjaiLbHfnqMIsHiwci8rG54EW2GC03uWliB4xzVNd4mfnp5mW3OhdUhaU1dys9Ma6TUBluqrfe9CqvqcryrFfl+IoN2x2TdOU/stp9qwVwbmDkm5qT2LEmcR+q/bZKBqwI+YeAcQVLtFSSCLfO7bWhL5bbpVsZ+exmHezbNf/RvWxCERFzyvEKkC4CZyAWYwLMIslWWePyZkOcG5sa4NijlG62XVPfOyw==;5:TlFItydBvCYgq40HtARVXFTR8Nu6h4C+m1D2dcM+DPsELQed46CsYxKq44psy567Tvq6sNHj0tpRAehaQ3sWWHu+V4o3LvfgmoVp/iya8R2/CMs3e9/xbn3nxQGaAzVOsUUij4OU05d7oE0U93aLnAlU51jkUrMq6PYleZvNNY4=;7:x4YQoLK7Q8RLgIkvf01PGjnMioKj70n5p8C4mFpHbljCIG2v34L6RUrXOaa+BaIGGmNIGmYcY5VZI0HIm5h5w6bHEI2NYPvJKKoISEQN3pA3sD27c64ATovbukbWlFXnDV69NqfqlA4CQHIxpoQ41E0lllXP09igfikRMGNWdIW07ADVdAYAQECmRd6a7eY7LTvr/A7lrBPCfpDxljZpBdDEeKinM22MEP/Z5y8BfFVD6yl7YN4nRyKhHuDghi0P
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2018 11:39:09.7507 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 868abcd5-ee16-4bd7-fc0d-08d61fb6d9c1
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 8:54 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> This commit adds tag-based KASAN specific hooks implementation and
-> adjusts common generic and tag-based KASAN ones.
->
-> 1. When a new slab cache is created, tag-based KASAN rounds up the size of
->    the objects in this cache to KASAN_SHADOW_SCALE_SIZE (== 16).
->
-> 2. On each kmalloc tag-based KASAN generates a random tag, sets the shadow
->    memory, that corresponds to this object to this tag, and embeds this
->    tag value into the top byte of the returned pointer.
->
-> 3. On each kfree tag-based KASAN poisons the shadow memory with a random
->    tag to allow detection of use-after-free bugs.
->
-> The rest of the logic of the hook implementation is very much similar to
-> the one provided by generic KASAN. Tag-based KASAN saves allocation and
-> free stack metadata to the slab object the same way generic KASAN does.
->
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  mm/kasan/common.c | 118 ++++++++++++++++++++++++++++++++++++++--------
->  mm/kasan/kasan.h  |   8 ++++
->  mm/kasan/tags.c   |  48 +++++++++++++++++++
->  3 files changed, 155 insertions(+), 19 deletions(-)
->
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index 7134e75447ff..d368095feb6c 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -140,6 +140,13 @@ void kasan_poison_shadow(const void *address, size_t size, u8 value)
->  {
->         void *shadow_start, *shadow_end;
->
-> +       /*
-> +        * Perform shadow offset calculation based on untagged address, as
-> +        * some of the callers (e.g. kasan_poison_object_data) pass tagged
-> +        * addresses to this function.
-> +        */
-> +       address = reset_tag(address);
-> +
->         shadow_start = kasan_mem_to_shadow(address);
->         shadow_end = kasan_mem_to_shadow(address + size);
->
-> @@ -148,11 +155,24 @@ void kasan_poison_shadow(const void *address, size_t size, u8 value)
->
->  void kasan_unpoison_shadow(const void *address, size_t size)
->  {
-> -       kasan_poison_shadow(address, size, 0);
-> +       u8 tag = get_tag(address);
-> +
-> +       /*
-> +        * Perform shadow offset calculation based on untagged address, as
-> +        * some of the callers (e.g. kasan_unpoison_object_data) pass tagged
-> +        * addresses to this function.
-> +        */
-> +       address = reset_tag(address);
-> +
-> +       kasan_poison_shadow(address, size, tag);
->
->         if (size & KASAN_SHADOW_MASK) {
->                 u8 *shadow = (u8 *)kasan_mem_to_shadow(address + size);
-> -               *shadow = size & KASAN_SHADOW_MASK;
-> +
-> +               if (IS_ENABLED(CONFIG_KASAN_SW_TAGS))
-> +                       *shadow = tag;
-> +               else
-> +                       *shadow = size & KASAN_SHADOW_MASK;
->         }
->  }
->
-> @@ -200,8 +220,9 @@ void kasan_unpoison_stack_above_sp_to(const void *watermark)
->
->  void kasan_alloc_pages(struct page *page, unsigned int order)
->  {
-> -       if (likely(!PageHighMem(page)))
-> -               kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
-> +       if (unlikely(PageHighMem(page)))
-> +               return;
-> +       kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
->  }
->
->  void kasan_free_pages(struct page *page, unsigned int order)
-> @@ -218,6 +239,9 @@ void kasan_free_pages(struct page *page, unsigned int order)
->   */
->  static inline unsigned int optimal_redzone(unsigned int object_size)
->  {
-> +       if (IS_ENABLED(CONFIG_KASAN_SW_TAGS))
-> +               return 0;
-> +
->         return
->                 object_size <= 64        - 16   ? 16 :
->                 object_size <= 128       - 32   ? 32 :
-> @@ -232,6 +256,7 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
->                         slab_flags_t *flags)
->  {
->         unsigned int orig_size = *size;
-> +       unsigned int redzone_size;
->         int redzone_adjust;
->
->         /* Add alloc meta. */
-> @@ -239,20 +264,20 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
->         *size += sizeof(struct kasan_alloc_meta);
->
->         /* Add free meta. */
-> -       if (cache->flags & SLAB_TYPESAFE_BY_RCU || cache->ctor ||
-> -           cache->object_size < sizeof(struct kasan_free_meta)) {
-> +       if (IS_ENABLED(CONFIG_KASAN_GENERIC) &&
-> +           (cache->flags & SLAB_TYPESAFE_BY_RCU || cache->ctor ||
-> +            cache->object_size < sizeof(struct kasan_free_meta))) {
->                 cache->kasan_info.free_meta_offset = *size;
->                 *size += sizeof(struct kasan_free_meta);
->         }
-> -       redzone_adjust = optimal_redzone(cache->object_size) -
-> -               (*size - cache->object_size);
->
-> +       redzone_size = optimal_redzone(cache->object_size);
-> +       redzone_adjust = redzone_size - (*size - cache->object_size);
->         if (redzone_adjust > 0)
->                 *size += redzone_adjust;
->
->         *size = min_t(unsigned int, KMALLOC_MAX_SIZE,
-> -                       max(*size, cache->object_size +
-> -                                       optimal_redzone(cache->object_size)));
-> +                       max(*size, cache->object_size + redzone_size));
->
->         /*
->          * If the metadata doesn't fit, don't enable KASAN at all.
-> @@ -265,6 +290,8 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
->                 return;
->         }
->
-> +       cache->align = round_up(cache->align, KASAN_SHADOW_SCALE_SIZE);
-> +
->         *flags |= SLAB_KASAN;
->  }
->
-> @@ -319,6 +346,28 @@ void *kasan_init_slab_obj(struct kmem_cache *cache, const void *object)
->         alloc_info = get_alloc_info(cache, object);
->         __memset(alloc_info, 0, sizeof(*alloc_info));
->
-> +       /*
-> +        * Since it's desirable to only call object contructors ones during
+Add per device statistics like number of requests posted,
+dropped and completed etc.
 
-s/ones/once/
+Signed-off-by: Srikanth Jampala <Jampala.Srikanth@cavium.com>
+---
+ drivers/crypto/cavium/nitrox/nitrox_dev.h    | 7 +++++++
+ drivers/crypto/cavium/nitrox/nitrox_main.c   | 5 +++++
+ drivers/crypto/cavium/nitrox/nitrox_reqmgr.c | 9 ++++++++-
+ 3 files changed, 20 insertions(+), 1 deletion(-)
 
-> +        * slab allocation, we preassign tags to all such objects.
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_dev.h b/drivers/crypto/cavium/nitrox/nitrox_dev.h
+index 1059495ee541..a1442006f256 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_dev.h
++++ b/drivers/crypto/cavium/nitrox/nitrox_dev.h
+@@ -75,6 +75,12 @@ struct nitrox_hw {
+ 	u8 zip_cores;
+ };
+ 
++struct nitrox_stats {
++	atomic64_t posted;
++	atomic64_t completed;
++	atomic64_t dropped;
++};
++
+ #define MAX_MSIX_VECTOR_NAME	20
+ /**
+  * vectors for queues (64 AE, 64 SE and 64 ZIP) and
+@@ -176,6 +182,7 @@ struct nitrox_device {
+ 	struct nitrox_msix msix;
+ 	struct nitrox_bh bh;
+ 
++	struct nitrox_stats stats;
+ 	struct nitrox_hw hw;
+ #if IS_ENABLED(CONFIG_DEBUG_FS)
+ 	struct dentry *debugfs_dir;
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_main.c b/drivers/crypto/cavium/nitrox/nitrox_main.c
+index acce0f0b9c7a..362e7217354c 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_main.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_main.c
+@@ -542,6 +542,11 @@ static int nitrox_probe(struct pci_dev *pdev,
+ 	if (err)
+ 		goto pf_hw_fail;
+ 
++	/* clear the statistics */
++	atomic64_set(&ndev->stats.posted, 0);
++	atomic64_set(&ndev->stats.completed, 0);
++	atomic64_set(&ndev->stats.dropped, 0);
++
+ 	atomic_set(&ndev->state, __NDEV_READY);
+ 	/* barrier to sync with other cpus */
+ 	smp_mb__after_atomic();
+diff --git a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
+index 4a362fc22f62..f325b48ba904 100644
+--- a/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
++++ b/drivers/crypto/cavium/nitrox/nitrox_reqmgr.c
+@@ -460,6 +460,9 @@ static void post_se_instr(struct nitrox_softreq *sr,
+ 	cmdq->write_idx = incr_index(idx, 1, ndev->qlen);
+ 
+ 	spin_unlock_bh(&cmdq->cmdq_lock);
++
++	/* increment the posted command count */
++	atomic64_inc(&ndev->stats.posted);
+ }
+ 
+ static int post_backlog_cmds(struct nitrox_cmdq *cmdq)
+@@ -508,8 +511,11 @@ static int nitrox_enqueue_request(struct nitrox_softreq *sr)
+ 	post_backlog_cmds(cmdq);
+ 
+ 	if (unlikely(cmdq_full(cmdq, ndev->qlen))) {
+-		if (!(sr->flags & CRYPTO_TFM_REQ_MAY_BACKLOG))
++		if (!(sr->flags & CRYPTO_TFM_REQ_MAY_BACKLOG)) {
++			/* increment drop count */
++			atomic64_inc(&ndev->stats.dropped);
+ 			return -ENOSPC;
++		}
+ 		/* add to backlog list */
+ 		backlog_list_add(sr, cmdq);
+ 		return -EBUSY;
+@@ -694,6 +700,7 @@ static void process_response_list(struct nitrox_cmdq *cmdq)
+ 					    READ_ONCE(sr->resp.orh));
+ 		}
+ 		atomic_dec(&cmdq->pending_count);
++		atomic64_inc(&ndev->stats.completed);
+ 		/* sync with other cpus */
+ 		smp_mb__after_atomic();
+ 		/* remove from response list */
+-- 
+2.17.1
 
-While we are here, it can make sense to mention that we can't repaint
-objects with ctors after reallocation (even for
-non-SLAB_TYPESAFE_BY_RCU) because the ctor code can memorize pointer
-to the object somewhere (e.g. in the object itself). Then if we
-repaint it, the old memorized pointer will become invalid.
-
-> +        * Also preassign tags for SLAB_TYPESAFE_BY_RCU slabs to avoid
-> +        * use-after-free reports.
-> +        * For SLAB allocator we can't preassign tags randomly since the
-> +        * freelist is stored as an array of indexes instead of a linked
-> +        * list. Assign tags based on objects indexes, so that objects that
-> +        * are next to each other get different tags.
-> +        */
-> +       if (IS_ENABLED(CONFIG_KASAN_SW_TAGS) &&
-> +                       (cache->ctor || cache->flags & SLAB_TYPESAFE_BY_RCU)) {
-> +#ifdef CONFIG_SLAB
-> +               struct page *page = virt_to_page(object);
-> +               u8 tag = (u8)obj_to_index(cache, page, (void *)object);
-> +#else
-> +               u8 tag = random_tag();
-> +#endif
-
-This looks much better now as compared to the 2 additional callbacks
-in the previous version.
-
-> +
-> +               object = set_tag(object, tag);
-> +       }
-> +
->         return (void *)object;
->  }
->
-> @@ -327,15 +376,30 @@ void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t flags)
->         return kasan_kmalloc(cache, object, cache->object_size, flags);
->  }
->
-> +static inline bool shadow_invalid(u8 tag, s8 shadow_byte)
-> +{
-> +       if (IS_ENABLED(CONFIG_KASAN_GENERIC))
-> +               return shadow_byte < 0 ||
-> +                       shadow_byte >= KASAN_SHADOW_SCALE_SIZE;
-> +       else
-> +               return tag != (u8)shadow_byte;
-> +}
-> +
->  static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
->                               unsigned long ip, bool quarantine)
->  {
->         s8 shadow_byte;
-> +       u8 tag;
-> +       void *tagged_object;
->         unsigned long rounded_up_size;
->
-> +       tag = get_tag(object);
-> +       tagged_object = object;
-> +       object = reset_tag(object);
-> +
->         if (unlikely(nearest_obj(cache, virt_to_head_page(object), object) !=
->             object)) {
-> -               kasan_report_invalid_free(object, ip);
-> +               kasan_report_invalid_free(tagged_object, ip);
->                 return true;
->         }
->
-> @@ -344,20 +408,22 @@ static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
->                 return false;
->
->         shadow_byte = READ_ONCE(*(s8 *)kasan_mem_to_shadow(object));
-> -       if (shadow_byte < 0 || shadow_byte >= KASAN_SHADOW_SCALE_SIZE) {
-> -               kasan_report_invalid_free(object, ip);
-> +       if (shadow_invalid(tag, shadow_byte)) {
-> +               kasan_report_invalid_free(tagged_object, ip);
->                 return true;
->         }
->
->         rounded_up_size = round_up(cache->object_size, KASAN_SHADOW_SCALE_SIZE);
->         kasan_poison_shadow(object, rounded_up_size, KASAN_KMALLOC_FREE);
->
-> -       if (!quarantine || unlikely(!(cache->flags & SLAB_KASAN)))
-> +       if ((IS_ENABLED(CONFIG_KASAN_GENERIC) && !quarantine) ||
-> +                       unlikely(!(cache->flags & SLAB_KASAN)))
->                 return false;
->
->         set_track(&get_alloc_info(cache, object)->free_track, GFP_NOWAIT);
->         quarantine_put(get_free_info(cache, object), cache);
-> -       return true;
-> +
-> +       return IS_ENABLED(CONFIG_KASAN_GENERIC);
->  }
->
->  bool kasan_slab_free(struct kmem_cache *cache, void *object, unsigned long ip)
-> @@ -370,6 +436,7 @@ void *kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
->  {
->         unsigned long redzone_start;
->         unsigned long redzone_end;
-> +       u8 tag;
->
->         if (gfpflags_allow_blocking(flags))
->                 quarantine_reduce();
-> @@ -382,14 +449,27 @@ void *kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
->         redzone_end = round_up((unsigned long)object + cache->object_size,
->                                 KASAN_SHADOW_SCALE_SIZE);
->
-> -       kasan_unpoison_shadow(object, size);
-> +       /* See the comment in kasan_init_slab_obj regarding preassigned tags */
-> +       if (IS_ENABLED(CONFIG_KASAN_SW_TAGS) &&
-> +                       (cache->ctor || cache->flags & SLAB_TYPESAFE_BY_RCU)) {
-> +#ifdef CONFIG_SLAB
-> +               struct page *page = virt_to_page(object);
-> +
-> +               tag = (u8)obj_to_index(cache, page, (void *)object);
-> +#else
-> +               tag = get_tag(object);
-> +#endif
-
-This kinda _almost_ matches the chunk of code in kasan_init_slab_obj,
-but not exactly. Wonder if there is some nice way to unify this code?
-
-Maybe something like:
-
-static u8 tag_for_object(struct kmem_cache *cache, const void *object, new bool)
-{
-    if (!IS_ENABLED(CONFIG_KASAN_SW_TAGS) ||
-        !cache->ctor && !(cache->flags & SLAB_TYPESAFE_BY_RCU))
-        return random_tag();
-#ifdef CONFIG_SLAB
-    struct page *page = virt_to_page(object);
-    return (u8)obj_to_index(cache, page, (void *)object);
-#else
-    return new ? random_tag() : get_tag(object);
-#endif
-}
-
-Then we can call this in both places.
-As a side effect this will assign tags to pointers during slab
-initialization even if we don't have ctors, but it should be fine (?).
-
-
-
-> +       } else
-> +               tag = random_tag();
-> +
-> +       kasan_unpoison_shadow(set_tag(object, tag), size);
->         kasan_poison_shadow((void *)redzone_start, redzone_end - redzone_start,
->                 KASAN_KMALLOC_REDZONE);
->
->         if (cache->flags & SLAB_KASAN)
->                 set_track(&get_alloc_info(cache, object)->alloc_track, flags);
->
-> -       return (void *)object;
-> +       return set_tag(object, tag);
->  }
->  EXPORT_SYMBOL(kasan_kmalloc);
->
-> @@ -439,7 +519,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
->         page = virt_to_head_page(ptr);
->
->         if (unlikely(!PageSlab(page))) {
-> -               if (ptr != page_address(page)) {
-> +               if (reset_tag(ptr) != page_address(page)) {
->                         kasan_report_invalid_free(ptr, ip);
->                         return;
->                 }
-> @@ -452,7 +532,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
->
->  void kasan_kfree_large(void *ptr, unsigned long ip)
->  {
-> -       if (ptr != page_address(virt_to_head_page(ptr)))
-> +       if (reset_tag(ptr) != page_address(virt_to_head_page(ptr)))
->                 kasan_report_invalid_free(ptr, ip);
->         /* The object will be poisoned by page_alloc. */
->  }
-> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-> index a2533b890248..a3db6b8efe7a 100644
-> --- a/mm/kasan/kasan.h
-> +++ b/mm/kasan/kasan.h
-> @@ -12,10 +12,18 @@
->  #define KASAN_TAG_INVALID      0xFE /* inaccessible memory tag */
->  #define KASAN_TAG_MAX          0xFD /* maximum value for random tags */
->
-> +#ifdef CONFIG_KASAN_GENERIC
->  #define KASAN_FREE_PAGE         0xFF  /* page was freed */
->  #define KASAN_PAGE_REDZONE      0xFE  /* redzone for kmalloc_large allocations */
->  #define KASAN_KMALLOC_REDZONE   0xFC  /* redzone inside slub object */
->  #define KASAN_KMALLOC_FREE      0xFB  /* object was freed (kmem_cache_free/kfree) */
-> +#else
-> +#define KASAN_FREE_PAGE         KASAN_TAG_INVALID
-> +#define KASAN_PAGE_REDZONE      KASAN_TAG_INVALID
-> +#define KASAN_KMALLOC_REDZONE   KASAN_TAG_INVALID
-> +#define KASAN_KMALLOC_FREE      KASAN_TAG_INVALID
-> +#endif
-> +
->  #define KASAN_GLOBAL_REDZONE    0xFA  /* redzone for global variable */
->
->  /*
-> diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
-> index 700323946867..a3cca11e4fed 100644
-> --- a/mm/kasan/tags.c
-> +++ b/mm/kasan/tags.c
-> @@ -78,15 +78,60 @@ void *kasan_reset_tag(const void *addr)
->  void check_memory_region(unsigned long addr, size_t size, bool write,
->                                 unsigned long ret_ip)
->  {
-> +       u8 tag;
-> +       u8 *shadow_first, *shadow_last, *shadow;
-> +       void *untagged_addr;
-> +
-> +       if (unlikely(size == 0))
-> +               return;
-> +
-> +       tag = get_tag((const void *)addr);
-> +
-> +       /*
-> +        * Ignore accesses for pointers tagged with 0xff (native kernel
-> +        * pointer tag) to suppress false positives caused by kmap.
-> +        *
-> +        * Some kernel code was written to account for archs that don't keep
-> +        * high memory mapped all the time, but rather map and unmap particular
-> +        * pages when needed. Instead of storing a pointer to the kernel memory,
-> +        * this code saves the address of the page structure and offset within
-> +        * that page for later use. Those pages are then mapped and unmapped
-> +        * with kmap/kunmap when necessary and virt_to_page is used to get the
-> +        * virtual address of the page. For arm64 (that keeps the high memory
-> +        * mapped all the time), kmap is turned into a page_address call.
-> +
-> +        * The issue is that with use of the page_address + virt_to_page
-> +        * sequence the top byte value of the original pointer gets lost (gets
-> +        * set to KASAN_TAG_KERNEL (0xFF)).
-> +        */
-> +       if (tag == KASAN_TAG_KERNEL)
-> +               return;
-> +
-> +       untagged_addr = reset_tag((const void *)addr);
-> +       if (unlikely(untagged_addr <
-> +                       kasan_shadow_to_mem((void *)KASAN_SHADOW_START))) {
-> +               kasan_report(addr, size, write, ret_ip);
-> +               return;
-> +       }
-> +       shadow_first = kasan_mem_to_shadow(untagged_addr);
-> +       shadow_last = kasan_mem_to_shadow(untagged_addr + size - 1);
-> +       for (shadow = shadow_first; shadow <= shadow_last; shadow++) {
-> +               if (*shadow != tag) {
-> +                       kasan_report(addr, size, write, ret_ip);
-> +                       return;
-> +               }
-> +       }
->  }
->
->  #define DEFINE_HWASAN_LOAD_STORE(size)                                 \
->         void __hwasan_load##size##_noabort(unsigned long addr)          \
->         {                                                               \
-> +               check_memory_region(addr, size, false, _RET_IP_);       \
->         }                                                               \
->         EXPORT_SYMBOL(__hwasan_load##size##_noabort);                   \
->         void __hwasan_store##size##_noabort(unsigned long addr)         \
->         {                                                               \
-> +               check_memory_region(addr, size, true, _RET_IP_);        \
->         }                                                               \
->         EXPORT_SYMBOL(__hwasan_store##size##_noabort)
->
-> @@ -98,15 +143,18 @@ DEFINE_HWASAN_LOAD_STORE(16);
->
->  void __hwasan_loadN_noabort(unsigned long addr, unsigned long size)
->  {
-> +       check_memory_region(addr, size, false, _RET_IP_);
->  }
->  EXPORT_SYMBOL(__hwasan_loadN_noabort);
->
->  void __hwasan_storeN_noabort(unsigned long addr, unsigned long size)
->  {
-> +       check_memory_region(addr, size, true, _RET_IP_);
->  }
->  EXPORT_SYMBOL(__hwasan_storeN_noabort);
->
->  void __hwasan_tag_memory(unsigned long addr, u8 tag, unsigned long size)
->  {
-> +       kasan_poison_shadow((void *)addr, size, tag);
->  }
->  EXPORT_SYMBOL(__hwasan_tag_memory);
-> --
-> 2.19.0.397.gdd90340f6a-goog
->
