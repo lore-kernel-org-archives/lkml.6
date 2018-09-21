@@ -3,87 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0022EC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4199AECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FDB21522
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:47:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FDB21522
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CC0FC2154B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 05:48:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC0FC2154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=macq.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389254AbeIULfJ (ORCPT
+        id S2389262AbeIULgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 07:35:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38856 "EHLO mx1.redhat.com"
+        Fri, 21 Sep 2018 07:36:11 -0400
+Received: from smtp2.macqel.be ([109.135.2.61]:56342 "EHLO smtp2.macqel.be"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbeIULfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 07:35:09 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1BB23445E1;
-        Fri, 21 Sep 2018 05:47:55 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B2CF67B03E;
-        Fri, 21 Sep 2018 05:47:53 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 777CC1FCF7; Fri, 21 Sep 2018 07:47:52 +0200 (CEST)
-Date:   Fri, 21 Sep 2018 07:47:52 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Jiandi An <jiandi@amd.com>
-Cc:     Dave Airlie <airlied@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        Dave Airlie <airlied@linux.ie>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>
-Subject: Re: [virtio-dev] [PATCH 2/2] drm/virtio: add iommu support.
-Message-ID: <20180921054752.gjeaznoboqf2giit@sirius.home.kraxel.org>
-References: <CAPM=9tyXc41DAkgjCRojrqH28qkirxgrpgNmrwu4WAeLpg7tAw@mail.gmail.com>
- <9bf20fa1-3752-edd1-588c-e38cd166c3af@amd.com>
- <20180912072541.nagfrr2dgy34szcx@sirius.home.kraxel.org>
- <5684a3fc-3605-7bb0-b0be-418c2ae702b5@amd.com>
- <20180919044600.utvnu5l6fvvi2qi4@sirius.home.kraxel.org>
- <d4c25272-9df8-33d6-d310-964b17a8c80d@amd.com>
- <20180919113807.6mwqxkdg6f55h6fg@sirius.home.kraxel.org>
- <bb7b8676-cf39-3144-2de1-389f4b0a70b3@amd.com>
- <20180920063201.nt7kw555s4clshzr@sirius.home.kraxel.org>
- <95778dd4-8aca-eff6-f84a-c8efdd3b355d@amd.com>
+        id S1726479AbeIULgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 07:36:11 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.macqel.be (Postfix) with ESMTP id BB60D130D43;
+        Fri, 21 Sep 2018 07:48:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at macqel.be
+Received: from smtp2.macqel.be ([127.0.0.1])
+        by localhost (mail.macqel.be [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YodWpRD4htQB; Fri, 21 Sep 2018 07:48:51 +0200 (CEST)
+Received: from frolo.macqel.be (frolo.macqel [10.1.40.73])
+        by smtp2.macqel.be (Postfix) with ESMTP id 5B0D7130D3A;
+        Fri, 21 Sep 2018 07:48:51 +0200 (CEST)
+Received: by frolo.macqel.be (Postfix, from userid 1000)
+        id 2F98FDF007D; Fri, 21 Sep 2018 07:48:50 +0200 (CEST)
+Date:   Fri, 21 Sep 2018 07:48:51 +0200
+From:   Philippe De Muyter <phdm@macq.eu>
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org
+Subject: Re: [PATCH v2 1/5] m68k: Rename system call table file name
+Message-ID: <20180921054850.GA13343@frolo.macqel>
+References: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org> <1537455973-12468-2-git-send-email-firoz.khan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <95778dd4-8aca-eff6-f84a-c8efdd3b355d@amd.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 21 Sep 2018 05:47:55 +0000 (UTC)
+In-Reply-To: <1537455973-12468-2-git-send-email-firoz.khan@linaro.org>
+User-Agent: Mutt/1.5.16 (2007-06-09)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
-
-> > Just pass it down, the call sites all know it (see patch just sent).
+On Thu, Sep 20, 2018 at 08:36:09PM +0530, Firoz Khan wrote:
+> The system call table entries are present in syscalltable.S. One of
+> the patch in this patch series will auto-generate the system call
+> table entries using the system call table generation script and
+> which'll replace the existig table file.
 > 
-> Tested that patch you sent.  Together with this patch it also resolves
-> the virtio gpu graphical display issue for SEV guest.
+> In order to come up with a common naming convention across all
+> architecture, we need to change the file name to syscall_table.S.
 
-Cool.  Can you ack or review the patch so I can commit it?
+That file was probably called that way to be able to distinguish it
+from syscalltable.s and syscalltable.o in a file system with a 14
+characters limit in file names (in sysV unix systems).
 
-> Is there a way to optimize the dma_sync_sg to only sync on the pages
-> being updated instead of all the pages in the obj sgl list every time?
+> This change will unify the implementation across all architecture.
+> 
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+> ---
+>  arch/m68k/kernel/Makefile        |   2 +-
+>  arch/m68k/kernel/syscall_table.S | 403 +++++++++++++++++++++++++++++++++++++++
+>  arch/m68k/kernel/syscalltable.S  | 403 ---------------------------------------
 
-Well, the rectangle is passed to virtio_gpu_cmd_transfer_to_host_2d, so
-it should be possible to figure which pages are affected and trim the
-scatter list accordingly.
+You should generate your patch with the '-M' or '--find-renames' option.
 
-cheers,
-  Gerd
+Philippe
 
+-- 
+Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
