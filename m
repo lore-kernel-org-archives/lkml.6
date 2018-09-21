@@ -2,136 +2,138 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A28C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB2DECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527AA21531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E75206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:30:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TATuFq3P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 527AA21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5IVqiFV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E75206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389837AbeIUQMJ (ORCPT
+        id S2389749AbeIUQSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:12:09 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:54548 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeIUQMI (ORCPT
+        Fri, 21 Sep 2018 12:18:31 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37915 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389215AbeIUQSa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:12:08 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8LANP2l032903;
-        Fri, 21 Sep 2018 05:23:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537525405;
-        bh=KRjdjQ5hcy7QKZ5B8r6m0BycFYn2BHKtUqCgGLjIzAI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=TATuFq3PCJdQaawgDQLViVQv0o9wUcp9YQzm45Mk6CHFQIDYlyPCww3fUVPNh8xsT
-         OZlsI4ngDgpR7YMmhmObSGvZT9aPmznXWMU2WsVKtAcJPXneH1qTLhv+jQo3tZ4gQt
-         XwkIPVe3CuyHTQFfw95jUJ8h36E174thq65TC7mI=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LANPAa029983;
-        Fri, 21 Sep 2018 05:23:25 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 21
- Sep 2018 05:23:25 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 21 Sep 2018 05:23:25 -0500
-Received: from a0393678ub.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8LAMEtI032280;
-        Fri, 21 Sep 2018 05:23:20 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        <Gustavo.Pimentel@synopsys.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH 14/40] PCI: keystone: Use platform_get_resource_byname to get memory resources
-Date:   Fri, 21 Sep 2018 15:51:29 +0530
-Message-ID: <20180921102155.22839-15-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180921102155.22839-1-kishon@ti.com>
-References: <20180921102155.22839-1-kishon@ti.com>
+        Fri, 21 Sep 2018 12:18:30 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j8-v6so8608400wrw.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 03:30:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UdARNFAJ5ijh3ybSKJa9nmt5Z3EXObF5UVXI5Dvdy0U=;
+        b=l5IVqiFVkxNwBH8D6rZ4yW7vQHF2nrHngPB7fBqwU2l2Z2wZ7TzEKBIkoKXX+9eh5x
+         8gpxarcftOSGkEWcJhHNwxSncpdKPuhm4k856Bey3h7T0IorgM668Dza+Kiqcib0rZn0
+         tpxwWgRO2704hheWRq4UGgwKM+b4XzYmrzOPhFYtUQ4jmlJLgTEIbPvgMEPRljamdQ84
+         abttGCgrUchlyi2ZHgDS70KP5TELuvpydOZ1uUYvc6E46oR6pHoDYm0vdE0NUcsRPxSO
+         BbZwfn7wyc+Jwv/eIK1+ZvTY58x9veHsCQGASC9GPtaA/BJqN5B7/eJXn9XYNvfcT0ZM
+         Yw3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UdARNFAJ5ijh3ybSKJa9nmt5Z3EXObF5UVXI5Dvdy0U=;
+        b=nStbFiWezH2q+A6MKEjt6qUUBPC8AG4g/S1sJcvlzF8t4/P4+HTHhOjN6Ma4ExFgqP
+         Hx22L3tWsbsqvbZcXTnItu5L+4QNC5iHJuUOkbiFIWUQ4fY3aZ9xd+n5P1UTfdRaUW/I
+         u2YUAbrwMBSBEbH7h8P4i3CH6WFWgllS2NS5V0UCkibh5sceQ3Pi2DaP+ByjMiFv0mI3
+         G9U9YMqGy7+dg81MvXlxJQO1Zogx+VYEMWuOz940UfSmmrsBy1NMyGrC7xdpf1IzYAAd
+         HINundv2LdSRxoWvRXMaP5iN33GuyVUxFOodY+d2PXrNevaY7gGBJdQL47Gka8r3PWnU
+         K6iQ==
+X-Gm-Message-State: ABuFfoh63b2KfRs9xaNUUt+m4Gt7WY7ZtYZQlr35OdBfhdi5Hc3XGmSj
+        j2CSKj2zyb50s/v4oPgyTEw=
+X-Google-Smtp-Source: ACcGV61KCl9oiWBHDrukWbStlVYAulsJSoOE0BhkZ3EcPb68uSeIPCRbAqz/3E9eKzXC4URsL2sMTg==
+X-Received: by 2002:adf:df0f:: with SMTP id y15-v6mr5624919wrl.26.1537525815108;
+        Fri, 21 Sep 2018 03:30:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id s2-v6sm31991868wrn.83.2018.09.21.03.30.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 03:30:14 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] mtd: spi-nor: cadence-quadspi: Use proper enum for dma_unmap_single
+Date:   Fri, 21 Sep 2018 03:29:45 -0700
+Message-Id: <20180921102944.27968-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use platform_get_resource_byname() instead of platform_get_resource() which
-uses index to get memory resources. While at that get the memory resource
-defined specifically for configuration space instead of deriving the
-configuration space address from dbics address space. Since pci-keystone
-driver has never worked out of the box in mainline kernel, dt backward
-compatibility is ignored.
+Clang warns when one enumerated type is converted implicitly to another.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+drivers/mtd/spi-nor/cadence-quadspi.c:962:47: warning: implicit
+conversion from enumeration type 'enum dma_transfer_direction' to
+different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
+        dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+./include/linux/dma-mapping.h:428:66: note: expanded from macro
+'dma_map_single'
+#define dma_map_single(d, a, s, r) dma_map_single_attrs(d, a, s, r, 0)
+                                   ~~~~~~~~~~~~~~~~~~~~          ^
+drivers/mtd/spi-nor/cadence-quadspi.c:997:43: warning: implicit
+conversion from enumeration type 'enum dma_transfer_direction' to
+different enumeration type 'enum dma_data_direction' [-Wenum-conversion]
+        dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+./include/linux/dma-mapping.h:429:70: note: expanded from macro
+'dma_unmap_single'
+#define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, 0)
+                                     ~~~~~~~~~~~~~~~~~~~~~~          ^
+2 warnings generated.
+
+Use the proper enums from dma_data_direction to satisfy Clang.
+
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/108
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/mtd/spi-nor/cadence-quadspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 505e13b1197d..fe522b8c981f 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -49,7 +49,6 @@
- #define OB_SIZE				0x030
- #define CFG_PCIM_WIN_SZ_IDX		3
- #define CFG_PCIM_WIN_CNT		32
--#define SPACE0_REMOTE_CFG_OFFSET	0x1000
- #define OB_OFFSET_INDEX(n)		(0x200 + (8 * n))
- #define OB_OFFSET_HI(n)			(0x204 + (8 * n))
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index 8e714fbfa521..d0e57ac81098 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -959,7 +959,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
+ 		return 0;
+ 	}
  
-@@ -677,21 +676,19 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
- 	struct resource *res;
- 	int ret;
+-	dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
++	dma_dst = dma_map_single(nor->dev, buf, len, DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(nor->dev, dma_dst)) {
+ 		dev_err(nor->dev, "dma mapping failed\n");
+ 		return -ENOMEM;
+@@ -994,7 +994,7 @@ static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
+ 	}
  
--	/* Index 0 is the config reg. space address */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbics");
- 	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
- 	if (IS_ERR(pci->dbi_base))
- 		return PTR_ERR(pci->dbi_base);
+ err_unmap:
+-	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
++	dma_unmap_single(nor->dev, dma_dst, len, DMA_TO_DEVICE);
  
--	/*
--	 * We set these same and is used in pcie rd/wr_other_conf
--	 * functions
--	 */
--	pp->va_cfg0_base = pci->dbi_base + SPACE0_REMOTE_CFG_OFFSET;
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
-+	pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(pp->va_cfg0_base))
-+		return PTR_ERR(pp->va_cfg0_base);
-+
- 	pp->va_cfg1_base = pp->va_cfg0_base;
- 
--	/* Index 1 is the application reg. space address */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "app");
- 	ks_pcie->va_app_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(ks_pcie->va_app_base))
- 		return PTR_ERR(ks_pcie->va_app_base);
+ 	return 0;
+ }
 -- 
-2.17.1
+2.19.0
 
