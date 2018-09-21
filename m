@@ -2,89 +2,114 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB2DECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13CFECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7618B21557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:46:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7618B21557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F90421557
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:47:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKvrDRDy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F90421557
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391082AbeIUXgl (ORCPT
+        id S2391034AbeIUXhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:36:41 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11742 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390365AbeIUXgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:36:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 10:46:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="71889326"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.151]) ([10.7.153.151])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Sep 2018 10:46:35 -0700
-Subject: Re: [PATCH] i2c: aspeed: fixed invalid clock parameters for very
- large divisors
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        benh@kernel.crashing.org, joel@jms.id.au, andrew@aj.id.au
-Cc:     linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20180920232820.243734-1-brendanhiggins@google.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <07af0253-1efc-2ae1-93fb-ebcc1996d768@linux.intel.com>
-Date:   Fri, 21 Sep 2018 10:46:34 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 19:37:13 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40077 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390619AbeIUXhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 19:37:12 -0400
+Received: by mail-ot1-f65.google.com with SMTP id g14-v6so166032otj.7;
+        Fri, 21 Sep 2018 10:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uHhEAyyEH/JXSfBP7u9H9CJKC9aPf+TdqcrqXGxpmuQ=;
+        b=kKvrDRDy2TckOJdtvIZtwN1SoXP3z7GR3swFjFcrX/N93kF4RiNWFA0JFqGgZRLBtO
+         pXQDAnYzQrVdxKTyD7f94B/rkEqIK4rBEOBXqfKwISpIUd9QgpeRlF6sA7iyoqnqoqtq
+         cRTVgEID+sgUxJ+7rZFVimr1KbgaQSary05oYKC1Bef2AFEOi+tJHXlDIwyuAnu97Y9X
+         TRW69sKsv4HOk0fuBkGFnii1oT0BtXDWUgQAuXppulyW/5sXc4uJDGLjT41Vb0zOIOkU
+         M4tqbDAZt0SCoE1w4NAw2I7Bz/OiA3GidE0z8eDMhV0qBbJN42/vMQgQFYt16JptFbMK
+         z81Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uHhEAyyEH/JXSfBP7u9H9CJKC9aPf+TdqcrqXGxpmuQ=;
+        b=mGwVa8myHA747H16VGHHYcWkRzHY3pwpn5Tn6OqxSLxG7l58TqAwBTynOMcZhLxhqf
+         GXGLKgQKbeP684AYsmnK7pzwuIAgt1RFvWH9E6uAcDn5hLsbMk+qgQK+zWALaLhwocJb
+         q7iKGa78pr+3kAH3YHen7RvbeQrQetWtloB7I8kN2+QNlS8A9eYstUBvv/gql6WQnhvW
+         jRP9bTUrYl4koFy1pTO3DBSveASxY3ZrtBFqajm4KyPzmUZswPU2zF+GGVw6cLTgD+Lh
+         zUdszIZ06cS5NPMDECAW2ylzzxBUK6TT8hnY+BJnogvHooZNRXUwQ2ZJXRo+Yunaaa3m
+         axgw==
+X-Gm-Message-State: APzg51CguKMPr5V2bmbyBlXLNFfCffMiV/K8MB1MBkrhULMXIP2v2T0Z
+        2koQusmFM7yZ+7ptmtSJKXntfyaKG4qIDUlkdq0=
+X-Google-Smtp-Source: ANB0VdaRh8MvHi6RN/q2BSP1NY3MCPopnq69lRu0rcox0ccQBuQDwJOIQoy8rZz+QIUu+PENeN62SFhHIoStHGobqWA=
+X-Received: by 2002:a9d:3677:: with SMTP id w110-v6mr26948097otb.394.1537552035445;
+ Fri, 21 Sep 2018 10:47:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180920232820.243734-1-brendanhiggins@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a9d:2d28:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 10:47:15
+ -0700 (PDT)
+In-Reply-To: <163d1af7d51bfa330f4cc685c5c493cd38aa584b.1537541211.git.leonard.crestez@nxp.com>
+References: <163d1af7d51bfa330f4cc685c5c493cd38aa584b.1537541211.git.leonard.crestez@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 21 Sep 2018 14:47:15 -0300
+Message-ID: <CAOMZO5CpXjoh0r+HXY7UWCrusbqL-F+oKU1iKKvJ_sLfHhdq+w@mail.gmail.com>
+Subject: Re: [PATCH] crypto: mxs-dcp - Fix wait logic on chan threads
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brendan,
+Hi Leonard,
 
-nit:
-Title in imperative mood. I'd put 'fix' instead of 'fixed'.
+On Fri, Sep 21, 2018 at 12:03 PM, Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
+> When compiling with CONFIG_DEBUG_ATOMIC_SLEEP=y the mxs-dcp driver
+> prints warnings such as:
+>
+> WARNING: CPU: 0 PID: 120 at kernel/sched/core.c:7736 __might_sleep+0x98/0x9c
+> do not call blocking ops when !TASK_RUNNING; state=1 set at [<8081978c>] dcp_chan_thread_sha+0x3c/0x2ec
+>
+> The problem is that blocking ops will manipulate current->state
+> themselves so it is not allowed to call them between
+> set_current_state(TASK_INTERRUPTIBLE) and schedule().
+>
+> Fix this by converting the per-chan mutex to a spinlock (it only
+> protects tiny list ops anyway) and rearranging the wait logic so that
+> callbacks are called current->state as TASK_RUNNING. Those callbacks
+> will indeed call blocking ops themselves so this is required.
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-On 9/20/2018 4:28 PM, Brendan Higgins wrote:
-> The function that computes clock parameters from divisors did not
-> respect the maximum size of the bitfields that the parameters were
-> written to. This fixes the bug.
-> 
-> This bug can be reproduced with (and this fix verified with) the test
-> at: https://kunit-review.googlesource.com/c/linux/+/1035/
-> 
-> Discovered-by-KUnit: https://kunit-review.googlesource.com/c/linux/+/1035/
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+Do you have extra patches to allow this driver to probe?
 
-[....]
+I see the following probe error for a long time with mainline:
 
-> +	if (base_clk > ASPEED_I2CD_TIME_BASE_DIVISOR_MASK) {
-> +		base_clk = ASPEED_I2CD_TIME_BASE_DIVISOR_MASK;
-> +		clk_low = clk_high_low_mask;
-> +		clk_high = clk_high_low_mask;
+[   25.611780] mxs-dcp 80028000.dcp: Failed to register sha1 hash!
+[   25.620798] mxs-dcp: probe of 80028000.dcp failed with error -22
 
-Yes, it fixes these parameters to the lowest bus speed setting with the
-maximum base clock divisor value and the maximum SCL timing cycle value
-when a low bus-frequency is requested which exceeds the range of this
-H/W supports. This exceptional case handling is needed to prevent making
-invalid settings on it. Nice fix!
+Do you have a fix for this?
 
-One minor issue is, 'base_clk_divisor' instead of 'base_clk' could avoid
-misreading on this code.
-
-With that, it looks nice to me. Thanks!
-
-Reviewed-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Thanks
