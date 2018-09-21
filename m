@@ -2,145 +2,98 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 724ACECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D46C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19D8C21547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:27:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19D8C21547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 53C4621550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:28:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C4621550
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390086AbeIUUQ5 (ORCPT
+        id S2390164AbeIUURa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:16:57 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:44188 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728365AbeIUUQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:16:57 -0400
-Received: by wens.csie.org (Postfix, from userid 1000)
-        id CB99B5FBB9; Fri, 21 Sep 2018 22:27:47 +0800 (CST)
-From:   Chen-Yu Tsai <wens@csie.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>
-Cc:     Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        Fri, 21 Sep 2018 16:17:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41573 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728384AbeIUURa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:17:30 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DA786208F4; Fri, 21 Sep 2018 16:28:20 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AA892208DC;
+        Fri, 21 Sep 2018 16:28:10 +0200 (CEST)
+Date:   Fri, 21 Sep 2018 16:28:11 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Rodrigo =?utf-8?B?RXh0ZXJja8O2dHRlciBUasOkZGVy?= 
+        <rodrigo@tjader.xyz>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] Revert "drm/sun4i: Remove R40 display pipeline compatibles"
-Date:   Fri, 21 Sep 2018 22:27:43 +0800
-Message-Id: <20180921142743.8711-1-wens@csie.org>
-X-Mailer: git-send-email 2.19.0
+Subject: Re: [PATCH 1/2] arm64: dts: allwinner: Olimex A64-OLinuXino: enable
+ eMMC.
+Message-ID: <20180921142811.h5jraemk565alh3i@flea>
+References: <20180919141815.18737-1-rodrigo@tjader.xyz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tce3ovpuguzhkiii"
+Content-Disposition: inline
+In-Reply-To: <20180919141815.18737-1-rodrigo@tjader.xyz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 3510e7a7f91088159bfc67e8abdc9f9e77d28870.
 
-During the 4.19 merge window for drm-misc, two patches critical to
-supporting the display pipeline on the Allwinner R40 SoC were missed.
-They were applied later but missed the merge window deadline. As a
-result 4.19-rc1 kernel would crash on the R40 when it couldn't parse
-the new device tree structure. We ended up removing support for the
-R40 display pipeline for 4.19.
+--tce3ovpuguzhkiii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since the missing patches are already merged for 4.20, we can now
-revert the commit that removed support.
+Hi!
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
+On Wed, Sep 19, 2018 at 11:18:13AM -0300, Rodrigo Exterck=F6tter Tj=E4der w=
+rote:
+> Copied snippet from A64-TERES I.
+>=20
+> Signed-off-by: Rodrigo Exterck=F6tter Tj=E4der <rodrigo@tjader.xyz>
 
-drm-misc-fixes, which contains the patch to be reverted, should be
-merged into drm-misc-next before tihs patch is applied.
+Expanding a bit more that commit log would be helpful. What is the
+eMMC connected to that board? Do all versions have it? Which modes are
+supposed to be supported, and which one have been tested?
 
-Also, checkpatch.pl is complaining that the R40 mixer compatibles are
-missing from the device tree bindings. It seems the patch adding them
-never made it in. Please apply if possible:
+Thanks!
+Maxime
 
-    https://patchwork.kernel.org/patch/10485815/
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Thanks
+--tce3ovpuguzhkiii
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
- drivers/gpu/drm/sun4i/sun4i_drv.c      |  1 +
- drivers/gpu/drm/sun4i/sun8i_mixer.c    | 24 ++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c |  1 +
- 3 files changed, 26 insertions(+)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 9027ddde4262..1e41c3f5fd6d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -402,6 +402,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
- 	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
- 	{ .compatible = "allwinner,sun8i-h3-display-engine" },
-+	{ .compatible = "allwinner,sun8i-r40-display-engine" },
- 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ .compatible = "allwinner,sun9i-a80-display-engine" },
- 	{ .compatible = "allwinner,sun50i-a64-display-engine" },
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 091f6cf40353..8b3d02b146b7 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -545,6 +545,22 @@ static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
- 	.vi_num		= 1,
- };
- 
-+static const struct sun8i_mixer_cfg sun8i_r40_mixer0_cfg = {
-+	.ccsc		= 0,
-+	.mod_rate	= 297000000,
-+	.scaler_mask	= 0xf,
-+	.ui_num		= 3,
-+	.vi_num		= 1,
-+};
-+
-+static const struct sun8i_mixer_cfg sun8i_r40_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.mod_rate	= 297000000,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
-+};
-+
- static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.vi_num = 2,
- 	.ui_num = 1,
-@@ -582,6 +598,14 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-h3-de2-mixer-0",
- 		.data = &sun8i_h3_mixer0_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun8i-r40-de2-mixer-0",
-+		.data = &sun8i_r40_mixer0_cfg,
-+	},
-+	{
-+		.compatible = "allwinner,sun8i-r40-de2-mixer-1",
-+		.data = &sun8i_r40_mixer1_cfg,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
-diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-index 9831a9fe2cf4..3040a79f298f 100644
---- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-@@ -252,6 +252,7 @@ static int sun8i_tcon_top_remove(struct platform_device *pdev)
- 
- /* sun4i_drv uses this list to check if a device node is a TCON TOP */
- const struct of_device_id sun8i_tcon_top_of_table[] = {
-+	{ .compatible = "allwinner,sun8i-r40-tcon-top" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
--- 
-2.19.0
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluk//oACgkQ0rTAlCFN
+r3QXKw/7BYnbMDLnhQEBeRx8cU1EYQjORYI3JWaZ57uiBojQBYSwf4JW4iqbgbPa
+nQAXK40y5Vc/HaGUfDvzHPVy5uaFcIjH37/IwWcE2+1gKrdExH7Od0HO4tve0wis
+7+kDUCmBO0PgbP0oBoKeEgbsY/4Ve+cxbRm+9Cpy+c+eU6GgAS0bDwPqemvkWckb
+Lxo0N7wwa4fH+rOV9P8XBZgatJzJMu4TlMMOuOMvJU9DdliaRdcsh255U3SCgVsX
+dIsBRTBGNn4NdOSfiiu1mOgWv36HouxlZHbaJvsUMxSgcjWF+Jcc4vAeFZoD1yp2
+r+SVOpsAVfnS+7M6mT4pvsv+Ygt+ZXbEA4SC6CI7/Ub7Bzh5bQwWuVz+BG5KPGWe
+dIRQfG3J0jZFQKmHq27MtZGf+JhDZpjEVFukgR7ZbomhTD9XfyukrbVTm1fjyzsx
+17UyMKPPb3c4dlRSchjnZuHXylVGytUwvkPO0up4OQiVnyP6EW9vm3RtV0dTaIcM
+17IewJ7mXPTCXOpdzh4FgkiZHLc9eUp53Pm1WG76Z6UTv2srUgG2zIq6MxWrXEDB
+17ObYvSfeotqXV1iwHfpDo7Il4/i4uNjPY5mP1jT1eT+u0/1WuP2AWAvgmknObJC
+5IvOgeMw61KVsUWzRhW/ewTrE5voVH85Y1K2W6pq9e30658vHog=
+=JbAG
+-----END PGP SIGNATURE-----
 
+--tce3ovpuguzhkiii--
