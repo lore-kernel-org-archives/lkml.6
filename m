@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD99C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05328ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C11821557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1B5E21557
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:48:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L9aPmW/6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C11821557
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VNxVaqk8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B5E21557
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391032AbeIUXi1 (ORCPT
+        id S2391144AbeIUXi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:38:27 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46338 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeIUXi1 (ORCPT
+        Fri, 21 Sep 2018 19:38:29 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36256 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbeIUXi2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:38:27 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u24-v6so6278425pfn.13
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:48:29 -0700 (PDT)
+        Fri, 21 Sep 2018 19:38:28 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1-v6so6381807pgo.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:48:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:in-reply-to
          :references;
         bh=rC4Rj3P1k/Q6QD7WX93Els8mh/I6lZrdcdTj1aL5lPo=;
-        b=L9aPmW/6bCVDL7k9UHGBoUikgajoxeo8OWrAVQqvSQoTYtgyISqRUbQaeGVf9StkI3
-         /Z43sLecr2+DBgdf2CzrH5DmmEknRnaJhj3bEQMVB7VdOy/P+x/mcSw1OMnxogCS0uPT
-         lYI6x9O4TYvzamDWVrRvf184a9Z2x61dL0b58=
+        b=VNxVaqk89fuASli0i598dlUGJAgaYNnxg1qgYLN6eNYHPJ5pc67dgVPwnT1Oi5D7H4
+         LRjCkCBS2zP9VIot8+ZDaemdv4T10n9MoxvzcLiJcle2lKYib0qZPUFr2gxDFuudxcQ2
+         97ud0VlsA7aSAP42HOeFLoGH7IPaXP1nPp6Hw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
         bh=rC4Rj3P1k/Q6QD7WX93Els8mh/I6lZrdcdTj1aL5lPo=;
-        b=S57zhFe8OCXECQ/4Ku6lNCYULl/dvStcyejI+AYS7SNrTJXWdGGqne0DJ9OaPx05JL
-         K8oZNmQT+z28s0HWeWv/iO1nkNgurW1jZYVPDsOT6J8UkaUR1X3yJzCbH3B9GZ5guL2d
-         zbwM271eLJx2jR+vuUQ+vHvYzLBG7VlvLcrDmBUngXCLeLwwQHJrEFcz5FQK1Xxjhn1d
-         HHtGwehpvkB6pyioy7NsBpEkxWJ2ZOQF49Z6La80mzn3P1PuOQYONmd72ANFQVFz6YdO
-         2ycGJLVla+0xgkVfrFm/lIk4Sb5dj7sxtDmhnBiWvxYl0WobglnS0cVoZqQX/KNxm72G
-         yWBA==
-X-Gm-Message-State: APzg51AKEFbeTxzasaU5aVtBrqwqYQ2dnoxiZCidXCqsApjbYlybKlf6
-        b7UD53eXOiffZVdWh3mrt7LmLgwBe0Zhkw==
-X-Google-Smtp-Source: ANB0VdZVgdDwSptuQEMsIf/2cGmme8+3gazHFRqHgPXtYspTuNlZ6xZTz4zrVfgCykOiR968ceQ8Fw==
-X-Received: by 2002:a62:6b41:: with SMTP id g62-v6mr12338220pfc.113.1537552109056;
-        Fri, 21 Sep 2018 10:48:29 -0700 (PDT)
+        b=g2oGttMwbfkREsKxiyRgdxtCUWeH3bMkURJbF/mlBE9poibmn1JflWgtgnSZUCauFl
+         NzZjOmNt357bWn2Gysoyap9BK2LiFknkxSer43GOpzjvXnxrx9Mh8z2Z5qQAzv0/cGEs
+         7uL7s80NuMThc/9FQza6aSBsf3u3grsVHpo2tAs7lzQ4AwHU120NFj5d1h+KHwqrwGPL
+         4dpACcfx4m/hx5ZIyxhzdaFRz4cm5id2ZGo4YIFqzhMTN1D9HJ1X+22B2GGrb/n4ebHx
+         VC/IBoBluWT9b1paaonO5vxLQNjHeFUTBbANMal0Gko51TNJrWHBZeV+jrfqXNOF+5WE
+         6qEQ==
+X-Gm-Message-State: APzg51CNyHnHnadUCBNd29FSsrZd5hr8wlDvLfNmhKIecdEQ6RGQYIJc
+        VCS8nmicqIS2QyaoGEJic95r/HuuOlo4Bg==
+X-Google-Smtp-Source: ANB0VdYVWaBV1GO0pFL8Jgh5q0PimrQofQs4kINfv2pvERAN9R3idzLwt4FAwV3dJ+yecFKj2WcwQQ==
+X-Received: by 2002:a63:cf52:: with SMTP id b18-v6mr41651596pgj.194.1537552110891;
+        Fri, 21 Sep 2018 10:48:30 -0700 (PDT)
 Received: from localhost ([209.121.128.187])
-        by smtp.gmail.com with ESMTPSA id s85-v6sm47315331pfa.116.2018.09.21.10.48.27
+        by smtp.gmail.com with ESMTPSA id x4-v6sm34082224pfm.119.2018.09.21.10.48.29
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 10:48:27 -0700 (PDT)
+        Fri, 21 Sep 2018 10:48:29 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Subject: [PATCH v4 07/16] thermal: tsens: Pass register offsets as private data
-Date:   Fri, 21 Sep 2018 10:46:16 -0700
-Message-Id: <0d972069de14750f76b8545af6abfa44aad9c485.1537547011.git.amit.kucheria@linaro.org>
+Date:   Fri, 21 Sep 2018 10:25:11 -0700
+Message-Id:
+ <0d972069de14750f76b8545af6abfa44aad9c485.1537547011.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180918193448.GA1367@tuxbook-pro>
 References: <20180918193448.GA1367@tuxbook-pro>
@@ -71,6 +72,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20180921172511.diKyVyZa11PLqA5DIA3YEWhUBUhy8KTPyXh09MwXd_E@z>
 
 Registers have moved around across TSENS generations. For example, the
 CTRL register was at offset 0x0 in the SROT region on msm8916 but is at
