@@ -2,115 +2,95 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12554ECE561
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637CEECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F080921547
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:48:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F080921547
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id EBE5621547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:50:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrYzrG7J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE5621547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388997AbeIUHea (ORCPT
+        id S2388866AbeIUHg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 03:34:30 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:46352 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725892AbeIUHea (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 03:34:30 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1g3AY5-0003wM-DX; Thu, 20 Sep 2018 21:48:01 -0400
-Message-ID: <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
-Subject: Re: Code of Conduct: Let's revamp it.
-From:   Rik van Riel <riel@surriel.com>
-To:     Edward Cree <ec429@cantab.net>, Olof Johansson <olof@lixom.net>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Thu, 20 Sep 2018 21:48:01 -0400
-In-Reply-To: <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
-         <20180919081812.020f19e3@lwn.net>
-         <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
-         <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
-         <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-kVnuM3KLbC/0CBvj4wiF"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Fri, 21 Sep 2018 03:36:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39220 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbeIUHg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 03:36:58 -0400
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC00A2154F
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 01:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537494632;
+        bh=jKzdj7jccLinGJ+3slgoITmnAjWHnsiKsaQQEpAvPKI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KrYzrG7JoY2XL8I2GJLJxzghmTFkaceCUA0/ogCgxi2xME7D4FgMoTwCtXKzRJ/XN
+         trGiqYxfyJfsJF9LLMmTYCTnc0IHVU2PaKtlYkc6ZhauzzenofBGEqbC2wVGSKT73Z
+         cxfxD+fmsl1/MOhoV6UDQvPxaJX+aS3rv/EHKHA0=
+Received: by mail-wr1-f46.google.com with SMTP id s14-v6so11214992wrw.6
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Sep 2018 18:50:31 -0700 (PDT)
+X-Gm-Message-State: APzg51DTYI34bJCal5bnUk91IjE/CjxrLltNr90NSVQxv8OfN0bK5LWB
+        NOhQtKDr/h4R+WTnazxSa88nG2ovEGpSL5BDXbAkwg==
+X-Google-Smtp-Source: ANB0VdYniFvnvoGLxwn9gdYn9bxOUWNsHtf4wxBfRYuYYLwmbdJ+5dNbv9G2EvQbVwcBavF9OeTwEOx2gt9/Z1oqbMI=
+X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr35875280wrh.148.1537494630108;
+ Thu, 20 Sep 2018 18:50:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180921001513.12504-1-Jason@zx2c4.com>
+In-Reply-To: <20180921001513.12504-1-Jason@zx2c4.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 20 Sep 2018 18:50:18 -0700
+X-Gmail-Original-Message-ID: <CALCETrULOFr=oQFMVT4qxPTWEQ++G82HCuxRoA=Sr4Z8kmMbYQ@mail.gmail.com>
+Message-ID: <CALCETrULOFr=oQFMVT4qxPTWEQ++G82HCuxRoA=Sr4Z8kmMbYQ@mail.gmail.com>
+Subject: Re: [PATCH] framewarn: expand KASAN_EXTRA exception to KASAN
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch seems reasonable, but you emailed the wrong people :)
 
---=-kVnuM3KLbC/0CBvj4wiF
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 2018-09-20 at 03:14 +0100, Edward Cree wrote:
-
-> I think there are important differences between code to be run by
-> CPUs
->  and a Code to be run by humans.  And when the author goes on a
-> victory
->  lap on Twitter and declares the Code to be "a political document",
-> is
->  it any surprise I'm worried?
-
-Speaking for myself, I expect there will be occasional
-impedance mismatches in communication between people
-from different cultures, and people with different
-neurotypes.
-
-That is not only expected, it is also perfectly fine.
-
-If people end up feeling like they are in conflict
-with each other, and they would like help resolving
-it, the first task of the TAB will be to mediate,
-and help people figure out how communication could
-be improved.
-
-The goal of the code of conduct is to make the community
-welcoming, and to help people with being a part of the
-Linux community.
-
-Mediation is not about telling people what to do,
-but about asking the people involved what they would
-like to see, and helping to breach the gap between
-their styles of communication.
-
-As an aside, the TAB has no power to remove anyone
-from the community. Patches are applied by maintainers,
-mailing lists are run by their administrators.
-
-The only things the TAB can do is mediate and advise.
-
---=20
-All Rights Reversed.
-
---=-kVnuM3KLbC/0CBvj4wiF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlukTdEACgkQznnekoTE
-3oPyOgf/W93rHqk2gUzBnH82SAP3pmvjsxiPCSRchxzPe4U2Ju8dovvqJFiH9cf4
-K8pbOwjDu/N65G3YNhOPZbx9UxC1F0YWVwDFCPbJqVD0ToNXQu8K/zYzEdUvRGOw
-CewieGGe/MzJnOZAemKISidoK7gg+Nv+fyr397mk/Gy18zn7G+25vl6f8g0v9Zdq
-QbWTVJ5fEwfaIvGHR/MHntJuOvEpYbUrQgkwZ/pHQuAKeDMenOngxxGFq8qNERSU
-BHN6wPwLjMtx1hGEqe+ONgfgdxfPgGQDSGqCTdbdJKKb9S7Jfj1KE4CdqkfaJ8q2
-6PcKpQEBLBWgPzbZ6ZVmpcrhIQykHg==
-=Crdu
------END PGP SIGNATURE-----
-
---=-kVnuM3KLbC/0CBvj4wiF--
-
+On Thu, Sep 20, 2018 at 5:15 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> It turns out that KASAN in general will bloat stack frames in unexpected
+> ways, not just KASAN_EXTRA. So, this patch trivially changes that
+> default to be associated with KASAN instead of KASAN_EXTRA.
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  lib/Kconfig.debug | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 4966c4fbe7f7..39078a080e29 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -222,7 +222,7 @@ config ENABLE_MUST_CHECK
+>  config FRAME_WARN
+>         int "Warn for stack frames larger than (needs gcc 4.4)"
+>         range 0 8192
+> -       default 3072 if KASAN_EXTRA
+> +       default 3072 if KASAN
+>         default 2048 if GCC_PLUGIN_LATENT_ENTROPY
+>         default 1280 if (!64BIT && PARISC)
+>         default 1024 if (!64BIT && !PARISC)
+> --
+> 2.19.0
+>
