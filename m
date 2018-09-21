@@ -2,87 +2,122 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62108C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE1EC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 198C221557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:14:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ET3kI7xB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 198C221557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 989C821550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:15:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 989C821550
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390693AbeIUWEJ (ORCPT
+        id S2390619AbeIUWFQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:04:09 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33569 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389657AbeIUWEJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:04:09 -0400
-Received: by mail-io1-f67.google.com with SMTP id r196-v6so12824860iod.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FJ3KtydreSwN5BR6cwgUf1jetzEptleJfeEByLlhiY4=;
-        b=ET3kI7xBX0F1XYD4+XgS7LlNu7nDX4qrOWyzuteUXsLF/tjHlNlj51EBog51aWDlVV
-         Zozz3sMB2f4y0hjSF1IgVEgWTm/4T9a1O85LyWpOQQ/KPKI7I+SHjVd1IB0PUEIJtcQ9
-         dlA0Zi/IYfQSLmFc72t198kuUk3TpEWnGvTlE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FJ3KtydreSwN5BR6cwgUf1jetzEptleJfeEByLlhiY4=;
-        b=X3zsCKrFxvVwNmNWaT6sd3X6igmfkraLKznDiZswD3wtg82790/j3txG2irrp3UJXW
-         oPEv3ZVDvBb4KpmeaMh7PmFMMDkad99nTYCEfPS1xW25EQgHge5ceHlNcZM8MK16MfQj
-         ck5w7/zTDmU4vWFjlVAYYwdOu14JnabQEoRmk+vBxZGY8qobUjeIJq9qJ1EExTOvoZkP
-         gRKm09v+KvMeK0hxBfR2CruOJm45YNoEEawdMsdGi0eTup5Kz371mz2q5WXFRdg5ssgV
-         gT+ubtrqWhf3e21OFKQ6BqjgCpq1Uomx+YRBXN0zwqR2C/wwIPkLqtOEdM7jEcYmm6BO
-         3BwQ==
-X-Gm-Message-State: APzg51B5xwUxgkDEaBEmuL0sCX/oK1UWXV7XGY1m2CseQIkZVr/c1i3G
-        ABD3xTm7E7UXb2L3ZCsSJPSP8blT7hfyVMWqt7t1Hw==
-X-Google-Smtp-Source: ANB0VdZrn1ixifMv6b3+spEpIaYYI4TfqIvx3NiQTNA9gTW1Mejel3Aqq1oM2jBYmmbCi705X68tnA7lYxflhTMOAFw=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr37078278iof.304.1537546474176;
- Fri, 21 Sep 2018 09:14:34 -0700 (PDT)
+        Fri, 21 Sep 2018 18:05:16 -0400
+Received: from mga11.intel.com ([192.55.52.93]:21339 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728221AbeIUWFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:05:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:15:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="92588470"
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga001.jf.intel.com with ESMTP; 21 Sep 2018 09:15:03 -0700
+Subject: Re: [patch V3 01/11] x86/mm/init32: Mark text and rodata RO in one go
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180917142906.384767038@linutronix.de>
+ <20180917143545.731701535@linutronix.de>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Bin Yang <bin.yang@intel.com>,
+        Mark Gross <mark.gross@intel.com>,
+        kernel test robot <rong.a.chen@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
+ 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
+ K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
+ VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
+ e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
+ ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
+ kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
+ rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
+ f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
+ mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
+ UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
+ sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
+ 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
+ cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
+ UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
+ db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
+ lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
+ kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
+ gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
+ AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
+ XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
+ e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
+ pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
+ YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
+ lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
+ M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
+ 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
+ 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
+ OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
+ ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
+ z5cecg==
+Message-ID: <bd7b4774-61d8-4b4e-56da-546d5576ddff@intel.com>
+Date:   Fri, 21 Sep 2018 09:15:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <ab85fbee4d8286cbedbcc7317f89dc0d2dd83965.1537502494.git.sean.wang@mediatek.com>
- <82d47055aec8e40422eb72568e96bfbaf199d9d2.1537502494.git.sean.wang@mediatek.com>
-In-Reply-To: <82d47055aec8e40422eb72568e96bfbaf199d9d2.1537502494.git.sean.wang@mediatek.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 21 Sep 2018 09:14:21 -0700
-Message-ID: <CACRpkdZ5Un1s5qM92GsLOjW0yQTvitzi9F7WVJu87DhSckSn7Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] pinctrl: mediatek: add eint support to MT6765 pinctrl driver
-To:     Sean Wang <sean.wang@mediatek.com>
-Cc:     "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        mars.cheng@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180917143545.731701535@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 9:07 PM <sean.wang@mediatek.com> wrote:
+On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
+> The sequence of marking text and rodata read-only in 32bit init is:
+> 
+>   set_ro(text);
+>   kernel_set_to_readonly = 1;
+>   set_ro(rodata);
+> 
+> When kernel_set_to_readonly is 1 it enables the protection mechanism in CPA
+> for the read only regions. With the upcoming checks for existing mappings
+> this consequently triggers the warning about an existing mapping being
+> incorrect vs. static protections because rodata has not been converted yet.
+> 
+> There is no technical reason to split the two, so just combine the RO
+> protection to convert text and rodata in one go.
+> 
+> Convert the printks to pr_info while at it.
+> 
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-> From: Mars Cheng <mars.cheng@mediatek.com>
->
-> Just add eint support to MT6765 pinctrl driver as usual as
-> happens on the other SoCs.
->
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
-Patch applied.
-
-Yours,
-Linus Walleij
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
