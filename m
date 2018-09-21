@@ -2,99 +2,97 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9923EC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAFDECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35D4F21567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7AA121565
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hwu9wvW1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D4F21567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BEs+utip";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c2hyBA5H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AA121565
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390792AbeIUWh6 (ORCPT
+        id S2390800AbeIUWjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:37:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390415AbeIUWh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:37:57 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 21 Sep 2018 18:39:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38384 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389683AbeIUWjL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:39:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A156E612DE; Fri, 21 Sep 2018 16:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537548567;
+        bh=wfl7CY2HNioLA7leeZKAIAgYMyV9JiBzsT95ShCPR4Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BEs+utipIL6Agf8ekpGzjbbhIoKPE+CpP/wX39NRlzw47O9noWzjzvgpDNZ1z1Y9q
+         w5FZkFLRPveEWOH5AJG5krfngqmyOPjhXgP1eRiA/TfDRydwsgeVk7OrEkGs8Htp7p
+         +dh+uqWMsq1q7lUUZ7C207UwDveXRNi+n7Z7mcSY=
+Received: from [192.168.0.114] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E145921565;
-        Fri, 21 Sep 2018 16:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537548494;
-        bh=NB80ZvOh4YQqHfMJmQ4hYag9UWb+rjpX8+eT5pv2gr0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hwu9wvW13Go+uvuZ+ANfMpGXpRGRGW1bKFGLbU5hYmwS5QBfC2z9FjLV6q2gsHLkO
-         Pxg/ubwh87LW8ZIlx2X8JUg62O5FFLT/dnXpV/jQllnEdUI9HUAowiwZC5YNBqZBsS
-         YbZh6p58w5kf3zBSyvBwwOSlJxIfzCRRwFnQULHo=
-Date:   Fri, 21 Sep 2018 11:48:13 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-nvdimm@lists.01.org,
-        linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Stephen Bates <sbates@raithlin.com>,
-        linux-block@vger.kernel.org,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v6 03/13] PCI/P2PDMA: Add PCI p2pmem DMA mappings to
- adjust the bus offset
-Message-ID: <20180921164813.GJ224714@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180913001156.4115-1-logang@deltatee.com>
- <20180913001156.4115-4-logang@deltatee.com>
- <20180921131550.GG224714@bhelgaas-glaptop.roam.corp.google.com>
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7FDE160D30;
+        Fri, 21 Sep 2018 16:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537548566;
+        bh=wfl7CY2HNioLA7leeZKAIAgYMyV9JiBzsT95ShCPR4Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=c2hyBA5H5l37/G2qu7XQSWlpHc3SrMRBMHFf1zV8oW606muPN0NAPhqOM+rJ4QIXu
+         BQCR2oLZzaxGB0yDSV36zFGEPrMuaLTtxz3NwMXqA/HC48lSBci8WIjmAUKaK3gCkf
+         BWBlq7ErcAI7fP1X3VFLLI5itqMm87O7DAatFfXQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FDE160D30
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
+ (BD_ADDR)
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Brian Norris <briannorris@chromium.org>
+References: <20180920223436.202454-1-mka@chromium.org>
+ <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
+ <20180920230121.GT22824@google.com>
+ <36e5d881-a45e-c879-c275-e6e18bc99ed5@codeaurora.org>
+ <20180920231947.GU22824@google.com>
+ <124b6f76-a65f-e304-6c60-fbb9104415f4@codeaurora.org>
+ <20180921164541.GX22824@google.com>
+From:   Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <a1f8d4de-04e5-c150-531b-7d2ceee6325c@codeaurora.org>
+Date:   Fri, 21 Sep 2018 12:49:24 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921131550.GG224714@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180921164541.GX22824@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 08:15:50AM -0500, Bjorn Helgaas wrote:
-> On Wed, Sep 12, 2018 at 06:11:46PM -0600, Logan Gunthorpe wrote:
-> > The DMA address used when mapping PCI P2P memory must be the PCI bus
-> > address. Thus, introduce pci_p2pmem_map_sg() to map the correct
-> > addresses when using P2P memory. Memory mapped in this way does not
-> > need to be unmapped.
-> 
-> I think the use of "map" in this context is slightly confusing because the
-> general expectation is that map/unmap must be balanced.
-> 
-> I assume it's because the "mapping" consumes no resources, e.g., requires
-> no page table entries.  Possibly there's a better verb than "map", e.g.,
-> "convert", "convert_to_p2pdma", etc?
-> 
-> If you keep "map", maybe add a sentence or two about why there's no
-> corresponding unmap?
+On 9/21/2018 12:45 PM, Matthias Kaehlcke wrote:
+> Well, there is a generic binding
+> (https://elixir.bootlin.com/linux/v4.18/source/Documentation/devicetree/bindings/net/bluetooth.txt),
+> the fact that there are drivers that aren't adhering to it doesn't
+> change that.
 
-Another wrinkle is that "map" usually takes an A and gives you back a
-B.  Now the caller has both A and B and both are still valid.
-
-Here we pass in an SGL and the SGL is transformed, so the caller only
-has B and A has been destroyed, i.e., the SGL can no longer be used as
-it was before, and there's no way to get A back.
-
-Maybe this is pointless bikeshedding, so if your color is the best,
-don't change anything.
-
-Bjorn
+OK. If there is some soft of a "standard" naming convention, we should be good.
+Otherwise, as Sakari also raised the concern; common code becomes a dumping
+ground for drivers.
