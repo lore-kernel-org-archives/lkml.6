@@ -6,154 +6,224 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA965ECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA82ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9292154E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:47:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B9292154E
+	by mail.kernel.org (Postfix) with ESMTP id C82972086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82972086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390124AbeIUTgK (ORCPT
+        id S2390091AbeIUTgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:36:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:32709 "EHLO mx1.redhat.com"
+        Fri, 21 Sep 2018 15:36:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:29876 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728313AbeIUTgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:36:08 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S2389879AbeIUTgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 15:36:09 -0400
+Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D9AB130034AB;
-        Fri, 21 Sep 2018 13:47:10 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 57D2C1E2D5;
+        Fri, 21 Sep 2018 13:47:11 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-56.phx2.redhat.com [10.3.116.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E46347FFF1;
-        Fri, 21 Sep 2018 13:47:05 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ED5DC309137F;
+        Fri, 21 Sep 2018 13:47:08 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id B9D139EE56; Fri, 21 Sep 2018 15:47:04 +0200 (CEST)
+        id 6BE369EE5B; Fri, 21 Sep 2018 15:47:05 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     daniel.vetter@ffwll.ch, michel@daenzer.net, imirkin@alum.mit.edu,
         Gerd Hoffmann <kraxel@redhat.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 1/6] drm: move native byte order quirk to new drm_driver_legacy_fb_format function
-Date:   Fri, 21 Sep 2018 15:46:59 +0200
-Message-Id: <20180921134704.12826-2-kraxel@redhat.com>
+Subject: [PATCH v4 5/6] drm/virtio: fix DRM_FORMAT_* handling
+Date:   Fri, 21 Sep 2018 15:47:03 +0200
+Message-Id: <20180921134704.12826-6-kraxel@redhat.com>
 In-Reply-To: <20180921134704.12826-1-kraxel@redhat.com>
 References: <20180921134704.12826-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 21 Sep 2018 13:47:11 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 21 Sep 2018 13:47:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turns out we need the pixel format fixup not only for the addfb ioctl,
-but also for fbdev emulation code.
+Use DRM_FORMAT_HOST_XRGB8888, so we are using the correct format code
+on bigendian machines.  Also set the quirk_addfb_prefer_host_byte_order
+mode_config bit so drm_mode_addfb() asks for the correct format code.
 
-Ideally we would place it in drm_mode_legacy_fb_format().  That would
-create alot of churn though, and most drivers don't care because they
-never ever run on a big endian platform.  So add a new
-drm_driver_legacy_fb_format() function instead which looks at the
-mode_config->quirk_addfb_prefer_host_byte_order flag.
+Both DRM_FORMAT_* and VIRTIO_GPU_FORMAT_* are defined to be little
+endian, so using a different mapping on bigendian machines is wrong.
+It's there because of broken drm_mode_addfb() behavior.  So with
+drm_mode_addfb() being fixed we can fix this too.
+
+While wading through the code I've noticed we have a little issue in
+virtio:  We attach a format to the bo when it is created
+(DRM_IOCTL_MODE_CREATE_DUMB), not when we map it as framebuffer
+(DRM_IOCTL_MODE_ADDFB).  Easy way out:  Support a single format only.
+Pick DRM_FORMAT_HOST_XRGB8888, it is the only one actually used in
+practice.  Drop unused mappings in virtio_gpu_translate_format().
+
+With this patch applied both ADDFB and ADDFB2 ioctls work correctly in
+the virtio-gpu.ko driver on big endian machines.  Without the patch only
+ADDFB (which still seems to be used by the majority of userspace) works
+correctly.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- include/drm/drm_fourcc.h          |  2 ++
- drivers/gpu/drm/drm_fourcc.c      | 30 ++++++++++++++++++++++++++++++
- drivers/gpu/drm/drm_framebuffer.c | 13 +------------
- 3 files changed, 33 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_display.c |  5 +++
+ drivers/gpu/drm/virtio/virtgpu_fb.c      |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_gem.c     |  7 +++--
+ drivers/gpu/drm/virtio/virtgpu_plane.c   | 54 ++------------------------------
+ 4 files changed, 13 insertions(+), 55 deletions(-)
 
-diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index fac831c401..865ef60c17 100644
---- a/include/drm/drm_fourcc.h
-+++ b/include/drm/drm_fourcc.h
-@@ -88,6 +88,8 @@ const struct drm_format_info *
- drm_get_format_info(struct drm_device *dev,
- 		    const struct drm_mode_fb_cmd2 *mode_cmd);
- uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
-+uint32_t drm_driver_legacy_fb_format(struct drm_device *dev,
-+				     uint32_t bpp, uint32_t depth);
- int drm_format_num_planes(uint32_t format);
- int drm_format_plane_cpp(uint32_t format, int plane);
- int drm_format_horz_chroma_subsampling(uint32_t format);
-diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-index be1d6aaef6..7c6d3922ed 100644
---- a/drivers/gpu/drm/drm_fourcc.c
-+++ b/drivers/gpu/drm/drm_fourcc.c
-@@ -96,6 +96,36 @@ uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth)
- EXPORT_SYMBOL(drm_mode_legacy_fb_format);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
+index 0379d68976..8f8fed471e 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_display.c
++++ b/drivers/gpu/drm/virtio/virtgpu_display.c
+@@ -307,6 +307,10 @@ virtio_gpu_user_framebuffer_create(struct drm_device *dev,
+ 	struct virtio_gpu_framebuffer *virtio_gpu_fb;
+ 	int ret;
  
- /**
-+ * drm_driver_legacy_fb_format - compute drm fourcc code from legacy description
-+ * @bpp: bits per pixels
-+ * @depth: bit depth per pixel
-+ * @native: use host native byte order
-+ *
-+ * Computes a drm fourcc pixel format code for the given @bpp/@depth values.
-+ * Unlike drm_mode_legacy_fb_format() this looks at the drivers mode_config,
-+ * and depending on the quirk_addfb_prefer_host_byte_order flag it returns
-+ * little endian byte order or host byte order framebuffer formats.
-+ */
-+uint32_t drm_driver_legacy_fb_format(struct drm_device *dev,
-+				     uint32_t bpp, uint32_t depth)
-+{
-+	uint32_t fmt = drm_mode_legacy_fb_format(bpp, depth);
++	if (mode_cmd->pixel_format != DRM_FORMAT_HOST_XRGB8888 &&
++	    mode_cmd->pixel_format != DRM_FORMAT_HOST_ARGB8888)
++		return ERR_PTR(-ENOENT);
 +
-+	if (dev->mode_config.quirk_addfb_prefer_host_byte_order) {
-+		if (fmt == DRM_FORMAT_XRGB8888)
-+			fmt = DRM_FORMAT_HOST_XRGB8888;
-+		if (fmt == DRM_FORMAT_ARGB8888)
-+			fmt = DRM_FORMAT_HOST_ARGB8888;
-+		if (fmt == DRM_FORMAT_RGB565)
-+			fmt = DRM_FORMAT_HOST_RGB565;
-+		if (fmt == DRM_FORMAT_XRGB1555)
-+			fmt = DRM_FORMAT_HOST_XRGB1555;
-+	}
-+	return fmt;
-+}
-+EXPORT_SYMBOL(drm_driver_legacy_fb_format);
+ 	/* lookup object associated with res handle */
+ 	obj = drm_gem_object_lookup(file_priv, mode_cmd->handles[0]);
+ 	if (!obj)
+@@ -355,6 +359,7 @@ int virtio_gpu_modeset_init(struct virtio_gpu_device *vgdev)
+ 	int i;
+ 
+ 	drm_mode_config_init(vgdev->ddev);
++	vgdev->ddev->mode_config.quirk_addfb_prefer_host_byte_order = true;
+ 	vgdev->ddev->mode_config.funcs = &virtio_gpu_mode_funcs;
+ 	vgdev->ddev->mode_config.helper_private = &virtio_mode_config_helpers;
+ 
+diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
+index b9678c4082..abc4ec4c62 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_fb.c
++++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
+@@ -226,7 +226,7 @@ static int virtio_gpufb_create(struct drm_fb_helper *helper,
+ 	mode_cmd.width = sizes->surface_width;
+ 	mode_cmd.height = sizes->surface_height;
+ 	mode_cmd.pitches[0] = mode_cmd.width * 4;
+-	mode_cmd.pixel_format = drm_mode_legacy_fb_format(32, 24);
++	mode_cmd.pixel_format = DRM_FORMAT_HOST_XRGB8888;
+ 
+ 	format = virtio_gpu_translate_format(mode_cmd.pixel_format);
+ 	if (format == 0)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
+index 0f2768eaca..82c817f37c 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_gem.c
++++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
+@@ -90,7 +90,10 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
+ 	uint32_t resid;
+ 	uint32_t format;
+ 
+-	pitch = args->width * ((args->bpp + 1) / 8);
++	if (args->bpp != 32)
++		return -EINVAL;
 +
-+/**
-  * drm_get_format_name - fill a string with a drm fourcc format's name
-  * @format: format to compute name of
-  * @buf: caller-supplied buffer
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 1ee3d6b442..1e2126101c 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -116,7 +116,7 @@ int drm_mode_addfb(struct drm_device *dev, struct drm_mode_fb_cmd *or,
- 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
- 		return -EOPNOTSUPP;
++	pitch = args->width * 4;
+ 	args->size = pitch * args->height;
+ 	args->size = ALIGN(args->size, PAGE_SIZE);
  
--	r.pixel_format = drm_mode_legacy_fb_format(or->bpp, or->depth);
-+	r.pixel_format = drm_driver_legacy_fb_format(dev, or->bpp, or->depth);
- 	if (r.pixel_format == DRM_FORMAT_INVALID) {
- 		DRM_DEBUG("bad {bpp:%d, depth:%d}\n", or->bpp, or->depth);
- 		return -EINVAL;
-@@ -133,17 +133,6 @@ int drm_mode_addfb(struct drm_device *dev, struct drm_mode_fb_cmd *or,
- 	    r.pixel_format == DRM_FORMAT_XRGB2101010)
- 		r.pixel_format = DRM_FORMAT_XBGR2101010;
- 
--	if (dev->mode_config.quirk_addfb_prefer_host_byte_order) {
--		if (r.pixel_format == DRM_FORMAT_XRGB8888)
--			r.pixel_format = DRM_FORMAT_HOST_XRGB8888;
--		if (r.pixel_format == DRM_FORMAT_ARGB8888)
--			r.pixel_format = DRM_FORMAT_HOST_ARGB8888;
--		if (r.pixel_format == DRM_FORMAT_RGB565)
--			r.pixel_format = DRM_FORMAT_HOST_RGB565;
--		if (r.pixel_format == DRM_FORMAT_XRGB1555)
--			r.pixel_format = DRM_FORMAT_HOST_XRGB1555;
--	}
--
- 	ret = drm_mode_addfb2(dev, &r, file_priv);
+@@ -99,7 +102,7 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
  	if (ret)
- 		return ret;
+ 		goto fail;
+ 
+-	format = virtio_gpu_translate_format(DRM_FORMAT_XRGB8888);
++	format = virtio_gpu_translate_format(DRM_FORMAT_HOST_XRGB8888);
+ 	virtio_gpu_resource_id_get(vgdev, &resid);
+ 	virtio_gpu_cmd_create_resource(vgdev, resid, format,
+ 				       args->width, args->height);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
+index 88f2fb8c61..a84ff56507 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_plane.c
++++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+@@ -28,22 +28,11 @@
+ #include <drm/drm_atomic_helper.h>
+ 
+ static const uint32_t virtio_gpu_formats[] = {
+-	DRM_FORMAT_XRGB8888,
+-	DRM_FORMAT_ARGB8888,
+-	DRM_FORMAT_BGRX8888,
+-	DRM_FORMAT_BGRA8888,
+-	DRM_FORMAT_RGBX8888,
+-	DRM_FORMAT_RGBA8888,
+-	DRM_FORMAT_XBGR8888,
+-	DRM_FORMAT_ABGR8888,
++	DRM_FORMAT_HOST_XRGB8888,
+ };
+ 
+ static const uint32_t virtio_gpu_cursor_formats[] = {
+-#ifdef __BIG_ENDIAN
+-	DRM_FORMAT_BGRA8888,
+-#else
+-	DRM_FORMAT_ARGB8888,
+-#endif
++	DRM_FORMAT_HOST_ARGB8888,
+ };
+ 
+ uint32_t virtio_gpu_translate_format(uint32_t drm_fourcc)
+@@ -51,32 +40,6 @@ uint32_t virtio_gpu_translate_format(uint32_t drm_fourcc)
+ 	uint32_t format;
+ 
+ 	switch (drm_fourcc) {
+-#ifdef __BIG_ENDIAN
+-	case DRM_FORMAT_XRGB8888:
+-		format = VIRTIO_GPU_FORMAT_X8R8G8B8_UNORM;
+-		break;
+-	case DRM_FORMAT_ARGB8888:
+-		format = VIRTIO_GPU_FORMAT_A8R8G8B8_UNORM;
+-		break;
+-	case DRM_FORMAT_BGRX8888:
+-		format = VIRTIO_GPU_FORMAT_B8G8R8X8_UNORM;
+-		break;
+-	case DRM_FORMAT_BGRA8888:
+-		format = VIRTIO_GPU_FORMAT_B8G8R8A8_UNORM;
+-		break;
+-	case DRM_FORMAT_RGBX8888:
+-		format = VIRTIO_GPU_FORMAT_R8G8B8X8_UNORM;
+-		break;
+-	case DRM_FORMAT_RGBA8888:
+-		format = VIRTIO_GPU_FORMAT_R8G8B8A8_UNORM;
+-		break;
+-	case DRM_FORMAT_XBGR8888:
+-		format = VIRTIO_GPU_FORMAT_X8B8G8R8_UNORM;
+-		break;
+-	case DRM_FORMAT_ABGR8888:
+-		format = VIRTIO_GPU_FORMAT_A8B8G8R8_UNORM;
+-		break;
+-#else
+ 	case DRM_FORMAT_XRGB8888:
+ 		format = VIRTIO_GPU_FORMAT_B8G8R8X8_UNORM;
+ 		break;
+@@ -89,19 +52,6 @@ uint32_t virtio_gpu_translate_format(uint32_t drm_fourcc)
+ 	case DRM_FORMAT_BGRA8888:
+ 		format = VIRTIO_GPU_FORMAT_A8R8G8B8_UNORM;
+ 		break;
+-	case DRM_FORMAT_RGBX8888:
+-		format = VIRTIO_GPU_FORMAT_X8B8G8R8_UNORM;
+-		break;
+-	case DRM_FORMAT_RGBA8888:
+-		format = VIRTIO_GPU_FORMAT_A8B8G8R8_UNORM;
+-		break;
+-	case DRM_FORMAT_XBGR8888:
+-		format = VIRTIO_GPU_FORMAT_R8G8B8X8_UNORM;
+-		break;
+-	case DRM_FORMAT_ABGR8888:
+-		format = VIRTIO_GPU_FORMAT_R8G8B8A8_UNORM;
+-		break;
+-#endif
+ 	default:
+ 		/*
+ 		 * This should not happen, we handle everything listed
 -- 
 2.9.3
 
