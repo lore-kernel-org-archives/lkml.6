@@ -8,70 +8,67 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4957ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4172AECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F02B21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F3A21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:12:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgaB21sW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F02B21523
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPSF0Mmi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0F3A21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389752AbeIUP7E (ORCPT
+        id S2389630AbeIUQAW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:59:04 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35199 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389630AbeIUP7C (ORCPT
+        Fri, 21 Sep 2018 12:00:22 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36345 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727776AbeIUQAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:59:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j26-v6so12286468wre.2;
-        Fri, 21 Sep 2018 03:10:52 -0700 (PDT)
+        Fri, 21 Sep 2018 12:00:21 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e1-v6so12304845wrt.3;
+        Fri, 21 Sep 2018 03:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+k8VQnKn4mutcliPiNEY+rHvbFqnNR24naQdY6mjm90=;
-        b=JgaB21sWBO6OpxFqgWMQavCm/A+X6hF2JaWSmFzpr9+DEbV3NPYZAo6KEEi1QV7S4l
-         3kiX+GyqwgTUmLIuqpuxQ47J+RiziJF5OCp8/F2FGB4oeau5V7GalasRrLeGfVmkoBFm
-         2JeTjYbXWjbB33uI/bN1KTeMHokqGRZ5iAg2bWcOP5PKuDKFEetg6zmHd8t/7WCzr7Be
-         K+FKWD/D85Nyd7LiIs+XquKiRaJUY7MZLlcRsrpDuHsinvdIXXF4pb3LheT/HU3AmgK8
-         em5UWTQTL9HqHUPN39qPdFcO59XZxzSt+JoAvmHNUeZH1NLuPk2D6BeJ6aq3w00mnjB7
-         t73A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nLAI+OxEpstiwUMaI0E8e9GJi/FAzAwPqs7evmpnfYs=;
+        b=mPSF0MmiCUkvRERl0/2NE+IU+kGMnWxhvkBDkQCbLBpgZBY9GVnJoXUiIRGoHPJggI
+         A75rwgXP8ILd8QDxL0pCdtlaKKnESK6RaUk2W0Dya30eJYayxPzZPtmtN+OH1yk3+v/9
+         lDQBTtEIWNxq4eqjM8TdIojMbfrfQ+iZ7IPMp8299NyAH0YsYspUpvVOXUhH5PJdzeLZ
+         Ylz14I8oU02oWwSaw7MmfaVEToRfixM2hn2dPu2TS/3pHGaDpAPRPBUDCtoiWbAAs0U7
+         hqnJpf+vcr5KwZdvb0rlvRMRLmyaIrAwEsFTbp4I83/Eu1c6+NdIU/PyBNsLPgcK0fJB
+         CYOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+k8VQnKn4mutcliPiNEY+rHvbFqnNR24naQdY6mjm90=;
-        b=fwWJLvt5yMuIrS9VV5kSYkYarTYRxhjRsTZTaXYEjfzroBA1HwlVpoy8utMWg/mi+R
-         6swYLR1f3LUNgn0W4JYdMtRkLWJKCYXp3PU/7+gh/a6ir5kJ6QqtWeFjxI+NPegkZUkN
-         HCS16PR0u5YklMuSqnsyD8GkAFGND3GnQnWDQN1pW+aEnBah0QkJBmkQxW7ddQRLRf3O
-         oZtHhF35xxE1qKh1IvvdNMkUjDcBty3GNwumygM7CM0xM/1Ak4BnpiO9lz8oCxq1PLZC
-         XUZk9mOI3VXPSvWzky6hCDpyqyCxmYfPpnpK4s1cFuxbF5M3OFbYSEgGhwpbQ1TG6Ok6
-         CV7w==
-X-Gm-Message-State: APzg51CoEq8YYoVUsP6lgM7n40jXUVYoSwuUOuDLkzPjKnhDLgDG7jTb
-        R8epjFrbgpJXtuvOEd/YUEKgpXe6
-X-Google-Smtp-Source: ANB0VdYFCd5AGIaBmfOSFeAXSVTGl/SCbnuZdUzCs9onEUmGa3tY41jBtKH3YnN7Vd4CyW57J1Ta2A==
-X-Received: by 2002:adf:e711:: with SMTP id c17-v6mr36970485wrm.143.1537524651799;
-        Fri, 21 Sep 2018 03:10:51 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nLAI+OxEpstiwUMaI0E8e9GJi/FAzAwPqs7evmpnfYs=;
+        b=WsM55/2vxahQ/etK0PqUp6EPgBGN2Eyfh4cg029T8zolrwC/x2n1DDbSzmt2K/23zu
+         Xhf45yuA3PtkIONfhPbPweNNaS4265FnuBS1OL9xfMAEo7SJSuVauLpE0U45OU9cyc9P
+         jOAdKaHH0ofauzfQ6EJwWHk21Fb+f83ImGcY5W8LRHLtTioibtbO/vWskiqCdtG0Eea1
+         n4NO0/AjDZxTYcghlFsJzKBBsNjMlaVH2rNZNv1+fy2ApO5KQV6CG+39BEXzaAZb+9+H
+         3toh+4nPXs1VenkTFlZmlVmEW2qD6zZnBxGTlZafl+jrlXI25e8y2wojYXZK9qI7mOWL
+         Iw9Q==
+X-Gm-Message-State: APzg51BCPHAhzdN7Pi1NHiZ+9s4XDF0lQtiTJGxVVtS4HRDliocGvJUN
+        AYtQQZ6KF4UqDdZ3vpzkEZY=
+X-Google-Smtp-Source: ANB0VdZW2VJuaFwzsUdIex6zz5aUhGSKxtGPZlPxm7hDd/sJUfc5kexfKfUtpnAvFQhZGpJBFPpRRA==
+X-Received: by 2002:a5d:4cc8:: with SMTP id c8-v6mr39055587wrt.210.1537524730466;
+        Fri, 21 Sep 2018 03:12:10 -0700 (PDT)
 Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id j191-v6sm4618354wmb.37.2018.09.21.03.10.51
+        by smtp.gmail.com with ESMTPSA id a1-v6sm822688wrt.9.2018.09.21.03.12.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 03:10:51 -0700 (PDT)
+        Fri, 21 Sep 2018 03:12:10 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Kamil Debski <kamil@wypas.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] hwmon: pwm-fan: Set fan speed to 0 on suspend
-Date:   Fri, 21 Sep 2018 12:10:48 +0200
-Message-Id: <20180921101048.11679-2-thierry.reding@gmail.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>, linux-rtc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: tegra: Propagate errors from platform_get_irq()
+Date:   Fri, 21 Sep 2018 12:12:09 +0200
+Message-Id: <20180921101209.11895-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180921101048.11679-1-thierry.reding@gmail.com>
-References: <20180921101048.11679-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -81,63 +78,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Technically this is not required because disabling the PWM should be
-enough. However, when support for atomic operations was implemented in
-the PWM subsystem, only actual changes to the PWM channel are applied
-during pwm_config(), which means that during after resume from suspend
-the old settings won't be applied.
-
-One possible solution is for the PWM driver to implement its own PM
-operations such that settings from before suspend get applied on resume.
-This has the disadvantage of completely ignoring any particular ordering
-requirements that PWM user drivers might have, so it is best to leave it
-up to the user drivers to apply the settings that they want at the
-appropriate time.
-
-Another way to solve this would be to read back the current state of the
-PWM at the time of resume. That way, in case the configuration was lost
-during suspend, applying the old settings in PWM user drivers would
-actually get them applied because they differ from the current settings.
-However, not all PWM drivers support reading the hardware state, and not
-all hardware may support it.
-
-The best workaround at this point seems to be to let PWM user drivers
-tell the PWM subsystem that the PWM is turned off by, in addition to
-disabling it, also setting the duty cycle to 0. This causes the resume
-operation to apply a configuration that is different from the current
-configuration, resulting in the proper state from before suspend getting
-restored.
+Instead of confusingly returning -EBUSY on failure to obtain an
+interrupt, propagate the real error code. While at it, let the user know
+why the interrupt could not be acquired.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/hwmon/pwm-fan.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-tegra.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 936aaf76dd6e..7da6a160d45a 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -294,9 +294,19 @@ static int pwm_fan_remove(struct platform_device *pdev)
- static int pwm_fan_suspend(struct device *dev)
- {
- 	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
-+	struct pwm_args args;
-+	int ret;
-+
-+	pwm_get_args(ctx->pwm, &args);
-+
-+	if (ctx->pwm_value) {
-+		ret = pwm_config(ctx->pwm, 0, args.period);
-+		if (ret < 0)
-+			return ret;
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index 8dc48fe7fc35..c9e77a83cd1b 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -322,9 +322,13 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(info->rtc_base))
+ 		return PTR_ERR(info->rtc_base);
  
--	if (ctx->pwm_value)
- 		pwm_disable(ctx->pwm);
+-	info->tegra_rtc_irq = platform_get_irq(pdev, 0);
+-	if (info->tegra_rtc_irq <= 0)
+-		return -EBUSY;
++	ret = platform_get_irq(pdev, 0);
++	if (ret <= 0) {
++		dev_err(&pdev->dev, "failed to get platform IRQ: %d\n", ret);
++		return ret;
 +	}
 +
- 	return 0;
- }
++	info->tegra_rtc_irq = ret;
  
+ 	info->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(info->clk))
 -- 
 2.19.0
 
