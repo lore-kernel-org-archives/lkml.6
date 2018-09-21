@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C13ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103C8ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D069E21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A840F21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:26:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NEy6nt7F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D069E21523
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QOMxQSZ0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A840F21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389986AbeIUSO6 (ORCPT
+        id S2390013AbeIUSPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:14:58 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47698 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389910AbeIUSO6 (ORCPT
+        Fri, 21 Sep 2018 14:15:02 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53966 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389634AbeIUSPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:14:58 -0400
+        Fri, 21 Sep 2018 14:15:02 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180921122618euoutp029656f71cb038d71ba83b45c6a90cbcae~WaeqMXkCG2217422174euoutp02N
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:26:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180921122618euoutp029656f71cb038d71ba83b45c6a90cbcae~WaeqMXkCG2217422174euoutp02N
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180921122621euoutp0170fe0b8ecfad27b17771615e40bbbf09~Waes1RlMI0246802468euoutp01G
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:26:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180921122621euoutp0170fe0b8ecfad27b17771615e40bbbf09~Waes1RlMI0246802468euoutp01G
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537532778;
-        bh=T59ti9Ug5BqCYqp8sra8DJ1fKLQ73dUj8tuniH46HQ8=;
+        s=mail20170921; t=1537532781;
+        bh=Gc8A4fvoVeATfeVJrujwYupX10uY+pxjztNgKaOOvww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NEy6nt7F64MID7w+Q2uYq1bri3uJMkCpgl0QfGe0rhd8eO+gj1xZ6uEBAJkr5TzXv
-         JoVpX9P3FH4p0e9/AUyWtDPsCl7ZR9DIQLpvvBjObeQ6wRowbq4WCNuFoLlb3TX9rm
-         CDWsvtiK+dhTARMRGuPMEq3pRo9SwC9hVsCjZW4Q=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180921122618eucas1p10afe58c59930e16713f2487516bec993~Waepb-hAa1146811468eucas1p1a;
-        Fri, 21 Sep 2018 12:26:18 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 8B.9F.04441.963E4AB5; Fri, 21
-        Sep 2018 13:26:17 +0100 (BST)
+        b=QOMxQSZ0EdMSuD8Pp/wAq+H1dBNKSxuYy5L1csQ0OFFE1A71prrAaROB+FjSihacA
+         f9CiNPWcNu1MfOcH4MKvxxHe8TIGdsqiBGbYQEcFQ7QlCkIspTi63eApeySkPyw88r
+         A/cebMe0V41mLJ4bXFyJ3p5GsSbupZb1igoUn92Y=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180921122620eucas1p268b98d570a140945ea98e70fb4e51f07~Waer5jTvS1104511045eucas1p2b;
+        Fri, 21 Sep 2018 12:26:20 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 66.7C.04294.C63E4AB5; Fri, 21
+        Sep 2018 13:26:20 +0100 (BST)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20180921122617eucas1p1c167a8ea2aeca02fb3927aa3660ff540~WaeojFnZu1309513095eucas1p1G;
-        Fri, 21 Sep 2018 12:26:17 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401~Waeq06DpV1393813938eucas1p2k;
+        Fri, 21 Sep 2018 12:26:19 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180921122616eusmtrp1e98426defbdd8c1adabf44ee024d4a7b~WaeoRbQBn2872728727eusmtrp1M;
-        Fri, 21 Sep 2018 12:26:16 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-c9-5ba4e3697b8e
+        20180921122619eusmtrp1a776d3c7a344257c480150397ea69f62~WaeqjG5Jb2872728727eusmtrp1R;
+        Fri, 21 Sep 2018 12:26:19 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-8e-5ba4e36cdc58
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C7.69.04284.863E4AB5; Fri, 21
-        Sep 2018 13:26:16 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C9.69.04284.B63E4AB5; Fri, 21
+        Sep 2018 13:26:19 +0100 (BST)
 Received: from AMDC2034.DIGITAL.local (unknown [106.120.51.41]) by
         eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180921122616eusmtip1a4c04bb741e9d7657c6b0e1c1e54a465~WaensUlaU2106721067eusmtip1b;
-        Fri, 21 Sep 2018 12:26:16 +0000 (GMT)
+        20180921122618eusmtip1c8a2162f57eedac5f8641d35bdde390d~Waep66Eqt2109621096eusmtip1O;
+        Fri, 21 Sep 2018 12:26:18 +0000 (GMT)
 From:   Christoph Manszewski <c.manszewski@samsung.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
@@ -74,55 +74,54 @@ Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/3] drm/exynos: mixer: Make pixel blend mode configurable
-Date:   Fri, 21 Sep 2018 14:24:37 +0200
+Subject: [PATCH 3/3] drm/exynos: mixer: Make plane alpha configurable
+Date:   Fri, 21 Sep 2018 14:24:38 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537532678-4276-1-git-send-email-c.manszewski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djPc7qZj5dEG7TO17O4te4cq0XvuZNM
-        FhtnrGe1OL57KaPFla/v2Swm3Z/AYvHi3kUWi/7Hr5ktzp/fwG5xtukNu8Wmx9dYLS7vmsNm
-        MeP8PiaLtUfuslvMmPySzYHfY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEVx2aSk
-        5mSWpRbp2yVwZby81sxScFKl4seGz6wNjMfluhg5OSQETCT2zfvM2sXIxSEksIJRYuFSEIcT
-        yPnCKPFrZxGE/ZlR4nW/EUzDpn372SAaljNKXNiyDKobqKHt8wtGkCo2AVOJ23c/sYHYIgLK
-        En8nrmIEKWIW2MoisffkDSaQhLCAl8TL45+AbA4OFgFViQ+rwiE2yEncPNfJDGJzCnhIrPvx
-        jAUivo1d4tOZCBCbV6BMYsm52YwQcReJi8/PQNnCEq+Ob2GHsGUkTk/uYQHZKyHQzChx68s1
-        VghnAqPEwdVdUFOtJTbdeAV2BLOApsT6XfoQYUeJ+89usIKEJQT4JG68FQQJMwOZk7ZNZ4YI
-        80p0tAlBVKtJvN6yhQ1m7YvPX6HO8ZB4ufkLNEBnM0o8POcxgVF+FsKuBYyMqxjFU0uLc9NT
-        iw3zUsv1ihNzi0vz0vWS83M3MQITz+l/xz/tYPx6KekQowAHoxIPr8HixdFCrIllxZW5hxgl
-        OJiVRHj3dS2JFuJNSaysSi3Kjy8qzUktPsQozcGiJM7Lp5UWLSSQnliSmp2aWpBaBJNl4uCU
-        amDk6dGfznv8rlhTQIy8e8QMp93qrMyhlv8dl23/JhV7ViBe8YRAawjfith35/xlLpwy/eec
-        ISK27Wzg9E1nig++u1PYaJxglGa3X15froV5bc+rE9H997wXJZmt/sD/1vJZLf/Ha459k+Nz
-        qg5bHu1/sTZgwY3z3e3lix6z3HOz2OrSIrk9/KwSS3FGoqEWc1FxIgAZ4C13OAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42I5/e/4Xd2Mx0uiDVadNrC4te4cq0XvuZNM
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa0hTYRjm27nsaM1OU/FDQ2NilpWaWJxuZmC0ikKQoPJHnfKkkpuyeTdq
+        WabOuxZ5yTBdafPaUhM1LRXFSxtiiRdMwbJdElNnZXTbdpT+PZf34X3ej49A+FWYIxEujmYk
+        YjpCgFujzb2rmt0Rs4pg79FOe2qiTo1RWep+DvW8sB6j+tqeAOrdygJO5U/nopT2wzBK5cwa
+        EEqjaeBSb5O/cCnV7ChGjbQ+xKlCTQeHqu2Z4lKFBTrcf5NQpUzHhS+/zWDC6Yw+jvCF4qYw
+        u1EJhMsq50D8gvWhECYiPJaRePldsg5rep0DorK84h/pNLgMdLrLgRUBSV/4vTkbkwNrgk9W
+        AZihK+GyxAigsXYGZckygIYOFb4eWV5MQVijEsBS7S2O2bBEJtXxZoyTe+Hk1JIlYEe6wt95
+        SmAOIGQTCl/1j1kCtuQxOK/+a8Eo6QYr04bXNjjDcXU6YsZWpBDW/ZhDWb2ZC++rg8yYR8bC
+        1NF+wOoBUKXWrc3YQn1fI5fFW+BgQablBEjeBnDCOIqxJBfAN9XytcRBqBrTm1oQpno7YH2r
+        Fysfhe33ujGzDEkbODa/2SwjJpjf/ABhZR5Mu8tnp7dBQ2Mjvr5Wu7yyVk0I9Q0dgH2sEgAX
+        ZancXOBS/H9ZGQBK4MDESEWhjNRHzMR5SmmRNEYc6nklUqQCpv8z+KfP2AJaf13uAiQBBBt5
+        3hUVwXyMjpUmiLoAJBCBHa9Drgjm80LohERGEnlREhPBSLuAE4EKHHg2HleD+WQoHc1cY5go
+        RrLucggrRxnYL9uXOS6I6yYPD6Co29z7oER6YnrExb1ooNSvbGj7fP6naX5Bnrb8Tm3RVkXL
+        ruKdp3wC9P03HD6f1Y4niz/61ifUZPUcoe1LA4f8n7aNPDiZumHp63H+ZJyHy2PX8z9PEO7u
+        q9V+NfIk7+uGpBSnxfL20y3nNAd6s4yVC88GziQLUGkYvccDkUjpfyb5Fc07AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42I5/e/4Xd3sx0uiDd7N5ba4te4cq0XvuZNM
         FhtnrGe1OL57KaPFla/v2Swm3Z/AYvHi3kUWi/7Hr5ktzp/fwG5xtukNu8Wmx9dYLS7vmsNm
         MeP8PiaLtUfuslvMmPySzYHfY9OqTjaP7d8esHrc7z7O5LF5Sb1H35ZVjB6fN8kFsEXp2RTl
-        l5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZby81sxScFKl
-        4seGz6wNjMfluhg5OSQETCQ27dvP1sXIxSEksJRRYlH/SzaIhIzEvLN9ULawxJ9rXVBFnxgl
-        Vh54xQySYBMwlbh99xNYkYiAssTfiasYQYqYBQ6ySLRsPMMIkhAW8JJ4efwTUxcjBweLgKrE
-        h1XhIGFeAXeJw2cnMkEskJO4ea4TbCangIfEuh/PWEDKhYBqTq03mcDIt4CRYRWjSGppcW56
-        brGhXnFibnFpXrpecn7uJkZgLGw79nPzDsZLG4MPMQpwMCrx8BosXhwtxJpYVlyZe4hRgoNZ
-        SYR3X9eSaCHelMTKqtSi/Pii0pzU4kOMpkAnTWSWEk3OB8ZpXkm8oamhuYWlobmxubGZhZI4
-        73mDyighgfTEktTs1NSC1CKYPiYOTqkGRuelR16+kno9y+uvwIVLs2WFPPwem1y06F7A+uOX
-        itH0SqWnJ54yhJZ/1XnPsXvW5dVvd84PiE1sa3NffWDpqkUrj2eelNSTuNxv9+Z7Y08ww+Iu
-        uQlTxWOC9279IKLM45U4bfOH+7sXFQXbX53DVCsgsuGLUtyTrx1TTzt5Tvvv9eFpwr19V1uV
-        WIozEg21mIuKEwGVUg6gmwIAAA==
-Message-Id: <20180921122617eucas1p1c167a8ea2aeca02fb3927aa3660ff540~WaeojFnZu1309513095eucas1p1G@eucas1p1.samsung.com>
-X-CMS-MailID: 20180921122617eucas1p1c167a8ea2aeca02fb3927aa3660ff540
+        l5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZWw90M9Y0Ktf
+        Me/lebYGxv3qXYycHBICJhKfP7YydzFycQgJLGWUmPTsMAtEQkZi3tk+NghbWOLPtS42iKJP
+        jBJvTj5gB0mwCZhK3L77CaxIREBZ4u/EVYwgRcwCB1kkWjaeYQRJCAu4Srw9958JxGYRUJVY
+        3nERrIFXwF1i0Y9fUBvkJG6e62QGsTkFPCTW/XgGdAUH0DZ3iVPrTSYw8i1gZFjFKJJaWpyb
+        nltsqFecmFtcmpeul5yfu4kRGA3bjv3cvIPx0sbgQ4wCHIxKPLwGixdHC7EmlhVX5h5ilOBg
+        VhLh3de1JFqINyWxsiq1KD++qDQntfgQoynQTROZpUST84GRmlcSb2hqaG5haWhubG5sZqEk
+        znveoDJKSCA9sSQ1OzW1ILUIpo+Jg1OqgVH9/brmidE+264oOb1d+dKNJ+sFG28Ox5wbak2N
+        P66aTfr8KzZXi32/R2/PvDXqLjObBU46LI1cvC3lnOSj44XbeZxEb+0t3qEnI7bw0fQ75rcY
+        eq193rxMYxNq2GrlfPHGps/n1fTFhSZ+v7lkwcye104vfMUnZGpLPBR91LlEn2de+3HuikIl
+        luKMREMt5qLiRABsazyrnAIAAA==
+Message-Id: <20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401~Waeq06DpV1393813938eucas1p2k@eucas1p2.samsung.com>
+X-CMS-MailID: 20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180921122617eucas1p1c167a8ea2aeca02fb3927aa3660ff540
+X-RootMTR: 20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180921122617eucas1p1c167a8ea2aeca02fb3927aa3660ff540
+X-CMS-RootMailID: 20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401
 References: <1537532678-4276-1-git-send-email-c.manszewski@samsung.com>
-        <CGME20180921122617eucas1p1c167a8ea2aeca02fb3927aa3660ff540@eucas1p1.samsung.com>
+        <CGME20180921122619eucas1p24ab7008bf55e7dbe3eb01e5ad85fc401@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mixer hardware supports both premultiplied alpha and
-non-premultiplied alpha. Currently premultiplied alpha is default, make
-this configurable.
+The mixer hardware supports variable plane alpha. Currently planes are
+opaque, make this configurable.
 
 Tested on Odroid-U3 with Exynos 4412 CPU, kernel next-20180913
 using modetest.
@@ -130,121 +129,154 @@ using modetest.
 Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
 ---
  drivers/gpu/drm/exynos/exynos_drm_drv.h   |  1 +
- drivers/gpu/drm/exynos/exynos_drm_plane.c |  7 +++++++
- drivers/gpu/drm/exynos/exynos_mixer.c     | 27 +++++++++++++++++++++------
- 3 files changed, 29 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_plane.c |  3 +++
+ drivers/gpu/drm/exynos/exynos_mixer.c     | 37 ++++++++++++++++++-------------
+ drivers/gpu/drm/exynos/regs-mixer.h       |  5 ++++-
+ 4 files changed, 30 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index c737c4bd2c19..1cb26d8c66f9 100644
+index 1cb26d8c66f9..ec1d5bcac61a 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
 +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -92,6 +92,7 @@ struct exynos_drm_plane {
- #define EXYNOS_DRM_PLANE_CAP_SCALE	(1 << 1)
+@@ -93,6 +93,7 @@ struct exynos_drm_plane {
  #define EXYNOS_DRM_PLANE_CAP_ZPOS	(1 << 2)
  #define EXYNOS_DRM_PLANE_CAP_TILE	(1 << 3)
-+#define EXYNOS_DRM_PLANE_CAP_PIX_BLEND	(1 << 4)
+ #define EXYNOS_DRM_PLANE_CAP_PIX_BLEND	(1 << 4)
++#define EXYNOS_DRM_PLANE_CAP_WIN_BLEND	(1 << 5)
  
  /*
   * Exynos DRM plane configuration structure.
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 755ca0e9ead2..236408906f1f 100644
+index 236408906f1f..df0508e0e49e 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -298,6 +298,10 @@ int exynos_plane_init(struct drm_device *dev,
- 		      const struct exynos_drm_plane_config *config)
- {
- 	int err;
-+	unsigned int supported_modes = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-+				       BIT(DRM_MODE_BLEND_PREMULTI) |
-+				       BIT(DRM_MODE_BLEND_COVERAGE);
-+	struct drm_plane *plane = &exynos_plane->base;
+@@ -325,5 +325,8 @@ int exynos_plane_init(struct drm_device *dev,
+ 	if (config->capabilities & EXYNOS_DRM_PLANE_CAP_PIX_BLEND)
+ 		drm_plane_create_blend_mode_property(plane, supported_modes);
  
- 	err = drm_universal_plane_init(dev, &exynos_plane->base,
- 				       1 << dev->mode_config.num_crtc,
-@@ -318,5 +322,8 @@ int exynos_plane_init(struct drm_device *dev,
- 	exynos_plane_attach_zpos_property(&exynos_plane->base, config->zpos,
- 			   !(config->capabilities & EXYNOS_DRM_PLANE_CAP_ZPOS));
- 
-+	if (config->capabilities & EXYNOS_DRM_PLANE_CAP_PIX_BLEND)
-+		drm_plane_create_blend_mode_property(plane, supported_modes);
++	if (config->capabilities & EXYNOS_DRM_PLANE_CAP_WIN_BLEND)
++		drm_plane_create_alpha_property(plane);
 +
  	return 0;
  }
 diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index ffbf4a950f69..721b63e92b28 100644
+index 721b63e92b28..e3a4ecbc503b 100644
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -131,14 +131,16 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
- 		.pixel_formats = mixer_formats,
+@@ -132,7 +132,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
  		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
  		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE |
--				EXYNOS_DRM_PLANE_CAP_ZPOS,
-+				EXYNOS_DRM_PLANE_CAP_ZPOS |
-+				EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
+ 				EXYNOS_DRM_PLANE_CAP_ZPOS |
+-				EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
++				EXYNOS_DRM_PLANE_CAP_PIX_BLEND |
++				EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
  	}, {
  		.zpos = 1,
  		.type = DRM_PLANE_TYPE_CURSOR,
- 		.pixel_formats = mixer_formats,
+@@ -140,7 +141,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
  		.num_pixel_formats = ARRAY_SIZE(mixer_formats),
  		.capabilities = EXYNOS_DRM_PLANE_CAP_DOUBLE |
--				EXYNOS_DRM_PLANE_CAP_ZPOS,
-+				EXYNOS_DRM_PLANE_CAP_ZPOS |
-+				EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
+ 				EXYNOS_DRM_PLANE_CAP_ZPOS |
+-				EXYNOS_DRM_PLANE_CAP_PIX_BLEND,
++				EXYNOS_DRM_PLANE_CAP_PIX_BLEND |
++				EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
  	}, {
  		.zpos = 2,
  		.type = DRM_PLANE_TYPE_OVERLAY,
-@@ -309,15 +311,22 @@ static void vp_default_filter(struct mixer_context *ctx)
+@@ -148,7 +150,8 @@ static const struct exynos_drm_plane_config plane_configs[MIXER_WIN_NR] = {
+ 		.num_pixel_formats = ARRAY_SIZE(vp_formats),
+ 		.capabilities = EXYNOS_DRM_PLANE_CAP_SCALE |
+ 				EXYNOS_DRM_PLANE_CAP_ZPOS |
+-				EXYNOS_DRM_PLANE_CAP_TILE,
++				EXYNOS_DRM_PLANE_CAP_TILE |
++				EXYNOS_DRM_PLANE_CAP_WIN_BLEND,
+ 	},
+ };
+ 
+@@ -311,8 +314,9 @@ static void vp_default_filter(struct mixer_context *ctx)
  }
  
  static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
--				bool alpha)
-+				unsigned int pixel_alpha)
+-				unsigned int pixel_alpha)
++				unsigned int pixel_alpha, unsigned int alpha)
  {
++	u32 win_alpha = alpha >> 8;
  	u32 val;
  
  	val  = MXR_GRP_CFG_COLOR_KEY_DISABLE; /* no blank key */
--	if (alpha) {
--		/* blending based on pixel alpha */
-+	switch (pixel_alpha) {
-+	case DRM_MODE_BLEND_PIXEL_NONE:
-+		break;
-+	case DRM_MODE_BLEND_COVERAGE:
-+		val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
-+		break;
-+	case DRM_MODE_BLEND_PREMULTI:
-+	default:
- 		val |= MXR_GRP_CFG_BLEND_PRE_MUL;
+@@ -328,21 +332,24 @@ static void mixer_cfg_gfx_blend(struct mixer_context *ctx, unsigned int win,
  		val |= MXR_GRP_CFG_PIXEL_BLEND_EN;
-+		break;
+ 		break;
  	}
++
++	if (alpha != DRM_BLEND_ALPHA_OPAQUE) {
++		val |= MXR_GRP_CFG_WIN_BLEND_EN;
++		val |= win_alpha;
++	}
  	mixer_reg_writemask(ctx, MXR_GRAPHIC_CFG(win),
  			    val, MXR_GRP_CFG_MISC_MASK);
-@@ -553,10 +562,16 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
- 	unsigned int win = plane->index;
- 	unsigned int x_ratio = 0, y_ratio = 0;
- 	unsigned int dst_x_offset, dst_y_offset;
-+	unsigned int pixel_alpha;
- 	dma_addr_t dma_addr;
- 	unsigned int fmt;
- 	u32 val;
+ }
  
-+	if (fb->format->has_alpha)
-+		pixel_alpha = state->base.pixel_blend_mode;
-+	else
-+		pixel_alpha = DRM_MODE_BLEND_PIXEL_NONE;
-+
- 	switch (fb->format->format) {
- 	case DRM_FORMAT_XRGB4444:
- 	case DRM_FORMAT_ARGB4444:
-@@ -616,7 +631,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
+-static void mixer_cfg_vp_blend(struct mixer_context *ctx)
++static void mixer_cfg_vp_blend(struct mixer_context *ctx, unsigned int alpha)
+ {
+-	u32 val;
++	u32 win_alpha = alpha >> 8;
++	u32 val = 0;
+ 
+-	/*
+-	 * No blending at the moment since the NV12/NV21 pixelformats don't
+-	 * have an alpha channel. However the mixer supports a global alpha
+-	 * value for a layer. Once this functionality is exposed, we can
+-	 * support blending of the video layer through this.
+-	 */
+-	val = 0;
++	if (alpha != DRM_BLEND_ALPHA_OPAQUE) {
++		val |= MXR_VID_CFG_BLEND_EN;
++		val |= win_alpha;
++	}
+ 	mixer_reg_write(ctx, MXR_VIDEO_CFG, val);
+ }
+ 
+@@ -538,7 +545,7 @@ static void vp_video_buffer(struct mixer_context *ctx,
+ 	vp_reg_write(ctx, VP_BOT_C_PTR, chroma_addr[1]);
+ 
+ 	mixer_cfg_layer(ctx, plane->index, priority, true);
+-	mixer_cfg_vp_blend(ctx);
++	mixer_cfg_vp_blend(ctx, state->base.alpha);
+ 
+ 	spin_unlock_irqrestore(&ctx->reg_slock, flags);
+ 
+@@ -631,7 +638,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
  	mixer_reg_write(ctx, MXR_GRAPHIC_BASE(win), dma_addr);
  
  	mixer_cfg_layer(ctx, win, priority, true);
--	mixer_cfg_gfx_blend(ctx, win, fb->format->has_alpha);
-+	mixer_cfg_gfx_blend(ctx, win, pixel_alpha);
+-	mixer_cfg_gfx_blend(ctx, win, pixel_alpha);
++	mixer_cfg_gfx_blend(ctx, win, pixel_alpha, state->base.alpha);
  
  	/* layer update mandatory for mixer 16.0.33.0 */
  	if (ctx->mxr_ver == MXR_VER_16_0_33_0 ||
+diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/exynos/regs-mixer.h
+index 189cfa2470a8..d2b8194a07bf 100644
+--- a/drivers/gpu/drm/exynos/regs-mixer.h
++++ b/drivers/gpu/drm/exynos/regs-mixer.h
+@@ -109,12 +109,15 @@
+ #define MXR_CFG_SCAN_HD			(1 << 0)
+ #define MXR_CFG_SCAN_MASK		0x47
+ 
++/* bits for MXR_VIDEO_CFG */
++#define MXR_VID_CFG_BLEND_EN		(1 << 16)
++
+ /* bits for MXR_GRAPHICn_CFG */
+ #define MXR_GRP_CFG_COLOR_KEY_DISABLE	(1 << 21)
+ #define MXR_GRP_CFG_BLEND_PRE_MUL	(1 << 20)
+ #define MXR_GRP_CFG_WIN_BLEND_EN	(1 << 17)
+ #define MXR_GRP_CFG_PIXEL_BLEND_EN	(1 << 16)
+-#define MXR_GRP_CFG_MISC_MASK		((3 << 16) | (3 << 20))
++#define MXR_GRP_CFG_MISC_MASK		((3 << 16) | (3 << 20) | 0xff)
+ #define MXR_GRP_CFG_FORMAT_VAL(x)	MXR_MASK_VAL(x, 11, 8)
+ #define MXR_GRP_CFG_FORMAT_MASK		MXR_GRP_CFG_FORMAT_VAL(~0)
+ #define MXR_GRP_CFG_ALPHA_VAL(x)	MXR_MASK_VAL(x, 7, 0)
 -- 
 2.7.4
 
