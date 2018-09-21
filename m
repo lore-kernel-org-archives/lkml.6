@@ -2,121 +2,162 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C29C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CB3ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59582086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:18:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EAC72086E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:18:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sL9oakTz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59582086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="WU8mBRIb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EAC72086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389531AbeIUPGQ (ORCPT
+        id S2389550AbeIUPGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:06:16 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36090 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389313AbeIUPGP (ORCPT
+        Fri, 21 Sep 2018 11:06:32 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44429 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUPGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:06:15 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1-v6so5784601pgo.3;
-        Fri, 21 Sep 2018 02:18:19 -0700 (PDT)
+        Fri, 21 Sep 2018 11:06:31 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s10-v6so10138342edb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 02:18:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qbcdu2B5IGt2CH1nNVSWZwz+ED7Rbqjhkqs6sbUcTt0=;
-        b=sL9oakTzvjsSooaNPYcIA2thAJvZiOd/6wE6YEbj0pKm+MFyKYPEYMlih2lV+KiFOL
-         w991247jXnjBz06NB9IB7yuJzV7HipNb4xyu4/50c+PLjpWkpRD0WFPt9Q7iplakJyj5
-         mAyzjaQeQ242zeczKsvooyWnvJ3kcKrKBAfPFDjsYZpndCrmYH4lMPluEhivZkg1Z83b
-         yuN01F16NKOdfdjE2ecD9c6WpM2rPgqN0Bv2+05NYLhapA/YYR1UI4kjBNc1C/8mhg37
-         VS8LUcICgKA+NvCRhikhvMxln0WSsu1Vse7rmYvRxbTA8io5B2BEKo+BqKRaDqUVjhOz
-         i4Iw==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7qp8I2J9cN2HrlPxm/AXMT+FJnXPh+bXknrDhTD6lcw=;
+        b=WU8mBRIbJkzVmjPokzWzIRTmPGSdrkEfhH7B7srTJox3iDaM9Jt4j5WugjKJN3SwEk
+         py5h1n4LtJYYka0sIUny7Ju0pJJrLatxXfv2hFTWjdElAdPK2kPeBmdWQc4xcYO0SOUC
+         1/cLCz6r51jQTkpJlBPXE31sBA7cB9tFRD69k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qbcdu2B5IGt2CH1nNVSWZwz+ED7Rbqjhkqs6sbUcTt0=;
-        b=V/S6xTsryVA02WP9oa/bStKndYCFd324xc7DXpWorcioCuTLAyIRrg8bSBJWbwRMkU
-         wacbpLfZ0z1loIwsAkAglZ0fh2v/a0Bo3HxgtoLd0Sahvne5887f4k+amyliriiBJRZ6
-         n+0fnJtEcOpvxXpHkd5zDpvk/d9fzDzo8mjxXiJjdE1jYmAlTcsG/aawJfRO3/VVJoPu
-         GnYLnGAvuestqjIvXeXPg1soRrN5oGqbphvGDA+5wtoGk9dl42Q3QXIjWVoJDA6OuoXc
-         bGVEe6NHIo9nvQZu9V8pE9dtlq6nuh7/sjtTX38QpSj7gDUtUVZElMTWjeP5VonBYc6b
-         1bEQ==
-X-Gm-Message-State: APzg51AMz+6BINfv933pFABCzoXEO/5A4bfq9Az89MJ+KtZiBa9OJfmL
-        Dx+ZBSxwkkkZ0w4YNMrOwZ8=
-X-Google-Smtp-Source: ANB0VdYeTCvy2J8ddelAk9OOspU6quRaVibdLiTamJydBmvWI7oA+VLobnPXcX1FEnKr12P+vZiNmw==
-X-Received: by 2002:a62:1b41:: with SMTP id b62-v6mr21912173pfb.172.1537521498776;
-        Fri, 21 Sep 2018 02:18:18 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id z11-v6sm45469800pfi.4.2018.09.21.02.18.18
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=7qp8I2J9cN2HrlPxm/AXMT+FJnXPh+bXknrDhTD6lcw=;
+        b=FcEbwMmwNV2YC+8Wvhe1PN/qx0k/4rKnsMOSZCgYs94/Zn8I7VUbkByPcOfkxUlZ/+
+         OwSzPHs1YbXGkGyaz3uz3BET92wHkuyqhrA+t63TCrlnGSkn8PbO4N4UV7mtiFKDWL/O
+         lDwjT/P3gEUry07VshBP0hqSnpvbBGC4HGq74IugJ+9e+ANqS6owiMWL/m+IiS5zBDTi
+         v4xaej0s6QMGFm3qjx9xhoAqv0fQ/yuS42+KqjuydDOJVBr8L4EUAK61b6ZUbcv70RBv
+         JqljF5kl7SBFCe/VGM41EFvI5nwR7ddF93ff4fcOKTDEAPbPxp86kKVVqlZh/yMM8Vrs
+         Dfig==
+X-Gm-Message-State: APzg51AhydSEJ/KTLX4/SWw4+7XUXz2qz81TujPeWR6nXLlHToWmutHX
+        WI86M3gTKGwjUDsf9z5foTDKAA==
+X-Google-Smtp-Source: ANB0VdYeTCVYdxShWNHioj9SlAvLTr4iSPnNH1QgjsvAN1Xy9j1aVPDV7r4NlA2gYTTUAU/5Mg/91g==
+X-Received: by 2002:a50:a105:: with SMTP id 5-v6mr7100286edj.186.1537521513519;
+        Fri, 21 Sep 2018 02:18:33 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id a19-v6sm2534316edd.69.2018.09.21.02.18.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 02:18:18 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 02:18:14 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        afd@ti.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: ina3221: Get channel names from DT node
-Message-ID: <20180921091813.GA21564@Asurada-Nvidia.nvidia.com>
-References: <20180921000753.21846-1-nicoleotsuka@gmail.com>
- <20180921000753.21846-3-nicoleotsuka@gmail.com>
- <21a6e8f3-c95d-43d0-ca3f-3f91ddfeff07@roeck-us.net>
- <20180921012038.GA23354@Asurada-Nvidia.nvidia.com>
+        Fri, 21 Sep 2018 02:18:32 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 11:18:30 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Eric Engestrom <eric.engestrom@intel.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/fourcc: rename Intel modifiers to follow the
+ naming convention
+Message-ID: <20180921091830.GA11082@phenom.ffwll.local>
+Mail-Followup-To: Eric Engestrom <eric.engestrom@intel.com>,
+        dri-devel@lists.freedesktop.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+References: <20180918172217.18754-1-eric.engestrom@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180921012038.GA23354@Asurada-Nvidia.nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180918172217.18754-1-eric.engestrom@intel.com>
+X-Operating-System: Linux phenom 4.14.0-1-amd64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, Sep 20, 2018 at 06:20:38PM -0700, Nicolin Chen wrote:
-> > So if there are no devicetree entries, the user now gets a sequence of
-> > "unknown" sensors ? I don't think so. Please keep in mind that there are
-> > users of this chip who don't have devicetree systems, and other users
-> > may not want to specify any specific name properties (or they use sensors3.conf
-> > to do it).
+On Tue, Sep 18, 2018 at 06:21:59PM +0100, Eric Engestrom wrote:
+> All the other vendors use the format
+> DRM_FORMAT_MOD_{SAMSUNG,QCOM,VIVANTE,NVIDIA,BROADCOM,ARM}_* for their
+> modifiers, except Intel.
 > 
-> Being enlightened by your comments below, maybe adding a
-> separate group for channel names by attaching is_visible
-> to it could be acceptable? Then, name nodes can hide from
-> those who don't want to specify.
- 
-> > > +		/* Log connected channels */
-> > > +		ina->attr_group[g++] = &ina3221_group[i];
-> > > +		ina->channel_name[i] = str;
-> > > +		ina->enable[i] = true;
-> > 
-> > I also don't see the need for defining the group dynamically. The
-> > is_visible callback is very well suited for handling optional sysfs
-> > attributes.
+> Suggested-by: Gerd Hoffmann <kraxel@redhat.com>
+> Signed-off-by: Eric Engestrom <eric.engestrom@intel.com>
 
-I tried is_visible but it looks like it won't be that neat to
-implement as some attributes of this driver don't really pass
-the channel index to the store()/show() but some other indexes.
+I think it'd be good to add why you want this (easier to parse in tooling,
+or something like that was what you said on irc). With that addressed,
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch> on both patches.
 
-If you are very against the dynamical group, I can drop it to
-leave the sysfs node as it was.
+Probably best if you get i915 maintainers to merge both through drm-intel.
+-Daniel
+> ---
+>  include/uapi/drm/drm_fourcc.h | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index 139632b871816f9e3dad..170a562223387687592a 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -271,7 +271,8 @@ extern "C" {
+>   * sharing. It exists since on a given platform it does uniquely identify the
+>   * layout in a simple way for i915-specific userspace.
+>   */
+> -#define I915_FORMAT_MOD_X_TILED	fourcc_mod_code(INTEL, 1)
+> +#define DRM_FORMAT_MOD_INTEL_X_TILED	fourcc_mod_code(INTEL, 1)
+> +#define I915_FORMAT_MOD_X_TILED	DRM_FORMAT_MOD_INTEL_X_TILED
+>  
+>  /*
+>   * Intel Y-tiling layout
+> @@ -286,7 +287,8 @@ extern "C" {
+>   * sharing. It exists since on a given platform it does uniquely identify the
+>   * layout in a simple way for i915-specific userspace.
+>   */
+> -#define I915_FORMAT_MOD_Y_TILED	fourcc_mod_code(INTEL, 2)
+> +#define DRM_FORMAT_MOD_INTEL_Y_TILED	fourcc_mod_code(INTEL, 2)
+> +#define I915_FORMAT_MOD_Y_TILED	DRM_FORMAT_MOD_INTEL_Y_TILED
+>  
+>  /*
+>   * Intel Yf-tiling layout
+> @@ -301,7 +303,8 @@ extern "C" {
+>   * 64 byte blocks of pixels contain four pixel rows of 16 bytes, where the width
+>   * in pixel depends on the pixel depth.
+>   */
+> -#define I915_FORMAT_MOD_Yf_TILED fourcc_mod_code(INTEL, 3)
+> +#define DRM_FORMAT_MOD_INTEL_Yf_TILED fourcc_mod_code(INTEL, 3)
+> +#define I915_FORMAT_MOD_Yf_TILED DRM_FORMAT_MOD_INTEL_Yf_TILED
+>  
+>  /*
+>   * Intel color control surface (CCS) for render compression
+> @@ -320,8 +323,10 @@ extern "C" {
+>   * But that fact is not relevant unless the memory is accessed
+>   * directly.
+>   */
+> -#define I915_FORMAT_MOD_Y_TILED_CCS	fourcc_mod_code(INTEL, 4)
+> -#define I915_FORMAT_MOD_Yf_TILED_CCS	fourcc_mod_code(INTEL, 5)
+> +#define DRM_FORMAT_MOD_INTEL_Y_TILED_CCS	fourcc_mod_code(INTEL, 4)
+> +#define I915_FORMAT_MOD_Y_TILED_CCS	DRM_FORMAT_MOD_INTEL_Y_TILED_CCS
+> +#define DRM_FORMAT_MOD_INTEL_Yf_TILED_CCS	fourcc_mod_code(INTEL, 5)
+> +#define I915_FORMAT_MOD_Yf_TILED_CCS	DRM_FORMAT_MOD_INTEL_Yf_TILED_CCS
+>  
+>  /*
+>   * Tiled, NV12MT, grouped in 64 (pixels) x 32 (lines) -sized macroblocks
+> -- 
+> Cheers,
+>   Eric
+> 
 
-And for the name nodes that I was talking about above, I will
-add an sysfs store() function so non-DT users can set them,
-and I also removed the confusing "unknown" default name.
-
-I have been rewriting the DT binding and it should make a lot
-of sense now comparing to this version. Will send v2 tomrrow.
-
-Thanks
-Nicolin
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
