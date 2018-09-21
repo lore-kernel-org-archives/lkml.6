@@ -2,82 +2,148 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CF6ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D258ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 094302154C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18FB521479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:25:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gzK5pDHL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 094302154C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GP4qjuN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18FB521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389702AbeIUSJy (ORCPT
+        id S2389647AbeIUSNj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 14:09:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33890 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727697AbeIUSJy (ORCPT
+        Fri, 21 Sep 2018 14:13:39 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46210 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUSNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 14:09:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9UjvAUTQUgqFx8GwnwHC8ESLZjSakdChu/DzRxkh1N4=; b=gzK5pDHLa8Lr2WTzOPjEay0gY
-        ixcgoezxLIfGj3VtbeJb00vN/yqVqP58SFbKwd9UQjinvzdKiqQBwFGNoSZrvrt1PUi5dViJVSY5n
-        gtk+ni6ZTk4Dlohz4M1ngzSZHyXVgtdrgz+r2Sw/xIKKBGo+LNu0TeijirOZR3XXqtNnSP5/jUM0R
-        cU634pSCAveZZc0SzkOCDuuYFET29OrByQ9PLqJYlWiJGnqnuNs5FMmVIT860PrXWIkN0G3e28p4E
-        2EzOUnJ5jZPGbZykju0E0A5pYA+vbFB63TpFiuPOu7OEYMnOAqqeKEgdTzkSDqXKLZtS3zhEwUKD2
-        +AVPkZaNg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g3KQh-0005ZC-IT; Fri, 21 Sep 2018 12:21:03 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C14E22024E449; Fri, 21 Sep 2018 14:20:58 +0200 (CEST)
-Date:   Fri, 21 Sep 2018 14:20:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [Problem] Cache line starvation
-Message-ID: <20180921122058.GB24124@hirez.programming.kicks-ass.net>
-References: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
+        Fri, 21 Sep 2018 14:13:39 -0400
+Received: by mail-io1-f67.google.com with SMTP id y12-v6so11944462ioj.13
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 05:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=FEdUn77hfplHsqh8OJiidognkuBS3sbEWNjMCJbO6VU=;
+        b=GP4qjuN05dK/c/Y08fV1cwM1zbmNoXO/DtzcncLXrcJovUTu/YiAIgZW2GqspfQFVd
+         DUvHDxTWQBd4sFKKrrE0mwwInpyo4hX6Zrsa83lbZpTpIRgSeq7I/1lk79VywlgU4Ail
+         bV7rTiz0QWimp8z4RjEgOJXT1kUgPQf/EHPP2gsZ4a1c4w8vVoo+mDEGxL5wf/KPzKpW
+         KoEM6YEVL5x3vg8aB5C6ootI8yBWAqS2Hrk7B/u7J4APBqfleB9BkydvO9Vt/5J+MB6+
+         xU7e1knycUsmVOcM4bFmCXbjS1rglXdjTW/ITO05jI8yUj5i+84WXamTYO7jLdWPM1P1
+         3XUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=FEdUn77hfplHsqh8OJiidognkuBS3sbEWNjMCJbO6VU=;
+        b=etgdHn4QU+nftMofTOuk8NT0LmRjlBTaAQEnjlxn6OXsMfui27Ktas9lHuRcsjWiHD
+         R0xLvKG1OyoUEO1u5FhGvJiMTrynZgc4uf73WQJUaPG5w1ZBq9wTSCsHod2fL0TXmSV+
+         Z/tVqLYmYXoM408bmI2VkMd1ZoLrDHp/xURma8H6PvbIXXLoGTnymkuK8n3J4jTrmIBx
+         iqpqrav2T64W02z9c1XQtEjYH9Avfc/bGN2G32yIgWTobNQ9l330+rk46QTWJ4koaySF
+         xyUG2ZvWBWetFNsCkORwvimSUifV0SHdOaWYrpJgaYRDPO5WjTYZ8A2o4Ld8o7Paf2ch
+         3PVw==
+X-Gm-Message-State: APzg51A19eQCwsJSq6uX942sIrNlkLCwD85hmP2I3o3nupm/86csHBkn
+        8sbboaf8MoBinrbsF93UFggyxSl3bzgjRsF/t1s1ug==
+X-Google-Smtp-Source: ANB0VdaNHfIHTAgSgtpHFhzU739EApcUV90eoDrRT4ferIYcUz1KEndOEVMf9lLEnE6sh9sh+FRb4d3PaiHuwdmXPgw=
+X-Received: by 2002:a6b:ca85:: with SMTP id a127-v6mr38249544iog.31.1537532700205;
+ Fri, 21 Sep 2018 05:25:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a02:3d47:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 05:24:59
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+aoFSySFTd9FzA0xzRYQXSbs-wzX7B67hD3jTGAQEXBOA@mail.gmail.com>
+References: <cover.1537383101.git.andreyknvl@google.com> <d74e710797323db0e43f047ea698fbc85060fc57.1537383101.git.andreyknvl@google.com>
+ <CACT4Y+aoFSySFTd9FzA0xzRYQXSbs-wzX7B67hD3jTGAQEXBOA@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Fri, 21 Sep 2018 14:24:59 +0200
+Message-ID: <CAAeHK+zBh0BiYq65QDxD-nxkHHF0QL6UQx8fs40K39R6XJJfzA@mail.gmail.com>
+Subject: Re: [PATCH v8 09/20] kasan: preassign tags to objects with ctors or SLAB_TYPESAFE_BY_RCU
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 02:02:26PM +0200, Sebastian Andrzej Siewior wrote:
-> We reproducibly observe cache line starvation on a Core2Duo E6850 (2
-> cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
-> cores).
-> 
-> The problem can be triggered with a v4.9-RT kernel by starting
+On Fri, Sep 21, 2018 at 1:25 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, Sep 19, 2018 at 8:54 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
 
-> Daniel reported that disabling ticket locks on 4.4 makes the problem go
-> away, but he hasn't run a long time test yet and as we saw with 4.14 it can
-> take quite a while.
+>>         if (!shuffle) {
+>>                 for_each_object_idx(p, idx, s, start, page->objects) {
+>> -                       setup_object(s, page, p);
+>> -                       if (likely(idx < page->objects))
+>> -                               set_freepointer(s, p, p + s->size);
+>> -                       else
+>> +                       if (likely(idx < page->objects)) {
+>> +                               next = p + s->size;
+>> +                               next = setup_object(s, page, next);
+>> +                               set_freepointer(s, p, next);
+>> +                       } else
+>>                                 set_freepointer(s, p, NULL);
+>>                 }
+>> -               page->freelist = fixup_red_left(s, start);
+>> +               start = fixup_red_left(s, start);
+>> +               start = setup_object(s, page, start);
+>> +               page->freelist = start;
+>>         }
+>
+> Just want to double-check that this is correct.
+> We now do an additional setup_object call after the loop, but we do 1
+> less in the loop. So total number of calls should be the same, right?
+> However, after the loop we call setup_object for the first object (?),
+> but inside of the loop we skip the call for the last object (?). Am I
+> missing something, or we call ctor twice for the last object and don't
+> call it for the first one?
 
-On 4.4 and 4.9 ARM64 still uses ticket locks. So I'm very interested to
-know if the ticket locks on x86 really fix or just make it harder.
+Inside the loop we call setup_object for the "next" object. So we
+start iterating on the first one, but call setup_object for the
+second. Then the loop moves on to the second one and calls
+setup_object for the third. And so on. So the loop calls setup_object
+for every object (including the last one) except for the first one.
 
-I've been looking at qspinlock in the light of this and there is indeed
-room for improvement. The ticket lock certainly is much simpler.
+The idea is that we want the freelist pointer that is stored in the
+current object to have a tagged pointer to the next one, so we need to
+assign a tag to the next object before storing the pointer in the
+current one.
