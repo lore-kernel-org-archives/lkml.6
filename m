@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B67E1ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFC8ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FCB21531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB4DF21547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 07:30:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Akx5S0Z8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FCB21531
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ax9QBPqE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4DF21547
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389542AbeIUNRS (ORCPT
+        id S2389715AbeIUNSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 09:17:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41621 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389527AbeIUNRR (ORCPT
+        Fri, 21 Sep 2018 09:18:24 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52498 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389437AbeIUNRQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 09:17:17 -0400
-Received: by mail-wr1-f66.google.com with SMTP id j15-v6so7712950wrt.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 00:29:41 -0700 (PDT)
+        Fri, 21 Sep 2018 09:17:16 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y139-v6so1938650wmc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 00:29:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=z6J0lcIe6xsRLogfR590wyd3HYBi8XsWqZR0RfEWiDM=;
-        b=Akx5S0Z82xq1MbncYzTFkwHgy5iwYVtLczSIMjJbOzn8qoos+tGCX4uj52tFfjbB0f
-         GbS0TX1d/VROuNnrJnmprt3qpU8JmbT7d/UyhtDP6l3YU2fQ/cPLDrG7Msekvy62yjxm
-         5EfJxIq4NFZdcOU+DrEeV9PylCbJpcUE0jUi4/hPYFGmJKY2VvicKvNivUl1yORaFI5s
-         Ucq38QsllX1rcSrKMWghsdVvFUOYgQJXa6QX8uSe+jxeOYi+1nGcUGo2RddhuFsNIXeX
-         kGtcgKmlLRmPT1aOff1nHRk2hLph2MqbKDtOBe2+0U0zKPsH6rfT/DrLWi1b+qcvhUSZ
-         I2oQ==
+        bh=enYwgS0Z/OX0ykxo6KT1YIz+qVBOPAuLng+TvhpgC2Q=;
+        b=ax9QBPqEHiCyAwwF9/F83G6RkY/zwF0zAVw4bJMCA1u1VBs4Vy6ldq+YfmdcLOfzO+
+         otZHdHSQo7uKd68dRs9RAOWOR7hV3GfJZ/mwv4p7GArn5WVEicO5U886Tt5k1XQk7IaY
+         4e1AmPKXXzgcwKBnbyvkevLCKKG/0J3hNSMG3wQMN+1GpLYdQ1A2iPSjKD4lF9/WlO3y
+         qV5Es+vp7uDcxclX5NZeDbY7v9ZHHqd33JWiHlxpPKramRuVO98kBj2Fw+tRWoJwoUly
+         /3Ukifj1mwgxhNuGmDv1NnPN++uzZeqaG7JzgXJfHFBKEuM3NmM4ds8lybkuar27m/Xe
+         cd3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=z6J0lcIe6xsRLogfR590wyd3HYBi8XsWqZR0RfEWiDM=;
-        b=RH/1x3M0Tt3PO9qw91nbFHm57rWCkqgRJ2IJrpzI6DrTR/8k6NuP/YRkdEnNgA2E4b
-         iggkt/D5GoMg2rlaLEh7hzd+19UCcVxusb7FjdK6RFeYwPB9+QURQoD48cvjoH8huhHV
-         M4k4nvIEF0DyLNf3MbyJ8wkWa88WowOKbsMDzxFeYOK5/JEafxFfTUI81It8oQwfEEJx
-         NPoHCV6Wf5tKpwcKps99ahoy8Twgk0FOM1wOeT0XSqEeWK9cOzzh4+fKMNdCZZC7/8qQ
-         X9S3CO8Ab1g3vqYbcPfetG/eKBkijy9qzpLPOzsP9RBpGrEAGKQKrxEfDIVwIyoJe0wU
-         OpHA==
-X-Gm-Message-State: APzg51AgEp1C7AqcBV0OTcMuLFVURm9Q7vuy9gp35gyOl7IBZshOPWEY
-        L9ToCX7Z769xSTRTrxP1nZI1HA==
-X-Google-Smtp-Source: ANB0Vdaq55vrhHmz5f5pWEZkhj14bLhOZoM4CqivPiNClz4+9ymd7vlGk9z6b5ddRtOBnAHIez2TEg==
-X-Received: by 2002:a5d:438d:: with SMTP id i13-v6mr37187271wrq.156.1537514981276;
-        Fri, 21 Sep 2018 00:29:41 -0700 (PDT)
+        bh=enYwgS0Z/OX0ykxo6KT1YIz+qVBOPAuLng+TvhpgC2Q=;
+        b=Bv4BLjF+hSrUM9uu6o1drqCw/pG2A9n0uly9Ac1IDw8ORJI1xEP/9k8oBXLzG3AF7N
+         hJReyWzlNSavBTiqWOoMC6wg4b/TNa9gF57OwuHSiq7UQW/2OOw5yXShdeGWq0GnneLV
+         8pw74GuYWl+Izk5TWFUsstd5BpvoNeIz7b6uhwsI6WC9iY9xDfrk0kzgh31359aCKb+E
+         9qjDw+7+ZBYARPgR09d0fhePQ8TBzXJiu6E5BXb7M7ANFfTn7CAMArHbuL25/5u87wNo
+         AmCk6OwwVdKCId7YoX1BBD0IA0N4HYoOveX0T+YEecIGS+SSbPCgxTpAbuo485u1MvKB
+         2Feg==
+X-Gm-Message-State: APzg51A1FYMIExjN7H+6jjtDtdYTUyMLRKcFr3E3Rvkj5Se+vbJeZrXi
+        yYGlTWP81+3UEcoLT6h6KCIT5A==
+X-Google-Smtp-Source: ANB0VdYVG3Hut091dxcPYAon/AW+q0CXTIGK9gN4AZuJZ11+Ckt6Rc5TXLYEijShq/9FbJTyefoz8g==
+X-Received: by 2002:a1c:88a:: with SMTP id 132-v6mr6142987wmi.9.1537514979956;
+        Fri, 21 Sep 2018 00:29:39 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm2841597wmb.33.2018.09.21.00.29.40
+        by smtp.gmail.com with ESMTPSA id d18-v6sm2841597wmb.33.2018.09.21.00.29.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 00:29:40 -0700 (PDT)
+        Fri, 21 Sep 2018 00:29:39 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         "David S . Miller" <davem@davemloft.net>,
@@ -75,9 +75,9 @@ To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 11/22] nvmem: change the signature of nvmem_unregister()
-Date:   Fri, 21 Sep 2018 09:29:10 +0200
-Message-Id: <20180921072921.19387-12-brgl@bgdev.pl>
+Subject: [PATCH v5 10/22] nvmem: mxs-ocotp: use devm_nvmem_register()
+Date:   Fri, 21 Sep 2018 09:29:09 +0200
+Message-Id: <20180921072921.19387-11-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180921072921.19387-1-brgl@bgdev.pl>
 References: <20180921072921.19387-1-brgl@bgdev.pl>
@@ -88,79 +88,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We switched the nvmem framework to using kref instead of manually
-checking the current number of users in nvmem_unregister() so this
-function can no longer fail. We also converted all remaining users
-that still checked the return value of nvmem_unregister() to using
-devm_nvmem_register(). Make the routine return void.
+Use the resource managed variant of nvmem_register();
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/nvmem/core.c           | 8 ++------
- include/linux/nvmem-provider.h | 9 +++------
- 2 files changed, 5 insertions(+), 12 deletions(-)
+ drivers/nvmem/mxs-ocotp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 920b56e500cc..bd14d04782cd 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -553,20 +553,16 @@ static void nvmem_device_release(struct kref *kref)
-  * nvmem_unregister() - Unregister previously registered nvmem device
-  *
-  * @nvmem: Pointer to previously registered nvmem device.
-- *
-- * Return: Will be an negative on error or a zero on success.
-  */
--int nvmem_unregister(struct nvmem_device *nvmem)
-+void nvmem_unregister(struct nvmem_device *nvmem)
- {
- 	kref_put(&nvmem->refcnt, nvmem_device_release);
--
--	return 0;
- }
- EXPORT_SYMBOL_GPL(nvmem_unregister);
+diff --git a/drivers/nvmem/mxs-ocotp.c b/drivers/nvmem/mxs-ocotp.c
+index 7018e2ef5714..53122f59c4b2 100644
+--- a/drivers/nvmem/mxs-ocotp.c
++++ b/drivers/nvmem/mxs-ocotp.c
+@@ -177,7 +177,7 @@ static int mxs_ocotp_probe(struct platform_device *pdev)
+ 	ocotp_config.size = data->size;
+ 	ocotp_config.priv = otp;
+ 	ocotp_config.dev = dev;
+-	otp->nvmem = nvmem_register(&ocotp_config);
++	otp->nvmem = devm_nvmem_register(dev, &ocotp_config);
+ 	if (IS_ERR(otp->nvmem)) {
+ 		ret = PTR_ERR(otp->nvmem);
+ 		goto err_clk;
+@@ -199,7 +199,7 @@ static int mxs_ocotp_remove(struct platform_device *pdev)
  
- static void devm_nvmem_release(struct device *dev, void *res)
- {
--	WARN_ON(nvmem_unregister(*(struct nvmem_device **)res));
-+	nvmem_unregister(*(struct nvmem_device **)res);
+ 	clk_unprepare(otp->clk);
+ 
+-	return nvmem_unregister(otp->nvmem);
++	return 0;
  }
  
- /**
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 24def6ad09bb..0f357d0c1e75 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -70,7 +70,7 @@ struct nvmem_config {
- #if IS_ENABLED(CONFIG_NVMEM)
- 
- struct nvmem_device *nvmem_register(const struct nvmem_config *cfg);
--int nvmem_unregister(struct nvmem_device *nvmem);
-+void nvmem_unregister(struct nvmem_device *nvmem);
- 
- struct nvmem_device *devm_nvmem_register(struct device *dev,
- 					 const struct nvmem_config *cfg);
-@@ -87,10 +87,7 @@ static inline struct nvmem_device *nvmem_register(const struct nvmem_config *c)
- 	return ERR_PTR(-ENOSYS);
- }
- 
--static inline int nvmem_unregister(struct nvmem_device *nvmem)
--{
--	return -ENOSYS;
--}
-+static inline void nvmem_unregister(struct nvmem_device *nvmem) {}
- 
- static inline struct nvmem_device *
- devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
-@@ -101,7 +98,7 @@ devm_nvmem_register(struct device *dev, const struct nvmem_config *c)
- static inline int
- devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
- {
--	return nvmem_unregister(nvmem);
-+	return -ENOSYS;
- 
- }
- 
+ static struct platform_driver mxs_ocotp_driver = {
 -- 
 2.18.0
 
