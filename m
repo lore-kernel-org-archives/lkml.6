@@ -2,268 +2,118 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C62C46475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64274C46472
 	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9603A2157C
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9603A2157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CC42221550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:28:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="D5QUgEQT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC42221550
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390477AbeIUV1x (ORCPT
+        id S2390470AbeIUVRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:27:53 -0400
-Received: from [217.140.106.52] ([217.140.106.52]:42147 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728149AbeIUV1x (ORCPT
+        Fri, 21 Sep 2018 17:17:46 -0400
+Received: from mail-it1-f171.google.com ([209.85.166.171]:38676 "EHLO
+        mail-it1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390111AbeIUVRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:27:53 -0400
-X-Greylist: delayed 3885 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Sep 2018 17:27:53 EDT
-Received: from e110455-lin.cambridge.arm.com (e110455-lin.cambridge.arm.com [10.2.131.2])
-        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id w8LEXrOm032346;
-        Fri, 21 Sep 2018 15:33:53 +0100
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Ayan Kumar Halder <ayan.halder@arm.com>
-Cc:     Brian Starkey <brian.starkey@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH v2] drm/arm/malidp: Validate rotations for compressed/uncompressed framebuffers for each layer
-Date:   Fri, 21 Sep 2018 15:33:53 +0100
-Message-Id: <20180921143353.15943-1-Liviu.Dudau@arm.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180615124654.GD15072@e110455-lin.cambridge.arm.com>
-References: <20180615124654.GD15072@e110455-lin.cambridge.arm.com>
+        Fri, 21 Sep 2018 17:17:45 -0400
+Received: by mail-it1-f171.google.com with SMTP id p129-v6so2301990ite.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=D9/GEtgl+LG4gkvsNGTC0CK6q4I40vIhsemOKcBgVtg=;
+        b=D5QUgEQTZEhZ3qRi2LoezB9K+5nfO1LwisKMJrHIINdUv6vzEG2wV9QzeheW4zlHYt
+         FgwsDQm5/ZsEi576EyDIWgmHNEXJXGRVeDb/neUv77hU7rPdUWxphj4k5HEpMbixl1bP
+         32qVdj8W2PhVs3zIQSAoE/GLo8PSa0T9N3vEI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=D9/GEtgl+LG4gkvsNGTC0CK6q4I40vIhsemOKcBgVtg=;
+        b=C4eZQV0CHeAsBiGLrWdsIaB2HKMor9y4KTyyKuFbtFA1nZX6cXO3D1x1X+jOvQs0hr
+         yYPXdcMrxmVWtOjmf6+LIVymNubg22n5TGuoBXeiQ4lD/hQQ78JDnR71f9ZoQd5x4enm
+         qosv+2uC/a46nc5s7sX/c5C6MTpgm/05hWeZk5Q6N7iJkiKSfVNi87O36WOt/xpQKayx
+         tMp0ohIE8Cv1BzyEXFpmT9CO6Jyg+0lBEmqIfzNJp63zYgHw9IN0Ey1o2zwo394n7dbw
+         uPXMWzE0T+puQsaw/JoqCySKqLnFbOc67hjo+AuOpVVCBXc/hqPx4za0MW0rgC53k31z
+         IMAw==
+X-Gm-Message-State: APzg51DMJ+9PTvYBCdFApl3lBM6T76ADLiHkOu9TOWi1mHTB8/m7Tgx6
+        0xX3rbhgcrtUQAlURC4MwXvvew5FcA7W+/zCS8ig3g==
+X-Google-Smtp-Source: ANB0Vdbmbb6PpjOhhyFHq0PeGb2wtcnZE/QZvZvfJyiAM0BffBd3Ae7KYq+cFQcn5xvPOV3ZurCBNWr22K0cHBJawUc=
+X-Received: by 2002:a24:e084:: with SMTP id c126-v6mr6350185ith.136.1537543701910;
+ Fri, 21 Sep 2018 08:28:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 08:28:21
+ -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <17157.1537542475@warthog.procyon.org.uk>
+References: <20180920151214.15484-1-mszeredi@redhat.com> <20180920151214.15484-6-mszeredi@redhat.com>
+ <17157.1537542475@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 21 Sep 2018 17:28:21 +0200
+Message-ID: <CAJfpegtw9pYrWv3zcWMJ6SMADcQ-JsSsE4UW3sEb1QM89U+WJg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] fsmount: do not use legacy MS_ flags
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ayan Kumar Halder <ayan.halder@arm.com>
+On Fri, Sep 21, 2018 at 5:07 PM, David Howells <dhowells@redhat.com> wrote:
+> Miklos Szeredi <mszeredi@redhat.com> wrote:
+>
+>> What happens if we introduce new flags for fsmount(2) and are already out
+>> of flags for mount(2)?  I see a big mess that way.
+>>
+>> So let's instead start a clean new set, to be used in the new API.
+>
+> If we must.  But let's not call them just M_* please.  Let's call them
+> MOUNT_ATTR_* or something.
 
-Add support for compressed framebuffers that are described using
-the framebuffer's modifier field. Mali DP uses the rotation memory for
-the decompressor of the format, so we need to check for space when
-the modifiers are present.
+Oh well.
 
-Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
-Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-[re-worded commit, rebased, cleaned up duplicated checks for
- RGB888 and BGR888 and removed additional parameter for
- rotmem_required function hook]
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
----
- drivers/gpu/drm/arm/malidp_crtc.c   | 28 ++++++++++++---------
- drivers/gpu/drm/arm/malidp_hw.c     | 38 ++++++++++++-----------------
- drivers/gpu/drm/arm/malidp_hw.h     |  7 ++++++
- drivers/gpu/drm/arm/malidp_planes.c | 19 +++++++++++----
- 4 files changed, 53 insertions(+), 39 deletions(-)
+>> The MS_RELATIME flag was accepted but ignored.  Simply leave this out of
+>> the new set, since "relatime" is the default.
+>
+> Can we make RELATIME, STRICTATIME and NOATIME an enum rather than individual
+> flags?
 
-diff --git a/drivers/gpu/drm/arm/malidp_crtc.c b/drivers/gpu/drm/arm/malidp_crtc.c
-index ef44202fb43f8..e1b72782848c3 100644
---- a/drivers/gpu/drm/arm/malidp_crtc.c
-+++ b/drivers/gpu/drm/arm/malidp_crtc.c
-@@ -348,19 +348,20 @@ static int malidp_crtc_atomic_check(struct drm_crtc *crtc,
- 
- 	/*
- 	 * check if there is enough rotation memory available for planes
--	 * that need 90° and 270° rotation. Each plane has set its required
--	 * memory size in the ->plane_check() callback, here we only make
--	 * sure that the sums are less that the total usable memory.
-+	 * that need 90° and 270° rotion or planes that are compressed.
-+	 * Each plane has set its required memory size in the ->plane_check()
-+	 * callback, here we only make sure that the sums are less that the
-+	 * total usable memory.
- 	 *
- 	 * The rotation memory allocation algorithm (for each plane):
--	 *  a. If no more rotated planes exist, all remaining rotate
--	 *     memory in the bank is available for use by the plane.
--	 *  b. If other rotated planes exist, and plane's layer ID is
--	 *     DE_VIDEO1, it can use all the memory from first bank if
--	 *     secondary rotation memory bank is available, otherwise it can
-+	 *  a. If no more rotated or compressed planes exist, all remaining
-+	 *     rotate memory in the bank is available for use by the plane.
-+	 *  b. If other rotated or compressed planes exist, and plane's
-+	 *     layer ID is DE_VIDEO1, it can use all the memory from first bank
-+	 *     if secondary rotation memory bank is available, otherwise it can
- 	 *     use up to half the bank's memory.
--	 *  c. If other rotated planes exist, and plane's layer ID is not
--	 *     DE_VIDEO1, it can use half of the available memory
-+	 *  c. If other rotated or compressed planes exist, and plane's layer ID
-+	 *     is not DE_VIDEO1, it can use half of the available memory.
- 	 *
- 	 * Note: this algorithm assumes that the order in which the planes are
- 	 * checked always has DE_VIDEO1 plane first in the list if it is
-@@ -372,7 +373,9 @@ static int malidp_crtc_atomic_check(struct drm_crtc *crtc,
- 
- 	/* first count the number of rotated planes */
- 	drm_atomic_crtc_state_for_each_plane_state(plane, pstate, state) {
--		if (pstate->rotation & MALIDP_ROTATED_MASK)
-+		struct drm_framebuffer *fb = pstate->fb;
-+
-+		if ((pstate->rotation & MALIDP_ROTATED_MASK) || fb->modifier)
- 			rotated_planes++;
- 	}
- 
-@@ -388,8 +391,9 @@ static int malidp_crtc_atomic_check(struct drm_crtc *crtc,
- 	drm_atomic_crtc_state_for_each_plane_state(plane, pstate, state) {
- 		struct malidp_plane *mp = to_malidp_plane(plane);
- 		struct malidp_plane_state *ms = to_malidp_plane_state(pstate);
-+		struct drm_framebuffer *fb = pstate->fb;
- 
--		if (pstate->rotation & MALIDP_ROTATED_MASK) {
-+		if ((pstate->rotation & MALIDP_ROTATED_MASK) || fb->modifier) {
- 			/* process current plane */
- 			rotated_planes--;
- 
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index b33000634a4ee..5549092e6c36a 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -85,41 +85,43 @@ static const struct malidp_format_id malidp550_de_formats[] = {
- 
- static const struct malidp_layer malidp500_layers[] = {
- 	/*  id, base address, fb pointer address base, stride offset,
--		yuv2rgb matrix offset, mmu control register offset */
-+	    yuv2rgb matrix offset, mmu control register offset, rotation_features */
- 	{ DE_VIDEO1, MALIDP500_DE_LV_BASE, MALIDP500_DE_LV_PTR_BASE,
--		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, 0 },
-+		MALIDP_DE_LV_STRIDE0, MALIDP500_LV_YUV2RGB, 0, ROTATE_ANY },
- 	{ DE_GRAPHICS1, MALIDP500_DE_LG1_BASE, MALIDP500_DE_LG1_PTR_BASE,
--		MALIDP_DE_LG_STRIDE, 0, 0 },
-+		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
- 	{ DE_GRAPHICS2, MALIDP500_DE_LG2_BASE, MALIDP500_DE_LG2_PTR_BASE,
--		MALIDP_DE_LG_STRIDE, 0, 0 },
-+		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
- };
- 
- static const struct malidp_layer malidp550_layers[] = {
- 	/*  id, base address, fb pointer address base, stride offset,
--		yuv2rgb matrix offset, mmu control register offset */
-+		yuv2rgb matrix offset, mmu control register offset, rotation_features */
- 	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
--		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0 },
-+		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY },
- 	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
--		MALIDP_DE_LG_STRIDE, 0, 0 },
-+		MALIDP_DE_LG_STRIDE, 0, 0, ROTATE_ANY },
- 	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
--		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0 },
-+		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB, 0, ROTATE_ANY },
- 	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
--		MALIDP550_DE_LS_R1_STRIDE, 0, 0 },
-+		MALIDP550_DE_LS_R1_STRIDE, 0, 0, ROTATE_NONE },
- };
- 
- static const struct malidp_layer malidp650_layers[] = {
- 	/*  id, base address, fb pointer address base, stride offset,
--		yuv2rgb matrix offset, mmu control register offset */
-+		yuv2rgb matrix offset, mmu control register offset, rotation_features */
- 	{ DE_VIDEO1, MALIDP550_DE_LV1_BASE, MALIDP550_DE_LV1_PTR_BASE,
- 		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB,
--		MALIDP650_DE_LV_MMU_CTRL },
-+		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY },
- 	{ DE_GRAPHICS1, MALIDP550_DE_LG_BASE, MALIDP550_DE_LG_PTR_BASE,
--		MALIDP_DE_LG_STRIDE, 0, MALIDP650_DE_LG_MMU_CTRL },
-+		MALIDP_DE_LG_STRIDE, 0, MALIDP650_DE_LG_MMU_CTRL,
-+		ROTATE_COMPRESSED },
- 	{ DE_VIDEO2, MALIDP550_DE_LV2_BASE, MALIDP550_DE_LV2_PTR_BASE,
- 		MALIDP_DE_LV_STRIDE0, MALIDP550_LV_YUV2RGB,
--		MALIDP650_DE_LV_MMU_CTRL },
-+		MALIDP650_DE_LV_MMU_CTRL, ROTATE_ANY },
- 	{ DE_SMART, MALIDP550_DE_LS_BASE, MALIDP550_DE_LS_PTR_BASE,
--		MALIDP550_DE_LS_R1_STRIDE, 0, MALIDP650_DE_LS_MMU_CTRL },
-+		MALIDP550_DE_LS_R1_STRIDE, 0, MALIDP650_DE_LS_MMU_CTRL,
-+		ROTATE_NONE },
- };
- 
- #define SE_N_SCALING_COEFFS	96
-@@ -314,10 +316,6 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
- 
- static int malidp500_rotmem_required(struct malidp_hw_device *hwdev, u16 w, u16 h, u32 fmt)
- {
--	/* RGB888 or BGR888 can't be rotated */
--	if ((fmt == DRM_FORMAT_RGB888) || (fmt == DRM_FORMAT_BGR888))
--		return -EINVAL;
--
- 	/*
- 	 * Each layer needs enough rotation memory to fit 8 lines
- 	 * worth of pixel data. Required size is then:
-@@ -605,10 +603,6 @@ static int malidp550_rotmem_required(struct malidp_hw_device *hwdev, u16 w, u16
- {
- 	u32 bytes_per_col;
- 
--	/* raw RGB888 or BGR888 can't be rotated */
--	if ((fmt == DRM_FORMAT_RGB888) || (fmt == DRM_FORMAT_BGR888))
--		return -EINVAL;
--
- 	switch (fmt) {
- 	/* 8 lines at 4 bytes per pixel */
- 	case DRM_FORMAT_ARGB2101010:
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index 0d7f9ea0ade89..3ab133d49bbad 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -36,6 +36,12 @@ enum {
- 	SE_MEMWRITE = BIT(5),
- };
- 
-+enum rotation_features {
-+	ROTATE_NONE,		/* does not support rotation at all */
-+	ROTATE_ANY,		/* supports rotation on any buffers */
-+	ROTATE_COMPRESSED,	/* supports rotation only on compressed buffers */
-+};
-+
- struct malidp_format_id {
- 	u32 format;		/* DRM fourcc */
- 	u8 layer;		/* bitmask of layers supporting it */
-@@ -63,6 +69,7 @@ struct malidp_layer {
- 	u16 stride_offset;	/* offset to the first stride register. */
- 	s16 yuv2rgb_offset;	/* offset to the YUV->RGB matrix entries */
- 	u16 mmu_ctrl_offset;    /* offset to the MMU control register */
-+	enum rotation_features rot;	/* type of rotation supported */
- };
- 
- enum malidp_scaling_coeff_set {
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index c21b44effa5a7..36d2952774b22 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -433,11 +433,20 @@ static int malidp_de_plane_check(struct drm_plane *plane,
- 	if (ret)
- 		return ret;
- 
--	/* packed RGB888 / BGR888 can't be rotated or flipped */
--	if (state->rotation != DRM_MODE_ROTATE_0 &&
--	    (fb->format->format == DRM_FORMAT_RGB888 ||
--	     fb->format->format == DRM_FORMAT_BGR888))
--		return -EINVAL;
-+	/* validate the rotation constraints for each layer */
-+	if (state->rotation != DRM_MODE_ROTATE_0) {
-+		if (mp->layer->rot == ROTATE_NONE)
-+			return -EINVAL;
-+		if ((mp->layer->rot == ROTATE_COMPRESSED) && !!(fb->modifier))
-+			return -EINVAL;
-+		/*
-+		 * packed RGB888 / BGR888 can't be rotated or flipped
-+		 * unless they are stored in a compressed way
-+		 */
-+		if ((fb->format->format == DRM_FORMAT_RGB888 ||
-+		     fb->format->format == DRM_FORMAT_BGR888) && !!(fb->modifier))
-+			return -EINVAL;
-+	}
- 
- 	ms->rotmem_size = 0;
- 	if (state->rotation & MALIDP_ROTATED_MASK) {
--- 
-2.18.0
+Sure.
 
+>
+>         #define MOUNT_ATTR_RDONLY       0x01
+>         #define MOUNT_ATTR_NOSUID       0x02
+>         #define MOUNT_ATTR_NODEV        0x04
+>         #define MOUNT_ATTR_NOEXEC       0x08
+>         #define MOUNT_ATTR_RELATIME     0x00
+>         #define MOUNT_ATTR_NOATIME      0x10
+>         #define MOUNT_ATTR_STRICTATIME  0x20
+>         #define MOUNT_ATTR_ATIME_MASK   0x30
+>         #define MOUNT_ATTR_NODIRATIME   0x40
+>
+> We can also use these for a mount_setattr() syscall:
+>
+>         mount_setattr(int dfd, const char *path, unsigned int atflags,
+>                       unsigned int attr_values,
+>                       unsigned int attr_mask);
+>
+> where atflags can potentially include AT_RECURSIVE.
+
+Indeed.  Also, shouldn't these include the propagation flags?
+
+Thanks,
+Miklos
