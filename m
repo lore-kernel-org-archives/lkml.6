@@ -2,178 +2,122 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91889ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB981ECE560
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9267721567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:56:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1/eWWNt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9267721567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 7FC802156D
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 19:59:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC802156D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391343AbeIVBqc (ORCPT
+        id S2391351AbeIVBuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 21:46:32 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42956 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390726AbeIVBqc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 21:46:32 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f1-v6so12908850ljc.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 12:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=tyNFqlRgNIU7/JV5URMRHBQpAzwuRhN3gj7rS87SzuU=;
-        b=K1/eWWNt+yMrFsSjuBZLlgz3+ShAqzgPmDd+dEKAGkeKvQ6BCHYabdmGZWZn92V/HV
-         sKy6iMSfbI9FK5M17Vsp+ge69+AcG+zHX/Eu2qHqGyU1pa7mnmBYAZQUKXJLUyrX6qCY
-         4jPXZXo0FfrKHHHbM82+Rbz7jeA15/q7T7YOcG1BWkwGNS6x0Et6wHZFb/VWEUVvRdui
-         msOBQfdtWuVqx6TE90Ac86+B2KXEC1zG7Gdg1P0wiLuejx3/1LrOOabLCEoe6jxb0xyK
-         JOkz76jf4gnoihbpfCMgZzI3zC5fVnrCRgvoobQqu70xwX2b3KOQSTIy9tUuhNGXT74a
-         YehQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=tyNFqlRgNIU7/JV5URMRHBQpAzwuRhN3gj7rS87SzuU=;
-        b=BGBvKExvtn/KDakWsCjp4cj7K8BW8lzBaD+UFHJbToxAx4/Vw49WsTSzCOduz23t3P
-         bmOZ4l91KqzO7LyhdycpTIA/h/4EFajwwzPrRzqtMwvcpD9IYafBFTrkmzfceZz3aXH9
-         VhL9RlY2phtLK2eMFEyIGAGsE5IXATOoXpZHcozH8A2ek8yohkJfA0mYjEILa3E9nt9H
-         vWoB8bJdFBs5YwSoW4Dn9UoDeUHrTBSXMDu7CgnQ0Ua+2ps2NlSoFdws8FW/OeBUovQ9
-         trgLeGojmaX0gSSAKNewvUdKoz2bftQEUDagXdLMzM+0sEIZ3ZCQMXgGyhH8DY1g5gym
-         Garw==
-X-Gm-Message-State: ABuFfoiXJrk/sDv7IehpJyXT8UXpnUe7HOStRNlauAXugaVQofqfOCZO
-        CSsDVcnfmPijbSwBA4VLoiA=
-X-Google-Smtp-Source: ACcGV63xqxhWnwiHSOLYZWpQ/bSfuPrsunQbL01DTf0ghHshpFbkkjhdPSFd/DIY7s0F0+xucA8iBw==
-X-Received: by 2002:a2e:8905:: with SMTP id d5-v6mr3613071lji.97.1537559767369;
-        Fri, 21 Sep 2018 12:56:07 -0700 (PDT)
-Received: from duuni.helsinki.fi (nat-eduroam-hy-138-172.fe.helsinki.fi. [128.214.138.172])
-        by smtp.gmail.com with ESMTPSA id m12-v6sm5124683ljh.24.2018.09.21.12.56.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 12:56:06 -0700 (PDT)
-From:   Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-rpi-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
-Subject: [PATCH] staging: vc04_services: Remove unused vchiq_genversion script
-Date:   Fri, 21 Sep 2018 22:56:01 +0300
-Message-Id: <20180921195601.8776-1-tuomas.tynkkynen@iki.fi>
-X-Mailer: git-send-email 2.16.3
+        Fri, 21 Sep 2018 21:50:04 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25786 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390726AbeIVBuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 21:50:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 12:59:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,286,1534834800"; 
+   d="scan'208";a="75223255"
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga008.jf.intel.com with ESMTP; 21 Sep 2018 12:59:39 -0700
+Subject: Re: [patch V3 06/11] x86/mm/cpa: Add large page preservation
+ statistics
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180917142906.384767038@linutronix.de>
+ <20180917143546.160867778@linutronix.de>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Bin Yang <bin.yang@intel.com>,
+        Mark Gross <mark.gross@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <e72bda71-9aa6-3c1f-c224-09df181c38ec@intel.com>
+Date:   Fri, 21 Sep 2018 12:59:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180917143546.160867778@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As far as I can tell, this has never been used.
+On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
+> The large page preservation mechanism is just magic and provides no
+> information at all. Add optional statistic output in debugfs so the magic can
+> be evaluated. Defaults is off.
+> 
+> Output:
+> 
+>  1G pages checked:                    2
+>  1G pages sameprot:                   0
+>  1G pages preserved:                  0
+>  2M pages checked:                  540
+>  2M pages sameprot:                 466
+>  2M pages preserved:                 47
+>  4K pages checked:               800770
+>  4K pages set-checked:             7668
 
-Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
----
- .../interface/vchiq_arm/vchiq_genversion           | 88 ----------------------
- 1 file changed, 88 deletions(-)
- delete mode 100644 drivers/staging/vc04_services/interface/vchiq_arm/vchiq_genversion
+Very nice, of course.
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_genversion b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_genversion
-deleted file mode 100644
-index dd1f324a8654..000000000000
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_genversion
-+++ /dev/null
-@@ -1,88 +0,0 @@
--#!/usr/bin/perl -w
--# SPDX-License-Identifier: GPL-2.0
--
--use strict;
--
--#
--# Generate a version from available information
--#
--
--my $prefix = shift @ARGV;
--my $root = shift @ARGV;
--
--
--if ( not defined $root ) {
--	die "usage: $0 prefix root-dir\n";
--}
--
--if ( ! -d $root ) {
--	die "root directory $root not found\n";
--}
--
--my $version = "unknown";
--my $tainted = "";
--
--if ( -d "$root/.git" ) {
--	# attempt to work out git version. only do so
--	# on a linux build host, as cygwin builds are
--	# already slow enough
--
--	if ( -f "/usr/bin/git" || -f "/usr/local/bin/git" ) {
--		if (not open(F, "git --git-dir $root/.git rev-parse --verify HEAD|")) {
--			$version = "no git version";
--		}
--		else {
--			$version = <F>;
--			$version =~ s/[ \r\n]*$//;     # chomp may not be enough (cygwin).
--			$version =~ s/^[ \r\n]*//;     # chomp may not be enough (cygwin).
--		}
--
--		if (open(G, "git --git-dir $root/.git status --porcelain|")) {
--			$tainted = <G>;
--			$tainted =~ s/[ \r\n]*$//;     # chomp may not be enough (cygwin).
--			$tainted =~ s/^[ \r\n]*//;     # chomp may not be enough (cygwin).
--			if (length $tainted) {
--			$version = join ' ', $version, "(tainted)";
--		}
--		else {
--			$version = join ' ', $version, "(clean)";
--         }
--		}
--	}
--}
--
--my $hostname = `hostname`;
--$hostname =~ s/[ \r\n]*$//;     # chomp may not be enough (cygwin).
--$hostname =~ s/^[ \r\n]*//;     # chomp may not be enough (cygwin).
--
--
--print STDERR "Version $version\n";
--print <<EOF;
--#include "${prefix}_build_info.h"
--#include <linux/broadcom/vc_debug_sym.h>
--
--VC_DEBUG_DECLARE_STRING_VAR( ${prefix}_build_hostname, "$hostname" );
--VC_DEBUG_DECLARE_STRING_VAR( ${prefix}_build_version, "$version" );
--VC_DEBUG_DECLARE_STRING_VAR( ${prefix}_build_time,    __TIME__ );
--VC_DEBUG_DECLARE_STRING_VAR( ${prefix}_build_date,    __DATE__ );
--
--const char *vchiq_get_build_hostname( void )
--{
--   return vchiq_build_hostname;
--}
--
--const char *vchiq_get_build_version( void )
--{
--   return vchiq_build_version;
--}
--
--const char *vchiq_get_build_date( void )
--{
--   return vchiq_build_date;
--}
--
--const char *vchiq_get_build_time( void )
--{
--   return vchiq_build_time;
--}
--EOF
--- 
-2.16.3
+We've all rigged one of these up as we've played with this code, and
+this will certainly help the next issue that we have.
 
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
