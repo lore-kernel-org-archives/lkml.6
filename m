@@ -5,67 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45017ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA24ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B002098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB5B221523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:14:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z90Hgvv9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B002098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFOSd7yK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB5B221523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389626AbeIUQBU (ORCPT
+        id S2389657AbeIUQCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:01:20 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42684 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeIUQBU (ORCPT
+        Fri, 21 Sep 2018 12:02:21 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51688 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUQCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:01:20 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v17-v6so12275650wrr.9;
-        Fri, 21 Sep 2018 03:13:09 -0700 (PDT)
+        Fri, 21 Sep 2018 12:02:21 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y2-v6so2482559wma.1;
+        Fri, 21 Sep 2018 03:14:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=glZV49Ep2s2aL5s4iHVlVkhgYEOAi/oWCd5CUZz2C4w=;
-        b=Z90Hgvv9nZF3Y5tpt8dc10Q2p7xLvLqHfzxe5wsi0JPShcGHP0MeUH2uc/WrD6JnDs
-         +Ukttp+CUZN2bnOVIhUiCV/1sK8xcIW7iVlkjaXclQT1uRdHEZMeyemmqbh6H38p7L0p
-         0tKBbwTuhWtJipqp4czvHeJrxTbWceMUqMLmo58GfG0IV5//fgFXQG4bQPz2K1x9mA9G
-         vGLO6mqyp+bquJImJFtbhDPy1Lv6p8UpEOJyI4/pauixxmdVIq+1y088TnjI1tglYWql
-         FnSU50qU4jqyy3QDaoEnXC6IEYTjMOockbkbGiCsWfYmYDEDmz9R0u1VZfVIg5G7OYPs
-         PYCA==
+        bh=twlh7GbhGfcC9UTvG9ggOQuu123y4BtnylUREQZ/5O0=;
+        b=aFOSd7yK6kAXNflKr57Kkn90yqyZx8IB6wS1Kjzby2qZ/JSX6+leF63QYpIieR00ma
+         1j0yuoIHtmerRL0+A1FnXsdHVwHelRxxtx1D98OiFCF8RiU5ul/YwX7T5m8NjAMSlLpK
+         uatMYx6DD3lXociFLctUVZ5GUhebhnZmDmBjRoQPSnfZr7Z89Ir1QFQ2hEN4FEpJnpv5
+         KKeyaHPaLY7fWITMKvejfFmBNsgqP2FY5L1LsvzYw1JBlOzWkYCWuiPVN4XITE8Cz1OR
+         VXkPSlid/cCkpTBHNfqRV9zqOFo3IT0oUJD4s/xo3WoyVWGX2j59fjFHDPSBYogXgbji
+         996g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=glZV49Ep2s2aL5s4iHVlVkhgYEOAi/oWCd5CUZz2C4w=;
-        b=RODekaZrS6iow76ZJvE53x+MtwXA9TUMN5SeQDVB7gMHBvi6Tu+fFGz2+bEWBtmgOI
-         ES6pHlz/DymZs8OrlOQ7xJntKGEstT/odbobsduJZ/nWiGpu3Ztwd4G5xbaIbyrL3Tx/
-         2jK9W5cvnCwRsffpKgn/HLR2q40YtlU9q3qJgalLMBGRoXu+eec0mQ4YDl3AWVUkYQa7
-         Uzkpo1seGOrWN60kSkL7HUeN445pUd7KsSV5jNEZYxfdhmscF+/HfuYD5xY64EscTSf7
-         jB309+lDN4PxQsjdGLvpJlIh7t3oQ1nXj1LZ893Y4brWM0dA6peG2O/8PawyFzYEnZZE
-         kbbQ==
-X-Gm-Message-State: ABuFfogtpTOxXu8hU46trnhGhZFfwJawg7ktk8EHiNnQ+IdoCDNWXn80
-        bEEFQ/j1sDxDmFx9HWCNc6M+C3+v
-X-Google-Smtp-Source: ACcGV616P4uJIIQOS4Sm8Ox5SKRI9e8E1NEGevX1eXRYDKxvlKgvSpttoclsGm7yt3mUPa6mOZoiuA==
-X-Received: by 2002:adf:d084:: with SMTP id y4-v6mr946204wrh.152.1537524788491;
-        Fri, 21 Sep 2018 03:13:08 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id h10-v6sm5783793wmf.44.2018.09.21.03.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 03:13:08 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pwm: tegra: Remove gratuituous blank line
-Date:   Fri, 21 Sep 2018 12:13:07 +0200
-Message-Id: <20180921101307.12089-1-thierry.reding@gmail.com>
+        bh=twlh7GbhGfcC9UTvG9ggOQuu123y4BtnylUREQZ/5O0=;
+        b=X6XM//igbdX+rc4JDspcfqJ9XJljb8zrWl6ppsTiUlIotgvGy6NBvaBH8M5TIzW+29
+         2mCGMLZZlbxuk/AYeNdBvCFzGnyRF36ycRGI9zQlSFpnca9nmU4gXNns1ZliQDkhb09i
+         x7i4zTwVf6sFRdl0+2NrG11p84ZFr1OBkZfW8v4+O74NZAeOvcpxtnBIJtkuSaFaNVrC
+         fajZPwc+k89k/SJrALSnjxtBUP08wtJL80Ky60Lq3fkJd9FMoS2BJ+NVb0k1TZ8gETpL
+         yK2bYgDLp8X+VHXb42T9nDZS5gzRaCJFWi5RRzcDaoFu/AtiOEhNpWrPKvjQ7eDoUXyX
+         q7Lw==
+X-Gm-Message-State: APzg51DdRugp21/efu6S1dTv3wgiTSGUWVeb8cEnfKTVhWrjM8/t3s/i
+        aJW6jT4beLMTLTav0SINiLU=
+X-Google-Smtp-Source: ANB0VdYyZdwSRU0VsjiFkvZ8IJWcGuKkEQE64dT9JQ3zz/4KI+QWSDQYQyuFLVolJZVcn6we4s1tHQ==
+X-Received: by 2002:a1c:f60c:: with SMTP id w12-v6mr6789499wmc.80.1537524848953;
+        Fri, 21 Sep 2018 03:14:08 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id w94-v6sm20016715wrc.38.2018.09.21.03.14.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 03:14:08 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] i40e: Use proper enum in i40e_ndo_set_vf_link_state
+Date:   Fri, 21 Sep 2018 03:13:59 -0700
+Message-Id: <20180921101359.23911-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,28 +77,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Clang warns when one enumerated type is converted implicitly to another.
 
-It's common to follow a device tree ID table by the MODULE_DEVICE_TABLE
-immediately, without an extra blank line between.
+drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c:4214:42: warning:
+implicit conversion from enumeration type 'enum i40e_aq_link_speed' to
+different enumeration type 'enum virtchnl_link_speed'
+      [-Wenum-conversion]
+                pfe.event_data.link_event.link_speed = I40E_LINK_SPEED_40GB;
+                                                     ~ ^~~~~~~~~~~~~~~~~~~~
+1 warning generated.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Use the proper enum from virtchnl_link_speed, which has the same value
+as I40E_LINK_SPEED_40GB, VIRTCHNL_LINK_SPEED_40GB. This appears to be
+missed by commit ff3f4cc267f6 ("virtchnl: finish conversion to virtchnl
+interface").
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/81
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/pwm/pwm-tegra.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index f8ebbece57b7..48c4595a0ffc 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -300,7 +300,6 @@ static const struct of_device_id tegra_pwm_of_match[] = {
- 	{ .compatible = "nvidia,tegra186-pwm", .data = &tegra186_pwm_soc },
- 	{ }
- };
--
- MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
- 
- static const struct dev_pm_ops tegra_pwm_pm_ops = {
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 3e707c7e6782..916a98e6c0e6 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -4211,7 +4211,7 @@ int i40e_ndo_set_vf_link_state(struct net_device *netdev, int vf_id, int link)
+ 		vf->link_forced = true;
+ 		vf->link_up = true;
+ 		pfe.event_data.link_event.link_status = true;
+-		pfe.event_data.link_event.link_speed = I40E_LINK_SPEED_40GB;
++		pfe.event_data.link_event.link_speed = VIRTCHNL_LINK_SPEED_40GB;
+ 		break;
+ 	case IFLA_VF_LINK_STATE_DISABLE:
+ 		vf->link_forced = true;
 -- 
 2.19.0
 
