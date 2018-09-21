@@ -2,114 +2,122 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ECCC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFB2ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4399921532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:58:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64B5221532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:00:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EpxnZvTc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4399921532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="0uIrF0+K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B5221532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390259AbeIUUsA (ORCPT
+        id S2390295AbeIUUtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:48:00 -0400
-Received: from mail-eopbgr720113.outbound.protection.outlook.com ([40.107.72.113]:21340
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727392AbeIUUr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:47:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=34B0xCvW6W9J3mfaamo9SBYqaJMbSIc8pkv8x+pi+vY=;
- b=EpxnZvTcKO64KceJNQCkND4vkeELZw/M55knXdi5Lpz7SN4qLmhTM2/OtUGbEQszpmbPh/upHFcXEhgvSdVV+pyE14eq3LGXgvZmS18i0ChYyeTEaCs/gpuIstznvY+reHxPcrXNgKZpeSJntO9UAvXQcjHqEFyuyqRx7z86Fog=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0168.namprd21.prod.outlook.com (10.173.192.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.6; Fri, 21 Sep 2018 14:58:42 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1185.010; Fri, 21 Sep 2018
- 14:58:42 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     Will Deacon <will.deacon@arm.com>
-CC:     Mikulas Patocka <mpatocka@redhat.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 4.18 032/136] arm64: fix infinite stacktrace
-Thread-Topic: [PATCH AUTOSEL 4.18 032/136] arm64: fix infinite stacktrace
-Thread-Index: AQHUTjKZkwzoLz5wYky3itWJrfizs6T139oAgAABeoCABPlwAA==
-Date:   Fri, 21 Sep 2018 14:58:42 +0000
-Message-ID: <20180921145840.GT3821@sasha-vm>
-References: <20180917030006.245495-1-alexander.levin@microsoft.com>
- <20180917030006.245495-32-alexander.levin@microsoft.com>
- <alpine.LRH.2.02.1809180654220.17180@file01.intranet.prod.int.rdu2.redhat.com>
- <20180918110051.GB16498@arm.com>
-In-Reply-To: <20180918110051.GB16498@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0168;6:lAm87PqvY9fPAq9P/RjZaUnmwInwYjuKggTBOamMC0A8d0av8Qt63Z6HD+yOyeX8x3hscI/i0x83d9kRh8yq2JgxCGEpmlRNho/Z7bLIMop7tnx304ItHuWFKD0rl2087e8XNa/SgZrsr19iXpTrCkBYXJ0jauPrOyFDVYCKWjbWv1jUTVGPQZoXeOXJ0a3ghrKuFbj72tKirkecUBxnjbFiu0KxEVzfyvfSZQivAhECmCF7K0ziTnAr70ETAvBXE1bE3KdGfaDRdagpcBvKB4AJwTU/xcaL6Sr/DgJdj/w4D73k/r5retyUiktK+aF+0mQSvE9DQZzZ4IhXhSkrrgxQyZ6Olp7shatfXtHXdALkWHPumPz5lzNwldfVC9IXO77RXuA1g5/2Rozy9oBZRdKCe167bvhQ7J4my5kGv3iT4aHr82o1wgzR6iP5gWKgVnkjKEq51OOc3yllMEXnEw==;5:Mrri8oV5zeYWRW8z4Lh3B7WeU6OHezXctBJjTXQzM9hFDlfqokxdx9TL8r/FTQgit5qDUzzOs01tQD+X0c14Lq+zu0e3ghGQbhvK6waln8DmRGEtGYRi6FLHQMFoHtzy1d4rIDH9fJQf2/eBvmeSXIlCF7EGkLn9H4WrUo5AL4o=;7:ueLGvOS2LGgdewORlyu2XqVly8g6ObsKEZ/DURK2FIzIj4/k+9hUfykYY7f9Nw2mRhsePjFox0oar6I5dv1toQJowuUIfZ57MRh2SQUzx0jvCeu77sX2kf5d2hrbleSXdrj/fcB6iNQENNCfHDar4gzOqBXm+QkGtKVOltr4OvKN+3NK7ajFNpFdffr75yPYnPxutiTCLsPuPW6TpYWsfrSI3q9HQJ/4nS8kiM94M5l53GoppUh2jsXpkTrpS4ut
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 16fd44bf-24ec-4cec-c3b7-08d61fd2b917
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0168;
-x-ms-traffictypediagnostic: CY4PR21MB0168:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB01685543003C35CDDBA0B549FB120@CY4PR21MB0168.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(788757137089);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0168;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0168;
-x-forefront-prvs: 0802ADD973
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39860400002)(376002)(346002)(396003)(366004)(136003)(189003)(199004)(51914003)(229853002)(8676002)(2906002)(305945005)(6486002)(10090500001)(6436002)(71200400001)(68736007)(478600001)(2900100001)(71190400001)(54906003)(4326008)(6506007)(8936002)(93886005)(86612001)(76176011)(66066001)(81156014)(81166006)(6916009)(86362001)(33896004)(186003)(105586002)(102836004)(486006)(22452003)(53936002)(446003)(26005)(476003)(33656002)(10290500003)(316002)(7736002)(97736004)(6512007)(14454004)(217873002)(256004)(14444005)(6246003)(9686003)(25786009)(72206003)(99286004)(1076002)(33716001)(6116002)(5250100002)(11346002)(5660300001)(3846002)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0168;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 6jCnjfA+EBz4FrskDQcii/JCe48oFP0lWlfkiRGWbDcVuSqeAz3Tg8t5tayAUFIOkWwOaWvyooEXNlrOS9aurv5uJyTY0ww0wtbl/BjakCtlPN91xgb/Bu7NzScO6Co65CZ6VOfYGzwxloxof7XbqFA/ycqM/onZJ/DLsku6R3/VGFkBhr/sB9Inyzl1GuM+uiVSTomVVaIL8diPlG9kABaBqjYh2sfh/MFQyAM7T+joJXDdfsR0eH5jyMXAZlGL7M0pVRxWRvpgxnHC+NWsXZdc4cziocs1kFwqX+CQ/7D0B9MhnYmn02zFo+a1HGvf0MeLCsi2gUzT9oLwpy1/IlNLWP6gtyGEId+dyM9SNQs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C99377D48D4A224DB9A832C49BB9D45F@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 21 Sep 2018 16:49:16 -0400
+Received: from mail-it1-f178.google.com ([209.85.166.178]:51355 "EHLO
+        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390231AbeIUUtQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:49:16 -0400
+Received: by mail-it1-f178.google.com with SMTP id e14-v6so2278490itf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jamrnX0sFRvEHJX20QnT1GhwLyV16WnRhGsixsSTKqY=;
+        b=0uIrF0+KvQ8ImRKGV0by01j6c/FUCS2hKuX+/eVRSRq1SRsR/NC7O5mHOcBLIbBe+E
+         zNZJbtC4INjqgPBd2uXkviIi8Wazo7f49zsgpg+y0ex+nstTe0UJOv8r86w4pmMRq1pk
+         AbgBSeFZYm1VZLjN/Q82Flw2RnfIGxTpRyODmmxROgP6LE+N+SbQO2CJn4mqVVU8iGTs
+         D6/P4zZUfeUartmQCMAoaxOO1B6Q0HUwS70t/n4eBYTTPLdMmZNMTQnexVAJDtwwafR2
+         gfsSkH8prUWyng6hUsuuK0JnbnbjuBjOZSU/qzh9O2/u/Qc3rNMcaBJuexe/qJyE9hVu
+         k3Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jamrnX0sFRvEHJX20QnT1GhwLyV16WnRhGsixsSTKqY=;
+        b=LcigR4s4VkIrT6CddTJdk2aeLG6Z7E4Scv/OqSAVJo6PF0ImYxMzaHp5ry8ioyMEGX
+         0WUFW+C4iuq0dXJdPwcqdDLRUghGR8WK9F/t3NGwgbMpkko1MerjkuBIrmnJ1Hwf1Uuz
+         /I4ZiXZSOgdrmUPza5X4LZEHplbU4lANWDqsXb3hxib5h5GfoDWYWasZZVT49miUSrda
+         nFzQNHdMWebh6+GJVWWSLJRYcjnWdiRzb7ryH30y0Ywo79jhgVDNffr+HJQWJtizszvC
+         2djuXBkZL4A5gDIXwyn86X6SQas5fuQJldolzRLNI7pGqVIm2NpGwD+52BWxaLzbg7hb
+         y9Xg==
+X-Gm-Message-State: ABuFfojmVBaP8uj4agPQDjAZUhKgfSmcJG6tJqZ33qjeWECQRuKNqb5d
+        ncSZjRqpcV0zZ7f7eI7s9gCV3AjBmOY=
+X-Google-Smtp-Source: ACcGV63YeXOSFq4C2nCexB9DGm5A/BZbAFPIOrl+1auWP2BTzKTicEMHaFVn+kxnZIgoXRpyuSKVEA==
+X-Received: by 2002:a24:ecc4:: with SMTP id g187-v6mr1827473ith.145.1537541999939;
+        Fri, 21 Sep 2018 07:59:59 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id t134-v6sm2420845itb.41.2018.09.21.07.59.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 07:59:58 -0700 (PDT)
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+To:     Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
+ <20180921015608.GA31060@dastard> <20180921070805.GC14529@lst.de>
+ <20180921072511.GA8188@ming.t460p>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <65999732-fc76-bb86-65ed-01aace49b9c7@kernel.dk>
+Date:   Fri, 21 Sep 2018 08:59:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16fd44bf-24ec-4cec-c3b7-08d61fd2b917
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2018 14:58:42.6876
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0168
+In-Reply-To: <20180921072511.GA8188@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:00:51PM +0100, Will Deacon wrote:
->On Tue, Sep 18, 2018 at 06:55:34AM -0400, Mikulas Patocka wrote:
->> This patch is not correct, because the stacktrace is supposed to work
->> around discontiguous interrupt stacks.
+On 9/21/18 1:25 AM, Ming Lei wrote:
+> On Fri, Sep 21, 2018 at 09:08:05AM +0200, Christoph Hellwig wrote:
+>> On Fri, Sep 21, 2018 at 11:56:08AM +1000, Dave Chinner wrote:
+>>>> 3) If slab can't guarantee to return 512-aligned buffer, how to fix
+>>>> this data corruption issue?
+>>>
+>>> I think that the block layer needs to check the alignment of memory
+>>> buffers passed to it and take appropriate action rather than
+>>> corrupting random memory and returning a sucess status to the bad
+>>> bio.
 >>
->> You should replace 'frame->fp <=3D fp' with 'frame->fp =3D=3D fp'.
->
->No, just drop the patch. It was already reverted upstream in
->e87a4a92fba3. Can the AUTOSEL robot check for upstream reverts?
+>> Or just reject the I/O.  But yes, we already have the
+>> queue_dma_alignment helper in the block layer, we just don't do it
+>> in the fast path.  I think generic_make_request_checks needs to
+>> check it, and print an error and return a warning if the alignment
+>> requirement isn't met.
+> 
+> That can be done in generic_make_request_checks(), but some cost may be
+> introduced, because each bvec needs to be checked in the fast path.
 
-It does! Once when it grabs the patch and once right before Greg sees a
-pull request. There's a (rather large - ~2 week) time gap in between
-when fixes/reverts sneak in.
+I think this is all crazy talk. We've never done this, we've always
+assumed that an address of length N, will be N aligned as well. If
+a driver sets queue dma alignment > than its sector size, then we're
+in real trouble and would need to bounce IOs. That's silly enough
+that it doesn't warrant being done in the core code imho, if you're
+hw is that crappy, then do it in your queue_rq(). Could be done with
+a core helper for sure, but I'm really not that interested in
+having a full bvec loop for each bio just to check something that
+(to my knowledge) hasn't been an issue in decades.
 
-Thanks for the review, I'll drop the patch.
+-- 
+Jens Axboe
 
---
-Thanks,
-Sasha=
