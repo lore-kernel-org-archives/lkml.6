@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37813ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E29C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54A521568
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8D6320858
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OFyuXUUZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54A521568
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eXnNKEPH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8D6320858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390484AbeIUVE2 (ORCPT
+        id S2390556AbeIUVEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:04:28 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:56265 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391010AbeIUVD0 (ORCPT
+        Fri, 21 Sep 2018 17:04:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46147 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390964AbeIUVDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:03:26 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f21-v6so3429620wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:14:06 -0700 (PDT)
+        Fri, 21 Sep 2018 17:03:19 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z3-v6so1388485wrr.13
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:13:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0OMivlQBlkMR+OIo97sD6sFFaZkiu9rVW9+qGQSiUP4=;
-        b=OFyuXUUZFiBmXAWubLMx8YU2l5NLejkfxGTmVmIjjN+VgNs9mtzWo980BQQpct6WLd
-         rDAhvuAdk6qF3cbQTSFRXn0PcT1IzpAfxR+sFpJOJe2IJbwSj59PMSyBpUxLuVggrsvP
-         hrti4DOQKgnAED9gVJ5snFxmuK+mluxPyAQnTA3dQ7NAfuUFASCgQMSB3mp5/xfQ27xS
-         75qVKCQIrZCgnWJtYLaPFDtHEGJ538o1f4PLXaKvfU2khl7Q/i2PkvPvdY0aTeENetoK
-         2nbVWFbN03/CT+bvoF56qjyq9biCpx6HnnKmrSy5A+VKYDB3tV63Bch01C/sd+Kv4Qzw
-         1BOw==
+        bh=m233AnC4qvrdV4eo3QzdNfMFrtQI7a9l1G83xPQzcRQ=;
+        b=eXnNKEPHitQJezi0vHtHIhgtf1+Nu76xnakGrrSIlmxQYrEomHDWnSPKQZv2RBaMyg
+         DfOVVg7EW8nVvRheW/vPQsiupWVv3evsdHoJRSqZc5ljRyWpJPE9tFdyKd5RY7/gEjsf
+         Bo9WOBw2fmhd1oljcXXeQgEpPVkER26e6mZUo021V6Dlc4TrtV542wIpdX1hwq2n1yWg
+         A1wHs5iM0blg0U9U5JZfWUVL3DgRODcMiXnIJK/FzsWXwjYpVDteD/5/1twuScg+5ilL
+         qdeYlxvgCjApJidVANb5pXkm6j00YzJAnSB/ACTkn+5l0LVYlZeh0KIpEQ5r1osMg3rK
+         6eFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0OMivlQBlkMR+OIo97sD6sFFaZkiu9rVW9+qGQSiUP4=;
-        b=q3Rw458XYVgUXxeMrc9cgl6ES1QvaWAiju6Np0Jp8eRTMtjJP3w/P+bBYQ9F/D/ZaU
-         PC9OqfNHlTnYHeCyUMbKu81awo4274fqWm9GbvW7bO/abJk8pyTnzV04M03LoZ5kzpwl
-         RN2JvDBIwXqwaA1es0wcPI72AIdTgCK6iedEgvLjg6fxpcnRh3ICN5YTAhlEf/ga1jbL
-         XYDYgnA41G1ljlUqrwNg68U3fus1DoDPbNYtIhDxtdLnuYfoVBTTtwfyuFEGrZNjQ73X
-         7fYr9upyr4Xo8v1XNZJeY2MWF7Gz2D+mTaulvpMRwT6BnTgemiDB0d2F8PZDSHPRx2g8
-         jhZw==
-X-Gm-Message-State: APzg51BbbFxe3+U4L3LywDX/eGoIEYyu/3X+ZVWkpLbljj39q0+oxHnV
-        9FQVHatJdY3JIpT35vG8qfbA9Q==
-X-Google-Smtp-Source: ANB0VdZLgoo9U70xaziY+cHCD1by/PdgBIs7OJ1vqc5f/YS1n5hIWdaF6Wpvq4bFhZ/LeGhK+ftS8A==
-X-Received: by 2002:a1c:40d5:: with SMTP id n204-v6mr7794413wma.44.1537542845659;
-        Fri, 21 Sep 2018 08:14:05 -0700 (PDT)
+        bh=m233AnC4qvrdV4eo3QzdNfMFrtQI7a9l1G83xPQzcRQ=;
+        b=q5moj15yvc+rYFx5K2/NPD6CG7bsYLgna0tHDGbDYQ6tUDGUJDKod4vhWquEmiMTf2
+         JZJXmow4o1sVVCxnDuxalhLricFegU7lENehcGemVY1R+aevIhwpTL8x3lZQj1ObL7wG
+         eDDj1Uy/Vzlbo0VLnfAGfXeP8C97gE1662qfP5tXyUJp48SeTJWa/k7i8m6hjt6M7gTT
+         fX1PzHA3+jozY1j516uCZ0yG3OJydDSoDEZUs5prHU9m2qse5ekFAtzNNEPVXX2GMSPM
+         OHeFI7M2zTKZha/4ClZxjYq/l15cv+VxSUxinrcx+QboDW9XVtwOCDfNhAkHzQ2CdgOv
+         1saQ==
+X-Gm-Message-State: APzg51AUbIscSWdZn/OS5QBi+AeezefpaYX8BBc5yCNqPTZJ0hg2rnAE
+        7Dael1QCAUkX3XLymxuRwKRLhQ==
+X-Google-Smtp-Source: ANB0VdZ/7B03zuJhdFK5x1o9/rEePSk4KohCAM1ihTBVIsTurv5K1v1r00w6vlR1FCprWMkvVK1lhQ==
+X-Received: by 2002:adf:9244:: with SMTP id 62-v6mr35901684wrj.62.1537542838400;
+        Fri, 21 Sep 2018 08:13:58 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm27990271wru.46.2018.09.21.08.14.04
+        by smtp.gmail.com with ESMTPSA id e7-v6sm27990271wru.46.2018.09.21.08.13.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 08:14:04 -0700 (PDT)
+        Fri, 21 Sep 2018 08:13:57 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v9 11/20] kasan, arm64: fix up fault handling logic
-Date:   Fri, 21 Sep 2018 17:13:33 +0200
-Message-Id: <a8169b3802dda203e717ecd9cdc40cc3fa86e7e5.1537542735.git.andreyknvl@google.com>
+Subject: [PATCH v9 07/20] kasan, arm64: untag address in __kimg_to_phys and _virt_addr_is_linear
+Date:   Fri, 21 Sep 2018 17:13:29 +0200
+Message-Id: <1324a622035ee2a6fecd1e729a62af22542d9f3e.1537542735.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
 In-Reply-To: <cover.1537542735.git.andreyknvl@google.com>
 References: <cover.1537542735.git.andreyknvl@google.com>
@@ -109,38 +109,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-show_pte in arm64 fault handling relies on the fact that the top byte of
-a kernel pointer is 0xff, which isn't always the case with tag-based
-KASAN.
+__kimg_to_phys (which is used by virt_to_phys) and _virt_addr_is_linear
+(which is used by virt_addr_valid) assume that the top byte of the address
+is 0xff, which isn't always the case with tag-based KASAN.
 
-This patch resets the top byte in show_pte.
+This patch resets the tag in those macros.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/mm/fault.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/include/asm/memory.h | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 50b30ff30de4..78328c864d01 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -32,6 +32,7 @@
- #include <linux/perf_event.h>
- #include <linux/preempt.h>
- #include <linux/hugetlb.h>
-+#include <linux/kasan.h>
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index 0f1e024a951f..3226a0218b0b 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -92,6 +92,15 @@
+ #define KASAN_THREAD_SHIFT	0
+ #endif
  
- #include <asm/bug.h>
- #include <asm/cmpxchg.h>
-@@ -134,6 +135,8 @@ void show_pte(unsigned long addr)
- 	pgd_t *pgdp;
- 	pgd_t pgd;
- 
-+	addr = (unsigned long)kasan_reset_tag((void *)addr);
++#ifdef CONFIG_KASAN_SW_TAGS
++#define KASAN_TAG_SHIFTED(tag)		((unsigned long)(tag) << 56)
++#define KASAN_SET_TAG(addr, tag)	(((addr) & ~KASAN_TAG_SHIFTED(0xff)) | \
++						KASAN_TAG_SHIFTED(tag))
++#define KASAN_RESET_TAG(addr)		KASAN_SET_TAG(addr, 0xff)
++#else
++#define KASAN_RESET_TAG(addr)		addr
++#endif
 +
- 	if (addr < TASK_SIZE) {
- 		/* TTBR0 */
- 		mm = current->active_mm;
+ #define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
+ 
+ /*
+@@ -232,7 +241,7 @@ static inline unsigned long kaslr_offset(void)
+ #define __is_lm_address(addr)	(!!((addr) & BIT(VA_BITS - 1)))
+ 
+ #define __lm_to_phys(addr)	(((addr) & ~PAGE_OFFSET) + PHYS_OFFSET)
+-#define __kimg_to_phys(addr)	((addr) - kimage_voffset)
++#define __kimg_to_phys(addr)	(KASAN_RESET_TAG(addr) - kimage_voffset)
+ 
+ #define __virt_to_phys_nodebug(x) ({					\
+ 	phys_addr_t __x = (phys_addr_t)(x);				\
+@@ -308,7 +317,8 @@ static inline void *phys_to_virt(phys_addr_t x)
+ #endif
+ #endif
+ 
+-#define _virt_addr_is_linear(kaddr)	(((u64)(kaddr)) >= PAGE_OFFSET)
++#define _virt_addr_is_linear(kaddr)	(KASAN_RESET_TAG((u64)(kaddr)) >= \
++						PAGE_OFFSET)
+ #define virt_addr_valid(kaddr)		(_virt_addr_is_linear(kaddr) && \
+ 					 _virt_addr_valid(kaddr))
+ 
 -- 
 2.19.0.444.g18242da7ef-goog
 
