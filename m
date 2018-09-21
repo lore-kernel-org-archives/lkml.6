@@ -2,239 +2,164 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D79C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0985FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEB3721557
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86E1B206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:20:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fiFTXajG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEB3721557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfgKBVwb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86E1B206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390713AbeIUWIl (ORCPT
+        id S2390506AbeIUWJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:08:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728221AbeIUWIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:08:41 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FFAA21550;
-        Fri, 21 Sep 2018 16:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537546745;
-        bh=rmuL3ipH4J1YEgEOUFO5mHBBwkTmkIFd94u591nDNCo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fiFTXajGYkHgZbrzjqLKjg9cxO+N4ViMZswUGrdBxxA5ks8qm58vsLGRnD8T3nt1m
-         1rQAdbNF9+imjwRygHG8p1OorCf7ReW/BRASmvw/m3aNaF8ZkBIjPZss6CVJGAqyzX
-         rbHHiX/M6ykPOLbLakThzxrYomUTAy7HA2EF5nr4=
-Date:   Fri, 21 Sep 2018 11:18:58 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v6 04/13] PCI/P2PDMA: Introduce configfs/sysfs enable
- attribute helpers
-Message-ID: <20180921161858.GH224714@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180913001156.4115-1-logang@deltatee.com>
- <20180913001156.4115-5-logang@deltatee.com>
+        Fri, 21 Sep 2018 18:09:52 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34952 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388909AbeIUWJv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:09:51 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x20-v6so11954618lfg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 09:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fN2MyFbI6pwyHbFgq1mWh1sheEyEx/X06GhcwDaS3tY=;
+        b=DfgKBVwbtkBqYDc9RHOXR/uRcb4rY7dgwel0sK0DLY+Q4HlMqHFdZkoBqevyaiXgp6
+         2q5nFC0/6dhZ7hOjwjMqoQKOX0+gXSFORtQvvXIJf85u7CqViZ1etD/79m2n9bcOOCEU
+         gfglQw4f94wvxT3naXYvxVz7+HrMmwlcFya26hXAl3CK1VCD3PAdXpmK1uH2kzo+MAaO
+         Ew/Q+CJq08LJktMu5eqmL9b23x1iLMbbR1/kOTCIVG1b4CpkTeq1s8uAw0JMFzKqvd50
+         nM2zYWFDGpTe9+W0aUNfzSx0PJrCDxhPzT719m2tRyBmegjoZvXYIo9jaVhnPVcfVaAW
+         bolA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fN2MyFbI6pwyHbFgq1mWh1sheEyEx/X06GhcwDaS3tY=;
+        b=tXe7cDbZAvjdUcfr1UJC+TdTsGeRGKeswmCj25ZNnIiSNTNQ9qaharSjiYHdgEyrW5
+         QMQlejn7XQrUwgWK9hBuUle3eOYHGMxCh5+AtdCPdSsmLqz127pXtSjKytxzhLf3sVCW
+         fq6lw6K8MyXXvKN8JDD4RofahmkOFWTZrOe3OB/EPu56t05+BOydpArNHG7txNNzQfjK
+         ptZj53bq7UGw0HpJE1TM5ZSsjlMwm/dOsjU8styelN+p04VqPgej97gsjEriAtQQyNjT
+         uH3ktLTz3j1u1gIrmUR05IEIiYIDt95vVV+JYTqw3PT69mBF9/l30jc7tvTW4OP5MV7B
+         qFDw==
+X-Gm-Message-State: APzg51Dq6X3L8IX3Ild4zAQUBUBMEvzQlUZVWEnoRAAwXH6S0+jiTwv5
+        oeRuM30zvluN99oSV6yiUZgvLG9XII0YfgFoTf4=
+X-Google-Smtp-Source: ANB0Vdb+b+ooholNc2yR8buXuBglYz5faRgV1CVPOJoHaaMEhcM5D3Lhys+5Fq6O3phQtVtAEx9AAhr6LRdL1SPQa4E=
+X-Received: by 2002:a19:6719:: with SMTP id b25-v6mr6587546lfc.54.1537546813432;
+ Fri, 21 Sep 2018 09:20:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913001156.4115-5-logang@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180920191254.GA22764@jordon-HP-15-Notebook-PC>
+ <6fa7d32b-07f0-ab6d-8053-021b171153e6@virtuozzo.com> <CAFqt6zbp8wynKqFRyp3Q55Scoi9ojfdCVkMrxC4w9qxPxWMXGQ@mail.gmail.com>
+ <68b8cbf3-1b5a-2311-ac09-a8676280e85e@virtuozzo.com> <CAFqt6za6VJ7vmWEqg4JGWqRiqbfc6GYDnpUeBQ+03xdY51-GQA@mail.gmail.com>
+ <0c3d2ba2-29dc-ed02-0919-54d1d76a1eb1@virtuozzo.com>
+In-Reply-To: <0c3d2ba2-29dc-ed02-0919-54d1d76a1eb1@virtuozzo.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Fri, 21 Sep 2018 21:50:00 +0530
+Message-ID: <CAFqt6zbzikDrj5+o=YpbQF3OQtSUiXL=7WTq1KF8GE5WVvz-8w@mail.gmail.com>
+Subject: Re: [PATCH] kernel/kcov: Replace vm_insert_page with vmf_insert_page
+To:     aryabinin@virtuozzo.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>, tchibo@google.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 06:11:47PM -0600, Logan Gunthorpe wrote:
-> Users of the P2PDMA infrastructure will typically need a way for
-> the user to tell the kernel to use P2P resources. Typically
-> this will be a simple on/off boolean operation but sometimes
-> it may be desirable for the user to specify the exact device to
-> use for the P2P operation.
-> 
-> Add new helpers for attributes which take a boolean or a PCI device.
-> Any boolean, or the word 'auto' turn P2P on or off. Specifying a full
-> PCI device name/BDF will select the specific device.
+On Fri, Sep 21, 2018 at 8:14 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>
+>
+>
+> On 09/21/2018 04:25 PM, Souptick Joarder wrote:
+> > On Fri, Sep 21, 2018 at 5:22 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+> >> On 09/21/2018 01:03 PM, Souptick Joarder wrote:
+> >>> On Fri, Sep 21, 2018 at 3:06 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+> >>>>
+> >>>> On 09/20/2018 10:12 PM, Souptick Joarder wrote:
+> >>>>> @@ -293,8 +293,9 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+> >>>>>               spin_unlock(&kcov->lock);
+> >>>>>               for (off = 0; off < size; off += PAGE_SIZE) {
+> >>>>>                       page = vmalloc_to_page(kcov->area + off);
+> >>>>> -                     if (vm_insert_page(vma, vma->vm_start + off, page))
+> >>>>> -                             WARN_ONCE(1, "vm_insert_page() failed");
+> >>>>> +                     if (vmf_insert_page(vma, vma->vm_start + off, page)
+> >>>>> +                                     != VM_FAULT_NOPAGE)
+> >>>>> +                             WARN_ONCE(1, "vmf_insert_page() failed");
+> >>>>
+> >>>> Nack, don't see the reason for such change, it only makes code worse.
+> >>>
+> >>> Yes, it needed.
+> >>
+> >> No, it's not needed. vm_insert_page() works perfectly fine here.
+> >>
+> >>> Going forward vm_insert_page will be converted to
+> >>> vmf_insert_page. As part of it, this code has to be converted to use
+> >>> vmf_insert_page().
+> >>
+> >> This doesn't explain why such conversion would make sense for kcov_mmap().
+> >
+> > vm_insert_page used to return errno which individual drivers have to
+> > map to VM_FAULT_CODE.
+> > There were also places where return value of vm_insert_page was
+> > ignored and return a
+> > TRUE value.
+> >
+> > As part of vm_fault_t migration patches, we have identified and clean
+> > up all these.
+> > The plan was to introduce inline wrapper vmf_insert_page(), convert all
+> > the page fault handlers to use it and then convert vm_insert_page to
+> > vmf_insert_page. By now we have converted all the page fault handlers
+> > to use this API.
+> >
+> > Still their are few places where vm_insert_page is called outside fault handlers
+> > context to map kernel page to user vma and kernel/kcov.c is one of them.
+> >
+> > Now removing vm_insert_page from those few places one by one.
+> >
+> > Going forward vm_insert_page will be removed from kernel permanently,
+> > so that new drivers can't use this API and create new errno to VM_FAULT_CODE
+> > mapping code.
+> >
+>
+> So, to avoid addition of new code that converts errno->VM_FAULT_* you propose to add
+> new code that does the opposite - converts VM_FAULT_* to errno? How is that better?
 
-I think examples of the valid booleans would be useful.  "Boolean"
-suggests true/false, but AFAICT strtobool() only works for things
-like 0/1/on/off.
+I didn't propose that. It's not a better idea.
+And from fault handlers prospective, with these changes, fault handlers code
+will only return VM_FAULT_CODE not errno.
 
-What's the need for "auto"?  Sounds like it's equivalent to "on" but
-it's not obvious why we need both.
+>
+> And what function is going to be next? pte_none()? It is also used in fault handlers.
+> Are there going to be vmf_pte_none() and complete removal of pte_none() "so that new drivers
+> can't use pte_none() and create new pte_none() to VM_FAULT_CODE mapping code"?
 
-It'd be sort of nice if the contents of the sysfs file were valid
-things you could put *back* into it.  But it looks like the contents
-might be "none", which isn't valid for the store.  And the contents
-are never "on" or "off".
+vmf_insert_{pfn, page, mixed} are the functions which are planned to change.
+vmf_insert_{pfn,mixed} are merged into linux-next.
+There is no plan for any other functions.
 
-Where do these store/show functions get connected to sysfs?  I know
-there's a lot of magic there, so apologies if I'm missing it.
+>
 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> ---
->  drivers/pci/p2pdma.c       | 83 ++++++++++++++++++++++++++++++++++++++
->  include/linux/pci-p2pdma.h | 15 +++++++
->  2 files changed, 98 insertions(+)
-> 
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index 29bd40a87768..3da848f3fe72 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -9,6 +9,7 @@
->   */
->  
->  #define pr_fmt(fmt) "pci-p2pdma: " fmt
-> +#include <linux/ctype.h>
->  #include <linux/pci-p2pdma.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
-> @@ -856,3 +857,85 @@ int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
->  	return nents;
->  }
->  EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg);
-> +
-> +/**
-> + * pci_p2pdma_enable_store - parse a configfs/sysfs attribute store
-> + *		to enable p2pdma
-> + * @page: contents of the value to be stored
-> + * @p2p_dev: returns the PCI device that was selected to be used
-> + *		(if 'auto', 'none or a boolean isn't the store value)
-> + * @use_p2pdma: returns whether to enable p2pdma or not
-> + *
-> + * Parses an attribute value to decide whether to enable p2pdma.
-> + * The value can select a PCI device (using it's full BDF device
-> + * name), a boolean, or 'auto'. 'auto' and a true boolean value
-> + * have the same meaning. A false value disables p2pdma and
-> + * a PCI device enables it to use a specific device as the
-> + * backing provider.
-> + *
-> + * pci_p2pdma_enable_show() should be used as the show operation for
-> + * the attribute.
-> + *
-> + * Returns 0 on success
-> + */
-> +int pci_p2pdma_enable_store(const char *page, struct pci_dev **p2p_dev,
-> +			    bool *use_p2pdma)
-> +{
-> +	struct device *dev;
-> +
-> +	dev = bus_find_device_by_name(&pci_bus_type, NULL, page);
-> +	if (dev) {
-> +		*use_p2pdma = true;
-> +		*p2p_dev = to_pci_dev(dev);
-> +
-> +		if (!pci_has_p2pmem(*p2p_dev)) {
-> +			pr_err("PCI device has no peer-to-peer memory: %s\n",
+> Don't you see that how that doesn't make any sense?
+> Want vmf_insert_page() for easier error handling in fault handlers? - fine, use it in fault handlers.
+> But leave the vm_insert_page() for the code that has nothing to do with fault handling.
 
-pci_err()?
+If we leave vm_insert_page() for the code other than fault handling,
+then drivers writer will
+have choice to use this API in fault handlers context in future which
+need to be blocked.
 
-> +			       page);
-> +			pci_dev_put(*p2p_dev);
-> +			return -ENODEV;
-> +		}
-> +
-> +		return 0;
-> +	} else if (sysfs_streq(page, "auto")) {
-> +		*use_p2pdma = true;
-> +		return 0;
-> +	} else if ((page[0] == '0' || page[0] == '1') && !iscntrl(page[1])) {
-> +		/*
-> +		 * If the user enters a PCI device that  doesn't exist
-> +		 * like "0000:01:00.1", we don't want strtobool to think
-> +		 * it's a '0' when it's clearly not what the user wanted.
-> +		 * So we require 0's and 1's to be exactly one character.
-> +		 */
-> +	} else if (!strtobool(page, use_p2pdma)) {
-> +		return 0;
-> +	}
-> +
-> +	pr_err("No such PCI device: %.*s\n", (int)strcspn(page, "\n"), page);
-> +	return -ENODEV;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_p2pdma_enable_store);
-> +
-> +/**
-> + * pci_p2pdma_enable_show - show a configfs/sysfs attribute indicating
-> + *		whether p2pdma is enabled
-> + * @page: contents of the stored value
-> + * @p2p_dev: the selected p2p device (NULL if no device is selected)
-> + * @use_p2pdma: whether p2pdme has been enabled
-> + *
-> + * Attributes that use pci_p2pdma_enable_store() should use this function
-> + * to show the value of the attribute.
-> + *
-> + * Returns 0 on success
-> + */
-> +ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
-> +			       bool use_p2pdma)
-> +{
-> +	if (!use_p2pdma)
-> +		return sprintf(page, "none\n");
-> +
-> +	if (!p2p_dev)
-> +		return sprintf(page, "auto\n");
-> +
-> +	return sprintf(page, "%s\n", pci_name(p2p_dev));
-> +}
-> +EXPORT_SYMBOL_GPL(pci_p2pdma_enable_show);
-> diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
-> index 2f03dbbf5af6..377de4d73767 100644
-> --- a/include/linux/pci-p2pdma.h
-> +++ b/include/linux/pci-p2pdma.h
-> @@ -38,6 +38,10 @@ void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl);
->  void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
->  int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
->  		      enum dma_data_direction dir);
-> +int pci_p2pdma_enable_store(const char *page, struct pci_dev **p2p_dev,
-> +			    bool *use_p2pdma);
-> +ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
-> +			       bool use_p2pdma);
->  #else /* CONFIG_PCI_P2PDMA */
->  static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
->  		size_t size, u64 offset)
-> @@ -105,5 +109,16 @@ static inline int pci_p2pdma_map_sg(struct device *dev,
->  {
->  	return 0;
->  }
-> +static inline int pci_p2pdma_enable_store(const char *page,
-> +		struct pci_dev **p2p_dev, bool *use_p2pdma)
-> +{
-> +	*use_p2pdma = false;
-> +	return 0;
-> +}
-> +static inline ssize_t pci_p2pdma_enable_show(char *page,
-> +		struct pci_dev *p2p_dev, bool use_p2pdma)
-> +{
-> +	return sprintf(page, "none\n");
-> +}
->  #endif /* CONFIG_PCI_P2PDMA */
->  #endif /* _LINUX_PCI_P2P_H */
-> -- 
-> 2.19.0
-> 
+How can we block driver writer not to use vm_insert_page in fault
+handlers context ??
