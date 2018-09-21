@@ -2,138 +2,98 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F64FECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81755ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2B621523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:04:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A2B621523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 237ED20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:05:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="J4ETu3c8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 237ED20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389467AbeIUOvw (ORCPT
+        id S2389502AbeIUOx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 10:51:52 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:52758 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389022AbeIUOvv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 10:51:51 -0400
-X-UUID: 21d796796a664612a18823d1f99dea12-20180921
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 800977900; Fri, 21 Sep 2018 17:03:51 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 21 Sep 2018 17:03:49 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 21 Sep 2018 17:03:49 +0800
-Message-ID: <1537520629.20660.3.camel@mtksdaap41>
-Subject: Re: [PATCH v3 04/12] drm/mediatek: add clock factor for different IC
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Cawa Cheng <cawa.cheng@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        YT Shen <yt.shen@mediatek.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Mao Huang <littlecvr@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Sascha Hauer" <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Date:   Fri, 21 Sep 2018 17:03:49 +0800
-In-Reply-To: <20180921032822.30771-5-bibby.hsieh@mediatek.com>
-References: <20180921032822.30771-1-bibby.hsieh@mediatek.com>
-         <20180921032822.30771-5-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 21 Sep 2018 10:53:29 -0400
+Received: from ozlabs.org ([203.11.71.1]:37859 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389235AbeIUOx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 10:53:29 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42GnkP3JRZz9sC7;
+        Fri, 21 Sep 2018 19:05:33 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537520733;
+        bh=c/UT0/iYEjgMyhEVoR1W0DkIOmkMVIwrXSBnYViLNhU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=J4ETu3c8c1SOpFONVeBDk+rpCKybKbNN000VdU91pJOfJCXy2vxzAGUZmU47VjXuZ
+         vccwUjcG5osnBeae/16WEVOShxojkKLFQGivLFxz+HAYcr285uyb95GLs+wBSm+L+S
+         h84RxNoKJvqb/K6hEtrWgUEvqptcSIsOsn5a1g/fH9mRmEuYEUwrpxB8vWkHVDrz8I
+         NYcg6NKmG01B8gqi0XkbYe8YpkUzPaMfwO30yqAmJlZY0RrrY8ln+VMxYFXu+l5Qc5
+         MQHaQqiez/XZBBsmvu60UC0BauctrYkK3rbI34xN4xvDWhLAOCxR+/naOh2T/GDxuw
+         gBydeOc++/1Jw==
+Date:   Fri, 21 Sep 2018 19:05:32 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [REVIEW][PATCH 9/9] signal/powerpc: Use force_sig_fault where
+ appropriate
+Message-ID: <20180921190532.1fc443f0@canb.auug.org.au>
+In-Reply-To: <20180918175850.4437-9-ebiederm@xmission.com>
+References: <878t3yitze.fsf@xmission.com>
+        <20180918175850.4437-9-ebiederm@xmission.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/LvvCWtQn0+MyTAxO+aensSW"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
+--Sig_/LvvCWtQn0+MyTAxO+aensSW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2018-09-21 at 11:28 +0800, Bibby Hsieh wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
-> 
-> different IC has different clock designed in HDMI, the factor for
-> calculate clock should be different. Usinng the data in of_node
-> to find this factor.
-> 
+Hi Eric,
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+On Tue, 18 Sep 2018 19:58:50 +0200 "Eric W. Biederman" <ebiederm@xmission.c=
+om> wrote:
+>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dpi.c | 24 +++++++++++++++---------
->  1 file changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> index 1e7369e0d91c..022ccec49cea 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-> @@ -120,6 +120,7 @@ struct mtk_dpi_yc_limit {
->  };
->  
->  struct mtk_dpi_conf {
-> +	unsigned int (*cal_factor)(int clock);
->  	u32 reg_h_fre_con;
->  	bool edge_sel_en;
->  };
-> @@ -460,15 +461,7 @@ static int mtk_dpi_set_display_mode(struct mtk_dpi *dpi,
->  	unsigned int factor;
->  
->  	/* let pll_rate can fix the valid range of tvdpll (1G~2GHz) */
-> -
-> -	if (mode->clock <= 27000)
-> -		factor = 3 << 4;
-> -	else if (mode->clock <= 84000)
-> -		factor = 3 << 3;
-> -	else if (mode->clock <= 167000)
-> -		factor = 3 << 2;
-> -	else
-> -		factor = 3 << 1;
-> +	factor = dpi->conf->cal_factor(mode->clock);
->  	drm_display_mode_to_videomode(mode, &vm);
->  	pll_rate = vm.pixelclock * factor;
->  
-> @@ -682,7 +675,20 @@ static const struct component_ops mtk_dpi_component_ops = {
->  	.unbind = mtk_dpi_unbind,
->  };
->  
-> +static unsigned int mt8173_calculate_factor(int clock)
-> +{
-> +	if (clock <= 27000)
-> +		return 3 << 4;
-> +	else if (clock <= 84000)
-> +		return 3 << 3;
-> +	else if (clock <= 167000)
-> +		return 3 << 2;
-> +	else
-> +		return 3 << 1;
-> +}
-> +
->  static const struct mtk_dpi_conf mt8173_conf = {
-> +	.cal_factor = mt8173_calculate_factor,
->  	.reg_h_fre_con = 0xe0,
->  };
->  
+Again, looks all good to me.
 
+Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/LvvCWtQn0+MyTAxO+aensSW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluktFwACgkQAVBC80lX
+0GxUZggAjfzzqiy0I2AO7lFNh2CfaFDcrUYOuRhMUQ8cCkh4xzo0LGIJUjrjSUVg
+yiYBNCa1IkxfvhO9p0mCPOo6UFOxVDDmG+szKObU7uUpTLyfqF/YOJucdzvYZj56
+8UukU/if+4cPgJCrsLyIYRrnJ3njeKN1UhCy6prUBIXK7hOfK3xGbHUo5MWm31A/
+48iwE9rpB2JmBgubhCvEE7cpZWFH1QMjPMn74x8sxPZsU7581Hu+Es5d+eMdH902
+nMqyukQvYjrmau3jSAbK/3bspU2LTcB/eBZRkkpX2/loSqgPpqCfuZibjzpWVz98
+jx8mpkClmnRO6dkhVEjWcpz758lVzA==
+=7xuH
+-----END PGP SIGNATURE-----
+
+--Sig_/LvvCWtQn0+MyTAxO+aensSW--
