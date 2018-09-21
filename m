@@ -4,81 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F909ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D08BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AC2921479
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:07:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0891F21479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 20:09:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NXcVpSOu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AC2921479
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ia/AA+YU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0891F21479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391403AbeIVB6D (ORCPT
+        id S2391400AbeIVB7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 21:58:03 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37871 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391371AbeIVB6C (ORCPT
+        Fri, 21 Sep 2018 21:59:52 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37030 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391102AbeIVB7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 21:58:02 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v9-v6so12980360ljk.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:07:36 -0700 (PDT)
+        Fri, 21 Sep 2018 21:59:52 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v9-v6so12986814ljk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:09:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7EpUvi+T8MrC31QM6OhDhjM/N/cghP7Ph1PgseG1nBA=;
-        b=NXcVpSOuM+pvgWh9lIYATmUVDlWQjzIz+3RBgRNJTzaS21XKmyVwT5Ww6cbb3lDhRP
-         iz0o3+CgukZNorjUNf1sPYBzlnbCfJTBkaQ7gXB4wmZthZW//WQvX91iXzHGoQTxjsC2
-         VbJOiJNX9vmTKxgHGPdBeoTn+LEq2tjEFbzVw=
+        bh=F+BSJ2tuav+b9ZW+KMyDw7Bg3ZiHYzuj2cR1M0NTFbk=;
+        b=ia/AA+YUNHFZMNAd87m56981xiKMVI/573oScCjgcreQnlrB563qWG09bIKtMbiFnY
+         S2hMkLD5Ly85DCcSM0O8NoH4e77yEdTDYdrGBPw881N7HpBJFDMKVKkL4ikUQNVXchdP
+         GRHcC5dSLwWoxbdCgycaiTcTnOdw+0G1MInT4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7EpUvi+T8MrC31QM6OhDhjM/N/cghP7Ph1PgseG1nBA=;
-        b=rMGI3FePEZMBgqwwMFEgY0RrSE8ExBGPhL9LuFDFIwqqT3DGrZ5DWEP0+WwoQRxV02
-         18vSOHiFP4OipPkFyCJj+vyBcaQheSNoEAyT+cyR8fJIjoV1BTisxiK8y4Ypbvl1C4As
-         mSBoiQKuM9ShUyvpfqLNa1WBIn/Yi8HtwawVm/ZkAPyeUBWMsXlCD6th1nsQeQl188p3
-         nMMllOKbuY5VpCPUxKT0cAERQni3RAC5qH8pFKAsrxT6H4R56PKcMNFnlMAjv9V2Wrkm
-         AFB+fO2M/zLBb7+acziSjrrs446rggNoA+C7R2deiDssts197EyEdv//S7Yz/64nXePS
-         qstw==
-X-Gm-Message-State: APzg51D3FQwswwWRmnnLIJRtRp/XrGCvxY2OcyjOUdgnxXoPhfZb4NVM
-        /ZPtdIeO/QyUA0+7U0wxX2NqdC3qRnY=
-X-Google-Smtp-Source: ANB0VdZVUTNy29/9pjZMcyWSffZdeb+QzXNp+3H4Nkip+aTbj7ANLTR0XFxgenKFTHmX9B4LuBcw7A==
-X-Received: by 2002:a2e:9057:: with SMTP id n23-v6mr3595630ljg.44.1537560455220;
-        Fri, 21 Sep 2018 13:07:35 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id i86-v6sm2453157lfb.67.2018.09.21.13.07.32
+        bh=F+BSJ2tuav+b9ZW+KMyDw7Bg3ZiHYzuj2cR1M0NTFbk=;
+        b=orX95EP0sWy/ZTqQESxDZxFZQWV2wVMLUh6qT40SeCHfHjKkMA9VvPyK72siLFAByl
+         m/jR8/8rHoMa+waZclBnHA5b9sGNr73lfxVQFGwmhsBALkfWnCQTbxhGyF9fC2PNdiNe
+         F90uGNzBwAQVQUCyZwaQZZsqY2ooY0dLBZLujsR9u2pvsbcXkwnK192lBBDwxOw3MnIL
+         fapM9m2FYB8QlSIbxC6UDbobetaf71cTy9fSmdtqn80oPb19H/TIzQoKEcn8vGToAmj5
+         uAG48gDEBa5ke3qZ7huTS9mFwlcYhO+8TNg/qvzSZq5E3kAtdg0IU/w+6CEz/7cHl581
+         26xA==
+X-Gm-Message-State: APzg51CnD/9D8ooFUx7HN2zLLCCSHbVV3vT2Sj9lWJLOvQ3F4i2bDtD1
+        Pxp8wwgRlqTYSlmx5Bc+nJ3v8H6dEj0=
+X-Google-Smtp-Source: ANB0Vdbw7vQyh5A2iRIeFOnaMBvznjfIKh5AE4Wj2zjBNjm/z5/wyYSTnaiAVzjeEjM+QM1dK1jMFA==
+X-Received: by 2002:a2e:6d0a:: with SMTP id i10-v6mr3610921ljc.145.1537560563256;
+        Fri, 21 Sep 2018 13:09:23 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id h16-v6sm5235187ljh.26.2018.09.21.13.09.22
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 13:07:33 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id y17-v6so12963921ljy.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:07:32 -0700 (PDT)
-X-Received: by 2002:a2e:5554:: with SMTP id j81-v6mr780096ljb.53.1537560451968;
- Fri, 21 Sep 2018 13:07:31 -0700 (PDT)
+        Fri, 21 Sep 2018 13:09:23 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id y17-v6so12970441ljy.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 13:09:22 -0700 (PDT)
+X-Received: by 2002:a2e:8103:: with SMTP id d3-v6mr3401992ljg.3.1537560561575;
+ Fri, 21 Sep 2018 13:09:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <1537424558-17989-1-git-send-email-vbadigan@codeaurora.org>
- <1537424558-17989-3-git-send-email-vbadigan@codeaurora.org>
- <CAE=gft6w_iV+vm=u=ZKNvDLVTHcAO+AR0A9Yg9etTHW8bJy05w@mail.gmail.com> <8f26b82c-b966-11d3-4fb6-0137a0a8cd4a@codeaurora.org>
-In-Reply-To: <8f26b82c-b966-11d3-4fb6-0137a0a8cd4a@codeaurora.org>
+References: <1537424558-17989-1-git-send-email-vbadigan@codeaurora.org> <1537424558-17989-2-git-send-email-vbadigan@codeaurora.org>
+In-Reply-To: <1537424558-17989-2-git-send-email-vbadigan@codeaurora.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Fri, 21 Sep 2018 13:06:54 -0700
-X-Gmail-Original-Message-ID: <CAE=gft52RWSibZRPukRX_L7ACOSUnqHc0FbsoCSvzAr=My-1kA@mail.gmail.com>
-Message-ID: <CAE=gft52RWSibZRPukRX_L7ACOSUnqHc0FbsoCSvzAr=My-1kA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/3] dt-bindings: mmc: sdhci-msm: Add entries for
- passing load values
+Date:   Fri, 21 Sep 2018 13:08:43 -0700
+X-Gmail-Original-Message-ID: <CAE=gft7k6gsX-xbW1cr+z2SYeHh=zbmNoUxxXOuG9zZz+DYcWQ@mail.gmail.com>
+Message-ID: <CAE=gft7k6gsX-xbW1cr+z2SYeHh=zbmNoUxxXOuG9zZz+DYcWQ@mail.gmail.com>
+Subject: Re: [PATCH V2 1/3] mmc: sdhci: Allow platform controlled voltage switching
 To:     vbadigan@codeaurora.org
 Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
         robh+dt@kernel.org, linux-mmc@vger.kernel.org,
         asutoshd@codeaurora.org, riteshh@codeaurora.org,
         stummala@codeaurora.org, sayali <sayalil@codeaurora.org>,
         Doug Anderson <dianders@google.com>, vviswana@codeaurora.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -86,69 +82,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 3:32 AM Veerabhadrarao Badiganti
+On Wed, Sep 19, 2018 at 11:24 PM Veerabhadrarao Badiganti
 <vbadigan@codeaurora.org> wrote:
 >
-> Hi Evan,
+> From: Vijay Viswanath <vviswana@codeaurora.org>
 >
+> Some controllers can have internal mechanism to inform the SW that it
+> is ready for voltage switching. For such controllers, changing voltage
+> before the HW is ready can result in various issues.
 >
-> On 9/21/2018 5:45 AM, Evan Green wrote:
-> > On Wed, Sep 19, 2018 at 11:24 PM Veerabhadrarao Badiganti
-> > <vbadigan@codeaurora.org> wrote:
-> >> From: Vijay Viswanath <vviswana@codeaurora.org>
-> >>
-> >> The load a particular sdhc controller should request from a regulator
-> >> is device specific and hence each device should individually vote for
-> >> the required load.
-> >>
-> >> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-> >> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-> >> ---
-> >>   Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 6 ++++++
-> >>   1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> >> index 502b3b8..3720385 100644
-> >> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> >> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> >> @@ -26,6 +26,11 @@ Required properties:
-> >>          "cal"   - reference clock for RCLK delay calibration (optional)
-> >>          "sleep" - sleep clock for RCLK delay calibration (optional)
-> >>
-> >> +Optional properties:
-> >> +- qcom,<supply>-current-level-microamp - specifies load levels for supply during BUS_ON and
-> >> +                                       BUS_OFF states in power irq. Should be specified in
-> >> +                                       pairs (lpm, hpm), for BUS_OFF and BUS_ON respectively.
-> >> +                                       Units uA.
-> >>   Example:
-> >>
-> >>          sdhc_1: sdhci@f9824900 {
-> >> @@ -37,6 +42,7 @@ Example:
-> >>
-> >>                  vmmc-supply = <&pm8941_l20>;
-> >>                  vqmmc-supply = <&pm8941_s3>;
-> >> +               qcom,vqmmc-current-level-microamp = <200 22000>;
-> >>
-> >>                  pinctrl-names = "default";
-> >>                  pinctrl-0 = <&sdc1_clk &sdc1_cmd &sdc1_data>;
-> >> --
-> >> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
-> >>
-> > Aren't the regulator load levels pretty coarse? Would it be safe to
-> > say that pretty much all sd/mmc devices need the high powered mode, or
-> > are there really some devices that can get by with LPM all the time?
-> > -Evan
-> The load levels here are min and max supported by the regulator. To
-> cover all devices
-> we do set it to max load. We can't make any assumptions on this,  as
-> peak current may vary
-> from device to device.
+> During setup/cleanup of host, check whether regulator enable/disable
+> was already done by platform driver.
+>
+> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+> ---
+>  drivers/mmc/host/sdhci.c | 22 +++++++++++++++-------
+>  drivers/mmc/host/sdhci.h |  1 +
+>  2 files changed, 16 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae5..04b3fd2 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3616,6 +3616,7 @@ int sdhci_setup_host(struct sdhci_host *host)
+>         unsigned int override_timeout_clk;
+>         u32 max_clk;
+>         int ret;
+> +       bool enable_vqmmc = false;
+>
+>         WARN_ON(host == NULL);
+>         if (host == NULL)
+> @@ -3629,9 +3630,12 @@ int sdhci_setup_host(struct sdhci_host *host)
+>          * the host can take the appropriate action if regulators are not
+>          * available.
+>          */
+> -       ret = mmc_regulator_get_supply(mmc);
+> -       if (ret)
+> -               return ret;
+> +       if (!mmc->supply.vmmc) {
+> +               ret = mmc_regulator_get_supply(mmc);
+> +               if (ret)
+> +                       return ret;
+> +               enable_vqmmc  = true;
 
-Hi Veera,
-If it were up to me, I would just assume all devices need high power
-mode for BUS_ON and low power mode for BUS_OFF, and skip adding this
-binding until you actually came up with a device that needed lower
-power mode for BUS_ON, or high power mode for BUS_OFF (when would that
-be, anyway?) Are there any actual use cases you've seen that need
-different values in here?
--Evan
+The coupling of logic strikes me as a little bit odd, it's saying if
+vmmc is already present, then don't turn on vqmmc. I guess what it's
+trying to say is "hands off all the regulators, I've got this". It
+might be cleaner to set enable_vqmmc based on whether or not
+mmc->supply.vqmmc exists before the get_supply call, rather than
+coupling it into whether or not vmmc exists.
+
+Actually, what might be even nicer is to change
+mmc_regulator_get_supply to only get supplies that it doesn't already
+have. You'd still have your enable_vqmmc local, but the
+mmc_regulator_get_supply call would be outside the conditional, and
+the logic of "don't enable vqmmc if it existed before" would make more
+sense.
+
+> +       }
+>
+>         DBG("Version:   0x%08x | Present:  0x%08x\n",
+>             sdhci_readw(host, SDHCI_HOST_VERSION),
+> @@ -3880,7 +3884,11 @@ int sdhci_setup_host(struct sdhci_host *host)
+>                 mmc->caps |= MMC_CAP_NEEDS_POLL;
+>
+>         if (!IS_ERR(mmc->supply.vqmmc)) {
+> -               ret = regulator_enable(mmc->supply.vqmmc);
+> +               if (enable_vqmmc) {
+> +                       ret = regulator_enable(mmc->supply.vqmmc);
+> +                       host->vqmmc_enabled = !ret;
+> +               } else
+> +                       ret = 0;
+
+I think it's preferred that if your "if" had curly braces, then the
+else part needs it too. Actually, can you move the if (ret) pr_warn
+stuff up and inside of your if statement above? That keeps the logic
+together, and then you don't need an else case at all!
+
+>
+>                 /* If vqmmc provides no 1.8V signalling, then there's no UHS */
+>                 if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
+> @@ -4136,7 +4144,7 @@ int sdhci_setup_host(struct sdhci_host *host)
+>         return 0;
+>
+>  unreg:
+> -       if (!IS_ERR(mmc->supply.vqmmc))
+> +       if (host->vqmmc_enabled)
+>                 regulator_disable(mmc->supply.vqmmc);
+>  undma:
+>         if (host->align_buffer)
+> @@ -4154,7 +4162,7 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+>  {
+>         struct mmc_host *mmc = host->mmc;
+>
+> -       if (!IS_ERR(mmc->supply.vqmmc))
+> +       if (host->vqmmc_enabled)
+>                 regulator_disable(mmc->supply.vqmmc);
+>
+>         if (host->align_buffer)
+> @@ -4287,7 +4295,7 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
+>
+>         tasklet_kill(&host->finish_tasklet);
+>
+> -       if (!IS_ERR(mmc->supply.vqmmc))
+> +       if (host->vqmmc_enabled)
+>                 regulator_disable(mmc->supply.vqmmc);
+>
+>         if (host->align_buffer)
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index b001cf4..3c28152 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -524,6 +524,7 @@ struct sdhci_host {
+>         bool pending_reset;     /* Cmd/data reset is pending */
+>         bool irq_wake_enabled;  /* IRQ wakeup is enabled */
+>         bool v4_mode;           /* Host Version 4 Enable */
+> +       bool vqmmc_enabled;     /* Vqmmc is enabled */
+
+This is kind of unpleasant. It's confused by the fact that other host
+controllers have a vqmmc_enabled member, but they use it to mean what
+it sounds like, "is vqmmc currently enabled". Here you're really using
+it to mean "don't ever disable vqmmc in sdhci, because the platform
+code sort of owns vqmmc". It only "sort of" owns it in that sdhci is
+still free to call regulator_is_supported_voltage and
+mmc_regulator_set_vqmmc, but somehow not regulator_disable. Is there
+any way to clean up the semantics here?
+
+>
+>         struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests done */
+>         struct mmc_command *cmd;        /* Current command */
+> --
+> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
+>
