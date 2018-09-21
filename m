@@ -2,97 +2,113 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D84C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C25BECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A84206B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:06:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FGtQgn6w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A84206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 2E7112146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:07:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E7112146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389519AbeIUOyh (ORCPT
+        id S2389531AbeIUOzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 10:54:37 -0400
-Received: from ozlabs.org ([203.11.71.1]:45067 "EHLO ozlabs.org"
+        Fri, 21 Sep 2018 10:55:21 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:35498 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389022AbeIUOyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 10:54:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1725898AbeIUOzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 10:55:21 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id W4ueZbSjZezx; Fri, 21 Sep 2018 11:07:25 +0200 (CEST)
+Received: from nazgul.tnic (prg-ext-pat.suse.com [213.151.95.130])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42Gnlh2lQxz9sCS;
-        Fri, 21 Sep 2018 19:06:40 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1537520800;
-        bh=TvqJhBqv/m9EPmG5OEUM72BQ8p6reWkSM2j8Pc4YyFE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FGtQgn6wBoSIPjfzE6kt2uG/ruSlt4JvsWru9xClilIVe5PHVjFIRo9fDVH0F4RLf
-         g4CQi9wdLDV7Vzsa97DR4xMtNuaK5sQ/BG9oiLQMXb3gKU/3I2pkTdJRjdNfl3IJpM
-         UHx7RVLTD4ne3k5QxxG3EDvbEIAwjfXb29c1W+uoWPZUw7QquHRRHzG83a75Kyetz6
-         SfdTx/H/vfBI0IaspXoGjrFPBX60zNUzbL27Kl4XpMV3tiwbVK5WwCGjQGX63wfYmt
-         PuuruwuVLbgADKqMLU/eWFCm8iiha1zwKVF1vp4MiJ+cz1vLRS1WFXXlBKE4eDQULL
-         N6XKAqAD10WfA==
-Date:   Fri, 21 Sep 2018 19:06:39 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [REVIEW][PATCH 0/9] signal/powerpc: siginfo cleanups
-Message-ID: <20180921190639.36c4bcf8@canb.auug.org.au>
-In-Reply-To: <878t3yitze.fsf@xmission.com>
-References: <878t3yitze.fsf@xmission.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 60DFE1EC0118;
+        Fri, 21 Sep 2018 11:07:25 +0200 (CEST)
+Date:   Fri, 21 Sep 2018 11:07:21 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Manish Narani <MNARANI@xilinx.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v7 2/7] edac: synps: Add platform specific structures for
+ ddrc controller
+Message-ID: <20180921090721.GB30439@nazgul.tnic>
+References: <1537194305-9243-1-git-send-email-manish.narani@xilinx.com>
+ <1537194305-9243-3-git-send-email-manish.narani@xilinx.com>
+ <20180918075522.GC22202@nazgul.tnic>
+ <DM6PR02MB5227F5B1B329C903BA64A27CC11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
+ <20180919111553.GA9140@nazgul.tnic>
+ <DM6PR02MB52279753E7FD04587393DC08C11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/L83Adti=lF2bierENe4AgKL"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DM6PR02MB52279753E7FD04587393DC08C11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/L83Adti=lF2bierENe4AgKL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 19, 2018 at 01:33:58PM +0000, Manish Narani wrote:
+> Apart from this one, I have covered all the comments from the previous review.
 
-Hi Eric,
+Are you sure?
 
-On Tue, 18 Sep 2018 19:41:09 +0200 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> Folks please review and double check me.  I think I have kept these
-> changes simple and obviously correct but I am human and mess up
-> sometimes.
+Let's see. I said:
 
-Its always good to see a nicely set out patch series like this.
+| Kill all that "function pointer" fluff. Here's how I've changed it:
+| 
+| /**
+|  * struct synps_platform_data -  synps platform data structure
+|  * @edac_geterror_info: edac error info
+|  * @edac_get_mtype:     get mtype
+|  * @edac_get_dtype:     get dtype
+|  * @edac_get_eccstate:  get ECC state
+			  ^^^^^^^^^^^^^
 
---=20
-Cheers,
-Stephen Rothwell
+This is supposed to denote that this function returns whether ECC
+checking is enabled on the controller or not.
 
---Sig_/L83Adti=lF2bierENe4AgKL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Your patch has:
 
------BEGIN PGP SIGNATURE-----
++ * struct synps_platform_data -  synps platform data structure.
++ * @geterror_info:     Get error info.
++ * @get_mtype:         Get mtype.
++ * @get_dtype:         Get dtype.
++ * @get_eccstate:      Get eccstate.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluktJ8ACgkQAVBC80lX
-0GzDLQgAjiA+cJSVkM6LtgzOLLTCs4Co5C770JYclf8Z1UezSfK0DvVUbyEL1FZs
-ric3KQQVU5qyNzMM3qJX+UJjQUlFMumsFcbp9eRV4Uavyanvv0JQgnbYo/L/u9Fc
-E+pjhUK3qSPF0tJs4nC+szglI+DMIvGFl64Y7RN2/CFev1w61uEvOanZgdkVlA4W
-ArjpONz2GSebGRcKE6fJghjqLwQMGFe9pU9umSSLZSv9XuX1hINYGaTN6zqy8f+Q
-1pgc4YvMgvNXcAPEoTM2B3fUPkDgw+F7WKMYVjX4nLsV1z9qE4BWli99UHGC6aTp
-AWJ64EKghrxlKCDpEjKm9Iq7BhDiCw==
-=Kblr
------END PGP SIGNATURE-----
+So what is "eccstate"? Is it a struct or a variable or ...?
 
---Sig_/L83Adti=lF2bierENe4AgKL--
+Do you see my point?
+
+I know, it is a small thing but documenting our code properly is
+something which people would be thanking us for. Even you will be
+thanking yourself when you look at this months from now after having
+forgotten it all.
+
+Please check the rest of your additions for similar discrepancies.
+
+Thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
