@@ -2,112 +2,79 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B87C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3A9C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520D721550
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:03:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520D721550
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A05021550
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:03:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fjHbA62p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A05021550
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390480AbeIUVwa (ORCPT
+        id S2390546AbeIUVxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:52:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388909AbeIUVwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:52:30 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22A96C059B76;
-        Fri, 21 Sep 2018 16:02:59 +0000 (UTC)
-Received: from haswell-e.nc.xsintricity.com (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D8E2230912F4;
-        Fri, 21 Sep 2018 16:02:57 +0000 (UTC)
-Message-ID: <551884c4290b58a8bdcf5fc02b3b29a7b1ac7844.camel@redhat.com>
-Subject: Re: [PATCH] IB/mlx4: Remove unnecessary parentheses
-From:   Doug Ledford <dledford@redhat.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 21 Sep 2018 12:02:56 -0400
-In-Reply-To: <20180920033229.15102-1-natechancellor@gmail.com>
-References: <20180920033229.15102-1-natechancellor@gmail.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-CEagSXfSaqMJxZ0kvSCr"
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Sep 2018 16:02:59 +0000 (UTC)
+        Fri, 21 Sep 2018 17:53:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46108 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728221AbeIUVxE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 17:53:04 -0400
+Received: from [192.168.0.23] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 122481280;
+        Fri, 21 Sep 2018 18:03:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1537545810;
+        bh=2nM0WjSQy7aiBX9nU+aa3CMFcY9SEg4ZIMcEZRSzv/A=;
+        h=Reply-To:Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=fjHbA62pt2MUzaVs3nmfFwEEOincM64r3ySWKFfWToAFQciETt+5tAWrSSHsKjntd
+         gaUIz1oN9ugB9BF2jv+4b+2YB1I9I+m34Xz+GBCYWg86bp2/M05fbWALXTkQtglrYd
+         Psvqd010LAKgtLEL1BCPXyrZE1U9hxDP6PQfpSNM=
+Reply-To: kieran.bingham+renesas@ideasonboard.com,
+          kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH] kernel/bounds: Provide prototype for foo
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
+ <20180921144527.GB16316@kroah.com>
+ <6436e493-a3e4-7f9e-da1f-9db50643dff8@ideasonboard.com>
+Openpgp: preference=signencrypt
+Organization: Ideas on Board
+Message-ID: <cfb48097-31d7-be19-994f-81f88f2bb1c8@ideasonboard.com>
+Date:   Fri, 21 Sep 2018 17:03:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <6436e493-a3e4-7f9e-da1f-9db50643dff8@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21/09/18 16:58, Kieran Bingham wrote:
+> Hi Greg,
+> 
+> Thank you for quick response!
 
---=-CEagSXfSaqMJxZ0kvSCr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ahem; s/for quick/for your quick/
 
-On Wed, 2018-09-19 at 20:32 -0700, Nathan Chancellor wrote:
-> Clang warns when more than one set of parentheses are used in single
-> conditional statements.
->=20
-> drivers/infiniband/hw/mlx4/mcg.c:676:16: warning: equality comparison
-> with extraneous parentheses [-Wparentheses-equality]
->                         if ((method =3D=3D IB_MGMT_METHOD_GET_RESP)) {
->                              ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/infiniband/hw/mlx4/mcg.c:676:16: note: remove extraneous
-> parentheses around the comparison to silence this warning
->                         if ((method =3D=3D IB_MGMT_METHOD_GET_RESP)) {
->                             ~       ^                         ~
-> drivers/infiniband/hw/mlx4/mcg.c:676:16: note: use '=3D' to turn this
-> equality comparison into an assignment
->                         if ((method =3D=3D IB_MGMT_METHOD_GET_RESP)) {
->                                     ^~
->                                     =3D
->=20
-> Remove the unnecessary parentheses to silence this warning.
->=20
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+I hate re-reading mails after I hit send and spotting things like this.
+Sigh :-)
 
-Applied to for-next, thanks.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
---=-CEagSXfSaqMJxZ0kvSCr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlulFjAACgkQuCajMw5X
-L91FBg/+N9IjWWGLCBrNlJboa98FuGpxWU0/RN1P7N8DPoZ3SecK4eHWFZzpcCQz
-fi1xEdRtZhqTBLOUJzPQUSIJ9k8QwI8Z4vSLEiFn0mZyq4JitzN/yC493/7wTbHk
-J6imJtVrpS7v22wHM4fKzniJJw4JG7oHMkEq2e5+u1PQRHOzdk8xWZG9hr8ip6hD
-xCeKHKWMWr9/CS2JkpTYy5jbpyaAJFV19ee/Ta+LcJVp82tDOvQEGWHAWSrf0xF6
-q3E/Pr7ADspLZOh8Rdvw0EVPQIIv3iDV60hjLhBsooVEFSRVsq1LJO171wJFlQzK
-adD4IoxLOl/ushGOIyTGI413WvA1SMrDPU6cxLvIFMXAMlv7lor2RxumyOX+sARx
-Plv7r4CfWl82z07PbN8vqZP5oyy7QhmHZKazVGnnmRks4kU3m3JG0z3jK+cubN9W
-OTEinmeONgkex9aveal+KEEYpTFjzIotbL26OsrnyGUCs3338Kd320PZ0/vr7yWr
-QiRqOrZcIdU7WhiWGkUh2vlozFC20+eDtcrVAwyB8opmXvodxdgd0Ne2NgCDnXbj
-5x+eyXbFqFjPHG1X2aSqFyWKZhihswRyCXhm0g1Mq1ITHg4uZsVsIRscmc/qa/gf
-xJ4G5QjKavDYNrD7zqulbpyahDcbz0JABEO0hHmkSAqWXNNN9Bs=
-=tPdz
------END PGP SIGNATURE-----
-
---=-CEagSXfSaqMJxZ0kvSCr--
-
+Regards
+--
+Kieran
