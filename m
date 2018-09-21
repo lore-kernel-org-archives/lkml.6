@@ -2,152 +2,127 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8736C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53361ECE566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57D0F2150E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t16AGqWi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D0F2150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 134EF2150E
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134EF2150E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390055AbeIUTOy (ORCPT
+        id S2390097AbeIUTPe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:14:54 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39195 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeIUTOx (ORCPT
+        Fri, 21 Sep 2018 15:15:34 -0400
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:45095 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbeIUTPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:14:53 -0400
-Received: by mail-lj1-f194.google.com with SMTP id l15-v6so11639131lji.6
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FJFvYvUXiSW5WCbOfxE2BKgCZxDE29u3shIdNmORS/w=;
-        b=t16AGqWiLbSa1yDlxhU+OoXznKrk3wbrOOZPQR4XPdLL2fkZHhpUiMpw2099cjCANa
-         TMA8uNIaPs4mb98A0D1k5YoOEyCC5cRXldSI+CAs6gQcFmmU8ihdMcSxULXPwIRQ/K4k
-         HId0I2PZM/uu2VL3qNlS4x8d1NwxorXSOdq5hWJOhRiLxKZKFxMtrItNpOJ5raRqwvfm
-         oDeQP2GSR0M/AfK2SHH7W1+Puh+NEEL1RTqJZ1LQUvergXhjG3aHOPfodkZ/AoNskXol
-         EONGWyZYudRgPf5twdR2BWnNvMxwYlrzsZhRgvVR7XljypxQHpoE3uSFV9JVTHaK5BuQ
-         C7sQ==
+        Fri, 21 Sep 2018 15:15:34 -0400
+Received: by mail-wr1-f50.google.com with SMTP id 20-v6so12854605wrb.12
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:26:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FJFvYvUXiSW5WCbOfxE2BKgCZxDE29u3shIdNmORS/w=;
-        b=bMImKU4W7HHydY9HcEvr5+F92VnSJIhmkul48Odljk6SlDPtJT47xmzi8nx7o/jmeL
-         WAHYkmpENpk3dHh2YbiE3VQpn8XJgB3FfWuFUHSiV0DffWc56h8qtur9uRt0/6+OFtWb
-         kxzvmdov25/WGX69A+HdG7o71HFdg+Hj8Jbs67T7Vak9RbPIVlsiMFsaC9QtT7y83ZJO
-         Ot0ZFNphGxhLtvOgU0cj2PdwOVmOHMXpwNlhFoipD6xKhm83/C3CBQIzxnCVRjRrVaW/
-         nwVBYyMCBGjDvQM/6JO3nADxaPzKyxSwsBaqIKyh4PHtFlDiFKlxdebNcIlLRsfzwNbk
-         1iGw==
-X-Gm-Message-State: ABuFfoj5iCuNk+OWeuR9IC++LOIn1Du9EKSp+51CJr0bpBsIHEwIxEbl
-        6M4+lOj1EQEQ1YQaNVVuxQJtwVpcWf731mswvSA=
-X-Google-Smtp-Source: ACcGV60Fcg01npQdYB6mZbES/EvGUm1AQCt6qbKLkzqUppyw1FnvlVwEaBzrj8RwsiCxkhqoiGspH8UBqtUD9bBOXwM=
-X-Received: by 2002:a2e:8ed1:: with SMTP id e17-v6mr1849774ljl.86.1537536360141;
- Fri, 21 Sep 2018 06:26:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180920191254.GA22764@jordon-HP-15-Notebook-PC>
- <6fa7d32b-07f0-ab6d-8053-021b171153e6@virtuozzo.com> <CAFqt6zbp8wynKqFRyp3Q55Scoi9ojfdCVkMrxC4w9qxPxWMXGQ@mail.gmail.com>
- <68b8cbf3-1b5a-2311-ac09-a8676280e85e@virtuozzo.com>
-In-Reply-To: <68b8cbf3-1b5a-2311-ac09-a8676280e85e@virtuozzo.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 21 Sep 2018 18:55:47 +0530
-Message-ID: <CAFqt6za6VJ7vmWEqg4JGWqRiqbfc6GYDnpUeBQ+03xdY51-GQA@mail.gmail.com>
-Subject: Re: [PATCH] kernel/kcov: Replace vm_insert_page with vmf_insert_page
-To:     aryabinin@virtuozzo.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>, tchibo@google.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1uKCZtawr6sx1VF67pqvvb8M6Rauyp4CSph0imxJ5Ao=;
+        b=jYXQ8VGvFfkKCmOwm3UpDrMMpnwU7qZ0MSfdpPFlQ2EjpWQdenjGCpUrHSQ+9j9kqK
+         /WxFRSTpHGS1aiWygeK0yZWHWtYEEW8LTAw7WbQlDiManHEPJWEV7EHBy0NUWEPbTXHt
+         Z3p5SE5DkZ5jJjrdVVznWNQ4hkSmx7aYhIFecSUoLpgv7wPpoy6m/Rbe13QpeHrVmK6L
+         NN7jfVTMkQ8TI2ggM7bUuJJ0zkH9s+bZFdGM7gJHY+bmWW5sDnPHslung+aRHmgop5s/
+         XQbJf6sWl2eGFFgwCEwNYA/6Q6NNAl33A92JqSZZAalVM8HCtqi4zby+tXlNf0rAkL4R
+         mKiQ==
+X-Gm-Message-State: APzg51CmXCSWHbE6PqLAedISgCVnZKjF7rgBpblqpSCTG/ihU5+8WoXP
+        VetlCpKxc8hA0Qlu3F4Z0rE=
+X-Google-Smtp-Source: ANB0VdaVJa74kMPkh47W1eZR1xPt5lfIMMNXIpuzjoLxYy9WyfaycvtUv6Q/YzZmUC1I80AWBOSLUg==
+X-Received: by 2002:adf:e44e:: with SMTP id t14-v6mr37268082wrm.96.1537536401315;
+        Fri, 21 Sep 2018 06:26:41 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id y5-v6sm30937834wrd.5.2018.09.21.06.26.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 06:26:40 -0700 (PDT)
+Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
+        by techadventures.net (Postfix) with ESMTPA id C3A0D1252A7;
+        Fri, 21 Sep 2018 15:26:39 +0200 (CEST)
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, dan.j.williams@intel.com, david@redhat.com,
+        Pavel.Tatashin@microsoft.com, Jonathan.Cameron@huawei.com,
+        yasu.isimatu@gmail.com, malat@debian.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH v2 0/4] Refactor node_states_check_changes_online/offline
+Date:   Fri, 21 Sep 2018 15:26:30 +0200
+Message-Id: <20180921132634.10103-1-osalvador@techadventures.net>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 5:22 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->
->
->
-> On 09/21/2018 01:03 PM, Souptick Joarder wrote:
-> > On Fri, Sep 21, 2018 at 3:06 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
-> >>
-> >> On 09/20/2018 10:12 PM, Souptick Joarder wrote:
-> >>> There is a plan to replace vm_insert_page with new API
-> >>> vmf_insert_page. As part of it, converting vm_insert_page
-> >>> to use vmf_insert_page.
-> >>>
-> >>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >>> ---
-> >>>  kernel/kcov.c | 5 +++--
-> >>>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/kernel/kcov.c b/kernel/kcov.c
-> >>> index 3ebd09e..8900d8e 100644
-> >>> --- a/kernel/kcov.c
-> >>> +++ b/kernel/kcov.c
-> >>> @@ -293,8 +293,9 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
-> >>>               spin_unlock(&kcov->lock);
-> >>>               for (off = 0; off < size; off += PAGE_SIZE) {
-> >>>                       page = vmalloc_to_page(kcov->area + off);
-> >>> -                     if (vm_insert_page(vma, vma->vm_start + off, page))
-> >>> -                             WARN_ONCE(1, "vm_insert_page() failed");
-> >>> +                     if (vmf_insert_page(vma, vma->vm_start + off, page)
-> >>> +                                     != VM_FAULT_NOPAGE)
-> >>> +                             WARN_ONCE(1, "vmf_insert_page() failed");
-> >>
-> >> Nack, don't see the reason for such change, it only makes code worse.
-> >
-> > Yes, it needed.
->
-> No, it's not needed. vm_insert_page() works perfectly fine here.
->
-> > Going forward vm_insert_page will be converted to
-> > vmf_insert_page. As part of it, this code has to be converted to use
-> > vmf_insert_page().
->
-> This doesn't explain why such conversion would make sense for kcov_mmap().
+From: Oscar Salvador <osalvador@suse.de>
 
-vm_insert_page used to return errno which individual drivers have to
-map to VM_FAULT_CODE.
-There were also places where return value of vm_insert_page was
-ignored and return a
-TRUE value.
+v1 -> v2:
+        - Address feedback from Pavel
+        - Re-write patch4 his way, as it is better
+        - Add Reviewed-by from Pavel
 
-As part of vm_fault_t migration patches, we have identified and clean
-up all these.
-The plan was to introduce inline wrapper vmf_insert_page(), convert all
-the page fault handlers to use it and then convert vm_insert_page to
-vmf_insert_page. By now we have converted all the page fault handlers
-to use this API.
+---
 
-Still their are few places where vm_insert_page is called outside fault handlers
-context to map kernel page to user vma and kernel/kcov.c is one of them.
+This patchset refactors/clean ups node_states_check_changes_online/offline
+functions together with node_states_set/clear_node.
 
-Now removing vm_insert_page from those few places one by one.
+The main reason behind this patchset is that currently, these
+functions are suboptimal and confusing.
 
-Going forward vm_insert_page will be removed from kernel permanently,
-so that new drivers can't use this API and create new errno to VM_FAULT_CODE
-mapping code.
+For example, they contain wrong statements like:
 
->
-> > please refer below commit on linus tree -
-> > 1c8f422059ae5da07db74
->
-> That the commit has nothing to deal with kcov, it doesn't explain why kcov_mmap()
-> can't keep using vm_insert_page() and/or why we should prefer vmf_insert_page()
-> over vm_insert_page() particularly in the case of kcov_mmap().
->
+if (N_MEMORY == N_NORMAL_MEMORY)
+if (N_MEMORY =! N_NORMAL_MEMORY)
+if (N_MEMORY != N_HIGH_MEMORY)
+if (N_MEMORY == N_HIGH_MEMORY)
+
+These comparasions are wrong, as N_MEMORY will never be equal
+to either N_NORMAL_MEMORY or N_HIGH_MEMORY.
+Although the statements do not "affect" the flow because in the way
+they are placed, they are completely wrong and confusing.
+
+I caught another misuse of this in [1].
+
+Another thing that this patchset addresses is the fact that
+some functions get called twice, or even unconditionally, without
+any need.
+
+Examples of this are:
+
+- node_states_set_node()->node_set_state(node, N_MEMORY)
+
+* node_states_set_node() gets called whenever we online pages,
+  so we end up calling node_set_state(node, N_MEMORY) everytime.
+  To avoid this, we should check if the node is already in node_state[N_MEMORY].
+
+- node_states_set_node()->node_set_state(node, N_HIGH_MEMORY)
+
+* On !CONFIG_HIGH_MEMORY, N_HIGH_MEMORY == N_NORMAL_MEMORY,
+  but the current code sets:
+  status_change_nid_high = status_change_nid_normal
+  This means that we will call node_set_state(node, N_NORMAL_MEMORY) twice.
+  The fix here is to set status_change_nid_normal = -1 on such systems,
+  so we skip the second call.
+
+[1] https://patchwork.kernel.org/patch/10579155/
+
+Oscar Salvador (4):
+  mm/memory_hotplug: Spare unnecessary calls to node_set_state
+  mm/memory_hotplug: Tidy up node_states_clear_node
+  mm/memory_hotplug: Simplify node_states_check_changes_online
+  mm/memory_hotplug: Clean up node_states_check_changes_offline
+
+ mm/memory_hotplug.c | 146 ++++++++++++++--------------------------------------
+ 1 file changed, 40 insertions(+), 106 deletions(-)
+
+-- 
+2.13.6
+
