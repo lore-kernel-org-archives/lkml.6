@@ -2,91 +2,155 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C4EC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A07EC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 873C321532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:21:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="We8XySgK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 873C321532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id C06AB21532
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 03:22:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06AB21532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389042AbeIUJIP (ORCPT
+        id S2389076AbeIUJIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 05:08:15 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:45751 "EHLO frisell.zx2c4.com"
+        Fri, 21 Sep 2018 05:08:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37012 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbeIUJIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 05:08:14 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d6414b89;
-        Fri, 21 Sep 2018 03:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=qdBZm+bCMXbqziUyqMAN82K9JXU=; b=We8XyS
-        gKQsKJkfNwAdgVm2wsJlboESXdrjvxmmpL19RZnWTSOdubJd7bigD/z2Q64YitkO
-        0aBMT6S2qlhHJ0Jbkf9gSqVggt8/GS9elCRDTqhRQH4AREYzPSylqu068gKx0VeL
-        xTgmdBxB9GnrMTGWo5EnQyC7i2N3cbUvuaoz9OySLcnm1AFa0WlHWr05T6SM2mdF
-        gD8fVXgk6iFRfM9yUyTCIrReY9VunAu6Nvtp+iEMn0QjlclBqMgz9eXB8hFc0qnI
-        PZeNWCUwl4pbFNFNQgrf4tkyJHitdjOIVNMj/oZnppNTTs5yO2KcBHWTd0YiiCaI
-        93rEChnNX2G+ZXEg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 4c14d2ab (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Fri, 21 Sep 2018 03:03:33 +0000 (UTC)
-Received: by mail-ot1-x333.google.com with SMTP id j9-v6so11657737otl.2;
-        Thu, 20 Sep 2018 20:21:26 -0700 (PDT)
-X-Gm-Message-State: APzg51CgJZpau8iP9YvfzjKZA1FezmrDuVv+6MmOnRfnDEwI/QVxBpci
-        yMpVxCdFVrUOge+uIBfl0Kjx9bEsIDWISdENxFA=
-X-Google-Smtp-Source: ANB0VdavM5TENL1YAnHQE/rZ3576FwEhKFj8UVn+1qMLmZr7pnT4ZZKXj/FHE8OKyThAEuf8bvZlb9g5nEFHaJM0jXY=
-X-Received: by 2002:a9d:6554:: with SMTP id q20-v6mr24751122otl.209.1537499783441;
- Thu, 20 Sep 2018 20:16:23 -0700 (PDT)
+        id S1725892AbeIUJIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 05:08:47 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7BE2D30026A9;
+        Fri, 21 Sep 2018 03:22:00 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D189310694C9;
+        Fri, 21 Sep 2018 03:21:59 +0000 (UTC)
+Date:   Fri, 21 Sep 2018 11:21:57 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com
+Cc:     linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+        x86@kernel.org, thgarnie@google.com, corbet@lwn.net,
+        linux-doc@vger.kernel.org, peterz@infradead.org
+Subject: [PATCH v2 3/3] x86/doc/kaslr.txt: Create a separate part of document
+ abourt KASLR at the end of file
+Message-ID: <20180921032157.GT2555@MiWiFi-R3L-srv>
+References: <20180921020550.13095-1-bhe@redhat.com>
+ <20180921020550.13095-4-bhe@redhat.com>
 MIME-Version: 1.0
-References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-3-Jason@zx2c4.com>
- <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com>
- <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com>
- <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com> <20180921031255.GB11109@lunn.ch>
-In-Reply-To: <20180921031255.GB11109@lunn.ch>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 21 Sep 2018 05:16:11 +0200
-X-Gmail-Original-Message-ID: <CAHmME9p-abAV-depcb+8wjAayv8WaGRqPXBswseH+ovsRbfJ-Q@mail.gmail.com>
-Message-ID: <CAHmME9p-abAV-depcb+8wjAayv8WaGRqPXBswseH+ovsRbfJ-Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography library
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921020550.13095-4-bhe@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 21 Sep 2018 03:22:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+Take the original content as the first part to only list static mm layout
+tables in non-KASLR case. Then add KASLR document at the end.
 
-On Fri, Sep 21, 2018 at 5:13 AM Andrew Lunn <andrew@lunn.ch> wrote:
-> Do you any stack usage information?
->
-> A VPN can be at the bottom of some deep stack calls. Swap on NFS over
-> the VPN? If you have one frame of 1K, you might be O.K. But if you
-> have a few of these, i can see there might be issues of overflowing
-> the stack.
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+ Documentation/x86/x86_64/mm.txt | 62 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 54 insertions(+), 8 deletions(-)
 
-It's pretty small, and most of the work is punted onto workqueues
-pretty early, so the depth isn't as much of an issue as it would be if
-I did everything from ndo_start_xmit. I've done some stack tracking
-using the debug option for that, and it's generally far from the
-deepest thing running.
+diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
+index fc1da95e629d..58187614c7ca 100644
+--- a/Documentation/x86/x86_64/mm.txt
++++ b/Documentation/x86/x86_64/mm.txt
+@@ -1,4 +1,6 @@
+ 
++MM layout in non-KASLR case:
++
+ Virtual memory map with 4 level page tables:
+ 
+ 0000000000000000 - 00007fffffffffff (=47 bits, 128 TB) user space, different per mm
+@@ -12,7 +14,6 @@ ffffea0000000000 - ffffeaffffffffff (=40 bits, 1 TB) virtual memory map (vmemmap
+ ffffeb0000000000 - ffffebffffffffff (=40 bits, 1 TB) unused hole
+ ffffec0000000000 - fffffbffffffffff (=44 bits, 16 TB) kasan shadow memory
+ fffffc0000000000 - fffffdffffffffff (=41 bits, 2 TB) unused hole
+-				    vaddr_end for KASLR
+ fffffe0000000000 - fffffe7fffffffff (=39 bits, 512 GB) cpu_entry_area mapping
+ fffffe8000000000 - fffffeffffffffff (=39 bits, 512 GB) LDT remap for PTI
+ ffffff0000000000 - ffffff7fffffffff (=39 bits, 512 GB) %esp fixup stacks
+@@ -38,7 +39,6 @@ ffd4000000000000 - ffd5ffffffffffff (=49 bits, 512 TB) virtual memory map (vmemm
+ ffd6000000000000 - ffdeffffffffffff (~51 bits, 2304 TB) unused hole
+ ffdf000000000000 - fffffdffffffffff (~53 bits, ~8 PB) kasan shadow memory
+ fffffc0000000000 - fffffdffffffffff (=41 bits, 2 TB) unused hole
+-				    vaddr_end for KASLR
+ fffffe0000000000 - fffffe7fffffffff (=39 bits, 512 GB) cpu_entry_area mapping
+ fffffe8000000000 - fffffeffffffffff (=39 bits, 512 GB) unused hole
+ ffffff0000000000 - ffffff7fffffffff (=39 bits, 512 GB) %esp fixup stacks
+@@ -70,10 +70,56 @@ memory window (this size is arbitrary, it can be raised later if needed).
+ The mappings are not part of any other kernel PGD and are only available
+ during EFI runtime calls.
+ 
+-Note that if CONFIG_RANDOMIZE_MEMORY is enabled, the direct mapping of all
+-physical memory, vmalloc/ioremap space and virtual memory map are randomized.
+-Their order is preserved but their base will be offset early at boot time.
++KASLR
++=========================================================================
++
++Kernel Adress Space Layout Randomization (KASLR) consists of two parts
++which work together to enhance the security of the Linux kernel:
++
++ - Kernel text KASLR
++ - Memory region KASLR
++
++Kernel text KASLR
++-----------------
++The physical address and virtual address of kernel text itself are
++randomized to a different position separately. The physical address of
++the kernel can be anywhere under 64TB, while the virtual address of the
++kernel is restricted between [0xffffffff80000000, ffffffffbfffffff],
++the 1GB space.
++
++ffffffff80000000 - ffffffffbfffffff (1 GB)  kernel text mapping, from phys 0
++ffffffffc0000000 - fffffffffeffffff (1520 MB) module mapping space
++
++Note: The kernel text KASLR uses 1 GB space to randomize the position of
++kernel image, and it's defalutly enabled. If KASLR config option
++CONFIG_RANDOMIZE_BASE is not enabled, the space for kernel image will be
++shrink to 512 MB, increase the size of modules area to 1.5 GB.
++
++Memory region KASLR
++-------------------
++If CONFIG_RANDOMIZE_MEMORY is enabled, the below three memory regions
++are randomized. Their order is preserved but their base will be offset
++early at boot time.
++
++   - direct mapping region
++   - vmalloc region
++   - vmemmap region
++
++The KASLR address range must not overlap with anything except the KASAN
++shadow area, which is correct as KASAN disables KASLR.
++
++So from the original starting address of the direct mapping region for physical
++RAM to the starting address of the cpu_entry_area mapping region, namely
++[0xffff880000000000 - 0xfffffdffffffffff], the scope of 118 TB in all is
++the virtual address space where memory region KASLR can be allowed to move
++those memory regions around. After KASLR manipulation is done, their layout
++looks like:
+ 
+-Be very careful vs. KASLR when changing anything here. The KASLR address
+-range must not overlap with anything except the KASAN shadow area, which is
+-correct as KASAN disables KASLR.
++Name            Starting address        Size                                         Aligned
++-----------------------------------------------------------------------------------------------
++direct mapping  page_offset_base        [actual size of system RAM + 10 TB padding]  1 GB
++*guard hole     random                  random                                       1 GB
++vmalloc         vmalloc_base            32 TB                                        1 GB
++*guard hole     random                  random                                       1 GB
++vmemmap         vmemmap_base            1 TB                                         1 GB
++*guard hole     random                  random                                       1 GB
+-- 
+2.13.6
 
-Jason
