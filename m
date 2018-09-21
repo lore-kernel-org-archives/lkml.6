@@ -2,129 +2,138 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78BCC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C37ECE561
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FE2B2154B
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:56:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE2B2154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A6FE21547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 01:58:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="MB/QCSwj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6FE21547
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388823AbeIUHmn (ORCPT
+        id S2388876AbeIUHpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 03:42:43 -0400
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:25238 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725855AbeIUHmn (ORCPT
+        Fri, 21 Sep 2018 03:45:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47684 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeIUHpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 03:42:43 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 21 Sep 2018 11:26:11 +0930
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1g3Afw-00089q-VT; Fri, 21 Sep 2018 11:56:09 +1000
-Date:   Fri, 21 Sep 2018 11:56:08 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ming Lei <tom.leiming@gmail.com>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: Re: block: DMA alignment of IO buffer allocated from slab
-Message-ID: <20180921015608.GA31060@dastard>
-References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Fri, 21 Sep 2018 03:45:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=w9Mvn5xDktEsZbF3s15rO5XAaHQNVxHqTZ38oAYifNw=; b=MB/QCSwjd9gF
+        8Ef4U4vSbz8EkibUNZzeGIHsqAwAScM95Dx0hb1iB9EZNf+U/xhtBSKEOoZHytrrqJgGwIRRO8FSr
+        yqr85RvLjW6FF+aBEQCJOXz8jkku4d03zouQIQ+43ZzHCXWzckqR+zHKbh0yUXzre3H2DRXoPrmNR
+        +w37w=;
+Received: from [209.82.80.116] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g3AiT-0008HB-Bn; Fri, 21 Sep 2018 01:58:45 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id BE321440078; Fri, 21 Sep 2018 02:58:40 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: da905{2,5}: Remove unnecessary array check" to the regulator tree
+In-Reply-To: 
+Message-Id: <20180921015840.BE321440078@finisterre.ee.mobilebroadband>
+Date:   Fri, 21 Sep 2018 02:58:40 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 05:15:43PM +0800, Ming Lei wrote:
-> Hi Guys,
-> 
-> Some storage controllers have DMA alignment limit, which is often set via
-> blk_queue_dma_alignment(), such as 512-byte alignment for IO buffer.
-> 
-> Block layer now only checks if this limit is respected for buffer of
-> pass-through request,
-> see blk_rq_map_user_iov(), bio_map_user_iov().
-> 
-> The userspace buffer for direct IO is checked in dio path, see
-> do_blockdev_direct_IO().
-> IO buffer from page cache should be fine wrt. this limit too.
-> 
-> However, some file systems, such as XFS, may allocate single sector IO buffer
-> via slab. Usually I guess kmalloc-512 should be fine to return
-> 512-aligned buffer.
-> But once KASAN or other slab debug options are enabled, looks this
-> isn't true any
-> more, kmalloc-512 may not return 512-aligned buffer. Then data corruption
-> can be observed because the IO buffer from fs layer doesn't respect the DMA
-> alignment limit any more.
-> 
-> Follows several related questions:
-> 
-> 1) does kmalloc-N slab guarantee to return N-byte aligned buffer?  If
-> yes, is it a stable rule?
+The patch
 
-It has behaved like this for both slab and slub for many, many
-years.  A quick check indicates that at least XFS and hfsplus feed
-kmalloc()d buffers straight to bios without any memory buffer
-alignment checks at all.
+   regulator: da905{2,5}: Remove unnecessary array check
 
-> 2) If it is a rule for kmalloc-N slab to return N-byte aligned buffer,
-> seems KASAN violates this
-> rule?
+has been applied to the regulator tree at
 
-XFS has been using kmalloc()d memory like this since 2012 and lots
-of people use KASAN on XFS systems, including me. From this, it
-would seem that the problem of mishandling unaligned memory buffers
-is not widespread in the storage subsystem - it's taken years of
-developers using slub debug and/or KASAN to find a driver that has
-choked on an inappropriately aligned memory buffer....
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-> 3) If slab can't guarantee to return 512-aligned buffer, how to fix
-> this data corruption issue?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-I think that the block layer needs to check the alignment of memory
-buffers passed to it and take appropriate action rather than
-corrupting random memory and returning a sucess status to the bad
-bio.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-IMO, trusting higher layers of kernel code to get everything right
-is somewhat naive. The block layer does not trust userspace to get
-everything right for good reason and those same reasons extend to
-kernel code. i.e. all software has bugs, we have an impossible
-complex kernel config test matrix, and even if correctly written,
-proven bug-free software existed, that perfect code can still
-misbehave when things like memory corruption from other bad code or
-hardware occurs.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-From that persepective, I think that if the the receiver of a bio
-has specific alignment requirements and the bio does not meet them,
-then it needs to either enforce the alignment requirements (i.e.
-error out) or make it right by bouncing the bio to an acceptible
-alignment. Erroring out will cause things to fail hard until
-whatever problem causing the error is fixed, while bouncing them
-provides the "everything just works normally" solution...
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Cheers,
+Thanks,
+Mark
 
-Dave.
+From 5a7d7d0f9f791b1e13f26dbbb07c86482912ad62 Mon Sep 17 00:00:00 2001
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Thu, 20 Sep 2018 17:04:20 -0700
+Subject: [PATCH] regulator: da905{2,5}: Remove unnecessary array check
+
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context:
+
+drivers/regulator/da9052-regulator.c:423:22: warning: address of array
+'pdata->regulators' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (pdata && pdata->regulators) {
+                  ~~ ~~~~~~~^~~~~~~~~~
+drivers/regulator/da9055-regulator.c:615:22: warning: address of array
+'pdata->regulators' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (pdata && pdata->regulators) {
+                  ~~ ~~~~~~~^~~~~~~~~~
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/142
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/da9052-regulator.c | 2 +-
+ drivers/regulator/da9055-regulator.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/regulator/da9052-regulator.c b/drivers/regulator/da9052-regulator.c
+index 9ececfef42d6..37e4025203e3 100644
+--- a/drivers/regulator/da9052-regulator.c
++++ b/drivers/regulator/da9052-regulator.c
+@@ -420,7 +420,7 @@ static int da9052_regulator_probe(struct platform_device *pdev)
+ 	config.dev = &pdev->dev;
+ 	config.driver_data = regulator;
+ 	config.regmap = da9052->regmap;
+-	if (pdata && pdata->regulators) {
++	if (pdata) {
+ 		config.init_data = pdata->regulators[cell->id];
+ 	} else {
+ #ifdef CONFIG_OF
+diff --git a/drivers/regulator/da9055-regulator.c b/drivers/regulator/da9055-regulator.c
+index f40c3b8644ae..588c3d2445cf 100644
+--- a/drivers/regulator/da9055-regulator.c
++++ b/drivers/regulator/da9055-regulator.c
+@@ -612,7 +612,7 @@ static int da9055_regulator_probe(struct platform_device *pdev)
+ 	config.driver_data = regulator;
+ 	config.regmap = da9055->regmap;
+ 
+-	if (pdata && pdata->regulators) {
++	if (pdata) {
+ 		config.init_data = pdata->regulators[pdev->id];
+ 	} else {
+ 		ret = da9055_regulator_dt_init(pdev, regulator, &config,
 -- 
-Dave Chinner
-david@fromorbit.com
+2.19.0
+
