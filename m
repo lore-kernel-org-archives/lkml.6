@@ -2,139 +2,157 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 714A7ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92181C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2360521531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A20E20858
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:36:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d/7UMQ4b";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d/7UMQ4b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2360521531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOYif+ZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A20E20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389811AbeIUQUa (ORCPT
+        id S2389651AbeIUQYY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 12:20:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60046 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeIUQU3 (ORCPT
+        Fri, 21 Sep 2018 12:24:24 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43423 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbeIUQYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 12:20:29 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C013360E5A; Fri, 21 Sep 2018 10:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537525933;
-        bh=JpovLsUxK9UKq2Wkw6h4oRZ1TJCDLQGpLyf6nxA7AJA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=d/7UMQ4bYUrU3F9mTEvErqySeV38XGi3AJEu+po86E0SGG+w+gX4HC0PHPevnP/o8
-         1J3pOvwkGD/pUS9ce7aaiIDH3C5Lcv+S3CJZDgLluICnf+7wHoHeayrczNAY85KKtP
-         D/QAC9a+sE7BTFgcTURMF/7omEOLKRrFlkkoqJyE=
-Received: from [10.206.25.139] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4D84D612DA;
-        Fri, 21 Sep 2018 10:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537525933;
-        bh=JpovLsUxK9UKq2Wkw6h4oRZ1TJCDLQGpLyf6nxA7AJA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=d/7UMQ4bYUrU3F9mTEvErqySeV38XGi3AJEu+po86E0SGG+w+gX4HC0PHPevnP/o8
-         1J3pOvwkGD/pUS9ce7aaiIDH3C5Lcv+S3CJZDgLluICnf+7wHoHeayrczNAY85KKtP
-         D/QAC9a+sE7BTFgcTURMF/7omEOLKRrFlkkoqJyE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D84D612DA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-Subject: Re: [PATCH V2 2/3] dt-bindings: mmc: sdhci-msm: Add entries for
- passing load values
-To:     Evan Green <evgreen@chromium.org>
-Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        robh+dt@kernel.org, linux-mmc@vger.kernel.org,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayali <sayalil@codeaurora.org>,
-        Doug Anderson <dianders@google.com>, vviswana@codeaurora.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1537424558-17989-1-git-send-email-vbadigan@codeaurora.org>
- <1537424558-17989-3-git-send-email-vbadigan@codeaurora.org>
- <CAE=gft6w_iV+vm=u=ZKNvDLVTHcAO+AR0A9Yg9etTHW8bJy05w@mail.gmail.com>
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Message-ID: <8f26b82c-b966-11d3-4fb6-0137a0a8cd4a@codeaurora.org>
-Date:   Fri, 21 Sep 2018 16:02:06 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAE=gft6w_iV+vm=u=ZKNvDLVTHcAO+AR0A9Yg9etTHW8bJy05w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Fri, 21 Sep 2018 12:24:23 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u23so1191175edx.10;
+        Fri, 21 Sep 2018 03:36:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=KRReny5VpNNTdbbaaXk16iyPudk0xjZLoIJb/EyF1q4=;
+        b=OOYif+ZMRuVWJtkZCPtl6stUw53hCHfJ8PKmYLkj8YzuXHwPx6mJ6/7Ufoeqc7bb1H
+         znHGP+uAUPtqPW+/Dkcp0sM1i3suHR+yvSVSWCcC08Np5XIWkzczCBVq+wOLUWt/cwKb
+         tb4t/7k16ZXaewz64JVhd7uDiXdAacXBcAnqU/opD/bPj5pwJEOhemqwXVuq7Igj2hge
+         enr6UxSRF78/W3YefIggVNHSQVqU5GVPwvxD37Qt6nmNegKOcuhx5xTQeDm1+qfd7W17
+         lvnKuxXlhfaceiwDK+qaIUcH4X74QplfT2uImGMO0Qfc6Gxqvd4zTVDQhujKzBAjkSlW
+         iwRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KRReny5VpNNTdbbaaXk16iyPudk0xjZLoIJb/EyF1q4=;
+        b=ECDHAVfCTeFxl1/2eaIlvjFY2NU541Qd2YhzkaDw1RUGQS1VwbO/FqITkFgOvWEAtD
+         7qJQbSkEKbKhyFsjQbYlKbKdCWPb36KgPInwE85UggBZ1cTrzHHDD2lWpUSf922I8wrF
+         0sef9d3kFg0WKS7nj/a50PNzfH6HjrWLBJXGzd/gFK/2QEFTZebqj0la2x4KjsTZjMSN
+         SRkWhtWZPdE62Aky8uCxHsSHpGoSf+dS5Y3TMD3zb9SSjcjr00b6/Isk5lNvHHZJ2tDW
+         N8O+kSjXAP3Jqt9jbBEwwgB3DFkt0m8GrTPwQS21QDv9A+M42N09ijr5jkzegnEt9CWA
+         4AhQ==
+X-Gm-Message-State: ABuFfojYc4OfoLfowIprSzWN1bEappf9I+64fZjf3HhZs4KtDVCHp+V/
+        iDSjgsjckUFgunCrFy36Zpg=
+X-Google-Smtp-Source: ACcGV63aMUmSu/jN7ly0seSJt/WHOvU5D9fxk5pVoNJ2YVNIcna88n84Ck1xnEw07xp+IbfLSZKxMA==
+X-Received: by 2002:a50:d9c6:: with SMTP id x6-v6mr2650063edj.63.1537526166941;
+        Fri, 21 Sep 2018 03:36:06 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id k28-v6sm1900871ede.11.2018.09.21.03.36.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 03:36:05 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Timur Tabi <timur@codeaurora.org>, swboyd@chromium.org,
+        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH] gpiolib: Fix gpio_direction_* for single direction GPIOs
+Date:   Fri, 21 Sep 2018 12:36:03 +0200
+Message-Id: <20180921103604.13361-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
+GPIOs with no programmable direction are not required to implement
+direction_output nor direction_input.
 
+If we try to set an output direction on an output-only GPIO or input
+direction on an input-only GPIO simply return 0.
 
-On 9/21/2018 5:45 AM, Evan Green wrote:
-> On Wed, Sep 19, 2018 at 11:24 PM Veerabhadrarao Badiganti
-> <vbadigan@codeaurora.org> wrote:
->> From: Vijay Viswanath <vviswana@codeaurora.org>
->>
->> The load a particular sdhc controller should request from a regulator
->> is device specific and hence each device should individually vote for
->> the required load.
->>
->> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
->> ---
->>   Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> index 502b3b8..3720385 100644
->> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> @@ -26,6 +26,11 @@ Required properties:
->>          "cal"   - reference clock for RCLK delay calibration (optional)
->>          "sleep" - sleep clock for RCLK delay calibration (optional)
->>
->> +Optional properties:
->> +- qcom,<supply>-current-level-microamp - specifies load levels for supply during BUS_ON and
->> +                                       BUS_OFF states in power irq. Should be specified in
->> +                                       pairs (lpm, hpm), for BUS_OFF and BUS_ON respectively.
->> +                                       Units uA.
->>   Example:
->>
->>          sdhc_1: sdhci@f9824900 {
->> @@ -37,6 +42,7 @@ Example:
->>
->>                  vmmc-supply = <&pm8941_l20>;
->>                  vqmmc-supply = <&pm8941_s3>;
->> +               qcom,vqmmc-current-level-microamp = <200 22000>;
->>
->>                  pinctrl-names = "default";
->>                  pinctrl-0 = <&sdc1_clk &sdc1_cmd &sdc1_data>;
->> --
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc., is a member of Code Aurora Forum, a Linux Foundation Collaborative Project
->>
-> Aren't the regulator load levels pretty coarse? Would it be safe to
-> say that pretty much all sd/mmc devices need the high powered mode, or
-> are there really some devices that can get by with LPM all the time?
-> -Evan
-The load levels here are min and max supported by the regulator. To 
-cover all devices
-we do set it to max load. We can't make any assumptions on this,  as 
-peak current may vary
-from device to device.
+This allows this single direction GPIO to be used by libgpiod.
 
-Thanks,
-Veera
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/gpio/gpiolib.c | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a57300c1d649..4b45de883ada 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2512,19 +2512,27 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
+ int gpiod_direction_input(struct gpio_desc *desc)
+ {
+ 	struct gpio_chip	*chip;
+-	int			status = -EINVAL;
++	int			status = 0;
+ 
+ 	VALIDATE_DESC(desc);
+ 	chip = desc->gdev->chip;
+ 
+-	if (!chip->get || !chip->direction_input) {
++	if (!chip->get && chip->direction_input) {
+ 		gpiod_warn(desc,
+-			"%s: missing get() or direction_input() operations\n",
++			"%s: missing get() and direction_input() operations\n",
+ 			__func__);
+ 		return -EIO;
+ 	}
+ 
+-	status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
++	if (chip->direction_input) {
++		status = chip->direction_input(chip, gpio_chip_hwgpio(desc));
++	} else if (chip->get_direction &&
++		  (chip->get_direction(chip, gpio_chip_hwgpio(desc)) != 1)) {
++		gpiod_warn(desc,
++			"%s: missing direction_input() operation\n",
++			__func__);
++		return -EIO;
++	}
+ 	if (status == 0)
+ 		clear_bit(FLAG_IS_OUT, &desc->flags);
+ 
+@@ -2546,16 +2554,28 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
+ {
+ 	struct gpio_chip *gc = desc->gdev->chip;
+ 	int val = !!value;
+-	int ret;
++	int ret = 0;
+ 
+-	if (!gc->set || !gc->direction_output) {
++	if (!gc->set && !gc->direction_output) {
+ 		gpiod_warn(desc,
+-		       "%s: missing set() or direction_output() operations\n",
++		       "%s: missing set() and direction_output() operations\n",
+ 		       __func__);
+ 		return -EIO;
+ 	}
+ 
+-	ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), val);
++	if (gc->direction_output) {
++		ret = gc->direction_output(gc, gpio_chip_hwgpio(desc), val);
++	} else {
++		if (gc->get_direction &&
++		    gc->get_direction(gc, gpio_chip_hwgpio(desc))) {
++			gpiod_warn(desc,
++				"%s: missing direction_output() operation\n",
++				__func__);
++			return -EIO;
++		}
++		gc->set(gc, gpio_chip_hwgpio(desc), val);
++	}
++
+ 	if (!ret)
+ 		set_bit(FLAG_IS_OUT, &desc->flags);
+ 	trace_gpio_value(desc_to_gpio(desc), 0, val);
+-- 
+2.18.0
 
