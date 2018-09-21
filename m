@@ -2,84 +2,52 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAFDECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D70ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7AA121565
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BEs+utip";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c2hyBA5H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AA121565
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B542B21568
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:49:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B542B21568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390800AbeIUWjL (ORCPT
+        id S2390856AbeIUWjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:39:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38384 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389683AbeIUWjL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:39:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A156E612DE; Fri, 21 Sep 2018 16:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537548567;
-        bh=wfl7CY2HNioLA7leeZKAIAgYMyV9JiBzsT95ShCPR4Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BEs+utipIL6Agf8ekpGzjbbhIoKPE+CpP/wX39NRlzw47O9noWzjzvgpDNZ1z1Y9q
-         w5FZkFLRPveEWOH5AJG5krfngqmyOPjhXgP1eRiA/TfDRydwsgeVk7OrEkGs8Htp7p
-         +dh+uqWMsq1q7lUUZ7C207UwDveXRNi+n7Z7mcSY=
-Received: from [192.168.0.114] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7FDE160D30;
-        Fri, 21 Sep 2018 16:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537548566;
-        bh=wfl7CY2HNioLA7leeZKAIAgYMyV9JiBzsT95ShCPR4Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=c2hyBA5H5l37/G2qu7XQSWlpHc3SrMRBMHFf1zV8oW606muPN0NAPhqOM+rJ4QIXu
-         BQCR2oLZzaxGB0yDSV36zFGEPrMuaLTtxz3NwMXqA/HC48lSBci8WIjmAUKaK3gCkf
-         BWBlq7ErcAI7fP1X3VFLLI5itqMm87O7DAatFfXQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FDE160D30
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH 0/2] Add API to retrieve the Bluetooth Device Address
- (BD_ADDR)
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Brian Norris <briannorris@chromium.org>
-References: <20180920223436.202454-1-mka@chromium.org>
- <0ea65ca1-8d06-72d8-3bbe-693e09605a8a@codeaurora.org>
- <20180920230121.GT22824@google.com>
- <36e5d881-a45e-c879-c275-e6e18bc99ed5@codeaurora.org>
- <20180920231947.GU22824@google.com>
- <124b6f76-a65f-e304-6c60-fbb9104415f4@codeaurora.org>
- <20180921164541.GX22824@google.com>
-From:   Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <a1f8d4de-04e5-c150-531b-7d2ceee6325c@codeaurora.org>
-Date:   Fri, 21 Sep 2018 12:49:24 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Fri, 21 Sep 2018 18:39:36 -0400
+Received: from mga03.intel.com ([134.134.136.65]:45512 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390619AbeIUWjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:39:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:49:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
+   d="scan'208";a="259212511"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.50]) ([10.24.14.50])
+  by orsmga005.jf.intel.com with ESMTP; 21 Sep 2018 09:49:52 -0700
+Subject: Re: [PATCH V5 0/6] perf and x86/intel_rdt: Fix lack of coordination
+ with perf
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
+        mingo@redhat.com, acme@kernel.org, gavin.hindman@intel.com,
+        jithu.joseph@intel.com, dave.hansen@intel.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1537377064.git.reinette.chatre@intel.com>
+ <20180920141150.GY24124@hirez.programming.kicks-ass.net>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <77383a1e-f343-7529-24cf-874f0999507d@intel.com>
+Date:   Fri, 21 Sep 2018 09:49:48 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180921164541.GX22824@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180920141150.GY24124@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -87,12 +55,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/21/2018 12:45 PM, Matthias Kaehlcke wrote:
-> Well, there is a generic binding
-> (https://elixir.bootlin.com/linux/v4.18/source/Documentation/devicetree/bindings/net/bluetooth.txt),
-> the fact that there are drivers that aren't adhering to it doesn't
-> change that.
+Dear Maintainers,
 
-OK. If there is some soft of a "standard" naming convention, we should be good.
-Otherwise, as Sakari also raised the concern; common code becomes a dumping
-ground for drivers.
+On 9/20/2018 7:11 AM, Peter Zijlstra wrote:
+> On Wed, Sep 19, 2018 at 10:29:05AM -0700, Reinette Chatre wrote:
+>> Reinette Chatre (6):
+>>   perf/core: Add sanity check to deal with pinned event failure
+>>   perf/x86: Add helper to obtain performance counter index
+>>   x86/intel_rdt: Remove local register variables
+>>   x86/intel_rdt: Create required perf event attributes
+>>   x86/intel_rdt: Use perf infrastructure for measurements
+>>   x86/intel_rdt: Re-enable pseudo-lock measurements
+>>
+>>  Documentation/x86/intel_rdt_ui.txt          |  22 +-
+>>  arch/x86/events/core.c                      |  21 ++
+>>  arch/x86/include/asm/perf_event.h           |   1 +
+>>  arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 372 ++++++++++++--------
+>>  kernel/events/core.c                        |   6 +
+>>  5 files changed, 261 insertions(+), 161 deletions(-)
+> 
+> Yeah, these look good, thanks!
+> 
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+
+Could you please consider this series for inclusion into v4.19?
+
+- This series is needed to complete the initial cache pseudo-locking
+enabling that is first introduced in v4.19. Without this series users
+are able to create pseudo-locked regions but unable to accurately
+measure their success.
+- This is not adding a new feature of pseudo-locked region measurement
+but fixing the existing measurement code that was disabled after found
+to be poorly integrated.
+- This series consists out of 6 patches. Patches 2 to 6 are either new
+code in support of this fix or fixes to code that does not exist in
+kernels before v4.19.
+- Patch 1 is a fix to existing code. It is small, was suggested by, and
+does have support from maintainer. Even so, if it is felt that this is
+too risky then patches 2 to 6 could still be merged since it does not
+actually depend on patch 1. In retrospect I should have submitted it
+separately.
+
+Your consideration would be greatly appreciated.
+
+Thank you
+
+Reinette
