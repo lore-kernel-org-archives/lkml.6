@@ -2,99 +2,61 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F01ABECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04291ECE567
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A71C020833
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:45:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A71C020833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BA3B521479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 14:45:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3B521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390245AbeIUUem (ORCPT
+        id S2390261AbeIUUfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 16:34:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55618 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeIUUem (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 16:34:42 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2DD1FC3;
-        Fri, 21 Sep 2018 14:45:29 +0000 (UTC)
-Date:   Fri, 21 Sep 2018 16:45:27 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kernel/bounds: Provide prototype for foo
-Message-ID: <20180921144527.GB16316@kroah.com>
-References: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 21 Sep 2018 16:35:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53678 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728149AbeIUUfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 16:35:06 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64D3D3018762;
+        Fri, 21 Sep 2018 14:45:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D880308BDA4;
+        Fri, 21 Sep 2018 14:45:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180920151214.15484-3-mszeredi@redhat.com>
+References: <20180920151214.15484-3-mszeredi@redhat.com> <20180920151214.15484-1-mszeredi@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] vfs_submount: use SB_SUBMOUNT instead of MS_SUBMOUNT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180921142234.16882-1-kieran.bingham+renesas@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14946.1537541153.1@warthog.procyon.org.uk>
+Date:   Fri, 21 Sep 2018 15:45:53 +0100
+Message-ID: <14947.1537541153@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 21 Sep 2018 14:45:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 03:22:33PM +0100, Kieran Bingham wrote:
-> kernel/bounds.c is recompiled on every build, and shows the following
-> warning when compiling with W=1:
+Miklos Szeredi <mszeredi@redhat.com> wrote:
 
-Don't do that, you will get a lot of warnings that really don't make
-much sense.  Like this one :)
+> -	return vfs_kern_mount(type, MS_SUBMOUNT, name, data, data_size);
+> +	return vfs_kern_mount(type, SB_SUBMOUNT, name, data, data_size);
 
-> 
->   CC      kernel/bounds.s
-> linux/kernel/bounds.c:16:6: warning: no previous prototype for ‘foo’ [-Wmissing-prototypes]
->  void foo(void)
->       ^~~
-> 
-> Provide a prototype to satisfy the compiler.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Cc: stable@vger.kernel.org
-> 
-> ---
-> I compile all of my incremental builds with W=1, which allows me to know
-> instantly if I add a new compiler warning in code I generate.
-> 
-> This warning always comes up and seems trivial to clean up.
-> ---
->  kernel/bounds.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/bounds.c b/kernel/bounds.c
-> index c373e887c066..60136d937800 100644
-> --- a/kernel/bounds.c
-> +++ b/kernel/bounds.c
-> @@ -13,6 +13,8 @@
->  #include <linux/log2.h>
->  #include <linux/spinlock_types.h>
->  
-> +void foo(void);
-> +
->  void foo(void)
+Folded in.
 
-This file is a userspace tool that is used to later generate the
-include/generated/bounds.h file.
-
-If you really want to track this down and fix it properly, put the
-prototype in the .c file that ends up calling this function.  That's a
-fun task to dig through the build system to find :)
-
-good luck!
-
-greg k-h
+David
