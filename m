@@ -2,258 +2,125 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C640CECE566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAAFC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 398A021532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE2F2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 13:40:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="gMc2CsnQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 398A021532
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GRDz19kC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE2F2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389822AbeIUT2a (ORCPT
+        id S2389970AbeIUT3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 15:28:30 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36699 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389702AbeIUT21 (ORCPT
+        Fri, 21 Sep 2018 15:29:31 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43745 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389684AbeIUT3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 15:28:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b11-v6so6014202pfo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:39:33 -0700 (PDT)
+        Fri, 21 Sep 2018 15:29:31 -0400
+Received: by mail-io1-f66.google.com with SMTP id y10-v6so12199260ioa.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 06:40:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dEDi/RdhKg1iw0zuffJVQigaZvB50LUeWGo7/t1is1s=;
-        b=gMc2CsnQ8CKDEe7/hyDvOxc+Lrp//6g/hY9YYFa/sredKTnHfA5qBb5TbeeqoUjARt
-         jS9FPLQnYN8TA+Y4fXKjlD8D8H7YgDKyEaXGthJH24ITi7OzdqRxtF3HRe70thK1FB5z
-         e1V+tAteQa4xe0QPGIcjsVNO1eW70gAHULrl8nMRx1AJ0ZuhQFvlCIj10NkelxFUzhMO
-         Dnbc7G19/0AsW+Jq3teE6CIJ2BnSfA1H+JdVPe6P4Uj/JZgkyvM6WLbvFXep9VmTnP0H
-         4QlXCMUq7vJZ7QzpmqCp96eGbSUWN3oReDHMjeOH3qE/ez0oPsWRiLIiFzpHDJD4TBuk
-         HYFg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ffxcvDmJo9Kkl+XpYMWfI5FmARAz2amVWdHtbL6Meeo=;
+        b=GRDz19kC2mfxx+5F0MrrPB5pQX1+uTk89M1juFRb3hiqg0FzNO67jQ7Zd/f8YzkNWy
+         chAh775EGNJGmOJv+rfwdKQ9apc3WHbEfpfYqgRm/oGe8Yib5UIPFjYOjaJiCkQ5QqVV
+         +IsdMfl7L7ds6fp49/1CQxNBaDqlXgr4+KPZk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dEDi/RdhKg1iw0zuffJVQigaZvB50LUeWGo7/t1is1s=;
-        b=oi2YrLwmEj8cfeVPs1ZiBr/Vc1vhzsQQTwqpQl2rGHlPJBRvHlL1Uk1G0xwXLW5RdY
-         yBxj8GI4o92Qke+sSWPFev45I3sWyC0je7hh9Hl3p1oP6aR00o/gevrMeH/Jhk3mXWu5
-         igDPnOivbqIX8pXv1roMSWPcltps2qnQVoqPK9cSiK38mWdUPY9naXgGZ1izkBxJHf07
-         j22sSFrqvNlMPSNz9pBR8f0Rcjzj4DhMh5qIs2+PVdgIVqfyIOPSM7aZxMfRYnovnC+F
-         VGHWTFpaW5Tr4UZrjo+Sum2GSw62td7tp+2nnDvPwyb2WRcxIHVtdqi2B0BZyuJNSiQR
-         bkSA==
-X-Gm-Message-State: APzg51A+fvArMCV7OttxrR4jke+e+YQgsuQGR0O+rVgXrJ9hoQkXumsu
-        zmqhe5jtGtaXK9AWAdtdBL6nYQ==
-X-Google-Smtp-Source: ANB0VdZEbn8wWQy3/4HPuL4aysHynH/1HiP4CHqFFeBTier8me9efVsMuAeBWT5QtcMGZoe0iRRheQ==
-X-Received: by 2002:a62:435c:: with SMTP id q89-v6mr47150478pfa.135.1537537172397;
-        Fri, 21 Sep 2018 06:39:32 -0700 (PDT)
-Received: from cisco ([128.107.241.177])
-        by smtp.gmail.com with ESMTPSA id b203-v6sm42279265pfb.174.2018.09.21.06.39.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 06:39:31 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 07:39:28 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v6 4/5] seccomp: add support for passing fds via
- USER_NOTIF
-Message-ID: <20180921133928.GS4672@cisco>
-References: <20180906152859.7810-1-tycho@tycho.ws>
- <20180906152859.7810-5-tycho@tycho.ws>
- <CALCETrWZmN4FeCSwemfMeayupBmQ-NqpVWQuqSU34CLvzdx8gw@mail.gmail.com>
- <20180919095536.GM4672@cisco>
- <C1406292-7496-459F-A76A-20C9EFBB12D6@amacapital.net>
- <20180919143842.GN4672@cisco>
- <CALCETrVuP0nQ5B01-iWrcQ87hisz7=jA08-Uisqud_r+zc74NQ@mail.gmail.com>
- <20180920234240.GR4672@cisco>
- <CALCETrWEr_VAtJu1mm1akTigsRUXAA7_7RHb-WGHqnyNy=j17Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrWEr_VAtJu1mm1akTigsRUXAA7_7RHb-WGHqnyNy=j17Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ffxcvDmJo9Kkl+XpYMWfI5FmARAz2amVWdHtbL6Meeo=;
+        b=dpWqMa7YWX7eOUcdQepMTdKfIC1oPy+er88zzgRAkp4V4s91Eq+HqJueaFJtj+urXa
+         EXdPS1V3zhnyip+FhTYW4Pd5s83c7VcxCJKADRpgxGL+8PhYihN7xa2V6VHSLaQjum3s
+         zmKpBg3TqXYWUqhxtIvPMZgwqeSUOwImJ/StKz9I+WaV7LEMr2wzcg8pxXh3yPhbTvEP
+         q+IPr9qDo1Ic7MZOvZCYlLBeXAr2TT5ATwLoAx8KCkgAJn6Pb6qRpgVmjKN6Fck3Zsm+
+         CCW7ugULqwakqx2ZwAyC+Iub8Lr9GEgkNHgoNmU9wLIv7vx60nm09QjgWgLjGuE4PCJU
+         Iwiw==
+X-Gm-Message-State: APzg51Dnc+8BHBMtQYZLKTzQcocoMC3NTyP4V9QE0mZrkB9F8k6Gjds7
+        K0aSQzlK7Ts+njmM7VJaTRqrfg==
+X-Google-Smtp-Source: ANB0VdbmyfteoyoxvhpDwY2zilhDS55H866XT158G9GrVmU08LDu/NrmsUPExJjc2EQVSukSCUgO/Q==
+X-Received: by 2002:a02:b459:: with SMTP id w25-v6mr38749681jaj.32.1537537235369;
+        Fri, 21 Sep 2018 06:40:35 -0700 (PDT)
+Received: from localhost.localdomain ([209.82.80.116])
+        by smtp.gmail.com with ESMTPSA id c12-v6sm9896298ioq.81.2018.09.21.06.40.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 06:40:34 -0700 (PDT)
+From:   srinivas.kandagatla@linaro.org
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 00/26] nvmem: patches for 4.20
+Date:   Fri, 21 Sep 2018 06:40:00 -0700
+Message-Id: <20180921134026.4596-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.9.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 07:18:45PM -0700, Andy Lutomirski wrote:
-> On Thu, Sep 20, 2018 at 4:42 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> >
-> > On Wed, Sep 19, 2018 at 12:58:20PM -0700, Andy Lutomirski wrote:
-> > > On Wed, Sep 19, 2018 at 7:38 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > On Wed, Sep 19, 2018 at 07:19:56AM -0700, Andy Lutomirski wrote:
-> > > >>
-> > > >>
-> > > >> > On Sep 19, 2018, at 2:55 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > > >> >
-> > > >> >> On Wed, Sep 12, 2018 at 04:52:38PM -0700, Andy Lutomirski wrote:
-> > > >> >>> On Thu, Sep 6, 2018 at 8:28 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > > >> >>> The idea here is that the userspace handler should be able to pass an fd
-> > > >> >>> back to the trapped task, for example so it can be returned from socket().
-> > > >> >>>
-> > > >> >>> I've proposed one API here, but I'm open to other options. In particular,
-> > > >> >>> this only lets you return an fd from a syscall, which may not be enough in
-> > > >> >>> all cases. For example, if an fd is written to an output parameter instead
-> > > >> >>> of returned, the current API can't handle this. Another case is that
-> > > >> >>> netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
-> > > >> >>> ever decides to install an fd and output it, we wouldn't be able to handle
-> > > >> >>> this either.
-> > > >> >>
-> > > >> >> An alternative could be to have an API (an ioctl on the listener,
-> > > >> >> perhaps) that just copies an fd into the tracee.  There would be the
-> > > >> >> obvious set of options: do we replace an existing fd or allocate a new
-> > > >> >> one, and is it CLOEXEC.  Then the tracer could add an fd and then
-> > > >> >> return it just like it's a regular number.
-> > > >> >>
-> > > >> >> I feel like this would be more flexible and conceptually simpler, but
-> > > >> >> maybe a little slower for the common cases.  What do you think?
-> > > >> >
-> > > >> > I'm just implementing this now, and there's one question: when do we
-> > > >> > actually do the fd install? Should we do it when the user calls
-> > > >> > SECCOMP_NOTIF_PUT_FD, or when the actual response is sent? It feels
-> > > >> > like we should do it when the response is sent, instead of doing it
-> > > >> > right when SECCOMP_NOTIF_PUT_FD is called, since if there's a
-> > > >> > subsequent signal and the tracer decides to discard the response,
-> > > >> > we'll have to implement some delete mechanism to delete the fd, but it
-> > > >> > would have already been visible to the process, etc. So I'll go
-> > > >> > forward with this unless there are strong objections, but I thought
-> > > >> > I'd point it out just to avoid another round trip.
-> > > >> >
-> > > >> >
-> > > >>
-> > > >> Can you do that non-racily?  That is, you need to commit to an fd *number* right away, but what if another thread uses the number before you actually install the fd?
-> > > >
-> > > > I was thinking we could just do an __alloc_fd() and then do the
-> > > > fd_install() when the response is sent or clean up the case that the
-> > > > listener or task dies. I haven't actually tried to run the code yet,
-> > > > so it's possible the locking won't work :)
-> > >
-> > > I would be very surprised if the locking works.  How can you run a
-> > > thread in a process when another thread has allocated but not
-> > > installed an fd and is blocked for an arbitrarily long time?
-> >
-> > I think the trick is that there's no actual locking required (except
-> > for a brief locking of task->files). I've run the patch below and it
-> > seems to work. But perhaps that's abusing __alloc_fd a little too
-> > hard, I don't really know.
-> >
-> 
-> Hmm.  This makes me highly nervous.  If nothing else, what releases
-> the busy-but-not-open fd if the whole process aborts?
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Nothing right now, it gets installed even though the syscall gets
--ENOSYS. So not ideal, but that's why I was thinking we needed some
-form of delete support. But,
+Hi Greg,
 
-> > > >
-> > > >> Do we really allow non-“kill” signals to interrupt the whole process?  It might be the case that we don’t really need to clean up from signals if there’s a guarantee that the thread dies.
-> > > >
-> > > > Yes, we do, because of this: https://lkml.org/lkml/2018/3/15/1122
-> > > >
-> > >
-> > > I'm still not sure I see the problem.  Suppose I'm implementing a user
-> > > notifier for a nasty syscall like recvmsg().  If I'm the tracer, by
-> > > the time I decide to install an fd, I've committed to returning
-> > > something other than -EINTR, even if a non-fatal signal is sent before
-> > > I finish.  No rollback should be necessary.
-> >
-> > I don't understand why this is true. Surely you could stop a handler
-> > on receipt of a new signal, and have it do something else entirely?
-> 
-> I think you *could*, but I'm not sure why you would.  In general,
-> syscalls never execute signal handlers mid-syscall.  There is a very
-> small number of syscalls that use sys_restart_syscall(), but I don't
-> think any of them allocate fds, and I'm not sure we need or want to
-> support them with user notifiers.  The rest of the syscalls will, if
-> they're behaving correct, either do *something* (like reading some or
-> all of a buffer) and return success or they'll do nothing and return
-> -EINTR.  Or they return an -ERESTARTSYS variant.  And then, only
-> *after* the syscall logically returns (i.e. completely finishes
-> processing and puts its return code into the relevant register) will a
-> signal be delivered.  In other words, the case where something like
-> recv() gets interrupted but still returns a success code does not mean
-> that a signal handler was called and then recv() resumed.  It means
-> that recv() noticed the signal, stopped receiving, returned the number
-> of bytes read, and then allowed the signal to be delivered.
-> 
-> In the -ERESTARTSYS case, the syscall returns -ERESTARTSYS (or a
-> variant) and returns without doing anything.  But it returns in a
-> special case where, after the signal returns, the syscall will happen
-> again.
-> 
-> So, for user notifiers, I think that any sane handler that notices a
-> non-fatal signal will do one of these things:
-> 
->  - Return -EINTR without changing any tracee state.
-> 
->  - Return success, possibly without blocking as long as it would have
-> without the signal.
-> 
->  - Return -ERESTARTSYS without changing any tracee state.
-> 
->  - Kill the tracee.
-> 
-> None of these would involve backing out an fd that was already
-> installed.  I suppose another way of looking at this is that.
-> 
-> Although... now that I think about it, there are some special cases,
-> like socketpair().  Look for put_unused_fd().  So maybe we need to
-> expose get_unused_fd_flags() and put_unused_fd(), but I think that
-> these are exceptions and will be very uncommon in the context of
-> seccomp user notifiers.  (For example, socketpair() can be implemented
-> almost correctly without put_unused_fd().)
+Here are some cleanup patches and some non device tree support reworked
+by Bartosz. I also included 2 minor changes in to misc/eeprom drivers.
 
-socketpair() is a good point. In particular, if we use this queuing
-thing I've done above, then you can only ever send one fd, and you'll
-need to send two here. So perhaps we really do need to do this as soon
-as the tracer calls ioctl(), vs queuing and waiting.
+Can you please pick them up for 4.20.
 
-> Hmm.  This does mean that we need a test case for a user notifier
-> returning -ERESTARTSYS.  It should Just Work (tm), but those are
-> famous last words.
-> 
-> -ERESTARTSYS_RESTARTBLOCK is the case that I don't think we need to worry about.
-> 
-> >
-> > > In the (unlikely?) event that some tracer needs to be able to rollback
-> > > an fd installation to return -EINTR, a SECCOMP_NOTIF_CLOSE_FD
-> > > operation should be good enough, I think.  Or maybe PUT_FD can put -1
-> > > to delete an fd.
-> >
-> > Yes, I think even with something like what I did below we'd need some
-> > sort of REMOVE_FD option, because otherwise there's no way to change
-> > your mind and send -EINTR without the fd you just PUT_FD'd.
-> >
-> 
-> I think we just want the operation to cover all the cases.  Let PUT_FD
-> take a source fd and a dest fd.  If the source fd is -1, the dest is
-> closed.  If the source is -1 and the dest is -1, return -EINVAL.  If
-> the dest is -1, allocate an fd.  If the dest is >= 0, work like
-> dup2().  (The latter could be necessary to emulate things like, say,
-> dup2 :))
+thanks,
+srini
 
-...then if we're going to allow overwriting fds, we'd need to lift out
-the logic from do_dup2 somewhere? Is this getting too complicated? :)
 
-Tycho
+Bartosz Golaszewski (24):
+  eeprom: eeprom_93xx46: use resource management
+  eeprom: at25: use devm_nvmem_register()
+  nvmem: provide nvmem_dev_name()
+  nvmem: remove the name field from struct nvmem_device
+  nvmem: use list_for_each_entry_safe in nvmem_device_remove_all_cells()
+  nvmem: remove a stray newline
+  nvmem: check the return value of nvmem_add_cells()
+  nvmem: use kref
+  nvmem: sunxi_sid: return -ENOMEM if kzalloc() fails
+  nvmem: sunxi_sid: use devm_nvmem_register()
+  nvmem: lpc18xx_eeprom: use devm_nvmem_register()
+  nvmem: mxs-ocotp: use devm_nvmem_register()
+  nvmem: change the signature of nvmem_unregister()
+  nvmem: remove the global cell list
+  nvmem: add support for cell info
+  nvmem: resolve cells from DT at registration time
+  nvmem: add support for cell lookups from machine code
+  Documentation: nvmem: document cell tables and lookup entries
+  nvmem: add a notifier chain
+  nvmem: use SPDX license identifiers
+  nvmem: make the naming of arguments in nvmem_cell_get() consistent
+  nvmem: use EOPNOTSUPP instead of ENOSYS
+  nvmem: fix commenting style
+  nvmem: use octal permissions instead of constants
+
+Srinivas Kandagatla (2):
+  nvmem: sunxi_sid: remove unused variable in probe
+  nvmem: make nvmem_add_cells() static
+
+ Documentation/nvmem/nvmem.txt       |  31 ++
+ drivers/misc/eeprom/at25.c          |   3 +-
+ drivers/misc/eeprom/eeprom_93xx46.c |  19 +-
+ drivers/nvmem/core.c                | 530 +++++++++++++++++++---------
+ drivers/nvmem/lpc18xx_eeprom.c      |   6 +-
+ drivers/nvmem/mxs-ocotp.c           |   4 +-
+ drivers/nvmem/sunxi_sid.c           |  22 +-
+ include/linux/nvmem-consumer.h      | 100 ++++--
+ include/linux/nvmem-provider.h      |  50 +--
+ 9 files changed, 505 insertions(+), 260 deletions(-)
+
+-- 
+2.19.0
+
