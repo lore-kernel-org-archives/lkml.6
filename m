@@ -2,148 +2,291 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B087ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C835DC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1109C21567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1109C21567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BD1821566
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD1821566
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391160AbeIUWXy (ORCPT
+        id S2391170AbeIUWYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:23:54 -0400
-Received: from mga07.intel.com ([134.134.136.100]:56916 "EHLO mga07.intel.com"
+        Fri, 21 Sep 2018 18:24:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33358 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388909AbeIUWXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:23:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 09:34:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,285,1534834800"; 
-   d="scan'208";a="92594016"
-Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga001.jf.intel.com with ESMTP; 21 Sep 2018 09:33:08 -0700
-Subject: Re: [patch V3 03/11] x86/mm/cpa: Rework static_protections()
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180917142906.384767038@linutronix.de>
- <20180917143545.913005317@linutronix.de>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Bin Yang <bin.yang@intel.com>,
-        Mark Gross <mark.gross@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b2fe2ecc-a0f2-8b06-9709-dd49e3163ad3@intel.com>
-Date:   Fri, 21 Sep 2018 09:33:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2390646AbeIUWXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:23:54 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CD0E230024E4;
+        Fri, 21 Sep 2018 16:34:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 241E87F34E;
+        Fri, 21 Sep 2018 16:34:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 30/34] vfs: syscall: Add fsmount() to create a mount for a
+ superblock [ver #12]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        dhowells@redhat.com, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Date:   Fri, 21 Sep 2018 17:34:12 +0100
+Message-ID: <153754765237.17872.17624067695858838756.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20180917143545.913005317@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 21 Sep 2018 16:34:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/17/2018 07:29 AM, Thomas Gleixner wrote:
-> +/*
-> + * The kernel text needs to be executable for obvious reasons. This does
-> + * not cover __inittext since that is gone after boot. On 64bit we do not
-> + * enforce !NX on the low mapping
-> + */
-> +static pgprotval_t protect_kernel_text(unsigned long address)
-> +{
-> +	if (within(address, (unsigned long)_text, (unsigned long)_etext))
-> +		return _PAGE_NX;
-> +	return 0;
-> +}
+Provide a system call by which a filesystem opened with fsopen() and
+configured by a series of fsconfig() calls can have a detached mount object
+created for it.  This mount object can then be attached to the VFS mount
+hierarchy using move_mount() by passing the returned file descriptor as the
+from directory fd.
 
-Minor nit: I was scratching my head about how why this works.  It
-_reads_ like we are using _PAGE_NX to protect kernel text which doesn't
-make any sense of course.
+The system call looks like:
 
-Could we make a connection between the protection and _PAGE_NX in the
-comments:
+	int mfd = fsmount(int fsfd, unsigned int flags,
+			  unsigned int ms_flags);
 
-	Protect kernel text against by forbidding _PAGE_NX.  This 	
-	protects only the high kernel mapping (_text -> _etext) out of
-	which we actually execute.  Do not protect the low mapping.
+where fsfd is the file descriptor returned by fsopen().  flags can be 0 or
+FSMOUNT_CLOEXEC.  ms_flags is a bitwise-OR of the following flags:
 
-	This does not cover __inittext since that is gone after boot.
+	MS_RDONLY
+	MS_NOSUID
+	MS_NODEV
+	MS_NOEXEC
+	MS_NOATIME
+	MS_NODIRATIME
+	MS_RELATIME
+	MS_STRICTATIME
 
-The static_protections() code looks fine because it's totally obvious
-that it is dealing with "forbidden" bits, btw:
+	MS_UNBINDABLE
+	MS_PRIVATE
+	MS_SLAVE
+	MS_SHARED
 
-> +static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
-> +					  unsigned long pfn)
-> +{
-> +	pgprotval_t forbidden;
-> +
-> +	/* Operate on the virtual address */
-> +	forbidden  = protect_kernel_text(address);
-> +	forbidden |= protect_kernel_text_ro(address);
-> +
-> +	/* Check the PFN directly */
-> +	forbidden |= protect_pci_bios(pfn);
-> +	forbidden |= protect_rodata(pfn);
->  
-> -	return prot;
-> +	return __pgprot(pgprot_val(prot) & ~forbidden);
->  }
+In the event that fsmount() fails, it may be possible to get an error
+message by calling read() on fsfd.  If no message is available, ENODATA
+will be reported.
 
-This is more of a, "if you happen to respin these" comment, though, so:
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-api@vger.kernel.org
+---
 
-Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/namespace.c                         |  125 +++++++++++++++++++++++++++++++-
+ include/linux/syscalls.h               |    1 
+ include/uapi/linux/fs.h                |    2 +
+ 5 files changed, 126 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index f9970310c126..c78b68256f8a 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -402,3 +402,4 @@
+ 388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
+ 389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
+ 390	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
++391	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 4185d36e03bb..d44ead5d4368 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -347,6 +347,7 @@
+ 336	common	move_mount		__x64_sys_move_mount
+ 337	common	fsopen			__x64_sys_fsopen
+ 338	common	fsconfig		__x64_sys_fsconfig
++339	common	fsmount			__x64_sys_fsmount
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 156261d03c12..4dfe7e23b7ee 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2463,7 +2463,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+ 
+ 	attached = mnt_has_parent(old);
+ 	/*
+-	 * We need to allow open_tree(OPEN_TREE_CLONE) followed by
++	 * We need to allow open_tree(OPEN_TREE_CLONE) or fsmount() followed by
+ 	 * move_mount(), but mustn't allow "/" to be moved.
+ 	 */
+ 	if (old->mnt_ns && !attached)
+@@ -3329,9 +3329,126 @@ struct vfsmount *kern_mount(struct file_system_type *type)
+ EXPORT_SYMBOL_GPL(kern_mount);
+ 
+ /*
+- * Move a mount from one place to another.
+- * In combination with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be
+- * used to copy a mount subtree.
++ * Create a kernel mount representation for a new, prepared superblock
++ * (specified by fs_fd) and attach to an open_tree-like file descriptor.
++ */
++SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags, unsigned int, ms_flags)
++{
++	struct fs_context *fc;
++	struct file *file;
++	struct path newmount;
++	struct fd f;
++	unsigned int mnt_flags = 0;
++	long ret;
++
++	if (!may_mount())
++		return -EPERM;
++
++	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
++		return -EINVAL;
++
++	if (ms_flags & ~(MS_RDONLY | MS_NOSUID | MS_NODEV | MS_NOEXEC |
++			 MS_NOATIME | MS_NODIRATIME | MS_RELATIME |
++			 MS_STRICTATIME))
++		return -EINVAL;
++
++	if (ms_flags & MS_RDONLY)
++		mnt_flags |= MNT_READONLY;
++	if (ms_flags & MS_NOSUID)
++		mnt_flags |= MNT_NOSUID;
++	if (ms_flags & MS_NODEV)
++		mnt_flags |= MNT_NODEV;
++	if (ms_flags & MS_NOEXEC)
++		mnt_flags |= MNT_NOEXEC;
++	if (ms_flags & MS_NODIRATIME)
++		mnt_flags |= MNT_NODIRATIME;
++
++	if (ms_flags & MS_STRICTATIME) {
++		if (ms_flags & MS_NOATIME)
++			return -EINVAL;
++	} else if (ms_flags & MS_NOATIME) {
++		mnt_flags |= MNT_NOATIME;
++	} else {
++		mnt_flags |= MNT_RELATIME;
++	}
++
++	f = fdget(fs_fd);
++	if (!f.file)
++		return -EBADF;
++
++	ret = -EINVAL;
++	if (f.file->f_op != &fscontext_fops)
++		goto err_fsfd;
++
++	fc = f.file->private_data;
++
++	/* There must be a valid superblock or we can't mount it */
++	ret = -EINVAL;
++	if (!fc->root)
++		goto err_fsfd;
++
++	ret = -EPERM;
++	if (mount_too_revealing(fc->root->d_sb, &mnt_flags)) {
++		pr_warn("VFS: Mount too revealing\n");
++		goto err_fsfd;
++	}
++
++	ret = mutex_lock_interruptible(&fc->uapi_mutex);
++	if (ret < 0)
++		goto err_fsfd;
++
++	ret = -EBUSY;
++	if (fc->phase != FS_CONTEXT_AWAITING_MOUNT)
++		goto err_unlock;
++
++	ret = -EPERM;
++	if ((fc->sb_flags & SB_MANDLOCK) && !may_mandlock())
++		goto err_unlock;
++
++	newmount.mnt = vfs_create_mount(fc, mnt_flags);
++	if (IS_ERR(newmount.mnt)) {
++		ret = PTR_ERR(newmount.mnt);
++		goto err_unlock;
++	}
++	newmount.dentry = dget(fc->root);
++
++	/* We've done the mount bit - now move the file context into more or
++	 * less the same state as if we'd done an fspick().  We don't want to
++	 * do any memory allocation or anything like that at this point as we
++	 * don't want to have to handle any errors incurred.
++	 */
++	vfs_clean_context(fc);
++
++	/* Attach to an apparent O_PATH fd with a note that we need to unmount
++	 * it, not just simply put it.
++	 */
++	file = dentry_open(&newmount, O_PATH, fc->cred);
++	if (IS_ERR(file)) {
++		ret = PTR_ERR(file);
++		goto err_path;
++	}
++	file->f_mode |= FMODE_NEED_UNMOUNT;
++
++	ret = get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0);
++	if (ret >= 0)
++		fd_install(ret, file);
++	else
++		fput(file);
++
++err_path:
++	path_put(&newmount);
++err_unlock:
++	mutex_unlock(&fc->uapi_mutex);
++err_fsfd:
++	fdput(f);
++	return ret;
++}
++
++/*
++ * Move a mount from one place to another.  In combination with
++ * fsopen()/fsmount() this is used to install a new mount and in combination
++ * with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be used to copy
++ * a mount subtree.
+  *
+  * Note the flags value is a combination of MOVE_MOUNT_* flags.
+  */
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 4ab15fdf8aea..4697fad47789 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -913,6 +913,7 @@ asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
+ asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
+ asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
+ 			     const void __user *value, int aux);
++asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index fecbae30a30d..10281d582e28 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -349,6 +349,8 @@ typedef int __bitwise __kernel_rwf_t;
+  */
+ #define FSOPEN_CLOEXEC		0x00000001
+ 
++#define FSMOUNT_CLOEXEC		0x00000001
++
+ /*
+  * The type of fsconfig() call made.
+  */
+
