@@ -2,225 +2,251 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08554C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8452ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A590621531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45C3521522
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 11:26:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uoPFDMQv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A590621531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROigMOcF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C3521522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389914AbeIUROK (ORCPT
+        id S2389968AbeIUROy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 13:14:10 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40015 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727554AbeIUROK (ORCPT
+        Fri, 21 Sep 2018 13:14:54 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37319 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389746AbeIUROx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:14:10 -0400
-Received: by mail-it1-f195.google.com with SMTP id h23-v6so1515651ita.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 04:25:44 -0700 (PDT)
+        Fri, 21 Sep 2018 13:14:53 -0400
+Received: by mail-oi0-f66.google.com with SMTP id p84-v6so11092335oic.4;
+        Fri, 21 Sep 2018 04:26:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=TE77MA4ag5cUwzU/qmu3qYmTdqef2HVGTM23qFE/jrU=;
-        b=uoPFDMQvKu1SDEdAXH8CFrFbkACdxLdKQxE1ryXw8tVfEaR20sP4lrLlxeZ3+tHn+8
-         hneU2uCbtbbW21aJEqc+nmqP16/tO5bK++6mAMGdmFq9nXaMfazwIUrD71R0tW4V8SvL
-         O5S4MhiuJZVxnNoEVn0ODT2rlHulpEiZrHzqPSQkxAiR9BAooAG5/D3bA4Myz4X0iQJm
-         QlxZG6+tOu9AuoFe0UHpHbc0hv/z0YZRHZWVBRWy4Cdcxp3Hkniqf/1npNXKQjufmcMS
-         bPMbb0ReDLk8TPbjED76qCpkl0TCML8J7VFPVQW1JdBA3YDiYXERGQtPUV0QUWvPLPz/
-         iLgA==
+        bh=vw0e28fwSZC5UQc5BVCOLbGo+yoDvxKS5llDJY/qwuw=;
+        b=ROigMOcFwVzgIKkSC+Aknm0Yax5z0Bt8xgKkCSE602kGi3Mg1H89oSwI9d46wRyeYb
+         RmpEM1L+CX9xG7Y0cD3G8bjDAk9loiENARMpt4/cl+s4sbAF827q2sXS8B7MJHDoJ8+x
+         1ft5+Kurt9joBNo4X5ao8WPtyNq8V5hc/KNVkaSKBCOk605wL+3z84Ln7u7ZFSXum9yd
+         ALQhTfBF67cVHE9rgJlEbV9vmFY74FCP546IxE4NqmVgsHt7MM9jUdJ8PT5Et484Hgmr
+         ujH7or+JK3H7PFKL7j+KDnJXqKO0WywjaLTAx/QtCsDaW+M7ZwbYcgTxRE/qL8uYY89B
+         iNTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=TE77MA4ag5cUwzU/qmu3qYmTdqef2HVGTM23qFE/jrU=;
-        b=Dk49BKMM4RJi/Y9JbKCGKmg9rv/cowl7aAYT6AaNKFbPhFU+0YhRpERXWwnFs9obrq
-         8Ls5bRAmS1OpH+nQY7ZifygA1Wy2Jq5IJYkJDCI0H4SMh84zUT0YGgP7Ij48GHxw+pi6
-         lkM0OuTVL2xzXYYwwuv1GhnYZGysBdomZO6qIo2OsAFjy1jYSfD1IgwL6ZBiMysxSBif
-         BLh2LQKKH+EMKNp8zKS1QW1nSTghRHqVpNwWpFPA6ItXwVgQgLKbu80quUc1NaZHmNYq
-         aBo/uRMTnn/aPCL687350Ot1nxbpQJUl13UmYsQ+uBevZpDsluIFDeaSkbQ7xV8bTTaV
-         pT/g==
-X-Gm-Message-State: APzg51DG8LE4xk8Z7L4bR8zalXokPJYk8sZPieAvqjNK4QpXXhzg7kyC
-        6L9Ye2F/75+ZrmgH49089G15qc63iJnwZYvgI5cntQ==
-X-Google-Smtp-Source: ANB0VdZgwpQluLou8SXL3jD+aNR+Pik6byg7jBOb8RFmErQ+roUxqymUFqlL3XvAgDRUbjPtHcCasv/TB8DM6NMki54=
-X-Received: by 2002:a24:140f:: with SMTP id 15-v6mr5527808itg.57.1537529143478;
- Fri, 21 Sep 2018 04:25:43 -0700 (PDT)
+        bh=vw0e28fwSZC5UQc5BVCOLbGo+yoDvxKS5llDJY/qwuw=;
+        b=mXH1QZFLwT9vE7UUB2Ue3Cb9fcDZ6aJbWSQIYvbqqEf4TSAzfVRUxj22mNqPOpyCeI
+         p0/KP7MgJyXdujbQIpFbfR5dE/gF+pn6PpcshxQuI5vcgMtY44i7rcwbhCwnywFVDIKt
+         YwUc3yAJG8s1L/Z5GJZCAaCJamxFhqakXX/dNvdwf55JO+iNHgGRS/3Zg0i3IjEEPVKF
+         GdGZXmJ5YVD2H8r2zJq1Jb18MQz3DAw4T05PKe90+kDCwRym0epZj+Xuk91bBt6pQMDN
+         yZABu+wk5FxIz4wR1DM+IWpSmlB/N3kLQibTCguDpRzcHdKkTFkSlS9QxYXgw1nId7Xt
+         UetA==
+X-Gm-Message-State: APzg51D0Wr9JwLmW4dzmqYIyu753a9JeQWD/vA8teFYE/uDFZCrR7T1D
+        1eA8F/82I3R22g/DWiDvrK/lBM6DXmi1EZnzlWM=
+X-Google-Smtp-Source: ANB0VdafiVnEdFrQToTn9wM0Xe6RT2xOW2OQq+5nQujhuaoYp8VK0cG8EgGXzov8VsAS5gAzbms9VqsJmCNHwRAJ5Vw=
+X-Received: by 2002:aca:2203:: with SMTP id b3-v6mr1358004oic.366.1537529186279;
+ Fri, 21 Sep 2018 04:26:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 04:25:22
- -0700 (PDT)
-In-Reply-To: <d74e710797323db0e43f047ea698fbc85060fc57.1537383101.git.andreyknvl@google.com>
-References: <cover.1537383101.git.andreyknvl@google.com> <d74e710797323db0e43f047ea698fbc85060fc57.1537383101.git.andreyknvl@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 21 Sep 2018 13:25:22 +0200
-Message-ID: <CACT4Y+aoFSySFTd9FzA0xzRYQXSbs-wzX7B67hD3jTGAQEXBOA@mail.gmail.com>
-Subject: Re: [PATCH v8 09/20] kasan: preassign tags to objects with ctors or SLAB_TYPESAFE_BY_RCU
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+Received: by 2002:a9d:326:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 04:26:25 -0700 (PDT)
+In-Reply-To: <CAGfqbt7xJxGbq3oOJp9S0Sg7Z9=T6Dy52MDNWSDdsU==kPt1KQ@mail.gmail.com>
+References: <20180831225616.29221-1-jmkrzyszt@gmail.com> <20180920101151eucas1p221f5a1715b8556bb9d99bf08fe09ce6f~WE-_cEf4l0754207542eucas1p27@eucas1p2.samsung.com>
+ <9860023.SlBYqtbjDV@z50> <CGME20180920161947epcas3p491e6c136fe05d9672c81b7b4b8328f64@epcas3p4.samsung.com>
+ <15226900.TQMLYV7PZ0@z50> <20180921081806eucas1p182d4646e8510b5f0356214af7edba11e~WXF8Ptw4M0970709707eucas1p1p@eucas1p1.samsung.com>
+ <CAGfqbt7xJxGbq3oOJp9S0Sg7Z9=T6Dy52MDNWSDdsU==kPt1KQ@mail.gmail.com>
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Date:   Fri, 21 Sep 2018 13:26:25 +0200
+Message-ID: <CAGfqbt6chUGTDQ-yjppMydet+LFLAjpVzzRsr4+ho3Nu9y_2UQ@mail.gmail.com>
+Subject: Re: [PATCH v7 4/4] gpiolib: Implement fast processing path in get/set array
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Rojhalat Ibrahim <imr@rtschenk.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 19, 2018 at 8:54 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> An object constructor can initialize pointers within this objects based on
-> the address of the object. Since the object address might be tagged, we
-> need to assign a tag before calling constructor.
->
-> The implemented approach is to assign tags to objects with constructors
-> when a slab is allocated and call constructors once as usual. The
-> downside is that such object would always have the same tag when it is
-> reallocated, so we won't catch use-after-frees on it.
->
-> Also pressign tags for objects from SLAB_TYPESAFE_BY_RCU caches, since
-> they can be validy accessed after having been freed.
->
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  mm/slab.c |  2 +-
->  mm/slub.c | 24 ++++++++++++++----------
->  2 files changed, 15 insertions(+), 11 deletions(-)
->
-> diff --git a/mm/slab.c b/mm/slab.c
-> index 6fdca9ec2ea4..fe0ddf08aa2c 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -2574,7 +2574,7 @@ static void cache_init_objs(struct kmem_cache *cachep,
->
->         for (i = 0; i < cachep->num; i++) {
->                 objp = index_to_obj(cachep, page, i);
-> -               kasan_init_slab_obj(cachep, objp);
-> +               objp = kasan_init_slab_obj(cachep, objp);
->
->                 /* constructor could break poison info */
->                 if (DEBUG == 0 && cachep->ctor) {
-> diff --git a/mm/slub.c b/mm/slub.c
-> index c4d5f4442ff1..75fc76e42a1e 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1413,16 +1413,17 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
->  #endif
->  }
->
-> -static void setup_object(struct kmem_cache *s, struct page *page,
-> +static void *setup_object(struct kmem_cache *s, struct page *page,
->                                 void *object)
->  {
->         setup_object_debug(s, page, object);
-> -       kasan_init_slab_obj(s, object);
-> +       object = kasan_init_slab_obj(s, object);
->         if (unlikely(s->ctor)) {
->                 kasan_unpoison_object_data(s, object);
->                 s->ctor(object);
->                 kasan_poison_object_data(s, object);
->         }
-> +       return object;
->  }
->
->  /*
-> @@ -1530,16 +1531,16 @@ static bool shuffle_freelist(struct kmem_cache *s, struct page *page)
->         /* First entry is used as the base of the freelist */
->         cur = next_freelist_entry(s, page, &pos, start, page_limit,
->                                 freelist_count);
-> +       cur = setup_object(s, page, cur);
->         page->freelist = cur;
->
->         for (idx = 1; idx < page->objects; idx++) {
-> -               setup_object(s, page, cur);
->                 next = next_freelist_entry(s, page, &pos, start, page_limit,
->                         freelist_count);
-> +               next = setup_object(s, page, next);
->                 set_freepointer(s, cur, next);
->                 cur = next;
->         }
-> -       setup_object(s, page, cur);
->         set_freepointer(s, cur, NULL);
->
->         return true;
-> @@ -1561,7 +1562,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
->         struct page *page;
->         struct kmem_cache_order_objects oo = s->oo;
->         gfp_t alloc_gfp;
-> -       void *start, *p;
-> +       void *start, *p, *next;
->         int idx, order;
->         bool shuffle;
->
-> @@ -1613,13 +1614,16 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
->
->         if (!shuffle) {
->                 for_each_object_idx(p, idx, s, start, page->objects) {
-> -                       setup_object(s, page, p);
-> -                       if (likely(idx < page->objects))
-> -                               set_freepointer(s, p, p + s->size);
-> -                       else
-> +                       if (likely(idx < page->objects)) {
-> +                               next = p + s->size;
-> +                               next = setup_object(s, page, next);
-> +                               set_freepointer(s, p, next);
-> +                       } else
->                                 set_freepointer(s, p, NULL);
->                 }
-> -               page->freelist = fixup_red_left(s, start);
-> +               start = fixup_red_left(s, start);
-> +               start = setup_object(s, page, start);
-> +               page->freelist = start;
->         }
+Hi Marek,
 
-Just want to double-check that this is correct.
-We now do an additional setup_object call after the loop, but we do 1
-less in the loop. So total number of calls should be the same, right?
-However, after the loop we call setup_object for the first object (?),
-but inside of the loop we skip the call for the last object (?). Am I
-missing something, or we call ctor twice for the last object and don't
-call it for the first one?
+2018-09-21 12:51 GMT+02:00, Janusz Krzysztofik <jmkrzyszt@gmail.com>:
+> Hi Marek,
+>
+> 2018-09-21 10:18 GMT+02:00, Marek Szyprowski <m.szyprowski@samsung.com>:
+>> Hi Janusz,
+>>
+>> On 2018-09-20 18:21, Janusz Krzysztofik wrote:
+>>> On Thursday, September 20, 2018 5:48:22 PM CEST Janusz Krzysztofik
+>>> wrote:
+>>>> On Thursday, September 20, 2018 12:11:48 PM CEST Marek Szyprowski
+>>>> wrote:
+>>>>> On 2018-09-02 14:01, Janusz Krzysztofik wrote:
+>>>>>> Certain GPIO descriptor arrays returned by gpio_get_array() may
+>>>>>> contain
+>>>>>> information on direct mapping of array members to pins of a single
+>>>>>> GPIO
+>>>>>> chip in hardware order.  In such cases, bitmaps of values can be
+>>>>>> passed
+>>>>>> directly from/to the chip's .get/set_multiple() callbacks without
+>>>>>> wasting time on iterations.
+>>>>>>
+>>>>>> Add respective code to gpiod_get/set_array_bitmap_complex()
+>>>>>> functions.
+>>>>>> Pins not applicable for fast path are processed as before, skipping
+>>>>>> over the 'fast' ones.
+>>>>>>
+>>>>>> Cc: Jonathan Corbet <corbet@lwn.net>
+>>>>>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+>>>>> I've just noticed that this patch landed in today's linux-next. Sadly
+>>>>> it
+>>>>> breaks booting of Exynos5250-based Samsung Snow Chromebook (ARM 32bit,
+>>>>> device-tree source arch/arm/boot/dts/exynos5250-snow.dts).
+>>>>>
+>>>>> Booting hangs after detecting MMC cards. Reverting this patch fixes
+>>>>> the
+>>>>> boot. I will try later to add some debugs and investigate it further
+>>>>> what
+>>>>> really happens when booting hangs.
+>>>> Hi Marek,
+>>>>
+>>>> Thanks for reporting. Could you please try the following fix?
+>>> Hi again,
+>>>
+>>> I realized the patch was not correct, j, not i, should be updated in
+>>> second
+>>> hunk. Please try the following one.
+>>>
+>>> Thanks,
+>>> Janusz
+>>>
+>>> >From a919c504850f6cb40e8e81267a3a37537f7c4fd4 Mon Sep 17 00:00:00 2001
+>>> From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+>>> Date: Thu, 20 Sep 2018 17:37:21 +0200
+>>> Subject: [PATCH] gpiolib: Fix bitmap index not updated
+>>> While skipping fast path bits, bitmap index is not updated with next
+>>> found zero bit position. Fix it.
+>>>
+>>> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+>>
+>> This one also doesn't help. A quick compare of logs with this version and
+>> a working system shows, that with your patch (and fix) there are no calls
+>> to
+>> gpx0-2 pin (which are a part of mmc pwrseq), what causes mmc failure. If
+>> you need any more information (what kind of logs will help?), let me
+>> know.
 
+One more question. You said before that booting hanged after detecting MMC
+cards.  Without the fix, I could imagine it keeps iterating with index not
+updated and simply never returns from gpiod_get/set_array_bitmap_complex().
+Is the behaviour you observe the same with the fix applied?
 
->         page->inuse = page->objects;
-> --
-> 2.19.0.397.gdd90340f6a-goog
+Thanks,
+Janusz
+
+> There is a debug message on array_info content available at the end of
+> gpiod_get_array(), could you please activate it and post the message so
+> we can understand better what is going on?
+>
+> On the other hand, I've had a look your device-tree configuration and
+> it looks like that specific setup won't benefit from the fast bitmap path.
+> You have pin 2 at position 0 and pin 1 at position 1 of the array.
+> Hence, the fast bitmap path covers only pin 1, and pin 2 is processed
+> by the old path with apparently buggy code for skipping over fast pins.
+>
+> As a temporary workaround, you could try to revert the order of pins in
+> your dts file (pin 1 at position 0, pin 2 at 1) and the mmc pwrseq code
+> should work for you again by taking the original old path, not skipping
+> over fast pins.  Results of such check may also help us to better
+> understand and resolve the issue.
+>
+> Thanks,
+> Janusz
+>
+>>
+>>> ---
+>>>   drivers/gpio/gpiolib.c | 7 ++++---
+>>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+>>> index a53d17745d21..369bdd358fcc 100644
+>>> --- a/drivers/gpio/gpiolib.c
+>>> +++ b/drivers/gpio/gpiolib.c
+>>> @@ -2880,7 +2880,7 @@ int gpiod_get_array_value_complex(bool raw, bool
+>>> can_sleep,
+>>>   			__set_bit(hwgpio, mask);
+>>>
+>>>   			if (array_info)
+>>> -				find_next_zero_bit(array_info->get_mask,
+>>> +				i = find_next_zero_bit(array_info->get_mask,
+>>>   						   array_size, i);
+>>>   			else
+>>>   				i++;
+>>> @@ -2905,7 +2905,8 @@ int gpiod_get_array_value_complex(bool raw, bool
+>>> can_sleep,
+>>>   			trace_gpio_value(desc_to_gpio(desc), 1, value);
+>>>
+>>>   			if (array_info)
+>>> -				find_next_zero_bit(array_info->get_mask, i, j);
+>>> +				j = find_next_zero_bit(array_info->get_mask, i,
+>>> +						       j);
+>>>   			else
+>>>   				j++;
+>>>   		}
+>>> @@ -3192,7 +3193,7 @@ int gpiod_set_array_value_complex(bool raw, bool
+>>> can_sleep,
+>>>   			}
+>>>
+>>>   			if (array_info)
+>>> -				find_next_zero_bit(array_info->set_mask,
+>>> +				i = find_next_zero_bit(array_info->set_mask,
+>>>   						   array_size, i);
+>>>   			else
+>>>   				i++;
+>>
+>> Best regards
+>> --
+>> Marek Szyprowski, PhD
+>> Samsung R&D Institute Poland
+>>
+>>
+>
