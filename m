@@ -2,127 +2,116 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77050ECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1AFECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F8021523
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:42:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F8021523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id A1DCF2154B
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 08:42:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hwTJfywd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DCF2154B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389450AbeIUOaG (ORCPT
+        id S2389481AbeIUOaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 10:30:06 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:59680 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727795AbeIUOaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 10:30:05 -0400
-Received: from wd0156.dip.tu-dresden.de ([141.76.108.156] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1g3H0i-0003Xp-1g; Fri, 21 Sep 2018 10:42:00 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Damian Kos <dkos@cadence.com>
-Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, pgaj@cadence.com,
-        ltyrala@cadence.com, stelford@cadence.com, jartur@cadence.com,
-        piotrs@cadence.com, quentin.schulz@bootlin.com, jbergsagel@ti.com,
-        Quentin Schulz <quentin.schulz@free-electrons.com>
-Subject: Re: [PATCH v4 5/5] drm: bridge: add support for Cadence MHDP DPI/DP bridge
-Date:   Fri, 21 Sep 2018 10:41:59 +0200
-Message-ID: <1903708.pJTgKoWLiI@phil>
-In-Reply-To: <1537455288-20223-6-git-send-email-dkos@cadence.com>
-References: <1537455288-20223-1-git-send-email-dkos@cadence.com> <1537455288-20223-6-git-send-email-dkos@cadence.com>
+        Fri, 21 Sep 2018 10:30:18 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35619 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727795AbeIUOaS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 10:30:18 -0400
+Received: by mail-it1-f195.google.com with SMTP id 139-v6so1090541itf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 01:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VCY11d6Q8u0HYNWtx8TAGoyh4KZuFvy2DdJdgLsq9o4=;
+        b=hwTJfywdz5WnhE5Nga7GttYtqDQjsF3XZQoVKgV7ljaH2NcjzBeTucVUR8VQhvipMi
+         oQePY5IU2hEXJ5e8QsU3oTa1uqKbHcn7LOj6+ynA8cMJHsW+O97BuR5FVgcbndXblCh5
+         ebG9/HiOiBiYSkco9t1WePM7IrLWzWaXdA3I9S4DkBqwSzzmI0PqCg56a4z9XJfoHO81
+         7e/p5PXSQPx6M4XKXw04s6qQnbVeIS04EHgsmwpnq3sOPsjkLieNQLkAX+B5e8s9zPkA
+         6SWx+fwsnaS5YSWY9z+nWVeKdn4GYcuI7OUmY/aEzRUhCLRM0y6Uo2c4ByK+ScIg1LTG
+         zg6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VCY11d6Q8u0HYNWtx8TAGoyh4KZuFvy2DdJdgLsq9o4=;
+        b=GuOz9p5GzIZWhzKgbYiS4qAxw96Oq4pY/hLx2CcUKlG5R+a5fzqAxkBLJ/36NW+w6/
+         0552mnUDSpqaxexcPeUTnew60uIIKgd+b3oIBYbLF8DxkBAeP9DYM7CJrDj97lR4V9o4
+         OmiDsCs/YXWVUXo4tR+IsZXisi5NYfTKxqnspVzBuNYzODhYtSsasRSMs2FqfRHwQfN/
+         8mhv3cJ4bVPJjnAy6Ja7E8QSoW3NoqvTcthSzRlSOGZ3lDxT/BHtczHi7UL4aYc1DMv8
+         FDhEDP7mXLdEetWZjMzCd5XH6m/k4SRn6o/aAmm2mMRCRa+Npc0n56QfOPrhExgHimgD
+         tHbw==
+X-Gm-Message-State: APzg51DuD3svjBITJisowqxSPew7++N2i+36r+shE9U5XMe2O6g1q7Nb
+        3dPtLFwmReTDGu0uk67yQfr16+nyZoQvpslP918c/A==
+X-Google-Smtp-Source: ANB0Vda+opvZmDfHV0yzKnM0MEfdpYOvtQobfHjTIRkktdS+V9kzmP2N3nt1XjannMel0sctHqyQYFRdNq6Oi9Se+uE=
+X-Received: by 2002:a24:ef43:: with SMTP id i64-v6mr5075062ith.47.1537519348581;
+ Fri, 21 Sep 2018 01:42:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 01:42:08
+ -0700 (PDT)
+In-Reply-To: <CALCETrULOFr=oQFMVT4qxPTWEQ++G82HCuxRoA=Sr4Z8kmMbYQ@mail.gmail.com>
+References: <20180921001513.12504-1-Jason@zx2c4.com> <CALCETrULOFr=oQFMVT4qxPTWEQ++G82HCuxRoA=Sr4Z8kmMbYQ@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 21 Sep 2018 10:42:08 +0200
+Message-ID: <CACT4Y+azFyB6xMtbOGuwUW5jo_dxchM7EdyMWHD_6CU1n9erFA@mail.gmail.com>
+Subject: Re: [PATCH] framewarn: expand KASAN_EXTRA exception to KASAN
+To:     Andy Lutomirski <luto@kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Damian,
-
-Am Donnerstag, 20. September 2018, 16:54:40 CEST schrieb Damian Kos:
-> From: Quentin Schulz <quentin.schulz@free-electrons.com>
-> 
-> This adds basic support for Cadence MHDP DPI to DP bridge.
-> 
-> Basically, it takes a DPI stream as input and output it encoded in DP
-> format. It's missing proper HPD, HDCP and currently supports only
-> SST mode.
-> 
-> Changes made in the low level driver (cdn-dp-reg.*):
-> - moved it to from drivers/gpu/drm/rockchip to
->   drivers/gpu/drm/bridge/cdns-mhdp-common.*
-> - functions for sending/receiving commands are now public
-> - added functions for reading registers and link training
->   adjustment
-> 
-> Changes made in RK's driver (cdn-dp-core.*):
-> - Moved audio_info and audio_pdev fields from cdn_dp_device to
->   cdns_mhdp_device structure.
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Signed-off-by: Damian Kos <dkos@cadence.com>
-
-[...]
-
-> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-> index 0ccc76217ee4..129b0529f3e1 100644
-> --- a/drivers/gpu/drm/rockchip/Kconfig
-> +++ b/drivers/gpu/drm/rockchip/Kconfig
-> @@ -27,7 +27,9 @@ config ROCKCHIP_ANALOGIX_DP
->  
->  config ROCKCHIP_CDN_DP
->          bool "Rockchip cdn DP"
-> -	depends on EXTCON=y || (EXTCON=m && DRM_ROCKCHIP=m)
-> +	depends on DRM_ROCKCHIP=m
-
-Sorry, I wasn't fast enough in my reply to you mail to catch that before
-your v4, but I don't think this is necessary.
-Instead I do guess, the select below should do the right thing by
-making EXTCON=y if DRM_ROCKCHIP=y.
-
-Somewhat clumsily verified by making EXTCON=m in my defconfig
-and seeing get changed to y upon build, which I guess comes from
-a different "select" in the config.
+On Fri, Sep 21, 2018 at 3:50 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> This patch seems reasonable, but you emailed the wrong people :)
+>
+> On Thu, Sep 20, 2018 at 5:15 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>>
+>> It turns out that KASAN in general will bloat stack frames in unexpected
+>> ways, not just KASAN_EXTRA. So, this patch trivially changes that
+>> default to be associated with KASAN instead of KASAN_EXTRA.
+>>
+>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+>> ---
+>>  lib/Kconfig.debug | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>> index 4966c4fbe7f7..39078a080e29 100644
+>> --- a/lib/Kconfig.debug
+>> +++ b/lib/Kconfig.debug
+>> @@ -222,7 +222,7 @@ config ENABLE_MUST_CHECK
+>>  config FRAME_WARN
+>>         int "Warn for stack frames larger than (needs gcc 4.4)"
+>>         range 0 8192
+>> -       default 3072 if KASAN_EXTRA
+>> +       default 3072 if KASAN
+>>         default 2048 if GCC_PLUGIN_LATENT_ENTROPY
+>>         default 1280 if (!64BIT && PARISC)
+>>         default 1024 if (!64BIT && !PARISC)
 
 
-> +	select EXTCON
-> +	select DRM_CDNS_MHDP
->          help
->  	  This selects support for Rockchip SoC specific extensions
->  	  for the cdn DP driver. If you want to enable Dp on
-> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
-> index a314e2109e76..16ba61ffca39 100644
-> --- a/drivers/gpu/drm/rockchip/Makefile
-> +++ b/drivers/gpu/drm/rockchip/Makefile
-> @@ -3,13 +3,15 @@
->  # Makefile for the drm device driver.  This driver provides support for the
->  # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
->  
-> +ccflags-y += -I$(src)/../bridge
+Looks fine to me.
+KASAN always increases stack size too for exactly that reason, so it's
+reasonable to allow larger frames rather than try to massage code
+every here and there to fit into the normal frame size.
 
-hmm, instead of adding an include path, the shared header should probably
-just live in /include/drm/bridge/... in the kernel source?
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
 
-
-Heiko
-
-
+Thanks
