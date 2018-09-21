@@ -2,281 +2,338 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 884C0C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F5FECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F11F21531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F11F21531
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4493A21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 10:07:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4493A21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389486AbeIUPz0 (ORCPT
+        id S2389661AbeIUPzp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:55:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbeIUPzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:55:25 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B9EBC0587D2;
-        Fri, 21 Sep 2018 10:07:17 +0000 (UTC)
-Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F3D7017AFC;
-        Fri, 21 Sep 2018 10:07:10 +0000 (UTC)
-Subject: Re: [PATCH v5 10/23] iommu: introduce device fault data
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 21 Sep 2018 11:55:45 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33634 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726479AbeIUPzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:55:45 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0E10BB083E23E;
+        Fri, 21 Sep 2018 18:07:33 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.399.0; Fri, 21 Sep
+ 2018 18:07:26 +0800
+Date:   Fri, 21 Sep 2018 18:05:26 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Kenneth Lee <nek.in.cn@gmail.com>,
         Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     Yi L <yi.l.liu@linux.intel.com>, Raj Ashok <ashok.raj@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Liu@mail.linuxfoundation.org, Jean Delvare <khali@linux-fr.org>
-References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1526072055-86990-11-git-send-email-jacob.jun.pan@linux.intel.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <72b3e4d8-de99-11d3-c725-1211fc64b262@redhat.com>
-Date:   Fri, 21 Sep 2018 12:07:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joerg Roedel <joro@8bytes.org>, <linux-doc@vger.kernel.org>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>,
+        "Hao Fang" <fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <iommu@lists.linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        <linux-accelerators@lists.ozlabs.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+Message-ID: <20180921100526.GI207969@Turing-Arch-b>
+References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+ <20180917014244.GA27596@redhat.com>
+ <20180917083940.GE207969@Turing-Arch-b>
+ <20180917123744.GA3605@redhat.com>
+ <20180918060014.GF207969@Turing-Arch-b>
+ <20180918130314.GA3500@redhat.com>
+ <20180920055543.GG207969@Turing-Arch-b>
+ <20180920142340.GA3341@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1526072055-86990-11-git-send-email-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Sep 2018 10:07:17 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180920142340.GA3341@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
-
-On 5/11/18 10:54 PM, Jacob Pan wrote:
-> Device faults detected by IOMMU can be reported outside IOMMU
-> subsystem for further processing. This patch intends to provide
-> a generic device fault data such that device drivers can be
-> communicated with IOMMU faults without model specific knowledge.
+On Thu, Sep 20, 2018 at 10:23:40AM -0400, Jerome Glisse wrote:
+> Received: from popscn.huawei.com [10.3.17.45] by Turing-Arch-b with POP3
+>  (fetchmail-6.3.26) for <kenny@localhost> (single-drop); Thu, 20 Sep 2018
+>  22:30:01 +0800 (CST)
+> Received: from DGGEMM401-HUB.china.huawei.com (10.3.20.209) by
+>  dggeml405-hub.china.huawei.com (10.3.17.49) with Microsoft SMTP Server
+>  (TLS) id 14.3.382.0; Thu, 20 Sep 2018 22:23:57 +0800
+> Received: from dggwg01-in.huawei.com (172.30.65.35) by
+>  DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server id
+>  14.3.399.0; Thu, 20 Sep 2018 22:23:56 +0800
+> Received: from mx1.redhat.com (unknown [209.132.183.28])	by Forcepoint
+>  Email with ESMTPS id 18963FA9B6FA9;	Thu, 20 Sep 2018 22:23:50 +0800 (CST)
+> Received: from smtp.corp.redhat.com
+>  (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])	(using
+>  TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))	(No client
+>  certificate requested)	by mx1.redhat.com (Postfix) with ESMTPS id
+>  CF1D9C058CBE;	Thu, 20 Sep 2018 14:23:47 +0000 (UTC)
+> Received: from redhat.com (unknown [10.20.6.215])	by
+>  smtp.corp.redhat.com (Postfix) with ESMTPS id 1B030106A780;	Thu, 20 Sep
+>  2018 14:23:41 +0000 (UTC)
+> Date: Thu, 20 Sep 2018 10:23:40 -0400
+> From: Jerome Glisse <jglisse@redhat.com>
+> To: Kenneth Lee <liguozhu@hisilicon.com>
+> CC: Kenneth Lee <nek.in.cn@gmail.com>, Alex Williamson
+>  <alex.williamson@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+>  kvm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman
+>  <gregkh@linuxfoundation.org>, Joerg Roedel <joro@8bytes.org>,
+>  linux-doc@vger.kernel.org, Sanjay Kumar <sanjay.k.kumar@intel.com>, Hao
+>  Fang <fanghao11@huawei.com>, linux-kernel@vger.kernel.org,
+>  linuxarm@huawei.com, iommu@lists.linux-foundation.org, "David S . Miller"
+>  <davem@davemloft.net>, linux-crypto@vger.kernel.org, Zhou Wang
+>  <wangzhou1@hisilicon.com>, Philippe Ombredanne <pombredanne@nexb.com>,
+>  Thomas Gleixner <tglx@linutronix.de>, Zaibo Xu <xuzaibo@huawei.com>,
+>  linux-accelerators@lists.ozlabs.org, Lu Baolu <baolu.lu@linux.intel.com>
+> Subject: Re: [RFCv2 PATCH 0/7] A General Accelerator Framework, WarpDrive
+> Message-ID: <20180920142340.GA3341@redhat.com>
+> References: <20180903005204.26041-1-nek.in.cn@gmail.com>
+>  <20180917014244.GA27596@redhat.com>
+>  <20180917083940.GE207969@Turing-Arch-b> <20180917123744.GA3605@redhat.com>
+>  <20180918060014.GF207969@Turing-Arch-b> <20180918130314.GA3500@redhat.com>
+>  <20180920055543.GG207969@Turing-Arch-b>
+> Content-Type: text/plain; charset="iso-8859-1"
+> Content-Disposition: inline
+> Content-Transfer-Encoding: 8bit
+> In-Reply-To: <20180920055543.GG207969@Turing-Arch-b>
+> User-Agent: Mutt/1.10.0 (2018-05-17)
+> X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+> X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16
+>  (mx1.redhat.com [10.5.110.32]); Thu, 20 Sep 2018 14:23:48 +0000 (UTC)
+> Return-Path: jglisse@redhat.com
+> X-MS-Exchange-Organization-AuthSource: DGGEMM401-HUB.china.huawei.com
+> X-MS-Exchange-Organization-AuthAs: Anonymous
+> MIME-Version: 1.0
 > 
-> The proposed format is the result of discussion at:
-> https://lkml.org/lkml/2017/11/10/291
-> Part of the code is based on Jean-Philippe Brucker's patchset
-> (https://patchwork.kernel.org/patch/9989315/).
+> On Thu, Sep 20, 2018 at 01:55:43PM +0800, Kenneth Lee wrote:
+> > On Tue, Sep 18, 2018 at 09:03:14AM -0400, Jerome Glisse wrote:
+> > > On Tue, Sep 18, 2018 at 02:00:14PM +0800, Kenneth Lee wrote:
+> > > > On Mon, Sep 17, 2018 at 08:37:45AM -0400, Jerome Glisse wrote:
+> > > > > On Mon, Sep 17, 2018 at 04:39:40PM +0800, Kenneth Lee wrote:
+> > > > > > On Sun, Sep 16, 2018 at 09:42:44PM -0400, Jerome Glisse wrote:
+> > > > > > > So i want to summarize issues i have as this threads have dig deep into
+> > > > > > > details. For this i would like to differentiate two cases first the easy
+> > > > > > > one when relying on SVA/SVM. Then the second one when there is no SVA/SVM.
+> > > > > > 
+> > > > > > Thank you very much for the summary.
+> > > > > > 
+> > > > > > > In both cases your objectives as i understand them:
+> > > > > > > 
+> > > > > > > [R1]- expose a common user space API that make it easy to share boiler
+> > > > > > >       plate code accross many devices (discovering devices, opening
+> > > > > > >       device, creating context, creating command queue ...).
+> > > > > > > [R2]- try to share the device as much as possible up to device limits
+> > > > > > >       (number of independant queues the device has)
+> > > > > > > [R3]- minimize syscall by allowing user space to directly schedule on the
+> > > > > > >       device queue without a round trip to the kernel
+> > > > > > > 
+> > > > > > > I don't think i missed any.
+> > > > > > > 
+> > > > > > > 
+> > > > > > > (1) Device with SVA/SVM
+> > > > > > > 
+> > > > > > > For that case it is easy, you do not need to be in VFIO or part of any
+> > > > > > > thing specific in the kernel. There is no security risk (modulo bug in
+> > > > > > > the SVA/SVM silicon). Fork/exec is properly handle and binding a process
+> > > > > > > to a device is just couple dozen lines of code.
+> > > > > > > 
+> > > > > > 
+> > > > > > This is right...logically. But the kernel has no clear definition about "Device
+> > > > > > with SVA/SVM" and no boiler plate for doing so. Then VFIO may become one of the
+> > > > > > boiler plate.
+> > > > > > 
+> > > > > > VFIO is one of the wrappers for IOMMU for user space. And maybe it is the only
+> > > > > > one. If we add that support within VFIO, which solve most of the problem of
+> > > > > > SVA/SVM, it will save a lot of work in the future.
+> > > > > 
+> > > > > You do not need to "wrap" IOMMU for SVA/SVM. Existing upstream SVA/SVM user
+> > > > > all do the SVA/SVM setup in couple dozen lines and i failed to see how it
+> > > > > would require any more than that in your case.
+> > > > > 
+> > > > > 
+> > > > > > I think this is the key confliction between us. So could Alex please say
+> > > > > > something here? If the VFIO is going to take this into its scope, we can try
+> > > > > > together to solve all the problem on the way. If it it is not, it is also
+> > > > > > simple, we can just go to another way to fulfill this part of requirements even
+> > > > > > we have to duplicate most of the code.
+> > > > > > 
+> > > > > > Another point I need to emphasis here: because we have to replace the hardware
+> > > > > > queue when fork, so it won't be very simple even in SVA/SVM case.
+> > > > > 
+> > > > > I am assuming hardware queue can only be setup by the kernel and thus
+> > > > > you are totaly safe forkwise as the queue is setup against a PASID and
+> > > > > the child does not bind to any PASID and you use VM_DONTCOPY on the
+> > > > > mmap of the hardware MMIO queue because you should really use that flag
+> > > > > for that.
+> > > > > 
+> > > > > 
+> > > > > > > (2) Device does not have SVA/SVM (or it is disabled)
+> > > > > > > 
+> > > > > > > You want to still allow device to be part of your framework. However
+> > > > > > > here i see fundamentals securities issues and you move the burden of
+> > > > > > > being careful to user space which i think is a bad idea. We should
+> > > > > > > never trus the userspace from kernel space.
+> > > > > > > 
+> > > > > > > To keep the same API for the user space code you want a 1:1 mapping
+> > > > > > > between device physical address and process virtual address (ie if
+> > > > > > > device access device physical address A it is accessing the same
+> > > > > > > memory as what is backing the virtual address A in the process.
+> > > > > > > 
+> > > > > > > Security issues are on two things:
+> > > > > > > [I1]- fork/exec, a process who opened any such device and created an
+> > > > > > >       active queue can transfer without its knowledge control of its
+> > > > > > >       commands queue through COW. The parent map some anonymous region
+> > > > > > >       to the device as a command queue buffer but because of COW the
+> > > > > > >       parent can be the first to copy on write and thus the child can
+> > > > > > >       inherit the original pages that are mapped to the hardware.
+> > > > > > >       Here parent lose control and child gain it.
+> > > > > > 
+> > > > > > This is indeed an issue. But it remains an issue only if you continue to use the
+> > > > > > queue and the memory after fork. We can use at_fork kinds of gadget to fix it in
+> > > > > > user space.
+> > > > > 
+> > > > > Trusting user space is a no go from my point of view.
+> > > > 
+> > > > Can we dive deeper on this? Maybe we have different understanding on "Trusting
+> > > > user space". As my understanding, "trusting user space" means "no matter what
+> > > > the user process does, it should only hurt itself and anything give to it, no
+> > > > the kernel and the other process".
+> > > > 
+> > > > In our case, we create a channel between a process and the hardware. The process
+> > > > can do whateven it like to its own memory the channel itself. It won't hurt the
+> > > > other process and the kernel. And if the process fork a child and give the
+> > > > channel to the child, it should the freedom on those resource remain within the
+> > > > parent and the child. We are not trust another else.
+> > > > 
+> > > > So do you refer to something else here?
+> > > > 
+> > > 
+> > > I am refering to COW giving control to the child on to what happens
+> > > in the parent from device point of view. A process hurting itself is
+> > > fine, but if process now has to do special steps to protect from
+> > > its child ie make sure that its childs can not hurt it, then i see
+> > > that as a kernel bug. We can not ask user space process to know about
+> > > all the thousands things that needs to be done to avoid issues with
+> > > each device driver that the process may use (process can be totaly
+> > > ignorant it is using a device if that device is use by a library it
+> > > links to).
+> > > 
+> > > 
+> > > Maybe what needs to happen will explain it better. So if userspace
+> > > wants to be secure and protect itself from its child taking over the
+> > > device through COW:
+> > > 
+> > >     - parent opened a device and is using it
+> > > 
+> > >     ... when parent wants to fork/exec it must:
+> > > 
+> > >     - parent _must_ flush device command queue and wait for the
+> > >       device to finish all pending jobs
+> > > 
+> > >     - parent _must_ unmap all range mapped to the device
+> > > 
+> > >     - parent should first close device file (unless you force set
+> > >       the CLOEXEC flag in the kernel)/it could also just flush
+> > >       but if you are not mapping the device command queue with
+> > >       VM_DONTCOPY then you should really be closing the device
+> > > 
+> > >     - now parent can fork/exec
+> > > 
+> > >     - parent must force COW ie write at least one byte to _all_
+> > >       pages in the range it wants to use with the device
+> > > 
+> > >     - parent re-open the device and re-initialize everything
+> > > 
+> > > 
+> > > So this is putting quite a burden on a number of steps the parent
+> > > _must_ do in order to keep control of memory exposed to the device.
+> > > Not doing so can potentialy lead (it depends on who does the COW
+> > > first) to the child taking control of memory use by the device,
+> > > memory which was mapped by the parent before the child was created.
+> > > 
+> > > Forcing CLOEXEC and VM_DONTCOPY somewhat help to simplify this,
+> > > but you still need to stop, flush, unmap, before fork/exec and then
+> > > re-init everything after.
+> > > 
+> > > 
+> > > This is only when not using SVA/SVM, SVA/SVM is totaly fine from
+> > > that point of view, no issues whatsoever.
+> > > 
+> > > The solution i outlined in previous email do not have that above
+> > > issue either, no need to rely on user space doing that dance.
+> > 
+> > Thank you. I get the point. I'm now trying to see if I can solve the problem by
+> > seting the vma to VM_SHARED when the portiong is "shared to the hardware".
+> > 
 > 
-> The assumption is that model specific IOMMU driver can filter and
-> handle most of the internal faults if the cause is within IOMMU driver
-> control. Therefore, the fault reasons can be reported are grouped
-> and generalized based common specifications such as PCI ATS.
+> FYI you can not convert a private anonymous vma to a share one it is
+> illegal AFAIK at least i never heard of it and i am pretty sure the
+> mm code would break if that happens. The user space is the one that
+> decide what flags a vma has, not the kernel. Modulo few flags like
+> DONTCOPY that can be force set by device driver for their vma ie vma
+> of an mmap against the device file.
 > 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> ---
->  include/linux/iommu.h | 101 +++++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 99 insertions(+), 2 deletions(-)
+> If you don't like my solution here is another one but it is ugly and
+> i think it is a bad idea. Again this is for the non SVA/SVM case and
+> it assumes that the command queue is a mmap() of the device file:
+>   (A) register mmu_notifier
+>   (B) on _every_ invalidate range callback (_no matter_ what is the
+>       range) you zap the command queue mapped to user space (this is
+>       because you can't tell if the callback happens for a fork or
+>       something else) wait for the hardware queue to finish and clear
+>       all the iommu/dma mapping and you unpin all the pages ie
+>       put_page()
+>   (C) in device file vma page fault handler (vm_operations_struct.
+>       fault) you redo all the GUP and redo all the iommu/dma mapping
+>       and you remap the command queue to the userspace
 > 
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index e8cadb6..aeadb4f 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -49,13 +49,17 @@ struct bus_type;
->  struct device;
->  struct iommu_domain;
->  struct notifier_block;
-> +struct iommu_fault_event;
->  
->  /* iommu fault flags */
-> -#define IOMMU_FAULT_READ	0x0
-> -#define IOMMU_FAULT_WRITE	0x1
-> +#define IOMMU_FAULT_READ		(1 << 0)
-> +#define IOMMU_FAULT_WRITE		(1 << 1)
-> +#define IOMMU_FAULT_EXEC		(1 << 2)
-> +#define IOMMU_FAULT_PRIV		(1 << 3)
->  
->  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
->  			struct device *, unsigned long, int, void *);
-> +typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *, void *);
->  
->  struct iommu_domain_geometry {
->  	dma_addr_t aperture_start; /* First address that can be mapped    */
-> @@ -264,6 +268,98 @@ struct iommu_device {
->  	struct device *dev;
->  };
->  
-> +/*  Generic fault types, can be expanded IRQ remapping fault */
-> +enum iommu_fault_type {
-> +	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault */
-> +	IOMMU_FAULT_PAGE_REQ,		/* page request fault */
-> +};
-
-While doing the exercise of mapping the SMMUv3 events to this, I failed
-to map some event types to iommu_fault_reason enum values.
-> +
-> +enum iommu_fault_reason {
-> +	IOMMU_FAULT_REASON_UNKNOWN = 0,
-> +
-> +	/* IOMMU internal error, no specific reason to report out */
-> +	IOMMU_FAULT_REASON_INTERNAL,
-> +
-> +	/* Could not access the PASID table */
-> +	IOMMU_FAULT_REASON_PASID_FETCH,
-
-Would it be possible to add
- /* could not access the device context (fetch caused external abort) */
-IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH,
-
-> +
-> +	/*
-> +	 * PASID is out of range (e.g. exceeds the maximum PASID
-> +	 * supported by the IOMMU) or disabled.
-> +	 */
-> +	IOMMU_FAULT_REASON_PASID_INVALID,
-Would it be possible to add
-/* source id is out of range */
-IOMMU_FAULT_REASON_SOURCEID_INVALID,
-
-or alike
-on ARM the sourceid matches the streamid and pasid matches the substreamid.
-
-It would be useful to have:
-/* pasid entry is invalid or has configuration errors */
-IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
-
-/* device context entry is invalid or has configuration errors */
-IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY,
-
-This typically allows to return information to the guest about fields in
-device context entry or pasid entry that are incorrect, not matching the
-physical IOMMU capability
-> +
-> +	/* Could not access the page directory (Invalid PASID entry) */
-> +	IOMMU_FAULT_REASON_PGD_FETCH,
-I was unsure about this one. On my side I needed something more general
-such as:
-/*
-* An external abort occurred fetching (or updating) a translation
-* table descriptor
-*/
-IOMMU_FAULT_REASON_WALK_EABT,
-
-> +
-> +	/* Could not access the page table entry (Bad address) */
-> +	IOMMU_FAULT_REASON_PTE_FETCH,
-I interpreted this one as the actual translation failure but that's not
-obvious to me either. Is it a fetch abort or is it that the PTE is
-marked invalid. Maybe if we have the former we can just have a
-translation fault reason instead.
-> +
-> +	/* Protection flag check failed */
-> +	IOMMU_FAULT_REASON_PERMISSION,
-On ARM we also have:
-
-/* access flag check failed */
-IOMMU_FAULT_REASON_ACCESS,
-
-and
-
-/* Output address of a translation stage caused Address Size fault */
- IOMMU_FAULT_REASON_OOR_ADDRESS
-
-I am aware all those suggestions do not match the original goal of your
-series, mostly targeted at SVA support. However in the prospect to make
-those APIs as generic as possible it may be useful to take those
-requirements as well.
-
-Hope it does not bring extra noise to the topic ;-)
-
-Thanks
-
-Eric
-
-
-
-
-> +};
-> +
-> +/**
-> + * struct iommu_fault_event - Generic per device fault data
-> + *
-> + * - PCI and non-PCI devices
-> + * - Recoverable faults (e.g. page request), information based on PCI ATS
-> + * and PASID spec.
-> + * - Un-recoverable faults of device interest
-> + * - DMA remapping and IRQ remapping faults
-> +
-> + * @type contains fault type.
-> + * @reason fault reasons if relevant outside IOMMU driver, IOMMU driver internal
-> + *         faults are not reported
-> + * @addr: tells the offending page address
-> + * @pasid: contains process address space ID, used in shared virtual memory(SVM)
-> + * @page_req_group_id: page request group index
-> + * @last_req: last request in a page request group
-> + * @pasid_valid: indicates if the PRQ has a valid PASID
-> + * @prot: page access protection flag, e.g. IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
-> + * @device_private: if present, uniquely identify device-specific
-> + *                  private data for an individual page request.
-> + * @iommu_private: used by the IOMMU driver for storing fault-specific
-> + *                 data. Users should not modify this field before
-> + *                 sending the fault response.
-> + */
-> +struct iommu_fault_event {
-> +	enum iommu_fault_type type;
-> +	enum iommu_fault_reason reason;
-> +	u64 addr;
-> +	u32 pasid;
-> +	u32 page_req_group_id;
-> +	u32 last_req : 1;
-> +	u32 pasid_valid : 1;
-> +	u32 prot;
-> +	u64 device_private;
-> +	u64 iommu_private;
-> +};
-> +
-> +/**
-> + * struct iommu_fault_param - per-device IOMMU fault data
-> + * @dev_fault_handler: Callback function to handle IOMMU faults at device level
-> + * @data: handler private data
-> + *
-> + */
-> +struct iommu_fault_param {
-> +	iommu_dev_fault_handler_t handler;
-> +	void *data;
-> +};
-> +
-> +/**
-> + * struct iommu_param - collection of per-device IOMMU data
-> + *
-> + * @fault_param: IOMMU detected device fault reporting data
-> + *
-> + * TODO: migrate other per device data pointers under iommu_dev_data, e.g.
-> + *	struct iommu_group	*iommu_group;
-> + *	struct iommu_fwspec	*iommu_fwspec;
-> + */
-> +struct iommu_param {
-> +	struct iommu_fault_param *fault_param;
-> +};
-> +
->  int  iommu_device_register(struct iommu_device *iommu);
->  void iommu_device_unregister(struct iommu_device *iommu);
->  int  iommu_device_sysfs_add(struct iommu_device *iommu,
-> @@ -437,6 +533,7 @@ struct iommu_ops {};
->  struct iommu_group {};
->  struct iommu_fwspec {};
->  struct iommu_device {};
-> +struct iommu_fault_param {};
->  
->  static inline bool iommu_present(struct bus_type *bus)
->  {
+> In (C) you can remap different command queue if you are in the child
+> than in the parent (just look at current->mm and compare it to the
+> one the command queue was created against).
 > 
+> Note that this solution will be much __slower__ than what i described
+> in my previous email. You will see that mmu notifier callbacks happens
+> often and for tons of reasons and you will be _constantly_ undoing and
+> redoing tons of work.
+> 
+> This can be mitigated if you can differentiate reasons behind a mmu
+> notifier callback. I posted patchset to do that a while ago and i
+> intend to post it again in the next month or so. But this would still
+> be a bad idea and solution i described previously is much more sane.
+> 
+> Trying to pretend you can have the same thing as SVA/SVM without SVA
+> is not a good idea. The non SVA case can still expose same API (like
+> i described previously) but should go through kernel for _every_
+> hardware submission (you can batch multiple commands in one submission).
+> Not doing so is way too risky from my POV.
+> 
+> Cheers,
+> Jérôme
+
+You are quite right. I tried all the way to find a leak in the mm system and
+fail to. I will tried other way or maybe discard the non-SVA scenario.
+
+Cheers,
+-- 
+			-Kenneth(Hisilicon)
+
