@@ -2,150 +2,91 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB748ECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF0FC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B4D21532
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:19:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B4D21532
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gonehiking.org
+	by mail.kernel.org (Postfix) with ESMTP id 1BB6B21547
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 15:23:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="c7J7+08B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB6B21547
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390440AbeIUVJL (ORCPT
+        id S2390410AbeIUVNH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 17:09:11 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:52902 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390076AbeIUVJK (ORCPT
+        Fri, 21 Sep 2018 17:13:07 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40633 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390298AbeIUVNG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 17:09:10 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 77F3F21760;
-        Fri, 21 Sep 2018 15:19:47 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id LcDoBpOJYK_T; Fri, 21 Sep 2018 15:19:47 +0000 (UTC)
-Received: from mail.gonehiking.org (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        by mailout.easymail.ca (Postfix) with ESMTPA id D7DA02131D;
-        Fri, 21 Sep 2018 15:19:41 +0000 (UTC)
-Received: from [192.168.1.4] (rhapsody.internal [192.168.1.4])
-        by mail.gonehiking.org (Postfix) with ESMTP id B82EB9F2E8;
-        Fri, 21 Sep 2018 09:19:40 -0600 (MDT)
-Subject: Re: [PATCH] scsi: FlashPoint: Remove unnecessary parentheses
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180920211032.21840-1-natechancellor@gmail.com>
-From:   Khalid Aziz <khalid@gonehiking.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=khalid@gonehiking.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <bb9c20c4-f13a-497a-0ad1-73978a9f4f3b@gonehiking.org>
-Date:   Fri, 21 Sep 2018 09:19:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 21 Sep 2018 17:13:06 -0400
+Received: by mail-it1-f195.google.com with SMTP id h23-v6so2282920ita.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 08:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=NTb6q2/6NvaCo2lEt+p87YCjpJd5nfZ1KeuAd5Uysos=;
+        b=c7J7+08BdKhaj4y7n6MLBwJXysdocIOQrE23ANkHmvVfVisB6beIi0SRxQxgCxYfwE
+         Dj++aRUGV10LipwsEoL1jB0wsW2bTEL6/2PmCDsiRIqCVLJqtPUzzZmYnHt00RjW4b/h
+         n0dOiOt4qU+FKBONkULWHiLEm2C1iNCBTwUu0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=NTb6q2/6NvaCo2lEt+p87YCjpJd5nfZ1KeuAd5Uysos=;
+        b=eJbmXSA4mwtXKi0DLELXTN02VXkeee9E39y01hPgoS7cSUqhmk4Le51KsUZHGdaRez
+         Ne7/zYzNvbJ9oEQrQ9ORC8e7FR0inpNN4AKAct1A+fA9Do9R6B+ecAWK3VqqUGiaPKxY
+         pUPe9ZfSFg1qkzC7zncWAK8DXj5mD0VS9aTFEAvwY7Qzb5i4ytjPF4lwiCiM1zb6fnvu
+         qb41LK/4p+baEcAT2Yy1FKTgISDXxx/hmyyovMd+lmXGvd7mIaCxn6/nbEQxHHfNSe1Q
+         ke4Ffyq/iVX0/sOSpRoFZ9lzC86g3VbTZXvzE+UQEO0WLnlGnBD3MTEJmtHi5ufPjvX/
+         Flnw==
+X-Gm-Message-State: APzg51CDG8xrk9Vn/z+tOzZuzkCfG1lhRgcUdqkDJD2dK9uBZ8St0aNL
+        k/sfvOpbNGAtyG3RP1jBjH8AXZk2wenloi0Lci0idw==
+X-Google-Smtp-Source: ANB0VdZU7k69iy4uvA4zGkxCWumRel/OTyaYR5e2F9BwnYgL5owrDUy4SH/Kxo3A+gZyLA5IXXsoD/wek7yueZ0pmsE=
+X-Received: by 2002:a24:e084:: with SMTP id c126-v6mr6331029ith.136.1537543423604;
+ Fri, 21 Sep 2018 08:23:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180920211032.21840-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 08:23:43
+ -0700 (PDT)
+X-Originating-IP: [212.96.48.140]
+In-Reply-To: <17547.1537542706@warthog.procyon.org.uk>
+References: <20180920151214.15484-1-mszeredi@redhat.com> <20180920151214.15484-7-mszeredi@redhat.com>
+ <17547.1537542706@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 21 Sep 2018 17:23:43 +0200
+Message-ID: <CAJfpegueVku24snfr+RwdsdzLc_s5VrS1=TPhTJp6Tw1ZPf=PQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] fsconfig: rename FSCONFIG_CMD_CREATE to FSCONFIG_CMD_OBTAIN
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/20/2018 03:10 PM, Nathan Chancellor wrote:
-> Clang warns when multiple pairs of parentheses are used for a single
-> conditional statement.
-> 
-> In file included from drivers/scsi/BusLogic.c:57:
-> drivers/scsi/FlashPoint.c:2947:34: warning: equality comparison with extraneous parentheses [-Wparentheses-equality]
->                                 if ((currSCCB->Sccb_scsistat == SELECT_SN_ST)) {
->                                      ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
-> drivers/scsi/FlashPoint.c:2947:34: note: remove extraneous parentheses around the comparison to silence this warning
->                                 if ((currSCCB->Sccb_scsistat == SELECT_SN_ST)) {
->                                     ~                        ^              ~
-> drivers/scsi/FlashPoint.c:2947:34: note: use '=' to turn this equality comparison into an assignment
->                                 if ((currSCCB->Sccb_scsistat == SELECT_SN_ST)) {
->                                                              ^~
->                                                              =
-> drivers/scsi/FlashPoint.c:2956:39: warning: equality comparison with extraneous parentheses [-Wparentheses-equality]
->                                 else if ((currSCCB->Sccb_scsistat ==
->                                           ~~~~~~~~~~~~~~~~~~~~~~~~^~
-> drivers/scsi/FlashPoint.c:2956:39: note: remove extraneous parentheses around the comparison to silence this warning
->                                 else if ((currSCCB->Sccb_scsistat ==
->                                          ~                        ^
-> drivers/scsi/FlashPoint.c:2956:39: note: use '=' to turn this equality comparison into an assignment
->                                 else if ((currSCCB->Sccb_scsistat ==
->                                                                   ^~
->                                                                   =
-> 2 warnings generated.
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/156
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/scsi/FlashPoint.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
+On Fri, Sep 21, 2018 at 5:11 PM, David Howells <dhowells@redhat.com> wrote:
+> Miklos Szeredi <mszeredi@redhat.com> wrote:
+>
+>> The old name strongly implies that a new superblock will be created from
+>> the fs_context.  This is not true: filesystems are free to retuse an
+>> existing superblock and return that (for good reason).
+>
+> Kind of like open(O_CREAT) only ever creates files, right;-)
+>
+> Actually, FSCONFIG_CMD_OPEN might be a better name.
 
-There are more places in this file with extraneous parentheses, for example:
+We've already opened the context with fsopen() and about to open a
+file referring to a subtree with fsmount().  And this one doesn't
+actually involve opening any files, so IMO it should not be called
+_OPEN.
 
- 952         if ((RD_HARPOON(ioport + hp_vendor_id_1) != ORION_VEND_1))
- 953                 return (int)FAILURE;
- 954
- 955         if ((RD_HARPOON(ioport + hp_device_id_0) != ORION_DEV_0))
- 956                 return (int)FAILURE;
- 957
- 958         if ((RD_HARPOON(ioport + hp_device_id_1) != ORION_DEV_1))
-
-Wonder why the compiler does not complain about these, but this patch is
-good for now. I will clean up the rest in another patch.
-
-James, Martin, please pull this patch into the scsi tree.
-
-Acked-by: Khalid Aziz <khalid@gonehiking.org>
+Thanks,
+Miklos
