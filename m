@@ -2,110 +2,156 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9D3ECE560
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCDCC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E9A2156E
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:03:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX6GLAfL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E9A2156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 550002154C
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 21:04:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 550002154C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391521AbeIVCyG (ORCPT
+        id S2391531AbeIVCzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 22:54:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391328AbeIVCyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 22:54:06 -0400
-Received: from localhost.localdomain (unknown [178.38.103.27])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B2C321532;
-        Fri, 21 Sep 2018 21:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537563809;
-        bh=h4/iplhYCAV79ucu4oz9dTxNL7eJrY13ixOD0eE3JN4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HX6GLAfL1eT5WklSKw2SN8qdImCnstaVvQtn9pTUx2/Q/T129qH+g2M8ZKssyydcS
-         2CPz+bbpu3bBbZZY9qxPaGibqjVh9HHLw8pSE21KX4foV9G6zk7ZaQWUct7blF3Wz/
-         LyojjIjvPU8G4oi4Y4gHZac4SN3X1D/2xn+15dnk=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH] ARM: dts: exynos: Add CD and WP pins to Odroid XU SD card
-Date:   Fri, 21 Sep 2018 23:03:21 +0200
-Message-Id: <20180921210321.12404-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Sep 2018 22:55:21 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59010 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391321AbeIVCzV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 22:55:21 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id E3C0880736; Fri, 21 Sep 2018 23:04:40 +0200 (CEST)
+Date:   Fri, 21 Sep 2018 23:04:40 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 1/2] leds: core: Introduce LED pattern trigger
+Message-ID: <20180921210440.GA18062@amd>
+References: <67ebebf02edd6d8ee42a13b139733e9cc680ea86.1536631975.git.baolin.wang@linaro.org>
+ <CAMz4kuJx9twJ=wM5qsucV3JH_VS-AC1aWMqpQOwAMkCuKBHLRg@mail.gmail.com>
+ <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Content-Disposition: inline
+In-Reply-To: <324778a9-a32c-ae6e-337a-39845f214bfc@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Defining card-detect and write-protect GPIO pins in Odroid XU SD Card
-does not change anything from functional point of view - dw-mmc driver
-was reading the state from registers.  Adding cd-gpios and wp-gpios
-properties changes only internal driver behavior to access the pins
-directly.
 
-Add them to DTS only to comprehensively describe the hardware.  Minor
-benefit is that write-protect pin configuration makes sure that it will
-be properly pulled up to indicate write access.
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This also removes debug messages:
-    dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
-    dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
+On Fri 2018-09-21 22:59:40, Jacek Anaszewski wrote:
+> Hi Baolin,
+>=20
+> On 09/21/2018 05:31 AM, Baolin Wang wrote:
+> > Hi Jacek and Pavel,
+> >=20
+> > On 11 September 2018 at 10:47, Baolin Wang <baolin.wang@linaro.org> wro=
+te:
+> >> This patch adds one new led trigger that LED device can configure
+> >> the software or hardware pattern and trigger it.
+> >>
+> >> Consumers can write 'pattern' file to enable the software pattern
+> >> which alters the brightness for the specified duration with one
+> >> software timer.
+> >>
+> >> Moreover consumers can write 'hw_pattern' file to enable the hardware
+> >> pattern for some LED controllers which can autonomously control
+> >> brightness over time, according to some preprogrammed hardware
+> >> patterns.
+> >>
+> >> Signed-off-by: Raphael Teysseyre <rteysseyre@gmail.com>
+> >> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> >> ---
+> >> Changes from v11:
+> >>  - Change -1 means repeat indefinitely.
+> >>
+> >> Changes from v10:
+> >>  - Change 'int' to 'u32' for delta_t field.
+> >>
+> >> Changes from v9:
+> >>  - None.
+> >>
+> >> Changes from v8:
+> >>  - None.
+> >>
+> >> Changes from v7:
+> >>  - Move the SC27XX hardware patterns description into its own ABI file.
+> >>
+> >> Changes from v6:
+> >>  - Improve commit message.
+> >>  - Optimize the description of the hw_pattern file.
+> >>  - Simplify some logics.
+> >>
+> >> Changes from v5:
+> >>  - Add one 'hw_pattern' file for hardware patterns.
+> >>
+> >> Changes from v4:
+> >>  - Change the repeat file to return the originally written number.
+> >>  - Improve comments.
+> >>  - Fix some build warnings.
+> >>
+> >> Changes from v3:
+> >>  - Reset pattern number to 0 if user provides incorrect pattern string.
+> >>  - Support one pattern.
+> >>
+> >> Changes from v2:
+> >>  - Remove hardware_pattern boolen.
+> >>  - Chnage the pattern string format.
+> >>
+> >> Changes from v1:
+> >>  - Use ATTRIBUTE_GROUPS() to define attributes.
+> >>  - Introduce hardware_pattern flag to determine if software pattern
+> >>  or hardware pattern.
+> >>  - Re-implement pattern_trig_store_pattern() function.
+> >>  - Remove pattern_get() interface.
+> >>  - Improve comments.
+> >>  - Other small optimization.
+> >> ---
+> >=20
+> > Do you have any comments for the v12 patch set? Thanks.
+>=20
+> We will probably have to remove hw_pattern from ledtrig-pattern
+> since we are unable to come up with generic interface for it.
+> Unless thread [0] will end up with some brilliant ideas. So far
+> we're waiting for Pavel's reply.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5410-odroidxu.dts | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+I believe same semantics as pattern works well for hw_pattern, and
+suggested code changes to make it more robust. I don't really
+understand what issues you see there.
 
-diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-index a2046f5f998c..dae360f29a47 100644
---- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-+++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-@@ -525,12 +525,14 @@
- 
- &mmc_2 {
- 	status = "okay";
-+	wp-gpios = <&gpm5 0 GPIO_ACTIVE_LOW>;
-+	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
- 	card-detect-delay = <200>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-sdr-timing = <0 4>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
- 	pinctrl-names = "default";
--	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4 &sd2_wp>;
- 	bus-width = <4>;
- 	cap-sd-highspeed;
- 	vmmc-supply = <&ldo21_reg>;
-@@ -573,6 +575,14 @@
- 		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
- 		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
- 	};
-+
-+	sd2_wp: sd2-wp {
-+		samsung,pins = "gpm5-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-+		/* Pin is floating so pull it up to disable write-protect */
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
-+	};
- };
- 
- &pwm {
--- 
-2.17.1
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlulXOgACgkQMOfwapXb+vIwxACeOY/GmDdT/ZG/AhTETS7oy+Zz
+7JgAnRDsn5vgCJj2Z/pd4tlAv6EmaFjY
+=5GPL
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
