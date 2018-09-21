@@ -2,123 +2,65 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D17BECE567
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19925C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 262D521566
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:41:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3IER1PT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 262D521566
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B803521565
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 16:44:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B803521565
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390809AbeIUWbJ (ORCPT
+        id S2390651AbeIUWeB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 18:31:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40960 "EHLO mail.kernel.org"
+        Fri, 21 Sep 2018 18:34:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57684 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389683AbeIUWbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 18:31:09 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728149AbeIUWeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 18:34:00 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 420FA21565;
-        Fri, 21 Sep 2018 16:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537548087;
-        bh=y/cdrkvx/4VQFEwAC2tZK5bwdY3HlVZb3pjDHaBktzQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W3IER1PTSm/Izcw1HvfR6LVGCzICd/6jXkKRZQg+uHKj8SEjFhjfisNqOAbTu2eHc
-         Unpzr+tUDoyYSdBY8nRitSaibhmvqUGrG8ZWDdNHOnI3AbGbogxYkH/VMHUbQt7nHF
-         XXsq9/qatJLnyNYuNudzqUcsOtShrJjIHSIrk9GI=
-Date:   Fri, 21 Sep 2018 11:41:26 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v6 06/13] PCI/P2PDMA: Add P2P DMA driver writer's
- documentation
-Message-ID: <20180921164126.GI224714@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180913001156.4115-1-logang@deltatee.com>
- <20180913001156.4115-7-logang@deltatee.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id C3C73C02E63F;
+        Fri, 21 Sep 2018 16:44:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 68B297DFD8;
+        Fri, 21 Sep 2018 16:44:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180920151214.15484-1-mszeredi@redhat.com>
+References: <20180920151214.15484-1-mszeredi@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] mount-api: fixes and cleanups
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180913001156.4115-7-logang@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 21 Sep 2018 17:44:16 +0100
+Message-ID: <19805.1537548256@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Sep 2018 16:44:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 12, 2018 at 06:11:49PM -0600, Logan Gunthorpe wrote:
-> Add a restructured text file describing how to write drivers
-> with support for P2P DMA transactions. The document describes
-> how to use the APIs that were added in the previous few
-> commits.
-> 
-> Also adds an index for the PCI documentation tree even though this
-> is the only PCI document that has been converted to restructured text
-> at this time.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Hi Miklós,
 
-> +With the client list in hand, the orchestrator may then call
-> +:c:func:`pci_p2pmem_find()` to obtain a published P2P memory provider
-> +that is supported (behind the same root port) as all the clients. If more
-> +than one provider is supported, the one nearest to all the clients will
-> +be chosen first. If there are more than one provider is an equal distance
+I've reposted my patches with some of your changes folded in.  I will consider
+the other things, but I don't have time to do that before Monday.  I think I
+should also have a go at porting fuse so that we can get the subtype bits
+done.
 
-s/If there are more/If more/
+Note that I have a perl script that does some of the initial work.  It needs a
+bit of fixing up, but I'll post that in a mail at some point.
 
-> +away, the one returned will be chosen at random. This function returns the PCI
-
-s/the one returned will be chosen at random/one will be chosen
-arbitrarily/ ?  (I doubt it's really random)
-
-> +device to use for the provider with a reference taken and therefore
-> +when it's no longer needed it should be returned with pci_dev_put().
-
-> +Struct Page Caveats
-> +-------------------
-> +
-> +Driver writers should be very careful about not passing these special
-> +struct pages to code that isn't prepared for it. At this time, the kernel
-> +interfaces do not have any checks for ensuring this. This obviously
-> +precludes passing these pages to userspace.
-
-Sounds like landmines here since the reader probably can't translate
-"code that isn't prepared for it" into a list of interfaces that are
-off-limits.  But that's a VM issue that is above my pay grade, so I'm
-not suggesting any change; just pointing out something that makes me
-wonder "hmmm..., how would I act on this?"
-
-> +P2P memory is also technically IO memory but should never have any side
-> +effects behind it. Thus, the order of loads and stores should not be important
-> +and ioreadX(), iowriteX() and friends should not be necessary.
-> +However, as the memory is not cache coherent, if access ever needs to
-> +be protected by a spinlock then :c:func:`mmiowb()` must be used before
-> +unlocking the lock. (See ACQUIRES VS I/O ACCESSES in
-> +Documentation/memory-barriers.txt)
+David
