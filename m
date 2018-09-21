@@ -2,129 +2,118 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D2EC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D879ECE562
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97E8214C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:02:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97E8214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CF69921523
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 12:11:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hJ76pWpa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF69921523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390023AbeIURvF (ORCPT
+        id S1728184AbeIUSAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 13:51:05 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39720 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389968AbeIURvF (ORCPT
+        Fri, 21 Sep 2018 14:00:31 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41340 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeIUSAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 13:51:05 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1g3K8g-0000ey-MZ; Fri, 21 Sep 2018 14:02:26 +0200
-Date:   Fri, 21 Sep 2018 14:02:26 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Daniel Wagner <daniel.wagner@siemens.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [Problem] Cache line starvation
-Message-ID: <20180921120226.6xjgr4oiho22ex75@linutronix.de>
+        Fri, 21 Sep 2018 14:00:31 -0400
+Received: by mail-io1-f68.google.com with SMTP id q4-v6so11937679iob.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 05:11:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QBC4eOvcjICWl8SkjX7Xwso3DYrnQd7SI+xze7Og4q8=;
+        b=hJ76pWpa45R8fATmTWSzFweAHYFv/Zoa3PVU18zf7XMAXVAWFtswQzPMXHpd96uMks
+         DAlnB/74hZCfacatffAS2VY/RhBkmccnH/TxOc5QaSnMDmlfcKB2AX68ilwxWCenJF6T
+         cz6ncRDvjpNPWrPb7JGpmddcgPopetHX3b06ZknzW2k9hS3xaZ4gGRJyLchutLVa8rpz
+         y1UZ8z5ltcxp6DfhpCbSzPzCGa3GobV8rm2c/RuoX78wkusd4YdqKdUT66tf0Isatq0F
+         310MICxgNxH3CwRer8gO3NJgR/u6MNlJrM5SeUJ4Ztbtttv7BI5tB0pJf3NQ2Ks+lrh3
+         ymTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QBC4eOvcjICWl8SkjX7Xwso3DYrnQd7SI+xze7Og4q8=;
+        b=exVzRHwf4s229KI2mtSUxn/VKLHnSr9voXbk/eX66lV9iac3SbL188UHEumwtRxhrQ
+         ITdjr78Rr5TPsfHFWtTyWh2FBZX0xhcqbysSB3W3gcmjXC1tH3Js+SnzSHwAlI7YH1Eq
+         mJMxVWfMN8agvyD0+DLb9uO9OLPT/yRdfWv9RIZI7mrr4QLUV8vE1htKQ1lRIO8gPDC2
+         FRFOF6LBXk/3NGU0xHRFxjekbErMyvr0zQy0C1YjqlxfVCBJ9S0EK2raK7UQPnyVJnep
+         jDNoIwIV01fcGh+FCpPVyOEU5knh9wGHnFXb4oG27wzoeoI46Vbhpz8kyD01Rq8rAsCT
+         6skA==
+X-Gm-Message-State: ABuFfohTip9JY/erJpJlk3zG+/v5MMX5/vd6TNf+LlnORvB9+JJVXt5Y
+        n/PawUi6tDUMpGPJBt/K5WHFwZQO1hFquyvXCiOGXA==
+X-Google-Smtp-Source: ACcGV60wadvIcBszp1QVS0nmChP/mKlWZHUsNOI2jO/M8CFow797dpUfV/HqHoDVhs30SH4pYZIyh44cl1bW8pK2i2Q=
+X-Received: by 2002:a6b:ece:: with SMTP id 197-v6mr146406ioo.192.1537531915286;
+ Fri, 21 Sep 2018 05:11:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+Received: by 2002:a02:3d47:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 05:11:54
+ -0700 (PDT)
+In-Reply-To: <CACT4Y+azFyB6xMtbOGuwUW5jo_dxchM7EdyMWHD_6CU1n9erFA@mail.gmail.com>
+References: <20180921001513.12504-1-Jason@zx2c4.com> <CALCETrULOFr=oQFMVT4qxPTWEQ++G82HCuxRoA=Sr4Z8kmMbYQ@mail.gmail.com>
+ <CACT4Y+azFyB6xMtbOGuwUW5jo_dxchM7EdyMWHD_6CU1n9erFA@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Fri, 21 Sep 2018 14:11:54 +0200
+Message-ID: <CAAeHK+xhxephgg-ibC4zw0vCMOyMBRvh2E0SHRnJgSSdcpsyWQ@mail.gmail.com>
+Subject: Re: [PATCH] framewarn: expand KASAN_EXTRA exception to KASAN
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We reproducibly observe cache line starvation on a Core2Duo E6850 (2
-cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
-cores).
+On Fri, Sep 21, 2018 at 10:42 AM, 'Dmitry Vyukov' via kasan-dev
+<kasan-dev@googlegroups.com> wrote:
+> On Fri, Sep 21, 2018 at 3:50 AM, Andy Lutomirski <luto@kernel.org> wrote:
+>> This patch seems reasonable, but you emailed the wrong people :)
+>>
+>> On Thu, Sep 20, 2018 at 5:15 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>>>
+>>> It turns out that KASAN in general will bloat stack frames in unexpected
+>>> ways, not just KASAN_EXTRA. So, this patch trivially changes that
+>>> default to be associated with KASAN instead of KASAN_EXTRA.
+>>>
+>>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+>>> ---
+>>>  lib/Kconfig.debug | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>>> index 4966c4fbe7f7..39078a080e29 100644
+>>> --- a/lib/Kconfig.debug
+>>> +++ b/lib/Kconfig.debug
+>>> @@ -222,7 +222,7 @@ config ENABLE_MUST_CHECK
+>>>  config FRAME_WARN
+>>>         int "Warn for stack frames larger than (needs gcc 4.4)"
+>>>         range 0 8192
+>>> -       default 3072 if KASAN_EXTRA
+>>> +       default 3072 if KASAN
+>>>         default 2048 if GCC_PLUGIN_LATENT_ENTROPY
+>>>         default 1280 if (!64BIT && PARISC)
+>>>         default 1024 if (!64BIT && !PARISC)
+>
+>
+> Looks fine to me.
+> KASAN always increases stack size too for exactly that reason, so it's
+> reasonable to allow larger frames rather than try to massage code
+> every here and there to fit into the normal frame size.
 
-The problem can be triggered with a v4.9-RT kernel by starting
-
-    cyclictest -S -p98 -m  -i2000 -b 200
-
-and as "load"
-
-    stress-ng --ptrace 4
-
-The reported maximal latency is usually less than 60us. If the problem
-triggers then values around 400us, 800us or even more are reported. The
-upperlimit is the -i parameter.
-
-Reproduction with 4.9-RT is almost immediate on Core2Duo, ARM64 and SKL,
-but it took 7.5 hours to trigger on v4.14-RT on the Core2Duo.
-
-Instrumentation show always the picture:
-
-CPU0                                         CPU1
-=> do_syscall_64                              => do_syscall_64
-=> SyS_ptrace                                   => syscall_slow_exit_work
-=> ptrace_check_attach                          => ptrace_do_notify / rt_read_unlock 
-=> wait_task_inactive                              rt_spin_lock_slowunlock()
-   -> while task_running()                         __rt_mutex_unlock_common()
-  /   check_task_state()                           mark_wakeup_next_waiter()
- |     raw_spin_lock_irq(&p->pi_lock);             raw_spin_lock(&current->pi_lock);
- |     .                                               .
- |     raw_spin_unlock_irq(&p->pi_lock);               .
-  \  cpu_relax()                                       .
-   -                                                   .
-    *IRQ*                                          <lock acquired>
-
-In the error case we observe that the while() loop is repeated more than
-5000 times which indicates that the pi_lock can be acquired. CPU1 on the
-other side does not make progress waiting for the same lock with interrupts
-disabled.
-
-This continues until an IRQ hits CPU0. Once CPU0 starts processing the IRQ
-the other CPU is able to acquire pi_lock and the situation relaxes.
-
-This matches Daniel Wagner's observations which he described in [0] on
-v4.4-RT.
-
-It took us weeks to hunt this down as it's really showing true Heisenbug
-behaviour and instrumentation at the wrong place makes it vanish
-immediately.
-
-Other data points:
-
-Replacing the single rep_nop() in cpu_relax() with two consecutive
-rep_nop() makes it harder to trigger on the Core2Duo machine. Adding a
-third one seems to resolve it completely, though no long term runs done
-yet. Also our attempt of instrumenting the lock()/unlock() sequence more
-deeply with rdtsc() timestamps made it go away. On SKL the identical
-instrumentation hides it.
-
-Peter suggested to do a clwb(&p->pi_lock); before the cpu_relax() in
-wait_task_inactive() which on both the Core2Duo and the SKL gets runtime
-patched to clflush(). That hides it as well.
-
-On ARM64 we suspected something like this without having real proof a week
-ago and added a delay loop to cpu_relax(). That "resolved" the issue. By
-now we have traces on ARM64 which proof it to be the same issue.
-
-Daniel reported that disabling ticket locks on 4.4 makes the problem go
-away, but he hasn't run a long time test yet and as we saw with 4.14 it can
-take quite a while.
-
-While it is pretty reliable reproducible with an RT kernel, this is not an
-RT kernel issue at all. Mainline has similar or even the same code
-patterns, but it's harder to observe as there are no latency guarantees for
-an observer like cyclictest. The fact that an interrupt makes it go away
-makes it even harder because the rare stalls just go unnoticed because they
-are canceled early.
-
-[0] https://lkml.kernel.org/r/4d878d3e-bd1b-3d6e-bdde-4ce840191093@monom.org
-
-Sebastian
+Do we need KASAN_EXTRA then at all?
