@@ -2,183 +2,109 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C1AECE562
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F243C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D79F21531
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D79F21531
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id EEA3821531
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:49:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NM+qVdob"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA3821531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389843AbeIUPfg (ORCPT
+        id S2389708AbeIUPhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:35:36 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37992 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389624AbeIUPff (ORCPT
+        Fri, 21 Sep 2018 11:37:10 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50970 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbeIUPhK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:35:35 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8L9iYaR008884;
-        Fri, 21 Sep 2018 11:46:40 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mmkmu38kt-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 21 Sep 2018 11:46:40 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EF0C341;
-        Fri, 21 Sep 2018 09:46:39 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9D0C82AD2;
-        Fri, 21 Sep 2018 09:46:39 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 21 Sep
- 2018 11:46:39 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by Webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 21 Sep
- 2018 11:46:39 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <benjamin.gaignard@linaro.org>, Gerald Baeza <gerald.baeza@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V2 09/27] mmc: mmci: modify dma_setup callback
-Date:   Fri, 21 Sep 2018 11:46:03 +0200
-Message-ID: <1537523181-14578-10-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
-References: <1537523181-14578-1-git-send-email-ludovic.Barre@st.com>
+        Fri, 21 Sep 2018 11:37:10 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s12-v6so2405031wmc.0;
+        Fri, 21 Sep 2018 02:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q72Ia64O0Hj+jtCZ2mc6urtTqPRevPjtrB0L5cIiYPg=;
+        b=NM+qVdobtIfq/q5x6B3Dtmn19wbQFKjhbqjS15dB1J3fDirStMeFB3xj4UmekCDHqk
+         UNIHBVi/vE4OrSEbbbQ3R5no/6YG1b5t2sdpj10dZmWEfc7Zka92Eh8JLtbj7L0GdJTH
+         hDgdTjcOSwOgnO8qBbEPaSHMTSzgi1RQ5tRYlXHIunF6XrRwR2ZVb/DWWBHYl3D+Essx
+         4zhLkwLKdME3lDCrTsR5HhRHSQy7nVfIYL1B0RnCNvTpyA7K+B9FyFgE+eQpB263vVxi
+         xiyOFMu+UHpmkZZdhTQSTBSIVhomDV+i0wdm85KnbRzY+ntbWBXG7FQAoiO2ZCGvmwCN
+         gm4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q72Ia64O0Hj+jtCZ2mc6urtTqPRevPjtrB0L5cIiYPg=;
+        b=aXIZFc6n1If78G6TK7Qb1Hg5dqD6u1yODRg94VVxlcnF+ZQrkZlYg8SEz/FY5O8j76
+         IztdvInDReWRPjh3sZExia8WMqXsHj+Wfl77CqAtzPjJzaIS0PqMwjUFJtZQ7/hVTJ29
+         bDopiT8jPB1MysJvT5fYGj0k5OQMrDCz8n7m5einn+5GSukyAHWlHae73jIh6Vc/qlVm
+         dN7YKdloZ32xJCpwCVjHJtrBaaNUoOHUndsZRgrh2QIfsKaVyAshy7PxPbqzEYN1DWvu
+         2kDDHh/FHm6v4m5wy41Xh89IkSRiSrbSLoJiizy+1VTgKmMeNBW94a2yd5ryanmmq1ZI
+         gjMA==
+X-Gm-Message-State: APzg51CIOrwnU6M1n2DoThCEHIP4WPU+YDjouMxupYIq/UKpUPnby3HR
+        LEvZui9+Jo+wD3jh+iVd8kGlkDWko3sfdg==
+X-Google-Smtp-Source: ACcGV62uRE3V/IrKK4lj+wG0duZyTmAB6h1PXhBzHBDcCAKlwPF/PV6dok7C+gMr7ORFlJPnQc74fA==
+X-Received: by 2002:a7b:c04c:: with SMTP id u12-v6mr6568435wmc.24.1537523344836;
+        Fri, 21 Sep 2018 02:49:04 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 88-v6sm25030740wrf.95.2018.09.21.02.49.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 02:49:04 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] rsi: Remove unnecessary boolean condition
+Date:   Fri, 21 Sep 2018 02:48:29 -0700
+Message-Id: <20180921094828.16976-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_04:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+Clang warns that the address of a pointer will always evaluated as true
+in a boolean context.
 
-This patch creates a generic mmci_dma_setup which calls
-dma_setup callback and manages common next_cookie.
-This patch is needed for sdmmc variant which has a different
-dma settings.
+drivers/net/wireless/rsi/rsi_91x_mac80211.c:927:50: warning: address of
+array 'key->key' will always evaluate to 'true'
+[-Wpointer-bool-conversion]
+        if (vif->type == NL80211_IFTYPE_STATION && key->key &&
+                                                ~~ ~~~~~^~~
+1 warning generated.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-
-# Conflicts:
-#	drivers/mmc/host/mmci.h
-
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/136
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/mmc/host/mmci.c          | 25 +++++++++++++------------
- drivers/mmc/host/mmci.h          |  1 +
- drivers/mmc/host/mmci_qcom_dml.c |  2 ++
- 3 files changed, 16 insertions(+), 12 deletions(-)
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
-index 55c4222..2a433ed 100644
---- a/drivers/mmc/host/mmci.c
-+++ b/drivers/mmc/host/mmci.c
-@@ -398,6 +398,17 @@ void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
- 		host->ops->get_next_data(host, data);
- }
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index 4e510cbe0a89..e56fc83faf0e 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -924,7 +924,7 @@ static int rsi_hal_key_config(struct ieee80211_hw *hw,
+ 	if (status)
+ 		return status;
  
-+int mmci_dma_setup(struct mmci_host *host)
-+{
-+	if (!host->ops || !host->ops->dma_setup)
-+		return 0;
-+
-+	/* initialize pre request cookie */
-+	host->next_cookie = 1;
-+
-+	return host->ops->dma_setup(host);
-+}
-+
- static void
- mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
- {
-@@ -472,7 +483,7 @@ struct mmci_dmae_priv {
- 
- #define mmci_dmae_inprogress(dmae) ((dmae)->in_progress)
- 
--static int mmci_dma_setup(struct mmci_host *host)
-+int mmci_dmae_setup(struct mmci_host *host)
- {
- 	const char *rxname, *txname;
- 	struct mmci_dmae_priv *dmae;
-@@ -488,9 +499,6 @@ static int mmci_dma_setup(struct mmci_host *host)
- 	dmae->tx_channel = dma_request_slave_channel(mmc_dev(host->mmc),
- 						     "tx");
- 
--	/* initialize pre request cookie */
--	host->next_cookie = 1;
--
- 	/*
- 	 * If only an RX channel is specified, the driver will
- 	 * attempt to use it bidirectionally, however if it is
-@@ -531,9 +539,6 @@ static int mmci_dma_setup(struct mmci_host *host)
- 			host->mmc->max_seg_size = max_seg_size;
- 	}
- 
--	if (host->ops && host->ops->dma_setup)
--		return host->ops->dma_setup(host);
--
- 	return 0;
- }
- 
-@@ -793,14 +798,10 @@ static struct mmci_host_ops mmci_variant_ops = {
- 	.prep_data = mmci_dmae_prep_data,
- 	.unprep_data = mmci_dmae_unprep_data,
- 	.get_next_data = mmci_dmae_get_next_data,
-+	.dma_setup = mmci_dmae_setup,
- };
- #else
- /* Blank functions if the DMA engine is not available */
--static inline int mmci_dma_setup(struct mmci_host *host)
--{
--	return 0;
--}
--
- static inline void mmci_dma_release(struct mmci_host *host)
- {
- }
-diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
-index 4f73070..72fe02d 100644
---- a/drivers/mmc/host/mmci.h
-+++ b/drivers/mmc/host/mmci.h
-@@ -334,4 +334,5 @@ int mmci_dmae_prep_data(struct mmci_host *host, struct mmc_data *data,
- void mmci_dmae_unprep_data(struct mmci_host *host, struct mmc_data *data,
- 			   int err);
- void mmci_dmae_get_next_data(struct mmci_host *host, struct mmc_data *data);
-+int mmci_dmae_setup(struct mmci_host *host);
- 
-diff --git a/drivers/mmc/host/mmci_qcom_dml.c b/drivers/mmc/host/mmci_qcom_dml.c
-index 432a823..003c497 100644
---- a/drivers/mmc/host/mmci_qcom_dml.c
-+++ b/drivers/mmc/host/mmci_qcom_dml.c
-@@ -126,6 +126,8 @@ static int qcom_dma_setup(struct mmci_host *host)
- 	int consumer_id, producer_id;
- 	struct device_node *np = host->mmc->parent->of_node;
- 
-+	mmci_dmae_setup(host);
-+
- 	consumer_id = of_get_dml_pipe_index(np, "tx");
- 	producer_id = of_get_dml_pipe_index(np, "rx");
- 
+-	if (vif->type == NL80211_IFTYPE_STATION && key->key &&
++	if (vif->type == NL80211_IFTYPE_STATION &&
+ 	    (key->cipher == WLAN_CIPHER_SUITE_WEP104 ||
+ 	     key->cipher == WLAN_CIPHER_SUITE_WEP40)) {
+ 		if (!rsi_send_block_unblock_frame(adapter->priv, false))
 -- 
-2.7.4
+2.19.0
 
