@@ -2,144 +2,106 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 567C4C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C04C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A482321479
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61AF221479
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 17:39:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVYmHMBh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A482321479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DbphoVWu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61AF221479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390985AbeIUX11 (ORCPT
+        id S2390820AbeIUX3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 19:27:27 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39798 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390180AbeIUX11 (ORCPT
+        Fri, 21 Sep 2018 19:29:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44670 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389545AbeIUX3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 19:27:27 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q8-v6so4133916wmq.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 10:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3WaRCeTavRdCrBPmdVBNSrZv2RzOK3qF0HcqkxChA6U=;
-        b=EVYmHMBhHn+apvft+i20jHzdcmbpXf9BiUZPiiqfmliGV/Gzk6SERZEHcUmqKezD7S
-         K2adYRA9ijur6lUf0HXLFm9PIOWuOCOvxLRuRD+W43ic51FDTsnEiZ6guUY5X3pq2p8+
-         FZfQ9B9UU6FgdCYTthgfYGfDAYavv/7fo9NuZV4hPk/McFXr3VEhNXQpkHM9f5kuJ3Oj
-         tLUILcNAbhBo3JTlruWVD65mDUj6OJXxUY1GSlifipfG65Qw1jz/S+olhkY0x9qt92JR
-         APldxpTK9ojSCYqGFzPkJ7vd/Ud5PMPDs1unmpLIkGvZxa+7t0BHrjjMfagNb/g96LL/
-         2PIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3WaRCeTavRdCrBPmdVBNSrZv2RzOK3qF0HcqkxChA6U=;
-        b=YJgL+0WdbItSNRGO9WAWtYo/xmQUonrlA6ywRA4WtO/pUmWNI4p7zSATpgkxZOuI09
-         y6hldx5/nIf5ttq1rV/vsKYNgKBA+SIhSI/9z7Gi0YhJ/Ks0cAEOiyz3AVfwmbtF6yuc
-         4RVphdu1MFuXoi/jyDDLoETsF6JIw+LEHhK0/rvamuUTgY5FOxgCq8+4KZj2eIAbDaIa
-         Y3SEHa06uwwYDo2fSAZ0gP+gUFucA0gi2zUdaXhS+t9hnVrPJYY383xz4O25UGbYqBbP
-         oqBKgB50wqu8fHkm1OaupeTuEq3oSNC+WNA7Gtk5DhMKnMBMDcK4C6/oRKTynlD33RdT
-         /tFA==
-X-Gm-Message-State: ABuFfoj8Fz3J8Kl7LjDPZ+Q27Opc89yElyh6kaFynOPgl+2rmD5EJVq3
-        77uEpHm4CgekmTXW8TEUgwY=
-X-Google-Smtp-Source: ANB0Vdb9Mw0jbwMaP0XagADrlb7L8boodJM2vIRabP60jldzC0Zlp7qXfpMHagXvz4qQeVRwyw976Q==
-X-Received: by 2002:a1c:7015:: with SMTP id l21-v6mr8146042wmc.81.1537551450758;
-        Fri, 21 Sep 2018 10:37:30 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm33231645wrn.83.2018.09.21.10.37.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 10:37:30 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: Remove unnecessary parentheses
-Date:   Fri, 21 Sep 2018 10:37:23 -0700
-Message-Id: <20180921173723.13148-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        Fri, 21 Sep 2018 19:29:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JvDiDNeeCvrvtd+m4PKb8k0vBYUIpsqjMWrMN5GpSI8=; b=DbphoVWuxm7zFiZbE0XB49Sx8
+        uyXJKxpizo8pLzcQ6SavUWkwDwxshWUNHIVhMKQgaSo0TDQrQsyoovzmFAUciNWtymFShxrxozKFn
+        +ihfuSpwn/v7oVUF/cbQL4/9SsNdOhN+OGk4A3K/2hIlKoGvKVM/00tg5i5dDx9nJgZ+g=;
+Received: from [209.121.128.187] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1g3POS-0000ix-W0; Fri, 21 Sep 2018 17:39:05 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 4B0A9440078; Fri, 21 Sep 2018 18:39:03 +0100 (BST)
+Date:   Fri, 21 Sep 2018 10:39:03 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Ryan Case <ryandcase@chromium.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI)
+ documentation
+Message-ID: <20180921173903.GH20825@sirena.org.uk>
+References: <20180920224055.164856-1-ryandcase@chromium.org>
+ <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wayzTnRSUXKNfBqd"
+Content-Disposition: inline
+In-Reply-To: <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
+X-Cookie: Disc space -- the final frontier!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when multiple pairs of parentheses are used for a single
-conditional statement.
 
-drivers/staging/rtl8188eu/core/rtw_pwrctrl.c:295:21: warning: equality
-comparison with extraneous parentheses [-Wparentheses-equality]
-        if ((pwrpriv->rpwm == pslv)) {
-             ~~~~~~~~~~~~~~^~~~~~~
-drivers/staging/rtl8188eu/core/rtw_pwrctrl.c:295:21: note: remove
-extraneous parentheses around the comparison to silence this warning
-        if ((pwrpriv->rpwm == pslv)) {
-            ~              ^      ~
-drivers/staging/rtl8188eu/core/rtw_pwrctrl.c:295:21: note: use '=' to
-turn this equality comparison into an assignment
-        if ((pwrpriv->rpwm == pslv)) {
-                           ^~
-                           =
-drivers/staging/rtl8188eu/hal/odm.c:1062:27: warning: equality
-comparison with extraneous parentheses [-Wparentheses-equality]
-        if ((pregpriv->wifi_spec == 1))/*  (pmlmeinfo->HT_enable == 0))
-*/
-             ~~~~~~~~~~~~~~~~~~~~^~~~
-drivers/staging/rtl8188eu/hal/odm.c:1062:27: note: remove extraneous
-parentheses around the comparison to silence this warning
-        if ((pregpriv->wifi_spec == 1))/*  (pmlmeinfo->HT_enable == 0))
-*/
-            ~                    ^   ~
-drivers/staging/rtl8188eu/hal/odm.c:1062:27: note: use '=' to turn this
-equality comparison into an assignment
-        if ((pregpriv->wifi_spec == 1))/*  (pmlmeinfo->HT_enable == 0))
-*/
-                                 ^~
-                                 =
+--wayzTnRSUXKNfBqd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/163
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/staging/rtl8188eu/core/rtw_pwrctrl.c | 2 +-
- drivers/staging/rtl8188eu/hal/odm.c          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On Fri, Sep 21, 2018 at 10:30:57AM -0700, Stephen Boyd wrote:
+> Quoting Ryan Case (2018-09-20 15:40:54)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-index 5ab6fc22a156..a3d3e9eb133c 100644
---- a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-@@ -292,7 +292,7 @@ void rtw_set_rpwm(struct adapter *padapter, u8 pslv)
- 			pslv = PS_STATE_S3;
- 	}
- 
--	if ((pwrpriv->rpwm == pslv)) {
-+	if (pwrpriv->rpwm == pslv) {
- 		RT_TRACE(_module_rtl871x_pwrctrl_c_, _drv_err_,
- 			 ("%s: Already set rpwm[0x%02X], new=0x%02X!\n", __func__, pwrpriv->rpwm, pslv));
- 		return;
-diff --git a/drivers/staging/rtl8188eu/hal/odm.c b/drivers/staging/rtl8188eu/hal/odm.c
-index 48738f94cf88..5a0c38ecb15e 100644
---- a/drivers/staging/rtl8188eu/hal/odm.c
-+++ b/drivers/staging/rtl8188eu/hal/odm.c
-@@ -1059,7 +1059,7 @@ void odm_EdcaTurboCheckCE(struct odm_dm_struct *pDM_Odm)
- 	struct mlme_ext_priv	*pmlmeext = &(Adapter->mlmeextpriv);
- 	struct mlme_ext_info	*pmlmeinfo = &(pmlmeext->mlmext_info);
- 
--	if ((pregpriv->wifi_spec == 1))/*  (pmlmeinfo->HT_enable == 0)) */
-+	if (pregpriv->wifi_spec == 1) /*  (pmlmeinfo->HT_enable == 0)) */
- 		goto dm_CheckEdcaTurbo_EXIT;
- 
- 	if (pmlmeinfo->assoc_AP_vendor >=  HT_IOT_PEER_MAX)
--- 
-2.19.0
+> > +Required properties:
+> > +- compatible:  Should contain:
+> > +               "qcom,sdm845-qspi"
 
+> Does someone have a more generic compatible string that can be added
+> here to indicate the type of quad SPI controller this is? I really doubt
+> this is a one-off hardware block for the specific SDM845 SoC.=20
+
+The idiom for DT is supposed to be to use only device specific names
+unfortunately.
+
+--wayzTnRSUXKNfBqd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlulLLYACgkQJNaLcl1U
+h9AU1wgAgr4OI2IG5x9+yA8va8lXHDVS1UyHUqTHnwCA/kxaU4R7rgH206FRlpJ8
+pFUfghnofGabgVNonvWdrWrKMc91J3CDus2GxlK4ABtCd3Lw5DtRhSJGoyNV7Fod
+UM/VSpTgicbumfAzBezNumE404xAKGrhD6Q0qsSq9X6wyAaX+GsQXeEquCetMEvq
+1DHzxH06iPB4GElxOV3Wvn2qxNeoGyB3biQPharwFIPZ9gAuTz6S4HlPiZ8ZoK0c
+g6ltMOlI7lHyWRcEouAS83uxZPpTOy0C9U0zgxd403hVDKB4Fmj7NLKgi2MwAMf4
+DnbWiuFULuhhd6jw/6rZbkB3XDKHXQ==
+=FO1W
+-----END PGP SIGNATURE-----
+
+--wayzTnRSUXKNfBqd--
