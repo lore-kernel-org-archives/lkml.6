@@ -2,105 +2,294 @@ Return-Path: <SRS0=rfjF=MD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE701C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D84C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3B120684
-	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:45:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3B120684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 901AE21531
+	for <linux-kernel@archiver.kernel.org>; Fri, 21 Sep 2018 09:45:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901AE21531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389628AbeIUPdj (ORCPT
+        id S2389651AbeIUPdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 21 Sep 2018 11:33:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:50943 "EHLO mga06.intel.com"
+        Fri, 21 Sep 2018 11:33:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52948 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389560AbeIUPdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Sep 2018 11:33:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2018 02:45:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,284,1534834800"; 
-   d="scan'208";a="265507948"
-Received: from xuting-mobl.ccr.corp.intel.com (HELO haswell-OptiPlex-9020.ccr.corp.intel.com) ([10.255.29.10])
-  by fmsmga006.fm.intel.com with ESMTP; 21 Sep 2018 02:45:34 -0700
-From:   Li Zhijian <lizhijian@cn.fujitsu.com>
-To:     shuah@kernel.org, linux-kselftest@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Li Zhijian <lizhijian@cn.fujitsu.com>,
-        Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org
-Subject: [PATCH] selftests/gpio: fix compiling errors
-Date:   Fri, 21 Sep 2018 18:00:21 +0800
-Message-Id: <1537524021-3371-1-git-send-email-lizhijian@cn.fujitsu.com>
-X-Mailer: git-send-email 2.7.4
+        id S2389560AbeIUPdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Sep 2018 11:33:44 -0400
+Received: from smtp.corp.redhat.com (int-mx12.intmail.prod.int.phx2.redhat.com [10.5.11.27])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B6C01E2D5;
+        Fri, 21 Sep 2018 09:45:41 +0000 (UTC)
+Received: from [10.36.117.87] (ovpn-117-87.ams2.redhat.com [10.36.117.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 997B789B16;
+        Fri, 21 Sep 2018 09:45:37 +0000 (UTC)
+Subject: Re: [RFC v2 01/20] iommu: Introduce bind_pasid_table API
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, tianyu.lan@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+References: <20180918142457.3325-1-eric.auger@redhat.com>
+ <20180918142457.3325-2-eric.auger@redhat.com>
+ <20180920102114.23e15767@jacob-builder>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <a90227f8-9986-7092-9f49-59f7a2713368@redhat.com>
+Date:   Fri, 21 Sep 2018 11:45:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180920102114.23e15767@jacob-builder>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.27
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 21 Sep 2018 09:45:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lizhijian@haswell-OptiPlex-9020:/home/lizj/linux/tools/testing/selftests$ make
-[...snip...]
-make ARCH=x86 CROSS_COMPILE= -C ../../../gpio
-make[2]: Entering directory '/home/lizj/linux/tools/gpio'
-[...snip...]
-make[3]: Leaving directory '/home/lizj/linux/tools/gpio'
-  LINK     /home/lizj/linux/tools/testing/selftests/gpiogpio-event-mon
-make[2]: Leaving directory '/home/lizj/linux/tools/gpio'
-gcc -O2 -g -std=gnu99 -Wall -I../../../../usr/include/ gpio-mockup-chardev.c ../../../gpio/gpio-utils.o  -lmount -I/usr/include/libmount -o gpio-mockup-chardev
-gcc: error: ../../../gpio/gpio-utils.o: No such file or directory
-<builtin>: recipe for target 'gpio-mockup-chardev' failed
-make[1]: *** [gpio-mockup-chardev] Error 1
-make[1]: Leaving directory
-'/home/lizj/linux/tools/testing/selftests/gpio'
-Makefile:85: recipe for target 'all' failed
-make: *** [all] Error 2
+Hi Jacob,
 
-in this patch
-- correct target name to $OUTPUTgpio-utils.o
-- pass OUTPUT to tools/gpio/Makefile
-- support cleanup ../gpiogpio-hammer.o
+On 9/20/18 7:21 PM, Jacob Pan wrote:
+> On Tue, 18 Sep 2018 16:24:38 +0200
+> Eric Auger <eric.auger@redhat.com> wrote:
+> 
+>> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>
+>> In virtualization use case, when a guest is assigned
+>> a PCI host device, protected by a virtual IOMMU on a guest,
+>> the physical IOMMU must be programmed to be consistent with
+>> the guest mappings. If the physical IOMMU supports two
+>> translation stages it makes sense to program guest mappings
+>> onto the first stage/level (ARM/VTD terminology) while to host
+>> owns the stage/level 2.
+>>
+>> In that case, it is mandated to trap on guest configuration
+>> settings and pass those to the physical iommu driver.
+>>
+>> This patch adds a new API to the iommu subsystem that allows
+>> to bind and unbind the guest configuration data to the host.
+>>
+>> A generic iommu_pasid_table_config struct is introduced in
+>> a new iommu.h uapi header. This is going to be used by the VFIO
+>> user API. We foresee at least two specializations of this struct,
+>> for PASID table passing and ARM SMMUv3.
+>>
+>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> ---
+>>
+>> In practice, I think it would be simpler to have a single
+>> set_pasid_table function instead of bind/unbind. The "bypass" field
+>> tells the stage 1 is bypassed (equivalent to the unbind actually).
+>> On userspace we have notifications that the device context has
+>> changed. Calling either bind or unbind requires to have an understand
+>> of what was the previous state and call different notifiers. So to me
+>> the bind/unbind complexifies the user integration while not bring much
+>> benefits.
+>>
+> I don't have strong preference and I think having a single function
+> makes sense. In VT-d2, the bind/unbind operation is a result of PASID
+> cache invalidation from the guest. So there is no symmetrical
+> bind/unbin user calls.
 
-CC: Bamvor Jian Zhang <bamv2005@gmail.com>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Shuah Khan <shuah@kernel.org>
-CC: linux-gpio@vger.kernel.org
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
----
- tools/testing/selftests/gpio/Makefile | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+OK thank you for the feedback.
+> 
+>> This patch generalizes the API introduced by Jacob & co-authors in
+>> https://lwn.net/Articles/754331/
+>>
+>> v1 -> v2:
+>> - restore the original pasid table name
+>> - remove the struct device * parameter in the API
+>> - reworked iommu_pasid_smmuv3
+>> ---
+>>  drivers/iommu/iommu.c      | 19 ++++++++++++++
+>>  include/linux/iommu.h      | 21 +++++++++++++++
+>>  include/uapi/linux/iommu.h | 52
+>> ++++++++++++++++++++++++++++++++++++++ 3 files changed, 92
+>> insertions(+) create mode 100644 include/uapi/linux/iommu.h
+>>
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index 8c15c5980299..db2c7c9502ae 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -1362,6 +1362,25 @@ int iommu_attach_device(struct iommu_domain
+>> *domain, struct device *dev) }
+>>  EXPORT_SYMBOL_GPL(iommu_attach_device);
+>>  
+>> +int iommu_bind_pasid_table(struct iommu_domain *domain,
+>> +			   struct iommu_pasid_table_config *cfg)
+>> +{
+>> +	if (unlikely(!domain->ops->bind_pasid_table))
+>> +		return -ENODEV;
+>> +
+>> +	return domain->ops->bind_pasid_table(domain, cfg);
+>> +}
+>> +EXPORT_SYMBOL_GPL(iommu_bind_pasid_table);
+>> +
+>> +void iommu_unbind_pasid_table(struct iommu_domain *domain)
+>> +{
+>> +	if (unlikely(!domain->ops->unbind_pasid_table))
+>> +		return;
+>> +
+>> +	domain->ops->unbind_pasid_table(domain);
+>> +}
+>> +EXPORT_SYMBOL_GPL(iommu_unbind_pasid_table);
+>> +
+>>  static void __iommu_detach_device(struct iommu_domain *domain,
+>>  				  struct device *dev)
+>>  {
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 87994c265bf5..e56cad4863f7 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -25,6 +25,7 @@
+>>  #include <linux/errno.h>
+>>  #include <linux/err.h>
+>>  #include <linux/of.h>
+>> +#include <uapi/linux/iommu.h>
+>>  
+>>  #define IOMMU_READ	(1 << 0)
+>>  #define IOMMU_WRITE	(1 << 1)
+>> @@ -185,6 +186,8 @@ struct iommu_resv_region {
+>>   * @domain_get_windows: Return the number of windows for a domain
+>>   * @of_xlate: add OF master IDs to iommu grouping
+>>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+>> + * @bind_pasid_table: bind pasid table
+>> + * @unbind_pasid_table: unbind pasid table and restore defaults
+>>   */
+>>  struct iommu_ops {
+>>  	bool (*capable)(enum iommu_cap);
+>> @@ -231,6 +234,10 @@ struct iommu_ops {
+>>  	int (*of_xlate)(struct device *dev, struct of_phandle_args
+>> *args); bool (*is_attach_deferred)(struct iommu_domain *domain,
+>> struct device *dev); 
+>> +	int (*bind_pasid_table)(struct iommu_domain *domain,
+>> +				struct iommu_pasid_table_config
+>> *cfg);
+>> +	void (*unbind_pasid_table)(struct iommu_domain *domain);
+>> +
+>>  	unsigned long pgsize_bitmap;
+>>  };
+>>  
+>> @@ -292,6 +299,9 @@ extern int iommu_attach_device(struct
+>> iommu_domain *domain, struct device *dev);
+>>  extern void iommu_detach_device(struct iommu_domain *domain,
+>>  				struct device *dev);
+>> +extern int iommu_bind_pasid_table(struct iommu_domain *domain,
+>> +				  struct iommu_pasid_table_config
+>> *cfg); +extern void iommu_unbind_pasid_table(struct iommu_domain
+>> *domain); extern struct iommu_domain *iommu_get_domain_for_dev(struct
+>> device *dev); extern int iommu_map(struct iommu_domain *domain,
+>> unsigned long iova, phys_addr_t paddr, size_t size, int prot);
+>> @@ -684,6 +694,17 @@ const struct iommu_ops
+>> *iommu_ops_from_fwnode(struct fwnode_handle *fwnode) return NULL;
+>>  }
+>>  
+>> +static inline
+>> +int iommu_bind_pasid_table(struct iommu_domain *domain,
+>> +			   struct iommu_pasid_table_config *cfg)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +static inline
+>> +void iommu_unbind_pasid_table(struct iommu_domain *domain)
+>> +{
+>> +}
+>> +
+>>  #endif /* CONFIG_IOMMU_API */
+>>  
+>>  #ifdef CONFIG_IOMMU_DEBUGFS
+>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>> new file mode 100644
+>> index 000000000000..babec91ae7e1
+>> --- /dev/null
+>> +++ b/include/uapi/linux/iommu.h
+>> @@ -0,0 +1,52 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> +/*
+>> + * IOMMU user API definitions
+>> + *
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#ifndef _UAPI_IOMMU_H
+>> +#define _UAPI_IOMMU_H
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +/**
+>> + * SMMUv3 Stream Table Entry stage 1 related information
+>> + * @s1contextptr: Context Descriptor Table GPA
+>> + * @abort: shall the STE lead to abort
+>> + * @s1fmt: STE s1fmt field as set by the guest
+>> + * @s1cdmax: STE s1cdmax as set by the guest
+>> + * @s1dss: STE s1dss as set by the guest
+>> + * All field names match the smmu 3.0/3.1 spec (ARM IHI 0070A)
+>> + */
+>> +struct iommu_pasid_smmuv3 {
+>> +	__u64 s1contextptr;
+>> +	__u8 bypass;
+>> +	__u8 abort;
+>> +	__u8 s1fmt;
+>> +	__u8 s1cdmax;
+>> +	__u8 s1dss;
+>> +};
+>> +
+>> +/**
+>> + * PASID table data used to bind guest PASID table to the host IOMMU
+>> + * Note PASID table corresponds to the Context Table on ARM SMMUv3.
+>> + *
+>> + * @version: API version to prepare for future extensions
+>> + * @format: format of the PASID table
+>> + *
+>> + */
+>> +struct iommu_pasid_table_config {
+> don;t you need some vendor neutral data such as 
+>  * @base_ptr:	PASID table pointer
+>  * @pasid_bits:	number of bits supported in the guest PASID table, must be less
+>  *		or equal than the host supported PASID size.
+At the moment I put those info in the vendor specific struct, ie.
+iommu_pasid_smmuv3
+s1contextptr = base_ptr whereas s1cdmax corresponds to the number of
+entries pointed by S1contextptr.
 
-diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
-index 4665cdb..7f9354a 100644
---- a/tools/testing/selftests/gpio/Makefile
-+++ b/tools/testing/selftests/gpio/Makefile
-@@ -7,7 +7,7 @@ EXTRA_PROGS := ../gpiogpio-event-mon ../gpiogpio-hammer ../gpiolsgpio
- EXTRA_DIRS := ../gpioinclude/
- EXTRA_OBJS := ../gpiogpio-event-mon-in.o ../gpiogpio-event-mon.o
- EXTRA_OBJS += ../gpiogpio-hammer-in.o ../gpiogpio-utils.o ../gpiolsgpio-in.o
--EXTRA_OBJS += ../gpiolsgpio.o
-+EXTRA_OBJS += ../gpiolsgpio.o ../gpiogpio-hammer.o
- 
- include ../lib.mk
- 
-@@ -22,7 +22,7 @@ CFLAGS += -O2 -g -std=gnu99 -Wall -I../../../../usr/include/
- LDLIBS += -lmount -I/usr/include/libmount
- 
- $(BINARIES):| khdr
--$(BINARIES): ../../../gpio/gpio-utils.o
-+$(BINARIES): ../gpiogpio-utils.o
- 
--../../../gpio/gpio-utils.o:
--	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
-+../gpiogpio-utils.o:
-+	make OUTPUT=$(OUTPUT) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C ../../../gpio
--- 
-2.7.4
+I am open to moving those fields back to the generic part if their
+semantic is shared by all the archs.
 
+Thanks
+
+Eric
+> 
+> 
+>> +#define PASID_TABLE_CFG_VERSION_1 1
+>> +	__u32 version;
+>> +#define IOMMU_PASID_FORMAT_SMMUV3	(1 << 0)
+>> +	__u32 format;
+>> +	union {
+>> +		struct iommu_pasid_smmuv3 smmuv3;
+>> +	};
+>> +};
+>> +
+>> +#endif /* _UAPI_IOMMU_H */
+> 
