@@ -2,143 +2,141 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FC1ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87740ECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFFFA21532
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:18:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40EDD21523
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEeNvgkP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFFFA21532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ufkh0eZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EDD21523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728233AbeIVQLJ (ORCPT
+        id S1728381AbeIVQMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 12:11:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbeIVQLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 12:11:08 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1E0821523;
-        Sat, 22 Sep 2018 10:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537611485;
-        bh=196skmytk4ds3Dl8r1FNBEGvAdmNW93w3sAv7eVOuWs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fEeNvgkPjM2XgvFJEmS8B3EfCuR0eOxSWfLUQ0MocP1xEV85OsWC7QHs/NDlwwq6A
-         1/iydNaiUPqKAsowa4010GCfTxh/BVqmJgLycuRiVq7HL8MGoIUIWoSxq15a44k5m8
-         9USHVQCVSl7Trwo7CAjbgSSfV6nnbqSs37al2lsI=
-Date:   Sat, 22 Sep 2018 11:18:01 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Song Qiang <songqiang1304521@gmail.com>
-Cc:     Himanshu Jha <himanshujha199640@gmail.com>, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: magnetometer: hmc5843: Clean up redundant code.
-Message-ID: <20180922111801.73a4d969@archlinux>
-In-Reply-To: <20180922100419.GA25620@Eros>
-References: <20180920141321.15251-1-songqiang1304521@gmail.com>
-        <201809211608.bVz8vg0N%fengguang.wu@intel.com>
-        <20180921182616.GA2077@himanshu-Vostro-3559>
-        <20180922100419.GA25620@Eros>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 22 Sep 2018 12:12:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49924 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbeIVQME (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 12:12:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1bNhqFpd+/d6m4CxLiz9FXUYWUZNpxNbSe5s88iOrO4=; b=ufkh0eZMNlfjPKRCKJOyCnEAS
+        +R+JP48Y5oaRDzHLuDi4G0unQvB20kqkyYHyIKVPUZA6/XlBYEDQ+BfvvBmuhI028ME6wd3sV55YR
+        EgPGlLhielvTpiU30hW658iOIjsa1J3enXkx+LOrWIFsVWafz8jo5oWMcpgaTF9NtLRgtEruRFOiY
+        gv1ezIa1Wb/xl3RgAC243BHQRXwvBIOanT26HzlHx3tg40N0eZacXJrUZpjZajsnM5H8XbNe6rns7
+        rZUOc5ppieW8TgvYq+9UZlhucXKPOM85d921GuEfX6oc9hro3hrAUUS+d3OZJYv/1OU3gMoYQcYS8
+        srguGPsiw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g3ezv-0004Zb-5e; Sat, 22 Sep 2018 10:18:48 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 149412024E449; Sat, 22 Sep 2018 12:18:44 +0200 (CEST)
+Date:   Sat, 22 Sep 2018 12:18:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v6 0/3] Harden spectrev2 userspace-userspace protection
+Message-ID: <20180922101844.GF24124@hirez.programming.kicks-ass.net>
+References: <nycvar.YFH.7.76.1809101119280.15880@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1809121055070.15880@cbobk.fhfr.pm>
+ <99FC4B6EFCEFD44486C35F4C281DC6732144EA58@ORSMSX107.amr.corp.intel.com>
+ <20180919154828.GJ24124@hirez.programming.kicks-ass.net>
+ <nycvar.YFH.7.76.1809220936520.15880@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1809221022250.1391@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1809221022250.1391@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 22 Sep 2018 18:04:19 +0800
-Song Qiang <songqiang1304521@gmail.com> wrote:
+On Sat, Sep 22, 2018 at 11:53:14AM +0200, Thomas Gleixner wrote:
+> @@ -86,6 +88,7 @@ extern void exit_ptrace(struct task_stru
+>   * process_vm_writev or ptrace (and should use the real credentials).
+>   */
+>  extern bool ptrace_may_access(struct task_struct *task, unsigned int mode);
+> +extern bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode);
 
-> On Fri, Sep 21, 2018 at 11:56:16PM +0530, Himanshu Jha wrote:
-> > Hi Song,
-> > 
-> > On Fri, Sep 21, 2018 at 04:10:16PM +0800, kbuild test robot wrote:  
-> > > Hi Song,
-> > > 
-> > > Thank you for the patch! Yet something to improve:
-> > > 
-> > > [auto build test ERROR on iio/togreg]
-> > > [also build test ERROR on v4.19-rc4 next-20180920]
-> > > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> > > 
-> > > url:    https://github.com/0day-ci/linux/commits/Song-Qiang/iio-magnetometer-hmc5843-Clean-up-redundant-code/20180921-091239
-> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-> > > config: x86_64-randconfig-u0-09211331 (attached as .config)
-> > > compiler: gcc-5 (Debian 5.5.0-3) 5.4.1 20171010
-> > > reproduce:
-> > >         # save the attached .config to linux build tree
-> > >         make ARCH=x86_64 
-> > > 
-> > > All errors (new ones prefixed by >>):
-> > >   
-> > > >> ERROR: "hmc5843_volatile_table" [drivers/iio/magnetometer/hmc5843_i2c.ko] undefined!
-> > > >> ERROR: "hmc5843_readable_table" [drivers/iio/magnetometer/hmc5843_i2c.ko] undefined!
-> > > >> ERROR: "hmc5843_writable_table" [drivers/iio/magnetometer/hmc5843_i2c.ko] undefined!  
-> > 
-> > You would need to export these above symbols using EXPORT_SYMBOL()
-> > to be used by i2c/spi modules.
-> > 
-> > But on the other hand, exporting too many symbols is a bad idea since
-> > it is only used for this driver and not at any other place in IIO.
-> > So, in my opinion drop this patch and leave the code as-is.
-> > 
-> > https://lkml.org/lkml/2018/7/16/566 --> worth reading
-> > 
-> > 
-> > Thanks
-> > -- 
-> > Himanshu Jha
-> > Undergraduate Student
-> > Department of Electronics & Communication
-> > Guru Tegh Bahadur Institute of Technology  
-> 
-> Hi Himanshu,
-> 
-> You're right, that's exactly what I was missing!
-> I saw the link you mentioned above and I also think that's a very good
-> idea to limit the scope of symbols. But I don't know when this work can
-> be applied to the kernel, as it seems like a not little change for the
-> build infrastructure.
-> I think this maybe a common problem for some drivers.
-> Divers for bmc150 in drivers/iio/accel/bmc-150-accel-core.c did the same
-> exporting stuff as I was prefered. So I think even if either exporting or
-> duplicating is not good enough, one must be choosed for now.
-> 
-> I think this is a topic that I have some ideas but not experienced
-> enough to say what should we do is better. I would like to hear Jonathan's
-> ideas about this. If this patched shouldn't be applied, then maybe bmc150
-> should be patched.
+I like that..
 
-As you say it's not a particularly clear advantage either way and will
-depend on the size of the repetition.
+>  static inline int ptrace_reparented(struct task_struct *child)
+>  {
+> --- a/kernel/ptrace.c
+> +++ b/kernel/ptrace.c
 
-So I'm afraid it's in the category of insisting on one option or the
-other is just overly fussy.  Al, for existing cases it's also not
-worth the noise that changing to one or other option creates.
+> +bool ptrace_may_access_sched(struct task_struct *task, unsigned int mode)
+> +{
+> +	struct mm_struct *mm;
+> +	int res;
+> +
+> +	res = __ptrace_may_access_basic(task, mode);
+> +	if (res <= 0)
+> +		return !res;
+> +
+> +	rcu_read_lock();
+> +	res = __ptrace_may_access_cred(__task_cred(task), mode);
+>  	rcu_read_unlock();
+> +	if (res)
+> +		return false;
+> +
+> +	mm = task->mm;
+> +	if (mm && get_dumpable(mm) != SUID_DUMP_USER)
+> +		return false;
+> +	return true;
+> +}
+> +
+> +/* Returns 0 on success, -errno on denial. */
+> +static int __ptrace_may_access(struct task_struct *task, unsigned int mode)
+> +{
+> +	const struct cred *tcred;
+> +	struct mm_struct *mm;
+> +	int res;
+> +
+> +	res = __ptrace_may_access_basic(task, mode);
+> +	if (res <= 0)
+> +		return res;
+> +
+> +	rcu_read_lock();
+> +	tcred = __task_cred(task);
+> +	res = __ptrace_may_access_cred(tcred, mode);
+> +	if (res > 0)
+> +		res = ptrace_has_cap(tcred->user_ns, mode) ? 0 : -EPERM;
+>  	rcu_read_unlock();
+> +	if (res < 0)
+> +		return res;
+> +
+>  	mm = task->mm;
+> +	if (mm && (get_dumpable(mm) != SUID_DUMP_USER &&
+> +		   !ptrace_has_cap(mm->user_ns, mode)))
+> +		return -EPERM;
+>  
+>  	return security_ptrace_access_check(task, mode);
+>  }
 
-Whilst the noise effect on things like backporting fixes is minor for patches
-like this, it isn't zero so there has to be a clear advantage in whatever
-is changed.  Hence I won't be taking this one, or any patches going the
-other way for existing drivers.
+This has some unfortunate duplication.
 
-Thanks,
-
-Jonathan
-
-> 
-> yours,
-> Song Qiang
-> 
-
+Lets go with it for now, but I'll see if I can do something about that
+later.
