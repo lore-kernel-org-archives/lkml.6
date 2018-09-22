@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73792ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E60D3C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BB9D21569
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:09:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8098C2156B
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:11:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="DSsyCNVE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB9D21569
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="FXxHo9MY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8098C2156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391650AbeIVGAs (ORCPT
+        id S2391686AbeIVGCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:00:48 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41770 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbeIVGAr (ORCPT
+        Sat, 22 Sep 2018 02:02:44 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41963 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725984AbeIVGCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:00:47 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t39-v6so3486373qtc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:09:32 -0700 (PDT)
+        Sat, 22 Sep 2018 02:02:43 -0400
+Received: by mail-qt1-f196.google.com with SMTP id t39-v6so3489602qtc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:11:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=netronome-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:in-reply-to:references
          :organization:mime-version:content-transfer-encoding;
-        bh=fv9LuU7OvqkibppjQzeB+G+nvWZEOLtJkPf+O93TBi0=;
-        b=DSsyCNVEfx1TCFeThMQEAfzhIHhnhLE1DuCa+AO+F1RrAoUEZDz2OoHcgQnGTHNi6L
-         C1lvmQR0RzaSmo0DuotYUMX7ktpK6pUlLgZjhLEJQZ75jwrSbWIV1CKTowXCB6CsvtZr
-         VqZKGZySuvjWtAEDVVJDOfI+Zxz4LiIi0izAed7Kaoc8iH3ZeepudaD6Q/YuvMYoJIkk
-         GiDo8+Y4MJC2FZwGDLNXMtYG0e47orZXf/WKgwo/Homw9qaVbSl20ihs68+38n5Jdg58
-         lCp1+E1FXOVqmzrQM8adcK2wyUViRMNu22PAKauqbjKnc4MArpNdqmADoW4gvgpwXBUo
-         Mh4g==
+        bh=0984RIY0Al4Htf5boVt6F4f7H0iJckgvtVwmVzjHiMc=;
+        b=FXxHo9MY1UlLqTTqc3QXhhw+RtXRShm6BwnDYDmiV3WdeVnfg0EEzLA4UBCcO9lXL0
+         9XcLs9NT+GYiuDRJRgytqnWMkEslWqvwR7Knr97UGI88zwCCTOMtEGbV9v1scLQvcpfq
+         AShkgrpb3iPHqy/yjz4jBFFeXmzH1bAzpnTwVnM7j41SCAVFtARNDO3lQ6JrXO3vsWej
+         zemob7wTNCH4KlPPkx10YJp/nGonLR1LEm24EVwaPV9cCt4PyPZgJ5I3s0pdY+dblJYg
+         tmkROqYrB5E6YYq1klU7WPxL0DnH2fdB2G6U1tqmV9veApg/7lg6nyAxVZ+8Upxi/Uf2
+         yERA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
          :references:organization:mime-version:content-transfer-encoding;
-        bh=fv9LuU7OvqkibppjQzeB+G+nvWZEOLtJkPf+O93TBi0=;
-        b=mM3ONcSMh6oV3FF2hIDu7z8DbNyV+aNCjR/mV1ZxoYfTMpMOJzEvYB+qKySkKFuK28
-         p55sJfjJB5JEyl28myJAwc/xRQAmeJ7f7K8EChALrQov8jjMMLQ2dVwMAgQ83PSjBxp+
-         EbeRkVDA4wJTmgXrFOmnT6ru5ayGrUV5SI3XeNEc23XJW6rn/ShIEQMNUk/jFPyfSIir
-         nhXw/OsJG2qF9t2IZ4oRE4Uk+YhdnFXxG3jKCWWC63r1zwdRqWFGKOerdSC4HDna0ILj
-         QEfsSrpVUCX6eDMaBI8rMu4V5o/0EJSgwpjwggSfJ+kfYNZJwWwvPqWS0eM7PU64OIKs
-         OU4Q==
-X-Gm-Message-State: APzg51A5inJYkzCNq6PdLc6DcV/kVkHaHoJ8hNstDVVSxsT1er6hK25V
-        yMlua56j452qJfNEerDWAbZzZtqTz4Q=
-X-Google-Smtp-Source: ACcGV63lbhavWDYFkqDNVWbnMV6SIJSguCQ9YbW7tlgODcIgyz6Wo12s3HEKmmNA7hzMItvz8QEiMA==
-X-Received: by 2002:ac8:764c:: with SMTP id i12-v6mr78400qtr.250.1537574972414;
-        Fri, 21 Sep 2018 17:09:32 -0700 (PDT)
+        bh=0984RIY0Al4Htf5boVt6F4f7H0iJckgvtVwmVzjHiMc=;
+        b=Ddw6ersxc+Da5Xo9StNpxTKDsmAFOlWfY7s5FyWXdPE6iQb8mS4n4AO+cb22nThf28
+         gqL2Rltr9SJQO08qoh16leGAXIKbzv49w9FOri4OPfZhP+WJf8r0OuQOj+Z7Mxr24bvW
+         mM8Tu9ttx9Ma5Oza0zAYKsh16WmWZh5HnL7I2OEISd5aOZuKZm37ibPicVyBeG9B+jF7
+         mumWaYtmhdA5FMlZbVE9/NX3XdMIF3kBoi0BYfRCoJ5+5pVC2eL3gYaeuCMjEQ3dE+Fu
+         3YBqVyU5izQm2ZewZ7NiqDdxS723jTa6xl8I1WeRNDXxXb1Y1/iPkZVoc+QnRHHmBU1a
+         TBIA==
+X-Gm-Message-State: APzg51C5XZOpxZUbMrwkyTiMeQaWd5BYW8EN3X7lUVd79dOFHPnFmFkB
+        8/Kjw5w02oCLygJr/T10dcPBzA==
+X-Google-Smtp-Source: ANB0VdYrurcy8S8i4lLZAhyhKjQoCP1udSt0SCamscqDzV2DjpdR9qDgl61rdjtnEX+yDQKLhQQrfQ==
+X-Received: by 2002:ac8:6989:: with SMTP id o9-v6mr87770qtq.244.1537575088441;
+        Fri, 21 Sep 2018 17:11:28 -0700 (PDT)
 Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm14787605qte.20.2018.09.21.17.09.31
+        by smtp.gmail.com with ESMTPSA id 39-v6sm10323015qku.18.2018.09.21.17.11.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 21 Sep 2018 17:09:32 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 17:09:29 -0700
+        Fri, 21 Sep 2018 17:11:28 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 17:11:25 -0700
 From:   Jakub Kicinski <jakub.kicinski@netronome.com>
 To:     Roman Gushchin <guro@fb.com>
 Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Kernel Team <Kernel-team@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH bpf-next] bpftool: add support for
- BPF_MAP_TYPE_REUSEPORT_SOCKARRAY maps
-Message-ID: <20180921170929.2d278d65@cakuba.netronome.com>
-In-Reply-To: <20180921224700.10524-1-guro@fb.com>
-References: <20180921224700.10524-1-guro@fb.com>
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH bpf-next 6/9] bpftool: add support for
+ PERCPU_CGROUP_STORAGE maps
+Message-ID: <20180921171125.7d663add@cakuba.netronome.com>
+In-Reply-To: <20180921171353.11050-6-guro@fb.com>
+References: <20180921171353.11050-1-guro@fb.com>
+        <20180921171353.11050-6-guro@fb.com>
 Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -81,14 +81,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018 22:47:20 +0000, Roman Gushchin wrote:
-> Add BPF_MAP_TYPE_REUSEPORT_SOCKARRAY map type to the list
-> of maps types which bpftool recognizes.
+On Fri, 21 Sep 2018 17:14:12 +0000, Roman Gushchin wrote:
+> This commit adds support for BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE
+> map type.
 > 
 > Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
 > Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
-> Cc: Yonghong Song <yhs@fb.com>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Alexei Starovoitov <ast@kernel.org>
 
 Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
