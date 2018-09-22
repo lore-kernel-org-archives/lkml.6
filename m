@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80014C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 07:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8824FC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 07:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F7D2154C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 07:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 420282154C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 07:53:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWn1CtZ+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F7D2154C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZq8ePU7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 420282154C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbeIVNpd (ORCPT
+        id S1727111AbeIVNph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 09:45:33 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33899 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeIVNpc (ORCPT
+        Sat, 22 Sep 2018 09:45:37 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33344 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeIVNph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 09:45:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f6-v6so6951264plo.1;
-        Sat, 22 Sep 2018 00:52:56 -0700 (PDT)
+        Sat, 22 Sep 2018 09:45:37 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y18-v6so3745546pge.0;
+        Sat, 22 Sep 2018 00:52:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
         bh=43L5RYxkov+mXGNBoSYqfF3+NoflZDa7xEDlbzcJ+64=;
-        b=jWn1CtZ+HHu++iHjXDm897aEmDwyFcwISwOnNbh9+LKMD1qVqejPQZ22ACPOv/tx+O
-         ygzT9iGxAz1eNJavkDtUi0iPBkCPFbk02LUxEAZdtAcsig+nNr2kYQdOFynkOcBJss2j
-         x/kb68iITAGqk50WpuRsaE7UM6hd4x3HTiG+KyvyPb7D/T+pE8MpPFXAHnpQgVKqLfUH
-         dn2Y7ThUvOITjn0BBUsY9xwBYy/O5B5IFu22IgjPJo3gPhYIcsK8rgpsTki3xf8SQc2d
-         nYzIVkfv0TtuTIXZmoo6U+sjjB1mqtGVeLRVbWy20s6uptqE4ZbrVYd0B/9RIlCjUsAQ
-         io6g==
+        b=FZq8ePU7atSHKj/De1aqoz5mzj2sqyFvAlAfJMZFFEb3kefa3CvAK3BBbPqRPpAgTu
+         5NC0FTEalVZ0pDDDcL/8U5RkwExTMw1QKlPoMnYGAQlCydqMNamMVSG4BBNY3iIlTfd8
+         ePRkXV4DF860gkOvrlr5bwp2R/dIYLgcBnBqZVQuV1nGqivpAKDOdUmWXy4XhSZxSmOp
+         6VMDkONsNp4lVlLp0+qogjMv3dSqErSe9Ii2st+WXjjcpYl5SSKmjSYHrkggEffQ28pz
+         7FWErag3pQ5mv6NfabcxONl2xWeYdEKH+7jo4txxay4fRBf+fAur4//y9QvQqwTon4W2
+         Qhwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
         bh=43L5RYxkov+mXGNBoSYqfF3+NoflZDa7xEDlbzcJ+64=;
-        b=fW4PMe5mZIpWdHmboCISGlrt8kTDVUhxcLCZkXSCudpFbbIDNxUq3rjgbb0GrJXP6M
-         WAbnl9fud8zJkZjpGE2E36txwkJev2X7JRs3BiPnHloijN2eh1gSicJWSzCfA1r2Swkd
-         b1/ilVNli5e1NY9BszHpxjatVQDhAOBWXY1NWT7V6ZYkvPvI2T3mjOcBbdMfCTJGaOew
-         yHL+NedqAYdu27PLtRaDGWgfXJ0rUyiOsCNfEZj1Ue4VDpvQrMoDnDdMl6E35lzItDnp
-         EkOlt8LjscjsbRdBsSySWCTrbqo4+9yLP4dHWTgZQQEmTMqHWpW3F63pN/FJB518+uOp
-         Lolg==
-X-Gm-Message-State: ABuFfojeRJbVOo4yVPvID9hcBHdqfYsMD75qtXII5dPBncPe90qbaI6N
-        VM1MRDuQQ+lZscsy5hXZm5M=
-X-Google-Smtp-Source: ACcGV63o3guMYKZDFalxsdlG8TEyH4MFldgayaWhd6bLBil0kofevniNPCvYBewbQZtu6U8ltloUYQ==
-X-Received: by 2002:a17:902:bccb:: with SMTP id o11-v6mr1453571pls.167.1537602775711;
-        Sat, 22 Sep 2018 00:52:55 -0700 (PDT)
+        b=hx1zgPCP9LTp3E2h+Olm9M7OBNUqU37KvNy9jCJ5oNySk53nK1i718DBdcnsy665k4
+         IF2WW8+5wlI5xW6hRTCveU5GGyhRMO8BTGPIvdfjtIwUhDun+aB4ywMIN40Dd6644tVO
+         qRdkJGtwaRJFsEqI2UY+uF2alPb8DEM+0ADsxakOslaYrActESPUeeV9tNiWlUTypym9
+         TTka4Q3gJMIwRfeLSByV3rn7xX/l433eARGsmCtgiBlE/d+UR0E68j4bPEmCuSJyVLXX
+         Tu1lK5t3ZABrEUvk7cqEP2+k8uvYgNZpx381wcnuB8yb48wCp3r6erMWyfcmYrF4gVld
+         JIqg==
+X-Gm-Message-State: ABuFfohHqhrq4D9b0BqY3udJt+Z6JkYk6PHf6xGQiL3TnRGvVkbrazyk
+        aTTgVqrzTbULt9B+vk8a+DU=
+X-Google-Smtp-Source: ACcGV62FafytttGzuwR9XuWtgDWcjoDPpu8WbhfR8HFUim7BIip24mmUxk6s7H2+gPzllLPBeUx5Jw==
+X-Received: by 2002:a63:4716:: with SMTP id u22-v6mr8990pga.95.1537602779566;
+        Sat, 22 Sep 2018 00:52:59 -0700 (PDT)
 Received: from localhost.localdomain ([103.51.74.116])
-        by smtp.gmail.com with ESMTPSA id f67-v6sm53219253pff.29.2018.09.22.00.52.51
+        by smtp.gmail.com with ESMTPSA id f67-v6sm53219253pff.29.2018.09.22.00.52.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 00:52:54 -0700 (PDT)
+        Sat, 22 Sep 2018 00:52:58 -0700 (PDT)
 From:   Anand Moon <linux.amoon@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -68,9 +69,11 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org
 Subject: [PATCHv4 0/6] Add support for UHS-I on Exynos5422 odroid boards
-Date:   Sat, 22 Sep 2018 07:52:31 +0000
-Message-Id: <20180922075238.884-1-linux.amoon@gmail.com>
+Date:   Sat, 22 Sep 2018 07:52:32 +0000
+Message-Id: <20180922075238.884-2-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180922075238.884-1-linux.amoon@gmail.com>
+References: <20180922075238.884-1-linux.amoon@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
