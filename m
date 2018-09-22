@@ -2,92 +2,131 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14259C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E98CCECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E4E2157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmojfQD4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E4E2157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id A7BEA2159E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7BEA2159E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392359AbeIVGNh (ORCPT
+        id S2392342AbeIVGNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:13:37 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41591 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392142AbeIVGNh (ORCPT
+        Sat, 22 Sep 2018 02:13:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44234 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392004AbeIVGKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:13:37 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h79-v6so6653756pfk.8;
-        Fri, 21 Sep 2018 17:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/Hmjqg3H1j0jCY0Bmgr7OuD0BWqDMH23GEbtI3zhfaI=;
-        b=QmojfQD4UpODd0UgSiQ5yRpXVCl5RKQueVPHJSsdToDxVrJGcA+X5wd69C6cFK3V1g
-         0Gaaw6TiBEm2j0TtS4DO2rc6huXeds+8niv2HYuJliT/AAC1xDj+4xO614EzThQQeZsW
-         7+yfdS7VL4U3rlTZVe8rzkvKih9WQ7D5GVpfLAV9h35A/Rz3RQtZ+4La7U/6YU/BFbfq
-         SEN+1TOHlnsYH6OojNnQp6WL4+tZkcDgPRHkjeQlePUTE4VpSOoBUSNNKL4TlKp5PxPT
-         4EnS4JmWyvDyVP7koZPOFd80cVIn/soB4ABuvrpOzXC8eKRs2qMGj6SBaOLWWgZrjSAa
-         V44A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/Hmjqg3H1j0jCY0Bmgr7OuD0BWqDMH23GEbtI3zhfaI=;
-        b=K07PFmP+9tWCDsVVucOJFS7jSEFHXu/YL4W4OEKZzGlxjbvMO9rb0C32tP0aTKxRAX
-         8Ptg6PVWiizvvgsf2fP0p/LLJg89VheEz/BbJ2MgxtLxQr6uqAeatOo3uppbZU6o6EEC
-         WuKS8HO4v8GrriBA72dnDqiKA1z+rqdqIWQVvc1aKcdqlFx6gIQU34owIg7FVksBs2HG
-         y3flcWcIrOJm0mhnUnqLPB5PfBtHyxKXUDekv9ZkrwJylile7726lOTZZvr1Pn8xlg7O
-         VVTxQfuT4Nphau+D1TMP/TA/3w/jc2ZSeC1Ijbe2HxZIszqF+PkpYid8Jo6LVjzER+2+
-         GQSA==
-X-Gm-Message-State: APzg51DrFw4Ytj5Yq19tXdYAcHHhtJ2sLuPhmOSdnOsjxDUHmgSJibV9
-        KbB6fiPRzUqdAj0UrQ0mPajzQV8J
-X-Google-Smtp-Source: ANB0VdYwrHHCLtSG9mBUHTBNCz5UyVbulA3luRdLhM6dG9IzjuiFme3wHzSKqw7hw8+wm2rypdLN0A==
-X-Received: by 2002:a62:2285:: with SMTP id p5-v6mr134765pfj.53.1537575738755;
-        Fri, 21 Sep 2018 17:22:18 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id q66-v6sm10597880pfc.46.2018.09.21.17.22.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 17:22:17 -0700 (PDT)
-Subject: Re: [PATCH] watchdog/hpwdt: Disable PreTimeout when Timeout is
- smaller
-To:     Jerry Hoemann <jerry.hoemann@hpe.com>, wim@linux-watchdog.org
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180921205039.11466-1-jerry.hoemann@hpe.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <32cd1d39-f8d2-8b40-e025-4e3cda27c2c5@roeck-us.net>
-Date:   Fri, 21 Sep 2018 17:22:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 22 Sep 2018 02:10:48 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3Vdy-0008Bd-6Y; Sat, 22 Sep 2018 01:19:30 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3Vdo-0000s2-2n; Sat, 22 Sep 2018 01:19:20 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20180921205039.11466-1-jerry.hoemann@hpe.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>
+Date:   Sat, 22 Sep 2018 01:15:42 +0100
+Message-ID: <lsq.1537575342.443081298@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 29/63] ext4: make sure bitmaps and the inode table
+ don't overlap with bg descriptors
+In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/21/2018 01:50 PM, Jerry Hoemann wrote:
-> During module install, disable pretimeout if the requested timeout
-> value is not greater than the minimal pretimeout value that is
-> supported by hardware.
-> 
-> This makes the module load handling of pretimeout consistent
-> with the ioctl handling of pretimeout.
-> 
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+3.16.58-rc1 review patch.  If anyone has any objections, please let me know.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+------------------
+
+From: Theodore Ts'o <tytso@mit.edu>
+
+commit 77260807d1170a8cf35dbb06e07461a655f67eee upstream.
+
+It's really bad when the allocation bitmaps and the inode table
+overlap with the block group descriptors, since it causes random
+corruption of the bg descriptors.  So we really want to head those off
+at the pass.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199865
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[bwh: Backported to 3.16: Open-code sb_rdonly()]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ fs/ext4/super.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2086,6 +2086,7 @@ static int ext4_check_descriptors(struct
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
+ 	ext4_fsblk_t last_block;
++	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
+ 	ext4_fsblk_t block_bitmap;
+ 	ext4_fsblk_t inode_bitmap;
+ 	ext4_fsblk_t inode_table;
+@@ -2118,6 +2119,14 @@ static int ext4_check_descriptors(struct
+ 			if (!(sb->s_flags & MS_RDONLY))
+ 				return 0;
+ 		}
++		if (block_bitmap >= sb_block + 1 &&
++		    block_bitmap <= last_bg_block) {
++			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
++				 "Block bitmap for group %u overlaps "
++				 "block group descriptors", i);
++			if (!(sb->s_flags & MS_RDONLY))
++				return 0;
++		}
+ 		if (block_bitmap < first_block || block_bitmap > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+ 			       "Block bitmap for group %u not in group "
+@@ -2132,6 +2141,14 @@ static int ext4_check_descriptors(struct
+ 			if (!(sb->s_flags & MS_RDONLY))
+ 				return 0;
+ 		}
++		if (inode_bitmap >= sb_block + 1 &&
++		    inode_bitmap <= last_bg_block) {
++			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
++				 "Inode bitmap for group %u overlaps "
++				 "block group descriptors", i);
++			if (!(sb->s_flags & MS_RDONLY))
++				return 0;
++		}
+ 		if (inode_bitmap < first_block || inode_bitmap > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+ 			       "Inode bitmap for group %u not in group "
+@@ -2146,6 +2163,14 @@ static int ext4_check_descriptors(struct
+ 			if (!(sb->s_flags & MS_RDONLY))
+ 				return 0;
+ 		}
++		if (inode_table >= sb_block + 1 &&
++		    inode_table <= last_bg_block) {
++			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
++				 "Inode table for group %u overlaps "
++				 "block group descriptors", i);
++			if (!(sb->s_flags & MS_RDONLY))
++				return 0;
++		}
+ 		if (inode_table < first_block ||
+ 		    inode_table + sbi->s_itb_per_group - 1 > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+
