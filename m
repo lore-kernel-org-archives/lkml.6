@@ -2,138 +2,168 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A13CEECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1FBECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 431A62150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:33:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="P21/7pGx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431A62150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 374EF206B7
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:36:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 374EF206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbeIVV04 (ORCPT
+        id S1729007AbeIVVaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 17:26:56 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46939 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbeIVV04 (ORCPT
+        Sat, 22 Sep 2018 17:30:19 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:41159 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbeIVVaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 17:26:56 -0400
-Received: by mail-oi0-f66.google.com with SMTP id y207-v6so13781593oie.13
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 08:32:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SJUBPvQlv+59yJXa4obXLAMyaSqOoxIliyFJOoC/vHI=;
-        b=P21/7pGxWgCYO5aDoHDOqSn41VwhfDWfl5/heqyhgLaat/D56JhDd6uXZqx0f26mdc
-         RrxpSh0XjYbHM03P7qfhJ/Zw7m8pUgYA4bWtmmgcK5n7RlRG5KgNCJ8Q3QyksR5VjvVf
-         bal2EQcE1LeUUfBNwXG/b4A58jSU+C0aVgHcjyLjjFJ92+FCE3cXOXjgc9BBOGz7lHKZ
-         OmM7C61vlBrtxtYIxtrAPZxL8YrhYpTUGqwoKeim4tExTCjsc8UOcMfrBH4Sl8PgaOk8
-         9s/bWzEIy1XW3jxS/iALw4IvQphm4iNos/iRGZMf1MldSv9KhlAb5h9OC1/OoBAxEM2Z
-         mCWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SJUBPvQlv+59yJXa4obXLAMyaSqOoxIliyFJOoC/vHI=;
-        b=jCf+vBonfCyRFy9THtiEis2reuQXDQD3q34UyKD+eL3xjYQR/IxvtcrKWaKQyFOsV3
-         H7/RB81WYqu7lGG9APiq5/9fqQy86tz2sVdTzZaoXj10S9JG1hP32tkeavtHdjkADNoo
-         jbC7jgeepScbx2qy5UMoEporXSH1qWDbN0maIF3uCC8B6PM+9BAf3J9ISuUqdgHpyBvi
-         8p3ogyDT8zPYSmLVMTylDQ15F7GoBebKuV0qDLksikNEyAu/Hq885kbO42GHtYVGlDsK
-         w8QhLJ1RyxHpLcocWOqDdIaKH6tlVNQaep1Qdy06jYuunnkjLu3DT6vW+LwX2nP2uF3b
-         WPaw==
-X-Gm-Message-State: APzg51Dpo5g1IcbdTTliZODlRXQULCr+B0lx5RaWFR12MWsgbu4uKhne
-        Nd57SmLSttixunqOQDl4mwLPHSHYJp62WUohZT0=
-X-Google-Smtp-Source: ANB0VdYLDgkC29qe1QzroCFHDaGa3iPLSKqVSB0t/utTe3QYbzqvBLnHSz6oBjFa0SxAjdsK6Z7hCHzNJ+le5iww8t4=
-X-Received: by 2002:aca:338a:: with SMTP id z132-v6mr1463872oiz.184.1537630377308;
- Sat, 22 Sep 2018 08:32:57 -0700 (PDT)
+        Sat, 22 Sep 2018 17:30:18 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id w8MFa9qT017529
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Sat, 22 Sep 2018 08:36:11 -0700 (PDT)
+Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Sat, 22 Sep
+ 2018 08:36:09 -0700
+Subject: Re: [PATCH v2 1/2] printk: Fix panic caused by passing log_buf_len to
+ command line
+To:     Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+CC:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        <sergey.senozhatsky@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <1537291068-443145-1-git-send-email-zhe.he@windriver.com>
+ <20180919015030.GA423@jagdpanzerIV>
+ <6c354803-5341-7237-9ee3-7882252c7483@windriver.com>
+ <20180919023932.GA14090@jagdpanzerIV>
+ <20180918224312.6e9aef50@vmware.local.home>
+ <1545bc85-b64a-4b45-d40f-79567ac621dc@windriver.com>
+ <20180920123056.27b2cf18@gandalf.local.home>
+ <20180921073753.mqayzofcofpmhiyu@pathway.suse.cz>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <02b53bc1-3803-50b1-d07e-a7962f9e5688@windriver.com>
+Date:   Sat, 22 Sep 2018 23:36:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1537433449-65213-1-git-send-email-jianxin.pan@amlogic.com> <1537433449-65213-3-git-send-email-jianxin.pan@amlogic.com>
-In-Reply-To: <1537433449-65213-3-git-send-email-jianxin.pan@amlogic.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 22 Sep 2018 17:32:46 +0200
-Message-ID: <CAFBinCAaphyifUNyDQr7th2Mt=A+UQnzai0edKLCPNbxhh2w+Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] mtd: rawnand: meson: add support for Amlogic NAND
- flash controller
-To:     jianxin.pan@amlogic.com
-Cc:     boris.brezillon@bootlin.com, linux-mtd@lists.infradead.org,
-        liang.yang@amlogic.com, yixun.lan@amlogic.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at,
-        jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
-        carlo@caione.org, khilman@baylibre.com, robh@kernel.org,
-        jian.hu@amlogic.com, hanjie.lin@amlogic.com,
-        victor.wan@amlogic.com, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180921073753.mqayzofcofpmhiyu@pathway.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.216]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Thu, Sep 20, 2018 at 10:51 AM Jianxin Pan <jianxin.pan@amlogic.com> wrote:
-[snip]
-> +static int meson_nfc_clk_init(struct meson_nfc *nfc)
-> +{
-> +       int ret;
-> +
-> +       /* request core clock */
-> +       nfc->core_clk = devm_clk_get(nfc->dev, "core");
-> +       if (IS_ERR(nfc->core_clk)) {
-> +               dev_err(nfc->dev, "failed to get core clk\n");
-> +               return PTR_ERR(nfc->core_clk);
-> +       }
-> +
-> +       nfc->device_clk = devm_clk_get(nfc->dev, "device");
-> +       if (IS_ERR(nfc->device_clk)) {
-> +               dev_err(nfc->dev, "failed to get device clk\n");
-> +               return PTR_ERR(nfc->device_clk);
-> +       }
-> +
-> +       nfc->phase_tx = devm_clk_get(nfc->dev, "tx");
-> +       if (IS_ERR(nfc->phase_tx)) {
-> +               dev_err(nfc->dev, "failed to get tx clk\n");
-> +               return PTR_ERR(nfc->phase_tx);
-> +       }
-> +
-> +       nfc->phase_rx = devm_clk_get(nfc->dev, "rx");
-> +       if (IS_ERR(nfc->phase_rx)) {
-> +               dev_err(nfc->dev, "failed to get rx clk\n");
-> +               return PTR_ERR(nfc->phase_rx);
-> +       }
-neither the "rx" nor the "tx" clock are documented in the dt-bindings patch
-
-> +       /* init SD_EMMC_CLOCK to sane defaults w/min clock rate */
-> +       regmap_update_bits(nfc->reg_clk, 0,
-> +                          CLK_SELECT_NAND | CLK_ALWAYS_ON | CLK_DIV_MASK,
-> +                          CLK_SELECT_NAND | CLK_ALWAYS_ON | CLK_DIV_MASK);
-clk_set_rate also works for clocks that are not enabled yet (except if
-they have the flag CLK_SET_RATE_UNGATE)
-this should help you to remove CLK_DIV_MASK here
-
-is CLK_SELECT_NAND a bit that switches the clock output from the sdmmc
-controller to the NAND controller?
-if so: can this be modeled as a mux clock?
-
-the public S905 datasheet doesn't mention CLK_ALWAYS_ON at bit 28 but
-uses bit 24 instead. the description from the datasheet:
-Cfg_always_on:
-1: Keep clock always on
-0: Clock on/off controlled by activities.
-    Any APB3 access or descriptor execution will turn clock on.
-Recommended value: 0
-
-can you please explain what CLK_ALWAYS_ON does and why it has to be 1?
 
 
-Regards
-Martin
+On 2018年09月21日 15:37, Petr Mladek wrote:
+> On Thu 2018-09-20 12:30:56, Steven Rostedt wrote:
+>> On Fri, 21 Sep 2018 00:16:50 +0800
+>> He Zhe <zhe.he@windriver.com> wrote:
+>>
+>>> On 2018年09月19日 10:43, Steven Rostedt wrote:
+>>>> On Wed, 19 Sep 2018 11:39:32 +0900
+>>>> Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>>>>  
+>>>>> On (09/19/18 10:27), He Zhe wrote:  
+>>>>>> On 2018年09月19日 09:50, Sergey Senozhatsky wrote:    
+>>>>>>> On (09/19/18 01:17), zhe.he@windriver.com wrote:    
+>>>>>>>> @@ -1048,7 +1048,14 @@ static void __init log_buf_len_update(unsigned size)
+>>>>>>>>  /* save requested log_buf_len since it's too early to process it */
+>>>>>>>>  static int __init log_buf_len_setup(char *str)
+>>>>>>>>  {
+>>>>>>>> -	unsigned size = memparse(str, &str);
+>>>>>>>> +	unsigned size;    
+>>>>>>> 	unsigned int size;    
+>>>>>> This is in v1 but then Steven suggested that it should be split out
+>>>>>> and only keep the pure fix part here.    
+>>>>> Ah, I see.
+>>>>>
+>>>>> Hmm... memparse() returns u64 value. A user *probably* can ask the kernel
+>>>>> to allocate log_buf larger than 'unsigned int'.
+>>>>>
+>>>>> So may be I'd do two fixes here:
+>>>>>
+>>>>>  First  - switch to u64 size.
+>>>>>  Second - check for NULL str.
+>>>>>
+>>>>>
+>>>>> Steven, Petr, what do you think?
+>>>>>  
+>>>> I think I would switch it around. Check for NULL first, and then switch
+>>>> to u64. It was always an int, do we need to backport converting it to
+>>>> u64 to stable? The NULL check is a definite, the overflow of int
+>>>> shouldn't crash anything.  
+>> Hi Zhe,
+>>
+>>> To switch to u64, several variables need to be adjusted to new type to aligned
+>>> with new_log_buf_len. And currently new_log_buf_len is passed to
+>>> memblock_virt_alloc(phys_addr_t, phys_addr_t). So we can't simply define
+>>> new_log_buf_len as u64. We need to define it as phys_addr_t tomake it work
+>>> well for both 32bit and 64bit arches, since a 32-bit architecture can set
+>>> ARCH_PHYS_ADDR_T_64BIT if it needs a 64-bit phys_addr_t.
+>> The above explanation verifies more that the NULL pointer check needs
+>> to be first, and that the change in size should not be backported to
+>> stable because it has a high risk to doing the change as compared to it
+>> being a problem for older kernels.
+> I agree that the NULL check should go first.
+>
+> I would personally keep the size as unsigned int. IMHO, a support
+> for a log buffer bigger than 4GB is not worth the complexity.
+
+Thank you, Petr, Steven and Sergey. I'll send v3 soon for the NULL check
+and cast correction.
+
+
+
+For 64 bit log buffer length, the variable changes should be OK. The main
+obstacle might be that we need to modify the syscall below to make the
+64 bit length returned back to user space. "error" is not long enough.
+
+int do_syslog(int type, char __user *buf, int len, int source)
+...
+        case SYSLOG_ACTION_SIZE_BUFFER:                                         
+                error = log_buf_len;                                            
+                break;
+...
+    return error;
+...
+
+SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)                
+{                                                                                                                                                                                       
+        return do_syslog(type, buf, len, SYSLOG_FROM_READER);                       
+}
+
+
+
+Besides, in terms of variable type alignment, there has already been a
+similar problematic case in do_syslog as below. i.e. int = u64 - u64. It seems
+this needs to be fixed.
+
+int do_syslog(int type, char __user *buf, int len, int source)
+...
+    case SYSLOG_ACTION_SIZE_UNREAD:
+        if (source == SYSLOG_FROM_PROC) {
+            error = log_next_seq - syslog_seq;
+...
+
+
+
+I'd like to fix the above issues. But can I have your opinions about how to
+handle the syscall?
+
+
+Thanks,
+Zhe
+
+>
+> Best Regards,
+> Petr
+>
+
