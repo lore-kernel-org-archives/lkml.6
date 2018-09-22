@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C48ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A06ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD002157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD002157C
+	by mail.kernel.org (Postfix) with ESMTP id 350A92157C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 350A92157C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392183AbeIVGNE (ORCPT
+        id S2392295AbeIVGNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:13:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44257 "EHLO
+        Sat, 22 Sep 2018 02:13:11 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44250 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392015AbeIVGKs (ORCPT
+        by vger.kernel.org with ESMTP id S2392012AbeIVGKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Sep 2018 02:10:48 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdy-0008Bc-65; Sat, 22 Sep 2018 01:19:30 +0100
+        id 1g3Vdy-0008BZ-6q; Sat, 22 Sep 2018 01:19:30 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdo-0000sB-57; Sat, 22 Sep 2018 01:19:20 +0100
+        id 1g3Vdo-0000s6-3v; Sat, 22 Sep 2018 01:19:20 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Andreas Dilger" <adilger@dilger.ca>,
-        "Theodore Ts'o" <tytso@mit.edu>
+CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.457041470@decadent.org.uk>
+Message-ID: <lsq.1537575342.940034960@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 31/63] ext4: add corruption check in ext4_xattr_set_entry()
+Subject: [PATCH 3.16 30/63] ext4: fix false negatives *and* false
+ positives in ext4_check_descriptors()
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,93 +58,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 5369a762c882c0b6e9599e4ebbb3a9ba9eee7e2d upstream.
+commit 44de022c4382541cebdd6de4465d1f4f465ff1dd upstream.
 
-In theory this should have been caught earlier when the xattr list was
-verified, but in case it got missed, it's simple enough to add check
-to make sure we don't overrun the xattr buffer.
+Ext4_check_descriptors() was getting called before s_gdb_count was
+initialized.  So for file systems w/o the meta_bg feature, allocation
+bitmaps could overlap the block group descriptors and ext4 wouldn't
+notice.
 
-This addresses CVE-2018-10879.
+For file systems with the meta_bg feature enabled, there was a
+fencepost error which would cause the ext4_check_descriptors() to
+incorrectly believe that the block allocation bitmap overlaps with the
+block group descriptor blocks, and it would reject the mount.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200001
+Fix both of these problems.
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-[bwh: Backported to 3.16:
- - Add inode parameter to ext4_xattr_set_entry() and update callers
- - Return -EIO instead of -EFSCORRUPTED on error
- - Adjust context]
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -610,14 +610,20 @@ static size_t ext4_xattr_free_space(stru
- }
- 
- static int
--ext4_xattr_set_entry(struct ext4_xattr_info *i, struct ext4_xattr_search *s)
-+ext4_xattr_set_entry(struct ext4_xattr_info *i, struct ext4_xattr_search *s,
-+		     struct inode *inode)
- {
--	struct ext4_xattr_entry *last;
-+	struct ext4_xattr_entry *last, *next;
- 	size_t free, min_offs = s->end - s->base, name_len = strlen(i->name);
- 
- 	/* Compute min_offs and last. */
- 	last = s->first;
--	for (; !IS_LAST_ENTRY(last); last = EXT4_XATTR_NEXT(last)) {
-+	for (; !IS_LAST_ENTRY(last); last = next) {
-+		next = EXT4_XATTR_NEXT(last);
-+		if ((void *)next >= s->end) {
-+			EXT4_ERROR_INODE(inode, "corrupted xattr entries");
-+			return -EIO;
-+		}
- 		if (!last->e_value_block && last->e_value_size) {
- 			size_t offs = le16_to_cpu(last->e_value_offs);
- 			if (offs < min_offs)
-@@ -798,7 +804,7 @@ ext4_xattr_block_set(handle_t *handle, s
- 				ce = NULL;
- 			}
- 			ea_bdebug(bs->bh, "modifying in-place");
--			error = ext4_xattr_set_entry(i, s);
-+			error = ext4_xattr_set_entry(i, s, inode);
- 			if (!error) {
- 				if (!IS_LAST_ENTRY(s->first))
- 					ext4_xattr_rehash(header(s->base),
-@@ -851,7 +857,7 @@ ext4_xattr_block_set(handle_t *handle, s
- 		s->end = s->base + sb->s_blocksize;
- 	}
- 
--	error = ext4_xattr_set_entry(i, s);
-+	error = ext4_xattr_set_entry(i, s, inode);
- 	if (error == -EIO)
- 		goto bad_block;
- 	if (error)
-@@ -1021,7 +1027,7 @@ int ext4_xattr_ibody_inline_set(handle_t
- 
- 	if (EXT4_I(inode)->i_extra_isize == 0)
- 		return -ENOSPC;
--	error = ext4_xattr_set_entry(i, s);
-+	error = ext4_xattr_set_entry(i, s, inode);
- 	if (error) {
- 		if (error == -ENOSPC &&
- 		    ext4_has_inline_data(inode)) {
-@@ -1033,7 +1039,7 @@ int ext4_xattr_ibody_inline_set(handle_t
- 			error = ext4_xattr_ibody_find(inode, i, is);
- 			if (error)
- 				return error;
--			error = ext4_xattr_set_entry(i, s);
-+			error = ext4_xattr_set_entry(i, s, inode);
+ fs/ext4/super.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2086,7 +2086,7 @@ static int ext4_check_descriptors(struct
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
+ 	ext4_fsblk_t last_block;
+-	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
++	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0);
+ 	ext4_fsblk_t block_bitmap;
+ 	ext4_fsblk_t inode_bitmap;
+ 	ext4_fsblk_t inode_table;
+@@ -3987,6 +3987,7 @@ static int ext4_fill_super(struct super_
+ 			goto failed_mount2;
  		}
- 		if (error)
- 			return error;
-@@ -1059,7 +1065,7 @@ static int ext4_xattr_ibody_set(handle_t
+ 	}
++	sbi->s_gdb_count = db_count;
+ 	if (!ext4_check_descriptors(sb, logical_sb_block, &first_not_zeroed)) {
+ 		ext4_msg(sb, KERN_ERR, "group descriptors corrupted!");
+ 		goto failed_mount2;
+@@ -3999,7 +4000,6 @@ static int ext4_fill_super(struct super_
+ 			goto failed_mount2;
+ 		}
  
- 	if (EXT4_I(inode)->i_extra_isize == 0)
- 		return -ENOSPC;
--	error = ext4_xattr_set_entry(i, s);
-+	error = ext4_xattr_set_entry(i, s, inode);
- 	if (error)
- 		return error;
- 	header = IHDR(inode, ext4_raw_inode(&is->iloc));
+-	sbi->s_gdb_count = db_count;
+ 	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
+ 	spin_lock_init(&sbi->s_next_gen_lock);
+ 
 
