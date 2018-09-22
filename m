@@ -6,44 +6,55 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9262FECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E65ACECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F77208D9
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F77208D9
+	by mail.kernel.org (Postfix) with ESMTP id 91499208D9
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91499208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392312AbeIVGQJ (ORCPT
+        id S2403764AbeIVGQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:16:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44129 "EHLO
+        Sat, 22 Sep 2018 02:16:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44124 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391924AbeIVGKp (ORCPT
+        by vger.kernel.org with ESMTP id S2391744AbeIVGKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Sep 2018 02:10:45 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdv-0008BO-0d; Sat, 22 Sep 2018 01:19:27 +0100
+        id 1g3Vds-0008BY-Lt; Sat, 22 Sep 2018 01:19:24 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdp-0000uH-4Z; Sat, 22 Sep 2018 01:19:21 +0100
+        id 1g3Vdn-0000qb-EG; Sat, 22 Sep 2018 01:19:19 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Andy Lutomirski" <luto@amacapital.net>,
-        "Oleg Nesterov" <oleg@redhat.com>,
-        "Kees Cook" <keescook@chromium.org>
+CC:     akpm@linux-foundation.org,
+        "Mel Gorman" <mgorman@techsingularity.net>,
+        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
+        "Hugh Dickins" <hughd@google.com>, dave@stgolabs.net,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Chris Mason" <clm@fb.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Darren Hart" <dvhart@linux.intel.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Mel Gorman" <mgorman@suse.de>, "Chenbo Feng" <fengc@google.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Davidlohr Bueso" <dbueso@suse.de>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.25773851@decadent.org.uk>
+Message-ID: <lsq.1537575342.285933720@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 57/63] seccomp: add "seccomp" syscall
+Subject: [PATCH 3.16 12/63] futex: Remove requirement for lock_page() in
+ get_futex_key()
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,222 +68,201 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Mel Gorman <mgorman@suse.de>
 
-commit 48dc92b9fc3926844257316e75ba11eb5c742b2c upstream.
+commit 65d8fc777f6dcfee12785c057a6b57f679641c90 upstream.
 
-This adds the new "seccomp" syscall with both an "operation" and "flags"
-parameter for future expansion. The third argument is a pointer value,
-used with the SECCOMP_SET_MODE_FILTER operation. Currently, flags must
-be 0. This is functionally equivalent to prctl(PR_SET_SECCOMP, ...).
+When dealing with key handling for shared futexes, we can drastically reduce
+the usage/need of the page lock. 1) For anonymous pages, the associated futex
+object is the mm_struct which does not require the page lock. 2) For inode
+based, keys, we can check under RCU read lock if the page mapping is still
+valid and take reference to the inode. This just leaves one rare race that
+requires the page lock in the slow path when examining the swapcache.
 
-In addition to the TSYNC flag later in this patch series, there is a
-non-zero chance that this syscall could be used for configuring a fixed
-argument area for seccomp-tracer-aware processes to pass syscall arguments
-in the future. Hence, the use of "seccomp" not simply "seccomp_add_filter"
-for this syscall. Additionally, this syscall uses operation, flags,
-and user pointer for arguments because strictly passing arguments via
-a user pointer would mean seccomp itself would be unable to trivially
-filter the seccomp syscall itself.
+Additionally realtime users currently have a problem with the page lock being
+contended for unbounded periods of time during futex operations.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Reviewed-by: Andy Lutomirski <luto@amacapital.net>
+Task A
+     get_futex_key()
+     lock_page()
+    ---> preempted
+
+Now any other task trying to lock that page will have to wait until
+task A gets scheduled back in, which is an unbound time.
+
+With this patch, we pretty much have a lockless futex_get_key().
+
+Experiments show that this patch can boost/speedup the hashing of shared
+futexes with the perf futex benchmarks (which is good for measuring such
+change) by up to 45% when there are high (> 100) thread counts on a 60 core
+Westmere. Lower counts are pretty much in the noise range or less than 10%,
+but mid range can be seen at over 30% overall throughput (hash ops/sec).
+This makes anon-mem shared futexes much closer to its private counterpart.
+
+Signed-off-by: Mel Gorman <mgorman@suse.de>
+[ Ported on top of thp refcount rework, changelog, comments, fixes. ]
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Chris Mason <clm@fb.com>
+Cc: Darren Hart <dvhart@linux.intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: dave@stgolabs.net
+Link: http://lkml.kernel.org/r/1455045314-8305-3-git-send-email-dave@stgolabs.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Chenbo Feng <fengc@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: s/READ_ONCE/ACCESS_ONCE/]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/Kconfig                      |  1 +
- arch/x86/syscalls/syscall_32.tbl  |  1 +
- arch/x86/syscalls/syscall_64.tbl  |  1 +
- include/linux/syscalls.h          |  2 ++
- include/uapi/asm-generic/unistd.h |  4 ++-
- include/uapi/linux/seccomp.h      |  4 +++
- kernel/seccomp.c                  | 55 ++++++++++++++++++++++++++++---
- kernel/sys_ni.c                   |  3 ++
- 8 files changed, 65 insertions(+), 6 deletions(-)
+ kernel/futex.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 91 insertions(+), 7 deletions(-)
 
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -321,6 +321,7 @@ config HAVE_ARCH_SECCOMP_FILTER
- 	  - secure_computing is called from a ptrace_event()-safe context
- 	  - secure_computing return value is checked and a return value of -1
- 	    results in the system call being skipped immediately.
-+	  - seccomp syscall wired up
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -394,6 +394,7 @@ get_futex_key(u32 __user *uaddr, int fsh
+ 	unsigned long address = (unsigned long)uaddr;
+ 	struct mm_struct *mm = current->mm;
+ 	struct page *page, *page_head;
++	struct address_space *mapping;
+ 	int err, ro = 0;
  
- config SECCOMP_FILTER
- 	def_bool y
---- a/arch/x86/syscalls/syscall_32.tbl
-+++ b/arch/x86/syscalls/syscall_32.tbl
-@@ -360,3 +360,4 @@
- 351	i386	sched_setattr		sys_sched_setattr
- 352	i386	sched_getattr		sys_sched_getattr
- 353	i386	renameat2		sys_renameat2
-+354	i386	seccomp			sys_seccomp
---- a/arch/x86/syscalls/syscall_64.tbl
-+++ b/arch/x86/syscalls/syscall_64.tbl
-@@ -323,6 +323,7 @@
- 314	common	sched_setattr		sys_sched_setattr
- 315	common	sched_getattr		sys_sched_getattr
- 316	common	renameat2		sys_renameat2
-+317	common	seccomp			sys_seccomp
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -866,4 +866,6 @@ asmlinkage long sys_process_vm_writev(pi
- asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
- 			 unsigned long idx1, unsigned long idx2);
- asmlinkage long sys_finit_module(int fd, const char __user *uargs, int flags);
-+asmlinkage long sys_seccomp(unsigned int op, unsigned int flags,
-+			    const char __user *uargs);
- #endif
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -699,9 +699,11 @@ __SYSCALL(__NR_sched_setattr, sys_sched_
- __SYSCALL(__NR_sched_getattr, sys_sched_getattr)
- #define __NR_renameat2 276
- __SYSCALL(__NR_renameat2, sys_renameat2)
-+#define __NR_seccomp 277
-+__SYSCALL(__NR_seccomp, sys_seccomp)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 277
-+#define __NR_syscalls 278
- 
- /*
-  * All syscalls below here should go away really,
---- a/include/uapi/linux/seccomp.h
-+++ b/include/uapi/linux/seccomp.h
-@@ -10,6 +10,10 @@
- #define SECCOMP_MODE_STRICT	1 /* uses hard-coded filter. */
- #define SECCOMP_MODE_FILTER	2 /* uses user-supplied filter. */
- 
-+/* Valid operations for seccomp syscall. */
-+#define SECCOMP_SET_MODE_STRICT	0
-+#define SECCOMP_SET_MODE_FILTER	1
-+
- /*
-  * All BPF programs must return a 32-bit value.
-  * The bottom 16-bits are for optional return data.
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -18,6 +18,7 @@
- #include <linux/compat.h>
- #include <linux/sched.h>
- #include <linux/seccomp.h>
-+#include <linux/syscalls.h>
- 
- /* #define SECCOMP_DEBUG 1 */
- 
-@@ -314,7 +315,7 @@ free_prog:
-  *
-  * Returns 0 on success and non-zero otherwise.
-  */
--static long seccomp_attach_user_filter(char __user *user_filter)
-+static long seccomp_attach_user_filter(const char __user *user_filter)
- {
- 	struct sock_fprog fprog;
- 	long ret = -EFAULT;
-@@ -517,6 +518,7 @@ out:
- #ifdef CONFIG_SECCOMP_FILTER
- /**
-  * seccomp_set_mode_filter: internal function for setting seccomp filter
-+ * @flags:  flags to change filter behavior
-  * @filter: struct sock_fprog containing filter
-  *
-  * This function may be called repeatedly to install additional filters.
-@@ -527,11 +529,16 @@ out:
-  *
-  * Returns 0 on success or -EINVAL on failure.
-  */
--static long seccomp_set_mode_filter(char __user *filter)
-+static long seccomp_set_mode_filter(unsigned int flags,
-+				    const char __user *filter)
- {
- 	const unsigned long seccomp_mode = SECCOMP_MODE_FILTER;
- 	long ret = -EINVAL;
- 
-+	/* Validate flags. */
-+	if (flags != 0)
-+		goto out;
-+
- 	if (!seccomp_may_assign_mode(seccomp_mode))
- 		goto out;
- 
-@@ -544,12 +551,35 @@ out:
- 	return ret;
- }
- #else
--static inline long seccomp_set_mode_filter(char __user *filter)
-+static inline long seccomp_set_mode_filter(unsigned int flags,
-+					   const char __user *filter)
- {
- 	return -EINVAL;
- }
- #endif
- 
-+/* Common entry point for both prctl and syscall. */
-+static long do_seccomp(unsigned int op, unsigned int flags,
-+		       const char __user *uargs)
-+{
-+	switch (op) {
-+	case SECCOMP_SET_MODE_STRICT:
-+		if (flags != 0 || uargs != NULL)
-+			return -EINVAL;
-+		return seccomp_set_mode_strict();
-+	case SECCOMP_SET_MODE_FILTER:
-+		return seccomp_set_mode_filter(flags, uargs);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+SYSCALL_DEFINE3(seccomp, unsigned int, op, unsigned int, flags,
-+			 const char __user *, uargs)
-+{
-+	return do_seccomp(op, flags, uargs);
-+}
-+
- /**
-  * prctl_set_seccomp: configures current->seccomp.mode
-  * @seccomp_mode: requested mode to use
-@@ -559,12 +589,27 @@ static inline long seccomp_set_mode_filt
-  */
- long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
- {
-+	unsigned int op;
-+	char __user *uargs;
-+
- 	switch (seccomp_mode) {
- 	case SECCOMP_MODE_STRICT:
--		return seccomp_set_mode_strict();
-+		op = SECCOMP_SET_MODE_STRICT;
-+		/*
-+		 * Setting strict mode through prctl always ignored filter,
-+		 * so make sure it is always NULL here to pass the internal
-+		 * check in do_seccomp().
-+		 */
-+		uargs = NULL;
-+		break;
- 	case SECCOMP_MODE_FILTER:
--		return seccomp_set_mode_filter(filter);
-+		op = SECCOMP_SET_MODE_FILTER;
-+		uargs = filter;
-+		break;
- 	default:
- 		return -EINVAL;
+ 	/*
+@@ -472,7 +473,19 @@ again:
  	}
-+
-+	/* prctl interface doesn't have flags, so they are always zero. */
-+	return do_seccomp(op, 0, uargs);
- }
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -213,3 +213,6 @@ cond_syscall(compat_sys_open_by_handle_a
+ #endif
  
- /* compare kernel pointers */
- cond_syscall(sys_kcmp);
+-	lock_page(page_head);
++	/*
++	 * The treatment of mapping from this point on is critical. The page
++	 * lock protects many things but in this context the page lock
++	 * stabilizes mapping, prevents inode freeing in the shared
++	 * file-backed region case and guards against movement to swap cache.
++	 *
++	 * Strictly speaking the page lock is not needed in all cases being
++	 * considered here and page lock forces unnecessarily serialization
++	 * From this point on, mapping will be re-verified if necessary and
++	 * page lock will be acquired only if it is unavoidable
++	 */
 +
-+/* operate on Secure Computing state */
-+cond_syscall(sys_seccomp);
++	mapping = ACCESS_ONCE(page_head->mapping);
+ 
+ 	/*
+ 	 * If page_head->mapping is NULL, then it cannot be a PageAnon
+@@ -489,18 +502,31 @@ again:
+ 	 * shmem_writepage move it from filecache to swapcache beneath us:
+ 	 * an unlikely race, but we do need to retry for page_head->mapping.
+ 	 */
+-	if (!page_head->mapping) {
+-		int shmem_swizzled = PageSwapCache(page_head);
++	if (unlikely(!mapping)) {
++		int shmem_swizzled;
++
++		/*
++		 * Page lock is required to identify which special case above
++		 * applies. If this is really a shmem page then the page lock
++		 * will prevent unexpected transitions.
++		 */
++		lock_page(page);
++		shmem_swizzled = PageSwapCache(page) || page->mapping;
+ 		unlock_page(page_head);
+ 		put_page(page_head);
++
+ 		if (shmem_swizzled)
+ 			goto again;
++
+ 		return -EFAULT;
+ 	}
+ 
+ 	/*
+ 	 * Private mappings are handled in a simple way.
+ 	 *
++	 * If the futex key is stored on an anonymous page, then the associated
++	 * object is the mm which is implicitly pinned by the calling process.
++	 *
+ 	 * NOTE: When userspace waits on a MAP_SHARED mapping, even if
+ 	 * it's a read-only handle, it's expected that futexes attach to
+ 	 * the object not the particular process.
+@@ -518,16 +544,74 @@ again:
+ 		key->both.offset |= FUT_OFF_MMSHARED; /* ref taken on mm */
+ 		key->private.mm = mm;
+ 		key->private.address = address;
++
++		get_futex_key_refs(key); /* implies smp_mb(); (B) */
++
+ 	} else {
++		struct inode *inode;
++
++		/*
++		 * The associated futex object in this case is the inode and
++		 * the page->mapping must be traversed. Ordinarily this should
++		 * be stabilised under page lock but it's not strictly
++		 * necessary in this case as we just want to pin the inode, not
++		 * update the radix tree or anything like that.
++		 *
++		 * The RCU read lock is taken as the inode is finally freed
++		 * under RCU. If the mapping still matches expectations then the
++		 * mapping->host can be safely accessed as being a valid inode.
++		 */
++		rcu_read_lock();
++
++		if (ACCESS_ONCE(page_head->mapping) != mapping) {
++			rcu_read_unlock();
++			put_page(page_head);
++
++			goto again;
++		}
++
++		inode = ACCESS_ONCE(mapping->host);
++		if (!inode) {
++			rcu_read_unlock();
++			put_page(page_head);
++
++			goto again;
++		}
++
++		/*
++		 * Take a reference unless it is about to be freed. Previously
++		 * this reference was taken by ihold under the page lock
++		 * pinning the inode in place so i_lock was unnecessary. The
++		 * only way for this check to fail is if the inode was
++		 * truncated in parallel so warn for now if this happens.
++		 *
++		 * We are not calling into get_futex_key_refs() in file-backed
++		 * cases, therefore a successful atomic_inc return below will
++		 * guarantee that get_futex_key() will still imply smp_mb(); (B).
++		 */
++		if (WARN_ON_ONCE(!atomic_inc_not_zero(&inode->i_count))) {
++			rcu_read_unlock();
++			put_page(page_head);
++
++			goto again;
++		}
++
++		/* Should be impossible but lets be paranoid for now */
++		if (WARN_ON_ONCE(inode->i_mapping != mapping)) {
++			err = -EFAULT;
++			rcu_read_unlock();
++			iput(inode);
++
++			goto out;
++		}
++
+ 		key->both.offset |= FUT_OFF_INODE; /* inode-based key */
+-		key->shared.inode = page_head->mapping->host;
++		key->shared.inode = inode;
+ 		key->shared.pgoff = basepage_index(page);
++		rcu_read_unlock();
+ 	}
+ 
+-	get_futex_key_refs(key); /* implies MB (B) */
+-
+ out:
+-	unlock_page(page_head);
+ 	put_page(page_head);
+ 	return err;
+ }
 
