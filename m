@@ -2,98 +2,96 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D68ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 566ACC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11927208D9
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:24:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11927208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 0FA1420870
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:24:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="wqnCHWWy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA1420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392275AbeIVGPf (ORCPT
+        id S2392186AbeIVGPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:15:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44167 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391937AbeIVGKp (ORCPT
+        Sat, 22 Sep 2018 02:15:53 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45040 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391689AbeIVGPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:10:45 -0400
-Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdv-0008BS-5d; Sat, 22 Sep 2018 01:19:27 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdo-0000tx-Vr; Sat, 22 Sep 2018 01:19:20 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sat, 22 Sep 2018 02:15:52 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 36-v6so14666860oth.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FzKt0H2ASyMiPG5GQif8m/Z16u/iKRM6Kn8x29FcSMs=;
+        b=wqnCHWWyinc9sruuvoNgd7Qt0W+kTlu5uCyNCV6I2tdCwwL166ufg4VdXoS30otW6B
+         7XFnIyT+9mP2Tdvi1L+wUEs6iDlFeeilcM+1MXB+tAhWpMtykn9DVuWk+mkKisdxLu8a
+         SIKY0Qrf1Cj7pTUQVK9j1Pjll00UT6Nb4agIUao4tK1EHPzhZ9Vpdrr5bsbfMVrzGVZt
+         GEFTlcXRlc4amqSGOPkWqyUOAn05fJFG6j3etfRaIRMSCE1N/iVBKoMLr1AdFiCLYxfV
+         Si5d1QYVadFxTWyygSv1F7SsSVYbF8HUnx3xwDkqiKJLWoW1wYPLHnHHxYgKcUUaRTxU
+         g3/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FzKt0H2ASyMiPG5GQif8m/Z16u/iKRM6Kn8x29FcSMs=;
+        b=TxpCuLafBSYE/zzg7/Gr3+iQH5epYk501hLQ6p5Mw+Lp4TfLV+gxauj90AYvTzMbLR
+         hmJo9L6d0Zgy3ukNKqD8OFNUWuKBDFlIT6EBv1TIxtfEX8UjryKX22W2xx+QiKthTwg3
+         p7xZVWCG4u3L1NQ6px6aYLkbyLNBH345ez9QTvlPSbReT1uzVx8P66Y8hhBHom9fVLPm
+         GeTrV7Sg152kA1kaXcusclmm9TQQ9Ny1Nx4c3NtmYbx8nRt9iZsTm4IXYUWY1EoYDJj5
+         071AsjzOb1ym1dj3K4nxWNNVdAMO6z4kuFb4lPoM5x6cSmA/EP7JVw0vo5klMD+z2Wua
+         z/aQ==
+X-Gm-Message-State: ABuFfoh4XzHHVNJeFehV7vrkyU85N+Yq68+a6BOtprDqS1OPA4D22PW9
+        zcQXtoJmQjujZeoz/NkgVbQ6MlDhGaCK0bYwLB7e4g==
+X-Google-Smtp-Source: ACcGV63HVdzGjn1uIJvedQNRtjRFBl3QtiNaYet2CoYdxyqLfpvIWVd+buS5a+4Gift83Qwm+T2W/eNGb9Q2Iaw6iHY=
+X-Received: by 2002:a9d:50ac:: with SMTP id b44-v6mr93472oth.267.1537575873762;
+ Fri, 21 Sep 2018 17:24:33 -0700 (PDT)
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Eric Sandeen" <sandeen@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Eric Sandeen" <sandeen@sandeen.net>, "Xu, Wen" <wen.xu@gatech.edu>
-Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.901442804@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 53/63] xfs: don't call xfs_da_shrink_inode with NULL bp
-In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+References: <20180919125848.6570-1-pagupta@redhat.com>
+In-Reply-To: <20180919125848.6570-1-pagupta@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 21 Sep 2018 17:24:21 -0700
+Message-ID: <CAPcyv4hnFHySmhiBeiYKNsCq0xmbqOXp6LWvUpnGHo+zAA=TUg@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm: remove duplicate include
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        zwisler@kernel.org, Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.58-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed, Sep 19, 2018 at 5:59 AM Pankaj Gupta <pagupta@redhat.com> wrote:
+>
+> Removed duplicate include.
+>
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> ---
+>  drivers/nvdimm/nd-core.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/nvdimm/nd-core.h b/drivers/nvdimm/nd-core.h
+> index ac68072fb8cd..182258f64417 100644
+> --- a/drivers/nvdimm/nd-core.h
+> +++ b/drivers/nvdimm/nd-core.h
+> @@ -14,7 +14,6 @@
+>  #define __ND_CORE_H__
+>  #include <linux/libnvdimm.h>
+>  #include <linux/device.h>
+> -#include <linux/libnvdimm.h>
+>  #include <linux/sizes.h>
+>  #include <linux/mutex.h>
+>  #include <linux/nd.h>
 
-------------------
-
-From: Eric Sandeen <sandeen@sandeen.net>
-
-commit bb3d48dcf86a97dc25fe9fc2c11938e19cb4399a upstream.
-
-xfs_attr3_leaf_create may have errored out before instantiating a buffer,
-for example if the blkno is out of range.  In that case there is no work
-to do to remove it, and in fact xfs_da_shrink_inode will lead to an oops
-if we try.
-
-This also seems to fix a flaw where the original error from
-xfs_attr3_leaf_create gets overwritten in the cleanup case, and it
-removes a pointless assignment to bp which isn't used after this.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199969
-Reported-by: Xu, Wen <wen.xu@gatech.edu>
-Tested-by: Xu, Wen <wen.xu@gatech.edu>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-[bwh: Backported to 3.16: adjust filename]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/xfs/xfs_attr_leaf.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
---- a/fs/xfs/xfs_attr_leaf.c
-+++ b/fs/xfs/xfs_attr_leaf.c
-@@ -701,9 +701,8 @@ xfs_attr_shortform_to_leaf(xfs_da_args_t
- 	ASSERT(blkno == 0);
- 	error = xfs_attr3_leaf_create(args, blkno, &bp);
- 	if (error) {
--		error = xfs_da_shrink_inode(args, 0, bp);
--		bp = NULL;
--		if (error)
-+		/* xfs_attr3_leaf_create may not have instantiated a block */
-+		if (bp && (xfs_da_shrink_inode(args, 0, bp) != 0))
- 			goto out;
- 		xfs_idata_realloc(dp, size, XFS_ATTR_FORK);	/* try to put */
- 		memcpy(ifp->if_u1.if_data, tmpbuffer, size);	/* it back */
-
+Looks good, applied.
