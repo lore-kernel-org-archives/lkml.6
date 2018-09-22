@@ -2,94 +2,109 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F5AC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 12:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B29C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 12:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA46A21522
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 12:51:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA46A21522
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9FB4A21522
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 12:53:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TrcaWdiq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB4A21522
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbeIVSpB convert rfc822-to-8bit (ORCPT
+        id S1731543AbeIVSq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 14:45:01 -0400
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:40590 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728934AbeIVSpB (ORCPT
+        Sat, 22 Sep 2018 14:46:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45578 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729017AbeIVSq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 14:45:01 -0400
-Received: from [10.145.248.251] (82-132-247-97.dab.02.net [82.132.247.97])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id A78299E7639;
-        Sat, 22 Sep 2018 13:51:29 +0100 (BST)
-Date:   Sat, 22 Sep 2018 13:51:22 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180922114849.GA3890@himanshu-Vostro-3559>
-References: <1537447238-18674-2-git-send-email-eugen.hristev@microchip.com> <201809211544.zop1vk8B%fengguang.wu@intel.com> <20180922113616.2d849fb0@archlinux> <20180922114849.GA3890@himanshu-Vostro-3559>
+        Sat, 22 Sep 2018 14:46:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/bjpq5o0/XFTnrSqFgRMHoX4x0Y5+DaI95cP+reMwVA=; b=TrcaWdiqUiABPMmkd8Flfefiv
+        eYNJUrdVABYoa8PooinxlfNQ8+214Y5PD414zWFGzCJ6zwzuxov3QVrm3jHmfeUL60YNlkKi8lhII
+        UbnftpJZkmvQuHRXSEFuXmgB85IiLiiJ7oqrzuMXl9UowN21LOimOaKy9/RIOPh/whvJXRdjjiNcj
+        0eevkL+r6FHSlmAXbx/AdrPBVzED4I/FtT4KGCvAHOVwp4IMw3AlaaQbAe/kqr61BfpfsRj7GS4ft
+        Pxr8BK3vnzfmtxPNTr6guc7wv90bIqbYu8czyTM6HpenVDSzB4v7DtaZRj2+MecDDFk4hFiRgP8DB
+        PO/1F690Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g3hP6-0007Z7-Nw; Sat, 22 Sep 2018 12:52:56 +0000
+Date:   Sat, 22 Sep 2018 05:52:56 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dhaval Giani <dhaval.giani@gmail.com>
+Cc:     alexander.levin@microsoft.com, LKML <linux-kernel@vger.kernel.org>,
+        gregkh@linuxfoundation.org, alice.ferrazzi@gmail.com,
+        Kevin Hilman <khilman@baylibre.com>,
+        Tim Bird <tbird20d@gmail.com>, dvyukov@google.com,
+        Laura Abbott <labbott@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        gustavo.padovan@collabora.co.uk,
+        "Carpenter,Dan" <dan.carpenter@oracle.com>, knut.omang@oracle.com
+Subject: Re: [Announce] LPC 2018: Testing and Fuzzing Microconference
+Message-ID: <20180922125256.GB14042@bombadil.infradead.org>
+References: <CAPhKKr_XFzGcBBuQ51w7HjZd_Kq3nTOB6uAFG2vP5JH+Vx_eng@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 2/2] iio: adc: at91: fix wrong channel number in triggered buffer mode
-To:     Himanshu Jha <himanshujha199640@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>
-CC:     Eugen Hristev <eugen.hristev@microchip.com>,
-        ludovic.desroches@microchip.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, nicolas.ferre@microchip.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Message-ID: <83D84516-8721-4712-B24B-7B1199FAFCC4@jic23.retrosnub.co.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPhKKr_XFzGcBBuQ51w7HjZd_Kq3nTOB6uAFG2vP5JH+Vx_eng@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 19, 2018 at 10:13:15AM -0700, Dhaval Giani wrote:
+> Sasha and I are pleased to announce the Testing and Fuzzing track at
+> LPC [ 1 ]. We are planning to continue the discussions from last
+> year's microconference [2]. Many discussions from the Automated
+> Testing Summit [3] will also continue, and a final agenda will come up
+> only soon after that.
+> 
+> Suggested Topics
+> 
+> - Syzbot/syzkaller
+> - ATS
+> - Distro/stable testing
+> - kernelci
+> - kernelci auto bisection
+> - Unit testing framework
+> 
+> We look forward to other interesting topics for this microconference
+> as a reply to this email.
 
+I would like to talk about the IDA test suite that was recently merged.
+See lib/test_ida.c.  It can be built as a module (CONFIG_TEST_IDA=m),
+built-in (=y) or built in userspace (as part of the radix tree test
+suite for historical reasons) along with the current kernel code.
 
-On 22 September 2018 12:48:49 BST, Himanshu Jha <himanshujha199640@gmail.com> wrote:
->On Sat, Sep 22, 2018 at 11:36:16AM +0100, Jonathan Cameron wrote:
->> On Fri, 21 Sep 2018 15:26:03 +0800
->> kbuild test robot <lkp@intel.com> wrote:
->> 
->> > Hi Eugen,
->> This one is leaving me stumped...
->> 
->> Anyone care to point out what I'm missing that is wrong here?
->> 
->> Also Eugen, please don't cc stable on a patch directly.  It is fine
->to send
->> a backport request once a patch has hit mainline, but before that
->it's just
->> adding noise to a list as they won't take it directly anyway.
->
->Song is correct on this one.
->
->So, just replace the declaration to:
->
->	struct iio_chan_spec const *chan;
->
->and then warning goes away...
+Being able to build the test suite in userspace allows for much more
+rapid development.  Building it in kernel space offers testing across
+a wide range of configurations that I don't have access to and can't
+necessarily simulate well in userspace.
 
-Good point. Not enough coffee this morning..
+My userspace implementation of kmalloc() simulates failures (in a rather
+heavy-handed way; every non-GFP_KERNEL allocation fails).  That's rather
+harder to simulate in kernel space.  I'd like there to be a way for a
+kernel space test suite to ask for kmalloc failures so that the failure
+paths can be tested.
 
-Obvious now :)
->
->Another thing, its better not to reply the automated bot and instead to
->the author by changing "From" address. :)
->
->That is what I do often when replying to that thread.
->
->https://lore.kernel.org/lkml/20180921182616.GA2077@himanshu-Vostro-3559/
->
->And it nests properly in the given thread avoiding any noise to kbuild
->bot.
+I think the idea of building parts of the core kernel libraries in
+userspace and testing them there has greater generality than just the
+IDA, IDR, XArray & radix tree and might profitably be adopted by other
+parts of lib/.  The userspace simulation of other parts of the kernel
+may well need to be extended.
 
+I'd also like to do at least kernel-space testing of the page cache.
+I have some ideas around that too, but I don't know if they're
+sufficiently far advanced to talk about in November.
 
-
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
