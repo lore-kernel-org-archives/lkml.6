@@ -2,118 +2,93 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86683C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 18:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96B6C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 18:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0102154F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 18:03:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3Gzm9Pq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D0102154F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AE1EB2150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 18:17:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE1EB2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbeIVX6U (ORCPT
+        id S1727736AbeIWAL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 19:58:20 -0400
-Received: from mail-pl1-f178.google.com ([209.85.214.178]:42023 "EHLO
-        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbeIVX6U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 19:58:20 -0400
-Received: by mail-pl1-f178.google.com with SMTP id x20-v6so1810247pln.9;
-        Sat, 22 Sep 2018 11:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lqP/ScYapj5ZfNKVjpnLFuNrpq7uJNpLbuU2p/3GcmA=;
-        b=H3Gzm9PqUGF5ayx+XflYECLGO52qf164vD42x/RFjWemYoE23AKcWM4a0dt91X4ntt
-         QQEF87unSzo/fgitsusyazPA43ECiENmAUdpIoJe9v9BSeh/Yh6R8/UAMVghRFOnc+3k
-         ricXZvNCdR/qmw33tdaHGkNLTeunth0NB6SfnG7mL/4BO2K9IlWuqkMl17O9fF5kKgVV
-         9gDQV88gUnSQFAD/Fi1I34Zwj6C4qO/KUOHiAPdKokeBfA82wDVfaAHJ5KAtyWMuEart
-         MsgnVpZWW4EBJNNFfp3/Un6yHhxMxxrTWkbbk23elbbt7Y0LtRUpv0JmGu0w2pQiiPWx
-         A0BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lqP/ScYapj5ZfNKVjpnLFuNrpq7uJNpLbuU2p/3GcmA=;
-        b=Gfx0ABhzaY3Xbc1PuzUYFofQXBm4oQWsF/KRw5LdVsZwdcj9pQDjXN4BMj1hLvnTrY
-         nBlol8Uezq+g3G9kCL5GoM6Qj/fqKMcF1MCcbMLuJPObdRJfA719Cwi3MFs1Jr7MtAFu
-         ktD+Ii65ytGEyzzO2kxJe48QJJISZmAbTNT0sRCQo1aBnSBhR5GpkLndXhRBIY/r2ckI
-         iV2jKShQsdF+JqHR04bIRYLP9P780ZTuSB3OggZ4qY/P9aOzN6numoVEPrQQS89sDIt5
-         zxyR9qY6TW2cO1gCzo9Aj2RFz01N8mootIdBL28YJzXp+Qwk2UCHxZgMJjmzbSgldS6k
-         X4JA==
-X-Gm-Message-State: ABuFfohJQW/Dox7sFQEQUxcyVP34qQywx6FKMHIKleaFI/WaADLo/rbh
-        whqaBNXG3yuffag/K/6amOU=
-X-Google-Smtp-Source: ACcGV630QNCwI1BjY7mYGaeJPT9l8ybAQtSV19gqPONA8taXzhjl9+CAlrbt0hR/C1kIZ7O02nbkrg==
-X-Received: by 2002:a17:902:263:: with SMTP id 90-v6mr3505468plc.190.1537639434495;
-        Sat, 22 Sep 2018 11:03:54 -0700 (PDT)
-Received: from Asurada (c-73-231-2-134.hsd1.ca.comcast.net. [73.231.2.134])
-        by smtp.gmail.com with ESMTPSA id n22-v6sm59896521pfj.68.2018.09.22.11.03.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 11:03:54 -0700 (PDT)
-Date:   Sat, 22 Sep 2018 11:03:48 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: Add ina3221 documentation
-Message-ID: <20180922180348.GA9092@Asurada>
-References: <20180921223216.634-1-nicoleotsuka@gmail.com>
- <20180921223216.634-2-nicoleotsuka@gmail.com>
- <3c117b80-f671-1e57-6eab-3d9801b4b889@roeck-us.net>
+        Sat, 22 Sep 2018 20:11:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35137 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbeIWAL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 20:11:57 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 955A1208C7; Sat, 22 Sep 2018 20:17:27 +0200 (CEST)
+Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6443E204AE;
+        Sat, 22 Sep 2018 20:17:17 +0200 (CEST)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH 0/6] Add CPU clock support for Armada 7K/8K
+Date:   Sat, 22 Sep 2018 20:17:03 +0200
+Message-Id: <20180922181709.13007-1-gregory.clement@bootlin.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c117b80-f671-1e57-6eab-3d9801b4b889@roeck-us.net>
-User-Agent: Mutt/1.5.22 (2013-10-16)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >+2) child nodes
-> >+  The names of child nodes should indicate input source names
-> >+
-> >+  Required properties:
-> >+  - input-id: Must be 1, 2 or 3
-> >+
-> >+  Optional properties:
-> >+  - shunt-resistor: Shunt resistor value in micro-Ohm
-> >+  - status: Should be "disabled" if no input source
-> >+
-> >+  Example:
-> >+
-> >+  input1 {
-> >+          input-id = <0x1>;
-> >+          status = "disabled";
-> >+  };
-> >+  VDD_GPU {
-> >+          input-id = <0x2>;
-> >+          shunt-resistor = <5000>;
-> >+  };
-> >
-> 
-> Using child nodes is a good idea. However, you are converting the node name into
-> the hwmon 'label' attribute which I can not accept. First, it is undocumented,
-> second, it effectively creates an undocumented property (if one wants to configure
-> the shunt resistor value, one has to configure a child node which is converted
-> into a label), and third, it violates the hwmon ABI ('input1' is not a "hint
-> about what this voltage channel is being used for").
+Hello,
 
-Oh. I see the point here now. Then a child name could be just input[123],
-and I will add a separate optional child property to indicate the label.
+This series allows to mange the cpu clock for Armada 7K/8K. For these
+SoCs, the CPUs share the same clock by cluster, so actually the clock
+management is done at cluster level.
 
-Will fix it in next ver.
+As for the other Armada 7K/8K clocks it is possible to have multiple
+AP so here again we need to have unique name: the purpose of the second
+patch is to share a common code which will be used in 3 drivers.
 
-Thanks
-Nicolin
+The last 2 patch enable the driver at dt and platform level and will
+be applied through the mvebu subsystem.
+
+Gregory
+
+Gregory CLEMENT (6): dt-bindings: ap806: add the cluster clock node in
+  the syscon file clk: mvebu: add helper file for Armada AP and CP
+  clocks clk: mvebu: add CPU clock driver for Armada 7K/8K clk: mvebu:
+  ap806: Fix clock name for the cluster arm64: marvell: enable the
+  Armada 7K/8K CPU clk driver arm64: dts: marvell: Add cpu clock node
+  on Armada 7K/8K
+
+ .../arm/marvell/ap806-system-controller.txt   |  22 ++
+ arch/arm64/Kconfig.platforms                  |   1 +
+ .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   6 +
+ drivers/clk/mvebu/Kconfig                     |   8 +
+ drivers/clk/mvebu/Makefile                    |   2 +
+ drivers/clk/mvebu/ap-cpu-clk.c                | 265 ++++++++++++++++++
+ drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
+ drivers/clk/mvebu/armada_ap_cp_helper.c       |  28 ++
+ drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
+ drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
+ 11 files changed, 361 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
+
+-- 
+2.19.0
+
