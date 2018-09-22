@@ -2,107 +2,106 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9067DC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E284ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 244202150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:05:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="13RaEpHl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244202150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 30DDC2150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:11:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DDC2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbeIWCA2 (ORCPT
+        id S1728143AbeIWCGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 22:00:28 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54144 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727299AbeIWCA2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 22:00:28 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8MK4DxC069907;
-        Sat, 22 Sep 2018 20:05:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=HjQEFozZzOKtU/pxThogFkZbHtcpTMfSXFOAXXJokok=;
- b=13RaEpHl6Tzt2w9R0yvd2l4LUYzBk+hAErxIXWGflgV7DOBxRufkSLA1kfIGa/qGo9jh
- PViGvaRBlJXwsj+ymrgfcTUAhSulY8x1/msKQsf3Yam3Ahw8mWr1fRZufVQlI2goqzV7
- oC4RY8Y6KmuaCatVhDoyDJz6yeuFPMQPVI7ZLy10Y3noBx3NQH8Vu6eG5EfBiRDHVicG
- g2PKIgdvO1FNNXQW+ENOVsispNCs1OCV1BMP3hDqvZ1HFjd+cWRR57F3FgxrkgqWzRns
- WiGTNc4sYFD5I6ASRdfb9CE7mGhjamKMW6mUWsx/ft9V9vysJYlQWWDX8DkrP0U8mOkr 7Q== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2mnd5t19vu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 22 Sep 2018 20:05:34 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8MK5SVt005739
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 22 Sep 2018 20:05:28 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8MK5QO9028384;
-        Sat, 22 Sep 2018 20:05:26 GMT
-Received: from dhcp-10-152-34-93.usdhcp.oraclecorp.com.com (/10.152.34.93)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 22 Sep 2018 13:05:26 -0700
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To:     jgross@suse.com, konrad.wilk@oracle.com, roger.pau@citrix.com,
-        axboe@kernel.dk
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH] xen/blkfront: When purging persistent grants, keep them in the buffer
-Date:   Sat, 22 Sep 2018 15:55:49 -0400
-Message-Id: <20180922195549.27953-1-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9024 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=11 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=634
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809220212
+        Sat, 22 Sep 2018 22:06:17 -0400
+Received: from mout.gmx.net ([212.227.17.21]:33705 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726530AbeIWCGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 22:06:17 -0400
+Received: from eddi-vb.fritz.box ([87.123.147.0]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0Lu3J4-1fbfCu2kkQ-011UNM; Sat, 22
+ Sep 2018 22:11:22 +0200
+From:   Tobias Herzog <t-herzog@gmx.de>
+To:     oneukum@suse.com
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] cdc-acm: correct counting of UART states in serial state notification
+Date:   Sat, 22 Sep 2018 22:11:11 +0200
+Message-Id: <1537647071-2691-2-git-send-email-t-herzog@gmx.de>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1537647071-2691-1-git-send-email-t-herzog@gmx.de>
+References: <1537647071-2691-1-git-send-email-t-herzog@gmx.de>
+X-Provags-ID: V03:K1:gc6QyhSN4lrE2w2RWYzmeku1QWXlsgnwM2F57BhUxmEAw6Z2H/U
+ y5u76mHGq+HfHdWAnSEaur/sT3gNsByc6SCbnTpicHgN/bUfQIu9RevqT4zv5HRkOVtZ9G/
+ mkoULQKsrO9RZB8ZfnYpw101yMfdWXNnk5g7KiNiilVO64YQKur9LQWGQrEnpcqsChjD67y
+ ML7yHd4IGejzQhHuOhW1A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:0Dn1hDfOdGY=:S+OAmYK7zq6snhfY9boi1l
+ FDWuO7zFzMhI7jN0g5nELj9REJa+G0TwHGdXUf0IVXw7kF8ZTxga0wW9sr9AEurVuiUcrIt6r
+ 8Rb9YcfyYXoltkrCOqF3nwfstUo99TWck+WkIAJSqe4xol2O6n4xSJI+kw+v/oi1Mcqs5K5R5
+ a7O8bQDw6OUYeHjttsF5uo0CP7CE8gfIDYsiLkXjrx+P64SDLly/WLSkEC2NyqoWDCih6d72H
+ fTvunYilb8q9Rc4VRtzCQJRFh4ZsZRR+oM42AaN5oirau7Ofop1vXmaQ4qDPforKoeAHiFJcZ
+ MpAK3cyybNEsAwitB2lLg6Yw5G6kfEgW28sy0wFB6mxe9coaTsTAFQmUbFFjFGZQthGIryWIb
+ 589H/iRsPrCKCBYXaijdvM5OYzPKi2hWVs4o5o14efSIkXBE6AYPZqA2JUfoZ1pRixhuyuiLk
+ EUhbOcZtW7qTsegeb8Y1S/HOSwOfWubE44UuQi5/QQVok6AsvRD8P/rxnvBiX9WaeXrvQtsEV
+ rss2PvguE5u3wRMxy/i8j0CyZyiWxv0qn7ZWtsGfbs7GLJrdHJhgD/I6ufGZ4Utn1CWGscQAg
+ tbf+9YVdd1lMowsbEk8NQMpx1NsmhbrMLkXFLDgNMhlE0cguy2GTpAaSkGA1jiWalirt/K8n2
+ mZsyFIzes7fjVd+PhkXT8wkPIhjW5DnGt5GhEDBM1I7dtEhlE8WSH8alCOfioQE0aftYziU//
+ o9x9QgRsub7Fpj+4zDHYR8YM76j1lCWih0uR6ASiB/CxrjRHKbXXpb+lazpQyBNrblTxwYUjm
+ WRDh5mZQghU+ZW+AJR6X7+Q88hc9w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
-added support for purging persistent grants when they are not in use. As
-part of the purge, the grants were removed from the grant buffer, This
-eventually causes the buffer to become empty, with BUG_ON triggered in
-get_free_grant(). This can be observed even on an idle system, within
-20-30 minutes.
+The usb standard ("Universal Serial Bus Class Definitions for Communication
+Devices") distiguishes between "consistent signals" (DSR, DCD), and
+"irregular signals" (break, ring, parity error, framing error, overrun).
+The bits of "irregular signals" are set, if this error/event occurred on
+the device side and are immeadeatly unset, if the serial state notification
+was sent.
+Like other drivers of real serial ports do, just the occurence of those
+events should be counted in serial_icounter_struct (but no 1->0
+transitions).
 
-We should keep the grants in the buffer when purging, and only free the
-grant ref.
-
-Fixes: a46b53672b2c ("xen/blkfront: cleanup stale persistent grants")
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Tobias Herzog <t-herzog@gmx.de>
 ---
- drivers/block/xen-blkfront.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/usb/class/cdc-acm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index a71d817e900d..3b441fe69c0d 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -2667,11 +2667,9 @@ static void purge_persistent_grants(struct blkfront_info *info)
- 			    gnttab_query_foreign_access(gnt_list_entry->gref))
- 				continue;
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 50339ca..187f386 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -310,17 +310,17 @@ static void acm_process_notification(struct acm *acm, unsigned char *buf)
  
--			list_del(&gnt_list_entry->node);
- 			gnttab_end_foreign_access(gnt_list_entry->gref, 0, 0UL);
-+			gnt_list_entry->gref = GRANT_INVALID_REF;
- 			rinfo->persistent_gnts_c--;
--			__free_page(gnt_list_entry->page);
--			kfree(gnt_list_entry);
- 		}
+ 		if (difference & ACM_CTRL_DSR)
+ 			acm->iocount.dsr++;
+-		if (difference & ACM_CTRL_BRK)
+-			acm->iocount.brk++;
+-		if (difference & ACM_CTRL_RI)
+-			acm->iocount.rng++;
+ 		if (difference & ACM_CTRL_DCD)
+ 			acm->iocount.dcd++;
+-		if (difference & ACM_CTRL_FRAMING)
++		if (newctrl & ACM_CTRL_BRK)
++			acm->iocount.brk++;
++		if (newctrl & ACM_CTRL_RI)
++			acm->iocount.rng++;
++		if (newctrl & ACM_CTRL_FRAMING)
+ 			acm->iocount.frame++;
+-		if (difference & ACM_CTRL_PARITY)
++		if (newctrl & ACM_CTRL_PARITY)
+ 			acm->iocount.parity++;
+-		if (difference & ACM_CTRL_OVERRUN)
++		if (newctrl & ACM_CTRL_OVERRUN)
+ 			acm->iocount.overrun++;
+ 		spin_unlock_irqrestore(&acm->read_lock, flags);
  
- 		spin_unlock_irqrestore(&rinfo->ring_lock, flags);
 -- 
-2.17.0
+2.1.4
 
