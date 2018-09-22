@@ -2,195 +2,162 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A11EECE562
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 02:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF41ECE562
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 02:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C64EA21569
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 02:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 363E121569
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 02:43:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ltBWC4D1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C64EA21569
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BM/5Cfk2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363E121569
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbeIVIVl (ORCPT
+        id S1726011AbeIVIfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 04:21:41 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46578 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeIVIVk (ORCPT
+        Sat, 22 Sep 2018 04:35:10 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:40671 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbeIVIfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 04:21:40 -0400
-Received: by mail-pg1-f194.google.com with SMTP id b129-v6so6809569pga.13
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 19:29:55 -0700 (PDT)
+        Sat, 22 Sep 2018 04:35:10 -0400
+Received: by mail-yw1-f68.google.com with SMTP id z143-v6so5967803ywa.7
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 19:43:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GcNLB+YtZFGEqQrGiujLOYSVXkHIzNgch1okFqFaDiY=;
-        b=ltBWC4D1HBoEilJRtwQCtcZE+RMQW55nzzD92WHqXkSNiGBkQWg/M3zDqrS5C7TIrw
-         prZOimq7wp5sEVIMlHIgad0FrEqUOg8JvlUkuQO7V57ZtdN6KlYzCSy62aD4XuKGSDf8
-         vhJ86cb7oGy2cWH5HHKSxDnh3Tk7Gr26RHp/3Qo7ghgoAPqntdpwMLCQ/87MQxDzPs0w
-         S5kC6OKsmZzXhpktPRmY2k4KTRNGXFGSzKdMxo3PPIpfgS2sLbNCJygeu0iBYQUL7kXv
-         b6+VIiUaNOAv9iNxRS+XwOnV6+Fu9cmE08fioO9NzbOPhg2Dt0fkfTDtR2fumB1mzaXG
-         BRmw==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=a1F0qMtQnaSQ4BfN2Qd8tviFqAlyz5lbDnvZV34+gUo=;
+        b=BM/5Cfk2qrNn84jZfLGUdsyZFRgHFODpIoox+FDgW9BOqRBcQ2W+l6EnOR0BNL6K6y
+         iw5d0eYuPLKP+iTg6ebN5ySWubyZhP27lWlMX7oa/OWBTASh4mWPIjxpFI3x+69he39z
+         Ypj1PEr6Bo3A6GBtIhLMwKETo+V36qWXtbpP4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GcNLB+YtZFGEqQrGiujLOYSVXkHIzNgch1okFqFaDiY=;
-        b=ZbzNGdQYUDPEQk+FFrXtdtHVXNJ+scHJtFmDF7huQgNjmLNOt4rYNS9YgShH7xtw0d
-         047zO23OF0pPi/cjbGlY9QkRjyUAoPchXMoW9H7+kmr5q0Y/sR0KSG/YC9z07BeFwTG6
-         CkgYMx5gUnmBzwJqPacfeDb1BoDPZga1wC/VH5NAp8QZqo11nyGQT1T3W/FdN9hGuoBr
-         pfYgVPnczL4prBomyhLDaIjpdG7ncu2PyEBUdfnhrCPbJwnH2QAqLjLn4OhzrathgYpj
-         5O/M3+KV1vcGxWu3LOMFT+nDYmdTYRKHXfCnKosWXAAXb5RUEcPB87tKmSF4lEVRMPaZ
-         kgpA==
-X-Gm-Message-State: ABuFfoiq1/Q3NHh6eWbZbRGxU8xwdZu1GuJyjRoJTC5NvnzWDJPsMs6k
-        aKUgIH8WmKgrtwDCPm8zpisb0Rqk18o=
-X-Google-Smtp-Source: ACcGV632WfrdJUg7xshR1Ak8mPfkPVBkuCsgyHidnFaBx5tdFzFcedPSrM3hsfNZW/sZnPMdD/R8WA==
-X-Received: by 2002:a63:6445:: with SMTP id y66-v6mr370264pgb.443.1537583394225;
-        Fri, 21 Sep 2018 19:29:54 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id d22-v6sm67534549pfm.48.2018.09.21.19.29.52
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=a1F0qMtQnaSQ4BfN2Qd8tviFqAlyz5lbDnvZV34+gUo=;
+        b=ldLuy+1aeINS4aBcn4YhWHbKWsSralLV9eNrlRGUkq6w7v02Gbot/mEucPnMotCCXC
+         a9Ff5KkFdeDscXwa1+7Oe4fpqBdoOO5XvAmiorXqMAeP42HWBmpyyx63k4MHDSTOpSmX
+         D89JcSpPK+MzZe3wFW1DQY0TOj6YbY9ifo4DP8S0tWTy1njWbsbQY9p6yOoNayjjpXp5
+         C4alkaOT2nmFaElUQh8+/tDxQUInLCOEHeKEmTTg+baVfNuMc59Pv5eZFnH2uMJjRoB0
+         ztim6cjwaDIPRywVhw6VUdV0dXAgo5IUCrT8AgkNyS1mlKEFWEK+zYWj7PjBquhCwL+x
+         E5EA==
+X-Gm-Message-State: ABuFfoiciV9eztCWSnTa0PhXrpMJlPQKg/xJ5JIMD9veeby7+CGUv5mX
+        68qqvDr8a+FGA1S7c1T57jq0pHF+kBQ=
+X-Google-Smtp-Source: ANB0VdZTxtJj065jCHkH3fG3f2Qukivlld/ybk2t+6RUr1m4QUgFFxrxzvcPowkWSRNoBcdbq/C1kQ==
+X-Received: by 2002:a0d:ed47:: with SMTP id w68-v6mr178164ywe.479.1537584200954;
+        Fri, 21 Sep 2018 19:43:20 -0700 (PDT)
+Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id j66-v6sm5308895ywc.61.2018.09.21.19.43.18
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Sep 2018 19:29:53 -0700 (PDT)
-Subject: Re: [PATCH v3 00/12] block: always associate blkg and refcount
- cleanup
-To:     Dennis Zhou <dennisszhou@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180911184137.35897-1-dennisszhou@gmail.com>
- <20180921205640.GA50648@dennisz-mbp.dhcp.thefacebook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b1bcc8b3-f15f-08e3-e5e0-c1877fba144e@kernel.dk>
-Date:   Fri, 21 Sep 2018 20:29:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 21 Sep 2018 19:43:19 -0700 (PDT)
+Received: by mail-yw1-f43.google.com with SMTP id d193-v6so3096905ywb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 19:43:18 -0700 (PDT)
+X-Received: by 2002:a81:9b85:: with SMTP id s127-v6mr189732ywg.47.1537584198385;
+ Fri, 21 Sep 2018 19:43:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180921205640.GA50648@dennisz-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Fri, 21 Sep 2018 19:43:16
+ -0700 (PDT)
+In-Reply-To: <5360cd42-5827-58af-515c-6e1ded1d9154@schaufler-ca.com>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com> <5360cd42-5827-58af-515c-6e1ded1d9154@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 21 Sep 2018 19:43:16 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+9w-+i2F3-w=5QRzNEC1QaF_nwSZRgdLk+M4LpwmZ2Qg@mail.gmail.com>
+Message-ID: <CAGXu5j+9w-+i2F3-w=5QRzNEC1QaF_nwSZRgdLk+M4LpwmZ2Qg@mail.gmail.com>
+Subject: Re: [PATCH v4 04/19] SELinux: Remove cred security blob poisoning
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/21/18 2:56 PM, Dennis Zhou wrote:
-> Hi Jens,
-> 
-> On Tue, Sep 11, 2018 at 02:41:25PM -0400, Dennis Zhou wrote:
->> Hi everyone,
->>
->> v3: a few minor fixes.
->>   0003: Updated the comment to bio_associate_blkg to reflect closest
->>         association.
->>         Removed a return branch in __bio_lookup_create.
->>   0009: Removed an unnecessary rcu_read_(un)lock pair.
->>   0010: Fixed blkg null pointer... blkg->blkcg => blkcg.
->>
->> This is rebased onto axboe#for-4.20/block 902d53914f64.
->>
->> From v2 below (updated):
->> ------
->> This is a followup to the patch series I sent out earlier [1] containing
->> the middle two points:
->>   1. always associate a bio with a blkg
->>   2. remove the extra css ref held by bios and utilize the blkg ref
->>
->> The major difference with v2 is that error handling on blkg creation
->> and association failure is handled more gracefully. Rather than having
->> the complex logic to fallback to root, failures walk up the blkg tree.
->> This seems more natural and less prone to error with the many possible
->> failure scenarios.
->>
->> Additionally, there are fixes for kbuild errors and some key details
->> overlooked by me in the first series that were pointed out in review.
->>
->> Modified from the first patchset:
->> First, both blk-throttle and blk-iolatency rely on blkg association
->> to enable their policies. Rather than each policy (and future policies)
->> implement this logic independently, this consolidates it such that
->> all bios are tagged with a blkg.
->>
->> Second, with the addition of always having a blkg reference, the blkcg
->> can now be referenced through it rather than maintaining an additional
->> pointer and reference. So let's clean this up.
->>
->> [1] https://lore.kernel.org/lkml/20180831015356.69796-1-dennisszhou@gmail.com/T
->>
->> This patchset contains the following 12 patches:
->>   0001-blkcg-fix-ref-count-issue-with-bio_blkcg-using-task_.patch
->>   0002-blkcg-update-blkg_lookup_create-to-do-locking.patch
->>   0003-blkcg-convert-blkg_lookup_create-to-find-closest-blk.patch
->>   0004-blkcg-always-associate-a-bio-with-a-blkg.patch
->>   0005-blkcg-consolidate-bio_issue_init-to-be-a-part-of-cor.patch
->>   0006-blkcg-associate-a-blkg-for-pages-being-evicted-by-sw.patch
->>   0007-blkcg-associate-writeback-bios-with-a-blkg.patch
->>   0008-blkcg-remove-bio-bi_css-and-instead-use-bio-bi_blkg.patch
->>   0009-blkcg-remove-additional-reference-to-the-css.patch
->>   0010-blkcg-cleanup-and-make-blk_get_rl-use-blkg_lookup_cr.patch
->>   0011-blkcg-change-blkg-reference-counting-to-use-percpu_r.patch
->>   0012-blkcg-rename-blkg_try_get-to-blkg_tryget.patch
->>
->> This patchset is on top of axboe#for-4.20/block 902d53914f64.
->>
->> diffstats below:
->>
->> Dennis Zhou (Facebook) (12):
->>   blkcg: fix ref count issue with bio_blkcg using task_css
->>   blkcg: update blkg_lookup_create to do locking
->>   blkcg: convert blkg_lookup_create to find closest blkg
->>   blkcg: always associate a bio with a blkg
->>   blkcg: consolidate bio_issue_init to be a part of core
->>   blkcg: associate a blkg for pages being evicted by swap
->>   blkcg: associate writeback bios with a blkg
->>   blkcg: remove bio->bi_css and instead use bio->bi_blkg
->>   blkcg: remove additional reference to the css
->>   blkcg: cleanup and make blk_get_rl use blkg_lookup_create
->>   blkcg: change blkg reference counting to use percpu_ref
->>   blkcg: rename blkg_try_get to blkg_tryget
->>
->>  Documentation/admin-guide/cgroup-v2.rst |   8 +-
->>  block/bfq-cgroup.c                      |   4 +-
->>  block/bfq-iosched.c                     |   2 +-
->>  block/bio.c                             | 158 ++++++++++++++++--------
->>  block/blk-cgroup.c                      | 123 ++++++++++++------
->>  block/blk-iolatency.c                   |  26 +---
->>  block/blk-throttle.c                    |  13 +-
->>  block/bounce.c                          |   4 +-
->>  block/cfq-iosched.c                     |   4 +-
->>  drivers/block/loop.c                    |   5 +-
->>  drivers/md/raid0.c                      |   2 +-
->>  fs/buffer.c                             |  10 +-
->>  fs/ext4/page-io.c                       |   2 +-
->>  include/linux/bio.h                     |  23 ++--
->>  include/linux/blk-cgroup.h              | 145 +++++++++++++++-------
->>  include/linux/blk_types.h               |   1 -
->>  include/linux/cgroup.h                  |   2 +
->>  include/linux/writeback.h               |   5 +-
->>  kernel/cgroup/cgroup.c                  |  48 +++++--
->>  kernel/trace/blktrace.c                 |   4 +-
->>  mm/page_io.c                            |   2 +-
->>  21 files changed, 381 insertions(+), 210 deletions(-)
->>
->> Thanks,
->> Dennis
-> 
-> I reran some basic test again for sanity and it seems to be fine on my
-> end. There are at least acks, and some reviewed-by's on the series. Is
-> there anything else you think needs to be done before we let this bake
-> in for-4.20/for-next?
+On Fri, Sep 21, 2018 at 5:17 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> The SELinux specific credential poisioning only makes sense
+> if SELinux is managing the credentials. As the intent of this
+> patch set is to move the blob management out of the modules
+> and into the infrastructure, the SELinux specific code has
+> to go. The poisioning could be introduced into the infrastructure
+> at some later date.
+>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Looks like it's good to go, I have applied it for 4.20. Thanks Dennis.
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+
+> ---
+>  kernel/cred.c            | 13 -------------
+>  security/selinux/hooks.c |  6 ------
+>  2 files changed, 19 deletions(-)
+>
+> diff --git a/kernel/cred.c b/kernel/cred.c
+> index ecf03657e71c..fa2061ee4955 100644
+> --- a/kernel/cred.c
+> +++ b/kernel/cred.c
+> @@ -704,19 +704,6 @@ bool creds_are_invalid(const struct cred *cred)
+>  {
+>         if (cred->magic != CRED_MAGIC)
+>                 return true;
+> -#ifdef CONFIG_SECURITY_SELINUX
+> -       /*
+> -        * cred->security == NULL if security_cred_alloc_blank() or
+> -        * security_prepare_creds() returned an error.
+> -        */
+> -       if (selinux_is_enabled() && cred->security) {
+> -               if ((unsigned long) cred->security < PAGE_SIZE)
+> -                       return true;
+> -               if ((*(u32 *)cred->security & 0xffffff00) ==
+> -                   (POISON_FREE << 24 | POISON_FREE << 16 | POISON_FREE << 8))
+> -                       return true;
+> -       }
+> -#endif
+>         return false;
+>  }
+>  EXPORT_SYMBOL(creds_are_invalid);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 9d6cdd21acb6..80614ca25a2b 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -3920,12 +3920,6 @@ static void selinux_cred_free(struct cred *cred)
+>  {
+>         struct task_security_struct *tsec = selinux_cred(cred);
+>
+> -       /*
+> -        * cred->security == NULL if security_cred_alloc_blank() or
+> -        * security_prepare_creds() returned an error.
+> -        */
+> -       BUG_ON(cred->security && (unsigned long) cred->security < PAGE_SIZE);
+> -       cred->security = (void *) 0x7UL;
+>         kfree(tsec);
+>  }
+>
+> --
+> 2.17.1
+>
+>
+
+
 
 -- 
-Jens Axboe
-
+Kees Cook
+Pixel Security
