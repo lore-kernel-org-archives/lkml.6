@@ -2,65 +2,65 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9063BECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 062D5ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3489B2156E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98AB12156E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:47:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="S1o6XQLP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3489B2156E
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="cbjiuR6u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98AB12156E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391757AbeIVGfd (ORCPT
+        id S2391740AbeIVGip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:35:33 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:40709 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391614AbeIVGfd (ORCPT
+        Sat, 22 Sep 2018 02:38:45 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43081 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbeIVGip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:35:33 -0400
-Received: by mail-oi0-f67.google.com with SMTP id l202-v6so12865260oig.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:44:11 -0700 (PDT)
+        Sat, 22 Sep 2018 02:38:45 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e21-v6so1995039otk.10
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:47:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TyrevxK5pV+sYSGt19Tnl/B2FPBdTF8yPD+StB8mmtw=;
-        b=S1o6XQLPB4L9XwGu3G0CWfqUbK8TpF7ozUahTqh5urUeFNc2H3ZRLge3k5tw/OaHKE
-         dond3/KMSjWQSYF1AYHW6DyMJPGYW/E9S+LQ4nhnKRC5j0STYJo0DWOyrFeRX3XjDYxG
-         79ULny5l33BAJQASv5m5eIebspU9eTWqeSGzdXgGXdIkhFyzpXSBhmWx9HuUbUtZwW6o
-         Hr703XxIjWAVOLTnUMYTuncRhdXEHCbfeqOAfRGBWQSqzWiQppuT1VXmTgTfKanp/89a
-         d2Wg+GBNWgbGjI/r2Qmngmh0qr/Zu7SdjLeITDfCIAtxfTXMmPoCJksuAG2BTEBU2e6R
-         PTlw==
+        bh=thMTjBYg+6WKqkYaoBm2zaWnrXuykg/WL3BhAPijcYA=;
+        b=cbjiuR6un8rT2QPtyvSgzjYrd5VxLQV1HelP79xTBohZuG2iHkdbabKyXAC3uVZDxj
+         XKDrYhdxdzP27SP8o9CUceQwB7gH9G/LJuYOqX48bMI8XPhm4/sbg7d5V2Fx/xqpgIBC
+         etyyFYsUaS8DIS8oJMSCtw+uiGnMsC1BXBwoOg6v0V+5MwaDvUp3BJ2IhD+wkGpUVU67
+         rUfKuHVId+5Od2qjCFlSthyoPc0HnjNpZ66XZx5uR9knM8XVpnM32uK5RDMXfeDF8mTR
+         J6cgIMLp+Mr6Cj3OFNk9fu2jYKHsvruEJ8K8DI8Zg4Jiryi9xp8rSsgTbvswWhBmPtzp
+         LNXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TyrevxK5pV+sYSGt19Tnl/B2FPBdTF8yPD+StB8mmtw=;
-        b=KyB27/8+tIpHJzXNOYk/XUPiHjBVXSEPA3wLvaYL3rkWMNxnLHiVitOV6vVHRSZyuU
-         SVhlgF2zE10TBKk4lySND/PzbLlei7SscOaKhRYis48sx6Q8dtwa7g84IOiCh6PJhuo1
-         F8mR+gZ1IdPKzk1tMaFaPRMlNv6xDjLvf1SOBmC1+YWCER9pcXHdw38P2b6tDg0xYmp1
-         Ql9dU6UoejNshgTWZ/kgyheFdcfzPlDZ7SZ7PHsIiEDn4iEznuHlwnAn9BS3zlvactdU
-         CndPRg9KQnjjYzHw4Gu9BbEOj4sN2cGBrp2a2cdKA3ZfbDvRXsKW/S+AoOgvaTXcSIAG
-         hDxQ==
-X-Gm-Message-State: APzg51DElmgcrQzSjcfksVmMslllitd7cmfaxo+ccqdsQaNdrWXgF3N4
-        ZortFckOp399TtfkABFIJZQvUoFCsQZiptmwD74QbQ==
-X-Google-Smtp-Source: ANB0VdY1c3Lunf9Gbbf7OsaC13d6Nc7og5YuJgwpsGWAOEYi/LnwU+T+C84ZGKapV1rAbcPCgs6eDOxovKvRN+ML7ds=
-X-Received: by 2002:aca:60c1:: with SMTP id u184-v6mr31937oib.99.1537577050674;
- Fri, 21 Sep 2018 17:44:10 -0700 (PDT)
+        bh=thMTjBYg+6WKqkYaoBm2zaWnrXuykg/WL3BhAPijcYA=;
+        b=t4XifJF7c7gwg00TP7arPQ4apa+V0nCd4jTER0GM7Ptx93aI7ietEuHNEZA/wwQfsa
+         yxgEkZOlOHQ26xCGiKL/nY+DcpGCHw/pIfkSKExbcRZN1PO50A4V9vztjqevcVhsiwip
+         FGEns7rdXKqp8ubGG4I2gvIzP0lDRVe04FsV+3r4WeQpC7B0GzM07y3Cr6K5s54XBkiF
+         UefieSxVumqBWuQ/29Sh8mdYFU1G6wD6VLSdlajF+oZym/sp+TpkLG+W7GKfBPhC2pYH
+         N5y8YczXaHl2eX/IsBJX3hTFvvHXsEQe+RoEwRP+iF4jtOoY6SJrPFA5QFAU2z0vOJRJ
+         uIXg==
+X-Gm-Message-State: ABuFfoh6/3aXcHaMb/3xAuj1s/Pvzs9GyGEP8SgOmOlj0j2aH64joHGF
+        yXkdbp+iXvzcR3H3+S+3oxjknhR+tv8odOiigKD+hg==
+X-Google-Smtp-Source: ACcGV60j+6Cj9Wji94HEqK+WmFqAuGlqVN0MJObLbhzffa58BVayLBNgIN4p9Ni2JyV3ezOaf82IqAez98h4E/9mIQM=
+X-Received: by 2002:a9d:7519:: with SMTP id r25-v6mr149182otk.73.1537577241614;
+ Fri, 21 Sep 2018 17:47:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-3-pagupta@redhat.com>
-In-Reply-To: <20180831133019.27579-3-pagupta@redhat.com>
+References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-2-pagupta@redhat.com>
+In-Reply-To: <20180831133019.27579-2-pagupta@redhat.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 21 Sep 2018 17:43:58 -0700
-Message-ID: <CAPcyv4js9hWfXPK++a0DhDwtk1pBazMvb9H-X2OQy18uemUhGw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] libnvdimm: nd_region flush callback support
+Date:   Fri, 21 Sep 2018 17:47:10 -0700
+Message-ID: <CAPcyv4jFimkVnVuzza5TCG=KvY88KZnXzH4GNEgUBbTouprzJA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] nd: move nd_region to common header
 To:     Pankaj Gupta <pagupta@redhat.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         KVM list <kvm@vger.kernel.org>,
@@ -85,241 +85,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 6:32 AM Pankaj Gupta <pagupta@redhat.com> wrote:
+On Fri, Aug 31, 2018 at 6:31 AM Pankaj Gupta <pagupta@redhat.com> wrote:
 >
-> This patch adds functionality to perform flush from guest
-> to host over VIRTIO. We are registering a callback based
-> on 'nd_region' type. virtio_pmem driver requires this special
-> flush function. For rest of the region types we are registering
-> existing flush function. Report error returned by host fsync
-> failure to userspace.
+> This patch moves nd_region definition to common header
+> include/linux/nd.h file. This is required for flush callback
+> support for both virtio-pmem & pmem driver.
 >
 > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-
-This looks ok to me, just some nits below.
-
 > ---
->  drivers/acpi/nfit/core.c     |  7 +++++--
->  drivers/nvdimm/claim.c       |  3 ++-
->  drivers/nvdimm/pmem.c        | 12 ++++++++----
->  drivers/nvdimm/region_devs.c | 12 ++++++++++--
->  include/linux/libnvdimm.h    |  4 +++-
->  5 files changed, 28 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index b072cfc..cd63b69 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -2216,6 +2216,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk, unsigned int bw,
->  {
->         u64 cmd, offset;
->         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[DCR];
-> +       struct nd_region *nd_region = nfit_blk->nd_region;
->
->         enum {
->                 BCW_OFFSET_MASK = (1ULL << 48)-1,
-> @@ -2234,7 +2235,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk, unsigned int bw,
->                 offset = to_interleave_offset(offset, mmio);
->
->         writeq(cmd, mmio->addr.base + offset);
-> -       nvdimm_flush(nfit_blk->nd_region);
-> +       nd_region->flush(nd_region);
+>  drivers/nvdimm/nd.h | 39 ---------------------------------------
+>  include/linux/nd.h  | 40 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 40 insertions(+), 39 deletions(-)
 
-I would keep the indirect function call override inside of
-nvdimm_flush. Then this hunk can go away...
-
->
->         if (nfit_blk->dimm_flags & NFIT_BLK_DCR_LATCH)
->                 readq(mmio->addr.base + offset);
-> @@ -2245,6 +2246,7 @@ static int acpi_nfit_blk_single_io(struct nfit_blk *nfit_blk,
->                 unsigned int lane)
->  {
->         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[BDW];
-> +       struct nd_region *nd_region = nfit_blk->nd_region;
->         unsigned int copied = 0;
->         u64 base_offset;
->         int rc;
-> @@ -2283,7 +2285,8 @@ static int acpi_nfit_blk_single_io(struct nfit_blk *nfit_blk,
->         }
->
->         if (rw)
-> -               nvdimm_flush(nfit_blk->nd_region);
-> +               nd_region->flush(nd_region);
-> +
->
-
-...ditto, no need to touch this code.
-
->         rc = read_blk_stat(nfit_blk, lane) ? -EIO : 0;
->         return rc;
-> diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
-> index fb667bf..49dce9c 100644
-> --- a/drivers/nvdimm/claim.c
-> +++ b/drivers/nvdimm/claim.c
-> @@ -262,6 +262,7 @@ static int nsio_rw_bytes(struct nd_namespace_common *ndns,
->  {
->         struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
->         unsigned int sz_align = ALIGN(size + (offset & (512 - 1)), 512);
-> +       struct nd_region *nd_region = to_nd_region(ndns->dev.parent);
->         sector_t sector = offset >> 9;
->         int rc = 0;
->
-> @@ -301,7 +302,7 @@ static int nsio_rw_bytes(struct nd_namespace_common *ndns,
->         }
->
->         memcpy_flushcache(nsio->addr + offset, buf, size);
-> -       nvdimm_flush(to_nd_region(ndns->dev.parent));
-> +       nd_region->flush(nd_region);
-
-For this you would need to teach nsio_rw_bytes() that the flush can fail.
-
->
->         return rc;
->  }
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 6071e29..ba57cfa 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -201,7 +201,8 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
->         struct nd_region *nd_region = to_region(pmem);
->
->         if (bio->bi_opf & REQ_PREFLUSH)
-> -               nvdimm_flush(nd_region);
-> +               bio->bi_status = nd_region->flush(nd_region);
-> +
-
-Let's have nvdimm_flush() return 0 or -EIO if it fails since thats
-what nsio_rw_bytes() expects, and you'll need to translate that to:
-BLK_STS_IOERR
-
->
->         do_acct = nd_iostat_start(bio, &start);
->         bio_for_each_segment(bvec, bio, iter) {
-> @@ -216,7 +217,7 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
->                 nd_iostat_end(bio, start);
->
->         if (bio->bi_opf & REQ_FUA)
-> -               nvdimm_flush(nd_region);
-> +               bio->bi_status = nd_region->flush(nd_region);
-
-Same comment.
-
->
->         bio_endio(bio);
->         return BLK_QC_T_NONE;
-> @@ -517,6 +518,7 @@ static int nd_pmem_probe(struct device *dev)
->  static int nd_pmem_remove(struct device *dev)
->  {
->         struct pmem_device *pmem = dev_get_drvdata(dev);
-> +       struct nd_region *nd_region = to_region(pmem);
->
->         if (is_nd_btt(dev))
->                 nvdimm_namespace_detach_btt(to_nd_btt(dev));
-> @@ -528,14 +530,16 @@ static int nd_pmem_remove(struct device *dev)
->                 sysfs_put(pmem->bb_state);
->                 pmem->bb_state = NULL;
->         }
-> -       nvdimm_flush(to_nd_region(dev->parent));
-> +       nd_region->flush(nd_region);
-
-Not needed if the indirect function call moves inside nvdimm_flush().
-
->
->         return 0;
->  }
->
->  static void nd_pmem_shutdown(struct device *dev)
->  {
-> -       nvdimm_flush(to_nd_region(dev->parent));
-> +       struct nd_region *nd_region = to_nd_region(dev->parent);
-> +
-> +       nd_region->flush(nd_region);
->  }
->
->  static void nd_pmem_notify(struct device *dev, enum nvdimm_event event)
-> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-> index fa37afc..a170a6b 100644
-> --- a/drivers/nvdimm/region_devs.c
-> +++ b/drivers/nvdimm/region_devs.c
-> @@ -290,7 +290,7 @@ static ssize_t deep_flush_store(struct device *dev, struct device_attribute *att
->                 return rc;
->         if (!flush)
->                 return -EINVAL;
-> -       nvdimm_flush(nd_region);
-> +       nd_region->flush(nd_region);
-
-Let's pass the error code through if the flush fails.
-
->
->         return len;
->  }
-> @@ -1065,6 +1065,11 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
->         dev->of_node = ndr_desc->of_node;
->         nd_region->ndr_size = resource_size(ndr_desc->res);
->         nd_region->ndr_start = ndr_desc->res->start;
-> +       if (ndr_desc->flush)
-> +               nd_region->flush = ndr_desc->flush;
-> +       else
-> +               nd_region->flush = nvdimm_flush;
-> +
-
-We'll need to rename the existing nvdimm_flush() to generic_nvdimm_flush().
-
->         nd_device_register(dev);
->
->         return nd_region;
-> @@ -1109,7 +1114,7 @@ EXPORT_SYMBOL_GPL(nvdimm_volatile_region_create);
->   * nvdimm_flush - flush any posted write queues between the cpu and pmem media
->   * @nd_region: blk or interleaved pmem region
->   */
-> -void nvdimm_flush(struct nd_region *nd_region)
-> +int nvdimm_flush(struct nd_region *nd_region)
->  {
->         struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
->         int i, idx;
-> @@ -1133,7 +1138,10 @@ void nvdimm_flush(struct nd_region *nd_region)
->                 if (ndrd_get_flush_wpq(ndrd, i, 0))
->                         writeq(1, ndrd_get_flush_wpq(ndrd, i, idx));
->         wmb();
-> +
-> +       return 0;
->  }
-> +
-
-Needless newline.
-
->  EXPORT_SYMBOL_GPL(nvdimm_flush);
->
->  /**
-> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> index 097072c..3af7177 100644
-> --- a/include/linux/libnvdimm.h
-> +++ b/include/linux/libnvdimm.h
-> @@ -115,6 +115,7 @@ struct nd_mapping_desc {
->         int position;
->  };
->
-> +struct nd_region;
->  struct nd_region_desc {
->         struct resource *res;
->         struct nd_mapping_desc *mapping;
-> @@ -126,6 +127,7 @@ struct nd_region_desc {
->         int numa_node;
->         unsigned long flags;
->         struct device_node *of_node;
-> +       int (*flush)(struct nd_region *nd_region);
->  };
->
->  struct device;
-> @@ -201,7 +203,7 @@ unsigned long nd_blk_memremap_flags(struct nd_blk_region *ndbr);
->  unsigned int nd_region_acquire_lane(struct nd_region *nd_region);
->  void nd_region_release_lane(struct nd_region *nd_region, unsigned int lane);
->  u64 nd_fletcher64(void *addr, size_t len, bool le);
-> -void nvdimm_flush(struct nd_region *nd_region);
-> +int nvdimm_flush(struct nd_region *nd_region);
->  int nvdimm_has_flush(struct nd_region *nd_region);
->  int nvdimm_has_cache(struct nd_region *nd_region);
->
-> --
-> 2.9.3
->
+No, we need to find a way to do this without dumping all of these
+internal details to a public / global header.
