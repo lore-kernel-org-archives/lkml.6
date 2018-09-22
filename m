@@ -2,114 +2,93 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D168ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73792ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F4F62156F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BB9D21569
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:09:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="GmFfNXKM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4F62156F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="DSsyCNVE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB9D21569
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391673AbeIVF5u (ORCPT
+        id S2391650AbeIVGAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 01:57:50 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41574 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725756AbeIVF5u (ORCPT
+        Sat, 22 Sep 2018 02:00:48 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41770 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbeIVGAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 01:57:50 -0400
-Received: by mail-ot1-f67.google.com with SMTP id e18-v6so14653800oti.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:06:36 -0700 (PDT)
+        Sat, 22 Sep 2018 02:00:47 -0400
+Received: by mail-qt1-f194.google.com with SMTP id t39-v6so3486373qtc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:09:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m7FOKBEtlEGpM8dxYrDEffG368llkqCqL7eq0tuIQLI=;
-        b=GmFfNXKM6Fe27jUmjn2eiln/O3CxMTZ8OWLaIBGeeQkg/qqb0ofcpKQDwa/8oq04YI
-         if/5pbANZ6qvYwoVjN4cyQ3xVwyyW4O+h93DAyTRk79/4JfMzJTbE9xxfLo/8UZjebz+
-         Y1M+JfRm279DkB0dGfeEgLsTOgO6ifHmVCvdT6rizgrNg2RwFCwYQvXIwzlYg47AUZmD
-         exvW8iOhSz4lyzRtsI7Hi/GraeLZJk1ibpeOg3nD/Dvq3cAdqXiSFgI5xs6w2r3tfl0w
-         va4e/sDK34doEeT2nj0BDCwPzkUrZsFw9UaBXjBLhaCN4kICRV2aG3TGFZpt95h5PXX6
-         KZKA==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=fv9LuU7OvqkibppjQzeB+G+nvWZEOLtJkPf+O93TBi0=;
+        b=DSsyCNVEfx1TCFeThMQEAfzhIHhnhLE1DuCa+AO+F1RrAoUEZDz2OoHcgQnGTHNi6L
+         C1lvmQR0RzaSmo0DuotYUMX7ktpK6pUlLgZjhLEJQZ75jwrSbWIV1CKTowXCB6CsvtZr
+         VqZKGZySuvjWtAEDVVJDOfI+Zxz4LiIi0izAed7Kaoc8iH3ZeepudaD6Q/YuvMYoJIkk
+         GiDo8+Y4MJC2FZwGDLNXMtYG0e47orZXf/WKgwo/Homw9qaVbSl20ihs68+38n5Jdg58
+         lCp1+E1FXOVqmzrQM8adcK2wyUViRMNu22PAKauqbjKnc4MArpNdqmADoW4gvgpwXBUo
+         Mh4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m7FOKBEtlEGpM8dxYrDEffG368llkqCqL7eq0tuIQLI=;
-        b=FhsNc2fV2c7mJeA0LIZ4Zeyb8I8zacsqK7XXZgGa5Uwq6rj/D4//oK6v8/DP2OJeS9
-         w0yssNmiIRItVQEg/JjNHS9Lit5Lq+mbkmsL5GvsnPmnvUQ7BZgmLlR+qbFlLbkVcT6e
-         kt6vWRpgrptvn4Jx4H8M7tYWZf8ykprQdjahFudv10XBlneyrF8TPdHtFyUXlUjFV5dj
-         Lr8xmon0XtnKQg4dMkYUGKio8J0cVeLWq8FeLTukrQgkc+Mx4vix+TsJcuSUSDyOyOcp
-         4tSI2pA0NdxkYjBWnuk27Vwi5adNCwHvf6bsDPHxWdviGILL4cNJQ1dgaCLxkcqGXjbj
-         C1og==
-X-Gm-Message-State: ABuFfoias9XB7CLR//p6fvLa0TBqh+DdXJC7H9QcKCiGQiwjueAPPSwp
-        Tn1bRGd8GNYFiPt5SI9zPBrBAyvVtAYuOj8GS8oaww==
-X-Google-Smtp-Source: ACcGV63J9sd7MKc15T2AVjUDQKJLq3wsJyfgvKbjs9I1S3uJgj9HyfMS3Ec28Zk4TM/Wo2kSOZqYaGkqXfabXX+rB8Q=
-X-Received: by 2002:a9d:d7:: with SMTP id 23-v6mr67743otk.372.1537574795806;
- Fri, 21 Sep 2018 17:06:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=fv9LuU7OvqkibppjQzeB+G+nvWZEOLtJkPf+O93TBi0=;
+        b=mM3ONcSMh6oV3FF2hIDu7z8DbNyV+aNCjR/mV1ZxoYfTMpMOJzEvYB+qKySkKFuK28
+         p55sJfjJB5JEyl28myJAwc/xRQAmeJ7f7K8EChALrQov8jjMMLQ2dVwMAgQ83PSjBxp+
+         EbeRkVDA4wJTmgXrFOmnT6ru5ayGrUV5SI3XeNEc23XJW6rn/ShIEQMNUk/jFPyfSIir
+         nhXw/OsJG2qF9t2IZ4oRE4Uk+YhdnFXxG3jKCWWC63r1zwdRqWFGKOerdSC4HDna0ILj
+         QEfsSrpVUCX6eDMaBI8rMu4V5o/0EJSgwpjwggSfJ+kfYNZJwWwvPqWS0eM7PU64OIKs
+         OU4Q==
+X-Gm-Message-State: APzg51A5inJYkzCNq6PdLc6DcV/kVkHaHoJ8hNstDVVSxsT1er6hK25V
+        yMlua56j452qJfNEerDWAbZzZtqTz4Q=
+X-Google-Smtp-Source: ACcGV63lbhavWDYFkqDNVWbnMV6SIJSguCQ9YbW7tlgODcIgyz6Wo12s3HEKmmNA7hzMItvz8QEiMA==
+X-Received: by 2002:ac8:764c:: with SMTP id i12-v6mr78400qtr.250.1537574972414;
+        Fri, 21 Sep 2018 17:09:32 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id l5-v6sm14787605qte.20.2018.09.21.17.09.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Sep 2018 17:09:32 -0700 (PDT)
+Date:   Fri, 21 Sep 2018 17:09:29 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH bpf-next] bpftool: add support for
+ BPF_MAP_TYPE_REUSEPORT_SOCKARRAY maps
+Message-ID: <20180921170929.2d278d65@cakuba.netronome.com>
+In-Reply-To: <20180921224700.10524-1-guro@fb.com>
+References: <20180921224700.10524-1-guro@fb.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-References: <153702858249.1603922.12913911825267831671.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180917161245.c4bb8546d2c6069b0506c5dd@linux-foundation.org>
- <CAGXu5jLRuWOMPTfXAFFiVSb6CUKaa_TD4gncef+MT84pcazW6w@mail.gmail.com> <AT5PR8401MB1169D656C8B5E121752FC0F8AB120@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-In-Reply-To: <AT5PR8401MB1169D656C8B5E121752FC0F8AB120@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 21 Sep 2018 17:06:24 -0700
-Message-ID: <CAPcyv4iuRkQWsWa-YfTMDJUTUr1QouEsS6zD_LAjcpbLGXCPEQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] mm: Randomize free memory
-To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <MHocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Toshi Kani <toshi.kani@hpe.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 4:51 PM Elliott, Robert (Persistent Memory)
-<elliott@hpe.com> wrote:
->
->
-> > -----Original Message-----
-> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > owner@vger.kernel.org> On Behalf Of Kees Cook
-> > Sent: Friday, September 21, 2018 2:13 PM
-> > Subject: Re: [PATCH 0/3] mm: Randomize free memory
-> ...
-> > I'd be curious to hear more about the mentioned cache performance
-> > improvements. I love it when a security feature actually _improves_
-> > performance. :)
->
-> It's been a problem in the HPC space:
-> http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
->
-> A kernel module called zonesort is available to try to help:
-> https://software.intel.com/en-us/articles/xeon-phi-software
->
-> and this abandoned patch series proposed that for the kernel:
-> https://lkml.org/lkml/2017/8/23/195
->
-> Dan's patch series doesn't attempt to ensure buffers won't conflict, but
-> also reduces the chance that the buffers will. This will make performance
-> more consistent, albeit slower than "optimal" (which is near impossible
-> to attain in a general-purpose kernel).  That's better than forcing
-> users to deploy remedies like:
->     "To eliminate this gradual degradation, we have added a Stream
->      measurement to the Node Health Check that follows each job;
->      nodes are rebooted whenever their measured memory bandwidth
->      falls below 300 GB/s."
+On Fri, 21 Sep 2018 22:47:20 +0000, Roman Gushchin wrote:
+> Add BPF_MAP_TYPE_REUSEPORT_SOCKARRAY map type to the list
+> of maps types which bpftool recognizes.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Cc: Yonghong Song <yhs@fb.com>
 
-Robert, thanks for that! Yes, instead of run-to-run variations
-alternating between almost-never-conflict and nearly-always-conflict,
-we'll get a random / average distribution of cache conflicts.
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
