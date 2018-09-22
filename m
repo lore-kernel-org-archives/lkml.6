@@ -2,120 +2,109 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FD4ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B819ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 21:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43C92150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:58:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkR/JujG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E43C92150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C02A42150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 21:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02A42150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbeIWCxo (ORCPT
+        id S1728090AbeIWC6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 22:53:44 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45490 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbeIWCxm (ORCPT
+        Sat, 22 Sep 2018 22:58:46 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:47639 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727052AbeIWC6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 22:53:42 -0400
-Received: by mail-io1-f66.google.com with SMTP id e12-v6so14950791iok.12;
-        Sat, 22 Sep 2018 13:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IHsv1kVPjHiFN5CDlRUXNfvFEO14wRvjZvBGLfsjNrM=;
-        b=DkR/JujGC6QZq7kfnWQQqTt91/Kgjfiu5RXrScIz+dJibGoo53UjxUHicbdKFk5izg
-         t03xYzy2NwUX5gbjUD1NYEAqMq/3V1xhpPUSsp/uSOZaWQZ4/cGSYqRtukDA3wh1eziW
-         9VX60W3LD9/lGO53Md1wvDVMNehMbB7/HRx1o/lXybX36LbJGtUSizcxU78oIyCtQj5a
-         WfjLOwwiXTV1HD6U1cGzTqi/rH0D1jINskphnQQRYB/d0CfB5lo11Oivj6CO22t93RUo
-         5YkVwFJcIyvneRY8QC8ut74PsLDYUHhHNi5Y5muP0m65Xi9ogDJyPjDKrutKmhm/uSXp
-         7mhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IHsv1kVPjHiFN5CDlRUXNfvFEO14wRvjZvBGLfsjNrM=;
-        b=Z9ZAC45rrYvwNPpW/hOAlLZPNeGtusjjghXJSBLI0V4HsstPYyOB93Mn8zeiSFoW4G
-         oQu3PVwh8BZmL0dkZVJ5B4TWoVPCWtzCQUJBnlUIdHqByqt/A1qYQ0Wyjpa8DLlxASqo
-         SPfk8A+fnoOgD7kz0KgcBJJLVej9yBlpsBXYpDmg4iytvpIYODotg3xX1gg3fHdKyJaX
-         DUGg9MlIybx6A4+owNbh5M6TS83c603GheK0uNS92w6kIyNn1pc7EnyI9ROhOo96pkoT
-         qRgfCuBi62avGRoBlh0BuzXuJsmPN5awIrK6wQmDMyloQi5+832mjK5sW3+ncHzKlhPZ
-         EGxA==
-X-Gm-Message-State: ABuFfoj6m6bjmagfeGxUNZraO8JNrs+JUoLwDCgf83/mEJTlot5lgZL7
-        EPE/OMAqFz6x0ilLKI9EGg==
-X-Google-Smtp-Source: ACcGV60ImIWGagy29ibxHcRQQYAg3cndP6SHcbTl12kX34RkH3FeINWvyzI00CPhlVXAMjS4eaau6A==
-X-Received: by 2002:a6b:c085:: with SMTP id q127-v6mr2896530iof.255.1537649927138;
-        Sat, 22 Sep 2018 13:58:47 -0700 (PDT)
-Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
-        by smtp.gmail.com with ESMTPSA id k62-v6sm4465306itc.21.2018.09.22.13.58.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 13:58:46 -0700 (PDT)
-From:   ryang <decatf@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ryang <decatf@gmail.com>
-Subject: [PATCH v3 2/2] iio: light: bh1750: Add device tree support
-Date:   Sat, 22 Sep 2018 16:57:54 -0400
-Message-Id: <20180922205754.6100-2-decatf@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180922205754.6100-1-decatf@gmail.com>
-References: <20180922205754.6100-1-decatf@gmail.com>
+        Sat, 22 Sep 2018 22:58:46 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3p48-0004F2-CH; Sat, 22 Sep 2018 22:03:48 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3p43-0003Zy-3L; Sat, 22 Sep 2018 22:03:43 +0100
+Message-ID: <8818ebb8014a4dcabd5ea45fd9eda6c134f7d799.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16 00/63] 3.16.58-rc1 review
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org
+Date:   Sat, 22 Sep 2018 22:03:35 +0100
+In-Reply-To: <3c4507c7-d805-5895-e634-09e7ba4e2c4f@roeck-us.net>
+References: <lsq.1537575341.194909669@decadent.org.uk>
+         <3c4507c7-d805-5895-e634-09e7ba4e2c4f@roeck-us.net>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-xSlCntg7590pOmQtcO/A"
+User-Agent: Evolution 3.29.92-1 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree support for ROHM BH1750 series ambient light sensors.
 
-Signed-off-by: ryang <decatf@gmail.com>
----
-Changes in v2:
-     - Export module device table
-Changes in v3:
-     - Remove of_match_ptr so that bh1750_of_match is available
-       without CONFIG_OF.
+--=-xSlCntg7590pOmQtcO/A
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
- drivers/iio/light/bh1750.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On Sat, 2018-09-22 at 05:28 -0700, Guenter Roeck wrote:
+> On 09/21/2018 05:15 PM, Ben Hutchings wrote:
+> > This is the start of the stable review cycle for the 3.16.58 release.
+> > There are 63 patches in this series, which will be posted as responses
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >=20
+> > Responses should be made by Mon Sep 24 00:15:41 UTC 2018.
+> > Anything received after that time might be too late.
+> >=20
+>=20
+> Build results:
+> 	total: 139 pass: 139 fail: 0
+> Qemu test results:
+> 	total: 217 pass: 217 fail: 0
+>=20
+> Details are available at https://kerneltests.org/builders/.
 
-diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
-index c3a481452b67..28347df78cff 100644
---- a/drivers/iio/light/bh1750.c
-+++ b/drivers/iio/light/bh1750.c
-@@ -307,9 +307,20 @@ static const struct i2c_device_id bh1750_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, bh1750_id);
- 
-+static const struct of_device_id bh1750_of_match[] = {
-+	{ .compatible = "rohm,bh1710", },
-+	{ .compatible = "rohm,bh1715", },
-+	{ .compatible = "rohm,bh1721", },
-+	{ .compatible = "rohm,bh1750", },
-+	{ .compatible = "rohm,bh1751", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bh1750_of_match);
-+
- static struct i2c_driver bh1750_driver = {
- 	.driver = {
- 		.name = "bh1750",
-+		.of_match_table = bh1750_of_match,
- 		.pm = &bh1750_pm_ops,
- 	},
- 	.probe = bh1750_probe,
--- 
-2.17.1
+Thanks for checking.
 
+Ben.
+
+--=20
+Ben Hutchings
+Any sufficiently advanced bug is indistinguishable from a feature.
+
+
+
+--=-xSlCntg7590pOmQtcO/A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlumricACgkQ57/I7JWG
+EQkUCw/+Ppuj/Bla55QIeiRXI7c0QTljYTgjdzPyN6icuOl1DC+mz8VhmfuDc24e
+bCOu43tDJ+LoMrWT8bGOXAppZFx8R4fF7XQfOHOUCIYYG+pOKo+BoHsoZ2YsZZjc
+zvoL91BzzvKQca0WiS8MhkPhUio9btmXH02Tjt1FSw+G0Y5NvXJFHjKJ4hoEOubK
+ShkA/ejMQOV37lA9IgWyoOXYCR/OZlN5O1Aiq2gyrinMQ+R/68mUMSW4xzVx4dVJ
++SEhe78yqQnwFb8Cyx+VNCuctJKX65WCMRt+8SqMkUdbRbxjZ8/hGFDdj5DlRUr3
+wyYm82ka8iUDPOjt8d8g9i1diIgsnwKOqrRlHkAhVXygviMZtdGIyBi2sH+AILJa
+OIPo+2O/8IDh4cTd8Lti+OaprEQesDaGyNwMOiQGlw4c1VIH7zUJzNA0W11bLJcY
+k7VIFaIjSJlYLDwL+FwUyfRLQLZuP2cnrdHScSU24IHH1klDiogEWPLG5PC6ing4
+miHnoOWfmhJlYf8lgq7e1VWU+VyzNlCzIO0cUiVdcxNmiKh7dv4oBZIdCRxwMQOk
+BBzyEjI2Qz7rY8pyGoui/7SIdaaDZK0+uXonrsEeNChdfzcgO4S7k033ramIHYky
+WBPIolnqpae6pTlAcDg6jFK+xpjA2tu460tFjy0EPl9F6woGzfs=
+=mZ1y
+-----END PGP SIGNATURE-----
+
+--=-xSlCntg7590pOmQtcO/A--
