@@ -2,190 +2,188 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C804ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A17C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AEF2157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:19:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FATU+veu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06AEF2157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D76620684
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:20:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D76620684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392217AbeIVGLN (ORCPT
+        id S2392238AbeIVGLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:11:13 -0400
-Received: from sonic306-10.consmr.mail.bf2.yahoo.com ([74.6.132.49]:34571 "EHLO
-        sonic306-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391758AbeIVGLM (ORCPT
+        Sat, 22 Sep 2018 02:11:31 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44339 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392075AbeIVGKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:11:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537575594; bh=i/FeXI6VaSffmX1y1gpuicpe9EtDrQAWHmEzOnUriC0=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=FATU+veusBAp8RqgiYFYB8uBdP/nTVGcHrDWb3KefwqQsHUnRf9W3GDiJ5QIkYTl4CIaUuOsu5+nuZWaW5pShWncSLDJrlME48sXRDpiDee1fR7vYE+/FnvL11UEpza/6zQ4O3H4r5Peo92RX8pBX3glh2LUegLLevzmdWZVeue1dCs7Ciby1Y0rEsQvWlaO1WIua1IMifJ7jP5xuAdB+W8hixwBM9YUcHpKNafgnA5s/Lt3gS63yJAHHEYnvmVEJkPzctN/XDY940IQlLlLxcDzLPWXgAQu7zvGnSXn3QIDFk1FglV2yzmeFFZeSirNkLs/untperhR4/GECDP2bw==
-X-YMail-OSG: XuaOVtEVM1mikCscWceS8.HCm.CdAuEC6YfliI6G_vFCTRqznqbIa6p8F0rskD7
- uZvg1h9_7b8ihb6tZHQZY979Su_pKSuzDFR1hvr6ZEWCJG1j_C02Rgc8e_thtwgp_QDWbImMAgOe
- G3xevsva0JwZKTo3151ZcNtHAXzKY8JbbRdiPYMlEDU_J8cEgM5Ssu_IF6OGLVLEM5H4cTZtMl2R
- OsnOYOj6RjsV4qZ9e9RhSD6vnWvxDb71S8Uz_sGuJ.DDldaM4SHvz2GMcVLJzFc.PoPaB.E.7W3A
- 0kOC_ND9kI9CO.vZKBLojJLD.Ft2u5iEqvh0U8U5SbzZ4R7xobeMxn8PM1pKeBYw68dfeMSd7WR4
- gPlu2XvaMeM64k2W_gtTq8qqnbCOLWgN7df2PsLL7H8HzVs315KB7ZAyoE.FC09GGP64s333M3fK
- TVsDdrBxl66JEHrWwEX88oL7rdfEUrisC75ZT2H.c8d_RgGvD2YzR1Gi.JUAXb7xBf0HvMxl2dz9
- PykWeApB33u2ggXRc5XpTw2fBTQD8ZfRxFdp9zyc_U1rF37lWWYh1Rqb34LWN2msUAJLq1PtbPHZ
- J4nJuEr4ApvAiauVhi4tMcKRGhEnjo7FwIjCiMVCcLYO5i00g0Vnp..WlNEqlgl8A1Jdd3Eoza_h
- SAxReyWoE.f3jO8i0dUjqJaP62YmoyAJ7dMmUoLunvWb2BaYbIcqdp394bdlSxYNUAglQrJzBYrr
- DS4O6r6zEnAWYOoYaKAgtWr.8F15zPQS1MAerCeHtZ4G6Yskc99Fk7WUIY8WgODPq.KKqOXSDHuj
- Bo3LqnCG1jzlsa8n_c2VR3yq7Bqq0iwjNEptm9ZWIL3fYW_aY6XTbE8gXOuDLdXnXc437pVFRtAm
- xPVi3ssbbn71fxgucZSMOz6VgFTsFZ1aakVETYj1XJgdPDfEK3HUFdLscGrDpighGCWoa7zyuZHr
- SeRbkgGMPfq8X7BGzKyzKdHIuOo8J1UNa2bAK9VFuQtD0wcPQRp4dOM__37DQPzLj04D8SXX46H8
- rpGLlOwkqCZep8g_Exhscyw63C7ynnGW8bDqxBBo9ZQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Sep 2018 00:19:54 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp409.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c77f6ae516e03a89627c63bd722d43d2;
-          Sat, 22 Sep 2018 00:19:49 +0000 (UTC)
-Subject: [PATCH v4 16/19] SELinux: Abstract use of ipc security blobs
-To:     LSM <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <383f1b1a-3d7c-46d2-a553-3a09f25bc1c4@schaufler-ca.com>
-Date:   Fri, 21 Sep 2018 17:19:45 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 22 Sep 2018 02:10:52 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3Ve1-0008BS-1M; Sat, 22 Sep 2018 01:19:33 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3Vdn-0000rS-Ps; Sat, 22 Sep 2018 01:19:19 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        "Xiaofei Tan" <tanxiaofei@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "John Garry" <john.garry@huawei.com>,
+        "Jason Yan" <yanaijie@huawei.com>
+Date:   Sat, 22 Sep 2018 01:15:42 +0100
+Message-ID: <lsq.1537575342.218539845@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 22/63] scsi: libsas: defer ata device eh commands to
+ libata
+In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't use the ipc->security pointer directly.
-Don't use the msg_msg->security pointer directly.
-Provide helper functions that provides the security blob pointers.
+3.16.58-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+------------------
+
+From: Jason Yan <yanaijie@huawei.com>
+
+commit 318aaf34f1179b39fa9c30fa0f3288b645beee39 upstream.
+
+When ata device doing EH, some commands still attached with tasks are
+not passed to libata when abort failed or recover failed, so libata did
+not handle these commands. After these commands done, sas task is freed,
+but ata qc is not freed. This will cause ata qc leak and trigger a
+warning like below:
+
+WARNING: CPU: 0 PID: 28512 at drivers/ata/libata-eh.c:4037
+ata_eh_finish+0xb4/0xcc
+CPU: 0 PID: 28512 Comm: kworker/u32:2 Tainted: G     W  OE 4.14.0#1
+......
+Call trace:
+[<ffff0000088b7bd0>] ata_eh_finish+0xb4/0xcc
+[<ffff0000088b8420>] ata_do_eh+0xc4/0xd8
+[<ffff0000088b8478>] ata_std_error_handler+0x44/0x8c
+[<ffff0000088b8068>] ata_scsi_port_error_handler+0x480/0x694
+[<ffff000008875fc4>] async_sas_ata_eh+0x4c/0x80
+[<ffff0000080f6be8>] async_run_entry_fn+0x4c/0x170
+[<ffff0000080ebd70>] process_one_work+0x144/0x390
+[<ffff0000080ec100>] worker_thread+0x144/0x418
+[<ffff0000080f2c98>] kthread+0x10c/0x138
+[<ffff0000080855dc>] ret_from_fork+0x10/0x18
+
+If ata qc leaked too many, ata tag allocation will fail and io blocked
+for ever.
+
+As suggested by Dan Williams, defer ata device commands to libata and
+merge sas_eh_finish_cmd() with sas_eh_defer_cmd(). libata will handle
+ata qcs correctly after this.
+
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: Xiaofei Tan <tanxiaofei@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- security/selinux/hooks.c          | 18 +++++++++---------
- security/selinux/include/objsec.h | 13 +++++++++++++
- 2 files changed, 22 insertions(+), 9 deletions(-)
+ drivers/scsi/libsas/sas_scsi_host.c | 33 ++++++++++++-----------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 389e51ef48a5..e6cb5fce5437 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5884,7 +5884,7 @@ static int ipc_has_perm(struct kern_ipc_perm *ipc_perms,
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = ipc_perms->security;
-+	isec = selinux_ipc(ipc_perms);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = ipc_perms->key;
-@@ -5941,7 +5941,7 @@ static int selinux_msg_queue_associate(struct kern_ipc_perm *msq, int msqflg)
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = msq->security;
-+	isec = selinux_ipc(msq);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = msq->key;
-@@ -5990,8 +5990,8 @@ static int selinux_msg_queue_msgsnd(struct kern_ipc_perm *msq, struct msg_msg *m
- 	u32 sid = current_sid();
- 	int rc;
- 
--	isec = msq->security;
--	msec = msg->security;
-+	isec = selinux_ipc(msq);
-+	msec = selinux_msg_msg(msg);
- 
- 	/*
- 	 * First time through, need to assign label to the message
-@@ -6038,8 +6038,8 @@ static int selinux_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *m
- 	u32 sid = task_sid(target);
- 	int rc;
- 
--	isec = msq->security;
--	msec = msg->security;
-+	isec = selinux_ipc(msq);
-+	msec = selinux_msg_msg(msg);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = msq->key;
-@@ -6092,7 +6092,7 @@ static int selinux_shm_associate(struct kern_ipc_perm *shp, int shmflg)
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = shp->security;
-+	isec = selinux_ipc(shp);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = shp->key;
-@@ -6189,7 +6189,7 @@ static int selinux_sem_associate(struct kern_ipc_perm *sma, int semflg)
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = sma->security;
-+	isec = selinux_ipc(sma);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = sma->key;
-@@ -6275,7 +6275,7 @@ static int selinux_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- 
- static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
+--- a/drivers/scsi/libsas/sas_scsi_host.c
++++ b/drivers/scsi/libsas/sas_scsi_host.c
+@@ -250,6 +250,7 @@ out_done:
+ static void sas_eh_finish_cmd(struct scsi_cmnd *cmd)
  {
--	struct ipc_security_struct *isec = ipcp->security;
-+	struct ipc_security_struct *isec = selinux_ipc(ipcp);
- 	*secid = isec->sid;
+ 	struct sas_ha_struct *sas_ha = SHOST_TO_SAS_HA(cmd->device->host);
++	struct domain_device *dev = cmd_to_domain_dev(cmd);
+ 	struct sas_task *task = TO_SAS_TASK(cmd);
+ 
+ 	/* At this point, we only get called following an actual abort
+@@ -258,6 +259,14 @@ static void sas_eh_finish_cmd(struct scs
+ 	 */
+ 	sas_end_task(cmd, task);
+ 
++	if (dev_is_sata(dev)) {
++		/* defer commands to libata so that libata EH can
++		 * handle ata qcs correctly
++		 */
++		list_move_tail(&cmd->eh_entry, &sas_ha->eh_ata_q);
++		return;
++	}
++
+ 	/* now finish the command and move it on to the error
+ 	 * handler done list, this also takes it off the
+ 	 * error handler pending list.
+@@ -265,22 +274,6 @@ static void sas_eh_finish_cmd(struct scs
+ 	scsi_eh_finish_cmd(cmd, &sas_ha->eh_done_q);
  }
  
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index 591adb374d69..5bf9f280e9b2 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -26,6 +26,7 @@
- #include <linux/in.h>
- #include <linux/spinlock.h>
- #include <linux/lsm_hooks.h>
-+#include <linux/msg.h>
- #include <net/net_namespace.h>
- #include "flask.h"
- #include "avc.h"
-@@ -173,4 +174,16 @@ static inline struct inode_security_struct *selinux_inode(
- 	return inode->i_security;
+-static void sas_eh_defer_cmd(struct scsi_cmnd *cmd)
+-{
+-	struct domain_device *dev = cmd_to_domain_dev(cmd);
+-	struct sas_ha_struct *ha = dev->port->ha;
+-	struct sas_task *task = TO_SAS_TASK(cmd);
+-
+-	if (!dev_is_sata(dev)) {
+-		sas_eh_finish_cmd(cmd);
+-		return;
+-	}
+-
+-	/* report the timeout to libata */
+-	sas_end_task(cmd, task);
+-	list_move_tail(&cmd->eh_entry, &ha->eh_ata_q);
+-}
+-
+ static void sas_scsi_clear_queue_lu(struct list_head *error_q, struct scsi_cmnd *my_cmd)
+ {
+ 	struct scsi_cmnd *cmd, *n;
+@@ -288,7 +281,7 @@ static void sas_scsi_clear_queue_lu(stru
+ 	list_for_each_entry_safe(cmd, n, error_q, eh_entry) {
+ 		if (cmd->device->sdev_target == my_cmd->device->sdev_target &&
+ 		    cmd->device->lun == my_cmd->device->lun)
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 	}
  }
  
-+static inline struct msg_security_struct *selinux_msg_msg(
-+						const struct msg_msg *msg_msg)
-+{
-+	return msg_msg->security;
-+}
-+
-+static inline struct ipc_security_struct *selinux_ipc(
-+						const struct kern_ipc_perm *ipc)
-+{
-+	return ipc->security;
-+}
-+
- #endif /* _SELINUX_OBJSEC_H_ */
--- 
-2.17.1
-
+@@ -677,12 +670,12 @@ static void sas_eh_handle_sas_errors(str
+ 		case TASK_IS_DONE:
+ 			SAS_DPRINTK("%s: task 0x%p is done\n", __func__,
+ 				    task);
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 			continue;
+ 		case TASK_IS_ABORTED:
+ 			SAS_DPRINTK("%s: task 0x%p is aborted\n",
+ 				    __func__, task);
+-			sas_eh_defer_cmd(cmd);
++			sas_eh_finish_cmd(cmd);
+ 			continue;
+ 		case TASK_IS_AT_LU:
+ 			SAS_DPRINTK("task 0x%p is at LU: lu recover\n", task);
+@@ -693,7 +686,7 @@ static void sas_eh_handle_sas_errors(str
+ 					    "recovered\n",
+ 					    SAS_ADDR(task->dev),
+ 					    cmd->device->lun);
+-				sas_eh_defer_cmd(cmd);
++				sas_eh_finish_cmd(cmd);
+ 				sas_scsi_clear_queue_lu(work_q, cmd);
+ 				goto Again;
+ 			}
 
