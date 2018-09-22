@@ -2,98 +2,109 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 485F7ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E48ECE567
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02F9B215E4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:19:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F9B215E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 48066215E4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:19:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48066215E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392166AbeIVGKy (ORCPT
+        id S2392189AbeIVGK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:10:54 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:41294 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392140AbeIVGKx (ORCPT
+        Sat, 22 Sep 2018 02:10:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44371 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392140AbeIVGKz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:10:53 -0400
-Received: by mail-io1-f69.google.com with SMTP id q24-v6so26101716iog.8
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:19:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=4tA88TLPwMdDTqdkaaoMo4ME+HYOUnR76EVicgKx82s=;
-        b=SXWCayAGwk1lSy/eUhBfUoHncEhLi+VQSmbyOctTxkuzxbhLSHG8NHEuSWRA9wMvZG
-         OgKnapThfEFOwJrWEeMdHJGMm7S6jal0XlNbGBSwSHyFZxe3pLaO7j8xDwWhdvLcQ2uj
-         oZFx/aYCUW0mf4U4xm578u1jsmldeHQs++tp5lw4cLkxYFS/Awy+CWEZszOhTZ8qo8QF
-         tBpYWF2VtT9I/c+VzKev4qImvvXwshCoxG3kb1M5UB5owBrdVHR3tw62DdQgywE/rc+X
-         fVo3UxQRpekclX9EIGztThXapnK3wv2kkjlfdn2gqeu7adkrdjfx7pty4h1I3H4qhcOq
-         oxmw==
-X-Gm-Message-State: ABuFfohpOAbxDqkafB5byAVVMCRTzt8SE3sHXa+2UV0wRp8zDangLp7+
-        X6LoIdV/Icd26aoK9vW6SGvctYlZOETxg+4aykAXugihHqlm
-X-Google-Smtp-Source: ACcGV60e00p8udnSLh4QX29CICaWGF+Ki+94KbKu132FcYgZbtv/ag5rkmKQyOPpsE36y0D70kn3rdFR4Xt/ZqOpcXOJ6FseDBHZ
+        Sat, 22 Sep 2018 02:10:55 -0400
+Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3Ve1-0008BR-2L; Sat, 22 Sep 2018 01:19:33 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1g3Vdn-0000rN-Ol; Sat, 22 Sep 2018 01:19:19 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-X-Received: by 2002:a5e:c104:: with SMTP id v4-v6mr114038iol.9.1537575575770;
- Fri, 21 Sep 2018 17:19:35 -0700 (PDT)
-Date:   Fri, 21 Sep 2018 17:19:35 -0700
-In-Reply-To: <lsq.1537575342.495565532@decadent.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000025c4a05766ab6be@google.com>
-Subject: Re: [PATCH 3.16 20/63] scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()
-From:   syzbot <syzbot+7d26fc1eea198488deab@syzkaller.appspotmail.com>
-To:     Ben Hutchings <ben@decadent.org.uk>
-Cc:     akpm@linux-foundation.org, ben@decadent.org.uk,
-        dgilbert@interlog.com, glider@google.com, jthumshirn@suse.de,
-        linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        "Benjamin Tissoires" <benjamin.tissoires@redhat.com>,
+        "Kees Cook" <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-bluetooth@vger.kernel.org, kernel-team@android.com,
+        security@kernel.org, "Johan Hedberg" <johan.hedberg@gmail.com>,
+        "Marcel Holtmann" <marcel@holtmann.org>,
+        "Mark Salyzyn" <salyzyn@android.com>
+Date:   Sat, 22 Sep 2018 01:15:42 +0100
+Message-ID: <lsq.1537575342.858007707@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 21/63] Bluetooth: hidp: buffer overflow in
+ hidp_process_report
+In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 3.16.58-rc1 review patch.  If anyone has any objections, please let me  
-> know.
+3.16.58-rc1 review patch.  If anyone has any objections, please let me know.
 
-> ------------------
+------------------
 
-> From: Alexander Potapenko <glider@google.com>
+From: Mark Salyzyn <salyzyn@android.com>
 
-> commit a45b599ad808c3c982fdcdc12b0b8611c2f92824 upstream.
+commit 7992c18810e568b95c869b227137a2215702a805 upstream.
 
-> This shall help avoid copying uninitialized memory to the userspace when
-> calling ioctl(fd, SG_IO) with an empty command.
+CVE-2018-9363
 
-> Reported-by: syzbot+7d26fc1eea198488deab@syzkaller.appspotmail.com
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> Acked-by: Douglas Gilbert <dgilbert@interlog.com>
-> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> ---
->   drivers/scsi/sg.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+The buffer length is unsigned at all layers, but gets cast to int and
+checked in hidp_process_report and can lead to a buffer overflow.
+Switch len parameter to unsigned int to resolve issue.
 
-> --- a/drivers/scsi/sg.c
-> +++ b/drivers/scsi/sg.c
-> @@ -1825,7 +1825,7 @@ retry:
->   		num = (rem_sz > scatter_elem_sz_prev) ?
->   			scatter_elem_sz_prev : rem_sz;
+This affects 3.18 and newer kernels.
 
-> -		schp->pages[k] = alloc_pages(gfp_mask, order);
-> +		schp->pages[k] = alloc_pages(gfp_mask | __GFP_ZERO, order);
->   		if (!schp->pages[k])
->   			goto out;
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Fixes: a4b1b5877b514b276f0f31efe02388a9c2836728 ("HID: Bluetooth: hidp: make sure input buffers are big enough")
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: linux-bluetooth@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: security@kernel.org
+Cc: kernel-team@android.com
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/bluetooth/hidp/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-
-Can't find the corresponding bug.
+--- a/net/bluetooth/hidp/core.c
++++ b/net/bluetooth/hidp/core.c
+@@ -429,8 +429,8 @@ static void hidp_del_timer(struct hidp_s
+ 		del_timer(&session->timer);
+ }
+ 
+-static void hidp_process_report(struct hidp_session *session,
+-				int type, const u8 *data, int len, int intr)
++static void hidp_process_report(struct hidp_session *session, int type,
++				const u8 *data, unsigned int len, int intr)
+ {
+ 	if (len > HID_MAX_BUFFER_SIZE)
+ 		len = HID_MAX_BUFFER_SIZE;
 
