@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E6CC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB94AECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E70420870
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:23:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E70420870
+	by mail.kernel.org (Postfix) with ESMTP id 9E3E420870
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:24:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3E420870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392241AbeIVGPE (ORCPT
+        id S2391957AbeIVGKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:15:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44171 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391939AbeIVGKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Sep 2018 02:10:46 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44150 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391933AbeIVGKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 02:10:45 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdv-0008Bd-Cd; Sat, 22 Sep 2018 01:19:27 +0100
+        id 1g3Vdv-0008BQ-6k; Sat, 22 Sep 2018 01:19:27 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdo-0000tJ-Lv; Sat, 22 Sep 2018 01:19:20 +0100
+        id 1g3Vdp-0000uR-7D; Sat, 22 Sep 2018 01:19:21 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Juergen Gross" <jgross@suse.com>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Nadav Amit" <namit@vmware.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+CC:     akpm@linux-foundation.org, "Peter Zijlstra" <peterz@infradead.org>,
+        "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Kyle Huey" <khuey@kylehuey.com>,
+        "Andy Lutomirski" <luto@kernel.org>, "Kyle Huey" <me@kylehuey.com>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.718020505@decadent.org.uk>
+Message-ID: <lsq.1537575342.558857038@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 45/63] x86/paravirt: Fix spectre-v2 mitigations for
- paravirt guests
+Subject: [PATCH 3.16 59/63] x86/process: Correct and optimize
+ TIF_BLOCKSTEP switch
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -63,158 +61,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Kyle Huey <me@kylehuey.com>
 
-commit 5800dc5c19f34e6e03b5adab1282535cb102fafd upstream.
+commit b9894a2f5bd18b1691cb6872c9afe32b148d0132 upstream.
 
-Nadav reported that on guests we're failing to rewrite the indirect
-calls to CALLEE_SAVE paravirt functions. In particular the
-pv_queued_spin_unlock() call is left unpatched and that is all over the
-place. This obviously wrecks Spectre-v2 mitigation (for paravirt
-guests) which relies on not actually having indirect calls around.
+The debug control MSR is "highly magical" as the blockstep bit can be
+cleared by hardware under not well documented circumstances.
 
-The reason is an incorrect clobber test in paravirt_patch_call(); this
-function rewrites an indirect call with a direct call to the _SAME_
-function, there is no possible way the clobbers can be different
-because of this.
+So a task switch relying on the bit set by the previous task (according to
+the previous tasks thread flags) can trip over this and not update the flag
+for the next task.
 
-Therefore remove this clobber check. Also put WARNs on the other patch
-failure case (not enough room for the instruction) which I've not seen
-trigger in my (limited) testing.
+To fix this its required to handle DEBUGCTLMSR_BTF when either the previous
+or the next or both tasks have the TIF_BLOCKSTEP flag set.
 
-Three live kernel image disassemblies for lock_sock_nested (as a small
-function that illustrates the problem nicely). PRE is the current
-situation for guests, POST is with this patch applied and NATIVE is with
-or without the patch for !guests.
+While at it avoid branching within the TIF_BLOCKSTEP case and evaluating
+boot_cpu_data twice in kernels without CONFIG_X86_DEBUGCTLMSR.
 
-PRE:
+x86_64: arch/x86/kernel/process.o
+text	data	bss	dec	 hex
+3024    8577    16      11617    2d61	Before
+3008	8577	16	11601	 2d51	After
 
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    callq  *0xffffffff822299e8
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
+i386: No change
 
-POST:
+[ tglx: Made the shift value explicit, use a local variable to make the
+code readable and massaged changelog]
 
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    callq  0xffffffff810a0c20 <__raw_callee_save___pv_queued_spin_unlock>
-   0xffffffff817be9a5 <+53>:    xchg   %ax,%ax
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063aa0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-NATIVE:
-
-(gdb) disassemble lock_sock_nested
-Dump of assembler code for function lock_sock_nested:
-   0xffffffff817be970 <+0>:     push   %rbp
-   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
-   0xffffffff817be974 <+4>:     push   %rbx
-   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
-   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
-   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
-   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
-   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
-   0xffffffff817be98f <+31>:    test   %eax,%eax
-   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
-   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
-   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
-   0xffffffff817be9a0 <+48>:    movb   $0x0,(%rdi)
-   0xffffffff817be9a3 <+51>:    nopl   0x0(%rax)
-   0xffffffff817be9a7 <+55>:    pop    %rbx
-   0xffffffff817be9a8 <+56>:    pop    %rbp
-   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
-   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
-   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
-   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
-   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
-   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
-End of assembler dump.
-
-
-Fixes: 63f70270ccd9 ("[PATCH] i386: PARAVIRT: add common patching machinery")
-Fixes: 3010a0663fd9 ("x86/paravirt, objtool: Annotate indirect calls")
-Reported-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Originally-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Kyle Huey <khuey@kylehuey.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: http://lkml.kernel.org/r/20170214081104.9244-3-khuey@kylehuey.com
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
+
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/paravirt.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/x86/include/uapi/asm/msr-index.h |  1 +
+ arch/x86/kernel/process.c             | 12 +++++++-----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -97,10 +97,12 @@ unsigned paravirt_patch_call(void *insnb
- 	struct branch *b = insnbuf;
- 	unsigned long delta = (unsigned long)target - (addr+5);
+--- a/arch/x86/include/uapi/asm/msr-index.h
++++ b/arch/x86/include/uapi/asm/msr-index.h
+@@ -109,6 +109,7 @@
  
--	if (tgt_clobbers & ~site_clobbers)
--		return len;	/* target would clobber too much for this site */
--	if (len < 5)
-+	if (len < 5) {
-+#ifdef CONFIG_RETPOLINE
-+		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+#endif
- 		return len;	/* call too long for patch site */
-+	}
+ /* DEBUGCTLMSR bits (others vary by model): */
+ #define DEBUGCTLMSR_LBR			(1UL <<  0) /* last branch recording */
++#define DEBUGCTLMSR_BTF_SHIFT		1
+ #define DEBUGCTLMSR_BTF			(1UL <<  1) /* single-step on branches */
+ #define DEBUGCTLMSR_TR			(1UL <<  6)
+ #define DEBUGCTLMSR_BTS			(1UL <<  7)
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -231,13 +231,15 @@ void __switch_to_xtra(struct task_struct
  
- 	b->opcode = 0xe8; /* call */
- 	b->delta = delta;
-@@ -115,8 +117,12 @@ unsigned paravirt_patch_jmp(void *insnbu
- 	struct branch *b = insnbuf;
- 	unsigned long delta = (unsigned long)target - (addr+5);
+ 	propagate_user_return_notify(prev_p, next_p);
  
--	if (len < 5)
-+	if (len < 5) {
-+#ifdef CONFIG_RETPOLINE
-+		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+#endif
- 		return len;	/* call too long for patch site */
-+	}
+-	if ((tifp ^ tifn) & _TIF_BLOCKSTEP) {
+-		unsigned long debugctl = get_debugctlmsr();
++	if ((tifp & _TIF_BLOCKSTEP || tifn & _TIF_BLOCKSTEP) &&
++	    arch_has_block_step()) {
++		unsigned long debugctl, msk;
  
- 	b->opcode = 0xe9;	/* jmp */
- 	b->delta = delta;
++		rdmsrl(MSR_IA32_DEBUGCTLMSR, debugctl);
+ 		debugctl &= ~DEBUGCTLMSR_BTF;
+-		if (tifn & _TIF_BLOCKSTEP)
+-			debugctl |= DEBUGCTLMSR_BTF;
+-		update_debugctlmsr(debugctl);
++		msk = tifn & _TIF_BLOCKSTEP;
++		debugctl |= (msk >> TIF_BLOCKSTEP) << DEBUGCTLMSR_BTF_SHIFT;
++		wrmsrl(MSR_IA32_DEBUGCTLMSR, debugctl);
+ 	}
+ 
+ 	if ((tifp ^ tifn) & _TIF_NOTSC) {
 
