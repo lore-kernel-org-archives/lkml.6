@@ -2,231 +2,484 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096FEECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C70C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC12020C0A
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:49:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pgp4XbLS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC12020C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 925132154C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 15:55:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 925132154C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbeIVVm7 (ORCPT
+        id S1728737AbeIVVt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 17:42:59 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:35114 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728187AbeIVVm7 (ORCPT
+        Sat, 22 Sep 2018 17:49:56 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45492 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728379AbeIVVt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 17:42:59 -0400
-Received: by mail-yw1-f67.google.com with SMTP id 14-v6so6382810ywe.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 08:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=feHpblfTImGvlf9+35jXQhQuP/j6SjiAxAIh2JsTDks=;
-        b=Pgp4XbLSqI7L06PANKddKm4CuCb8EgKA6MfjlNCxXtdEv8vdtUGTqC61GG+ZWrZeQZ
-         nh8Y2nlMUu/BIfLitxL1fs5WRRfKyzR6egJGDtMnhWmy9Udr9StalcMNHiT8dSq0m/9r
-         jOd79ZpfgIMg4Z9q2zVuamEVWL512RFJLI4mc=
+        Sat, 22 Sep 2018 17:49:56 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p52-v6so13000366eda.12;
+        Sat, 22 Sep 2018 08:55:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=feHpblfTImGvlf9+35jXQhQuP/j6SjiAxAIh2JsTDks=;
-        b=q40VciiPlhIX3uCHJWay50yrSCECgQdjIzsNGFYm3Pxt5u7Co8+7EmgEs2rCnt01V0
-         tVO6WYQqhnPykv0Z9KcYVmqw3/OYJsmhoxiN9aeMqtzgQDaT6B5weAGqIyegFYx5OlGl
-         h/06GAUQAdPRDHnoKnXSeG0HdLLerepdeTb4yhUAY8LWiBfNTEU5VJpUs1CdUP2eZF72
-         n8Yn33ll7QWf9ewGYipQBeLPzYzL2lyB+l9ad/Iwx2bnqcBK+r9fGjqft6p5LYxI68ky
-         oPxxfDpgevhCAMC7nmx2gu/4z8eRrKgbJkfjtNkA+7ICU0EMsOpEXhMMdswRRl968U3i
-         qAiA==
-X-Gm-Message-State: ABuFfoi5B5jXvbqAVcgjkuFmd58lnXyeiQO+ZoUNzDfvnKQWRbL5eTbu
-        blrgBJbF7gYzyyaWoI5o3YusBfKgV4Y=
-X-Google-Smtp-Source: ANB0VdZdFCKQ+4HfAyndp7DpFIeeXx8xxoMFbXtYCYUWvaA4XrGBGZDx2GQvpUd791Vtr49eyGrzlg==
-X-Received: by 2002:a81:2e95:: with SMTP id u143-v6mr1164027ywu.424.1537631336967;
-        Sat, 22 Sep 2018 08:48:56 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm5583532ywd.48.2018.09.22.08.48.54
-        for <linux-kernel@vger.kernel.org>
+        bh=zbEyqlSCvgm1YTc+Sj/7aYTqbzctlRGMSeBBX8th0Fc=;
+        b=pfJHXqagYG+yI4GxvS/o04iCAlZDMbDQrCIjgWOuTMIIo0/bM2Hblcp5lWvloT6KQ+
+         jGaNIv+ID4caXhXjA61/YS3Ixww5brdbWaJmZWbdf605j4ckGaSt0HgLq3k5ONR6AON8
+         cmIbEiVlZ0lRIGPNkvsYAgZSCMY4im/cQkMMgFkkjv4KxgwPQf32UgAGtwILXGkC7rKW
+         QYn7VXg7VSDH6epEF6CYTOVUaoq5yHGpoEcs/7GumiiimYOqCLqnab5vtdzqMzEeJbtK
+         QDA+B7m+S7MM5c1qL0Gea4mMa0QX0e1I622g0QYUN0IPtHQ2PCkHC9cPs7bSfa2tCWPa
+         jwlw==
+X-Gm-Message-State: ABuFfohCW8kJB5W4lmdEE4bZ2Por8gPYZ3rhWPZxS6cKiqGL1oM7oHPC
+        cblyYuX8NsCrK568o0QDWCcGijQ4S7k=
+X-Google-Smtp-Source: ACcGV62V/gGI0y0J0/vmt50Oe7Md9M5XpAtE92f7amtFJgxg7AO0hBXf3YwCvUWtdr0jbxAQemGrSA==
+X-Received: by 2002:a50:b3c8:: with SMTP id t8-v6mr4802611edd.95.1537631750774;
+        Sat, 22 Sep 2018 08:55:50 -0700 (PDT)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id i15-v6sm3638883ede.66.2018.09.22.08.55.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 08:48:54 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 184-v6so6693788ybg.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 08:48:54 -0700 (PDT)
-X-Received: by 2002:a25:396:: with SMTP id 144-v6mr1272573ybd.403.1537631333748;
- Sat, 22 Sep 2018 08:48:53 -0700 (PDT)
+        Sat, 22 Sep 2018 08:55:50 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id y8-v6so11954277wrh.7;
+        Sat, 22 Sep 2018 08:55:49 -0700 (PDT)
+X-Received: by 2002:adf:9522:: with SMTP id 31-v6mr2363923wrs.91.1537631749212;
+ Sat, 22 Sep 2018 08:55:49 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5f04:0:0:0:0:0 with HTTP; Sat, 22 Sep 2018 08:48:53
- -0700 (PDT)
-In-Reply-To: <20180913104629.5179-4-fanc.fnst@cn.fujitsu.com>
-References: <20180913104629.5179-1-fanc.fnst@cn.fujitsu.com> <20180913104629.5179-4-fanc.fnst@cn.fujitsu.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 22 Sep 2018 08:48:53 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jK13F7EY--zAVWq-=P2-Lt7n-K05ctL-vH7S=rcWKQoOw@mail.gmail.com>
-Message-ID: <CAGXu5jK13F7EY--zAVWq-=P2-Lt7n-K05ctL-vH7S=rcWKQoOw@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] x86/boot/KASLR: Limit kaslr to choosing the
- immovable memory
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-22-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-22-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 22 Sep 2018 23:55:35 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66RqR3pGh+1_rnvMQ4LJaSkKmky9D36tdxQS7cyJb6GYA@mail.gmail.com>
+Message-ID: <CAGb2v66RqR3pGh+1_rnvMQ4LJaSkKmky9D36tdxQS7cyJb6GYA@mail.gmail.com>
+Subject: Re: [PATCH 21/27] drm/sun4i: Add support for H6 HDMI PHY
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 13, 2018 at 3:46 AM, Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
-> If CONFIG_MEMORY_HOTREMOVE enabled and the amount of immovable
-> memory regions is not zero. Calculate the intersection between memory
-> regions from e820/efi memory table and immovable memory regions.
+On Sun, Sep 2, 2018 at 3:28 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
 >
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> H6 has Synopsys DWC HDMI 2.0 TX PHY.
+>
+> mpll settings were calculated from specifications of similar Synopsys
+> HDMI PHY found in i.MX6. Other PHY settings were derived from BSP PHY
+> driver code.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 > ---
->  arch/x86/boot/compressed/kaslr.c | 71 +++++++++++++++++++++++++++-----
->  1 file changed, 60 insertions(+), 11 deletions(-)
+>  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 137 +++++++++++++++++++++++++
+>  1 file changed, 137 insertions(+)
 >
-> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-> index 0c3567bc231c..0a7ef2daf169 100644
-> --- a/arch/x86/boot/compressed/kaslr.c
-> +++ b/arch/x86/boot/compressed/kaslr.c
-> @@ -101,6 +101,11 @@ static bool memmap_too_large;
->  /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
->  static unsigned long long mem_limit = ULLONG_MAX;
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> index ee2bf61cd4d2..2f5499bd35ec 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> @@ -14,6 +14,122 @@
+>   */
+>  #define I2C_ADDR       0x69
 >
-> +#ifdef CONFIG_MEMORY_HOTREMOVE
-> +/* Store the immovable memory regions */
-> +extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
-> +#endif
+> +static const struct dw_hdmi_mpll_config sun50i_h6_mpll_cfg[] = {
+
+How did you choose the pixel clock points for this table? The values
+sort of match up with the BSP.
+
+> +       {
+> +               30666000, {
+> +                       { 0x00b3, 0x0000 },
+> +                       { 0x2153, 0x0000 },
+> +                       { 0x40f3, 0x0000 },
+> +               },
+> +       },  {
+> +               36800000, {
+> +                       { 0x00b3, 0x0000 },
+> +                       { 0x2153, 0x0000 },
+> +                       { 0x40a2, 0x0001 },
+> +               },
+> +       },  {
+> +               46000000, {
+> +                       { 0x00b3, 0x0000 },
+> +                       { 0x2142, 0x0001 },
+> +                       { 0x40a2, 0x0001 },
+> +               },
+> +       },  {
+> +               61333000, {
+> +                       { 0x0072, 0x0001 },
+> +                       { 0x2142, 0x0001 },
+> +                       { 0x40a2, 0x0001 },
+> +               },
+> +       },  {
+> +               73600000, {
+> +                       { 0x0072, 0x0001 },
+> +                       { 0x2142, 0x0001 },
+> +                       { 0x4061, 0x0002 },
+> +               },
+> +       },  {
+> +               92000000, {
+> +                       { 0x0072, 0x0001 },
+> +                       { 0x2145, 0x0002 },
+> +                       { 0x4061, 0x0002 },
+> +               },
+> +       },  {
+> +               122666000, {
+> +                       { 0x0051, 0x0002 },
+> +                       { 0x2145, 0x0002 },
+> +                       { 0x4061, 0x0002 },
+> +               },
+> +       },  {
+> +               147200000, {
+> +                       { 0x0051, 0x0002 },
+> +                       { 0x2145, 0x0002 },
+> +                       { 0x4064, 0x0003 },
+> +               },
+> +       },  {
+> +               184000000, {
+> +                       { 0x0051, 0x0002 },
+> +                       { 0x214c, 0x0003 },
+> +                       { 0x4064, 0x0003 },
+> +               },
+> +       },  {
+> +               226666000, {
+> +                       { 0x0040, 0x0003 },
+> +                       { 0x214c, 0x0003 },
+> +                       { 0x4064, 0x0003 },
+> +               },
+> +       },  {
+> +               272000000, {
+> +                       { 0x0040, 0x0003 },
+> +                       { 0x214c, 0x0003 },
+> +                       { 0x5a64, 0x0003 },
+> +               },
+> +       },  {
+> +               340000000, {
+> +                       { 0x0040, 0x0003 },
+> +                       { 0x3b4c, 0x0003 },
+> +                       { 0x5a64, 0x0003 },
+> +               },
+> +       },  {
+> +               600000000, {
+
+594000000 is the proper clock rate.
+
+> +                       { 0x1a40, 0x0003 },
+> +                       { 0x3b4c, 0x0003 },
+> +                       { 0x5a64, 0x0003 },
+> +               },
+> +       }, {
+> +               ~0UL, {
+> +                       { 0x0000, 0x0000 },
+> +                       { 0x0000, 0x0000 },
+> +                       { 0x0000, 0x0000 },
+> +               },
+> +       }
+> +};
 > +
->
->  enum mem_avoid_index {
->         MEM_AVOID_ZO_RANGE = 0,
-> @@ -577,9 +582,9 @@ static unsigned long slots_fetch_random(void)
->         return 0;
+> +static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] = {
+
+The BSP sometimes uses different settings depending on the pixel repetition.
+Any ideas about this? I assume it's because the TMDS clock changes as a
+result of pixel repetition, as is the same with different bit depths.
+
+> +       /* pixelclk    bpp8    bpp10   bpp12 */
+> +       { 25175000,  { 0x0000, 0x0000, 0x0000 }, },
+> +       { 27000000,  { 0x0012, 0x0000, 0x0000 }, },
+> +       { 59400000,  { 0x0008, 0x0008, 0x0008 }, },
+> +       { 72000000,  { 0x0008, 0x0008, 0x001b }, },
+> +       { 74250000,  { 0x0013, 0x0013, 0x0013 }, },
+> +       { 90000000,  { 0x0008, 0x001a, 0x001b }, },
+> +       { 118800000, { 0x001b, 0x001a, 0x001b }, },
+> +       { 144000000, { 0x001b, 0x001a, 0x0034 }, },
+> +       { 180000000, { 0x001b, 0x0033, 0x0034 }, },
+> +       { 216000000, { 0x0036, 0x0033, 0x0034 }, },
+> +       { 237600000, { 0x0036, 0x0033, 0x001b }, },
+> +       { 288000000, { 0x0036, 0x001b, 0x001b }, },
+> +       { 297000000, { 0x0019, 0x001b, 0x0019 }, },
+> +       { 330000000, { 0x0036, 0x001b, 0x001b }, },
+> +       { 600000000, { 0x003f, 0x001b, 0x001b }, },
+> +       { ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
+> +};
+> +
+> +static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] = {
+> +       /*pixelclk   symbol   term   vlev*/
+
+I see a slightly different setting for 27000000, and this frequency
+below 74250000
+only, and even different for all three bit depths (not listed here). So:
+
+    { 25175000,  0x8009, 0x0004, 0x0232 },
+    { 27000000,  0x8009, 0x0007, 0x02b0 },
+
+And,
+
+> +       { 74250000,  0x8009, 0x0004, 0x0232},
+> +       { 148500000, 0x8029, 0x0004, 0x0273},
+
+These two don't match what I see in the BSP. BTW, which table did you use?
+phy301 or phy303? The code seems to indicate that model 301 is the one.
+
+> +       { 600000000, 0x8039, 0x0004, 0x014a},
+
+594000000 is the proper pixel clock you're after.
+
+> +       { ~0UL,      0x0000, 0x0000, 0x0000}
+> +};
+> +
+>  static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
+>                                       struct sun8i_hdmi_phy *phy,
+>                                       unsigned int clk_rate)
+> @@ -290,6 +406,16 @@ static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_phy *phy)
+>                      SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
 >  }
 >
-> -static void process_mem_region(struct mem_vector *entry,
-> -                              unsigned long minimum,
-> -                              unsigned long image_size)
-> +static void slots_count(struct mem_vector *entry,
-> +                       unsigned long minimum,
-> +                       unsigned long image_size)
->  {
->         struct mem_vector region, overlap;
->         unsigned long start_orig, end;
-> @@ -655,6 +660,56 @@ static void process_mem_region(struct mem_vector *entry,
->         }
->  }
->
-> +static bool process_mem_region(struct mem_vector *region,
-> +                              unsigned long long minimum,
-> +                              unsigned long long image_size)
+> +static void sun50i_hdmi_phy_init_h6(struct sun8i_hdmi_phy *phy)
 > +{
-> +       int i;
-> +       /*
-> +        * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
-> +        * walk all the regions, so use region directely.
-> +        */
-> +       if (num_immovable_mem == 0) {
-> +               slots_count(region, minimum, image_size);
+> +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
+> +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
+> +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
 > +
-> +               if (slot_area_index == MAX_SLOT_AREA) {
-> +                       debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-> +                       return 1;
-> +               }
-> +               return 0;
-> +       }
-> +
-> +#ifdef CONFIG_MEMORY_HOTREMOVE
-> +       /*
-> +        * If immovable memory found, filter the intersection between
-> +        * immovable memory and region to slots_count.
-> +        * Otherwise, go on old code.
-> +        */
-> +       for (i = 0; i < num_immovable_mem; i++) {
-> +               struct mem_vector entry;
-> +               unsigned long long start, end, entry_end, region_end;
-> +
-> +               start = immovable_mem[i].start;
-> +               end = start + immovable_mem[i].size;
-> +               region_end = region->start + region->size;
-> +
-> +               entry.start = clamp(region->start, start, end);
-> +               entry_end = clamp(region_end, start, end);
-> +
-> +               if (entry.start + image_size < entry_end) {
-
-Can this logic be rewritten to use the existing mem_overlaps() check
-instead? I think that would make it much more readable.
-
-Otherwise, yes, this all looks fine.
-
--Kees
-
-> +                       entry.size = entry_end - entry.start;
-> +                       slots_count(&entry, minimum, image_size);
-> +
-> +                       if (slot_area_index == MAX_SLOT_AREA) {
-> +                               debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-> +                               return 1;
-> +                       }
-> +               }
-> +       }
-> +       return 0;
-> +#endif
+> +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
+> +                          0xffff0000, 0x80c00000);
 > +}
 > +
->  #ifdef CONFIG_EFI
->  /*
->   * Returns true if mirror region found (and must have been processed
-> @@ -720,11 +775,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+>  static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
+>  {
+>         sun8i_hdmi_phy_unlock(phy);
+> @@ -423,6 +549,13 @@ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
+>         .phy_config = &sun8i_hdmi_phy_config_h3,
+>  };
 >
->                 region.start = md->phys_addr;
->                 region.size = md->num_pages << EFI_PAGE_SHIFT;
-> -               process_mem_region(&region, minimum, image_size);
-> -               if (slot_area_index == MAX_SLOT_AREA) {
-> -                       debug_putstr("Aborted EFI scan (slot_areas full)!\n");
-> +               if (process_mem_region(&region, minimum, image_size))
->                         break;
-> -               }
->         }
->         return true;
->  }
-> @@ -751,11 +803,8 @@ static void process_e820_entries(unsigned long minimum,
->                         continue;
->                 region.start = entry->addr;
->                 region.size = entry->size;
-> -               process_mem_region(&region, minimum, image_size);
-> -               if (slot_area_index == MAX_SLOT_AREA) {
-> -                       debug_putstr("Aborted e820 scan (slot_areas full)!\n");
-> +               if (process_mem_region(&region, minimum, image_size))
->                         break;
-> -               }
->         }
->  }
->
+> +static const struct sun8i_hdmi_phy_variant sun50i_h6_hdmi_phy = {
+> +       .cur_ctr  = sun50i_h6_cur_ctr,
+> +       .mpll_cfg = sun50i_h6_mpll_cfg,
+> +       .phy_cfg  = sun50i_h6_phy_config,
+> +       .phy_init = &sun50i_hdmi_phy_init_h6,
+> +};
+> +
+>  static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
+>         .is_custom_phy = true,
+>         .phy_init = &sun8i_hdmi_phy_init_a83t,
+> @@ -443,6 +576,10 @@ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
+>                 .compatible = "allwinner,sun50i-a64-hdmi-phy",
+>                 .data = &sun50i_a64_hdmi_phy,
+>         },
+> +       {
+> +               .compatible = "allwinner,sun50i-h6-hdmi-phy",
+> +               .data = &sun50i_h6_hdmi_phy,
+> +       },
+
+Version sort please.
+
+Regards
+ChenYu
+
+>         {
+>                 .compatible = "allwinner,sun8i-a83t-hdmi-phy",
+>                 .data = &sun8i_a83t_hdmi_phy,
 > --
-> 2.17.1
+> 2.18.0
 >
+On Sun, Sep 2, 2018 at 3:28 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
 >
+> H6 has Synopsys DWC HDMI 2.0 TX PHY.
 >
-
-
-
--- 
-Kees Cook
-Pixel Security
+> mpll settings were calculated from specifications of similar Synopsys
+> HDMI PHY found in i.MX6. Other PHY settings were derived from BSP PHY
+> driver code.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 137 +++++++++++++++++++++++++
+>  1 file changed, 137 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> index ee2bf61cd4d2..2f5499bd35ec 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+> @@ -14,6 +14,122 @@
+>   */
+>  #define I2C_ADDR       0x69
+>
+> +static const struct dw_hdmi_mpll_config sun50i_h6_mpll_cfg[] = {
+> +       {
+> +               30666000, {
+> +                       { 0x00b3, 0x0000 },
+> +                       { 0x2153, 0x0000 },
+> +                       { 0x40f3, 0x0000 },
+> +               },
+> +       },  {
+> +               36800000, {
+> +                       { 0x00b3, 0x0000 },
+> +                       { 0x2153, 0x0000 },
+> +                       { 0x40a2, 0x0001 },
+> +               },
+> +       },  {
+> +               46000000, {
+> +                       { 0x00b3, 0x0000 },
+> +                       { 0x2142, 0x0001 },
+> +                       { 0x40a2, 0x0001 },
+> +               },
+> +       },  {
+> +               61333000, {
+> +                       { 0x0072, 0x0001 },
+> +                       { 0x2142, 0x0001 },
+> +                       { 0x40a2, 0x0001 },
+> +               },
+> +       },  {
+> +               73600000, {
+> +                       { 0x0072, 0x0001 },
+> +                       { 0x2142, 0x0001 },
+> +                       { 0x4061, 0x0002 },
+> +               },
+> +       },  {
+> +               92000000, {
+> +                       { 0x0072, 0x0001 },
+> +                       { 0x2145, 0x0002 },
+> +                       { 0x4061, 0x0002 },
+> +               },
+> +       },  {
+> +               122666000, {
+> +                       { 0x0051, 0x0002 },
+> +                       { 0x2145, 0x0002 },
+> +                       { 0x4061, 0x0002 },
+> +               },
+> +       },  {
+> +               147200000, {
+> +                       { 0x0051, 0x0002 },
+> +                       { 0x2145, 0x0002 },
+> +                       { 0x4064, 0x0003 },
+> +               },
+> +       },  {
+> +               184000000, {
+> +                       { 0x0051, 0x0002 },
+> +                       { 0x214c, 0x0003 },
+> +                       { 0x4064, 0x0003 },
+> +               },
+> +       },  {
+> +               226666000, {
+> +                       { 0x0040, 0x0003 },
+> +                       { 0x214c, 0x0003 },
+> +                       { 0x4064, 0x0003 },
+> +               },
+> +       },  {
+> +               272000000, {
+> +                       { 0x0040, 0x0003 },
+> +                       { 0x214c, 0x0003 },
+> +                       { 0x5a64, 0x0003 },
+> +               },
+> +       },  {
+> +               340000000, {
+> +                       { 0x0040, 0x0003 },
+> +                       { 0x3b4c, 0x0003 },
+> +                       { 0x5a64, 0x0003 },
+> +               },
+> +       },  {
+> +               600000000, {
+> +                       { 0x1a40, 0x0003 },
+> +                       { 0x3b4c, 0x0003 },
+> +                       { 0x5a64, 0x0003 },
+> +               },
+> +       }, {
+> +               ~0UL, {
+> +                       { 0x0000, 0x0000 },
+> +                       { 0x0000, 0x0000 },
+> +                       { 0x0000, 0x0000 },
+> +               },
+> +       }
+> +};
+> +
+> +static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] = {
+> +       /* pixelclk    bpp8    bpp10   bpp12 */
+> +       { 25175000,  { 0x0000, 0x0000, 0x0000 }, },
+> +       { 27000000,  { 0x0012, 0x0000, 0x0000 }, },
+> +       { 59400000,  { 0x0008, 0x0008, 0x0008 }, },
+> +       { 72000000,  { 0x0008, 0x0008, 0x001b }, },
+> +       { 74250000,  { 0x0013, 0x0013, 0x0013 }, },
+> +       { 90000000,  { 0x0008, 0x001a, 0x001b }, },
+> +       { 118800000, { 0x001b, 0x001a, 0x001b }, },
+> +       { 144000000, { 0x001b, 0x001a, 0x0034 }, },
+> +       { 180000000, { 0x001b, 0x0033, 0x0034 }, },
+> +       { 216000000, { 0x0036, 0x0033, 0x0034 }, },
+> +       { 237600000, { 0x0036, 0x0033, 0x001b }, },
+> +       { 288000000, { 0x0036, 0x001b, 0x001b }, },
+> +       { 297000000, { 0x0019, 0x001b, 0x0019 }, },
+> +       { 330000000, { 0x0036, 0x001b, 0x001b }, },
+> +       { 600000000, { 0x003f, 0x001b, 0x001b }, },
+> +       { ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
+> +};
+> +
+> +static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] = {
+> +       /*pixelclk   symbol   term   vlev*/
+> +       { 74250000,  0x8009, 0x0004, 0x0232},
+> +       { 148500000, 0x8029, 0x0004, 0x0273},
+> +       { 600000000, 0x8039, 0x0004, 0x014a},
+> +       { ~0UL,      0x0000, 0x0000, 0x0000}
+> +};
+> +
+>  static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
+>                                       struct sun8i_hdmi_phy *phy,
+>                                       unsigned int clk_rate)
+> @@ -290,6 +406,16 @@ static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_phy *phy)
+>                      SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
+>  }
+>
+> +static void sun50i_hdmi_phy_init_h6(struct sun8i_hdmi_phy *phy)
+> +{
+> +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
+> +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
+> +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
+> +
+> +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
+> +                          0xffff0000, 0x80c00000);
+> +}
+> +
+>  static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
+>  {
+>         sun8i_hdmi_phy_unlock(phy);
+> @@ -423,6 +549,13 @@ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
+>         .phy_config = &sun8i_hdmi_phy_config_h3,
+>  };
+>
+> +static const struct sun8i_hdmi_phy_variant sun50i_h6_hdmi_phy = {
+> +       .cur_ctr  = sun50i_h6_cur_ctr,
+> +       .mpll_cfg = sun50i_h6_mpll_cfg,
+> +       .phy_cfg  = sun50i_h6_phy_config,
+> +       .phy_init = &sun50i_hdmi_phy_init_h6,
+> +};
+> +
+>  static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
+>         .is_custom_phy = true,
+>         .phy_init = &sun8i_hdmi_phy_init_a83t,
+> @@ -443,6 +576,10 @@ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
+>                 .compatible = "allwinner,sun50i-a64-hdmi-phy",
+>                 .data = &sun50i_a64_hdmi_phy,
+>         },
+> +       {
+> +               .compatible = "allwinner,sun50i-h6-hdmi-phy",
+> +               .data = &sun50i_h6_hdmi_phy,
+> +       },
+>         {
+>                 .compatible = "allwinner,sun8i-a83t-hdmi-phy",
+>                 .data = &sun8i_a83t_hdmi_phy,
+> --
+> 2.18.0
+>
