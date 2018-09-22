@@ -2,167 +2,111 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B2CECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 19:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAF5ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 19:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1D52150E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 19:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26E1E2150E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 19:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JAy3iKDt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1D52150E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mooHwLB8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E1E2150E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeIWBxP (ORCPT
+        id S1728095AbeIWByT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 21:53:15 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35802 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727086AbeIWBxP (ORCPT
+        Sat, 22 Sep 2018 21:54:19 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35998 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbeIWByT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 21:53:15 -0400
-Received: by mail-io1-f66.google.com with SMTP id w11-v6so14956481iob.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 12:58:30 -0700 (PDT)
+        Sat, 22 Sep 2018 21:54:19 -0400
+Received: by mail-it1-f196.google.com with SMTP id u13-v6so6033834iti.1;
+        Sat, 22 Sep 2018 12:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+aGHIjhq3Ey4Dk/p/B20R+5ju1ygdAY3HfZG6TiSlm8=;
-        b=JAy3iKDtIMAoU5683hV9OD47awjPkEO5j0dXtV2dSjVKNFgQhl+s+j901KDSiKeKyd
-         ea1lgztaKj6VtN7p3xxGNyLun/vRgJudMPgf4kftoBiUajbm02dRMOmbYKR06IKEG4Ni
-         8IQzBhCHvENkWRIaoHqCfH88xqO9BeHZxt9V4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MBy+RNKnOUmTHb65YAdlTNAluCLYjYibeqs9O8pC2u4=;
+        b=mooHwLB8DO2SZF1VOksxSqUyr3DfRTUG8Dq5UN3PVaQVIRawlYV0XVTw4FTIsizMin
+         aWMImts1bGMuxzvfSppNwoAp4sFfdKGzgoux4CBom8mCla9CZ/JBQXHXOYF7OktKYP5p
+         gmj5Po/4Zi7P3LY1ziwY850QkIHlrSCT1DgwHNqCFYu1hwcMZsRB3iMAojAGujqw3uFd
+         4nnY3Lkd5eKiTSh088aibWu0dsbLa5E8w7drd5qK5geuy0f3Vq5sgGFSxX5PrA/YsSpM
+         LI1fTNrWxkG1iUareblAWAtilSk5qlEPdebj9tRsFEFSD7UMVA/EB7pc7Jo8aPzrQv/l
+         dInA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+aGHIjhq3Ey4Dk/p/B20R+5ju1ygdAY3HfZG6TiSlm8=;
-        b=uZk72U2QNnqOfoyFtB3fUb+C3xIIYaVdfJwurkQQkT+0Cz5GzCuTOJBiEKqUNaECIl
-         R6R8OIrX/HaRkaRXLoG/JRugxdokzhC6reQKKkOgoZqWSfR8MZ7qxHKmq6qv4OFfTpZC
-         +p/Exj3knNVNvq+q0fn3p/MWlSn6PlYX1gQ/G6rEYcbcz1OywP+MJVkzzJKyAqfzaJnh
-         jjD40sTeCOoXzrL9A9TuYVa7Q1KsXiJfJ7SJaYSZovyztpoWWTyYy0SGTp0lvLB+hxC3
-         XAVRvjMyJo6CWguVOm48QGfEJSVfGJNreL8q3/WPNziKU0d4MnEIJksnRfFvHKopKbg4
-         74Rg==
-X-Gm-Message-State: ABuFfoiF2xXqSC6mudydcLZxj9FymuA9se2+I6uYCh/ZpuNPm7S0Lk1p
-        MSjiPGauurDbxCanX3siIChbDg==
-X-Google-Smtp-Source: ACcGV61mjjvM0udyJmTXfltxjFPUV28jmXCUzpNBrysrAQwBEe1lW5TDfJJZ/NkjPhhug9wCk7d+ig==
-X-Received: by 2002:a6b:ab41:: with SMTP id u62-v6mr2858544ioe.104.1537646309848;
-        Sat, 22 Sep 2018 12:58:29 -0700 (PDT)
-Received: from djkurtz2.bld.corp.google.com ([2620:15c:183:0:1cfd:61a5:7215:5f9c])
-        by smtp.gmail.com with ESMTPSA id w140-v6sm1333158iof.22.2018.09.22.12.58.29
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MBy+RNKnOUmTHb65YAdlTNAluCLYjYibeqs9O8pC2u4=;
+        b=nrvQ/USkBuxj22pUaPfuvlcOa7+hDpDH4tcyv31TGAQgD60iZRaoYmBbMxWC7k9XD0
+         0A6Ms2t7PzpjFJJRGv4arXgaPm0eCaYvIoOglB+Ppgtmuhjg2dpjvWZDg4hJ4PY5DSGy
+         k8U8tb7y40B8hmEtiJv3cxF33/JQNaUHU1IImICBf1vJEg7C/8HfGArdeyQ7JEPuA/nm
+         F4svA53GxBoP+XkKj4ed7n8AKSUzcZ5G94iFLoE+dHG8ZO0eNGNjGWKossNKaAq7iObr
+         fygt9g49iU3V7cQdOr6IijGqS1c2E2fShzYl0NRntdDs80kRb1sA67r1k8Yv9BycXhyq
+         weOw==
+X-Gm-Message-State: ABuFfojnwSQ++K2dOWxkIkLN445toJwj/Qg9qz9IpP2HFqjmLxpwJcp+
+        ypsfJWuDKuedQU8jvcJ1JA==
+X-Google-Smtp-Source: ACcGV63Pli+DNEMDN6cpjWf/lDAPN1CcUt5bcQjgKHqGNRkE1bFyJQlEcpS2kpjPKsiDVlCIkNLCvQ==
+X-Received: by 2002:a24:1d84:: with SMTP id 126-v6mr2649830itj.63.1537646373473;
+        Sat, 22 Sep 2018 12:59:33 -0700 (PDT)
+Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
+        by smtp.gmail.com with ESMTPSA id h66-v6sm1095021ita.22.2018.09.22.12.59.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 12:58:29 -0700 (PDT)
-From:   Daniel Kurtz <djkurtz@chromium.org>
-To:     Daniel Drake <drake@endlessm.com>
-Cc:     Shyam-sundar.S-k@amd.com, Nehal-bakulchandra.Shah@amd.com,
-        Ken.Xue@amd.com, Daniel Kurtz <djkurtz@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] pinctrl/amd: poll InterruptEnable bits in amd_gpio_irq_set_type
-Date:   Sat, 22 Sep 2018 13:58:26 -0600
-Message-Id: <20180922195826.175628-1-djkurtz@chromium.org>
-X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 22 Sep 2018 12:59:32 -0700 (PDT)
+From:   ryang <decatf@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ryang <decatf@gmail.com>
+Subject: [PATCH v2 1/2] dt-bindings: iio: light: bh1750: Add device tree binding documentation
+Date:   Sat, 22 Sep 2018 15:59:21 -0400
+Message-Id: <20180922195922.24791-1-decatf@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From the AMD BKDG, if WAKE_INT_MASTER_REG.MaskStsEn is set, a software
-write to the debounce registers of *any* gpio will block wake/interrupt
-status generation for *all* gpios for a length of time that depends on
-WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the Interrupt
-Delivery bit (INTERRUPT_ENABLE) will read as 0.
+Document device tree bindings for ROHM BH1750 ambient light sensor driver.
 
-In commit 4c1de0414a1340 ("pinctrl/amd: poll InterruptEnable bits in
-enable_irq") we tried to fix this same "gpio Interrupts are blocked
-immediately after writing debounce registers" problem, but incorrectly
-assumed it only affected the gpio whose debounce was being configured
-and not ALL gpios.
-
-To solve this for all gpios, we move the polling loop from
-amd_gpio_irq_enable() to amd_gpio_irq_set_type(), while holding the gpio
-spinlock.  This ensures that another gpio operation (e.g.
-amd_gpio_irq_unmask()) can read a temporarily disabled IRQ and
-incorrectly disable it while trying to modify some other register bits.
-
-Fixes: 4c1de0414a1340 pinctrl/amd: poll InterruptEnable bits in enable_irq
-
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: ryang <decatf@gmail.com>
 ---
- drivers/pinctrl/pinctrl-amd.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ .../devicetree/bindings/iio/light/bh1750.txt   | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/bh1750.txt
 
-diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
-index b7788140641ee2..67718b0f978d34 100644
---- a/drivers/pinctrl/pinctrl-amd.c
-+++ b/drivers/pinctrl/pinctrl-amd.c
-@@ -348,21 +348,12 @@ static void amd_gpio_irq_enable(struct irq_data *d)
- 	unsigned long flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
--	u32 mask = BIT(INTERRUPT_ENABLE_OFF) | BIT(INTERRUPT_MASK_OFF);
- 
- 	raw_spin_lock_irqsave(&gpio_dev->lock, flags);
- 	pin_reg = readl(gpio_dev->base + (d->hwirq)*4);
- 	pin_reg |= BIT(INTERRUPT_ENABLE_OFF);
- 	pin_reg |= BIT(INTERRUPT_MASK_OFF);
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
--	/*
--	 * When debounce logic is enabled it takes ~900 us before interrupts
--	 * can be enabled.  During this "debounce warm up" period the
--	 * "INTERRUPT_ENABLE" bit will read as 0. Poll the bit here until it
--	 * reads back as 1, signaling that interrupts are now enabled.
--	 */
--	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
--		continue;
- 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- }
- 
-@@ -426,7 +417,7 @@ static void amd_gpio_irq_eoi(struct irq_data *d)
- static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	int ret = 0;
--	u32 pin_reg;
-+	u32 pin_reg, pin_reg_irq_en, mask;
- 	unsigned long flags, irq_flags;
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct amd_gpio *gpio_dev = gpiochip_get_data(gc);
-@@ -495,6 +486,28 @@ static int amd_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	}
- 
- 	pin_reg |= CLR_INTR_STAT << INTERRUPT_STS_OFF;
-+	/*
-+	 * If WAKE_INT_MASTER_REG.MaskStsEn is set, a software write to the
-+	 * debounce registers of any GPIO will block wake/interrupt status
-+	 * generation for *all* GPIOs for a lenght of time that depends on
-+	 * WAKE_INT_MASTER_REG.MaskStsLength[11:0].  During this period the
-+	 * INTERRUPT_ENABLE bit will read as 0.
-+	 *
-+	 * We temporarily enable irq for the GPIO whose configuration is
-+	 * changing, and then wait for it to read back as 1 to know when
-+	 * debounce has settled and then disable the irq again.
-+	 * We do this polling with the spinlock held to ensure other GPIO
-+	 * access routines do not read an incorrect value for the irq enable
-+	 * bit of other GPIOs.  We keep the GPIO masked while polling to avoid
-+	 * spurious irqs, and disable the irq again after polling.
-+	 */
-+	mask = BIT(INTERRUPT_ENABLE_OFF);
-+	pin_reg_irq_en = pin_reg;
-+	pin_reg_irq_en |= mask;
-+	pin_reg_irq_en &= ~BIT(INTERRUPT_MASK_OFF);
-+	writel(pin_reg_irq_en, gpio_dev->base + (d->hwirq)*4);
-+	while ((readl(gpio_dev->base + (d->hwirq)*4) & mask) != mask)
-+		continue;
- 	writel(pin_reg, gpio_dev->base + (d->hwirq)*4);
- 	raw_spin_unlock_irqrestore(&gpio_dev->lock, flags);
- 
+diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.txt b/Documentation/devicetree/bindings/iio/light/bh1750.txt
+new file mode 100644
+index 000000000000..468350cc7af6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/bh1750.txt
+@@ -0,0 +1,18 @@
++ROHM BH1750 - ALS, Ambient light sensor
++
++Required properties:
++
++- compatible: Must be one of:
++    "rohm,bh1710"
++    "rohm,bh1715"
++    "rohm,bh1721"
++    "rohm,bh1750"
++    "rohm,bh1751"
++- reg: the I2C address of the sensor
++
++Example:
++
++bh1750@23 {
++	compatible = "rohm,bh1750";
++	reg = <0x23>;
++};
 -- 
-2.19.0.444.g18242da7ef-goog
+2.17.1
 
