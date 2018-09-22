@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2334EECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE6DC46470
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEC3D2156B
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:26:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEC3D2156B
+	by mail.kernel.org (Postfix) with ESMTP id 079C72156E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:26:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079C72156E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392132AbeIVGRo (ORCPT
+        id S2392207AbeIVGRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 22 Sep 2018 02:17:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44072 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44073 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391846AbeIVGKm (ORCPT
+        by vger.kernel.org with ESMTP id S2391842AbeIVGKm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Sep 2018 02:10:42 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vds-0008Bb-O9; Sat, 22 Sep 2018 01:19:24 +0100
+        id 1g3Vds-0008Bc-OS; Sat, 22 Sep 2018 01:19:24 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdn-0000qv-Ii; Sat, 22 Sep 2018 01:19:19 +0100
+        id 1g3Vdn-0000r0-Jo; Sat, 22 Sep 2018 01:19:19 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -39,10 +39,10 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, "Paolo Bonzini" <pbonzini@redhat.com>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.432581606@decadent.org.uk>
+Message-ID: <lsq.1537575342.802137681@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 16/63] KVM: x86: pass kvm_vcpu to kvm_read_guest_virt
- and kvm_write_guest_virt_system
+Subject: [PATCH 3.16 17/63] kvm: x86: use correct privilege level for
+ sgdt/sidt/fxsave/fxrstor  access
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,174 +58,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit ce14e868a54edeb2e30cb7a7b104a2fc4b9d76ca upstream.
+commit 3c9fa24ca7c9c47605672916491f79e8ccacb9e6 upstream.
 
-Int the next patch the emulator's .read_std and .write_std callbacks will
-grow another argument, which is not needed in kvm_read_guest_virt and
-kvm_write_guest_virt_system's callers.  Since we have to make separate
-functions, let's give the currently existing names a nicer interface, too.
+The functions that were used in the emulation of fxrstor, fxsave, sgdt and
+sidt were originally meant for task switching, and as such they did not
+check privilege levels.  This is very bad when the same functions are used
+in the emulation of unprivileged instructions.  This is CVE-2018-10853.
+
+The obvious fix is to add a new argument to ops->read_std and ops->write_std,
+which decides whether the access is a "system" access or should use the
+processor's CPL.
 
 Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[bwh: Backported to 3.16:
- - Drop change to handle_invvpid()
- - Adjust context]
+[bwh: Backported to 3.16: Drop change in handle_ud()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6027,8 +6027,7 @@ static int nested_vmx_check_vmptr(struct
- 			vmcs_read32(VMX_INSTRUCTION_INFO), &gva))
- 		return 1;
+--- a/arch/x86/include/asm/kvm_emulate.h
++++ b/arch/x86/include/asm/kvm_emulate.h
+@@ -104,11 +104,12 @@ struct x86_emulate_ops {
+ 	 *  @addr:  [IN ] Linear address from which to read.
+ 	 *  @val:   [OUT] Value read from memory, zero-extended to 'u_long'.
+ 	 *  @bytes: [IN ] Number of bytes to read from memory.
++	 *  @system:[IN ] Whether the access is forced to be at CPL0.
+ 	 */
+ 	int (*read_std)(struct x86_emulate_ctxt *ctxt,
+ 			unsigned long addr, void *val,
+ 			unsigned int bytes,
+-			struct x86_exception *fault);
++			struct x86_exception *fault, bool system);
  
--	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &vmptr,
--				sizeof(vmptr), &e)) {
-+	if (kvm_read_guest_virt(vcpu, gva, &vmptr, sizeof(vmptr), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
-@@ -6539,8 +6538,8 @@ static int handle_vmread(struct kvm_vcpu
- 				vmx_instruction_info, &gva))
- 			return 1;
- 		/* _system ok, as nested_vmx_check_permission verified cpl=0 */
--		kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, gva,
--			     &field_value, (is_long_mode(vcpu) ? 8 : 4), NULL);
-+		kvm_write_guest_virt_system(vcpu, gva, &field_value,
-+					    (is_long_mode(vcpu) ? 8 : 4), NULL);
- 	}
+ 	/*
+ 	 * write_std: Write bytes of standard (non-emulated/special) memory.
+@@ -116,10 +117,11 @@ struct x86_emulate_ops {
+ 	 *  @addr:  [IN ] Linear address to which to write.
+ 	 *  @val:   [OUT] Value write to memory, zero-extended to 'u_long'.
+ 	 *  @bytes: [IN ] Number of bytes to write to memory.
++	 *  @system:[IN ] Whether the access is forced to be at CPL0.
+ 	 */
+ 	int (*write_std)(struct x86_emulate_ctxt *ctxt,
+ 			 unsigned long addr, void *val, unsigned int bytes,
+-			 struct x86_exception *fault);
++			 struct x86_exception *fault, bool system);
+ 	/*
+ 	 * fetch: Read bytes of standard (non-emulated/special) memory.
+ 	 *        Used for instruction fetch.
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -734,14 +734,14 @@ static int linearize(struct x86_emulate_
+ static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
+ 			      void *data, unsigned size)
+ {
+-	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, true);
+ }
  
- 	nested_vmx_succeed(vcpu);
-@@ -6575,8 +6574,8 @@ static int handle_vmwrite(struct kvm_vcp
- 		if (get_vmx_mem_address(vcpu, exit_qualification,
- 				vmx_instruction_info, &gva))
- 			return 1;
--		if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva,
--			   &field_value, (is_long_mode(vcpu) ? 8 : 4), &e)) {
-+		if (kvm_read_guest_virt(vcpu, gva, &field_value,
-+					(is_long_mode(vcpu) ? 8 : 4), &e)) {
- 			kvm_inject_page_fault(vcpu, &e);
- 			return 1;
- 		}
-@@ -6669,9 +6668,9 @@ static int handle_vmptrst(struct kvm_vcp
- 			vmx_instruction_info, &vmcs_gva))
- 		return 1;
- 	/* ok to use *_system, as nested_vmx_check_permission verified cpl=0 */
--	if (kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, vmcs_gva,
--				 (void *)&to_vmx(vcpu)->nested.current_vmptr,
--				 sizeof(u64), &e)) {
-+	if (kvm_write_guest_virt_system(vcpu, vmcs_gva,
-+					(void *)&to_vmx(vcpu)->nested.current_vmptr,
-+					sizeof(u64), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
-@@ -6723,8 +6722,7 @@ static int handle_invept(struct kvm_vcpu
- 	if (get_vmx_mem_address(vcpu, vmcs_readl(EXIT_QUALIFICATION),
- 			vmx_instruction_info, &gva))
- 		return 1;
--	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &operand,
--				sizeof(operand), &e)) {
-+	if (kvm_read_guest_virt(vcpu, gva, &operand, sizeof(operand), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
+ static int linear_write_system(struct x86_emulate_ctxt *ctxt,
+ 			       ulong linear, void *data,
+ 			       unsigned int size)
+ {
+-	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, true);
+ }
+ 
+ static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
+@@ -755,7 +755,7 @@ static int segmented_read_std(struct x86
+ 	rc = linearize(ctxt, addr, size, false, &linear);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+-	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, false);
+ }
+ 
+ static int segmented_write_std(struct x86_emulate_ctxt *ctxt,
+@@ -769,7 +769,7 @@ static int segmented_write_std(struct x8
+ 	rc = linearize(ctxt, addr, size, true, &linear);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+-	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, false);
+ }
+ 
+ /*
+@@ -2472,12 +2472,12 @@ static bool emulator_io_port_access_allo
+ #ifdef CONFIG_X86_64
+ 	base |= ((u64)base3) << 32;
+ #endif
+-	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL);
++	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL, true);
+ 	if (r != X86EMUL_CONTINUE)
+ 		return false;
+ 	if (io_bitmap_ptr + port/8 > desc_limit_scaled(&tr_seg))
+ 		return false;
+-	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL);
++	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL, true);
+ 	if (r != X86EMUL_CONTINUE)
+ 		return false;
+ 	if ((perm >> bit_idx) & mask)
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -4178,11 +4178,10 @@ static int kvm_fetch_guest_virt(struct x
- 					  exception);
- }
+@@ -4191,10 +4191,15 @@ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
  
--int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
-+int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
- 			       gva_t addr, void *val, unsigned int bytes,
- 			       struct x86_exception *exception)
- {
--	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
- 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
- 
- 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
-@@ -4190,26 +4189,24 @@ int kvm_read_guest_virt(struct x86_emula
- }
- EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
- 
--static int kvm_read_guest_virt_system(struct x86_emulate_ctxt *ctxt,
--				      gva_t addr, void *val, unsigned int bytes,
--				      struct x86_exception *exception)
-+static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
-+			     gva_t addr, void *val, unsigned int bytes,
-+			     struct x86_exception *exception)
+ static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
+ 			     gva_t addr, void *val, unsigned int bytes,
+-			     struct x86_exception *exception)
++			     struct x86_exception *exception, bool system)
  {
  	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
- 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
+-	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
++	u32 access = 0;
++
++	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
++		access |= PFERR_USER_MASK;
++
++	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access, exception);
  }
  
--int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
--				       gva_t addr, void *val,
--				       unsigned int bytes,
--				       struct x86_exception *exception)
-+static int kvm_write_guest_virt_helper(gva_t addr, void *val, unsigned int bytes,
-+				      struct kvm_vcpu *vcpu, u32 access,
-+				      struct x86_exception *exception)
+ static int kvm_write_guest_virt_helper(gva_t addr, void *val, unsigned int bytes,
+@@ -4229,12 +4234,17 @@ out:
+ }
+ 
+ static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
+-			      unsigned int bytes, struct x86_exception *exception)
++			      unsigned int bytes, struct x86_exception *exception,
++			      bool system)
  {
--	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
- 	void *data = val;
- 	int r = X86EMUL_CONTINUE;
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
++	u32 access = PFERR_WRITE_MASK;
++
++	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
++		access |= PFERR_USER_MASK;
  
- 	while (bytes) {
- 		gpa_t gpa =  vcpu->arch.walk_mmu->gva_to_gpa(vcpu, addr,
--							     PFERR_WRITE_MASK,
-+							     access,
- 							     exception);
- 		unsigned offset = addr & (PAGE_SIZE-1);
- 		unsigned towrite = min(bytes, (unsigned)PAGE_SIZE - offset);
-@@ -4230,6 +4227,22 @@ int kvm_write_guest_virt_system(struct x
- out:
- 	return r;
+ 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
+-					   PFERR_WRITE_MASK, exception);
++					   access, exception);
  }
-+
-+static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
-+			      unsigned int bytes, struct x86_exception *exception)
-+{
-+	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
-+
-+	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
-+					   PFERR_WRITE_MASK, exception);
-+}
-+
-+int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
-+				unsigned int bytes, struct x86_exception *exception)
-+{
-+	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
-+					   PFERR_WRITE_MASK, exception);
-+}
- EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
  
- static int vcpu_mmio_gva_to_gpa(struct kvm_vcpu *vcpu, unsigned long gva,
-@@ -4902,8 +4915,8 @@ static void emulator_write_gpr(struct x8
- static const struct x86_emulate_ops emulate_ops = {
- 	.read_gpr            = emulator_read_gpr,
- 	.write_gpr           = emulator_write_gpr,
--	.read_std            = kvm_read_guest_virt_system,
--	.write_std           = kvm_write_guest_virt_system,
-+	.read_std            = emulator_read_std,
-+	.write_std           = emulator_write_std,
- 	.fetch               = kvm_fetch_guest_virt,
- 	.read_emulated       = emulator_read_emulated,
- 	.write_emulated      = emulator_write_emulated,
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -124,11 +124,11 @@ int kvm_inject_realmode_interrupt(struct
- 
- void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr);
- 
--int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
-+int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
- 	gva_t addr, void *val, unsigned int bytes,
- 	struct x86_exception *exception);
- 
--int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
-+int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu,
- 	gva_t addr, void *val, unsigned int bytes,
- 	struct x86_exception *exception);
- 
+ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
 
