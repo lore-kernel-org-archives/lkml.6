@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3618ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A43C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5824821569
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5824821569
+	by mail.kernel.org (Postfix) with ESMTP id 3F56D21569
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F56D21569
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391896AbeIVGKn (ORCPT
+        id S2391964AbeIVGRQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:10:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44079 "EHLO
+        Sat, 22 Sep 2018 02:17:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44103 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391848AbeIVGKm (ORCPT
+        by vger.kernel.org with ESMTP id S2391854AbeIVGKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:10:42 -0400
+        Sat, 22 Sep 2018 02:10:43 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vds-0008BQ-Br; Sat, 22 Sep 2018 01:19:24 +0100
+        id 1g3Vds-0008BP-BX; Sat, 22 Sep 2018 01:19:24 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdn-0000q2-7P; Sat, 22 Sep 2018 01:19:19 +0100
+        id 1g3Vdn-0000pw-6Z; Sat, 22 Sep 2018 01:19:19 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Alexey Khoroshilov" <khoroshilov@ispras.ru>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Valentina Manea" <valentina.manea.m@gmail.com>
+CC:     akpm@linux-foundation.org, "Thomas King" <thomaskingnew@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Christoph Paasch" <cpaasch@apple.com>,
+        "Eric Dumazet" <edumazet@google.com>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.109038403@decadent.org.uk>
+Message-ID: <lsq.1537575342.639753801@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 05/63] usbip: fix error handling in stub_probe()
+Subject: [PATCH 3.16 04/63] net: Set sk_prot_creator when cloning sockets
+ to the right proto
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,73 +59,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Christoph Paasch <cpaasch@apple.com>
 
-commit 3ff67445750a84de67faaf52c6e1895cb09f2c56 upstream.
+commit 9d538fa60bad4f7b23193c89e843797a1cf71ef3 upstream.
 
-If usb_hub_claim_port() fails, no resources are deallocated and
-if stub_add_files() fails, port is not released.
+sk->sk_prot and sk->sk_prot_creator can differ when the app uses
+IPV6_ADDRFORM (transforming an IPv6-socket to an IPv4-one).
+Which is why sk_prot_creator is there to make sure that sk_prot_free()
+does the kmem_cache_free() on the right kmem_cache slab.
 
-The patch fixes these issues and rearranges error handling code.
+Now, if such a socket gets transformed back to a listening socket (using
+connect() with AF_UNSPEC) we will allocate an IPv4 tcp_sock through
+sk_clone_lock() when a new connection comes in. But sk_prot_creator will
+still point to the IPv6 kmem_cache (as everything got copied in
+sk_clone_lock()). When freeing, we will thus put this
+memory back into the IPv6 kmem_cache although it was allocated in the
+IPv4 cache. I have seen memory corruption happening because of this.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+With slub-debugging and MEMCG_KMEM enabled this gives the warning
+	"cache_from_obj: Wrong slab cache. TCPv6 but object is from TCP"
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Acked-by: Valentina Manea <valentina.manea.m@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename]
+A C-program to trigger this:
+
+void main(void)
+{
+        int fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+        int new_fd, newest_fd, client_fd;
+        struct sockaddr_in6 bind_addr;
+        struct sockaddr_in bind_addr4, client_addr1, client_addr2;
+        struct sockaddr unsp;
+        int val;
+
+        memset(&bind_addr, 0, sizeof(bind_addr));
+        bind_addr.sin6_family = AF_INET6;
+        bind_addr.sin6_port = ntohs(42424);
+
+        memset(&client_addr1, 0, sizeof(client_addr1));
+        client_addr1.sin_family = AF_INET;
+        client_addr1.sin_port = ntohs(42424);
+        client_addr1.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+        memset(&client_addr2, 0, sizeof(client_addr2));
+        client_addr2.sin_family = AF_INET;
+        client_addr2.sin_port = ntohs(42421);
+        client_addr2.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+        memset(&unsp, 0, sizeof(unsp));
+        unsp.sa_family = AF_UNSPEC;
+
+        bind(fd, (struct sockaddr *)&bind_addr, sizeof(bind_addr));
+
+        listen(fd, 5);
+
+        client_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        connect(client_fd, (struct sockaddr *)&client_addr1, sizeof(client_addr1));
+        new_fd = accept(fd, NULL, NULL);
+        close(fd);
+
+        val = AF_INET;
+        setsockopt(new_fd, SOL_IPV6, IPV6_ADDRFORM, &val, sizeof(val));
+
+        connect(new_fd, &unsp, sizeof(unsp));
+
+        memset(&bind_addr4, 0, sizeof(bind_addr4));
+        bind_addr4.sin_family = AF_INET;
+        bind_addr4.sin_port = ntohs(42421);
+        bind(new_fd, (struct sockaddr *)&bind_addr4, sizeof(bind_addr4));
+
+        listen(new_fd, 5);
+
+        client_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        connect(client_fd, (struct sockaddr *)&client_addr2, sizeof(client_addr2));
+
+        newest_fd = accept(new_fd, NULL, NULL);
+        close(new_fd);
+
+        close(client_fd);
+        close(new_fd);
+}
+
+As far as I can see, this bug has been there since the beginning of the
+git-days.
+
+Signed-off-by: Christoph Paasch <cpaasch@apple.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Thomas King <thomaskingnew@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/usbip/stub_dev.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ net/core/sock.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/staging/usbip/stub_dev.c
-+++ b/drivers/staging/usbip/stub_dev.c
-@@ -340,7 +340,6 @@ static int stub_probe(struct usb_device
- {
- 	struct stub_device *sdev = NULL;
- 	const char *udev_busid = dev_name(&udev->dev);
--	int err = 0;
- 	struct bus_id_priv *busid_priv;
- 	int rc;
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1512,6 +1512,8 @@ struct sock *sk_clone_lock(const struct
  
-@@ -401,23 +400,28 @@ static int stub_probe(struct usb_device
- 			(struct usb_dev_state *) udev);
- 	if (rc) {
- 		dev_dbg(&udev->dev, "unable to claim port\n");
--		return rc;
-+		goto err_port;
- 	}
+ 		sock_copy(newsk, sk);
  
--	err = stub_add_files(&udev->dev);
--	if (err) {
-+	rc = stub_add_files(&udev->dev);
-+	if (rc) {
- 		dev_err(&udev->dev, "stub_add_files for %s\n", udev_busid);
--		dev_set_drvdata(&udev->dev, NULL);
--		usb_put_dev(udev);
--		kthread_stop_put(sdev->ud.eh);
--
--		busid_priv->sdev = NULL;
--		stub_device_free(sdev);
--		return err;
-+		goto err_files;
- 	}
- 	busid_priv->status = STUB_BUSID_ALLOC;
- 
- 	return 0;
-+err_files:
-+	usb_hub_release_port(udev->parent, udev->portnum,
-+			     (struct usb_dev_state *) udev);
-+err_port:
-+	dev_set_drvdata(&udev->dev, NULL);
-+	usb_put_dev(udev);
-+	kthread_stop_put(sdev->ud.eh);
++		newsk->sk_prot_creator = sk->sk_prot;
 +
-+	busid_priv->sdev = NULL;
-+	stub_device_free(sdev);
-+	return rc;
- }
- 
- static void shutdown_busid(struct bus_id_priv *busid_priv)
+ 		/* SANITY */
+ 		get_net(sock_net(newsk));
+ 		sk_node_init(&newsk->sk_node);
 
