@@ -2,121 +2,97 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E836EC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 429FEECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 806A42150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:42:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="BZU3fDXm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806A42150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id EDC1B21532
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 20:57:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC1B21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbeIWChl (ORCPT
+        id S1728224AbeIWCwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 22:37:41 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41195 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727988AbeIWChl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 22:37:41 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y17-v6so14992684ljy.8
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 13:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1F53DeP330QpWm2udvHwsXVnMMzggjVWGKIFG7fDbcE=;
-        b=BZU3fDXmofOSiKkB+H6OVheCTKDv7bpWWLQ2DPKOsTRUoC0NS7D8WbP+NMBdMtBAAR
-         n1Wav1ST3c0XIPpxZAGzO2dyChtcCyojLgmQr/660mehltrR7sSz/1JsMgI/uos766D6
-         rsSEcgVrUyZ+sbvstUQjQzBgy6Qsq2MXQmZh11TLWN6CYzauThx1jCfJgGQut2DGX6lP
-         8r8K3E/L7njq2Q/FeOHCOWux0iIQkUVeFDhD5pWGqF/sH3ftwG7ndBvdGuuzGXjp0DSC
-         B8Q7RuJANtbvjjVPAhrs7nANpDLQ2CVxEDBplW/yv7pMZLtHEAnNPREHyMVDdH0fnRNy
-         u4HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1F53DeP330QpWm2udvHwsXVnMMzggjVWGKIFG7fDbcE=;
-        b=sCy5cbFhw0Wh3vE0D2e0sMwjpNiqMNq4d/r+WP4zvjpq4xvvWm7TGg4qU33bWJQ71j
-         8aVlMz7lOHvy8cM6FgNY5C5KX/zyGjS4v9lkdzaoUfw/t6On8nitlJjJkhaAGnxQUkm9
-         IxSfvsQZ3rqIlYpg/ev/4C5f7PTgDKJKw+sWYvbDZdgGP2rGSj/pUD5z1bvF1m14NKtQ
-         7D22oOA0PE+oqgPwQHK+hlL37LKhxoRbmGsPj7m6tPt9RACDtN9z1Dnm66c7jGOetSXS
-         t+oXs+I+4JMFvn+qozgmnnTot9+FiFvWfVdhx3kMryPlPlacOjdpyrYkOQY80g4Idy93
-         7Q4A==
-X-Gm-Message-State: ABuFfogqsCDxXsYNWSBBBH+1zPtzXqK24iz3fW2N3+szGon4jdixgj27
-        LdaKE5cKslJtKnF2bGBrmIBTVA08mlj2bugZUFz/
-X-Google-Smtp-Source: ANB0VdboyQ/PSPf9AdoYI2/xn9iFyeJpAvEMzBRGCceV9CBdpFj5SkmhDpiyKGU6MsyB1dSL29+2GCasYbHfmR8YEgs=
-X-Received: by 2002:a2e:44c6:: with SMTP id b67-v6mr6124225ljf.102.1537648966670;
- Sat, 22 Sep 2018 13:42:46 -0700 (PDT)
+        Sat, 22 Sep 2018 22:52:32 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:42988 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727845AbeIWCwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 22:52:32 -0400
+Received: from p5b1273f1.dip0.t-ipconnect.de ([91.18.115.241] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1g3oxz-0002T9-2o; Sat, 22 Sep 2018 22:57:27 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     robh+dt@kernel.org, vicencb@gmail.com, shawn.lin@rock-chips.com,
+        ezequiel@collabora.com, enric.balletbo@collabora.com,
+        pbrobinson@gmail.com, tom@vamrs.com, dev@vamrs.com,
+        stephen@vamrs.com, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Add 96Boards Rock960 CE board support
+Date:   Sat, 22 Sep 2018 22:57:26 +0200
+Message-ID: <1927657.aQyVdf9HM0@phil>
+In-Reply-To: <20180913180545.29756-1-manivannan.sadhasivam@linaro.org>
+References: <20180913180545.29756-1-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-References: <20180824120001.20771-1-omosnace@redhat.com> <20180824120001.20771-2-omosnace@redhat.com>
- <CAHC9VhTZkrmgt7rxNYWTgYvm+TVGgRD6iFu9dDtZ7eYNXBKqHQ@mail.gmail.com>
- <CAFqZXNuir-8TE7WUHYhw5t446THO=sCjOXv+WAxNDs79e6OTWQ@mail.gmail.com>
- <CAHC9VhQ8dRTzC8vBsUOm8o4LQxVRiwgkSb23xEZwSDfsXhY3uw@mail.gmail.com> <CAFqZXNtqe8fF318pzmxzGaZgO0Mb_cacNKTRRbFNyMFhxUspJg@mail.gmail.com>
-In-Reply-To: <CAFqZXNtqe8fF318pzmxzGaZgO0Mb_cacNKTRRbFNyMFhxUspJg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 22 Sep 2018 16:42:35 -0400
-Message-ID: <CAHC9VhSoZD1uFX5FmUbLWeSPQS9ii2hyQAKV2yM8PeV5dHm-8Q@mail.gmail.com>
-Subject: Re: [PATCH ghak10 v5 1/2] audit: Add functions to log time adjustments
-To:     omosnace@redhat.com
-Cc:     linux-audit@redhat.com, rgb@redhat.com, sgrubb@redhat.com,
-        mlichvar@redhat.com, john.stultz@linaro.org, tglx@linutronix.de,
-        sboyd@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 7:21 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Mon, Sep 17, 2018 at 4:51 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Sep 17, 2018 at 8:38 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > On Fri, Sep 14, 2018 at 5:19 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Fri, Aug 24, 2018 at 8:00 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+Am Donnerstag, 13. September 2018, 20:05:41 CEST schrieb Manivannan Sadhasivam:
+> This patchset adds 96Boards Rock960 CE board support. Rock960 CE
+> (Consumer Edition) board is one of the member of 96Boards Consumer
+> Edition and AI platform and is manufactured by Vamrs Limited. Most of
+> the board configuration is shared with the Ficus board manufactured by
+> vamrs, which is an Enterprise 96Board.
+> 
+> For the sake of avoiding code duplication, a common rock960.dtsi file
+> with common DT nodes for both boards and separate board specific DTS
+> files has been added.
+> 
+> To be specific, below are some of the key differences between both
+> boards:
+> 
+> 1. Different host enable GPIO for USB
+> 2. Different power and reset GPIO for PCI-E
+> 3. No Ethernet port on Rock960
+> 
+> While adding the board support, SD card Chip detection support is also
+> added to the common dtsi file, shared by both boards.
+> 
+> This series has been tested on Rock960 CE v1.2 board.
+> 
+> Thanks,
+> Mani
+> 
+> Changes in v3:
+> 
+> * Moved usb and pcie nodes to common dtsi and kept only the properties
+>   which differ in board specific dts.
+> * Updated the common dtsi commit description.
+> 
+> Changes in v2:
+> 
+> * Changed the board compatible to "vamrs,rock960"
+> 
+> Manivannan Sadhasivam (4):
+>   arm64: dts: rockchip: Split out common nodes for Rock960 based boards
+>   dt-bindings: arm: rockchip: Add binding for Rock960 board
+>   arm64: boot: dts: rockchip: Add support for Rock960 board
+>   arm64: dts: rockchip: Enable SD card detection for Rock960 boards
 
-...
+applied all 4 for 4.20, after fixing the subject of patch3 (-boot:)
+and adapting to recent Makefile changes as pointed out by
+Ezequiel.
 
-> > Okay, with that in mind, perhaps when recording the offset values we
-> > omit the "old" values (arguably that doesn't make much sense here) and
-> > keep the sec/nsec split:
-> >
-> > type=TIME_CHANGE [...]: offset_sec=<X> offset_nsec=<Y>
-> >
-> > ... and for all others we stick with:
-> >
-> > type=TIME_CHANGE [...]: ntp_<VAR>=<NEWVAL> old=<OLD_VAL>
->
-> Alright, that format would work. However, I would still like to have a
-> separate type for the offset injection, since it has different field
-> structure and semantics (difference vs. new+old). I don't see any
-> reason to sacrifice the distinction for just one record type slot
-> (AFAIK we technically still have about 2 billion left...).
->
-> (Maybe you just duplicated the record type by mistake, in that case
-> please disregard the last sentence.)
+Heiko
 
-A reasonable guess on the typo, but no that was intentional :)
 
-As described above, there is no set field ordering for the TIME_CHANGE
-record, just like there is not set field ordering for the
-CONFIG_CHANGE record.  Why?  We only include the state variables that
-are being changed instead of including all of the available state
-variables.  Yes, historically there are the "new" and "old" fields,
-but I don't see that as a strong convention; the special "old=" field
-name helps prevent confusion.
-
-Yes, we aren't really at risk of running out of record types, but why
-do we *need* two types here?  I don't believe the ordering/structure
-argument is significant in this particular case, and I would much
-rather see all the time related state changes included in one
-TIME_CHANGE record.
-
--- 
-paul moore
-www.paul-moore.com
