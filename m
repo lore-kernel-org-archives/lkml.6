@@ -2,461 +2,246 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15931ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 13:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CB8ECE561
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 13:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91192154F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 13:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91192154F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C5B52154C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 13:21:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="QdoYAkfd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C5B52154C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730967AbeIVTNE (ORCPT
+        id S1731368AbeIVTPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 15:13:04 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35110 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbeIVTNE (ORCPT
+        Sat, 22 Sep 2018 15:15:04 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44611 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728324AbeIVTPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 15:13:04 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y21-v6so564043edr.2;
-        Sat, 22 Sep 2018 06:19:27 -0700 (PDT)
+        Sat, 22 Sep 2018 15:15:04 -0400
+Received: by mail-oi0-f65.google.com with SMTP id l82-v6so13631389oih.11
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 06:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HNcNyBwY7fIjxicUVA71G5eX+eUJKh7I+daABSk6rzM=;
+        b=QdoYAkfdAgrZ5WFUpIjSdUg0+dBEIN+5GML9vdfJtdjMORsMqRVbGIeSMq91YsyxQg
+         LDnnrpoQL22vLVllWCTXDvu1n5T0wwfKCQTKzzxKliMaABaz+X9Wzyctf0IKI3zjFTjP
+         imv/elHB1sf0jiIvD5q6Qk2lNzYyIN/xlFMIGy0i0itzKSZ0mKWWku+YkGGoMIgXFuUD
+         X1Hb7VySOG5GPaBa5vjnxkSruWLYb1SPj/iOxy1gllMPX5yXCpc15hpBe4+hLPw6Gv6v
+         N+lM7YghES56wG+hPxdHbj+B//3vTXJl4FkHJucAlaCe1Pd+VQxnC9CPjorK6ma4Lm0Y
+         nGHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8OcgvoQRyB5Eqr0Zm330wU/ZCop730lDt299Q+3Gjxw=;
-        b=g/q3KRTiqVe/MShUMXP1ZUfP3g4ZVY6BrY6yINxFin58kNScX2ac6nfT80D3YsqbaT
-         bsA1aYJkq3sPx0LSl22Dqlho0ftw+TZdCBvyHL8jTB4boE44XeHTBNZcmL1xJC0vvjw2
-         vZOWvsHj1DfMGdm7rfSRBi6p/Vj9ejBVpK6ik+LaTHApRUpDK9VvcreHPSRuq5QkRfLb
-         r4OiRv/28GpfEHUbprt33cPYJPKHdzLi6TxdLmCY1ya5uO3Imt4Un9DFgzK6KA+6fu/i
-         npurnFvx/da7BO/QI20LkYveGXrmYm+aFJSKY17oy/bjHFFQOfI28748mol5dozsck8G
-         t2gQ==
-X-Gm-Message-State: ABuFfojLlK3mZ8yqOB3FJ/SfNd6ojd0Z3EDSRWGXgbnVmziU3wx795p5
-        U37+qaKjFfZfsptINaOWqR8uFkPHePA=
-X-Google-Smtp-Source: ACcGV63Rb3K28pdxxV1WCTLDitC7N4yy24ta8xC+2zXs/e3aL3WdVp/sI+ZhjWgIg/LGssY3MrVobQ==
-X-Received: by 2002:a50:acc6:: with SMTP id x64-v6mr4006681edc.152.1537622366551;
-        Sat, 22 Sep 2018 06:19:26 -0700 (PDT)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm3297395ede.5.2018.09.22.06.19.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 06:19:26 -0700 (PDT)
-Received: by mail-wr1-f42.google.com with SMTP id j15-v6so11290054wrt.8;
-        Sat, 22 Sep 2018 06:19:25 -0700 (PDT)
-X-Received: by 2002:adf:e484:: with SMTP id i4-v6mr2072928wrm.145.1537622365403;
- Sat, 22 Sep 2018 06:19:25 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HNcNyBwY7fIjxicUVA71G5eX+eUJKh7I+daABSk6rzM=;
+        b=Wfsl310sO6r34n0bC6ScP08xO79VV7YunruQT9PmKZ2rGWntxZD9GnNvg9wJFc97xU
+         o/ZLA4FEVnHOrrOkYXIXPYoBARso0CefuSiCEiSSbbT7InLgkuW95lvreBfhQw8JD2qU
+         9TJjkJlTllNcvCCdN0VjL5J8u4f1pPnTec2Jzvmunjo1NIqPl4xXwCESDEg4v78xzl6W
+         /gxUHNV5hlMvcbtrL89euUyPRP3iKPZlUHXsYOqhK6r4cnZKIuHhHr9azbB3wOFFB9t6
+         1CZ4MJOyYCelraNu3n37ESqABACmJ0hPLjY9OHXh1S2UQ0vQB7H9Bj9h4iVtgGOobqv+
+         HC7w==
+X-Gm-Message-State: APzg51B7+u94V2Ei+zgVyHDvgCm5wXcWa/Ecr79GIDgwxjL5BjJGvzA7
+        Vu1JwehNFJTruBdIZdCx7xOAlw==
+X-Google-Smtp-Source: ANB0Vdbje16rRbB0IC8Dmv/vU0qlbZBT1nVhYjfiTRGsZLJdLs4KMIGSlGnP+yZsMG80AYco2oP6xQ==
+X-Received: by 2002:aca:48b:: with SMTP id 133-v6mr702895oie.28.1537622489166;
+        Sat, 22 Sep 2018 06:21:29 -0700 (PDT)
+Received: from brauner.io ([172.56.7.23])
+        by smtp.gmail.com with ESMTPSA id 1-v6sm9924931oir.19.2018.09.22.06.21.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Sep 2018 06:21:28 -0700 (PDT)
+Date:   Sat, 22 Sep 2018 15:21:09 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] fsmount: do not use legacy MS_ flags
+Message-ID: <20180922132106.wfa6xaxwbu276qka@brauner.io>
+References: <20180921155455.flkf5vdrm3vgn6do@brauner.io>
+ <20180920151214.15484-6-mszeredi@redhat.com>
+ <20180920151214.15484-1-mszeredi@redhat.com>
+ <17157.1537542475@warthog.procyon.org.uk>
+ <20311.1537548756@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-13-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-13-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 22 Sep 2018 21:19:12 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65tt4S-k=AF2AmjQyEkUydzMimB8TT2Uiqmpf6G8qD1Cw@mail.gmail.com>
-Message-ID: <CAGb2v65tt4S-k=AF2AmjQyEkUydzMimB8TT2Uiqmpf6G8qD1Cw@mail.gmail.com>
-Subject: Re: [PATCH 12/27] drm/sun4i: Add basic support for DE3
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wesq2zeaygxqgfat"
+Content-Disposition: inline
+In-Reply-To: <20311.1537548756@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> Display Engine 3 is an upgrade of DE2 with new features like support for
-> 10 bit color formats and support for AFBC.
->
-> Most of DE2 code works with DE3, except some small details.
->
-> Add support for it.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/sun8i_csc.c       | 96 +++++++++++++++++++++++--
->  drivers/gpu/drm/sun4i/sun8i_mixer.c     | 17 ++++-
->  drivers/gpu/drm/sun4i/sun8i_mixer.h     | 21 +++++-
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c |  8 ++-
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.h |  1 +
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.c  |  8 +++
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.h  |  2 +
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.c | 34 ++++++++-
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.h | 23 ++++++
->  9 files changed, 197 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
-> index b14925b40ccf..101901ccf2dc 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-> @@ -34,6 +34,34 @@ static const u32 yvu2rgb[] = {
->         0x000004A8, 0x00000000, 0x00000813, 0xFFFBAC4A,
->  };
->
-> +/*
-> + * DE3 has a bit different CSC units. Factors are in two's complement format.
-> + * First three have 17 bits for fractinal part and last two 2 bits. First
-> + * three values in each line are multiplication factor, 4th is difference,
-> + * which is subtracted from the input value before the multiplication and
-> + * last value is constant, which is added at the end.
-> + *
-> + * x' = c00 * (x + d0) + c01 * (y + d1) + c02 * (z + d2) + const0
-> + * y' = c10 * (x + d0) + c11 * (y + d1) + c12 * (z + d2) + const1
-> + * z' = c20 * (x + d0) + c21 * (y + d1) + c22 * (z + d2) + const2
-> + *
-> + * Please note that above formula is true only for Blender CSC. Other DE3 CSC
-> + * units takes only positive value for difference. From what can be deducted
-> + * from BSP driver code, those units probably automatically assume that
-> + * difference has to be subtracted.
-> + */
-> +static const u32 yuv2rgb_de3[] = {
-> +       0x0002542a, 0x00000000, 0x0003312a, 0xffffffc0, 0x00000000,
-> +       0x0002542a, 0xffff376b, 0xfffe5fc3, 0xfffffe00, 0x00000000,
-> +       0x0002542a, 0x000408d3, 0x00000000, 0xfffffe00, 0x00000000,
-> +};
-> +
-> +static const u32 yvu2rgb_de3[] = {
-> +       0x0002542a, 0x0003312a, 0x00000000, 0xffffffc0, 0x00000000,
-> +       0x0002542a, 0xfffe5fc3, 0xffff376b, 0xfffffe00, 0x00000000,
-> +       0x0002542a, 0x00000000, 0x000408d3, 0xfffffe00, 0x00000000,
-> +};
-> +
->  static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
->                                        enum sun8i_csc_mode mode)
->  {
-> @@ -61,6 +89,38 @@ static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
->         }
->  }
->
-> +static void sun8i_de3_ccsc_set_coefficients(struct regmap *map, int layer,
-> +                                           enum sun8i_csc_mode mode)
-> +{
-> +       const u32 *table;
-> +       int i, j;
-> +
-> +       switch (mode) {
-> +       case SUN8I_CSC_MODE_YUV2RGB:
-> +               table = yuv2rgb_de3;
-> +               break;
-> +       case SUN8I_CSC_MODE_YVU2RGB:
-> +               table = yvu2rgb_de3;
-> +               break;
-> +       default:
-> +               DRM_WARN("Wrong CSC mode specified.\n");
-> +               return;
-> +       }
-> +
-> +       for (i = 0; i < 3; i++) {
-> +               for (j = 0; j < 3; j++)
-> +                       regmap_write(map,
-> +                                    SUN8I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE,
-> +                                                                layer, i, j),
-> +                                    table[i * 5 + j]);
 
-Given that the first three values occupy contiguous addresses,
-you can use regmap_bulk_write() here.
+--wesq2zeaygxqgfat
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +               regmap_write(map,
-> +                            SUN8I_MIXER_BLEND_CSC_CONST(DE3_BLD_BASE,
-> +                                                        layer, i),
-> +                            SUN8I_MIXER_BLEND_CSC_CONST_VAL(table[i * 5 + 3],
-> +                                                            table[i * 5 + 4]));
+On Fri, Sep 21, 2018 at 05:52:36PM +0100, David Howells wrote:
+> Christian Brauner <christian@brauner.io> wrote:
+>=20
+> > So from reading the patch I got the impression that superblock mount
+> > options passed via fsconfig() are passed as strings like "ro" and are
+> > translated into approriate objects (e.g. flags etc.) by the kernel.
+>=20
+> I'm having second throughts about that - at least for "ro": that one is
+> particularly problematic as it governs how source devices are opened.  I'm
+> kind of tempted to pass that as a flag to fsopen().
+>=20
+> What I'd like to do in btrfs, ext4, etc. is open blockdevs as I get the
+> parameters that enumerate them - but I have to hold the looked-up paths t=
+ill
+> the validate/get_tree stage so that I know the final ro/rw state before I=
+ can
+> do the opening.
+>=20
+> > That seems like a future proof mechanism to extend mount options for
+> > userspace without having to worry about exceeding any integer types in =
+the
+> > future. Maybe this would make sense for non-superblock options as well?=
+ I
+> > can see that this is less performant that checking flags and string par=
+sing
+> > is a thing that is not particularly nice but it would be one option to =
+solve
+> > the running out of flags problem.
+>=20
+> Al disliked the idea of setting up a separate context to define the mount
+> options.
 
-Nit: Using a two-dimension array might make it easier to read.
+I hope thinking about mount flag exhaustion at this point is not too
+hijacking this thread too much. But another option I was thinking about was=
+ to
+split the mount flags into different sets where the sets can be
+differentiated by a command.
 
-> +       }
-> +}
-> +
->  static void sun8i_csc_enable(struct regmap *map, u32 base, bool enable)
->  {
->         u32 val;
-> @@ -73,21 +133,45 @@ static void sun8i_csc_enable(struct regmap *map, u32 base, bool enable)
->         regmap_update_bits(map, SUN8I_CSC_CTRL(base), SUN8I_CSC_CTRL_EN, val);
->  }
->
-> +static void sun8i_de3_ccsc_enable(struct regmap *map, int layer, bool enable)
-> +{
-> +       u32 val, mask;
-> +
-> +       mask = SUN8I_MIXER_BLEND_CSC_CTL_EN(layer);
-> +
-> +       if (enable)
-> +               val = mask;
-> +       else
-> +               val = 0;
-> +
-> +       regmap_update_bits(map, SUN8I_MIXER_BLEND_CSC_CTL(DE3_BLD_BASE),
-> +                          mask, val);
-> +}
-> +
->  void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int layer,
->                                      enum sun8i_csc_mode mode)
->  {
-> -       u32 base;
-> +       if (!mixer->cfg->is_de3) {
-> +               u32 base;
+enum {
+        MOUNT_ATTR_PROPAGATION =3D 1
+        MOUNT_ATTR_SECURITY
+        MOUNT_ATTR_FSTIME
+}
 
-You could rewrite this as
+Let's say split mount propagation flags into a set identified by
+MOUNT_ATTR_PROPAGATION:
+#define MOUNT_ATTR_UNBINDABLE   (1<<0)  /* change to unbindable */
+#define MOUNT_ATTR_PRIVATE      (1<<1)  /* change to private */
+#define MOUNT_ATTR_SLAVE        (1<<2)  /* change to slave */
+#define MOUNT_ATTR_SHARED       (1<<3)  /* change to shared */
 
-    if (mixer->cfg->is_de3) {
-               sun8i_de3_ccsc_set_coefficients(mixer->engine.regs,
-                                               layer, mode);
-               return;
-    }
+and another set
+MOUNT_ATTR_SECURITY:
+#define MOUNT_ATTR_RDONLY        (1<<0) /* Mount read-only */
+#define MOUNT_ATTR_NOSUID        (1<<1) /* Ignore suid and sgid bits */
+#define MOUNT_ATTR_NODEV         (1<<2) /* Disallow access to device specia=
+l files */
+#define MOUNT_ATTR_NOEXEC        (1<<3) /* Disallow program execution */
 
-That way you don't need to change the indentation on the existing lines.
-I suppose this is more of a personal preference. The downside is the control
-flow is slightly more complicated.
+and another set
+MOUNT_ATTR_FSTIME:
+#define MOUNT_ATTR_NOATIME      (1<<0)  /* Do not update access times. */
+#define MOUNT_ATTR_NODIRATIME   (1<<1)  /* Do not update directory access t=
+imes */
 
-> -       base = ccsc_base[mixer->cfg->ccsc][layer];
-> +               base = ccsc_base[mixer->cfg->ccsc][layer];
->
-> -       sun8i_csc_set_coefficients(mixer->engine.regs, base, mode);
-> +               sun8i_csc_set_coefficients(mixer->engine.regs, base, mode);
-> +       } else {
-> +               sun8i_de3_ccsc_set_coefficients(mixer->engine.regs,
-> +                                               layer, mode);
-> +       }
->  }
->
->  void sun8i_csc_enable_ccsc(struct sun8i_mixer *mixer, int layer, bool enable)
->  {
-> -       u32 base;
-> +       if (!mixer->cfg->is_de3) {
-> +               u32 base;
->
-> -       base = ccsc_base[mixer->cfg->ccsc][layer];
-> +               base = ccsc_base[mixer->cfg->ccsc][layer];
->
-> -       sun8i_csc_enable(mixer->engine.regs, base, enable);
-> +               sun8i_csc_enable(mixer->engine.regs, base, enable);
-> +       } else {
-> +               sun8i_de3_ccsc_enable(mixer->engine.regs, layer, enable);
-> +       }
->  }
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> index 743941a33d88..a9218abf0935 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -460,8 +460,21 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
->         base = sun8i_blender_base(mixer);
->
->         /* Reset the registers */
-> -       for (i = 0x0; i < 0x20000; i += 4)
-> -               regmap_write(mixer->engine.regs, i, 0);
-> +       if (mixer->cfg->is_de3) {
-> +               for (i = 0x0; i < 0x3000; i += 4)
-> +                       regmap_write(mixer->engine.regs, i, 0);
-> +               for (i = 0x20000; i < 0x40000; i += 4)
-> +                       regmap_write(mixer->engine.regs, i, 0);
-> +               for (i = 0x70000; i < 0x88000; i += 4)
-> +                       regmap_write(mixer->engine.regs, i, 0);
-> +               for (i = 0xa0000; i < 0xb0000; i += 4)
-> +                       regmap_write(mixer->engine.regs, i, 0);
-> +               for (i = 0xd0000; i < 0xe0000; i += 4)
-> +                       regmap_write(mixer->engine.regs, i, 0);
+and so on...
 
-Could you use the macros *_BASE and *_SIZE here? That would make
-it more obviously what parts you're clearing.
+So you could e.g. add another unsigned int cmd argument to
+mount_setattr():
 
-The last offset, 0xd0000, isn't even defined in the DE3 spec.
+mount_setattr(int dfd, const char *path, unsigned int atflags,
+              unsigned int attr_cmd,
+	      unsigned int attr_values,
+	      unsigned int attr_mask);
 
-> +       } else {
-> +               for (i = 0x0; i < 0x20000; i += 4)
-> +                       regmap_write(mixer->engine.regs, i, 0);
-> +       }
->
->         /* Enable the mixer */
->         regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> index 020b0a097c84..4c9a442bbb44 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -33,6 +33,10 @@
->  #define DE2_CH_BASE                            0x2000
->  #define DE2_CH_SIZE                            0x1000
->
-> +#define DE3_BLD_BASE                           0x0800
-> +#define DE3_CH_BASE                            0x1000
-> +#define DE3_CH_SIZE                            0x0800
-> +
->  #define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
->  #define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 * (x))
->  #define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 * (x))
-> @@ -47,6 +51,11 @@
->  #define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 * (x))
->  #define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 + 0x04 * (x))
->  #define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) + 0xfc)
-> +#define SUN8I_MIXER_BLEND_CSC_CTL(base)                ((base) + 0x100)
-> +#define SUN8I_MIXER_BLEND_CSC_COEFF(base, layer, x, y) \
-> +       ((base) + 0x110 + (layer) * 0x30 +  (x) * 0x10 + 4 * (y))
-> +#define SUN8I_MIXER_BLEND_CSC_CONST(base, layer, i) \
-> +       ((base) + 0x110 + (layer) * 0x30 +  (i) * 0x10 + 0x0c)
+Then - similiar to fsconfig()'s FS_CONFIG_SET_{FLAG,STRING,...} - you
+would pass:
 
-Should these have a DE3 prefix?
+/* set propagation */
+mount_setattr(dfd, path, atflags,
+              MOUNT_ATTR_PROPAGATION,
+	      vals,
+	      propagation_flagmask);
 
->
->  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
->  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
-> @@ -61,6 +70,9 @@
->
->  #define SUN8I_MIXER_BLEND_OUTCTL_INTERLACED    BIT(1)
->
-> +#define SUN8I_MIXER_BLEND_CSC_CTL_EN(ch)       BIT(ch)
-> +#define SUN8I_MIXER_BLEND_CSC_CONST_VAL(d, c)  (((d) << 16) | ((c) & 0xffff))
-> +
+/* set security */
+mount_setattr(dfd, path, atflags,
+              MOUNT_ATTR_SECURITY,
+	      vals,
+	      security_flagmask);
 
-Same here.
+/* set time */
+mount_setattr(dfd, path, atflags,
+              MOUNT_ATTR_FSTIME,
+	      vals,
+	      fstime_flagmask);
 
->  #define SUN8I_MIXER_FBFMT_ARGB8888     0
->  #define SUN8I_MIXER_FBFMT_ABGR8888     1
->  #define SUN8I_MIXER_FBFMT_RGBA8888     2
+and then finally have an additional command like:
 
-[...]
+/* apply changes */
+mount_setattr(dfd, path, atflags, MOUNT_ATTR_APPLY, vals, 0);
 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> index 46f0237c17bb..3d0ad64178ea 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
-> @@ -30,6 +30,8 @@
->  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_RGB_MODE                BIT(15)
->  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_OFFSET    8
->  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_MASK      GENMASK(12, 8)
-> +#define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK      GENMASK(31, 24)
-> +#define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA(x)                ((x) << 24)
+that applies all the properties.
 
-DE3 prefix?
+In kernel you could then either have separate flags in the corresponding
+structs of interest or bit arrays of arbitrary length or whatever.
+Each of the flag setting commands before the MOUNT_ATTR_APPLY would then
+perform verification whether the combination of flags makes sense and
+immediately return back an error to userspace but only the
+MOUNT_ATTR_APPLY call would actually commit the changes.
 
->
->  struct sun8i_mixer;
->
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> index 8697afc36023..22e1ed5cd7a4 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> @@ -835,7 +835,10 @@ static const u32 bicubic4coefftab32[480] = {
->
->  static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int channel)
->  {
-> -       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
-> +       if (mixer->cfg->is_de3)
-> +               return DE3_VI_SCALER_BASE + DE3_VI_SCALER_SIZE * channel;
-> +       else
-> +               return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
->  }
->
->  static int sun8i_vi_scaler_coef_index(unsigned int step)
-> @@ -951,6 +954,35 @@ void sun8i_vi_scaler_setup(struct sun8i_mixer *mixer, int layer,
->                 cvphase = vphase;
->         }
->
-> +       if (mixer->cfg->is_de3) {
-> +               u32 val;
-> +
-> +               if (format->hsub == 1 && format->vsub == 1)
-> +                       val = SUN8I_SCALER_VSU_SCALE_MODE_UI;
-> +               else
-> +                       val = SUN8I_SCALER_VSU_SCALE_MODE_NORMAL;
-> +
-> +               regmap_write(mixer->engine.regs,
-> +                            SUN8I_SCALER_VSU_SCALE_MODE(base), val);
+>=20
+> > > 	mount_setattr(int dfd, const char *path, unsigned int atflags,
+> > > 		      unsigned int attr_values,
+> > > 		      unsigned int attr_mask);
+> >=20
+> > If we go with the flag arguments wouldn't it make sense to use a larger
+> > integer type?
+>=20
+> You can't - at least not directly through syscall args.  They are 32-bit =
+on a
+> 32-bit system.
 
-The remaining settings seem to be related to the edge detection scaling
-method. Since you aren't supporting it, are they necessary?
+Ah, 32bit systems. I tend to forget that they exist. :)
 
-> +               regmap_write(mixer->engine.regs,
-> +                            SUN8I_SCALER_VSU_DIR_THR(base),
-> +                            SUN8I_SCALER_VSU_SUB_ZERO_DIR_THR(0) |
-> +                            SUN8I_SCALER_VSU_ZERO_DIR_THR(0) |
-> +                            SUN8I_SCALER_VSU_HORZ_DIR_THR(0xff) |
-> +                            SUN8I_SCALER_VSU_VERT_DIR_THR(1));
-> +               regmap_write(mixer->engine.regs,
-> +                            SUN8I_SCALER_VSU_EDGE_THR(base),
-> +                            SUN8I_SCALER_VSU_EDGE_SHIFT(8) |
-> +                            SUN8I_SCALER_VSU_EDGE_OFFSET(0));
-> +               regmap_write(mixer->engine.regs,
-> +                            SUN8I_SCALER_VSU_EDSCL_CTRL(base), 0);
-> +               regmap_write(mixer->engine.regs,
-> +                            SUN8I_SCALER_VSU_ANGLE_THR(base),
-> +                            SUN8I_SCALER_VSU_ANGLE_SHIFT(2) |
-> +                            SUN8I_SCALER_VSU_ANGLE_OFFSET(0));
-> +       }
-> +
->         regmap_write(mixer->engine.regs,
->                      SUN8I_SCALER_VSU_OUTSIZE(base), outsize);
->         regmap_write(mixer->engine.regs,
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
-> index cd015405f66d..c322f5652481 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
-> @@ -15,6 +15,9 @@
->  #define DE2_VI_SCALER_BASE 0x20000
->  #define DE2_VI_SCALER_SIZE 0x20000
->
-> +#define DE3_VI_SCALER_BASE 0x20000
-> +#define DE3_VI_SCALER_SIZE 0x08000
-> +
->  /* this two macros assumes 16 fractional bits which is standard in DRM */
->  #define SUN8I_VI_SCALER_SCALE_MIN              1
->  #define SUN8I_VI_SCALER_SCALE_MAX              ((1UL << 20) - 1)
-> @@ -25,6 +28,11 @@
->  #define SUN8I_VI_SCALER_SIZE(w, h)             (((h) - 1) << 16 | ((w) - 1))
->
->  #define SUN8I_SCALER_VSU_CTRL(base)            ((base) + 0x0)
-> +#define SUN8I_SCALER_VSU_SCALE_MODE(base)      ((base) + 0x10)
-> +#define SUN8I_SCALER_VSU_DIR_THR(base)         ((base) + 0x20)
-> +#define SUN8I_SCALER_VSU_EDGE_THR(base)                ((base) + 0x24)
-> +#define SUN8I_SCALER_VSU_EDSCL_CTRL(base)      ((base) + 0x28)
-> +#define SUN8I_SCALER_VSU_ANGLE_THR(base)       ((base) + 0x2c)
+>=20
+> > > where atflags can potentially include AT_RECURSIVE.
+> >=20
+> > Very much in favor of having this operate recursively!
+>=20
+> It gets complicated with propagation.
 
-DE3 prefix for the new ones please.
+Sure, I totally understand.
 
->  #define SUN8I_SCALER_VSU_OUTSIZE(base)         ((base) + 0x40)
->  #define SUN8I_SCALER_VSU_YINSIZE(base)         ((base) + 0x80)
->  #define SUN8I_SCALER_VSU_YHSTEP(base)          ((base) + 0x88)
-> @@ -46,6 +54,21 @@
->  #define SUN8I_SCALER_VSU_CTRL_EN               BIT(0)
->  #define SUN8I_SCALER_VSU_CTRL_COEFF_RDY                BIT(4)
->
-> +#define SUN8I_SCALER_VSU_SUB_ZERO_DIR_THR(x)   (((x) << 24) & 0xFF)
-> +#define SUN8I_SCALER_VSU_ZERO_DIR_THR(x)       (((x) << 16) & 0xFF)
-> +#define SUN8I_SCALER_VSU_HORZ_DIR_THR(x)       (((x) << 8) & 0xFF)
-> +#define SUN8I_SCALER_VSU_VERT_DIR_THR(x)       ((x) & 0xFF)
-> +
-> +#define SUN8I_SCALER_VSU_SCALE_MODE_UI         0
-> +#define SUN8I_SCALER_VSU_SCALE_MODE_NORMAL     1
-> +#define SUN8I_SCALER_VSU_SCALE_MODE_ED_SCALE   2
-> +
-> +#define SUN8I_SCALER_VSU_EDGE_SHIFT(x)         (((x) << 16) & 0xF)
-> +#define SUN8I_SCALER_VSU_EDGE_OFFSET(x)                ((x) & 0xFF)
-> +
-> +#define SUN8I_SCALER_VSU_ANGLE_SHIFT(x)                (((x) << 16) & 0xF)
-> +#define SUN8I_SCALER_VSU_ANGLE_OFFSET(x)       ((x) & 0xFF)
-> +
+Christian
 
-Same here.
+--wesq2zeaygxqgfat
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards
-ChenYu
+-----BEGIN PGP SIGNATURE-----
 
->  void sun8i_vi_scaler_enable(struct sun8i_mixer *mixer, int layer, bool enable);
->  void sun8i_vi_scaler_setup(struct sun8i_mixer *mixer, int layer,
->                            u32 src_w, u32 src_h, u32 dst_w, u32 dst_h,
-> --
-> 2.18.0
->
+iQIzBAEBCgAdFiEE7btrcuORLb1XUhEwjrBW1T7ssS0FAlumQcIACgkQjrBW1T7s
+sS25/Q/+MAZYF2T2DmFh80HqUJ5f7dRCAWmohsOiKAU6TbYD87o0LEbRP9pDvLqe
+cW7PeZbGhq++Ol2q4Ff14WiO/bFWKbtbQ7n5vCG1o05+5ikQSd81O8QslG0Nrn+v
+zTsu+/TEAH5ZmFNVetiD/98mkWS9K3E8tmJTMTwXA0Tkkwyq9ezIOtoF+LQ6/e+A
+DSwA+VlfNr23ijFFQ6ojTNAhGpngJfX0IOQeANYRNol69I4k9C96S2biAKfvV4xM
+9MYiBTi0FAKlv6fTyDnPyG4DmSkF5db1g3RGjD/t7heLm4Nz/IFyvpm7ZJZTqBmo
+6smkhX1W1UnPuu57yY1n/VqNjccp1XE5w+iPhTp5v+UoObbelV1p9ey6taRwNrmY
++hNQfBeA2ga7ZEn1uEN0mH77Y1Cg82Vj5mRwliP05wLpujlOeZM729zMKfumaxa7
+UAyNQ+WwloKJAibX72usqM8Pmza1Us7YPcp/eXtKMenHiDgz5F3HBNBJQq1USGmm
+UR3u+4jKUqS86kHzGR1OiTOgjZ+sP10EpQRL4gCSRprAZVRJ7E3hP9cb3KuGYGbR
+RlGsdxZrRSYy13ymh6KIRjrKBOMeUzOMwMO3KVOg3hyPicpqU5thhAxS6+Urql7v
++IKqAJa6h3geiBXgDamz8CMHETNV/FN/VEh3iHZXaRGbWifkBzE=
+=t3Po
+-----END PGP SIGNATURE-----
+
+--wesq2zeaygxqgfat--
