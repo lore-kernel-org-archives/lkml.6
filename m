@@ -2,107 +2,123 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040F0C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0909CECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1B6A2150E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:41:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BE0920684
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:57:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="fRsLbea0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B6A2150E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cp+0BzRX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE0920684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbeIWFhE (ORCPT
+        id S1726074AbeIWFwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 01:37:04 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33965 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbeIWFhD (ORCPT
+        Sun, 23 Sep 2018 01:52:21 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35613 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeIWFwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 01:37:03 -0400
-Received: by mail-pf1-f195.google.com with SMTP id k19-v6so7521953pfi.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 16:41:43 -0700 (PDT)
+        Sun, 23 Sep 2018 01:52:21 -0400
+Received: by mail-pf1-f196.google.com with SMTP id p12-v6so7527337pfh.2;
+        Sat, 22 Sep 2018 16:56:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gcw9CPSV3u4YZIhv/1kFUlTXnlNjBUBOnEHeo2kzAG8=;
-        b=fRsLbea0WqRNuUF/D8fiemmJvAOCLFkpp5qlftzGN5aLY+hZvkgUZ/7w6LeI7hwozy
-         iTA9JYcxARVNloV04ELd8eqgaVO2JHPcmoZ+vKpcRzBx+hpLoCHlmYxEzQZbmiROeMph
-         +TsZFHV1KZUuKbYXkWRsUGgC46fGD16VRzh6o=
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yhU6AFucjYuaEBlXVfmhqsSUjsj7F/FZ3yfpqeIQT5w=;
+        b=cp+0BzRXHG7YR4QT9lM/VGA1RlJdjXjvowfoSqlrtjS9gOhQy//A2gHLYZ1Tp6devk
+         Yh+tN9OrMfEqN+nBZ9+cXr1f5/eNlX3yG92CTsvDqtBuU+zm/SmSg7xABdq1ueUxgPfy
+         nhPsWL4d+jZGW++YM8hcsjfo9gIY7S/OTer2/xbcUegFoWmYRMq6ysxYau5xoS48dxPU
+         fGtdgqEGmA43zcNL1G8hsfdLNKbvO8xtD19OhEN7j2RHXySDxxQ1Ffc6hck5CslMNDNa
+         /AJz40BWnV6Y5yRQVJDKhgM+I0G2L8d8i/FAELXCGdz38FBKYYWGGkMVwmzzXDm+WSIm
+         QTVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gcw9CPSV3u4YZIhv/1kFUlTXnlNjBUBOnEHeo2kzAG8=;
-        b=eZWWldkan3AEk8x1pGhxxcxXkR9GUi2PIB+x5kBAYZ4csUd3ocwvrDl9lCsx64qibe
-         VCamWcRTcjb07HB8XeFwhv3TGngAWAcn8JfNeQIwSXlAxagQhlOKVpcm9QPuW78gCuGv
-         zS0h2ujLPj8IzS1Nu91R3fzFrhvx9UX42QJ7uI0LfWlGz6NSFIxUivZR5QGKkHBjrzJI
-         ZLBbfgQYvABnWjaCEFsc6wvgJtLpB2YlI4Qf5Q5blAhRtyBcVeBn7bUkNzQxYznP4mdj
-         hSXtS/cOfx1bsPKvjbGA3o0TlHavDEXdiPZGOeeK2Le8UOcZ1zKAvSMSvgL8uKSBXHEu
-         qJjA==
-X-Gm-Message-State: ABuFfoj7hppiay7/aesdZ84UnCj1cgfD4J9rcBUeJQIQAiz6yTGOQPDl
-        NKsQ6Okb693gNckiQcsv/wyzZuS5Krk=
-X-Google-Smtp-Source: ACcGV61HqTSEmA6k1xeHjIqiB46mqmWw/Rc7H8WwHSLt/o7nNRkGfvUeoSl6rq0AnOYEgRP3uAEFHg==
-X-Received: by 2002:a65:594b:: with SMTP id g11-v6mr3710808pgu.260.1537659702332;
-        Sat, 22 Sep 2018 16:41:42 -0700 (PDT)
-Received: from joelaf-glaptop0.roam.corp.google.com (c-98-210-118-128.hsd1.ca.comcast.net. [98.210.118.128])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm32377789pgp.13.2018.09.22.16.41.40
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yhU6AFucjYuaEBlXVfmhqsSUjsj7F/FZ3yfpqeIQT5w=;
+        b=qvp0lEXlLxSYN0yiLpQPbIKQ1hCkdTt8c6yCkb46i+ZB+H0F8xDRb1CX8ZbkZeEXLw
+         0/v5ZtpGSdCLbMUywXIzRphyof2ZrsnElhH2ycj+OhXZmYHA6trx9EN5VafmuBRrGOse
+         x+/SvGqPklmt6tc4KqLdGiRT+AwpgUsvR6aif+AKg15l9fKQHVr80WxUZZvxBxGEhZyZ
+         1rc9DkICaFXMHBaJWEDE7mccn27WWJ06XX/3O8QAdh1LqOrMwnqLNS8OppvkDyDr0yJb
+         2mgbixMZ/ASsEW2JuY5v47OmCLfqAv7qdWEXGtRPlfcNvWPmij4ENdu+HwePST052+z4
+         ozRQ==
+X-Gm-Message-State: APzg51AvU/Px8TUsD9zUzVvduv0IFinS8Evs2gootTNS8GdWs8CW4A2m
+        hCYypvLqLZ5X+a3XM9rsin0Gsjqn
+X-Google-Smtp-Source: ANB0VdYCnY4Abq96LKg8N9o4Kbp+gKGCe3ddSwPfADxJNy9PvLwQjq7GTNXAtsexTtzRB4cUMczLvQ==
+X-Received: by 2002:a62:8208:: with SMTP id w8-v6mr4047724pfd.215.1537660618262;
+        Sat, 22 Sep 2018 16:56:58 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id o21-v6sm51202242pfa.54.2018.09.22.16.56.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 16:41:41 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH RFC 3/3] Documentation: RCU: Fix rcu_preempt_state reference in stallwarn
-Date:   Sat, 22 Sep 2018 19:41:27 -0400
-Message-Id: <20180922234127.94970-3-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
-In-Reply-To: <20180922234127.94970-1-joel@joelfernandes.org>
-References: <20180922234127.94970-1-joel@joelfernandes.org>
+        Sat, 22 Sep 2018 16:56:57 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] dt-bindings: hwmon: Add ina3221 documentation
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20180921223216.634-1-nicoleotsuka@gmail.com>
+ <20180921223216.634-2-nicoleotsuka@gmail.com>
+ <3c117b80-f671-1e57-6eab-3d9801b4b889@roeck-us.net>
+ <20180922180348.GA9092@Asurada>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <b29cff36-b6c0-e9df-475b-f5138cff06c4@roeck-us.net>
+Date:   Sat, 22 Sep 2018 16:56:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180922180348.GA9092@Asurada>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rcu_preempt_state doesn't exist anymore. Update stallwarn documentation
-accordingly.
+On 09/22/2018 11:03 AM, Nicolin Chen wrote:
+>>> +2) child nodes
+>>> +  The names of child nodes should indicate input source names
+>>> +
+>>> +  Required properties:
+>>> +  - input-id: Must be 1, 2 or 3
+>>> +
+>>> +  Optional properties:
+>>> +  - shunt-resistor: Shunt resistor value in micro-Ohm
+>>> +  - status: Should be "disabled" if no input source
+>>> +
+>>> +  Example:
+>>> +
+>>> +  input1 {
+>>> +          input-id = <0x1>;
+>>> +          status = "disabled";
+>>> +  };
+>>> +  VDD_GPU {
+>>> +          input-id = <0x2>;
+>>> +          shunt-resistor = <5000>;
+>>> +  };
+>>>
+>>
+>> Using child nodes is a good idea. However, you are converting the node name into
+>> the hwmon 'label' attribute which I can not accept. First, it is undocumented,
+>> second, it effectively creates an undocumented property (if one wants to configure
+>> the shunt resistor value, one has to configure a child node which is converted
+>> into a label), and third, it violates the hwmon ABI ('input1' is not a "hint
+>> about what this voltage channel is being used for").
+> 
+> Oh. I see the point here now. Then a child name could be just input[123],
+> and I will add a separate optional child property to indicate the label.
+> 
+Exactly. "label" is quite widely used as property name, so that should be acceptable.
+I am not sure about index; we'll see if Rob has any comments.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- Documentation/RCU/stallwarn.txt | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/RCU/stallwarn.txt b/Documentation/RCU/stallwarn.txt
-index 491043fd976f..b6bc7a2a9961 100644
---- a/Documentation/RCU/stallwarn.txt
-+++ b/Documentation/RCU/stallwarn.txt
-@@ -176,9 +176,8 @@ causing stalls, and that the stall was affecting RCU-sched.  This message
- will normally be followed by stack dumps for each CPU.  Please note that
- PREEMPT_RCU builds can be stalled by tasks as well as by CPUs, and that
- the tasks will be indicated by PID, for example, "P3421".  It is even
--possible for a rcu_preempt_state stall to be caused by both CPUs -and-
--tasks, in which case the offending CPUs and tasks will all be called
--out in the list.
-+possible for a rcu_state stall to be caused by both CPUs -and- tasks,
-+in which case the offending CPUs and tasks will all be called out in the list.
- 
- CPU 2's "(3 GPs behind)" indicates that this CPU has not interacted with
- the RCU core for the past three grace periods.  In contrast, CPU 16's "(0
--- 
-2.19.0.444.g18242da7ef-goog
-
+Thanks,
+Guenter
