@@ -2,171 +2,154 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5EBC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 17:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398F4ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 17:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 373022150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 17:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 373022150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id DCB4E2150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 17:32:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QqhA21E5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="odUpehAV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB4E2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbeIVX0k (ORCPT
+        id S1728164AbeIVX1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 19:26:40 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.109]:35373 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726004AbeIVX0k (ORCPT
+        Sat, 22 Sep 2018 19:27:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54794 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbeIVX1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 19:26:40 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id EA587A1430A
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 12:32:19 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 3llIgkzMz8YaU3llPgFmcd; Sat, 22 Sep 2018 12:32:19 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.49.176] (port=36072 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1g3llH-002Vvr-Sb; Sat, 22 Sep 2018 12:32:08 -0500
-Subject: Re: [PATCH] iio: adc: Fix potential integer overflow
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180918125314.GA12752@embeddedor.com>
- <20180922144230.7d5e6c80@archlinux>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <8be2f082-eb0d-24db-305a-a917e67ab371@embeddedor.com>
-Date:   Sat, 22 Sep 2018 12:31:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sat, 22 Sep 2018 19:27:14 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0321360E58; Sat, 22 Sep 2018 17:32:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537637574;
+        bh=JoTkmxJkK9Zvvar1YesuDCKF9QJ2EJWCVqUjksi3Dv0=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=QqhA21E5xp4mwB2ue42Y0+XtYP+DjRi35p/KHRMbIQ8ca4iTYhLHlf1Hr4hffz3F9
+         rpBGjApFktRVBaDGU0tTvOdHiXgSoxkNOqCSDoTtT4HHBceHsdP4x08BpBGMW4I4JG
+         98KzoyN1Zi9z91/YG9Tl540qJ2EHyI78IvtCk/ZA=
+Received: from [192.168.43.47] (unknown [223.237.247.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5AEBD60CA2;
+        Sat, 22 Sep 2018 17:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537637572;
+        bh=JoTkmxJkK9Zvvar1YesuDCKF9QJ2EJWCVqUjksi3Dv0=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=odUpehAVFYG5vrgTe1PV2hNylXHmgUN30IZbxpYzLiLUlGptgd/1OskLcuoKLDF0q
+         /vz8VXFkJhj22FMn5c5cPdcgv97hzeW8rQN2ks13APWR4Q0AA0EUADOC+vjSzNRBQc
+         18MaHHs25rKJzAs9Tzet2OPcd9CwrXr059/GyESE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AEBD60CA2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 2/6] pstore: Add event tracing support
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>,
+        kernel-team <kernel-team@android.com>
+References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
+ <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
+ <CAEXW_YRXQwKvnahv5X1F_Bu_98vMg=w1xpo8PZ+aNT02vBrwwg@mail.gmail.com>
+ <e8fdef37-afcd-24b3-1005-e707b73f20b1@codeaurora.org>
+Message-ID: <ab7c17a6-c853-d763-1f12-1c169ff7a579@codeaurora.org>
+Date:   Sat, 22 Sep 2018 23:02:37 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180922144230.7d5e6c80@archlinux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.176
-X-Source-L: No
-X-Exim-ID: 1g3llH-002Vvr-Sb
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.49.176]:36072
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <e8fdef37-afcd-24b3-1005-e707b73f20b1@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 9/22/18 8:42 AM, Jonathan Cameron wrote:
-> On Tue, 18 Sep 2018 07:53:14 -0500
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
-> 
->> Cast factor to s64 in order to give the compiler complete information
->> about the proper arithmetic to use and avoid a potential integer
->> overflow. Notice that such variable is being used in a context
->> that expects an expression of type s64 (64 bits, signed).
+On 9/22/2018 10:07 PM, Sai Prakash Ranjan wrote:
+> On 9/22/2018 2:35 PM, Joel Fernandes wrote:
+>> On Sat, Sep 8, 2018 at 4:28 PM Sai Prakash Ranjan
+>> <saiprakash.ranjan@codeaurora.org> wrote:
+>>>
+>> Could you just split the pstore space into a per-cpu event buffer like
+>> we are doing for ftrace-on-pstore? Then you don't need to lock. I fear
+>> the lock contention will be apparent. The pstore code already has
+>> plumbing to split the store buffer per CPU.
 >>
->> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
->> Fixes: e13d757279bb ("iio: adc: Add QCOM SPMI PMIC5 ADC driver")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/iio/adc/qcom-vadc-common.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/adc/qcom-vadc-common.c b/drivers/iio/adc/qcom-vadc-common.c
->> index dcd7fb5..e360e27 100644
->> --- a/drivers/iio/adc/qcom-vadc-common.c
->> +++ b/drivers/iio/adc/qcom-vadc-common.c
->> @@ -282,7 +282,7 @@ static int qcom_vadc_scale_code_voltage_factor(u16 adc_code,
->>  	voltage = div64_s64(voltage, data->full_scale_code_volt);
->>  	if (voltage > 0) {
->>  		voltage *= prescale->den;
->> -		temp = prescale->num * factor;
->> +		temp = prescale->num * (s64)factor;
-> So factor is an unsigned int so could be 32 bits.  In reality it only
-> takes a small set of values between 1 and 1000
 > 
-> Maximum numerator is 10 so a maximum of 10,000.
+> Hi Joel,
 > 
-> Hence this is a false positive, be it one that would be very hard
-> for a static checker to identify.
+> Thanks a lot for reviewing.
 > 
-> So that moves it from a fix to a warning suppression change.
-> I have no problem with those, but description needs to reflect that.
+> I just looked at per-cpu buffer for ftrace and itseems the pstore percpu 
+> records will need to be merged into one record if we add this support 
+> for events. Merging of ftrace logs is based on timestamp, but for events 
+> we do not have timestamp field (for this specific reason I have added 
+> timestamp field for IO event tracing so that atleast we can know the cpu 
+> number in pstore output). For example, the sched event pstore output 
+> below has no timestamp field, so how do we merge per-cpu logs?
 > 
-> Let me know if I've missed something, if not I'm happy to apply
-> this and will put some text in the message to explain the above
-> reasoning.
+> # tail /sys/fs/pstore/event-ramoops-0
+> sched_waking: comm=rcu_sched pid=11 prio=120 target_cpu=002
+> sched_wakeup: comm=rcu_sched pid=11 prio=120 target_cpu=002
+> 
+> Also Pstore ftrace log format is fixed i.e.,(CPU:%d ts:%llu %08lx  %08lx 
+>   %pf <- %pF\n"), but different events will have different formats and 
+> we will not be able to add timestamp field like how pstore ftrace does 
+> using  pstore_ftrace_write_timestamp() and pstore_ftrace_read_timestamp().
+> 
+> Sorry if I am confusing you, I can explain better I guess.
 > 
 
-Hi Jonathan,
+To add to this on db410c board with the current patch I just measured 
+average throughput of dd over 60 seconds with sched event tracing 
+enabled (trace_event=sched tp_pstore) : 190 MB/s
 
-I think you are right. Plase, feel free to update the commit log.
+# dd if=/dev/zero of=/dev/null status=progress
+11402907648 bytes (11 GB, 11 GiB) copied, 60 s, 190 MB/s^C
+22430312+0 records in
+22430312+0 records out
+11484319744 bytes (11 GB, 11 GiB) copied, 60.4277 s, 190 MB/s
 
-Thanks
---
-Gustavo
+It seems fine or maybe I am testing it wrongly? Anyways let me know if I 
+can test any additional things in some different ways.
+
+Thanks,
+Sai
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
