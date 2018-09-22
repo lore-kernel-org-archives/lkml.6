@@ -7,45 +7,32 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EC1C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0B4ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD262157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 968302159E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:22:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EwHK/SiG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DD262157C
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="XCXtLMHl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 968302159E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392112AbeIVGN5 (ORCPT
+        id S2392142AbeIVGOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:13:57 -0400
-Received: from sonic304-18.consmr.mail.bf2.yahoo.com ([74.6.128.41]:37786 "EHLO
-        sonic304-18.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725800AbeIVGN4 (ORCPT
+        Sat, 22 Sep 2018 02:14:05 -0400
+Received: from sonic303-31.consmr.mail.bf2.yahoo.com ([74.6.131.230]:38496
+        "EHLO sonic303-31.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391738AbeIVGOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:13:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537575757; bh=Iu+tSavlo7t7q7n3Olg0VNVdtV/eWmeqFaZXnw9uMGQ=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=EwHK/SiGqCVb80ePHfMiMED/MFmPWaBRkh9xrsSXR5KKAhFXTTlisAuTAMljWj7DtJmkcGBoh3QbVoEWiTVoaa2+1SJ0p5UP09qMi4hh1uNOTfHuacFKR1IMhW8E6tPMhJH+RLyP9jdoQBEV16Hzt8Mc18CZbgbSPEXcalss+ZU0pBveqSwI+iPfvos72hrH7CkyB4AM9kaCGcJ4HePJsjYPmVwLqaU8Xtyl8o1qcCLXNVC2d8z6q1tRWISblt25wnp/cL9mKSaaWVoohtmhu7jft3bSfGm7JIYJkmPb5LU7fJKZ0zRJYkNuWtWUkyqlzX7Bv9CW9FKOp8x76PrIKQ==
-X-YMail-OSG: mYZXFYAVM1lVoWPokzHRxWvWAUDVA.vbkLkKy0mzbMBQgkcUQfARil.f0Gj_lJD
- x6QVmFW2qBbVcVrD.CSsMw.ThD9VQ.LawsfMJS4klkIdX2MtFjukoYkATH8PU8TOsJ8X1Eh_AuBb
- evazV0PxAXp8el8ptxckx7m17WVUnP_D0G0biXUgJnTw7EHS1XtDvCbTtU4ws65An8j1..aKh5Kk
- CTHk7eVQ3lfFp4AyrAZtI0AX5dE2UuqDXe_xXtQwrDFlFQiLGEPGYdyBEE9Dth3HOWujIMZlWl78
- t6dwwUAY6fwx__SSJn9NzJaEOiNDRitCBNff3uIl0iZOT_ar8Pr58QtOehyptY9gDeGBDDu9GZKC
- psx2QLynWJEQ2F8NxqB2p5uOPeRVBy_cym5QVYqGPBL4PKSeqJxFaMPPE5qFkz_EpQWRr6.U3zbi
- Zn4YmzvF6B3qOLsyBlt2b7HCEbOVGFvUOwd1k.qIQhmK4EQE3fQ7izr6WefrJ_.cUr3mcbXlq7gr
- Vhhk96ZsQorC2SC9iZzVkjALXm_WiL9EcnL6Y5Y1_OEEDsZlH3hImTKKzNC0GvTi1wa5L_.XkiqY
- dzjZ0RtTN8PRJJpd3dXte_t5Az2o.isNEfi_DYInQuYMTwP0XR4woUt4VG4lM5lXSzUz4WcmzhZs
- CHXF.vqn37YlZ3bEMqeTQF...Mi0wO7GjQ_wpo6r0tJVELRe5oQfv831QqDT7w3618uGXnWqWx4d
- UhHMdYVsTFOFl1hAoXJol.SqnV87eF4jrcyiFh_lyg11SfCJE3lJ3KfaNgLuQVFzSICcRTiLdLBj
- HVhBvn2TWJQwbLhXPhaEeUNpLiP9Qw.LlLBrPTXAeEWYiJOOfxLXoch5KSOM47ZQYOUrM7HxfNv5
- t1O5_lSRm2BxOrhbYnluZHzbMvV3_lk_LR3KiRpLk03J1dRHgkJmuy3CdmIQO9EL7UyfctJUJB4o
- TgCHptZeB7zsb.omxCjwi2liIECwebkprXmk0k1f3txVYLATleqKzxjxAfWOv3EInWeLFdy5k8v0
- _l0HoE79_22emyxpXIQCa17eWOtxXoVerw9GJ6q9cLQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Sep 2018 00:22:37 +0000
+        Sat, 22 Sep 2018 02:14:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537575766; bh=Iu+tSavlo7t7q7n3Olg0VNVdtV/eWmeqFaZXnw9uMGQ=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=XCXtLMHlb1lXs3t2Byw4S2DsvMgkepJKuUweTsROByhGo6mI8jCYN7jfCTbOcIUFiAPt2XERCPSjTyznHXsfQeriN/gylduK2N7fkI6Q2d1c0yd1lZkYCAx9qecjHt03GF1sHEKp5/5ATYyoS/uYGW2zkI3sASZFMlvmc3TUNi1r+2UhgwO0PmFOGOqD1FNg1wMLrLFWfvTHcCDkaGnJr2eeYq07Os4p264O8LR+rMUKL9IDw2BSq6syGfXd3EyweCckusujaMjOfFlxsssstqV7cY3qlWd+xgsS2H8NF+JVrjojiHgGrmpgaPPuf8edFGfek1nyzl4i9X++tqtXGw==
+X-YMail-OSG: 7VFgqxcVM1nm.9gcjV9vMlvcbGz1c7AIl.2HQJE1rgxu1zXuBiemUHvs4iEI.Tn
+ A7PsuiS_org--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Sep 2018 00:22:46 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp408.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b48542295dd1eb116f37600aab27ad1d;
-          Sat, 22 Sep 2018 00:22:37 +0000 (UTC)
+          by smtp425.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0841caf00ea79cb44958c74ce7010a8d;
+          Sat, 22 Sep 2018 00:18:45 +0000 (UTC)
 Subject: [PATCH v4 09/19] SELinux: Abstract use of file security blob
 To:     LSM <linux-security-module@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
@@ -62,8 +49,8 @@ To:     LSM <linux-security-module@vger.kernel.org>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <3acc0eab-7081-fcc4-f146-1b17772cc97d@schaufler-ca.com>
-Date:   Fri, 21 Sep 2018 17:22:32 -0700
+Message-ID: <ee568e97-ae0b-e809-0f4f-2619bf283cce@schaufler-ca.com>
+Date:   Fri, 21 Sep 2018 17:18:40 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
