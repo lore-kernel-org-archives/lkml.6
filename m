@@ -2,189 +2,134 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E18ADECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 16:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC634ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 16:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3FB214C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 16:11:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3FB214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4BDC9214C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 16:14:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="MbxiJeqq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDC9214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbeIVWF2 (ORCPT
+        id S1728696AbeIVWIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 18:05:28 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36621 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728186AbeIVWF1 (ORCPT
+        Sat, 22 Sep 2018 18:08:16 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33397 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728186AbeIVWIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 18:05:27 -0400
-Received: by mail-qt1-f195.google.com with SMTP id t5-v6so4807407qtn.3;
-        Sat, 22 Sep 2018 09:11:21 -0700 (PDT)
+        Sat, 22 Sep 2018 18:08:16 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n11-v6so4419735wro.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 09:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mcGbBgXQJT0O7Kc84hZsmJG+iBq1Y2VtsMhhu9LzD7g=;
+        b=MbxiJeqqyWVXS69oKibqLYu9cI3pdclStk3QqTlqK2eUrqyp0uZ82meFHv/GFR8hPE
+         f59ZolbuKtpseCigXM/3EhyRkfZK2aG4b2I4SDQ3tCMx2Xn8uxfdgKtpIolLJJOZ0vHL
+         2zypKMhxp9hYhKE8XaNI6Dau/Y4FTnqYVQ9ujtpnPk8Y/JgamBTTcOmEhSCG+YI4UdK7
+         FeEcq2S4uqKgshJ6AG/izqz4n/bq2A6rwsKGKN27m2a4Y0buoP10MbuK74jmB5jNE7wz
+         4/Fyim8lKTCDSSsd7CVp4mzj2qFvbGtPRAcwkT0qFNAzGQjMkL8qsUTB43v4lNv+deh1
+         2frw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=468Nu8sZi2WsTsiYIF8pqYFG9GixiVhGGmiZO7zpZ+c=;
-        b=TlEnln1XbDPlG8QsOTsRiuCotLk43Xgkgm/oAfeKLdvTMFRJQyUbBqSz6POAVMoEeG
-         I5pdwIdYTfjL2UolTvI3Wj0iKO/KTRJ1nrpJkn9+89hWtPcRBTR6n+nPylsIskg76ke1
-         BGdzvj3vNhaSgktp0tc2mvXx8EqZdxtu95PpHxBWekPvmH7JCZ+eGQVhy9rv2XXiCXd/
-         A3q0Uu/hA2z1Zo2BD1GaWZn27Y2O9UsuSYN55zYZBtuDeYy8wzkTuZFCsfEKxXPPsCoH
-         kZIVPXyU1gT4xOJYIOCMwSG9YHiyG8GWZFEYKPGbs4arNqM1DIg9ipHtEdDzEb0kjk5P
-         +qbQ==
-X-Gm-Message-State: ABuFfohS8AQ9UFTKU7I+Csl1I/ApXw2BwR2DomTVJpMUWUHbx9MGDIEo
-        Qy+yI79iE/28wag0ivg1/isgTOlMP6s5Zpc7aU4=
-X-Google-Smtp-Source: ANB0VdanprKf6AdeFJ5iG5BxQK/rtMXLIu91U/MHERVgu8Z++KDu+tTanoLKFPEhMuHKp5EBy1roADK5po+fbj9MbOs=
-X-Received: by 2002:aed:3608:: with SMTP id e8-v6mr1962947qtb.75.1537632681126;
- Sat, 22 Sep 2018 09:11:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mcGbBgXQJT0O7Kc84hZsmJG+iBq1Y2VtsMhhu9LzD7g=;
+        b=YGB+B2ACEPh86IFrIIXIzOE4zRlZPkrwKz1DPszGUnLofIHBca55pBYcwqBa/7VOnZ
+         U1K2eHSkVTGFXVPlcEwbag1p0kA/rPySj87jVRLQCear7FX0DlPEQzw1swZZHC/ENsum
+         8VP6ygysSnuorYWPpoX1fUTQA5yD2QmpcKWr6sHstlmS2ofLZn7S0P3AZm+2cd3SbTJw
+         z5/XPeEB0qK19tImWFu9hmRmSJA3TpN7adJ2E4b6u+hVlH+vHUQjwqi0iI1efLefjcGO
+         ZVFo4T+7Vq43Fzyxi1Yfue/oasVA/8+l02p+hv+QY35jXMjo1MVr4HgSQvoZXEE6mn5X
+         /AVw==
+X-Gm-Message-State: ABuFfojguMZcZBdK/At+re10XYf/6vQXXDc0QKoJhOnkZudafoQSoubu
+        ssQ1nv68PWr8ykqpZhyMWnZE7Q==
+X-Google-Smtp-Source: ACcGV60KJH9bSze6tH3NH03yxf23xeI91XIb4UicdeUqwb8zKtKPnY4jV8RweK5bskohJMVJRUWldA==
+X-Received: by 2002:a5d:6911:: with SMTP id t17-v6mr2527166wru.170.1537632848903;
+        Sat, 22 Sep 2018 09:14:08 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:6c3f:d1be:cb5f:3e61])
+        by smtp.gmail.com with ESMTPSA id q3-v6sm7294366wma.45.2018.09.22.09.14.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Sep 2018 09:14:08 -0700 (PDT)
+Date:   Sat, 22 Sep 2018 18:14:07 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] fsmount: do not use legacy MS_ flags
+Message-ID: <20180922161406.6beo2ob6ki2otrjx@brauner.io>
+References: <20180922132106.wfa6xaxwbu276qka@brauner.io>
+ <20180921155455.flkf5vdrm3vgn6do@brauner.io>
+ <20180920151214.15484-6-mszeredi@redhat.com>
+ <20180920151214.15484-1-mszeredi@redhat.com>
+ <17157.1537542475@warthog.procyon.org.uk>
+ <20311.1537548756@warthog.procyon.org.uk>
+ <8221.1537631312@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20180918161646.19105-1-Jason@zx2c4.com> <20180918161646.19105-3-Jason@zx2c4.com>
- <CAKv+Gu-0oTBrg3T8TsNYPOdrmJSSC313-CYASO34kb_nviva6A@mail.gmail.com>
- <CAK8P3a0CS3QzEKEV5==qj8hUYgW+q2v1f13jA+s0TjQd8kYXFA@mail.gmail.com> <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com>
-In-Reply-To: <CAHmME9rJq=q7xj_E_84GN5FuzSW2KdP4Ch=y527Lem0ME4GnLg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 22 Sep 2018 09:11:03 -0700
-Message-ID: <CAK8P3a2VL16mtyq0HjNOXuSp8YJXik4J9Z_aPzksmTAbFB+=_g@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 02/20] zinc: introduce minimal cryptography library
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Samuel Neves <sneves@dei.uc.pt>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ggw43pqr6lmhvudm"
+Content-Disposition: inline
+In-Reply-To: <8221.1537631312@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 5:12 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> Hey Arnd,
->
-> On Thu, Sep 20, 2018 at 6:02 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > Right, if you hit a stack requirement like this, it's usually the compiler
-> > doing something bad, not just using too much stack but also generating
-> > rather slow object code in the process. It's better to fix the bug by
-> > optimizing the code to not spill registers to the stack.
-> >
-> > In the long run, I'd like to reduce the stack frame size further, so
-> > best assume that anything over 1024 bytes (on 32-bit) or 1280 bytes
-> > (on 64-bit) is a bug in the code, and stay below that.
-> >
-> > For prototyping, you can just mark the broken functions individually
-> > by setting the warning limit for a specific function that is known to
-> > be misoptimized by the compiler (with a comment about which compiler
-> > and architectures are affected), but not override the limit for the
-> > entire file.
->
-> Thanks for the explanation. Fortunately in my case, the issues were
-> trivially fixable to get it under 1024/1280
 
-A lot of these bugs are not trivial, but we still need a full analysis of what
-failed and what the possible mititgations are. Can you describe more
-specifically what causes it?
+--ggw43pqr6lmhvudm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> (By the way, why does
-> 64-bit have a slightly larger stack frame? To account for 32 pointers
-> taking double the space or something?) That will be rectified in v6.
+On Sat, Sep 22, 2018 at 04:48:32PM +0100, David Howells wrote:
+> Christian Brauner <christian@brauner.io> wrote:
+>=20
+> > mount_setattr(int dfd, const char *path, unsigned int atflags,
+> >               unsigned int attr_cmd,
+> > 	      unsigned int attr_values,
+> > 	      unsigned int attr_mask);
+>=20
+> Whilst you can have up to six arguments on a syscall, I seem to remember =
+that
+> 6-arg syscalls require special handlers on some systems due to register c=
+ount.
 
-Correct. We have some functions in the kernel that take 128 pointers
-on the stack. This fits fine within the 1024 byte limit on 32 bit, but goes
-beyond the same limit on 64 bit. Everything that took more than 1280
-bytes (without KASAN) in my analysis was a real problem and reducing
-the stack size fixed a bug or improved the code in other ways. I never got
-around to reposting all those bug fixes I made back then, and there are
-probably a couple new ones we'd need.
+Sure, but if we wanted to we might just get the syscall down to five
+arguments even with my suggestion. Of course, I'm not sure what the
+reasons for all of the other arguments to this function are since it's
+not yet implemented. Seems that attr_values and attr_mask could be
+compacted to a single attr_mask maybe? :)
 
-> There is one exception though: sometimes KASAN bloats the frame on
-> 64-bit compiles. How would you feel about me adding
-> 'ccflags-$(CONFIG_KASAN) += -Wframe-larger-than=16384' in my makefile?
+Christian
 
-I ran into several ciphers in the kernel that required a large stack allocation,
-with or without KASAN. Typically these turned out to be optimization bugs
-in gcc where gcc tried to be smart about optimizing part of the cipher that
-was intentionally designed to not be optimizable, but in the process it
-ended up spilling registers to the stack. Adding KASAN into the mix then
-added an extra redzone around each of those.
+--ggw43pqr6lmhvudm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-My best approach here was to figure out which optimization step in gcc
-caused the register spilling in the first place, and adjust the set of
-optimizations done to a specific function in that cipher.
+-----BEGIN PGP SIGNATURE-----
 
-Note that some crypto ciphers are rather performance sensitive and we
-have users that care about every percent of performance one can get
-out. The bugs that cause the stack size explode beyond a few hundred
-bytes that one might expect are usually the same bugs that make the
-ciphers much slower than they should be even without KASAN.
+iQIzBAEBCgAdFiEE7btrcuORLb1XUhEwjrBW1T7ssS0FAlumak4ACgkQjrBW1T7s
+sS1DWA//cxvoc44u465NnCKqN2tw1U6zh7y9CgMb7ZMgX5wwcV1wa4ROQD44Uxf3
+9j8MlrVSflsEe203BqueDytZbvPjfzSk94wGzudoHlDIIU2JhD7nT9oahw9jYkht
+GAXHpm9sx46vvtIycG9bgXRsbRiKpexcC7clzzjAkohsS+b2tq7w8ywNme4FeNqt
+c1bXgNHtxzuECCTU6f6uZJIwIvO/B1sgpAHpTAkkTLXH/AO5reSalp+O1PxkfvhT
+3vb8pn1mt3cKE5XbmfniFaSEkowqGBgyeFFKDUE/tR+bEr9ko9MlANYFNLaa6Nq/
+CaN/PzPGbkhVKLGf5pJlBUqKL6Am2NADm7bPG/p2KAJTHL+rQLBZVJuWWUnWbk5Z
+5vbiTywkQMfnDtjAYmS7wfWIK/q93XVraVte0zMIw44Le3wMK2iHMj63qer1uzrx
+2GvfpQJY3VHWDcCFriclYFgHrxJNl+jPXKHj+W7pbLx7157UJHMlkO691u6Qmnp/
+954rx9YDDIRf+3SlgtvOzSKhGiEtNUWKCZKDOZovISFx+BhqKTsH5bsbG821MzGC
+IFf1r/eDDZkDDW9mJlhjoZ9VtO+MD25O1UkgAp23vb2u/ubtkUqVR8CtsStBlxYK
+O2wqyXotKw2pKRHnrSZIE/WfPIoN+gE58Z/kQRnrY5wgoBdK5Ic=
+=dDqw
+-----END PGP SIGNATURE-----
 
-For a cryptographic library it might therefore even make sense to have an
-even smaller limit (e.g. 400 bytes) in the Makefile and then audit each
-case that does not fit into that after determining what exactly caused the
-problem, and making sure we find  workaround that produces optmized
-object code. When you end up with a function that gcc-8 still
-misoptimizes in all optmization levels and you find no other workaround,
-please set the higher limit specifically for that function with a gcc version
-check in it, and add a comment pointing to the gcc bugzilla report you
-have. gcc developers tend to be good about fixing these issues in new
-compilers, but the version check helps to ensure we find it if a future
-version regresses again, and of course we have to make sure we apply
-the hack on all unpatched compilers.
-
-> I'm not remotely close to reaching that limit (it's just a tiny bit
-> over 1280), but it does seem like telling gcc to quiet down about
-> stack frames when KASAN is being used might make sense. Alternatively,
-> I see the defaults for FRAME_WARN are:
->
-> config FRAME_WARN
->        int "Warn for stack frames larger than (needs gcc 4.4)"
->        range 0 8192
->        default 3072 if KASAN_EXTRA
->        default 2048 if GCC_PLUGIN_LATENT_ENTROPY
->        default 1280 if (!64BIT && PARISC)
->        default 1024 if (!64BIT && !PARISC)
->        default 2048 if 64BIT
->
-> What about changing that KASAN_EXTRA into just KASAN? This seems
-> cleanest; I'll send a patch for it.
-
-I saw you already posted a patch for that, sorry for not being able to
-reply earlier. I actually spent several months of my work to introduce
-the KASAN_EXTRA option specifically in order to have a separate
-stack size limit for that, so I definitely object to that one. We need the
-default (allmodconfig) stack size check to be as small as we can in
-order to catch kernel and gcc bugs that bloat the stack more than
-it is currently at.
-
-> On the other hand, this KASAN behavior is only observable on 64-bit
-> systems when I force it to be 1280, whereas the default is still 2048,
-> so probably this isn't a problem *now* for this patchset. But it is
-> something to think about for down the road when you lower the default
-> frame.
-
-Right. Some background about that limit: 2048 has been what we used
-traditionally on 64-bit before KASAN. When I first saw the problems
-with KASAN, I had a more detailed look at it and found that we can
-significantly reduce it without KASAN, but obviously KASAN needs a
-little extra space. I got all my patches upstream to get the KASAN
-limit below 2048 and remove that special case for it, and I sent a
-lot of the other patches to reduce the limit further to 1280/1535
-without/with KASAN, but not all those patches got accepted, so for
-the moment that traditional limit is still in place.
-
-clang with KASAN still has known bugs that make it go beyond
-2048 bytes, as I said in the other thread, and this is something that
-first needs to be addressed in clang before we can take specific
-measures in the kernel to work around any remaining unrelated
-bugs with clang building our kernel with KASAN.
-
-        Arnd
+--ggw43pqr6lmhvudm--
