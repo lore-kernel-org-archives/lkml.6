@@ -2,105 +2,110 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCA3ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47429C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AED12150E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2CE421522
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 23:41:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="RP8dllz4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AED12150E
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="vTv36d/R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2CE421522
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbeIWFdi (ORCPT
+        id S1726222AbeIWFg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 01:33:38 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41500 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbeIWFdi (ORCPT
+        Sun, 23 Sep 2018 01:36:59 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37631 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbeIWFg7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 01:33:38 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y17-v6so15150125ljy.8
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 16:38:17 -0700 (PDT)
+        Sun, 23 Sep 2018 01:36:59 -0400
+Received: by mail-pl1-f196.google.com with SMTP id q1-v6so2045007plr.4
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 16:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t4vsmcrWT914V8JL5+69GqM4sSIsQ2EBYEbRFEjx/8I=;
-        b=RP8dllz44cqDoJpKJ8wcwuRwtQS9mTyHuzgB0SXdtdgsiGtVCRjgDjs+kJonZJtqK7
-         rZOEDa0QB4cLq9eT20hiKeaEdd5KAph1nWUKNAGIjEIRcysGvMse77OOtrhfqXh8q4m7
-         TsI1etAfzPqVHwKoBgj1esgSY+nN2DpqfskU4=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r0fzSEurK9u6mTyvxIb4LtJ6W8I9yFfacIDnT2Xs+n8=;
+        b=vTv36d/RzWjkVrpzgElIrekqekd/fJPW4KYnTH28l8nll7erCLIsuc7Exc6rupIC2l
+         R09/BkX8Xwkiv0csNf/lX2fxCW0qaqWArMJPXoQ1rnlaehBQ+oFuj64MVdH6XFwWZPx+
+         eqYzeoPUw6oF6v5N2Uz4H2R4WZTyn3tTaZ/HQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t4vsmcrWT914V8JL5+69GqM4sSIsQ2EBYEbRFEjx/8I=;
-        b=QJu7yTZ1yRWcB/nBNkyN67I4sGam0472g3bBjVFtORDlEmSdX2NeO2t9BJHoNborvi
-         IPAP5IyGmfDinTzrANZp2nJbQaf9lZTF1ofGpWdZl++Fqg8XcWE1ga8TdfhyqwzBENqL
-         +ygN2PfZPcEhaYkgD8F+T/FitJIQZyvB52b7y9+z2sRcTrsrQn6hELMf4DdUwjWJlSuI
-         AZ9xv0HfVxZP/mWP+zaQeg/MwKWZ0ywZVxOwRx/kqUhkgG7w3FvL+J8q1bnqu6JGu4mn
-         VX4gzs4g/eI1IX0CDK/z3YgaAloa+uvSvqmVax2AG5ZJMb8SZlq+ASLtN0k2Pk7i3Rw9
-         Xbrw==
-X-Gm-Message-State: ABuFfojLBnhcTa+w6xGJsHrNAwgtuI9Ip5v9AwjTVjaGvsAXPwlwQFoM
-        /9A9pNHQbWl7xAJc11vrRNnC9u0BsLuLYMeRqKaeEg==
-X-Google-Smtp-Source: ACcGV63uH2ajeHZ4Xguu3ovKQkh/zNcAprJnMoniW7rwdqenX03WMnLtyWuGwohuxnm5CeEIgsl750Qc8cdaZls+04o=
-X-Received: by 2002:a2e:901a:: with SMTP id h26-v6mr445800ljg.121.1537659496988;
- Sat, 22 Sep 2018 16:38:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180921223153.114728-1-joel@joelfernandes.org>
- <20180922011428.GU4222@linux.ibm.com> <CAEXW_YTgSFr5r3Qkr0+0_wxKGQV1KKP_8X8uQKAnHmhvem8XtA@mail.gmail.com>
- <20180922134616.GX4222@linux.ibm.com>
-In-Reply-To: <20180922134616.GX4222@linux.ibm.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Sat, 22 Sep 2018 19:38:05 -0400
-Message-ID: <CAEXW_YRaLjRWH9BYV_r8e4pCuBEGCzMSRdS6x7Qozc8HKoej=w@mail.gmail.com>
-Subject: Re: [PATCH RFC] Documentation: RCU: Clarify comment about fanout
-To:     paulmck@linux.ibm.com
-Cc:     LKML <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r0fzSEurK9u6mTyvxIb4LtJ6W8I9yFfacIDnT2Xs+n8=;
+        b=mrF1EUj/bgw9MLirVVbySpVYpz5MEhWN1Q+rVp0NUqErtwvdT9GL69EwOXkOUJyvsE
+         dgfIxdGZXrrnAL1Ahv2MQYeeoFHKaFDZ78IBbkcdegDcB+2gwTuvW3sfLoa8A/K/t7WX
+         4jYNL8LrEDDZkNKzLQa7GBFD68TZV+flWN6YxJjLvjlnShCjCH0tUMM4tDC6fjWUpMZ8
+         c4MTAwOrhkXevJd88GhKvr2/6Sef+k1bqFf3Q5b6JPE+TCuyDdJXjjXnKLZ1YWtgtSAh
+         z+fShRaim5/HrOAV/NhwWPJ02zB4aDtNovtRUs5PqYKXU9+lZXUsHRvT5oPDRnf6dLA2
+         v7rg==
+X-Gm-Message-State: ABuFfojjt9i3biUqYih0f3vQyaCqr9Tkn+JDFd8ozodM4NSUlroPrg6y
+        MhTNFbDPTChmN7xiwGqEAvunXDenkW0=
+X-Google-Smtp-Source: ACcGV61c0pLNFQI6NkxF0XXx0ET7K9rmiXtZexUNLAJOXi2PM9Scp7WI6YpeNYGzd7MDg+0udZ6Dhg==
+X-Received: by 2002:a17:902:6f16:: with SMTP id w22-v6mr4238148plk.127.1537659698448;
+        Sat, 22 Sep 2018 16:41:38 -0700 (PDT)
+Received: from joelaf-glaptop0.roam.corp.google.com (c-98-210-118-128.hsd1.ca.comcast.net. [98.210.118.128])
+        by smtp.gmail.com with ESMTPSA id h4-v6sm32377789pgp.13.2018.09.22.16.41.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Sep 2018 16:41:37 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Josh Triplett <josh@joshtriplett.org>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
         linux-doc@vger.kernel.org,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH RFC 1/3] rcu: tree: Remove unused externs
+Date:   Sat, 22 Sep 2018 19:41:25 -0400
+Message-Id: <20180922234127.94970-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 9:46 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-[...]
-> > I have a few more as well, I'll send them out soon.
->
-> I do have on my list to update this document based on the changes in
-> -rcu, which among other things eliminate the rcu_dynticks structure
-> and  make it so there is only one rcu_state structure in a given
-> running system.
->
-> If you are crazy enough to want to make the corresponding changes,
-> I would welcome the patches (and would be happy to help with editing,
-> grammar, and soforth.  The potential advantage to you is familiarlzation
-> with the new version of the code.
->
-> This is not a small amount of work, so please give it some thought
-> before saying "yes".  (In contrast, I would of course understand and
-> respect an immediate "no".)
+These aren't used anymore. Remove them.
 
-I thought about this and I'd be happy to do it as long as you don't
-mind me asking questions about parts I don't understand (which
-shouldn't be a problem from my past experience ;-)). I am spending
-time understanding the code anyway so I'd rather update the main
-documentation than my own notes for the benefit of everyone ;-) As you
-said, it'll help familiarization of the code. Btw I got rid of those
-extra rcu_state externs too, I'll send that patch out today and
-continue working on things next week...
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ kernel/rcu/tree.h | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-Thanks!
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index 703e19ff532d..57a937ac51c2 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -398,17 +398,6 @@ static const char *tp_rcu_varname __used __tracepoint_string = rcu_name;
+ #define RCU_NAME rcu_name
+ #endif /* #else #ifdef CONFIG_TRACING */
+ 
+-/*
+- * RCU implementation internal declarations:
+- */
+-extern struct rcu_state rcu_sched_state;
+-
+-extern struct rcu_state rcu_bh_state;
+-
+-#ifdef CONFIG_PREEMPT_RCU
+-extern struct rcu_state rcu_preempt_state;
+-#endif /* #ifdef CONFIG_PREEMPT_RCU */
+-
+ int rcu_dynticks_snap(struct rcu_data *rdp);
+ 
+ #ifdef CONFIG_RCU_BOOST
+-- 
+2.19.0.444.g18242da7ef-goog
 
- - Joel
