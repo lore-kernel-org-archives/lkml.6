@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A06ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0983ECE567
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350A92157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 350A92157C
+	by mail.kernel.org (Postfix) with ESMTP id 6C6BF2157C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6BF2157C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392295AbeIVGNL (ORCPT
+        id S2392308AbeIVGNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 22 Sep 2018 02:13:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44250 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44241 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392012AbeIVGKs (ORCPT
+        by vger.kernel.org with ESMTP id S2392011AbeIVGKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Sep 2018 02:10:48 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdy-0008BZ-6q; Sat, 22 Sep 2018 01:19:30 +0100
+        id 1g3Vdy-0008BY-5F; Sat, 22 Sep 2018 01:19:30 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdo-0000s6-3v; Sat, 22 Sep 2018 01:19:20 +0100
+        id 1g3Vdo-0000rr-0B; Sat, 22 Sep 2018 01:19:20 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -39,10 +39,10 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.940034960@decadent.org.uk>
+Message-ID: <lsq.1537575342.123314101@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 30/63] ext4: fix false negatives *and* false
- positives in ext4_check_descriptors()
+Subject: [PATCH 3.16 27/63] ext4: always check block group bounds in
+ ext4_init_block_bitmap()
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,52 +58,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 44de022c4382541cebdd6de4465d1f4f465ff1dd upstream.
+commit 819b23f1c501b17b9694325471789e6b5cc2d0d2 upstream.
 
-Ext4_check_descriptors() was getting called before s_gdb_count was
-initialized.  So for file systems w/o the meta_bg feature, allocation
-bitmaps could overlap the block group descriptors and ext4 wouldn't
-notice.
+Regardless of whether the flex_bg feature is set, we should always
+check to make sure the bits we are setting in the block bitmap are
+within the block group bounds.
 
-For file systems with the meta_bg feature enabled, there was a
-fencepost error which would cause the ext4_check_descriptors() to
-incorrectly believe that the block allocation bitmap overlaps with the
-block group descriptor blocks, and it would reject the mount.
-
-Fix both of these problems.
+https://bugzilla.kernel.org/show_bug.cgi?id=199865
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/super.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/ext4/balloc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2086,7 +2086,7 @@ static int ext4_check_descriptors(struct
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -184,7 +184,6 @@ static int ext4_init_block_bitmap(struct
+ 	unsigned int bit, bit_max;
  	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
- 	ext4_fsblk_t last_block;
--	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
-+	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0);
- 	ext4_fsblk_t block_bitmap;
- 	ext4_fsblk_t inode_bitmap;
- 	ext4_fsblk_t inode_table;
-@@ -3987,6 +3987,7 @@ static int ext4_fill_super(struct super_
- 			goto failed_mount2;
- 		}
- 	}
-+	sbi->s_gdb_count = db_count;
- 	if (!ext4_check_descriptors(sb, logical_sb_block, &first_not_zeroed)) {
- 		ext4_msg(sb, KERN_ERR, "group descriptors corrupted!");
- 		goto failed_mount2;
-@@ -3999,7 +4000,6 @@ static int ext4_fill_super(struct super_
- 			goto failed_mount2;
- 		}
+ 	ext4_fsblk_t start, tmp;
+-	int flex_bg = 0;
+ 	struct ext4_group_info *grp;
  
--	sbi->s_gdb_count = db_count;
- 	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
- 	spin_lock_init(&sbi->s_next_gen_lock);
+ 	J_ASSERT_BH(bh, buffer_locked(bh));
+@@ -217,22 +216,19 @@ static int ext4_init_block_bitmap(struct
+ 
+ 	start = ext4_group_first_block_no(sb, block_group);
+ 
+-	if (EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_FLEX_BG))
+-		flex_bg = 1;
+-
+ 	/* Set bits for block and inode bitmaps, and inode table */
+ 	tmp = ext4_block_bitmap(sb, gdp);
+-	if (!flex_bg || ext4_block_in_group(sb, tmp, block_group))
++	if (ext4_block_in_group(sb, tmp, block_group))
+ 		ext4_set_bit(EXT4_B2C(sbi, tmp - start), bh->b_data);
+ 
+ 	tmp = ext4_inode_bitmap(sb, gdp);
+-	if (!flex_bg || ext4_block_in_group(sb, tmp, block_group))
++	if (ext4_block_in_group(sb, tmp, block_group))
+ 		ext4_set_bit(EXT4_B2C(sbi, tmp - start), bh->b_data);
+ 
+ 	tmp = ext4_inode_table(sb, gdp);
+ 	for (; tmp < ext4_inode_table(sb, gdp) +
+ 		     sbi->s_itb_per_group; tmp++) {
+-		if (!flex_bg || ext4_block_in_group(sb, tmp, block_group))
++		if (ext4_block_in_group(sb, tmp, block_group))
+ 			ext4_set_bit(EXT4_B2C(sbi, tmp - start), bh->b_data);
+ 	}
  
 
