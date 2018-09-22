@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65ACECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FA9C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91499208D9
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91499208D9
+	by mail.kernel.org (Postfix) with ESMTP id 98BC1208D9
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:25:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BC1208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403764AbeIVGQI (ORCPT
+        id S2392399AbeIVGQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 22 Sep 2018 02:16:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44124 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44140 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391744AbeIVGKp (ORCPT
+        by vger.kernel.org with ESMTP id S2391927AbeIVGKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Sep 2018 02:10:45 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vds-0008BY-Lt; Sat, 22 Sep 2018 01:19:24 +0100
+        id 1g3Vdv-0008BL-Af; Sat, 22 Sep 2018 01:19:27 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdn-0000qb-EG; Sat, 22 Sep 2018 01:19:19 +0100
+        id 1g3Vdp-0000ub-9G; Sat, 22 Sep 2018 01:19:21 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,23 +38,21 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Mel Gorman" <mgorman@techsingularity.net>,
-        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
-        "Hugh Dickins" <hughd@google.com>, dave@stgolabs.net,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Chris Mason" <clm@fb.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Darren Hart" <dvhart@linux.intel.com>,
         "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Mel Gorman" <mgorman@suse.de>, "Chenbo Feng" <fengc@google.com>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Denys Vlasenko" <dvlasenk@redhat.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Brian Gerst" <brgerst@gmail.com>,
         "Ingo Molnar" <mingo@kernel.org>,
-        "Davidlohr Bueso" <dbueso@suse.de>
+        "Piotr Luc" <piotr.luc@intel.com>, "H. Peter Anvin" <hpa@zytor.com>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.285933720@decadent.org.uk>
+Message-ID: <lsq.1537575342.687575783@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 12/63] futex: Remove requirement for lock_page() in
- get_futex_key()
+Subject: [PATCH 3.16 61/63] x86/cpu/intel: Add Knights Mill to Intel family
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -68,201 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mel Gorman <mgorman@suse.de>
+From: Piotr Luc <piotr.luc@intel.com>
 
-commit 65d8fc777f6dcfee12785c057a6b57f679641c90 upstream.
+commit 0047f59834e5947d45f34f5f12eb330d158f700b upstream.
 
-When dealing with key handling for shared futexes, we can drastically reduce
-the usage/need of the page lock. 1) For anonymous pages, the associated futex
-object is the mm_struct which does not require the page lock. 2) For inode
-based, keys, we can check under RCU read lock if the page mapping is still
-valid and take reference to the inode. This just leaves one rare race that
-requires the page lock in the slow path when examining the swapcache.
+Add CPUID of Knights Mill (KNM) processor to Intel family list.
 
-Additionally realtime users currently have a problem with the page lock being
-contended for unbounded periods of time during futex operations.
-
-Task A
-     get_futex_key()
-     lock_page()
-    ---> preempted
-
-Now any other task trying to lock that page will have to wait until
-task A gets scheduled back in, which is an unbound time.
-
-With this patch, we pretty much have a lockless futex_get_key().
-
-Experiments show that this patch can boost/speedup the hashing of shared
-futexes with the perf futex benchmarks (which is good for measuring such
-change) by up to 45% when there are high (> 100) thread counts on a 60 core
-Westmere. Lower counts are pretty much in the noise range or less than 10%,
-but mid range can be seen at over 30% overall throughput (hash ops/sec).
-This makes anon-mem shared futexes much closer to its private counterpart.
-
-Signed-off-by: Mel Gorman <mgorman@suse.de>
-[ Ported on top of thp refcount rework, changelog, comments, fixes. ]
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Chris Mason <clm@fb.com>
-Cc: Darren Hart <dvhart@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
+Signed-off-by: Piotr Luc <piotr.luc@intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: dave@stgolabs.net
-Link: http://lkml.kernel.org/r/1455045314-8305-3-git-send-email-dave@stgolabs.net
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20161012180520.30976-1-piotr.luc@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Chenbo Feng <fengc@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: s/READ_ONCE/ACCESS_ONCE/]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/futex.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 91 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/intel-family.h | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -394,6 +394,7 @@ get_futex_key(u32 __user *uaddr, int fsh
- 	unsigned long address = (unsigned long)uaddr;
- 	struct mm_struct *mm = current->mm;
- 	struct page *page, *page_head;
-+	struct address_space *mapping;
- 	int err, ro = 0;
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -67,5 +67,6 @@
+ /* Xeon Phi */
  
- 	/*
-@@ -472,7 +473,19 @@ again:
- 	}
- #endif
+ #define INTEL_FAM6_XEON_PHI_KNL		0x57 /* Knights Landing */
++#define INTEL_FAM6_XEON_PHI_KNM		0x85 /* Knights Mill */
  
--	lock_page(page_head);
-+	/*
-+	 * The treatment of mapping from this point on is critical. The page
-+	 * lock protects many things but in this context the page lock
-+	 * stabilizes mapping, prevents inode freeing in the shared
-+	 * file-backed region case and guards against movement to swap cache.
-+	 *
-+	 * Strictly speaking the page lock is not needed in all cases being
-+	 * considered here and page lock forces unnecessarily serialization
-+	 * From this point on, mapping will be re-verified if necessary and
-+	 * page lock will be acquired only if it is unavoidable
-+	 */
-+
-+	mapping = ACCESS_ONCE(page_head->mapping);
- 
- 	/*
- 	 * If page_head->mapping is NULL, then it cannot be a PageAnon
-@@ -489,18 +502,31 @@ again:
- 	 * shmem_writepage move it from filecache to swapcache beneath us:
- 	 * an unlikely race, but we do need to retry for page_head->mapping.
- 	 */
--	if (!page_head->mapping) {
--		int shmem_swizzled = PageSwapCache(page_head);
-+	if (unlikely(!mapping)) {
-+		int shmem_swizzled;
-+
-+		/*
-+		 * Page lock is required to identify which special case above
-+		 * applies. If this is really a shmem page then the page lock
-+		 * will prevent unexpected transitions.
-+		 */
-+		lock_page(page);
-+		shmem_swizzled = PageSwapCache(page) || page->mapping;
- 		unlock_page(page_head);
- 		put_page(page_head);
-+
- 		if (shmem_swizzled)
- 			goto again;
-+
- 		return -EFAULT;
- 	}
- 
- 	/*
- 	 * Private mappings are handled in a simple way.
- 	 *
-+	 * If the futex key is stored on an anonymous page, then the associated
-+	 * object is the mm which is implicitly pinned by the calling process.
-+	 *
- 	 * NOTE: When userspace waits on a MAP_SHARED mapping, even if
- 	 * it's a read-only handle, it's expected that futexes attach to
- 	 * the object not the particular process.
-@@ -518,16 +544,74 @@ again:
- 		key->both.offset |= FUT_OFF_MMSHARED; /* ref taken on mm */
- 		key->private.mm = mm;
- 		key->private.address = address;
-+
-+		get_futex_key_refs(key); /* implies smp_mb(); (B) */
-+
- 	} else {
-+		struct inode *inode;
-+
-+		/*
-+		 * The associated futex object in this case is the inode and
-+		 * the page->mapping must be traversed. Ordinarily this should
-+		 * be stabilised under page lock but it's not strictly
-+		 * necessary in this case as we just want to pin the inode, not
-+		 * update the radix tree or anything like that.
-+		 *
-+		 * The RCU read lock is taken as the inode is finally freed
-+		 * under RCU. If the mapping still matches expectations then the
-+		 * mapping->host can be safely accessed as being a valid inode.
-+		 */
-+		rcu_read_lock();
-+
-+		if (ACCESS_ONCE(page_head->mapping) != mapping) {
-+			rcu_read_unlock();
-+			put_page(page_head);
-+
-+			goto again;
-+		}
-+
-+		inode = ACCESS_ONCE(mapping->host);
-+		if (!inode) {
-+			rcu_read_unlock();
-+			put_page(page_head);
-+
-+			goto again;
-+		}
-+
-+		/*
-+		 * Take a reference unless it is about to be freed. Previously
-+		 * this reference was taken by ihold under the page lock
-+		 * pinning the inode in place so i_lock was unnecessary. The
-+		 * only way for this check to fail is if the inode was
-+		 * truncated in parallel so warn for now if this happens.
-+		 *
-+		 * We are not calling into get_futex_key_refs() in file-backed
-+		 * cases, therefore a successful atomic_inc return below will
-+		 * guarantee that get_futex_key() will still imply smp_mb(); (B).
-+		 */
-+		if (WARN_ON_ONCE(!atomic_inc_not_zero(&inode->i_count))) {
-+			rcu_read_unlock();
-+			put_page(page_head);
-+
-+			goto again;
-+		}
-+
-+		/* Should be impossible but lets be paranoid for now */
-+		if (WARN_ON_ONCE(inode->i_mapping != mapping)) {
-+			err = -EFAULT;
-+			rcu_read_unlock();
-+			iput(inode);
-+
-+			goto out;
-+		}
-+
- 		key->both.offset |= FUT_OFF_INODE; /* inode-based key */
--		key->shared.inode = page_head->mapping->host;
-+		key->shared.inode = inode;
- 		key->shared.pgoff = basepage_index(page);
-+		rcu_read_unlock();
- 	}
- 
--	get_futex_key_refs(key); /* implies MB (B) */
--
- out:
--	unlock_page(page_head);
- 	put_page(page_head);
- 	return err;
- }
+ #endif /* _ASM_X86_INTEL_FAMILY_H */
 
