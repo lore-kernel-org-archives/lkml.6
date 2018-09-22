@@ -6,47 +6,50 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FA7ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E6CC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8064B20870
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:23:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8064B20870
+	by mail.kernel.org (Postfix) with ESMTP id 4E70420870
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:23:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E70420870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392274AbeIVGPE (ORCPT
+        id S2392241AbeIVGPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 22 Sep 2018 02:15:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44147 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44171 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391932AbeIVGKq (ORCPT
+        by vger.kernel.org with ESMTP id S2391939AbeIVGKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Sep 2018 02:10:46 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdv-0008BN-2u; Sat, 22 Sep 2018 01:19:27 +0100
+        id 1g3Vdv-0008Bd-Cd; Sat, 22 Sep 2018 01:19:27 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdp-0000um-Bi; Sat, 22 Sep 2018 01:19:21 +0100
+        id 1g3Vdo-0000tJ-Lv; Sat, 22 Sep 2018 01:19:20 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Will Deacon" <will.deacon@arm.com>,
-        "Jann Horn" <jannh@google.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Oleg Nesterov" <oleg@redhat.com>,
-        "Davidlohr Bueso" <dave@stgolabs.net>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+CC:     akpm@linux-foundation.org,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Juergen Gross" <jgross@suse.com>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Nadav Amit" <namit@vmware.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.179802987@decadent.org.uk>
+Message-ID: <lsq.1537575342.718020505@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 63/63] mm: get rid of vmacache_flush_all() entirely
+Subject: [PATCH 3.16 45/63] x86/paravirt: Fix spectre-v2 mitigations for
+ paravirt guests
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,119 +63,158 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit 7a9cdebdcc17e426fb5287e4a82db1dfe86339b2 upstream.
+commit 5800dc5c19f34e6e03b5adab1282535cb102fafd upstream.
 
-Jann Horn points out that the vmacache_flush_all() function is not only
-potentially expensive, it's buggy too.  It also happens to be entirely
-unnecessary, because the sequence number overflow case can be avoided by
-simply making the sequence number be 64-bit.  That doesn't even grow the
-data structures in question, because the other adjacent fields are
-already 64-bit.
+Nadav reported that on guests we're failing to rewrite the indirect
+calls to CALLEE_SAVE paravirt functions. In particular the
+pv_queued_spin_unlock() call is left unpatched and that is all over the
+place. This obviously wrecks Spectre-v2 mitigation (for paravirt
+guests) which relies on not actually having indirect calls around.
 
-So simplify the whole thing by just making the sequence number overflow
-case go away entirely, which gets rid of all the complications and makes
-the code faster too.  Win-win.
+The reason is an incorrect clobber test in paravirt_patch_call(); this
+function rewrites an indirect call with a direct call to the _SAME_
+function, there is no possible way the clobbers can be different
+because of this.
 
-[ Oleg Nesterov points out that the VMACACHE_FULL_FLUSHES statistics
-  also just goes away entirely with this ]
+Therefore remove this clobber check. Also put WARNs on the other patch
+failure case (not enough room for the instruction) which I've not seen
+trigger in my (limited) testing.
 
-Reported-by: Jann Horn <jannh@google.com>
-Suggested-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: drop changes to mm debug code]
+Three live kernel image disassemblies for lock_sock_nested (as a small
+function that illustrates the problem nicely). PRE is the current
+situation for guests, POST is with this patch applied and NATIVE is with
+or without the patch for !guests.
+
+PRE:
+
+(gdb) disassemble lock_sock_nested
+Dump of assembler code for function lock_sock_nested:
+   0xffffffff817be970 <+0>:     push   %rbp
+   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
+   0xffffffff817be974 <+4>:     push   %rbx
+   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
+   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
+   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
+   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
+   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
+   0xffffffff817be98f <+31>:    test   %eax,%eax
+   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
+   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
+   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
+   0xffffffff817be9a0 <+48>:    callq  *0xffffffff822299e8
+   0xffffffff817be9a7 <+55>:    pop    %rbx
+   0xffffffff817be9a8 <+56>:    pop    %rbp
+   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
+   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
+   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
+   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
+   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
+   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
+End of assembler dump.
+
+POST:
+
+(gdb) disassemble lock_sock_nested
+Dump of assembler code for function lock_sock_nested:
+   0xffffffff817be970 <+0>:     push   %rbp
+   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
+   0xffffffff817be974 <+4>:     push   %rbx
+   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
+   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
+   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
+   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
+   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
+   0xffffffff817be98f <+31>:    test   %eax,%eax
+   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
+   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
+   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
+   0xffffffff817be9a0 <+48>:    callq  0xffffffff810a0c20 <__raw_callee_save___pv_queued_spin_unlock>
+   0xffffffff817be9a5 <+53>:    xchg   %ax,%ax
+   0xffffffff817be9a7 <+55>:    pop    %rbx
+   0xffffffff817be9a8 <+56>:    pop    %rbp
+   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
+   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
+   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063aa0 <__local_bh_enable_ip>
+   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
+   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
+   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
+End of assembler dump.
+
+NATIVE:
+
+(gdb) disassemble lock_sock_nested
+Dump of assembler code for function lock_sock_nested:
+   0xffffffff817be970 <+0>:     push   %rbp
+   0xffffffff817be971 <+1>:     mov    %rdi,%rbp
+   0xffffffff817be974 <+4>:     push   %rbx
+   0xffffffff817be975 <+5>:     lea    0x88(%rbp),%rbx
+   0xffffffff817be97c <+12>:    callq  0xffffffff819f7160 <_cond_resched>
+   0xffffffff817be981 <+17>:    mov    %rbx,%rdi
+   0xffffffff817be984 <+20>:    callq  0xffffffff819fbb00 <_raw_spin_lock_bh>
+   0xffffffff817be989 <+25>:    mov    0x8c(%rbp),%eax
+   0xffffffff817be98f <+31>:    test   %eax,%eax
+   0xffffffff817be991 <+33>:    jne    0xffffffff817be9ba <lock_sock_nested+74>
+   0xffffffff817be993 <+35>:    movl   $0x1,0x8c(%rbp)
+   0xffffffff817be99d <+45>:    mov    %rbx,%rdi
+   0xffffffff817be9a0 <+48>:    movb   $0x0,(%rdi)
+   0xffffffff817be9a3 <+51>:    nopl   0x0(%rax)
+   0xffffffff817be9a7 <+55>:    pop    %rbx
+   0xffffffff817be9a8 <+56>:    pop    %rbp
+   0xffffffff817be9a9 <+57>:    mov    $0x200,%esi
+   0xffffffff817be9ae <+62>:    mov    $0xffffffff817be993,%rdi
+   0xffffffff817be9b5 <+69>:    jmpq   0xffffffff81063ae0 <__local_bh_enable_ip>
+   0xffffffff817be9ba <+74>:    mov    %rbp,%rdi
+   0xffffffff817be9bd <+77>:    callq  0xffffffff817be8c0 <__lock_sock>
+   0xffffffff817be9c2 <+82>:    jmp    0xffffffff817be993 <lock_sock_nested+35>
+End of assembler dump.
+
+
+Fixes: 63f70270ccd9 ("[PATCH] i386: PARAVIRT: add common patching machinery")
+Fixes: 3010a0663fd9 ("x86/paravirt, objtool: Annotate indirect calls")
+Reported-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -345,7 +345,7 @@ struct kioctx_table;
- struct mm_struct {
- 	struct vm_area_struct *mmap;		/* list of VMAs */
- 	struct rb_root mm_rb;
--	u32 vmacache_seqnum;                   /* per-thread vmacache */
-+	u64 vmacache_seqnum;                   /* per-thread vmacache */
- #ifdef CONFIG_MMU
- 	unsigned long (*get_unmapped_area) (struct file *filp,
- 				unsigned long addr, unsigned long len,
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1291,7 +1291,7 @@ struct task_struct {
- 	unsigned brk_randomized:1;
- #endif
- 	/* per-thread vma caching */
--	u32 vmacache_seqnum;
-+	u64 vmacache_seqnum;
- 	struct vm_area_struct *vmacache[VMACACHE_SIZE];
- #if defined(SPLIT_RSS_COUNTING)
- 	struct task_rss_stat	rss_stat;
---- a/include/linux/vmacache.h
-+++ b/include/linux/vmacache.h
-@@ -15,7 +15,6 @@ static inline void vmacache_flush(struct
- 	memset(tsk->vmacache, 0, sizeof(tsk->vmacache));
- }
+ arch/x86/kernel/paravirt.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -97,10 +97,12 @@ unsigned paravirt_patch_call(void *insnb
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
  
--extern void vmacache_flush_all(struct mm_struct *mm);
- extern void vmacache_update(unsigned long addr, struct vm_area_struct *newvma);
- extern struct vm_area_struct *vmacache_find(struct mm_struct *mm,
- 						    unsigned long addr);
-@@ -29,10 +28,6 @@ extern struct vm_area_struct *vmacache_f
- static inline void vmacache_invalidate(struct mm_struct *mm)
- {
- 	mm->vmacache_seqnum++;
--
--	/* deal with overflows */
--	if (unlikely(mm->vmacache_seqnum == 0))
--		vmacache_flush_all(mm);
- }
+-	if (tgt_clobbers & ~site_clobbers)
+-		return len;	/* target would clobber too much for this site */
+-	if (len < 5)
++	if (len < 5) {
++#ifdef CONFIG_RETPOLINE
++		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++#endif
+ 		return len;	/* call too long for patch site */
++	}
  
- #endif /* __LINUX_VMACACHE_H */
---- a/mm/vmacache.c
-+++ b/mm/vmacache.c
-@@ -6,42 +6,6 @@
- #include <linux/vmacache.h>
+ 	b->opcode = 0xe8; /* call */
+ 	b->delta = delta;
+@@ -115,8 +117,12 @@ unsigned paravirt_patch_jmp(void *insnbu
+ 	struct branch *b = insnbuf;
+ 	unsigned long delta = (unsigned long)target - (addr+5);
  
- /*
-- * Flush vma caches for threads that share a given mm.
-- *
-- * The operation is safe because the caller holds the mmap_sem
-- * exclusively and other threads accessing the vma cache will
-- * have mmap_sem held at least for read, so no extra locking
-- * is required to maintain the vma cache.
-- */
--void vmacache_flush_all(struct mm_struct *mm)
--{
--	struct task_struct *g, *p;
--
--	/*
--	 * Single threaded tasks need not iterate the entire
--	 * list of process. We can avoid the flushing as well
--	 * since the mm's seqnum was increased and don't have
--	 * to worry about other threads' seqnum. Current's
--	 * flush will occur upon the next lookup.
--	 */
--	if (atomic_read(&mm->mm_users) == 1)
--		return;
--
--	rcu_read_lock();
--	for_each_process_thread(g, p) {
--		/*
--		 * Only flush the vmacache pointers as the
--		 * mm seqnum is already set and curr's will
--		 * be set upon invalidation when the next
--		 * lookup is done.
--		 */
--		if (mm == p->mm)
--			vmacache_flush(p);
--	}
--	rcu_read_unlock();
--}
--
--/*
-  * This task may be accessing a foreign mm via (for example)
-  * get_user_pages()->find_vma().  The vmacache is task-local and this
-  * task's vmacache pertains to a different mm (ie, its own).  There is
+-	if (len < 5)
++	if (len < 5) {
++#ifdef CONFIG_RETPOLINE
++		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++#endif
+ 		return len;	/* call too long for patch site */
++	}
+ 
+ 	b->opcode = 0xe9;	/* jmp */
+ 	b->delta = delta;
 
