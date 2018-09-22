@@ -2,122 +2,151 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB344C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 01:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6805ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 01:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0982156E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 01:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C72F2156E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 01:21:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="RfrCQyZ7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0982156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QoWFoChX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C72F2156E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391734AbeIVHHv (ORCPT
+        id S2391709AbeIVHNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 03:07:51 -0400
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:52314 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725800AbeIVHHv (ORCPT
+        Sat, 22 Sep 2018 03:13:11 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:44220 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeIVHNL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 03:07:51 -0400
-X-Greylist: delayed 2954 seconds by postgrey-1.27 at vger.kernel.org; Sat, 22 Sep 2018 03:07:50 EDT
-Received: from pps.filterd (m0122331.ppops.net [127.0.0.1])
-        by mx0b-00190b01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8M0Qkn4005439;
-        Sat, 22 Sep 2018 01:27:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=p93C1xLyqAth6U3fPGI0FLeYdTlDpiESsNqR4DBO90k=;
- b=RfrCQyZ720qgskTrrN4qIxTxX7luP9GXUmc3H74ak2QSFAsXr63ys73Z4N+TLdGt7A1F
- Zdx9OoavlBb0YbOtev8veSIwgI6VjY+vfyW4XCQhtzoRg3ePcEMcgXUxvra+JklbzDH4
- yEW37iR2b2pZhYMQRjd88CFLB6SM+4aTLyc28WrCi4rAJNGC//ShK0dKZM20cTjAIlVS
- o21yuGcYS/NwLuxlWQ+Xe0yDBxbFLwXcl5rKhtgTd9wRJIikMrH0EiBwalC39SBIHbzj
- z2yedOUQajtWJMXrW23hrRsOfkE1rJltWM7ybxxEXwepzo7edMLvnVBoqorKhemoQJry Bw== 
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18])
-        by mx0b-00190b01.pphosted.com with ESMTP id 2mnakqr2dy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 22 Sep 2018 01:27:10 +0100
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-        by prod-mail-ppoint1.akamai.com (8.16.0.21/8.16.0.21) with SMTP id w8M0KXDP019601;
-        Fri, 21 Sep 2018 20:27:10 -0400
-Received: from prod-mail-relay11.akamai.com ([172.27.118.250])
-        by prod-mail-ppoint1.akamai.com with ESMTP id 2mmkmgp58c-1;
-        Fri, 21 Sep 2018 20:27:09 -0400
-Received: from [0.0.0.0] (prod-ssh-gw01.bos01.corp.akamai.com [172.27.119.138])
-        by prod-mail-relay11.akamai.com (Postfix) with ESMTP id 277481FC71;
-        Sat, 22 Sep 2018 00:27:09 +0000 (GMT)
-Subject: Re: [PATCH 00/22] various dynamic_debug patches
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-btrfs@vger.kernel.org, linux-acpi@vger.kernel.org,
-        x86@kernel.org
-References: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
-From:   Jason Baron <jbaron@akamai.com>
-Message-ID: <b2976966-8c48-2798-b2d6-cf7be45ed25f@akamai.com>
-Date:   Fri, 21 Sep 2018 20:27:09 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 22 Sep 2018 03:13:11 -0400
+Received: by mail-yw1-f68.google.com with SMTP id b2-v6so1767656ywe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 18:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YtxDGdS5WmP2lpgriVIeW783vVNCcQhPNphyJiNhET0=;
+        b=QoWFoChXF2sEtZL94gkMp1t2KvGA61shz9hwqw4qMSziQTQJF8texXvqQsAZ2NeUTc
+         RuJdphWmXLZzVITrqCICXPUaOAn+ac6kIubFzZGDJvkSc3CNNcSLwd9aICjo3JqOVA8w
+         NgybrMx3vGOS5MTHjsQounqbRLNh97MjBoB4y20fNbFuRB3QfEhswulnMDXijyrdCKbt
+         Xyi0pK4tBaGGf7sFv0bX9XuiP2vGleSe1Ca8PatPAQxgPeWi9BQTForB690gews/v7CN
+         tR752GUj6JAcqiggo/WfWQX1W0inSVcimgUK8FMnlO354NQemLA5hDoO1pncYyLlZXOC
+         Ctew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YtxDGdS5WmP2lpgriVIeW783vVNCcQhPNphyJiNhET0=;
+        b=jaBMSDKMY4GB4LgTQ6NzAhS1DqOcSXrlh99CdeBt0A7mmV7flTQWg9bzqhvP9A5ZsO
+         P2DBWskDoYg/x2ndAelaqzlhX3ToWTO/DWV9npLQ5CaT5v9lUhTCMbD7aIoe/I5aX8ee
+         jqtLiDg2W/uxq2veVeU1PoMzy2F5X7k/u2NSuaaWxSJnJ29yrdopSBYCibhmPmyeluKd
+         2nza9O5lKgHrNduD0oSdv0XoJspT8PoU9aa8gOg/fecLg0xAC02BIi/lyVZF0sg+oANz
+         GPjUXJnV72X+xOUOeicBUJhSvLrMqNJnUapyGW0NddSO7aagE06guRNEVCvysYfNVK77
+         IZXQ==
+X-Gm-Message-State: APzg51B1LeWoNtzShhWjtzHwZazvIiDClJgAlOAtKlqESULPVtw/37om
+        S7xlpgXgqPfTBFf2b4BavCE=
+X-Google-Smtp-Source: ANB0VdapYG6DLHdZ3J+Q7sbdYXdQdIPlpOqPf+2Ciqmk9e/iHGhJ2MxDgXhhUP9dGei34gVbUOHKfg==
+X-Received: by 2002:a81:4b50:: with SMTP id y77-v6mr134197ywa.198.1537579301532;
+        Fri, 21 Sep 2018 18:21:41 -0700 (PDT)
+Received: from GANOO-Loonix.attlocal.net (99-14-205-87.lightspeed.btrgla.sbcglobal.net. [99.14.205.87])
+        by smtp.gmail.com with ESMTPSA id m19-v6sm40545ywh.31.2018.09.21.18.21.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Sep 2018 18:21:40 -0700 (PDT)
+From:   Pierce Griffiths <pierceagriffiths@gmail.com>
+Cc:     pierceagriffiths@gmail.com, Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] torture-test modules: Remove unnecessary "ret" variables
+Date:   Fri, 21 Sep 2018 20:21:31 -0500
+Message-Id: <20180922012132.23373-1-pierceagriffiths@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180919220444.23190-1-linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=995
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809220002
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-21_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1809220003
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/19/2018 06:04 PM, Rasmus Villemoes wrote:
-> This started as an experiment to see how hard it would be to change
-> the four pointers in struct _ddebug into relative offsets, a la
-> CONFIG_GENERIC_BUG_RELATIVE_POINTERS, thus saving 16 bytes per
-> pr_debug site (and thus exactly making up for the extra space used by
-> the introduction of jump labels in 9049fc74). I stumbled on a few
-> things that are probably worth fixing regardless of whether the latter
-> half of this series is deemed worthwhile.
-> 
-> Patch relationships: 1-2, 3-4, 5-6 and 15-16 can be applied
-> individually, though 2, 4 and 6 probably makes most sense in the
-> context of the final goal of the series.
-> 
-> 7-12 I believe make sense on their own. Patch 13 again only makes
-> sense if we go all the way, and 14 and 17 depend on 13.
-> 
-> 18-21 are more preparatory patches, and finally 22 switch over x86-64
-> to use CONFIG_DYNAMIC_DEBUG_RELATIVE_POINTERS. I've tested that the
-> end result boots under virtme and that the dynamic_debug control file
-> has the expected contents.
-> 
+Remove return variables (declared as "ret") in cases where,
+depending on whether a condition evaluates as true, the result of a
+function call can be immediately returned instead of storing the result in
+the return variable. When the condition evaluates as false, the constant
+initially stored in the return variable at declaration is returned instead.
 
-I would like to to see all these patches included. Feel free to add:
-Acked-by: Jason Baron <jbaron@akamai.com>
+Signed-off-by: Pierce Griffiths <pierceagriffiths@gmail.com>
+---
+ kernel/torture.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-I've been wanting to add DYNAMIC_DEBUG_BRANCH to the
-[dev,net,pr].*ratelimited functions. That should reduce the size of the
-text as well.
+diff --git a/kernel/torture.c b/kernel/torture.c
+index 1ac24a826589..f4cec6db7f3c 100644
+--- a/kernel/torture.c
++++ b/kernel/torture.c
+@@ -233,16 +233,15 @@ torture_onoff(void *arg)
+  */
+ int torture_onoff_init(long ooholdoff, long oointerval)
+ {
+-	int ret = 0;
+-
+ #ifdef CONFIG_HOTPLUG_CPU
+ 	onoff_holdoff = ooholdoff;
+ 	onoff_interval = oointerval;
+ 	if (onoff_interval <= 0)
+ 		return 0;
+-	ret = torture_create_kthread(torture_onoff, NULL, onoff_task);
+-#endif /* #ifdef CONFIG_HOTPLUG_CPU */
+-	return ret;
++	return torture_create_kthread(torture_onoff, NULL, onoff_task);
++#else /* #ifdef CONFIG_HOTPLUG_CPU */
++	return 0;
++#endif /* #else #ifdef CONFIG_HOTPLUG_CPU */
+ }
+ EXPORT_SYMBOL_GPL(torture_onoff_init);
+ 
+@@ -513,15 +512,13 @@ static int torture_shutdown(void *arg)
+  */
+ int torture_shutdown_init(int ssecs, void (*cleanup)(void))
+ {
+-	int ret = 0;
+-
+ 	torture_shutdown_hook = cleanup;
+ 	if (ssecs > 0) {
+ 		shutdown_time = ktime_add(ktime_get(), ktime_set(ssecs, 0));
+-		ret = torture_create_kthread(torture_shutdown, NULL,
++		return torture_create_kthread(torture_shutdown, NULL,
+ 					     shutdown_task);
+ 	}
+-	return ret;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(torture_shutdown_init);
+ 
+@@ -619,13 +616,10 @@ static int torture_stutter(void *arg)
+ /*
+  * Initialize and kick off the torture_stutter kthread.
+  */
+-int torture_stutter_init(int s)
++int torture_stutter_init(const int s)
+ {
+-	int ret;
+-
+ 	stutter = s;
+-	ret = torture_create_kthread(torture_stutter, NULL, stutter_task);
+-	return ret;
++	return torture_create_kthread(torture_stutter, NULL, stutter_task);
+ }
+ EXPORT_SYMBOL_GPL(torture_stutter_init);
+ 
+-- 
+2.19.0
 
-Thanks,
-
--Jason
