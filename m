@@ -2,113 +2,95 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9906CC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 13:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D62ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 14:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561E22150F
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 13:55:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561E22150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 2CF602150F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 14:04:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hI8U5zVb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF602150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731689AbeIVTsx (ORCPT
+        id S1728863AbeIVT6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 15:48:53 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45736 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728633AbeIVTsx (ORCPT
+        Sat, 22 Sep 2018 15:58:07 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44020 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeIVT6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 15:48:53 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p52-v6so12852945eda.12;
-        Sat, 22 Sep 2018 06:55:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WnKNBPkOmwn2+Nw8zSMgPknBNJi4vlhvIYz/bUWhg4U=;
-        b=DnM9Yz6fFxhph/tXUjPrtOAUDmTzCCT0PGc0eLO1mQTjNo62SG0KGqEpoebn+45usP
-         pb+ngsxNaBsJCrCpZExeQOEZjvszP34B/jtA6wmwxM/cJoo/EsCh/3R41cZ2DCyInf6J
-         LvMC+7+OLirbagmcnONUbBduDFxczTRTjc/8p8lU25FeSEvJFz3c6Rvmkjr7qI06n4Li
-         yl8qfNtgweXkMaoZ2QxgUcs5qSyHuETyFVD7uaajqwMU/p900PKqTFQE78R3MGMdfhg+
-         atx8MNCMR4ZifePft52SnIp7vg0+Ndgzrc+RzaTlbctvwjWGQsdV7Eu0hCumyn3z2u5Z
-         T0iw==
-X-Gm-Message-State: APzg51BCTfuprrmFYMkXSqv08Ufp9yh9f+ZCvq2zyvqIugKjGfPrORmb
-        Lf+Ay9Eyv8G2eRSc8L53RlhzwmApozk=
-X-Google-Smtp-Source: ACcGV63AdYYDlFe1DaAzhE0NZgtZLyKZcnDwQF8RmKlYh7aZYl4YjalmZ+7+ZDZ67zWXfKJ4t/ZWqg==
-X-Received: by 2002:aa7:c708:: with SMTP id i8-v6mr3981100edq.231.1537624510607;
-        Sat, 22 Sep 2018 06:55:10 -0700 (PDT)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id e30-v6sm3130038ede.91.2018.09.22.06.55.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 06:55:09 -0700 (PDT)
-Received: by mail-wr1-f41.google.com with SMTP id t15so7521528wrx.1;
-        Sat, 22 Sep 2018 06:55:09 -0700 (PDT)
-X-Received: by 2002:adf:8485:: with SMTP id 5-v6mr2079405wrg.34.1537624508741;
- Sat, 22 Sep 2018 06:55:08 -0700 (PDT)
+        Sat, 22 Sep 2018 15:58:07 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8ME4K9x019146;
+        Sat, 22 Sep 2018 14:04:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=vBWSQ7/JyPV+Vxzvg+Uqckmfnl7OPrdOnlPPh2lEY+8=;
+ b=hI8U5zVbl1uhNsn2j2iSf/OZAk4NacfK4c75SNRmtvzZVpCH3rF3P28tY9I4NWVB74xS
+ dnnRdlP39LbMmaR9PAF+Bl4tb4bS55jG5rj5iFzX+oc2pT7qtOi6g4U4qJ9oBknHDMSj
+ E303SFKYg0Pmj01ImEy3HsNzUp9QJU+g2KRL/6WjZWhcxv2N5x/ybyhZBbghj2tdIAQX
+ yr2JORaq9JVBuwaashx+ja6QiY22miMXI3dsf8UuvY16f43naK8aam+UIcJiG7oyrSLQ
+ jJKSejVRP8Bf8JU9uyEVFjPKtTLV2YNz27iRf/R9pTR8vyKnLJSmVwKp1YA+pSfHdZzh 7g== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2mnecq8t1m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 22 Sep 2018 14:04:20 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w8ME4Ira028057
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 22 Sep 2018 14:04:19 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8ME4IdT006905;
+        Sat, 22 Sep 2018 14:04:18 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 22 Sep 2018 07:04:17 -0700
+Date:   Sat, 22 Sep 2018 17:04:07 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Karthik Nishanth <nishanthkarthik@live.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH] Fix clang warning -Wpointer-bool-conversion by removing
+ unnecessary check in regd.c
+Message-ID: <20180922140407.tmgf4roc2c67sadn@mwanda>
+References: <BN6PR17MB099677ADA332476DC575F2EDCA120@BN6PR17MB0996.namprd17.prod.outlook.com>
+ <20180922124432.tcykwwisip3rl7ll@mwanda>
+ <BN6PR17MB099607D1E30583A179197495CA110@BN6PR17MB0996.namprd17.prod.outlook.com>
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-15-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-15-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 22 Sep 2018 21:54:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v679T6eqUcgRtR0Tw6Njq4GupCAmHhvq=K1EAGYkryWYyQ@mail.gmail.com>
-Message-ID: <CAGb2v679T6eqUcgRtR0Tw6Njq4GupCAmHhvq=K1EAGYkryWYyQ@mail.gmail.com>
-Subject: Re: [PATCH 14/27] drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN6PR17MB099607D1E30583A179197495CA110@BN6PR17MB0996.namprd17.prod.outlook.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9023 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=522
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809220150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> It turns out that even new DW HDMI controllers exhibits same mangenta
+On Sat, Sep 22, 2018 at 01:40:19PM +0000, Karthik Nishanth wrote:
+> Do I submit a new patch with the modified subject?
+> 
 
-magenta?
+Yeah.  Put [PATCH v2] in the subject and then at the end of the patch
+description put:
 
-Otherwise, FWIW,
+Signed-off-by: Your Name <email>
+---
+v2: changed the subject.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+regards,
+dan carpenter
 
-> line issues as older versions.
->
-> Enable workaround for v2.12a.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 5971976284bf..df1c7a2d6961 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -1664,6 +1664,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
->         case 0x131a:
->         case 0x132a:
->         case 0x201a:
-> +       case 0x212a:
->                 count = 1;
->                 break;
->         default:
-> --
-> 2.18.0
->
