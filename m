@@ -2,120 +2,75 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76720C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 09:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A85C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32D2221532
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 09:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D2221532
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FCAB2154F
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FCAB2154F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeIVPvv (ORCPT
+        id S1727757AbeIVP41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 11:51:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44209 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727324AbeIVPvv (ORCPT
+        Sat, 22 Sep 2018 11:56:27 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:48977 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbeIVP41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 11:51:51 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w8M9wRKl2281108
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 22 Sep 2018 02:58:28 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w8M9wR0i2281105;
-        Sat, 22 Sep 2018 02:58:27 -0700
-Date:   Sat, 22 Sep 2018 02:58:27 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Matthew Whitehead <tipbot@zytor.com>
-Message-ID: <tip-2893cc8ff892fa74972d8dc0e1d0dc65116daaa3@git.kernel.org>
-Cc:     konrad.wilk@oracle.com, hpa@zytor.com, tedheadster@gmail.com,
-        bp@suse.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        luto@amacapital.net, dwmw@amazon.co.uk, peterz@infradead.org,
-        tglx@linutronix.de
-Reply-To: luto@amacapital.net, tglx@linutronix.de, peterz@infradead.org,
-          dwmw@amazon.co.uk, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, bp@suse.de, konrad.wilk@oracle.com,
-          hpa@zytor.com, tedheadster@gmail.com
-In-Reply-To: <20180921212041.13096-3-tedheadster@gmail.com>
-References: <20180921212041.13096-3-tedheadster@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/CPU: Change query logic so CPUID is enabled
- before testing
-Git-Commit-ID: 2893cc8ff892fa74972d8dc0e1d0dc65116daaa3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 22 Sep 2018 11:56:27 -0400
+Received: from null ([172.19.249.173]) by mrelayeu.kundenserver.de (mreue011
+ [212.227.15.167]) with ESMTPSA (Nemesis) id 1MPXxi-1gP9bl1vd4-00Mdyl; Sat, 22
+ Sep 2018 12:02:59 +0200
+Date:   Sat, 22 Sep 2018 12:02:58 +0200 (CEST)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-rpi-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Message-ID: <922221777.222442.1537610578773@email.1und1.de>
+In-Reply-To: <20180921195601.8776-1-tuomas.tynkkynen@iki.fi>
+References: <20180921195601.8776-1-tuomas.tynkkynen@iki.fi>
+Subject: Re: [PATCH] staging: vc04_services: Remove unused vchiq_genversion
+ script
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:B3jGny3EGKVAC+ctJO+EILmn4yNm84xPHXa2/mO2s/AfiunjQtC
+ p6X8r3nEj3DXvdxl3WphwSGDBzuboNw+ApIHT2z0M/5SeD8r/9QHLakJEocTpv3/U9sSLd1
+ g+3sKO1Y7RbGPLKS9H0HIYO2YvPgW/EDovxEfaFYpgOVf7X/pDflAZrN2a3wBnelw9as6cF
+ UB/OOjA8u/Y3D+s2Q+bpQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lxkTukdHgX8=:LqRl9meCMqmH2SeyBw7r+e
+ 9Umj9FCvywddndSWC8Fjb8caW5qM5h6/0AZXwYi8wkMXtbhXHR6E8jcb3M2RmHBKEAlw/RpIa
+ kpG910kcZCXVMusxhWRI6zb50kFJdzgYsEjHAZ/YsxE2v8k9K7+vlEQsfqhGNrK+GdEwPg+vm
+ KYo2r0U3iJGAKst3PwOPDH9Mkobb3euL4E7VHEUHsw5rdlGc235AHagpmqcmOCc/YqPRtiYcA
+ S+N7DGhSYox9VObohqz4WgOGV39XPzbrfpaWx2//IOAC1wdmHftcGpsWDkzivzpfqcW4o+QwG
+ +g4MCNIQU2yEzo1asaBw+XIoxkG2lZ3oaFpb5ot3cYI0TOWi3c02RY9AKUmNrYN2YTYcbX5U/
+ 0ZIdMqMNTlfrToFWY6+GkDo3yrm/877Hc+7+R4O1LhmIpcFjYMk1HBFdVy9HTO4VIuFzeduG4
+ 7u8ocbqwoL+qg/SJTH9DO1Ojzv0zTimYGQ1AgVVenWxSa/lcI0Dqn4I2e7mhR3giwyfnf7SXs
+ MeS40B9d128u9aDEN3NtHjgqhZ+epwPCJl81GJ4o+OYcpEJjXk1cX+8Zv9r30fo2z1E2X8M5F
+ ABkRq1Ed62pks7GANVJq4U/oBJOVHL4hckwc4obTnl0+z4p8u7UErTG7XrA/H/g8MyRUsl5hC
+ u7JvS/oPrkulbgwU+5+aYGWbDP8we0VC6xKz5tQTlFIQT37i/3D4AZwW4VbxCwsLDTqFavN15
+ nKPZAKkR6RJJAIvB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2893cc8ff892fa74972d8dc0e1d0dc65116daaa3
-Gitweb:     https://git.kernel.org/tip/2893cc8ff892fa74972d8dc0e1d0dc65116daaa3
-Author:     Matthew Whitehead <tedheadster@gmail.com>
-AuthorDate: Fri, 21 Sep 2018 17:20:41 -0400
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 22 Sep 2018 11:47:39 +0200
 
-x86/CPU: Change query logic so CPUID is enabled before testing
+> Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi> hat am 21. September 2018 um 21:56 geschrieben:
+> 
+> 
+> As far as I can tell, this has never been used.
+> 
+> Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
 
-Presently we check first if CPUID is enabled. If it is not already
-enabled, then we next call identify_cpu_without_cpuid() and clear
-X86_FEATURE_CPUID.
-
-Unfortunately, identify_cpu_without_cpuid() is the function where CPUID
-becomes _enabled_ on Cyrix 6x86/6x86L CPUs.
-
-Reverse the calling sequence so that CPUID is first enabled, and then
-check a second time to see if the feature has now been activated.
-
-[ bp: Massage commit message and remove trailing whitespace. ]
-
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
-Signed-off-by: Matthew Whitehead <tedheadster@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Andy Lutomirski <luto@amacapital.net>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180921212041.13096-3-tedheadster@gmail.com
----
- arch/x86/kernel/cpu/common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 44c4ef3d989b..658c85d16a9b 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1076,6 +1076,9 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 	memset(&c->x86_capability, 0, sizeof c->x86_capability);
- 	c->extended_cpuid_level = 0;
- 
-+	if (!have_cpuid_p())
-+		identify_cpu_without_cpuid(c);
-+
- 	/* cyrix could have cpuid enabled via c_identify()*/
- 	if (have_cpuid_p()) {
- 		cpu_detect(c);
-@@ -1093,7 +1096,6 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 		if (this_cpu->c_bsp_init)
- 			this_cpu->c_bsp_init(c);
- 	} else {
--		identify_cpu_without_cpuid(c);
- 		setup_clear_cpu_cap(X86_FEATURE_CPUID);
- 	}
- 
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
