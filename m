@@ -2,149 +2,116 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5521ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 18:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A30C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 19:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 171BB2146E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 18:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72F7B21532
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 19:21:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaiW+p4g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171BB2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QzRxWonB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F7B21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeIWAl3 (ORCPT
+        id S1727674AbeIWBPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 20:41:29 -0400
-Received: from mail-pl1-f169.google.com ([209.85.214.169]:34413 "EHLO
-        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbeIWAl3 (ORCPT
+        Sat, 22 Sep 2018 21:15:55 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:55568 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726153AbeIWBPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 20:41:29 -0400
-Received: by mail-pl1-f169.google.com with SMTP id f6-v6so7379436plo.1;
-        Sat, 22 Sep 2018 11:46:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O4G79cfQl39IIcoPKzysjvTlS/OFLnC+acQiKVBt+x4=;
-        b=SaiW+p4gAlmEPHbnsW2CI2ufFSDwQ5HWgagtSrcpThw1dUIe+8xrkb0i8+uLhFDRqi
-         Lm1V0vUKTm8JTne8WYemRxryefq98JQ3rXQFN+ZouWlaiQoPJHESNjFYVbCX64c1eJsY
-         qwFuQKJvhZSE2aW381JbaVVdVOW2t58yThj0etWLhpqih/Jo6GiqUSgNZd58mrpRf3yy
-         Q8pciE+jIcRZMWWpN3xMG1v6Ve38+264CIbILE6tt9jb+jUzj0QEv4G4KVsa04oCctz6
-         UgKzEvXAlD8PoIcNjTpwowxNxHlpm2txQC0xuELMTNBhPhq1bmmb9KQGZn621CT04bab
-         fI2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O4G79cfQl39IIcoPKzysjvTlS/OFLnC+acQiKVBt+x4=;
-        b=Dy7YthPxI04D9nO8kG9HlefC09i3YlC3D1fp32KE3IeBb74UQBPmn8m0/WTBZfzY9T
-         DXlI/s2pU9bHOwIJwtJCgUUDk5uRRNTY480OzjNr/MsN8ESUf4Hh3ueTK2qurDSZ8/yR
-         dyD6UQiUSTq1BHW3+UaXqCa8mVbNgkY8/NSvIrksB/lUXxEmTB2+Gf8wwLxOIDA/jI5l
-         KxTOzOA2JD6ODP1dZHl8S5VB+g5p6oPYnmejFsCPlwSrEAycNym+uw1+SaKKtLjb3Ykc
-         2J5dGNrxiyobLs+b5Q6Y7xAlI7P3AqzSBgURGDdfmRidi0yvORlF7XmFpCc5nOBP4TUY
-         bhfg==
-X-Gm-Message-State: ABuFfog5F6LQP+q5xDQ+AVK0fdPjQk6Ey8JctMRycFraC9CPd3i/Fm87
-        t6o9yPqDr1HqeUdmEAzzMK4=
-X-Google-Smtp-Source: ACcGV60PJBrtpDuYZXOmP7fWxly/hbf8NC50fe1wmegs2SkhXRnsdTmOOf5r0f2t6vZvoiMVa1NPFQ==
-X-Received: by 2002:a17:902:7c96:: with SMTP id y22-v6mr3658238pll.332.1537642015730;
-        Sat, 22 Sep 2018 11:46:55 -0700 (PDT)
-Received: from Asurada (c-73-231-2-134.hsd1.ca.comcast.net. [73.231.2.134])
-        by smtp.gmail.com with ESMTPSA id f11-v6sm46350974pfa.131.2018.09.22.11.46.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 11:46:55 -0700 (PDT)
-Date:   Sat, 22 Sep 2018 11:46:51 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] hwmon: ina3221: Read channel input source info
- from DT
-Message-ID: <20180922184650.GB9092@Asurada>
-References: <20180921223216.634-1-nicoleotsuka@gmail.com>
- <20180921223216.634-3-nicoleotsuka@gmail.com>
- <a7e6c311-eba4-e9b2-df64-9d02882a1dcb@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7e6c311-eba4-e9b2-df64-9d02882a1dcb@roeck-us.net>
-User-Agent: Mutt/1.5.22 (2013-10-16)
+        Sat, 22 Sep 2018 21:15:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ce02TxCekmqQ0uo5cVwaMreQXty+fONXT5m/+rLbQdE=; b=QzRxWonB7HLNtyyQn1tOnNKojS
+        vqbfFMmHepUoS5KX+A/9sJ/5nFoD7GERFQ9WIbt06PzHG5Kx+9JADX7lB4YNhuEhs20VA5vwymdKq
+        NrZuGbR1vZWcxPge5n9HniJIRBt7moNFva6FIZW6wgvGq89kHOym+rI7mtKIbKXHyuWU=;
+Received: from p200300ccfbf756001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbf7:5600:1a3d:a2ff:febf:d33a] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1g3nSo-0006XN-RT; Sat, 22 Sep 2018 21:21:10 +0200
+Received: from andi by aktux with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1g3nSo-0004DC-1U; Sat, 22 Sep 2018 21:21:10 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Evgeniy Polyakov <zbr@ioremap.net>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>, stable@vger.kernel.org
+Subject: [PATCH] w1: omap-hdq: fix missing bus unregister at removal
+Date:   Sat, 22 Sep 2018 21:20:54 +0200
+Message-Id: <20180922192054.16107-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >This patch adds a new structure of input source specific
-> >information including input source label, shunt resistor
-> >value and its connection status. It exposes these labels
-> >via sysfs and also disables those channels where there's
-> >no input source being connected.
-> >
-> 
-> I see you have decided to just display the disconnected channels.
-> This is misleading, and I can not accept it. Please either use the
-> is_visible callback to not display those channels at all, or have
+The bus master was not removed after unloading the module
+or unbinding the driver. That lead to oopses like this
 
-I will add is_visible. I have almost finished it while waiting for
-the v3's review comments. Will test it and include in the v4.
+[  127.842987] Unable to handle kernel paging request at virtual address bf01d04c
+[  127.850646] pgd = 70e3cd9a
+[  127.853698] [bf01d04c] *pgd=8f908811, *pte=00000000, *ppte=00000000
+[  127.860412] Internal error: Oops: 80000007 [#1] PREEMPT SMP ARM
+[  127.866668] Modules linked in: bq27xxx_battery overlay [last unloaded: omap_hdq]
+[  127.874542] CPU: 0 PID: 1022 Comm: w1_bus_master1 Not tainted 4.19.0-rc4-00001-g2d51da718324 #12
+[  127.883819] Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[  127.890441] PC is at 0xbf01d04c
+[  127.893798] LR is at w1_search_process_cb+0x4c/0xfc
+[  127.898956] pc : [<bf01d04c>]    lr : [<c05f9580>]    psr: a0070013
+[  127.905609] sp : cf885f48  ip : bf01d04c  fp : ddf1e11c
+[  127.911132] r10: cf8fe040  r9 : c05f8d00  r8 : cf8fe040
+[  127.916656] r7 : 000000f0  r6 : cf8fe02c  r5 : cf8fe000  r4 : cf8fe01c
+[  127.923553] r3 : c05f8d00  r2 : 000000f0  r1 : cf8fe000  r0 : dde1ef10
+[  127.930450] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[  127.938018] Control: 10c5387d  Table: 8f8f0019  DAC: 00000051
+[  127.944091] Process w1_bus_master1 (pid: 1022, stack limit = 0x9135699f)
+[  127.951171] Stack: (0xcf885f48 to 0xcf886000)
+[  127.955810] 5f40:                   cf8fe000 00000000 cf884000 cf8fe090 000003e8 c05f8d00
+[  127.964477] 5f60: dde5fc34 c05f9700 ddf1e100 ddf1e540 cf884000 cf8fe000 c05f9694 00000000
+[  127.973114] 5f80: dde5fc34 c01499a4 00000000 ddf1e540 c0149874 00000000 00000000 00000000
+[  127.981781] 5fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+[  127.990447] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  127.999114] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[  128.007781] [<c05f9580>] (w1_search_process_cb) from [<c05f9700>] (w1_process+0x6c/0x118)
+[  128.016479] [<c05f9700>] (w1_process) from [<c01499a4>] (kthread+0x130/0x148)
+[  128.024047] [<c01499a4>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+[  128.031677] Exception stack(0xcf885fb0 to 0xcf885ff8)
+[  128.037017] 5fa0:                                     00000000 00000000 00000000 00000000
+[  128.045684] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  128.054351] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[  128.061340] Code: bad PC value
+[  128.064697] ---[ end trace af066e33c0e14119 ]---
 
-> the _input attribute of disabled channels return -ENODATA (see
-> 'in[0-*]_enable' attribute in the ABI). If you implement the latter,
-> I would suggest to also implement the _enable attribute.
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ drivers/w1/masters/omap_hdq.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I will also add one separate patch for in[0-*]_enable after these
-two changes pass the review and get applied.
+diff --git a/drivers/w1/masters/omap_hdq.c b/drivers/w1/masters/omap_hdq.c
+index 83fc9aab34e8..3099052e1243 100644
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -763,6 +763,8 @@ static int omap_hdq_remove(struct platform_device *pdev)
+ 	/* remove module dependency */
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	w1_remove_master_device(&omap_w1_master);
++
+ 	return 0;
+ }
+ 
+-- 
+2.11.0
 
-> As mentioned in patch 1, I can not accept an implicitly mandatory
-> label attribute. The property defining the label attribute will
-> have to be optional and well defined to ensure that it matches
-> the ABI.
-
-I replied this in the PATCH-1. Let's discuss this topic there.
-
-> >+	/* Disable channels if their inputs are disconnected */
-> >+	for (i = 0, mask = 0; i < INA3221_NUM_CHANNELS; i++) {
-> >+		if (ina->inputs[i].disconnected)
-> >+			mask |= INA3221_CONFIG_CHx_EN(i);
-> >+	}
-> 
-> Consequently, you should also _enable_ channels which are not explicitly disabled.
-
-The register has enabled all channels by default. So I felt it'd
-be neat to have disabling code only. My v1 actually had enabling
-part as well, but I can add it back if you think it'd be better.
-
-> This can be tricky since you'll have to distinguish non-DT and DT configuration
-> and retain the original configuration if no channel configuration data is available
-> from devicetree.
-
-I don't quite understand this comments. Would you please elaborate
-it?
-
-For non-DT configurations, input->disconnected is always false by
-default unless someone adds config for it (through platform_data).
-If regmap_update_bits only does disabling like this version does,
-non-DT configurations will not get affected since mask = 0. Or if
-we change it to do both enabling and disabling, regmap_update_bits
-will still ignore since there's no register value changed, though
-it won't really hurt even if regmap writes correct configurations
-to the register.
-
-For DT configurations (without channel input source defined), it's
-like the same as non-DT configurations. As we have platforms only
-enabled ina3221 via DT while they don't have this new DT binding,
-the driver has to be backward compatible, so my change only sets
-input->disconnected=true when a status="disabled" is present, i.e.
-those platforms are treated as all channels getting enabled until
-they update their DTs.
-
-Thanks for the review
-Nicolin
