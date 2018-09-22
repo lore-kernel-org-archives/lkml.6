@@ -2,236 +2,112 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E57AC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A71C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA0B21523
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F43A21522
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:31:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xauF6oXU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA0B21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rm60PJU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F43A21522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeIVQTv (ORCPT
+        id S1728005AbeIVQYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 12:19:51 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49954 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeIVQTv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 12:19:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3tBh84qLZeYHo7NMsaOL7fLJkS7c0TwrIKBmLOgxSjo=; b=xauF6oXU1OlspiXHta4ABvllu
-        MND0YqkMLd9v4Ku6c3sEbeqPRrm62XbRiLKBhqYElp0qsKHaD2MY455bpeWJCylM5hD1QiUtIrvS0
-        olKSDYUt2blkEPxxmYga1QbAURwaLxkXIp+viqAjVtky9kihpn3Loljkmj5kMFDk+TuLYAaaIlDsK
-        FUapnnYcZ+bX3jovWFoaTUqT7R5UoXjpjxy04w5Eqentz3x4oiKo+bMuWVVBnd7OUlyYKuy6PWQqQ
-        5O9PPI00xAc4orlmWTmbRPXhLI3k0BgJnDPRVOFpBIDIVL/7H5VHxiOndEJIRdUqg+7Ze0qLy8arF
-        qMO1BCTJQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g3f7a-0004bY-8N; Sat, 22 Sep 2018 10:26:43 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9E2292025483B; Sat, 22 Sep 2018 12:26:40 +0200 (CEST)
-Date:   Sat, 22 Sep 2018 12:26:40 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     PierceGriffiths <pierceagriffiths@gmail.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scheduler: conditional statement cleanup
-Message-ID: <20180922102640.GG24124@hirez.programming.kicks-ass.net>
-References: <20180921202205.11769-1-pierceagriffiths@gmail.com>
+        Sat, 22 Sep 2018 12:24:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726039AbeIVQYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 12:24:33 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13A59214C4;
+        Sat, 22 Sep 2018 10:31:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537612287;
+        bh=+U+LxMZtqu1tnyEvD8as4V1J9/Gn90sNcswvKETa8M8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rm60PJU2MTGNChr+RfFtbEwaLtGSYzhPoWn1kwlM2jnVP1uL0WA0ruU9wdq0Yptut
+         W36pf22kuiZmucccqyUG1bijKWbew0Rfja4ivhOS2oGniVQJJSp5uYWGIdakEtrNts
+         zcn/pGgu2EV7qJBvMmV+qMpIkE1XbBsv6SlB5qhU=
+Date:   Sat, 22 Sep 2018 11:31:23 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Eugen Hristev <eugen.hristev@microchip.com>
+Cc:     <ludovic.desroches@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/2] iio: adc: at91: fix acking DRDY irq on simple
+ conversions
+Message-ID: <20180922113123.2c8da044@archlinux>
+In-Reply-To: <1537447238-18674-1-git-send-email-eugen.hristev@microchip.com>
+References: <1537447238-18674-1-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921202205.11769-1-pierceagriffiths@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 03:22:03PM -0500, PierceGriffiths wrote:
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 625bc9897f62..443a1f235cfd 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -617,12 +617,8 @@ bool sched_can_stop_tick(struct rq *rq)
->  	 * If there are more than one RR tasks, we need the tick to effect the
->  	 * actual RR behaviour.
->  	 */
-> -	if (rq->rt.rr_nr_running) {
-> -		if (rq->rt.rr_nr_running == 1)
-> -			return true;
-> -		else
-> -			return false;
-> -	}
-> +	if (rq->rt.rr_nr_running)
-> +		return rq->rt.rr_nr_running == 1;
->  
->  	/*
->  	 * If there's no RR tasks, but FIFO tasks, we can skip the tick, no
+On Thu, 20 Sep 2018 15:40:37 +0300
+Eugen Hristev <eugen.hristev@microchip.com> wrote:
 
-That one is OK I suppose.
-
-> diff --git a/kernel/sched/cpufreq.c b/kernel/sched/cpufreq.c
-> index 5e54cbcae673..a8fd4bd68954 100644
-> --- a/kernel/sched/cpufreq.c
-> +++ b/kernel/sched/cpufreq.c
-> @@ -34,10 +34,7 @@ void cpufreq_add_update_util_hook(int cpu, struct update_util_data *data,
->  			void (*func)(struct update_util_data *data, u64 time,
->  				     unsigned int flags))
->  {
-> -	if (WARN_ON(!data || !func))
-> -		return;
-> -
-> -	if (WARN_ON(per_cpu(cpufreq_update_util_data, cpu)))
-> +	if (WARN_ON(!data || !func || per_cpu(cpufreq_update_util_data, cpu)))
->  		return;
->  
->  	data->func = func;
-
-But I'm not a fan of this one. It mixes a different class of function
-and the WARN condition gets too complicated. Its easier to have separate
-warns.
-
-> diff --git a/kernel/sched/cpupri.c b/kernel/sched/cpupri.c
-> index daaadf939ccb..152c133e8247 100644
-> --- a/kernel/sched/cpupri.c
-> +++ b/kernel/sched/cpupri.c
-> @@ -29,20 +29,16 @@
->  #include "sched.h"
->  
->  /* Convert between a 140 based task->prio, and our 102 based cpupri */
-> -static int convert_prio(int prio)
-> +static int convert_prio(const int prio)
->  {
-> -	int cpupri;
-> -
->  	if (prio == CPUPRI_INVALID)
-> -		cpupri = CPUPRI_INVALID;
-> +		return CPUPRI_INVALID;
->  	else if (prio == MAX_PRIO)
-> -		cpupri = CPUPRI_IDLE;
-> +		return CPUPRI_IDLE;
->  	else if (prio >= MAX_RT_PRIO)
-> -		cpupri = CPUPRI_NORMAL;
-> +		return CPUPRI_NORMAL;
->  	else
-> -		cpupri = MAX_RT_PRIO - prio + 1;
-> -
-> -	return cpupri;
-> +		return MAX_RT_PRIO - prio + 1;
-
-The code looks even better if you leave out the last else.
-
->  }
->  
->  /**
-> @@ -95,10 +91,8 @@ int cpupri_find(struct cpupri *cp, struct task_struct *p,
->  		smp_rmb();
->  
->  		/* Need to do the rmb for every iteration */
-> -		if (skip)
-> -			continue;
-> -
-> -		if (cpumask_any_and(&p->cpus_allowed, vec->mask) >= nr_cpu_ids)
-> +		if (skip || cpumask_any_and(&p->cpus_allowed, vec->mask)
-> +				>= nr_cpu_ids)
->  			continue;
->  
->  		if (lowest_mask) {
-
-That just makes the code ugly for no reason.
-
-> @@ -222,7 +216,7 @@ int cpupri_init(struct cpupri *cp)
->  	return 0;
->  
->  cleanup:
-> -	for (i--; i >= 0; i--)
-> +	while (--i >= 0)
->  		free_cpumask_var(cp->pri_to_cpu[i].mask);
->  	return -ENOMEM;
->  }
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 2e2955a8cf8f..acf1b94669ad 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -142,10 +142,12 @@ void free_rt_sched_group(struct task_group *tg)
->  		destroy_rt_bandwidth(&tg->rt_bandwidth);
->  
->  	for_each_possible_cpu(i) {
-> -		if (tg->rt_rq)
-> -			kfree(tg->rt_rq[i]);
-> -		if (tg->rt_se)
-> -			kfree(tg->rt_se[i]);
-> +		/* Don't need to check if tg->rt_rq[i]
-> +		 * or tg->rt_se[i] are NULL, since kfree(NULL)
-> +		 * simply performs no operation
+> When doing simple conversions, the driver did not acknowledge the DRDY irq.
+> If this irq is not acked, it will be left pending, and as soon as a trigger
+> is enabled, the irq handler will be called, it doesn't know why this irq
+> has occurred because no channel is pending, and then we will have irq loop
+> and board will hang.
+> 
+> Fixes 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> ---
+>  drivers/iio/adc/at91_adc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+> index 44b5168..e85f859 100644
+> --- a/drivers/iio/adc/at91_adc.c
+> +++ b/drivers/iio/adc/at91_adc.c
+> @@ -712,6 +712,11 @@ static int at91_adc_read_raw(struct iio_dev *idev,
+>  		at91_adc_writel(st, AT91_ADC_CHDR,
+>  				AT91_ADC_CH(chan->channel));
+>  		at91_adc_writel(st, AT91_ADC_IDR, BIT(chan->channel));
+> +		/*
+> +		 * we need to ack the DRDY irq, otherwise it will be
+> +		 * left pending and irq handler will be confused
 > +		 */
+> +		at91_adc_readl(st, AT91_ADC_LCDR);
 
-That's an invalid comment style.
+I'm curious as to how things were working before.  Does this only occur
+if we do a raw_read whilst the buffer is enabled?
 
-> +		kfree(tg->rt_rq[i]);
-> +		kfree(tg->rt_se[i]);
->  	}
->  
->  	kfree(tg->rt_rq);
-> @@ -1015,10 +1017,7 @@ enqueue_top_rt_rq(struct rt_rq *rt_rq)
->  
->  	BUG_ON(&rq->rt != rt_rq);
->  
-> -	if (rt_rq->rt_queued)
-> -		return;
-> -
-> -	if (rt_rq_throttled(rt_rq))
-> +	if (rt_rq->rt_queued || rt_rq_throttled(rt_rq))
->  		return;
->  
->  	if (rt_rq->rt_nr_running) {
+I would have assumed when it's not enabled, the irq would be masked and
+never generated in the first place...
 
-The compiler can do this transformation and the old code was simpler.
+It may be that what we actually need to do is to prevent read_raw accesses
+when the buffer is enabled (like lots of other drivers do precisely to
+avoid this sort of condition). The problem there comes if we have
+existing applications doing this combination as we are then breaking
+userspace. If that's the case we'll need to be a bit more clever.
 
-> @@ -1211,10 +1210,7 @@ void dec_rt_tasks(struct sched_rt_entity *rt_se, struct rt_rq *rt_rq)
->   */
->  static inline bool move_entity(unsigned int flags)
->  {
-> -	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
-> -		return false;
-> -
-> -	return true;
-> +	return !((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
->  }
+Hammering down an irq state in a non irq handling path isn't a good
+solution.
 
-Again, I find the new code harder to read.
+Jonathan
 
 >  
-> @@ -2518,12 +2513,10 @@ static int tg_set_rt_bandwidth(struct task_group *tg,
->  	/*
->  	 * Disallowing the root group RT runtime is BAD, it would disallow the
->  	 * kernel creating (and or operating) RT threads.
-> +	 *
-> +	 * No period doesn't make any sense.
->  	 */
-> -	if (tg == &root_task_group && rt_runtime == 0)
-> -		return -EINVAL;
-> -
-> -	/* No period doesn't make any sense. */
-> -	if (rt_period == 0)
-> +	if ((tg == &root_task_group && !rt_runtime) || !rt_period)
->  		return -EINVAL;
->  
->  	mutex_lock(&rt_constraints_mutex);
+>  		st->last_value = 0;
+>  		st->done = false;
 
-Again, far harder to read.
-
-In short, while all the transformations are 'correct' the end result is
-horrible. Please don't do this.
