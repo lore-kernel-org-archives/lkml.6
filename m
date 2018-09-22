@@ -2,120 +2,172 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59235C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 21:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6CCC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 21:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 112AC21476
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 21:05:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VArYk0Zw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 112AC21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FCE821522
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 21:26:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FCE821522
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbeIWDAv (ORCPT
+        id S1728336AbeIWDVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 23:00:51 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36006 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeIWDAu (ORCPT
+        Sat, 22 Sep 2018 23:21:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727299AbeIWDVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 23:00:50 -0400
-Received: by mail-io1-f68.google.com with SMTP id q5-v6so15001388iop.3;
-        Sat, 22 Sep 2018 14:05:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IHsv1kVPjHiFN5CDlRUXNfvFEO14wRvjZvBGLfsjNrM=;
-        b=VArYk0ZwKqfpsu23LJuTDU/QXaSYybhX7viKFjGC0ehAhGUHMXvkco/e9X+s1PaYnh
-         LG5X1EvwDsvlndjAOFEOwzNllAdpE5/gill6AZ1beu4WLyxgfQo5bL8rPSGTlp6QmI3F
-         gl2vsdjvIkRKkjenLFS0gZfL3gB2+Jd/9dezchLyrfkdRnni5WAUN4wq9VFNwNfih809
-         luKAL8PjqOiCacAKNDC73kQoaSpLjzluP+N6GlkAPJZET+i2CCzu8EN7GynnPBg7nCm/
-         i3s6tDP+X78u7Dj9LTPJvRRwXrW0ncc5rGMzYEiqhJaNSqyGw4Gm+ejNYJ0xY1N0i7ui
-         KaJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IHsv1kVPjHiFN5CDlRUXNfvFEO14wRvjZvBGLfsjNrM=;
-        b=LE6wEcitc+xB0De01Bj4q1KWZssyI0zY+YU8fq2utnqUcjhsDYht1MWDgt5yPedIOs
-         iehTQf8s03i2aBXJmf9Ypem5BfPq151TaYnrQLRePynfzyuD9GUPgssc1Gl9Zhp+EjMy
-         irWAlnMyrVMwcIBOcrO085kQ2n4SPi0+9cDQGDWATAYQhofBY1fsw+vObmOe3ZqxQQ6F
-         uUd7I1Kj5sXLS8IAmaBN7GNjSJ8vp/fUsd1uFSctiL/cVvHq+/72wgcPQTSdIbZlY+X+
-         R5nkcSXT5l9LNMkyHTyoNNBwxo15e/9fA34UVbqmz0K9bPJSwoj73qY3uDaP15WwH/7i
-         9XXA==
-X-Gm-Message-State: ABuFfojtvOaCsAILtzrf79qFVKJ8WzGp90pJiDlrGMOywFKBSnt0R0Ni
-        85ETeJN8pJZOHFVax0b3K8CPA+0=
-X-Google-Smtp-Source: ACcGV62YtLsrDAoH/94g4LL+VX7tiOGbBk3M3U//7DKR05phQR63172XE89p+1Y6MeJcBAG4OLQz3A==
-X-Received: by 2002:a6b:9704:: with SMTP id z4-v6mr3035101iod.110.1537650353284;
-        Sat, 22 Sep 2018 14:05:53 -0700 (PDT)
-Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
-        by smtp.gmail.com with ESMTPSA id t24-v6sm4206532ite.12.2018.09.22.14.05.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 14:05:52 -0700 (PDT)
-From:   ryang <decatf@gmail.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ryang <decatf@gmail.com>
-Subject: [PATCH v3 2/2] iio: light: bh1750: Add device tree support
-Date:   Sat, 22 Sep 2018 17:05:39 -0400
-Message-Id: <20180922210539.6670-2-decatf@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180922210539.6670-1-decatf@gmail.com>
-References: <20180922210539.6670-1-decatf@gmail.com>
+        Sat, 22 Sep 2018 23:21:37 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8MLNrts096854
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 17:26:35 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mnkva7es4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 17:26:35 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sat, 22 Sep 2018 17:26:35 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 22 Sep 2018 17:26:31 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8MLQUMS37945450
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 22 Sep 2018 21:26:30 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 51436B206B;
+        Sat, 22 Sep 2018 17:24:55 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32021B2065;
+        Sat, 22 Sep 2018 17:24:55 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.236])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sat, 22 Sep 2018 17:24:55 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0A6C116C1D80; Sat, 22 Sep 2018 14:26:30 -0700 (PDT)
+Date:   Sat, 22 Sep 2018 14:26:30 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Pierce Griffiths <pierceagriffiths@gmail.com>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] torture-test modules: Remove unnecessary "ret" variables
+Reply-To: paulmck@linux.ibm.com
+References: <20180922012132.23373-1-pierceagriffiths@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180922012132.23373-1-pierceagriffiths@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18092221-0068-0000-0000-000003408E31
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009754; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01092182; UDB=6.00564383; IPR=6.00872206;
+ MB=3.00023458; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-22 21:26:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092221-0069-0000-0000-000045D33344
+Message-Id: <20180922212630.GF4222@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-22_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809220226
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree support for ROHM BH1750 series ambient light sensors.
+On Fri, Sep 21, 2018 at 08:21:31PM -0500, Pierce Griffiths wrote:
+> Remove return variables (declared as "ret") in cases where,
+> depending on whether a condition evaluates as true, the result of a
+> function call can be immediately returned instead of storing the result in
+> the return variable. When the condition evaluates as false, the constant
+> initially stored in the return variable at declaration is returned instead.
+> 
+> Signed-off-by: Pierce Griffiths <pierceagriffiths@gmail.com>
 
-Signed-off-by: ryang <decatf@gmail.com>
----
-Changes in v2:
-     - Export module device table
-Changes in v3:
-     - Remove of_match_ptr so that bh1750_of_match is available
-       without CONFIG_OF.
+Not bad, as it does safe a couple of lines.  Is it possible to save
+a few more by using "if (!IS_ENABLED(CONFIG_HOTPLUG_CPU))" instead
+of the #ifdef?  Or does that end up breaking the build for either
+CONFIG_HOTPLUG_CPU=y or CONFIG_HOTPLUG_CPU=n builds?
 
- drivers/iio/light/bh1750.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+							Thanx, Paul
 
-diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
-index c3a481452b67..28347df78cff 100644
---- a/drivers/iio/light/bh1750.c
-+++ b/drivers/iio/light/bh1750.c
-@@ -307,9 +307,20 @@ static const struct i2c_device_id bh1750_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, bh1750_id);
- 
-+static const struct of_device_id bh1750_of_match[] = {
-+	{ .compatible = "rohm,bh1710", },
-+	{ .compatible = "rohm,bh1715", },
-+	{ .compatible = "rohm,bh1721", },
-+	{ .compatible = "rohm,bh1750", },
-+	{ .compatible = "rohm,bh1751", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bh1750_of_match);
-+
- static struct i2c_driver bh1750_driver = {
- 	.driver = {
- 		.name = "bh1750",
-+		.of_match_table = bh1750_of_match,
- 		.pm = &bh1750_pm_ops,
- 	},
- 	.probe = bh1750_probe,
--- 
-2.17.1
+> ---
+>  kernel/torture.c | 22 ++++++++--------------
+>  1 file changed, 8 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/torture.c b/kernel/torture.c
+> index 1ac24a826589..f4cec6db7f3c 100644
+> --- a/kernel/torture.c
+> +++ b/kernel/torture.c
+> @@ -233,16 +233,15 @@ torture_onoff(void *arg)
+>   */
+>  int torture_onoff_init(long ooholdoff, long oointerval)
+>  {
+> -	int ret = 0;
+> -
+>  #ifdef CONFIG_HOTPLUG_CPU
+>  	onoff_holdoff = ooholdoff;
+>  	onoff_interval = oointerval;
+>  	if (onoff_interval <= 0)
+>  		return 0;
+> -	ret = torture_create_kthread(torture_onoff, NULL, onoff_task);
+> -#endif /* #ifdef CONFIG_HOTPLUG_CPU */
+> -	return ret;
+> +	return torture_create_kthread(torture_onoff, NULL, onoff_task);
+> +#else /* #ifdef CONFIG_HOTPLUG_CPU */
+> +	return 0;
+> +#endif /* #else #ifdef CONFIG_HOTPLUG_CPU */
+>  }
+>  EXPORT_SYMBOL_GPL(torture_onoff_init);
+> 
+> @@ -513,15 +512,13 @@ static int torture_shutdown(void *arg)
+>   */
+>  int torture_shutdown_init(int ssecs, void (*cleanup)(void))
+>  {
+> -	int ret = 0;
+> -
+>  	torture_shutdown_hook = cleanup;
+>  	if (ssecs > 0) {
+>  		shutdown_time = ktime_add(ktime_get(), ktime_set(ssecs, 0));
+> -		ret = torture_create_kthread(torture_shutdown, NULL,
+> +		return torture_create_kthread(torture_shutdown, NULL,
+>  					     shutdown_task);
+>  	}
+> -	return ret;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(torture_shutdown_init);
+> 
+> @@ -619,13 +616,10 @@ static int torture_stutter(void *arg)
+>  /*
+>   * Initialize and kick off the torture_stutter kthread.
+>   */
+> -int torture_stutter_init(int s)
+> +int torture_stutter_init(const int s)
+>  {
+> -	int ret;
+> -
+>  	stutter = s;
+> -	ret = torture_create_kthread(torture_stutter, NULL, stutter_task);
+> -	return ret;
+> +	return torture_create_kthread(torture_stutter, NULL, stutter_task);
+>  }
+>  EXPORT_SYMBOL_GPL(torture_stutter_init);
+> 
+> -- 
+> 2.19.0
+> 
 
