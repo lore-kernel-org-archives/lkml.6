@@ -2,144 +2,288 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AA2ECE561
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA56AC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 294B421567
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:04:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qeqd6tgD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 294B421567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AF192146E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 10:08:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF192146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbeIVP51 (ORCPT
+        id S1727944AbeIVQB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 11:57:27 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37670 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeIVP51 (ORCPT
+        Sat, 22 Sep 2018 12:01:57 -0400
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:39396 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbeIVQB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 11:57:27 -0400
-Received: by mail-pl1-f195.google.com with SMTP id q1-v6so1555909plr.4;
-        Sat, 22 Sep 2018 03:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ehJBkiM5j21JwFDXV9pseglwDPQdYPC5hmCDiQAbqxM=;
-        b=qeqd6tgDlPmKRvtoxzBt0gZABCNEJDBhVxwdX6FoxbXWtCAUghoK1KHOp1sz9OYsQy
-         4EeMhu/GQaO035mx3oDQhgwwW6fnxaJu6YZntCh7BiMs5ZQnJbcB/WqtlZmMowat+Mu+
-         ++t9Rue5hB4V15nHVIl0gFlSjjueqdWcdcLGrKaDBOYiX7Uic764qmlUw4rqrEW0jc6P
-         2h5ewXgVzZqdJ203cKtuOS4rRdVap34lrmmAcfDoSLQDh1slme7ZruLDS0bnXagX9iZH
-         8ho+pozbyoO+AxP3l/xM+eEUkWL6ZG8LTvipBgBb0wby/tRUyxePgExg0jYm6hmLS6oS
-         2ZOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ehJBkiM5j21JwFDXV9pseglwDPQdYPC5hmCDiQAbqxM=;
-        b=RR4FnVSLdRDgYZ75qs37f7jNOCHFeJKnjN1pK27QZhCnOYI6CjySdI437Gk7izGqDK
-         m6xjOLEm44rXqgv9YQRAeH3MfmaUl16a5RHHqU491M8k85d/mQFdRZtjRaUVu867Brb8
-         IPY8HHmCDdkb/w7z8oHiOe1wRcMFPefzMVeBZSF2n6Qhj9WksUBA/UFnyECjTFlJczv5
-         2s9aPZRFpGCuKAv8qAqGn1p9EGbVNhLufWYphpTfM0ZMofnI3fPXzoZadrnU+bFueN5G
-         8y/tzDuKQRlKTFzzbOdCWmCCIpiydghs9cD9feuOpYZP7CdhgvZgSnWFZ4p4a5yhU0OJ
-         7jxw==
-X-Gm-Message-State: ABuFfoiRnDP7WwpE27pfkisBgSmBLf1i7Z3IIFj4xh5R+aVhEE6MrQ6Q
-        I8iB1mU+v/gVa2VV8NZQeWY=
-X-Google-Smtp-Source: ACcGV60eDUUYHumDbstPHFC07V00vyN+sATUvq/G+d35Z9FrNi3r1wM6dafooFOHlSw4lvCGSqSzRA==
-X-Received: by 2002:a17:902:585:: with SMTP id f5-v6mr1977491plf.7.1537610666705;
-        Sat, 22 Sep 2018 03:04:26 -0700 (PDT)
-Received: from Eros (104.176.229.35.bc.googleusercontent.com. [35.229.176.104])
-        by smtp.gmail.com with ESMTPSA id n74-v6sm43540923pfi.161.2018.09.22.03.04.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Sep 2018 03:04:26 -0700 (PDT)
-Date:   Sat, 22 Sep 2018 18:04:19 +0800
-From:   Song Qiang <songqiang1304521@gmail.com>
-To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
+        Sat, 22 Sep 2018 12:01:57 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 609EF9E7848;
+        Sat, 22 Sep 2018 11:08:51 +0100 (BST)
+Date:   Sat, 22 Sep 2018 11:08:50 +0100
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Song Qiang <songqiang1304521@gmail.com>
+Cc:     Peter Meerwald-Stadler <pmeerw@pmeerw.net>, lars@metafoo.de,
+        knaack.h@gmx.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: magnetometer: hmc5843: Clean up redundant code.
-Message-ID: <20180922100419.GA25620@Eros>
-References: <20180920141321.15251-1-songqiang1304521@gmail.com>
- <201809211608.bVz8vg0N%fengguang.wu@intel.com>
- <20180921182616.GA2077@himanshu-Vostro-3559>
+Subject: Re: [PATCH] iio: magnetometer: Add support for PNI RM3100 9-axis
+ magnetometer
+Message-ID: <20180922110850.43487d23@archlinux>
+In-Reply-To: <20180922104244.651c802d@archlinux>
+References: <20180920131340.6699-1-songqiang1304521@gmail.com>
+        <alpine.DEB.2.21.1809201522370.1482@vps.pmeerw.net>
+        <20180920180511.GA18559@Eros>
+        <20180922104244.651c802d@archlinux>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921182616.GA2077@himanshu-Vostro-3559>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 11:56:16PM +0530, Himanshu Jha wrote:
-> Hi Song,
-> 
-> On Fri, Sep 21, 2018 at 04:10:16PM +0800, kbuild test robot wrote:
-> > Hi Song,
-> > 
-> > Thank you for the patch! Yet something to improve:
-> > 
-> > [auto build test ERROR on iio/togreg]
-> > [also build test ERROR on v4.19-rc4 next-20180920]
-> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> > 
-> > url:    https://github.com/0day-ci/linux/commits/Song-Qiang/iio-magnetometer-hmc5843-Clean-up-redundant-code/20180921-091239
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-> > config: x86_64-randconfig-u0-09211331 (attached as .config)
-> > compiler: gcc-5 (Debian 5.5.0-3) 5.4.1 20171010
-> > reproduce:
-> >         # save the attached .config to linux build tree
-> >         make ARCH=x86_64 
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> > >> ERROR: "hmc5843_volatile_table" [drivers/iio/magnetometer/hmc5843_i2c.ko] undefined!
-> > >> ERROR: "hmc5843_readable_table" [drivers/iio/magnetometer/hmc5843_i2c.ko] undefined!
-> > >> ERROR: "hmc5843_writable_table" [drivers/iio/magnetometer/hmc5843_i2c.ko] undefined!
-> 
-> You would need to export these above symbols using EXPORT_SYMBOL()
-> to be used by i2c/spi modules.
-> 
-> But on the other hand, exporting too many symbols is a bad idea since
-> it is only used for this driver and not at any other place in IIO.
-> So, in my opinion drop this patch and leave the code as-is.
-> 
-> https://lkml.org/lkml/2018/7/16/566 --> worth reading
-> 
-> 
-> Thanks
-> -- 
-> Himanshu Jha
-> Undergraduate Student
-> Department of Electronics & Communication
-> Guru Tegh Bahadur Institute of Technology
+On Sat, 22 Sep 2018 10:42:44 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Hi Himanshu,
+> A few follow ups to the discussion here from me..
+> 
+> Note it's helpful to crop and email and no one really minds if you
+> just act on their review without acknowledging it (so cut the
+> bits you fully agree with out too - saves on scrolling / reading time ;)
+> 
+> A catch all, "Agree with everything else and will fix for v2" covers
+> everything you don't want to discuss further.
+> (not that I'm great at doing this either :(
+> ...
+> > > > diff --git a/drivers/iio/magnetometer/rm3100-core.c b/drivers/iio/magnetometer/rm3100-core.c
+> > > > new file mode 100644
+> > > > index 000000000000..55d515e0fe67
+> > > > --- /dev/null
+> > > > +++ b/drivers/iio/magnetometer/rm3100-core.c
+> > > > @@ -0,0 +1,399 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0+
+> > > > +/*
+> > > > + * PNI RM3100 9-axis geomagnetic sensor driver core.
+> > > > + *
+> > > > + * Copyright (C) 2018 Song Qiang <songqiang1304521@gmail.com>
+> > > > + *
+> > > > + * User Manual available at
+> > > > + * <https://www.pnicorp.com/download/rm3100-user-manual/>
+> > > > + *
+> > > > + * TODO: Scale channel, event generaton, pm.    
+> > > 
+> > > at least read support for _SCALE is mandatory, IMHO
+> > >     
+> > 
+> > Okay, I'll add it in next version.
+> >   
+> Just for the record, it's only mandatory in cases where
+> it is known (you'd be amazed how often we only know the value is monotonic)
+> 
+> Now as you put it in the todo list, it's presumably known here
+> hence Peter's comment :)
+> 
+> (just avoiding setting precedence)
+> 
+> 
+> 
+> ...
+> > > > +static const struct regmap_range rm3100_readable_ranges[] = {
+> > > > +		regmap_reg_range(RM_W_REG_START, RM_W_REG_END),
+> > > > +};
+> > > > +
+> > > > +const struct regmap_access_table rm3100_readable_table = {    
+> > > 
+> > > static
+> > >     
+> > 
+> > I was planning to let rm3100-i2c.c and rm3100-spi.c to share these 6
+> > structures, because the only different configuration of regmap between
+> > these two files lies in 'struct regmap_config'. To achieve this, I have
+> > to expose these 3 structures to be referenced in rm3100-i2c.c and
+> > rm3100-spi.c
+> > Since *_common_probe() and *_common_remove() are exposed, I thought it
+> > was fine to expose these structures to reduce redundant code, is this
+> > prohibited?  
+> Nope, but are you doing it in this patch? + you need to export the
+> symbols if you are going to do that otherwise modular builds
+> will fail to probe (and possibly build - I can't recall and am too
+> lazy to check this morning - not enough coffee yet!)
+> 
+> ..
+> > > > +	*val = le32_to_cpu((buffer[0] << 16) + (buffer[1] << 8) + buffer[2]);    
+> > > 
+> > > no need for le32_to_cpu() 
+> > >     
+> > 
+> > I think I didn't fully understand this, I'll look into it.
+> >   
+> 
+> To point you in the right direction here.   When you explicitly pull out
+> individual bytes like you are doing here, you are getting them in a particular
+> endian order.   Shifts and adding (though normally convention is | when doing
+> this) are done in machine endianness, hence the *val is already in the
+> endian type of your cpu.
+> 
+> > > > +	*val = sign_extend32(*val, 23);
+> > > > +
+> > > > +	return IIO_VAL_INT;
+> > > > +}
+> > > > +
+> > > > +#define RM_CHANNEL(axis, idx)					\    
+> > > 
+> > > use RM3100_ prefix please
+> > >     
+> > 
+> > In the last driver I wrote, name of registers are so long that I have to
+> > suppress them as possible as I can, it seems like this one doesn't need
+> > to. :)
+> >   
+> > > > +	{								\
+> > > > +		.type = IIO_MAGN,					\
+> > > > +		.modified = 1,						\
+> > > > +		.channel2 = IIO_MOD_##axis,				\
+> > > > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+> > > > +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
+> > > > +		.scan_index = idx,					\
+> > > > +		.scan_type = {						\
+> > > > +			.sign = 's',					\
+> > > > +			.realbits = 24,					\
+> > > > +			.storagebits = 32,				\
+> > > > +			.shift = 8,					\
+> > > > +			.endianness = IIO_LE,				\
+> > > > +		},							\
+> > > > +	}
+> > > > +
+> > > > +static const struct iio_chan_spec rm3100_channels[] = {
+> > > > +	RM_CHANNEL(X, 0),
+> > > > +	RM_CHANNEL(Y, 1),
+> > > > +	RM_CHANNEL(Z, 2),
+> > > > +	IIO_CHAN_SOFT_TIMESTAMP(3),
+> > > > +};
+> > > > +
+> > > > +static const unsigned long rm3100_scan_masks[] = {GENMASK(2, 0), 0};
+> > > > +
+> > > > +#define RM_SAMP_NUM	14    
+> > > 
+> > > prefix
+> > >     
+> > > > +
+> > > > +/* Frequency : rm3100_samp_rates[][0].rm3100_samp_rates[][1]Hz.
+> > > > + * Time between reading: rm3100_sam_rates[][2]ms (The first on is actially 1.7).    
+> > > 
+> > > one
+> > > actually
+> > > 1.7 what unit?
+> > >     
+> > 
+> > It's in milliseconds. These time values are used for lookup so I do not
+> > need to compute time between conversion from measurement frequency, and
+> > they are used for wait time, I thought a little longer is better.
+> > I think the comment above this structure isn't very clear, I'll find a
+> > better way to explain it.  
+> Please also use kernel standard comment syntax
+> 
+> /*
+>  * Frequency...
+>  */
+> 
+> >   
+> ...
+> > > > +	if (i != RM_SAMP_NUM) {
+> > > > +		mutex_lock(&data->lock);
+> > > > +		ret = regmap_write(regmap, RM_REG_TMRC, i + RM_TMRC_OFFSET);
+> > > > +		if (ret < 0)    
+> > > 
+> > > unlock?
+> > >     
+> > 
+> > These actions are for changing the sampling frequency. This device
+> > cannot start conversion if CMM register is not reset after reading from
+> > CCX/CCY/CCZ registers. So I unlock it later since conversion should have
+> > already been stopped and other threads should not access the bus.  
+> Hmm.  If you are holding the lock across function calls you need
+> to look at lockdep annotations. 
+> 
+> Also, I suspect something is wrong here as you are unlocking in
+> the good path but not the bad one which seems unlikely to be 
+> as intended...
+> 
+> >   
+> > > > +			return ret;
+> > > > +
+> > > > +		/* Checking if cycle count registers need changing. */
+> > > > +		if (val == 600 && cycle_count == 200) {
+> > > > +			for (i = 0; i < 3; i++) {
+> > > > +				regmap_write(regmap, RM_REG_CCXL + 2 * i, 100);
+> > > > +				if (ret < 0)    
+> > > 
+> > > unlock?
+> > >     
+> > > > +					return ret;
+> > > > +			}
+> > > > +		} else if (val != 600 && cycle_count == 100) {
+> > > > +			for (i = 0; i < 3; i++) {
+> > > > +				regmap_write(regmap, RM_REG_CCXL + 2 * i, 200);
+> > > > +				if (ret < 0)    
+> > > 
+> > > unlock?
+> > >     
+> > > > +					return ret;
+> > > > +			}
+> > > > +		}
+> > > > +		/* Writing TMRC registers requires CMM reset. */
+> > > > +		ret = regmap_write(regmap, RM_REG_CMM, 0);
+> > > > +		if (ret < 0)    
+> > > 
+> > > unlock?
+> > >     
+> > > > +			return ret;
+> > > > +		ret = regmap_write(regmap, RM_REG_CMM, RM_CMM_PMX |
+> > > > +			RM_CMM_PMY | RM_CMM_PMZ | RM_CMM_START);
+> > > > +		if (ret < 0)    
+> > > 
+> > > unlock?
+> > >     
+> > > > +			return ret;
+> > > > +		mutex_unlock(&data->lock);
+> > > > +
+> > > > +		data->conversion_time = rm3100_samp_rates[i][2] + 3000;
+> > > > +		return 0;
+> > > > +	}
+> > > > +	return -EINVAL;
+> > > > +}
+> > > > +
+> > > > +static int rm3100_read_raw(struct iio_dev *indio_dev,
+> > > > +			   const struct iio_chan_spec *chan,
+> > > > +			   int *val, int *val2, long mask)
+> > > > +{
+> > > > +	struct rm3100_data *data = iio_priv(indio_dev);
+> > > > +	int ret;
+> > > > +
+> > > > +	switch (mask) {
+> > > > +	case IIO_CHAN_INFO_RAW:
+> > > > +		ret = iio_device_claim_direct_mode(indio_dev);
+> > > > +		if (ret < 0)    
+> > > 
+> > > release_direct_mode() here?
+> > >     
+> > 
+> > Oh..yes!  
+> 
+> This should have stopped you reading more than once so I'm surprised
+> this slipped through.  I guess the usual last minute change problem ;)
+> (we all do it however much we know we should retest properly)
+Ah. Just realised. Error path :)
 
-You're right, that's exactly what I was missing!
-I saw the link you mentioned above and I also think that's a very good
-idea to limit the scope of symbols. But I don't know when this work can
-be applied to the kernel, as it seems like a not little change for the
-build infrastructure.
-I think this maybe a common problem for some drivers.
-Divers for bmc150 in drivers/iio/accel/bmc-150-accel-core.c did the same
-exporting stuff as I was prefered. So I think even if either exporting or
-duplicating is not good enough, one must be choosed for now.
-
-I think this is a topic that I have some ideas but not experienced
-enough to say what should we do is better. I would like to hear Jonathan's
-ideas about this. If this patched shouldn't be applied, then maybe bmc150
-should be patched.
-
-yours,
-Song Qiang
+> 
+> Jonathan
 
