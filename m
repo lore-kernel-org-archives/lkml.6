@@ -2,113 +2,324 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0D4ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9063BECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 548A22156E
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:43:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 548A22156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3489B2156E
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:44:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="S1o6XQLP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3489B2156E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391722AbeIVGfP (ORCPT
+        id S2391757AbeIVGfd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:35:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57216 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391614AbeIVGfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:35:15 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E470DC01F290;
-        Sat, 22 Sep 2018 00:43:52 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B3BE87E4F;
-        Sat, 22 Sep 2018 00:43:48 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     amd-gfx@lists.freedesktop.org
-Cc:     stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Rex Zhu <Rex.Zhu@amd.com>,
-        Jim Qu <Jim.Qu@amd.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: Suppress keypresses from ACPI_VIDEO events
-Date:   Fri, 21 Sep 2018 20:43:44 -0400
-Message-Id: <20180922004346.12288-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sat, 22 Sep 2018 00:43:53 +0000 (UTC)
+        Sat, 22 Sep 2018 02:35:33 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40709 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391614AbeIVGfd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Sep 2018 02:35:33 -0400
+Received: by mail-oi0-f67.google.com with SMTP id l202-v6so12865260oig.7
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Sep 2018 17:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TyrevxK5pV+sYSGt19Tnl/B2FPBdTF8yPD+StB8mmtw=;
+        b=S1o6XQLPB4L9XwGu3G0CWfqUbK8TpF7ozUahTqh5urUeFNc2H3ZRLge3k5tw/OaHKE
+         dond3/KMSjWQSYF1AYHW6DyMJPGYW/E9S+LQ4nhnKRC5j0STYJo0DWOyrFeRX3XjDYxG
+         79ULny5l33BAJQASv5m5eIebspU9eTWqeSGzdXgGXdIkhFyzpXSBhmWx9HuUbUtZwW6o
+         Hr703XxIjWAVOLTnUMYTuncRhdXEHCbfeqOAfRGBWQSqzWiQppuT1VXmTgTfKanp/89a
+         d2Wg+GBNWgbGjI/r2Qmngmh0qr/Zu7SdjLeITDfCIAtxfTXMmPoCJksuAG2BTEBU2e6R
+         PTlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TyrevxK5pV+sYSGt19Tnl/B2FPBdTF8yPD+StB8mmtw=;
+        b=KyB27/8+tIpHJzXNOYk/XUPiHjBVXSEPA3wLvaYL3rkWMNxnLHiVitOV6vVHRSZyuU
+         SVhlgF2zE10TBKk4lySND/PzbLlei7SscOaKhRYis48sx6Q8dtwa7g84IOiCh6PJhuo1
+         F8mR+gZ1IdPKzk1tMaFaPRMlNv6xDjLvf1SOBmC1+YWCER9pcXHdw38P2b6tDg0xYmp1
+         Ql9dU6UoejNshgTWZ/kgyheFdcfzPlDZ7SZ7PHsIiEDn4iEznuHlwnAn9BS3zlvactdU
+         CndPRg9KQnjjYzHw4Gu9BbEOj4sN2cGBrp2a2cdKA3ZfbDvRXsKW/S+AoOgvaTXcSIAG
+         hDxQ==
+X-Gm-Message-State: APzg51DElmgcrQzSjcfksVmMslllitd7cmfaxo+ccqdsQaNdrWXgF3N4
+        ZortFckOp399TtfkABFIJZQvUoFCsQZiptmwD74QbQ==
+X-Google-Smtp-Source: ANB0VdY1c3Lunf9Gbbf7OsaC13d6Nc7og5YuJgwpsGWAOEYi/LnwU+T+C84ZGKapV1rAbcPCgs6eDOxovKvRN+ML7ds=
+X-Received: by 2002:aca:60c1:: with SMTP id u184-v6mr31937oib.99.1537577050674;
+ Fri, 21 Sep 2018 17:44:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-3-pagupta@redhat.com>
+In-Reply-To: <20180831133019.27579-3-pagupta@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 21 Sep 2018 17:43:58 -0700
+Message-ID: <CAPcyv4js9hWfXPK++a0DhDwtk1pBazMvb9H-X2OQy18uemUhGw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] libnvdimm: nd_region flush callback support
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Jan Kara <jack@suse.cz>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Zwisler, Ross" <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        niteshnarayanlal@hotmail.com, lcapitulino@redhat.com,
+        Igor Mammedov <imammedo@redhat.com>,
+        Eric Blake <eblake@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we return NOTIFY_DONE for any event which we don't think is
-ours. However, many laptops will send more then just an ATIF event and
-will also send an ACPI_VIDEO_NOTIFY_PROBE event as well. Since we don't
-check for this, we return NOTIFY_DONE which causes a keypress for the
-ACPI event to be propogated to userspace. This is the equivalent of
-someone pressing the display key on a laptop every time there's a
-hotplug event.
+On Fri, Aug 31, 2018 at 6:32 AM Pankaj Gupta <pagupta@redhat.com> wrote:
+>
+> This patch adds functionality to perform flush from guest
+> to host over VIRTIO. We are registering a callback based
+> on 'nd_region' type. virtio_pmem driver requires this special
+> flush function. For rest of the region types we are registering
+> existing flush function. Report error returned by host fsync
+> failure to userspace.
+>
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
 
-So, check for ACPI_VIDEO_NOTIFY_PROBE events and suppress keypresses
-from them.
+This looks ok to me, just some nits below.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+> ---
+>  drivers/acpi/nfit/core.c     |  7 +++++--
+>  drivers/nvdimm/claim.c       |  3 ++-
+>  drivers/nvdimm/pmem.c        | 12 ++++++++----
+>  drivers/nvdimm/region_devs.c | 12 ++++++++++--
+>  include/linux/libnvdimm.h    |  4 +++-
+>  5 files changed, 28 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index b072cfc..cd63b69 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -2216,6 +2216,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk, unsigned int bw,
+>  {
+>         u64 cmd, offset;
+>         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[DCR];
+> +       struct nd_region *nd_region = nfit_blk->nd_region;
+>
+>         enum {
+>                 BCW_OFFSET_MASK = (1ULL << 48)-1,
+> @@ -2234,7 +2235,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk, unsigned int bw,
+>                 offset = to_interleave_offset(offset, mmio);
+>
+>         writeq(cmd, mmio->addr.base + offset);
+> -       nvdimm_flush(nfit_blk->nd_region);
+> +       nd_region->flush(nd_region);
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-index 353993218f21..f008804f0b97 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -358,7 +358,9 @@ static int amdgpu_atif_get_sbios_requests(struct amdgpu_atif *atif,
-  *
-  * Checks the acpi event and if it matches an atif event,
-  * handles it.
-- * Returns NOTIFY code
-+ *
-+ * Returns:
-+ * NOTIFY_BAD or NOTIFY_DONE, depending on the event.
-  */
- static int amdgpu_atif_handler(struct amdgpu_device *adev,
- 			       struct acpi_bus_event *event)
-@@ -372,11 +374,16 @@ static int amdgpu_atif_handler(struct amdgpu_device *adev,
- 	if (strcmp(event->device_class, ACPI_VIDEO_CLASS) != 0)
- 		return NOTIFY_DONE;
- 
-+	/* Is this actually our event? */
- 	if (!atif ||
- 	    !atif->notification_cfg.enabled ||
--	    event->type != atif->notification_cfg.command_code)
--		/* Not our event */
--		return NOTIFY_DONE;
-+	    event->type != atif->notification_cfg.command_code) {
-+		/* These events will generate keypresses otherwise */
-+		if (event->type == ACPI_VIDEO_NOTIFY_PROBE)
-+			return NOTIFY_BAD;
-+		else
-+			return NOTIFY_DONE;
-+	}
- 
- 	if (atif->functions.sbios_requests) {
- 		struct atif_sbios_requests req;
-@@ -385,7 +392,7 @@ static int amdgpu_atif_handler(struct amdgpu_device *adev,
- 		count = amdgpu_atif_get_sbios_requests(atif, &req);
- 
- 		if (count <= 0)
--			return NOTIFY_DONE;
-+			return NOTIFY_BAD;
- 
- 		DRM_DEBUG_DRIVER("ATIF: %d pending SBIOS requests\n", count);
- 
--- 
-2.17.1
+I would keep the indirect function call override inside of
+nvdimm_flush. Then this hunk can go away...
 
+>
+>         if (nfit_blk->dimm_flags & NFIT_BLK_DCR_LATCH)
+>                 readq(mmio->addr.base + offset);
+> @@ -2245,6 +2246,7 @@ static int acpi_nfit_blk_single_io(struct nfit_blk *nfit_blk,
+>                 unsigned int lane)
+>  {
+>         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[BDW];
+> +       struct nd_region *nd_region = nfit_blk->nd_region;
+>         unsigned int copied = 0;
+>         u64 base_offset;
+>         int rc;
+> @@ -2283,7 +2285,8 @@ static int acpi_nfit_blk_single_io(struct nfit_blk *nfit_blk,
+>         }
+>
+>         if (rw)
+> -               nvdimm_flush(nfit_blk->nd_region);
+> +               nd_region->flush(nd_region);
+> +
+>
+
+...ditto, no need to touch this code.
+
+>         rc = read_blk_stat(nfit_blk, lane) ? -EIO : 0;
+>         return rc;
+> diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
+> index fb667bf..49dce9c 100644
+> --- a/drivers/nvdimm/claim.c
+> +++ b/drivers/nvdimm/claim.c
+> @@ -262,6 +262,7 @@ static int nsio_rw_bytes(struct nd_namespace_common *ndns,
+>  {
+>         struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+>         unsigned int sz_align = ALIGN(size + (offset & (512 - 1)), 512);
+> +       struct nd_region *nd_region = to_nd_region(ndns->dev.parent);
+>         sector_t sector = offset >> 9;
+>         int rc = 0;
+>
+> @@ -301,7 +302,7 @@ static int nsio_rw_bytes(struct nd_namespace_common *ndns,
+>         }
+>
+>         memcpy_flushcache(nsio->addr + offset, buf, size);
+> -       nvdimm_flush(to_nd_region(ndns->dev.parent));
+> +       nd_region->flush(nd_region);
+
+For this you would need to teach nsio_rw_bytes() that the flush can fail.
+
+>
+>         return rc;
+>  }
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 6071e29..ba57cfa 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -201,7 +201,8 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
+>         struct nd_region *nd_region = to_region(pmem);
+>
+>         if (bio->bi_opf & REQ_PREFLUSH)
+> -               nvdimm_flush(nd_region);
+> +               bio->bi_status = nd_region->flush(nd_region);
+> +
+
+Let's have nvdimm_flush() return 0 or -EIO if it fails since thats
+what nsio_rw_bytes() expects, and you'll need to translate that to:
+BLK_STS_IOERR
+
+>
+>         do_acct = nd_iostat_start(bio, &start);
+>         bio_for_each_segment(bvec, bio, iter) {
+> @@ -216,7 +217,7 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
+>                 nd_iostat_end(bio, start);
+>
+>         if (bio->bi_opf & REQ_FUA)
+> -               nvdimm_flush(nd_region);
+> +               bio->bi_status = nd_region->flush(nd_region);
+
+Same comment.
+
+>
+>         bio_endio(bio);
+>         return BLK_QC_T_NONE;
+> @@ -517,6 +518,7 @@ static int nd_pmem_probe(struct device *dev)
+>  static int nd_pmem_remove(struct device *dev)
+>  {
+>         struct pmem_device *pmem = dev_get_drvdata(dev);
+> +       struct nd_region *nd_region = to_region(pmem);
+>
+>         if (is_nd_btt(dev))
+>                 nvdimm_namespace_detach_btt(to_nd_btt(dev));
+> @@ -528,14 +530,16 @@ static int nd_pmem_remove(struct device *dev)
+>                 sysfs_put(pmem->bb_state);
+>                 pmem->bb_state = NULL;
+>         }
+> -       nvdimm_flush(to_nd_region(dev->parent));
+> +       nd_region->flush(nd_region);
+
+Not needed if the indirect function call moves inside nvdimm_flush().
+
+>
+>         return 0;
+>  }
+>
+>  static void nd_pmem_shutdown(struct device *dev)
+>  {
+> -       nvdimm_flush(to_nd_region(dev->parent));
+> +       struct nd_region *nd_region = to_nd_region(dev->parent);
+> +
+> +       nd_region->flush(nd_region);
+>  }
+>
+>  static void nd_pmem_notify(struct device *dev, enum nvdimm_event event)
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index fa37afc..a170a6b 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -290,7 +290,7 @@ static ssize_t deep_flush_store(struct device *dev, struct device_attribute *att
+>                 return rc;
+>         if (!flush)
+>                 return -EINVAL;
+> -       nvdimm_flush(nd_region);
+> +       nd_region->flush(nd_region);
+
+Let's pass the error code through if the flush fails.
+
+>
+>         return len;
+>  }
+> @@ -1065,6 +1065,11 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
+>         dev->of_node = ndr_desc->of_node;
+>         nd_region->ndr_size = resource_size(ndr_desc->res);
+>         nd_region->ndr_start = ndr_desc->res->start;
+> +       if (ndr_desc->flush)
+> +               nd_region->flush = ndr_desc->flush;
+> +       else
+> +               nd_region->flush = nvdimm_flush;
+> +
+
+We'll need to rename the existing nvdimm_flush() to generic_nvdimm_flush().
+
+>         nd_device_register(dev);
+>
+>         return nd_region;
+> @@ -1109,7 +1114,7 @@ EXPORT_SYMBOL_GPL(nvdimm_volatile_region_create);
+>   * nvdimm_flush - flush any posted write queues between the cpu and pmem media
+>   * @nd_region: blk or interleaved pmem region
+>   */
+> -void nvdimm_flush(struct nd_region *nd_region)
+> +int nvdimm_flush(struct nd_region *nd_region)
+>  {
+>         struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+>         int i, idx;
+> @@ -1133,7 +1138,10 @@ void nvdimm_flush(struct nd_region *nd_region)
+>                 if (ndrd_get_flush_wpq(ndrd, i, 0))
+>                         writeq(1, ndrd_get_flush_wpq(ndrd, i, idx));
+>         wmb();
+> +
+> +       return 0;
+>  }
+> +
+
+Needless newline.
+
+>  EXPORT_SYMBOL_GPL(nvdimm_flush);
+>
+>  /**
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index 097072c..3af7177 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -115,6 +115,7 @@ struct nd_mapping_desc {
+>         int position;
+>  };
+>
+> +struct nd_region;
+>  struct nd_region_desc {
+>         struct resource *res;
+>         struct nd_mapping_desc *mapping;
+> @@ -126,6 +127,7 @@ struct nd_region_desc {
+>         int numa_node;
+>         unsigned long flags;
+>         struct device_node *of_node;
+> +       int (*flush)(struct nd_region *nd_region);
+>  };
+>
+>  struct device;
+> @@ -201,7 +203,7 @@ unsigned long nd_blk_memremap_flags(struct nd_blk_region *ndbr);
+>  unsigned int nd_region_acquire_lane(struct nd_region *nd_region);
+>  void nd_region_release_lane(struct nd_region *nd_region, unsigned int lane);
+>  u64 nd_fletcher64(void *addr, size_t len, bool le);
+> -void nvdimm_flush(struct nd_region *nd_region);
+> +int nvdimm_flush(struct nd_region *nd_region);
+>  int nvdimm_has_flush(struct nd_region *nd_region);
+>  int nvdimm_has_cache(struct nd_region *nd_region);
+>
+> --
+> 2.9.3
+>
