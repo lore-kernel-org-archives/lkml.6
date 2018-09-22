@@ -2,48 +2,48 @@ Return-Path: <SRS0=j7Hi=ME=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760B6ECE560
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86245ECE560
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 308FF2157C
-	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308FF2157C
+	by mail.kernel.org (Postfix) with ESMTP id 4147A2157C
+	for <linux-kernel@archiver.kernel.org>; Sat, 22 Sep 2018 00:21:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4147A2157C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392062AbeIVGKt (ORCPT
+        id S2391792AbeIVGMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 22 Sep 2018 02:10:49 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44232 "EHLO
+        Sat, 22 Sep 2018 02:12:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:44256 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392003AbeIVGKs (ORCPT
+        by vger.kernel.org with ESMTP id S2392014AbeIVGKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Sep 2018 02:10:48 -0400
+        Sat, 22 Sep 2018 02:10:49 -0400
 Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdy-0008BN-1k; Sat, 22 Sep 2018 01:19:30 +0100
+        id 1g3Vdy-0008BX-6b; Sat, 22 Sep 2018 01:19:30 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1g3Vdo-0000t3-II; Sat, 22 Sep 2018 01:19:20 +0100
+        id 1g3Vdo-0000sH-6O; Sat, 22 Sep 2018 01:19:20 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com,
-        "Takashi Iwai" <tiwai@suse.de>
+CC:     akpm@linux-foundation.org, "Andreas Dilger" <adilger@dilger.ca>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sat, 22 Sep 2018 01:15:42 +0100
-Message-ID: <lsq.1537575342.196996512@decadent.org.uk>
+Message-ID: <lsq.1537575342.343873544@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 42/63] ALSA: rawmidi: Change resized buffers atomically
+Subject: [PATCH 3.16 32/63] ext4: always verify the magic number in xattr
+ blocks
 In-Reply-To: <lsq.1537575341.194909669@decadent.org.uk>
 X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,81 +57,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 39675f7a7c7e7702f7d5341f1e0d01db746543a0 upstream.
+commit 513f86d73855ce556ea9522b6bfd79f87356dc3a upstream.
 
-The SNDRV_RAWMIDI_IOCTL_PARAMS ioctl may resize the buffers and the
-current code is racy.  For example, the sequencer client may write to
-buffer while it being resized.
+If there an inode points to a block which is also some other type of
+metadata block (such as a block allocation bitmap), the
+buffer_verified flag can be set when it was validated as that other
+metadata block type; however, it would make a really terrible external
+attribute block.  The reason why we use the verified flag is to avoid
+constantly reverifying the block.  However, it doesn't take much
+overhead to make sure the magic number of the xattr block is correct,
+and this will avoid potential crashes.
 
-As a simple workaround, let's switch to the resized buffer inside the
-stream runtime lock.
+This addresses CVE-2018-10879.
 
-Reported-by: syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+https://bugzilla.kernel.org/show_bug.cgi?id=200001
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/rawmidi.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ fs/ext4/xattr.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/sound/core/rawmidi.c
-+++ b/sound/core/rawmidi.c
-@@ -645,7 +645,7 @@ static int snd_rawmidi_info_select_user(
- int snd_rawmidi_output_params(struct snd_rawmidi_substream *substream,
- 			      struct snd_rawmidi_params * params)
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -213,12 +213,12 @@ ext4_xattr_check_block(struct inode *ino
  {
--	char *newbuf;
-+	char *newbuf, *oldbuf;
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
- 	
- 	if (substream->append && substream->use_count > 1)
-@@ -658,13 +658,17 @@ int snd_rawmidi_output_params(struct snd
- 		return -EINVAL;
- 	}
- 	if (params->buffer_size != runtime->buffer_size) {
--		newbuf = krealloc(runtime->buffer, params->buffer_size,
--				  GFP_KERNEL);
-+		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
- 		if (!newbuf)
- 			return -ENOMEM;
-+		spin_lock_irq(&runtime->lock);
-+		oldbuf = runtime->buffer;
- 		runtime->buffer = newbuf;
- 		runtime->buffer_size = params->buffer_size;
- 		runtime->avail = runtime->buffer_size;
-+		runtime->appl_ptr = runtime->hw_ptr = 0;
-+		spin_unlock_irq(&runtime->lock);
-+		kfree(oldbuf);
- 	}
- 	runtime->avail_min = params->avail_min;
- 	substream->active_sensing = !params->no_active_sensing;
-@@ -675,7 +679,7 @@ EXPORT_SYMBOL(snd_rawmidi_output_params)
- int snd_rawmidi_input_params(struct snd_rawmidi_substream *substream,
- 			     struct snd_rawmidi_params * params)
- {
--	char *newbuf;
-+	char *newbuf, *oldbuf;
- 	struct snd_rawmidi_runtime *runtime = substream->runtime;
+ 	int error;
  
- 	snd_rawmidi_drain_input(substream);
-@@ -686,12 +690,16 @@ int snd_rawmidi_input_params(struct snd_
- 		return -EINVAL;
- 	}
- 	if (params->buffer_size != runtime->buffer_size) {
--		newbuf = krealloc(runtime->buffer, params->buffer_size,
--				  GFP_KERNEL);
-+		newbuf = kmalloc(params->buffer_size, GFP_KERNEL);
- 		if (!newbuf)
- 			return -ENOMEM;
-+		spin_lock_irq(&runtime->lock);
-+		oldbuf = runtime->buffer;
- 		runtime->buffer = newbuf;
- 		runtime->buffer_size = params->buffer_size;
-+		runtime->appl_ptr = runtime->hw_ptr = 0;
-+		spin_unlock_irq(&runtime->lock);
-+		kfree(oldbuf);
- 	}
- 	runtime->avail_min = params->avail_min;
- 	return 0;
+-	if (buffer_verified(bh))
+-		return 0;
+-
+ 	if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
+ 	    BHDR(bh)->h_blocks != cpu_to_le32(1))
+ 		return -EIO;
++	if (buffer_verified(bh))
++		return 0;
++
+ 	if (!ext4_xattr_block_csum_verify(inode, bh))
+ 		return -EIO;
+ 	error = ext4_xattr_check_names(BFIRST(bh), bh->b_data + bh->b_size,
 
