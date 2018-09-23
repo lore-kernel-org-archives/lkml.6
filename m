@@ -2,149 +2,105 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2ACC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 08:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4142DECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F4D21476
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 08:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE11D214C3
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UDUE1rfD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F4D21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XJsXooW1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE11D214C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbeIWOK7 (ORCPT
+        id S1726212AbeIWPCk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 10:10:59 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43082 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeIWOK6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 10:10:58 -0400
-Received: by mail-io1-f65.google.com with SMTP id y10-v6so15430860ioa.10
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 01:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=y0IARn3KE7W2+I5lcBK0Qf/uWuLQeiNiibQnarU6CSo=;
-        b=UDUE1rfDrwoTg9WEjccpglso8uiR5Ur1yQSizURMDbVk9PrY4AjE1BGJIO6neGXX0c
-         L5mUMtx9+l04/f2caasqSRSYpFNPSol1sV1YbAAShm1IL7adFOCzAiGaQVVbdj4fF6kS
-         2QEjxVUHP3zx2GHf78S9Sqf2cGBlOxvDhtUa4mnzgm+rPSev8HoKE2W3RqU8rfakYETr
-         LBjG8R35Y9SNSphva+mq56QAJBBpu5Rft/4ksvYgjCTg/B3QSGMQSaKqCTugmtuR/ien
-         czm6zC2oC9L8/avEOZ4NyJHaimhCtCxrMGAljzNzldlDOu/4tIcndLjrr6WQEAcSC5gb
-         rFBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=y0IARn3KE7W2+I5lcBK0Qf/uWuLQeiNiibQnarU6CSo=;
-        b=dQbhE2fyn/CSzeypuALmzuAqjTmc2qs/C6sNH+WmIrWUDpZ1vyByqjUFSshsnwV+FO
-         F2xiEy1UEkGvvCFyTUUHiep1eFtf6O4F0EisdLf4Idccig8e1SbvBsAD7XZrTWBpRvGS
-         giociNVpqQJkukzD/RjkLrRtU0l9nNCNkOr7YdqMTlo5WZBD1z9EEmgPVjn+3byy3wxW
-         LoWofxsRhb7hgcKzS9r53nOThspFb7ZlgQsSzv7AZg4ASISUtKqaPvUgfuWlVJUzTEtZ
-         83Qjeb1elky8gvgX+IHTm2rjh674gDBsNT+HPqHdNyqAQ4O0Xo1EEzpJPjEEI4zTb/Y8
-         fP8g==
-X-Gm-Message-State: ABuFfojAjIPTVtLyMenU9zliP71Yopt2sLqKZG/NOdy1CLEe/49HGJ0J
-        3OVKyeFyiQhsFYGXXh8LrpDrp++CaHuLq1zjd4+2yw==
-X-Google-Smtp-Source: ACcGV61kMrGwnULs3cTkgiES3Gx4u2GDUiZ9rnclbwJbDB9hZsn7d+i5oXYLNn1G8OWp64boXTcoyNoF83IjPfSDW3I=
-X-Received: by 2002:a6b:f316:: with SMTP id m22-v6mr3828566ioh.271.1537690460456;
- Sun, 23 Sep 2018 01:14:20 -0700 (PDT)
+        Sun, 23 Sep 2018 11:02:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:33699 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726070AbeIWPCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 11:02:40 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42J1dp5VSkz9s9J;
+        Sun, 23 Sep 2018 19:05:50 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537693551;
+        bh=yvZOulPJjljsAEAlKTxlXn0EJipUXbE7ECaYzGVWdIM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XJsXooW1fjeYlo+x2A4ACzrFDIuduzwnVad02z5piNgIN9FE9C3+FjvkVTuX6c/UB
+         LHrJVy+UKVDK66c9AIt0utroJbt5ahTbNShedi4r6j04mtaYOeH0IPumjEYHMBmGoJ
+         Tazff53/2DfLaDtWWKElAnFTDqTx+6yeAyEAjriJKtMnUt+PKD78Q6IFCYWrA7keCd
+         n/ZXrP3yUSiGZQC5FObhKVtYrxIFXNgZwXIH6hHmD8ouQCWwtocz3eRl/zP4cWu9GH
+         orWpQIizjVDVuaI2AW3fVMkg8PclJJl8mWVvRc93vEpXP83kXrkwi5SqpHZJZ3IA2F
+         W/Ggc5KsSIboA==
+Date:   Sun, 23 Sep 2018 19:05:49 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Mike Rapoport" <rppt@linux.vnet.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH -next] powerpc: Remove duplicated include from pci_32.c
+Message-ID: <20180923190549.1de60304@canb.auug.org.au>
+In-Reply-To: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
+References: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Sun, 23 Sep 2018 01:14:00
- -0700 (PDT)
-In-Reply-To: <0000000000002cdabf057685027b@google.com>
-References: <0000000000002cdabf057685027b@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 23 Sep 2018 10:14:00 +0200
-Message-ID: <CACT4Y+avdGM3bTCCHFxgH-4BpgA4KtGz6c=7R=Kwm5aGiq8zOg@mail.gmail.com>
-Subject: Re: net build error
-To:     syzbot <syzbot+a72ba31e3224309179d4@syzkaller.appspotmail.com>,
-        netdev <netdev@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WWIZE=ZAavuz4SP_FRcygZC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 23, 2018 at 9:42 AM, syzbot
-<syzbot+a72ba31e3224309179d4@syzkaller.appspotmail.com> wrote:
-> Hello,
+--Sig_/WWIZE=ZAavuz4SP_FRcygZC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi YueHaibing,
+
+On Sun, 23 Sep 2018 08:12:08 +0000 YueHaibing <yuehaibing@huawei.com> wrote:
 >
-> syzbot found the following crash on:
->
-> HEAD commit:    474ff2600889 net-ethtool: ETHTOOL_GUFO did not and should ..
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=164c4059400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a72ba31e3224309179d4
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+a72ba31e3224309179d4@syzkaller.appspotmail.com
+> Remove duplicated include.
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-+netdev
+Good catch.  It was added by 2 separate commits in v4.18-rc1.
 
-The root cause:
+Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
+--=20
+Cheers,
+Stephen Rothwell
 
-net/rds/ib.o:(.data..percpu..shared_aligned+0x0): multiple definition
-of `rds_ib_stats'
-net/rds/rdma_transport.o:(.data..percpu..shared_aligned+0x0): first defined here
-net/rds/ib_cm.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_recv.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_ring.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_send.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_stats.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_sysctl.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_rdma.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_fmr.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-net/rds/ib_frmr.o:(.data..percpu..shared_aligned+0x0): multiple
-definition of `rds_ib_stats'
-net/rds/rdma_transport.o:/syzkaller/managers/upstream-net-this-kasan-gce/kernel/net/rds/rdma_transport.c:284:
-first defined here
-Makefile:1030: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
+--Sig_/WWIZE=ZAavuz4SP_FRcygZC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlunV20ACgkQAVBC80lX
+0GyHRQgAh2paAZg1pxKRLibvX6qiQV5EDyFHpjlyVlAoTJBHVrVLkGnci+r9Uaaz
+HoY4az0poqh7jkKTpGj2WeoJKPvPmDk+KYSMGTZLdVxT+N8f3Y8djaUeBcq7dxpY
+20xOoSJJsFxr8sCG3ey2+UE7PPKRuQRC1G0DmWX0F161tzBJ6HO+dFHC3NsD2EXG
+Os2MGl0fIdttT+C258QBS9JfzjIVZd7p/9foXsC2GCPGMVqMQHfIC8rXpYfQpsf5
+/NJ+pr2M9IN7YVwleQ/9L/ZpliQCjJ3eI4uvCi/5IBPdk4hxhkwH1I151W7rl7cF
+euT0y+MzpttSOQCK9HfLTMIBoE1iSA==
+=EiDL
+-----END PGP SIGNATURE-----
+
+--Sig_/WWIZE=ZAavuz4SP_FRcygZC--
