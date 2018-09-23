@@ -2,97 +2,113 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87934ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 409E6C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F01220883
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:42:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5u6ZCrZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F01220883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E3C2F20883
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:44:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C2F20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeIXDld (ORCPT
+        id S1727303AbeIXDnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 23:41:33 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38199 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeIXDld (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 23:41:33 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x17-v6so8191345pfh.5;
-        Sun, 23 Sep 2018 14:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Q+9t6sgfnTSpN9xPtPLFz7mfRvrPV1qRnJb8PdeJm+o=;
-        b=Z5u6ZCrZXF8SmtfM8M13AMVNopbAMXHqQGEZUwc/ND68341KOTv4eqP0FRaoea8X8Z
-         NbE1Y3utlQul8bW38D/Dv2qs0hsGAyO3c72fOzEun2nz3rybTcPL6v7rvgzvOVTsk9tF
-         6UgB6cq4JquQCjvEYlE0wh7vaAjZpxWopY+mJnITVTc5KuMi3pM3wg2OHTWJZZlNx4Jb
-         0J7VmtxnBWEZpNl5t2VRUlpvcTsnSn4qAFP+cqNH6x7G4l7+Y2eeDoeKwAq5xXKTBwfA
-         lGUX68tt/tHo1vP774iJxGfDsh1FnJn5enA0vQT3RHgKS+7sn7/67bCBM+wQmhR7w3h1
-         1BhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Q+9t6sgfnTSpN9xPtPLFz7mfRvrPV1qRnJb8PdeJm+o=;
-        b=PDXVyyKuk+28xHdYVohodZzhw+LutwvYjT/ae6zgeqMDhv+rmqzfLdWaOLvcPwndHb
-         Uz/FJV5Kq6QCaVlbaYKHjg4mxWnkV/9uwC1jAN7RPdNVvTMnLa4526Bz5wtU+H8sy7p9
-         FJvBByXvADylgbbE2CgnuvNgKupEpVmxuqlii4Vz67h4mOBgDlvSA3wFrmtrhro0nHmM
-         FHsDa0dz8nnux//rf1VCxzzEOLY76XOFnMT0pxTYdD4P0mGdQ9akmw8Qy8WlJkv59/sO
-         ImgqPxv/qUtNYJiZ2jk3x0uyqyYBYk/eh7cWkWWxckesLU7VE31m29mB5iFDI9wmTwDg
-         4OEQ==
-X-Gm-Message-State: ABuFfogW9BTBgoBowcjk8cIlOyOigAA8Bibg8ebMFoK/qA6HJhn333wk
-        /mnrGr2Fm9iTE+ru7mtJGihCdPp9
-X-Google-Smtp-Source: ACcGV62AN+JrsioRN9oJ0Co2zP1PCR/BezAKtcfVnjZ7FA5HguAy2mwnwDr2wGkLtAFvsY5eXzNhNQ==
-X-Received: by 2002:a63:e0e:: with SMTP id d14-v6mr7087769pgl.38.1537738952287;
-        Sun, 23 Sep 2018 14:42:32 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id 26-v6sm3111260pfs.168.2018.09.23.14.42.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 14:42:31 -0700 (PDT)
-Subject: Re: [PATCH net-next] tcp: expose sk_state in tcp_retransmit_skb
- tracepoint
-To:     Yafang Shao <laoar.shao@gmail.com>, edumazet@google.com,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1537732141-22468-1-git-send-email-laoar.shao@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <375c389d-f391-5b72-bc52-9a82d61c6bd7@gmail.com>
-Date:   Sun, 23 Sep 2018 14:42:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 23 Sep 2018 23:43:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45774 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727219AbeIXDnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 23:43:31 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 159135D5E6;
+        Sun, 23 Sep 2018 21:44:30 +0000 (UTC)
+Received: from krava (ovpn-204-66.brq.redhat.com [10.40.204.66])
+        by smtp.corp.redhat.com (Postfix) with SMTP id AA90610694C4;
+        Sun, 23 Sep 2018 21:44:27 +0000 (UTC)
+Date:   Sun, 23 Sep 2018 23:44:26 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Kernel Team <Kernel-team@fb.com>, Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] perf: Sharing PMU counters across compatible
+ events
+Message-ID: <20180923214426.GL30923@krava>
+References: <20180815170313.455943-1-songliubraving@fb.com>
+ <20180815170313.455943-2-songliubraving@fb.com>
+ <20180830151355.GA23723@krava>
+ <34EEDB74-35C5-49C4-9947-6C0248F194B3@fb.com>
+ <20180910081336.GB31644@krava>
+ <90BE3370-3006-426A-80DC-279F07192E70@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <1537732141-22468-1-git-send-email-laoar.shao@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90BE3370-3006-426A-80DC-279F07192E70@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sun, 23 Sep 2018 21:44:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 11, 2018 at 01:29:32PM +0000, Song Liu wrote:
 
+SNIP
 
-On 09/23/2018 12:49 PM, Yafang Shao wrote:
-> With sk_state, we can know whether this connection is in SYN_SENT state
-> or ESTBLISHED state.
-> The reason to distinguish between these two scenario is that the
-> retransmission in ESTABLISHED state always mean network congestion while
-> in SYN_SENT state it always mean server issue, i.e. the syn packet is
-> dropped due to syn backlog queue full.
+> >>> 
+> >>> jirka
+> >> 
+> >> I am not sure I am following. The pmu is disabled when we call
+> >> event_pmu_add(). Why do we need to read before calling pmu->add()? 
+> >> And this is the first added dup event for this master, so we don't
+> >> need to worry about others. 
+> >> 
+> >> Does this make sense? 
+> > 
+> > I was just thinking since the pmu is disable we could
+> > we don't need to read the event on 2 places.. it's almost
+> > identic code
+> 
+> How about something like:
+> 
+> 
+> +/* PMU sharing aware version of event->pmu->add() */
+> +static int event_pmu_add(struct perf_event *event,
+> +			 struct perf_event_context *ctx)
+> +{
+> +	struct perf_event_dup *dup;
+> +	int ret;
+> +
+> +	/* no sharing, just do event->pmu->add() */
+> +	if (event->dup_id == -1)
+> +		return event->pmu->add(event, PERF_EF_START);
+> +
+> +	dup = &ctx->dup_events[event->dup_id];
+> +
+> +	if (dup->active_event_count = 0) {
+> +		/* try add master */
+> +		ret = event->pmu->add(dup->master, PERF_EF_START);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	dup->active_event_count++;
+> +	event->pmu->read(dup->master);
+> +	event->dup_base_count = dup_read_count(dup);
+> +	event->dup_base_child_count = dup_read_child_count(dup);
+> +	
+> +	return 0;
+> +}
 
-You mean, a packet drop on the remote peer ?
+yep, seems ok
 
-It could also be a packet drop in the network.
-
-Your patch is good, but changelog is quite misleading.
+jirka
