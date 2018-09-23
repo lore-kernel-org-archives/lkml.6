@@ -2,84 +2,108 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C6CC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 620CEC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6064E20676
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08DB121476
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:09:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QunJT3xc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6064E20676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RA6GO4Dc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08DB121476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726257AbeIWVFb (ORCPT
+        id S1726292AbeIWVHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 17:05:31 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:57496 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeIWVFb (ORCPT
+        Sun, 23 Sep 2018 17:07:00 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53730 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeIWVHA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 17:05:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
-        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=S15/6fzAhflUspZbyETU60dUNh6okU1PB6ZY1/JymVY=; b=QunJT3xcNuoGVMIfPCnHFD3mVu
-        /lUGH83iEw0Vjm895sUvsPIjNCjBQNJiOgFF6QROHA0jpOp7rXtw4WqfZmu6MrcyarheY/95UO3tQ
-        P5D9rhthn9SGllq2l6MxPAB3+LxqZSrIWFcAk57glH0T8DoYgvFfECyTKhCzcfSZjdhQ=;
-Received: from p200300ccfbe0f0001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbe0:f000:1a3d:a2ff:febf:d33a] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g45yx-0004K3-2u; Sun, 23 Sep 2018 17:07:35 +0200
-Received: from andi by aktux with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g45yw-00029N-A7; Sun, 23 Sep 2018 17:07:34 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH] ARM: dts: gta04: add serial console wakeup irq
-Date:   Sun, 23 Sep 2018 17:07:19 +0200
-Message-Id: <20180923150719.8211-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
+        Sun, 23 Sep 2018 17:07:00 -0400
+Received: by mail-wm1-f68.google.com with SMTP id b19-v6so7272618wme.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 08:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=t0l+caL0jaQP3oVUj6ad6M66cbVZ/ycreckyNkTRI9w=;
+        b=RA6GO4DckCNs22zOr9F6sdqMNlL7fUZdVBYwwj0nkm3dIwzOZry5YHFmpGklIZaDoF
+         RJ4TUxajQ49+/jw8SvLlqxkgTo9HkzhcI8dHcTLgFt2AHeJ+p3uuY+T0/EwkwepJjENq
+         1RiPiuFqafgvrExzPllzWFpTHA7gRXwP+zrLk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=t0l+caL0jaQP3oVUj6ad6M66cbVZ/ycreckyNkTRI9w=;
+        b=quCwuaxbASYRBpOt90Qa9eqZuoO58HOAAMR6C6TdLv1/DcmaBc/rnzT5rdWw7j/pJz
+         j7IYOaW8xWRDpF/uztRPgadpTwOvC3eazZqbytv8bxxQnhL6vrxbD5Dbl4/R6HtdVI08
+         g3a8NBLZX/P4i7/zbCSQHxBqC5MQ8Brk+xOVrYdnx1R8cGqG8WzlMB2qWXyzqgpSHolF
+         V85jPxYVdaAHtqcDRj9iMWWz+OvlOWCZ4Rqxp+GNwdJ3Kulzqj/nG8G7CmSmKZbr3jXj
+         Vds5QlkCwnOEcyEnRVMfr6EOwrx04kaRA36YU7OHdghfi9176e008pvdJ4X3ZUz7PAk2
+         REVg==
+X-Gm-Message-State: ABuFfohmHJVyxOe0P1LatYUUzFFftvLtcM5ryYk0/DTlg4628YmpNK0k
+        og+kXVOputNBzwep0Ac5cvxq/Q==
+X-Google-Smtp-Source: ACcGV621Fpc9JU3GS1bWXoS/VFvXTzvOXdMLogr/9DO688nt2eZHmSPEjMzlDWnzQ2g2bXo7zJ7xDA==
+X-Received: by 2002:a1c:cb4d:: with SMTP id b74-v6mr4646218wmg.123.1537715351968;
+        Sun, 23 Sep 2018 08:09:11 -0700 (PDT)
+Received: from dell ([2.27.167.7])
+        by smtp.gmail.com with ESMTPSA id v6-v6sm7956865wmc.43.2018.09.23.08.09.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Sep 2018 08:09:11 -0700 (PDT)
+Date:   Sun, 23 Sep 2018 16:09:09 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     gregkh@linuxfoundation.org, torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MFD fixes for v4.19
+Message-ID: <20180923150909.GH11050@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables the possibility to have more aggressive runtime pm
-by providing proper wakeup irq for the serial console.
+Morning Greg,
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/omap3-gta04.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Enjoy!
 
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index ac830b917776..edb7cdd33632 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -493,6 +493,7 @@
- &uart3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart3_pins>;
-+	interrupts-extended = <&intc 74 &omap3_pmx_core OMAP3_UART3_RX>;
- };
- 
- &charger {
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-fixes-4.19
+
+for you to fetch changes up to 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65:
+
+  mfd: omap-usb-host: Fix dts probe of children (2018-09-11 16:47:33 +0100)
+
+----------------------------------------------------------------
+- Fix Dialog DA9063 regulator constraints issue causing failure in probe
+- Fix OMAP Device Tree compatible strings to match DT
+
+----------------------------------------------------------------
+Philipp Zabel (1):
+      mfd: da9063: Fix DT probing with constraints
+
+Tony Lindgren (1):
+      mfd: omap-usb-host: Fix dts probe of children
+
+ drivers/mfd/omap-usb-host.c      | 11 ++++++-----
+ include/linux/mfd/da9063/pdata.h | 16 +++++++++-------
+ 2 files changed, 15 insertions(+), 12 deletions(-)
+
 -- 
-2.11.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
