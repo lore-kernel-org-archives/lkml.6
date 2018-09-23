@@ -2,132 +2,270 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E800ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609A7C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2538B2146E
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:41:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2538B2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E2DEC2146E
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:42:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DEC2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725971AbeIWGgv (ORCPT
+        id S1726011AbeIWGiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 02:36:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57404 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725769AbeIWGgv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 02:36:51 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8N0clUo089077
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 20:41:19 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mnkxmbbyu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 20:41:19 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 22 Sep 2018 20:41:19 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 22 Sep 2018 20:41:14 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8N0fDfP59179192
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 23 Sep 2018 00:41:13 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 26D99B206A;
-        Sat, 22 Sep 2018 20:39:38 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 06A4AB2066;
-        Sat, 22 Sep 2018 20:39:38 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.236])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat, 22 Sep 2018 20:39:37 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2EF8116C197D; Sat, 22 Sep 2018 17:41:13 -0700 (PDT)
-Date:   Sat, 22 Sep 2018 17:41:13 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC] Documentation: RCU: Clarify comment about fanout
-Reply-To: paulmck@linux.ibm.com
-References: <20180921223153.114728-1-joel@joelfernandes.org>
- <20180922011428.GU4222@linux.ibm.com>
- <CAEXW_YTgSFr5r3Qkr0+0_wxKGQV1KKP_8X8uQKAnHmhvem8XtA@mail.gmail.com>
- <20180922134616.GX4222@linux.ibm.com>
- <CAEXW_YRaLjRWH9BYV_r8e4pCuBEGCzMSRdS6x7Qozc8HKoej=w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEXW_YRaLjRWH9BYV_r8e4pCuBEGCzMSRdS6x7Qozc8HKoej=w@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18092300-0068-0000-0000-000003409FC4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009754; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01092247; UDB=6.00564422; IPR=6.00872271;
- MB=3.00023459; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-23 00:41:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092300-0069-0000-0000-000045D38DFB
-Message-Id: <20180923004113.GL4222@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-22_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809230006
+        Sun, 23 Sep 2018 02:38:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57036 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725845AbeIWGiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 02:38:01 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4DC6E88309;
+        Sun, 23 Sep 2018 00:42:31 +0000 (UTC)
+Received: from llong.com (ovpn-120-160.rdu2.redhat.com [10.10.120.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B1BEB206F3C1;
+        Sun, 23 Sep 2018 00:42:27 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     qat-linux@intel.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Conor McLoughlin <conor.mcloughlin@intel.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] crypto: qat - Fix KASAN stack-out-of-bounds bug in adf_probe()
+Date:   Sat, 22 Sep 2018 20:41:55 -0400
+Message-Id: <1537663315-4168-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sun, 23 Sep 2018 00:42:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 07:38:05PM -0400, Joel Fernandes wrote:
-> On Sat, Sep 22, 2018 at 9:46 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> [...]
-> > > I have a few more as well, I'll send them out soon.
-> >
-> > I do have on my list to update this document based on the changes in
-> > -rcu, which among other things eliminate the rcu_dynticks structure
-> > and  make it so there is only one rcu_state structure in a given
-> > running system.
-> >
-> > If you are crazy enough to want to make the corresponding changes,
-> > I would welcome the patches (and would be happy to help with editing,
-> > grammar, and soforth.  The potential advantage to you is familiarlzation
-> > with the new version of the code.
-> >
-> > This is not a small amount of work, so please give it some thought
-> > before saying "yes".  (In contrast, I would of course understand and
-> > respect an immediate "no".)
-> 
-> I thought about this and I'd be happy to do it as long as you don't
-> mind me asking questions about parts I don't understand (which
-> shouldn't be a problem from my past experience ;-)). I am spending
-> time understanding the code anyway so I'd rather update the main
-> documentation than my own notes for the benefit of everyone ;-) As you
-> said, it'll help familiarization of the code. Btw I got rid of those
-> extra rcu_state externs too, I'll send that patch out today and
-> continue working on things next week...
+The following KASAN warning was printed when booting a 64-bit kernel
+on some systems with Intel CPUs:
 
-If you continue to find and fix issues like your three most recent
-patches, I really cannot complain about a few questions, now can I?  ;-)
+[   44.512826] ==================================================================
+[   44.520165] BUG: KASAN: stack-out-of-bounds in find_first_bit+0xb0/0xc0
+[   44.526786] Read of size 8 at addr ffff88041e02fc50 by task kworker/0:2/124
 
-So please keep both the patches and questions coming!
+[   44.535253] CPU: 0 PID: 124 Comm: kworker/0:2 Tainted: G               X --------- ---  4.18.0-12.el8.x86_64+debug #1
+[   44.545858] Hardware name: Intel Corporation PURLEY/PURLEY, BIOS BKVDTRL1.86B.0005.D08.1712070559 12/07/2017
+[   44.555682] Workqueue: events work_for_cpu_fn
+[   44.560043] Call Trace:
+[   44.562502]  dump_stack+0x9a/0xe9
+[   44.565832]  print_address_description+0x65/0x22e
+[   44.570683]  ? find_first_bit+0xb0/0xc0
+[   44.570689]  kasan_report.cold.6+0x92/0x19f
+[   44.578726]  find_first_bit+0xb0/0xc0
+[   44.578737]  adf_probe+0x9eb/0x19a0 [qat_c62x]
+[   44.578751]  ? adf_remove+0x110/0x110 [qat_c62x]
+[   44.591490]  ? mark_held_locks+0xc8/0x140
+[   44.591498]  ? _raw_spin_unlock+0x30/0x30
+[   44.591505]  ? trace_hardirqs_on_caller+0x381/0x570
+[   44.604418]  ? adf_remove+0x110/0x110 [qat_c62x]
+[   44.604427]  local_pci_probe+0xd4/0x180
+[   44.604432]  ? pci_device_shutdown+0x110/0x110
+[   44.617386]  work_for_cpu_fn+0x51/0xa0
+[   44.621145]  process_one_work+0x8fe/0x16e0
+[   44.625263]  ? pwq_dec_nr_in_flight+0x2d0/0x2d0
+[   44.629799]  ? lock_acquire+0x14c/0x400
+[   44.633645]  ? move_linked_works+0x12e/0x2a0
+[   44.637928]  worker_thread+0x536/0xb50
+[   44.641690]  ? __kthread_parkme+0xb6/0x180
+[   44.645796]  ? process_one_work+0x16e0/0x16e0
+[   44.650160]  kthread+0x30c/0x3d0
+[   44.653400]  ? kthread_create_worker_on_cpu+0xc0/0xc0
+[   44.658457]  ret_from_fork+0x3a/0x50
 
-							Thanx, Paul
+[   44.663557] The buggy address belongs to the page:
+[   44.668350] page:ffffea0010780bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+[   44.676356] flags: 0x17ffffc0000000()
+[   44.680023] raw: 0017ffffc0000000 ffffea0010780bc8 ffffea0010780bc8 0000000000000000
+[   44.687769] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[   44.695510] page dumped because: kasan: bad access detected
+
+[   44.702578] Memory state around the buggy address:
+[   44.707372]  ffff88041e02fb00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   44.714593]  ffff88041e02fb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   44.721810] >ffff88041e02fc00: 00 00 00 00 00 00 f1 f1 f1 f1 04 f2 f2 f2 f2 f2
+[   44.729028]                                                  ^
+[   44.734864]  ffff88041e02fc80: f2 f2 00 00 00 00 f3 f3 f3 f3 00 00 00 00 00 00
+[   44.742082]  ffff88041e02fd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   44.749299] ==================================================================
+
+Looking into the code:
+
+  int ret, bar_mask;
+    :
+  for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+
+It is casting a 32-bit integer pointer to a 64-bit unsigned long
+pointer. There are two problems here. First, the 32-bit pointer address
+may not be 64-bit aligned. Secondly, it is accessing an extra 4 bytes.
+
+This is fixed by changing the bar_mask type to unsigned long.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ drivers/crypto/qat/qat_c3xxx/adf_drv.c      | 6 +++---
+ drivers/crypto/qat/qat_c3xxxvf/adf_drv.c    | 6 +++---
+ drivers/crypto/qat/qat_c62x/adf_drv.c       | 6 +++---
+ drivers/crypto/qat/qat_c62xvf/adf_drv.c     | 6 +++---
+ drivers/crypto/qat/qat_dh895xcc/adf_drv.c   | 6 +++---
+ drivers/crypto/qat/qat_dh895xccvf/adf_drv.c | 6 +++---
+ 6 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/crypto/qat/qat_c3xxx/adf_drv.c b/drivers/crypto/qat/qat_c3xxx/adf_drv.c
+index ba197f3..763c216 100644
+--- a/drivers/crypto/qat/qat_c3xxx/adf_drv.c
++++ b/drivers/crypto/qat/qat_c3xxx/adf_drv.c
+@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C3XXX_PCI_DEVICE_ID:
+@@ -235,8 +236,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+diff --git a/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c b/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
+index 24ec908..613c7d5 100644
+--- a/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
++++ b/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
+@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C3XXXIOV_PCI_DEVICE_ID:
+@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+diff --git a/drivers/crypto/qat/qat_c62x/adf_drv.c b/drivers/crypto/qat/qat_c62x/adf_drv.c
+index 59a5a0d..9cb8329 100644
+--- a/drivers/crypto/qat/qat_c62x/adf_drv.c
++++ b/drivers/crypto/qat/qat_c62x/adf_drv.c
+@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C62X_PCI_DEVICE_ID:
+@@ -235,8 +236,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	i = (hw_data->fuses & ADF_DEVICE_FUSECTL_MASK) ? 1 : 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+diff --git a/drivers/crypto/qat/qat_c62xvf/adf_drv.c b/drivers/crypto/qat/qat_c62xvf/adf_drv.c
+index b9f3e0e..278452b 100644
+--- a/drivers/crypto/qat/qat_c62xvf/adf_drv.c
++++ b/drivers/crypto/qat/qat_c62xvf/adf_drv.c
+@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_C62XIOV_PCI_DEVICE_ID:
+@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+diff --git a/drivers/crypto/qat/qat_dh895xcc/adf_drv.c b/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
+index be5c5a9..3a9708e 100644
+--- a/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
++++ b/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
+@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_DH895XCC_PCI_DEVICE_ID:
+@@ -237,8 +238,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+diff --git a/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c b/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
+index 26ab17b..3da0f95 100644
+--- a/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
++++ b/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
+@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct adf_hw_device_data *hw_data;
+ 	char name[ADF_DEVICE_NAME_LENGTH];
+ 	unsigned int i, bar_nr;
+-	int ret, bar_mask;
++	unsigned long bar_mask;
++	int ret;
+ 
+ 	switch (ent->device) {
+ 	case ADF_DH895XCCIOV_PCI_DEVICE_ID:
+@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	i = 0;
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
+-	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
+-			 ADF_PCI_MAX_BARS * 2) {
++	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
+ 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
+ 
+ 		bar->base_addr = pci_resource_start(pdev, bar_nr);
+-- 
+1.8.3.1
 
