@@ -6,123 +6,95 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F144C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C77ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37326214C1
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89A77214C1
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="DylMqUVC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37326214C1
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="dEmqVJ6G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A77214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbeIWTI3 (ORCPT
+        id S1726247AbeIWTKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 15:08:29 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42674 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeIWTI2 (ORCPT
+        Sun, 23 Sep 2018 15:10:53 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32910 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbeIWTKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 15:08:28 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m7-v6so909832ljc.9
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 06:11:01 -0700 (PDT)
+        Sun, 23 Sep 2018 15:10:53 -0400
+Received: by mail-lj1-f196.google.com with SMTP id l19-v6so1421571ljb.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 06:13:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IZamlx9F5Ps6sZz0zQO1d1QgBXUlrJZ+Le8kcZWXf6c=;
-        b=DylMqUVCRR8YWe4is1/xokCuQegtoSk4GAiyF/E6r1xw8Noda708Xs2071vdbK12N4
-         6+rm3ZMu9SCqU57P5GLR97TXEmuZhvPRPut6O3Wt6YUFx5ZeTN2v2mn06e/KB9LC4XeS
-         Wc5vfLOMDV1H2fFgFLUyObim7T641r89bcBdVZ1rM984Z1zLOmrQbN3IJbsU9QDhzIlg
-         jZUWwr4CPNfatoL4q2X7Oo+mf615uJ2pNFAzAOSRi4LI10sEMMYZObvNI6oShzDtg7B2
-         cA4Qf2K0sPmg9QhUmIyrBd+hxzcZjJBfbc4+/hRcQ+8bd4DQCPm6vtcQe8fP4rpZNw5u
-         E5Yg==
+         :cc;
+        bh=rvk/6LqTmb7TINouDKZPyi0AmjRpG91p7AkTBJkYPMg=;
+        b=dEmqVJ6GickYyG/DSRpCcylxiF3yzqDND+thGuLZTOfJJlA2zBRATOdKAqIQr7jeVm
+         tZaVusmuwDOcMz+TU0LovBF+kB76cOe+G1itSbYOrhmJGIIsk27tJrH3qatjL8EfhbIX
+         FoPavvMGgcP8J4umkvinAfezgJ6jCrVGgz0GhzTIxZbFXKNDI9cif3rUhQ1mpxckFYIH
+         lZbwBg/Hnnng4RpRJaAiDaIbBT9f/onU0mlEqZsUb647ajF1Hleds5bGYMjCw7XQX+18
+         sfGI1RM2Eah4hAZK0bCziJyJo65XrqiGpklfWsN1N4l8rirlX4QuoayzZrJPr/ZvIZUc
+         mpJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IZamlx9F5Ps6sZz0zQO1d1QgBXUlrJZ+Le8kcZWXf6c=;
-        b=pieaM4UfI9cBsq27RN7zmuyNr8m/FCWGKRZ98xa4yPtamvWJ+9BZvb1jhrYIXyWFfA
-         WXD9o8wo0R64IoEOhYttRbUb6IYN1I+15fN1hZHXEvW9+eoAUTAUAGAOz/NKxlxYU95Z
-         VG4bCjqyZMPHaLBiaVDZ0OSwsEx29GLdzAhXG+wPsfwf/dzYffA7LwHdR2idTVMb9cMv
-         0ql8DgFXmCGfKr4k1QT7+JHFd/NiLs/t5blcFibRe7UawGHR+28SosTvwOi5TG2ggnHn
-         J3myFZOqXhoN6bummUNQizHSRwRYKPeZjuO+4TfNAqfMMw98kO2kG8OSKzGuk+k0D7S5
-         EHPw==
-X-Gm-Message-State: ABuFfoh4iYNeM/G4v4fRqJoyB2vGkks9YYfUOurJcaRi7jS2lt27QIvG
-        VMM+O+hwFgRAPDpnNX+ozHDWByOgZW1jOkPBO+980w==
-X-Google-Smtp-Source: ACcGV61aoIAqYkS+SqTw0QCgZzZ6Eko8hsiRo9llv4kgmEqqSEjY32bWoVGjsVwLotiabgbAAreg3uqb89KDIKQijxI=
-X-Received: by 2002:a2e:5cb:: with SMTP id 194-v6mr4785632ljf.130.1537708261006;
- Sun, 23 Sep 2018 06:11:01 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=rvk/6LqTmb7TINouDKZPyi0AmjRpG91p7AkTBJkYPMg=;
+        b=cIV/FlCegF2Lg0mLzIH+VS9EVcoQXYn8QtU80wr+zZiG/nUc2V9R5Ree9RzyoLQsfh
+         mXsLYwVyb2MJIejzDL5pfvJyvNc6sMP/F1JI5iAa6cIxX4bqHrQOI+FvLbJlo/5F/yUR
+         ZkC7aD5FCAGj8Ttig7f/vYQolcW3gOb4zrcjE9GhvE/wI4pb31/52JqrSCOpD34SlhWU
+         4+FZUnvyr+dc6J399t2jObRBTDEV/rUB5ppt+L06HYKsW3CfWW4kU9gp9Biw587iREiP
+         eitI8ZrG09lv7qLzms2K5ASdKfyDUKfH+QKVZKOH79j93XlD/4GWOcbPtef2xNmankzg
+         W5sg==
+X-Gm-Message-State: ABuFfohATq/dD8nVOAlfvpmyCj0AZFtuVbVrVbKifDSy0DqA8EOPyPN6
+        fvXwIOASv88LBk20T/yMyumzZzNR0n7cPj/3ujGd8Q==
+X-Google-Smtp-Source: ANB0VdaWDK2WbgrSx2Itrgt41Uneea77BhnAmGB1mTQySe/yZS3D3T/rCrWlFDAKUthhkblv99MeVjig6W3Pb+0yogI=
+X-Received: by 2002:a2e:87cf:: with SMTP id v15-v6mr7670613ljj.13.1537708404715;
+ Sun, 23 Sep 2018 06:13:24 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:eac3:0:0:0:0:0 with HTTP; Sun, 23 Sep 2018 06:10:59
+Received: by 2002:a19:eac3:0:0:0:0:0 with HTTP; Sun, 23 Sep 2018 06:13:23
  -0700 (PDT)
 X-Originating-IP: [85.30.9.151]
-In-Reply-To: <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com> <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
- <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
- <CAOesGMhViv_D6GKYf3x02LGqthwEsfkUFWBdG7pCQqD2MGsEew@mail.gmail.com> <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
+In-Reply-To: <CY1PR02MB21385F71D8BC4498654CD0BFB8130@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1536781120-22794-1-git-send-email-jollys@xilinx.com> <CY1PR02MB21385F71D8BC4498654CD0BFB8130@CY1PR02MB2138.namprd02.prod.outlook.com>
 From:   Olof Johansson <olof@lixom.net>
-Date:   Sun, 23 Sep 2018 14:10:59 +0100
-Message-ID: <CAOesGMgqjGEXzRPXFxUcSyTof_wgjErPhZ7wokdGEDY9SnCvdw@mail.gmail.com>
-Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
+Date:   Sun, 23 Sep 2018 14:13:23 +0100
+Message-ID: <CAOesGMgUaQMcTQsbLR_qN95QPfOE1gCJuM9=6AiFLg+_t98qaw@mail.gmail.com>
+Subject: Re: [PATCH v12 0/6] drivers: Introduce firmware driver for ZynqMP core
 To:     Jolly Shah <JOLLYS@xilinx.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michal Simek <michals@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Rajan Vaja <RAJANV@xilinx.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
+Cc:     Michal Simek <michals@xilinx.com>,
+        "arm@kernel.org" <arm@kernel.org>, Rajan Vaja <RAJANV@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 20, 2018 at 5:46 PM, Jolly Shah <JOLLYS@xilinx.com> wrote:
+> Hi Olof,
+>
+> As suggested, this patchset is generated without ioctl interface. Please review. If you are ok, Michal can create a pull request for merge.
+
 Hi,
 
-Apologies for the slow responses here, I meant to follow up on this sooner.
+I replied on the other thread as well; it sounds like you will need
+something _like_ the ioctl interface for some of the dependent
+drivers. For those, would it be possible to only expose some of the
+ioctls through the interface, and not just pass through any call? I
+think that'd probably take care of my concern.
 
-On Tue, Sep 11, 2018 at 8:20 PM, Jolly Shah <JOLLYS@xilinx.com> wrote:
-> Hi Sudeep and Olof,
->
-> Clock driver from same patch set uses ioctl API along with other clock ee=
-mi APIs. As clock patches' final review is pending by Stephen, Michal only =
-created pull request for rest of the patches and that doesn't require ioctl=
- api. I will remove it and submit new patch set.
->
-> For future patches which requires ioctl api, would like to understand you=
-r suggestion so I can make required changes. For zynqmp, EEMI interface all=
-ows clock, reset, power etc management through firmware but apart from thos=
-e there are some operations which needs secure access through firmware. Exa=
-mples are accessing some storage registers for inter agent communication, c=
-onfiguring another agent(RPU) mode, setting PLL parameters, boot device con=
-figuration etc. Those operations are covered as ioctls as they are very pla=
-tform specific. Do you suggest to handle them with individual EEMI APIs ins=
-tead of ioctl API?
+But yeah, go ahead and stage these in a pull request for now, that way
+we can take care of these and merge them as the rest are getting
+ready. I don't want to hold you up more than needed; the patch set is
+already up to a very high version number and it's not fair to make you
+rework it completely yet again.
 
-I'm personally less worried about whether the calls are through an
-ioctl API or an EEMI one, but if it is through ioctl, I'd prefer if it
-wasn't wide-open pass-through. I.e. that the ioctls you actually use
-are documented, and only those who are whitelisted are passed through
-(and not in general exported to userspace).
-
-Does that make sense?
 
 
 -Olof
