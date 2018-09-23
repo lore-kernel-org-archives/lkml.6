@@ -2,115 +2,76 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F00ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 14:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 518C6C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 14:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A81214C1
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 14:07:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="er4HRPei"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A81214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F34D6206B5
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 14:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F34D6206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbeIWUEg (ORCPT
+        id S1726311AbeIWUZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 16:04:36 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37609 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbeIWUEV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 16:04:21 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u12-v6so17107192wrr.4
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 07:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7MBXQB9/hc9z8x7hC5JAvQtfexktjhUxajumS2QHCmI=;
-        b=er4HRPeiVgQTY8kBMmz6Ak2BYuXeRPMR5Cvr/pTN5LY7tMCEZuI3R+jKuUUTD4cG7X
-         zFrfxddiIiaRJBsQQ7H1mNFTqK1vl5ztdp8pPeKQB85N6P8l4K74PXMKka/L7oMIgPpO
-         3EHSTfN9S1mHLUYkoQmw9UNVOtxIltPI1pid/n5z5m7GkCS4x3eIVWZfdSfkept+piv8
-         b6za2B7+CmohEIF7fhGghDE65mtlZEfxo1SA8KL4dP9BtgED/sOvx2tUoMu7U+3ltHuC
-         yTWmI7bKzfEwsSUtC0Y+CXuCJyq9VokWPYg7vUiRTtLqIxMHMKsUqb9SaXvJqGzthSU4
-         KITQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7MBXQB9/hc9z8x7hC5JAvQtfexktjhUxajumS2QHCmI=;
-        b=XLtOM/SgEcLeAonhn77Ir83e1A5M43lh78m3pn3WEQp7VvG8KFDluYPr7BCNYYcxbc
-         sIy8eWFKNzM65pGZS7hR7kstK3Ec2cFnAk4AkivHg6JVnZGVeHY70NLWlF3QNhq8SvKa
-         B95PZFRpaJ1pxJygSjcFD9V7oImqUauqFvAWQpmFV/+u1Zd3Z3x2N6PLiJ6tNK00B6/F
-         ORXbV4T6yLowWmdTgMyp0Dnm61eFkJKLqnt/gY5380IXSEWvwCzuKV6+HMf5LEv24LfF
-         2UEuRRHDU5NKwEf+8yw0SSGw/+RWnfh5/f4GeXdH5PEwuE2NnMDjEEPbB25247dFiGB8
-         uVAQ==
-X-Gm-Message-State: ABuFfoh79W6o4zIj3LREIWmcb/jfR6SLmZ+ofhx/DD1rEZcQIAmhdc45
-        Ab9QbgdQpqylw6led4XUOfk=
-X-Google-Smtp-Source: ACcGV630OND4t/XsFCpNlmxvP+9Vtf1P4XL10FQL7nzPKu2WZy+0Z7Ww8+a31KznXzJn2TWTyEbJQA==
-X-Received: by 2002:adf:f94e:: with SMTP id q14-v6mr5386553wrr.151.1537711604310;
-        Sun, 23 Sep 2018 07:06:44 -0700 (PDT)
-Received: from localhost.co.uk ([2a01:388:3ce:110::1:8])
-        by smtp.gmail.com with ESMTPSA id j66-v6sm47477498wrj.28.2018.09.23.07.06.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 23 Sep 2018 07:06:43 -0700 (PDT)
-From:   Aymen Qader <qader.aymen@gmail.com>
-Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] staging: vc04_services: Add spaces after commas
-Date:   Sun, 23 Sep 2018 15:06:18 +0100
-Message-Id: <20180923140620.14583-4-qader.aymen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180923140620.14583-1-qader.aymen@gmail.com>
-References: <20180923140620.14583-1-qader.aymen@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Sun, 23 Sep 2018 16:25:21 -0400
+Received: from mga06.intel.com ([134.134.136.31]:31790 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726168AbeIWUZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 16:25:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2018 07:27:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,294,1534834800"; 
+   d="scan'208";a="82649259"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Sep 2018 07:24:12 -0700
+Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 23 Sep 2018 07:24:12 -0700
+Received: from fmsmsx115.amr.corp.intel.com ([169.254.4.182]) by
+ FMSMSX119.amr.corp.intel.com ([169.254.14.38]) with mapi id 14.03.0319.002;
+ Sun, 23 Sep 2018 07:24:12 -0700
+From:   "Saleem, Shiraz" <shiraz.saleem@intel.com>
+To:     =?utf-8?B?SMOla29uIEJ1Z2dl?= <Haakon.Bugge@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "Latif, Faisal" <faisal.latif@intel.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>
+CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] RDMA/i40iw: Fix incorrect iterator type
+Thread-Topic: [PATCH] RDMA/i40iw: Fix incorrect iterator type
+Thread-Index: AQHUTo/TThlrd5jITUCGxcBsK3DbZaT99FeA
+Date:   Sun, 23 Sep 2018 14:24:12 +0000
+Message-ID: <9DD61F30A802C4429A01CA4200E302A7A2F99554@fmsmsx115.amr.corp.intel.com>
+References: <20180917140707.1253738-1-Haakon.Bugge@oracle.com>
+In-Reply-To: <20180917140707.1253738-1-Haakon.Bugge@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.1.200.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl error:
-
-ERROR: space required after that ','
-
-in the interface/vchi directory
-
-Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
----
- drivers/staging/vc04_services/interface/vchi/vchi.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/vc04_services/interface/vchi/vchi.h b/drivers/staging/vc04_services/interface/vchi/vchi.h
-index cb2582a4eb6a..d8e660240a44 100644
---- a/drivers/staging/vc04_services/interface/vchi/vchi.h
-+++ b/drivers/staging/vc04_services/interface/vchi/vchi.h
-@@ -92,14 +92,14 @@ typedef struct vchi_msg_vector_ex {
- } VCHI_MSG_VECTOR_EX_T;
- 
- // Construct an entry in a msg vector for a pointer (p) of length (l)
--#define VCHI_VEC_POINTER(p,l)  VCHI_VEC_POINTER, { { (VCHI_MEM_HANDLE_T)(p), (l) } }
-+#define VCHI_VEC_POINTER(p, l)  VCHI_VEC_POINTER, { { (VCHI_MEM_HANDLE_T)(p), (l) } }
- 
- // Construct an entry in a msg vector for a message handle (h), starting at offset (o) of length (l)
--#define VCHI_VEC_HANDLE(h,o,l) VCHI_VEC_HANDLE,  { { (h), (o), (l) } }
-+#define VCHI_VEC_HANDLE(h, o, l) VCHI_VEC_HANDLE,  { { (h), (o), (l) } }
- 
- // Macros to manipulate 'FOURCC' values
- #define MAKE_FOURCC(x) ((int32_t)((x[0] << 24) | (x[1] << 16) | (x[2] << 8) | x[3]))
--#define FOURCC_TO_CHAR(x) (x >> 24) & 0xFF,(x >> 16) & 0xFF,(x >> 8) & 0xFF, x & 0xFF
-+#define FOURCC_TO_CHAR(x) (x >> 24) & 0xFF, (x >> 16) & 0xFF, (x >> 8) & 0xFF, x & 0xFF
- 
- // Opaque service information
- struct opaque_vchi_service_t;
--- 
-2.17.1
-
+PlN1YmplY3Q6IFtQQVRDSF0gUkRNQS9pNDBpdzogRml4IGluY29ycmVjdCBpdGVyYXRvciB0eXBl
+DQo+DQo+Q29tbWl0IGYyN2I0NzQ2ZjM3OCAoImk0MGl3OiBhZGQgY29ubmVjdGlvbiBtYW5hZ2Vt
+ZW50IGNvZGUiKSB1c2VzIGFuDQo+aW5jb3JyZWN0IHJjdSBpdGVyYXRvciwgd2hpbHN0IGhvbGRp
+bmcgdGhlIHJ0bmxfbG9jay4gU2luY2UgdGhlIGNyaXRpY2FsIHJlZ2lvbiBpbnZva2VzDQo+aTQw
+aXdfbWFuYWdlX3FoYXNoKCksIHdoaWNoIGlzIGEgc2xlZXBpbmcgZnVuY3Rpb24sIHRoZSByY3Ug
+bG9ja2luZyBhbmQNCj50cmF2ZXJzYWwgY2Fubm90IGJlIHVzZWQuDQo+DQo+U2lnbmVkLW9mZi1i
+eTogSMOla29uIEJ1Z2dlIDxoYWFrb24uYnVnZ2VAb3JhY2xlLmNvbT4NCj4tLS0NCj4gZHJpdmVy
+cy9pbmZpbmliYW5kL2h3L2k0MGl3L2k0MGl3X2NtLmMgfCAyICstDQo+IDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KDQpUaGFua3MgZG9pbmcgdGhpcyBIYWtv
+biENCg0KQWNrZWQtYnk6IFNoaXJheiBTYWxlZW0gPHNoaXJhei5zYWxlZW1AaW50ZWwuY29tPg0K
+DQo=
