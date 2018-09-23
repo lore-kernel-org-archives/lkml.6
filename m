@@ -2,126 +2,230 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4779FC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A94DC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3134214DC
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:35:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bwEm0PMa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TElOT9+I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3134214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 282F9214C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:35:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 282F9214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbeIWPcJ (ORCPT
+        id S1726727AbeIWPcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 11:32:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35602 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbeIWPcH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 11:32:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 892EE60C85; Sun, 23 Sep 2018 09:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537695316;
-        bh=JRt6QTdPzV+hiEmLqvodyH9j77nJh8dRpyJ164eCFjk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=bwEm0PMaBiKANlMR0T5/MSjNp0wCP/xQ5b/xLzkS5xUqs9rG602zZQehZCfvgM8xj
-         d+xa9pZ6UzXq7YDWB95LULUH07T+SAdi1UY8YprxFJZ+1WRoy9ov9kPL1JlZxm2Qg5
-         4D31pFMiG/jWhPBGG3iDwk3yDf7qTjwgSGQK/IkM=
-Received: from [10.79.169.181] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE52960C81;
-        Sun, 23 Sep 2018 09:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537695315;
-        bh=JRt6QTdPzV+hiEmLqvodyH9j77nJh8dRpyJ164eCFjk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TElOT9+IUdqQFKL+MOG00iF94qhkPDJN7dGbs840v2W4aIWlEfEte2ybiFGIwxHPj
-         KCxNHAQxt/Ya404SZGrefh3qV/JAvEOIXMDKLx88L7QNshymqI1NRhQeMIM1eZNdGr
-         rsUyqH74G8Mb43EJ/sFaz38QU6iu23D1iJcddbCQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE52960C81
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v7 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
- driver
-To:     Stephen Boyd <sboyd@kernel.org>, skannan@codeaurora.org
-Cc:     Evan Green <evgreen@google.com>, rjw@rjwysocki.net,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        anischal@codeaurora.org, devicetree@vger.kernel.org,
-        robh@kernel.org, amit.kucheria@linaro.org
-References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
- <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
- <CAE=gft7_5SZKpU0i9Jbi6UV-eqW8=6Fm7rw4oKVXG6J9Q7_E+g@mail.gmail.com>
- <1ddda4b9e6dcd7ad415235f4d6af2dc7@codeaurora.org>
- <153333504360.10763.8964005567051510823@swboyd.mtv.corp.google.com>
- <4d37a1ee4f2d5b30da3f62cbfca756a8@codeaurora.org>
- <153370933225.220756.12056174025047430491@swboyd.mtv.corp.google.com>
- <c83e4248-aef2-bb40-8d8e-47d9b2918cc7@codeaurora.org>
- <153504951102.28926.11593809590549791317@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <3e6b6874-3560-0ea0-6861-9f47f308e089@codeaurora.org>
-Date:   Sun, 23 Sep 2018 15:05:05 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <153504951102.28926.11593809590549791317@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 23 Sep 2018 11:32:24 -0400
+Received: from smtp21.cstnet.cn ([159.226.251.21]:48389 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726071AbeIWPcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 11:32:24 -0400
+Received: from pw-vbox.higon.com (unknown [182.150.46.145])
+        by APP-01 (Coremail) with SMTP id qwCowADnyeZUXqdbnkazDA--.173S2;
+        Sun, 23 Sep 2018 17:35:20 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+To:     bp@alien8.de, bhelgaas@google.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        thomas.lendacky@amd.com, helgaas@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-pci@vger.kernel.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v8 07/16] x86/pci: Add Hygon Dhyana support to PCI and north bridge
+Date:   Sun, 23 Sep 2018 17:35:13 +0800
+Message-Id: <580dc519d37ad9257520fe8c533f2c61d3e0cd83.1537533369.git.puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1537533368.git.puwen@hygon.cn>
+References: <cover.1537533368.git.puwen@hygon.cn>
+X-CM-TRANSID: qwCowADnyeZUXqdbnkazDA--.173S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtw17Cw1xCF4ktw1DXFyDtrb_yoW7Cr15pr
+        W5Jr4kXr4rWrW3Wa98tr4UZrn8ZF1vkayfCrW7Gw1Sq3WDuFy5Xrs2vw1ayw17taykXa4r
+        JFZ5G3WrJa18tF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+        8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+        8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+        ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x
+        0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE14v2
+        6r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvj
+        fU5nmRUUUUU
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+As Hygon registered its PCI Vendor ID as a new one 0x1d94, and there
+are PCI Devices 0x1450/0x1463/0x1464 for Host bridge on Hygon Dhyana
+platform, so add Hygon Dhyana support to the PCI and north bridge
+subsystem by using the code path of AMD family 17h.
 
+To prevent further checking PCI device ids which cannot happen both on
+Hygon and Intel platform, the function amd_gart_present should return
+if it's not a AMD CPU.
 
-On 8/24/2018 12:08 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-08-08 03:15:26)
->>
->>
->> On 8/8/2018 11:52 AM, Stephen Boyd wrote:
->>>>
->>>> Binding describes hardware controllable by the OS. That's the reality.
->>>> Let's not add mandatory clock bindings for clocks that the OS can't do
->>>> anything about.
->>>>
->>>
->>> It seems that you believe clks should only be used to turn on/off and
->>> control rates. That is not the whole truth. Sometimes clks are there
->>> just to express the clk frequencies that are present in the design so
->>> that drivers can figure out what to do.
->>>
->>
->> Stephen,
->>
->> As this clock is not configurable by linux clock drivers and we really
->> do not care the parent src(as mentioned by Saravana) to generate the
->> 300MHz, would it be good to define a fixed rate clock so as to express
->> the HW connectivity & frequency?
->>
-> 
-> As a hack that works great, but why do we need to workaround problems by
-> adding a fixed rate clk to DT for this PLL? The PLL is provided by GCC
-> node so it should be connected to the GCC node.
-> 
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci_ids.h
+Reviewed-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/include/asm/amd_nb.h |  3 +++
+ arch/x86/kernel/amd_nb.c      | 47 +++++++++++++++++++++++++++++++++++++------
+ arch/x86/pci/amd_bus.c        |  6 ++++--
+ include/linux/pci_ids.h       |  2 ++
+ 4 files changed, 50 insertions(+), 8 deletions(-)
 
-Please help with review the next patch series which would take the PLL 
-phandle from DT.
-
+diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
+index fddb6d2..1ae4e57 100644
+--- a/arch/x86/include/asm/amd_nb.h
++++ b/arch/x86/include/asm/amd_nb.h
+@@ -103,6 +103,9 @@ static inline u16 amd_pci_dev_to_node_id(struct pci_dev *pdev)
+ 
+ static inline bool amd_gart_present(void)
+ {
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++		return false;
++
+ 	/* GART present only on Fam15h, upto model 0fh */
+ 	if (boot_cpu_data.x86 == 0xf || boot_cpu_data.x86 == 0x10 ||
+ 	    (boot_cpu_data.x86 == 0x15 && boot_cpu_data.x86_model < 0x10))
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index b481b95..dcc4130 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -61,6 +61,21 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+ 	{}
+ };
+ 
++static const struct pci_device_id hygon_root_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_AMD_17H_ROOT) },
++	{}
++};
++
++const struct pci_device_id hygon_nb_misc_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_AMD_17H_DF_F3) },
++	{}
++};
++
++static const struct pci_device_id hygon_nb_link_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_AMD_17H_DF_F4) },
++	{}
++};
++
+ const struct amd_nb_bus_dev_range amd_nb_bus_dev_ranges[] __initconst = {
+ 	{ 0x00, 0x18, 0x20 },
+ 	{ 0xff, 0x00, 0x20 },
+@@ -197,12 +212,25 @@ int amd_cache_northbridges(void)
+ 	u16 i = 0;
+ 	struct amd_northbridge *nb;
+ 	struct pci_dev *root, *misc, *link;
++	const struct pci_device_id *root_ids = NULL;
++	const struct pci_device_id *misc_ids = NULL;
++	const struct pci_device_id *link_ids = NULL;
++
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++		root_ids = hygon_root_ids;
++		misc_ids = hygon_nb_misc_ids;
++		link_ids = hygon_nb_link_ids;
++	} else {
++		root_ids = amd_root_ids;
++		misc_ids = amd_nb_misc_ids;
++		link_ids = amd_nb_link_ids;
++	}
+ 
+ 	if (amd_northbridges.num)
+ 		return 0;
+ 
+ 	misc = NULL;
+-	while ((misc = next_northbridge(misc, amd_nb_misc_ids)) != NULL)
++	while ((misc = next_northbridge(misc, misc_ids)) != NULL)
+ 		i++;
+ 
+ 	if (!i)
+@@ -218,11 +246,11 @@ int amd_cache_northbridges(void)
+ 	link = misc = root = NULL;
+ 	for (i = 0; i != amd_northbridges.num; i++) {
+ 		node_to_amd_nb(i)->root = root =
+-			next_northbridge(root, amd_root_ids);
++			next_northbridge(root, root_ids);
+ 		node_to_amd_nb(i)->misc = misc =
+-			next_northbridge(misc, amd_nb_misc_ids);
++			next_northbridge(misc, misc_ids);
+ 		node_to_amd_nb(i)->link = link =
+-			next_northbridge(link, amd_nb_link_ids);
++			next_northbridge(link, link_ids);
+ 	}
+ 
+ 	if (amd_gart_present())
+@@ -263,9 +291,15 @@ bool __init early_is_amd_nb(u32 device)
+ {
+ 	const struct pci_device_id *id;
+ 	u32 vendor = device & 0xffff;
++	const struct pci_device_id *misc_ids = NULL;
++
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++		misc_ids = hygon_nb_misc_ids;
++	else
++		misc_ids = amd_nb_misc_ids;
+ 
+ 	device >>= 16;
+-	for (id = amd_nb_misc_ids; id->vendor; id++)
++	for (id = misc_ids; id->vendor; id++)
+ 		if (vendor == id->vendor && device == id->device)
+ 			return true;
+ 	return false;
+@@ -277,7 +311,8 @@ struct resource *amd_get_mmconfig_range(struct resource *res)
+ 	u64 base, msr;
+ 	unsigned int segn_busn_bits;
+ 
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return NULL;
+ 
+ 	/* assume all cpus from fam10h have mmconfig */
+diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
+index 649bdde..bfa50e6 100644
+--- a/arch/x86/pci/amd_bus.c
++++ b/arch/x86/pci/amd_bus.c
+@@ -93,7 +93,8 @@ static int __init early_root_info_init(void)
+ 		vendor = id & 0xffff;
+ 		device = (id>>16) & 0xffff;
+ 
+-		if (vendor != PCI_VENDOR_ID_AMD)
++		if (vendor != PCI_VENDOR_ID_AMD &&
++		    vendor != PCI_VENDOR_ID_HYGON)
+ 			continue;
+ 
+ 		if (hb_probes[i].device == device) {
+@@ -390,7 +391,8 @@ static int __init pci_io_ecs_init(void)
+ 
+ static int __init amd_postcore_init(void)
+ {
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return 0;
+ 
+ 	early_root_info_init();
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index d157983..8a0841c 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2561,6 +2561,8 @@
+ 
+ #define PCI_VENDOR_ID_AMAZON		0x1d0f
+ 
++#define PCI_VENDOR_ID_HYGON		0x1d94
++
+ #define PCI_VENDOR_ID_TEKRAM		0x1de1
+ #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.7.4
 
---
