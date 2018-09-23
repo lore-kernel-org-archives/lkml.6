@@ -2,148 +2,140 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27575ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB73C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C78EB208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:53:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pU/30lVr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78EB208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A3EAC21477
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:54:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EAC21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeIXFwD (ORCPT
+        id S1727299AbeIXFxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 01:52:03 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41956 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbeIXFwC (ORCPT
+        Mon, 24 Sep 2018 01:53:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57214 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725919AbeIXFxr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 01:52:02 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y17-v6so16611747ljy.8;
-        Sun, 23 Sep 2018 16:52:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=B+vWkV9PK2dW2ldgqA92Kie02InEocNbKcAQBBT4ZZo=;
-        b=pU/30lVr5PxtDJpoiEk9N/gJiRxiEkf53c0h9LpydS1sJ9uJHqdHtyrFGiysB2qlVI
-         /cohGpR3oywT2UA7PxgeVmqbl3/mixJ3Q4ALYNVJjv2yJow9fF+H5L3lZAJ2KJ4KaFTn
-         fevevjodGrmfd+aKyAaLJ8XhGBm9bSBmaph3xUY+Jw5IwN43ImZJhaEN815rwfWgwfhJ
-         nd+Ys8B43pH978psP6sxDNgZgM5Tqjfc8IXVs7dLexRqRw2sZbJJMdKShR6FAaJdWkVP
-         jA/f9Dui+ZRJsK8N/iXPj/9NwrdE9Fwnl+76gQwNY6tt9KkUGWA4uBoW86sIBLOjEQsB
-         qkQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=B+vWkV9PK2dW2ldgqA92Kie02InEocNbKcAQBBT4ZZo=;
-        b=Tw+zmwxX0nGPaujhEOxYBuuWJSphBYrU4tlJWvXCK7Q8pEt0CBP2dTyfwMrThNqHQh
-         X5KzPGeS9ZFyRUTvV5EuI5/iCetcbREEe6HxNjhdJ1GhDe2HQOeffm+KfxfO9/MB5lVc
-         VXGVJ5O+mBA5QJ9aIudcnhOQ0tdMyysuY6Wms96yW5pviVkXNnEl8GZex2aSG2mN1yGc
-         xrNbNXtixTRQBhBDpHxGzKb02CAblUBpZUY3cnsxog3OJRq+z0c9TUuyGgY9YeEY1623
-         LYA1eRrbrSTWjI7wwwu2HQZXwFeZIP4DTYugPPxuc8XduxkmuX87VZFz+3Lb/uGXWsFa
-         ED/w==
-X-Gm-Message-State: ABuFfogFUnI67wx+b1MSZaHYnlNhTzokdFgED45+ywHEXOcI5UL0pz/t
-        SDToE86JDnB2f3xS/mY7es8=
-X-Google-Smtp-Source: ANB0VdaH4l/xZHBe4Mb2obhXCx25rZrr7kGUqyMDhJM5hbXkNPWP1Z69FaPqhgTQzYPBhaGy2qm20g==
-X-Received: by 2002:a2e:4401:: with SMTP id r1-v6mr9187277lja.21.1537746751498;
-        Sun, 23 Sep 2018 16:52:31 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id m8-v6sm3419718lfh.25.2018.09.23.16.52.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 16:52:30 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Rojhalat Ibrahim <imr@rtschenk.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Subject: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap processing path
-Date:   Mon, 24 Sep 2018 01:53:34 +0200
-Message-Id: <20180923235336.22148-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <2785169.v6aIfS3K2k@z50>
-References: <2785169.v6aIfS3K2k@z50>
+        Mon, 24 Sep 2018 01:53:47 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8NNsDJM060073
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 19:54:18 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mpkpw1p9y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 19:54:18 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sun, 23 Sep 2018 19:54:17 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 23 Sep 2018 19:54:14 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8NNsDh157737426
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 23 Sep 2018 23:54:13 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C8C3B205F;
+        Sun, 23 Sep 2018 19:52:37 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1970B2064;
+        Sun, 23 Sep 2018 19:52:36 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.154.62])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sun, 23 Sep 2018 19:52:36 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 59EE416C1971; Sun, 23 Sep 2018 16:54:13 -0700 (PDT)
+Date:   Sun, 23 Sep 2018 16:54:13 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Question about ->head field of rcu_segcblist
+Reply-To: paulmck@linux.ibm.com
+References: <CAEXW_YQd8s9GP-TACJCbT67ZCy5guTJMW+Jue3VsEX1777UhBQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEXW_YQd8s9GP-TACJCbT67ZCy5guTJMW+Jue3VsEX1777UhBQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18092323-0064-0000-0000-00000352F62F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009760; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01092701; UDB=6.00564700; IPR=6.00872736;
+ MB=3.00023472; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-23 23:54:15
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092323-0065-0000-0000-00003ABEFA5C
+Message-Id: <20180923235413.GA4222@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-23_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809230253
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Sep 23, 2018 at 07:30:30PM -0400, Joel Fernandes wrote:
+> Hi Paul,
+> 
+> I was parsing the Data-Structures document and had a question about
+> the following "Important note" text.
+> 
+> Could it be clarified in the below text better why "remaining
+> callbacks are placed back on the RCU_DONE_TAIL segment", is a reason
+> for not depending on ->head for determining if no callbacks are
+> associated with the rcu_segcblist? If callbacks are added back to the
+> DONE_TAIL segment, then I would think rcu_head should be != NULL.
+> Infact the "rsclp->head = *rsclp->tails[RCU_DONE_TAIL];" in
+> rcu_segcblist_extract_done_cbs should set the ->head to  NULL if I
+> understand correctly.
 
-While investigating possible reasons of GPIO fast bitmap processing
-related boot hang on Samsung Snow Chromebook, reported by Marek
-Szyprowski (thanks!), I've discovered one coding bug, addressed by
-PATCH 1/2 of this series, and one potential regression introduced at
-design level of the solution, hopefully fixed by PATCH 2/2.  See
-commit messages for details.
+The rcu_segcblist_extract_done_cbs() function will set rsclp->head
+to NULL only if there were no non-done callbacks on the rsclp list.
+Otherwise, if there are non-done callbacks, then rsclp->head will
+be set to the first non-done callback.
 
-Janusz Krzysztofik (2):
-      gpiolib: Fix missing updates of bitmap index
-      gpiolib: Fix array members of same chip processed separately
+Either way, the problem is that the done callbacks can be removed
+and re-added, but the count is not adjusted until the re-add.  So
+you have to look at the count to see if there are callbacks.
 
-The fixes should resolve the boot hang observed by Marek, however the
-second change excludes that particular case from fast bitmap processing
-and restores the old behaviour.  Hence, it is possible still another
-issue which have had an influence on that boot hang exists in the code.
-In order to fully verify the fix, it would have to be tested on a
-platform where an array of GPIO descriptors is used which starts from
-at least two consecutive pins of one GPIO chip in hardware order,
-starting ftom 0, followed by one or more pins belonging to other
-chip(s).
+Testing rsclp->head fails because it can be temporarily NULL, even
+though there are callbacks hanging off of a pointer in rcu_do_batch()'s
+stack frame.
 
-In order to verify if separate calls to .set() chip callback for each
-pin instead of one call to .set_multiple() is actually the reason of
-boot hang on Samsung Snow Chromebook, the affected driver -
-drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
-modified for testing purposes so it calls gpiod_set_value() for each
-pin instead of gpiod_set_array_value() for all of them.  If that would
-also result in boot hang, we could be sure the issue was really the
-one addressed by the second fix.  Marek, could you please try to
-perform such test?
+Or am I misunderstanding your question?
 
-Thanks,
-Janusz
+							Thanx, Paul
 
-
-diffstat:
- Documentation/driver-api/gpio/board.rst |   19 +++++++++----
- drivers/gpio/gpiolib.c                  |   46 +++++++++++++++++++++-----------
- 2 files changed, 45 insertions(+), 20 deletions(-)
+> Important note: It is the ->len field that determines whether or not
+> there are callbacks associated with this rcu_segcblist structure, not
+> the ->head pointer. The reason for this is that all the
+> ready-to-invoke callbacks (that is, those in the RCU_DONE_TAIL
+> segment) are extracted all at once at callback-invocation time. If
+> callback invocation must be postponed, for example, because a
+> high-priority process just woke up on this CPU, then the remaining
+> callbacks are placed back on the RCU_DONE_TAIL segment. Either way,
+> the ->len and ->len_lazy counts are adjusted after the corresponding
+> callbacks have been invoked, and so again it is the ->lencount that
+> accurately reflects whether or not there are callbacks associated with
+> this rcu_segcblist structure. Of course, off-CPU sampling of the ->len
+> count requires the use of appropriate synchronization, for example,
+> memory barriers. This synchronization can be a bit subtle,
+> particularly in the case of rcu_barrier().
+> 
+> Thanks!
+> 
+>  - Joel
+> 
 
