@@ -2,120 +2,87 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD115ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59948C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576092148D
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:49:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bofh-nu.20150623.gappssmtp.com header.i=@bofh-nu.20150623.gappssmtp.com header.b="gwey7IAQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 576092148D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bofh.nu
+	by mail.kernel.org (Postfix) with ESMTP id 1C4472148D
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:55:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4472148D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbeIWSq5 (ORCPT
+        id S1726272AbeIWSw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 14:46:57 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40670 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeIWSq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 14:46:56 -0400
-Received: by mail-oi0-f65.google.com with SMTP id l202-v6so14948852oig.7
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 05:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bofh-nu.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lhmszu/x7AAXJwapMtmX/2IrEzWMZ0/D7XtDULkeBX8=;
-        b=gwey7IAQ2kislwvHgUtn+EWGuDe+Pz1W1LZm8/G0G7p755tc/h7i2L59klYGt45p+1
-         cTXj0epeC+1DQJuZiELUrx0GGQN1pwI+szlOuNuc7FTw4zpo/jrltdDQtAxsHRWrvJsR
-         y7dyKazJ4vg2PEGWw6GBFAhrZyjSdemCHYU6+WZVPtgrczfe1cHCcTMkwExWyq0u72eo
-         13MAv7Ig9zJSNfXZjf9ZjmzDnZhJ3V3eO4fkh6ZIWfEEc5WHaHbeKoNpaqVb5+bNU7hh
-         Uru2nwEPaFIZgxW7xFlqoDy2tNgd4rV/593jyGPoG5arMTN4hWtmn3KctZiRvnKN6zK7
-         aTuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lhmszu/x7AAXJwapMtmX/2IrEzWMZ0/D7XtDULkeBX8=;
-        b=cMPPz/riIiK0e+5+arVtuD89rbsVzIaGgzC+w7RdsB/09cOPtn0HpDlplq5Nxwcf+L
-         CRqsCXXoLeymTsiqyrMsDNteLN0lLR+aFoh7OLyeoCmJIHRLWDUuWWNWMKwhJ4+8Ybf0
-         d3BDEMIjDn0027p0gPqOJJhqHGFyMzLUFNZ8GQAHMHZaL4MPpU/3tYsq5c8Ttxl4VZws
-         /FU9OgiLlzwQj6MNRvKiBnNvv9Yb8vfj/3x2EDD25dmDfpl4PiHzxoakPeLcULFzQeT7
-         46kZrJUp1C/zsgV2AMu7lHtvPYm+i6F/fTfjsmuRdfAucGgjIRd05vkUTWAoKpKydhFD
-         BR2Q==
-X-Gm-Message-State: APzg51BOLDaZRtxCk9ktBLvl96Q8tTGNAEAZCzabC8Mc+Q3hv0eKKbIY
-        sWKHXpbrLG0eiUhDEK2b9jtiBzBoFDrmSYNCf2I7iw==
-X-Google-Smtp-Source: ANB0VdYI0GusGQiiDNTQT5snbUEHALBxvoW0teNbg1vGKb0wPpR8oMUuTpyanyrITCF5mYNm1YQ/3FXvnW4YSWX87iE=
-X-Received: by 2002:aca:6707:: with SMTP id z7-v6mr2875828oix.178.1537706974665;
- Sun, 23 Sep 2018 05:49:34 -0700 (PDT)
+        Sun, 23 Sep 2018 14:52:26 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:41878 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726126AbeIWSw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 14:52:26 -0400
+Received: from [192.168.1.9] (unknown [110.184.153.249])
+        by APP-09 (Coremail) with SMTP id swCowADHrR0NjadbMzVUDA--.5452S2;
+        Sun, 23 Sep 2018 20:54:38 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+Subject: Re: [PATCH v8 07/16] x86/pci: Add Hygon Dhyana support to PCI and
+ north bridge
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     bhelgaas@google.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, thomas.lendacky@amd.com,
+        helgaas@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-pci@vger.kernel.org
+References: <cover.1537533368.git.puwen@hygon.cn>
+ <580dc519d37ad9257520fe8c533f2c61d3e0cd83.1537533369.git.puwen@hygon.cn>
+ <20180923111046.GA20575@zn.tnic>
+Message-ID: <f20743b0-cad2-4eb4-ac6d-f1aa7b34ce16@hygon.cn>
+Date:   Sun, 23 Sep 2018 20:54:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180701160757.138608453@linuxfoundation.org> <20180701160759.928145668@linuxfoundation.org>
-In-Reply-To: <20180701160759.928145668@linuxfoundation.org>
-From:   Lars Persson <lists@bofh.nu>
-Date:   Sun, 23 Sep 2018 14:49:23 +0200
-Message-ID: <CADnJP=s+Lu8BiKeM6vsVbHtfYQCPudXHqrA+hKbXOR5FLxTK6g@mail.gmail.com>
-Subject: Re: [PATCH 4.9 069/101] ubi: fastmap: Correctly handle interrupted
- erasures in EBA
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Martinbayern@outlook.com, richard@nod.at
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180923111046.GA20575@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: swCowADHrR0NjadbMzVUDA--.5452S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY67k0a2IF6w4xM7kC6x804xWl14x267AK
+        xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+        A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j
+        6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr
+        0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAa
+        Y2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4
+        A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY
+        1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s
+        026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_
+        JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14
+        v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xva
+        j40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r
+        4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8IzuJUUUUU==
+X-Originating-IP: [110.184.153.249]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 1, 2018 at 6:27 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On 2018/9/23 19:10, Borislav Petkov wrote:
+>> Signed-off-by: Pu Wen <puwen@hygon.cn>
+>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci_ids.h
+>> Reviewed-by: Borislav Petkov <bp@suse.de>
 >
-> 4.9-stable review patch.  If anyone has any objections, please let me know.
+> A note for your future submissions: if you rework a patch in a
+> non-trivial way, you *must* drop Reviewed-by/Acked-by tags because they
+> are not valid anymore.
 >
-> ------------------
->
-> From: Richard Weinberger <richard@nod.at>
->
-> commit 781932375ffc6411713ee0926ccae8596ed0261c upstream.
->
-> Fastmap cannot track the LEB unmap operation, therefore it can
-> happen that after an interrupted erasure the mapping still looks
-> good from Fastmap's point of view, while reading from the PEB will
-> cause an ECC error and confuses the upper layer.
->
-> Instead of teaching users of UBI how to deal with that, we read back
-> the VID header and check for errors. If the PEB is empty or shows ECC
-> errors we fixup the mapping and schedule the PEB for erasure.
->
-> Fixes: dbb7d2a88d2a ("UBI: Add fastmap core")
-> Cc: <stable@vger.kernel.org>
-> Reported-by: martin bayern <Martinbayern@outlook.com>
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
->
-Hi Greg
+> In this case I guess Bjorn's tag can stay because he's acking the
+> pci_ids.h addition but mine definitely must go.
 
-This commit belongs to a series of 3 commits that are intended to be
-used together. Currently the stable branches have only the first
-commit from the series and we get a UBI speed regression because an
-extra NAND page read is always performed for each access to a UBI LEB.
+Thanks for the note. I'm sorry for not removing the Reviewed-by tag.
+Is this revision still OK by you? :)
 
-3e5e4335cc0ffd668054564b113fb3c9c97badb8 ubi: fastmap: Detect EBA
-mismatches on-the-fly
-34653fd8c46e771585fce5975e4243f8fd401914 ubi: fastmap: Check each
-mapping only once
-781932375ffc6411713ee0926ccae8596ed0261c ubi: fastmap: Correctly
-handle interrupted erasures in EBA
+-- 
+Regards,
+Pu Wen
 
-This will in turn require also this follow-up patch:
-25677478474a91fa1b46f19a4a591a9848bca6fb ubi: Initialize Fastmap
-checkmapping correctly
-
-
-BR,
- Lars Persson
