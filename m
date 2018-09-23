@@ -2,141 +2,184 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961D2C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FEFECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E8E621473
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:34:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dL/DckBN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E8E621473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AC1421477
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AC1421477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbeIWWcB (ORCPT
+        id S1726704AbeIWWmG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 18:32:01 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:40808 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbeIWWcA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 18:32:00 -0400
-Received: by mail-it1-f193.google.com with SMTP id h23-v6so7654524ita.5
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 09:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=d7/iOYyXx4a0cn8mFjuMxNglWgCdCbkWVKz9DOM0/Z0=;
-        b=dL/DckBN/VDw5ZZYa0iUQBbooF6C01ttVcuzrcjA3iZirVF5xVLB27qfZEKOd57cMT
-         wjt5dkICzJSUx1N/FQrl4F8+hTreYjr/V+BL2b8+SfVzYj7ry1O4cHojG3Uv9A/ReF7k
-         CIXiDm41rY5//7FqG8eUap678jH3FyuJEjgv7wT2pNiLNjX0IpRZxixzHkVwHFjHzyIX
-         c7+fgHYxHwrsA1tMBnOdruLnqPAXTBUjYBwRm1kxVVePAfLYnEM9u9DKPiPf+jP1nIi9
-         b/heTyqv56mkvakbHGpuYtI4SslG2FxzX2oROdXdPv/QPeE4do2lNIPIiO4Lk1IA+n7v
-         mu5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=d7/iOYyXx4a0cn8mFjuMxNglWgCdCbkWVKz9DOM0/Z0=;
-        b=PjrwcImurkSpOOBSHhZ9IL9wp/fhJaNAwdAmCvVJ45qczK5DCPwzI16y+4A58bc+Z0
-         ueiM6mhUQjIxocumxh+x2oOCnP3ccELD4DlApbY61ViF0+XOgbd0/eM6zXZNF9nSPgHm
-         kE/a4/yhzL+Ms8G9RukfoWQG8i2LfQkimPTbavqs8e9Vt5gtRTkw43u598spcMlA17V6
-         vZRrLllXqI9IXBSdSW8q/rqdA4iGM+/FWbnphePwL5OpfO8GKQq76/ME0V/VMktX8REa
-         yzI0g/hLJkmh9LfsmCjFKrF5XSwa1qEOiJiWzIQz7sv0pLVg/OgnwIXeNxkV0/NPqfZq
-         yM6Q==
-X-Gm-Message-State: APzg51CVZF4AY11ZZkembv+IysJuwklW3dnf88nq37JFW4H+HNkpCrOq
-        afng9042egsDmjpHSQgLQh175nJ3hIiDgNN9xueteA==
-X-Google-Smtp-Source: ANB0VdYuTO+kSxiFMC7CvxC6/gN+zsuT3biMiwUQfdsyElRRIakAgXus/B8XlLP3WIdN86jvFqjSpLAaFV6Yd+ARgsw=
-X-Received: by 2002:a02:88f7:: with SMTP id b52-v6mr6349985jak.25.1537720438006;
- Sun, 23 Sep 2018 09:33:58 -0700 (PDT)
+        Sun, 23 Sep 2018 18:42:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44592 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726223AbeIWWmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 18:42:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8425BABDC;
+        Sun, 23 Sep 2018 16:43:58 +0000 (UTC)
+Subject: Re: [RFC 1/3 net] lorawan: Add LoRaWAN class module
+To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
+References: <cover.1535039998.git.starnight@g.ncu.edu.tw>
+ <fc737f3940bbe91341fb15d85ac11931eb56d1fc.1535039998.git.starnight@g.ncu.edu.tw>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        =?UTF-8?Q?Konstantin_B=c3=b6hm?= <konstantin.boehm@ancud.de>,
+        Jan Jongboom <jan.jongboom@arm.com>,
+        Jon Ortego <Jon.Ortego@imst.de>,
+        "contact@snootlab.com" <contact@snootlab.com>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
+        Alexander Graf <agraf@suse.de>,
+        =?UTF-8?Q?Michal_Kube=c4=8dek?= <mkubecek@suse.cz>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Steve deRosier <derosier@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Pieter ROBYNS <pieter.robyns@uhasselt.be>,
+        Hasnain Virk <Hasnain.Virk@arm.com>,
+        linux-wpan - ML <linux-wpan@vger.kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Daniele Comel <dcomel@mipot.com>, shess@hessware.de,
+        Xue Liu <liuxuenetmail@gmail.com>, fomi <fomi@rakwireless.com>,
+        Afonso Bordado <afonsobordado@az8.co>
+Message-ID: <cebcea44-9db3-5564-574c-038d9af79995@suse.de>
+Date:   Sun, 23 Sep 2018 18:40:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a02:5942:0:0:0:0:0 with HTTP; Sun, 23 Sep 2018 09:33:37
- -0700 (PDT)
-In-Reply-To: <CAKdAkRS7PSXv65MTnvKOewqESxt0_FtKohd86ioOuYR3R0z9dw@mail.gmail.com>
-References: <000000000000e5f76c057664e73d@google.com> <CAKdAkRS7PSXv65MTnvKOewqESxt0_FtKohd86ioOuYR3R0z9dw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 23 Sep 2018 18:33:37 +0200
-Message-ID: <CACT4Y+YOb6M=xuPG64PAvd=0bcteicGtwQO60CevN_V67SJ=MQ@mail.gmail.com>
-Subject: Re: WARNING: kmalloc bug in input_mt_init_slots
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     syzbot+87829a10073277282ad1@syzkaller.appspotmail.com,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <fc737f3940bbe91341fb15d85ac11931eb56d1fc.1535039998.git.starnight@g.ncu.edu.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 7:52 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Fri, Sep 21, 2018 at 10:24 AM syzbot
-> <syzbot+87829a10073277282ad1@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    234b69e3e089 ocfs2: fix ocfs2 read block panic
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=131f761a400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=5fa12be50bca08d8
->> dashboard link: https://syzkaller.appspot.com/bug?extid=87829a10073277282ad1
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126ca61a400000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119d6511400000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
->>
->> input: syz0 as /devices/virtual/input/input25382
->> WARNING: CPU: 0 PID: 11238 at mm/slab_common.c:1031 kmalloc_slab+0x56/0x70
->> mm/slab_common.c:1031
->> Kernel panic - not syncing: panic_on_warn set ...
->
-> This is coming from:
->
-> commit 6286ae97d10ea2b5cd90532163797ab217bfdbdf
-> Author: Christoph Lameter <cl@linux.com>
-> Date:   Fri May 3 15:43:18 2013 +0000
->
->    slab: Return NULL for oversized allocations
->
->    The inline path seems to have changed the SLAB behavior for very large
->    kmalloc allocations with  commit e3366016 ("slab: Use common
->    kmalloc_index/kmalloc_size functions"). This patch restores the old
->    behavior but also adds diagnostics so that we can figure where in the
->    code these large allocations occur.
->
->    Reported-and-tested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->    Signed-off-by: Christoph Lameter <cl@linux.com>
->    Link: http://lkml.kernel.org/r/201305040348.CIF81716.OStQOHFJMFLOVF@I-love.SAKURA.ne.jp
->    [ penberg@kernel.org: use WARN_ON_ONCE ]
->    Signed-off-by: Pekka Enberg <penberg@kernel.org>
->
-> You'll have to convince Cristoph that WARN_ON_ONCE() there is evil and
-> has to be eradicated so that KASAN can run (but then we'd not know
-> easily that some allocation failed because it was too big and never
-> had a chance of succeeding vs. ordinary memory failure).
->
-> Can I recommend that maybe you introduce infrastructure for
-> panic_on_warn to ignore certain "well known" warnings?
+Hi Jian-Hong,
 
-Hi Christoph,
+[+ Afonso]
 
-What was the motivation behind that WARNING about large allocations in
-kmalloc? Why do we want to know about them? Is the general policy that
-kmalloc calls with potentially large size requests need to use NOWARN?
-If this WARNING still considered useful? Or we should change it to
-pr_err?
+Am 23.08.18 um 19:15 schrieb Jian-Hong Pan:
+> LoRaWAN defined by LoRa Alliance(TM) is the MAC layer over LoRa devices.
+> 
+> This patch implements part of Class A end-devices features defined in
+> LoRaWAN(TM) Specification Ver. 1.0.2:
+> 1. End-device receive slot timing
+> 2. Only single channel and single data rate for now
+> 3. Unconfirmed data up/down message types
+> 4. Encryption/decryption for up/down link data messages
+> 
+> It also implements the the functions and maps to Datagram socket for
+> LoRaWAN unconfirmed data messages.
+> 
+> On the other side, it defines the basic interface and operation
+> functions for compatible LoRa device drivers.
+> 
+> Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+> ---
+>  include/linux/maclorawan/lora.h | 239 +++++++++++
+>  net/maclorawan/Kconfig          |  14 +
+>  net/maclorawan/Makefile         |   2 +
+>  net/maclorawan/lorawan.h        | 219 ++++++++++
+>  net/maclorawan/lrwsec.c         | 237 +++++++++++
+>  net/maclorawan/lrwsec.h         |  57 +++
+>  net/maclorawan/mac.c            | 552 +++++++++++++++++++++++++
+>  net/maclorawan/main.c           | 665 ++++++++++++++++++++++++++++++
+>  net/maclorawan/socket.c         | 700 ++++++++++++++++++++++++++++++++
+>  9 files changed, 2685 insertions(+)
+>  create mode 100644 include/linux/maclorawan/lora.h
+
+Can we use include/linux/lora/lorawan.h for simplicity?
+
+>  create mode 100644 net/maclorawan/Kconfig
+>  create mode 100644 net/maclorawan/Makefile
+>  create mode 100644 net/maclorawan/lorawan.h
+>  create mode 100644 net/maclorawan/lrwsec.c
+>  create mode 100644 net/maclorawan/lrwsec.h
+>  create mode 100644 net/maclorawan/mac.c
+>  create mode 100644 net/maclorawan/main.c
+>  create mode 100644 net/maclorawan/socket.c
+
+This patch is much too large for me to review...
+
+It also doesn't seem to follow the structure I suggested: 802.15.4 has
+two separate directories, net/ieee802154/ and net/mac802154/. Therefore
+I had suggested net/maclorawan/ only for code that translates from
+ETH_P_LORAWAN to ETH_P_LORA socket buffers, i.e. your soft MAC. Generic
+socket code that applies also to hard MAC drivers I expected to go
+either to net/lora/lorawan/ or better net/lorawan/ or some other clearly
+separate location, with its own Kconfig symbol - any reason not to?
+Consider which parts can be enabled/used independently of each other,
+then you can put them into two (or more?) different patches.
+
+Also please use SPDX license identifiers in your headers.
+And please don't put the whole world in To, use CC.
+
+Thanks,
+Andreas
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
