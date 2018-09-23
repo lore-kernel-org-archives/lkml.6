@@ -2,105 +2,114 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4142DECE562
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C38C46470
 	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE11D214C3
+	by mail.kernel.org (Postfix) with ESMTP id B344B214C2
 	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XJsXooW1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE11D214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ey/7qYpD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B344B214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbeIWPCk (ORCPT
+        id S1726200AbeIWOz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 11:02:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:33699 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbeIWPCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 11:02:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42J1dp5VSkz9s9J;
-        Sun, 23 Sep 2018 19:05:50 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1537693551;
-        bh=yvZOulPJjljsAEAlKTxlXn0EJipUXbE7ECaYzGVWdIM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XJsXooW1fjeYlo+x2A4ACzrFDIuduzwnVad02z5piNgIN9FE9C3+FjvkVTuX6c/UB
-         LHrJVy+UKVDK66c9AIt0utroJbt5ahTbNShedi4r6j04mtaYOeH0IPumjEYHMBmGoJ
-         Tazff53/2DfLaDtWWKElAnFTDqTx+6yeAyEAjriJKtMnUt+PKD78Q6IFCYWrA7keCd
-         n/ZXrP3yUSiGZQC5FObhKVtYrxIFXNgZwXIH6hHmD8ouQCWwtocz3eRl/zP4cWu9GH
-         orWpQIizjVDVuaI2AW3fVMkg8PclJJl8mWVvRc93vEpXP83kXrkwi5SqpHZJZ3IA2F
-         W/Ggc5KsSIboA==
-Date:   Sun, 23 Sep 2018 19:05:49 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Paul Burton <paul.burton@mips.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Mike Rapoport" <rppt@linux.vnet.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH -next] powerpc: Remove duplicated include from pci_32.c
-Message-ID: <20180923190549.1de60304@canb.auug.org.au>
-In-Reply-To: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
-References: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
+        Sun, 23 Sep 2018 10:55:58 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37417 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbeIWOz5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 10:55:57 -0400
+Received: by mail-wm1-f68.google.com with SMTP id n11-v6so7134830wmc.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 01:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uNlv0Wegcg/20sPANhXobuE1yL29hBkVxc7VROKDXHA=;
+        b=ey/7qYpDDr7uUefMh99kwvim/VZmamHOd4pMWN1AX6twVKxfRVrzCVulpKD39zS5T5
+         YycEZoHBYu417T6GObNyHZtGUTDO/ZHNTpmTa/uVIKH0XAIhkhAHNiPRkIzhbxsIdQtf
+         DRRnoSeo8l2e3GRokKAt5nimp0c3XIOWvK3qtBSMq8je6nnYOudGVjN9B3SOvacniMfu
+         fCylsHtPBmFTzadnUQZTBtrVrL9B3WHVIeutptjkE0cMPDQDRaKY8P70UFz18w7jWV/V
+         hOnt0mQQN9q7LOWF00xMl+AKM4xaIiVizTzrkJZq2qZV1APhLWFavShHJn9zhVkcmg+B
+         vN4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uNlv0Wegcg/20sPANhXobuE1yL29hBkVxc7VROKDXHA=;
+        b=sR62FY5EykAhcQr6xLYPoEchlHwbAiaqyRVacIp9G759r1rfQi2eALywmIZZorMuqx
+         fDa1I5PjaoQCoAvQppXVlNiQMqP1pe4vkFBBr49XdGMxa5UJxSBJrv6I6F8otUiInObL
+         wFw8tQR9s5yFhb2I7+SzC9jOIVo8+SEmoSFzdY1djD8VUrOe3sWbrKnhLhBaK06EORK2
+         mkC/d8SWq2k0dYp14sQLjYJZctlPgDdVVzCZa6Hi8nDxuwnl+UyZkdh45RKspXaDBmle
+         Se/MdW4d7oo67SlD7BCwoBB+ZhwQUl5ftNLiCC6gSlmoPG77TRKx64JIflCxQ3MdBaRj
+         ekHQ==
+X-Gm-Message-State: ABuFfoh92CrFYbbi3SUFr5YLpo2p+8A2syX+3nz9d3G45K1SkzKK9ri1
+        v9b2Ub68DACG2joZSHd8y5RHSxjgFqjg/c+8Of4=
+X-Google-Smtp-Source: ANB0VdbEvTvBEY6UoXyTmx6NO0jjNzBVIlGMeHYHLmhYqYh2BS46r7Z/CBVS4uqIiCLjEBtkqIcjxpPCzWA/DixW1vs=
+X-Received: by 2002:a1c:570a:: with SMTP id l10-v6mr3415349wmb.56.1537693152402;
+ Sun, 23 Sep 2018 01:59:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WWIZE=ZAavuz4SP_FRcygZC"; protocol="application/pgp-signature"
+References: <20180912035352.11191-1-diego.viola@gmail.com> <CA+ToGPGSOsLpbOvjjb22B510qkNefdsUSiFTYON7c=oh0s8vcA@mail.gmail.com>
+ <CANiq72m_X1U+NVf1VQuUcCi9-dERrCG3Y3tueRGbOpPd5u+a0g@mail.gmail.com>
+In-Reply-To: <CANiq72m_X1U+NVf1VQuUcCi9-dERrCG3Y3tueRGbOpPd5u+a0g@mail.gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Sun, 23 Sep 2018 10:59:01 +0200
+Message-ID: <CAFLxGvxZmuXb6KbGggQf4y1_Tkv=Ri3PuE4Jnfwbs1VuA9z2QQ@mail.gmail.com>
+Subject: Re: [PATCH TRIVIAL] Punctuation fixes
+To:     Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
+Cc:     Diego Viola <diego.viola@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Trivial patch monkey <trivial@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WWIZE=ZAavuz4SP_FRcygZC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi YueHaibing,
-
-On Sun, 23 Sep 2018 08:12:08 +0000 YueHaibing <yuehaibing@huawei.com> wrote:
+On Sun, Sep 23, 2018 at 3:00 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> Remove duplicated include.
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Hi Diego,
+>
+> A few things, since it looks like this is your first patch.
 
-Good catch.  It was added by 2 separate commits in v4.18-rc1.
+git log...
 
-Reviewed-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> On Sat, Sep 22, 2018 at 5:56 PM, Diego Viola <diego.viola@gmail.com> wrote:
+> > On Wed, Sep 12, 2018 at 12:54 AM Diego Viola <diego.viola@gmail.com> wrote:
+> >>
+> >> Signed-off-by: Diego Viola <diego.viola@gmail.com>
+> >> ---
+> >>  CREDITS     | 2 +-
+> >>  MAINTAINERS | 2 +-
+> >>  Makefile    | 2 +-
+> >>  3 files changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/CREDITS b/CREDITS
+> >> index 5befd2d71..b82efb36d 100644
+> >> --- a/CREDITS
+> >> +++ b/CREDITS
+> >> @@ -1473,7 +1473,7 @@ W: http://www.linux-ide.org/
+> >>  W: http://www.linuxdiskcert.org/
+> >>  D: Random SMP kernel hacker...
+> >>  D: Uniform Multi-Platform E-IDE driver
+> >> -D: Active-ATA-Chipset maddness..........
+> >> +D: Active-ATA-Chipset maddness...
+>
+> I think the extra dots is what was intended here :)
 
---=20
-Cheers,
-Stephen Rothwell
+Diego, I know you can do better. :-)
+How about running linux-next and hunting down regressions?
+I think we suggested this already on IRC.
 
---Sig_/WWIZE=ZAavuz4SP_FRcygZC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlunV20ACgkQAVBC80lX
-0GyHRQgAh2paAZg1pxKRLibvX6qiQV5EDyFHpjlyVlAoTJBHVrVLkGnci+r9Uaaz
-HoY4az0poqh7jkKTpGj2WeoJKPvPmDk+KYSMGTZLdVxT+N8f3Y8djaUeBcq7dxpY
-20xOoSJJsFxr8sCG3ey2+UE7PPKRuQRC1G0DmWX0F161tzBJ6HO+dFHC3NsD2EXG
-Os2MGl0fIdttT+C258QBS9JfzjIVZd7p/9foXsC2GCPGMVqMQHfIC8rXpYfQpsf5
-/NJ+pr2M9IN7YVwleQ/9L/ZpliQCjJ3eI4uvCi/5IBPdk4hxhkwH1I151W7rl7cF
-euT0y+MzpttSOQCK9HfLTMIBoE1iSA==
-=EiDL
------END PGP SIGNATURE-----
-
---Sig_/WWIZE=ZAavuz4SP_FRcygZC--
+-- 
+Thanks,
+//richard
