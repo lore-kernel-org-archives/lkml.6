@@ -8,141 +8,152 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB58C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 06:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B72ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 06:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59FCF214C3
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 06:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 209C2214C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 06:44:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lat0Q/m6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59FCF214C3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1rcxRWD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209C2214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbeIWMkG (ORCPT
+        id S1726230AbeIWMlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 08:40:06 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36335 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeIWMkF (ORCPT
+        Sun, 23 Sep 2018 08:41:12 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52549 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeIWMlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 08:40:05 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f4-v6so13789205edq.3;
-        Sat, 22 Sep 2018 23:43:42 -0700 (PDT)
+        Sun, 23 Sep 2018 08:41:12 -0400
+Received: by mail-wm1-f65.google.com with SMTP id l7-v6so1846403wme.2;
+        Sat, 22 Sep 2018 23:44:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=+aASfUH4P9hk54OhxTyjz/Fmh3PnRmgcc6bV888S9zA=;
-        b=Lat0Q/m6tMFBjlo0tekH/a9GJwTxkQG0VZR/20AOILMqdPRiM4xdFZVQd3qw27hXuF
-         H7z7+9kZGOb10AdLjMPIpOvS2+205aso8OSODxXQurh8pD9TIGwjU2g2o3gO0CZCiVtd
-         ZV/CaKl7/V9W+k1ely6uWWCBgURwXXQofzTgvscyB5sFq5LCGd35mqsjKIfHsmJ7/PNo
-         MWDRWn8VE41DLUFyDJURQ2n7j93DWejjN0rJgK81REmutfxlOetUv2841EH/4cKu8Wyv
-         yQqVE3z7QBZfKq/AhW5Sp9vBVmOeqT2hVC/IZ2OnTmtHzyrnCip/3/5R9Ry0e5QCiTPQ
-         esAA==
+        bh=O6Q5AqId683ZOVDgSgYgyMi+eVDblYMC+fX5Er0E9ec=;
+        b=I1rcxRWDU8w0kaRt5sEVA0SXxNaM3gK6sGsiMdBltmDgYG2Qxs6ZlbOycT6YEix0Up
+         +7ZwNyPeQA8hmiX6zT2Mw5pZyvBqGZiXKlcfvaF4ikyyd9u9V4k1DuN1V9gDZtI92yhM
+         Uc27mO+uRqLtMLiK/i+ZsZCTpb3wZS2ombtjnJgPZtTTyk87ipa/8Ju/+N1PIBXXbgLB
+         FG/zwu2YFf32DIYTnkXABjafHegCPowThk+ZDMsUoBdQn/yX9TRt1lot6nNVJmUJVXEZ
+         GMJFhvFuNOC2AAUcCiZ/2cAVImkHne6AVjvLXJyohzAEH3I+FGk00eQqJ7zUHgs3UOSD
+         Lzsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+aASfUH4P9hk54OhxTyjz/Fmh3PnRmgcc6bV888S9zA=;
-        b=QtXOvudsoG59215aOanfwDAkuKCWJljNdzB9QWHe5ZJ+E6i9LXYBmtGf9khdiFPMKz
-         WUE95S4GaYtCxAW687TexQvyYnC9wauWV8Vmw6n/ZJ6NO2yVa3hgSwNvL+h+70qBsOXr
-         9C6QkABp5/ITB520dRfL5x+N5Jo0WqmwQeKxKfaIuRGWDV5xF8Irk9UjYVQT7ler9ya+
-         n37WFA1rfEkKJpaU8m+DWFFvjaVrFmiAEdOiQOQ+z9cGZcgSKvoDkPSVGbONgeGVnAl2
-         1IDQNHFq9Tcj/HuiulS8hT9aQMYdbsXph4bzRsBFPxcwyUvRbQI8IXF9caVpK/XVsehi
-         79Pw==
-X-Gm-Message-State: ABuFfogo3OR1ls6tMaNb+6LyeZkjzufrJqAfYNH5vEO11Gfrus7QEiaO
-        ZY+vMuDdZfhOE5AmTldOTFM=
-X-Google-Smtp-Source: ACcGV63qvCZUjHpekrJsGPKBdhbTCmLFy2L2SznXy4s/RIrQ0FHn7l2F5Ni7Oo53CueM/jBlf2E7aw==
-X-Received: by 2002:a50:e68c:: with SMTP id z12-v6mr8136483edm.275.1537685021351;
-        Sat, 22 Sep 2018 23:43:41 -0700 (PDT)
+        bh=O6Q5AqId683ZOVDgSgYgyMi+eVDblYMC+fX5Er0E9ec=;
+        b=mhldT+z/cVkAkU9OM/U16pd49xRXyFOPlsUF2r/WHgYwAtqDGChQ08H+RlV8/t+pV4
+         ry5pPBbF3CGrKLw80+JgMDRnCWZD/Tj9vxVK+RQefc+UAme3X7WlkPWQyflfDvWlxihy
+         6sw1L8F5oE3i6kSbkWPVfj59hS7E1Ev4EuktH/E1VkKGbDougPRPI/vdnkmNGcMlDW9K
+         iMpK4jl+CSjqPdIsSjcW72NwkhUycSauLWJrPuew74E0Qu2O94+FF/a2W4rGrrSSyTwa
+         rflr/1DMgru4wSJuVxWcB6+oQPCo4aeNeb5OqPv5Xf7mp4h1G1cvAtL5WY3YsdAtPoI7
+         Rb0g==
+X-Gm-Message-State: ABuFfoiNcxAgs/y6blxdehxpAoX4AnuimYxIYgMOoGalPFdq0SH2KXOb
+        lt6v3QoJrmBFnVCs7SKjF5c=
+X-Google-Smtp-Source: ANB0VdbM9F9lassu5Bpvso9pAQCvVkrc3DLuX+L+mtnvcDGVjDOuCtAMnHvzC4UH3eKmFxklKysSMw==
+X-Received: by 2002:a1c:ed4:: with SMTP id 203-v6mr3091269wmo.96.1537685087841;
+        Sat, 22 Sep 2018 23:44:47 -0700 (PDT)
 Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm5232367edo.39.2018.09.22.23.43.40
+        by smtp.gmail.com with ESMTPSA id v16-v6sm42296267wrw.12.2018.09.22.23.44.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Sep 2018 23:43:40 -0700 (PDT)
-Date:   Sat, 22 Sep 2018 23:43:39 -0700
+        Sat, 22 Sep 2018 23:44:47 -0700 (PDT)
+Date:   Sat, 22 Sep 2018 23:44:45 -0700
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtlwifi: btcoex: Use proper enumerated types for Wi-Fi
- only interface
-Message-ID: <20180923064339.GB12338@flashbox>
-References: <20180921220824.18344-1-natechancellor@gmail.com>
+To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] RDS: IB: Use DEFINE_PER_CPU_SHARED_ALIGNED for
+ rds_ib_stats
+Message-ID: <20180923064445.GC12338@flashbox>
+References: <20180921180451.18711-1-natechancellor@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180921220824.18344-1-natechancellor@gmail.com>
+In-Reply-To: <20180921180451.18711-1-natechancellor@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 03:08:24PM -0700, Nathan Chancellor wrote:
-> Clang warns when one enumerated type is implicitly converted to another.
+On Fri, Sep 21, 2018 at 11:04:51AM -0700, Nathan Chancellor wrote:
+> Clang warns when two declarations' section attributes don't match.
 > 
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1327:34:
-> warning: implicit conversion from enumeration type 'enum
-> btc_chip_interface' to different enumeration type 'enum
-> wifionly_chip_interface' [-Wenum-conversion]
->                 wifionly_cfg->chip_interface = BTC_INTF_PCI;
->                                              ~ ^~~~~~~~~~~~
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1330:34:
-> warning: implicit conversion from enumeration type 'enum
-> btc_chip_interface' to different enumeration type 'enum
-> wifionly_chip_interface' [-Wenum-conversion]
->                 wifionly_cfg->chip_interface = BTC_INTF_USB;
->                                              ~ ^~~~~~~~~~~~
-> drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c:1333:34:
-> warning: implicit conversion from enumeration type 'enum
-> btc_chip_interface' to different enumeration type 'enum
-> wifionly_chip_interface' [-Wenum-conversion]
->                 wifionly_cfg->chip_interface = BTC_INTF_UNKNOWN;
->                                              ~ ^~~~~~~~~~~~~~~~
-> 3 warnings generated.
+> net/rds/ib_stats.c:40:1: warning: section does not match previous
+> declaration [-Wsection]
+> DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
+> ^
+> ./include/linux/percpu-defs.h:142:2: note: expanded from macro
+> 'DEFINE_PER_CPU_SHARED_ALIGNED'
+>         DEFINE_PER_CPU_SECTION(type, name,
+> PER_CPU_SHARED_ALIGNED_SECTION) \
+>         ^
+> ./include/linux/percpu-defs.h:93:9: note: expanded from macro
+> 'DEFINE_PER_CPU_SECTION'
+>         extern __PCPU_ATTRS(sec) __typeof__(type) name;
+> \
+>                ^
+> ./include/linux/percpu-defs.h:49:26: note: expanded from macro
+> '__PCPU_ATTRS'
+>         __percpu __attribute__((section(PER_CPU_BASE_SECTION sec)))
+> \
+>                                 ^
+> net/rds/ib.h:446:1: note: previous attribute is here
+> DECLARE_PER_CPU(struct rds_ib_statistics, rds_ib_stats);
+> ^
+> ./include/linux/percpu-defs.h:111:2: note: expanded from macro
+> 'DECLARE_PER_CPU'
+>         DECLARE_PER_CPU_SECTION(type, name, "")
+>         ^
+> ./include/linux/percpu-defs.h:87:9: note: expanded from macro
+> 'DECLARE_PER_CPU_SECTION'
+>         extern __PCPU_ATTRS(sec) __typeof__(type) name
+>                ^
+> ./include/linux/percpu-defs.h:49:26: note: expanded from macro
+> '__PCPU_ATTRS'
+>         __percpu __attribute__((section(PER_CPU_BASE_SECTION sec)))
+> \
+>                                 ^
+> 1 warning generated.
 > 
-> Use the values from the correct enumerated type, wifionly_chip_interface.
+> The initial definition was added in commit ec16227e1414 ("RDS/IB:
+> Infiniband transport") and the cache aligned definition was added in
+> commit e6babe4cc4ce ("RDS/IB: Stats and sysctls") right after. The
+> definition probably should have been updated in net/rds/ib.h, which is
+> what this patch does.
 > 
-> BTC_INTF_UNKNOWN = WIFIONLY_INTF_UNKNOWN = 0
-> BTC_INTF_PCI = WIFIONLY_INTF_PCI = 0
-> BTC_INTF_USB = WIFIONLY_INTF_USB = 0
+> Link: https://github.com/ClangBuiltLinux/linux/issues/114
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  net/rds/ib.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/net/rds/ib.h b/net/rds/ib.h
+> index 73427ff439f9..fd483760c910 100644
+> --- a/net/rds/ib.h
+> +++ b/net/rds/ib.h
+> @@ -443,7 +443,7 @@ int rds_ib_send_grab_credits(struct rds_ib_connection *ic, u32 wanted,
+>  int rds_ib_xmit_atomic(struct rds_connection *conn, struct rm_atomic_op *op);
+>  
+>  /* ib_stats.c */
+> -DECLARE_PER_CPU(struct rds_ib_statistics, rds_ib_stats);
+> +DEFINE_PER_CPU_SHARED_ALIGNED(struct rds_ib_statistics, rds_ib_stats);
 
-I have sent a v2 making these values correct.
+I have sent a v2 because this should be DECLARE_PER_CPU_SHARED_ALIGNED,
+not DEFINE (thanks to 0day for catching it).
 
 I will make sure the '--in-reply-to' option in the future.
 
 Nathan
 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/135
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  .../net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c   | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-> index b026e80940a4..6fbf8845a2ab 100644
-> --- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-> +++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-> @@ -1324,13 +1324,13 @@ bool exhalbtc_initlize_variables_wifi_only(struct rtl_priv *rtlpriv)
->  
->  	switch (rtlpriv->rtlhal.interface) {
->  	case INTF_PCI:
-> -		wifionly_cfg->chip_interface = BTC_INTF_PCI;
-> +		wifionly_cfg->chip_interface = WIFIONLY_INTF_PCI;
->  		break;
->  	case INTF_USB:
-> -		wifionly_cfg->chip_interface = BTC_INTF_USB;
-> +		wifionly_cfg->chip_interface = WIFIONLY_INTF_USB;
->  		break;
->  	default:
-> -		wifionly_cfg->chip_interface = BTC_INTF_UNKNOWN;
-> +		wifionly_cfg->chip_interface = WIFIONLY_INTF_UNKNOWN;
->  		break;
->  	}
->  
+>  #define rds_ib_stats_inc(member) rds_stats_inc_which(rds_ib_stats, member)
+>  #define rds_ib_stats_add(member, count) \
+>  		rds_stats_add_which(rds_ib_stats, member, count)
 > -- 
 > 2.19.0
 > 
