@@ -2,71 +2,99 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C97C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C824FC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82D12148D
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:02:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82D12148D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A9382148D
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 12:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A9382148D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbeIWR7g (ORCPT
+        id S1726225AbeIWSLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 13:59:36 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12679 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726126AbeIWR7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 13:59:36 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B0F92CB3934AB;
-        Sun, 23 Sep 2018 20:02:13 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.399.0; Sun, 23 Sep 2018 20:02:07 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ring-buffer: Fix ring buffer size in rb_write_something
-Date:   Sun, 23 Sep 2018 12:11:33 +0000
-Message-ID: <1537704693-184237-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Sun, 23 Sep 2018 14:11:12 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:49018 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeIWSLL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 14:11:11 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id E9D93183C4;
+        Sun, 23 Sep 2018 14:13:52 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id 7PBqM3ygVc9Y; Sun, 23 Sep 2018 14:13:52 +0200 (CEST)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id D0F3A18398;
+        Sun, 23 Sep 2018 14:13:51 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF0D81A065;
+        Sun, 23 Sep 2018 14:13:51 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A39A81A061;
+        Sun, 23 Sep 2018 14:13:51 +0200 (CEST)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder02.se.axis.com (Postfix) with ESMTP;
+        Sun, 23 Sep 2018 14:13:51 +0200 (CEST)
+Received: from XBOX02.axis.com (xbox02.axis.com [10.0.5.16])
+        by thoth.se.axis.com (Postfix) with ESMTP id 9749D2F8E;
+        Sun, 23 Sep 2018 14:13:51 +0200 (CEST)
+Received: from [10.88.41.2] (10.0.5.60) by XBOX02.axis.com (10.0.5.16) with
+ Microsoft SMTP Server (TLS) id 15.0.1365.1; Sun, 23 Sep 2018 14:13:51 +0200
+Subject: Re: [PATCH crypto-next 18/23] crypto: artpec6 - Remove VLA usage of
+ skcipher
+To:     Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+CC:     Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>,
+        <linux-arm-kernel@axis.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric Biggers" <ebiggers@google.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180919021100.3380-1-keescook@chromium.org>
+ <20180919021100.3380-19-keescook@chromium.org>
+From:   Lars Persson <lars.persson@axis.com>
+Message-ID: <29e492c8-671a-2077-043f-e4f829ba04f2@axis.com>
+Date:   Sun, 23 Sep 2018 14:13:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180919021100.3380-19-keescook@chromium.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: sv
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.0.5.60]
+X-ClientProxiedBy: XBOX01.axis.com (10.0.5.15) To XBOX02.axis.com (10.0.5.16)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'cnt' should be used to calculate ring buffer size rather than data->cnt
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- kernel/trace/ring_buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 65bd461..53538c3 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -4924,7 +4924,7 @@ static __init int rb_write_something(struct rb_test_data *data, bool nested)
- 	cnt = data->cnt + (nested ? 27 : 0);
- 
- 	/* Multiply cnt by ~e, to make some unique increment */
--	size = (data->cnt * 68 / 25) % (sizeof(rb_string) - 1);
-+	size = (cnt * 68 / 25) % (sizeof(rb_string) - 1);
- 
- 	len = size + sizeof(struct rb_item);
- 
 
 
+On 9/19/18 4:10 AM, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> replaces struct crypto_skcipher and SKCIPHER_REQUEST_ON_STACK() usage
+> with struct crypto_sync_skcipher and SYNC_SKCIPHER_REQUEST_ON_STACK(),
+> which uses a fixed stack size.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Cc: Jesper Nilsson <jesper.nilsson@axis.com>
+> Cc: Lars Persson <lars.persson@axis.com>
+> Cc: linux-arm-kernel@axis.com
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>   drivers/crypto/axis/artpec6_crypto.c | 19 +++++++++----------
+>   1 file changed, 9 insertions(+), 10 deletions(-)
+> 
+
+Acked-by: Lars Persson <lars.persson@axis.com>
 
