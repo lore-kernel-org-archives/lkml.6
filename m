@@ -2,197 +2,144 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F023C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2E3ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA134214C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:34:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA134214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id 38C6F214C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:34:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Le1GbbPa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C6F214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbeIWPa7 (ORCPT
+        id S1726344AbeIWPbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 11:30:59 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:46645 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726288AbeIWPa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 11:30:59 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowAB3WOUCXqdb5DCzDA--.183S2;
-        Sun, 23 Sep 2018 17:33:58 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-To:     bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v8 02/16] x86/cpu: Get cache info and setup cache cpumap for Hygon Dhyana
-Date:   Sun, 23 Sep 2018 17:33:44 +0800
-Message-Id: <2a686b2ac0e2f5a1f2f5f101124d9dd44f949731.1537533369.git.puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1537533368.git.puwen@hygon.cn>
-References: <cover.1537533368.git.puwen@hygon.cn>
-X-CM-TRANSID: qwCowAB3WOUCXqdb5DCzDA--.183S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGry5Zr4DGFy8Xrykur1rZwb_yoWrtw1rpr
-        W2kw4rJF4xWFyfG3s8Jr4kXw4fZrykKa1xK347Ga4rAanrZr18Xrn8Kw13Zr98Zw4rCw4S
-        qF40gw17KF1rJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUym14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-        4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
-        rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-        vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-        x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
-        xKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-        wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUkrcfUUUUU=
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        Sun, 23 Sep 2018 11:31:10 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39610 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeIWPbK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 11:31:10 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so7804000pff.6
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 02:34:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=853+wXPZXaA/y8zlhPk0YkJuJFJ+zrRWHOdlglJdZRY=;
+        b=Le1GbbPa/IwZYnATAKC1apngF12WWDsKBagxvdtl5SzLzzBoOxW6Y1q9gSPeSoWFsA
+         xZhEapusAttCXNiS20qV4abbDdtoG6JK1BAidNnnMNN7jYQ8Ty+Vtazf9A8GENfMox4N
+         LU9RTo9LsA2Q/T/Rzn7ksGFmsS2A2ujIK4MDp+VJfvevz9H4z7VdnMnShW7N/VBndlJG
+         b4ek9UlPGyo/WvXcEutG0jSnCQZI7zaISkU0FbXLPOrdVeFSKDHu/qddbHYPqvSWuEKk
+         J9mG5PawH9a2lAs4hfje0ULyURguKoeE6e/bkCUlQDXl+r7WH/GWJFWTPNAB78j0riRe
+         8oDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=853+wXPZXaA/y8zlhPk0YkJuJFJ+zrRWHOdlglJdZRY=;
+        b=M65ccFV2ZxYVq9ISOde5NcMOqvfSiSimPDA4ByghpPCrZT+WEx4kMWeH3RyKe8WBv9
+         p1PmNJQrrJStlERSN8ugLBYwFzjJh/VpDNQIleQXWc1VOXJAllCl9oqw390Mvk9yByaH
+         JmC/f4laJgmY+C2hNNdN+wcJGS95OttRdwiaNVBmaadKBjXcaRP1LHV0OUnzb/k1LTfV
+         8P2DKGxZ/hEdxJXLZSxGwqGNI6AYDsdZACfqH+GwCWgay8h+nqiUWKI0rnzcAFsJUHOA
+         MO5oc7qT/+aR5haABIEXXsdGuUoUFQqJsz8GoXJAatYR1W6Ds6XZdzIs9q32DXriRXiB
+         HJiw==
+X-Gm-Message-State: ABuFfoh8+CW7QoGpZkcYDiq5LnF5Z/MkVEKx5TFzLVwzzaKBlR62covi
+        scr3E3DnnppIyJFkLhyr0Kc=
+X-Google-Smtp-Source: ACcGV60wgLocEBEFStlWvJjg5KikV4ML1tIZrlGJb4Kk9j1Cona+zrJmdf+icFudLK5qv0vX5vGdjA==
+X-Received: by 2002:a63:5ec5:: with SMTP id s188-v6mr5095540pgb.126.1537695259338;
+        Sun, 23 Sep 2018 02:34:19 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id v126-v6sm1687269pgb.47.2018.09.23.02.34.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Sep 2018 02:34:18 -0700 (PDT)
+Date:   Sun, 23 Sep 2018 15:04:12 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
+        devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] staging: mt7621-mmc: Remove do {} while (0) loop for
+ single statement macro
+Message-ID: <20180923093410.GA20551@nishad>
+References: <20180915131748.GA19661@nishad>
+ <20180918112711.GA14453@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918112711.GA14453@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Hygon Dhyana CPU has topology extensions bit in CPUID. With this
-bit, the kernel can get the cache information. So add support in
-cpuid4_cache_lookup_regs() to get the correct cache size.
+On Tue, Sep 18, 2018 at 01:27:11PM +0200, Greg Kroah-Hartman wrote:
+> On Sat, Sep 15, 2018 at 06:47:51PM +0530, Nishad Kamdar wrote:
+> > This patch removes do {} while (0) loop for single statement macros.
+> > Issue found by checkpatch.
+> > 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> >  drivers/staging/mt7621-mmc/sd.c | 28 +++++++---------------------
+> >  1 file changed, 7 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
+> > index 7474f9ed7b5b..ec12a3a5a926 100644
+> > --- a/drivers/staging/mt7621-mmc/sd.c
+> > +++ b/drivers/staging/mt7621-mmc/sd.c
+> > @@ -104,14 +104,10 @@ static int cd_active_low = 1;
+> >  /* gate means clock power down */
+> >  static int g_clk_gate = 0;
+> >  #define msdc_gate_clock(id) \
+> > -	do {					       \
+> > -		g_clk_gate &= ~(1 << ((id) + PERI_MSDC0_PDN));	\
+> > -	} while (0)
+> > +	(g_clk_gate &= ~(1 << ((id) + PERI_MSDC0_PDN)))
+> 
+> This should become an inline function, right?
+> 
+> 
+> >  /* not like power down register. 1 means clock on. */
+> >  #define msdc_ungate_clock(id) \
+> > -	do {					    \
+> > -		g_clk_gate |= 1 << ((id) + PERI_MSDC0_PDN);	\
+> > -	} while (0)
+> > +	(g_clk_gate |= 1 << ((id) + PERI_MSDC0_PDN))
+> 
+> Same here.
+> 
+> >  
+> >  // do we need sync object or not
+> >  void msdc_clk_status(int *status)
+> > @@ -170,9 +166,7 @@ static void msdc_clr_fifo(struct msdc_host *host)
+> >  	} while (0)
+> >  
+> >  #define msdc_irq_restore(val) \
+> > -	do {					\
+> > -		sdr_set_bits(host->base + MSDC_INTEN, val);	\
+> > -	} while (0)
+> > +	(sdr_set_bits(host->base + MSDC_INTEN, val))
+> 
+> Just call the one function where this is used and delete this #define.
+> 
+> Same type of changes for the rest of these as well.
+> 
+> thanks,
+> 
+> greg k-h
 
-The Hygon Dhyana CPU also discovers num_cache_leaves via CPUID leaf
-0x8000001d, so add support to it in find_num_cache_leaves().
+Ok. I'll do that.
 
-Also add cacheinfo_hygon_init_llc_id() and init_hygon_cacheinfo()
-functions to initialize Dhyana cache info. Setup cache cpumap in
-the same way as AMD does.
+Thanks for the review.
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Reviewed-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/include/asm/cacheinfo.h |  1 +
- arch/x86/kernel/cpu/cacheinfo.c  | 31 +++++++++++++++++++++++++++++--
- arch/x86/kernel/cpu/cpu.h        |  1 +
- arch/x86/kernel/cpu/hygon.c      |  3 +++
- 4 files changed, 34 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/cacheinfo.h b/arch/x86/include/asm/cacheinfo.h
-index e958e28..86b63c7 100644
---- a/arch/x86/include/asm/cacheinfo.h
-+++ b/arch/x86/include/asm/cacheinfo.h
-@@ -3,5 +3,6 @@
- #define _ASM_X86_CACHEINFO_H
- 
- void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
-+void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
- 
- #endif /* _ASM_X86_CACHEINFO_H */
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 0c5fcbd..dc1b934 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -602,6 +602,10 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
- 		else
- 			amd_cpuid4(index, &eax, &ebx, &ecx);
- 		amd_init_l3_cache(this_leaf, index);
-+	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
-+		cpuid_count(0x8000001d, index, &eax.full,
-+			    &ebx.full, &ecx.full, &edx);
-+		amd_init_l3_cache(this_leaf, index);
- 	} else {
- 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
- 	}
-@@ -625,7 +629,8 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- 	union _cpuid4_leaf_eax	cache_eax;
- 	int 			i = -1;
- 
--	if (c->x86_vendor == X86_VENDOR_AMD)
-+	if (c->x86_vendor == X86_VENDOR_AMD ||
-+	    c->x86_vendor == X86_VENDOR_HYGON)
- 		op = 0x8000001d;
- 	else
- 		op = 4;
-@@ -678,6 +683,22 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
- 	}
- }
- 
-+void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
-+{
-+	/*
-+	 * We may have multiple LLCs if L3 caches exist, so check if we
-+	 * have an L3 cache by looking at the L3 cache CPUID leaf.
-+	 */
-+	if (!cpuid_edx(0x80000006))
-+		return;
-+
-+	/*
-+	 * LLC is at the core complex level.
-+	 * Core complex ID is ApicId[3] for these processors.
-+	 */
-+	per_cpu(cpu_llc_id, cpu) = c->apicid >> 3;
-+}
-+
- void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- {
- 
-@@ -691,6 +712,11 @@ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- 	}
- }
- 
-+void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
-+{
-+	num_cache_leaves = find_num_cache_leaves(c);
-+}
-+
- void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- {
- 	/* Cache sizes */
-@@ -913,7 +939,8 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
- 	int index_msb, i;
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 
--	if (c->x86_vendor == X86_VENDOR_AMD) {
-+	if (c->x86_vendor == X86_VENDOR_AMD ||
-+	    c->x86_vendor == X86_VENDOR_HYGON) {
- 		if (__cache_amd_cpumap_setup(cpu, index, base))
- 			return;
- 	}
-diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
-index 7b229af..da5446a 100644
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -54,6 +54,7 @@ extern u32 get_scattered_cpuid_leaf(unsigned int level,
- 				    enum cpuid_regs_idx reg);
- extern void init_intel_cacheinfo(struct cpuinfo_x86 *c);
- extern void init_amd_cacheinfo(struct cpuinfo_x86 *c);
-+extern void init_hygon_cacheinfo(struct cpuinfo_x86 *c);
- 
- extern void detect_num_cpu_cores(struct cpuinfo_x86 *c);
- extern int detect_extended_topology_early(struct cpuinfo_x86 *c);
-diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
-index 9f5679e..ac70997 100644
---- a/arch/x86/kernel/cpu/hygon.c
-+++ b/arch/x86/kernel/cpu/hygon.c
-@@ -90,6 +90,7 @@ static void hygon_get_topology(struct cpuinfo_x86 *c)
- 		if (!err)
- 			c->x86_coreid_bits = get_count_order(c->x86_max_cores);
- 
-+		cacheinfo_hygon_init_llc_id(c, cpu, node_id);
- 	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
- 		u64 value;
- 
-@@ -324,6 +325,8 @@ static void init_hygon(struct cpuinfo_x86 *c)
- 	hygon_get_topology(c);
- 	srat_detect_node(c);
- 
-+	init_hygon_cacheinfo(c);
-+
- 	if (cpu_has(c, X86_FEATURE_XMM2)) {
- 		unsigned long long val;
- 		int ret;
--- 
-2.7.4
-
+regards,
+nishad
