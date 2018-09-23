@@ -2,73 +2,236 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF303C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43114ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 529C821479
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:41:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 529C821479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+	by mail.kernel.org (Postfix) with ESMTP id CA4F82147C
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:02:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4F82147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbeIWVjc (ORCPT
+        id S1726309AbeIWWAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 17:39:32 -0400
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:48232 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726222AbeIWVjc (ORCPT
+        Sun, 23 Sep 2018 18:00:47 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:63537 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeIWWAq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 17:39:32 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1g46Vl-0000zK-Gt; Sun, 23 Sep 2018 17:41:29 +0200
-Date:   Sun, 23 Sep 2018 17:41:29 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Christian =?iso-8859-15?Q?G=F6ttsche?= <cgzones@googlemail.com>
-Cc:     fw@strlen.de, pablo@netfilter.org, kadlec@blackhole.kfki.hu,
-        davem@davemloft.net, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Sun, 23 Sep 2018 18:00:46 -0400
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8NFxsmD006872;
+        Mon, 24 Sep 2018 00:59:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Mon, 24 Sep 2018 00:59:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8NFxmfR006857
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 24 Sep 2018 00:59:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
+To:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, jmorris@namei.org,
-        serge@hallyn.com, selinux <selinux@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] netfilter: nf_tables: add SECMARK support
-Message-ID: <20180923154129.ht55keytmgxcnl73@breakpoint.cc>
-References: <20180923091611.19815-1-cgzones@googlemail.com>
- <20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
- <CAJ2a_DfCmbFmpTngFnXzYy07gvEzN5UhAhrE8Cd8PowevrLUNw@mail.gmail.com>
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+ <CAGXu5jK=+FuL+JiSxcHy0i9Ppha=BQYdJW5zvbm1Redbo12wmw@mail.gmail.com>
+ <680e6e16-0890-8304-0e8e-6c58966813b5@schaufler-ca.com>
+ <CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <39457e79-3816-824b-6b4d-89d21b03f9ce@i-love.sakura.ne.jp>
+Date:   Mon, 24 Sep 2018 00:59:47 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ2a_DfCmbFmpTngFnXzYy07gvEzN5UhAhrE8Cd8PowevrLUNw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Göttsche <cgzones@googlemail.com> wrote:
-> > Can you change this to:
-> >
-> > struct nft_secmark {
-> >         u32 secid;
-> >         char *ctx;
-> > };
+On 2018/09/23 11:43, Kees Cook wrote:
+>>> I'm excited about getting this landed!
+>>
+>> Soon. Real soon. I hope. I would very much like for
+>> someone from the SELinux camp to chime in, especially on
+>> the selinux_is_enabled() removal.
 > 
-> Does the nla_policy struct needs an update too? (regarding then .len member)
+> Agreed.
 > 
-> +static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
-> +        [NFTA_SECMARK_CTX] = { .type = NLA_STRING, .len =
-> NFT_SECMARK_CTX_MAXLEN },
-> +}
-> 
-> NFT_SECMARK_CTX_MAXLEN might be dropped then..
 
-Better keep it, we can always increase this later it if needed.
-Given the length matches what xtables uses it should be fine.
+This patchset from Casey lands before the patchset from Kees, doesn't it?
+OK, a few comments (if I didn't overlook something).
+
+  lsm_early_cred()/lsm_early_task() are called from only __init functions.
+
+  lsm_cred_alloc()/lsm_file_alloc() are called from only security/security.c .
+
+  lsm_early_inode() should be avoided because it is not appropriate to
+  call panic() when lsm_early_inode() is called after __init phase.
+
+  Since all free hooks are called when one of init hooks failed, each
+  free hook needs to check whether init hook was called. An example is
+  inode_free_security() in security/selinux/hooks.c (but not addressed in
+  this patch).
+
+  This patchset might fatally prevent LKM-based LSM modules, for LKM-based
+  LSMs cannot count on lsm_*_alloc() because size for lsm_*_alloc() cannot
+  be updated upon loading LKM-based LSMs. If security_file_free() is called
+  regardless of whether lsm_file_cache is defined, LKM-based LSMs can be
+  loaded using current behavior (apart from the fact that legitimate
+  interface for appending to security_hook_heads is currently missing).
+  How do you plan to handle LKM-based LSMs?
+
+ include/linux/lsm_hooks.h  |    6 ++----
+ security/security.c        |   31 ++++++-------------------------
+ security/smack/smack_lsm.c |    8 +++++++-
+ 3 files changed, 15 insertions(+), 30 deletions(-)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 7e8b32f..8014614 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2095,13 +2095,11 @@ static inline void __init yama_add_hooks(void) { }
+ static inline void loadpin_add_hooks(void) { };
+ #endif
+ 
+-extern int lsm_cred_alloc(struct cred *cred, gfp_t gfp);
+ extern int lsm_inode_alloc(struct inode *inode);
+ 
+ #ifdef CONFIG_SECURITY
+-void lsm_early_cred(struct cred *cred);
+-void lsm_early_inode(struct inode *inode);
+-void lsm_early_task(struct task_struct *task);
++void __init lsm_early_cred(struct cred *cred);
++void __init lsm_early_task(struct task_struct *task);
+ #endif
+ 
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/security.c b/security/security.c
+index e7c85060..341e8df 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -267,7 +267,7 @@ int unregister_lsm_notifier(struct notifier_block *nb)
+  *
+  * Returns 0, or -ENOMEM if memory can't be allocated.
+  */
+-int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
++static int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+ {
+ 	if (blob_sizes.lbs_cred == 0) {
+ 		cred->security = NULL;
+@@ -286,7 +286,7 @@ int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+  *
+  * Allocate the cred blob for all the modules if it's not already there
+  */
+-void lsm_early_cred(struct cred *cred)
++void __init lsm_early_cred(struct cred *cred)
+ {
+ 	int rc;
+ 
+@@ -344,7 +344,7 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
+  *
+  * Returns 0, or -ENOMEM if memory can't be allocated.
+  */
+-int lsm_file_alloc(struct file *file)
++static int lsm_file_alloc(struct file *file)
+ {
+ 	if (!lsm_file_cache) {
+ 		file->f_security = NULL;
+@@ -379,25 +379,6 @@ int lsm_inode_alloc(struct inode *inode)
+ }
+ 
+ /**
+- * lsm_early_inode - during initialization allocate a composite inode blob
+- * @inode: the inode that needs a blob
+- *
+- * Allocate the inode blob for all the modules if it's not already there
+- */
+-void lsm_early_inode(struct inode *inode)
+-{
+-	int rc;
+-
+-	if (inode == NULL)
+-		panic("%s: NULL inode.\n", __func__);
+-	if (inode->i_security != NULL)
+-		return;
+-	rc = lsm_inode_alloc(inode);
+-	if (rc)
+-		panic("%s: Early inode alloc failed.\n", __func__);
+-}
+-
+-/**
+  * lsm_task_alloc - allocate a composite task blob
+  * @task: the task that needs a blob
+  *
+@@ -466,7 +447,7 @@ int lsm_msg_msg_alloc(struct msg_msg *mp)
+  *
+  * Allocate the task blob for all the modules if it's not already there
+  */
+-void lsm_early_task(struct task_struct *task)
++void __init lsm_early_task(struct task_struct *task)
+ {
+ 	int rc;
+ 
+@@ -1202,11 +1183,11 @@ void security_file_free(struct file *file)
+ {
+ 	void *blob;
+ 
++	call_void_hook(file_free_security, file);
++
+ 	if (!lsm_file_cache)
+ 		return;
+ 
+-	call_void_hook(file_free_security, file);
+-
+ 	blob = file->f_security;
+ 	file->f_security = NULL;
+ 	kmem_cache_free(lsm_file_cache, blob);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 7843004..b0b4045 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -750,6 +750,13 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ 	if (sp->smk_flags & SMK_SB_INITIALIZED)
+ 		return 0;
+ 
++	if (inode->i_security == NULL) {
++		int rc = lsm_inode_alloc(inode);
++
++		if (rc)
++			return rc;
++	}
++
+ 	if (!smack_privileged(CAP_MAC_ADMIN)) {
+ 		/*
+ 		 * Unprivileged mounts don't get to specify Smack values.
+@@ -818,7 +825,6 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ 	/*
+ 	 * Initialize the root inode.
+ 	 */
+-	lsm_early_inode(inode);
+ 	init_inode_smack(inode, sp->smk_root);
+ 
+ 	if (transmute) {
+
