@@ -2,137 +2,153 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CF3C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFD5C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FF821479
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 887CD21479
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:33:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BclPSk33";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IPrgwByi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FF821479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuGBSzyM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887CD21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbeIWVbJ (ORCPT
+        id S1726648AbeIWVb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 17:31:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46382 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbeIWVbJ (ORCPT
+        Sun, 23 Sep 2018 17:31:27 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37039 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbeIWVb1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 17:31:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4706560C6C; Sun, 23 Sep 2018 15:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537716798;
-        bh=k9lzblhHqQbmuaZaoyXA5IIlqXHWRmy4igZm8BG+q4w=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=BclPSk33ZdVMDaXv7ZEs42zFfymcL5NaYdv/EkLWqS7x2/1MKWHyaBr31djgSbG41
-         qbHRYT7bDGAWjvd+aRyoZT8j0NNYGNx8CyrB84G2ThVDyJYSVpfEpG/o+WKGkmWvCw
-         5F8AcFlWPeBjg6IHod1xnVS+7dQCok7M53MWDUBE=
-Received: from [192.168.43.47] (unknown [27.59.63.206])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2073660B7F;
-        Sun, 23 Sep 2018 15:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537716797;
-        bh=k9lzblhHqQbmuaZaoyXA5IIlqXHWRmy4igZm8BG+q4w=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=IPrgwByiyb/Cugq9OjjZZljqwSONqcV03mn7Wz1CoBg6aDxesPZjMl+rsuTEuY3fM
-         5hCm0+F7mqGZUzFmq8K85T8K6yhBChyY3W3AxRt26L4WN80vzKCIedjL0UAHbwjmot
-         Z8E+xGFl/RRHzoloxPpo3q16iJI/7SVrTvIzwr58=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2073660B7F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 2/6] pstore: Add event tracing support
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Prasad Sodagudi <psodagud@codeaurora.org>,
-        tsoni@codeaurora.org, Bryan Huntsman <bryanh@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>,
-        kernel-team <kernel-team@android.com>
-References: <cover.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <b9b60ff2864a17fb05481aa33f90114ab051d6ce.1536430404.git.saiprakash.ranjan@codeaurora.org>
- <CAEXW_YRXQwKvnahv5X1F_Bu_98vMg=w1xpo8PZ+aNT02vBrwwg@mail.gmail.com>
- <e8fdef37-afcd-24b3-1005-e707b73f20b1@codeaurora.org>
-Message-ID: <eb686156-95d2-2468-21be-13bfd97d5a58@codeaurora.org>
-Date:   Sun, 23 Sep 2018 21:03:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 23 Sep 2018 17:31:27 -0400
+Received: by mail-qt1-f195.google.com with SMTP id n6-v6so6446076qtl.4
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 08:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=IoX21+HxmVne961HBg+0/13LQqqkjwflCm/H8JikV5M=;
+        b=RuGBSzyMc6eXgM6+L8sOOEo5ZsywU3YFsQ88cdSV3sXfLAz7epBTmVQXZHD1/3TZ0G
+         HQkb2BAQoW6aiTRq9DaL11OF989Mb7rsJVqeHIzywJBrd1jdvHMkSsmQNXnET3Ce7Mub
+         usXiHyh/OrbvPbiGySqPcANN85GGgRtRP8MFlfUqZKAiMeSBlmaq1OGUGi88b/0WQ/yQ
+         fzsSzjbl26wrSEPfNNeGnWB1AoUGZFPH0hRpAjevHpzkSSrbQ6uDIn40bLF4EITNg9NA
+         47CA7L5cPrcoxVn3nBs32FWgaAMokLyO1YZm/4Pfzjx8qySHXAwpGVGhMirvArtY8pdP
+         cCnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=IoX21+HxmVne961HBg+0/13LQqqkjwflCm/H8JikV5M=;
+        b=Y2IXBZlMoAIG/JFhF2vRDupMCmUUagZO1bZXhzFttekHI2nX3a7if/Zi2HCJ8VtRqv
+         UBJ/kdHFwdtPqXOwP4dgYaJrh9mBCuUScBGHgPk2AtE+05xgD4Z12Y+OWM4VmE95Q+5X
+         ikk1R37TjCJCHiKk8dpWBAC8RPhbvnAyiI3paJME2WeDH7eK6jL3gyzPNH4r5N3gqM5e
+         xXAT9uK3Z+rMl6W9vy7YDwWFaUS5jDmJvqmNkDpO+5uyNBaRh6qKJpCXByX1VZp/7i6b
+         qRfinomDRhKnfx0AxgQZkj8NaIqWq2DzzQnOZ4EN3GGsGnHpDpHb9qf56HwDmoRy2EzH
+         tIHw==
+X-Gm-Message-State: APzg51BWKI2OyC/J5E3FlR8SgPFHyadIQyptiJnikBwdIgjwZ4Wab2sC
+        6aoS2VFmJLCFdGiSL1EV9AiJ49Y2Cm0loZqyNfQ=
+X-Google-Smtp-Source: ACcGV61rZDZVJyeXTK2CqK0AEWCwrDE3s4uOZIUsDuE8QzUGKZuSzx6xICFaeUNN+RoZIzzQvEB/eHyupwcyoVviF4Q=
+X-Received: by 2002:ac8:3059:: with SMTP id g25-v6mr4549589qte.136.1537716815569;
+ Sun, 23 Sep 2018 08:33:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e8fdef37-afcd-24b3-1005-e707b73f20b1@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Sun, 23 Sep 2018 08:33:15
+ -0700 (PDT)
+In-Reply-To: <20180923143344.2709-1-benmoore422@gmail.com>
+References: <20180923143344.2709-1-benmoore422@gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sun, 23 Sep 2018 17:33:15 +0200
+Message-ID: <CANiq72ncdwQi1HC+2pcs+HOep-9_mrG=W4UExz0Dmni9V3A9Cg@mail.gmail.com>
+Subject: Re: [PATCH] drivers/auxdisplay: TRIVIAl removed unnessecary braces
+ from if statements
+To:     Ben Moore <benmoore422@gmail.com>
+Cc:     trivial@kernel.org, willy@haproxy.com,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/22/2018 10:07 PM, Sai Prakash Ranjan wrote:
-> On 9/22/2018 2:35 PM, Joel Fernandes wrote:
->> On Sat, Sep 8, 2018 at 4:28 PM Sai Prakash Ranjan
->> <saiprakash.ranjan@codeaurora.org> wrote:
->>>
->>> +
->>> +       trace_seq_init(&iter->seq);
->>> +       iter->ent = fbuffer->entry;
->>> +       event_call->event.funcs->trace(iter, 0, event);
->>> +       trace_seq_putc(&iter->seq, 0);
->>
->> Would it be possible to store the binary trace record in the pstore
->> buffer instead of outputting text? I suspect that will both be faster
->> and less space.
->>
-> 
-> I will try this and come back.
-> 
+Hi Ben,
 
-Hi Joel,
+On Sun, Sep 23, 2018 at 4:33 PM,  <benmoore422@gmail.com> wrote:
+> From: Ben Moore <benmoore422@gmail.com>
+>
+> removed braches from single line if statements
+>
+> Signed-off-by: Ben Moore <benmoore422@gmail.com>
+> ---
+>  drivers/auxdisplay/panel.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/auxdisplay/panel.c b/drivers/auxdisplay/panel.c
+> index 3b25a643058c..0e4a7260dcc0 100644
+> --- a/drivers/auxdisplay/panel.c
+> +++ b/drivers/auxdisplay/panel.c
+> @@ -695,11 +695,10 @@ static void lcd_send_serial(int byte)
+>         for (bit = 0; bit < 8; bit++) {
+>                 clear_bit(LCD_BIT_CL, bits);    /* CLK low */
+>                 panel_set_bits();
+> -               if (byte & 1) {
+> +               if (byte & 1)
+>                         set_bit(LCD_BIT_DA, bits);
+> -               } else {
+> +               else
+>                         clear_bit(LCD_BIT_DA, bits);
+> -               }
+>
+>                 panel_set_bits();
+>                 udelay(2);  /* maintain the data during 2 us before CLK up */
+> @@ -1025,9 +1024,8 @@ static void lcd_init(void)
+>                         lcd.pins.rs = DEFAULT_LCD_PIN_RS;
+>                 if (lcd.pins.rw == PIN_NOT_SET)
+>                         lcd.pins.rw = DEFAULT_LCD_PIN_RW;
+> -       } else {
+> +       } else
+>                 charlcd->ops = &charlcd_tilcd_ops;
+> -       }
+>
+>         if (lcd.pins.bl == PIN_NOT_SET)
+>                 lcd.pins.bl = DEFAULT_LCD_PIN_BL;
+> --
+> 2.11.0
+>
 
-I removed trace_seq_putc and there is some improvement seen: 203 MB/s
+A few more things (Ben's first patch, sent to me first in private):
 
-# dd if=/dev/zero of=/dev/null status=progress
-12207371264 bytes (12 GB, 11 GiB) copied, 60 s, 203 MB/s^C
-24171926+0 records in
-24171926+0 records out
-12376026112 bytes (12 GB, 12 GiB) copied, 60.8282 s, 203 MB/s
+  * The subject could be better as:
 
-This seems good when compared to 190 MB/s seen previously.
-If this is Ok, then I will spin v2 with changes suggested.
+    [PATCH TRIVIAL] auxdisplay: remove unnecessary braces
 
-Thanks,
-Sai
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+    i.e. TRIVIAL inside the [...] (which will not appear in the Git
+commit message); unnessecary -> unnecessary; drivers/auxdisplay ->
+auxdisplay
+
+  * The commit message body ("removed braches from single line if
+statements") is redundant with the title of the commit (and has the
+typo "braches"). You could say, instead, say something like "No
+functional changes."; or if you tested that it generates the same
+object file, something like "Tested, no codegen changes."; etc.
+
+  * You can remove the "From:" line.
+
+  * I think Willy uses the w@1wt.eu address nowadays.
+
+  * It would be great if you can try to look for similar instances in
+drivers/auxdisplay/* and send a v2 of the patch (you would need to say
+in the subject "[PATCH v2 TRIVIAL]").
+
+  * Don't forget to Cc the general linux-kernel mailing list, please!
+
+Thank again for the patch and welcome to the kernel!
+
+[Jiri, I can pick the v2 of this in my tree if you prefer.]
+
+Cheers,
+Miguel
