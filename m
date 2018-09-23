@@ -6,54 +6,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3904EC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81048ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6635214C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:37:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6635214C2
+	by mail.kernel.org (Postfix) with ESMTP id 3D5DB214C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:37:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5DB214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbeIWPeA (ORCPT
+        id S1726944AbeIWPeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 11:34:00 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:49912 "EHLO cstnet.cn"
+        Sun, 23 Sep 2018 11:34:16 -0400
+Received: from smtp21.cstnet.cn ([159.226.251.21]:50085 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726139AbeIWPeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 11:34:00 -0400
+        id S1726071AbeIWPeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 11:34:16 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowADn77+xXqdbt2CzDA--.97S2;
-        Sun, 23 Sep 2018 17:36:53 +0800 (CST)
+        by APP-01 (Coremail) with SMTP id qwCowAA3mUbDXqdbBmWzDA--.8S2;
+        Sun, 23 Sep 2018 17:37:11 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
-To:     boris.ostrovsky@oracle.com, jgross@suse.com, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com
+To:     rjw@rjwysocki.net, bp@alien8.de, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        thomas.lendacky@amd.com, lenb@kernel.org, rafael@kernel.org,
+        rafael.j.wysocki@intel.com
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        xen-devel@lists.xenproject.org, Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v8 12/16] x86/xen: Add Hygon Dhyana support to Xen
-Date:   Sun, 23 Sep 2018 17:36:46 +0800
-Message-Id: <311bf41f08f24550aa6c5da3f1e03a68d3b89dac.1537533369.git.puwen@hygon.cn>
+        linux-acpi@vger.kernel.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v8 13/16] ACPI, x86: Add Hygon Dhyana support
+Date:   Sun, 23 Sep 2018 17:37:05 +0800
+Message-Id: <cce6ee26f4e2ebbab493433264d89d7cea661284.1537533369.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1537533368.git.puwen@hygon.cn>
 References: <cover.1537533368.git.puwen@hygon.cn>
-X-CM-TRANSID: qwCowADn77+xXqdbt2CzDA--.97S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryftF1ftw1fKFyfJF1fZwb_yoW8tFW7pr
-        W3AF4IqFWvqwn7X3s5X3yxXryrZw1qqa15KrZxKa1fXa1rZ3Z8XrWjk3WrXr1fu348ur10
-        va40ga1UCFZYvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-        628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAF
-        wI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf
-        9x0JUD-B_UUUUU=
+X-CM-TRANSID: qwCowAA3mUbDXqdbBmWzDA--.8S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFyruFWDtrWfurWfWrWruFg_yoWkZFg_uF
+        1vkr1xJa1qkF4kXF4xGrsxZryjy3Z7WFn5XrnFqa1fCr1xZry3Ja4qq3Z8Xr1jva93GFsI
+        vw1qgr1q9r13CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbIxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+        6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+        8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+        8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+        ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x
+        0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AK
+        xVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa
+        7VUbjQ6JUUUUU==
 X-Originating-IP: [182.150.46.145]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,67 +62,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To make Xen works functionally on Hygon platform, reuse AMD's Xen
-support code path for Hygon Dhyana CPU.
-
-There are six core performance events counters per thread, so there are
-six MSRs for these counters(0-5). Also there are four legacy PMC MSRs,
-they are alias of the counters(0-3).
-
-In this version of kernel Hygon use the legacy and safe version of MSR
-access. It works fine when VPMU enabled in Xen on Hygon platform by
-testing with perf.
+The Hygon Dhyana CPU has NONSTOP TSC feature, so enable the ACPI
+driver support to it.
 
 Signed-off-by: Pu Wen <puwen@hygon.cn>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- arch/x86/xen/pmu.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/acpi/acpi_pad.c       | 1 +
+ drivers/acpi/processor_idle.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
-index 7d00d4a..9403854 100644
---- a/arch/x86/xen/pmu.c
-+++ b/arch/x86/xen/pmu.c
-@@ -90,6 +90,12 @@ static void xen_pmu_arch_init(void)
- 			k7_counters_mirrored = 0;
- 			break;
- 		}
-+	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
-+		amd_num_counters = F10H_NUM_COUNTERS;
-+		amd_counters_base = MSR_K7_PERFCTR0;
-+		amd_ctrls_base = MSR_K7_EVNTSEL0;
-+		amd_msr_step = 1;
-+		k7_counters_mirrored = 0;
- 	} else {
- 		uint32_t eax, ebx, ecx, edx;
+diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
+index 552c1f7..a47676a 100644
+--- a/drivers/acpi/acpi_pad.c
++++ b/drivers/acpi/acpi_pad.c
+@@ -70,6 +70,7 @@ static void power_saving_mwait_init(void)
  
-@@ -285,7 +291,7 @@ static bool xen_amd_pmu_emulate(unsigned int msr, u64 *val, bool is_read)
- 
- bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
+ #if defined(CONFIG_X86)
+ 	switch (boot_cpu_data.x86_vendor) {
++	case X86_VENDOR_HYGON:
+ 	case X86_VENDOR_AMD:
+ 	case X86_VENDOR_INTEL:
+ 		/*
+diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+index abb559c..b2131c4 100644
+--- a/drivers/acpi/processor_idle.c
++++ b/drivers/acpi/processor_idle.c
+@@ -205,6 +205,7 @@ static void lapic_timer_state_broadcast(struct acpi_processor *pr,
+ static void tsc_check_state(int state)
  {
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
- 		if (is_amd_pmu_msr(msr)) {
- 			if (!xen_amd_pmu_emulate(msr, val, 1))
- 				*val = native_read_msr_safe(msr, err);
-@@ -308,7 +314,7 @@ bool pmu_msr_write(unsigned int msr, uint32_t low, uint32_t high, int *err)
- {
- 	uint64_t val = ((uint64_t)high << 32) | low;
- 
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
- 		if (is_amd_pmu_msr(msr)) {
- 			if (!xen_amd_pmu_emulate(msr, &val, 0))
- 				*err = native_write_msr_safe(msr, low, high);
-@@ -379,7 +385,7 @@ static unsigned long long xen_intel_read_pmc(int counter)
- 
- unsigned long long xen_read_pmc(int counter)
- {
--	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
- 		return xen_amd_read_pmc(counter);
- 	else
- 		return xen_intel_read_pmc(counter);
+ 	switch (boot_cpu_data.x86_vendor) {
++	case X86_VENDOR_HYGON:
+ 	case X86_VENDOR_AMD:
+ 	case X86_VENDOR_INTEL:
+ 	case X86_VENDOR_CENTAUR:
 -- 
 2.7.4
 
