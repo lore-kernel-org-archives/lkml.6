@@ -2,99 +2,66 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A13EECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38592ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA19121479
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:31:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="RwFLh3eP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA19121479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id DAB9721479
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 15:32:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB9721479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbeIWV3T (ORCPT
+        id S1726386AbeIWVa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 17:29:19 -0400
-Received: from mail-ua1-f49.google.com ([209.85.222.49]:37795 "EHLO
-        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbeIWV3T (ORCPT
+        Sun, 23 Sep 2018 17:30:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46710 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbeIWVa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 17:29:19 -0400
-Received: by mail-ua1-f49.google.com with SMTP id q23-v6so1106677uap.4;
-        Sun, 23 Sep 2018 08:31:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=drY0lrlt2nW9zRWED7ynXdM4iWAIMoLYUEXJokh3iiA=;
-        b=RwFLh3ePPBlWKhu6PCLKvFZbVHbEiKIFFJulbCwmVUkFFNAicsu2T3zxBLEBQWlxEi
-         n1iccATWxWmsOxF4uAFlgsoeWfaUCj4874ziwc0fjJMlfq7y+texclyHi+38m4VXAF8i
-         8d+IINOh9jPDxEb5sefg9rTZNwUXKfDtmpKUcR+c1zoN9n4YlhjQqZHnmBBBTvEaqgnm
-         Wu4ugU4fjjih7w2FByy3gdTmppAoa9eIIChktNdw5Fne3iS3IQLF/9Eo8bwmSoEXmide
-         +UxKAME6YPlvboeW4FxDhXJlfKor+cMW0vAjQSUZ3ph9/scehUTtm7g5Fqys9szL43+9
-         ur1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=drY0lrlt2nW9zRWED7ynXdM4iWAIMoLYUEXJokh3iiA=;
-        b=HgnVWNm4l2rYifXnGUUKJQIaV+HO2XXKBJWdtGDlGyt4d2WWmYMQjZ5zs/VPDR/Oet
-         3Fc6bv7InG7lxAdcyqNjcNDMtWZeYaSnTrKzoxNr/ShppM3C7dFYdUDe/7itpWfNpD3e
-         I+8IROUjcYBkqPFSQph0mnJNjaihGmbOmO32t1kQWxWfzu5iJ5awGXetMM1CLJTHJK9u
-         SxvaM1lh3sevPqsuNy6WdxxZudPMKU+7u0W/MxgANkT6EKs/0FoRN3eF4jd7KYvYkRlA
-         20qeIsgtxrFsf1I0jc0AzsjrIyVFJzeB7UybSjlpHA7CyORgde4I+GMuAtfGIfLq/L/j
-         cOvw==
-X-Gm-Message-State: ABuFfohcVnKY9eC9OD2fcFoTNziBS8r4b3cKwEn0cYYafAbm9oT2wHy+
-        osW9Cv3Mg2VEMePL0foaO32ixjHGHwEbnjhmcRmfrGDhB12qDg==
-X-Google-Smtp-Source: ACcGV61/uTTInWkK+sJTnHlq4dAQwC5TlBw8KAJddj4OjvyyHy3gkFyDq1ijUHrFyVoyEya+4WO0/RBqu2ZRchJnnY8=
-X-Received: by 2002:a9f:2c87:: with SMTP id w7-v6mr1601710uaj.21.1537716687989;
- Sun, 23 Sep 2018 08:31:27 -0700 (PDT)
+        Sun, 23 Sep 2018 17:30:29 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B4D3DCF;
+        Sun, 23 Sep 2018 15:32:38 +0000 (UTC)
+Date:   Sun, 23 Sep 2018 17:32:35 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] MFD fixes for v4.19
+Message-ID: <20180923153235.GA17314@kroah.com>
+References: <20180923150909.GH11050@dell>
 MIME-Version: 1.0
-References: <20180923091611.19815-1-cgzones@googlemail.com> <20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
-In-Reply-To: <20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
-From:   =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date:   Sun, 23 Sep 2018 17:31:16 +0200
-Message-ID: <CAJ2a_DfCmbFmpTngFnXzYy07gvEzN5UhAhrE8Cd8PowevrLUNw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] netfilter: nf_tables: add SECMARK support
-To:     fw@strlen.de
-Cc:     pablo@netfilter.org, kadlec@blackhole.kfki.hu, davem@davemloft.net,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, jmorris@namei.org,
-        serge@hallyn.com, selinux <selinux@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180923150909.GH11050@dell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +struct nft_secmark {
-> > +     char ctx[NFT_SECMARK_CTX_MAXLEN];
-> > +     int len;
-> > +     u32 secid;
-> > +};
->
-> Can you change this to:
->
-> struct nft_secmark {
->         u32 secid;
->         char *ctx;
-> };
+On Sun, Sep 23, 2018 at 04:09:09PM +0100, Lee Jones wrote:
+> Morning Greg,
 
-Does the nla_policy struct needs an update too? (regarding then .len member)
+Evening :)
 
-+static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
-+        [NFTA_SECMARK_CTX] = { .type = NLA_STRING, .len =
-NFT_SECMARK_CTX_MAXLEN },
-+}
+> Enjoy!
+> 
+> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> 
+>   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-fixes-4.19
+> 
+> for you to fetch changes up to 10492ee8ed9188d6d420e1f79b2b9bdbc0624e65:
+> 
+>   mfd: omap-usb-host: Fix dts probe of children (2018-09-11 16:47:33 +0100)
 
-NFT_SECMARK_CTX_MAXLEN might be dropped then..
+Thanks, now pulled.
+
+greg k-h
