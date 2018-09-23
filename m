@@ -2,96 +2,80 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83251ECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95284ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 22:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5DA20989
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:54:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b="lzH6WLl3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5DA20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=comcast.net
+	by mail.kernel.org (Postfix) with ESMTP id 4697B21473
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 22:07:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4697B21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbeIXDx1 (ORCPT
+        id S1725918AbeIXECS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 23:53:27 -0400
-Received: from resqmta-ch2-03v.sys.comcast.net ([69.252.207.35]:33322 "EHLO
-        resqmta-ch2-03v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726520AbeIXDx1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 23:53:27 -0400
-Received: from resomta-ch2-12v.sys.comcast.net ([69.252.207.108])
-        by resqmta-ch2-03v.sys.comcast.net with ESMTP
-        id 4CHUgdJUBPUIw4CKdgeazY; Sun, 23 Sep 2018 21:54:23 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
-        s=q20161114; t=1537739663;
-        bh=ozBS/3YtQT+ZEMp6NCYGolIle4BnTZ3kBc+HJ8/2gug=;
-        h=Received:Received:Subject:To:From:Message-ID:Date:MIME-Version:
-         Content-Type;
-        b=lzH6WLl31/7ThxyEmBN7Dl6HO6UQ4d71SYRcCC8Cia56qQwpQfy7qo2BT80wVSDK4
-         /ztWMvQUWHD1DQb2XjXv+MSRFCKsj5gzGaH3siwEgYi0gSrEfmEWeLhXHzPqF7zPAA
-         FISvhUGSgWnGasSPr3fFkFyegLcq5pX4PiFn3yk21yCXtK7ueOYVdRA1Z+4pK91U/q
-         GY6Ca1AlpOCKhxiPuQkFpnpC4XQZXN76Zc0pzMV0LcHYU2UWLOwZJu/5uf6qNd/rdV
-         tEM+Pmcq2Y9iWb2YAEHVGrZ9qfvfrAnggl4zFHjJouX+SJcYdTUE4vCBOHTKbgEmF7
-         A5wVM43VANtRw==
-Received: from [10.1.10.100] ([73.214.254.59])
-        by resomta-ch2-12v.sys.comcast.net with ESMTPSA
-        id 4CKcgRnarT2X34CKdg2faP; Sun, 23 Sep 2018 21:54:23 +0000
-Subject: Re: AMD Athlon bogus performance value causing RCU stalls?
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org
-References: <6243f7cc-1a80-db0b-4765-fa12bda9b06a@comcast.net>
- <alpine.DEB.2.21.1809232314460.1398@nanos.tec.linutronix.de>
-From:   Rob Prowel <rprowel@comcast.net>
-Message-ID: <de33e029-2be3-85de-4777-64dd8803fe1e@comcast.net>
-Date:   Sun, 23 Sep 2018 17:54:22 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 24 Sep 2018 00:02:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59296 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725741AbeIXECS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 00:02:18 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 045A4C057F9F;
+        Sun, 23 Sep 2018 22:03:13 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7F7768BE1C;
+        Sun, 23 Sep 2018 22:03:06 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 06:03:02 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        syzbot 
+        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
+        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
+Subject: Re: [PATCH v3 (resend)] block/loop: Serialize ioctl operations.
+Message-ID: <20180923220300.GA12589@ming.t460p>
+References: <1537009136-4839-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <1af79300-cb04-36e3-a650-168a5942161f@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1809232314460.1398@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfKtHwqGCZ1miu1CggW6UdpVF+aXHvL8GoboKMA3pDEPUaz0mC2dq6lAr+DDX0sAzgRW2pXiJ7oS7mfVKew1+o8g2I9goIBRgmM0Otv38M9DwABKUs/Ph
- NJqyp+BigYI6aqYZkqtU+gKjteTSLxNdzRbRCQtRm9YVMk00ZuDSZNak0wRJhGlN5UeiyuVnMEIUENv9AihkyManhCMTg1BxPiI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1af79300-cb04-36e3-a650-168a5942161f@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Sun, 23 Sep 2018 22:03:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/23/18 17:19, Thomas Gleixner wrote:
-
-
->>
->> What is that value for the second Athlon core (seems extremely bogus), and
->> would/could that be the reason for the schedule_timeouts?  This bogus value
->> also shows up in the bootup log when the second core is activated.  Seems to
->> be AMD specific, as the values are correct on my Xeon machines.
+On Sat, Sep 22, 2018 at 09:39:02PM +0900, Tetsuo Handa wrote:
+> Hello, Ming Lei.
 > 
-> That's a 32bit machine I assume.
-
-No.  Actually it is a 64 bit AMD Athlon.  Might need to check the math being a
-problem in the 64 bit domain as well.
-
-
+> I'd like to hear your comment on this patch regarding the ordering of
+> stopping kernel thread.
 > 
-> Yes. This was decoded recently as an issue on 32bit due to a calculation
-> which is based on 'unsigned long' but requires to be 64bit wide.
+>   > In order to enforce this strategy, this patch inversed
+>   > loop_reread_partitions() and loop_unprepare_queue() in loop_clr_fd().
+>   > I don't know whether it breaks something, but I don't have testcases.
 > 
-> It's in the 4.18.8 stable kernel, which should be available from your
-> fedora repo anytime soon.
-> 
+> Until 3.19, kthread_stop(lo->lo_thread) was called before
+> ioctl_by_bdev(bdev, BLKRRPART, 0) is called.
+> During 4.0 to 4.3, the loop module was using "kloopd" workqueue.
+> But since 4.4, loop_reread_partitions(lo, bdev) is called before
+> loop_unprepare_queue(lo) is called. And this patch is trying to change to
+> call loop_unprepare_queue() before loop_reread_partitions() is called.
+> Is there some reason we need to preserve current ordering?
 
-Will check with the newer kernel when it's available but please do double check if this
-problem might exist on 64 bit architectures as well...and of course I'm interested to
-know whether it is the likely cuprit of my RCU problem.
+IMO, both the two orders are fine, and what matters is that 'lo->lo_state'
+is updated before loop_reread_partitions(), then any IO from loop_reread_partitions
+will be failed, so it shouldn't be a big deal wrt. the order between
+loop_reread_partitions() and loop_unprepare_queue().
 
-
+Thanks,
+Ming
