@@ -2,270 +2,150 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609A7C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CBFECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2DEC2146E
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:42:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DEC2146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AB36420870
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:50:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNtNhNq5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB36420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726011AbeIWGiC (ORCPT
+        id S1725977AbeIWGp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 02:38:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57036 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbeIWGiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 02:38:01 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4DC6E88309;
-        Sun, 23 Sep 2018 00:42:31 +0000 (UTC)
-Received: from llong.com (ovpn-120-160.rdu2.redhat.com [10.10.120.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B1BEB206F3C1;
-        Sun, 23 Sep 2018 00:42:27 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     qat-linux@intel.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Conor McLoughlin <conor.mcloughlin@intel.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] crypto: qat - Fix KASAN stack-out-of-bounds bug in adf_probe()
-Date:   Sat, 22 Sep 2018 20:41:55 -0400
-Message-Id: <1537663315-4168-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sun, 23 Sep 2018 00:42:31 +0000 (UTC)
+        Sun, 23 Sep 2018 02:45:56 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38597 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbeIWGp4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 02:45:56 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x17-v6so7547128pfh.5;
+        Sat, 22 Sep 2018 17:50:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ppv/Tvu39nrRkYNflRUV2L/7F4sMTKMmB+Aq56Bm9xo=;
+        b=WNtNhNq5YjVNE4nPE9Qu/JqAsnVThARFJcwiUNWRZ0TNB1qpGSAJ0NkHFDsNJJ5CjO
+         uyezZqKJQ0JXgO23JqKWNKBxWWFNl82lAuOscaP43tzkspeB/glfuevm8CyH9ke64mRP
+         i2a5elWIT2WCw1yMbtNJU6CIf3YB1MgC5Vlor913YyknH2jeTSkL10mCWJ3Paeylas+O
+         9Km5N1B+V3Z5hWXTwoopvaMNA9QhGrVVES6PvJ077ysFVfhnucbBG2zWjFOeP2AKgxNa
+         LidpuffjC1sgyjhxSYH0ZRvUxZQvJRKMCIIC9Qlk4o0QYm250gCslUAtq3BVEp3Fy0/8
+         cxpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ppv/Tvu39nrRkYNflRUV2L/7F4sMTKMmB+Aq56Bm9xo=;
+        b=sMnM6kr8JQrn59e+iE9rOl6ONZVEQWqhhSdZ5WGw2+xcZDWi9kmuDYrY47p6+OM+HK
+         8Ifcmk7+N+3dk0exAIkmVOBrPu0DRkX/6MItksuFU2+oxTNa/nI45do2bsPfjOp+MJhI
+         8/D2Y9F8n1Dml3rK4eEGuoTsugAbxKv107er7ePiBo+FyqYZn2+VYc5Q+uQL2XlO2B5D
+         wf+Zj1mzAGIZMJiCdNxNo6oTKRJvcr0VVZ7UIWTsZKbLTo0a9iUaTXT7HKsvQbBD0EpH
+         VFh3Ed4+Y5XkI3gy+5dIi3I3Shi+iuvb4KWQBBXZ8mLJTe8JhvrsnMRbBrvBRDuXMPRQ
+         o+SQ==
+X-Gm-Message-State: APzg51Bk5KZUYLxq1RxH1hGpskzZIhgEm0gCgIGdn+twqDtoB8+bSRAI
+        C04B8OK3EVV7QWPqOSJNmwU=
+X-Google-Smtp-Source: ACcGV608ioTE536XSYAHSGadBj852Ou7b58gKcA3CqyhfMladVLdwmAEVkaxM304Z5lO/AHrjx3zrA==
+X-Received: by 2002:a62:9ed2:: with SMTP id f79-v6mr4282573pfk.206.1537663823830;
+        Sat, 22 Sep 2018 17:50:23 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id k13-v6sm12343835pgf.37.2018.09.22.17.50.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Sep 2018 17:50:23 -0700 (PDT)
+Date:   Sat, 22 Sep 2018 17:50:19 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] hwmon: ina3221: Read channel input source info
+ from DT
+Message-ID: <20180923005019.GA11764@Asurada-Nvidia.nvidia.com>
+References: <20180921223216.634-1-nicoleotsuka@gmail.com>
+ <20180921223216.634-3-nicoleotsuka@gmail.com>
+ <a7e6c311-eba4-e9b2-df64-9d02882a1dcb@roeck-us.net>
+ <20180922184650.GB9092@Asurada>
+ <f8e017c4-10dd-2d0d-84df-b05d3ed03bbf@roeck-us.net>
+ <20180923003841.GA10071@Asurada-Nvidia.nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180923003841.GA10071@Asurada-Nvidia.nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following KASAN warning was printed when booting a 64-bit kernel
-on some systems with Intel CPUs:
+On Sat, Sep 22, 2018 at 05:38:41PM -0700, Nicolin Chen wrote:
+> On Sat, Sep 22, 2018 at 04:59:55PM -0700, Guenter Roeck wrote:
+> 
+> > > > > +	/* Disable channels if their inputs are disconnected */
+> > > > > +	for (i = 0, mask = 0; i < INA3221_NUM_CHANNELS; i++) {
+> > > > > +		if (ina->inputs[i].disconnected)
+> > > > > +			mask |= INA3221_CONFIG_CHx_EN(i);
+> > > > > +	}
+> > > > 
+> > > > Consequently, you should also _enable_ channels which are not explicitly disabled.
+> > > 
+> > > The register has enabled all channels by default. So I felt it'd
+> > > be neat to have disabling code only. My v1 actually had enabling
+> > > part as well, but I can add it back if you think it'd be better.
+> > > 
+> > > > This can be tricky since you'll have to distinguish non-DT and DT configuration
+> > > > and retain the original configuration if no channel configuration data is available
+> > > > from devicetree.
+> 
+> > > For non-DT configurations, input->disconnected is always false by
+> > > default unless someone adds config for it (through platform_data).
+> > > If regmap_update_bits only does disabling like this version does,
+> > > non-DT configurations will not get affected since mask = 0. Or if
+> > > we change it to do both enabling and disabling, regmap_update_bits
+> > > will still ignore since there's no register value changed, though
+> > > it won't really hurt even if regmap writes correct configurations
+> > > to the register.
+> > > 
+> > > For DT configurations (without channel input source defined), it's
+> > > like the same as non-DT configurations. As we have platforms only
+> > > enabled ina3221 via DT while they don't have this new DT binding,
+> > > the driver has to be backward compatible, so my change only sets
+> > > input->disconnected=true when a status="disabled" is present, i.e.
+> > > those platforms are treated as all channels getting enabled until
+> > > they update their DTs.
+> 
+> > I think your assumption may be that the chip is always in its reset state
+> > when Linux is loaded. This is not necessarily the case; it may be
+> > preconfigured by BIOS or ROMMON, or even by someone using i2cset before
+> > loading the driver. If you add enable/disable functionality, you can
+> > not make an assumption about the original state of the chip at probe time;
+> > you have to read it from the chip itself.
+> 
+> I see. That made a point. In that case, I think the simplest way
+> is probably to do software reset before having configurations.
+> 
+> The "disconnected" here is to describe the physical connection,
+> not exact the switch control status because a channel could be
+> connected but disabled. However, a channel would not be enabled
+> if it's disconnected. So I think it'd be safe to just disable
+> the disconnected channels here as this version does, meanwhile,
+> I will add a soft reset to make sure all channels are enabled.
 
-[   44.512826] ==================================================================
-[   44.520165] BUG: KASAN: stack-out-of-bounds in find_first_bit+0xb0/0xc0
-[   44.526786] Read of size 8 at addr ffff88041e02fc50 by task kworker/0:2/124
+Actually...just a couple of lines before this, the probe() does
+soft reset:
 
-[   44.535253] CPU: 0 PID: 124 Comm: kworker/0:2 Tainted: G               X --------- ---  4.18.0-12.el8.x86_64+debug #1
-[   44.545858] Hardware name: Intel Corporation PURLEY/PURLEY, BIOS BKVDTRL1.86B.0005.D08.1712070559 12/07/2017
-[   44.555682] Workqueue: events work_for_cpu_fn
-[   44.560043] Call Trace:
-[   44.562502]  dump_stack+0x9a/0xe9
-[   44.565832]  print_address_description+0x65/0x22e
-[   44.570683]  ? find_first_bit+0xb0/0xc0
-[   44.570689]  kasan_report.cold.6+0x92/0x19f
-[   44.578726]  find_first_bit+0xb0/0xc0
-[   44.578737]  adf_probe+0x9eb/0x19a0 [qat_c62x]
-[   44.578751]  ? adf_remove+0x110/0x110 [qat_c62x]
-[   44.591490]  ? mark_held_locks+0xc8/0x140
-[   44.591498]  ? _raw_spin_unlock+0x30/0x30
-[   44.591505]  ? trace_hardirqs_on_caller+0x381/0x570
-[   44.604418]  ? adf_remove+0x110/0x110 [qat_c62x]
-[   44.604427]  local_pci_probe+0xd4/0x180
-[   44.604432]  ? pci_device_shutdown+0x110/0x110
-[   44.617386]  work_for_cpu_fn+0x51/0xa0
-[   44.621145]  process_one_work+0x8fe/0x16e0
-[   44.625263]  ? pwq_dec_nr_in_flight+0x2d0/0x2d0
-[   44.629799]  ? lock_acquire+0x14c/0x400
-[   44.633645]  ? move_linked_works+0x12e/0x2a0
-[   44.637928]  worker_thread+0x536/0xb50
-[   44.641690]  ? __kthread_parkme+0xb6/0x180
-[   44.645796]  ? process_one_work+0x16e0/0x16e0
-[   44.650160]  kthread+0x30c/0x3d0
-[   44.653400]  ? kthread_create_worker_on_cpu+0xc0/0xc0
-[   44.658457]  ret_from_fork+0x3a/0x50
+537         ret = regmap_field_write(ina->fields[F_RST], true);
+538         if (ret) {
+539                 dev_err(dev, "Unable to reset device\n");
+540                 return ret;
+541         }
 
-[   44.663557] The buggy address belongs to the page:
-[   44.668350] page:ffffea0010780bc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[   44.676356] flags: 0x17ffffc0000000()
-[   44.680023] raw: 0017ffffc0000000 ffffea0010780bc8 ffffea0010780bc8 0000000000000000
-[   44.687769] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-[   44.695510] page dumped because: kasan: bad access detected
-
-[   44.702578] Memory state around the buggy address:
-[   44.707372]  ffff88041e02fb00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[   44.714593]  ffff88041e02fb80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[   44.721810] >ffff88041e02fc00: 00 00 00 00 00 00 f1 f1 f1 f1 04 f2 f2 f2 f2 f2
-[   44.729028]                                                  ^
-[   44.734864]  ffff88041e02fc80: f2 f2 00 00 00 00 f3 f3 f3 f3 00 00 00 00 00 00
-[   44.742082]  ffff88041e02fd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[   44.749299] ==================================================================
-
-Looking into the code:
-
-  int ret, bar_mask;
-    :
-  for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
-
-It is casting a 32-bit integer pointer to a 64-bit unsigned long
-pointer. There are two problems here. First, the 32-bit pointer address
-may not be 64-bit aligned. Secondly, it is accessing an extra 4 bytes.
-
-This is fixed by changing the bar_mask type to unsigned long.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- drivers/crypto/qat/qat_c3xxx/adf_drv.c      | 6 +++---
- drivers/crypto/qat/qat_c3xxxvf/adf_drv.c    | 6 +++---
- drivers/crypto/qat/qat_c62x/adf_drv.c       | 6 +++---
- drivers/crypto/qat/qat_c62xvf/adf_drv.c     | 6 +++---
- drivers/crypto/qat/qat_dh895xcc/adf_drv.c   | 6 +++---
- drivers/crypto/qat/qat_dh895xccvf/adf_drv.c | 6 +++---
- 6 files changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/crypto/qat/qat_c3xxx/adf_drv.c b/drivers/crypto/qat/qat_c3xxx/adf_drv.c
-index ba197f3..763c216 100644
---- a/drivers/crypto/qat/qat_c3xxx/adf_drv.c
-+++ b/drivers/crypto/qat/qat_c3xxx/adf_drv.c
-@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct adf_hw_device_data *hw_data;
- 	char name[ADF_DEVICE_NAME_LENGTH];
- 	unsigned int i, bar_nr;
--	int ret, bar_mask;
-+	unsigned long bar_mask;
-+	int ret;
- 
- 	switch (ent->device) {
- 	case ADF_C3XXX_PCI_DEVICE_ID:
-@@ -235,8 +236,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* Find and map all the device's BARS */
- 	i = 0;
- 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
--	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
--			 ADF_PCI_MAX_BARS * 2) {
-+	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
- 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
- 
- 		bar->base_addr = pci_resource_start(pdev, bar_nr);
-diff --git a/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c b/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
-index 24ec908..613c7d5 100644
---- a/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
-+++ b/drivers/crypto/qat/qat_c3xxxvf/adf_drv.c
-@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct adf_hw_device_data *hw_data;
- 	char name[ADF_DEVICE_NAME_LENGTH];
- 	unsigned int i, bar_nr;
--	int ret, bar_mask;
-+	unsigned long bar_mask;
-+	int ret;
- 
- 	switch (ent->device) {
- 	case ADF_C3XXXIOV_PCI_DEVICE_ID:
-@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* Find and map all the device's BARS */
- 	i = 0;
- 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
--	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
--			 ADF_PCI_MAX_BARS * 2) {
-+	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
- 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
- 
- 		bar->base_addr = pci_resource_start(pdev, bar_nr);
-diff --git a/drivers/crypto/qat/qat_c62x/adf_drv.c b/drivers/crypto/qat/qat_c62x/adf_drv.c
-index 59a5a0d..9cb8329 100644
---- a/drivers/crypto/qat/qat_c62x/adf_drv.c
-+++ b/drivers/crypto/qat/qat_c62x/adf_drv.c
-@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct adf_hw_device_data *hw_data;
- 	char name[ADF_DEVICE_NAME_LENGTH];
- 	unsigned int i, bar_nr;
--	int ret, bar_mask;
-+	unsigned long bar_mask;
-+	int ret;
- 
- 	switch (ent->device) {
- 	case ADF_C62X_PCI_DEVICE_ID:
-@@ -235,8 +236,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* Find and map all the device's BARS */
- 	i = (hw_data->fuses & ADF_DEVICE_FUSECTL_MASK) ? 1 : 0;
- 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
--	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
--			 ADF_PCI_MAX_BARS * 2) {
-+	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
- 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
- 
- 		bar->base_addr = pci_resource_start(pdev, bar_nr);
-diff --git a/drivers/crypto/qat/qat_c62xvf/adf_drv.c b/drivers/crypto/qat/qat_c62xvf/adf_drv.c
-index b9f3e0e..278452b 100644
---- a/drivers/crypto/qat/qat_c62xvf/adf_drv.c
-+++ b/drivers/crypto/qat/qat_c62xvf/adf_drv.c
-@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct adf_hw_device_data *hw_data;
- 	char name[ADF_DEVICE_NAME_LENGTH];
- 	unsigned int i, bar_nr;
--	int ret, bar_mask;
-+	unsigned long bar_mask;
-+	int ret;
- 
- 	switch (ent->device) {
- 	case ADF_C62XIOV_PCI_DEVICE_ID:
-@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* Find and map all the device's BARS */
- 	i = 0;
- 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
--	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
--			 ADF_PCI_MAX_BARS * 2) {
-+	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
- 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
- 
- 		bar->base_addr = pci_resource_start(pdev, bar_nr);
-diff --git a/drivers/crypto/qat/qat_dh895xcc/adf_drv.c b/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
-index be5c5a9..3a9708e 100644
---- a/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
-+++ b/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
-@@ -123,7 +123,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct adf_hw_device_data *hw_data;
- 	char name[ADF_DEVICE_NAME_LENGTH];
- 	unsigned int i, bar_nr;
--	int ret, bar_mask;
-+	unsigned long bar_mask;
-+	int ret;
- 
- 	switch (ent->device) {
- 	case ADF_DH895XCC_PCI_DEVICE_ID:
-@@ -237,8 +238,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* Find and map all the device's BARS */
- 	i = 0;
- 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
--	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
--			 ADF_PCI_MAX_BARS * 2) {
-+	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
- 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
- 
- 		bar->base_addr = pci_resource_start(pdev, bar_nr);
-diff --git a/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c b/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
-index 26ab17b..3da0f95 100644
---- a/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
-+++ b/drivers/crypto/qat/qat_dh895xccvf/adf_drv.c
-@@ -125,7 +125,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	struct adf_hw_device_data *hw_data;
- 	char name[ADF_DEVICE_NAME_LENGTH];
- 	unsigned int i, bar_nr;
--	int ret, bar_mask;
-+	unsigned long bar_mask;
-+	int ret;
- 
- 	switch (ent->device) {
- 	case ADF_DH895XCCIOV_PCI_DEVICE_ID:
-@@ -215,8 +216,7 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* Find and map all the device's BARS */
- 	i = 0;
- 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM);
--	for_each_set_bit(bar_nr, (const unsigned long *)&bar_mask,
--			 ADF_PCI_MAX_BARS * 2) {
-+	for_each_set_bit(bar_nr, &bar_mask, ADF_PCI_MAX_BARS * 2) {
- 		struct adf_bar *bar = &accel_pci_dev->pci_bars[i++];
- 
- 		bar->base_addr = pci_resource_start(pdev, bar_nr);
--- 
-1.8.3.1
-
+So I think it'd be okay to just keep disabling disconnected
+channels only as this version?
