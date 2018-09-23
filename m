@@ -2,196 +2,281 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E88ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75434ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE90A214C3
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:38:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE90A214C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
+	by mail.kernel.org (Postfix) with ESMTP id F01FD20645
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:41:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="U3ooMq+b";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eNW6YE5A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F01FD20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeIWPfe (ORCPT
+        id S1726202AbeIWPiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 11:35:34 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:51470 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726047AbeIWPfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 11:35:33 -0400
-Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-01 (Coremail) with SMTP id qwCowACHnkQYX6db6XmzDA--.15S2;
-        Sun, 23 Sep 2018 17:38:36 +0800 (CST)
-From:   Pu Wen <puwen@hygon.cn>
-To:     trenn@suse.com, shuah@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v8 16/16] cpupower, x86: Add Hygon Dhyana support
-Date:   Sun, 23 Sep 2018 17:38:25 +0800
-Message-Id: <21c1dbb553c34d895d153cec744c7434cfa5a0f8.1537533369.git.puwen@hygon.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1537533368.git.puwen@hygon.cn>
-References: <cover.1537533368.git.puwen@hygon.cn>
-X-CM-TRANSID: qwCowACHnkQYX6db6XmzDA--.15S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Gr18WrWDXFy7Wry8GrWkXrb_yoW7trWfp3
-        90yrZ8J3y8tr98J3Wktr1UWa15CFs7urZrKwn7Gw1rAF17Zr4vqr4DtFy5KF9rXF97Ja1F
-        va93Kw1UXan7GaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkj14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0E
-        wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-        80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-        I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6x
-        AIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY
-        1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUsiSdUUUUU=
-X-Originating-IP: [182.150.46.145]
-X-CM-SenderInfo: psxzv046klw03qof0z/
+        Sun, 23 Sep 2018 11:38:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37948 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbeIWPiF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 11:38:05 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8A90160C89; Sun, 23 Sep 2018 09:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537695672;
+        bh=oLDYy5//Agc3UwWLBhsk097EDq/i/3qLSNpnlCKmon4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=U3ooMq+bTNr9yiRIj6q/i0i5qxp/FVPVOw3tH/nFJThAac8ufroNDVnNwskOmFN3+
+         a2x6Tlymh+hBZfuYrD6QARIuR25sLDnRmcwBNwmobnguJ/eJ9dsVi4d1xvb1P7eS9d
+         kroePYwLH+lqES1MzxS8LhDGxChnqGYUG4NHL2Os=
+Received: from [10.79.169.181] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CF97960C84;
+        Sun, 23 Sep 2018 09:40:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537695671;
+        bh=oLDYy5//Agc3UwWLBhsk097EDq/i/3qLSNpnlCKmon4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eNW6YE5AR7VbejZZZNQ9oEG6smp3QlnwJdvcue8LU3lQdVRFYDY0yjCokdZMXEI2v
+         oeRi6qIcuKDegRvy7+6ano5bjBrMhbsUZpaZrmwQ6mRIr5+J7vKbQQhJM0rMFdhaQa
+         rOhtm3fhnJKiIDON594eVsMxqWDgdpwt9D/4hayg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CF97960C84
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v7 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, amit.kucheria@linaro.org,
+        evgreen@google.com
+References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
+ <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
+ <20180829180122.GC10879@google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <8c19c840-292c-a5c4-f3d3-0c6fb14b15fb@codeaurora.org>
+Date:   Sun, 23 Sep 2018 15:10:55 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180829180122.GC10879@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tool cpupower is useful to get CPU frequency information and monitor
-power stats on Hygon Dhyana platform. So add Hygon Dhyana support to
-it by checking vendor and family to share the code path of AMD family
-17h.
+Hello Matthias,
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
----
- tools/power/cpupower/utils/cpufreq-info.c               | 6 ++++--
- tools/power/cpupower/utils/helpers/amd.c                | 4 ++--
- tools/power/cpupower/utils/helpers/cpuid.c              | 8 +++++---
- tools/power/cpupower/utils/helpers/helpers.h            | 2 +-
- tools/power/cpupower/utils/helpers/misc.c               | 2 +-
- tools/power/cpupower/utils/idle_monitor/mperf_monitor.c | 3 ++-
- 6 files changed, 15 insertions(+), 10 deletions(-)
+Thanks for your review comments.
 
-diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
-index df43cd4..56e54ea 100644
---- a/tools/power/cpupower/utils/cpufreq-info.c
-+++ b/tools/power/cpupower/utils/cpufreq-info.c
-@@ -170,6 +170,7 @@ static int get_boost_mode(unsigned int cpu)
- 	unsigned long pstates[MAX_HW_PSTATES] = {0,};
- 
- 	if (cpupower_cpu_info.vendor != X86_VENDOR_AMD &&
-+	    cpupower_cpu_info.vendor != X86_VENDOR_HYGON &&
- 	    cpupower_cpu_info.vendor != X86_VENDOR_INTEL)
- 		return 0;
- 
-@@ -190,8 +191,9 @@ static int get_boost_mode(unsigned int cpu)
- 	printf(_("    Supported: %s\n"), support ? _("yes") : _("no"));
- 	printf(_("    Active: %s\n"), active ? _("yes") : _("no"));
- 
--	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD &&
--	    cpupower_cpu_info.family >= 0x10) {
-+	if ((cpupower_cpu_info.vendor == X86_VENDOR_AMD &&
-+	     cpupower_cpu_info.family >= 0x10) ||
-+	     cpupower_cpu_info.vendor == X86_VENDOR_HYGON) {
- 		ret = decode_pstates(cpu, cpupower_cpu_info.family, b_states,
- 				     pstates, &pstate_no);
- 		if (ret)
-diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
-index bb41cdd..65beaee 100644
---- a/tools/power/cpupower/utils/helpers/amd.c
-+++ b/tools/power/cpupower/utils/helpers/amd.c
-@@ -45,7 +45,7 @@ static int get_did(int family, union msr_pstate pstate)
- 
- 	if (family == 0x12)
- 		t = pstate.val & 0xf;
--	else if (family == 0x17)
-+	else if (family == 0x17 || family == 0x18)
- 		t = pstate.fam17h_bits.did;
- 	else
- 		t = pstate.bits.did;
-@@ -59,7 +59,7 @@ static int get_cof(int family, union msr_pstate pstate)
- 	int fid, did, cof;
- 
- 	did = get_did(family, pstate);
--	if (family == 0x17) {
-+	if (family == 0x17 || family == 0x18) {
- 		fid = pstate.fam17h_bits.fid;
- 		cof = 200 * fid / did;
- 	} else {
-diff --git a/tools/power/cpupower/utils/helpers/cpuid.c b/tools/power/cpupower/utils/helpers/cpuid.c
-index 732b0b4..5cc39d4 100644
---- a/tools/power/cpupower/utils/helpers/cpuid.c
-+++ b/tools/power/cpupower/utils/helpers/cpuid.c
-@@ -8,7 +8,7 @@
- #include "helpers/helpers.h"
- 
- static const char *cpu_vendor_table[X86_VENDOR_MAX] = {
--	"Unknown", "GenuineIntel", "AuthenticAMD",
-+	"Unknown", "GenuineIntel", "AuthenticAMD", "HygonGenuine",
- };
- 
- #if defined(__i386__) || defined(__x86_64__)
-@@ -109,6 +109,7 @@ int get_cpu_info(struct cpupower_cpu_info *cpu_info)
- 	fclose(fp);
- 	/* Get some useful CPU capabilities from cpuid */
- 	if (cpu_info->vendor != X86_VENDOR_AMD &&
-+	    cpu_info->vendor != X86_VENDOR_HYGON &&
- 	    cpu_info->vendor != X86_VENDOR_INTEL)
- 		return ret;
- 
-@@ -124,8 +125,9 @@ int get_cpu_info(struct cpupower_cpu_info *cpu_info)
- 	if (cpuid_level >= 6 && (cpuid_ecx(6) & 0x1))
- 		cpu_info->caps |= CPUPOWER_CAP_APERF;
- 
--	/* AMD Boost state enable/disable register */
--	if (cpu_info->vendor == X86_VENDOR_AMD) {
-+	/* AMD or Hygon Boost state enable/disable register */
-+	if (cpu_info->vendor == X86_VENDOR_AMD ||
-+	    cpu_info->vendor == X86_VENDOR_HYGON) {
- 		if (ext_cpuid_level >= 0x80000007 &&
- 		    (cpuid_edx(0x80000007) & (1 << 9)))
- 			cpu_info->caps |= CPUPOWER_CAP_AMD_CBP;
-diff --git a/tools/power/cpupower/utils/helpers/helpers.h b/tools/power/cpupower/utils/helpers/helpers.h
-index 41da392..9021396 100644
---- a/tools/power/cpupower/utils/helpers/helpers.h
-+++ b/tools/power/cpupower/utils/helpers/helpers.h
-@@ -61,7 +61,7 @@ extern int be_verbose;
- 
- /* cpuid and cpuinfo helpers  **************************/
- enum cpupower_cpu_vendor {X86_VENDOR_UNKNOWN = 0, X86_VENDOR_INTEL,
--			  X86_VENDOR_AMD, X86_VENDOR_MAX};
-+			  X86_VENDOR_AMD, X86_VENDOR_HYGON, X86_VENDOR_MAX};
- 
- #define CPUPOWER_CAP_INV_TSC		0x00000001
- #define CPUPOWER_CAP_APERF		0x00000002
-diff --git a/tools/power/cpupower/utils/helpers/misc.c b/tools/power/cpupower/utils/helpers/misc.c
-index 80fdf55..f406adc 100644
---- a/tools/power/cpupower/utils/helpers/misc.c
-+++ b/tools/power/cpupower/utils/helpers/misc.c
-@@ -26,7 +26,7 @@ int cpufreq_has_boost_support(unsigned int cpu, int *support, int *active,
- 		 * has Hardware determined variable increments instead.
- 		 */
- 
--		if (cpu_info.family == 0x17) {
-+		if (cpu_info.family == 0x17 || cpu_info.family == 0x18) {
- 			if (!read_msr(cpu, MSR_AMD_HWCR, &val)) {
- 				if (!(val & CPUPOWER_AMD_CPBDIS))
- 					*active = 1;
-diff --git a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-index d7c2a6d..f2a7e9c 100644
---- a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-+++ b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-@@ -241,7 +241,8 @@ static int init_maxfreq_mode(void)
- 	if (!(cpupower_cpu_info.caps & CPUPOWER_CAP_INV_TSC))
- 		goto use_sysfs;
- 
--	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD) {
-+	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD ||
-+	    cpupower_cpu_info.vendor == X86_VENDOR_HYGON) {
- 		/* MSR_AMD_HWCR tells us whether TSC runs at P0/mperf
- 		 * freq.
- 		 * A test whether hwcr is accessable/available would be:
+On 8/29/2018 11:31 PM, Matthias Kaehlcke wrote:
+> Hi Taniya,
+> 
+> On Tue, Jul 24, 2018 at 04:12:50PM +0530, Taniya Das wrote:
+>> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
+>> for changing the frequency of CPUs. The driver implements the cpufreq
+>> driver interface for this hardware engine.
+>>
+>> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   drivers/cpufreq/Kconfig.arm       |  11 ++
+>>   drivers/cpufreq/Makefile          |   1 +
+>>   drivers/cpufreq/qcom-cpufreq-hw.c | 348 ++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 360 insertions(+)
+>>   create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+>>
+>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>> index 0cd8eb7..93a9d72 100644
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -298,3 +298,14 @@ config ARM_PXA2xx_CPUFREQ
+>>   	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
+>>
+>>   	  If in doubt, say N.
+>> +
+>> +config ARM_QCOM_CPUFREQ_HW
+>> +	bool "QCOM CPUFreq HW driver"
+>> +	depends on ARCH_QCOM
+>> +	help
+>> +	 Support for the CPUFreq HW driver.
+>> +	 Some QCOM chipsets have a HW engine to offload the steps
+>> +	 necessary for changing the frequency of the CPUs. Firmware loaded
+>> +	 in this engine exposes a programming interface to the OS.
+>> +	 The driver implements the cpufreq interface for this HW engine.
+>> +	 Say Y if you want to support CPUFreq HW.
+>> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+>> index c1ffeab..ca48a1d 100644
+>> --- a/drivers/cpufreq/Makefile
+>> +++ b/drivers/cpufreq/Makefile
+>> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+>>   obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
+>>   obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
+>>   obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+>> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
+>>
+>>
+>>   ##################################################################################
+>> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+>> new file mode 100644
+>> index 0000000..ea8f7d1
+>> --- /dev/null
+>> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+>> @@ -0,0 +1,348 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/cpufreq.h>
+>> +#include <linux/init.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_platform.h>
+>> +
+>> +#define INIT_RATE			300000000UL
+>> +#define LUT_MAX_ENTRIES			40U
+>> +#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
+>> +#define LUT_ROW_SIZE			32
+>> +
+>> +enum {
+>> +	REG_ENABLE,
+>> +	REG_LUT_TABLE,
+>> +	REG_PERF_STATE,
+>> +
+>> +	REG_ARRAY_SIZE,
+>> +};
+>> +
+>> +struct cpufreq_qcom {
+>> +	struct cpufreq_frequency_table *table;
+>> +	struct device *dev;
+> 
+> 'dev' is not used and can be removed.
+> 
+
+Thanks, would remove in the next patch.
+
+>> ...
+>>
+>> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+>> +				   struct device_node *np, unsigned int cpu,
+>> +				   unsigned long xo_rate)
+>> +{
+>> +	struct cpufreq_qcom *c;
+>> +	struct resource res;
+>> +	struct device *dev = &pdev->dev;
+>> +	const u16 *offsets;
+>> +	int ret, i, cpu_first, cpu_r;
+>> +	void __iomem *base;
+>> +
+>> +	if (qcom_freq_domain_map[cpu])
+>> +		return 0;
+>> +
+>> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+>> +	if (!c)
+>> +		return -ENOMEM;
+>> +
+>> +	offsets = of_device_get_match_data(&pdev->dev);
+>> +	if (!offsets)
+>> +		return -EINVAL;
+>> +
+>> +	if (of_address_to_resource(np, 0, &res))
+>> +		return -ENOMEM;
+>> +
+>> +	base = devm_ioremap_resource(dev, &res);
+>> +	if (!base)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
+>> +		c->reg_bases[i] = base + offsets[i];
+>> +
+>> +	/* HW should be in enabled state to proceed */
+>> +	if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
+>> +		dev_err(dev, "%s cpufreq hardware not enabled\n", np->name);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	ret = qcom_get_related_cpus(np, &c->related_cpus);
+>> +	if (ret) {
+>> +		dev_err(dev, "%s failed to get related CPUs\n", np->name);
+>> +		return ret;
+>> +	}
+>> +
+>> +	c->max_cores = cpumask_weight(&c->related_cpus);
+>> +	if (!c->max_cores)
+>> +		return -ENOENT;
+>> +
+>> +	c->xo_rate = xo_rate;
+>> +
+>> +	ret = qcom_cpufreq_hw_read_lut(pdev, c);
+>> +	if (ret) {
+>> +		dev_err(dev, "%s failed to read LUT\n", np->name);
+>> +		return ret;
+>> +	}
+>> +
+>> +	qcom_freq_domain_map[cpu] = c;
+>> +
+>> +	/* Related CPUs */
+>> +	cpu_first = cpumask_first(&c->related_cpus);
+>> +
+>> +	for_each_cpu(cpu_r, &c->related_cpus) {
+>> +		if (cpu_r != cpu_first)
+>> +			qcom_freq_domain_map[cpu_r] =
+>> +				qcom_freq_domain_map[cpu_first];
+>> +	}
+> 
+> The above ten lines could be simplified to:
+> 
+> 	for_each_cpu(cpu_r, &c->related_cpus)
+> 		qcom_freq_domain_map[cpu_r] = c;
+> 
+
+Would clean it up in the next patch.
+
+>> ...
+>>
+>> +static int __init qcom_cpufreq_hw_init(void)
+>> +{
+>> +	return platform_driver_register(&qcom_cpufreq_hw_driver);
+>> +}
+>> +subsys_initcall(qcom_cpufreq_hw_init);
+> 
+> Is subsys_initcall used for a particular reason? It will cause
+> problems when registering cooling devices, since the thermal device
+> class is initialized through an fs_initcall, which are executed
+> later.
+> 
+> Most cpufreq drivers use module_init, device_initcall or
+> late_initcall, can't this driver use one of those?
+> 
+
+We want the CPU to be scaling to the highest frequency at the earliest.
+
+> Cheers
+> 
+> Matthias
+> 
+
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
