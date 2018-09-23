@@ -2,237 +2,104 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7638DECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B96BC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CFAD21477
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:02:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CFAD21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id A4A1220989
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:15:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b="k45yqU3V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A1220989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=comcast.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbeIXCBK (ORCPT
+        id S1727239AbeIXCOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 22:01:10 -0400
-Received: from mailoutvs46.siol.net ([185.57.226.237]:45876 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726994AbeIXCBJ (ORCPT
+        Sun, 23 Sep 2018 22:14:05 -0400
+Received: from resqmta-ch2-07v.sys.comcast.net ([69.252.207.39]:59330 "EHLO
+        resqmta-ch2-07v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726927AbeIXCOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 22:01:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 9BE6952190A;
-        Sun, 23 Sep 2018 22:02:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id IGuE0ID0Q3HV; Sun, 23 Sep 2018 22:02:25 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 7D51C521916;
-        Sun, 23 Sep 2018 22:02:25 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPA id 521725218F7;
-        Sun, 23 Sep 2018 22:02:24 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [linux-sunxi] [PATCH 11/27] drm/sun4i: Rework DE2 register defines
-Date:   Sun, 23 Sep 2018 22:02:24 +0200
-Message-ID: <2037444.yZ41eTID0S@jernej-laptop>
-In-Reply-To: <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-12-jernej.skrabec@siol.net> <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
+        Sun, 23 Sep 2018 22:14:04 -0400
+X-Greylist: delayed 490 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Sep 2018 22:14:04 EDT
+Received: from resomta-ch2-17v.sys.comcast.net ([69.252.207.113])
+        by resqmta-ch2-07v.sys.comcast.net with ESMTP
+        id 4AZsgrm3dUrSz4AevgRNy0; Sun, 23 Sep 2018 20:07:13 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
+        s=q20161114; t=1537733233;
+        bh=Vx+vVy51q1uYYJoVugwEZ/l1+Y/GiuJQwJvsXkQZF1A=;
+        h=Received:Received:To:From:Subject:Message-ID:Date:MIME-Version:
+         Content-Type;
+        b=k45yqU3VUG4QGzVQthAH4MeHpAFqT6Hv5Ayc2gl4f8qN5MNWdlpWJTa2inVA1Is9Y
+         QVi6UA7NlfyZKF8S47pJQI9snPSL9MzpbaZtXtnTCXSbcly+9wN5d9EmsrU3Na1mda
+         9jpRoVH0uMEN+wdAg+s0bOSJD9axb/WZsQO3FAdM4lfVVF0JM354wlG8YITnZk60ww
+         Bjg1Ef06PXlslreFsPzIgdU6A4oNT0b+cahtNFumnqt6mWPKABtWe3jlzyaZEIx8/6
+         2kBSc5zEiZjsKdT6zbHVcVJa4XvnNjzgUkKT2va7dOIliTHAnlAxjBnFFK47q5/6F9
+         +WkrGpefy11kQ==
+Received: from [10.1.10.100] ([73.214.254.59])
+        by resomta-ch2-17v.sys.comcast.net with ESMTPSA
+        id 4AeuggYwvvmOM4AeugE2HS; Sun, 23 Sep 2018 20:07:12 +0000
+To:     linux-kernel@vger.kernel.org
+From:   Rob Prowel <rprowel@comcast.net>
+Subject: AMD Athlon bogus performance value causing RCU stalls?
+Message-ID: <6243f7cc-1a80-db0b-4765-fa12bda9b06a@comcast.net>
+Date:   Sun, 23 Sep 2018 16:07:12 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfP0xrToatYGHXqcHYGMfEP4wmzPobztP3Ujr7sH6OD6QBsVlOq2k05l9UPlOjEwKR2FD2oxICbODfPtzqh9WFe/EGfSowTGEPfh8wXIex/jaIUKHERBF
+ j34fwAyPm28OuO23dFESIBi3Qsh4pCxbYv54vULv0KNFgvqcIrBVIw8Af+G2YYE7mUEedru2w5hy9w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sobota, 22. september 2018 ob 14:32:30 CEST je Chen-Yu Tsai napisal(a):
-> Hi,
-> 
-> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Most, if not all, registers found in DE2 still exists in DE3. However,
-> > units are on different base addresses.
-> > 
-> > To prepare for addition of DE3 support, registers macros are reworked so
-> > they take base address as parameter.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > [rebased]
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> 
-> This patch mostly checks out. But see below.
-> 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 406c42e752d7..020b0a097c84
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > @@ -29,20 +29,24 @@
-> > 
-> >  #define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE                BIT(0)
-> > 
-> > -#define SUN8I_MIXER_BLEND_PIPE_CTL             0x1000
-> > -#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(x)       (0x1004 + 0x10 * (x) +
-> > 0x0)
-> > -#define SUN8I_MIXER_BLEND_ATTR_INSIZE(x)       (0x1004 + 0x10 * (x) +
-> > 0x4)
-> > -#define SUN8I_MIXER_BLEND_ATTR_COORD(x)                (0x1004 + 0x10 *
-> > (x) + 0x8) -#define SUN8I_MIXER_BLEND_ROUTE                        0x1080
-> > -#define SUN8I_MIXER_BLEND_PREMULTIPLY          0x1084
-> > -#define SUN8I_MIXER_BLEND_BKCOLOR              0x1088
-> > -#define SUN8I_MIXER_BLEND_OUTSIZE              0x108c
-> > -#define SUN8I_MIXER_BLEND_MODE(x)              (0x1090 + 0x04 * (x))
-> > -#define SUN8I_MIXER_BLEND_CK_CTL               0x10b0
-> > -#define SUN8I_MIXER_BLEND_CK_CFG               0x10b4
-> > -#define SUN8I_MIXER_BLEND_CK_MAX(x)            (0x10c0 + 0x04 * (x))
-> > -#define SUN8I_MIXER_BLEND_CK_MIN(x)            (0x10e0 + 0x04 * (x))
-> > -#define SUN8I_MIXER_BLEND_OUTCTL               0x10fc
-> > +#define DE2_BLD_BASE                           0x1000
-> > +#define DE2_CH_BASE                            0x2000
-> > +#define DE2_CH_SIZE                            0x1000
-> > +
-> > +#define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
-> > +#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 *
-> > (x))
-> > +#define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 *
-> > (x))
-> > +#define SUN8I_MIXER_BLEND_ATTR_COORD(base, x)  ((base) + 0xC + 0x10 *
-> > (x))
-> 
-> Nit: Use lowercase for '0xC' to be consistent.
-> 
-> > +#define SUN8I_MIXER_BLEND_ROUTE(base)          ((base) + 0x80)
-> > +#define SUN8I_MIXER_BLEND_PREMULTIPLY(base)    ((base) + 0x84)
-> > +#define SUN8I_MIXER_BLEND_BKCOLOR(base)                ((base) + 0x88)
-> > +#define SUN8I_MIXER_BLEND_OUTSIZE(base)                ((base) + 0x8c)
-> > +#define SUN8I_MIXER_BLEND_MODE(base, x)                ((base) + 0x90 +
-> > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_CK_CTL(base)         ((base) +
-> > 0xb0)
-> > +#define SUN8I_MIXER_BLEND_CK_CFG(base)         ((base) + 0xb4)
-> > +#define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 *
-> > (x)) +#define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 +
-> > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) +
-> > 0xfc)
-> > 
-> >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
-> >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
-> 
-> [...]
-> 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> > b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c index
-> > 6bb2aa164c8e..c68eab8a748f 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> > @@ -10,6 +10,7 @@
-> > 
-> >   */
-> >  
-> >  #include "sun8i_ui_scaler.h"
-> > 
-> > +#include "sun8i_vi_scaler.h"
-> > 
-> >  static const u32 lan2coefftab16[240] = {
-> >  
-> >         0x00004000, 0x00033ffe, 0x00063efc, 0x000a3bfb,
-> > 
-> > @@ -88,6 +89,14 @@ static const u32 lan2coefftab16[240] = {
-> > 
-> >         0x0b1c1603, 0x0d1c1502, 0x0e1d1401, 0x0f1d1301,
-> >  
-> >  };
-> > 
-> > +static inline u32 sun8i_ui_scaler_base(struct sun8i_mixer *mixer, int
-> > channel)
-> I recently saw a review comment stating one should not inline functions
-> unless they are defined in header files. Otherwise the decision should
-> be left up to the compiler.
-> 
-> > +{
-> > +       int vi_num = mixer->cfg->vi_num;
-> > +
-> > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * vi_num +
-> > +              DE2_UI_SCALER_SIZE * (channel - vi_num);
-> > +}
-> > +
-> > 
-> >  static int sun8i_ui_scaler_coef_index(unsigned int step)
-> >  {
-> >  
-> >         unsigned int scale, int_part, float_part;
-> 
-> [...]
-> 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c index
-> > d3f1acb234b7..8697afc36023 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > @@ -833,6 +833,11 @@ static const u32 bicubic4coefftab32[480] = {
-> > 
-> >         0x1012110d, 0x1012110d, 0x1013110c, 0x1013110c,
-> >  
-> >  };
-> > 
-> > +static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int
-> > channel) +{
-> > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
-> > +}
-> > +
-> 
-> This one as well.
-> 
-> >  static int sun8i_vi_scaler_coef_index(unsigned int step)
-> >  {
-> >  
-> >         unsigned int scale, int_part, float_part;
-> > 
-> > @@ -857,7 +862,7 @@ static int sun8i_vi_scaler_coef_index(unsigned int
-> > step)> 
-> >         }
-> >  
-> >  }
-> > 
-> > -static void sun8i_vi_scaler_set_coeff(struct regmap *map, int layer,
-> > +static void sun8i_vi_scaler_set_coeff(struct regmap *map, u32 base,
-> > 
-> >                                       u32 hstep, u32 vstep,
-> >                                       const struct drm_format_info
-> >                                       *format)
-> 
-> This is the only instance where a function's "layer" parameter was changed
-> to "base". It would be nice if it were consistent.
 
-Why not? Caller already have base address calculated, so it poses no overhead. 
-Additionally, sun8i_vi_scaler_set_coeff() doesn't have struct sun8i_mixer 
-*mixer parameter, which would allow calculating base address based on layer 
-id. So, you can chose between existing variant or adding additional parameter 
-for no real reason.
+Please CC me on comments.
 
-Best regards,
-Jernej
+I'm seeing a lot of these errors on my dual core fileserver:
+-----------------------------------------------------------------------
 
+Sep 23 01:51:28 files kernel: INFO: rcu_sched detected stalls on CPUs/tasks:
+Sep 23 01:51:28 files kernel:         1-...!: (0 ticks this GP) idle=27c/0/0 softirq=35425/35425 fqs=0
+Sep 23 01:51:28 files kernel:         (detected by 0, t=60009 jiffies, g=20812, c=20811, q=121)
+Sep 23 01:51:28 files kernel: Sending NMI from CPU 0 to CPUs 1:
+Sep 23 01:51:28 files kernel: NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x2/0x10
+Sep 23 01:51:28 files kernel: rcu_sched kthread starved for 60009 jiffies! g20812 c20811 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x402 ->cpu=1
+Sep 23 01:51:28 files kernel: RCU grace-period kthread stack dump:
+Sep 23 01:51:28 files kernel: rcu_sched       I    0    10      2 0x80000000
+Sep 23 01:51:33 files kernel: Call Trace:
+Sep 23 01:51:33 files kernel:  ? __schedule+0x25c/0x860
+Sep 23 01:51:33 files kernel:  schedule+0x28/0x80
+Sep 23 01:51:33 files kernel:  schedule_timeout+0x174/0x370
+Sep 23 01:51:33 files kernel:  ? __next_timer_interrupt+0xc0/0xc0
+Sep 23 01:51:33 files kernel:  rcu_gp_kthread+0x4b6/0x8c0
+Sep 23 01:51:33 files kernel:  ? _synchronize_rcu_expedited.constprop.68+0x310/0x310
+Sep 23 01:51:33 files kernel:  kthread+0x113/0x130
+Sep 23 01:51:33 files kernel:  ? kthread_create_worker_on_cpu+0x70/0x70
+Sep 23 01:51:33 files kernel:  ret_from_fork+0x35/0x40
+
+-----------------------------------------------------------------------
+
+The kernel reported bogoMIPS for the cores are as follows:
+
+$ grep bogo /proc/cpuinfo
+bogomips        : 4219.49
+bogomips        : 184253.06
+$
+
+What is that value for the second Athlon core (seems extremely bogus), and would/could that be the reason for the schedule_timeouts?  This bogus value also shows up in the bootup log when the second core is activated.  Seems to be AMD specific, as the values are correct on my Xeon machines.
+
+Kernel is a stock Fedora 4.18.7-100 release.  Machine is an old Dell Experion that I've repurposed as a fileserver and postgresql machine.
+
+Other than RTFM, or please build a bunch of kernels from source on your slow machine, using differing config options to help track down the cause of this...any thoughts about a solution?
 
 
