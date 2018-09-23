@@ -2,159 +2,132 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617E3C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7E2ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11EF62148D
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7DB220676
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 13:46:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="rsr2M8AC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11EF62148D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="08hfiQLS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7DB220676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeIWTfX (ORCPT
+        id S1726255AbeIWTn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 15:35:23 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45262 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeIWTfW (ORCPT
+        Sun, 23 Sep 2018 15:43:56 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33965 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeIWTnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 15:35:22 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a23-v6so246309pfi.12
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 06:37:52 -0700 (PDT)
+        Sun, 23 Sep 2018 15:43:55 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y10-v6so328095lfj.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 06:46:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=Zilsh2tFgZXnd5LLq1Z4euqgXWzST7tVUMLvmFK1/HA=;
-        b=rsr2M8ACOw2f6hJrczsl229WsNB8iqcMS0JKuaqTsjC6gdt2SlCg8OYLEQay+wMTXL
-         eRqL4tTx4Plu2tOfOhLJGPuORCA5Zaq4VY/D0Ad69vokTg6mSeY8E56Wn8Xcbuw3Tsrm
-         mC/oFU50nDFRdHOoQCHHrx1lOAeFhhDQwyHHsJfNtES3fnS+K2dSxbo5RmgDp3542SuK
-         9f13q/WOGOVTdLt5WCVlTFj1u6lHLBSawt5X16uDgTJ/QBB4nfApOTuAwkvx2dJlLsEs
-         DE+jp0cq+Fh63NKshYnAAs1kH/CFkaHCg5v2l4YYrZFC2q9v57wdi8ISPqHdmH3RZUlI
-         1rfg==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=C5+9DdUIa1SXcHBQy7B4QK/Om4O6fR+/Z/u1c1nwl/8=;
+        b=08hfiQLSGyCSsJJp62uLSBCR6ymKe5ipStBxuZfWZVT/gh8xaVkqX0hQLAZZbpBb8D
+         l9j1UcC/yFvvuelFlcrzNfc7TcTDvlmzTfsIXk3cWJIku7y9yNo7WkTC93TtErUcoJH9
+         5N5L0y+pi3zKgGQetyxGgr41x+mz65f9EA/0Qbkytw7jLv5cycP54h3ZwcszpIGlaKi6
+         UAgeV4WJbO/qjXakJelr5hxW6aauUx/ZuClCW53wkvdF4FtKZ/dK5RtN1EcvnLYvFv9n
+         n3h69DikULZ16pOMPEOueaxIKL4eV7ZuLFyWmIXQvwk18bygZBdu0Q+ZbE+FKO5hLK4U
+         K62Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Zilsh2tFgZXnd5LLq1Z4euqgXWzST7tVUMLvmFK1/HA=;
-        b=OBiYWgVtrU7vnc+VoG23OMbXgWTWeNznfbFsy+4gpbiqm9T9RcyojQWosJBmO1k7+2
-         PKWgF6ESJkKZ6GYGRZ4tGwrqSYdTcj98fMGc6BIsNGMvOfpanEAQ8oGba7gowuucm7CE
-         WTz+0wKrO2j+4QoF/NeErSX1mvUdYR+wpm3zYbW5UmtjO1yudopb2Uytg+wqG6Y2qBiL
-         CLpPcdf3HHYkbORCAN5/r2TWmZN3gyhtJy99WSoJJJS8GmCYP65fHm2Yz3gUM+YwrZdx
-         kR5TSxku+66iE0oV2JpxRFonAcaF7OgtitiegmowOcXDUYYM9cU0kNKW4Y5NUXpqQZzd
-         iuUw==
-X-Gm-Message-State: ABuFfohTwpg2trc8N2+DhhDFfA7iZKV13UjAA2Uue+jgFAVPnxPKaJ80
-        ZF3vfdzR341RtjX9xvPcUf07CA==
-X-Google-Smtp-Source: ACcGV63REVoEEo6io9wjsz75CHtYOyzRwj5oBTkOkzV1jE44O31bpbKpRG0x2QJAy0T8f2zXv+m2lw==
-X-Received: by 2002:a63:fe02:: with SMTP id p2-v6mr5994391pgh.148.1537709871594;
-        Sun, 23 Sep 2018 06:37:51 -0700 (PDT)
-Received: from anup-ubuntu64.dlink.router ([106.51.30.16])
-        by smtp.googlemail.com with ESMTPSA id j16-v6sm62428654pfk.125.2018.09.23.06.37.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 06:37:50 -0700 (PDT)
-From:   Anup Patel <anup@brainfault.org>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2] RISC-V: Show CPU ID and Hart ID separately in /proc/cpuinfo
-Date:   Sun, 23 Sep 2018 19:07:37 +0530
-Message-Id: <20180923133737.22693-1-anup@brainfault.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=C5+9DdUIa1SXcHBQy7B4QK/Om4O6fR+/Z/u1c1nwl/8=;
+        b=Ls+T9SxCumoB8bK1HINIjFJTDVB9QWdm/V8K40Oo6UyUhFm66vohUrtkVw55feHykN
+         qMggeNs5whESJiXK67DtE2OVpAEFbJfrRQaYTwvfjc1tPrbc4pJ1THh+GfVCHw/gVCMk
+         B4OrfvTmMOP0DqctZUoSnX4xkN5vdgjaDwgD6zCKXCq6H164RsgjJdjyXcMA82y/sWfR
+         QSqpXngUfy6QqencwF21DL+CVo7vd07KFlvucDO1R+FlxMMDK72lFC9CvAZY7N0pypwk
+         Ke+EyxUos0ndOp1QvNYhHKcXL2ErltDok3FzojtWIJjZP9D/kH3CdSIcA7+rp8n2i7rP
+         EowA==
+X-Gm-Message-State: APzg51B2lRI5intZLEtZdfhDZPQuO8hJ+LSYPbr331hf22pVddn/EDZE
+        5cs0iiU2YOdA0jySGwproSfdt8RGJfWj3MhSHVr/7Q==
+X-Google-Smtp-Source: ANB0VdZU2xTcCtD6WkQrvRyTjwPPFcmSLcWFbnWZUjDVfV2xRMveQPVL74vNZR/j1CvJs90nt3jDcJQIyt/P4RZA5ig=
+X-Received: by 2002:a19:1588:: with SMTP id 8-v6mr3739390lfv.36.1537710382039;
+ Sun, 23 Sep 2018 06:46:22 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:eac3:0:0:0:0:0 with HTTP; Sun, 23 Sep 2018 06:46:20
+ -0700 (PDT)
+X-Originating-IP: [85.30.9.151]
+In-Reply-To: <20180830180205.18121-1-krzk@kernel.org>
+References: <20180830180205.18121-1-krzk@kernel.org>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Sun, 23 Sep 2018 14:46:20 +0100
+Message-ID: <CAOesGMgE6QaasvHi7E55Z4U1Pp0+8QYW2eRLMsExebZ999_UHA@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: arm: Explicitly mark Samsung Exynos SoC
+ as unstable
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, /proc/cpuinfo show logical CPU ID as Hart ID which
-is in-correct. This patch shows CPU ID and Hart ID separately
-in /proc/cpuinfo using cpuid_to_hardid_map().
+On Thu, Aug 30, 2018 at 7:02 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Samsung Exynos SoCs and boards related bindings evolved since the initial
+> introduction, but initially the bindings were minimal and a bit incomplete
+> (they never described all the hardware modules available in the SoCs).
+> Since then some significant (not fully compatible) changes have been
+> already committed a few times (like gpio replaced by pinctrl, display ddc,
+> mfc reserved memory, some core clocks added to various hardware modules,
+> added more required nodes).
+>
+> On the other side there are no boards which have device tree embedded in
+> the bootloader. Device tree blob is always compiled from the kernel tree
+> and updated together with the kernel image.
+>
+> Thus to avoid further adding a bunch of workarounds for old/missing
+> bindings, make development of new platforms easier and allow to make
+> cleanup of the existing code and device tree files, lets mark some
+> Samsung Exynos SoC platform bindings as unstable. This means that
+> bindings can may change at any time and users should use the dtb file
+> compiled from the same kernel source tree as the kernel image.
 
-With this patch, contents of /proc/cpuinfo looks as follows:
-processor	: 0
-hart		: 1
-isa		: rv64imafdc
-mmu		: sv48
+I have to admit that I don't really like this approach, and I missed
+the patch when originally posted (I did notice it in the pull request
+it came in with though).
 
-processor	: 1
-hart		: 0
-isa		: rv64imafdc
-mmu		: sv48
+The main concern for me is that with a blanket "everything is always
+unstable" we discard the notion that we should strive for bindings to
+be stable and backwards compatible.
 
-processor	: 2
-hart		: 2
-isa		: rv64imafdc
-mmu		: sv48
+Questions that come to mind are:
 
-processor	: 3
-hart		: 3
-isa		: rv64imafdc
-mmu		: sv48
+ - When do they stop being unstable?
+ - Is there a way to note in the binding itself that it's still
+unstable with an anticipation of when it will be settled in?
+ - Is there a better way to version the bindings to avoid complete
+backwards compatibility?
 
-Signed-off-by: Anup Patel <anup@brainfault.org>
----
+Pointing out a couple of cases where it has been painful to stay
+backwards compatible could also be useful for understanding (even
+though you run the risk of each case being explained away with
+suggestions of how it can be handled).
 
-Changes since v1:
- - Show logical CPU ID as "processor" attribute in /proc/cpuinfo
 
- arch/riscv/kernel/cpu.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index 36b6ddb19b4d..392c7c19c4a3 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -81,7 +81,7 @@ static void print_isa(struct seq_file *f, const char *orig_isa)
- #endif
- 
- 	/* Print the base ISA, as we already know it's legal. */
--	seq_puts(f, "isa\t: ");
-+	seq_puts(f, "isa\t\t: ");
- 	seq_write(f, isa, 5);
- 	isa += 5;
- 
-@@ -96,6 +96,7 @@ static void print_isa(struct seq_file *f, const char *orig_isa)
- 			isa++;
- 		}
- 	}
-+	seq_puts(f, "\n");
- 
- 	/*
- 	 * If we were given an unsupported ISA in the device tree then print
-@@ -116,7 +117,7 @@ static void print_mmu(struct seq_file *f, const char *mmu_type)
- 		return;
- #endif
- 
--	seq_printf(f, "mmu\t: %s\n", mmu_type+6);
-+	seq_printf(f, "mmu\t\t: %s\n", mmu_type+6);
- }
- 
- static void *c_start(struct seq_file *m, loff_t *pos)
-@@ -144,14 +145,15 @@ static int c_show(struct seq_file *m, void *v)
- 						   NULL);
- 	const char *compat, *isa, *mmu;
- 
--	seq_printf(m, "hart\t: %lu\n", cpu_id);
-+	seq_printf(m, "processor\t: %lu\n", cpu_id);
-+	seq_printf(m, "hart\t\t: %lu\n", cpuid_to_hardid_map(cpu_id));
- 	if (!of_property_read_string(node, "riscv,isa", &isa))
- 		print_isa(m, isa);
- 	if (!of_property_read_string(node, "mmu-type", &mmu))
- 		print_mmu(m, mmu);
- 	if (!of_property_read_string(node, "compatible", &compat)
- 	    && strcmp(compat, "riscv"))
--		seq_printf(m, "uarch\t: %s\n", compat);
-+		seq_printf(m, "uarch\t\t: %s\n", compat);
- 	seq_puts(m, "\n");
- 
- 	return 0;
--- 
-2.17.1
-
+-Olof
