@@ -2,156 +2,150 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC33C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB45ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 02:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86C0B206B5
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73E082146E
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 02:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjWyuSt5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C0B206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OU6ImiH7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E082146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbeIWGyv (ORCPT
+        id S1725989AbeIWICs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 02:54:51 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45325 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbeIWGyv (ORCPT
+        Sun, 23 Sep 2018 04:02:48 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40073 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbeIWICs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 02:54:51 -0400
-Received: by mail-qt1-f193.google.com with SMTP id l2-v6so5483154qtr.12
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 17:59:17 -0700 (PDT)
+        Sun, 23 Sep 2018 04:02:48 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n31-v6so796491pgm.7;
+        Sat, 22 Sep 2018 19:07:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3S7+o+DQ2XA2b2p23lokHvd5A8cZ2RkDDULTqNI/A9I=;
-        b=IjWyuSt5oh0yhCluXc1KNkwhXFXNBD0UUFw23iSbf/+qMBF3SSpxODwaEfYJy+8Dyh
-         t42/LDzundMVDpQruAt3O/dp3UwVuhjAFmW+zIIF2SaVUJi50JtAq7B5yIeUbJIxzyrz
-         0Yy4cgY5vPOHI9PyqnkXWfWumKKBxhG32gGTHUVno41aJm7AfVdhe9C/y02N6WZaAXjC
-         UhN/ETH04jM/7xA1wOxgrcjh0vuJdpsfwl6aGRHERewBO8Sf9mmZwy4ig7z4aZRYxN/t
-         WnEo5KGfRVBaogfLNzTwVCGoMArR1/vOYdDIqESLV6M/QSfpOsMigti1WRTtd14NuHfY
-         plEw==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nzdPTYtIcSavV6H0ciUPs+KTqcsTJVvCjZAN4K2mW0A=;
+        b=OU6ImiH7MpG+l0EpzPQ0JvqpWbA56GcogEav39KYYdfpwauu8qETsoihK+9rAsMW/x
+         H0ckIipzakxgU87PTwEXAM0sX5lFoU42GP6xycYp3cDsaDjj18PsDlFqeNWffaSzMNEb
+         TBbBclSkoZ4iK8oGcmFD0MyzXqsdaaipjVR5g1ICmxGEqrNtJVd/j3vyvs816a6/SKZf
+         SK2zHr3fL9E5oEu5To+5ZhujJNR2IWdIelXw+d9qddedR59VSzN7uTbuA1kJKcMS8NeS
+         oOsy31AYpYuwq4HZRzhQBs0oV3SGjsyqJxQIPfXs45MOU1JqJI3+u88r1qKb3SVqr7Y7
+         QnCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3S7+o+DQ2XA2b2p23lokHvd5A8cZ2RkDDULTqNI/A9I=;
-        b=CXm5cNF7yc13cJdiUFaXHoIONtIstITh77eO2w1hQa3qBIsYmb7HKYInFeAtt5O7En
-         K6kTAVzZtXy0Cu1PA6zwAyeOaTE3B8b76hzKZGixsgaU5U70sT5oO7FP17M1fpUggkU7
-         Q9B55HPooajVWeqr+101AgDwhU2Sx4Uy0PCy3uKQFodJJMwA2e4Iq3dFZy/zOe1klHPH
-         xk5RKrT/5qxjTOpgNKsryrWSINBMyv9BHW8QX644O6PPiKNpWXoNl7krrmrG15y2C9Lj
-         FGdAdoX5p+vc9nG6hnB+isKpQlrXbn9jxj930SOYY52d6PLN/7oq2eP6kj08nfuL4W+M
-         dPAg==
-X-Gm-Message-State: ABuFfogm0RhQszSRNFRQxyxyqwPjnUU5TlLVTQvrjdi1VCYGDgybiqnh
-        f1wbw3LbsbNbPfFOYwxguLsPcYFgdFCeDBkZaao=
-X-Google-Smtp-Source: ACcGV61Xa6314Pmf4pcbcV4o1kHjnAHEwOkh2YzhLuykET7hbhqBcCn3vaR8H9XdvvlYs8tCarQWPRG+3i/IQ9Xt784=
-X-Received: by 2002:ac8:4304:: with SMTP id z4-v6mr2768202qtm.295.1537664357177;
- Sat, 22 Sep 2018 17:59:17 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nzdPTYtIcSavV6H0ciUPs+KTqcsTJVvCjZAN4K2mW0A=;
+        b=efvPIWBWqGGIkGVepQMVIX06yPDiSU/l7LkDI2V7caDd1L3yMqBWdK5NxFAm3xrbvD
+         qxO4hE7ZUisY8QhJ0oTdwm8+pQ5UrGrvI3aRtWvkW4tbBej6Ui10qAUFa6CvTQZDQqhv
+         RtjhkanxO+QKpqND/YigeVuTsh4p/l88qgkMpDHHYkWnbts8XujLSCCU970J4ZwG9o1V
+         OjDAczG+P3WnLcROrSXwMOEZ7N9LR6Lqv3BzsQ+VQzzDA+1cl69YOLvo6EGwd4wzToCP
+         mJ+Lu8i5gi8lEfJLlQFgnuY/AUYhyPlYtNP1ONkRLKD872JnIh9WM77pfUrWUuDcIOKP
+         jN9g==
+X-Gm-Message-State: APzg51DQGOqOpx/02F/R6ddE8nVIJQAAfFQU3WUlzvlO471RL97VZQWo
+        CKIgCBA4ycEa5AdRi95qRo+DSHbi
+X-Google-Smtp-Source: ANB0VdY5hiOohnGmwoUGTfNNPJGIqPuPtcKHbE/kckq2Oi7QpUXG8d3mqg8bjUgyipNyKPfxGT9cOg==
+X-Received: by 2002:a62:ee06:: with SMTP id e6-v6mr4450743pfi.2.1537668424965;
+        Sat, 22 Sep 2018 19:07:04 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id y4-v6sm43906493pfn.123.2018.09.22.19.07.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Sep 2018 19:07:03 -0700 (PDT)
+Subject: Re: [PATCH v3 2/2] hwmon: ina3221: Read channel input source info
+ from DT
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20180921223216.634-1-nicoleotsuka@gmail.com>
+ <20180921223216.634-3-nicoleotsuka@gmail.com>
+ <a7e6c311-eba4-e9b2-df64-9d02882a1dcb@roeck-us.net>
+ <20180922184650.GB9092@Asurada>
+ <f8e017c4-10dd-2d0d-84df-b05d3ed03bbf@roeck-us.net>
+ <20180923003841.GA10071@Asurada-Nvidia.nvidia.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <80510b08-0e89-03ce-7d69-fe51f8b6a7b5@roeck-us.net>
+Date:   Sat, 22 Sep 2018 19:07:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:ac8:7494:0:0:0:0:0 with HTTP; Sat, 22 Sep 2018 17:58:56
- -0700 (PDT)
-In-Reply-To: <CA+ToGPGSOsLpbOvjjb22B510qkNefdsUSiFTYON7c=oh0s8vcA@mail.gmail.com>
-References: <20180912035352.11191-1-diego.viola@gmail.com> <CA+ToGPGSOsLpbOvjjb22B510qkNefdsUSiFTYON7c=oh0s8vcA@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sun, 23 Sep 2018 02:58:56 +0200
-Message-ID: <CANiq72m_X1U+NVf1VQuUcCi9-dERrCG3Y3tueRGbOpPd5u+a0g@mail.gmail.com>
-Subject: Re: [PATCH TRIVIAL] Punctuation fixes
-To:     Diego Viola <diego.viola@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>, trivial@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180923003841.GA10071@Asurada-Nvidia.nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Diego,
+On 09/22/2018 05:38 PM, Nicolin Chen wrote:
+> On Sat, Sep 22, 2018 at 04:59:55PM -0700, Guenter Roeck wrote:
+> 
+>>>>> +	/* Disable channels if their inputs are disconnected */
+>>>>> +	for (i = 0, mask = 0; i < INA3221_NUM_CHANNELS; i++) {
+>>>>> +		if (ina->inputs[i].disconnected)
+>>>>> +			mask |= INA3221_CONFIG_CHx_EN(i);
+>>>>> +	}
+>>>>
+>>>> Consequently, you should also _enable_ channels which are not explicitly disabled.
+>>>
+>>> The register has enabled all channels by default. So I felt it'd
+>>> be neat to have disabling code only. My v1 actually had enabling
+>>> part as well, but I can add it back if you think it'd be better.
+>>>
+>>>> This can be tricky since you'll have to distinguish non-DT and DT configuration
+>>>> and retain the original configuration if no channel configuration data is available
+>>>> from devicetree.
+> 
+>>> For non-DT configurations, input->disconnected is always false by
+>>> default unless someone adds config for it (through platform_data).
+>>> If regmap_update_bits only does disabling like this version does,
+>>> non-DT configurations will not get affected since mask = 0. Or if
+>>> we change it to do both enabling and disabling, regmap_update_bits
+>>> will still ignore since there's no register value changed, though
+>>> it won't really hurt even if regmap writes correct configurations
+>>> to the register.
+>>>
+>>> For DT configurations (without channel input source defined), it's
+>>> like the same as non-DT configurations. As we have platforms only
+>>> enabled ina3221 via DT while they don't have this new DT binding,
+>>> the driver has to be backward compatible, so my change only sets
+>>> input->disconnected=true when a status="disabled" is present, i.e.
+>>> those platforms are treated as all channels getting enabled until
+>>> they update their DTs.
+> 
+>> I think your assumption may be that the chip is always in its reset state
+>> when Linux is loaded. This is not necessarily the case; it may be
+>> preconfigured by BIOS or ROMMON, or even by someone using i2cset before
+>> loading the driver. If you add enable/disable functionality, you can
+>> not make an assumption about the original state of the chip at probe time;
+>> you have to read it from the chip itself.
+> 
+> I see. That made a point. In that case, I think the simplest way
+> is probably to do software reset before having configurations.
+> 
+No. If the chip was configured by the BIOS/ROMMON, it is supposed
+to be that way. We can not just override that.
 
-A few things, since it looks like this is your first patch.
+Guenter
 
-On Sat, Sep 22, 2018 at 5:56 PM, Diego Viola <diego.viola@gmail.com> wrote:
-> On Wed, Sep 12, 2018 at 12:54 AM Diego Viola <diego.viola@gmail.com> wrote:
->>
->> Signed-off-by: Diego Viola <diego.viola@gmail.com>
->> ---
->>  CREDITS     | 2 +-
->>  MAINTAINERS | 2 +-
->>  Makefile    | 2 +-
->>  3 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/CREDITS b/CREDITS
->> index 5befd2d71..b82efb36d 100644
->> --- a/CREDITS
->> +++ b/CREDITS
->> @@ -1473,7 +1473,7 @@ W: http://www.linux-ide.org/
->>  W: http://www.linuxdiskcert.org/
->>  D: Random SMP kernel hacker...
->>  D: Uniform Multi-Platform E-IDE driver
->> -D: Active-ATA-Chipset maddness..........
->> +D: Active-ATA-Chipset maddness...
+> The "disconnected" here is to describe the physical connection,
+> not exact the switch control status because a channel could be
+> connected but disabled. However, a channel would not be enabled
+> if it's disconnected. So I think it'd be safe to just disable
+> the disconnected channels here as this version does, meanwhile,
+> I will add a soft reset to make sure all channels are enabled.
+> 
+> Thanks
+> Nicolin
+> 
 
-I think the extra dots is what was intended here :)
-
->>  D: Ultra DMA 133/100/66/33 w/48-bit Addressing
->>  D: ATA-Disconnect, ATA-TCQ
->>  D: ATA-Smart Kernel Daemon
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index d870cb57c..6567bf245 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -93,7 +93,7 @@ Descriptions of section entries:
->>            Supported:   Someone is actually paid to look after this.
->>            Maintained:  Someone actually looks after it.
->>            Odd Fixes:   It has a maintainer but they don't have time to do
->> -                       much other than throw the odd patch in. See below..
->> +                       much other than throw the odd patch in. See below.
->>            Orphan:      No current maintainer [but maybe you could take the
->>                         role as you write your new code].
->>            Obsolete:    Old code. Something tagged obsolete generally means
->> diff --git a/Makefile b/Makefile
->> index 4d5c883a9..7b5c5d634 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -1109,7 +1109,7 @@ archprepare: archheaders archscripts prepare1 scripts_basic
->>  prepare0: archprepare gcc-plugins
->>         $(Q)$(MAKE) $(build)=.
->>
->> -# All the preparing..
->> +# All the preparing...
->>  prepare: prepare0 prepare-objtool
->>
->>  # Support for using generic headers in asm-generic
->> --
->> 2.19.0
->>
->
-> Jonathan,
->
-> can you please merge my patch? After you merge this one, I'll go
-> through the rest of the documentation to make it more consistent.
-
-Jonathan is not responsible for these files. Jiri Kosina is the
-maintainer of the trivial tree.
-
-There are 1700+ instances of a "two-stops ellipsis" in the kernel. I
-am not sure they were mistakes, given their prevalence, even if they are
-not formal/common English. Also, I am not sure a commit for each 3 is
-really appropriate! :) Maybe do the full sweep of the Documentation
-ones in a single patch?
-
-Also, typically you would note in the subject that this is a "v2" of
-your previous patch (if I am not wrong, you sent a first version
-fixing only one of the 3 mistakes).
-
-Thanks for your first patch!
-
-Cheers,
-Miguel
