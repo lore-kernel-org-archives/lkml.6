@@ -2,64 +2,80 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB28ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 07:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368DEC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 08:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E145221477
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 07:55:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E145221477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id B4AD620684
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 08:03:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4AD620684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbeIWNwQ (ORCPT
+        id S1726146AbeIWN7c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 09:52:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51012 "EHLO mx1.suse.de"
+        Sun, 23 Sep 2018 09:59:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:13105 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726029AbeIWNwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 09:52:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7C7C9AF62;
-        Sun, 23 Sep 2018 07:55:41 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com
-Subject: [GIT PULL] xen: fixes for 4.19-rc5
-Date:   Sun, 23 Sep 2018 09:55:38 +0200
-Message-Id: <20180923075538.18404-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        id S1726051AbeIWN7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 09:59:32 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 30BCE49BCB966;
+        Sun, 23 Sep 2018 16:02:48 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.399.0; Sun, 23 Sep 2018 16:02:42 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paul Burton <paul.burton@mips.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Mike Rapoport" <rppt@linux.vnet.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] powerpc: Remove duplicated include from pci_32.c
+Date:   Sun, 23 Sep 2018 08:12:08 +0000
+Message-ID: <1537690328-77353-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus/Greg,
+Remove duplicated include.
 
-Please git pull the following tag:
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/powerpc/kernel/pci_32.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.19d-rc5-tag
+diff --git a/arch/powerpc/kernel/pci_32.c b/arch/powerpc/kernel/pci_32.c
+index d63be12..274bd14 100644
+--- a/arch/powerpc/kernel/pci_32.c
++++ b/arch/powerpc/kernel/pci_32.c
+@@ -17,7 +17,6 @@
+ #include <linux/of.h>
+ #include <linux/slab.h>
+ #include <linux/export.h>
+-#include <linux/syscalls.h>
+ 
+ #include <asm/processor.h>
+ #include <asm/io.h>
 
-xen: fixes for 4.19-rc5
-
-It contains two small fixes for xen drivers.
 
 
-Thanks.
-
-Juergen
-
- arch/x86/xen/pmu.c        |  2 +-
- drivers/xen/grant-table.c | 27 +++++++++++++++++++++------
- 2 files changed, 22 insertions(+), 7 deletions(-)
-
-Boris Ostrovsky (1):
-      xen/x86/vpmu: Zero struct pt_regs before calling into sample handling code
-
-Juergen Gross (1):
-      xen: issue warning message when out of grant maptrack entries
