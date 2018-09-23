@@ -2,139 +2,99 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7B1ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 05:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3BCC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 05:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555C3214C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 05:46:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWhde9eG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 555C3214C2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 75037214C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 05:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75037214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbeIWLmG (ORCPT
+        id S1726074AbeIWLqm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 07:42:06 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35047 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeIWLmG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 07:42:06 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v133-v6so262087pgb.2;
-        Sat, 22 Sep 2018 22:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tq9bvVBhYJhxEf9Gn7mmNpxAVaVdpAByjBlJ2fL4DIo=;
-        b=pWhde9eGE7Fq0gCBbhRMHYVsx9qERxcuFUdDEzw6oGUC0co1bJ2RYY8F13DzCNcwJS
-         RJCNPgdfkjjS5r0DoWQdWq2Eo0giYypwllJclKMNhwX7RRvCk+tdukFaHkrFrvUQZWYr
-         hVtuCv2i5Gik/7HWGW71Q9mexvHImeQyUcPOIheaK/DmwRm0mMHjgEHRJNnYghiE+soa
-         Cft9YNsvQdVzOd/FPwW4qo38mKi3AyHlkZDDLTt16VQ2USP2BgvssAvTLIbt68s03Jif
-         nxEeY3ZVuFeUbeZJ5alC8GAPGALf8OfvON8Lyw57GxsBuQGIyjF7JU9d3GCO3J6VOS7X
-         gy1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tq9bvVBhYJhxEf9Gn7mmNpxAVaVdpAByjBlJ2fL4DIo=;
-        b=Qx1k84c8Cdg9kQ2K2dPDEazqwhKZkNjHIq+mN4qGJFuOW/fYa3xrzwZ2t7PO5sjheD
-         rT2sud6AZuf/r9k8qqb7mEMjLXLpuvLz7C6pREsLpeQLPt087sRmrTPAwxf9k9tQO9Gt
-         Z8R4ozx5j5ZezSFzHwHHhujw3lkGCl3xVzpAySEkpeEf1SVQm0vXWlo8WJEIzx+/pE3K
-         2PH5PHjdQYQWNs3NuFujwKjyPrawFODitPX4Hy8TJl3KxDlC/5jMbTXXUdeP6dxk4sAW
-         Q/vwpXUK9wFEgLqV+mJVabiOklhdysPrGNWc8LCLsTQMWy4VpeYBHNerBBC6BYw1lFeT
-         aYww==
-X-Gm-Message-State: APzg51CxBr1O/3BgP84ye0ANG+lUIbZEsU0DNPnyyifPh9TU/Ei7F5xc
-        lDzr5bcYb9n6a/oi7IsOC82giiIb
-X-Google-Smtp-Source: ANB0VdbedHPjvY2YJgjC6/EwYQV0EoWqg3DrMWk2tA4U9i1E27IGI9JFcncwBjLNkI46+kcRhVTZeA==
-X-Received: by 2002:a62:cc83:: with SMTP id j3-v6mr4981393pfk.255.1537681552122;
-        Sat, 22 Sep 2018 22:45:52 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id m26-v6sm54502277pfi.102.2018.09.22.22.45.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 22:45:51 -0700 (PDT)
-Subject: Re: [PATCH v4 1/2] dt-bindings: hwmon: Add ina3221 documentation
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-References: <20180923041118.8743-1-nicoleotsuka@gmail.com>
- <20180923041118.8743-2-nicoleotsuka@gmail.com>
- <353ccbbd-94c8-72eb-eb98-8a0507431e15@roeck-us.net>
- <20180923053151.GB9960@Asurada>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <ce76fdf2-2894-96ad-d2f5-b2c25f197ee4@roeck-us.net>
-Date:   Sat, 22 Sep 2018 22:45:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180923053151.GB9960@Asurada>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Sun, 23 Sep 2018 07:46:42 -0400
+Received: from mga17.intel.com ([192.55.52.151]:28301 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbeIWLqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 07:46:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Sep 2018 22:50:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,291,1534834800"; 
+   d="scan'208";a="94072220"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga002.jf.intel.com with ESMTP; 22 Sep 2018 22:49:06 -0700
+Received: from fmsmsx156.amr.corp.intel.com (10.18.116.74) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sat, 22 Sep 2018 22:49:06 -0700
+Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
+ fmsmsx156.amr.corp.intel.com (10.18.116.74) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sat, 22 Sep 2018 22:49:05 -0700
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.242]) by
+ LCSMSX153.ger.corp.intel.com ([169.254.8.230]) with mapi id 14.03.0319.002;
+ Sun, 23 Sep 2018 08:49:03 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [char-misc v4.4.y 2/2] mei: bus: type promotion bug in
+ mei_nfc_if_version()
+Thread-Topic: [char-misc v4.4.y 2/2] mei: bus: type promotion bug in
+ mei_nfc_if_version()
+Thread-Index: AQHUS15efZUfsgX14EOznlt0owXT76T9ZoOg
+Date:   Sun, 23 Sep 2018 05:49:02 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9B4CF9@hasmsx108.ger.corp.intel.com>
+References: <20180903224304.15989-1-tomas.winkler@intel.com>
+ <20180903224304.15989-2-tomas.winkler@intel.com>
+ <20180913123553.GJ2268@kroah.com>
+In-Reply-To: <20180913123553.GJ2268@kroah.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTg0YTUxZGYtYTFlOC00MzllLTk0ZmItNWFjNWUyNTlkOGQyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZWxVZDc4ZG4wZ09qdWdcL09VS2FIeDVoZkNIUkhSejNKeWd2bThoV2Z2a09GU0hLbXQrZHZrVmo0R3RuckdFM28ifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.18]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/22/2018 10:31 PM, Nicolin Chen wrote:
-> On Sat, Sep 22, 2018 at 10:19:42PM -0700, Guenter Roeck wrote:
->>> +2) child nodes
->>> +  Required properties:
->>> +  - input-id: Must be 1, 2 or 3
->>> +
->>> +  Optional properties:
->>> +  - input-label: Name of the input source
->>> +  - shunt-resistor: Shunt resistor value in micro-Ohm
->>> +  - status: Should be "disabled" if no input source
->>> +
->>> +  Example:
->>> +
->>> +  input1 {
->>> +          input-id = <0x1>;
->>
->> We'll have to find a better name for this. Feel free to look up examples in the
->> existing devicetree descriptions. The one that seems to be used most of the time
->> to indicate a channel index or id is "reg". It should also start with 0 - there
->> is no real reason for it to start with 1; it only makes the code more complex.
 > 
-> The reason is that the port start from 1 in the datasheet.
+> On Tue, Sep 04, 2018 at 01:43:04AM +0300, Tomas Winkler wrote:
+> > From: Dan Carpenter <dan.carpenter@oracle.com>
+> >
+> > commit b40b3e9358fbafff6a4ba0f4b9658f6617146f9c upstream
+> >
+> > We accidentally removed the check for negative returns without
+> > considering the issue of type promotion.
+> > The "if_version_length" variable is type size_t so if __mei_cl_recv()
+> > returns a negative then "bytes_recv" is type promoted to a high
+> > positive value and treated as success.
+> >
+> > Cc: <stable@vger.kernel.org> # 4.4
 > 
+> I also need a version of this patch for 4.18.y, 4.14.y, and 4.9.y before I will
+> consider adding it to 4.4.y, as we do not want anyone to ever get a
+> regression moving to a new kernel.
 
-Maybe, but for me I'll want to have something that we can reuse for other chips.
-Having the index start with 0 for one chip and with 1 for another would be
-confusing. It is bad enough that we have in[0..n] for voltages and temp[1..n]
-for temperatures. I would not want to see the same in devicetree files,
-and much less so on a per-device basis. It is also pretty common to start
-channel numbers with 0 in devicetree files.
+Right, I've started from the wrong end. 
+Now I've posted the patches for the rest of the required long running versions.
 
-> I don't mind using reg or count it from 0, will look up to
-> see if I can find something solid; otherwise, I'll wait for
-> binding doc maintainers' opinions before sending v5.
-> 
-Sure, no problem.
-
-Guenter
-
->>> +          status = "disabled";
->>> +  };
->>> +  input2 {
->>> +          input-id = <0x2>;
->>> +          shunt-resistor = <5000>;
->>
->> I would suggest shunt-resistor-micro-ohms as per
->> Documentation/devicetree/bindings/property-units.txt.
-> 
-> Will change it.
-> 
-> Thank you
-> Nicolin
-> 
+Thanks
+Tomas
 
