@@ -2,129 +2,139 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BA0C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1276C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04971214C4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:37:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04971214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F276214C4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 00:38:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjyH/2kj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F276214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbeIWGdC (ORCPT
+        id S1725969AbeIWGeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 02:33:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45706 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726189AbeIWGdC (ORCPT
+        Sun, 23 Sep 2018 02:34:17 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42403 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725841AbeIWGeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 02:33:02 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8N0YuRD069245
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 20:37:31 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mnsajtgep-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 20:37:30 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 22 Sep 2018 20:37:30 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 22 Sep 2018 20:37:27 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8N0bQcx44499028
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 23 Sep 2018 00:37:26 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD3BBB2065;
-        Sat, 22 Sep 2018 20:35:50 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B8085B205F;
-        Sat, 22 Sep 2018 20:35:50 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.236])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat, 22 Sep 2018 20:35:50 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E0A4416C197D; Sat, 22 Sep 2018 17:37:25 -0700 (PDT)
-Date:   Sat, 22 Sep 2018 17:37:25 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC 3/3] Documentation: RCU: Fix rcu_preempt_state
- reference in stallwarn
-Reply-To: paulmck@linux.ibm.com
-References: <20180922234127.94970-1-joel@joelfernandes.org>
- <20180922234127.94970-3-joel@joelfernandes.org>
+        Sun, 23 Sep 2018 02:34:16 -0400
+Received: by mail-pl1-f193.google.com with SMTP id x20-v6so2014806pln.9;
+        Sat, 22 Sep 2018 17:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=b0TRjfAwL5QPGwvdhPzt3vnHHmJkyVGLznB2dvGxGOY=;
+        b=DjyH/2kjS6kzJ0IidGLY/U4T9glBHvxRlFiIjVaNR0H/yRnoLlbaLHj8vVPCmuPIw/
+         IWf7ixm2d9DM/VJ67qwSRU1RfW4MhO2oJXO0Byu2/oxabyc8zzzdvraG0J8BhHe42WvH
+         ZrHUwwlgY5lPg86awebisuNrnuZirD0aCtKMc3ZH+zisRi7Hjzu1eUl3o8hCRrxF+sz1
+         4PXkopmpnrWhzmB+HDnO0+J71+0HkMCx2PKeUonXd6iqCLIIknUSo56jMcthDuHeSNfK
+         LWQ6dn3nteBDzm5mruoNlN4oT1cwPdNrEtdjZ/Wm4RUpN6eF+TBuFnJlZg783/fJrjGM
+         cgjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=b0TRjfAwL5QPGwvdhPzt3vnHHmJkyVGLznB2dvGxGOY=;
+        b=epF6bTlPUw9WMgewn57Zr1c63Wd/UJhncbuSkgkUwA+2c3OHlREHhQNmQJ9cx+XPNr
+         0R/1rwKpeww8zsSc5RfsEkbRTGXBGixC2R2FKNUtaK6+XVDa0y8JxylwC06PMUjobwoQ
+         hk9WvrWbgRVklTXIXVKM1QgbesbMQb7ZFIE1KQ/kAXsObHsPjTnzBTdmG0Qi934hWwiJ
+         BeH6gYCzE/3XsoxreP1TuC3/JMmpTRf5wZ2IqeIwo9yHbCLcCb7xsRCIVAR3+LNKRPYB
+         inzOwB2DkTBAecgaidc83KAUEMV5WstPmBiPMMBAeDzB62Kp4pEu35mqqTrh4qJmVNTw
+         TNUg==
+X-Gm-Message-State: ABuFfoiXa8lkEcC6jn05x1Q/yeHnVP90Ciye++EbHhOmwABuL19YJBzK
+        PKTtOGNKuu7K/kFIBckv9AY=
+X-Google-Smtp-Source: ACcGV62D9SmiUS27L8/MVeGUWbJj9cgG4soAUzZvLpLj5OlOOqq99CQQVzM5ymmxGb5nVibB9d+ERw==
+X-Received: by 2002:a17:902:b783:: with SMTP id e3-v6mr2255480pls.134.1537663126711;
+        Sat, 22 Sep 2018 17:38:46 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id h82-v6sm46409162pfa.173.2018.09.22.17.38.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 22 Sep 2018 17:38:46 -0700 (PDT)
+Date:   Sat, 22 Sep 2018 17:38:42 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        corbet@lwn.net, afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] hwmon: ina3221: Read channel input source info
+ from DT
+Message-ID: <20180923003841.GA10071@Asurada-Nvidia.nvidia.com>
+References: <20180921223216.634-1-nicoleotsuka@gmail.com>
+ <20180921223216.634-3-nicoleotsuka@gmail.com>
+ <a7e6c311-eba4-e9b2-df64-9d02882a1dcb@roeck-us.net>
+ <20180922184650.GB9092@Asurada>
+ <f8e017c4-10dd-2d0d-84df-b05d3ed03bbf@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180922234127.94970-3-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18092300-0068-0000-0000-000003409F8A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009754; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01092246; UDB=6.00564421; IPR=6.00872270;
- MB=3.00023459; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-23 00:37:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092300-0069-0000-0000-000045D38C1A
-Message-Id: <20180923003725.GK4222@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-22_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809230005
+In-Reply-To: <f8e017c4-10dd-2d0d-84df-b05d3ed03bbf@roeck-us.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 07:41:27PM -0400, Joel Fernandes (Google) wrote:
-> rcu_preempt_state doesn't exist anymore. Update stallwarn documentation
-> accordingly.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+On Sat, Sep 22, 2018 at 04:59:55PM -0700, Guenter Roeck wrote:
 
-Good eyes, queued and pushed with edits, including fixing a grammar
-nit in my original.  ;-)
+> > > > +	/* Disable channels if their inputs are disconnected */
+> > > > +	for (i = 0, mask = 0; i < INA3221_NUM_CHANNELS; i++) {
+> > > > +		if (ina->inputs[i].disconnected)
+> > > > +			mask |= INA3221_CONFIG_CHx_EN(i);
+> > > > +	}
+> > > 
+> > > Consequently, you should also _enable_ channels which are not explicitly disabled.
+> > 
+> > The register has enabled all channels by default. So I felt it'd
+> > be neat to have disabling code only. My v1 actually had enabling
+> > part as well, but I can add it back if you think it'd be better.
+> > 
+> > > This can be tricky since you'll have to distinguish non-DT and DT configuration
+> > > and retain the original configuration if no channel configuration data is available
+> > > from devicetree.
 
-							Thanx, Paul
+> > For non-DT configurations, input->disconnected is always false by
+> > default unless someone adds config for it (through platform_data).
+> > If regmap_update_bits only does disabling like this version does,
+> > non-DT configurations will not get affected since mask = 0. Or if
+> > we change it to do both enabling and disabling, regmap_update_bits
+> > will still ignore since there's no register value changed, though
+> > it won't really hurt even if regmap writes correct configurations
+> > to the register.
+> > 
+> > For DT configurations (without channel input source defined), it's
+> > like the same as non-DT configurations. As we have platforms only
+> > enabled ina3221 via DT while they don't have this new DT binding,
+> > the driver has to be backward compatible, so my change only sets
+> > input->disconnected=true when a status="disabled" is present, i.e.
+> > those platforms are treated as all channels getting enabled until
+> > they update their DTs.
 
-> ---
->  Documentation/RCU/stallwarn.txt | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/RCU/stallwarn.txt b/Documentation/RCU/stallwarn.txt
-> index 491043fd976f..b6bc7a2a9961 100644
-> --- a/Documentation/RCU/stallwarn.txt
-> +++ b/Documentation/RCU/stallwarn.txt
-> @@ -176,9 +176,8 @@ causing stalls, and that the stall was affecting RCU-sched.  This message
->  will normally be followed by stack dumps for each CPU.  Please note that
->  PREEMPT_RCU builds can be stalled by tasks as well as by CPUs, and that
->  the tasks will be indicated by PID, for example, "P3421".  It is even
-> -possible for a rcu_preempt_state stall to be caused by both CPUs -and-
-> -tasks, in which case the offending CPUs and tasks will all be called
-> -out in the list.
-> +possible for a rcu_state stall to be caused by both CPUs -and- tasks,
-> +in which case the offending CPUs and tasks will all be called out in the list.
->  
->  CPU 2's "(3 GPs behind)" indicates that this CPU has not interacted with
->  the RCU core for the past three grace periods.  In contrast, CPU 16's "(0
-> -- 
-> 2.19.0.444.g18242da7ef-goog
-> 
+> I think your assumption may be that the chip is always in its reset state
+> when Linux is loaded. This is not necessarily the case; it may be
+> preconfigured by BIOS or ROMMON, or even by someone using i2cset before
+> loading the driver. If you add enable/disable functionality, you can
+> not make an assumption about the original state of the chip at probe time;
+> you have to read it from the chip itself.
 
+I see. That made a point. In that case, I think the simplest way
+is probably to do software reset before having configurations.
+
+The "disconnected" here is to describe the physical connection,
+not exact the switch control status because a channel could be
+connected but disabled. However, a channel would not be enabled
+if it's disconnected. So I think it'd be safe to just disable
+the disconnected channels here as this version does, meanwhile,
+I will add a soft reset to make sure all channels are enabled.
+
+Thanks
+Nicolin
