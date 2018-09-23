@@ -2,321 +2,170 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C842C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F82ECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8FC9214C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97001214C1
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 09:23:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ryLMMcov"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FC9214C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tHlcU1hz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97001214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbeIWPNP (ORCPT
+        id S1726214AbeIWPUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 11:13:15 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35115 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeIWPNP (ORCPT
+        Sun, 23 Sep 2018 11:20:11 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37172 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbeIWPUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 11:13:15 -0400
-Received: by mail-wr1-f68.google.com with SMTP id o16so3429365wrx.2;
-        Sun, 23 Sep 2018 02:16:26 -0700 (PDT)
+        Sun, 23 Sep 2018 11:20:11 -0400
+Received: by mail-pl1-f195.google.com with SMTP id q1-v6so2345969plr.4;
+        Sun, 23 Sep 2018 02:23:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wluegA9G0mQsc00qdkhXnSZHdeUAa9MHd8gbxoTToGU=;
-        b=ryLMMcovXTf077FcxlhGTkV4zius2JJPHHPBSmjYgU+zPpgiHCHZ0ejBE3Wa80xXS7
-         bm8GWbOzaZBGY/1+pD5nLKNBqQpom/BUMoHkf6+ksT0/+FJDYlOrSScJFiX0XYKSzMa5
-         /G9WU0SCzxJsnJOBDPuBb4o+/Ge3/iIRJ3DeX/EeP6QkfmidR6nW/hESHHboRkmVNgRs
-         2HVKW9PhHSwKGkL6VOqq16EQljFe0j0uUBpaAp5GYg8juk1O4YCwxcS+Yw0CNuPhCPCI
-         Uen36fTPIOSxmjzvG786XS3/fVRmCuZpwnZ9cSTPR8tn3tdVHUktXZ3CU7L+OfMsn2MD
-         WeGQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HTp/UI3ZNNsXvQvkOEXt+YcwGy265tVijee0umcwmNc=;
+        b=tHlcU1hzz0nUH4e2K2epN6LmLDt1pt0pT/9g7QctX+iVhiBdCPVFO3/ocOnwawf0gU
+         YKqw9uQUi2PbLbu+jUs7ftQqubQJjNjn1ways3RVk1bzycHnsxfd1OAo4uK3nkgU0GHQ
+         4zxrzBHnNNCcvGnGrb326hOBXepBVpCg2VOZKrMlUcdiuuNZmyux97jCHVEF6fvAdVel
+         jRibKXTnudUxSYTVYZnX/pObq7H7v6ahzINGJipTLbVA4p8pgMEu5vrQveOEcKJjvJcA
+         VxbtxcLujyPoVFyyAoixRgEB43S9mhLSukQoFT731ccpyNYrBM7lLQNSXdpVmi+/Zp0e
+         5mQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wluegA9G0mQsc00qdkhXnSZHdeUAa9MHd8gbxoTToGU=;
-        b=ncO2kVQFNqguQqeN/sHxAbvoYW9zH+L1J5I/2skdV5LXegVSJq9OGgvMnTTpt3ryu+
-         Esr08gYtnONmkVeNxiMK771qMfuR5CwmhiapDiU6Z+0/T1nCr3162j66t2Fwa1/YSnpt
-         +I48GsQl8w5DM+Dvo1WzVtDBRr5Ow8gPPYPBAVSqvDejxm98ZiOebB7p49sboZAkaqvx
-         U8aERwKJnXrl8QGLVcqOteUgm1joC1vJSsqDH4G/pu9jyfdA0v3PO2Y4Og4TWR5rHJxC
-         AHfw3CUB4o1f2haEb3EOalC34KTErLQ0Qw7oJoII+uo3upXLcRsSP95BSWcgI+NQLn3V
-         T76Q==
-X-Gm-Message-State: ABuFfohiHtNizQkFlr8Ysp4wocTTdfHAK+U7WSCS/2bjDhTITTwRcG8n
-        +D3nZ4W0ixxeY9afMq4X8BU=
-X-Google-Smtp-Source: ACcGV60eAEtkerqWJxCiE1r0wA+L7IgQKjDPk+dB//ebcuqFAvpd1zyAJxvV1/0YOTRqQAwhiYS54g==
-X-Received: by 2002:adf:d149:: with SMTP id b9-v6mr4555889wri.17.1537694185488;
-        Sun, 23 Sep 2018 02:16:25 -0700 (PDT)
-Received: from desktopdebian.localdomain (x4dbb2f17.dyn.telefonica.de. [77.187.47.23])
-        by smtp.gmail.com with ESMTPSA id m68-v6sm20865759wmb.10.2018.09.23.02.16.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 02:16:25 -0700 (PDT)
-From:   =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>
-To:     pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        davem@davemloft.net, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com,
-        sds@tycho.nsa.gov, eparis@parisplace.org, jmorris@namei.org,
-        serge@hallyn.com, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v2 1/2] netfilter: nf_tables: add SECMARK support
-Date:   Sun, 23 Sep 2018 11:16:10 +0200
-Message-Id: <20180923091611.19815-1-cgzones@googlemail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HTp/UI3ZNNsXvQvkOEXt+YcwGy265tVijee0umcwmNc=;
+        b=NTOGIcfgSycTrgbh5lmzaACN5OH6EEEBRin7ESXvUsVvGI6ZWDrvZ/uCo7i6zg6UCi
+         pw0/N6MlRRpaDJKA9VY2No08bYSYD1YViGl6f9oMa7K4q0dacRYZ/rKXM1Uqg0mgqSK9
+         LlKnHxQQkvHfyJ10KhgR52AWR8SRBt3WCaJCdKoIGf4rSaDvQWHj2RzvOcA2SBrX6A4Y
+         G8RKa6aksIDNCsEM28FF5ERCs/2YnBeyIG3QY8zlQtl+u++zUHJyl7tqFSu2bwNxVVhp
+         4bEtF6af7C6NAJrPVkMPFMGYl9H2xPr56l9hTtzQNzNpx6sCQXGUb4pUD7phPyMuQFkm
+         vztQ==
+X-Gm-Message-State: ABuFfohgPdkFEFnxonYlwNfbpLGSLzb+Br8tfgG1Cpm8RtRNBeB8mJJn
+        fVjMiIovg0O03oxejIj63Pw=
+X-Google-Smtp-Source: ACcGV61LoABF/yvN5DHHTzAyhS/lGNTbzelaPhjqyGxhAZlqeEc9gClc8eQ7TapjwXxKbexiQ5e9uQ==
+X-Received: by 2002:a17:902:a507:: with SMTP id s7-v6mr5667059plq.303.1537694602832;
+        Sun, 23 Sep 2018 02:23:22 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-83-213.tpgi.com.au. [59.102.83.213])
+        by smtp.gmail.com with ESMTPSA id 143-v6sm48835281pfy.156.2018.09.23.02.23.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Sep 2018 02:23:21 -0700 (PDT)
+Date:   Sun, 23 Sep 2018 19:23:15 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Ley Foon Tan <ley.foon.tan@intel.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        nios2-dev@lists.rocketboards.org
+Subject: Re: [PATCH 3/3] mm: optimise pte dirty/accessed bit setting by
+ demand based pte insertion
+Message-ID: <20180923192315.13cb4114@roar.ozlabs.ibm.com>
+In-Reply-To: <1537519325.19048.0.camel@intel.com>
+References: <20180828112034.30875-1-npiggin@gmail.com>
+        <20180828112034.30875-4-npiggin@gmail.com>
+        <20180905142951.GA15680@roeck-us.net>
+        <20180918035337.0727dad0@roar.ozlabs.ibm.com>
+        <1537519325.19048.0.camel@intel.com>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ability to set the security context of packets within the nf_tables framework.
-Add a nft_object for holding security contexts in the kernel and manipulating packets on the wire.
+On Fri, 21 Sep 2018 16:42:05 +0800
+Ley Foon Tan <ley.foon.tan@intel.com> wrote:
 
-Convert the security context strings at rule addition time to security identifiers.
-This is the same behavior like in xt_SECMARK and offers better performance than computing it per packet.
+> On Tue, 2018-09-18 at 03:53 +1000, Nicholas Piggin wrote:
+> > On Wed, 5 Sep 2018 07:29:51 -0700
+> > Guenter Roeck <linux@roeck-us.net> wrote:
+> >   
+> > > 
+> > > Hi,
+> > > 
+> > > On Tue, Aug 28, 2018 at 09:20:34PM +1000, Nicholas Piggin wrote:  
+> > > > 
+> > > > Similarly to the previous patch, this tries to optimise
+> > > > dirty/accessed
+> > > > bits in ptes to avoid access costs of hardware setting them.
+> > > >   
+> > > This patch results in silent nios2 boot failures, silent meaning
+> > > that
+> > > the boot stalls.  
+> > Okay I just got back to looking at this. The reason for the hang is
+> > I think a bug in the nios2 TLB code, but maybe other archs have
+> > similar
+> > issues.
+> > 
+> > In case of a missing / !present Linux pte, nios2 installs a TLB entry
+> > with no permissions via its fast TLB exception handler (software TLB
+> > fill). Then it relies on that causing a TLB permission exception in a
+> > slower handler that calls handle_mm_fault to set the Linux pte and
+> > flushes the old TLB. Then the fast exception handler will find the
+> > new
+> > Linux pte.
+> > 
+> > With this patch, nios2 has a case where handle_mm_fault does not
+> > flush
+> > the old TLB, which results in the TLB permission exception
+> > continually
+> > being retried.
+> > 
+> > What happens now is that fault paths like do_read_fault will install
+> > a
+> > Linux pte with the young bit clear and return. That will cause nios2
+> > to
+> > fault again but this time go down the bottom of handle_pte_fault and
+> > to
+> > the access flags update with the young bit set. The young bit is seen
+> > to
+> > be different, so that causes ptep_set_access_flags to do a TLB flush
+> > and
+> > that finally allows the fast TLB handler to fire and pick up the new
+> > Linux pte.
+> > 
+> > With this patch, the young bit is set in the first handle_mm_fault,
+> > so
+> > the second handle_mm_fault no longer sees the ptes are different and
+> > does not flush the TLB. The spurious fault handler also does not
+> > flush
+> > them unless FAULT_FLAG_WRITE is set.
+> > 
+> > What nios2 should do is invalidate the TLB in update_mmu_cache. What
+> > it
+> > *really* should do is install the new TLB entry, I have some patches
+> > to
+> > make that work in qemu I can submit. But I would like to try getting
+> > these dirty/accessed bit optimisation in 4.20, so I will send a
+> > simple
+> > path to just do the TLB invalidate that could go in Andrew's git
+> > tree.
+> > 
+> > Is that agreeable with the nios2 maintainers?
+> > 
+> > Thanks,
+> > Nick
+> >   
+> Hi
+> 
+> Do you have patches to test?
 
-Set the maximum security context length to 256.
+I've been working on some, it has taken longer than I expected, I'll
+hopefully have something to send out by tomorrow.
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
-
-v2: convert security context strings to ids on rule addition time
-
-Based on nf-next
-Tested with v4.18.8
-
- include/net/netfilter/nf_tables_core.h   |   4 +
- include/uapi/linux/netfilter/nf_tables.h |  18 +++-
- net/netfilter/nf_tables_core.c           |  28 ++++++-
- net/netfilter/nft_meta.c                 | 101 +++++++++++++++++++++++
- 4 files changed, 146 insertions(+), 5 deletions(-)
-
-diff --git a/include/net/netfilter/nf_tables_core.h b/include/net/netfilter/nf_tables_core.h
-index 8da837d2a..2046d104f 100644
---- a/include/net/netfilter/nf_tables_core.h
-+++ b/include/net/netfilter/nf_tables_core.h
-@@ -16,6 +16,10 @@ extern struct nft_expr_type nft_meta_type;
- extern struct nft_expr_type nft_rt_type;
- extern struct nft_expr_type nft_exthdr_type;
- 
-+#ifdef CONFIG_NETWORK_SECMARK
-+extern struct nft_object_type nft_secmark_obj_type;
-+#endif
-+
- int nf_tables_core_module_init(void);
- void nf_tables_core_module_exit(void);
- 
-diff --git a/include/uapi/linux/netfilter/nf_tables.h b/include/uapi/linux/netfilter/nf_tables.h
-index 702e4f0be..5444e7687 100644
---- a/include/uapi/linux/netfilter/nf_tables.h
-+++ b/include/uapi/linux/netfilter/nf_tables.h
-@@ -1176,6 +1176,21 @@ enum nft_quota_attributes {
- };
- #define NFTA_QUOTA_MAX		(__NFTA_QUOTA_MAX - 1)
- 
-+/**
-+ * enum nft_secmark_attributes - nf_tables secmark object netlink attributes
-+ *
-+ * @NFTA_SECMARK_CTX: security context (NLA_STRING)
-+ */
-+enum nft_secmark_attributes {
-+	NFTA_SECMARK_UNSPEC,
-+	NFTA_SECMARK_CTX,
-+	__NFTA_SECMARK_MAX,
-+};
-+#define NFTA_SECMARK_MAX	(__NFTA_SECMARK_MAX - 1)
-+
-+/* Max security context length */
-+#define NFT_SECMARK_CTX_MAXLEN		256
-+
- /**
-  * enum nft_reject_types - nf_tables reject expression reject types
-  *
-@@ -1432,7 +1447,8 @@ enum nft_ct_timeout_timeout_attributes {
- #define NFT_OBJECT_CONNLIMIT	5
- #define NFT_OBJECT_TUNNEL	6
- #define NFT_OBJECT_CT_TIMEOUT	7
--#define __NFT_OBJECT_MAX	8
-+#define NFT_OBJECT_SECMARK	8
-+#define __NFT_OBJECT_MAX	9
- #define NFT_OBJECT_MAX		(__NFT_OBJECT_MAX - 1)
- 
- /**
-diff --git a/net/netfilter/nf_tables_core.c b/net/netfilter/nf_tables_core.c
-index ffd5c0f94..3fbce3b9c 100644
---- a/net/netfilter/nf_tables_core.c
-+++ b/net/netfilter/nf_tables_core.c
-@@ -249,12 +249,24 @@ static struct nft_expr_type *nft_basic_types[] = {
- 	&nft_exthdr_type,
- };
- 
-+static struct nft_object_type *nft_basic_objects[] = {
-+#ifdef CONFIG_NETWORK_SECMARK
-+	&nft_secmark_obj_type,
-+#endif
-+};
-+
- int __init nf_tables_core_module_init(void)
- {
--	int err, i;
-+	int err, i, j = 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(nft_basic_objects); i++) {
-+		err = nft_register_obj(nft_basic_objects[i]);
-+		if (err)
-+			goto err;
-+	}
- 
--	for (i = 0; i < ARRAY_SIZE(nft_basic_types); i++) {
--		err = nft_register_expr(nft_basic_types[i]);
-+	for (j = 0; j < ARRAY_SIZE(nft_basic_types); j++) {
-+		err = nft_register_expr(nft_basic_types[j]);
- 		if (err)
- 			goto err;
- 	}
-@@ -262,8 +274,12 @@ int __init nf_tables_core_module_init(void)
- 	return 0;
- 
- err:
-+	while (j-- > 0)
-+		nft_unregister_expr(nft_basic_types[j]);
-+
- 	while (i-- > 0)
--		nft_unregister_expr(nft_basic_types[i]);
-+		nft_unregister_obj(nft_basic_objects[i]);
-+
- 	return err;
- }
- 
-@@ -274,4 +290,8 @@ void nf_tables_core_module_exit(void)
- 	i = ARRAY_SIZE(nft_basic_types);
- 	while (i-- > 0)
- 		nft_unregister_expr(nft_basic_types[i]);
-+
-+	i = ARRAY_SIZE(nft_basic_objects);
-+	while (i-- > 0)
-+		nft_unregister_obj(nft_basic_objects[i]);
- }
-diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
-index 297fe7d97..ac5df9508 100644
---- a/net/netfilter/nft_meta.c
-+++ b/net/netfilter/nft_meta.c
-@@ -543,3 +543,104 @@ struct nft_expr_type nft_meta_type __read_mostly = {
- 	.maxattr	= NFTA_META_MAX,
- 	.owner		= THIS_MODULE,
- };
-+
-+#ifdef CONFIG_NETWORK_SECMARK
-+
-+struct nft_secmark {
-+	char ctx[NFT_SECMARK_CTX_MAXLEN];
-+	int len;
-+	u32 secid;
-+};
-+
-+static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
-+	[NFTA_SECMARK_CTX]     = { .type = NLA_STRING, .len = NFT_SECMARK_CTX_MAXLEN },
-+};
-+
-+static int nft_secmark_secconversion(struct nft_secmark *priv)
-+{
-+	int err;
-+	u32 tmp_secid = 0;
-+
-+	err = security_secctx_to_secid(priv->ctx, priv->len, &tmp_secid);
-+	if (err)
-+		return err;
-+
-+	if (!tmp_secid)
-+		return -ENOENT;
-+
-+	err = security_secmark_relabel_packet(tmp_secid);
-+	if (err)
-+		return err;
-+
-+	priv->secid = tmp_secid;
-+	return 0;
-+}
-+
-+static void nft_secmark_obj_eval(struct nft_object *obj, struct nft_regs *regs, const struct nft_pktinfo *pkt)
-+{
-+	const struct nft_secmark *priv = nft_obj_data(obj);
-+	struct sk_buff *skb = pkt->skb;
-+
-+	skb->secmark = priv->secid;
-+}
-+
-+
-+static int nft_secmark_obj_init(const struct nft_ctx *ctx, const struct nlattr * const tb[], struct nft_object *obj)
-+{
-+	int err;
-+	struct nft_secmark *priv = nft_obj_data(obj);
-+
-+	if (tb[NFTA_SECMARK_CTX] == NULL)
-+		return -EINVAL;
-+
-+	nla_strlcpy(priv->ctx, tb[NFTA_SECMARK_CTX], NFT_SECMARK_CTX_MAXLEN);
-+	priv->len = strlen(priv->ctx);
-+
-+	err = nft_secmark_secconversion(priv);
-+	if (err)
-+		return err;
-+
-+	security_secmark_refcount_inc();
-+
-+	return 0;
-+}
-+
-+static int nft_secmark_obj_dump(struct sk_buff *skb, struct nft_object *obj, bool reset)
-+{
-+	int err;
-+	struct nft_secmark *priv = nft_obj_data(obj);
-+
-+	if (nla_put_string(skb, NFTA_SECMARK_CTX, priv->ctx))
-+		return -1;
-+
-+	if (reset) {
-+		err = nft_secmark_secconversion(priv);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static void nft_secmark_obj_destroy(const struct nft_ctx *ctx, struct nft_object *obj)
-+{
-+	security_secmark_refcount_dec();
-+}
-+
-+static const struct nft_object_ops nft_secmark_obj_ops = {
-+	.type		= &nft_secmark_obj_type,
-+	.size		= sizeof(struct nft_secmark),
-+	.init		= nft_secmark_obj_init,
-+	.eval		= nft_secmark_obj_eval,
-+	.dump		= nft_secmark_obj_dump,
-+	.destroy	= nft_secmark_obj_destroy,
-+};
-+struct nft_object_type nft_secmark_obj_type __read_mostly = {
-+	.type		= NFT_OBJECT_SECMARK,
-+	.ops		= &nft_secmark_obj_ops,
-+	.maxattr	= NFTA_SECMARK_MAX,
-+	.policy		= nft_secmark_policy,
-+	.owner		= THIS_MODULE,
-+};
-+
-+#endif /* CONFIG_NETWORK_SECMARK */
--- 
-2.19.0
-
+Thanks,
+Nick
