@@ -2,481 +2,198 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9188ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 10:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1994CECE562
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 10:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5B42148D
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 10:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABE992148D
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 10:39:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q2oWrt2U";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HhdHZAtF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5B42148D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="yiyxxQdm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE992148D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbeIWQao (ORCPT
+        id S1726168AbeIWQgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 12:30:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51288 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeIWQan (ORCPT
+        Sun, 23 Sep 2018 12:36:47 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:56245 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbeIWQgr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 12:30:43 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C71AC60C85; Sun, 23 Sep 2018 10:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537698821;
-        bh=kt8bKjKCvpM0XPLEwU4/pHp8/+QFZPBOijKM6EqOJRY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q2oWrt2UpTMZenF5W0jmELlIxpyWS9YzoyqZoSCaCLputbBAlguuc9sqoSR+vPdc4
-         1XYl56QgyANt+7KNCIC0kxyiRACtX9kHNjFKqwnij9Iw72a1R5B62Kv5J1Mj5Ha5oo
-         1OBwFUpFsILlyFpRE0MmQnbIM+WifmJF4zZV2UG4=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A110660C8D;
-        Sun, 23 Sep 2018 10:33:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537698820;
-        bh=kt8bKjKCvpM0XPLEwU4/pHp8/+QFZPBOijKM6EqOJRY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HhdHZAtFzb0K3jxY9wpq/38lhoQzxnuSt2z5JteJwt2ogKwhdFryu/waF/LpJTimJ
-         DMOpX13s0YPu1dH4Xb+Pn1Vu/wjASOq6k5HkVq/BXBYuUjs6znXLCDEFL2WjUHioMZ
-         0XBnwnwofhsvmHSEbxzeFmmCiXKCyrlaCOrTIRQ0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A110660C8D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, skannan@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        evgreen@google.com, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v8 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-Date:   Sun, 23 Sep 2018 16:03:13 +0530
-Message-Id: <1537698793-15285-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1537698793-15285-1-git-send-email-tdas@codeaurora.org>
-References: <1537698793-15285-1-git-send-email-tdas@codeaurora.org>
+        Sun, 23 Sep 2018 12:36:47 -0400
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w8NAdLQc010501;
+        Sun, 23 Sep 2018 19:39:22 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w8NAdLQc010501
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1537699162;
+        bh=pa/jP2LMB4EsNqAo1vydB5oZns6ko4DZvNfPjwxB9Jc=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=yiyxxQdmj69ZNloDE3GqylJpd1AxRk5atQtLHq2nhOdBvEccMRLDbvf4uJpTdsW3s
+         nQbkAF32JGnmdsMZkSI/mXgWW9Y/9houwFi+7jm+wf9p4JkeVcv8mZGm9hrIfsOyX9
+         D15cxdZlDEjTk8xauwRBlZOd/ObysAmYxF/LUf+RE6FtterFNfgwGkW6hsl3ISswaH
+         c8xGBv1K6F4VLgi3KCSLAO6lub4lQJSljHQoDOK866TtPN8y02MvrdDDraROM5e9DF
+         E4PC85AQ/zJeNCie0QK92Ud1l1xJKMBwaWkmepfhELYGoEyBw00bgW8Z51a3nMSd9A
+         /BBNsKJxvI1zw==
+X-Nifty-SrcIP: [209.85.222.41]
+Received: by mail-ua1-f41.google.com with SMTP id f4-v6so7308603uao.10;
+        Sun, 23 Sep 2018 03:39:22 -0700 (PDT)
+X-Gm-Message-State: ABuFfogs4WvP8kGbPCnQFY6gze+p6s+WczkVlkvJw1LI7/RViEXYbC/j
+        Fz53E2ySQd9E49orf7+uUz+1pvohYvH+Cau2h/A=
+X-Google-Smtp-Source: ACcGV605HykFSVleRgv6BIJPWJ/Sp9PaxZ+eXJA3dGTLaRnyvUNsbCpk6wgfs22Fmkve4wJM8deW3k4J/18J7uRW3VM=
+X-Received: by 2002:a9f:3826:: with SMTP id p35-v6mr1364584uad.42.1537699161027;
+ Sun, 23 Sep 2018 03:39:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:7111:0:0:0:0:0 with HTTP; Sun, 23 Sep 2018 03:38:40
+ -0700 (PDT)
+In-Reply-To: <20180922101116.7c9b4767@bbrezillon>
+References: <1536317783-4942-1-git-send-email-yamada.masahiro@socionext.com>
+ <20180907160822.319047c8@bbrezillon> <CAK7LNAQJOD3mxwbiOSn5wpDsU23DhZcx9QB_ufFZB8LUnh1KdQ@mail.gmail.com>
+ <20180907165348.3e0027ee@bbrezillon> <CAK7LNAT3ZjdW3ENekNJq=26SAh=tXdirmhHyA9qDGnwpXQ6Arg@mail.gmail.com>
+ <20180922094111.1c2969e8@xps13> <20180922101116.7c9b4767@bbrezillon>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 23 Sep 2018 06:38:40 -0400
+X-Gmail-Original-Message-ID: <CAK7LNAR0=1zAWkf9c4mYgLrJNmKR=8=mi6idWaaeuN4uHQVjug@mail.gmail.com>
+Message-ID: <CAK7LNAR0=1zAWkf9c4mYgLrJNmKR=8=mi6idWaaeuN4uHQVjug@mail.gmail.com>
+Subject: Re: [PATCH] mtd: rawnand: denali: add DT property to specify skipped
+ bytes in OOB
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-for changing the frequency of CPUs. The driver implements the cpufreq
-driver interface for this hardware engine.
+2018-09-22 4:11 GMT-04:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+> On Sat, 22 Sep 2018 09:41:11 +0200
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+>
+>> Hi Masahiro,
+>>
+>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Sat, 8 Sep
+>> 2018 01:10:25 +0900:
+>>
+>> > Hi Boris,
+>> >
+>> > 2018-09-07 23:53 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+>> > > On Fri, 7 Sep 2018 23:42:53 +0900
+>> > > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>> > >
+>> > >> Hi Boris,
+>> > >>
+>> > >> 2018-09-07 23:08 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+>> > >> > Hi Masahiro,
+>> > >> >
+>> > >> > On Fri,  7 Sep 2018 19:56:23 +0900
+>> > >> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>> > >> >
+>> > >> >> NAND devices need additional data area (OOB) for error correction,
+>> > >> >> but it is also used for Bad Block Marker (BBM).  In many cases, the
+>> > >> >> first byte in OOB is used for BBM, but the location actually depends
+>> > >> >> on chip vendors.  The NAND controller should preserve the precious
+>> > >> >> BBM to keep track of bad blocks.
+>> > >> >>
+>> > >> >> In Denali IP, the SPARE_AREA_SKIP_BYTES register is used to specify
+>> > >> >> the number of bytes to skip from the start of OOB.  The ECC engine
+>> > >> >> will automatically skip the specified number of bytes when it gets
+>> > >> >> access to OOB area.
+>> > >> >>
+>> > >> >> The same value for SPARE_AREA_SKIP_BYTES should be used between
+>> > >> >> firmware and the operating system if you intend to use the NAND
+>> > >> >> device across the control hand-off.
+>> > >> >>
+>> > >> >> In fact, the current denali.c code expects firmware to have already
+>> > >> >> set the SPARE_AREA_SKIP_BYTES register, then reads the value out.
+>> > >> >>
+>> > >> >> If no firmware (or bootloader) has initialized the controller, the
+>> > >> >> register value is zero, which is the default after power-on-reset.
+>> > >> >>
+>> > >> >> In other words, the Linux driver cannot initialize the controller
+>> > >> >> by itself.  You cannot support the reset control either because
+>> > >> >> resetting the controller will get register values lost.
+>> > >> >>
+>> > >> >> This commit adds a way to specify it via DT.  If the property
+>> > >> >> "denali,oob-skip-bytes" exists, the value will be set to the register.
+>> > >> >
+>> > >> > Hm, do we really need to make this config customizable? I mean, either
+>> > >> > you have a large-page NAND (page > 512 bytes) and the 2 first bytes
+>> > >> > must be reserved for the BBM or you have a small-page NAND and the BBM
+>> > >> > is at position 4 and 5. Are you sure people configure that differently?
+>> > >> > Don't you always have SPARE_AREA_SKIP_BYTES set to 6 or 2?
+>> > >>
+>> > >>
+>> > >> As I said in the patch description,
+>> > >> I need to use the same SPARE_AREA_SKIP_BYTES value
+>> > >> across firmware, boot-loader, Linux, and whatever.
+>> > >>
+>> > >> I want to set the value to 8 for my platform
+>> > >> because the on-chip boot ROM expects 8.
+>> > >> I cannot change it since the boot ROM is hard-wired.
+>> > >>
+>> > >>
+>> > >> The boot ROM skips 8 bytes in OOB
+>> > >> when it loads images from the on-board NAND device.
+>> > >>
+>> > >> So, when I update the image from U-Boot or Linux,
+>> > >> I need to make sure to set the register to 8.
+>> > >>
+>> > >> If I update the image with a different value,
+>> > >> the Boot ROM fails to boot.
+>> > >>
+>> > >>
+>> > >>
+>> > >> When the system has booted from NAND,
+>> > >> the register is already set to 8.  It works.
+>> > >>
+>> > >> However, when the system has booted from eMMC,
+>> > >> the register is not initialized by anyone.
+>> > >> I am searching for a way to set the register to 8
+>> > >> in this case.
+>
+> Maybe there's a solution which does not involve attaching a per-compat
+> value or adding a DT prop. If the FW/bootloader has not initialized this
+> register the value is 0, right? Why not testing the value and
+> assigning it to the default (8) if it's not been initialized by the
+> bootloader. That shouldn't break existing platforms since I don't think
+> 0 is a valid value anyway.
+>
+>         denali->oob_skip_bytes = ioread32(denali->reg +
+>                                           SPARE_AREA_SKIP_BYTES);
+>         if (!denali->oob_skip_bytes) {
+>                 denali->oob_skip_bytes = DEFAULT_OOB_SKIP_BYTES;
+>                 iowrite32(denali->oob_skip_bytes,
+>                           denali->reg + SPARE_AREA_SKIP_BYTES);
+>         }
+>
 
-Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/cpufreq/Kconfig.arm       |  11 ++
- drivers/cpufreq/Makefile          |   1 +
- drivers/cpufreq/qcom-cpufreq-hw.c | 354 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 366 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 0cd8eb7..93a9d72 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -298,3 +298,14 @@ config ARM_PXA2xx_CPUFREQ
- 	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
-
- 	  If in doubt, say N.
-+
-+config ARM_QCOM_CPUFREQ_HW
-+	bool "QCOM CPUFreq HW driver"
-+	depends on ARCH_QCOM
-+	help
-+	 Support for the CPUFreq HW driver.
-+	 Some QCOM chipsets have a HW engine to offload the steps
-+	 necessary for changing the frequency of the CPUs. Firmware loaded
-+	 in this engine exposes a programming interface to the OS.
-+	 The driver implements the cpufreq interface for this HW engine.
-+	 Say Y if you want to support CPUFreq HW.
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index c1ffeab..ca48a1d 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
- obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
- obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
- obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
+I prefer per-compatible values to a fixed default.
 
 
- ##################################################################################
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-new file mode 100644
-index 0000000..43107ab
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -0,0 +1,354 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/cpufreq.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+
-+#define LUT_MAX_ENTRIES			40U
-+#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
-+#define LUT_ROW_SIZE			32
-+#define CLK_HW_DIV			2
-+
-+enum {
-+	REG_ENABLE,
-+	REG_LUT_TABLE,
-+	REG_PERF_STATE,
-+
-+	REG_ARRAY_SIZE,
-+};
-+
-+struct cpufreq_qcom {
-+	struct cpufreq_frequency_table *table;
-+	void __iomem *reg_bases[REG_ARRAY_SIZE];
-+	cpumask_t related_cpus;
-+	unsigned int max_cores;
-+	unsigned long xo_rate;
-+	unsigned long cpu_hw_rate;
-+};
-+
-+static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] = {
-+	[REG_ENABLE]		= 0x0,
-+	[REG_LUT_TABLE]		= 0x110,
-+	[REG_PERF_STATE]	= 0x920,
-+};
-+
-+static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-+
-+static int
-+qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
-+			     unsigned int index)
-+{
-+	struct cpufreq_qcom *c = policy->driver_data;
-+
-+	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-+
-+	return 0;
-+}
-+
-+static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
-+{
-+	struct cpufreq_qcom *c;
-+	struct cpufreq_policy *policy;
-+	unsigned int index;
-+
-+	policy = cpufreq_cpu_get_raw(cpu);
-+	if (!policy)
-+		return 0;
-+
-+	c = policy->driver_data;
-+
-+	index = readl_relaxed(c->reg_bases[REG_PERF_STATE]);
-+	index = min(index, LUT_MAX_ENTRIES - 1);
-+
-+	return policy->freq_table[index].frequency;
-+}
-+
-+static unsigned int
-+qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
-+			    unsigned int target_freq)
-+{
-+	struct cpufreq_qcom *c = policy->driver_data;
-+	int index;
-+
-+	index = policy->cached_resolved_idx;
-+	if (index < 0)
-+		return 0;
-+
-+	writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
-+
-+	return policy->freq_table[index].frequency;
-+}
-+
-+static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-+{
-+	struct cpufreq_qcom *c;
-+
-+	c = qcom_freq_domain_map[policy->cpu];
-+	if (!c) {
-+		pr_err("No scaling support for CPU%d\n", policy->cpu);
-+		return -ENODEV;
-+	}
-+
-+	cpumask_copy(policy->cpus, &c->related_cpus);
-+
-+	policy->fast_switch_possible = true;
-+	policy->freq_table = c->table;
-+	policy->driver_data = c;
-+
-+	return 0;
-+}
-+
-+static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-+	&cpufreq_freq_attr_scaling_available_freqs,
-+	&cpufreq_freq_attr_scaling_boost_freqs,
-+	NULL
-+};
-+
-+static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-+	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-+	.verify		= cpufreq_generic_frequency_table_verify,
-+	.target_index	= qcom_cpufreq_hw_target_index,
-+	.get		= qcom_cpufreq_hw_get,
-+	.init		= qcom_cpufreq_hw_cpu_init,
-+	.fast_switch    = qcom_cpufreq_hw_fast_switch,
-+	.name		= "qcom-cpufreq-hw",
-+	.attr		= qcom_cpufreq_hw_attr,
-+	.boost_enabled	= true,
-+};
-+
-+static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
-+				    struct cpufreq_qcom *c)
-+{
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
-+
-+	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
-+				sizeof(*c->table), GFP_KERNEL);
-+	if (!c->table)
-+		return -ENOMEM;
-+
-+	base = c->reg_bases[REG_LUT_TABLE];
-+
-+	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-+		data = readl_relaxed(base + i * LUT_ROW_SIZE);
-+		src = (data & GENMASK(31, 30)) >> 30;
-+		lval = data & GENMASK(7, 0);
-+		core_count = CORE_COUNT_VAL(data);
-+
-+		if (src)
-+			c->table[i].frequency = c->xo_rate * lval / 1000;
-+		else
-+			c->table[i].frequency = c->cpu_hw_rate / 1000;
-+
-+		cur_freq = c->table[i].frequency;
-+
-+		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
-+			i, c->table[i].frequency, core_count);
-+
-+		if (core_count != c->max_cores)
-+			cur_freq = CPUFREQ_ENTRY_INVALID;
-+
-+		/*
-+		 * Two of the same frequencies with the same core counts means
-+		 * end of table.
-+		 */
-+		if (i > 0 && c->table[i - 1].frequency ==
-+		   c->table[i].frequency && prev_cc == core_count) {
-+			struct cpufreq_frequency_table *prev = &c->table[i - 1];
-+
-+			if (prev_freq == CPUFREQ_ENTRY_INVALID)
-+				prev->flags = CPUFREQ_BOOST_FREQ;
-+			break;
-+		}
-+		prev_cc = core_count;
-+		prev_freq = cur_freq;
-+	}
-+
-+	c->table[i].frequency = CPUFREQ_TABLE_END;
-+
-+	return 0;
-+}
-+
-+static int qcom_get_related_cpus(int index, struct cpumask *m)
-+{
-+	struct device_node *cpu_np;
-+	struct of_phandle_args args;
-+	int cpu, ret;
-+
-+	for_each_possible_cpu(cpu) {
-+		cpu_np = of_cpu_device_node_get(cpu);
-+		if (!cpu_np)
-+			continue;
-+		of_node_put(cpu_np);
-+
-+		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+				"#freq-domain-cells", 0, &args);
-+		if (ret < 0)
-+			continue;
-+
-+		if (index == args.args[0])
-+			cpumask_set_cpu(cpu, m);
-+	}
-+
-+	return 0;
-+}
-+
-+static int qcom_cpu_resources_init(struct platform_device *pdev,
-+				   unsigned int cpu, int index,
-+				   unsigned long xo_rate,
-+				   unsigned long cpu_hw_rate)
-+{
-+	struct cpufreq_qcom *c;
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	const u16 *offsets;
-+	int ret, i, cpu_r;
-+	void __iomem *base;
-+
-+	if (qcom_freq_domain_map[cpu])
-+		return 0;
-+
-+	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return -ENOMEM;
-+
-+	offsets = of_device_get_match_data(&pdev->dev);
-+	if (!offsets)
-+		return -EINVAL;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
-+		c->reg_bases[i] = base + offsets[i];
-+
-+	/* HW should be in enabled state to proceed */
-+	if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
-+		dev_err(dev, "Domain-%d cpufreq hardware not enabled\n", index);
-+		return -ENODEV;
-+	}
-+
-+	ret = qcom_get_related_cpus(index, &c->related_cpus);
-+	if (ret) {
-+		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
-+		return ret;
-+	}
-+
-+	c->max_cores = cpumask_weight(&c->related_cpus);
-+	if (!c->max_cores)
-+		return -ENOENT;
-+
-+	c->xo_rate = xo_rate;
-+	c->cpu_hw_rate = cpu_hw_rate;
-+
-+	ret = qcom_cpufreq_hw_read_lut(pdev, c);
-+	if (ret) {
-+		dev_err(dev, "Domain-%d failed to read LUT\n", index);
-+		return ret;
-+	}
-+
-+	for_each_cpu(cpu_r, &c->related_cpus)
-+		qcom_freq_domain_map[cpu_r] = c;
-+
-+	return 0;
-+}
-+
-+static int qcom_resources_init(struct platform_device *pdev)
-+{
-+	struct device_node *cpu_np;
-+	struct of_phandle_args args;
-+	struct clk *clk;
-+	unsigned int cpu;
-+	unsigned long xo_rate, cpu_hw_rate;
-+	int ret;
-+
-+	clk = devm_clk_get(&pdev->dev, "xo");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	xo_rate = clk_get_rate(clk);
-+
-+	devm_clk_put(&pdev->dev, clk);
-+
-+	clk = devm_clk_get(&pdev->dev, "cpu_clk");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
-+
-+	devm_clk_put(&pdev->dev, clk);
-+
-+	for_each_possible_cpu(cpu) {
-+		cpu_np = of_cpu_device_node_get(cpu);
-+		if (!cpu_np) {
-+			dev_dbg(&pdev->dev, "Failed to get cpu %d device\n",
-+				cpu);
-+			continue;
-+		}
-+
-+		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+				"#freq-domain-cells", 0, &args);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = qcom_cpu_resources_init(pdev, cpu, args.args[0],
-+					      xo_rate, cpu_hw_rate);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
-+{
-+	int rc;
-+
-+	/* Get the bases of cpufreq for domains */
-+	rc = qcom_resources_init(pdev);
-+	if (rc) {
-+		dev_err(&pdev->dev, "CPUFreq resource init failed\n");
-+		return rc;
-+	}
-+
-+	rc = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
-+	if (rc) {
-+		dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
-+		return rc;
-+	}
-+
-+	dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qcom_cpufreq_hw_match[] = {
-+	{ .compatible = "qcom,cpufreq-hw", .data = &cpufreq_qcom_std_offsets },
-+	{}
-+};
-+
-+static struct platform_driver qcom_cpufreq_hw_driver = {
-+	.probe = qcom_cpufreq_hw_driver_probe,
-+	.driver = {
-+		.name = "qcom-cpufreq-hw",
-+		.of_match_table = qcom_cpufreq_hw_match,
-+	},
-+};
-+
-+static int __init qcom_cpufreq_hw_init(void)
-+{
-+	return platform_driver_register(&qcom_cpufreq_hw_driver);
-+}
-+subsys_initcall(qcom_cpufreq_hw_init);
-+
-+MODULE_DESCRIPTION("QCOM firmware-based CPU Frequency driver");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+I'd like to set the register to 8 unless set otherwise
+because the boot ROM on my platform (Socionext UniPhier SoCs)
+uses that value.
 
+Other platforms like Altera SOCFPGA may want to use a different value
+(at least, I do not know what is the preferred value).
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
