@@ -2,85 +2,88 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A54C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F126CC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21CF821473
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:31:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="PPalrHoC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CF821473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C22C208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 23:51:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C22C208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neuling.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeIXFbO (ORCPT
+        id S1727139AbeIXFsR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 01:31:14 -0400
-Received: from mail-lj1-f177.google.com ([209.85.208.177]:40267 "EHLO
-        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbeIXFbO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 01:31:14 -0400
-Received: by mail-lj1-f177.google.com with SMTP id j19-v6so16600311ljc.7
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 16:31:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HvLwHwM9hxFAdw/QrpKA/KQOe9dZ9N7qjDamXE+LX4k=;
-        b=PPalrHoCBlaqiifvig9/v523wKEp8++NEFNPW0WLL0Og0Rd2i6TKv2yU0r2oVot1p/
-         VcrOvf/Xp8mhA1WOZRnleL2w22jqirljAKSnLpvE8ZYgPkQnc0+vkXGDxV2kCZMK0mec
-         ZFSoi6agFCbjne/f5JwBM9XWbUCSV7McC87sk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HvLwHwM9hxFAdw/QrpKA/KQOe9dZ9N7qjDamXE+LX4k=;
-        b=WKHLpv6MTku4NwIE4k3o7hon07JtCEL8xLw1C71sWYQioLazyhaNKtZxCHo7uM6Zff
-         eYIUPweqoNwmYRUwJY0VMWlq//qlVEBOd6XGsOx9h4fCvnb5wlmqoeVQV3m0y2g87s2/
-         ViFL5fk/b/oXgaZ3al9vspbnuqLnVf37yKgMxJGptWfLiMlTxPoTrQEZmquBOpowOK1B
-         5kq/6wBC6sPOxLIFMYxU2Wm0ACcCJvATdWV8ESzeEwnTkkgiu9JYdOnwkCvMELkT2Lut
-         LslOPq06NEqdah0sCrTaeoRFG6hRuHdfTV8q9K4KqmD8cydgkakhDsM305OV5issb1VV
-         Wx/g==
-X-Gm-Message-State: ABuFfoiPoPuBRHfyanNlT7e9kRNEmjeZkkziHEL7/+g1fJgk8YqDG1BW
-        PPHrVW1cVHzKMZEGl8ERgtLswuZd5FTvKigU2TUaAQ==
-X-Google-Smtp-Source: ACcGV61Uw+mgbw1KliXhqV75ez/UowEvshPK+7EAZfGcMLhTh2mhbHK6NQrTpQKnyXsSeYwM0WlkQPNUYGYPIDbA+0o=
-X-Received: by 2002:a2e:8098:: with SMTP id i24-v6mr8479507ljg.36.1537745509177;
- Sun, 23 Sep 2018 16:31:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAEXW_YQd8s9GP-TACJCbT67ZCy5guTJMW+Jue3VsEX1777UhBQ@mail.gmail.com>
-In-Reply-To: <CAEXW_YQd8s9GP-TACJCbT67ZCy5guTJMW+Jue3VsEX1777UhBQ@mail.gmail.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Sun, 23 Sep 2018 19:31:37 -0400
-Message-ID: <CAEXW_YTv2wFoaVW-1yv_S5pRo85Tiad-B4u4EaYBdCx5_KWRkQ@mail.gmail.com>
-Subject: Re: Question about ->head field of rcu_segcblist
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
+        Mon, 24 Sep 2018 01:48:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:39471 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725851AbeIXFsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 01:48:17 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by ozlabs.org (Postfix) with ESMTP id 42JPDb75Wwz9s8T;
+        Mon, 24 Sep 2018 09:48:47 +1000 (AEST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id CE924EE78BF; Mon, 24 Sep 2018 09:48:47 +1000 (AEST)
+Message-ID: <a06045cd5f4229113cb301668b2d993060a3ee73.camel@neuling.org>
+Subject: Re: [PATCH v8 1/3] powerpc: Detect the presence of big-cores via
+ "ibm,thread-groups"
+From:   Michael Neuling <mikey@neuling.org>
+To:     ego@linux.vnet.ibm.com
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Mon, 24 Sep 2018 09:48:47 +1000
+In-Reply-To: <20180921171740.GA12919@in.ibm.com>
+References: <1537464159-25919-1-git-send-email-ego@linux.vnet.ibm.com>
+         <1537464159-25919-2-git-send-email-ego@linux.vnet.ibm.com>
+         <d1cf1628ed2641140d3508d355cdc172d6b145e9.camel@neuling.org>
+         <20180921171740.GA12919@in.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 23, 2018 at 7:30 PM Joel Fernandes <joel@joelfernandes.org> wrote:
->
-> Hi Paul,
->
-> I was parsing the Data-Structures document and had a question about
-> the following "Important note" text.
->
-> Could it be clarified in the below text better why "remaining
-> callbacks are placed back on the RCU_DONE_TAIL segment", is a reason
-> for not depending on ->head for determining if no callbacks are
-> associated with the rcu_segcblist? If callbacks are added back to the
-> DONE_TAIL segment, then I would think rcu_head should be != NULL.
-> Infact the "rsclp->head = *rsclp->tails[RCU_DONE_TAIL];" in
-> rcu_segcblist_extract_done_cbs should set the ->head to  NULL if I
-> understand correctly.
+On Fri, 2018-09-21 at 22:47 +0530, Gautham R Shenoy wrote:
+> Hello Michael,
+> 
+> On Fri, Sep 21, 2018 at 01:02:45PM +1000, Michael Neuling wrote:
+> > This doesn't compile for me with:
+> > 
+> > arch/powerpc/kernel/smp.c: In function ‘smp_prepare_cpus’:
+> > arch/powerpc/kernel/smp.c:812:23: error: ‘tg.threads_per_group’ may be used
+> > uninitialized in this function [-Werror=maybe-uninitialized]
+> >   struct thread_groups tg;
+> >                        ^
+> > arch/powerpc/kernel/smp.c:812:23: error: ‘tg.nr_groups’ may be used
+> > uninitialized in this function [-Werror=maybe-uninitialized]
+> > cc1: all warnings being treated as errors
+> > /home/mikey/src/linux-ozlabs/scripts/Makefile.build:305: recipe for target
+> > 'arch/powerpc/kernel/smp.o' failed
+> > 
+> 
+> I couldn't get this error with gcc 4.8.5 and 8.1.1 with
+> pseries_defconfig and powernv_defconfig with CONFIG_PPC_WERROR=y.
 
-Just to clarify, I meant set to NULL assuming all cbs were done
-waiting and ready to be invoked.
+I'm using 5.4.0 which is in Ubuntu 16.04 (LTS).
+
+> Does the following the following delta patch make it work?
+
+Yep that fixes it, thanks.
+
+Mikey
+
