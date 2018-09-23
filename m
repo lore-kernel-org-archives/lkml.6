@@ -2,124 +2,100 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AB7ECE562
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 03:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D01BC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 04:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C685620C0A
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 03:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C34E214C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 04:11:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="We3IhKWy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C685620C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBvAzbKd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C34E214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726040AbeIWJk7 (ORCPT
+        id S1726051AbeIWKH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 05:40:59 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46252 "EHLO
+        Sun, 23 Sep 2018 06:07:29 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41752 "EHLO
         mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbeIWJk6 (ORCPT
+        with ESMTP id S1725977AbeIWKH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 05:40:58 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t20-v6so4204870ply.13
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Sep 2018 20:45:01 -0700 (PDT)
+        Sun, 23 Sep 2018 06:07:29 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b12-v6so7657820plr.8;
+        Sat, 22 Sep 2018 21:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=a8W8QpalLehtIpNxyJxBvUYytgQYATfpGtMk9JBjP4I=;
-        b=We3IhKWyQsOMBGMLZdKLwgZb/3ximD7DcKUniEiCrIZmcvQSgQRRZk5t7qzsr63+FX
-         YgCPy81PlZAJQq0xJPxmo8ENxoPIB2gqlT3gEasA0AYP5/+qKFoDgUVBKqexMDZ9CeF7
-         vJ/rdv6kbBXkGPghJ04GzZ98E3AqDULNlq/9k=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=gi2nLE493jyCYyE6ZJWexf22Kq8q/sI54gpvthJl4NI=;
+        b=DBvAzbKdOSyk0+dlPVYE5/FDoifTwzdUfcTjJzAjwvr35yZGS9+Y7hojPt3O85bdTm
+         hU1wtfarLSwckUTWsjaWw8zkaPggAsCI3fQplo7eK0uEp6BjpcneUnxksmChl4zjmmzF
+         x8NH0qFD2pQVIhtXOMLTlldE2vcJbGF9NavzYw1VJcT9rcgZ7bh7VBvf4Ukh8Zg8uke1
+         MZYXlykiDVv6OxvoDQ7z6W9e1WnjbzmWwSP69/7P4NXKnPMl/3/0PO5l0YTzk+pEMrVD
+         UVdlrG7VecNi0Rx/aw+ntEz/ZofrwKu9F56GY8/fn+sJaM5QO4vZeY5QFd4PtSw3ONd3
+         iAgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=a8W8QpalLehtIpNxyJxBvUYytgQYATfpGtMk9JBjP4I=;
-        b=TynNhkm6wiVUmI60IVrTRj2bUvACqEofM3CMQlkCo8AjJlxfoTQHeVJ8a7SLMYUZ4G
-         /7nvqHidtBorrgBTTeqLpGa3cGSdS7GCCXhTN7EgRpRzP9eMaOrfcIPB+7jiZtr2Vt+e
-         fPJWg0hW1cSU1HtcePxSczrnBIPOFNNAAsxOMaoGD9xVxNkYQU0XPROQkvPBpRGc3abw
-         2zoiMZPpZjfse7WRkb4bgtfgDPfCgB2KlPNA+KmCwP4YwSzWJXscWHP5JT2mv4cSy30G
-         HT5RkEXyUacAHD93/bcsNxL4UbcPVBxhBT6yfoRAvREWzQ83vbug3lRPKUAVLLfPhXW/
-         LDxA==
-X-Gm-Message-State: ABuFfojbzjgJtJIPU8pGqAi6E+5CK23rA3sPSoGgzZh7HbHi/pp4b0H4
-        MDi30vSZIMjgQzY6fu38yOnQbKjkZMk=
-X-Google-Smtp-Source: ACcGV62Tnr/K3u6Qe0CwUjqaiSy2Iq7nB7Kig4t7xxrTVSfRL0Y1cPVaaALKklZRIovp4VIflw4AJg==
-X-Received: by 2002:a17:902:8542:: with SMTP id d2-v6mr4790785plo.285.1537674301443;
-        Sat, 22 Sep 2018 20:45:01 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm69897pgt.83.2018.09.22.20.45.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 22 Sep 2018 20:45:00 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180921185106.GJ20825@sirena.org.uk>
-Cc:     Doug Anderson <dianders@chromium.org>, ryandcase@chromium.org,
-        boris.brezillon@bootlin.com,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180920224055.164856-1-ryandcase@chromium.org>
- <153755105782.119890.8484594239463905156@swboyd.mtv.corp.google.com>
- <CAD=FV=Wbj+bgdSBeHSFr+nz6fzCMcmQS-D9oyzkR0yVkxiRb8A@mail.gmail.com>
- <153755522409.119890.5471037050114193@swboyd.mtv.corp.google.com>
- <20180921185106.GJ20825@sirena.org.uk>
-Message-ID: <153767430006.119890.17210317555572798122@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
-Date:   Sat, 22 Sep 2018 20:45:00 -0700
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gi2nLE493jyCYyE6ZJWexf22Kq8q/sI54gpvthJl4NI=;
+        b=I3yUs9u55Bd7VW5o7MbLyAy7fqmGs277NVwlipzZPEd2LYK5SAFE/DpHuGJGhKGp/d
+         hjdYGWgclVZMZoBzYBbKpXGUTrnaPHYSKwdrhRBh7tVgwi4epsWdnwfzycIJDF89H2Cp
+         7uWaDC7m2m/9qbZc06iiZe90UEGfbCURqOxIExpUVUehKlUTYTGBHgfr2kvEF9SYwxlu
+         f67tDLQhf0D06HcX+ZCcDULPyvbyNYpC3h9ERXykCheeWYYGs+80DLybYG3htzRvX/vz
+         Z6gjMs+HSB/ifSiD6/XDypjRcTPs4jrYuQ8i16+dsynVYlCUeMjgc6PLYXJ1ja8Uefc7
+         CfEA==
+X-Gm-Message-State: ABuFfoh6k357OU/Cn4+7+JKotc71GlcsNo7450DUZFkNoKaT5bVeGPDa
+        zbrZtz23uNXztAmeCNCmJ/o=
+X-Google-Smtp-Source: ACcGV618VOoeh+MFZjxQWm1TM7r63Isxyy8l9blK9dlSRj9besPgqVErlVsmfZWtVtjMxP+MThUkKg==
+X-Received: by 2002:a17:902:b03:: with SMTP id 3-v6mr4909674plq.156.1537675888598;
+        Sat, 22 Sep 2018 21:11:28 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id l10-v6sm68942799pfj.179.2018.09.22.21.11.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Sep 2018 21:11:27 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net
+Cc:     afd@ti.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH v4 0/2] Add an initial DT binding doc for ina3221
+Date:   Sat, 22 Sep 2018 21:11:16 -0700
+Message-Id: <20180923041118.8743-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Mark Brown (2018-09-21 11:51:06)
-> On Fri, Sep 21, 2018 at 11:40:24AM -0700, Stephen Boyd wrote:
-> =
+This series adds a initial DT binding doc for ina3221. It defines
+a child node to describe the input source of each ina3221 channel.
+Then it changes the driver to handle the information properly.
 
-> > It seems that everybody has misunderstood my email. Let me try to
-> > clarify.
-> =
+Changelog
+v3->v4:
+ * Fixed one place in child DT node bindings (PATCH-1)
+ * Changed the driver accordingly and added is_visible (PATCH-2)
+v2->v3:
+ * Fixed two places in DT bindings (PATCH-1)
+v1->v2:
+ * Redefined DT bindings (detail in PATCH-1)
+ * Changed the driver code accordingly (detail in PATCH-2)
 
-> > I'm not saying to replace the sdm845 qspi compatible with a generic one.
-> > I'm recommending that a generic one is added in addition to the SoC
-> > specific one. That way, we get to put the generic compatible string in
-> > the driver and not need to update the driver compatible string array
-> > each time a new SoC comes out with a new compatible string.
-> =
+Nicolin Chen (2):
+  dt-bindings: hwmon: Add ina3221 documentation
+  hwmon: ina3221: Read channel input source info from DT
 
-> > If it turns out later that we need to handle some bug in that specific
-> > SoC compatible string then we're good to go and we can handle it by
-> > matching the more specific SoC version compatible.
-> =
+ .../devicetree/bindings/hwmon/ina3221.txt     |  42 +++++
+ Documentation/hwmon/ina3221                   |   1 +
+ drivers/hwmon/ina3221.c                       | 164 ++++++++++++++++--
+ 3 files changed, 196 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/ina3221.txt
 
-> Right, the policy is generally not to have these strings at all.  IIRC
-> the argument is that they tend to either become unclear as the marketing
-> and technology changes.
-
-Where is this policy documented? Is it on the list somewhere or written
-in Documentation/devicetree/? From my read of Rob's comment in the
-previous version of this patch, all that was asked was to add another
-compatible string for the specific SoC.
-
-I find the approach of picking the first SoC that the driver works on to
-be obtuse. I don't want to be reading some SoC DTS and see another SoC
-marketing number in the compatible string because it makes it confusing
-to explain to someone that yes these different SoCs are related to each
-other, but no, that SoC isn't this SoC. Sure it all works and everything
-is technically fine, but my aesthetically pleasing alarms go off and I
-don't see any particular downside to having two compatibles.
-
-The upside is that things aren't confusing and drivers don't get
-continual SoC churn updates because the compatible describes the SoC
-(qcom,sdm845-qspi) and the programming model (qcom,qspi-v1).
+-- 
+2.17.1
 
