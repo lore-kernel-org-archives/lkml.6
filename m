@@ -2,113 +2,96 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409E6C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83251ECE560
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C2F20883
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:44:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C2F20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E5DA20989
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 21:54:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b="lzH6WLl3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5DA20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=comcast.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeIXDnb (ORCPT
+        id S1727280AbeIXDx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 23:43:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45774 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727219AbeIXDnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 23:43:31 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 159135D5E6;
-        Sun, 23 Sep 2018 21:44:30 +0000 (UTC)
-Received: from krava (ovpn-204-66.brq.redhat.com [10.40.204.66])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AA90610694C4;
-        Sun, 23 Sep 2018 21:44:27 +0000 (UTC)
-Date:   Sun, 23 Sep 2018 23:44:26 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>,
-        Kernel Team <Kernel-team@fb.com>, Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] perf: Sharing PMU counters across compatible
- events
-Message-ID: <20180923214426.GL30923@krava>
-References: <20180815170313.455943-1-songliubraving@fb.com>
- <20180815170313.455943-2-songliubraving@fb.com>
- <20180830151355.GA23723@krava>
- <34EEDB74-35C5-49C4-9947-6C0248F194B3@fb.com>
- <20180910081336.GB31644@krava>
- <90BE3370-3006-426A-80DC-279F07192E70@fb.com>
+        Sun, 23 Sep 2018 23:53:27 -0400
+Received: from resqmta-ch2-03v.sys.comcast.net ([69.252.207.35]:33322 "EHLO
+        resqmta-ch2-03v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726520AbeIXDx1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 23:53:27 -0400
+Received: from resomta-ch2-12v.sys.comcast.net ([69.252.207.108])
+        by resqmta-ch2-03v.sys.comcast.net with ESMTP
+        id 4CHUgdJUBPUIw4CKdgeazY; Sun, 23 Sep 2018 21:54:23 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
+        s=q20161114; t=1537739663;
+        bh=ozBS/3YtQT+ZEMp6NCYGolIle4BnTZ3kBc+HJ8/2gug=;
+        h=Received:Received:Subject:To:From:Message-ID:Date:MIME-Version:
+         Content-Type;
+        b=lzH6WLl31/7ThxyEmBN7Dl6HO6UQ4d71SYRcCC8Cia56qQwpQfy7qo2BT80wVSDK4
+         /ztWMvQUWHD1DQb2XjXv+MSRFCKsj5gzGaH3siwEgYi0gSrEfmEWeLhXHzPqF7zPAA
+         FISvhUGSgWnGasSPr3fFkFyegLcq5pX4PiFn3yk21yCXtK7ueOYVdRA1Z+4pK91U/q
+         GY6Ca1AlpOCKhxiPuQkFpnpC4XQZXN76Zc0pzMV0LcHYU2UWLOwZJu/5uf6qNd/rdV
+         tEM+Pmcq2Y9iWb2YAEHVGrZ9qfvfrAnggl4zFHjJouX+SJcYdTUE4vCBOHTKbgEmF7
+         A5wVM43VANtRw==
+Received: from [10.1.10.100] ([73.214.254.59])
+        by resomta-ch2-12v.sys.comcast.net with ESMTPSA
+        id 4CKcgRnarT2X34CKdg2faP; Sun, 23 Sep 2018 21:54:23 +0000
+Subject: Re: AMD Athlon bogus performance value causing RCU stalls?
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org
+References: <6243f7cc-1a80-db0b-4765-fa12bda9b06a@comcast.net>
+ <alpine.DEB.2.21.1809232314460.1398@nanos.tec.linutronix.de>
+From:   Rob Prowel <rprowel@comcast.net>
+Message-ID: <de33e029-2be3-85de-4777-64dd8803fe1e@comcast.net>
+Date:   Sun, 23 Sep 2018 17:54:22 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90BE3370-3006-426A-80DC-279F07192E70@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sun, 23 Sep 2018 21:44:30 +0000 (UTC)
+In-Reply-To: <alpine.DEB.2.21.1809232314460.1398@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfKtHwqGCZ1miu1CggW6UdpVF+aXHvL8GoboKMA3pDEPUaz0mC2dq6lAr+DDX0sAzgRW2pXiJ7oS7mfVKew1+o8g2I9goIBRgmM0Otv38M9DwABKUs/Ph
+ NJqyp+BigYI6aqYZkqtU+gKjteTSLxNdzRbRCQtRm9YVMk00ZuDSZNak0wRJhGlN5UeiyuVnMEIUENv9AihkyManhCMTg1BxPiI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 01:29:32PM +0000, Song Liu wrote:
 
-SNIP
 
-> >>> 
-> >>> jirka
-> >> 
-> >> I am not sure I am following. The pmu is disabled when we call
-> >> event_pmu_add(). Why do we need to read before calling pmu->add()? 
-> >> And this is the first added dup event for this master, so we don't
-> >> need to worry about others. 
-> >> 
-> >> Does this make sense? 
-> > 
-> > I was just thinking since the pmu is disable we could
-> > we don't need to read the event on 2 places.. it's almost
-> > identic code
+On 09/23/18 17:19, Thomas Gleixner wrote:
+
+
+>>
+>> What is that value for the second Athlon core (seems extremely bogus), and
+>> would/could that be the reason for the schedule_timeouts?  This bogus value
+>> also shows up in the bootup log when the second core is activated.  Seems to
+>> be AMD specific, as the values are correct on my Xeon machines.
 > 
-> How about something like:
-> 
-> 
-> +/* PMU sharing aware version of event->pmu->add() */
-> +static int event_pmu_add(struct perf_event *event,
-> +			 struct perf_event_context *ctx)
-> +{
-> +	struct perf_event_dup *dup;
-> +	int ret;
-> +
-> +	/* no sharing, just do event->pmu->add() */
-> +	if (event->dup_id == -1)
-> +		return event->pmu->add(event, PERF_EF_START);
-> +
-> +	dup = &ctx->dup_events[event->dup_id];
-> +
-> +	if (dup->active_event_count = 0) {
-> +		/* try add master */
-> +		ret = event->pmu->add(dup->master, PERF_EF_START);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	dup->active_event_count++;
-> +	event->pmu->read(dup->master);
-> +	event->dup_base_count = dup_read_count(dup);
-> +	event->dup_base_child_count = dup_read_child_count(dup);
-> +	
-> +	return 0;
-> +}
+> That's a 32bit machine I assume.
 
-yep, seems ok
+No.  Actually it is a 64 bit AMD Athlon.  Might need to check the math being a
+problem in the 64 bit domain as well.
 
-jirka
+
+> 
+> Yes. This was decoded recently as an issue on 32bit due to a calculation
+> which is based on 'unsigned long' but requires to be 64bit wide.
+> 
+> It's in the 4.18.8 stable kernel, which should be available from your
+> fedora repo anytime soon.
+> 
+
+Will check with the newer kernel when it's available but please do double check if this
+problem might exist on 64 bit architectures as well...and of course I'm interested to
+know whether it is the likely cuprit of my RCU problem.
+
+
