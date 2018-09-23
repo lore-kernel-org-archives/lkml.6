@@ -2,104 +2,124 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B96BC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E193C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4A1220989
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D339821473
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 20:39:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=comcast.net header.i=@comcast.net header.b="k45yqU3V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A1220989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=comcast.net
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="omHhU3c7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D339821473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbeIXCOF (ORCPT
+        id S1727085AbeIXCiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 22:14:05 -0400
-Received: from resqmta-ch2-07v.sys.comcast.net ([69.252.207.39]:59330 "EHLO
-        resqmta-ch2-07v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726927AbeIXCOE (ORCPT
+        Sun, 23 Sep 2018 22:38:18 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55094 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbeIXCiS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 22:14:04 -0400
-X-Greylist: delayed 490 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Sep 2018 22:14:04 EDT
-Received: from resomta-ch2-17v.sys.comcast.net ([69.252.207.113])
-        by resqmta-ch2-07v.sys.comcast.net with ESMTP
-        id 4AZsgrm3dUrSz4AevgRNy0; Sun, 23 Sep 2018 20:07:13 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=comcast.net;
-        s=q20161114; t=1537733233;
-        bh=Vx+vVy51q1uYYJoVugwEZ/l1+Y/GiuJQwJvsXkQZF1A=;
-        h=Received:Received:To:From:Subject:Message-ID:Date:MIME-Version:
-         Content-Type;
-        b=k45yqU3VUG4QGzVQthAH4MeHpAFqT6Hv5Ayc2gl4f8qN5MNWdlpWJTa2inVA1Is9Y
-         QVi6UA7NlfyZKF8S47pJQI9snPSL9MzpbaZtXtnTCXSbcly+9wN5d9EmsrU3Na1mda
-         9jpRoVH0uMEN+wdAg+s0bOSJD9axb/WZsQO3FAdM4lfVVF0JM354wlG8YITnZk60ww
-         Bjg1Ef06PXlslreFsPzIgdU6A4oNT0b+cahtNFumnqt6mWPKABtWe3jlzyaZEIx8/6
-         2kBSc5zEiZjsKdT6zbHVcVJa4XvnNjzgUkKT2va7dOIliTHAnlAxjBnFFK47q5/6F9
-         +WkrGpefy11kQ==
-Received: from [10.1.10.100] ([73.214.254.59])
-        by resomta-ch2-17v.sys.comcast.net with ESMTPSA
-        id 4AeuggYwvvmOM4AeugE2HS; Sun, 23 Sep 2018 20:07:12 +0000
-To:     linux-kernel@vger.kernel.org
-From:   Rob Prowel <rprowel@comcast.net>
-Subject: AMD Athlon bogus performance value causing RCU stalls?
-Message-ID: <6243f7cc-1a80-db0b-4765-fa12bda9b06a@comcast.net>
-Date:   Sun, 23 Sep 2018 16:07:12 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 23 Sep 2018 22:38:18 -0400
+Received: by mail-it1-f195.google.com with SMTP id f14-v6so8060165ita.4
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 13:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cLpRmmAXcqfHQM/vlCqE+JhbjeuhgwiriiABBTiq/jM=;
+        b=omHhU3c7duibBPB3lt93E5PtisCXz/m4zjdi1xZFWdRJxma9QrR2tIqIgk6jtMp1tH
+         v0B3LTlYusF+3y+cxYnuhfo9xS25zOodG1BElPKORAKxeOgjE/3jlmbLfhbk4tFtTPl0
+         ax8wq6BAfqx7RZDkahl4stzAVZh7bAIC4hUkm+y5kRu5GgNpjmchqOmY1hXEaGP/Q2kZ
+         7xQQKN13/vcaNL8A5BGf8p/sLB5FZXHPmLym94qkV3wCbruB3fOO+ykUoQVMvnFTHAQw
+         QqmJhx+oAql652W9qeiYjh9JHeAkXCTvgxruqpRXSn5066YFjc1TC9qvLgFueyODovaS
+         J6uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cLpRmmAXcqfHQM/vlCqE+JhbjeuhgwiriiABBTiq/jM=;
+        b=Uw6viCJAVwJQXkJm25zXBMgrgVKI3Jdz1XSVP7XuDjExN7z98dkqz35sEwMiphRd17
+         H07BtKNIgEQNV+6nJQdlFPewwf+zgLEiS8yFn3GnePR2KVdUB4rlOsm4kHJH1q8832oj
+         NTGDP5jIzlqKMEjw5sTvxGNmsFtxH8SJJOkwNCAdd65QnYQkNSazNmzNPkspP86UX8a5
+         Es/gGlrJb/EoZ64lHov9zI98Z5bgyZvLIGfQBWoNX0EWjMb9IUP+YZVUD2o0lHaDWIuk
+         pGD1zuE05VkmMIH6LJETlRwtZvhWmL9w1cdECwfBuU5ev6Ngesgmgt8cNfl2wjEc2/Xy
+         EILg==
+X-Gm-Message-State: APzg51BIFJzR3Pp0+S8/Eu07yg5ESPK2Jg8R8jNPvPC17t9MK13WzIdX
+        G3L8ZpVao/S/GLtBaPYf59NzRw==
+X-Google-Smtp-Source: ACcGV62L5HrY188VztmIHAWmrih7S9gxo0Cgb42GxG8IkqV2n3CwcYmh1JI23BY1GHN6gWfMkuzodw==
+X-Received: by 2002:a24:2c4e:: with SMTP id i75-v6mr5700252iti.81.1537735169729;
+        Sun, 23 Sep 2018 13:39:29 -0700 (PDT)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id b26-v6sm1399629iod.38.2018.09.23.13.39.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Sep 2018 13:39:28 -0700 (PDT)
+From:   Yu Zhao <yuzhao@google.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+Subject: [PATCH] mmc: add quirk for O2 Micro dev 0x8620 rev 0x01
+Date:   Sun, 23 Sep 2018 14:39:24 -0600
+Message-Id: <20180923203924.68452-1-yuzhao@google.com>
+X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfP0xrToatYGHXqcHYGMfEP4wmzPobztP3Ujr7sH6OD6QBsVlOq2k05l9UPlOjEwKR2FD2oxICbODfPtzqh9WFe/EGfSowTGEPfh8wXIex/jaIUKHERBF
- j34fwAyPm28OuO23dFESIBi3Qsh4pCxbYv54vULv0KNFgvqcIrBVIw8Af+G2YYE7mUEedru2w5hy9w==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This device reports SDHCI_CLOCK_INT_STABLE even though it's not
+ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
+SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
+bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
+SDHCI_CLOCK_CARD_EN but only observed the first operand).
 
-Please CC me on comments.
+mmc1: Timeout waiting for hardware cmd interrupt.
+mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
+mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
+mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
+mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
+mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
+mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
+mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+mmc1: sdhci: Host ctl2: 0x00000008
+mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
+mmc1: sdhci: ============================================
 
-I'm seeing a lot of these errors on my dual core fileserver:
------------------------------------------------------------------------
+The problem happens during wakeup from S3. Adding a delay quirk
+after power up reliably fixes the problem.
 
-Sep 23 01:51:28 files kernel: INFO: rcu_sched detected stalls on CPUs/tasks:
-Sep 23 01:51:28 files kernel:         1-...!: (0 ticks this GP) idle=27c/0/0 softirq=35425/35425 fqs=0
-Sep 23 01:51:28 files kernel:         (detected by 0, t=60009 jiffies, g=20812, c=20811, q=121)
-Sep 23 01:51:28 files kernel: Sending NMI from CPU 0 to CPUs 1:
-Sep 23 01:51:28 files kernel: NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x2/0x10
-Sep 23 01:51:28 files kernel: rcu_sched kthread starved for 60009 jiffies! g20812 c20811 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x402 ->cpu=1
-Sep 23 01:51:28 files kernel: RCU grace-period kthread stack dump:
-Sep 23 01:51:28 files kernel: rcu_sched       I    0    10      2 0x80000000
-Sep 23 01:51:33 files kernel: Call Trace:
-Sep 23 01:51:33 files kernel:  ? __schedule+0x25c/0x860
-Sep 23 01:51:33 files kernel:  schedule+0x28/0x80
-Sep 23 01:51:33 files kernel:  schedule_timeout+0x174/0x370
-Sep 23 01:51:33 files kernel:  ? __next_timer_interrupt+0xc0/0xc0
-Sep 23 01:51:33 files kernel:  rcu_gp_kthread+0x4b6/0x8c0
-Sep 23 01:51:33 files kernel:  ? _synchronize_rcu_expedited.constprop.68+0x310/0x310
-Sep 23 01:51:33 files kernel:  kthread+0x113/0x130
-Sep 23 01:51:33 files kernel:  ? kthread_create_worker_on_cpu+0x70/0x70
-Sep 23 01:51:33 files kernel:  ret_from_fork+0x35/0x40
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+---
+ drivers/mmc/host/sdhci-pci-o2micro.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
------------------------------------------------------------------------
-
-The kernel reported bogoMIPS for the cores are as follows:
-
-$ grep bogo /proc/cpuinfo
-bogomips        : 4219.49
-bogomips        : 184253.06
-$
-
-What is that value for the second Athlon core (seems extremely bogus), and would/could that be the reason for the schedule_timeouts?  This bogus value also shows up in the bootup log when the second core is activated.  Seems to be AMD specific, as the values are correct on my Xeon machines.
-
-Kernel is a stock Fedora 4.18.7-100 release.  Machine is an old Dell Experion that I've repurposed as a fileserver and postgresql machine.
-
-Other than RTFM, or please build a bunch of kernels from source on your slow machine, using differing config options to help track down the cause of this...any thoughts about a solution?
-
+diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+index 77e9bc4aaee9..3e5ecf7ce101 100644
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -490,6 +490,8 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
+ 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
+ 		break;
+ 	case PCI_DEVICE_ID_O2_SEABIRD0:
++		if (chip->pdev->revision == 0x01)
++			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
+ 	case PCI_DEVICE_ID_O2_SEABIRD1:
+ 		/* UnLock WP */
+ 		ret = pci_read_config_byte(chip->pdev,
+-- 
+2.19.0.444.g18242da7ef-goog
 
