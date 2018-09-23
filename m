@@ -2,542 +2,269 @@ Return-Path: <SRS0=ZOiK=MF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF38FECE560
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64C7C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593DC208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:03:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="Poh2EWde"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593DC208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
+	by mail.kernel.org (Postfix) with ESMTP id 3D69E208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 23 Sep 2018 16:06:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D69E208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbeIWWBf (ORCPT
+        id S1726440AbeIWWEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 23 Sep 2018 18:01:35 -0400
-Received: from erza.pados.hu ([176.9.136.194]:45540 "EHLO erza.pados.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbeIWWBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Sep 2018 18:01:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
-         s=february2016; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
-        Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2kTnWbHd7RTr6mL6TrVPYz3MWqAY8JsZ1tkHEjhg79E=; b=Poh2EWdeBxZDI3/uTArwqoLWY9
-        QBrzzG7EaCgUr5jXCcaITVdn9szI9LdS0wGQpxN5BuJkCuTzGWxfFDFSJnMT2yvNmHXsEPuVpAR0m
-        Bhe9jWMU+0Iu98GmcpzAq69pZmyWiVlw6DIkEji0EjRhTQqSkz3pQGmEruCNRipXXilmgBinQFXF7
-        +wCj+eZZloaTSShgdbHnMUqMf/eNu1/zD3tiv+mnVC9d/BSjoaM67MUpDoMkX/55BeUp2hvX0wGAQ
-        63+w9Zm14l9PXNVesWq9Ba6Q6aazbx0wAcFNXfvI2jciZV4UYV2sARQWippM5O+Clefzriv6G1K1y
-        etHN4KkQ==;
-Received: from 84-236-24-27.pool.digikabel.hu ([84.236.24.27] helo=localhost)
-        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <pados@pados.hu>)
-        id 1g46r8-0006Is-Ei; Sun, 23 Sep 2018 18:03:35 +0200
-From:   Karoly Pados <pados@pados.hu>
-To:     "Johan Hovold" <johan@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Loic Poulain" <loic.poulain@linaro.org>
-Cc:     Karoly Pados <pados@pados.hu>
-Subject: [PATCH v5] USB: serial: ftdi_sio: implement GPIO support for FT-X devices
-Date:   Sun, 23 Sep 2018 18:03:30 +0200
-Message-Id: <20180923160330.2184-1-pados@pados.hu>
-X-Mailer: git-send-email 2.19.0
+        Sun, 23 Sep 2018 18:04:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41384 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726094AbeIWWEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Sep 2018 18:04:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DAE08AD68;
+        Sun, 23 Sep 2018 16:06:10 +0000 (UTC)
+Subject: Re: [RFC 2/3 net] lorawan: Add macro and definition for LoRaWAN class
+ modlue
+To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
+References: <cover.1535039998.git.starnight@g.ncu.edu.tw>
+ <f7ea222671a2bc6fe0a060c4bdb1ebae162d0d91.1535039998.git.starnight@g.ncu.edu.tw>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Janus Piwek <jpiwek@arroweurope.com>,
+        =?UTF-8?Q?Michael_R=c3=b6der?= <michael.roeder@avnet.eu>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>,
+        =?UTF-8?Q?Konstantin_B=c3=b6hm?= <konstantin.boehm@ancud.de>,
+        Jan Jongboom <jan.jongboom@arm.com>,
+        Jon Ortego <Jon.Ortego@imst.de>,
+        "contact@snootlab.com" <contact@snootlab.com>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        Brian Ray <brian.ray@link-labs.com>, lora@globalsat.com.tw,
+        Alexander Graf <agraf@suse.de>,
+        =?UTF-8?Q?Michal_Kube=c4=8dek?= <mkubecek@suse.cz>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Steve deRosier <derosier@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Pieter ROBYNS <pieter.robyns@uhasselt.be>,
+        Hasnain Virk <Hasnain.Virk@arm.com>,
+        linux-wpan - ML <linux-wpan@vger.kernel.org>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Daniele Comel <dcomel@mipot.com>, shess@hessware.de,
+        Xue Liu <liuxuenetmail@gmail.com>, fomi <fomi@rakwireless.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <f74c033a-fadc-fb8c-9469-6e6a32339cd8@suse.de>
+Date:   Sun, 23 Sep 2018 18:06:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <f7ea222671a2bc6fe0a060c4bdb1ebae162d0d91.1535039998.git.starnight@g.ncu.edu.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Spam_score: -2.9
-X-Spam_report: Spam detection software, running on the system "erza",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  This patch allows using the CBUS pins of FT-X devices as GPIO
-    in CBUS bitbanging mode. There is no conflict between the GPIO and VCP functionality
-    in this mode. Tested on FT230X and FT231X. As there is no way to request
-   the current CBUS register configuration from the device, all CBUS pins are
-    set to a known state when the first GPIO is requested. This allows using
-   libftdi to set the GPIO pins before loading this module for UART functionality,
-    a behavior that existing applications might be relying upon (though no specific
-    case is known to the authors of this patch). [...] 
- Content analysis details:   (-2.9 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
-  0.0 TVD_RCVD_IP            Message was received from an IP address
-  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
-                             See
-                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
-                              for more information.
-                             [URIs: pados.hu]
- -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
-                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows using the CBUS pins of FT-X devices as GPIO in CBUS
-bitbanging mode. There is no conflict between the GPIO and VCP
-functionality in this mode. Tested on FT230X and FT231X.
+Hi Jian-Hong,
 
-As there is no way to request the current CBUS register configuration
-from the device, all CBUS pins are set to a known state when the first
-GPIO is requested. This allows using libftdi to set the GPIO pins
-before loading this module for UART functionality, a behavior that
-existing applications might be relying upon (though no specific case
-is known to the authors of this patch).
+Many thanks and sorry for the delay. This patch mostly looks good and
+should go in before its first uses, so I would like to queue it soon for
+my hardware-MAC module drivers - but some questions below. Also a typo
+in the subject, and we should probably prepend "net: " and I would
+personally not mention the module here as it's a userspace API.
 
-Signed-off-by: Karoly Pados <pados@pados.hu>
----
-Changelog:
-- v2: Fix compile error when CONFIG_GPIOLIB is not defined.
-- v3: Incorporate review feedback.
-- v4: Include linux/gpio/driver.h unconditionally.
-      Replace and invert gpio_input with gpio_output.
-      Make ftdi_gpio_direction_get return 0/1.
-      Change dev_err msg in ftdi_set_bitmode_req.
-      Change formatting of error checking in ftdi_gpio_get.
-      Drop dev_err in ftdi_gpio_set.
-      Remove some line breaks and empty lines.
-      Change error handling in ftdi_read_eeprom (and adjust caller).
-      Replace SIO->FTX in FTDI_SIO_CBUS_MUX_GPIO macro name.
-- v5: Read only 4 bytes from eeprom in ftx_gpioconf_init.
-      Compare ftdi_read_eeprom result with 0 instead of eq. cehck.
-      Reserve 4 GPIOs even for FT234X.
-      Release CBUS after gpiochip deregister to avoid possible race.
-      Adjust comment on FTDI_SIO_SET_BITMODE macro.
-      Protect GPIO value/dir setting with mutex.
-      Add support for gpiochip.get_multiple and set_multiple.
-      Add names to GPIO lines.
+Am 23.08.18 um 19:15 schrieb Jian-Hong Pan:
+> This patch add the macro and definition for the implementation of
+> LoRaWAN protocol.
 
-Of special note, in this vesion of the patch GPIO names and support for
-get_multiple / set_multiple methods have been added in addition to earlier
-review comments.
+I would fix up the grammar nits in my tree then.
 
-Though there is no code copied, libftdi was used as 
-a reference. ftdi_read_eeprom is based on Loic Poulain's patch.
+> 
+> Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+> ---
+>  include/linux/socket.h              | 5 ++++-
+>  include/uapi/linux/if_arp.h         | 1 +
+>  include/uapi/linux/if_ether.h       | 1 +
+>  net/core/dev.c                      | 4 ++--
+>  security/selinux/hooks.c            | 4 +++-
+>  security/selinux/include/classmap.h | 4 +++-
+>  6 files changed, 14 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/socket.h b/include/linux/socket.h
+> index aa1e288b1659..e5c8381fd1aa 100644
+> --- a/include/linux/socket.h
+> +++ b/include/linux/socket.h
+> @@ -209,8 +209,9 @@ struct ucred {
+>  				 */
+>  #define AF_XDP		44	/* XDP sockets			*/
+>  #define AF_LORA		45	/* LoRa sockets			*/
+> +#define AF_LORAWAN	46	/* LoRaWAN sockets			*/
+>  
+> -#define AF_MAX		46	/* For now.. */
+> +#define AF_MAX		47	/* For now.. */
+>  
+>  /* Protocol families, same as address families. */
+>  #define PF_UNSPEC	AF_UNSPEC
+> @@ -261,6 +262,7 @@ struct ucred {
+>  #define PF_SMC		AF_SMC
+>  #define PF_XDP		AF_XDP
+>  #define PF_LORA		AF_LORA
+> +#define PF_LORAWAN	AF_LORAWAN
+>  #define PF_MAX		AF_MAX
+>  
+>  /* Maximum queue length specifiable by listen.  */
+> @@ -343,6 +345,7 @@ struct ucred {
+>  #define SOL_KCM		281
+>  #define SOL_TLS		282
+>  #define SOL_XDP		283
+> +#define SOL_LORAWAN	284
+>  
+>  /* IPX options */
+>  #define IPX_TYPE	1
+> diff --git a/include/uapi/linux/if_arp.h b/include/uapi/linux/if_arp.h
+> index 1ed7cb3f2129..2376f7839355 100644
+> --- a/include/uapi/linux/if_arp.h
+> +++ b/include/uapi/linux/if_arp.h
+> @@ -99,6 +99,7 @@
+>  #define ARPHRD_6LOWPAN	825		/* IPv6 over LoWPAN             */
+>  #define ARPHRD_VSOCKMON	826		/* Vsock monitor header		*/
+>  #define ARPHRD_LORA	827		/* LoRa				*/
+> +#define ARPHRD_LORAWAN	828		/* LoRaWAN			*/
+>  
+>  #define ARPHRD_VOID	  0xFFFF	/* Void type, nothing is known */
+>  #define ARPHRD_NONE	  0xFFFE	/* zero header length */
+> diff --git a/include/uapi/linux/if_ether.h b/include/uapi/linux/if_ether.h
+> index 45644dcf5b39..b1ac70d4a377 100644
+> --- a/include/uapi/linux/if_ether.h
+> +++ b/include/uapi/linux/if_ether.h
+> @@ -148,6 +148,7 @@
+>  					 * aggregation protocol
+>  					 */
+>  #define ETH_P_LORA	0x00FA		/* LoRa				*/
+> +#define ETH_P_LORAWAN	0x00FB		/* LoRaWAN			*/
+>  
+>  /*
+>   *	This is an Ethernet frame header.
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index f68122f0ab02..b95ce79ec5a8 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -297,7 +297,7 @@ static const unsigned short netdev_lock_type[] = {
+>  	 ARPHRD_IRDA, ARPHRD_FCPP, ARPHRD_FCAL, ARPHRD_FCPL,
+>  	 ARPHRD_FCFABRIC, ARPHRD_IEEE80211, ARPHRD_IEEE80211_PRISM,
+>  	 ARPHRD_IEEE80211_RADIOTAP, ARPHRD_PHONET, ARPHRD_PHONET_PIPE,
+> -	 ARPHRD_IEEE802154, ARPHRD_VOID, ARPHRD_NONE};
+> +	 ARPHRD_IEEE802154, ARPHRD_LORAWAN, ARPHRD_VOID, ARPHRD_NONE};
+>  
+>  static const char *const netdev_lock_name[] = {
+>  	"_xmit_NETROM", "_xmit_ETHER", "_xmit_EETHER", "_xmit_AX25",
+> @@ -314,7 +314,7 @@ static const char *const netdev_lock_name[] = {
+>  	"_xmit_IRDA", "_xmit_FCPP", "_xmit_FCAL", "_xmit_FCPL",
+>  	"_xmit_FCFABRIC", "_xmit_IEEE80211", "_xmit_IEEE80211_PRISM",
+>  	"_xmit_IEEE80211_RADIOTAP", "_xmit_PHONET", "_xmit_PHONET_PIPE",
+> -	"_xmit_IEEE802154", "_xmit_VOID", "_xmit_NONE"};
+> +	"_xmit_IEEE802154", "_xmit_LORAWAN", "_xmit_VOID", "_xmit_NONE"};
+>  
+>  static struct lock_class_key netdev_xmit_lock_key[ARRAY_SIZE(netdev_lock_type)];
+>  static struct lock_class_key netdev_addr_lock_key[ARRAY_SIZE(netdev_lock_type)];
 
-This patch uses CBUS bitbanging mode, which works nicely in parallel with
-the VCP function. The other modes do not, and so IMHO it does not make
-sense to try adding them to this same module.
+All your new constants except SOL_LORAWAN are always next to a LoRa one,
+but not in these two arrays. I don't have such changes in my original
+LoRa patch - am I missing such an array extension for ARPHRD_LORA then,
+or what is the criteria for when to add this?
 
-For this device, whenever changing the state of any single pin, all the
-others need to be written too. This means in order to change any pin, we 
-need to know the current state of all the others. So when using GPIO,
-we need to have a known starting state for all pins, but there seems to 
-be no way to retrieve the existing GPIO configuration (directions and
-output register values). The way I handle this in this patch is that when
-requesting a GPIO for the first time, the module initializes all pins to 
-a known default state (to inputs). Input was chosen, because a potentially
-floating pin is better than a potential driver conflict, because the latter
-could result in hardware damage. However, if the user does not request a 
-GPIO, the CBUS pins are not initialized, avoiding unnecessarily changing 
-hardware state. I figured I cannot rely on the default power-on state of
-the device for this as the user might have used libftdi before loading 
-our module. When the module is unloaded, CBUS bitbanging mode is exited 
-if it were us who entered it earlier.
+Other changes look fine to me.
 
- drivers/usb/serial/ftdi_sio.c | 297 +++++++++++++++++++++++++++++++++-
- drivers/usb/serial/ftdi_sio.h |  27 +++-
- 2 files changed, 322 insertions(+), 2 deletions(-)
+Regards,
+Andreas
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index b5cef322826f..749654a6a902 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -40,6 +40,7 @@
- #include <linux/usb.h>
- #include <linux/serial.h>
- #include <linux/usb/serial.h>
-+#include <linux/gpio/driver.h>
- #include "ftdi_sio.h"
- #include "ftdi_sio_ids.h"
- 
-@@ -72,6 +73,14 @@ struct ftdi_private {
- 	unsigned int latency;		/* latency setting in use */
- 	unsigned short max_packet_size;
- 	struct mutex cfg_lock; /* Avoid mess by parallel calls of config ioctl() and change_speed() */
-+#if defined(CONFIG_GPIOLIB)
-+	struct gpio_chip gc;
-+	bool	gpio_registered;  /* is the gpiochip in kernel registered */
-+	bool	gpio_used;	  /* true if the user requested a gpio */
-+	u8	gpio_altfunc;	  /* which pins are in gpio mode */
-+	u8	gpio_output;	  /* pin directions cache */
-+	u8	gpio_value;	  /* pin value for outputs */
-+#endif
- };
- 
- /* struct ftdi_sio_quirk is used by devices requiring special attention. */
-@@ -1766,6 +1775,282 @@ static void remove_sysfs_attrs(struct usb_serial_port *port)
- 
- }
- 
-+#if defined(CONFIG_GPIOLIB)
-+
-+static int ftdi_set_bitmode_req(struct usb_serial_port *port, u8 mode)
-+{
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	int result;
-+	u16 val;
-+
-+	val = (mode << 8) | (priv->gpio_output << 4) | priv->gpio_value;
-+	result = usb_control_msg(serial->dev,
-+				 usb_sndctrlpipe(serial->dev, 0),
-+				 FTDI_SIO_SET_BITMODE_REQUEST,
-+				 FTDI_SIO_SET_BITMODE_REQUEST_TYPE, val,
-+				 priv->interface, NULL, 0, WDR_TIMEOUT);
-+	if (result < 0) {
-+		dev_err(&serial->interface->dev,
-+			"bitmode request failed for value 0x%04x: %d\n",
-+			val, result);
-+	}
-+
-+	return result;
-+}
-+
-+static int ftdi_set_cbus_pins(struct usb_serial_port *port)
-+{
-+	return ftdi_set_bitmode_req(port, FTDI_SIO_BITMODE_CBUS);
-+}
-+
-+static int ftdi_exit_cbus_mode(struct usb_serial_port *port)
-+{
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+
-+	priv->gpio_output = 0;
-+	priv->gpio_value = 0;
-+	return ftdi_set_bitmode_req(port, FTDI_SIO_BITMODE_RESET);
-+}
-+
-+static int ftdi_gpio_request(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct usb_serial_port *port = gpiochip_get_data(gc);
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+	int result;
-+
-+	if (priv->gpio_altfunc & BIT(offset))
-+		return -ENODEV;
-+
-+	if (!priv->gpio_used) {
-+		/* Set default pin states, as we cannot get them from device */
-+		priv->gpio_output = 0x00;
-+		priv->gpio_value = 0x00;
-+		result = ftdi_set_cbus_pins(port);
-+		if (result)
-+			return result;
-+
-+		priv->gpio_used = true;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ftdi_gpio_get(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	struct usb_serial_port *port = gpiochip_get_data(gc);
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	unsigned char *rcvbuf;
-+	int result;
-+
-+	rcvbuf = kmalloc(1, GFP_KERNEL);
-+	if (!rcvbuf)
-+		return -ENOMEM;
-+
-+	result = usb_control_msg(serial->dev,
-+				 usb_rcvctrlpipe(serial->dev, 0),
-+				 FTDI_SIO_READ_PINS_REQUEST,
-+				 FTDI_SIO_READ_PINS_REQUEST_TYPE, 0,
-+				 priv->interface, rcvbuf, 1, WDR_TIMEOUT);
-+	if (result < 1) {
-+		if (result >= 0)
-+			result = -EIO;
-+	} else {
-+		result = !!(rcvbuf[0] & BIT(gpio));
-+	}
-+
-+	kfree(rcvbuf);
-+
-+	return result;
-+}
-+
-+static void ftdi_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
-+{
-+	struct usb_serial_port *port = gpiochip_get_data(gc);
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+
-+	if (value)
-+		priv->gpio_value |= BIT(gpio);
-+	else
-+		priv->gpio_value &= ~BIT(gpio);
-+
-+	ftdi_set_cbus_pins(port);
-+}
-+
-+static int ftdi_gpio_direction_get(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	struct usb_serial_port *port = gpiochip_get_data(gc);
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+
-+	if (priv->gpio_output & BIT(gpio))
-+		return 0;
-+	else
-+		return 1;
-+}
-+
-+static int ftdi_gpio_direction_input(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	struct usb_serial_port *port = gpiochip_get_data(gc);
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+
-+	priv->gpio_output &= ~BIT(gpio);
-+
-+	return ftdi_set_cbus_pins(port);
-+}
-+
-+static int ftdi_gpio_direction_output(struct gpio_chip *gc,
-+					  unsigned int gpio,
-+					  int value)
-+{
-+	struct usb_serial_port *port = gpiochip_get_data(gc);
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+
-+	priv->gpio_output |= BIT(gpio);
-+	if (value)
-+		priv->gpio_value |= BIT(gpio);
-+	else
-+		priv->gpio_value &= ~BIT(gpio);
-+
-+	return ftdi_set_cbus_pins(port);
-+}
-+
-+static int ftdi_read_eeprom(struct usb_serial *serial, void *dst,
-+			    u16 addr, u16 nbytes)
-+{
-+	int read = 0;
-+
-+	if (addr % 2 != 0)
-+		return -EINVAL;
-+	if (nbytes % 2 != 0)
-+		return -EINVAL;
-+
-+	/* Read EEPROM two bytes at a time */
-+	while (read < nbytes) {
-+		int rv;
-+
-+		rv = usb_control_msg(serial->dev,
-+				     usb_rcvctrlpipe(serial->dev, 0),
-+				     FTDI_SIO_READ_EEPROM_REQUEST,
-+				     FTDI_SIO_READ_EEPROM_REQUEST_TYPE,
-+				     0, (addr + read) / 2, dst + read, 2,
-+				     WDR_TIMEOUT);
-+		if (rv < 2) {
-+			if (rv >= 0)
-+				return -EIO;
-+			else
-+				return rv;
-+		}
-+
-+		read += rv;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ftx_gpioconf_init(struct usb_serial_port *port)
-+{
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	const u16 cbus_cfg_addr = 0x1a;
-+	const u16 cbus_cfg_size = 8;
-+	u8 *cbus_cfg_buf;
-+	int result;
-+	u8 i;
-+
-+	/* Read a part of device EEPROM */
-+	cbus_cfg_buf = kmalloc(cbus_cfg_size, GFP_KERNEL);
-+	if (!cbus_cfg_buf)
-+		return -ENOMEM;
-+
-+	result = ftdi_read_eeprom(serial, cbus_cfg_buf,
-+				  cbus_cfg_addr, cbus_cfg_size);
-+	if (result != 0)
-+		goto out_free;
-+
-+	/* Chip-type guessing logic based on libftdi. */
-+	priv->gc.ngpio = 4;  /* FT230X, FT231X */
-+	if (le16_to_cpu(serial->dev->descriptor.bcdDevice) != 0x1000)
-+		priv->gc.ngpio = 1;  /* FT234XD */
-+
-+	/* Determine which pins are configured for CBUS bitbanging */
-+	priv->gpio_altfunc = 0xff;
-+	for (i = 0; i < priv->gc.ngpio; ++i) {
-+		if (cbus_cfg_buf[i] == FTDI_FTX_CBUS_MUX_GPIO)
-+			priv->gpio_altfunc &= ~BIT(i);
-+	}
-+
-+out_free:
-+	kfree(cbus_cfg_buf);
-+
-+	return result;
-+}
-+
-+static int ftdi_gpio_init(struct usb_serial_port *port)
-+{
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+	struct usb_serial *serial = port->serial;
-+	int result;
-+
-+	/* Device-specific initializations */
-+	switch (priv->chip_type) {
-+	case FTX:
-+		result = ftx_gpioconf_init(port);
-+		break;
-+	default:
-+		return 0;
-+	}
-+
-+	if (result < 0)
-+		return result;
-+
-+	/* Register GPIO chip to kernel */
-+	priv->gc.label = "ftdi-cbus";
-+	priv->gc.request = ftdi_gpio_request;
-+	priv->gc.get_direction = ftdi_gpio_direction_get;
-+	priv->gc.direction_input = ftdi_gpio_direction_input;
-+	priv->gc.direction_output = ftdi_gpio_direction_output;
-+	priv->gc.get = ftdi_gpio_get;
-+	priv->gc.set = ftdi_gpio_set;
-+	priv->gc.owner = THIS_MODULE;
-+	priv->gc.parent = &serial->interface->dev;
-+	priv->gc.base = -1;
-+	priv->gc.can_sleep = true;
-+
-+	result = gpiochip_add_data(&priv->gc, port);
-+	if (!result)
-+		priv->gpio_registered = true;
-+
-+	return result;
-+}
-+
-+static void ftdi_gpio_remove(struct usb_serial_port *port)
-+{
-+	struct ftdi_private *priv = usb_get_serial_port_data(port);
-+
-+	if (priv->gpio_used) {
-+		/* Remark: Exiting CBUS-mode does not reset pin states too */
-+		ftdi_exit_cbus_mode(port);
-+		priv->gpio_used = false;
-+	}
-+
-+	if (priv->gpio_registered) {
-+		gpiochip_remove(&priv->gc);
-+		priv->gpio_registered = false;
-+	}
-+}
-+
-+#else
-+
-+static int ftdi_gpio_init(struct usb_serial_port *port)
-+{
-+	return 0;
-+}
-+
-+static void ftdi_gpio_remove(struct usb_serial_port *port) { }
-+
-+#endif
-+
- /*
-  * ***************************************************************************
-  * FTDI driver specific functions
-@@ -1794,7 +2079,7 @@ static int ftdi_sio_port_probe(struct usb_serial_port *port)
- {
- 	struct ftdi_private *priv;
- 	const struct ftdi_sio_quirk *quirk = usb_get_serial_data(port->serial);
--
-+	int result;
- 
- 	priv = kzalloc(sizeof(struct ftdi_private), GFP_KERNEL);
- 	if (!priv)
-@@ -1813,6 +2098,14 @@ static int ftdi_sio_port_probe(struct usb_serial_port *port)
- 		priv->latency = 16;
- 	write_latency_timer(port);
- 	create_sysfs_attrs(port);
-+
-+	result = ftdi_gpio_init(port);
-+	if (result < 0) {
-+		dev_err(&port->serial->interface->dev,
-+			"GPIO initialisation failed: %d\n",
-+			result);
-+	}
-+
- 	return 0;
- }
- 
-@@ -1930,6 +2223,8 @@ static int ftdi_sio_port_remove(struct usb_serial_port *port)
- {
- 	struct ftdi_private *priv = usb_get_serial_port_data(port);
- 
-+	ftdi_gpio_remove(port);
-+
- 	remove_sysfs_attrs(port);
- 
- 	kfree(priv);
-diff --git a/drivers/usb/serial/ftdi_sio.h b/drivers/usb/serial/ftdi_sio.h
-index dcd0b6e05baf..6856ccdac9b4 100644
---- a/drivers/usb/serial/ftdi_sio.h
-+++ b/drivers/usb/serial/ftdi_sio.h
-@@ -35,7 +35,10 @@
- #define FTDI_SIO_SET_EVENT_CHAR		6 /* Set the event character */
- #define FTDI_SIO_SET_ERROR_CHAR		7 /* Set the error character */
- #define FTDI_SIO_SET_LATENCY_TIMER	9 /* Set the latency timer */
--#define FTDI_SIO_GET_LATENCY_TIMER	10 /* Get the latency timer */
-+#define FTDI_SIO_GET_LATENCY_TIMER	0x0a /* Get the latency timer */
-+#define FTDI_SIO_SET_BITMODE		0x0b /* Set GPIO mode */
-+#define FTDI_SIO_READ_PINS		0x0c /* Read immediate value of pins */
-+#define FTDI_SIO_READ_EEPROM		0x90 /* Read EEPROM */
- 
- /* Interface indices for FT2232, FT2232H and FT4232H devices */
- #define INTERFACE_A		1
-@@ -433,6 +436,28 @@ enum ftdi_sio_baudrate {
-  *         1 = active
-  */
- 
-+/* FTDI_SIO_SET_BITMODE */
-+#define FTDI_SIO_SET_BITMODE_REQUEST_TYPE 0x40
-+#define FTDI_SIO_SET_BITMODE_REQUEST FTDI_SIO_SET_BITMODE
-+
-+/* Possible bitmodes for FTDI_SIO_SET_BITMODE_REQUEST */
-+#define FTDI_SIO_BITMODE_RESET		0x00
-+#define FTDI_SIO_BITMODE_CBUS		0x20
-+
-+/* FTDI_SIO_READ_PINS */
-+#define FTDI_SIO_READ_PINS_REQUEST_TYPE 0xc0
-+#define FTDI_SIO_READ_PINS_REQUEST FTDI_SIO_READ_PINS
-+
-+/*
-+ * FTDI_SIO_READ_EEPROM
-+ *
-+ * EEPROM format found in FTDI AN_201, "FT-X MTP memory Configuration",
-+ * http://www.ftdichip.com/Support/Documents/AppNotes/AN_201_FT-X%20MTP%20Memory%20Configuration.pdf
-+ */
-+#define FTDI_SIO_READ_EEPROM_REQUEST_TYPE 0xc0
-+#define FTDI_SIO_READ_EEPROM_REQUEST FTDI_SIO_READ_EEPROM
-+
-+#define FTDI_FTX_CBUS_MUX_GPIO		8
- 
- 
- /* Descriptors returned by the device
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index aaf520a689d8..0da3a1d69cb8 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -1477,7 +1477,9 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
+>  			return SECCLASS_XDP_SOCKET;
+>  		case PF_LORA:
+>  			return SECCLASS_LORA_SOCKET;
+> -#if PF_MAX > 46
+> +		case PF_LORAWAN:
+> +			return SECCLASS_LORAWAN_SOCKET;
+> +#if PF_MAX > 47
+>  #error New address family defined, please update this function.
+>  #endif
+>  		}
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index 060d4bf8385e..fa0151fe6f32 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -244,9 +244,11 @@ struct security_class_mapping secclass_map[] = {
+>  	  { COMMON_SOCK_PERMS, NULL } },
+>  	{ "lora_socket",
+>  	  { COMMON_SOCK_PERMS, NULL } },
+> +	{ "lorawan_socket",
+> +	  { COMMON_SOCK_PERMS, NULL } },
+>  	{ NULL }
+>    };
+>  
+> -#if PF_MAX > 46
+> +#if PF_MAX > 47
+>  #error New address family defined, please update secclass_map.
+>  #endif
+> 
+
+
 -- 
-2.19.0
-
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
