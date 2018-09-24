@@ -2,117 +2,159 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E20C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EA4ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB2E4214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:20:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB2E4214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 7CDBF21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:21:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDBF21486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731018AbeIXTWW (ORCPT
+        id S1731152AbeIXTXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 15:22:22 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38769 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728792AbeIXTWW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 15:22:22 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z13-v6so9319799qts.5
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 06:20:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EIzR1/hrrLXgQrE8yufc1jiGCT5qUVhXYOOQrqt+xn0=;
-        b=kr+xrxGsIT/lNE8OFyO2WsD+UBI2kV/9WO1MM8jqwO4MZyIryJLBuI73geqg6tax+S
-         ByA0FyX4xQ8x/VJTt6vZNj+6iglVFRY1jXQXM2+t0S4c0DkLu04wyJ/v95GtWP8pM/0Q
-         LBFkBtT1zCPedKBS3x9J8nmoexB/u3PjVAtGa45ce5rDRs1UzJ6f7nAA+rp515pI/RMR
-         hLIKkPzMtwptYNHqsTdLnClVs1Rp97sx/3D1+9Ws7oVV8Q3LtzQGI6Qk+yxLsvcmBPZi
-         y2VmkNYRIQxUPnfC4MGsVfS1ro2xpdD/fUyFtR9us57b2PGevKyierGgH6ng1dOMBnpt
-         jZyA==
-X-Gm-Message-State: ABuFfoibijSO/YVIuG8/kVFypjk2Ez4xxiCs4bGm1XuJrQH8MABtokJ6
-        Cg2nyYSkseTYD2AYl+DlgOnH2GUwwC7MDT1L+d0=
-X-Google-Smtp-Source: ACcGV60pScxNx1Xt8J26SGjIiHA4B+/TJTJ1jQbdiXP2WcfVZFoubr6nittYFMIswrHcb8x2lxfZrLFVqHMlIX297Ng=
-X-Received: by 2002:a0c:8834:: with SMTP id 49-v6mr4247272qvl.40.1537795212945;
- Mon, 24 Sep 2018 06:20:12 -0700 (PDT)
+        Mon, 24 Sep 2018 15:23:18 -0400
+Received: from mga09.intel.com ([134.134.136.24]:18155 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727710AbeIXTXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 15:23:18 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 06:21:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,298,1534834800"; 
+   d="scan'208";a="92762414"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 24 Sep 2018 06:20:51 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 24 Sep 2018 16:20:50 +0300
+Date:   Mon, 24 Sep 2018 16:20:50 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
+ for legacy boards
+Message-ID: <20180924132050.GK11965@kuha.fi.intel.com>
+References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+ <20180917181603.125492-3-dmitry.torokhov@gmail.com>
+ <20180920135348.GF11965@kuha.fi.intel.com>
+ <20180921233119.GA44099@dtor-ws>
 MIME-Version: 1.0
-References: <1537764195-19117-1-git-send-email-daniel.lezcano@linaro.org>
-In-Reply-To: <1537764195-19117-1-git-send-email-daniel.lezcano@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 24 Sep 2018 15:19:57 +0200
-Message-ID: <CAK8P3a0YjbCHRHaTzev-rwi5qM3aBeFUUObL1dPKww_o_J_2vw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Set ARM/LPC18XX architecture orphan
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        arm-soc <arm@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921233119.GA44099@dtor-ws>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 6:43 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> While sending patches around, Joachim Eastwood was Cc'ed but I got an error
-> its mailbox was full and the mail can not be delivered which makes me think
-> there is no body at the other end of the line.
->
-> After doing some statistics, it appears the latest commit as author/commiter
-> is:
->
-> commit b16ebc017ebf52a81e5e88743ccd68fc25e99ba9
-> Author: Joachim Eastwood <manabian@gmail.com>
-> Date:   Mon Oct 31 14:45:17 2016 +0000
->
-> Remove the maintainer entry and set the component as orphan.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
+Hi Dmitry,
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+On Fri, Sep 21, 2018 at 04:31:19PM -0700, Dmitry Torokhov wrote:
+> > > +	if (!parent_pset)
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	p = pset_create_set(properties);
+> > > +	if (IS_ERR(p))
+> > > +		return ERR_CAST(p);
+> > > +
+> > > +	p->dev = dev;
+> > 
+> > That looks wrong.
+> > 
+> > I'm guessing the assumption here is that the child nodes will never be
+> > assigned to their own devices, but you can't do that. It will limit
+> > the use of the child nodes to a very small number of cases, possibly
+> > only to gpios.
+> 
+> If I need to assign a node to a device I'll use device_add_properties()
+> API. device_add_child_properties() is for nodes living "below" the
+> device.
 
-I also checked the github account and any other mails I could
-find from Joachim, which stopped around the same time.
+device_add_properties() is not available to us before we have the
+actual struct device meant for the properties. If the child device is
+populated outside of the "boardfiles" then we have to be able to link
+it to the child node afterwards.
 
-I've added the lpc32xx maintainers to Cc, as the two platforms are
-related. Maybe they are interested in picking up support for this
-as well, and/or merge the two directories into one (there is only
-one trivial file in mach-lpc18xx, the rest are drivers).
+But I took a closer look at the code and realized that you are not
+using that p->dev with the child nodes for anything, so I may be wrong
+about this. You are not actually linking the child nodes to that
+device here.
 
-       Arnd
+> All nodes (the primary/secondary and children) would point to the owning
+> device, just for convenience.
 
-> ---
->  MAINTAINERS | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 67e877c..f3612f6b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1599,9 +1599,8 @@ L:        linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:     Maintained
->
->  ARM/LPC18XX ARCHITECTURE
-> -M:     Joachim Eastwood <manabian@gmail.com>
->  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> -S:     Maintained
-> +S:     Orphan
->  F:     arch/arm/boot/dts/lpc43*
->  F:     drivers/clk/nxp/clk-lpc18xx*
->  F:     drivers/clocksource/timer-lpc32xx.c
-> --
-> 2.7.4
->
+Since you don't use that for anything, then drop that line. It's only
+confusing.
+
+And besides, since we will have separate child devices for those child
+nodes, there is a small change that somebody needs to call
+device_remove_properties(child_dev). At least then that operation
+becomes safe, as it's a nop with the child pset nodes.
+
+> > I think that has to be fixed. It should not be a big deal. Just expect
+> > the child nodes to be removed separately, and add ref counting to the
+> > struct property_set handling.
+> 
+> Why do we need to remove them separately and what do we need refcounting
+> for?
+
+If you could remove the nodes independently, then obviously the parent
+can not be removed before the children. The ref count would be there
+to prevent that.
+
+Though my original comment is not valid, I still think that the child
+nodes should be created and destroyed separately. Actually, I don't
+think we should be talking about child nodes in the API at all. Check
+below..
+
+> > > +	p->parent = parent_pset;
+> > > +	list_add_tail(&p->child_node, &parent_pset->children);
+> > > +
+> > > +	return &p->fwnode;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(device_add_child_properties);
+> > 
+> > The child nodes will change the purpose of the build-in property
+> > support. Originally the goal was just to support adding of build-in
+> > device properties to real firmware nodes, but things have changed
+> > quite a bit from that. These child nodes are purely tied to the
+> > build-in device property support, so we should be talking about adding
+> > pset type child nodes to pset type parent nodes in the API:
+> > fwnode_pset_add_child_node(), or something like that.
+> 
+> OK, I can change device_add_child_properties() to
+> fwnode_pset_add_child_node() if Rafael would prefer this name.
+
+So not even that. We should have API like this:
+
+struct fwnode_handle *
+fwnode_pset_create(struct fwnode_handle *parent, const char *name,
+                   const struct property_entry *props);
+
+void fwnode_pset_destroy(struct fwnode_handle *fwnode);
+
+int device_add_properties(struct device *dev,
+                          const struct fwnode_handle *pset_node);
+
+void device_remove_properties(struct device *dev);
+
+So basically we separate creation of the nodes from linking them to the
+devices completely. That would give this API much better structure. It
+would scale better, for example, it would then be possible to add
+child nodes from different locations if needed.
+
+
+Thanks,
+
+-- 
+heikki
