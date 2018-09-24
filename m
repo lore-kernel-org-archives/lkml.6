@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0B5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8E7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0F2320877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F2320877
+	by mail.kernel.org (Postfix) with ESMTP id AF4A920877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF4A920877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730552AbeIXSDq (ORCPT
+        id S1730827AbeIXSDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:03:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53660 "EHLO
+        Mon, 24 Sep 2018 14:03:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53672 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729771AbeIXSDq (ORCPT
+        with ESMTP id S1730816AbeIXSDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:03:46 -0400
+        Mon, 24 Sep 2018 14:03:49 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F22FAD64;
-        Mon, 24 Sep 2018 12:01:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92A88D64;
+        Mon, 24 Sep 2018 12:02:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 047/111] RDMA/cma: Protect cma dev list with lock
-Date:   Mon, 24 Sep 2018 13:52:14 +0200
-Message-Id: <20180924113109.746674313@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 030/111] MIPS: jz4740: Bump zload address
+Date:   Mon, 24 Sep 2018 13:51:57 +0200
+Message-Id: <20180924113107.583152271@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -54,75 +54,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-commit 954a8e3aea87e896e320cf648c1a5bbe47de443e upstream.
+[ Upstream commit c6ea7e9747318e5a6774995f4f8e3e0f7c0fa8ba ]
 
-When AF_IB addresses are used during rdma_resolve_addr() a lock is not
-held. A cma device can get removed while list traversal is in progress
-which may lead to crash. ie
+Having the zload address at 0x8060.0000 means the size of the
+uncompressed kernel cannot be bigger than around 6 MiB, as it is
+deflated at address 0x8001.0000.
 
-        CPU0                                     CPU1
-        ====                                     ====
-rdma_resolve_addr()
- cma_resolve_ib_dev()
-  list_for_each()                         cma_remove_one()
-    cur_dev->device                        mutex_lock(&lock)
-                                            list_del();
-                                           mutex_unlock(&lock);
-                                           cma_process_remove();
+This limit is too small; a kernel with some built-in drivers and things
+like debugfs enabled will already be over 6 MiB in size, and so will
+fail to extract properly.
 
+To fix this, we bump the zload address from 0x8060.0000 to 0x8100.0000.
 
-Therefore, hold a lock while traversing the list which avoids such
-situation.
+This is fine, as all the boards featuring Ingenic JZ SoCs have at least
+32 MiB of RAM, and use u-boot or compatible bootloaders which won't
+hardcode the load address but read it from the uImage's header.
 
-Cc: <stable@vger.kernel.org> # 3.10
-Fixes: f17df3b0dede ("RDMA/cma: Add support for AF_IB to rdma_resolve_addr()")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19787/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/core/cma.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ arch/mips/jz4740/Platform |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -673,6 +673,7 @@ static int cma_resolve_ib_dev(struct rdm
- 	dgid = (union ib_gid *) &addr->sib_addr;
- 	pkey = ntohs(addr->sib_pkey);
- 
-+	mutex_lock(&lock);
- 	list_for_each_entry(cur_dev, &dev_list, list) {
- 		for (p = 1; p <= cur_dev->device->phys_port_cnt; ++p) {
- 			if (!rdma_cap_af_ib(cur_dev->device, p))
-@@ -696,18 +697,19 @@ static int cma_resolve_ib_dev(struct rdm
- 					cma_dev = cur_dev;
- 					sgid = gid;
- 					id_priv->id.port_num = p;
-+					goto found;
- 				}
- 			}
- 		}
- 	}
--
--	if (!cma_dev)
--		return -ENODEV;
-+	mutex_unlock(&lock);
-+	return -ENODEV;
- 
- found:
- 	cma_attach_to_dev(id_priv, cma_dev);
--	addr = (struct sockaddr_ib *) cma_src_addr(id_priv);
--	memcpy(&addr->sib_addr, &sgid, sizeof sgid);
-+	mutex_unlock(&lock);
-+	addr = (struct sockaddr_ib *)cma_src_addr(id_priv);
-+	memcpy(&addr->sib_addr, &sgid, sizeof(sgid));
- 	cma_translate_ib(addr, &id_priv->id.route.addr.dev_addr);
- 	return 0;
- }
+--- a/arch/mips/jz4740/Platform
++++ b/arch/mips/jz4740/Platform
+@@ -1,4 +1,4 @@
+ platform-$(CONFIG_MACH_INGENIC)	+= jz4740/
+ cflags-$(CONFIG_MACH_INGENIC)	+= -I$(srctree)/arch/mips/include/asm/mach-jz4740
+ load-$(CONFIG_MACH_INGENIC)	+= 0xffffffff80010000
+-zload-$(CONFIG_MACH_INGENIC)	+= 0xffffffff80600000
++zload-$(CONFIG_MACH_INGENIC)	+= 0xffffffff81000000
 
 
