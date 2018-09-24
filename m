@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C3DC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6915ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6830A2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:44:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6830A2098A
+	by mail.kernel.org (Postfix) with ESMTP id A1B642098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:45:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B642098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbeIXRqg (ORCPT
+        id S1729659AbeIXRqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:46:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51242 "EHLO
+        Mon, 24 Sep 2018 13:46:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51254 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728899AbeIXRqf (ORCPT
+        with ESMTP id S1729033AbeIXRqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:46:35 -0400
+        Mon, 24 Sep 2018 13:46:38 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C98B1072;
-        Mon, 24 Sep 2018 11:44:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F1901072;
+        Mon, 24 Sep 2018 11:44:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org,
+        Manikanta Pubbisetty <mpubbise@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 101/105] rtc: bq4802: add error handling for devm_ioremap
-Date:   Mon, 24 Sep 2018 13:34:27 +0200
-Message-Id: <20180924113122.740704052@linuxfoundation.org>
+Subject: [PATCH 3.18 075/105] mac80211: restrict delayed tailroom needed decrement
+Date:   Mon, 24 Sep 2018 13:34:01 +0200
+Message-Id: <20180924113120.740176791@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -52,35 +53,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Manikanta Pubbisetty <mpubbise@codeaurora.org>
 
-[ Upstream commit 7874b919866ba91bac253fa219d3d4c82bb944df ]
+[ Upstream commit 133bf90dbb8b873286f8ec2e81ba26e863114b8c ]
 
-When devm_ioremap fails, the lack of error-handling code may
-cause unexpected results.
+As explained in ieee80211_delayed_tailroom_dec(), during roam,
+keys of the old AP will be destroyed and new keys will be
+installed. Deletion of the old key causes
+crypto_tx_tailroom_needed_cnt to go from 1 to 0 and the new key
+installation causes a transition from 0 to 1.
 
-This patch adds error-handling code after calling devm_ioremap.
+Whenever crypto_tx_tailroom_needed_cnt transitions from 0 to 1,
+we invoke synchronize_net(); the reason for doing this is to avoid
+a race in the TX path as explained in increment_tailroom_need_count().
+This synchronize_net() operation can be slow and can affect the station
+roam time. To avoid this, decrementing the crypto_tx_tailroom_needed_cnt
+is delayed for a while so that upon installation of new key the
+transition would be from 1 to 2 instead of 0 to 1 and thereby
+improving the roam time.
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This is all correct for a STA iftype, but deferring the tailroom_needed
+decrement for other iftypes may be unnecessary.
+
+For example, let's consider the case of a 4-addr client connecting to
+an AP for which AP_VLAN interface is also created, let the initial
+value for tailroom_needed on the AP be 1.
+
+* 4-addr client connects to the AP (AP: tailroom_needed = 1)
+* AP will clear old keys, delay decrement of tailroom_needed count
+* AP_VLAN is created, it takes the tailroom count from master
+  (AP_VLAN: tailroom_needed = 1, AP: tailroom_needed = 1)
+* Install new key for the station, assume key is plumbed in the HW,
+  there won't be any change in tailroom_needed count on AP iface
+* Delayed decrement of tailroom_needed count on AP
+  (AP: tailroom_needed = 0, AP_VLAN: tailroom_needed = 1)
+
+Because of the delayed decrement on AP iface, tailroom_needed count goes
+out of sync between AP(master iface) and AP_VLAN(slave iface) and
+there would be unnecessary tailroom created for the packets going
+through AP_VLAN iface.
+
+Also, WARN_ONs were observed while trying to bring down the AP_VLAN
+interface:
+(warn_slowpath_common) (warn_slowpath_null+0x18/0x20)
+(warn_slowpath_null) (ieee80211_free_keys+0x114/0x1e4)
+(ieee80211_free_keys) (ieee80211_del_virtual_monitor+0x51c/0x850)
+(ieee80211_del_virtual_monitor) (ieee80211_stop+0x30/0x3c)
+(ieee80211_stop) (__dev_close_many+0x94/0xb8)
+(__dev_close_many) (dev_close_many+0x5c/0xc8)
+
+Restricting delayed decrement to station interface alone fixes the problem
+and it makes sense to do so because delayed decrement is done to improve
+roam time which is applicable only for client devices.
+
+Signed-off-by: Manikanta Pubbisetty <mpubbise@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-bq4802.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/mac80211/cfg.c |    2 +-
+ net/mac80211/key.c |   24 +++++++++++++++---------
+ 2 files changed, 16 insertions(+), 10 deletions(-)
 
---- a/drivers/rtc/rtc-bq4802.c
-+++ b/drivers/rtc/rtc-bq4802.c
-@@ -164,6 +164,10 @@ static int bq4802_probe(struct platform_
- 	} else if (p->r->flags & IORESOURCE_MEM) {
- 		p->regs = devm_ioremap(&pdev->dev, p->r->start,
- 					resource_size(p->r));
-+		if (!p->regs){
-+			err = -ENOMEM;
-+			goto out;
-+		}
- 		p->read = bq4802_read_mem;
- 		p->write = bq4802_write_mem;
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -276,7 +276,7 @@ static int ieee80211_del_key(struct wiph
+ 		goto out_unlock;
+ 	}
+ 
+-	ieee80211_key_free(key, true);
++	ieee80211_key_free(key, sdata->vif.type == NL80211_IFTYPE_STATION);
+ 
+ 	ret = 0;
+  out_unlock:
+--- a/net/mac80211/key.c
++++ b/net/mac80211/key.c
+@@ -515,11 +515,15 @@ int ieee80211_key_link(struct ieee80211_
+ {
+ 	struct ieee80211_local *local = sdata->local;
+ 	struct ieee80211_key *old_key;
+-	int idx, ret;
+-	bool pairwise;
+-
+-	pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
+-	idx = key->conf.keyidx;
++	int idx = key->conf.keyidx;
++	bool pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
++	/*
++	 * We want to delay tailroom updates only for station - in that
++	 * case it helps roaming speed, but in other cases it hurts and
++	 * can cause warnings to appear.
++	 */
++	bool delay_tailroom = sdata->vif.type == NL80211_IFTYPE_STATION;
++	int ret;
+ 
+ 	mutex_lock(&sdata->local->key_mtx);
+ 
+@@ -547,14 +551,14 @@ int ieee80211_key_link(struct ieee80211_
+ 	increment_tailroom_need_count(sdata);
+ 
+ 	ieee80211_key_replace(sdata, sta, pairwise, old_key, key);
+-	ieee80211_key_destroy(old_key, true);
++	ieee80211_key_destroy(old_key, delay_tailroom);
+ 
+ 	ieee80211_debugfs_key_add(key);
+ 
+ 	if (!local->wowlan) {
+ 		ret = ieee80211_key_enable_hw_accel(key);
+ 		if (ret)
+-			ieee80211_key_free(key, true);
++			ieee80211_key_free(key, delay_tailroom);
  	} else {
+ 		ret = 0;
+ 	}
+@@ -705,7 +709,8 @@ void ieee80211_free_sta_keys(struct ieee
+ 		ieee80211_key_replace(key->sdata, key->sta,
+ 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
+ 				key, NULL);
+-		__ieee80211_key_destroy(key, true);
++		__ieee80211_key_destroy(key, key->sdata->vif.type ==
++					NL80211_IFTYPE_STATION);
+ 	}
+ 
+ 	for (i = 0; i < NUM_DEFAULT_KEYS; i++) {
+@@ -715,7 +720,8 @@ void ieee80211_free_sta_keys(struct ieee
+ 		ieee80211_key_replace(key->sdata, key->sta,
+ 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
+ 				key, NULL);
+-		__ieee80211_key_destroy(key, true);
++		__ieee80211_key_destroy(key, key->sdata->vif.type ==
++					NL80211_IFTYPE_STATION);
+ 	}
+ 
+ 	mutex_unlock(&local->key_mtx);
 
 
