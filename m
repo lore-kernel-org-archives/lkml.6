@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97648C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B655EECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50BA321486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BA321486
+	by mail.kernel.org (Postfix) with ESMTP id 6B55E21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B55E21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730012AbeIXR76 (ORCPT
+        id S1730042AbeIXSAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:59:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52360 "EHLO
+        Mon, 24 Sep 2018 14:00:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52366 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729146AbeIXR76 (ORCPT
+        with ESMTP id S1729146AbeIXSAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:59:58 -0400
+        Mon, 24 Sep 2018 14:00:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C981FD64;
-        Mon, 24 Sep 2018 11:58:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB9DED64;
+        Mon, 24 Sep 2018 11:58:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 37/70] usb: Avoid use-after-free by flushing endpoints early in usb_set_interface()
-Date:   Mon, 24 Sep 2018 13:52:36 +0200
-Message-Id: <20180924113103.408499012@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 4.4 38/70] usb: host: u132-hcd: Fix a sleep-in-atomic-context bug in u132_get_frame()
+Date:   Mon, 24 Sep 2018 13:52:37 +0200
+Message-Id: <20180924113103.860378395@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -53,64 +50,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit f9a5b4f58b280c1d26255376713c132f93837621 upstream.
+commit 6d4f268fa132742fe96dad22307c68d237356d88 upstream.
 
-The steps taken by usb core to set a new interface is very different from
-what is done on the xHC host side.
+i_usX2Y_subs_startup in usbusx2yaudio.c is a completion handler function
+for the USB driver. So it should not sleep, but it is can sleep
+according to the function call paths (from bottom to top) in Linux-4.16.
 
-xHC hardware will do everything in one go. One command is used to set up
-new endpoints, free old endpoints, check bandwidth, and run the new
-endpoints.
+[FUNC] msleep
+drivers/usb/host/u132-hcd.c, 2558:
+	msleep in u132_get_frame
+drivers/usb/core/hcd.c, 2231:
+	[FUNC_PTR]u132_get_frame in usb_hcd_get_frame_number
+drivers/usb/core/usb.c, 822:
+	usb_hcd_get_frame_number in usb_get_current_frame_number
+sound/usb/usx2y/usbusx2yaudio.c, 303:
+	usb_get_current_frame_number in i_usX2Y_urb_complete
+sound/usb/usx2y/usbusx2yaudio.c, 366:
+	i_usX2Y_urb_complete in i_usX2Y_subs_startup
 
-All this is done by xHC when usb core asks the hcd to check for
-available bandwidth. At this point usb core has not yet flushed the old
-endpoints, which will cause use-after-free issues in xhci driver as
-queued URBs are cancelled on a re-allocated endpoint.
+Note that [FUNC_PTR] means a function pointer call is used.
 
-To resolve this add a call to usb_disable_interface() which will flush
-the endpoints before calling usb_hcd_alloc_bandwidth()
+To fix this bug, msleep() is replaced with mdelay().
 
-Additional checks in xhci driver will also be implemented to gracefully
-handle stale URB cancel on freed and re-allocated endpoints
+This bug is found by my static analysis tool DSAC.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/message.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/usb/host/u132-hcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -1282,6 +1282,11 @@ void usb_enable_interface(struct usb_dev
-  * is submitted that needs that bandwidth.  Some other operating systems
-  * allocate bandwidth early, when a configuration is chosen.
-  *
-+ * xHCI reserves bandwidth and configures the alternate setting in
-+ * usb_hcd_alloc_bandwidth(). If it fails the original interface altsetting
-+ * may be disabled. Drivers cannot rely on any particular alternate
-+ * setting being in effect after a failure.
-+ *
-  * This call is synchronous, and may not be used in an interrupt context.
-  * Also, drivers must not change altsettings while urbs are scheduled for
-  * endpoints in that interface; all such urbs must first be completed
-@@ -1317,6 +1322,12 @@ int usb_set_interface(struct usb_device
- 			 alternate);
- 		return -EINVAL;
+--- a/drivers/usb/host/u132-hcd.c
++++ b/drivers/usb/host/u132-hcd.c
+@@ -2565,7 +2565,7 @@ static int u132_get_frame(struct usb_hcd
+ 	} else {
+ 		int frame = 0;
+ 		dev_err(&u132->platform_dev->dev, "TODO: u132_get_frame\n");
+-		msleep(100);
++		mdelay(100);
+ 		return frame;
  	}
-+	/*
-+	 * usb3 hosts configure the interface in usb_hcd_alloc_bandwidth,
-+	 * including freeing dropped endpoint ring buffers.
-+	 * Make sure the interface endpoints are flushed before that
-+	 */
-+	usb_disable_interface(dev, iface, false);
- 
- 	/* Make sure we have enough bandwidth for this alternate interface.
- 	 * Remove the current alt setting and add the new alt setting.
+ }
 
 
