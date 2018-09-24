@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E26DCC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A9FECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF3B21477
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D78A121477
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSfU9Rqf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF3B21477
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEMm1bC1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78A121477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbeIXGrE (ORCPT
+        id S1727769AbeIXGrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 02:47:04 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44598 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725742AbeIXGrD (ORCPT
+        Mon, 24 Sep 2018 02:47:10 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40833 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725742AbeIXGrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 02:47:03 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k21-v6so8295238pff.11;
-        Sun, 23 Sep 2018 17:47:27 -0700 (PDT)
+        Mon, 24 Sep 2018 02:47:09 -0400
+Received: by mail-pl1-f194.google.com with SMTP id s17-v6so8333099plp.7;
+        Sun, 23 Sep 2018 17:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tJd5qCvwZt+FEMthacrCaTfBiAsBAEj0Nbh8yr7YEp0=;
-        b=YSfU9RqfhF+bLKXSTHxWKI8itgJv7xvcOAFMdX/rGWCccKbwzTm0nHkMaY9yUSZGAx
-         RxU9xLsNiQkV5HGvYT2jd+KECQ0OHE8Cdjv5lqWD8NZczrfIvL5np5suat2eE+HSK6gd
-         3Xsj1Rj6QJUK/PbDwO2d4Inn3z8RXdATYwnyEdRPpdzK0DvxhkcTXVzlLydPE3e84Lmh
-         kZG9HTkD/P3ZFOVG4mTXX6uD31N88mtmbVhFL//7KWUxZvP76Z+ZHN3zDafZC3DQ0tfP
-         1RlQov2Vrf98y1HSAZcDQtzoqCxDcS+Iz6p4OoY/rxAA2/98P5aOZpezuVtAIPo+dxQu
-         UgEg==
+        bh=gGEUS43rmrDiePYKKFPE6JQ30QeCTnyz4CZGEBeeyW8=;
+        b=dEMm1bC1EDeogca6Q9IuTBmu3wdpu2dM7p8bHgze2Hc3bJ/mv176X6swM+K6TYbyHt
+         4sxHN38Yn0XaFRPrIQVcGty95Dpx7xRE0pjhk8loJoih+T5dQFKaaSLcTsnSs6U12dMc
+         otG0u3Gm0+3GbzJx8hHVWDL78BqPY0xUMsC5EKLhOO+ossJmrzTQ2cpuv2aO5reWaRlB
+         SZV5Sw43TjJTc6zVpiX03AW3Jagc/H/n0NXC8kEutlb3DFhqvkWXGbwgyIU9gom4BsF0
+         SVQcwTx6b0br4Hjv01wVCLd5R2T+eF6MkmZFws1qepbiwok4FQzGR75iYULm6ooj2NRa
+         2BBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tJd5qCvwZt+FEMthacrCaTfBiAsBAEj0Nbh8yr7YEp0=;
-        b=X6I64Iwdyu1cyyGSevVINi0w+/BLM3eu9pcU4bG4LZd9PiudXQQ7gKwLxlZ+cIwEts
-         MkNUrIQXJiYD9hb62iVufrXn8GfCTpH/oExNUpVn0tB8/nMcXSBsCXoj8R2dmUzgRfg1
-         9mVjOsAVGEwXzU/KZr+UlAEd1GYR83dVkQYojuVyi16VM8ROGg6u76rB5F2mOi/0hBH0
-         PnWKk+Xo/GyyEyGfKNGIkwa60xLL4YjO5cpJ72Mbdm2nnBdiA4HO7/0CScaALAeaVuII
-         2dw6xDWZ9xKXjHYBp0SQgYLxphFRbnVTbOo8DQtJcIkxaZvir1T7zsgRddahHGzU97Pk
-         vwFA==
-X-Gm-Message-State: ABuFfoiFN9Z/9bvb75uI5dA3HtIp3GI2E1mELVKBPJgauvA/ZOw1hwa/
-        f7jjzQdsVOUPi5dLHqP4v+o=
-X-Google-Smtp-Source: ACcGV62eFxL2pNEF6V7WFdDnmEgNe2WHtdkiir9/urY7x3zlSRyk2uRGf/3JwirkNaTQ4nXeky55KA==
-X-Received: by 2002:a63:9857:: with SMTP id l23-v6mr7508168pgo.321.1537750046763;
-        Sun, 23 Sep 2018 17:47:26 -0700 (PDT)
+        bh=gGEUS43rmrDiePYKKFPE6JQ30QeCTnyz4CZGEBeeyW8=;
+        b=BBYkoq7odSNHym2gpmJ+hZK5WqlE9odq26BH2037swkZBuMlVk0o0QPN9PMYBmpgkT
+         XOm7krRvgOPYw2ETGPrik/efOWewbb2l7kdUg58ODl/TQZv3D9Eol5gpwRRGFmPdaxf7
+         xRabp2CdTBtmlBZsSAnvQF1qSoCtM/cf6hRuUFBeR8cZOyjFECKXUoFagyRDlYc/fwDR
+         /qTEVzorH1C72yhotle8hlb9jJLT45s3WeLOYDAetSuffeia3nNm5VjbhhfGhjE8Aus8
+         IT9EPF7qBD6MDb2iLgcbw++W8/QkogjPP5eOnSDiF+sXKBLXsJnQ+px2ujCGwMpt/fuz
+         0JiQ==
+X-Gm-Message-State: ABuFfohIqTjCY3UHIKN1RlYIaN0cQprq3Kmjg6MaIggtt+z9C2CFU8jD
+        6vZ7FivtR1hFEToOGnlfRZg=
+X-Google-Smtp-Source: ACcGV60eAMashiv6PbvM7zY1Nadtu5u31QnrMn4kLUcf6GlleVKGQuDdh3Tftr59zO540ZEMR/82ag==
+X-Received: by 2002:a17:902:4001:: with SMTP id b1-v6mr8318366pld.312.1537750052671;
+        Sun, 23 Sep 2018 17:47:32 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.gmail.com with ESMTPSA id 82-v6sm5121839pfr.115.2018.09.23.17.47.21
+        by smtp.gmail.com with ESMTPSA id 82-v6sm5121839pfr.115.2018.09.23.17.47.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 17:47:26 -0700 (PDT)
+        Sun, 23 Sep 2018 17:47:32 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 15/20] iommu/tegra: gart: Allow only one active domain at a time
-Date:   Mon, 24 Sep 2018 03:41:48 +0300
-Message-Id: <20180924004153.8232-16-digetx@gmail.com>
+Subject: [PATCH v4 16/20] iommu/tegra: gart: Don't use managed resources
+Date:   Mon, 24 Sep 2018 03:41:49 +0300
+Message-Id: <20180924004153.8232-17-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924004153.8232-1-digetx@gmail.com>
 References: <20180924004153.8232-1-digetx@gmail.com>
@@ -80,48 +80,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GART has a single address space that is shared by all devices, hence only
-one domain could be active at a time.
+GART is a part of the Memory Controller driver that is always built-in,
+hence there is no benefit from the use of managed resources.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/iommu/tegra-gart.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/iommu/tegra-gart.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 1d45b023adea..9f7d3afb686f 100644
+index 9f7d3afb686f..d019ae8ecfc9 100644
 --- a/drivers/iommu/tegra-gart.c
 +++ b/drivers/iommu/tegra-gart.c
-@@ -55,6 +55,7 @@ struct gart_device {
- 	spinlock_t		pte_lock;	/* for pagetable */
- 	struct list_head	client;
- 	spinlock_t		client_lock;	/* for client list */
-+	struct iommu_domain	*active_domain;	/* current active domain */
- 	struct device		*dev;
+@@ -171,7 +171,7 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
+ 	struct gart_client *client, *c;
+ 	int err = 0;
  
- 	struct iommu_device	iommu;		/* IOMMU Core handle */
-@@ -184,6 +185,12 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
- 			goto fail;
- 		}
- 	}
-+	if (gart->active_domain && gart->active_domain != domain) {
-+		dev_err(gart->dev, "Only one domain can be active at a time\n");
-+		err = -EINVAL;
-+		goto fail;
-+	}
-+	gart->active_domain = domain;
- 	list_add(&client->list, &gart->client);
+-	client = devm_kzalloc(gart->dev, sizeof(*c), GFP_KERNEL);
++	client = kzalloc(sizeof(*c), GFP_KERNEL);
+ 	if (!client)
+ 		return -ENOMEM;
+ 	client->dev = dev;
+@@ -197,7 +197,7 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
+ 	return 0;
+ 
+ fail:
+-	devm_kfree(gart->dev, client);
++	kfree(client);
  	spin_unlock(&gart->client_lock);
- 	dev_dbg(gart->dev, "Attached %s\n", dev_name(dev));
-@@ -206,6 +213,8 @@ static void __gart_iommu_detach_dev(struct iommu_domain *domain,
+ 	return err;
+ }
+@@ -212,7 +212,7 @@ static void __gart_iommu_detach_dev(struct iommu_domain *domain,
+ 	list_for_each_entry(c, &gart->client, list) {
  		if (c->dev == dev) {
  			list_del(&c->list);
- 			devm_kfree(gart->dev, c);
-+			if (list_empty(&gart->client))
-+				gart->active_domain = NULL;
+-			devm_kfree(gart->dev, c);
++			kfree(c);
+ 			if (list_empty(&gart->client))
+ 				gart->active_domain = NULL;
  			dev_dbg(gart->dev, "Detached %s\n", dev_name(dev));
- 			return;
- 		}
+@@ -459,7 +459,7 @@ struct gart_device *tegra_gart_probe(struct device *dev,
+ 		return ERR_PTR(-ENXIO);
+ 	}
+ 
+-	gart = devm_kzalloc(dev, sizeof(*gart), GFP_KERNEL);
++	gart = kzalloc(sizeof(*gart), GFP_KERNEL);
+ 	if (!gart) {
+ 		dev_err(dev, "failed to allocate gart_device\n");
+ 		return ERR_PTR(-ENOMEM);
+@@ -468,7 +468,7 @@ struct gart_device *tegra_gart_probe(struct device *dev,
+ 	ret = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
+ 	if (ret) {
+ 		dev_err(dev, "Failed to register IOMMU in sysfs\n");
+-		return ERR_PTR(ret);
++		goto free_gart;
+ 	}
+ 
+ 	iommu_device_set_ops(&gart->iommu, &gart_iommu_ops);
+@@ -506,6 +506,8 @@ struct gart_device *tegra_gart_probe(struct device *dev,
+ 	iommu_device_unregister(&gart->iommu);
+ remove_sysfs:
+ 	iommu_device_sysfs_remove(&gart->iommu);
++free_gart:
++	kfree(gart);
+ 
+ 	return ERR_PTR(ret);
+ }
 -- 
 2.19.0
 
