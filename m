@@ -3,40 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E897C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172B6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44DE6208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DE6208D9
+	by mail.kernel.org (Postfix) with ESMTP id C86D620C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C86D620C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731621AbeIXSPO (ORCPT
+        id S1731634AbeIXSPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:15:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55182 "EHLO
+        Mon, 24 Sep 2018 14:15:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55194 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730614AbeIXSPN (ORCPT
+        with ESMTP id S1730625AbeIXSPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:15:13 -0400
+        Mon, 24 Sep 2018 14:15:15 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63399108B;
-        Mon, 24 Sep 2018 12:13:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7F32108B;
+        Mon, 24 Sep 2018 12:13:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhu Yanjun <yanjun.zhu@oracle.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 029/173] IB/rxe: Drop QP0 silently
-Date:   Mon, 24 Sep 2018 13:51:03 +0200
-Message-Id: <20180924113118.045275806@linuxfoundation.org>
+Subject: [PATCH 4.14 030/173] block: allow max_discard_segments to be stacked
+Date:   Mon, 24 Sep 2018 13:51:04 +0200
+Message-Id: <20180924113118.166314974@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,53 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhu Yanjun <yanjun.zhu@oracle.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-[ Upstream commit 536ca245c512aedfd84cde072d7b3ca14b6e1792 ]
+[ Upstream commit 42c9cdfe1e11e083dceb0f0c4977b758cf7403b9 ]
 
-According to "Annex A16: RDMA over Converged Ethernet (RoCE)":
+Set max_discard_segments to USHRT_MAX in blk_set_stacking_limits() so
+that blk_stack_limits() can stack up this limit for stacked devices.
 
-A16.4.3 MANAGEMENT INTERFACES
+before:
 
-As defined in the base specification, a special Queue Pair, QP0 is defined
-solely for communication between subnet manager(s) and subnet management
-agents. Since such an IB-defined subnet management architecture is outside
-the scope of this annex, it follows that there is also no requirement that
-a port which conforms to this annex be associated with a QP0. Thus, for
-end nodes designed to conform to this annex, the concept of QP0 is
-undefined and unused for any port connected to an Ethernet network.
+$ cat /sys/block/nvme0n1/queue/max_discard_segments
+256
+$ cat /sys/block/dm-0/queue/max_discard_segments
+1
 
-CA16-8: A packet arriving at a RoCE port containing a BTH with the
-destination QP field set to QP0 shall be silently dropped.
+after:
 
-Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Acked-by: Moni Shoua <monis@mellanox.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+$ cat /sys/block/nvme0n1/queue/max_discard_segments
+256
+$ cat /sys/block/dm-0/queue/max_discard_segments
+256
+
+Fixes: 1e739730c5b9e ("block: optionally merge discontiguous discard bios into a single request")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/sw/rxe/rxe_recv.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ block/blk-settings.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_recv.c
-+++ b/drivers/infiniband/sw/rxe/rxe_recv.c
-@@ -225,9 +225,14 @@ static int hdr_check(struct rxe_pkt_info
- 		goto err1;
- 	}
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -128,7 +128,7 @@ void blk_set_stacking_limits(struct queu
  
-+	if (unlikely(qpn == 0)) {
-+		pr_warn_once("QP 0 not supported");
-+		goto err1;
-+	}
-+
- 	if (qpn != IB_MULTICAST_QPN) {
--		index = (qpn == 0) ? port->qp_smi_index :
--			((qpn == 1) ? port->qp_gsi_index : qpn);
-+		index = (qpn == 1) ? port->qp_gsi_index : qpn;
-+
- 		qp = rxe_pool_get_index(&rxe->qp_pool, index);
- 		if (unlikely(!qp)) {
- 			pr_warn_ratelimited("no qp matches qpn 0x%x\n", qpn);
+ 	/* Inherit limits from component devices */
+ 	lim->max_segments = USHRT_MAX;
+-	lim->max_discard_segments = 1;
++	lim->max_discard_segments = USHRT_MAX;
+ 	lim->max_hw_sectors = UINT_MAX;
+ 	lim->max_segment_size = UINT_MAX;
+ 	lim->max_sectors = UINT_MAX;
 
 
