@@ -5,136 +5,115 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66910ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5702C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 122A72086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:13:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122A72086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A25B2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A25B2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbeIXWQI (ORCPT
+        id S1731535AbeIXWQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:16:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59760 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730364AbeIXWQI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:16:08 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGCuoq140030
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:13:13 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mq36xr0mg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:13:09 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 24 Sep 2018 10:07:56 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 10:07:53 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OG7oZe33358004
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 09:07:50 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59155BE054;
-        Mon, 24 Sep 2018 10:07:50 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 97C92BE051;
-        Mon, 24 Sep 2018 10:07:47 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 10:07:47 -0600 (MDT)
-Subject: Re: [PATCH v10 11/26] s390: vfio-ap: implement mediated device open
- callback
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <e1ff9918-a1ab-31b1-0b32-a3980770d2ac@linux.ibm.com>
- <09a6b9e5-e335-14cf-debd-de0f92dafd5e@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 24 Sep 2018 12:07:46 -0400
+        Mon, 24 Sep 2018 18:16:40 -0400
+Received: from mga09.intel.com ([134.134.136.24]:39171 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728976AbeIXWQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 18:16:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 09:13:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,298,1534834800"; 
+   d="scan'208";a="73316623"
+Received: from ray.jf.intel.com (HELO [10.24.8.159]) ([10.24.8.159])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Sep 2018 09:11:56 -0700
+Subject: Re: [PATCH 2/8] x86/mm/cpa: Move flush_tlb_all()
+To:     Peter Zijlstra <peterz@infradead.org>
+References: <20180919085016.164552924@infradead.org>
+ <20180919085947.882287392@infradead.org>
+ <5ab3ee67-a29b-0f4c-d7cf-2bdedd192ad6@intel.com>
+ <20180922103752.GI24124@hirez.programming.kicks-ass.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Bin Yang <bin.yang@intel.com>,
+        Mark Gross <mark.gross@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <65237ab4-9358-5abc-0d94-0edf9e7410cc@intel.com>
+Date:   Mon, 24 Sep 2018 09:11:56 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <09a6b9e5-e335-14cf-debd-de0f92dafd5e@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180922103752.GI24124@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092416-0036-0000-0000-00000A3DD861
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01093019; UDB=6.00564892; IPR=6.00873056;
- MB=3.00023483; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:07:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092416-0037-0000-0000-0000490D83FB
-Message-Id: <ebe81ebf-9b61-dbf6-743e-6145162cdcfb@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 04:40 AM, David Hildenbrand wrote:
-> 
->>    /**
->> - * Verify that the AP instructions are available on the guest. This is
->> indicated
->> - * via the  KVM_S390_VM_CPU_FEAT_AP CPU model feature.
->> + * Verify that the AP instructions are being interpreted by firmware
->> for the
->> + * guest. This is indicated by the kvm->arch.crypto.apie flag.
->>     */
->>    static int kvm_ap_validate_crypto_setup(struct kvm *kvm)
->>    {
->> -	if (test_bit_inv(KVM_S390_VM_CPU_FEAT_AP, kvm->arch.cpu_feat))
->> +	if (kvm->arch.crypto.apie)
->>    		return 0;
-> 
-> I wonder if this check makes sense, because apie can be toggled during
-> runtime. I guess it would be sufficient to check if the ap control block
-> is available and apie is supported by the HW.
+On 09/22/2018 03:37 AM, Peter Zijlstra wrote:
+> On Fri, Sep 21, 2018 at 02:34:32PM -0700, Dave Hansen wrote:
+>> On 09/19/2018 01:50 AM, Peter Zijlstra wrote:
+>>> @@ -1528,28 +1538,8 @@ static int __change_page_attr(struct cpa
+>>>  	 * We have to split the large page:
+>>>  	 */
+>>>  	err = split_large_page(cpa, kpte, address);
+>>> -	if (!err) {
+>> ...
+>>> -		flush_tlb_all();
+>>> +	if (!err)
+>>>  		goto repeat;
+>>> -	}
+>> I _think_ this is the only use of split_large_page()'s error code.  We
+>> can just make it return void now, right?
+> Then how does it decide to goto repeat or error out?
 
-I am not clear about what you are getting at here, but I'll attempt
-to respond. There is no need to check if the AP control block (CRYCB)
-is available as the address is set in the CRYCBD three instructions
-above, even if AP instructions are not available. Regarding whether apie 
-is supported by the hardware, the value of vcpu->kvm->arch.crypto.apie 
-can not be set unless it is supported by the HW. In the patch (24/26) 
-that provides the VM attributes to toggle this value, it can only be 
-turned on if the AP instructions are available. I might also note that 
-the kvm_ap_validate_crypto_setup() function is called whenever one of 
-the VM crypto attributes is changed, so it makes sense that decisions 
-made in this function are based on a change to a VM crypto attribute. In 
-my first pass at changing this function, I checked
-ap_instructions_available() here, but after considering all of the
-above, it made sense to me to check the apie flag.
-
-> 
-> 
+D'oh.  Good point.  I was misreading the diff.
 
