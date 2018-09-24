@@ -2,46 +2,40 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A73ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5ECECE567
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 779DA21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779DA21486
+	by mail.kernel.org (Postfix) with ESMTP id 31EBA20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EBA20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732267AbeIXSXL (ORCPT
+        id S1732316AbeIXSXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:23:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56246 "EHLO
+        Mon, 24 Sep 2018 14:23:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56256 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732194AbeIXSXK (ORCPT
+        with ESMTP id S1732275AbeIXSXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:23:10 -0400
+        Mon, 24 Sep 2018 14:23:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 170D7108A;
-        Mon, 24 Sep 2018 12:21:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 813AC10A7;
+        Mon, 24 Sep 2018 12:21:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Christ van Willegen <cvwillegen@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 119/173] pinctrl: rza1: Fix selector use for groups and functions
-Date:   Mon, 24 Sep 2018 13:52:33 +0200
-Message-Id: <20180924113124.747438971@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.14 102/173] CIFS: fix wrapping bugs in num_entries()
+Date:   Mon, 24 Sep 2018 13:52:16 +0200
+Message-Id: <20180924113123.567675031@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -59,87 +53,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit dc4003d260594aa300028c3c5d040c5719abd19b ]
+commit 56446f218af1133c802dad8e9e116f07f381846c upstream.
 
-We must use a mutex around the generic_add functions and save the
-function and group selector in case we need to remove them. Otherwise
-the selector use will be racy for deferred probe at least.
+The problem is that "entryptr + next_offset" and "entryptr + len + size"
+can wrap.  I ended up changing the type of "entryptr" because it makes
+the math easier when we don't have to do so much casting.
 
-Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Christ van Willegen <cvwillegen@gmail.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Sean Wang <sean.wang@mediatek.com>
-Acked-by: Jacopo Mondi <jacopo@jmondi.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Tested-By: H. Nikolaus Schaller <hns@goldelico.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pinctrl/pinctrl-rza1.c |   24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -878,6 +878,7 @@ static int rza1_dt_node_to_map(struct pi
- 	const char *grpname;
- 	const char **fngrps;
- 	int ret, npins;
-+	int gsel, fsel;
+---
+ fs/cifs/smb2pdu.c |   25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2939,33 +2939,38 @@ num_entries(char *bufstart, char *end_of
+ 	int len;
+ 	unsigned int entrycount = 0;
+ 	unsigned int next_offset = 0;
+-	FILE_DIRECTORY_INFO *entryptr;
++	char *entryptr;
++	FILE_DIRECTORY_INFO *dir_info;
  
- 	npins = rza1_dt_node_pin_count(np);
- 	if (npins < 0) {
-@@ -927,18 +928,19 @@ static int rza1_dt_node_to_map(struct pi
- 	fngrps[0] = grpname;
+ 	if (bufstart == NULL)
+ 		return 0;
  
- 	mutex_lock(&rza1_pctl->mutex);
--	ret = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
--					NULL);
--	if (ret) {
-+	gsel = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
-+					 NULL);
-+	if (gsel < 0) {
- 		mutex_unlock(&rza1_pctl->mutex);
--		return ret;
-+		return gsel;
+-	entryptr = (FILE_DIRECTORY_INFO *)bufstart;
++	entryptr = bufstart;
+ 
+ 	while (1) {
+-		entryptr = (FILE_DIRECTORY_INFO *)
+-					((char *)entryptr + next_offset);
+-
+-		if ((char *)entryptr + size > end_of_buf) {
++		if (entryptr + next_offset < entryptr ||
++		    entryptr + next_offset > end_of_buf ||
++		    entryptr + next_offset + size > end_of_buf) {
+ 			cifs_dbg(VFS, "malformed search entry would overflow\n");
+ 			break;
+ 		}
+ 
+-		len = le32_to_cpu(entryptr->FileNameLength);
+-		if ((char *)entryptr + len + size > end_of_buf) {
++		entryptr = entryptr + next_offset;
++		dir_info = (FILE_DIRECTORY_INFO *)entryptr;
++
++		len = le32_to_cpu(dir_info->FileNameLength);
++		if (entryptr + len < entryptr ||
++		    entryptr + len > end_of_buf ||
++		    entryptr + len + size > end_of_buf) {
+ 			cifs_dbg(VFS, "directory entry name would overflow frame end of buf %p\n",
+ 				 end_of_buf);
+ 			break;
+ 		}
+ 
+-		*lastentry = (char *)entryptr;
++		*lastentry = entryptr;
+ 		entrycount++;
+ 
+-		next_offset = le32_to_cpu(entryptr->NextEntryOffset);
++		next_offset = le32_to_cpu(dir_info->NextEntryOffset);
+ 		if (!next_offset)
+ 			break;
  	}
- 
--	ret = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
--					  mux_confs);
--	if (ret)
-+	fsel = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
-+					   mux_confs);
-+	if (fsel < 0) {
-+		ret = fsel;
- 		goto remove_group;
--	mutex_unlock(&rza1_pctl->mutex);
-+	}
- 
- 	dev_info(rza1_pctl->dev, "Parsed function and group %s with %d pins\n",
- 				 grpname, npins);
-@@ -955,15 +957,15 @@ static int rza1_dt_node_to_map(struct pi
- 	(*map)->data.mux.group = np->name;
- 	(*map)->data.mux.function = np->name;
- 	*num_maps = 1;
-+	mutex_unlock(&rza1_pctl->mutex);
- 
- 	return 0;
- 
- remove_function:
--	mutex_lock(&rza1_pctl->mutex);
--	pinmux_generic_remove_last_function(pctldev);
-+	pinmux_generic_remove_function(pctldev, fsel);
- 
- remove_group:
--	pinctrl_generic_remove_last_group(pctldev);
-+	pinctrl_generic_remove_group(pctldev, gsel);
- 	mutex_unlock(&rza1_pctl->mutex);
- 
- 	dev_info(rza1_pctl->dev, "Unable to parse function and group %s\n",
 
 
