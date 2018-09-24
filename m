@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3588C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA499ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 778ED21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778ED21486
+	by mail.kernel.org (Postfix) with ESMTP id 9042521486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9042521486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbeIXR7t (ORCPT
+        id S1730355AbeIXR7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:59:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52324 "EHLO
+        Mon, 24 Sep 2018 13:59:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52342 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729194AbeIXR7s (ORCPT
+        with ESMTP id S1728920AbeIXR7z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:59:48 -0400
+        Mon, 24 Sep 2018 13:59:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21B3DD64;
-        Mon, 24 Sep 2018 11:58:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91AB11072;
+        Mon, 24 Sep 2018 11:58:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Rene Nielsen <rene.nielsen@microsemi.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.4 69/70] MIPS: VDSO: Match data page cache colouring when D$ aliases
-Date:   Mon, 24 Sep 2018 13:53:08 +0200
-Message-Id: <20180924113107.984774618@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
+        =?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>
+Subject: [PATCH 4.4 70/70] MIPS: VDSO: Drop gic_get_usm_range() usage
+Date:   Mon, 24 Sep 2018 13:53:09 +0200
+Message-Id: <20180924113108.147610264@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -54,90 +55,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Paul Burton <paul.burton@imgtec.com>
 
-commit 0f02cfbc3d9e413d450d8d0fd660077c23f67eff upstream.
+commit 00578cd864d45ae4b8fa3f684f8d6f783dd8d15d upstream.
 
-When a system suffers from dcache aliasing a user program may observe
-stale VDSO data from an aliased cache line. Notably this can break the
-expectation that clock_gettime(CLOCK_MONOTONIC, ...) is, as its name
-suggests, monotonic.
+We don't really need gic_get_usm_range() to abstract discovery of the
+address of the GIC user-visible section now that we have access to its
+base address globally.
 
-In order to ensure that users observe updates to the VDSO data page as
-intended, align the user mappings of the VDSO data page such that their
-cache colouring matches that of the virtual address range which the
-kernel will use to update the data page - typically its unmapped address
-within kseg0.
+Switch to calculating it ourselves, which will allow us to stop
+requiring the irqchip driver to care about a counter exposed to userland
+for use via the VDSO.
 
-This ensures that we don't introduce aliasing cache lines for the VDSO
-data page, and therefore that userland will observe updates without
-requiring cache invalidation.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
-Reported-by: Rene Nielsen <rene.nielsen@microsemi.com>
-Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
-Patchwork: https://patchwork.linux-mips.org/patch/20344/
-Tested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Tested-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: James Hogan <jhogan@kernel.org>
+Signed-off-by: Paul Burton <paul.burton@imgtec.com>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v4.4+
+Patchwork: https://patchwork.linux-mips.org/patch/17040/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- arch/mips/kernel/vdso.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/mips/kernel/vdso.c |   15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
 --- a/arch/mips/kernel/vdso.c
 +++ b/arch/mips/kernel/vdso.c
-@@ -14,12 +14,14 @@
+@@ -13,7 +13,6 @@
+ #include <linux/err.h>
  #include <linux/init.h>
  #include <linux/ioport.h>
- #include <linux/irqchip/mips-gic.h>
-+#include <linux/kernel.h>
+-#include <linux/irqchip/mips-gic.h>
+ #include <linux/kernel.h>
  #include <linux/mm.h>
  #include <linux/sched.h>
- #include <linux/slab.h>
+@@ -21,6 +20,7 @@
  #include <linux/timekeeper_internal.h>
  
  #include <asm/abi.h>
-+#include <asm/page.h>
++#include <asm/mips-cps.h>
+ #include <asm/page.h>
  #include <asm/vdso.h>
  
- /* Kernel-provided data used by the VDSO. */
-@@ -118,12 +120,30 @@ int arch_setup_additional_pages(struct l
+@@ -101,9 +101,8 @@ int arch_setup_additional_pages(struct l
+ {
+ 	struct mips_vdso_image *image = current->thread.abi->vdso;
+ 	struct mm_struct *mm = current->mm;
+-	unsigned long gic_size, vvar_size, size, base, data_addr, vdso_addr;
++	unsigned long gic_size, vvar_size, size, base, data_addr, vdso_addr, gic_pfn;
+ 	struct vm_area_struct *vma;
+-	struct resource gic_res;
+ 	int ret;
+ 
+ 	down_write(&mm->mmap_sem);
+@@ -116,7 +115,7 @@ int arch_setup_additional_pages(struct l
+ 	 * only map a page even though the total area is 64K, as we only need
+ 	 * the counter registers at the start.
+ 	 */
+-	gic_size = gic_present ? PAGE_SIZE : 0;
++	gic_size = mips_gic_present() ? PAGE_SIZE : 0;
  	vvar_size = gic_size + PAGE_SIZE;
  	size = vvar_size + image->size;
  
-+	/*
-+	 * Find a region that's large enough for us to perform the
-+	 * colour-matching alignment below.
-+	 */
-+	if (cpu_has_dc_aliases)
-+		size += shm_align_mask + 1;
-+
- 	base = get_unmapped_area(NULL, 0, size, 0, 0);
- 	if (IS_ERR_VALUE(base)) {
- 		ret = base;
- 		goto out;
- 	}
+@@ -157,13 +156,9 @@ int arch_setup_additional_pages(struct l
  
-+	/*
-+	 * If we suffer from dcache aliasing, ensure that the VDSO data page
-+	 * mapping is coloured the same as the kernel's mapping of that memory.
-+	 * This ensures that when the kernel updates the VDSO data userland
-+	 * will observe it without requiring cache invalidations.
-+	 */
-+	if (cpu_has_dc_aliases) {
-+		base = __ALIGN_MASK(base, shm_align_mask);
-+		base += ((unsigned long)&vdso_data - gic_size) & shm_align_mask;
-+	}
-+
- 	data_addr = base + gic_size;
- 	vdso_addr = data_addr + PAGE_SIZE;
+ 	/* Map GIC user page. */
+ 	if (gic_size) {
+-		ret = gic_get_usm_range(&gic_res);
+-		if (ret)
+-			goto out;
++		gic_pfn = virt_to_phys(mips_gic_base + MIPS_GIC_USER_OFS) >> PAGE_SHIFT;
  
+-		ret = io_remap_pfn_range(vma, base,
+-					 gic_res.start >> PAGE_SHIFT,
+-					 gic_size,
++		ret = io_remap_pfn_range(vma, base, gic_pfn, gic_size,
+ 					 pgprot_noncached(PAGE_READONLY));
+ 		if (ret)
+ 			goto out;
 
 
