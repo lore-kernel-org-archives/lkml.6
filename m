@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F64C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B869C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B54D32082C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C2C2064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTvK5rPt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54D32082C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qX+WLrtr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C2C2064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733040AbeIXVHx (ORCPT
+        id S1733094AbeIXVH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:07:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53104 "EHLO mail.kernel.org"
+        Mon, 24 Sep 2018 17:07:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730187AbeIXVHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:07:52 -0400
+        id S1732866AbeIXVH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:07:56 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D2D820C0A;
-        Mon, 24 Sep 2018 15:05:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 823B82064D;
+        Mon, 24 Sep 2018 15:05:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537801516;
-        bh=/Kg/151d6uBBqfT0doJWdo5CKR++XMoy3zg7wTaO4OE=;
+        s=default; t=1537801520;
+        bh=Zhn+aKscOqLBQqpVI2Tue6wXAaKPrmigoja6P10ZD4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KTvK5rPtcQcrnp7R+GNOUuw5mP6tFS0r252KcMUJz5UYnWvmw4rP/YkrQMAWKN+y2
-         W3slRhklBsE5RbPs1aRwCuCJdXjvVPF1GV5NrI3J6qxyDQ7yQfaCJOnY8wjRluNhuw
-         /rtWmHHQGr/fTODky87N6ds+5zPicOg+HHVxkYlI=
+        b=qX+WLrtrJrLTGFUswpIDP1ZTS3cNG19jQnlgFKbVlM6K42S1InW9K7eeJwRiVoIlh
+         /ZZNUaAklcCVhEASbtwPYP2c71muXRliCemVOae7zh1iWANLrfWHqoA+m+BZGIjQH1
+         iFmpH9ZykWS0K/RhZIt9rpTjmlbrQ/Gw1deqMWvI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 23/27] perf tools: Improve thread_stack__event() for trace begin / end
-Date:   Mon, 24 Sep 2018 12:02:38 -0300
-Message-Id: <20180924150242.14235-24-acme@kernel.org>
+Subject: [PATCH 24/27] perf tools: Improve thread_stack__process() for trace begin / end
+Date:   Mon, 24 Sep 2018 12:02:39 -0300
+Message-Id: <20180924150242.14235-25-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180924150242.14235-1-acme@kernel.org>
 References: <20180924150242.14235-1-acme@kernel.org>
@@ -57,119 +57,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-thread_stack__event() is used to create call stacks, by keeping track of
-calls and returns. Improve the handling of trace begin / end to allow
-for a trace that ends in a call.
+thread_stack__process() is used to create call paths for database
+export.  Improve the handling of trace begin / end to allow for a trace
+that ends in a call.
 
 Previously, the Intel PT decoder would indicate begin / end by a branch
 from / to zero. That hides useful information, in particular when a
 trace ends with a call. Before remedying that, enhance the thread stack
-so that it does not expect to see the 'return' for a 'call' that ends
-the trace.
-
-Committer notes:
-
-Added this:
-
-                return thread_stack__push(thread->ts, ret_addr,
--                                         flags && PERF_IP_FLAG_TRACE_END);
-+                                         flags & PERF_IP_FLAG_TRACE_END);
-
-To fix problem spotted by:
-
-debian:9:            clang version 3.8.1-24 (tags/RELEASE_381/final)
-debian:experimental: clang version 6.0.1-6 (tags/RELEASE_601/final)
+so that it identifies the trace end by the flag instead of by ip == 0.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20180920130048.31432-4-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20180920130048.31432-5-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/thread-stack.c | 35 ++++++++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 5 deletions(-)
+ tools/perf/util/thread-stack.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index dd17d6a38d3a..e3f7dfecafa9 100644
+index e3f7dfecafa9..c091635bf7dc 100644
 --- a/tools/perf/util/thread-stack.c
 +++ b/tools/perf/util/thread-stack.c
-@@ -36,6 +36,7 @@
-  * @branch_count: the branch count when the entry was created
-  * @cp: call path
-  * @no_call: a 'call' was not seen
-+ * @trace_end: a 'call' but trace ended
-  */
- struct thread_stack_entry {
- 	u64 ret_addr;
-@@ -44,6 +45,7 @@ struct thread_stack_entry {
- 	u64 branch_count;
- 	struct call_path *cp;
- 	bool no_call;
-+	bool trace_end;
- };
+@@ -357,7 +357,7 @@ void call_return_processor__free(struct call_return_processor *crp)
  
- /**
-@@ -112,7 +114,8 @@ static struct thread_stack *thread_stack__new(struct thread *thread,
- 	return ts;
+ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
+ 				 u64 timestamp, u64 ref, struct call_path *cp,
+-				 bool no_call)
++				 bool no_call, bool trace_end)
+ {
+ 	struct thread_stack_entry *tse;
+ 	int err;
+@@ -375,6 +375,7 @@ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
+ 	tse->branch_count = ts->branch_count;
+ 	tse->cp = cp;
+ 	tse->no_call = no_call;
++	tse->trace_end = trace_end;
+ 
+ 	return 0;
+ }
+@@ -448,7 +449,7 @@ static int thread_stack__bottom(struct thread *thread, struct thread_stack *ts,
+ 		return -ENOMEM;
+ 
+ 	return thread_stack__push_cp(thread->ts, ip, sample->time, ref, cp,
+-				     true);
++				     true, false);
  }
  
--static int thread_stack__push(struct thread_stack *ts, u64 ret_addr)
-+static int thread_stack__push(struct thread_stack *ts, u64 ret_addr,
-+			      bool trace_end)
- {
- 	int err = 0;
- 
-@@ -124,6 +127,7 @@ static int thread_stack__push(struct thread_stack *ts, u64 ret_addr)
+ static int thread_stack__no_call_return(struct thread *thread,
+@@ -480,7 +481,7 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 			if (!cp)
+ 				return -ENOMEM;
+ 			return thread_stack__push_cp(ts, 0, sample->time, ref,
+-						     cp, true);
++						     cp, true, false);
  		}
- 	}
+ 	} else if (thread_stack__in_kernel(ts) && sample->ip < ks) {
+ 		/* Return to userspace, so pop all kernel addresses */
+@@ -505,7 +506,7 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 		return -ENOMEM;
  
-+	ts->stack[ts->cnt].trace_end = trace_end;
- 	ts->stack[ts->cnt++].ret_addr = ret_addr;
+ 	err = thread_stack__push_cp(ts, sample->addr, sample->time, ref, cp,
+-				    true);
++				    true, false);
+ 	if (err)
+ 		return err;
  
- 	return err;
-@@ -150,6 +154,18 @@ static void thread_stack__pop(struct thread_stack *ts, u64 ret_addr)
- 	}
+@@ -525,7 +526,7 @@ static int thread_stack__trace_begin(struct thread *thread,
+ 
+ 	/* Pop trace end */
+ 	tse = &ts->stack[ts->cnt - 1];
+-	if (tse->cp->sym == NULL && tse->cp->ip == 0) {
++	if (tse->trace_end) {
+ 		err = thread_stack__call_return(thread, ts, --ts->cnt,
+ 						timestamp, ref, false);
+ 		if (err)
+@@ -554,7 +555,7 @@ static int thread_stack__trace_end(struct thread_stack *ts,
+ 	ret_addr = sample->ip + sample->insn_len;
+ 
+ 	return thread_stack__push_cp(ts, ret_addr, sample->time, ref, cp,
+-				     false);
++				     false, true);
  }
  
-+static void thread_stack__pop_trace_end(struct thread_stack *ts)
-+{
-+	size_t i;
-+
-+	for (i = ts->cnt; i; ) {
-+		if (ts->stack[--i].trace_end)
-+			ts->cnt = i;
-+		else
-+			return;
-+	}
-+}
-+
- static bool thread_stack__in_kernel(struct thread_stack *ts)
- {
- 	if (!ts->cnt)
-@@ -254,10 +270,19 @@ int thread_stack__event(struct thread *thread, u32 flags, u64 from_ip,
- 		ret_addr = from_ip + insn_len;
- 		if (ret_addr == to_ip)
- 			return 0; /* Zero-length calls are excluded */
--		return thread_stack__push(thread->ts, ret_addr);
--	} else if (flags & PERF_IP_FLAG_RETURN) {
--		if (!from_ip)
--			return 0;
-+		return thread_stack__push(thread->ts, ret_addr,
-+					  flags & PERF_IP_FLAG_TRACE_END);
-+	} else if (flags & PERF_IP_FLAG_TRACE_BEGIN) {
-+		/*
-+		 * If the caller did not change the trace number (which would
-+		 * have flushed the stack) then try to make sense of the stack.
-+		 * Possibly, tracing began after returning to the current
-+		 * address, so try to pop that. Also, do not expect a call made
-+		 * when the trace ended, to return, so pop that.
-+		 */
-+		thread_stack__pop(thread->ts, to_ip);
-+		thread_stack__pop_trace_end(thread->ts);
-+	} else if ((flags & PERF_IP_FLAG_RETURN) && from_ip) {
- 		thread_stack__pop(thread->ts, to_ip);
- 	}
+ int thread_stack__process(struct thread *thread, struct comm *comm,
+@@ -604,6 +605,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 	ts->last_time = sample->time;
  
+ 	if (sample->flags & PERF_IP_FLAG_CALL) {
++		bool trace_end = sample->flags & PERF_IP_FLAG_TRACE_END;
+ 		struct call_path_root *cpr = ts->crp->cpr;
+ 		struct call_path *cp;
+ 		u64 ret_addr;
+@@ -621,7 +623,7 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 		if (!cp)
+ 			return -ENOMEM;
+ 		err = thread_stack__push_cp(ts, ret_addr, sample->time, ref,
+-					    cp, false);
++					    cp, false, trace_end);
+ 	} else if (sample->flags & PERF_IP_FLAG_RETURN) {
+ 		if (!sample->ip || !sample->addr)
+ 			return 0;
 -- 
 2.14.4
 
