@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C776CC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E3FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 882A520C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 882A520C0A
+	by mail.kernel.org (Postfix) with ESMTP id ACD8120877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD8120877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730958AbeIXSEf (ORCPT
+        id S1730969AbeIXSEi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:04:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53764 "EHLO
+        Mon, 24 Sep 2018 14:04:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53772 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730877AbeIXSEd (ORCPT
+        with ESMTP id S1729932AbeIXSEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:04:33 -0400
+        Mon, 24 Sep 2018 14:04:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1252BD64;
-        Mon, 24 Sep 2018 12:02:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B949D64;
+        Mon, 24 Sep 2018 12:02:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.9 057/111] usb: uas: add support for more quirk flags
-Date:   Mon, 24 Sep 2018 13:52:24 +0200
-Message-Id: <20180924113110.586526882@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manikanta Pubbisetty <mpubbise@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 031/111] mac80211: restrict delayed tailroom needed decrement
+Date:   Mon, 24 Sep 2018 13:51:58 +0200
+Message-Id: <20180924113107.687176869@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -50,51 +53,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Manikanta Pubbisetty <mpubbise@codeaurora.org>
 
-commit 42d1c6d4a06a77b3ab206a919b9050c3080f3a71 upstream.
+[ Upstream commit 133bf90dbb8b873286f8ec2e81ba26e863114b8c ]
 
-The hope that UAS devices would be less broken than old style storage
-devices has turned out to be unfounded. Make UAS support more of the
-quirk flags of the old driver.
+As explained in ieee80211_delayed_tailroom_dec(), during roam,
+keys of the old AP will be destroyed and new keys will be
+installed. Deletion of the old key causes
+crypto_tx_tailroom_needed_cnt to go from 1 to 0 and the new key
+installation causes a transition from 0 to 1.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Whenever crypto_tx_tailroom_needed_cnt transitions from 0 to 1,
+we invoke synchronize_net(); the reason for doing this is to avoid
+a race in the TX path as explained in increment_tailroom_need_count().
+This synchronize_net() operation can be slow and can affect the station
+roam time. To avoid this, decrementing the crypto_tx_tailroom_needed_cnt
+is delayed for a while so that upon installation of new key the
+transition would be from 1 to 2 instead of 0 to 1 and thereby
+improving the roam time.
+
+This is all correct for a STA iftype, but deferring the tailroom_needed
+decrement for other iftypes may be unnecessary.
+
+For example, let's consider the case of a 4-addr client connecting to
+an AP for which AP_VLAN interface is also created, let the initial
+value for tailroom_needed on the AP be 1.
+
+* 4-addr client connects to the AP (AP: tailroom_needed = 1)
+* AP will clear old keys, delay decrement of tailroom_needed count
+* AP_VLAN is created, it takes the tailroom count from master
+  (AP_VLAN: tailroom_needed = 1, AP: tailroom_needed = 1)
+* Install new key for the station, assume key is plumbed in the HW,
+  there won't be any change in tailroom_needed count on AP iface
+* Delayed decrement of tailroom_needed count on AP
+  (AP: tailroom_needed = 0, AP_VLAN: tailroom_needed = 1)
+
+Because of the delayed decrement on AP iface, tailroom_needed count goes
+out of sync between AP(master iface) and AP_VLAN(slave iface) and
+there would be unnecessary tailroom created for the packets going
+through AP_VLAN iface.
+
+Also, WARN_ONs were observed while trying to bring down the AP_VLAN
+interface:
+(warn_slowpath_common) (warn_slowpath_null+0x18/0x20)
+(warn_slowpath_null) (ieee80211_free_keys+0x114/0x1e4)
+(ieee80211_free_keys) (ieee80211_del_virtual_monitor+0x51c/0x850)
+(ieee80211_del_virtual_monitor) (ieee80211_stop+0x30/0x3c)
+(ieee80211_stop) (__dev_close_many+0x94/0xb8)
+(__dev_close_many) (dev_close_many+0x5c/0xc8)
+
+Restricting delayed decrement to station interface alone fixes the problem
+and it makes sense to do so because delayed decrement is done to improve
+roam time which is applicable only for client devices.
+
+Signed-off-by: Manikanta Pubbisetty <mpubbise@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/storage/uas.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ net/mac80211/cfg.c |    2 +-
+ net/mac80211/key.c |   24 +++++++++++++++---------
+ 2 files changed, 16 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -842,6 +842,27 @@ static int uas_slave_configure(struct sc
- 		sdev->skip_ms_page_8 = 1;
- 		sdev->wce_default_on = 1;
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -454,7 +454,7 @@ static int ieee80211_del_key(struct wiph
+ 		goto out_unlock;
  	}
-+
+ 
+-	ieee80211_key_free(key, true);
++	ieee80211_key_free(key, sdata->vif.type == NL80211_IFTYPE_STATION);
+ 
+ 	ret = 0;
+  out_unlock:
+--- a/net/mac80211/key.c
++++ b/net/mac80211/key.c
+@@ -648,11 +648,15 @@ int ieee80211_key_link(struct ieee80211_
+ {
+ 	struct ieee80211_local *local = sdata->local;
+ 	struct ieee80211_key *old_key;
+-	int idx, ret;
+-	bool pairwise;
+-
+-	pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
+-	idx = key->conf.keyidx;
++	int idx = key->conf.keyidx;
++	bool pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
 +	/*
-+	 * Some disks return the total number of blocks in response
-+	 * to READ CAPACITY rather than the highest block number.
-+	 * If this device makes that mistake, tell the sd driver.
++	 * We want to delay tailroom updates only for station - in that
++	 * case it helps roaming speed, but in other cases it hurts and
++	 * can cause warnings to appear.
 +	 */
-+	if (devinfo->flags & US_FL_FIX_CAPACITY)
-+		sdev->fix_capacity = 1;
-+
-+	/*
-+	 * Some devices don't like MODE SENSE with page=0x3f,
-+	 * which is the command used for checking if a device
-+	 * is write-protected.  Now that we tell the sd driver
-+	 * to do a 192-byte transfer with this command the
-+	 * majority of devices work fine, but a few still can't
-+	 * handle it.  The sd driver will simply assume those
-+	 * devices are write-enabled.
-+	 */
-+	if (devinfo->flags & US_FL_NO_WP_DETECT)
-+		sdev->skip_ms_page_3f = 1;
-+
- 	scsi_change_queue_depth(sdev, devinfo->qdepth - 2);
- 	return 0;
- }
++	bool delay_tailroom = sdata->vif.type == NL80211_IFTYPE_STATION;
++	int ret;
+ 
+ 	mutex_lock(&sdata->local->key_mtx);
+ 
+@@ -680,14 +684,14 @@ int ieee80211_key_link(struct ieee80211_
+ 	increment_tailroom_need_count(sdata);
+ 
+ 	ieee80211_key_replace(sdata, sta, pairwise, old_key, key);
+-	ieee80211_key_destroy(old_key, true);
++	ieee80211_key_destroy(old_key, delay_tailroom);
+ 
+ 	ieee80211_debugfs_key_add(key);
+ 
+ 	if (!local->wowlan) {
+ 		ret = ieee80211_key_enable_hw_accel(key);
+ 		if (ret)
+-			ieee80211_key_free(key, true);
++			ieee80211_key_free(key, delay_tailroom);
+ 	} else {
+ 		ret = 0;
+ 	}
+@@ -922,7 +926,8 @@ void ieee80211_free_sta_keys(struct ieee
+ 		ieee80211_key_replace(key->sdata, key->sta,
+ 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
+ 				key, NULL);
+-		__ieee80211_key_destroy(key, true);
++		__ieee80211_key_destroy(key, key->sdata->vif.type ==
++					NL80211_IFTYPE_STATION);
+ 	}
+ 
+ 	for (i = 0; i < NUM_DEFAULT_KEYS; i++) {
+@@ -932,7 +937,8 @@ void ieee80211_free_sta_keys(struct ieee
+ 		ieee80211_key_replace(key->sdata, key->sta,
+ 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
+ 				key, NULL);
+-		__ieee80211_key_destroy(key, true);
++		__ieee80211_key_destroy(key, key->sdata->vif.type ==
++					NL80211_IFTYPE_STATION);
+ 	}
+ 
+ 	mutex_unlock(&local->key_mtx);
 
 
