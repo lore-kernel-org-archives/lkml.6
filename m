@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3724FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D1FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED80B20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED80B20C0A
+	by mail.kernel.org (Postfix) with ESMTP id CAC8420C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC8420C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732254AbeIXSSX (ORCPT
+        id S1732261AbeIXSS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:18:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55794 "EHLO
+        Mon, 24 Sep 2018 14:18:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55802 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbeIXSSX (ORCPT
+        with ESMTP id S1730180AbeIXSS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:18:23 -0400
+        Mon, 24 Sep 2018 14:18:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C08A10A5;
-        Mon, 24 Sep 2018 12:16:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9AE910A5;
+        Mon, 24 Sep 2018 12:16:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 077/173] xen/netfront: fix waiting for xenbus state change
-Date:   Mon, 24 Sep 2018 13:51:51 +0200
-Message-Id: <20180924113121.707070320@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 060/173] xen-netfront: fix queue name setting
+Date:   Mon, 24 Sep 2018 13:51:34 +0200
+Message-Id: <20180924113120.433439519@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,109 +53,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 8edfe2e992b75aee3da9316e9697c531194c2f53 upstream.
+[ Upstream commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 ]
 
-Commit 822fb18a82aba ("xen-netfront: wait xenbus state change when load
-module manually") added a new wait queue to wait on for a state change
-when the module is loaded manually. Unfortunately there is no wakeup
-anywhere to stop that waiting.
+Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
+open") changed the initialization order: xennet_create_queues() now
+happens before we do register_netdev() so using netdev->name in
+xennet_init_queue() is incorrect, we end up with the following in
+/proc/interrupts:
 
-Instead of introducing a new wait queue rename the existing
-module_unload_q to module_wq and use it for both purposes (loading and
-unloading).
+ 60:        139          0   xen-dyn    -event     eth%d-q0-tx
+ 61:        265          0   xen-dyn    -event     eth%d-q0-rx
+ 62:        234          0   xen-dyn    -event     eth%d-q1-tx
+ 63:          1          0   xen-dyn    -event     eth%d-q1-rx
 
-As any state change of the backend might be intended to stop waiting
-do the wake_up_all() in any case when netback_changed() is called.
+and this looks ugly. Actually, using early netdev name (even when it's
+already set) is also not ideal: nowadays we tend to rename eth devices
+and queue name may end up not corresponding to the netdev name.
 
-Fixes: 822fb18a82aba ("xen-netfront: wait xenbus state change when load module manually")
-Cc: <stable@vger.kernel.org> #4.18
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Use nodename from xenbus device for queue naming: this can't change in VM's
+lifetime. Now /proc/interrupts looks like
+
+ 62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
+ 63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
+ 64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
+ 65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
+
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/xen-netfront.c |   24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ drivers/net/xen-netfront.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/net/xen-netfront.c
 +++ b/drivers/net/xen-netfront.c
-@@ -87,8 +87,7 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+@@ -1611,7 +1611,7 @@ static int xennet_init_queue(struct netf
+ 		    (unsigned long)queue);
  
--static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
--static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
-+static DECLARE_WAIT_QUEUE_HEAD(module_wq);
+ 	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
+-		 queue->info->netdev->name, queue->id);
++		 queue->info->xbdev->nodename, queue->id);
  
- struct netfront_stats {
- 	u64			packets;
-@@ -1331,11 +1330,11 @@ static struct net_device *xennet_create_
- 	netif_carrier_off(netdev);
- 
- 	xenbus_switch_state(dev, XenbusStateInitialising);
--	wait_event(module_load_q,
--			   xenbus_read_driver_state(dev->otherend) !=
--			   XenbusStateClosed &&
--			   xenbus_read_driver_state(dev->otherend) !=
--			   XenbusStateUnknown);
-+	wait_event(module_wq,
-+		   xenbus_read_driver_state(dev->otherend) !=
-+		   XenbusStateClosed &&
-+		   xenbus_read_driver_state(dev->otherend) !=
-+		   XenbusStateUnknown);
- 	return netdev;
- 
-  exit:
-@@ -2009,15 +2008,14 @@ static void netback_changed(struct xenbu
- 
- 	dev_dbg(&dev->dev, "%s\n", xenbus_strstate(backend_state));
- 
-+	wake_up_all(&module_wq);
-+
- 	switch (backend_state) {
- 	case XenbusStateInitialising:
- 	case XenbusStateInitialised:
- 	case XenbusStateReconfiguring:
- 	case XenbusStateReconfigured:
--		break;
--
- 	case XenbusStateUnknown:
--		wake_up_all(&module_unload_q);
- 		break;
- 
- 	case XenbusStateInitWait:
-@@ -2033,12 +2031,10 @@ static void netback_changed(struct xenbu
- 		break;
- 
- 	case XenbusStateClosed:
--		wake_up_all(&module_unload_q);
- 		if (dev->state == XenbusStateClosed)
- 			break;
- 		/* Missed the backend's CLOSING state -- fallthrough */
- 	case XenbusStateClosing:
--		wake_up_all(&module_unload_q);
- 		xenbus_frontend_closed(dev);
- 		break;
- 	}
-@@ -2146,14 +2142,14 @@ static int xennet_remove(struct xenbus_d
- 
- 	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
- 		xenbus_switch_state(dev, XenbusStateClosing);
--		wait_event(module_unload_q,
-+		wait_event(module_wq,
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateClosing ||
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateUnknown);
- 
- 		xenbus_switch_state(dev, XenbusStateClosed);
--		wait_event(module_unload_q,
-+		wait_event(module_wq,
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateClosed ||
- 			   xenbus_read_driver_state(dev->otherend) ==
+ 	/* Initialise tx_skbs as a free chain containing every entry. */
+ 	queue->tx_skb_freelist = 0;
 
 
