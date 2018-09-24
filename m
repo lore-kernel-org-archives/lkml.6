@@ -6,83 +6,278 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE265C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C212C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F3120989
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F3120989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D58B20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:11:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D58B20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbeIXPMS (ORCPT
+        id S1728484AbeIXPMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:12:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56029 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728433AbeIXPMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:12:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0C08F207CA; Mon, 24 Sep 2018 11:11:10 +0200 (CEST)
-Received: from mc-bl-xps13.lan (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
-        by mail.bootlin.com (Postfix) with ESMTPSA id ABAE820618;
-        Mon, 24 Sep 2018 11:11:09 +0200 (CEST)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 2/2] net: mvpp2: use round-robin scheduling for TX queues on the same CPU
-Date:   Mon, 24 Sep 2018 11:11:06 +0200
-Message-Id: <20180924091106.15094-3-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180924091106.15094-1-maxime.chevallier@bootlin.com>
-References: <20180924091106.15094-1-maxime.chevallier@bootlin.com>
+        Mon, 24 Sep 2018 11:12:21 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:56414 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728433AbeIXPMU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:12:20 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g4Mte-0005aJ-T6; Mon, 24 Sep 2018 03:11:14 -0600
+Received: from [105.184.227.67] (helo=x220.Home)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g4MtO-0002zU-Kg; Mon, 24 Sep 2018 03:11:14 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arch@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Mon, 24 Sep 2018 11:10:01 +0200
+Message-Id: <20180924091015.4458-1-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <871s9j462u.fsf@xmission.com>
+References: <871s9j462u.fsf@xmission.com>
+X-XM-SPF: eid=1g4MtO-0002zU-Kg;;;mid=<20180924091015.4458-1-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+yq4H85nTNFFzzq09WPbMqFy/GWcac4ug=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [REVIEW][PATCH 01/15] signal/arm64: Push siginfo generation into arm64_notify_die
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit allows each TXQ to be picked in a round-robin fashion by
-the PPv2 transmit scheduling mechanism. This is opposed to the default
-behaviour that prioritizes the highest numbered queues.
+Instead of generating a struct siginfo before calling arm64_notify_die
+pass the signal number, tne sicode and the fault address into
+arm64_notify_die and have it call force_sig_fault instead of
+force_sig_info to let the generic code generate the struct siginfo.
 
-Suggested-by: Yan Markman <ymarkman@marvell.com>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+This keeps code passing just the needed information into
+siginfo generating code, making it easier to see what
+is happening and harder to get wrong.  Further by letting
+the generic code handle the generation of struct siginfo
+it reduces the number of sites generating struct siginfo
+making it possible to review them and verify that all
+of the fiddly details for a structure passed to userspace
+are handled properly.
+
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2.h      | 1 +
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 3 +++
- 2 files changed, 4 insertions(+)
+ arch/arm64/include/asm/system_misc.h |  3 +-
+ arch/arm64/kernel/sys_compat.c       | 13 ++++-----
+ arch/arm64/kernel/traps.c            | 24 ++++++++--------
+ arch/arm64/mm/fault.c                | 41 +++++++---------------------
+ 4 files changed, 30 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-index f5dceef60b0e..176c6b56fdcc 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-@@ -331,6 +331,7 @@
- #define     MVPP2_TXP_SCHED_ENQ_MASK		0xff
- #define     MVPP2_TXP_SCHED_DISQ_OFFSET		8
- #define MVPP2_TXP_SCHED_CMD_1_REG		0x8010
-+#define MVPP2_TXP_SCHED_FIXED_PRIO_REG		0x8014
- #define MVPP2_TXP_SCHED_PERIOD_REG		0x8018
- #define MVPP2_TXP_SCHED_MTU_REG			0x801c
- #define     MVPP2_TXP_MTU_MAX			0x7FFFF
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index bdacb9577216..c2ed71788e4f 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -1448,6 +1448,9 @@ static void mvpp2_defaults_set(struct mvpp2_port *port)
- 		    tx_port_num);
- 	mvpp2_write(port->priv, MVPP2_TXP_SCHED_CMD_1_REG, 0);
+diff --git a/arch/arm64/include/asm/system_misc.h b/arch/arm64/include/asm/system_misc.h
+index 28893a0b141d..0e2a0ecaf484 100644
+--- a/arch/arm64/include/asm/system_misc.h
++++ b/arch/arm64/include/asm/system_misc.h
+@@ -33,7 +33,8 @@ void die(const char *msg, struct pt_regs *regs, int err);
  
-+	/* Set TXQ scheduling to Round-Robin */
-+	mvpp2_write(port->priv, MVPP2_TXP_SCHED_FIXED_PRIO_REG, 0);
+ struct siginfo;
+ void arm64_notify_die(const char *str, struct pt_regs *regs,
+-		      struct siginfo *info, int err);
++		      int signo, int sicode, void __user *addr,
++		      int err);
+ 
+ void hook_debug_fault_code(int nr, int (*fn)(unsigned long, unsigned int,
+ 					     struct pt_regs *),
+diff --git a/arch/arm64/kernel/sys_compat.c b/arch/arm64/kernel/sys_compat.c
+index a6109825eeb9..32653d156747 100644
+--- a/arch/arm64/kernel/sys_compat.c
++++ b/arch/arm64/kernel/sys_compat.c
+@@ -68,8 +68,8 @@ do_compat_cache_op(unsigned long start, unsigned long end, int flags)
+  */
+ long compat_arm_syscall(struct pt_regs *regs)
+ {
+-	siginfo_t info;
+ 	unsigned int no = regs->regs[7];
++	void __user *addr;
+ 
+ 	switch (no) {
+ 	/*
+@@ -112,13 +112,10 @@ long compat_arm_syscall(struct pt_regs *regs)
+ 		break;
+ 	}
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code  = ILL_ILLTRP;
+-	info.si_addr  = (void __user *)instruction_pointer(regs) -
+-			 (compat_thumb_mode(regs) ? 2 : 4);
++	addr  = (void __user *)instruction_pointer(regs) -
++		(compat_thumb_mode(regs) ? 2 : 4);
+ 
+-	arm64_notify_die("Oops - bad compat syscall(2)", regs, &info, no);
++	arm64_notify_die("Oops - bad compat syscall(2)", regs,
++			 SIGILL, ILL_ILLTRP, addr, no);
+ 	return 0;
+ }
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 039e9ff379cc..459eb6fb7158 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -257,13 +257,23 @@ void arm64_force_sig_info(struct siginfo *info, const char *str,
+ }
+ 
+ void arm64_notify_die(const char *str, struct pt_regs *regs,
+-		      struct siginfo *info, int err)
++		      int signo, int sicode, void __user *addr,
++		      int err)
+ {
+ 	if (user_mode(regs)) {
++		struct siginfo info;
 +
- 	/* Close bandwidth for all queues */
- 	for (queue = 0; queue < MVPP2_MAX_TXQ; queue++) {
- 		ptxq = mvpp2_txq_phys(port->id, queue);
+ 		WARN_ON(regs != current_pt_regs());
+ 		current->thread.fault_address = 0;
+ 		current->thread.fault_code = err;
+-		arm64_force_sig_info(info, str, current);
++
++		clear_siginfo(&info);
++		info.si_signo = signo;
++		info.si_errno = 0;
++		info.si_code  = sicode;
++		info.si_addr  = addr;
++
++		arm64_force_sig_info(&info, str, current);
+ 	} else {
+ 		die(str, regs, err);
+ 	}
+@@ -348,12 +358,9 @@ static int call_undef_hook(struct pt_regs *regs)
+ 
+ void force_signal_inject(int signal, int code, unsigned long address)
+ {
+-	siginfo_t info;
+ 	const char *desc;
+ 	struct pt_regs *regs = current_pt_regs();
+ 
+-	clear_siginfo(&info);
+-
+ 	switch (signal) {
+ 	case SIGILL:
+ 		desc = "undefined instruction";
+@@ -372,12 +379,7 @@ void force_signal_inject(int signal, int code, unsigned long address)
+ 		signal = SIGKILL;
+ 	}
+ 
+-	info.si_signo = signal;
+-	info.si_errno = 0;
+-	info.si_code  = code;
+-	info.si_addr  = (void __user *)address;
+-
+-	arm64_notify_die(desc, regs, &info, 0);
++	arm64_notify_die(desc, regs, signal, code, (void __user *)address, 0);
+ }
+ 
+ /*
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 50b30ff30de4..86fe70d8722f 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -625,8 +625,8 @@ static int do_bad(unsigned long addr, unsigned int esr, struct pt_regs *regs)
+ 
+ static int do_sea(unsigned long addr, unsigned int esr, struct pt_regs *regs)
+ {
+-	struct siginfo info;
+ 	const struct fault_info *inf;
++	void __user *siaddr;
+ 
+ 	inf = esr_to_fault_info(esr);
+ 
+@@ -645,15 +645,11 @@ static int do_sea(unsigned long addr, unsigned int esr, struct pt_regs *regs)
+ 			nmi_exit();
+ 	}
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = inf->sig;
+-	info.si_errno = 0;
+-	info.si_code  = inf->code;
+ 	if (esr & ESR_ELx_FnV)
+-		info.si_addr = NULL;
++		siaddr = NULL;
+ 	else
+-		info.si_addr  = (void __user *)addr;
+-	arm64_notify_die(inf->name, regs, &info, esr);
++		siaddr  = (void __user *)addr;
++	arm64_notify_die(inf->name, regs, inf->sig, inf->code, siaddr, esr);
+ 
+ 	return 0;
+ }
+@@ -734,7 +730,6 @@ asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
+ 					 struct pt_regs *regs)
+ {
+ 	const struct fault_info *inf = esr_to_fault_info(esr);
+-	struct siginfo info;
+ 
+ 	if (!inf->fn(addr, esr, regs))
+ 		return;
+@@ -745,12 +740,8 @@ asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
+ 		show_pte(addr);
+ 	}
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = inf->sig;
+-	info.si_errno = 0;
+-	info.si_code  = inf->code;
+-	info.si_addr  = (void __user *)addr;
+-	arm64_notify_die(inf->name, regs, &info, esr);
++	arm64_notify_die(inf->name, regs,
++			 inf->sig, inf->code, (void __user *)addr, esr);
+ }
+ 
+ asmlinkage void __exception do_el0_irq_bp_hardening(void)
+@@ -780,20 +771,14 @@ asmlinkage void __exception do_sp_pc_abort(unsigned long addr,
+ 					   unsigned int esr,
+ 					   struct pt_regs *regs)
+ {
+-	struct siginfo info;
+-
+ 	if (user_mode(regs)) {
+ 		if (instruction_pointer(regs) > TASK_SIZE)
+ 			arm64_apply_bp_hardening();
+ 		local_irq_enable();
+ 	}
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = SIGBUS;
+-	info.si_errno = 0;
+-	info.si_code  = BUS_ADRALN;
+-	info.si_addr  = (void __user *)addr;
+-	arm64_notify_die("SP/PC alignment exception", regs, &info, esr);
++	arm64_notify_die("SP/PC alignment exception", regs,
++			 SIGBUS, BUS_ADRALN, (void __user *)addr, esr);
+ }
+ 
+ int __init early_brk64(unsigned long addr, unsigned int esr,
+@@ -847,14 +832,8 @@ asmlinkage int __exception do_debug_exception(unsigned long addr,
+ 	if (!inf->fn(addr, esr, regs)) {
+ 		rv = 1;
+ 	} else {
+-		struct siginfo info;
+-
+-		clear_siginfo(&info);
+-		info.si_signo = inf->sig;
+-		info.si_errno = 0;
+-		info.si_code  = inf->code;
+-		info.si_addr  = (void __user *)addr;
+-		arm64_notify_die(inf->name, regs, &info, esr);
++		arm64_notify_die(inf->name, regs,
++				 inf->sig, inf->code, (void __user *)addr, esr);
+ 		rv = 0;
+ 	}
+ 
 -- 
-2.11.0
+2.17.1
 
