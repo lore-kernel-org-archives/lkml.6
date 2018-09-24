@@ -2,84 +2,82 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0469C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E615C43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC06208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:13:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CC06208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 3EEF2208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:14:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EEF2208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbeIYERs (ORCPT
+        id S1727677AbeIYES3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:17:48 -0400
-Received: from sauhun.de ([88.99.104.3]:38918 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725743AbeIYERr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:17:47 -0400
-Received: from localhost (i577B9B6D.versanet.de [87.123.155.109])
-        by pokefinder.org (Postfix) with ESMTPSA id C91822C0599;
-        Tue, 25 Sep 2018 00:13:24 +0200 (CEST)
-Date:   Tue, 25 Sep 2018 00:13:24 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-i2c@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>
-Subject: Re: [PATCH v2 2/2] i2c: i2c-qcom-geni: Simplify tx/rx functions
-Message-ID: <20180924221324.GG18592@kunai>
-References: <20180920180323.217377-1-swboyd@chromium.org>
- <20180920180323.217377-3-swboyd@chromium.org>
- <CAD=FV=U=r0nkT+JO2j4WUHF03ZiJcmaVrzL6dsauDHV=a2m3tQ@mail.gmail.com>
- <153748188889.119890.3818754688788845202@swboyd.mtv.corp.google.com>
+        Tue, 25 Sep 2018 00:18:29 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:34783 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeIYES2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 00:18:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id A24DA21F17;
+        Mon, 24 Sep 2018 22:14:06 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ZYodnnZ3F5Gy; Mon, 24 Sep 2018 22:14:06 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id BFAA921F0A;
+        Mon, 24 Sep 2018 22:13:53 +0000 (UTC)
+Subject: Re: [PATCH 3.18 000/105] 3.18.123-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180924113113.268650190@linuxfoundation.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <7f4284d7-2a94-7ac7-0360-45e10b0c3ba4@kernel.org>
+Date:   Mon, 24 Sep 2018 16:13:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4eRLI4hEmsdu6Npr"
-Content-Disposition: inline
-In-Reply-To: <153748188889.119890.3818754688788845202@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 09/24/2018 05:32 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.123 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Sep 26 11:30:30 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.123-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
---4eRLI4hEmsdu6Npr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Compiled and booted on my test system. No dmesg regressions.
 
+thanks,
+-- Shuah
 
-> Sure that's fine. I'll resend this one patch with that squashed in.
-
-Waiting for this resend.
-
-
---4eRLI4hEmsdu6Npr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlupYYQACgkQFA3kzBSg
-KbZUAw/6AjBlbEkPNqwMjLmoFWCYG2iIlf+ba+VcKOfT/msFIMa+UA60q2rzKgJR
-q3Qx3PFagto5Vpoaoj0Vm8FYpEL2ePw2n/l4ULrvVdzlTvPVu58PiX80bijy+QN1
-H25JOGX/xslcKN07MCMCM38NoumrmMPM7iFK18uooPLqVeGe/49V38aqkiTv6tkG
-YE8tsr+WHgxDDvZ5X+eZF0vikupbJsjB6MShThZkQGspv95qwagVO4P4ZvyLpvHn
-geWXyby0jCskkUDADpl9eJzKUEgqN18Va3Tli1VzK75Epv28mnjkDGDNr60ujBPd
-LEbm/qK0Wrez46S5KrpLR24mMsBGuDGivgdV/puaWQA1NpAIh2koD8ZRqnZMhXD3
-39iipVT0304EQi9HU9AW1R9Ye+nF4rzXobc8CHIF/nvVjwVGYu/YrVhOjtIu8Jun
-KR3+a+79AxgJsj1epx0NKBvJ6VEVCuWM+gZ5O6d7w/jfE1AVUFTlcCH73Qy5vw3k
-0NVaKJmJFFz0rJ8timQnMZGUyPoj+ajp5Bvc2gixYYygGaw0nI+1LYzOXYLB50FO
-n+Y/AYMiWxKdBDWhMQiRMI1BSkoD+cKYycqjz2gRWkIsix6ktvBnjHE2ViKWUZ6Z
-32lAym2dYG2GizHGLFf8nTFTLkRfdXm6qU0eG8bbPMLdYauDgJA=
-=KsAr
------END PGP SIGNATURE-----
-
---4eRLI4hEmsdu6Npr--
