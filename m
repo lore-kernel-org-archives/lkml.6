@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B66ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3881C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7DAC21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7DAC21486
+	by mail.kernel.org (Postfix) with ESMTP id A84BF21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A84BF21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733153AbeIXS2f (ORCPT
+        id S1733165AbeIXS2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:28:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57152 "EHLO
+        Mon, 24 Sep 2018 14:28:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57162 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732373AbeIXS2f (ORCPT
+        with ESMTP id S1729127AbeIXS2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:28:35 -0400
+        Mon, 24 Sep 2018 14:28:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE740108B;
-        Mon, 24 Sep 2018 12:26:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37037108B;
+        Mon, 24 Sep 2018 12:26:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timo Wischer <twischer@de.adit-jv.com>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 149/173] ALSA: pcm: Fix snd_interval_refine first/last with open min/max
-Date:   Mon, 24 Sep 2018 13:53:03 +0200
-Message-Id: <20180924113126.363732716@linuxfoundation.org>
+Subject: [PATCH 4.14 150/173] scsi: libfc: fixup sleeping function called from invalid context
+Date:   Mon, 24 Sep 2018 13:53:04 +0200
+Message-Id: <20180924113126.409978960@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,68 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Timo Wischer <twischer@de.adit-jv.com>
+From: Hannes Reinecke <hare@suse.de>
 
-[ Upstream commit ff2d6acdf6f13d9f8fdcd890844c6d7535ac1f10 ]
+[ Upstream commit fa519f701d27198a2858bb108fc18ea9d8c106a7 ]
 
-Without this commit the following intervals [x y), (x y) were be
-replaced to (y-1 y) by snd_interval_refine_last(). This was also done
-if y-1 is part of the previous interval.
-With this changes it will be replaced with [y-1 y) in case of y-1 is
-part of the previous interval. A similar behavior will be used for
-snd_interval_refine_first().
+fc_rport_login() will be calling mutex_lock() while running inside an
+RCU-protected section, triggering the warning 'sleeping function called
+from invalid context'.  To fix this we can drop the rcu functions here
+altogether as the disc mutex protecting the list itself is already held,
+preventing any list manipulation.
 
-This commit adapts the changes for alsa-lib of commit
-9bb985c ("pcm: snd_interval_refine_first/last: exclude value only if
-also excluded before")
-
-Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: a407c593398c ("scsi: libfc: Fixup disc_mutex handling")
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Acked-by: Johannes Thumshirn <jth@kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/core/pcm_lib.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/scsi/libfc/fc_disc.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/sound/core/pcm_lib.c
-+++ b/sound/core/pcm_lib.c
-@@ -629,27 +629,33 @@ EXPORT_SYMBOL(snd_interval_refine);
- 
- static int snd_interval_refine_first(struct snd_interval *i)
- {
-+	const unsigned int last_max = i->max;
-+
- 	if (snd_BUG_ON(snd_interval_empty(i)))
- 		return -EINVAL;
- 	if (snd_interval_single(i))
- 		return 0;
- 	i->max = i->min;
--	i->openmax = i->openmin;
--	if (i->openmax)
-+	if (i->openmin)
- 		i->max++;
-+	/* only exclude max value if also excluded before refine */
-+	i->openmax = (i->openmax && i->max >= last_max);
- 	return 1;
- }
- 
- static int snd_interval_refine_last(struct snd_interval *i)
- {
-+	const unsigned int last_min = i->min;
-+
- 	if (snd_BUG_ON(snd_interval_empty(i)))
- 		return -EINVAL;
- 	if (snd_interval_single(i))
- 		return 0;
- 	i->min = i->max;
--	i->openmin = i->openmax;
--	if (i->openmin)
-+	if (i->openmax)
- 		i->min--;
-+	/* only exclude min value if also excluded before refine */
-+	i->openmin = (i->openmin && i->min <= last_min);
- 	return 1;
- }
- 
+--- a/drivers/scsi/libfc/fc_disc.c
++++ b/drivers/scsi/libfc/fc_disc.c
+@@ -294,9 +294,11 @@ static void fc_disc_done(struct fc_disc
+ 	 * discovery, reverify or log them in.	Otherwise, log them out.
+ 	 * Skip ports which were never discovered.  These are the dNS port
+ 	 * and ports which were created by PLOGI.
++	 *
++	 * We don't need to use the _rcu variant here as the rport list
++	 * is protected by the disc mutex which is already held on entry.
+ 	 */
+-	rcu_read_lock();
+-	list_for_each_entry_rcu(rdata, &disc->rports, peers) {
++	list_for_each_entry(rdata, &disc->rports, peers) {
+ 		if (!kref_get_unless_zero(&rdata->kref))
+ 			continue;
+ 		if (rdata->disc_id) {
+@@ -307,7 +309,6 @@ static void fc_disc_done(struct fc_disc
+ 		}
+ 		kref_put(&rdata->kref, fc_rport_destroy);
+ 	}
+-	rcu_read_unlock();
+ 	mutex_unlock(&disc->disc_mutex);
+ 	disc->disc_callback(lport, event);
+ 	mutex_lock(&disc->disc_mutex);
 
 
