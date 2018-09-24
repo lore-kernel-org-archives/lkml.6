@@ -2,40 +2,41 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E191ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D80C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 026D52145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 026D52145D
+	by mail.kernel.org (Postfix) with ESMTP id 6B5A321486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B5A321486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730213AbeIXR7I (ORCPT
+        id S1730225AbeIXR7L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:59:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52176 "EHLO
+        Mon, 24 Sep 2018 13:59:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52212 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729805AbeIXR7H (ORCPT
+        with ESMTP id S1728835AbeIXR7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:59:07 -0400
+        Mon, 24 Sep 2018 13:59:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CB201071;
-        Mon, 24 Sep 2018 11:57:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A5D6D64;
+        Mon, 24 Sep 2018 11:57:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Wei Lu <wei.lu2@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 58/70] gpiolib: Mark gpio_suffixes array with __maybe_unused
-Date:   Mon, 24 Sep 2018 13:52:57 +0200
-Message-Id: <20180924113106.608303591@linuxfoundation.org>
+Subject: [PATCH 4.4 59/70] drm/amdkfd: Fix error codes in kfd_get_process
+Date:   Mon, 24 Sep 2018 13:52:58 +0200
+Message-Id: <20180924113106.718096379@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -53,43 +54,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Wei Lu <wei.lu2@amd.com>
 
-[ Upstream commit b23ec59926faf05b0c43680d05671c484e810ac4 ]
+[ Upstream commit e47cb828eb3fca3e8999a0b9aa053dda18552071 ]
 
-Since we put static variable to a header file it's copied to each module
-that includes the header. But not all of them are actually used it.
+Return ERR_PTR(-EINVAL) if kfd_get_process fails to find the process.
+This fixes kernel oopses when a child process calls KFD ioctls with
+a file descriptor inherited from the parent process.
 
-Mark gpio_suffixes array with __maybe_unused to hide a compiler warning:
-
-In file included from
-drivers/gpio/gpiolib-legacy.c:6:0:
-drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
- static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-                           ^~~~~~~~~~~~~
-In file included from drivers/gpio/gpiolib-devprop.c:17:0:
-drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
- static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-                           ^~~~~~~~~~~~~
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Wei Lu <wei.lu2@amd.com>
+Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpiolib.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -30,7 +30,7 @@ struct acpi_gpio_info {
- };
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -125,6 +125,8 @@ struct kfd_process *kfd_get_process(cons
+ 		return ERR_PTR(-EINVAL);
  
- /* gpio suffixes used for ACPI and device tree lookup */
--static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-+static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
+ 	process = find_process(thread);
++	if (!process)
++		return ERR_PTR(-EINVAL);
  
- #ifdef CONFIG_ACPI
- void acpi_gpiochip_add(struct gpio_chip *chip);
+ 	return process;
+ }
 
 
