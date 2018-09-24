@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD34EECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A631ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FB92083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FB92083A
+	by mail.kernel.org (Postfix) with ESMTP id 4F6332083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6332083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388767AbeIXSnU (ORCPT
+        id S2388778AbeIXSnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:43:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59122 "EHLO
+        Mon, 24 Sep 2018 14:43:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59132 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730507AbeIXSnU (ORCPT
+        with ESMTP id S1730507AbeIXSnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:43:20 -0400
+        Mon, 24 Sep 2018 14:43:22 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F1FD109A;
-        Mon, 24 Sep 2018 12:41:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9B62B109A;
+        Mon, 24 Sep 2018 12:41:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Rick Farrington <ricardo.farrington@cavium.com>,
-        Felix Manlunas <felix.manlunas@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Enrico Scholz <enrico.scholz@sigma-chemnitz.de>,
+        Jan Luebbe <jlu@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 174/235] liquidio: fix hang when re-binding VF host drv after running DPDK VF driver
-Date:   Mon, 24 Sep 2018 13:52:40 +0200
-Message-Id: <20180924113122.235241184@linuxfoundation.org>
+Subject: [PATCH 4.18 175/235] gpu: ipu-v3: csi: pass back mbus_code_to_bus_cfg error codes
+Date:   Mon, 24 Sep 2018 13:52:41 +0200
+Message-Id: <20180924113122.299623629@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,51 +54,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rick Farrington <ricardo.farrington@cavium.com>
+From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
 
-[ Upstream commit ac13d6d8eaded15c67265eafc32f439ea3a0ac4a ]
+[ Upstream commit d36d0e6309dd8137cf438cbb680e72eb63c81425 ]
 
-When configuring SLI_PKTn_OUTPUT_CONTROL, VF driver was assuming that IPTR
-mode was disabled by reset, which was not true.  Since DPDK driver had
-set IPTR mode previously, the VF driver (which uses buf-ptr-only mode) was
-not properly handling DROQ packets (i.e. it saw zero-length packets).
+mbus_code_to_bus_cfg() can fail on unknown mbus codes; pass back the
+error to the caller.
 
-This represented an invalid hardware configuration which the driver could
-not handle.
-
-Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
-Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
+[p.zabel@pengutronix.de - renamed rc to ret for consistency]
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c |    3 +++
- drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c |    3 +++
- 2 files changed, 6 insertions(+)
+ drivers/gpu/ipu-v3/ipu-csi.c |   20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-@@ -493,6 +493,9 @@ static void cn23xx_pf_setup_global_outpu
- 	for (q_no = srn; q_no < ern; q_no++) {
- 		reg_val = octeon_read_csr(oct, CN23XX_SLI_OQ_PKT_CONTROL(q_no));
- 
-+		/* clear IPTR */
-+		reg_val &= ~CN23XX_PKT_OUTPUT_CTL_IPTR;
+--- a/drivers/gpu/ipu-v3/ipu-csi.c
++++ b/drivers/gpu/ipu-v3/ipu-csi.c
+@@ -318,13 +318,17 @@ static int mbus_code_to_bus_cfg(struct i
+ /*
+  * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
+  */
+-static void fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
++static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
+ 				 struct v4l2_mbus_config *mbus_cfg,
+ 				 struct v4l2_mbus_framefmt *mbus_fmt)
+ {
++	int ret;
 +
- 		/* set DPTR */
- 		reg_val |= CN23XX_PKT_OUTPUT_CTL_DPTR;
+ 	memset(csicfg, 0, sizeof(*csicfg));
  
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
-@@ -165,6 +165,9 @@ static void cn23xx_vf_setup_global_outpu
- 		reg_val =
- 		    octeon_read_csr(oct, CN23XX_VF_SLI_OQ_PKT_CONTROL(q_no));
+-	mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
++	ret = mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
++	if (ret < 0)
++		return ret;
  
-+		/* clear IPTR */
-+		reg_val &= ~CN23XX_PKT_OUTPUT_CTL_IPTR;
+ 	switch (mbus_cfg->type) {
+ 	case V4L2_MBUS_PARALLEL:
+@@ -356,6 +360,8 @@ static void fill_csi_bus_cfg(struct ipu_
+ 		/* will never get here, keep compiler quiet */
+ 		break;
+ 	}
 +
- 		/* set DPTR */
- 		reg_val |= CN23XX_PKT_OUTPUT_CTL_DPTR;
++	return 0;
+ }
+ 
+ int ipu_csi_init_interface(struct ipu_csi *csi,
+@@ -365,8 +371,11 @@ int ipu_csi_init_interface(struct ipu_cs
+ 	struct ipu_csi_bus_config cfg;
+ 	unsigned long flags;
+ 	u32 width, height, data = 0;
++	int ret;
+ 
+-	fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
++	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
++	if (ret < 0)
++		return ret;
+ 
+ 	/* set default sensor frame width and height */
+ 	width = mbus_fmt->width;
+@@ -587,11 +596,14 @@ int ipu_csi_set_mipi_datatype(struct ipu
+ 	struct ipu_csi_bus_config cfg;
+ 	unsigned long flags;
+ 	u32 temp;
++	int ret;
+ 
+ 	if (vc > 3)
+ 		return -EINVAL;
+ 
+-	mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
++	ret = mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
++	if (ret < 0)
++		return ret;
+ 
+ 	spin_lock_irqsave(&csi->lock, flags);
  
 
 
