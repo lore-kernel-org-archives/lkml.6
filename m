@@ -2,190 +2,124 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0713C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB157C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507262087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:04:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A30372148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:05:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SH/KdTLm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507262087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5JhvJU4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A30372148C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeIXQGN (ORCPT
+        id S1728262AbeIXQGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:06:13 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47583 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeIXQGN (ORCPT
+        Mon, 24 Sep 2018 12:06:46 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52537 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbeIXQGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:06:13 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180924100455euoutp02f950dd939d77b877151f4bd4ac9893fc~XTfEEByQf1747717477euoutp02C
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:04:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180924100455euoutp02f950dd939d77b877151f4bd4ac9893fc~XTfEEByQf1747717477euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537783495;
-        bh=2AXwC75v3xobkTMSy1LR+GGYo4noBKKd9mTq+7/7Kok=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=SH/KdTLmMCNC6U2/7BW3t4rNQvfQlzf/Xm9yPFQLr2+8m2Ixt5hK10OYLNp29WSLx
-         gFP/h+f38qk0FqVg2xzN3jig6XdCQOlm0SA6ZEAu0vk+GYgSTeNwc/1bpzrtRx70aZ
-         xT+RpxPDuRB5rsf0DI7kNt1vxyvVk34+uiTcU1oE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180924100454eucas1p22e3599cb10c3255324af462ed202e69a~XTfDLedKd0656406564eucas1p2f;
-        Mon, 24 Sep 2018 10:04:54 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 16.85.04441.6C6B8AB5; Mon, 24
-        Sep 2018 11:04:54 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20180924100453eucas1p2cc67bf2cae5c0d0a031c7ce8d1117529~XTfCSQ2rd1041310413eucas1p2S;
-        Mon, 24 Sep 2018 10:04:53 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180924100453eusmtrp25a75dcc59be5967c5007456ebb2db463~XTfB-9_US1743417434eusmtrp2E;
-        Mon, 24 Sep 2018 10:04:53 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-1b-5ba8b6c6f4c1
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 01.15.04128.5C6B8AB5; Mon, 24
-        Sep 2018 11:04:53 +0100 (BST)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180924100452eusmtip16fb60e091ee3cfd950d256de74645d56~XTfBoPMB02743427434eusmtip1Y;
-        Mon, 24 Sep 2018 10:04:52 +0000 (GMT)
-Subject: Re: [PATCH] ARM: dts: exynos: Add CD and WP pins to Odroid XU SD
- card
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Anand Moon <linux.amoon@gmail.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Mon, 24 Sep 2018 12:04:52 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        Mon, 24 Sep 2018 12:06:46 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l7-v6so4224445wme.2;
+        Mon, 24 Sep 2018 03:05:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gIJcpWbHbNHTaa5JmRfvZAm8Urcwd2xDE3D7bIusbZ4=;
+        b=m5JhvJU44sH8y7ioLcm/3FlbGeqqL9Uz74iGgbsi8yl0RtAPswIe5QnTzEHCRR4QdB
+         QlKwsNuWa1Ez5g/3jsmFVbBkZO8694iP3lpkB+2FQtdnVoN9USIJS4RTTA61U8BGjssC
+         z3q5ImJPcioHIPJoxOV8dq20rkn1jskK5Um0qL1wQChrdQJv2oqmzSXPZYwH0mH9++b6
+         2/FwdejQtEkViyz4YH+3Tgqqc8vTEuctjWJVB8yBc+6u2s2eD+w77gh+obRmDaXm3GEG
+         /AN6za7OCx+Up2euvwelpWXmXzKIWlPKzX5o71Wz8bmDlDVR8APBFpjKBYMSEiIm991o
+         4HJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gIJcpWbHbNHTaa5JmRfvZAm8Urcwd2xDE3D7bIusbZ4=;
+        b=asAxicloh33Ej9YDa+IDMlEuhMM1qLCQOd7JX7bRWzMSSFLFQ0Ap5uDutFCE2fnmgl
+         SEbyJjsdIFbmTiZhIflUE5iEss8j9m/o7l3lBTnKgJ52r0VAU2ERQo9WQirBiN+y+B5d
+         eQb0PqQJGTYOAqQwIqs13yvTAjZCtz2JZu197ilelDVrrQG2JDhVuTawDb82jMsf6bEf
+         k8NuDbRfikZdwMwQ73PWAYBKZWdPioB6iJDpSIgTRw8ypHsn35NrYOIwIr+DeVJq/JoP
+         8HFRknd/oLw/o70OppDiasS0ei8CV3Lfs9maOmROlo9ADd37IlQT+hnCvpB3Lw+2zh5N
+         0d2A==
+X-Gm-Message-State: ABuFfoiN4Fcf9APnqwNfVMEIlfTkQjK2sV+DXiOAio+qX03HEqhLA7bw
+        TprkDd3GCkI9dceKx7bK+cU=
+X-Google-Smtp-Source: ACcGV61qWEs8AicWtT+envh7XYE2S9+zSiKAoL94O92PtgvZX+RCc22o9ss68C4j0/M5OZuc7dYtPQ==
+X-Received: by 2002:a1c:ed1a:: with SMTP id l26-v6mr6594100wmh.61.1537783527252;
+        Mon, 24 Sep 2018 03:05:27 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id 132-v6sm10926732wmd.13.2018.09.24.03.05.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 03:05:26 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 12:05:25 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 03/20] iommu/tegra: gart: Ignore devices without IOMMU
+ phandle in DT
+Message-ID: <20180924100525.GE21032@ulmo>
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-4-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180921210321.12404-1-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djP87rHtq2INniwg9li/pFzrBb9j18z
-        W5w/v4HdYtPja6wWl3fNYbOYcX4fk8W6jbfYHdg9ds66y+6xaVUnm8fmJfUenzfJBbBEcdmk
-        pOZklqUW6dslcGWcmbmHseC6SMXF9eoNjCcEuhg5OSQETCS+7epj6mLk4hASWMEoMeXOajYI
-        5wujxJ9t+1ggnM+MEjfOHWWGaelt62GESCxnlLjw8RUzhPOeUWJbVzc7SJWwQIDEoQW3wGaJ
-        CJxnlFj/ZxUjSIJZQE3i0IrHrCA2m4ChRNfbLjYQm0VAVeLal1lANRwcogIxEr93WYOEeQUE
-        JU7OfMICYnMKmEpMaHzEDDFGXmL72zlQtrjErSfzwZ6QEFjGLvFg0kd2iOYyibWHulggznaR
-        mHjgHiOELSzx6vgWdghbRuL/TpjmZkaJ9hmz2CGcHkaJrXN2sEFUWUscPn6RFeQ6ZgFNifW7
-        9CHCjhJ77/eDhSUE+CRuvBWEOIhPYtK26cwQYV6JjjYhiGo1iVnH18GtPXjhEvMERqVZSN6c
-        heS1WUhem4WwdwEjyypG8dTS4tz01GLDvNRyveLE3OLSvHS95PzcTYzAxHP63/FPOxi/Xko6
-        xCjAwajEw8twb3m0EGtiWXFl7iFGCQ5mJRFet1tAId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rx8
-        WmnRQgLpiSWp2ampBalFMFkmDk6pBka7ij07y9eo3PgX7PJ1edmv2KAZklfXzDXabpLulxd4
-        Z+H3vKPSwRMOtdS9nmsjJPL/w9QDC19fVsz0fL6kpfNVROpcm2nptXErZTZ/UzyX8WnWL10t
-        65uiTsknVhm6qB7Rl7Wf0bik6lz6nR/ams/ctY+ZfKp/eLe2UOWLZuTyX8H+R3R/3JqtxFKc
-        kWioxVxUnAgAfigujjgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xu7pHt62INmh/wmwx/8g5Vov+x6+Z
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLdxlvsDuweO2fdZffYtKqTzWPzknqPz5vkAlii9GyK
-        8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLOzNzDWHBd
-        pOLievUGxhMCXYycHBICJhK9bT2MXYxcHEICSxklPiw9ygiRkJE4Oa2BFcIWlvhzrYsNougt
-        o8TUlhVMIAlhAT+JZf3nwLpFBM4zSpzauRSsg1lATeLQisesEB0djBKLN/4BG8smYCjR9RZk
-        FCcHr4CdxPNH05hBbBYBVYlrX2aB1YgKxEgcndwCVSMocXLmExYQm1PAVGJC4yNmiAVmEvM2
-        P4Sy5SW2v50DZYtL3Hoyn2kCo9AsJO2zkLTMQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV5
-        6XrJ+bmbGIGxtu3Yzy07GLveBR9iFOBgVOLhXXF7ebQQa2JZcWXuIUYJDmYlEV63W0Ah3pTE
-        yqrUovz4otKc1OJDjKZAz01klhJNzgemgbySeENTQ3MLS0NzY3NjMwslcd7zBpVRQgLpiSWp
-        2ampBalFMH1MHJxSDYy5c/YpPRf8nPBd5WV9vYoDwwZ/ez7mUy5f+jpi1J9Vvfo86bLDorVa
-        EszRpVuvftfiCdC9O2/irSXbtJsfSIkfcJ68/jKXeAdPRMbPhaeVfPxiYhevZs/eN7tJPJXP
-        RaM1QGPX9VvPLGKatm0+etRxkVOmTpasbesvjzCmB9ZbF7422c29jF+JpTgj0VCLuag4EQAd
-        KY9cywIAAA==
-Message-Id: <20180924100453eucas1p2cc67bf2cae5c0d0a031c7ce8d1117529~XTfCSQ2rd1041310413eucas1p2S@eucas1p2.samsung.com>
-X-CMS-MailID: 20180924100453eucas1p2cc67bf2cae5c0d0a031c7ce8d1117529
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180921210332epcas3p423aaeeb84ec3d8a44c5a898949f992e8
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180921210332epcas3p423aaeeb84ec3d8a44c5a898949f992e8
-References: <CGME20180921210332epcas3p423aaeeb84ec3d8a44c5a898949f992e8@epcas3p4.samsung.com>
-        <20180921210321.12404-1-krzk@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Ns7jmDPpOpCD+GE/"
+Content-Disposition: inline
+In-Reply-To: <20180924004153.8232-4-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
 
-On 2018-09-21 23:03, Krzysztof Kozlowski wrote:
-> Defining card-detect and write-protect GPIO pins in Odroid XU SD Card
-> does not change anything from functional point of view - dw-mmc driver
-> was reading the state from registers.  Adding cd-gpios and wp-gpios
-> properties changes only internal driver behavior to access the pins
-> directly.
->
-> Add them to DTS only to comprehensively describe the hardware.  Minor
-> benefit is that write-protect pin configuration makes sure that it will
-> be properly pulled up to indicate write access.
->
-> This also removes debug messages:
->      dwmmc_exynos 12220000.mmc: No GPIO consumer cd found
->      dwmmc_exynos 12220000.mmc: No GPIO consumer wp found
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->   arch/arm/boot/dts/exynos5410-odroidxu.dts | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> index a2046f5f998c..dae360f29a47 100644
-> --- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> @@ -525,12 +525,14 @@
->   
->   &mmc_2 {
->   	status = "okay";
-> +	wp-gpios = <&gpm5 0 GPIO_ACTIVE_LOW>;
-> +	cd-gpios = <&gpc2 2 GPIO_ACTIVE_LOW>;
->   	card-detect-delay = <200>;
->   	samsung,dw-mshc-ciu-div = <3>;
->   	samsung,dw-mshc-sdr-timing = <0 4>;
->   	samsung,dw-mshc-ddr-timing = <0 2>;
->   	pinctrl-names = "default";
-> -	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-> +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4 &sd2_wp>;
+--Ns7jmDPpOpCD+GE/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-IMHO there is no point adding cd-gpios property if CD line is already 
-assigned to this device via respective pin ctrl entry (as special function).
+On Mon, Sep 24, 2018 at 03:41:36AM +0300, Dmitry Osipenko wrote:
+> GART can't handle all devices, hence ignore devices that aren't related
+> to GART. IOMMU phandle must be explicitly assign to devices in the device
+> tree.
 
-Handling of WP line is even more controversial imho. Ideally the drivers 
-or mmc core should check somehow if WP line is available or not and act 
-respectively. WP line is not available on uSD card connector so there is 
-no point describing it.
+I think technically the GART can indeed handle all devices since it is
+just a physical address region that can be used to remap other physical
+addresses. That's not to say that doing so would be a good idea. So the
+commit message here is slightly confusing, but other than that the idea
+is good, so:
 
->   	bus-width = <4>;
->   	cap-sd-highspeed;
->   	vmmc-supply = <&ldo21_reg>;
-> @@ -573,6 +575,14 @@
->   		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
->   		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
->   	};
-> +
-> +	sd2_wp: sd2-wp {
-> +		samsung,pins = "gpm5-0";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_2>;
-> +		/* Pin is floating so pull it up to disable write-protect */
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV4>;
-> +	};
->   };
->   
->   &pwm {
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+--Ns7jmDPpOpCD+GE/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluotuUACgkQ3SOs138+
+s6FALBAAihy4Koa8dQIhpVPATIDDQsyRjFl4jqvkGh5jHGBULZGdXN8uUyzuMj7/
+5aOiJQ/HgbzR+U/eX/rwOLMQmcr6aLYw2TqwcpwcERhOvDyQNRI8U9PtTIAxcuhO
+DFqTwYCX+aZGy2MCfF+P9hl3MKweAXFCqvj+ckBh1GIGkU5lqYM8r1sgfz/mB/xc
+QDcODaJcIYy/umpDO5ADZK+Q9A6KC/ZGY6xdS4BppKlasG8wKGG6nC0PbiSKhpby
+mjeIRFo2XULhp7/+0Nqj2V5gGDUcu+yRe2lKKMzmELeaIJ7LgxkD3uva4mQ4nxFK
+mx/kuCeSZrvxWiV12whALZ0c2znYamDXzlLHb9orgEsV4zrb6OhBAh5LK733AQ/e
++5FpejQ+Tna8pWVzRDTkvx2GAeYS+EdmDXjZT+OLGVk2DvAPfx1ORFKIGaWrisZQ
+B/yASM3fEXX4/fpQaz6WN6XLUtZu4SWRJR5QIF+E5t6jAPhBVHyaD6ItNGb+Vbpm
+KoEHJfg4eIFwlN5r6aSV/UVS9Ik014fxUu5DtPr3U5+7jLcL6N7/rhYuF1fE01yv
+A1B6bjK9NeCwo4qgUiU+xKHR/2VBw9OaL06qYakzz0K6XADzDbyBYsolqU/TdbMG
+/NI2DduseQE3DzaSuvREtm3fQbJN4s/tbdcTW/VGygIvHL+RTU0=
+=Cw72
+-----END PGP SIGNATURE-----
+
+--Ns7jmDPpOpCD+GE/--
