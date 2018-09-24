@@ -2,39 +2,38 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A31ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5818ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBB0E208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB0E208D9
+	by mail.kernel.org (Postfix) with ESMTP id 72E1A20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E1A20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732396AbeIXSTM (ORCPT
+        id S1732406AbeIXSTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:19:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55894 "EHLO
+        Mon, 24 Sep 2018 14:19:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55904 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbeIXSTL (ORCPT
+        with ESMTP id S1729919AbeIXSTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:19:11 -0400
+        Mon, 24 Sep 2018 14:19:15 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 753F910A7;
-        Mon, 24 Sep 2018 12:17:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BA11109F;
+        Mon, 24 Sep 2018 12:17:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 061/173] arm64: dts: qcom: db410c: Fix Bluetooth LED trigger
-Date:   Mon, 24 Sep 2018 13:51:35 +0200
-Message-Id: <20180924113120.496608424@linuxfoundation.org>
+        stable@vger.kernel.org, Tim Anderson <tsa@biglakesoftware.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.14 088/173] USB: Add quirk to support DJI CineSSD
+Date:   Mon, 24 Sep 2018 13:52:02 +0200
+Message-Id: <20180924113122.539901560@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,33 +51,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Loic Poulain <loic.poulain@linaro.org>
+From: Tim Anderson <tsa@biglakesoftware.com>
 
-[ Upstream commit e53db018315b7660bb7000a29e79faff2496c2c2 ]
+commit f45681f9becaa65111ed0a691ccf080a0cd5feb8 upstream.
 
-Current LED trigger, 'bt', is not known/used by any existing driver.
-Fix this by renaming it to 'bluetooth-power' trigger which is
-controlled by the Bluetooth subsystem.
+This device does not correctly handle the LPM operations.
 
-Fixes: 9943230c8860 ("arm64: dts: qcom: Add apq8016-sbc board LED's related device nodes")
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Also, the device cannot handle ATA pass-through commands
+and locks up when attempted while running in super speed.
+
+This patch adds the equivalent quirk logic as found in uas.
+
+Signed-off-by: Tim Anderson <tsa@biglakesoftware.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-@@ -187,7 +187,7 @@
- 			led@6 {
- 				label = "apq8016-sbc:blue:bt";
- 				gpios = <&pm8916_mpps 3 GPIO_ACTIVE_HIGH>;
--				linux,default-trigger = "bt";
-+				linux,default-trigger = "bluetooth-power";
- 				default-state = "off";
- 			};
- 		};
+---
+ drivers/usb/core/quirks.c          |    3 +++
+ drivers/usb/storage/scsiglue.c     |    9 +++++++++
+ drivers/usb/storage/unusual_devs.h |    7 +++++++
+ 3 files changed, 19 insertions(+)
+
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -259,6 +259,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
+ 
++	/* DJI CineSSD */
++	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* INTEL VALUE SSD */
+ 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -392,6 +392,15 @@ static int queuecommand_lck(struct scsi_
+ 		return 0;
+ 	}
+ 
++	if ((us->fflags & US_FL_NO_ATA_1X) &&
++			(srb->cmnd[0] == ATA_12 || srb->cmnd[0] == ATA_16)) {
++		memcpy(srb->sense_buffer, usb_stor_sense_invalidCDB,
++		       sizeof(usb_stor_sense_invalidCDB));
++		srb->result = SAM_STAT_CHECK_CONDITION;
++		done(srb);
++		return 0;
++	}
++
+ 	/* enqueue the command and wake up the control thread */
+ 	srb->scsi_done = done;
+ 	us->srb = srb;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2307,6 +2307,13 @@ UNUSUAL_DEV(  0x2735, 0x100b, 0x0000, 0x
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_GO_SLOW ),
+ 
++/* Reported-by: Tim Anderson <tsa@biglakesoftware.com> */
++UNUSUAL_DEV(  0x2ca3, 0x0031, 0x0000, 0x9999,
++		"DJI",
++		"CineSSD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_NO_ATA_1X),
++
+ /*
+  * Reported by Frederic Marchal <frederic.marchal@wowcompany.com>
+  * Mio Moov 330
 
 
