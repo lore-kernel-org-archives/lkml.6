@@ -2,39 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698BEECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A31ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F172208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F172208D9
+	by mail.kernel.org (Postfix) with ESMTP id CBB0E208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB0E208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732383AbeIXSTK (ORCPT
+        id S1732396AbeIXSTM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:19:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55886 "EHLO
+        Mon, 24 Sep 2018 14:19:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55894 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbeIXSTJ (ORCPT
+        with ESMTP id S1729919AbeIXSTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:19:09 -0400
+        Mon, 24 Sep 2018 14:19:11 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4DE99109F;
-        Mon, 24 Sep 2018 12:17:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 753F910A7;
+        Mon, 24 Sep 2018 12:17:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Georg=20M=C3=BCller?= <georgmueller@gmx.net>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.14 087/173] mei: bus: need to unlink client before freeing
-Date:   Mon, 24 Sep 2018 13:52:01 +0200
-Message-Id: <20180924113122.460108726@linuxfoundation.org>
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 061/173] arm64: dts: qcom: db410c: Fix Bluetooth LED trigger
+Date:   Mon, 24 Sep 2018 13:51:35 +0200
+Message-Id: <20180924113120.496608424@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,76 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-commit 34f1166afd67f9f48a08c52f36180048908506a4 upstream.
+[ Upstream commit e53db018315b7660bb7000a29e79faff2496c2c2 ]
 
-In case a client fails to connect in mei_cldev_enable(), the
-caller won't call the mei_cldev_disable leaving the client
-in a linked stated. Upon driver unload the client structure
-will be freed in  mei_cl_bus_dev_release(), leaving a stale pointer
-on a fail_list.  This will eventually end up in crash
-during power down flow in mei_cl_set_disonnected().
+Current LED trigger, 'bt', is not known/used by any existing driver.
+Fix this by renaming it to 'bluetooth-power' trigger which is
+controlled by the Bluetooth subsystem.
 
-RIP:  mei_cl_set_disconnected+0x5/0x260[mei]
-Call trace:
-mei_cl_all_disconnect+0x22/0x30
-mei_reset+0x194/0x250
-__synchronize_hardirq+0x43/0x50
-_cond_resched+0x15/0x30
-mei_me_intr_clear+0x20/0x100
-mei_stop+0x76/0xb0
-mei_me_shutdown+0x3f/0x80
-pci_device_shutdown+0x34/0x60
-kernel_restart+0x0e/0x30
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200455
-Fixes: 'c110cdb17148 ("mei: bus: make a client pointer always available")'
-Cc: <stable@vger.kernel.org> 4.10+
-Tested-by: Georg Müller <georgmueller@gmx.net>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Fixes: 9943230c8860 ("arm64: dts: qcom: Add apq8016-sbc board LED's related device nodes")
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/misc/mei/bus.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/mei/bus.c
-+++ b/drivers/misc/mei/bus.c
-@@ -465,17 +465,15 @@ int mei_cldev_enable(struct mei_cl_devic
- 
- 	cl = cldev->cl;
- 
-+	mutex_lock(&bus->device_lock);
- 	if (cl->state == MEI_FILE_UNINITIALIZED) {
--		mutex_lock(&bus->device_lock);
- 		ret = mei_cl_link(cl);
--		mutex_unlock(&bus->device_lock);
- 		if (ret)
--			return ret;
-+			goto out;
- 		/* update pointers */
- 		cl->cldev = cldev;
- 	}
- 
--	mutex_lock(&bus->device_lock);
- 	if (mei_cl_is_connected(cl)) {
- 		ret = 0;
- 		goto out;
-@@ -841,12 +839,13 @@ static void mei_cl_bus_dev_release(struc
- 
- 	mei_me_cl_put(cldev->me_cl);
- 	mei_dev_bus_put(cldev->bus);
-+	mei_cl_unlink(cldev->cl);
- 	kfree(cldev->cl);
- 	kfree(cldev);
- }
- 
- static const struct device_type mei_cl_device_type = {
--	.release	= mei_cl_bus_dev_release,
-+	.release = mei_cl_bus_dev_release,
- };
- 
- /**
+--- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+@@ -187,7 +187,7 @@
+ 			led@6 {
+ 				label = "apq8016-sbc:blue:bt";
+ 				gpios = <&pm8916_mpps 3 GPIO_ACTIVE_HIGH>;
+-				linux,default-trigger = "bt";
++				linux,default-trigger = "bluetooth-power";
+ 				default-state = "off";
+ 			};
+ 		};
 
 
