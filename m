@@ -2,100 +2,136 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63151ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C51ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1147B20883
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 021FB20883
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="VQBH0tVA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1147B20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCNSnv+Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021FB20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbeIXV5y (ORCPT
+        id S1730695AbeIXV5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:57:54 -0400
-Received: from a9-92.smtp-out.amazonses.com ([54.240.9.92]:41732 "EHLO
-        a9-92.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728312AbeIXV5x (ORCPT
+        Mon, 24 Sep 2018 17:57:55 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35172 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728312AbeIXV5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:57:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1537804504;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=jkm4O9apag7jq/yOWRqDujn9+uZfKY5xgF95ikWDcns=;
-        b=VQBH0tVAFaTb8pQrkQu+8T2iSBwpYnGq4Cdot+TeM3tVoeImH4HPQUQus7Ove9Tc
-        3PGFMXrBYenuab/zD+35KwtsAx+kReJ3iXEu4a+o+u7eRMTPqqJg4GHloWqi5wWmuc+
-        Xt2jVMbKZqWaMWEbeCtG81Gy1/ykBJzLAcQWsmgY=
-Date:   Mon, 24 Sep 2018 15:55:04 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Dmitry Vyukov <dvyukov@google.com>
-cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        syzbot+87829a10073277282ad1@syzkaller.appspotmail.com,
-        Pekka Enberg <penberg@kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: WARNING: kmalloc bug in input_mt_init_slots
-In-Reply-To: <CACT4Y+ayX8vzd2JPrLeFhf3K_Quf4x6SDtmtkNJuwNLyOh67tQ@mail.gmail.com>
-Message-ID: <010001660c4a8bbe-91200766-00df-48bd-bc60-a03da2ccdb7d-000000@email.amazonses.com>
-References: <000000000000e5f76c057664e73d@google.com> <CAKdAkRS7PSXv65MTnvKOewqESxt0_FtKohd86ioOuYR3R0z9dw@mail.gmail.com> <CACT4Y+YOb6M=xuPG64PAvd=0bcteicGtwQO60CevN_V67SJ=MQ@mail.gmail.com> <010001660c1fafb2-6d0dc7e1-d898-4589-874c-1be1af94e22d-000000@email.amazonses.com>
- <CACT4Y+ayX8vzd2JPrLeFhf3K_Quf4x6SDtmtkNJuwNLyOh67tQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 24 Sep 2018 17:57:54 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g2-v6so9299538plo.2;
+        Mon, 24 Sep 2018 08:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Csqe0Y2+oowuJwJFhl6JfGwU4IIBJ0vNM6hKyBJNQsM=;
+        b=hCNSnv+QstSPUsyErkEYzixHnbSsJOjHH6xluY9HthFeDh5+ExnIISf2VJDh3qafrr
+         QkPp+ZkzTG9w3R/K8ucAD9szO6e4I76OFnc7LlbaWXRh5nbwVtOUjKwW6GLna5po/ZKj
+         7itcLYyglCsCQpDmecMXcCjTHUC9QBNsTtau0rb0h+fM5+NyKaCcrUAZpKVbVSj8W+xL
+         DSmsZlVQKJfdbNFIRXNxVExZJIBu1srHr/0GSZ7P4+pePKjY2185LNMS20CSzjSepx5R
+         j+ctik52DJcbHykuUe9q6MghO7DETZ28tcKFTbMl/fsclbiI0cgzKVWc5VcGVgswq5TI
+         7W1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Csqe0Y2+oowuJwJFhl6JfGwU4IIBJ0vNM6hKyBJNQsM=;
+        b=GRh9NlHKZUo3364j1OzMmdlp8clwPErOsxD2XVbVCBiSX3ba7hb27SEVcshfDXBNyF
+         FFkguQzqKWCNq7AZFT7gkOM/RacqbMNlE/RsZQ4rvDlwGb1h2xJbaWpa8Usyc7/ptjOL
+         u7rlWPbL3MI555N5xHXVOlCfICPK0zqHG5hj0yGufcWpZxNLVy4VcyMbR+JQdf08uXYX
+         fdPd4tf1M4NZu1dBJycjkaJOE8hFHs7fEkwXFV8U94xeCOBV3XtPvYLO2sOU4a7bTc8W
+         Nkq65/3K6N4N/phYTCcGTCSpvPhyLNmJSKox0PT0++YmZDzpmZMvnw7T130xKGmaM7eq
+         px8w==
+X-Gm-Message-State: ABuFfoi+HiR5JHZ39RLkYjjHIWP+Elkro1FmUW5sfPvVSYb4g8cra9QG
+        xAiHn/6WMuX8wiSEIgqrslk=
+X-Google-Smtp-Source: ACcGV620iTzGYlJqYbfjFojtCoLo9RVNtZ9oCtBNuM5/mqPrZz565AW8BHjsPJCyG75DgAC4VmPhhA==
+X-Received: by 2002:a17:902:4d45:: with SMTP id o5-v6mr11379771plh.78.1537804505258;
+        Mon, 24 Sep 2018 08:55:05 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id y86-v6sm50918925pfk.84.2018.09.24.08.54.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 08:55:04 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 21:24:52 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: Fix potential integer overflow
+Message-ID: <20180924155452.GA7529@himanshu-Vostro-3559>
+References: <20180918125314.GA12752@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.09.24-54.240.9.92
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180918125314.GA12752@embeddedor.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018, Dmitry Vyukov wrote:
+Hi Gustavo,
 
-> On Mon, Sep 24, 2018 at 5:08 PM, Christopher Lameter <cl@linux.com> wrote:
-> > On Sun, 23 Sep 2018, Dmitry Vyukov wrote:
-> >
-> >> What was the motivation behind that WARNING about large allocations in
-> >> kmalloc? Why do we want to know about them? Is the general policy that
-> >> kmalloc calls with potentially large size requests need to use NOWARN?
-> >> If this WARNING still considered useful? Or we should change it to
-> >> pr_err?
-> >
-> > In general large allocs should be satisfied by the page allocator. The
-> > slab allocators are used for allocating and managing small objects. The
-> > page allocator has mechanisms to deal with large objects (compound pages,
-> > multiple page sized allocs etc).
->
-> I am asking more about the status of this warning. If it fires in
-> input_mt_init_slots(), does it mean that input_mt_init_slots() needs
-> to be fixed? If not, then we need to change this warning to something
-> else.
+On Tue, Sep 18, 2018 at 07:53:14AM -0500, Gustavo A. R. Silva wrote:
+> Cast factor to s64 in order to give the compiler complete information
+> about the proper arithmetic to use and avoid a potential integer
+> overflow. Notice that such variable is being used in a context
+> that expects an expression of type s64 (64 bits, signed).
+> 
+> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
+> Fixes: e13d757279bb ("iio: adc: Add QCOM SPMI PMIC5 ADC driver")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/iio/adc/qcom-vadc-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/qcom-vadc-common.c b/drivers/iio/adc/qcom-vadc-common.c
+> index dcd7fb5..e360e27 100644
+> --- a/drivers/iio/adc/qcom-vadc-common.c
+> +++ b/drivers/iio/adc/qcom-vadc-common.c
+> @@ -282,7 +282,7 @@ static int qcom_vadc_scale_code_voltage_factor(u16 adc_code,
+>  	voltage = div64_s64(voltage, data->full_scale_code_volt);
+>  	if (voltage > 0) {
+>  		voltage *= prescale->den;
+> -		temp = prescale->num * factor;
+> +		temp = prescale->num * (s64)factor;
 
-Hmmm.. kmalloc falls back to the page allocator already?
+As Jonathan pointed it is a false positive, let me share some more
+insight on this particular set of warnings.
 
-See
+`num` is u32 and `factor` is unsigned int(u32 on most implementations).
 
-static __always_inline void *kmalloc(size_t size, gfp_t flags)
-{
-        if (__builtin_constant_p(size)) {
-                if (size > KMALLOC_MAX_CACHE_SIZE)
-                        return kmalloc_large(size, flags);
+So, if multiplication b/w them exceeds UNIT_MAX then that is perfectly
+defined behavior in C. And often called "wrapping".
+https://port70.net/~nsz/c/c11/n1570.html#6.2.5p9
+
+And *if* it exceeds UNIT_MAX, then it is certainly wrong arthimetic
+implementation by the author.
+
+On the other hand, if it were the case signed int overflow then
+certainly it is undefined behavior and called "overflow".
+
+And here `temp` is guaranteed to not overflow!
+
+But I don't understand what issue are you trying to resolve here and I'm
+interested in this particular set of warnings because I too get coverity
+scan reports on the same although I only search for IIO drivers issues.
 
 
-Note that this uses KMALLOC_MAX_CACHE_SIZE which should be smaller than
-KMALLOC_MAX_SIZE.
-
-
-How large is the allocation? AFACIT nRequests larger than KMALLOC_MAX_SIZE
-are larger than the maximum allowed by the page allocator. Thus the warning
-and the NULL return.
-
+Thanks
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
