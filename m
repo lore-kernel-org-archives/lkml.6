@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE99C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C14E1ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E322148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E322148C
+	by mail.kernel.org (Postfix) with ESMTP id 84D212148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D212148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387485AbeIXSaC (ORCPT
+        id S2387494AbeIXSaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:30:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57392 "EHLO
+        Mon, 24 Sep 2018 14:30:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57404 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbeIXSaB (ORCPT
+        with ESMTP id S1730233AbeIXSaF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:30:01 -0400
+        Mon, 24 Sep 2018 14:30:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 856FD1018;
-        Mon, 24 Sep 2018 12:28:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C97801018;
+        Mon, 24 Sep 2018 12:28:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 027/235] gfs2: Special-case rindex for gfs2_grow
-Date:   Mon, 24 Sep 2018 13:50:13 +0200
-Message-Id: <20180924113107.427808714@linuxfoundation.org>
+Subject: [PATCH 4.18 028/235] clk: imx6ul: fix missing of_node_put()
+Date:   Mon, 24 Sep 2018 13:50:14 +0200
+Message-Id: <20180924113107.556569596@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,48 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 776125785a87ff05d49938bd5b9f336f2a05bff6 ]
+[ Upstream commit 11177e7a7aaef95935592072985526ebf0a3df43 ]
 
-To speed up the common case of appending to a file,
-gfs2_write_alloc_required presumes that writing beyond the end of a file
-will always require additional blocks to be allocated.  This assumption
-is incorrect for preallocates files, but there are no negative
-consequences as long as *some* space is still left on the filesystem.
+of_find_compatible_node() is returning a device node with refcount
+incremented and must be explicitly decremented after the last use
+which is right after the us in of_iomap() here.
 
-One special file that always has some space preallocated beyond the end
-of the file is the rindex: when growing a filesystem, gfs2_grow adds one
-or more new resource groups and appends records describing those
-resource groups to the rindex; the preallocated space ensures that this
-is always possible.
-
-However, when a filesystem is completely full, gfs2_write_alloc_required
-will indicate that an additional allocation is required, and appending
-the next record to the rindex will fail even though space for that
-record has already been preallocated.  To fix that, skip the incorrect
-optimization in gfs2_write_alloc_required, but for the rindex only.
-Other writes to preallocated space beyond the end of the file are still
-allowed to fail on completely full filesystems.
-
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Reviewed-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/gfs2/bmap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6ul.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -2060,7 +2060,7 @@ int gfs2_write_alloc_required(struct gfs
- 	end_of_file = (i_size_read(&ip->i_inode) + sdp->sd_sb.sb_bsize - 1) >> shift;
- 	lblock = offset >> shift;
- 	lblock_stop = (offset + len + sdp->sd_sb.sb_bsize - 1) >> shift;
--	if (lblock_stop > end_of_file)
-+	if (lblock_stop > end_of_file && ip != GFS2_I(sdp->sd_rindex))
- 		return 1;
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -142,6 +142,7 @@ static void __init imx6ul_clocks_init(st
  
- 	size = (lblock_stop - lblock) << shift;
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-anatop");
+ 	base = of_iomap(np, 0);
++	of_node_put(np);
+ 	WARN_ON(!base);
+ 
+ 	clks[IMX6UL_PLL1_BYPASS_SRC] = imx_clk_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
 
 
