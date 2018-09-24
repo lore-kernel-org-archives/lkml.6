@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2438DECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA34AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE4A020842
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE4A020842
+	by mail.kernel.org (Postfix) with ESMTP id 8BD1621486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD1621486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389386AbeIXSr4 (ORCPT
+        id S2389396AbeIXSsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59852 "EHLO
+        Mon, 24 Sep 2018 14:48:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59864 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730401AbeIXSrz (ORCPT
+        with ESMTP id S1730401AbeIXSsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:55 -0400
+        Mon, 24 Sep 2018 14:48:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3F80109A;
-        Mon, 24 Sep 2018 12:45:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0593109A;
+        Mon, 24 Sep 2018 12:46:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Pintu Agarwal <pintu.ping@gmail.com>,
-        Li Zhijian <lizhijian@cn.fujitsu.com>,
+        stable@vger.kernel.org, Timo Wischer <twischer@de.adit-jv.com>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 212/235] selftests/android: initialize heap_type to avoid compiling warning
-Date:   Mon, 24 Sep 2018 13:53:18 +0200
-Message-Id: <20180924113124.916353987@linuxfoundation.org>
+Subject: [PATCH 4.18 213/235] ALSA: pcm: Fix snd_interval_refine first/last with open min/max
+Date:   Mon, 24 Sep 2018 13:53:19 +0200
+Message-Id: <20180924113124.983012170@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,43 +52,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
+From: Timo Wischer <twischer@de.adit-jv.com>
 
-[ Upstream commit cc7c673032fc7427087e74b75f732b43db38a256 ]
+[ Upstream commit ff2d6acdf6f13d9f8fdcd890844c6d7535ac1f10 ]
 
-Initialize heap_type to ION_HEAP_TYPE_SYSTEM to avoid "used uninitialized"
-compiler warning. heap_type gets used after initialization, this change is
-to just keep the compiler happy.
+Without this commit the following intervals [x y), (x y) were be
+replaced to (y-1 y) by snd_interval_refine_last(). This was also done
+if y-1 is part of the previous interval.
+With this changes it will be replaced with [y-1 y) in case of y-1 is
+part of the previous interval. A similar behavior will be used for
+snd_interval_refine_first().
 
-root@vm-lkp-nex04-8G-7 ~/linux-v4.18-rc2/tools/testing/selftests/android# make
-make[1]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
-make[1]: Entering directory '/root/linux-v4.18-rc2/tools/testing/selftests/android/ion'
-gcc  -I. -I../../../../../drivers/staging/android/uapi/ -I../../../../../usr/include/ -Wall -O2 -g    ionapp_export.c ipcsocket.c ionutils.c   -o ionapp_export
-ionapp_export.c: In function 'main':
-ionapp_export.c:91:2: warning: 'heap_type' may be used uninitialized in
-this function [-Wmaybe-uninitialized]
-  printf("heap_type: %ld, heap_size: %ld\n", heap_type, heap_size);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This commit adapts the changes for alsa-lib of commit
+9bb985c ("pcm: snd_interval_refine_first/last: exclude value only if
+also excluded before")
 
-CC: Shuah Khan <shuah@kernel.org>
-CC: Pintu Agarwal <pintu.ping@gmail.com>
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Timo Wischer <twischer@de.adit-jv.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/android/ion/ionapp_export.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/core/pcm_lib.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/tools/testing/selftests/android/ion/ionapp_export.c
-+++ b/tools/testing/selftests/android/ion/ionapp_export.c
-@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -626,27 +626,33 @@ EXPORT_SYMBOL(snd_interval_refine);
  
- 	heap_size = 0;
- 	flags = 0;
-+	heap_type = ION_HEAP_TYPE_SYSTEM;
+ static int snd_interval_refine_first(struct snd_interval *i)
+ {
++	const unsigned int last_max = i->max;
++
+ 	if (snd_BUG_ON(snd_interval_empty(i)))
+ 		return -EINVAL;
+ 	if (snd_interval_single(i))
+ 		return 0;
+ 	i->max = i->min;
+-	i->openmax = i->openmin;
+-	if (i->openmax)
++	if (i->openmin)
+ 		i->max++;
++	/* only exclude max value if also excluded before refine */
++	i->openmax = (i->openmax && i->max >= last_max);
+ 	return 1;
+ }
  
- 	while ((opt = getopt(argc, argv, "hi:s:")) != -1) {
- 		switch (opt) {
+ static int snd_interval_refine_last(struct snd_interval *i)
+ {
++	const unsigned int last_min = i->min;
++
+ 	if (snd_BUG_ON(snd_interval_empty(i)))
+ 		return -EINVAL;
+ 	if (snd_interval_single(i))
+ 		return 0;
+ 	i->min = i->max;
+-	i->openmin = i->openmax;
+-	if (i->openmin)
++	if (i->openmax)
+ 		i->min--;
++	/* only exclude min value if also excluded before refine */
++	i->openmin = (i->openmin && i->min <= last_min);
+ 	return 1;
+ }
+ 
 
 
