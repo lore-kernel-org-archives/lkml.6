@@ -2,73 +2,72 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CABC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46F2C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B09208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8009F208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:19:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="fID3/n1o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B09208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnVAeZuO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8009F208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732338AbeIYATz (ORCPT
+        id S1728903AbeIYAXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 20:19:55 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45349 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730407AbeIYATy (ORCPT
+        Mon, 24 Sep 2018 20:23:18 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50480 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728455AbeIYAXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 20:19:54 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a23-v6so1691706pfi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 11:16:30 -0700 (PDT)
+        Mon, 24 Sep 2018 20:23:18 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s12-v6so10762667wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 11:19:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pwPxX45gZm6RhM5vkMPVW/U8WnPtyGy8RjrhrRy6BQg=;
-        b=fID3/n1o/jp9PG1h69DDVj4VLN8kHopsqh78fV9/OyBY/nD//flWC6c2JfjS9Hgth3
-         0NLhjmKoM4amGC5QjfGMwydmgOZxuhAhQsWT3qSjonTobEF5bm6vhl90Ea1vEl7LR/NY
-         FilXtuNJIAfWxOPFxWR08aL5u0lrGF6KqAr57+gi2Ck+BrECzvrteLiGSz7zmCLLsgQc
-         8+RLOiZdP00ytLHbHXK4Ocdq3J5xW0de5Q5C8MSvm1Yusfv61Gz1nzxYPjv6cWMVpRuJ
-         drZZGCJtm88NyaAjTFYKLkUt2ckGPnTKc9tzCDyrAtX/2DW1UZMYx/MX3wReP07BGXCF
-         LvbA==
+        bh=osPdFj+6z7qk7EiqhmErk/SA8lAP0sfo6EwqLFqd/Kw=;
+        b=LnVAeZuOBRmPOaSbqKCVLxNc2B47igUSqQytZYh56cSu8j0bC3dvfmq8kF9T+LytQP
+         0QimpmG1XAwyCrKT6q7s9CNZ1ms7JmymaNIziRZfpOfolYFJf7AASePlRgEfn7HcDZ7J
+         ydvLqDl4+Uy5Mi4mEvH9u/9wMPrR3xZmhsleqdX+zKpcMMgVpRfUWChspSNW51h0GASA
+         uvP5TPx9yvKBqxek+/K0pGqQqJjW0vP97eXUJY9UdT60GKWhCLC4lAUOWFJNnmhs32wk
+         Vfx3NGdZ1NfwvPVXF0lXgX+/0bWZhxJHvrNR8bK6jQF6jkJ58bcEdzRN7LMYf4MLBRkR
+         qQSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pwPxX45gZm6RhM5vkMPVW/U8WnPtyGy8RjrhrRy6BQg=;
-        b=Mx9CYmYL+0UljgIf8/RIOU9gjXOqmAZZq4rEfMQiw0lvHxgkxjPEhmBWEmplTter9U
-         Xf/f5+eLuwLR7RR+61Q6TDMWSJhSrtm8Xc5XebR0sjol2WhLnji0LpIDhlZIAJh2zn7a
-         Qf627i3H6WPyYnMVBUVqk9zcJwXZaaIn84Ysb9aBM8BUuuV02Rhp9Ssbvf4xDGewymxT
-         Y/XHQ2TkQFv9Sa2eiXj2kO+GHOvHGHOEjVDhcDYQ9nYNa+lFHfMD0EQBJ3rXmYRSno6m
-         JqCebEIttojcedK5kZ+sXxA21QYahxS0gE6xhVEuuCJS6gZDqHamzDVRtmBOTesNYBZu
-         92Wg==
-X-Gm-Message-State: ABuFfojJjeXw5lvjO+oj/Tvor1r4BmN/gWpky2Xq0CS1gPPepG6yxwms
-        ZkFKoGsZAiD1a5r1JDmrHK0EUw==
-X-Google-Smtp-Source: ACcGV63YVLu+VgDntuhrWVQmosW8hgf8RgGvgsvQOMh8Mgs4LplU27l7EBOYYP9l24bp2JRsc4SSuQ==
-X-Received: by 2002:a62:4e0a:: with SMTP id c10-v6mr35131pfb.240.1537812989947;
-        Mon, 24 Sep 2018 11:16:29 -0700 (PDT)
-Received: from hackmann.mtv.corp.google.com ([2620:0:1000:1601:82f7:8f1:8c08:a97a])
-        by smtp.gmail.com with ESMTPSA id 77-v6sm7991149pfw.159.2018.09.24.11.16.29
+        bh=osPdFj+6z7qk7EiqhmErk/SA8lAP0sfo6EwqLFqd/Kw=;
+        b=pyobg2tlc1/XPpKLNxKr6CUVBKCM+Z++TUgUeQuQFKezrlGIbh72l7JOFyoSVXAuhC
+         YOyVWWI+sixrMQFeT9AhV1CC2RVJsl69L60KzF0WMYqNl59AuI6wLgYCtJ7X32LqObx4
+         A+zdDkSLU7O72BgpwUykn8hGw9L5mXyt0K02HEQ5lybnJRwrylFszsQ3fJjj6co5RCpJ
+         sLEMNl/JHt0qz5i9gKtIh1uwCJutzXqrJXC6R7VNJYgpajWYs1kL0ANE7ovLu2IeypNX
+         fR+H/TWOxcYyg7kLQeyqyDpV+ITgv7Bdg5pRka0+kxEZCaHx9F6FKcvgzR4HR1eGcah+
+         44Yw==
+X-Gm-Message-State: APzg51CxuTwLTEt5623HwjLI5iFd4mfqCgQDL5+E0UAv5RjexLxXfAak
+        0GrCfFJ1AwwrTs3EnJU9keCJsS2ozr7pbw==
+X-Google-Smtp-Source: ACcGV63DYgKEDtvb1KuDOpRG9GDkA303scgCfQC/culYNWneIlZJJARbujDQtTRd3SG5ohFLuXdVXg==
+X-Received: by 2002:a1c:8406:: with SMTP id g6-v6mr8105576wmd.18.1537813191567;
+        Mon, 24 Sep 2018 11:19:51 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id b74-v6sm24046510wma.8.2018.09.24.11.19.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 11:16:29 -0700 (PDT)
-From:   Greg Hackmann <ghackmann@android.com>
-X-Google-Original-From: Greg Hackmann <ghackmann@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Omer Tripp <trippo@google.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] fs: fix possible Spectre V1 indexing in __close_fd()
-Date:   Mon, 24 Sep 2018 11:15:00 -0700
-Message-Id: <20180924181500.125257-1-ghackmann@google.com>
-X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
+        Mon, 24 Sep 2018 11:19:50 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
+Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH RESEND] ocfs2/dlm: Remove unnecessary parentheses
+Date:   Mon, 24 Sep 2018 11:19:30 -0700
+Message-Id: <20180924181929.6853-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,37 +75,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__close_fd() is reachable via the close() syscall with a
-userspace-controlled fd.  Ensure that it can't be used to speculatively
-access past the end of current->fdt.
+Clang warns when more than one set of parentheses is used for a
+single conditional statement:
 
-Reported-by: Omer Tripp <trippo@google.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
+fs/ocfs2/dlm/dlmthread.c:534:18: warning: equality comparison with extraneous
+      parentheses [-Wparentheses-equality]
+        if ((res->owner == dlm->node_num)) {
+             ~~~~~~~~~~~^~~~~~~~~~~~~~~~
+fs/ocfs2/dlm/dlmthread.c:534:18: note: remove extraneous parentheses around the
+      comparison to silence this warning
+        if ((res->owner == dlm->node_num)) {
+            ~           ^               ~
+
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- fs/file.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ocfs2/dlm/dlmthread.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 7ffd6e9d103d..a80cf82be96b 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -18,6 +18,7 @@
- #include <linux/bitops.h>
- #include <linux/spinlock.h>
- #include <linux/rcupdate.h>
-+#include <linux/nospec.h>
+diff --git a/fs/ocfs2/dlm/dlmthread.c b/fs/ocfs2/dlm/dlmthread.c
+index 838a06d4066a..074d5de17bb2 100644
+--- a/fs/ocfs2/dlm/dlmthread.c
++++ b/fs/ocfs2/dlm/dlmthread.c
+@@ -531,7 +531,7 @@ void __dlm_dirty_lockres(struct dlm_ctxt *dlm, struct dlm_lock_resource *res)
+ 	assert_spin_locked(&res->spinlock);
  
- unsigned int sysctl_nr_open __read_mostly = 1024*1024;
- unsigned int sysctl_nr_open_min = BITS_PER_LONG;
-@@ -626,6 +627,7 @@ int __close_fd(struct files_struct *files, unsigned fd)
- 	fdt = files_fdtable(files);
- 	if (fd >= fdt->max_fds)
- 		goto out_unlock;
-+	fd = array_index_nospec(fd, fdt->max_fds);
- 	file = fdt->fd[fd];
- 	if (!file)
- 		goto out_unlock;
+ 	/* don't shuffle secondary queues */
+-	if ((res->owner == dlm->node_num)) {
++	if (res->owner == dlm->node_num) {
+ 		if (res->state & (DLM_LOCK_RES_MIGRATING |
+ 				  DLM_LOCK_RES_BLOCK_DIRTY))
+ 		    return;
 -- 
-2.19.0.397.gdd90340f6a-goog
+2.19.0
 
