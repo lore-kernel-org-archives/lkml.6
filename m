@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C76CC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422B7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5682145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5682145D
+	by mail.kernel.org (Postfix) with ESMTP id ED24B2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED24B2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbeIXR4m (ORCPT
+        id S1729755AbeIXR4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:56:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51818 "EHLO
+        Mon, 24 Sep 2018 13:56:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51828 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729691AbeIXR4l (ORCPT
+        with ESMTP id S1728154AbeIXR4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:56:41 -0400
+        Mon, 24 Sep 2018 13:56:51 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BE1C1071;
-        Mon, 24 Sep 2018 11:54:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EB011072;
+        Mon, 24 Sep 2018 11:55:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 24/70] s390/qeth: fix race in used-buffer accounting
-Date:   Mon, 24 Sep 2018 13:52:23 +0200
-Message-Id: <20180924113101.263155769@linuxfoundation.org>
+Subject: [PATCH 4.4 25/70] s390/qeth: reset layer2 attribute on layer switch
+Date:   Mon, 24 Sep 2018 13:52:24 +0200
+Message-Id: <20180924113101.379835194@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -54,38 +54,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit a702349a4099cd5a7bab0904689d8e0bf8dcd622 ]
+[ Upstream commit 70551dc46ffa3555a0b5f3545b0cd87ab67fd002 ]
 
-By updating q->used_buffers only _after_ do_QDIO() has completed, there
-is a potential race against the buffer's TX completion. In the unlikely
-case that the TX completion path wins, qeth_qdio_output_handler() would
-decrement the counter before qeth_flush_buffers() even incremented it.
+After the subdriver's remove() routine has completed, the card's layer
+mode is undetermined again. Reflect this in the layer2 field.
+
+If qeth_dev_layer2_store() hits an error after remove() was called, the
+card _always_ requires a setup(), even if the previous layer mode is
+requested again.
+But qeth_dev_layer2_store() bails out early if the requested layer mode
+still matches the current one. So unless we reset the layer2 field,
+re-probing the card back to its previous mode is currently not possible.
 
 Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/net/qeth_core_sys.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -3505,13 +3505,14 @@ static void qeth_flush_buffers(struct qe
- 	qdio_flags = QDIO_FLAG_SYNC_OUTPUT;
- 	if (atomic_read(&queue->set_pci_flags_count))
- 		qdio_flags |= QDIO_FLAG_PCI_OUT;
-+	atomic_add(count, &queue->used_buffers);
-+
- 	rc = do_QDIO(CARD_DDEV(queue->card), qdio_flags,
- 		     queue->queue_no, index, count);
- 	if (queue->card->options.performance_stats)
- 		queue->card->perf_stats.outbound_do_qdio_time +=
- 			qeth_get_micros() -
- 			queue->card->perf_stats.outbound_do_qdio_start_time;
--	atomic_add(count, &queue->used_buffers);
- 	if (rc) {
- 		queue->card->stats.tx_errors += count;
- 		/* ignore temporary SIGA errors without busy condition */
+--- a/drivers/s390/net/qeth_core_sys.c
++++ b/drivers/s390/net/qeth_core_sys.c
+@@ -419,6 +419,7 @@ static ssize_t qeth_dev_layer2_store(str
+ 	if (card->discipline) {
+ 		card->discipline->remove(card->gdev);
+ 		qeth_core_free_discipline(card);
++		card->options.layer2 = -1;
+ 	}
+ 
+ 	rc = qeth_core_load_discipline(card, newdis);
 
 
