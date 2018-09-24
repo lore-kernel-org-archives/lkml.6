@@ -6,37 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD90ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E2FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 264382087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264382087A
+	by mail.kernel.org (Postfix) with ESMTP id A22A82087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A22A82087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387893AbeIXSc3 (ORCPT
+        id S2387898AbeIXScd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:32:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57822 "EHLO
+        Mon, 24 Sep 2018 14:32:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57836 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733162AbeIXSc2 (ORCPT
+        with ESMTP id S1731127AbeIXScc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:32:28 -0400
+        Mon, 24 Sep 2018 14:32:32 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80DE71099;
-        Mon, 24 Sep 2018 12:30:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BD911098;
+        Mon, 24 Sep 2018 12:30:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Sandipan Das <sandipan@linux.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 064/235] powerpc/powernv: opal_put_chars partial write fix
-Date:   Mon, 24 Sep 2018 13:50:50 +0200
-Message-Id: <20180924113111.589473383@linuxfoundation.org>
+Subject: [PATCH 4.18 065/235] perf script: Show correct offsets for DWARF-based unwinding
+Date:   Mon, 24 Sep 2018 13:50:51 +0200
+Message-Id: <20180924113111.729043041@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,38 +57,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Sandipan Das <sandipan@linux.ibm.com>
 
-[ Upstream commit bd90284cc6c1c9e8e48c8eadd0c79574fcce0b81 ]
+[ Upstream commit 2a9d5050dc84fa2060f08a52f632976923e0fa7e ]
 
-The intention here is to consume and discard the remaining buffer
-upon error. This works if there has not been a previous partial write.
-If there has been, then total_len is no longer total number of bytes
-to copy. total_len is always "bytes left to copy", so it should be
-added to written bytes.
+When perf/data is recorded with the dwarf call-graph option, the
+callchain shown by 'perf script' still shows the binary offsets of the
+userspace symbols instead of their virtual addresses. Since the symbol
+offset calculation is based on using virtual address as the ip, we see
+incorrect offsets as well.
 
-This code may not be exercised any more if partial writes will not be
-hit, but this is a small bugfix before a larger change.
+The use of virtual addresses affects the ability to find out the
+line number in the corresponding source file to which an address
+maps to as described in commit 67540759151a ("perf unwind: Use
+addr_location::addr instead of ip for entries").
 
-Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+This has also been addressed by temporarily converting the virtual
+address to the correponding binary offset so that it can be mapped
+to the source line number correctly.
+
+This is a follow-up for commit 19610184693c ("perf script: Show
+virtual addresses instead of offsets").
+
+This can be verified on a powerpc64le system running Fedora 27 as
+shown below:
+
+  # perf probe -x /usr/lib64/libc-2.26.so -a inet_pton
+  # perf record -e probe_libc:inet_pton --call-graph=dwarf ping -6 -c 1 ::1
+
+Before:
+
+  # perf report --stdio --no-children -s sym,srcline -g address
+
+  # Samples: 1  of event 'probe_libc:inet_pton'
+  # Event count (approx.): 1
+  #
+  # Overhead  Symbol                Source:Line
+  # ........  ....................  ...........
+  #
+     100.00%  [.] __GI___inet_pton  inet_pton.c
+              |
+              ---gaih_inet getaddrinfo.c:537 (inlined)
+                 __GI_getaddrinfo getaddrinfo.c:2304 (inlined)
+                 main ping.c:519
+                 generic_start_main libc-start.c:308 (inlined)
+                 __libc_start_main libc-start.c:102
+  ...
+
+  # perf script -F comm,ip,sym,symoff,srcline,dso
+
+  ping
+                    15af28 __GI___inet_pton+0xffff000099160008 (/usr/lib64/libc-2.26.so)
+    libc-2.26.so[ffff80004ca0af28]
+                    10fa53 gaih_inet+0xffff000099160f43
+    libc-2.26.so[ffff80004c9bfa53] (inlined)
+                    1105b3 __GI_getaddrinfo+0xffff000099160163
+    libc-2.26.so[ffff80004c9c05b3] (inlined)
+                      2d6f main+0xfffffffd9f1003df (/usr/bin/ping)
+    ping[fffffffecf882d6f]
+                     2369f generic_start_main+0xffff00009916013f
+    libc-2.26.so[ffff80004c8d369f] (inlined)
+                     23897 __libc_start_main+0xffff0000991600b7 (/usr/lib64/libc-2.26.so)
+    libc-2.26.so[ffff80004c8d3897]
+
+After:
+
+  # perf report --stdio --no-children -s sym,srcline -g address
+
+  # Samples: 1  of event 'probe_libc:inet_pton'
+  # Event count (approx.): 1
+  #
+  # Overhead  Symbol                Source:Line
+  # ........  ....................  ...........
+  #
+     100.00%  [.] __GI___inet_pton  inet_pton.c
+              |
+              ---gaih_inet.constprop.7 getaddrinfo.c:537
+                 getaddrinfo getaddrinfo.c:2304
+                 main ping.c:519
+                 generic_start_main.isra.0 libc-start.c:308
+                 __libc_start_main libc-start.c:102
+  ...
+
+  # perf script -F comm,ip,sym,symoff,srcline,dso
+
+  ping
+              7fffb38aaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
+    inet_pton.c:68
+              7fffb385fa53 gaih_inet.constprop.7+0xf43 (/usr/lib64/libc-2.26.so)
+    getaddrinfo.c:537
+              7fffb38605b3 getaddrinfo+0x163 (/usr/lib64/libc-2.26.so)
+    getaddrinfo.c:2304
+                 130782d6f main+0x3df (/usr/bin/ping)
+    ping.c:519
+              7fffb377369f generic_start_main.isra.0+0x13f (/usr/lib64/libc-2.26.so)
+    libc-start.c:308
+              7fffb3773897 __libc_start_main+0xb7 (/usr/lib64/libc-2.26.so)
+    libc-start.c:102
+
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Fixes: 67540759151a ("perf unwind: Use addr_location::addr instead of ip for entries")
+Link: http://lkml.kernel.org/r/20180703120555.32971-1-sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/opal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/machine.c                |    9 ++++++++-
+ tools/perf/util/unwind-libdw.c           |    2 +-
+ tools/perf/util/unwind-libunwind-local.c |    2 +-
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -388,7 +388,7 @@ int opal_put_chars(uint32_t vtermno, con
- 		/* Closed or other error drop */
- 		if (rc != OPAL_SUCCESS && rc != OPAL_BUSY &&
- 		    rc != OPAL_BUSY_EVENT) {
--			written = total_len;
-+			written += total_len;
- 			break;
- 		}
- 		if (rc == OPAL_SUCCESS) {
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2272,6 +2272,7 @@ static int unwind_entry(struct unwind_en
+ {
+ 	struct callchain_cursor *cursor = arg;
+ 	const char *srcline = NULL;
++	u64 addr;
+ 
+ 	if (symbol_conf.hide_unresolved && entry->sym == NULL)
+ 		return 0;
+@@ -2279,7 +2280,13 @@ static int unwind_entry(struct unwind_en
+ 	if (append_inlines(cursor, entry->map, entry->sym, entry->ip) == 0)
+ 		return 0;
+ 
+-	srcline = callchain_srcline(entry->map, entry->sym, entry->ip);
++	/*
++	 * Convert entry->ip from a virtual address to an offset in
++	 * its corresponding binary.
++	 */
++	addr = map__map_ip(entry->map, entry->ip);
++
++	srcline = callchain_srcline(entry->map, entry->sym, addr);
+ 	return callchain_cursor_append(cursor, entry->ip,
+ 				       entry->map, entry->sym,
+ 				       false, NULL, 0, 0, 0, srcline);
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -77,7 +77,7 @@ static int entry(u64 ip, struct unwind_i
+ 	if (__report_module(&al, ip, ui))
+ 		return -1;
+ 
+-	e->ip  = al.addr;
++	e->ip  = ip;
+ 	e->map = al.map;
+ 	e->sym = al.sym;
+ 
+--- a/tools/perf/util/unwind-libunwind-local.c
++++ b/tools/perf/util/unwind-libunwind-local.c
+@@ -575,7 +575,7 @@ static int entry(u64 ip, struct thread *
+ 	struct addr_location al;
+ 
+ 	e.sym = thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
+-	e.ip = al.addr;
++	e.ip  = ip;
+ 	e.map = al.map;
+ 
+ 	pr_debug("unwind: %s:ip = 0x%" PRIx64 " (0x%" PRIx64 ")\n",
 
 
