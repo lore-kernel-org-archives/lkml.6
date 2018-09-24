@@ -2,48 +2,43 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D75C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0CDC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F30821486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F30821486
+	by mail.kernel.org (Postfix) with ESMTP id F29242148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29242148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732379AbeIXSXx (ORCPT
+        id S1732413AbeIXSX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:23:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56304 "EHLO
+        Mon, 24 Sep 2018 14:23:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56322 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730513AbeIXSXw (ORCPT
+        with ESMTP id S1732170AbeIXSX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:23:52 -0400
+        Mon, 24 Sep 2018 14:23:56 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00B3D10A7;
-        Mon, 24 Sep 2018 12:21:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41EB910AB;
+        Mon, 24 Sep 2018 12:22:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, akiyks@gmail.com,
-        boqun.feng@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        linux-arch@vger.kernel.org, luc.maranget@inria.fr,
-        npiggin@gmail.com, parri.andrea@gmail.com,
-        stern@rowland.harvard.edu, will.deacon@arm.com,
-        Ingo Molnar <mingo@kernel.org>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 121/173] sched/core: Use smp_mb() in wake_woken_function()
-Date:   Mon, 24 Sep 2018 13:52:35 +0200
-Message-Id: <20180924113124.853998762@linuxfoundation.org>
+Subject: [PATCH 4.14 122/173] efi/esrt: Only call efi_mem_reserve() for boot services memory
+Date:   Mon, 24 Sep 2018 13:52:36 +0200
+Message-Id: <20180924113124.914120374@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -61,128 +56,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit 76e079fefc8f62bd9b2cd2950814d1ee806e31a5 ]
+[ Upstream commit 61f0d55569463a1af897117ff47d202b0ccb2e24 ]
 
-wake_woken_function() synchronizes with wait_woken() as follows:
+The following commit:
 
-  [wait_woken]                       [wake_woken_function]
+  7e1550b8f208 ("efi: Drop type and attribute checks in efi_mem_desc_lookup()")
 
-  entry->flags &= ~wq_flag_woken;    condition = true;
-  smp_mb();                          smp_wmb();
-  if (condition)                     wq_entry->flags |= wq_flag_woken;
-     break;
+refactored the implementation of efi_mem_desc_lookup() so that the type
+check is moved to the callers, one of which is the x86 version of
+efi_arch_mem_reserve(), where we added a modified check that only takes
+EFI_BOOT_SERVICES_DATA regions into account.
 
-This commit replaces the above smp_wmb() with an smp_mb() in order to
-guarantee that either wait_woken() sees the wait condition being true
-or the store to wq_entry->flags in woken_wake_function() follows the
-store in wait_woken() in the coherence order (so that the former can
-eventually be observed by wait_woken()).
+This is reasonable, since it is the only memory type that requires this,
+but doing so uncovered some unexpected behavior in the ESRT code, which
+permits the ESRT table to reside in other types of memory than what the
+UEFI spec mandates (i.e., EFI_BOOT_SERVICES_DATA), and unconditionally
+calls efi_mem_reserve() on the region in question. This may result in
+errors such as
 
-The commit also fixes a comment associated to set_current_state() in
-wait_woken(): the comment pairs the barrier in set_current_state() to
-the above smp_wmb(), while the actual pairing involves the barrier in
-set_current_state() and the barrier executed by the try_to_wake_up()
-in wake_woken_function().
+  esrt: Reserving ESRT space from 0x000000009c810318 to 0x000000009c810350.
+  efi: Failed to lookup EFI memory descriptor for 0x000000009c810318
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+when the ESRT table is not in EFI_BOOT_SERVICES_DATA memory, but we try
+to reserve it nonetheless.
+
+So make the call to efi_mem_reserve() conditional on the memory type.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Jones <pjones@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akiyks@gmail.com
-Cc: boqun.feng@gmail.com
-Cc: dhowells@redhat.com
-Cc: j.alglave@ucl.ac.uk
-Cc: linux-arch@vger.kernel.org
-Cc: luc.maranget@inria.fr
-Cc: npiggin@gmail.com
-Cc: parri.andrea@gmail.com
-Cc: stern@rowland.harvard.edu
-Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/20180716180605.16115-10-paulmck@linux.vnet.ibm.com
+Cc: linux-efi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/wait.c |   47 +++++++++++++++++++++--------------------------
- 1 file changed, 21 insertions(+), 26 deletions(-)
+ drivers/firmware/efi/esrt.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/wait.c
-+++ b/kernel/sched/wait.c
-@@ -395,35 +395,36 @@ static inline bool is_kthread_should_sto
-  *     if (condition)
-  *         break;
-  *
-- *     p->state = mode;				condition = true;
-- *     smp_mb(); // A				smp_wmb(); // C
-- *     if (!wq_entry->flags & WQ_FLAG_WOKEN)	wq_entry->flags |= WQ_FLAG_WOKEN;
-- *         schedule()				try_to_wake_up();
-- *     p->state = TASK_RUNNING;		    ~~~~~~~~~~~~~~~~~~
-- *     wq_entry->flags &= ~WQ_FLAG_WOKEN;		condition = true;
-- *     smp_mb() // B				smp_wmb(); // C
-- *						wq_entry->flags |= WQ_FLAG_WOKEN;
-- * }
-- * remove_wait_queue(&wq_head, &wait);
-+ *     // in wait_woken()			// in woken_wake_function()
-  *
-+ *     p->state = mode;				wq_entry->flags |= WQ_FLAG_WOKEN;
-+ *     smp_mb(); // A				try_to_wake_up():
-+ *     if (!(wq_entry->flags & WQ_FLAG_WOKEN))	   <full barrier>
-+ *         schedule()				   if (p->state & mode)
-+ *     p->state = TASK_RUNNING;			      p->state = TASK_RUNNING;
-+ *     wq_entry->flags &= ~WQ_FLAG_WOKEN;	~~~~~~~~~~~~~~~~~~
-+ *     smp_mb(); // B				condition = true;
-+ * }						smp_mb(); // C
-+ * remove_wait_queue(&wq_head, &wait);		wq_entry->flags |= WQ_FLAG_WOKEN;
-  */
- long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
- {
--	set_current_state(mode); /* A */
- 	/*
--	 * The above implies an smp_mb(), which matches with the smp_wmb() from
--	 * woken_wake_function() such that if we observe WQ_FLAG_WOKEN we must
--	 * also observe all state before the wakeup.
-+	 * The below executes an smp_mb(), which matches with the full barrier
-+	 * executed by the try_to_wake_up() in woken_wake_function() such that
-+	 * either we see the store to wq_entry->flags in woken_wake_function()
-+	 * or woken_wake_function() sees our store to current->state.
- 	 */
-+	set_current_state(mode); /* A */
- 	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !is_kthread_should_stop())
- 		timeout = schedule_timeout(timeout);
- 	__set_current_state(TASK_RUNNING);
+--- a/drivers/firmware/efi/esrt.c
++++ b/drivers/firmware/efi/esrt.c
+@@ -333,7 +333,8 @@ void __init efi_esrt_init(void)
  
- 	/*
--	 * The below implies an smp_mb(), it too pairs with the smp_wmb() from
--	 * woken_wake_function() such that we must either observe the wait
--	 * condition being true _OR_ WQ_FLAG_WOKEN such that we will not miss
--	 * an event.
-+	 * The below executes an smp_mb(), which matches with the smp_mb() (C)
-+	 * in woken_wake_function() such that either we see the wait condition
-+	 * being true or the store to wq_entry->flags in woken_wake_function()
-+	 * follows ours in the coherence order.
- 	 */
- 	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); /* B */
+ 	end = esrt_data + size;
+ 	pr_info("Reserving ESRT space from %pa to %pa.\n", &esrt_data, &end);
+-	efi_mem_reserve(esrt_data, esrt_data_size);
++	if (md.type == EFI_BOOT_SERVICES_DATA)
++		efi_mem_reserve(esrt_data, esrt_data_size);
  
-@@ -433,14 +434,8 @@ EXPORT_SYMBOL(wait_woken);
- 
- int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
- {
--	/*
--	 * Although this function is called under waitqueue lock, LOCK
--	 * doesn't imply write barrier and the users expects write
--	 * barrier semantics on wakeup functions.  The following
--	 * smp_wmb() is equivalent to smp_wmb() in try_to_wake_up()
--	 * and is paired with smp_store_mb() in wait_woken().
--	 */
--	smp_wmb(); /* C */
-+	/* Pairs with the smp_store_mb() in wait_woken(). */
-+	smp_mb(); /* C */
- 	wq_entry->flags |= WQ_FLAG_WOKEN;
- 
- 	return default_wake_function(wq_entry, mode, sync, key);
+ 	pr_debug("esrt-init: loaded.\n");
+ err_memunmap:
 
 
