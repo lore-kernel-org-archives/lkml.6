@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2672C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B28C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA32D20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA32D20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 97B09208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97B09208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732052AbeIXSRN (ORCPT
+        id S1732066AbeIXSRQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55552 "EHLO
+        Mon, 24 Sep 2018 14:17:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55562 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSRM (ORCPT
+        with ESMTP id S1730150AbeIXSRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:12 -0400
+        Mon, 24 Sep 2018 14:17:15 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5418D10A5;
-        Mon, 24 Sep 2018 12:15:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA67910A7;
+        Mon, 24 Sep 2018 12:15:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 056/173] arm64: fix possible spectre-v1 write in ptrace_hbp_set_event()
-Date:   Mon, 24 Sep 2018 13:51:30 +0200
-Message-Id: <20180924113120.104243611@linuxfoundation.org>
+Subject: [PATCH 4.14 057/173] reset: imx7: Fix always writing bits as 0
+Date:   Mon, 24 Sep 2018 13:51:31 +0200
+Message-Id: <20180924113120.195338268@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,57 +53,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit 14d6e289a89780377f8bb09de8926d3c62d763cd ]
+[ Upstream commit 26fce0557fa639fb7bbc33e31a57cff7df25c3a0 ]
 
-It's possible for userspace to control idx. Sanitize idx when using it
-as an array index, to inhibit the potential spectre-v1 write gadget.
+Right now the only user of reset-imx7 is pci-imx6 and the
+reset_control_assert and deassert calls on pciephy_reset don't toggle
+the PCIEPHY_BTN and PCIEPHY_G_RST bits as expected. Fix this by writing
+1 or 0 respectively.
 
-Found by smatch.
+The reference manual is not very clear regarding SRC_PCIEPHY_RCR but for
+other registers like MIPIPHY and HSICPHY the bits are explicitly
+documented as "1 means assert, 0 means deassert".
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+The values are still reversed for IMX7_RESET_PCIE_CTRL_APPS_EN.
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/ptrace.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/reset/reset-imx7.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -274,19 +274,22 @@ static int ptrace_hbp_set_event(unsigned
+--- a/drivers/reset/reset-imx7.c
++++ b/drivers/reset/reset-imx7.c
+@@ -80,7 +80,7 @@ static int imx7_reset_set(struct reset_c
+ {
+ 	struct imx7_src *imx7src = to_imx7_src(rcdev);
+ 	const struct imx7_src_signal *signal = &imx7_src_signals[id];
+-	unsigned int value = 0;
++	unsigned int value = assert ? signal->bit : 0;
  
- 	switch (note_type) {
- 	case NT_ARM_HW_BREAK:
--		if (idx < ARM_MAX_BRP) {
--			tsk->thread.debug.hbp_break[idx] = bp;
--			err = 0;
--		}
-+		if (idx >= ARM_MAX_BRP)
-+			goto out;
-+		idx = array_index_nospec(idx, ARM_MAX_BRP);
-+		tsk->thread.debug.hbp_break[idx] = bp;
-+		err = 0;
- 		break;
- 	case NT_ARM_HW_WATCH:
--		if (idx < ARM_MAX_WRP) {
--			tsk->thread.debug.hbp_watch[idx] = bp;
--			err = 0;
--		}
-+		if (idx >= ARM_MAX_WRP)
-+			goto out;
-+		idx = array_index_nospec(idx, ARM_MAX_WRP);
-+		tsk->thread.debug.hbp_watch[idx] = bp;
-+		err = 0;
- 		break;
- 	}
- 
-+out:
- 	return err;
- }
- 
+ 	switch (id) {
+ 	case IMX7_RESET_PCIEPHY:
 
 
