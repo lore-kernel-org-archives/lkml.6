@@ -2,212 +2,151 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD11AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1B9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88FB421486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:19:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88FB421486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id DB43321486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:19:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CUxsK2Aa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB43321486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeIXPUa (ORCPT
+        id S1728430AbeIXPUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:20:30 -0400
-Received: from shell.v3.sk ([90.176.6.54]:58700 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727786AbeIXPU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:20:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 717EABA230;
-        Mon, 24 Sep 2018 11:19:19 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id n06MwWgG069I; Mon, 24 Sep 2018 11:19:16 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 6E464BA25C;
-        Mon, 24 Sep 2018 11:19:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id abSVPPYozE_a; Mon, 24 Sep 2018 11:19:15 +0200 (CEST)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id AD3C8BA230;
-        Mon, 24 Sep 2018 11:19:15 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     libertas-dev@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] libertas: return errno from lbs_add_card()
-Date:   Mon, 24 Sep 2018 11:18:53 +0200
-Message-Id: <20180924091853.452055-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.0
+        Mon, 24 Sep 2018 11:20:46 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52752 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeIXPUq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:20:46 -0400
+Received: by mail-it1-f196.google.com with SMTP id h3-v6so9588487ita.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 02:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rS1mqpxBCQG2vYOjlLWLe8grWSn6psHa6d8/gEao3RQ=;
+        b=CUxsK2AaMGXsYBs10gOijRXjTaNpaV4Q0sBe+bVWJbCm4aN4UroDEDmBIOcOoiHmlw
+         KGOqJtT56YMlZf4VbQtNQw/bHoEE9vgrwl0pB05PFUMSl6VPlr264zKWfKBBhQl3a5pO
+         bEWRZQ9BUmcO1+p4JMDehtx9dPJZOm7ehN9J3SAfA32uTo/PxWIHPFffPW0/qg10BSeK
+         15UiRzcN0z6BywRM0EnqOqZvnN2EenEO+FIT3P3LNGQhMzIE6wZ/4bzeC2opvOSTfIHQ
+         JwoUNOkt0jZ4/HGVE6uZs0SsMZ9ikORLB52WAFONeqPqA5F+R19U445stSV2+mE2q6I3
+         5rfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rS1mqpxBCQG2vYOjlLWLe8grWSn6psHa6d8/gEao3RQ=;
+        b=DCltKzZ1q1WQMbpj42uSQTyQDGNio3Q0ZDkBYsbkt6U9phOet0RP4GFsByOfzPhXEK
+         zzqDlI18p+rimn0DVUsMtLPyhd/MerL1ZnrVFaf+aPrkTeFVO/4ohlZGFTb04L6GIfk5
+         eLWaOxcPHsX1+qUfPlIsISvQI12Ga8R/04EJlnduUiOIt+g8nFm+Z+6EIgySGlXimQr/
+         U43uGSMF27DYKH2zQHh91JvhPUgI3BD0hKWBY94Sn3EIjdBBwUrV5QIJw4t4gIQOSxzM
+         e2aJEQBlYgSk56XOXBLCEBBmsnVTQ+yqZ4X2nfeDgK0INCUg7Np/A2/iccwzDpNUO6Yw
+         z/SA==
+X-Gm-Message-State: ABuFfoguTtMZEDN4nS11KTNpA6n5xAizE5HGb/g/EdNZG0RgQ79lkMvt
+        GhDyhZbgD5BScLuhAqifPucIH+j9+6gnmDLaZrxJ5w==
+X-Google-Smtp-Source: ACcGV61KROE549eGpZAoEPJotXYLQ1GsMcQyeqFp6ed9F0BFlTX8vKqis1OS8Kz6X2l/g9GUME9qJJBzL7ApBnh2zrA=
+X-Received: by 2002:a24:d286:: with SMTP id z128-v6mr6873183itf.14.1537780778120;
+ Mon, 24 Sep 2018 02:19:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 02:19:17
+ -0700 (PDT)
+In-Reply-To: <CAAeHK+zBh0BiYq65QDxD-nxkHHF0QL6UQx8fs40K39R6XJJfzA@mail.gmail.com>
+References: <cover.1537383101.git.andreyknvl@google.com> <d74e710797323db0e43f047ea698fbc85060fc57.1537383101.git.andreyknvl@google.com>
+ <CACT4Y+aoFSySFTd9FzA0xzRYQXSbs-wzX7B67hD3jTGAQEXBOA@mail.gmail.com> <CAAeHK+zBh0BiYq65QDxD-nxkHHF0QL6UQx8fs40K39R6XJJfzA@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 24 Sep 2018 11:19:17 +0200
+Message-ID: <CACT4Y+b6qe1S_4dAhYGPm0r1nFWW4Fn1rCNbSZW-7w7jMpcTtQ@mail.gmail.com>
+Subject: Re: [PATCH v8 09/20] kasan: preassign tags to objects with ctors or SLAB_TYPESAFE_BY_RCU
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Makes lbs_add_card() longer throw away the errno and lets its callers
-propagate it instead.
+On Fri, Sep 21, 2018 at 2:24 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> On Fri, Sep 21, 2018 at 1:25 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Wed, Sep 19, 2018 at 8:54 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+>
+>>>         if (!shuffle) {
+>>>                 for_each_object_idx(p, idx, s, start, page->objects) {
+>>> -                       setup_object(s, page, p);
+>>> -                       if (likely(idx < page->objects))
+>>> -                               set_freepointer(s, p, p + s->size);
+>>> -                       else
+>>> +                       if (likely(idx < page->objects)) {
+>>> +                               next = p + s->size;
+>>> +                               next = setup_object(s, page, next);
+>>> +                               set_freepointer(s, p, next);
+>>> +                       } else
+>>>                                 set_freepointer(s, p, NULL);
+>>>                 }
+>>> -               page->freelist = fixup_red_left(s, start);
+>>> +               start = fixup_red_left(s, start);
+>>> +               start = setup_object(s, page, start);
+>>> +               page->freelist = start;
+>>>         }
+>>
+>> Just want to double-check that this is correct.
+>> We now do an additional setup_object call after the loop, but we do 1
+>> less in the loop. So total number of calls should be the same, right?
+>> However, after the loop we call setup_object for the first object (?),
+>> but inside of the loop we skip the call for the last object (?). Am I
+>> missing something, or we call ctor twice for the last object and don't
+>> call it for the first one?
+>
+> Inside the loop we call setup_object for the "next" object. So we
+> start iterating on the first one, but call setup_object for the
+> second. Then the loop moves on to the second one and calls
+> setup_object for the third. And so on. So the loop calls setup_object
+> for every object (including the last one) except for the first one.
+>
+> The idea is that we want the freelist pointer that is stored in the
+> current object to have a tagged pointer to the next one, so we need to
+> assign a tag to the next object before storing the pointer in the
+> current one.
 
-Basicaly a cosmetical thing. Used to be a part of a patchset that I
-discarded, but it still make sense to apply this one, because it makes th=
-e
-error handling somewhat cleaner.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/net/wireless/marvell/libertas/if_cs.c   |  4 ++--
- drivers/net/wireless/marvell/libertas/if_sdio.c |  4 ++--
- drivers/net/wireless/marvell/libertas/if_spi.c  |  4 ++--
- drivers/net/wireless/marvell/libertas/if_usb.c  |  5 ++++-
- drivers/net/wireless/marvell/libertas/main.c    | 17 ++++++++++-------
- 5 files changed, 20 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/wireless/marvell/libertas/if_cs.c b/drivers/net/=
-wireless/marvell/libertas/if_cs.c
-index 7d88223f890b..cebf03c6a622 100644
---- a/drivers/net/wireless/marvell/libertas/if_cs.c
-+++ b/drivers/net/wireless/marvell/libertas/if_cs.c
-@@ -900,8 +900,8 @@ static int if_cs_probe(struct pcmcia_device *p_dev)
-=20
- 	/* Make this card known to the libertas driver */
- 	priv =3D lbs_add_card(card, &p_dev->dev);
--	if (!priv) {
--		ret =3D -ENOMEM;
-+	if (IS_ERR(priv)) {
-+		ret =3D PTR_ERR(priv);
- 		goto out2;
- 	}
-=20
-diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/ne=
-t/wireless/marvell/libertas/if_sdio.c
-index 43743c26c071..2fd54a0aeb5a 100644
---- a/drivers/net/wireless/marvell/libertas/if_sdio.c
-+++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
-@@ -1206,8 +1206,8 @@ static int if_sdio_probe(struct sdio_func *func,
-=20
-=20
- 	priv =3D lbs_add_card(card, &func->dev);
--	if (!priv) {
--		ret =3D -ENOMEM;
-+	if (IS_ERR(priv)) {
-+		ret =3D PTR_ERR(priv);
- 		goto free;
- 	}
-=20
-diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net=
-/wireless/marvell/libertas/if_spi.c
-index e9aec6cb1105..47cee494eb62 100644
---- a/drivers/net/wireless/marvell/libertas/if_spi.c
-+++ b/drivers/net/wireless/marvell/libertas/if_spi.c
-@@ -1146,8 +1146,8 @@ static int if_spi_probe(struct spi_device *spi)
- 	 * This will call alloc_etherdev.
- 	 */
- 	priv =3D lbs_add_card(card, &spi->dev);
--	if (!priv) {
--		err =3D -ENOMEM;
-+	if (IS_ERR(priv)) {
-+		ret =3D PTR_ERR(priv);
- 		goto free_card;
- 	}
- 	card->priv =3D priv;
-diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net=
-/wireless/marvell/libertas/if_usb.c
-index c67a8e7be310..66dc6aeeadbc 100644
---- a/drivers/net/wireless/marvell/libertas/if_usb.c
-+++ b/drivers/net/wireless/marvell/libertas/if_usb.c
-@@ -254,8 +254,11 @@ static int if_usb_probe(struct usb_interface *intf,
- 		goto dealloc;
- 	}
-=20
--	if (!(priv =3D lbs_add_card(cardp, &intf->dev)))
-+	priv =3D lbs_add_card(cardp, &intf->dev);
-+	if (IS_ERR(priv)) {
-+		ret =3D PTR_ERR(priv);
- 		goto err_add_card;
-+	}
-=20
- 	cardp->priv =3D priv;
-=20
-diff --git a/drivers/net/wireless/marvell/libertas/main.c b/drivers/net/w=
-ireless/marvell/libertas/main.c
-index f22e1c220cba..f7db60bc7c7f 100644
---- a/drivers/net/wireless/marvell/libertas/main.c
-+++ b/drivers/net/wireless/marvell/libertas/main.c
-@@ -907,25 +907,29 @@ struct lbs_private *lbs_add_card(void *card, struct=
- device *dmdev)
- 	struct net_device *dev;
- 	struct wireless_dev *wdev;
- 	struct lbs_private *priv =3D NULL;
-+	int err;
-=20
- 	/* Allocate an Ethernet device and register it */
- 	wdev =3D lbs_cfg_alloc(dmdev);
- 	if (IS_ERR(wdev)) {
-+		err =3D PTR_ERR(wdev);
- 		pr_err("cfg80211 init failed\n");
--		goto done;
-+		goto err_cfg;
- 	}
-=20
- 	wdev->iftype =3D NL80211_IFTYPE_STATION;
- 	priv =3D wdev_priv(wdev);
- 	priv->wdev =3D wdev;
-=20
--	if (lbs_init_adapter(priv)) {
-+	err =3D lbs_init_adapter(priv);
-+	if (err) {
- 		pr_err("failed to initialize adapter structure\n");
- 		goto err_wdev;
- 	}
-=20
- 	dev =3D alloc_netdev(0, "wlan%d", NET_NAME_UNKNOWN, ether_setup);
- 	if (!dev) {
-+		err =3D -ENOMEM;
- 		dev_err(dmdev, "no memory for network device instance\n");
- 		goto err_adapter;
- 	}
-@@ -949,6 +953,7 @@ struct lbs_private *lbs_add_card(void *card, struct d=
-evice *dmdev)
- 	init_waitqueue_head(&priv->waitq);
- 	priv->main_thread =3D kthread_run(lbs_thread, dev, "lbs_main");
- 	if (IS_ERR(priv->main_thread)) {
-+		err =3D PTR_ERR(priv->main_thread);
- 		lbs_deb_thread("Error creating main thread.\n");
- 		goto err_ndev;
- 	}
-@@ -961,7 +966,7 @@ struct lbs_private *lbs_add_card(void *card, struct d=
-evice *dmdev)
- 	priv->wol_gap =3D 20;
- 	priv->ehs_remove_supported =3D true;
-=20
--	goto done;
-+	return priv;
-=20
-  err_ndev:
- 	free_netdev(dev);
-@@ -972,10 +977,8 @@ struct lbs_private *lbs_add_card(void *card, struct =
-device *dmdev)
-  err_wdev:
- 	lbs_cfg_free(priv);
-=20
--	priv =3D NULL;
--
--done:
--	return priv;
-+ err_cfg:
-+	return ERR_PTR(err);
- }
- EXPORT_SYMBOL_GPL(lbs_add_card);
-=20
---=20
-2.19.0
-
+Ah, OK, then false alarm.
