@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13592C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7DBECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD97321486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD97321486
+	by mail.kernel.org (Postfix) with ESMTP id 4108D21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4108D21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388158AbeIXSeQ (ORCPT
+        id S2388170AbeIXSeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:34:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58126 "EHLO
+        Mon, 24 Sep 2018 14:34:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58136 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730184AbeIXSeP (ORCPT
+        with ESMTP id S2387409AbeIXSeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:34:15 -0400
+        Mon, 24 Sep 2018 14:34:18 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 503951018;
-        Mon, 24 Sep 2018 12:32:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81DC01018;
+        Mon, 24 Sep 2018 12:32:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Hanna Hawa <hannah@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 091/235] iommu/ipmmu-vmsa: IMUCTRn.TTSEL needs a special usage on R-Car Gen3
-Date:   Mon, 24 Sep 2018 13:51:17 +0200
-Message-Id: <20180924113114.268291507@linuxfoundation.org>
+Subject: [PATCH 4.18 092/235] dmaengine: mv_xor_v2: kill the tasklets upon exit
+Date:   Mon, 24 Sep 2018 13:51:18 +0200
+Message-Id: <20180924113114.349238780@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,62 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Hanna Hawa <hannah@marvell.com>
 
-[ Upstream commit 2ae86955703e9e6a119af4bbe27f6b6dd7a43131 ]
+[ Upstream commit 8bbafed8dd5cfa81071b50ead5cb60367fdef3a9 ]
 
-The TTSEL bit of IMUCTRn register of R-Car Gen3 needs to be set
-unused MMU context number even if uTLBs are disabled
-(The MMUEN bit of IMUCTRn register = 0).
-Since initial values of IMUCTRn.TTSEL on all IPMMU-domains are 0,
-this patch adds a new feature "reserved_context" to reserve IPMMU
-context number 0 as the unused MMU context.
+The mv_xor_v2 driver uses a tasklet, initialized during the probe()
+routine. However, it forgets to cleanup the tasklet using
+tasklet_kill() function during the remove() routine, which this patch
+fixes. This prevents the tasklet from potentially running after the
+module has been removed.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 19a340b1a820 ("dmaengine: mv_xor_v2: new driver")
+
+Signed-off-by: Hanna Hawa <hannah@marvell.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/ipmmu-vmsa.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/dma/mv_xor_v2.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -47,6 +47,7 @@ struct ipmmu_features {
- 	unsigned int number_of_contexts;
- 	bool setup_imbuscr;
- 	bool twobit_imttbcr_sl0;
-+	bool reserved_context;
- };
+--- a/drivers/dma/mv_xor_v2.c
++++ b/drivers/dma/mv_xor_v2.c
+@@ -899,6 +899,8 @@ static int mv_xor_v2_remove(struct platf
  
- struct ipmmu_vmsa_device {
-@@ -916,6 +917,7 @@ static const struct ipmmu_features ipmmu
- 	.number_of_contexts = 1, /* software only tested with one context */
- 	.setup_imbuscr = true,
- 	.twobit_imttbcr_sl0 = false,
-+	.reserved_context = false,
- };
+ 	platform_msi_domain_free_irqs(&pdev->dev);
  
- static const struct ipmmu_features ipmmu_features_r8a7795 = {
-@@ -924,6 +926,7 @@ static const struct ipmmu_features ipmmu
- 	.number_of_contexts = 8,
- 	.setup_imbuscr = false,
- 	.twobit_imttbcr_sl0 = true,
-+	.reserved_context = true,
- };
- 
- static const struct of_device_id ipmmu_of_ids[] = {
-@@ -1017,6 +1020,11 @@ static int ipmmu_probe(struct platform_d
- 		}
- 
- 		ipmmu_device_reset(mmu);
++	tasklet_kill(&xor_dev->irq_tasklet);
 +
-+		if (mmu->features->reserved_context) {
-+			dev_info(&pdev->dev, "IPMMU context 0 is reserved\n");
-+			set_bit(0, mmu->ctx);
-+		}
- 	}
+ 	clk_disable_unprepare(xor_dev->clk);
  
- 	/*
+ 	return 0;
 
 
