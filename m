@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B655EECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 814F5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B55E21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B55E21486
+	by mail.kernel.org (Postfix) with ESMTP id 46E5C21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46E5C21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbeIXSAE (ORCPT
+        id S1730387AbeIXSAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:00:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52366 "EHLO
+        Mon, 24 Sep 2018 14:00:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52372 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729146AbeIXSAD (ORCPT
+        with ESMTP id S1729245AbeIXSAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:00:03 -0400
+        Mon, 24 Sep 2018 14:00:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB9DED64;
-        Mon, 24 Sep 2018 11:58:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EA09D64;
+        Mon, 24 Sep 2018 11:58:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 4.4 38/70] usb: host: u132-hcd: Fix a sleep-in-atomic-context bug in u132_get_frame()
-Date:   Mon, 24 Sep 2018 13:52:37 +0200
-Message-Id: <20180924113103.860378395@linuxfoundation.org>
+        stable@vger.kernel.org, Laurent Roux <xpros64@hotmail.fr>
+Subject: [PATCH 4.4 39/70] USB: add quirk for WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
+Date:   Mon, 24 Sep 2018 13:52:38 +0200
+Message-Id: <20180924113104.137288009@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -50,50 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Maxence Duprès <xpros64@hotmail.fr>
 
-commit 6d4f268fa132742fe96dad22307c68d237356d88 upstream.
+commit 9b83a1c301ad6d24988a128c69b42cbaaf537d82 upstream.
 
-i_usX2Y_subs_startup in usbusx2yaudio.c is a completion handler function
-for the USB driver. So it should not sleep, but it is can sleep
-according to the function call paths (from bottom to top) in Linux-4.16.
+WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
+cause a -EPROTO error, a communication restart and loop again.
 
-[FUNC] msleep
-drivers/usb/host/u132-hcd.c, 2558:
-	msleep in u132_get_frame
-drivers/usb/core/hcd.c, 2231:
-	[FUNC_PTR]u132_get_frame in usb_hcd_get_frame_number
-drivers/usb/core/usb.c, 822:
-	usb_hcd_get_frame_number in usb_get_current_frame_number
-sound/usb/usx2y/usbusx2yaudio.c, 303:
-	usb_get_current_frame_number in i_usX2Y_urb_complete
-sound/usb/usx2y/usbusx2yaudio.c, 366:
-	i_usX2Y_urb_complete in i_usX2Y_subs_startup
+This issue has already been fixed for KS25.
+https://lore.kernel.org/patchwork/patch/753077/
 
-Note that [FUNC_PTR] means a function pointer call is used.
+I just add device 201 for KS49 in quirks.c to get it works.
 
-To fix this bug, msleep() is replaced with mdelay().
-
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Laurent Roux <xpros64@hotmail.fr>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/u132-hcd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -2565,7 +2565,7 @@ static int u132_get_frame(struct usb_hcd
- 	} else {
- 		int frame = 0;
- 		dev_err(&u132->platform_dev->dev, "TODO: u132_get_frame\n");
--		msleep(100);
-+		mdelay(100);
- 		return frame;
- 	}
- }
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -37,6 +37,10 @@ static const struct usb_device_id usb_qu
+ 	/* CBM - Flash disk */
+ 	{ USB_DEVICE(0x0204, 0x6025), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
++	/* WORLDE Controller KS49 or Prodipe MIDI 49C USB controller */
++	{ USB_DEVICE(0x0218, 0x0201), .driver_info =
++			USB_QUIRK_CONFIG_INTF_STRINGS },
++
+ 	/* WORLDE easy key (easykey.25) MIDI controller  */
+ 	{ USB_DEVICE(0x0218, 0x0401), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
 
 
