@@ -2,146 +2,141 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5281AECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285CCECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05FFB208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:27:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05FFB208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id B2B4D214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:32:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B4D214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbeIYCbE (ORCPT
+        id S1727493AbeIYCgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:31:04 -0400
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:34536 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbeIYCbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:31:04 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 17EC09E7849;
-        Mon, 24 Sep 2018 21:27:02 +0100 (BST)
-Date:   Mon, 24 Sep 2018 21:27:01 +0100
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     Eugen Hristev <eugen.hristev@microchip.com>
-Cc:     <ludovic.desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/2] iio: adc: at91: fix acking DRDY irq on simple
- conversions
-Message-ID: <20180924212701.400e21f7@archlinux>
-In-Reply-To: <20180924210056.2cae9439@archlinux>
-References: <1537447238-18674-1-git-send-email-eugen.hristev@microchip.com>
-        <20180922113123.2c8da044@archlinux>
-        <9846e106-8baf-b491-29ca-8306be9527ee@microchip.com>
-        <20180924210056.2cae9439@archlinux>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 24 Sep 2018 22:36:55 -0400
+Received: from mga05.intel.com ([192.55.52.43]:15825 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727247AbeIYCgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 22:36:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 13:32:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,299,1534834800"; 
+   d="scan'208";a="266317900"
+Received: from sayanbha-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.27.35])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Sep 2018 13:32:53 -0700
+Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
+        id F030721E3F; Mon, 24 Sep 2018 23:32:52 +0300 (EEST)
+Date:   Mon, 24 Sep 2018 23:32:52 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 1/2] [media] imx214: Add imx214 camera sensor driver
+Message-ID: <20180924203252.wxeclgjc7zvepyhb@kekkonen.localdomain>
+References: <20180921085450.19224-1-ricardo.ribalda@gmail.com>
+ <20180921092833.c3bznrhc3yyarmq4@kekkonen.localdomain>
+ <CAPybu_2J4b8C_AQu5trH6fLG3FAkSvFiUOYt-HFwG+YXK9PkkQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPybu_2J4b8C_AQu5trH6fLG3FAkSvFiUOYt-HFwG+YXK9PkkQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 21:00:56 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+Hi Ricardo,
 
-> On Mon, 24 Sep 2018 09:19:43 +0300
-> Eugen Hristev <eugen.hristev@microchip.com> wrote:
-> 
-> > On 22.09.2018 13:31, Jonathan Cameron wrote:  
-> > > On Thu, 20 Sep 2018 15:40:37 +0300
-> > > Eugen Hristev <eugen.hristev@microchip.com> wrote:
-> > >     
-> > >> When doing simple conversions, the driver did not acknowledge the DRDY irq.
-> > >> If this irq is not acked, it will be left pending, and as soon as a trigger
-> > >> is enabled, the irq handler will be called, it doesn't know why this irq
-> > >> has occurred because no channel is pending, and then we will have irq loop
-> > >> and board will hang.
-> > >>
-> > >> Fixes 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-> > >> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > >> Cc: <stable@vger.kernel.org>
-> > >> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> > >> ---
-> > >>   drivers/iio/adc/at91_adc.c | 5 +++++
-> > >>   1 file changed, 5 insertions(+)
-> > >>
-> > >> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-> > >> index 44b5168..e85f859 100644
-> > >> --- a/drivers/iio/adc/at91_adc.c
-> > >> +++ b/drivers/iio/adc/at91_adc.c
-> > >> @@ -712,6 +712,11 @@ static int at91_adc_read_raw(struct iio_dev *idev,
-> > >>   		at91_adc_writel(st, AT91_ADC_CHDR,
-> > >>   				AT91_ADC_CH(chan->channel));
-> > >>   		at91_adc_writel(st, AT91_ADC_IDR, BIT(chan->channel));
-> > >> +		/*
-> > >> +		 * we need to ack the DRDY irq, otherwise it will be
-> > >> +		 * left pending and irq handler will be confused
-> > >> +		 */
-> > >> +		at91_adc_readl(st, AT91_ADC_LCDR);    
-> > > 
-> > > I'm curious as to how things were working before.  Does this only occur
-> > > if we do a raw_read whilst the buffer is enabled?    
-> > 
-> > No. The situation is that the read raw does not properly cleans itself 
-> > up after it's done.
-> > The DRDY bit is cleared only when LCDR (last converted data ) is being read.
-> > Even if we read the per channel conversion data, the LCDR still needs to 
-> > be read to clear this irq status.
-> > The driver does not use the DRDY irq but this irq status is still being 
-> > set in the status register.  
-> 
-> Hmm. That is somewhat nasty if it results in false interrupts when you
-> then enable them.
+On Fri, Sep 21, 2018 at 12:15:55PM +0200, Ricardo Ribalda Delgado wrote:
+...
+> > > +static struct reg_8 mode_1920x1080[];
+> > > +static struct reg_8 mode_4096x2304[];
+> >
+> > Const. Could you rearrange the bits to avoid the forward declarations?
+> Const done, but I prefer to keep the forward declaration. Otherwise
+> the long tables will "hide" the mode declaration.
 
-I'm talking rubbish here.  Please ignore!
+Well, I guess the long tables do "hide" a bunch of other stuff, too. :-)
+But... I agree there's no trivial way around those tables either.
+
+It appears I'm not the only one who's commented on the matter of the
+forward declaration.
+
+...
+
+> > > +static int imx214_probe(struct i2c_client *client)
+> > > +{
+> > > +     struct device *dev = &client->dev;
+> > > +     struct imx214 *imx214;
+> > > +     struct fwnode_handle *endpoint;
+> > > +     int ret;
+> > > +     static const s64 link_freq[] = {
+> > > +             (IMX214_DEFAULT_PIXEL_RATE * 10LL) / 8,
+> >
+> > You should check the link frequency matches with that from the firmware.
+> 
+> I am not sure what you mean here sorry.
+
+The system firmware holds safe frequencies for the CSI-2 bus on that
+particular system; you should check that the register lists are valid for
+that frequency.
+
+...
+
+> > > +     imx214->pixel_rate = v4l2_ctrl_new_std(&imx214->ctrls, NULL,
+> > > +                                            V4L2_CID_PIXEL_RATE, 0,
+> > > +                                            IMX214_DEFAULT_PIXEL_RATE, 1,
+> > > +                                            IMX214_DEFAULT_PIXEL_RATE);
+> > > +     imx214->link_freq = v4l2_ctrl_new_int_menu(&imx214->ctrls, NULL,
+> > > +                                                V4L2_CID_LINK_FREQ,
+> > > +                                                ARRAY_SIZE(link_freq) - 1,
+> > > +                                                0, link_freq);
+> >
+> > Do I understand this correctly that the driver does not support setting
+> > e.g. exposure time or gain? Those are very basic features...
+> 
+> 
+> Yep :), this is just a first step. I do not have the register set from
+> the device :(. So I am reverse engineering a lot of things.
+> I will add more controls as I am done with them.
+
+Looking at the registers you have in the register list, the sensor's
+registers appear similar to those used by the smiapp driver (the old SMIA
+standard).
+
+I'd guess the same register would work for setting the exposure time. I'm
+less certain about the limits though.
 
 > 
-> >   
-> > > 
-> > > I would have assumed when it's not enabled, the irq would be masked and
-> > > never generated in the first place...
-> > > 
-> > > It may be that what we actually need to do is to prevent read_raw accesses
-> > > when the buffer is enabled (like lots of other drivers do precisely to
-> > > avoid this sort of condition). The problem there comes if we have
-> > > existing applications doing this combination as we are then breaking
-> > > userspace. If that's the case we'll need to be a bit more clever.
-> > > 
-> > > Hammering down an irq state in a non irq handling path isn't a good
-> > > solution.    
-> > 
-> > Ok, I will move the clearing of the DRDY (LCDR read) in the irq path 
-> > then, and send a v2.  
+> >
+> > You'll also need to ensure the s_ctrl() callback works without s_power()
+> > being called. My suggestion is to switch to PM runtime; see e.g. the ov1385
+> > driver in the current media tree master.
 > 
-> If that can be done cleanly, let us go with that approach. If not
-> what you have here with the addition of a comments saying that the
-> interrupt status is not masked, merely the interrupt and as a result needs
-> clearing for when you later enabled the interrupt, is fine.
 > 
-> This definitely sounds like one of those bits of hardware that
-> you can write software to use safely but they certainly didn't make
-> it easy to do so!
-> 
-> Jonathan
-> > 
-> >   
-> > > 
-> > > Jonathan
-> > >     
-> > >>   
-> > >>   		st->last_value = 0;
-> > >>   		st->done = false;    
-> > >     
-> 
+> There is one limitation with this chip on the dragonboard. I2c only
+> works if the camss is ON. Therefore whatever s_ctrl needs to be
+> cached and written at streamon.
 
+That's something that doesn't belong to this driver. It's the I²C adapter
+driver / camss issue, and not necessarily related to drivers only. Is the
+I²C controller part of the camss btw.?
+
+-- 
+Regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
