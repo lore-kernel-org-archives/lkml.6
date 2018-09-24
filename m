@@ -2,156 +2,296 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FA3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248D9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B102B21480
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:56:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B102B21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C4EA92086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:56:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GzqnhH0b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4EA92086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeIXQ5a (ORCPT
+        id S1728515AbeIXQ5o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:57:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60508 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbeIXQ5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:57:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0941A80D;
-        Mon, 24 Sep 2018 03:56:01 -0700 (PDT)
-Received: from [10.4.13.92] (e112298-lin.Emea.Arm.com [10.4.13.92])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8087D3F5B3;
-        Mon, 24 Sep 2018 03:55:59 -0700 (PDT)
-Subject: Re: [PATCH 02/10] irqchip/gic-v3-its: Consolidate LPI_PENDBASE_SZ
- usage
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20180921195954.21574-1-marc.zyngier@arm.com>
- <20180921195954.21574-3-marc.zyngier@arm.com>
- <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
- <cab043d8-c9bb-6975-8304-ff80dbe62027@arm.com>
- <f37b69a8-64fd-490d-1680-9f6aef235e10@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <d901b068-66f8-e817-e2fb-7728f597cbeb@arm.com>
-Date:   Mon, 24 Sep 2018 11:55:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 24 Sep 2018 12:57:44 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41588 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbeIXQ5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 12:57:44 -0400
+Received: by mail-ed1-f67.google.com with SMTP id f38-v6so15875064edd.8
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 03:56:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2whNj4RcdK8Wlpanm09DeQRJiaISFPiZtn8l2emuidg=;
+        b=GzqnhH0bLxokhVrH116Y7n8jl2OltzG3f3YhurwUlIMl5c5TisJ7h4rd+jUuaPtwj0
+         8m1O8yjBFH3cKyagMiAjPLWCN88QyNFAYjqEnFBWHP+fh2eIhvUKjM/FWn4ABdwDKZgJ
+         NgzebZZqPBuj48oGR/QqLn1//U55lfkeSn+aU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2whNj4RcdK8Wlpanm09DeQRJiaISFPiZtn8l2emuidg=;
+        b=s05LGBGK+KbUtJHzIdKACetipR19H1ssao2g6BroHiNz/pTnNAOn5cpYc6l4HHgxW/
+         HXG3AvUJU5ifO9F8f19stfpwWXfhFqox2OISDhLaWbrZZz0BnypZa9cN+RnSdNeH6g/l
+         0NZsO029tm1zk/9TZZpiMdNZh3i5Kd+3PoGi8wA842TVaZrnofui12imog70lvSyPZyn
+         Ae9nsxqQfNW+9rMK6hdRJjkbMO3NhXxruhF1lzRrKTR70UQfX2l+10h/eW+RmpP4lMUS
+         HghkLT6tXgaEaklw3M7okxqCkKe2XYUeCAlWIP1WZRWl8IgTqzCebN8C9rNNWnldIWek
+         SHVg==
+X-Gm-Message-State: ABuFfojZFvp7xJOhasG1l3e0gedTZWOeM9KXeAHkv/zskoosE94OAJ7f
+        smflQjJVyIxx4hiOvKAjUoTgkGThAxfMeA==
+X-Google-Smtp-Source: ANB0VdacsXKzJsGoqEjdd4B4HJ7pZJm0mfxmyI9bfF5Sb0R0q1WdljUYy8PnuiLZqHZ8lvvS14oFCg==
+X-Received: by 2002:a50:bf0d:: with SMTP id f13-v6mr15769424edk.157.1537786572173;
+        Mon, 24 Sep 2018 03:56:12 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id r7-v6sm1855295eds.54.2018.09.24.03.56.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 03:56:11 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 12:56:05 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>
+Subject: Re: [PATCH] tools/memory-model: Model smp_mb__after_unlock_lock()
+Message-ID: <20180924105605.GA8466@andrea>
+References: <20180924104449.8211-1-andrea.parri@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <f37b69a8-64fd-490d-1680-9f6aef235e10@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924104449.8211-1-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 24, 2018 at 12:44:49PM +0200, Andrea Parri wrote:
+> From the header comment for smp_mb__after_unlock_lock():
+> 
+>   "Place this after a lock-acquisition primitive to guarantee that
+>    an UNLOCK+LOCK pair acts as a full barrier.  This guarantee applies
+>    if the UNLOCK and LOCK are executed by the same CPU or if the
+>    UNLOCK and LOCK operate on the same lock variable."
+> 
+> This formalizes the above guarantee by defining (new) mb-links according
+> to the law:
+> 
+>   ([M] ; po ; [UL] ; (co | po) ; [LKW] ;
+> 	fencerel(After-unlock-lock) ; [M])
+> 
+> where the component ([UL] ; co ; [LKW]) identifies "UNLOCK+LOCK pairs on
+> the same lock variable" and the component ([UL] ; po ; [LKW]) identifies
+> "UNLOCK+LOCK pairs executed by the same CPU".
+> 
+> In particular, the LKMM forbids the following two behaviors (the second
+> litmus test below is based on
+> 
+>   Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+> 
+> c.f., Section "Tree RCU Grace Period Memory Ordering Building Blocks"):
+> 
+> C after-unlock-lock-same-cpu
+> 
+> (*
+>  * Result: Never
+>  *)
+> 
+> {}
+> 
+> P0(spinlock_t *s, spinlock_t *t, int *x, int *y)
+> {
+> 	int r0;
+> 
+> 	spin_lock(s);
+> 	WRITE_ONCE(*x, 1);
+> 	spin_unlock(s);
+> 	spin_lock(t);
+> 	smp_mb__after_unlock_lock();
+> 	r0 = READ_ONCE(*y);
+> 	spin_unlock(t);
+> }
+> 
+> P1(int *x, int *y)
+> {
+> 	int r0;
+> 
+> 	WRITE_ONCE(*y, 1);
+> 	smp_mb();
+> 	r0 = READ_ONCE(*x);
+> }
+> 
+> exists (0:r0=0 /\ 1:r0=0)
+> 
+> C after-unlock-lock-same-lock-variable
+> 
+> (*
+>  * Result: Never
+>  *)
+> 
+> {}
+> 
+> P0(spinlock_t *s, int *x, int *y)
+> {
+> 	int r0;
+> 
+> 	spin_lock(s);
+> 	WRITE_ONCE(*x, 1);
+> 	r0 = READ_ONCE(*y);
+> 	spin_unlock(s);
+> }
+> 
+> P1(spinlock_t *s, int *y, int *z)
+> {
+> 	int r0;
+> 
+> 	spin_lock(s);
+> 	smp_mb__after_unlock_lock();
+> 	WRITE_ONCE(*y, 1);
+> 	r0 = READ_ONCE(*z);
+> 	spin_unlock(s);
+> }
+> 
+> P2(int *z, int *x)
+> {
+> 	int r0;
+> 
+> 	WRITE_ONCE(*z, 1);
+> 	smp_mb();
+> 	r0 = READ_ONCE(*x);
+> }
+> 
+> exists (0:r0=0 /\ 1:r0=0 /\ 2:r0=0)
+> 
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> Cc: Luc Maranget <luc.maranget@inria.fr>
+> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> Cc: Akira Yokosawa <akiyks@gmail.com>
+> Cc: Daniel Lustig <dlustig@nvidia.com>
+> ---
+> NOTES.
+> 
+> - A number of equivalent formalizations seems available; for example,
+>   we could replace "co" in the law above with "coe" (by "coherence")
+>   and we could limit "coe" to "singlestep(coe)" (by the "prop" term).
+>   These changes did not show significant performance improvement and
+>   they looked slightly less readable to me, hence...
+> 
+> - The mb-links order memory accesses po-_before_ the lock-release to
+>   memory accesses po-_after_ the lock-acquire; in part., this forma-
+>   lization does _not_ forbid the following behavior (after A. Stern):
+> 
+> C po-in-after-unlock-lock
+> 
+> {}
+> 
+> P0(spinlock_t *s, spinlock_t *t, int *y)
+> {
+> 	int r0;
+> 
+> 	spin_lock(s);
+> 	spin_unlock(s);
+> 
+> 	spin_lock(t);
+> 	smp_mb__after_unlock_lock();
+> 	r0 = READ_ONCE(*y);
+> 	spin_unlock(t);
+> }
+> 
+> P1(spinlock_t *s, int *y)
+> {
+> 	int r0;
+> 
+> 	WRITE_ONCE(*y, 1);
+> 	smp_mb();
+> 	r0 = spin_is_locked(s);
+> }
+> 
+> exists (0:r0=0 /\ 1:r0=0)
+
+This should have been "exists (0:r0=0 /\ 1:r0=1)".
+
+  Andrea
 
 
-On 24/09/18 11:54, Suzuki K Poulose wrote:
 > 
+> - I'm not aware of currently supported architectures (implementations)
+>   of smp_mb__after_unlock_lock() and spin_{lock,unlock}() which would
+>   violate the guarantee formalized in this patch.  It is worth noting
+>   that the same conclusion does _not_ extend to other locking primiti-
+>   ves (e.g., write_{lock,unlock}()), AFAICT: c.f., e.g., riscv.  This
+>   "works" considered the callsites for the barrier, but yeah...
+> ---
+>  tools/memory-model/linux-kernel.bell | 3 ++-
+>  tools/memory-model/linux-kernel.cat  | 4 +++-
+>  tools/memory-model/linux-kernel.def  | 1 +
+>  3 files changed, 6 insertions(+), 2 deletions(-)
 > 
-> On 24/09/18 11:50, Julien Thierry wrote:
->> Hi,
->>
->> On 24/09/18 11:33, Suzuki K Poulose wrote:
->>> Hi Marc,
->>>
->>> On 21/09/18 20:59, Marc Zyngier wrote:
->>>> LPI_PENDING_SZ is always used in conjunction with a max(). Let's
->>>> factor this in the definition of the macro, and simplify the rest
->>>> of the code.
->>>>
->>>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->>>> ---
->>>>   drivers/irqchip/irq-gic-v3-its.c | 12 ++++--------
->>>>   1 file changed, 4 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->>>> b/drivers/irqchip/irq-gic-v3-its.c
->>>> index c2df341ff6fa..ed6aab11e019 100644
->>>> --- a/drivers/irqchip/irq-gic-v3-its.c
->>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
->>>> @@ -62,7 +62,7 @@ static u32 lpi_id_bits;
->>>>    */
->>>>   #define LPI_NRBITS        lpi_id_bits
->>>>   #define LPI_PROPBASE_SZ        ALIGN(BIT(LPI_NRBITS), SZ_64K)
->>>> -#define LPI_PENDBASE_SZ        ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K)
->>>> +#define LPI_PENDBASE_SZ        max_t(u32, SZ_64K, 
->>>> ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K))
->>>
->>> minor nit: The ALIGN() already aligns the given value up to the required
->>> alignment. So, if the LPI_NRBITS is guaranteed to be non-zero,
->>> we could simply drop the max_t().
->>>
->>
->> Hmmm, Doesn't ALIGN only aligns down? So if "BIT(LPI_NR_BITS) / 8 < 
->> SZ_64K" (i.e. LPI_NRBITS < 20) The ALIGN(..., SZ_64K) would give 0.
+> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+> index b84fb2f67109e..796513362c052 100644
+> --- a/tools/memory-model/linux-kernel.bell
+> +++ b/tools/memory-model/linux-kernel.bell
+> @@ -29,7 +29,8 @@ enum Barriers = 'wmb (*smp_wmb*) ||
+>  		'sync-rcu (*synchronize_rcu*) ||
+>  		'before-atomic (*smp_mb__before_atomic*) ||
+>  		'after-atomic (*smp_mb__after_atomic*) ||
+> -		'after-spinlock (*smp_mb__after_spinlock*)
+> +		'after-spinlock (*smp_mb__after_spinlock*) ||
+> +		'after-unlock-lock (*smp_mb__after_unlock_lock*)
+>  instructions F[Barriers]
+>  
+>  (* Compute matching pairs of nested Rcu-lock and Rcu-unlock *)
+> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+> index 882fc33274ac3..8f23c74a96fdc 100644
+> --- a/tools/memory-model/linux-kernel.cat
+> +++ b/tools/memory-model/linux-kernel.cat
+> @@ -30,7 +30,9 @@ let wmb = [W] ; fencerel(Wmb) ; [W]
+>  let mb = ([M] ; fencerel(Mb) ; [M]) |
+>  	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
+>  	([M] ; po? ; [RMW] ; fencerel(After-atomic) ; [M]) |
+> -	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M])
+> +	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
+> +	([M] ; po ; [UL] ; (co | po) ; [LKW] ;
+> +		fencerel(After-unlock-lock) ; [M])
+>  let gp = po ; [Sync-rcu] ; po?
+>  
+>  let strong-fence = mb | gp
+> diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+> index 6fa3eb28d40b5..b27911cc087d4 100644
+> --- a/tools/memory-model/linux-kernel.def
+> +++ b/tools/memory-model/linux-kernel.def
+> @@ -23,6 +23,7 @@ smp_wmb() { __fence{wmb}; }
+>  smp_mb__before_atomic() { __fence{before-atomic}; }
+>  smp_mb__after_atomic() { __fence{after-atomic}; }
+>  smp_mb__after_spinlock() { __fence{after-spinlock}; }
+> +smp_mb__after_unlock_lock() { __fence{after-unlock-lock}; }
+>  
+>  // Exchange
+>  xchg(X,V)  __xchg{mb}(X,V)
+> -- 
+> 2.17.1
 > 
-> Isn't it the ALIGN_DOWN(), which aligns it down ? Following the kernel
-> definitions :
-> linux/kernel.h -> uapi/linux/kernel.h
-> ALIGN(x,a) =>     __ALIGN_KERNEL(x, a)
->          \ => __ALIGN_KERNEL_MASK(x, (a -1)
->          \ => (((x + (a - 1)) & ~ (a - 1))
-
-Oh, yes you're right, made the wrong assumption.
-Your suggestion makes sense. Sorry for the noise.
-
-Thanks,
-
-> 
-> Cheers
-> Suzuki
-> 
-> 
->>
->> Thanks,
->>
->>> Rest looks good to me.
->>>
->>> Suzuki
->>>
->>>>   #define LPI_PROP_DEFAULT_PRIO    0xa0
->>>> @@ -1924,12 +1924,9 @@ static int its_alloc_collections(struct 
->>>> its_node *its)
->>>>   static struct page *its_allocate_pending_table(gfp_t gfp_flags)
->>>>   {
->>>>       struct page *pend_page;
->>>> -    /*
->>>> -     * The pending pages have to be at least 64kB aligned,
->>>> -     * hence the 'max(LPI_PENDBASE_SZ, SZ_64K)' below.
->>>> -     */
->>>> +
->>>>       pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
->>>> -                get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
->>>> +                get_order(LPI_PENDBASE_SZ));
->>>>       if (!pend_page)
->>>>           return NULL;
->>>> @@ -1941,8 +1938,7 @@ static struct page 
->>>> *its_allocate_pending_table(gfp_t gfp_flags)
->>>>   static void its_free_pending_table(struct page *pt)
->>>>   {
->>>> -    free_pages((unsigned long)page_address(pt),
->>>> -           get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
->>>> +    free_pages((unsigned long)page_address(pt), 
->>>> get_order(LPI_PENDBASE_SZ));
->>>>   }
->>>>   static void its_cpu_init_lpis(void)
->>>>
->>
-
--- 
-Julien Thierry
