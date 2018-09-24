@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F643ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73EEC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 645C72064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645C72064D
+	by mail.kernel.org (Postfix) with ESMTP id 97D6A2064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D6A2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389341AbeIXSrY (ORCPT
+        id S2389348AbeIXSr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59778 "EHLO
+        Mon, 24 Sep 2018 14:47:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59788 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730081AbeIXSrX (ORCPT
+        with ESMTP id S1730081AbeIXSr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:23 -0400
+        Mon, 24 Sep 2018 14:47:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9B95109A;
-        Mon, 24 Sep 2018 12:45:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C708109A;
+        Mon, 24 Sep 2018 12:45:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 231/235] pinctrl: msm: Fix msm_config_group_get() to be compliant
-Date:   Mon, 24 Sep 2018 13:53:37 +0200
-Message-Id: <20180924113125.942993670@linuxfoundation.org>
+Subject: [PATCH 4.18 232/235] pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant
+Date:   Mon, 24 Sep 2018 13:53:38 +0200
+Message-Id: <20180924113126.003052623@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,15 +54,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 05e0c828955c1cab58dd71a04539442e5375d917 ]
+[ Upstream commit 1cf86bc21257a330e3af51f2a4e885f1a705f6a5 ]
 
 If you do this on an sdm845 board:
-  cat /sys/kernel/debug/pinctrl/3400000.pinctrl/pinconf-groups
+  grep "" /sys/kernel/debug/pinctrl/*spmi:pmic*/pinconf-groups
 
 ...it looks like nonsense.  For every pin you see listed:
-  input bias bus hold, input bias disabled, input bias pull down, input bias pull up
+  input bias disabled, input bias high impedance, input bias pull down, input bias pull up, ...
 
-That's because msm_config_group_get() isn't complying with the rules
+That's because pmic_gpio_config_get() isn't complying with the rules
 that pinconf_generic_dump_one() expects.  Specifically for boolean
 parameters (anything with a "struct pin_config_item" where has_arg is
 false) the function expects that the function should return its value
@@ -78,50 +78,77 @@ so I'll follow tradition and return 1 in these cases.  While I'm at
 it, I'll also continue searching for four leaf clovers, kocking on
 wood three times, and trying not to break mirrors.
 
-Fixes: f365be092572 ("pinctrl: Add Qualcomm TLMM driver")
+NOTE: This also fixes an apparent typo for reading
+PIN_CONFIG_BIAS_DISABLE where the old driver was accidentally
+using "=" instead of "==" and thus was setting some internal
+state when you tried to query PIN_CONFIG_BIAS_DISABLE.  Oops.
+
+Fixes: eadff3024472 ("pinctrl: Qualcomm SPMI PMIC GPIO pin controller driver")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c |   32 +++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -250,22 +250,30 @@ static int msm_config_group_get(struct p
- 	/* Convert register value to pinconf value */
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -390,31 +390,47 @@ static int pmic_gpio_config_get(struct p
+ 
  	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = arg == MSM_NO_PULL;
-+		if (arg != MSM_NO_PULL)
+ 	case PIN_CONFIG_DRIVE_PUSH_PULL:
+-		arg = pad->buffer_type == PMIC_GPIO_OUT_BUF_CMOS;
++		if (pad->buffer_type != PMIC_GPIO_OUT_BUF_CMOS)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+-		arg = pad->buffer_type == PMIC_GPIO_OUT_BUF_OPEN_DRAIN_NMOS;
++		if (pad->buffer_type != PMIC_GPIO_OUT_BUF_OPEN_DRAIN_NMOS)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_SOURCE:
+-		arg = pad->buffer_type == PMIC_GPIO_OUT_BUF_OPEN_DRAIN_PMOS;
++		if (pad->buffer_type != PMIC_GPIO_OUT_BUF_OPEN_DRAIN_PMOS)
 +			return -EINVAL;
 +		arg = 1;
  		break;
  	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = arg == MSM_PULL_DOWN;
-+		if (arg != MSM_PULL_DOWN)
+-		arg = pad->pullup == PMIC_GPIO_PULL_DOWN;
++		if (pad->pullup != PMIC_GPIO_PULL_DOWN)
 +			return -EINVAL;
 +		arg = 1;
  		break;
- 	case PIN_CONFIG_BIAS_BUS_HOLD:
- 		if (pctrl->soc->pull_no_keeper)
- 			return -ENOTSUPP;
- 
--		arg = arg == MSM_KEEPER;
-+		if (arg != MSM_KEEPER)
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pad->pullup = PMIC_GPIO_PULL_DISABLE;
++		if (pad->pullup != PMIC_GPIO_PULL_DISABLE)
 +			return -EINVAL;
 +		arg = 1;
  		break;
  	case PIN_CONFIG_BIAS_PULL_UP:
- 		if (pctrl->soc->pull_no_keeper)
- 			arg = arg == MSM_PULL_UP_NO_KEEPER;
- 		else
- 			arg = arg == MSM_PULL_UP;
-+		if (!arg)
+-		arg = pad->pullup == PMIC_GPIO_PULL_UP_30;
++		if (pad->pullup != PMIC_GPIO_PULL_UP_30)
 +			return -EINVAL;
++		arg = 1;
  		break;
- 	case PIN_CONFIG_DRIVE_STRENGTH:
- 		arg = msm_regval_to_drive(arg);
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = !pad->is_enabled;
++		if (pad->is_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_POWER_SOURCE:
+ 		arg = pad->power_source;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pad->input_enabled;
++		if (!pad->input_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		arg = pad->out_value;
 
 
