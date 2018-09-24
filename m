@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CC1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26DCC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 114DB21477
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CF3B21477
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qPKIQ6OT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 114DB21477
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSfU9Rqf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF3B21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeIXGq6 (ORCPT
+        id S1727725AbeIXGrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 02:46:58 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35249 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725742AbeIXGq5 (ORCPT
+        Mon, 24 Sep 2018 02:47:04 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44598 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725742AbeIXGrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 02:46:57 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p12-v6so8313229pfh.2;
-        Sun, 23 Sep 2018 17:47:21 -0700 (PDT)
+        Mon, 24 Sep 2018 02:47:03 -0400
+Received: by mail-pf1-f194.google.com with SMTP id k21-v6so8295238pff.11;
+        Sun, 23 Sep 2018 17:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YOOMCH2KwkYbAYwpexjwI99bbfGpSnTLhrWo5MkIH4Y=;
-        b=qPKIQ6OTTXw8MbDOh30LTWWB9kBOZVaIfkXenTR4doEmpODTnRFkH5AtgqJJdygb0e
-         5atSCL7mH9+HtoRbHTMkD+x5kVzi1lrXzkO1W/Oa1k9Rp8kqBROXeVbYtMkHep6a2+CC
-         n/c0HiiZgpm0g4W2UPA6fV5AD5jeoz+a5WXsqYv2Kv+nsTGMMldlPrle66+y95919zUw
-         spLXvQHjz0ahR9ccnhL9zN840Hw0UcgZbDe0hnhNkn8HMtEZ0rlqui1d62LXE4WBgWYt
-         eyQG566r8YgJwcfDI4BIEoBioCcsy4pQdcZA3xMNqfg9hyKgKMPqXMlQT+DNrNHCcKPf
-         Cfxg==
+        bh=tJd5qCvwZt+FEMthacrCaTfBiAsBAEj0Nbh8yr7YEp0=;
+        b=YSfU9RqfhF+bLKXSTHxWKI8itgJv7xvcOAFMdX/rGWCccKbwzTm0nHkMaY9yUSZGAx
+         RxU9xLsNiQkV5HGvYT2jd+KECQ0OHE8Cdjv5lqWD8NZczrfIvL5np5suat2eE+HSK6gd
+         3Xsj1Rj6QJUK/PbDwO2d4Inn3z8RXdATYwnyEdRPpdzK0DvxhkcTXVzlLydPE3e84Lmh
+         kZG9HTkD/P3ZFOVG4mTXX6uD31N88mtmbVhFL//7KWUxZvP76Z+ZHN3zDafZC3DQ0tfP
+         1RlQov2Vrf98y1HSAZcDQtzoqCxDcS+Iz6p4OoY/rxAA2/98P5aOZpezuVtAIPo+dxQu
+         UgEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YOOMCH2KwkYbAYwpexjwI99bbfGpSnTLhrWo5MkIH4Y=;
-        b=RD/m4UNhXuiDUtbuRLAiWkGs+8ylYNomqxgDQSsnGxGkpuKiC9WY4cumkTOG8329BZ
-         c/rh7ldKTLoS5BGB9ZsvxPjxtvcttuwBqvN0DnGFJMCt138P7Bg3SZuyIj18BqdQuQMe
-         Xv2+b71Kjckd2neNUTTckRUDmLaXCLgyn/KUzmFMo1CwnaiLfFsFVgANGG5iYzIBDCRA
-         RpL3fSgOFipjWnX5pk7IQAeW6b7oF6KleZfWb1oBK4+M3CI+mKdnRH3bPEj6w1Xfusbb
-         9wKR6lmox/n3XpSRZqdnKyUh62P6npZ8BjlsiFPVkyNvYn8zGyz/kVCb/LeJU6Wgcr9y
-         e+zA==
-X-Gm-Message-State: APzg51Ah04qqZykfwruh4SpM0DzBkqa+KtxIKQamb/PY0G8Gj/GrP6aT
-        FrMYWlmovL9TxurvKeKNZnQ=
-X-Google-Smtp-Source: ANB0VdaJDoXVZtelMVWUvHRrxQvGHLYeOajLlC224ubYixe55f1FgQOS4sFEbP/uhfcKbfGVDLtxcQ==
-X-Received: by 2002:a62:51c6:: with SMTP id f189-v6mr8084215pfb.7.1537750040893;
-        Sun, 23 Sep 2018 17:47:20 -0700 (PDT)
+        bh=tJd5qCvwZt+FEMthacrCaTfBiAsBAEj0Nbh8yr7YEp0=;
+        b=X6I64Iwdyu1cyyGSevVINi0w+/BLM3eu9pcU4bG4LZd9PiudXQQ7gKwLxlZ+cIwEts
+         MkNUrIQXJiYD9hb62iVufrXn8GfCTpH/oExNUpVn0tB8/nMcXSBsCXoj8R2dmUzgRfg1
+         9mVjOsAVGEwXzU/KZr+UlAEd1GYR83dVkQYojuVyi16VM8ROGg6u76rB5F2mOi/0hBH0
+         PnWKk+Xo/GyyEyGfKNGIkwa60xLL4YjO5cpJ72Mbdm2nnBdiA4HO7/0CScaALAeaVuII
+         2dw6xDWZ9xKXjHYBp0SQgYLxphFRbnVTbOo8DQtJcIkxaZvir1T7zsgRddahHGzU97Pk
+         vwFA==
+X-Gm-Message-State: ABuFfoiFN9Z/9bvb75uI5dA3HtIp3GI2E1mELVKBPJgauvA/ZOw1hwa/
+        f7jjzQdsVOUPi5dLHqP4v+o=
+X-Google-Smtp-Source: ACcGV62eFxL2pNEF6V7WFdDnmEgNe2WHtdkiir9/urY7x3zlSRyk2uRGf/3JwirkNaTQ4nXeky55KA==
+X-Received: by 2002:a63:9857:: with SMTP id l23-v6mr7508168pgo.321.1537750046763;
+        Sun, 23 Sep 2018 17:47:26 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.gmail.com with ESMTPSA id 82-v6sm5121839pfr.115.2018.09.23.17.47.15
+        by smtp.gmail.com with ESMTPSA id 82-v6sm5121839pfr.115.2018.09.23.17.47.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 17:47:20 -0700 (PDT)
+        Sun, 23 Sep 2018 17:47:26 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 14/20] iommu/tegra: gart: Fix NULL pointer dereference
-Date:   Mon, 24 Sep 2018 03:41:47 +0300
-Message-Id: <20180924004153.8232-15-digetx@gmail.com>
+Subject: [PATCH v4 15/20] iommu/tegra: gart: Allow only one active domain at a time
+Date:   Mon, 24 Sep 2018 03:41:48 +0300
+Message-Id: <20180924004153.8232-16-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924004153.8232-1-digetx@gmail.com>
 References: <20180924004153.8232-1-digetx@gmail.com>
@@ -80,31 +80,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix NULL pointer dereference on IOMMU domain destruction that happens
-because clients list is being iterated unsafely and its elements are
-getting deleted during the iteration.
+GART has a single address space that is shared by all devices, hence only
+one domain could be active at a time.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/iommu/tegra-gart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iommu/tegra-gart.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index e6fe139576c3..1d45b023adea 100644
+index 1d45b023adea..9f7d3afb686f 100644
 --- a/drivers/iommu/tegra-gart.c
 +++ b/drivers/iommu/tegra-gart.c
-@@ -258,9 +258,9 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
- 	if (gart) {
- 		spin_lock(&gart->client_lock);
- 		if (!list_empty(&gart->client)) {
--			struct gart_client *c;
-+			struct gart_client *c, *tmp;
+@@ -55,6 +55,7 @@ struct gart_device {
+ 	spinlock_t		pte_lock;	/* for pagetable */
+ 	struct list_head	client;
+ 	spinlock_t		client_lock;	/* for client list */
++	struct iommu_domain	*active_domain;	/* current active domain */
+ 	struct device		*dev;
  
--			list_for_each_entry(c, &gart->client, list)
-+			list_for_each_entry_safe(c, tmp, &gart->client, list)
- 				__gart_iommu_detach_dev(domain, c->dev);
+ 	struct iommu_device	iommu;		/* IOMMU Core handle */
+@@ -184,6 +185,12 @@ static int gart_iommu_attach_dev(struct iommu_domain *domain,
+ 			goto fail;
  		}
- 		spin_unlock(&gart->client_lock);
+ 	}
++	if (gart->active_domain && gart->active_domain != domain) {
++		dev_err(gart->dev, "Only one domain can be active at a time\n");
++		err = -EINVAL;
++		goto fail;
++	}
++	gart->active_domain = domain;
+ 	list_add(&client->list, &gart->client);
+ 	spin_unlock(&gart->client_lock);
+ 	dev_dbg(gart->dev, "Attached %s\n", dev_name(dev));
+@@ -206,6 +213,8 @@ static void __gart_iommu_detach_dev(struct iommu_domain *domain,
+ 		if (c->dev == dev) {
+ 			list_del(&c->list);
+ 			devm_kfree(gart->dev, c);
++			if (list_empty(&gart->client))
++				gart->active_domain = NULL;
+ 			dev_dbg(gart->dev, "Detached %s\n", dev_name(dev));
+ 			return;
+ 		}
 -- 
 2.19.0
 
