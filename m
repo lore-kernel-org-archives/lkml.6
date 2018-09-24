@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E01ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684A5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB8D821486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB8D821486
+	by mail.kernel.org (Postfix) with ESMTP id 2C88D2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C88D2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730137AbeIXR6r (ORCPT
+        id S1730149AbeIXR6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:58:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52110 "EHLO
+        Mon, 24 Sep 2018 13:58:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52116 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728264AbeIXR6q (ORCPT
+        with ESMTP id S1729120AbeIXR6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:58:46 -0400
+        Mon, 24 Sep 2018 13:58:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D73B1072;
-        Mon, 24 Sep 2018 11:57:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58B7B1072;
+        Mon, 24 Sep 2018 11:57:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 35/70] usb: Dont die twice if PCI xhci host is not responding in resume
-Date:   Mon, 24 Sep 2018 13:52:34 +0200
-Message-Id: <20180924113102.993373564@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 53/70] ARM: hisi: check of_iomap and fix missing of_node_put
+Date:   Mon, 24 Sep 2018 13:52:52 +0200
+Message-Id: <20180924113105.990523119@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -52,35 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-commit f3dc41c5d22b2ca14a0802a65d8cdc33a3882d4e upstream.
+[ Upstream commit 81646a3d39ef14749301374a3a0b8311384cd412 ]
 
-usb_hc_died() should only be called once, and with the primary HCD
-as parameter. It will mark both primary and secondary hcd's dead.
+of_find_compatible_node() returns a device node with refcount incremented
+and thus needs an explicit of_node_put(). Further relying on an unchecked
+of_iomap() which can return NULL is problematic here, after all ctrl_base
+is critical enough for hix5hd2_set_cpu() to call BUG() if not available
+so a check seems mandated here.
 
-Remove the extra call to usb_cd_died with the shared hcd as parameter.
-
-Fixes: ff9d78b36f76 ("USB: Set usb_hcd->state and flags for shared roothubs")
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+0002 Fixes: commit 06cc5c1d4d73 ("ARM: hisi: enable hix5hd2 SoC")
+Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/core/hcd-pci.c |    2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/mach-hisi/hotplug.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/core/hcd-pci.c
-+++ b/drivers/usb/core/hcd-pci.c
-@@ -529,8 +529,6 @@ static int resume_common(struct device *
- 				event == PM_EVENT_RESTORE);
- 		if (retval) {
- 			dev_err(dev, "PCI post-resume error %d!\n", retval);
--			if (hcd->shared_hcd)
--				usb_hc_died(hcd->shared_hcd);
- 			usb_hc_died(hcd);
- 		}
- 	}
+--- a/arch/arm/mach-hisi/hotplug.c
++++ b/arch/arm/mach-hisi/hotplug.c
+@@ -180,11 +180,15 @@ static bool hix5hd2_hotplug_init(void)
+ 	struct device_node *np;
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "hisilicon,cpuctrl");
+-	if (np) {
+-		ctrl_base = of_iomap(np, 0);
+-		return true;
+-	}
+-	return false;
++	if (!np)
++		return false;
++
++	ctrl_base = of_iomap(np, 0);
++	of_node_put(np);
++	if (!ctrl_base)
++		return false;
++
++	return true;
+ }
+ 
+ void hix5hd2_set_cpu(int cpu, bool enable)
 
 
