@@ -2,156 +2,199 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2C5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CF2C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD32D20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:35:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B09DE2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:36:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R/C7Fyrw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NjRSj+lI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD32D20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TK1WZ31t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09DE2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730426AbeIXVi2 (ORCPT
+        id S1730724AbeIXVjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:38:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38470 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbeIXVi2 (ORCPT
+        Mon, 24 Sep 2018 17:39:14 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46842 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727770AbeIXVjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:38:28 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8589360275; Mon, 24 Sep 2018 15:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537803343;
-        bh=2/odgQNhiVZLh5asPkZ0bd8jbF9pbwHTX22kJbUPikI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R/C7FyrwUZrUsExUo5T5CMsoYlt2Tdtj+B/Kjct1ytXueF519KDr/gp86Lmk5bDlb
-         7bZxWCDbQQTaPD16Kclp2knpwxR4V/OFItsdaV0YtTpMOy6c6Lr1MF5uS6VP+lXGlU
-         FOvTisBKN6Mr4ECrD7ztqb6eD9020jMZn5fPVYoU=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9222E60214;
-        Mon, 24 Sep 2018 15:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537803342;
-        bh=2/odgQNhiVZLh5asPkZ0bd8jbF9pbwHTX22kJbUPikI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NjRSj+lIiipzhESl9vkFoOWups4TJTQXqHk3PDhSi7j2nsDvAT32a9yWucUvJnBX/
-         76UcesjjajUmLccA69G0FYhuvgY0jNEOCGinbFfYYZbPbmm7EzrZXL6lMyN5WdcT6s
-         z1Qk1+AYkQsETO/Se3knI+KBTox9O7ZJOomiuruY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9222E60214
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Mon, 24 Sep 2018 09:35:41 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     bjorn.andersson@linaro.org, sboyd@kernel.org, evgreen@chromium.org,
-        linus.walleij@linaro.org, rplsssn@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, devicetree@vger.kernel.org,
-        andy.gross@linaro.org, dianders@chromium.org
-Subject: Re: [PATCH v3 3/5] drivers: pinctrl: msm: enable PDC interrupt only
- during suspend
-Message-ID: <20180924153541.GJ17420@codeaurora.org>
-References: <20180904211810.5506-1-ilina@codeaurora.org>
- <20180904211810.5506-4-ilina@codeaurora.org>
- <868t3twl64.wl-marc.zyngier@arm.com>
- <20180922170909.GI17420@codeaurora.org>
- <867ejcwnn7.wl-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <867ejcwnn7.wl-marc.zyngier@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 24 Sep 2018 17:39:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z3-v6so8325247wrr.13;
+        Mon, 24 Sep 2018 08:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=0BkH5m0GuqqcfqME6Xifhw9fwDwbf5Zilx/nd6W+4j8=;
+        b=TK1WZ31t9ThTfmFuFoGhTv6Ub3m7Wym6nOS8vIBX86V3u0fSD7A2oiGXRLaQ4lwqio
+         ehd5iUhA1LRQZnZLH+z2ZvJU5kU+DBT5549QbxUJQE62vU3Q4WlPsVWaC8S4UXrTeEtK
+         rE+JmkhHYlNK0hXkTHNhXugd5XVIjHz/jjCVT3Xm9FulUxNKfeH0HeK/FWwNVKLtkdgG
+         MZB6JPgDUVOR1EVm4uebMhKzwPJaNbh9NRQoxpzOECduKU5wFAt4BFLwlkEldSinbgZq
+         CQz/Ug05WHO4vQWxJs7M2cuFb5HVCaxuuZPD6XPLppFtXoy2ZwfbaAxLrZ6fvvRbi8dx
+         AftA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=0BkH5m0GuqqcfqME6Xifhw9fwDwbf5Zilx/nd6W+4j8=;
+        b=NNbdbjK1TMRaUrQaKiw8pi+gS6S81xtrK7KkUdMLI9ljjx74c/+oZfm2bcEYO0Tz2o
+         FTIHeB3t/OwOG/t6zxfu6rkjmrMsnZcy+ZUD/gxqIar6yOhPCJXvkenqct3dnDSxcbJ6
+         i4F4DVBhRRar1VoFKmCrKWKqFsgS2Pl6Pvw2E7hFDHZER0q95bOGUunIQRuncRKrpm+p
+         Fp2SWJCtu6aEQYL+qKwIHCNkdLxk8yEMfsYwbaGoWHNqhztXQuv7fd+vXbZ+VbTW4NbB
+         vhW/wpQaPoY7TRgOBQmKVasJC/TaCNzoQ7SGcP9ldi6iVATh/C+57WcqmrBtaxnujq8C
+         wg4w==
+X-Gm-Message-State: ABuFfohrZ1rLH+GCp5plkJGnLNk1AHB8BhCFFJt5kevLWzFtWM7oIp83
+        xDZN1sbSQbCaSOLR24dKsVIwYG5C
+X-Google-Smtp-Source: ACcGV63Hp9RP1QaZtlmwXZcEvOh4ZUEwbgRfrQxpIXK5gJheHss0RF+KrHRrl5aLcAJEY+QrgA+qEQ==
+X-Received: by 2002:adf:ce0e:: with SMTP id p14-v6mr9917215wrn.118.1537803386338;
+        Mon, 24 Sep 2018 08:36:26 -0700 (PDT)
+Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
+        by smtp.gmail.com with ESMTPSA id z141-v6sm10602149wmc.3.2018.09.24.08.36.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 08:36:25 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH] KVM: x86: never trap MSR_KERNEL_GS_BASE
+Date:   Mon, 24 Sep 2018 17:36:24 +0200
+Message-Id: <1537803384-17360-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 23 2018 at 03:48 -0600, Marc Zyngier wrote:
->On Sat, 22 Sep 2018 18:09:09 +0100,
->Lina Iyer <ilina@codeaurora.org> wrote:
->>
->> On Sat, Sep 22 2018 at 10:29 -0600, Marc Zyngier wrote:
->> > Hi Lina,
->> >
->> > On Tue, 04 Sep 2018 22:18:08 +0100,
->> > Lina Iyer <ilina@codeaurora.org> wrote:
+KVM has an old optimization whereby accesses to the kernel GS base MSR
+are trapped when the guest is in 32-bit and not when it is in 64-bit mode.
+The idea is that swapgs is not available in 32-bit mode and thus the
+guest has no reason to access the MSR unless in 64-bit mode.  Therefore
+32-bit applications need not pay the price of switching the kernel GS
+base between the host and the guest values, 64-bit applications.
 
->> Also, I am exploring an option that was suggested by Stephen [1] to just
->> use the PDC interrupt as a parent of the GPIO IRQ and use a different
->> irqchip for the PDC interrupt. I ran into some issue with accessing
->> irqchip and irqdata of the PDC interrupt, since the irqchip was not in
->> hierarchy with the GPIO's irqchip. I haven't been able to find time to
->> resolve the issue that the set_parent_ functions, because of the
->> hierarchy.
->>
->> Essentially, we have two different mechanisms for GPIO IRQs based on
->> whether they can be woken up by the PDC interrupt.
->>
->> 	GPIO-IRQ --> PDC --> GIC
->>
->> 	GPIO-IRQ --> TLMM SUMMARY --> GIC
->>
->> Do you think the idea is feasible? It would avoid doing all this
->> enable/disable at every suspend and even during idle, when the TLMM
->> could be powered off.
->
->[me tries to page it all in again]
->
->You could have the PDC as part of the GPIO hierarchy:
->
->	GPIO -> PDC -> TLMM -> GIC
->
-The PDC irqchip's parent is the GIC as set up in
-drivers/irqchip/qcom-pdc.c. Wouldn't that conflict with the established
-hierarchy?
+However, this optimization adds complexity to the code for little
+benefit (these days most guests are going to be 64-bit anyway) and in fact
+broke after commit 678e315e78a7 ("KVM: vmx: add dedicated utility to
+access guest's kernel_gs_base", 2018-08-06); the guest kernel GS base
+is not restored correctly by the RSM instruction and UEFI Secure Boot
+was broken.  This patch just removes the optimization; the kernel
+GS base MSR is now never trapped by KVM, similarly to the FS and GS
+base MSRs.
 
->and always configure the PDC as a wake-up source. I just wonder if you
->can do that without setting up a parallel hierarchy between the PDC
->and the GIC. We already have similar things in the tree (see OMAP's
->wakeupgen), and it may be worth having a look.
-Sure, will take a  look.
+Fixes: 678e315e78a780dbef384b92339c8414309dbc11
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx.c | 47 ++++++++++-------------------------------------
+ 1 file changed, 10 insertions(+), 37 deletions(-)
 
->The lack of interrupt
->replaying on the PDC is quite annoying (I have much stronger words in
->mind though), and I'm not sure we can easily fix that one without this
->parallel interrupt hack (you need something to inject edge interrupts
->in the TLMM).
->
-The PDC replays the intterupt at the GIC, not the at the TLMM. So the
-hierachy you recommended may not work as well here.
->>
->>
->> >> +			disable_irq(irqd->irq);
->> >> +			enable_irq(irq);
->> >> +		}
->> >> +	}
->> >
->> > Given that you're changing in_suspend and parsing the bitmap,
->> > shouldn't take the pdc spinlock?
->> >
->> Since we are the the only CPU running and suspend/resume (and even idle)
->> would be serialized I didn't see a reason for needing a lock.
->
->In that case, what is the purpose of 'in_suspend' if
->msm_gpio_irq_set_wake cannot happen during the suspend/resume phases?
->It all seems a bit inconsistent.
->
-Well the disable_irq_wake that I call here, calls into the set_wake
-callbacks. Hence the flag to indicate that we should ignore the PDC
-interrupt configuration at that time. Let me see if I need to disable
-the disable_irq_wake at all.
-
-Thanks,
-Lina
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 06412ba46aa3..8b066480224b 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -121,7 +121,6 @@
+ 
+ #define MSR_BITMAP_MODE_X2APIC		1
+ #define MSR_BITMAP_MODE_X2APIC_APICV	2
+-#define MSR_BITMAP_MODE_LM		4
+ 
+ #define KVM_VMX_TSC_MULTIPLIER_MAX     0xffffffffffffffffULL
+ 
+@@ -2899,8 +2898,7 @@ static void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+ 		vmx->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
+ 	}
+ 
+-	if (is_long_mode(&vmx->vcpu))
+-		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
++	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+ #else
+ 	savesegment(fs, fs_sel);
+ 	savesegment(gs, gs_sel);
+@@ -2951,8 +2949,7 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
+ 	vmx->loaded_cpu_state = NULL;
+ 
+ #ifdef CONFIG_X86_64
+-	if (is_long_mode(&vmx->vcpu))
+-		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
++	rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+ #endif
+ 	if (host_state->ldt_sel || (host_state->gs_sel & 7)) {
+ 		kvm_load_ldt(host_state->ldt_sel);
+@@ -2980,24 +2977,19 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
+ #ifdef CONFIG_X86_64
+ static u64 vmx_read_guest_kernel_gs_base(struct vcpu_vmx *vmx)
+ {
+-	if (is_long_mode(&vmx->vcpu)) {
+-		preempt_disable();
+-		if (vmx->loaded_cpu_state)
+-			rdmsrl(MSR_KERNEL_GS_BASE,
+-			       vmx->msr_guest_kernel_gs_base);
+-		preempt_enable();
+-	}
++	preempt_disable();
++	if (vmx->loaded_cpu_state)
++		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
++	preempt_enable();
+ 	return vmx->msr_guest_kernel_gs_base;
+ }
+ 
+ static void vmx_write_guest_kernel_gs_base(struct vcpu_vmx *vmx, u64 data)
+ {
+-	if (is_long_mode(&vmx->vcpu)) {
+-		preempt_disable();
+-		if (vmx->loaded_cpu_state)
+-			wrmsrl(MSR_KERNEL_GS_BASE, data);
+-		preempt_enable();
+-	}
++	preempt_disable();
++	if (vmx->loaded_cpu_state)
++		wrmsrl(MSR_KERNEL_GS_BASE, data);
++	preempt_enable();
+ 	vmx->msr_guest_kernel_gs_base = data;
+ }
+ #endif
+@@ -5073,19 +5065,6 @@ static void vmx_set_efer(struct kvm_vcpu *vcpu, u64 efer)
+ 	if (!msr)
+ 		return;
+ 
+-	/*
+-	 * MSR_KERNEL_GS_BASE is not intercepted when the guest is in
+-	 * 64-bit mode as a 64-bit kernel may frequently access the
+-	 * MSR.  This means we need to manually save/restore the MSR
+-	 * when switching between guest and host state, but only if
+-	 * the guest is in 64-bit mode.  Sync our cached value if the
+-	 * guest is transitioning to 32-bit mode and the CPU contains
+-	 * guest state, i.e. the cache is stale.
+-	 */
+-#ifdef CONFIG_X86_64
+-	if (!(efer & EFER_LMA))
+-		(void)vmx_read_guest_kernel_gs_base(vmx);
+-#endif
+ 	vcpu->arch.efer = efer;
+ 	if (efer & EFER_LMA) {
+ 		vm_entry_controls_setbit(to_vmx(vcpu), VM_ENTRY_IA32E_MODE);
+@@ -6078,9 +6057,6 @@ static u8 vmx_msr_bitmap_mode(struct kvm_vcpu *vcpu)
+ 			mode |= MSR_BITMAP_MODE_X2APIC_APICV;
+ 	}
+ 
+-	if (is_long_mode(vcpu))
+-		mode |= MSR_BITMAP_MODE_LM;
+-
+ 	return mode;
+ }
+ 
+@@ -6121,9 +6097,6 @@ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu)
+ 	if (!changed)
+ 		return;
+ 
+-	vmx_set_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW,
+-				  !(mode & MSR_BITMAP_MODE_LM));
+-
+ 	if (changed & (MSR_BITMAP_MODE_X2APIC | MSR_BITMAP_MODE_X2APIC_APICV))
+ 		vmx_update_msr_bitmap_x2apic(msr_bitmap, mode);
+ 
+-- 
+1.8.3.1
 
