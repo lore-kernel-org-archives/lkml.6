@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6736ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 699E2C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89DA421486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DA421486
+	by mail.kernel.org (Postfix) with ESMTP id 2F30621486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F30621486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732514AbeIXSYH (ORCPT
+        id S1732540AbeIXSYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:24:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56354 "EHLO
+        Mon, 24 Sep 2018 14:24:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56366 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732170AbeIXSYG (ORCPT
+        with ESMTP id S1732161AbeIXSYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:24:06 -0400
+        Mon, 24 Sep 2018 14:24:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2699C10AC;
-        Mon, 24 Sep 2018 12:22:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89CDF107E;
+        Mon, 24 Sep 2018 12:22:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Wei Xu <xuwei5@hisilicon.com>,
+        stable@vger.kernel.org,
+        Rick Farrington <ricardo.farrington@cavium.com>,
+        Felix Manlunas <felix.manlunas@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 125/173] ARM: hisi: check of_iomap and fix missing of_node_put
-Date:   Mon, 24 Sep 2018 13:52:39 +0200
-Message-Id: <20180924113125.088489200@linuxfoundation.org>
+Subject: [PATCH 4.14 126/173] liquidio: fix hang when re-binding VF host drv after running DPDK VF driver
+Date:   Mon, 24 Sep 2018 13:52:40 +0200
+Message-Id: <20180924113125.135943817@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,47 +54,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Rick Farrington <ricardo.farrington@cavium.com>
 
-[ Upstream commit 81646a3d39ef14749301374a3a0b8311384cd412 ]
+[ Upstream commit ac13d6d8eaded15c67265eafc32f439ea3a0ac4a ]
 
-of_find_compatible_node() returns a device node with refcount incremented
-and thus needs an explicit of_node_put(). Further relying on an unchecked
-of_iomap() which can return NULL is problematic here, after all ctrl_base
-is critical enough for hix5hd2_set_cpu() to call BUG() if not available
-so a check seems mandated here.
+When configuring SLI_PKTn_OUTPUT_CONTROL, VF driver was assuming that IPTR
+mode was disabled by reset, which was not true.  Since DPDK driver had
+set IPTR mode previously, the VF driver (which uses buf-ptr-only mode) was
+not properly handling DROQ packets (i.e. it saw zero-length packets).
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-0002 Fixes: commit 06cc5c1d4d73 ("ARM: hisi: enable hix5hd2 SoC")
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
+This represented an invalid hardware configuration which the driver could
+not handle.
+
+Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
+Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-hisi/hotplug.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c |    3 +++
+ drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/arch/arm/mach-hisi/hotplug.c
-+++ b/arch/arm/mach-hisi/hotplug.c
-@@ -180,11 +180,15 @@ static bool hix5hd2_hotplug_init(void)
- 	struct device_node *np;
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+@@ -493,6 +493,9 @@ static void cn23xx_pf_setup_global_outpu
+ 	for (q_no = srn; q_no < ern; q_no++) {
+ 		reg_val = octeon_read_csr(oct, CN23XX_SLI_OQ_PKT_CONTROL(q_no));
  
- 	np = of_find_compatible_node(NULL, NULL, "hisilicon,cpuctrl");
--	if (np) {
--		ctrl_base = of_iomap(np, 0);
--		return true;
--	}
--	return false;
-+	if (!np)
-+		return false;
++		/* clear IPTR */
++		reg_val &= ~CN23XX_PKT_OUTPUT_CTL_IPTR;
 +
-+	ctrl_base = of_iomap(np, 0);
-+	of_node_put(np);
-+	if (!ctrl_base)
-+		return false;
-+
-+	return true;
- }
+ 		/* set DPTR */
+ 		reg_val |= CN23XX_PKT_OUTPUT_CTL_DPTR;
  
- void hix5hd2_set_cpu(int cpu, bool enable)
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+@@ -165,6 +165,9 @@ static void cn23xx_vf_setup_global_outpu
+ 		reg_val =
+ 		    octeon_read_csr(oct, CN23XX_VF_SLI_OQ_PKT_CONTROL(q_no));
+ 
++		/* clear IPTR */
++		reg_val &= ~CN23XX_PKT_OUTPUT_CTL_IPTR;
++
+ 		/* set DPTR */
+ 		reg_val |= CN23XX_PKT_OUTPUT_CTL_DPTR;
+ 
 
 
