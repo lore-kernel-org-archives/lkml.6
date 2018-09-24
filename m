@@ -2,99 +2,576 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78486C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F377FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C23214C1
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D8782087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="VZs6FsOI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C23214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yttljvac"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8782087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731927AbeIXVGv (ORCPT
+        id S1732035AbeIXVG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:06:51 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37792 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730111AbeIXVGt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:06:49 -0400
-Received: by mail-io1-f68.google.com with SMTP id v14-v6so17861593iob.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 08:04:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=KCZtKkAnBWhjGuHz0Qqtj110cu8mPWHG0oxrWOK5/q4=;
-        b=VZs6FsOI2EREWJvZIVz6ylNa4LUHFP9d/0m4tjJzpN7x/HgiwAWnPlasNzsI9ho2m4
-         k8N0+zimIxAKBXVBgGyL+odfKT3ndbsk4QdWMZ2shgudas5uqUR50aZJUkrMkiTwBA3M
-         mg+swulEL8gS8ALJqZ8Nx/Rz9CK6IP9dpOFMo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=KCZtKkAnBWhjGuHz0Qqtj110cu8mPWHG0oxrWOK5/q4=;
-        b=G1MXVRAZ5vhQRaxNbR2RF+Op2TGnF6/hQ81JZADWiKrBBBQ2Gp7fuHXHDc1qClWqJy
-         U/WozRN9uJgPjdemA4l2akUcDF0hvTBKoZUc1jFFRKHHEpyXoakkqSR/QlPVTkii+q1X
-         HEC1ix/jbprYdFMdpG/6gOwK2KKrrvGtQj7nD8thFyukJZ8MDysnVo2osz5XUaaH1wgG
-         jjr3NASJKgQtmlyTMnqEffMOG8oxso43v746aG4cZM23ztMPnjcHTwaAMbHMVqJe1AaC
-         SQ6MeOC3AjjyebaekAHFx9/tNX62D3k8MjAtyaE0GANk7cBTzGcNyh5RxVU7Ny9kqfnb
-         BwZw==
-X-Gm-Message-State: ABuFfojqeV1PET/h1CqB3KvlSWs0xq9VqSoAZPAfHta0SGSkt9ZenswW
-        Q2wj9R3rP3mlIhOmGgz+kHW3nNZBlckzZBZIW7RFTg==
-X-Google-Smtp-Source: ACcGV62C10rXWFarnMQ7IgWL3fKIfJw6FgL7/9BYs/fkWL3Xs8FNYyKM178hBftFc0HX5SQRpOMlAr4ZxR5TzR2QrO8=
-X-Received: by 2002:a6b:1e91:: with SMTP id e139-v6mr8429141ioe.246.1537801454424;
- Mon, 24 Sep 2018 08:04:14 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 08:04:13
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <8222c235-ff07-b16b-3389-0b9780145abd@virtuozzo.com>
-References: <153666041612.19117.14667042009014596105.stgit@localhost.localdomain>
- <8222c235-ff07-b16b-3389-0b9780145abd@virtuozzo.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 24 Sep 2018 17:04:13 +0200
-Message-ID: <CAJfpegt60Bcmu+fHRTL-HE-Uw5rvP3Nb_yuzfpX02E9Z8ECbdg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] fuse: Solve request_find() bottleneck
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     kuznet@virtuozzo.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 24 Sep 2018 17:06:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730672AbeIXVG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:06:57 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4FDE2087A;
+        Mon, 24 Sep 2018 15:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537801462;
+        bh=RgTyr/5g1V2hmdDRYqEf+5g1MI1Fc+qyNXCeVK2CIe8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=yttljvacd45nw+Pc4aMGrSHe1gQu4CsfaH3OkvrOSdnGyQU8Lc6ug/vjaBfAPa/rM
+         k6KKl3zetqyMO/97wxjxL6u6BGAo8r9V9Y6sCtuCs7VW3IQIHaPMAC37GVwz1oRkfj
+         tZQdI3Q290m8VYWI3hHOPuO3kvcpXXVfQefVya34=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-trace-devel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 13/27] tools lib traceevent: Add prefix tep_ to enums filter_{boolean,op,cmp}_type
+Date:   Mon, 24 Sep 2018 12:02:28 -0300
+Message-Id: <20180924150242.14235-14-acme@kernel.org>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180924150242.14235-1-acme@kernel.org>
+References: <20180924150242.14235-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 2:08 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> 2 weeks passed, so ping.
->
-> Miklos, any reaction on this?
->
-> Thanks,
-> Kirill
->
-> On 11.09.2018 13:11, Kirill Tkhai wrote:
->> Hi,
->>
->> We noticed the performance bottle neck in FUSE running our
->> Virtuozzo storage over rdma. On some types of workload
->> we observe 20% of time spent in request_find() in profiler.
->> This function is iterating over long list of requests, and it
->> scales bad.
->>
->> The patch introduces hash table to reduce the number
->> of iterations, we do in this function. Also, algorithm
->> of generating IDs for interrupt requests is changed,
->> simplified request_find() function and killed
->> fuse_req::intr_unique field.
+From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 
-Concept looks good.  Will review details...
+In order to make libtraceevent into a proper library, variables, data
+structures and functions require a unique prefix to prevent name space
+conflicts. That prefix will be "tep_". This adds prefix tep_ to enums
+filter_boolean_type, filter_op_type, filter_cmp_type and all enum's members
 
-Thanks,
-Miklos
+Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Cc: linux-trace-devel@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180919185723.680572508@goodmis.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/lib/traceevent/event-parse.h  |  46 ++++++------
+ tools/lib/traceevent/parse-filter.c | 144 ++++++++++++++++++------------------
+ 2 files changed, 95 insertions(+), 95 deletions(-)
+
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 7c4bf915d09a..c9d7c5376fc2 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -768,29 +768,29 @@ void tep_print_printk(struct tep_handle *pevent);
+ 
+ /* ----------------------- filtering ----------------------- */
+ 
+-enum filter_boolean_type {
+-	FILTER_FALSE,
+-	FILTER_TRUE,
++enum tep_filter_boolean_type {
++	TEP_FILTER_FALSE,
++	TEP_FILTER_TRUE,
+ };
+ 
+-enum filter_op_type {
+-	FILTER_OP_AND = 1,
+-	FILTER_OP_OR,
+-	FILTER_OP_NOT,
++enum tep_filter_op_type {
++	TEP_FILTER_OP_AND = 1,
++	TEP_FILTER_OP_OR,
++	TEP_FILTER_OP_NOT,
+ };
+ 
+-enum filter_cmp_type {
+-	FILTER_CMP_NONE,
+-	FILTER_CMP_EQ,
+-	FILTER_CMP_NE,
+-	FILTER_CMP_GT,
+-	FILTER_CMP_LT,
+-	FILTER_CMP_GE,
+-	FILTER_CMP_LE,
+-	FILTER_CMP_MATCH,
+-	FILTER_CMP_NOT_MATCH,
+-	FILTER_CMP_REGEX,
+-	FILTER_CMP_NOT_REGEX,
++enum tep_filter_cmp_type {
++	TEP_FILTER_CMP_NONE,
++	TEP_FILTER_CMP_EQ,
++	TEP_FILTER_CMP_NE,
++	TEP_FILTER_CMP_GT,
++	TEP_FILTER_CMP_LT,
++	TEP_FILTER_CMP_GE,
++	TEP_FILTER_CMP_LE,
++	TEP_FILTER_CMP_MATCH,
++	TEP_FILTER_CMP_NOT_MATCH,
++	TEP_FILTER_CMP_REGEX,
++	TEP_FILTER_CMP_NOT_REGEX,
+ };
+ 
+ enum filter_exp_type {
+@@ -828,7 +828,7 @@ enum filter_value_type {
+ struct fliter_arg;
+ 
+ struct filter_arg_boolean {
+-	enum filter_boolean_type	value;
++	enum tep_filter_boolean_type	value;
+ };
+ 
+ struct filter_arg_field {
+@@ -844,7 +844,7 @@ struct filter_arg_value {
+ };
+ 
+ struct filter_arg_op {
+-	enum filter_op_type	type;
++	enum tep_filter_op_type	type;
+ 	struct filter_arg	*left;
+ 	struct filter_arg	*right;
+ };
+@@ -856,13 +856,13 @@ struct filter_arg_exp {
+ };
+ 
+ struct filter_arg_num {
+-	enum filter_cmp_type	type;
++	enum tep_filter_cmp_type	type;
+ 	struct filter_arg	*left;
+ 	struct filter_arg	*right;
+ };
+ 
+ struct filter_arg_str {
+-	enum filter_cmp_type	type;
++	enum tep_filter_cmp_type	type;
+ 	struct tep_format_field	*field;
+ 	char			*val;
+ 	char			*buffer;
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index 153e248de75b..55ce8e603485 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -378,7 +378,7 @@ create_arg_item(struct tep_event_format *event, const char *token,
+ 			} else {
+ 				/* not a field, Make it false */
+ 				arg->type = FILTER_ARG_BOOLEAN;
+-				arg->boolean.value = FILTER_FALSE;
++				arg->boolean.value = TEP_FILTER_FALSE;
+ 				break;
+ 			}
+ 		}
+@@ -395,7 +395,7 @@ create_arg_item(struct tep_event_format *event, const char *token,
+ }
+ 
+ static struct filter_arg *
+-create_arg_op(enum filter_op_type btype)
++create_arg_op(enum tep_filter_op_type btype)
+ {
+ 	struct filter_arg *arg;
+ 
+@@ -425,7 +425,7 @@ create_arg_exp(enum filter_exp_type etype)
+ }
+ 
+ static struct filter_arg *
+-create_arg_cmp(enum filter_cmp_type ctype)
++create_arg_cmp(enum tep_filter_cmp_type ctype)
+ {
+ 	struct filter_arg *arg;
+ 
+@@ -488,8 +488,8 @@ add_right(struct filter_arg *op, struct filter_arg *arg, char *error_str)
+ 			 * is not a REGEX.
+ 			 */
+ 			if (strlen(arg->value.str) == 1 &&
+-			    op->num.type != FILTER_CMP_REGEX &&
+-			    op->num.type != FILTER_CMP_NOT_REGEX) {
++			    op->num.type != TEP_FILTER_CMP_REGEX &&
++			    op->num.type != TEP_FILTER_CMP_NOT_REGEX) {
+ 				arg->value.type = FILTER_NUMBER;
+ 				goto do_int;
+ 			}
+@@ -512,7 +512,7 @@ add_right(struct filter_arg *op, struct filter_arg *arg, char *error_str)
+ 				free_arg(left);
+ 				free_arg(arg);
+ 				op->type = FILTER_ARG_BOOLEAN;
+-				op->boolean.value = FILTER_FALSE;
++				op->boolean.value = TEP_FILTER_FALSE;
+ 				break;
+ 			}
+ 
+@@ -525,15 +525,15 @@ add_right(struct filter_arg *op, struct filter_arg *arg, char *error_str)
+ 
+ 			/* Make sure this is a valid string compare */
+ 			switch (op_type) {
+-			case FILTER_CMP_EQ:
+-				op_type = FILTER_CMP_MATCH;
++			case TEP_FILTER_CMP_EQ:
++				op_type = TEP_FILTER_CMP_MATCH;
+ 				break;
+-			case FILTER_CMP_NE:
+-				op_type = FILTER_CMP_NOT_MATCH;
++			case TEP_FILTER_CMP_NE:
++				op_type = TEP_FILTER_CMP_NOT_MATCH;
+ 				break;
+ 
+-			case FILTER_CMP_REGEX:
+-			case FILTER_CMP_NOT_REGEX:
++			case TEP_FILTER_CMP_REGEX:
++			case TEP_FILTER_CMP_NOT_REGEX:
+ 				ret = regcomp(&op->str.reg, str, REG_ICASE|REG_NOSUB);
+ 				if (ret) {
+ 					show_error(error_str,
+@@ -577,8 +577,8 @@ add_right(struct filter_arg *op, struct filter_arg *arg, char *error_str)
+ 
+  do_int:
+ 			switch (op->num.type) {
+-			case FILTER_CMP_REGEX:
+-			case FILTER_CMP_NOT_REGEX:
++			case TEP_FILTER_CMP_REGEX:
++			case TEP_FILTER_CMP_NOT_REGEX:
+ 				show_error(error_str,
+ 					   "Op not allowed with integers");
+ 				return TEP_ERRNO__ILLEGAL_INTEGER_CMP;
+@@ -652,22 +652,22 @@ enum op_type {
+ };
+ 
+ static enum op_type process_op(const char *token,
+-			       enum filter_op_type *btype,
+-			       enum filter_cmp_type *ctype,
++			       enum tep_filter_op_type *btype,
++			       enum tep_filter_cmp_type *ctype,
+ 			       enum filter_exp_type *etype)
+ {
+-	*btype = FILTER_OP_NOT;
++	*btype = TEP_FILTER_OP_NOT;
+ 	*etype = FILTER_EXP_NONE;
+-	*ctype = FILTER_CMP_NONE;
++	*ctype = TEP_FILTER_CMP_NONE;
+ 
+ 	if (strcmp(token, "&&") == 0)
+-		*btype = FILTER_OP_AND;
++		*btype = TEP_FILTER_OP_AND;
+ 	else if (strcmp(token, "||") == 0)
+-		*btype = FILTER_OP_OR;
++		*btype = TEP_FILTER_OP_OR;
+ 	else if (strcmp(token, "!") == 0)
+ 		return OP_NOT;
+ 
+-	if (*btype != FILTER_OP_NOT)
++	if (*btype != TEP_FILTER_OP_NOT)
+ 		return OP_BOOL;
+ 
+ 	/* Check for value expressions */
+@@ -699,21 +699,21 @@ static enum op_type process_op(const char *token,
+ 
+ 	/* Check for compares */
+ 	if (strcmp(token, "==") == 0)
+-		*ctype = FILTER_CMP_EQ;
++		*ctype = TEP_FILTER_CMP_EQ;
+ 	else if (strcmp(token, "!=") == 0)
+-		*ctype = FILTER_CMP_NE;
++		*ctype = TEP_FILTER_CMP_NE;
+ 	else if (strcmp(token, "<") == 0)
+-		*ctype = FILTER_CMP_LT;
++		*ctype = TEP_FILTER_CMP_LT;
+ 	else if (strcmp(token, ">") == 0)
+-		*ctype = FILTER_CMP_GT;
++		*ctype = TEP_FILTER_CMP_GT;
+ 	else if (strcmp(token, "<=") == 0)
+-		*ctype = FILTER_CMP_LE;
++		*ctype = TEP_FILTER_CMP_LE;
+ 	else if (strcmp(token, ">=") == 0)
+-		*ctype = FILTER_CMP_GE;
++		*ctype = TEP_FILTER_CMP_GE;
+ 	else if (strcmp(token, "=~") == 0)
+-		*ctype = FILTER_CMP_REGEX;
++		*ctype = TEP_FILTER_CMP_REGEX;
+ 	else if (strcmp(token, "!~") == 0)
+-		*ctype = FILTER_CMP_NOT_REGEX;
++		*ctype = TEP_FILTER_CMP_NOT_REGEX;
+ 	else
+ 		return OP_NONE;
+ 
+@@ -840,13 +840,13 @@ static int test_arg(struct filter_arg *parent, struct filter_arg *arg,
+ 		return FILTER_VAL_NORM;
+ 
+ 	case FILTER_ARG_OP:
+-		if (arg->op.type != FILTER_OP_NOT) {
++		if (arg->op.type != TEP_FILTER_OP_NOT) {
+ 			lval = test_arg(arg, arg->op.left, error_str);
+ 			switch (lval) {
+ 			case FILTER_VAL_NORM:
+ 				break;
+ 			case FILTER_VAL_TRUE:
+-				if (arg->op.type == FILTER_OP_OR)
++				if (arg->op.type == TEP_FILTER_OP_OR)
+ 					return FILTER_VAL_TRUE;
+ 				rval = test_arg(arg, arg->op.right, error_str);
+ 				if (rval != FILTER_VAL_NORM)
+@@ -856,7 +856,7 @@ static int test_arg(struct filter_arg *parent, struct filter_arg *arg,
+ 						       error_str);
+ 
+ 			case FILTER_VAL_FALSE:
+-				if (arg->op.type == FILTER_OP_AND)
++				if (arg->op.type == TEP_FILTER_OP_AND)
+ 					return FILTER_VAL_FALSE;
+ 				rval = test_arg(arg, arg->op.right, error_str);
+ 				if (rval != FILTER_VAL_NORM)
+@@ -877,18 +877,18 @@ static int test_arg(struct filter_arg *parent, struct filter_arg *arg,
+ 			break;
+ 
+ 		case FILTER_VAL_TRUE:
+-			if (arg->op.type == FILTER_OP_OR)
++			if (arg->op.type == TEP_FILTER_OP_OR)
+ 				return FILTER_VAL_TRUE;
+-			if (arg->op.type == FILTER_OP_NOT)
++			if (arg->op.type == TEP_FILTER_OP_NOT)
+ 				return FILTER_VAL_FALSE;
+ 
+ 			return reparent_op_arg(parent, arg, arg->op.left,
+ 					       error_str);
+ 
+ 		case FILTER_VAL_FALSE:
+-			if (arg->op.type == FILTER_OP_AND)
++			if (arg->op.type == TEP_FILTER_OP_AND)
+ 				return FILTER_VAL_FALSE;
+-			if (arg->op.type == FILTER_OP_NOT)
++			if (arg->op.type == TEP_FILTER_OP_NOT)
+ 				return FILTER_VAL_TRUE;
+ 
+ 			return reparent_op_arg(parent, arg, arg->op.left,
+@@ -949,9 +949,9 @@ process_filter(struct tep_event_format *event, struct filter_arg **parg,
+ 	struct filter_arg *left_item = NULL;
+ 	struct filter_arg *arg = NULL;
+ 	enum op_type op_type;
+-	enum filter_op_type btype;
++	enum tep_filter_op_type btype;
+ 	enum filter_exp_type etype;
+-	enum filter_cmp_type ctype;
++	enum tep_filter_cmp_type ctype;
+ 	enum tep_errno ret;
+ 
+ 	*parg = NULL;
+@@ -1197,7 +1197,7 @@ process_event(struct tep_event_format *event, const char *filter_str,
+ 			return TEP_ERRNO__MEM_ALLOC_FAILED;
+ 
+ 		(*parg)->type = FILTER_ARG_BOOLEAN;
+-		(*parg)->boolean.value = FILTER_FALSE;
++		(*parg)->boolean.value = TEP_FILTER_FALSE;
+ 	}
+ 
+ 	return 0;
+@@ -1223,7 +1223,7 @@ filter_event(struct event_filter *filter, struct tep_event_format *event,
+ 			return TEP_ERRNO__MEM_ALLOC_FAILED;
+ 
+ 		arg->type = FILTER_ARG_BOOLEAN;
+-		arg->boolean.value = FILTER_TRUE;
++		arg->boolean.value = TEP_FILTER_TRUE;
+ 	}
+ 
+ 	filter_type = add_filter_type(filter, event->id);
+@@ -1832,22 +1832,22 @@ static int test_num(struct tep_event_format *event, struct filter_arg *arg,
+ 	}
+ 
+ 	switch (arg->num.type) {
+-	case FILTER_CMP_EQ:
++	case TEP_FILTER_CMP_EQ:
+ 		return lval == rval;
+ 
+-	case FILTER_CMP_NE:
++	case TEP_FILTER_CMP_NE:
+ 		return lval != rval;
+ 
+-	case FILTER_CMP_GT:
++	case TEP_FILTER_CMP_GT:
+ 		return lval > rval;
+ 
+-	case FILTER_CMP_LT:
++	case TEP_FILTER_CMP_LT:
+ 		return lval < rval;
+ 
+-	case FILTER_CMP_GE:
++	case TEP_FILTER_CMP_GE:
+ 		return lval >= rval;
+ 
+-	case FILTER_CMP_LE:
++	case TEP_FILTER_CMP_LE:
+ 		return lval <= rval;
+ 
+ 	default:
+@@ -1918,17 +1918,17 @@ static int test_str(struct tep_event_format *event, struct filter_arg *arg,
+ 		val = get_field_str(arg, record);
+ 
+ 	switch (arg->str.type) {
+-	case FILTER_CMP_MATCH:
++	case TEP_FILTER_CMP_MATCH:
+ 		return strcmp(val, arg->str.val) == 0;
+ 
+-	case FILTER_CMP_NOT_MATCH:
++	case TEP_FILTER_CMP_NOT_MATCH:
+ 		return strcmp(val, arg->str.val) != 0;
+ 
+-	case FILTER_CMP_REGEX:
++	case TEP_FILTER_CMP_REGEX:
+ 		/* Returns zero on match */
+ 		return !regexec(&arg->str.reg, val, 0, NULL, 0);
+ 
+-	case FILTER_CMP_NOT_REGEX:
++	case TEP_FILTER_CMP_NOT_REGEX:
+ 		return regexec(&arg->str.reg, val, 0, NULL, 0);
+ 
+ 	default:
+@@ -1942,15 +1942,15 @@ static int test_op(struct tep_event_format *event, struct filter_arg *arg,
+ 		   struct tep_record *record, enum tep_errno *err)
+ {
+ 	switch (arg->op.type) {
+-	case FILTER_OP_AND:
++	case TEP_FILTER_OP_AND:
+ 		return test_filter(event, arg->op.left, record, err) &&
+ 			test_filter(event, arg->op.right, record, err);
+ 
+-	case FILTER_OP_OR:
++	case TEP_FILTER_OP_OR:
+ 		return test_filter(event, arg->op.left, record, err) ||
+ 			test_filter(event, arg->op.right, record, err);
+ 
+-	case FILTER_OP_NOT:
++	case TEP_FILTER_OP_NOT:
+ 		return !test_filter(event, arg->op.right, record, err);
+ 
+ 	default:
+@@ -2070,10 +2070,10 @@ static char *op_to_str(struct event_filter *filter, struct filter_arg *arg)
+ 	int val;
+ 
+ 	switch (arg->op.type) {
+-	case FILTER_OP_AND:
++	case TEP_FILTER_OP_AND:
+ 		op = "&&";
+ 		/* fall through */
+-	case FILTER_OP_OR:
++	case TEP_FILTER_OP_OR:
+ 		if (!op)
+ 			op = "||";
+ 
+@@ -2094,8 +2094,8 @@ static char *op_to_str(struct event_filter *filter, struct filter_arg *arg)
+ 			right_val = 0;
+ 
+ 		if (left_val >= 0) {
+-			if ((arg->op.type == FILTER_OP_AND && !left_val) ||
+-			    (arg->op.type == FILTER_OP_OR && left_val)) {
++			if ((arg->op.type == TEP_FILTER_OP_AND && !left_val) ||
++			    (arg->op.type == TEP_FILTER_OP_OR && left_val)) {
+ 				/* Just return left value */
+ 				str = left;
+ 				left = NULL;
+@@ -2105,10 +2105,10 @@ static char *op_to_str(struct event_filter *filter, struct filter_arg *arg)
+ 				/* just evaluate this. */
+ 				val = 0;
+ 				switch (arg->op.type) {
+-				case FILTER_OP_AND:
++				case TEP_FILTER_OP_AND:
+ 					val = left_val && right_val;
+ 					break;
+-				case FILTER_OP_OR:
++				case TEP_FILTER_OP_OR:
+ 					val = left_val || right_val;
+ 					break;
+ 				default:
+@@ -2119,8 +2119,8 @@ static char *op_to_str(struct event_filter *filter, struct filter_arg *arg)
+ 			}
+ 		}
+ 		if (right_val >= 0) {
+-			if ((arg->op.type == FILTER_OP_AND && !right_val) ||
+-			    (arg->op.type == FILTER_OP_OR && right_val)) {
++			if ((arg->op.type == TEP_FILTER_OP_AND && !right_val) ||
++			    (arg->op.type == TEP_FILTER_OP_OR && right_val)) {
+ 				/* Just return right value */
+ 				str = right;
+ 				right = NULL;
+@@ -2135,7 +2135,7 @@ static char *op_to_str(struct event_filter *filter, struct filter_arg *arg)
+ 		asprintf(&str, "(%s) %s (%s)", left, op, right);
+ 		break;
+ 
+-	case FILTER_OP_NOT:
++	case TEP_FILTER_OP_NOT:
+ 		op = "!";
+ 		right = arg_to_str(filter, arg->op.right);
+ 		if (!right)
+@@ -2246,26 +2246,26 @@ static char *num_to_str(struct event_filter *filter, struct filter_arg *arg)
+ 		goto out;
+ 
+ 	switch (arg->num.type) {
+-	case FILTER_CMP_EQ:
++	case TEP_FILTER_CMP_EQ:
+ 		op = "==";
+ 		/* fall through */
+-	case FILTER_CMP_NE:
++	case TEP_FILTER_CMP_NE:
+ 		if (!op)
+ 			op = "!=";
+ 		/* fall through */
+-	case FILTER_CMP_GT:
++	case TEP_FILTER_CMP_GT:
+ 		if (!op)
+ 			op = ">";
+ 		/* fall through */
+-	case FILTER_CMP_LT:
++	case TEP_FILTER_CMP_LT:
+ 		if (!op)
+ 			op = "<";
+ 		/* fall through */
+-	case FILTER_CMP_GE:
++	case TEP_FILTER_CMP_GE:
+ 		if (!op)
+ 			op = ">=";
+ 		/* fall through */
+-	case FILTER_CMP_LE:
++	case TEP_FILTER_CMP_LE:
+ 		if (!op)
+ 			op = "<=";
+ 
+@@ -2289,18 +2289,18 @@ static char *str_to_str(struct event_filter *filter, struct filter_arg *arg)
+ 	char *op = NULL;
+ 
+ 	switch (arg->str.type) {
+-	case FILTER_CMP_MATCH:
++	case TEP_FILTER_CMP_MATCH:
+ 		op = "==";
+ 		/* fall through */
+-	case FILTER_CMP_NOT_MATCH:
++	case TEP_FILTER_CMP_NOT_MATCH:
+ 		if (!op)
+ 			op = "!=";
+ 		/* fall through */
+-	case FILTER_CMP_REGEX:
++	case TEP_FILTER_CMP_REGEX:
+ 		if (!op)
+ 			op = "=~";
+ 		/* fall through */
+-	case FILTER_CMP_NOT_REGEX:
++	case TEP_FILTER_CMP_NOT_REGEX:
+ 		if (!op)
+ 			op = "!~";
+ 
+-- 
+2.14.4
+
