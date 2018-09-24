@@ -2,153 +2,327 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCEAECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA6CECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4886C20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:54:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="1HiMlKX7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4886C20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id C1E2020989
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:54:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E2020989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeIXPzM (ORCPT
+        id S1728502AbeIXP4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:55:12 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45567 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbeIXPzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:55:12 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x16-v6so11191004ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 02:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yu0mDz6OGYXcQJKG1HbQ7Ywzq+ByLvivtrx+JoNOxDY=;
-        b=1HiMlKX7wjdac/JJPBhKqyzlW1Pj2r5kF9NXy96VMPfYXAEmFR4g80+ve16CrLAmUm
-         2F/qSaJXiw7PNkO4RWBEgL7vvF8bvUEY04LDwD4GzRVQfsMT/OUfMiIk4mTkc4Z8PVPB
-         zQG//gw57r2eL3HBZDj0hug120gdMc5UWxmsk3ZT0wP7uVgOamkSsM49LeoZ2RYqrf8v
-         j5jG4JHb0gu9NmqYS9ksDqLQdMzqcRTbBkjnP+GBDulLnfypBAeFV9nywXF9o5NP1Sgc
-         LrieGAyhzSpyqcB1JnRx0BfuvUjWuqPrmgbMfst3602aAuiYET5q5ISgHD9vRDgUQIKT
-         TTEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yu0mDz6OGYXcQJKG1HbQ7Ywzq+ByLvivtrx+JoNOxDY=;
-        b=DjBT+0i248ERykNvgqglP4VhATTAl9gHSv6vVm6tR5fMtM+h0YyEzwYoV69j42LwEd
-         nd/3JcsonfmOZROh09UXQIrST7kl9IIvfkZ7GpvUO5larAUfTTjx9tzgLpJ4lbLULS8z
-         fcMj1TrFPeysHtRw/Lsxl+cKiUREBenhMF7GH6kf+pJ9lJeGYL/AwBaa3KNJ5r07OiEI
-         7L+WX46DPO7sB4ImdTTma1tS9hlH4UOWyQOUmY7XVzIZyUY9eT73l2KAYrRNv91J2pQB
-         /zjUBRnRqjqVTEjZIKlflBuV0FcxDNtRoFiN+OQl+abDtnMBl1kR32X6BaMKlNgyGEti
-         y4yA==
-X-Gm-Message-State: ABuFfojs4/chxmGISzn+VF0dvNQMTiueFAbDOqNIgZzeSsg6H6/5DXjC
-        QTWvmIVxOmKaZlc0nTKmGZUsuQ==
-X-Google-Smtp-Source: ANB0VdYg4JDdpo0q9jPko9zAVid5Bne9Fyb9shEAWmMf4fr1+svUgpoF+MmK1Fbpz/fQcjp2KcI3Yg==
-X-Received: by 2002:a2e:4557:: with SMTP id s84-v6mr9723977lja.47.1537782836229;
-        Mon, 24 Sep 2018 02:53:56 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id u24-v6sm6400446lji.4.2018.09.24.02.53.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 02:53:54 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 02:53:32 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        jason@lakedaemon.net, andrew@lunn.ch,
-        sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk,
-        ylefloch@online.net, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] ARM: mvebu: use dt_fixup to provide fallback for
- enable-method
-Message-ID: <20180924095332.lrfobc5dhxahm6g5@localhost>
-References: <20180726034856.20743-1-chris.packham@alliedtelesis.co.nz>
- <8736u3jhc3.fsf@bootlin.com>
+        Mon, 24 Sep 2018 11:56:02 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58408 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbeIXP4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:56:02 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EE284207CA; Mon, 24 Sep 2018 11:54:44 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B7625208DC;
+        Mon, 24 Sep 2018 11:54:34 +0200 (CEST)
+Date:   Mon, 24 Sep 2018 11:54:35 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH 02/10] phy: Add configuration interface
+Message-ID: <20180924095435.77hh7lrpq7wkss2o@flea>
+References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
+ <a739a2d623c3e60373a73e1ec206c2aa35c4a742.1536138624.git-series.maxime.ripard@bootlin.com>
+ <1ed01c1f-76d5-fa96-572b-9bfd269ad11b@ti.com>
+ <20180906145622.kwxvkcuerbeqsj6b@flea>
+ <1a169fad-72b7-fac0-1254-cac5d8304740@ti.com>
+ <20180912084242.skxbwbgluakakyg6@flea>
+ <e0d7db11-7ec1-cb98-4e62-12d78d1ba65b@ti.com>
+ <20180919121436.ztjnxofe66quddeq@flea>
+ <93088385-126b-6bfb-70e4-16f7b949d299@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4pbg56coqo4uhuid"
 Content-Disposition: inline
-In-Reply-To: <8736u3jhc3.fsf@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <93088385-126b-6bfb-70e4-16f7b949d299@ti.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 21, 2018 at 12:05:48PM +0200, Gregory CLEMENT wrote:
-> Hi Chris,
->  
->  On jeu., juil. 26 2018, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
-> 
-> > We need to maintain backwards compatibility with device trees that don't
-> > define an enable method. At the same time we want the device tree to be
-> > able to specify an enable-method and have it stick.
-> >
-> > Previously by having smp assigned in the DT_MACHINE definition this
-> > would be picked up by setup_arch() and override whatever
-> > arm_dt_init_cpu_maps() had configured. Now we move the initial
-> > assignment of default smp_ops to a dt_fixup and let
-> > arm_dt_init_cpu_maps() override that if the device tree defines an
-> > enable-method.
-> >
-> > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> 
-> I made several tests on an Armada XP based board: OpenBlock AX3: I
-> modify the enable-method in the decvice tree, and I confirm that without
-> your patch it is not taken into account whereas with this patch the
-> enable-method is applied form the device tree. I also didn't see any
-> regression with the original dtb.
-> 
-> So I added my:
-> Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-> 
-> and applied on mvebu/soc
+
+--4pbg56coqo4uhuid
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-Looks like this broke non-SMP. Not a huge deal, but please apply this as
-closely as possible on top of the previous patch (or squash it in).
+On Mon, Sep 24, 2018 at 02:18:35PM +0530, Kishon Vijay Abraham I wrote:
+> On Wednesday 19 September 2018 05:44 PM, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Fri, Sep 14, 2018 at 02:18:37PM +0530, Kishon Vijay Abraham I wrote:
+> >>>>>>> +/**
+> >>>>>>> + * phy_validate() - Checks the phy parameters
+> >>>>>>> + * @phy: the phy returned by phy_get()
+> >>>>>>> + * @mode: phy_mode the configuration is applicable to.
+> >>>>>>> + * @opts: Configuration to check
+> >>>>>>> + *
+> >>>>>>> + * Used to check that the current set of parameters can be handl=
+ed by
+> >>>>>>> + * the phy. Implementations are free to tune the parameters pass=
+ed as
+> >>>>>>> + * arguments if needed by some implementation detail or
+> >>>>>>> + * constraints. It will not change any actual configuration of t=
+he
+> >>>>>>> + * PHY, so calling it as many times as deemed fit will have no s=
+ide
+> >>>>>>> + * effect.
+> >>>>>>> + *
+> >>>>>>> + * Returns: 0 if successful, an negative error code otherwise
+> >>>>>>> + */
+> >>>>>>> +int phy_validate(struct phy *phy, enum phy_mode mode,
+> >>>>>>> +		  union phy_configure_opts *opts)
+> >>>>>>
+> >>>>>> IIUC the consumer driver will pass configuration options (or PHY p=
+arameters)
+> >>>>>> which will be validated by the PHY driver and in some cases the PH=
+Y driver can
+> >>>>>> modify the configuration options? And these modified configuration=
+ options will
+> >>>>>> again be given to phy_configure?
+> >>>>>>
+> >>>>>> Looks like it's a round about way of doing the same thing.
+> >>>>>
+> >>>>> Not really. The validate callback allows to check whether a particu=
+lar
+> >>>>> configuration would work, and try to negotiate a set of configurati=
+ons
+> >>>>> that both the consumer and the PHY could work with.
+> >>>>
+> >>>> Maybe the PHY should provide the list of supported features to the c=
+onsumer
+> >>>> driver and the consumer should select a supported feature?
+> >>>
+> >>> It's not really about the features it supports, but the boundaries it
+> >>> might have on those features. For example, the same phy integrated in
+> >>> two different SoCs will probably have some limit on the clock rate it
+> >>> can output because of the phy design itself, but also because of the
+> >>> clock that is fed into that phy, and that will be different from one
+> >>> SoC to the other.
+> >>>
+> >>> This integration will prevent us to use some clock rates on the first
+> >>> SoC, while the second one would be totally fine with it.
+> >>
+> >> If there's a clock that is fed to the PHY from the consumer, then the =
+consumer
+> >> driver should model a clock provider and the PHY can get a reference t=
+o it
+> >> using clk_get(). Rockchip and Arasan eMMC PHYs has already used someth=
+ing like
+> >> that.
+> >=20
+> > That would be doable, but no current driver has had this in their
+> > binding. So that would prevent any further rework, and make that whole
+> > series moot. And while I could live without the Allwinner part, the
+> > Cadence one is really needed.
+>=20
+> We could add a binding and modify the driver to to register a clock provi=
+der.
+> That could be included in this series itself.
+
+That wouldn't work for device whose bindings need to remain backward
+compatible. And the Allwinner part at least is in that case.
+
+I think we should aim at making it a norm for newer bindings, but we
+still have to support the old ones that cannot be changed.
+
+> >> Assuming the PHY can get a reference to the clock provided by the cons=
+umer,
+> >> what are the parameters we'll be able to get rid of in struct
+> >> phy_configure_opts_mipi_dphy?
+> >=20
+> > hs_clock_rate and lp_clock_rate. All the other ones are needed.
+>=20
+> For a start we could use that and get rid of hs_clock_rate and lp_clock_r=
+ate in
+> phy_configure_opts_mipi_dphy.
+
+As I was saying above, I'm not sure we can do that.
+
+> We could also use phy_set_bus_width() for lanes.
+
+I overlooked this function somehow, it indeed looks like we can remove
+the lanes part in favor of this function.
+
+> >=20
+> >> I'm sorry but I'm not convinced a consumer driver should have all the =
+details
+> >> that are added in phy_configure_opts_mipi_dphy.
+> >=20
+> > If it can convince you, here is the parameters that are needed by all
+> > the MIPI-DSI drivers currently in Linux to configure their PHY:
+> >=20
+> >   - cdns-dsi (drivers/gpu/drm/bridge/cdns-dsi.c)
+> >     - hs_clk_rate
+> >     - lanes
+> >     - videomode
+> >=20
+> >   - kirin (drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c)
+> >     - hs_exit
+> >     - hs_prepare
+> >     - hs_trail
+> >     - hs_zero
+> >     - lpx
+> >     - ta_get
+> >     - ta_go
+> >     - wakeup
+> >=20
+> >   - msm (drivers/gpu/drm/msm/dsi/*)
+> >     - clk_post
+> >     - clk_pre
+> >     - clk_prepare
+> >     - clk_trail
+> >     - clk_zero
+> >     - hs_clk_rate
+> >     - hs_exit
+> >     - hs_prepare
+> >     - hs_trail
+> >     - hs_zero
+> >     - lp_clk_rate
+> >     - ta_get
+> >     - ta_go
+> >     - ta_sure
+> >=20
+> >   - mtk (drivers/gpu/drm/mediatek/mtk_dsi.c)
+> >     - hs_clk_rate
+> >     - hs_exit
+> >     - hs_prepare
+> >     - hs_trail
+> >     - hs_zero
+> >     - lpx
+> >=20
+> >   - sun4i (drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c)
+> >     - clk_post
+> >     - clk_pre
+> >     - clk_prepare
+> >     - clk_zero
+> >     - hs_prepare
+> >     - hs_trail
+> >     - lanes
+> >     - lp_clk_rate
+> >=20
+> >   - tegra (drivers/gpu/drm/tegra/dsi.c)
+> >     - clk_post
+> >     - clk_pre
+> >     - clk_prepare
+> >     - clk_trail
+> >     - clk_zero
+> >     - hs_exit
+> >     - hs_prepare
+> >     - hs_trail
+> >     - hs_zero
+> >     - lpx
+> >     - ta_get
+> >     - ta_go
+> >     - ta_sure
+> >=20
+> >   - vc4 (drivers/gpu/drm/vc4/vc4_dsi.c)
+> >     - hs_clk_rate
+> >     - lanes
+> >=20
+> > Now, for MIPI-CSI receivers:
+> >=20
+> >   - marvell-ccic (drivers/media/platform/marvell-ccic/mcam-core.c)
+> >     - clk_term_en
+> >     - clk_settle
+> >     - d_term_en
+> >     - hs_settle
+> >     - lp_clk_rate
+> >=20
+> >   - omap4iss (drivers/staging/media/omap4iss/iss_csiphy.c)
+> >     - clk_miss
+> >     - clk_settle
+> >     - clk_term
+> >     - hs_settle
+> >     - hs_term
+> >     - lanes
+> >=20
+> >   - rcar-vin (drivers/media/platform/rcar-vin/rcar-csi2.c)
+> >     - hs_clk_rate
+> >     - lanes
+> >=20
+> >   - ti-vpe (drivers/media/platform/ti-vpe/cal.c)
+> >     - clk_term_en
+> >     - d_term_en
+> >     - hs_settle
+> >     - hs_term
+>=20
+> Thank you for providing the exhaustive list.
+>
+> > So the timings expressed in the structure are the set of all the ones
+> > currently used in the tree by DSI and CSI drivers. I would consider
+> > that a good proof that it would be useful.
+>=20
+> The problem I see here is each platform (PHY) will have it's own set of
+> parameters and we have to keep adding members to phy_configure_opts which=
+ is
+> not scalable. We should try to find a correlation between generic PHY mod=
+es and
+> these parameters (at-least for a subset).
+
+I definitely understand you skepticism towards someone coming in and
+dropping such a big list of obscure parameters :)
+
+However, those values are actually the whole list of parameters
+defined by the MIPI-DPHY standard, so I really don't expect drivers to
+need more than that. As you can see, most drivers allow less
+parameters to be configured, but all of them are defined within those
+parameters. So I'm not sure we need to worry about an ever-expanding
+list of parameters: we have a limited set of parameters defined, and
+=66rom an authoritative source, so we can also push back if someone
+wants to add a parameter that is implementation specific.
 
 
-- 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< - 8< -
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--4pbg56coqo4uhuid
+Content-Type: application/pgp-signature; name="signature.asc"
 
-From 3190d9502607995c7aecce79beec36714574d494 Mon Sep 17 00:00:00 2001
-From: Olof Johansson <olof@lixom.net>
-Date: Mon, 24 Sep 2018 02:37:31 -0700
-Subject: [PATCH] ARM: mvebu: fix !SMP build
+-----BEGIN PGP SIGNATURE-----
 
-Wrap set_smp_ops() in CONFIG_SMP.
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluotFoACgkQ0rTAlCFN
+r3Qk2hAAl8VsjDArszFyuzTttIzHoC0cmEvdwX5coXyspOqwvHKWBVGci1v3R1Rv
+vq5ElXdJWe/UznFA3RDcd9Xssa9haZ09I1SuuTPm/9lFZO7izjqvdOKd+K/ZpGHX
+w76soTksEq72FjsjBCc/ww1mvJLeBDAedbSTpgiEx3xkEWLyOO7JepRrxOQGAjHw
+UWS+dnVTcG0B//sv2Cx/belydQoEIFAnVD/8ddOgSBhZGRMuX3YN/xNhSlefWzVm
+zERu8t//AL53nUy/sk7ngZePm0VDUsM2jQ8FqqqoQgnKLDv+7mOwXLoN762+1/T/
+8M6AnPj6K1NZXTT7CkOr6zjd2zH8BA2aMwPVacy6Pclzp2Vn9DooGRlEf06NDrR8
+xe2ChLnV/uO9186FDVxCV5NYaY9ThqXxsztXH/5GWBOKBpUtmpUY6FgiiYPhv6tZ
+D3LHTbYJd4BFqYqW2apt4uLAPM/sOYKYXGisvySzLSDdwRagrvDdcLSx+pRMTUPd
+nMImIr+D6xOkkHp0WpN8kiM+X91HOEmsJdlAaIIEeto4fGZisSlvopZqGkzPjE6r
+/8MQP870/4AYJslIEZy2Orp9KsTCOXPbbtDtXSG7jo+wOzyzitqpgaujPkHxkAlH
+uFanKUZhsELxy+zfySLW7lSH2UMF152/fFhF/7hPGCYU/ag8+fo=
+=7Ujp
+-----END PGP SIGNATURE-----
 
-Fixes: d6ec59de9a0a8 ("ARM: mvebu: use dt_fixup to provide fallback for enable-method")
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- arch/arm/mach-mvebu/board-v7.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/mach-mvebu/board-v7.c b/arch/arm/mach-mvebu/board-v7.c
-index 5bbde5e..0b10acd 100644
---- a/arch/arm/mach-mvebu/board-v7.c
-+++ b/arch/arm/mach-mvebu/board-v7.c
-@@ -147,7 +147,9 @@ static void __init mvebu_dt_init(void)
- 
- static void __init armada_370_xp_dt_fixup(void)
- {
-+#ifdef CONFIG_SMP
- 	smp_set_ops(smp_ops(armada_xp_smp_ops));
-+#endif
- }
- 
- static const char * const armada_370_xp_dt_compat[] __initconst = {
--- 
-2.8.6
-
+--4pbg56coqo4uhuid--
