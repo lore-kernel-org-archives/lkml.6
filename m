@@ -2,99 +2,127 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A05C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 283ECC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C67C72098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:45:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C81CD2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:46:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="SRmBl/C+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C67C72098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="S9UgYfoV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81CD2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730083AbeIXUr3 (ORCPT
+        id S1730104AbeIXUs3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:47:29 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53521 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeIXUr2 (ORCPT
+        Mon, 24 Sep 2018 16:48:29 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:15528 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbeIXUs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:47:28 -0400
-Received: by mail-it1-f196.google.com with SMTP id q70-v6so2284023itb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 07:44:59 -0700 (PDT)
+        Mon, 24 Sep 2018 16:48:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/bZt5l0ZZGg7iG+3jPLSvGhO/WjTu84sSszDGnGeW+U=;
-        b=SRmBl/C+sETgXYc+9rwL+QTqqPhG0BwT6Z0W3/ZTm2mkjKdk+qa776v0GXTztRPqej
-         RQGNQhprc8uk5Ku/7yO6Gj/J3aSr7mlwJ4wRKyk6OykkTSsh9sZjqSXEG1gg9g+ns+Zf
-         z316hA069AJZV7hTJbaJ/R/Fnj5Tl0ma4jNAw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/bZt5l0ZZGg7iG+3jPLSvGhO/WjTu84sSszDGnGeW+U=;
-        b=U6FChLXMOC8dJZTfp/EkoJJGglI0+FOX+/69ZQuzmZBQegjnSmGycuEXeGJDnbBZ2y
-         Z/F6D/DsMh99nuWWw2VzAMGRLxQ5ziOSnQSL+x1YAgzbIu6gEEOixAn09LZp6Tat5mX1
-         z8JN2UMwJR3DQfMvhfuhcRn51JRk0uktOgE3B8l8ZeHeqKv2RiVsOPrLY+L+pVNBnUud
-         xw0dH/tBIJA/TN63rw5EgKzxgCib9h58CsIwVZGgUH5BwiUmh2eYt35Oma9BvdWYBPfR
-         LHXOYUvP5TPxXPk5VHTVi5Cc/25cPy+pCQy5hxNtSDIXmrSaZ1DSiiDVAAsy+Uy/I/xJ
-         1Nrg==
-X-Gm-Message-State: ABuFfogP+Fo7naDTx2PPct3zIwX3kAU50aYA7MKv6xP9z11ltYP1SK4j
-        empOGM1Oi79m8WiHEQboxtQiBLNwxhtyJTNS0qBRdQ==
-X-Google-Smtp-Source: ACcGV63Hq/yQkEmQlbG/mrZDN6R3tGFhI7wFVgeuxI02aeHw2S4o32i+ZZVcjzLyiXgT991PveOp3Wc9GlqtMSGoFuU=
-X-Received: by 2002:a24:4f8b:: with SMTP id c133-v6mr2713570itb.106.1537800299180;
- Mon, 24 Sep 2018 07:44:59 -0700 (PDT)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1537800359; x=1569336359;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:mime-version:
+   content-transfer-encoding;
+  bh=0DI+O59Dhkb0SPwEqcPUpxX1y8iSLvfYTy+WDtv+TlU=;
+  b=S9UgYfoV4+XSrqhPggKs58Ijjb95HOofJCJcf2UymZLMmY14V+Ki+EXH
+   1bNIX5dhjoxLkFW/iqvwDkfVeUStDrT71pKYSEAegHB4+k2W+suQLaPbY
+   16KWvYRf2qyrmgYYmEojtvpahfcp2JNnJYgVXKN1eG/q7VNCT09LsIniL
+   M=;
+X-IronPort-AV: E=Sophos;i="5.54,298,1534809600"; 
+   d="scan'208";a="760017054"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Sep 2018 14:45:45 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
+        by email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w8OEje7B058834
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Mon, 24 Sep 2018 14:45:43 GMT
+Received: from EX13D08UEE001.ant.amazon.com (10.43.62.126) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 24 Sep 2018 14:45:42 +0000
+Received: from EX13D02EUB004.ant.amazon.com (10.43.166.221) by
+ EX13D08UEE001.ant.amazon.com (10.43.62.126) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 24 Sep 2018 14:45:42 +0000
+Received: from EX13D02EUB004.ant.amazon.com ([10.43.166.221]) by
+ EX13D02EUB004.ant.amazon.com ([10.43.166.221]) with mapi id 15.00.1367.000;
+ Mon, 24 Sep 2018 14:45:41 +0000
+From:   "Stecklina, Julian" <jsteckli@amazon.de>
+To:     "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>
+CC:     "juerg.haefliger@hpe.com" <juerg.haefliger@hpe.com>,
+        "deepa.srinivasan@oracle.com" <deepa.srinivasan@oracle.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        "pradeep.vincent@oracle.com" <pradeep.vincent@oracle.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kanth.ghatraju@oracle.com" <kanth.ghatraju@oracle.com>,
+        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+        "liran.alon@oracle.com" <liran.alon@oracle.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "keescook@google.com" <keescook@google.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "chris.hyser@oracle.com" <chris.hyser@oracle.com>,
+        "tyhicks@canonical.com" <tyhicks@canonical.com>,
+        "john.haxby@oracle.com" <john.haxby@oracle.com>,
+        "jcm@redhat.com" <jcm@redhat.com>
+Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+Thread-Topic: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
+ in mind (for KVM to isolate its guests per CPU)
+Thread-Index: AQHUTmwG79KNqwwvs0u9NBSNsaJp1qT2qd0AgAjj0oA=
+Date:   Mon, 24 Sep 2018 14:45:41 +0000
+Message-ID: <1537800341.9745.20.camel@amazon.de>
+References: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
+         <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
+         <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
+         <ciirm8zhwyiqh4.fsf@u54ee758033e858cfa736.ant.amazon.com>
+         <ciirm8efdy916l.fsf@u54ee758033e858cfa736.ant.amazon.com>
+         <5efc291c-b0ed-577e-02d1-285d080c293d@oracle.com>
+         <ciirm8va743105.fsf@u54ee758033e858cfa736.ant.amazon.com>
+         <7221975d-6b67-effa-2747-06c22c041e78@oracle.com>
+In-Reply-To: <7221975d-6b67-effa-2747-06c22c041e78@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.165.20]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D5DA42683F56B14396B5512A9BB52777@amazon.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:bf41:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 07:44:58
- -0700 (PDT)
-X-Originating-IP: [212.96.48.140]
-In-Reply-To: <0000000000006971fa05769d22f6@google.com>
-References: <0000000000006971fa05769d22f6@google.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 24 Sep 2018 16:44:58 +0200
-Message-ID: <CAJfpegu9hZjJOUa7wHAj9KiTpcUuitsqnEMYvQzp6Mha2Yat-g@mail.gmail.com>
-Subject: Re: WARNING in request_end
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     syzbot <syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 2:29 PM, syzbot
-<syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    6bf4ca7fbc85 Linux 4.19-rc5
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=159149c6400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=22a62640793a83c9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ef054c4d3f64cd7f7cec
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmail.com
->
-> WARNING: CPU: 0 PID: 9445 at fs/fuse/dev.c:390 request_end+0x82e/0xaa0
+T24gVHVlLCAyMDE4LTA5LTE4IGF0IDE3OjAwIC0wNjAwLCBLaGFsaWQgQXppeiB3cm90ZToNCj4g
+SSB0ZXN0ZWQgdGhlIGtlcm5lbCB3aXRoIHRoaXMgbmV3IGNvZGUuIFdoZW4gYm9vdGVkIHdpdGhv
+dXQNCj4gInhwZm90bGJmbHVzaCIswqANCj4gdGhlcmUgaXMgbm8gbWVhbmluZ2Z1bCBjaGFuZ2Ug
+aW4gc3lzdGVtIHRpbWUgd2l0aCBrZXJuZWwgY29tcGlsZS4gDQoNClRoYXQncyBnb29kIG5ld3Mh
+IFNvIHRoZSBsb2NrIG9wdGltaXphdGlvbnMgc2VlbSB0byBoZWxwLg0KDQo+IEtlcm5lbMKgDQo+
+IGxvY2tzIHVwIGR1cmluZyBib290dXAgd2hlbiBib290ZWQgd2l0aCB4cGZvdGxiZmx1c2g6DQoN
+CkkgZGlkbid0IHRlc3QgdGhlIHZlcnNpb24gd2l0aCBUTEIgZmx1c2hlcywgYmVjYXVzZSBpdCdz
+IGNsZWFyIHRoYXQgdGhlDQpvdmVyaGVhZCBpcyBzbyBiYWQgdGhhdCBubyBvbmUgd2FudHMgdG8g
+dXNlIHRoaXMuDQoNCkl0IHNob3VsZG4ndCBsb2NrIHVwIHRob3VnaCwgc28gbWF5YmUgdGhlcmUg
+aXMgc3RpbGwgYSByYWNlIGNvbmRpdGlvbg0Kc29tZXdoZXJlLiBJJ2xsIGdpdmUgdGhpcyBhIHNw
+aW4gb24gbXkgZW5kIGxhdGVyIHRoaXMgd2Vlay4NCg0KVGhhbmtzIGZvciB0cnlpbmcgdGhpcyBv
+dXQhDQoNCkp1bGlhbg0KQW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJtYW55IEdtYkgKQmVy
+bGluIC0gRHJlc2RlbiAtIEFhY2hlbgptYWluIG9mZmljZTogS3JhdXNlbnN0ci4gMzgsIDEwMTE3
+IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJlcjogRHIuIFJhbGYgSGVyYnJpY2gsIENocmlzdGlhbiBT
+Y2hsYWVnZXIKVXN0LUlEOiBERTI4OTIzNzg3OQpFaW5nZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBD
+aGFybG90dGVuYnVyZyBIUkIgMTQ5MTczIEIK
 
-And  there we have the bug likely caused by the set_bit(FR_SENT, ...)
-not being inside the fpq->lock-ed region.
-
-So that needs to be fixed anyway, apparently.
-
-Thanks,
-Miklos
