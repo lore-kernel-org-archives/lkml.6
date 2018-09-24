@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9444ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 051C5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A17B2064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DCF32064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:09:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="cJRlnPvT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A17B2064D
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="HfKgb4q8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DCF32064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732829AbeIXVLd (ORCPT
+        id S1729497AbeIXVMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:11:33 -0400
-Received: from mail-eopbgr710090.outbound.protection.outlook.com ([40.107.71.90]:26752
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 24 Sep 2018 17:12:12 -0400
+Received: from mail-eopbgr720093.outbound.protection.outlook.com ([40.107.72.93]:21257
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732197AbeIXUvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:51:33 -0400
+        id S1731151AbeIXUuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:50:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=85K9w6hQEX6SNFnjtlNh9vx7eboPfZMX0BGj8dk5BbU=;
- b=cJRlnPvTfassQEYFcsKPzS6tWAYPwLpeJ0gREUAFmNY22tfjKsfc8VRQ+allbC4DqLWMPwnDVCdxT123RthsXcfH5WOD0ivE8DGNzy80ACwfsJ19giJ9Rn/Cd0gXczEzOe4usdPAR40YdpAgvipnz1JC2SVEK1SXUKiUWipqpF8=
+ bh=AOlibVdUI6Ao64Q+kxtHXv47vtcuD7BK7+x7faM8jWg=;
+ b=HfKgb4q8q/xS8KJxwUue/rUlTz4k7bS7M2olaF9yOPvN+hNx9lxHfWwrRZOGjH9VEFUOFmoIJA1ry44hm8NNatzqV+seqasJd07tp3HQrlCeexeBIeJMWRWMYcM4x6C/7/KSEUG1gGWIMcGBUlGRYOyRh08aC15ExNYzBYwC+9A=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
+ CY4PR21MB0821.namprd21.prod.outlook.com (10.173.192.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.5; Mon, 24 Sep 2018 14:48:53 +0000
+ 15.20.1207.3; Mon, 24 Sep 2018 14:48:17 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:48:53 +0000
+ 14:48:17 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Johannes Berg <johannes.berg@intel.com>,
+CC:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 38/76] mac80211: always account for A-MSDU header
- changes
-Thread-Topic: [PATCH AUTOSEL 4.18 38/76] mac80211: always account for A-MSDU
- header changes
-Thread-Index: AQHUVBWlgu/PT99uCUyNJNdutSF1CA==
-Date:   Mon, 24 Sep 2018 14:48:24 +0000
-Message-ID: <20180924144751.164410-37-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 27/76] bpf: fix msg->data/data_end after sg shift
+ repair in bpf_msg_pull_data
+Thread-Topic: [PATCH AUTOSEL 4.18 27/76] bpf: fix msg->data/data_end after sg
+ shift repair in bpf_msg_pull_data
+Thread-Index: AQHUVBWhCeSZRQ415EqtgigSJLDVaQ==
+Date:   Mon, 24 Sep 2018 14:48:17 +0000
+Message-ID: <20180924144751.164410-27-alexander.levin@microsoft.com>
 References: <20180924144751.164410-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -59,96 +60,108 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:qolWMARqW5zjoUZL2qdCKXIZE4QGf6HQSvtTJbkqAmVzWzphn3pHRxWW0cT4NMfIXc8PbkuOZ+3SE+ictog3pvzNmc36ng+5/0cUXEtInKnABR0GqKWC8saCyLvqgqpjui+e4G6RfGI5MMafQk/35pI4d5bvCnVKyNy5Qz03ZkZoNHiIXmoVM+66rUy7jRPMUI75gTHZzYOAL8DIRSJ/IKh2neYchWE++4jn6n4e0eTWNqZ/aKKTRMT9zcKXYB9Ze3l/SdjDwXsa9RCMIlK6w34rpsTui2w7tzIZpMQXM/PdzM47XQm7jM+gLaB7NMCu/LRbvAqqgHOd5iblm7oAzklv14Q6oNpm1Lgja/DxuxXu4le5a1jEr7AXRMXxEt6Hr/BOrNOwz6sUMziAvIS1ibKa7OQ3Ykhb/CqPHvn3s5i/PtWpQAvfiR1Hw4nIs/o1kLfh4LBtM3M+lrTPtY7imQ==;5:psWIxGT+pT/eG/hzA/43ufwIljJHPJy+IEatL6RBPWnKB/svoD0vLDPHw9UavzyLSplg7b6z0LJX0bwvQSU057mci/CuPyvapxnTbZvhZ8Hi7DUeyAkSn24YvI3sVnzSd+wl8C1QKuO11TDeXhfMQCc37qrf/FA4zCL3y00m71k=;7:5cFGuuCnFqWI1mTGl9tEU8P2y+bbrmzNKVPfsYZojNNVGF5soaOAeKRkvSdjo+6lnepbkIskQ3QQkqCPgYRxs7LVfswUw/r4UgNLhOcRJWA96Ky0tH8Y2TtUOJChn4H4wxYXOIf1wIGS1BHrS8b0bwTySq26bXoW4aGq6bS5SULVWV/0Va+7pIaOCnp43A1E+Do16N1Byz+erSxPahGOYbcTrfz0x4qoHIsCjJEvPE9oscO74Jx1zGDX6OQYQ99C
-x-ms-office365-filtering-correlation-id: e0df3a0e-2edd-4276-ad70-08d6222cd906
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:d0U9iidJ1wjhcs7cYzweZNZqL/ONvKnDWpJ0Vb9JZuzXwINsV1yc2zrdiqM+oQGbXY+1TPSxGXeXbguIU298X4JPZ4N1EQVKUjlAzGAoA3DJJHuHlfARVLGeoWzGBKfqfSYcBzr6R0H+wGUWd3hryZdouY8ZTHXWHjrSJtix7F2eVA3FO6t4Dml+FMXuDfSSk8Ji6fYa8zNQqPYzIfzavfkREpZ0MNJNxBpRjznGxr4TNVYR6EMLPuZPUf5H6+DnvGaqK6+NSKSAHue/TWTbe+lS9/GSwOmTj4qB2qW0qa6tSf2svQlJ9TlrnPJbsKepX7melB2R3M1lYQNoPzz+ge0TP+0q1rP2wNrh1eqJJAzm9SJDRYKKrFZKXsE4gQN0Xsu8HHvcJM3NbZksvHgYXNSFocHBKQK7Xq/FAxh4OOQkGZF/fdxuV6SAl1eeWhyf9EwDY6Br0nWNvB/Jo1LTCg==;5:M8Cn3RvFVelpGSXYCrsaySxZztf2Gwm/bBmwhIeB0RRPITiNmvX2wYAWOLE9TfZ7cFee25xhbbCZB1uYJa393bvlgyqyr71Tc5uSQ+WwLv+DZCGIWZvt5zdDYRRtr+TV/k1YETwG4trb98B8g7mu2DtqFRXNUcVtNndDQ0QTNs8=;7:7rB8xbSL4oqtYJxyrrmJEU7nWKxAJifq7SWyWnrpFqJ6/jRssXzlB0WaCE9xw9yUosJcyuMuEbCxarhKKT/2oWkRGlltRNVpvikk/NBsxNfFSt81Gw6UlgZce5qCT0BYm0iKUF83JHsqDO0eJEdXrYICnfwMPFS2yB/NGyXhwtKRGJNgn65CdgHopOqCFAyvoquP7sCU7ua8ZtxAWP2mcKcWrQU7tkQ7xsJPZE/oHBjcNpVmm61mzIA4qR7vQr1x
+x-ms-office365-filtering-correlation-id: 1665f08d-802f-445e-68e7-08d6222cc3bb
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
-x-ms-traffictypediagnostic: CY4PR21MB0855:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0855457383E865A150F34BB1FB170@CY4PR21MB0855.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0821;
+x-ms-traffictypediagnostic: CY4PR21MB0821:
+x-microsoft-antispam-prvs: <CY4PR21MB0821F2E3ED185BA9431D9F89FB170@CY4PR21MB0821.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(131327999870524)(85827821059158)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0821;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0821;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(486006)(81166006)(6436002)(110136005)(54906003)(10290500003)(6666003)(86362001)(446003)(6486002)(68736007)(2900100001)(86612001)(476003)(6512007)(1076002)(2616005)(305945005)(81156014)(105586002)(10090500001)(14454004)(71200400001)(106356001)(316002)(7736002)(71190400001)(478600001)(11346002)(6116002)(8936002)(5660300001)(3846002)(72206003)(97736004)(8676002)(6506007)(25786009)(36756003)(66066001)(2906002)(5250100002)(76176011)(26005)(14444005)(217873002)(107886003)(186003)(256004)(102836004)(22452003)(2501003)(99286004)(53936002)(4326008)(15650500001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(376002)(346002)(39860400002)(189003)(199004)(2900100001)(86612001)(81166006)(81156014)(8676002)(8936002)(1076002)(4326008)(25786009)(3846002)(6116002)(86362001)(99286004)(486006)(76176011)(54906003)(71190400001)(71200400001)(22452003)(316002)(106356001)(105586002)(6346003)(478600001)(10290500003)(6506007)(26005)(7736002)(305945005)(72206003)(186003)(476003)(446003)(11346002)(14454004)(2616005)(110136005)(217873002)(6486002)(53936002)(102836004)(5660300001)(14444005)(256004)(6512007)(6436002)(107886003)(66066001)(97736004)(36756003)(10090500001)(2501003)(68736007)(5250100002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: sH4bC67AU2WUBwmiq1vZIlt778IMUZmjG3IH+0m/x7wnvquP1ohI9mfHM+pA5Lbodcme2eBkyy3OegEJVcF7OWWkkbQ04VAP/ltN9UJaLLpR+B8IBhyYheknAI3EtYOxClGyjolT1YXwXjeQPqSsSIqPJz4c3Et/WSBv1ACE1x+c1L9Up3SukB5CkcPWwrO1zp7K6IKBukV/ueKfwsIPerUTC5eZr5nq4dpBy6J9zgdHRkcX4AVEMGCiWcH0n7TtGa7n96us/iQuJU4/bd/ACQcD6SjjifcGSHZ8XX3SD5HE9M4v8cq5vt+gcEHl74wpYtqNMlP17jS41/13OG6aSFb1YMOBjFzhYRG/+S0KOWU=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: Purjtx14SHimXm6xh+9vjVi0biTTsuyuKqBuK6AW6wvbTJ9vEmYZuqDJgKDqamRg+et1+6EQG4pT+w/Cj1XvSN3dGKNRZGhg1e3wtHXL51Qk8rEXfgweJaCsQjlNV9MqLlXD+XmIHTJCtD3EhU2P8gIItIulrnjZ0Bg8evnmDH+eetyV2MhtderU7EeUJmc68PNKn+Wd77een6ICcvgQggKEApwBsYCSQ48aLaR2PXWpkp5aShDsVZh57y3kXFAFg8D+Pju/gLN539y46dpJ9kZ+OhRiL2YUJwu4snlHXHQQOBccoEkndCV9MSiSydrHxKx+FNgrJN2UyF7zYz5eTSBN/fRlh4Uqkz8YjKI3Ueg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0df3a0e-2edd-4276-ad70-08d6222cd906
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:24.5925
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1665f08d-802f-445e-68e7-08d6222cc3bb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:17.6437
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0821
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit aa58acf325b4aadeecae2bfc90658273b47dbace ]
+[ Upstream commit 0e06b227c5221dd51b5569de93f3b9f532be4a32 ]
 
-In the error path of changing the SKB headroom of the second
-A-MSDU subframe, we would not account for the already-changed
-length of the first frame that just got converted to be in
-A-MSDU format and thus is a bit longer now.
+In the current code, msg->data is set as sg_virt(&sg[i]) + start - offset
+and msg->data_end relative to it as msg->data + bytes. Using iterator i
+to point to the updated starting scatterlist element holds true for some
+cases, however not for all where we'd end up pointing out of bounds. It
+is /correct/ for these ones:
 
-Fix this by doing the necessary accounting.
+1) When first finding the starting scatterlist element (sge) where we
+   find that the page is already privately owned by the msg and where
+   the requested bytes and headroom fit into the sge's length.
 
-It would be possible to reorder the operations, but that would
-make the code more complex (to calculate the necessary pad),
-and the headroom expansion should not fail frequently enough
-to make that worthwhile.
+However, it's /incorrect/ for the following ones:
 
-Fixes: 6e0456b54545 ("mac80211: add A-MSDU tx support")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+2) After we made the requested area private and updated the newly allocated
+   page into first_sg slot of the scatterlist ring; when we find that no
+   shift repair of the ring is needed where we bail out updating msg->data
+   and msg->data_end. At that point i will point to last_sg, which in this
+   case is the next elem of first_sg in the ring. The sge at that point
+   might as well be invalid (e.g. i =3D=3D msg->sg_end), which we use for
+   setting the range of sg_virt(&sg[i]). The correct one would have been
+   first_sg.
+
+3) Similar as in 2) but when we find that a shift repair of the ring is
+   needed. In this case we fix up all sges and stop once we've reached the
+   end. In this case i will point to will point to the new msg->sg_end,
+   and the sge at that point will be invalid. Again here the requested
+   range sits in first_sg.
+
+Fixes: 015632bb30da ("bpf: sk_msg program helper bpf_sk_msg_pull_data")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/mac80211/tx.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ net/core/filter.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index 1aac5e3c7eee..6ca0865de945 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -3239,7 +3239,7 @@ static bool ieee80211_amsdu_aggregate(struct ieee8021=
-1_sub_if_data *sdata,
+diff --git a/net/core/filter.c b/net/core/filter.c
+index a9f8d71575c7..e713a8791815 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -2300,6 +2300,7 @@ BPF_CALL_4(bpf_msg_pull_data,
+ 	if (unlikely(start >=3D offset + len))
+ 		return -EINVAL;
 =20
- 	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) +
- 						     2 + pad))
--		goto out;
-+		goto out_recalc;
++	first_sg =3D i;
+ 	/* The start may point into the sg element so we need to also
+ 	 * account for the headroom.
+ 	 */
+@@ -2307,8 +2308,6 @@ BPF_CALL_4(bpf_msg_pull_data,
+ 	if (!msg->sg_copy[i] && bytes_sg_total <=3D len)
+ 		goto out;
 =20
- 	ret =3D true;
- 	data =3D skb_push(skb, ETH_ALEN + 2);
-@@ -3256,11 +3256,13 @@ static bool ieee80211_amsdu_aggregate(struct ieee80=
-211_sub_if_data *sdata,
- 	head->data_len +=3D skb->len;
- 	*frag_tail =3D skb;
-=20
--	flow->backlog +=3D head->len - orig_len;
--	tin->backlog_bytes +=3D head->len - orig_len;
+-	first_sg =3D i;
 -
--	fq_recalc_backlog(fq, tin, flow);
-+out_recalc:
-+	if (head->len !=3D orig_len) {
-+		flow->backlog +=3D head->len - orig_len;
-+		tin->backlog_bytes +=3D head->len - orig_len;
-=20
-+		fq_recalc_backlog(fq, tin, flow);
-+	}
+ 	/* At this point we need to linearize multiple scatterlist
+ 	 * elements or a single shared page. Either way we need to
+ 	 * copy into a linear buffer exclusively owned by BPF. Then
+@@ -2390,7 +2389,7 @@ BPF_CALL_4(bpf_msg_pull_data,
+ 	if (msg->sg_end < 0)
+ 		msg->sg_end +=3D MAX_SKB_FRAGS;
  out:
- 	spin_unlock_bh(&fq->lock);
+-	msg->data =3D sg_virt(&sg[i]) + start - offset;
++	msg->data =3D sg_virt(&sg[first_sg]) + start - offset;
+ 	msg->data_end =3D msg->data + bytes;
 =20
+ 	return 0;
 --=20
 2.17.1
