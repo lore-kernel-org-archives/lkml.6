@@ -2,81 +2,176 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318BAC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D25ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 703BF20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:44:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SfZQZk+d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703BF20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id EA7CA208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:46:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA7CA208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeIYBrs (ORCPT
+        id S1726470AbeIYBuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:47:48 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49920 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeIYBrs (ORCPT
+        Mon, 24 Sep 2018 21:50:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60400 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726001AbeIYBuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:47:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=d7nfAlpTa4kiJ3fuJnaQl867ETtheD7fC+ZCwuhC25A=; b=SfZQZk+dnp/ahrpTAr1ZebvhPF
-        eLAUMgjSVxoS31zRiw+/vdkVDP/hpwpvQmIV2YjtK3NULjLCCqJXc77uwa3NC4JRi5yXTXo/CEs2h
-        1SIr9wLAt2YeJnI9FYgaVn2QxkndZlIeuQTLBZvaZeI9cCdLCfo2CoeFPzI+7PSoZgdpJt7GpJYSd
-        mCDuacFXOHuGvdEnc7UBiXLjBxQdzx8k3afCIMm5Lvht4mFbZh6MWi0QI+kgZ1ZpArx5MEYHxa3Y1
-        1r/1WaWQ9QH4G86Vh/4SfQ+Qtg84ZITTfJaTkBgkojKL0C0vTLReXCioJgdAuDFClAcx5xxiDLwjP
-        SrtQUkWw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g4Wlf-0005eC-FG; Mon, 24 Sep 2018 19:43:59 +0000
-Subject: Re: libata-core WARNING during boot
-To:     Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <b9b55c84-a90c-e7ac-add7-fdf1b7e13dc6@infradead.org>
- <0d5420a4-dd7c-1810-2fbd-0840372a5ba3@kernel.dk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <27c207df-f7ff-4f01-a713-9d92ab7b3631@infradead.org>
-Date:   Mon, 24 Sep 2018 12:43:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 24 Sep 2018 21:50:05 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OJi4NS058616
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:46:16 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mq48vd9ss-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:46:16 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 24 Sep 2018 13:46:15 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Sep 2018 13:46:12 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OJk90j21692564
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Sep 2018 12:46:09 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 762F4BE056;
+        Mon, 24 Sep 2018 13:46:09 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B8D31BE058;
+        Mon, 24 Sep 2018 13:46:06 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Sep 2018 13:46:06 -0600 (MDT)
+Subject: Re: [PATCH v10 11/26] s390: vfio-ap: implement mediated device open
+ callback
+To:     David Hildenbrand <david@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1536781396-13601-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <e1ff9918-a1ab-31b1-0b32-a3980770d2ac@linux.ibm.com>
+ <09a6b9e5-e335-14cf-debd-de0f92dafd5e@redhat.com>
+ <ebe81ebf-9b61-dbf6-743e-6145162cdcfb@linux.ibm.com>
+ <69b5e3d3-5d44-37c0-ca10-720345852134@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 24 Sep 2018 15:46:06 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <0d5420a4-dd7c-1810-2fbd-0840372a5ba3@kernel.dk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <69b5e3d3-5d44-37c0-ca10-720345852134@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18092419-0012-0000-0000-000016BAF85A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009764; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01093092; UDB=6.00564936; IPR=6.00873129;
+ MB=3.00023486; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 19:46:15
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092419-0013-0000-0000-000054851066
+Message-Id: <df269178-b486-b091-4da4-731fc3f77e85@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809240189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/18 12:19 PM, Jens Axboe wrote:
-> On 9/23/18 9:34 PM, Randy Dunlap wrote:
->> Hi,
+On 09/24/2018 02:40 PM, David Hildenbrand wrote:
+> On 24/09/2018 18:07, Tony Krowiak wrote:
+>> On 09/24/2018 04:40 AM, David Hildenbrand wrote:
+>>>
+>>>>     /**
+>>>> - * Verify that the AP instructions are available on the guest. This is
+>>>> indicated
+>>>> - * via the  KVM_S390_VM_CPU_FEAT_AP CPU model feature.
+>>>> + * Verify that the AP instructions are being interpreted by firmware
+>>>> for the
+>>>> + * guest. This is indicated by the kvm->arch.crypto.apie flag.
+>>>>      */
+>>>>     static int kvm_ap_validate_crypto_setup(struct kvm *kvm)
+>>>>     {
+>>>> -	if (test_bit_inv(KVM_S390_VM_CPU_FEAT_AP, kvm->arch.cpu_feat))
+>>>> +	if (kvm->arch.crypto.apie)
+>>>>     		return 0;
+>>>
+>>> I wonder if this check makes sense, because apie can be toggled during
+>>> runtime. I guess it would be sufficient to check if the ap control block
+>>> is available and apie is supported by the HW.
 >>
->> I'm having (repeatable) problems booting 4.18 and 4.18.9 (latest stable):
+>> I am not clear about what you are getting at here, but I'll attempt
+>> to respond. There is no need to check if the AP control block (CRYCB)
+>> is available as the address is set in the CRYCBD three instructions
+>> above, even if AP instructions are not available. Regarding whether apie
+>> is supported by the hardware, the value of vcpu->kvm->arch.crypto.apie
+>> can not be set unless it is supported by the HW. In the patch (24/26)
+>> that provides the VM attributes to toggle this value, it can only be
+>> turned on if the AP instructions are available. I might also note that
+>> the kvm_ap_validate_crypto_setup() function is called whenever one of
+>> the VM crypto attributes is changed, so it makes sense that decisions
+>> made in this function are based on a change to a VM crypto attribute. In
+>> my first pass at changing this function, I checked
+>> ap_instructions_available() here, but after considering all of the
+>> above, it made sense to me to check the apie flag.
 >>
->> WARNING: CPU: 1 PID: 1 at ../drivers/ata/libata-core.c:6677 ata_host_detach+0x6e/0x150
->>
->>
->> It never completes the boot.  Could that be due to this eh warning?
 > 
-> Is this a new issue? Not quite clear based on your report.
+> I prefer ap_instructions_available(). As I said, kvm->arch.crypto.apie
+> is a moving target.
+
+Looking at this again, I think I responded before my brain shifted from
+digesting comments about patch 24/26 (enable/disable APIE) to the
+context for your comment here; namely, the device open callback. My
+comment above makes no sense in this context. From the perspective of
+the vfio_ap device driver, there is one requirement that must be met in
+order to provide pass-through functionality: The AP instructions must be
+must be interpreted by the HW (i.e., ECA.28 == 1). Checking whether AP
+instructions are available does not tell us whether they are being
+interpreted by HW. Checking whether the AP control block (i.e., CRYCB)
+is available, even when combined with the instruction availability
+check, does not provide any more insight into the value of ECA.28
+becuase the CRYCB will be provided if the MSAX3 facility is installed
+(STFLE.76) for the guest regardless of whether AP instructions are 
+available or not. There is no doubt that if the AP instructions are
+not available, then the mdev open callback should fail, but it doesn't
+tell the whole story.
+
+I realize that our CPU model protects against configuring a vfio-ap
+device for the guest if ap=off, but this function knows nothing about
+userspace. I can make a similar argument that kvm->arch.crypto.apie
+will be switched on only if ap=on but again, that is userspace
+configuration.
+
+Having said all of the above, maybe it doesn't really matter whether
+AP instructions are being interpreted or not. If ECA.28 == 0, then
+the AP masks may very well be ignored since all AP instructions will
+be intercepted; so, maybe checking AP instruction availability is all
+that is needed. I will verify this and if I'm correct, I'll make the
+change you suggested.
+
 > 
 
-That's because I don't know.  I've been struggling with this for a few weeks
-now but I don't know how far back it goes.  I'll keep digging.
-
-thanks,
--- 
-~Randy
