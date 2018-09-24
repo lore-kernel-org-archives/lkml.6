@@ -2,137 +2,120 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D702ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB90ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C694F2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:29:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C694F2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B47752087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:31:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47752087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730511AbeIXWcL (ORCPT
+        id S1731134AbeIXWeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:32:11 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38764 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726711AbeIXWcL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:32:11 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGRiJC064936
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:29:13 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mq135y9rp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:29:12 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 24 Sep 2018 10:29:12 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 10:29:08 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OGT5fC26214622
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 09:29:05 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9DB62BE053;
-        Mon, 24 Sep 2018 10:29:05 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBE54BE04F;
-        Mon, 24 Sep 2018 10:29:01 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 10:29:01 -0600 (MDT)
-Subject: Re: [PATCH v10 12/26] s390: vfio-ap: implement VFIO_DEVICE_GET_INFO
- ioctl
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-13-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180924134310.29fb9d1d.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 24 Sep 2018 12:29:01 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 24 Sep 2018 18:34:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60990 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726400AbeIXWeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 18:34:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E34C9AD66;
+        Mon, 24 Sep 2018 16:31:14 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 16F5D1E3615; Mon, 24 Sep 2018 18:31:14 +0200 (CEST)
+Date:   Mon, 24 Sep 2018 18:31:14 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Jan Kara <jack@suse.cz>, Ming Lei <ming.lei@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        syzbot 
+        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
+        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
+Subject: Re: [PATCH v4] block/loop: Serialize ioctl operations.
+Message-ID: <20180924163114.GG28775@quack2.suse.cz>
+References: <1537009136-4839-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <1af79300-cb04-36e3-a650-168a5942161f@i-love.sakura.ne.jp>
+ <20180923220300.GA12589@ming.t460p>
+ <ba535251-c206-6242-3e6d-a4ed825c8114@i-love.sakura.ne.jp>
+ <20180924123108.GD28775@quack2.suse.cz>
+ <c51b5ce0-befb-5b7f-1aab-588d0f14d7b8@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20180924134310.29fb9d1d.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092416-0036-0000-0000-00000A3DDB71
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01093026; UDB=6.00564896; IPR=6.00873064;
- MB=3.00023484; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:29:11
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092416-0037-0000-0000-0000490D8FC2
-Message-Id: <13d5ac07-3c89-1a93-ce62-e3c44b3bf0ba@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=877 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240161
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c51b5ce0-befb-5b7f-1aab-588d0f14d7b8@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 07:43 AM, Cornelia Huck wrote:
-> On Wed, 12 Sep 2018 15:43:02 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On Mon 24-09-18 22:05:20, Tetsuo Handa wrote:
+> On 2018/09/24 21:31, Jan Kara wrote:
+> > On Mon 24-09-18 19:29:10, Tetsuo Handa wrote:
+> >> On 2018/09/24 7:03, Ming Lei wrote:
+> >>> On Sat, Sep 22, 2018 at 09:39:02PM +0900, Tetsuo Handa wrote:
+> >>>> Hello, Ming Lei.
+> >>>>
+> >>>> I'd like to hear your comment on this patch regarding the ordering of
+> >>>> stopping kernel thread.
+> >>>>
+> >>>>   > In order to enforce this strategy, this patch inversed
+> >>>>   > loop_reread_partitions() and loop_unprepare_queue() in loop_clr_fd().
+> >>>>   > I don't know whether it breaks something, but I don't have testcases.
+> >>>>
+> >>>> Until 3.19, kthread_stop(lo->lo_thread) was called before
+> >>>> ioctl_by_bdev(bdev, BLKRRPART, 0) is called.
+> >>>> During 4.0 to 4.3, the loop module was using "kloopd" workqueue.
+> >>>> But since 4.4, loop_reread_partitions(lo, bdev) is called before
+> >>>> loop_unprepare_queue(lo) is called. And this patch is trying to change to
+> >>>> call loop_unprepare_queue() before loop_reread_partitions() is called.
+> >>>> Is there some reason we need to preserve current ordering?
+> >>>
+> >>> IMO, both the two orders are fine, and what matters is that 'lo->lo_state'
+> >>> is updated before loop_reread_partitions(), then any IO from loop_reread_partitions
+> >>> will be failed, so it shouldn't be a big deal wrt. the order between
+> >>> loop_reread_partitions() and loop_unprepare_queue().
+> >>
+> >> OK. Thank you. Here is v4 patch (only changelog was updated).
+> >> Andrew, can we test this patch in the -mm tree?
+> >>
+> >> From 2278250ac8c5b912f7eb7af55e36ed40e2f7116b Mon Sep 17 00:00:00 2001
+> >> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >> Date: Mon, 24 Sep 2018 18:58:37 +0900
+> >> Subject: [PATCH v4] block/loop: Serialize ioctl operations.
+> >>
+> >> syzbot is reporting NULL pointer dereference [1] which is caused by
+> >> race condition between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
+> >> ioctl(other_loop_fd, LOOP_SET_FD, loop_fd) due to traversing other
+> >> loop devices without holding corresponding locks.
+> >>
+> >> syzbot is also reporting circular locking dependency between bdev->bd_mutex
+> >> and lo->lo_ctl_mutex [2] which is caused by calling blkdev_reread_part()
+> >> with lock held.
+> > 
+> > Thanks for looking into the loop crashes Tetsuo. I was looking into the
+> > loop code and trying to understand how your patch fixes them but I've
+> > failed. Can you please elaborate a bit on how exactly LOOP_CLR_FD and
+> > LOOP_SET_FD race to hit NULL pointer dereference? I don't really see the
+> > code traversing other loop devices as you mention in your changelog so I'm
+> > probably missing something. Thanks.
+> > 
 > 
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces ioctl access to the VFIO AP Matrix device driver
->> by implementing the VFIO_DEVICE_GET_INFO ioctl. This ioctl
->> provides the VFIO AP Matrix device driver information to the
->> guest machine.
-> 
-> What about the following?
-> 
-> "Add support for the VFIO_DEVICE_GET_INFO ioctl to the VFIO AP Matrix
-> device driver. This is a minimal implementation, as vfio-ap does not
-> use I/O regions."
+> That is explained in a discussion for [1] at
+> https://groups.google.com/forum/#!msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ
+> .  In the current code, the location of dangerous traversal is in
+> loop_validate_file().
 
-Sounds good, I'll change it.
+OK, thanks for explanation! I'll send some comments in reply to your patch.
 
-> 
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
->> Acked-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_ops.c |   38 +++++++++++++++++++++++++++++++++++++
->>   include/uapi/linux/vfio.h         |    1 +
->>   2 files changed, 39 insertions(+), 0 deletions(-)
-> 
-> Anyway,
-> 
-> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-> 
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
