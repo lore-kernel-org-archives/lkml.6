@@ -2,46 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308D7C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F66ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D69BB21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D69BB21486
+	by mail.kernel.org (Postfix) with ESMTP id ED3EE2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED3EE2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbeIXSmv (ORCPT
+        id S2388686AbeIXSmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:42:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59048 "EHLO
+        Mon, 24 Sep 2018 14:42:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387828AbeIXSmv (ORCPT
+        with ESMTP id S2388675AbeIXSmx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:42:51 -0400
+        Mon, 24 Sep 2018 14:42:53 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ACA79109E;
-        Mon, 24 Sep 2018 12:40:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B488109F;
+        Mon, 24 Sep 2018 12:40:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Christ van Willegen <cvwillegen@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 163/235] pinctrl: rza1: Fix selector use for groups and functions
-Date:   Mon, 24 Sep 2018 13:52:29 +0200
-Message-Id: <20180924113121.397382619@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        "D. Ziesche" <dziesche@zes.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.18 127/235] USB: net2280: Fix erroneous synchronization change
+Date:   Mon, 24 Sep 2018 13:51:53 +0200
+Message-Id: <20180924113118.699783973@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -59,87 +52,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-[ Upstream commit dc4003d260594aa300028c3c5d040c5719abd19b ]
+commit dec3c23c9aa1815f07d98ae0375b4cbc10971e13 upstream.
 
-We must use a mutex around the generic_add functions and save the
-function and group selector in case we need to remove them. Otherwise
-the selector use will be racy for deferred probe at least.
+Commit f16443a034c7 ("USB: gadgetfs, dummy-hcd, net2280: fix locking
+for callbacks") was based on a serious misunderstanding.  It
+introduced regressions into both the dummy-hcd and net2280 drivers.
 
-Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Christ van Willegen <cvwillegen@gmail.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Sean Wang <sean.wang@mediatek.com>
-Acked-by: Jacopo Mondi <jacopo@jmondi.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Tested-By: H. Nikolaus Schaller <hns@goldelico.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+The problem in dummy-hcd was fixed by commit 7dbd8f4cabd9 ("USB:
+dummy-hcd: Fix erroneous synchronization change"), but the problem in
+net2280 remains.  Namely: the ->disconnect(), ->suspend(), ->resume(),
+and ->reset() callbacks must be invoked without the private lock held;
+otherwise a deadlock will occur when the callback routine tries to
+interact with the UDC driver.
+
+This patch largely is a reversion of the relevant parts of
+f16443a034c7.  It also drops the private lock around the calls to
+->suspend() and ->resume() (something the earlier patch forgot to do).
+This is safe from races with device interrupts because it occurs
+within the interrupt handler.
+
+Finally, the patch changes where the ->disconnect() callback is
+invoked when net2280_pullup() turns the pullup off.  Rather than
+making the callback from within stop_activity() at a time when dropping
+the private lock could be unsafe, the callback is moved to a point
+after the lock has already been dropped.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: f16443a034c7 ("USB: gadgetfs, dummy-hcd, net2280: fix locking for callbacks")
+Reported-by: D. Ziesche <dziesche@zes.com>
+Tested-by: D. Ziesche <dziesche@zes.com>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pinctrl/pinctrl-rza1.c |   24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -1006,6 +1006,7 @@ static int rza1_dt_node_to_map(struct pi
- 	const char *grpname;
- 	const char **fngrps;
- 	int ret, npins;
-+	int gsel, fsel;
- 
- 	npins = rza1_dt_node_pin_count(np);
- 	if (npins < 0) {
-@@ -1055,18 +1056,19 @@ static int rza1_dt_node_to_map(struct pi
- 	fngrps[0] = grpname;
- 
- 	mutex_lock(&rza1_pctl->mutex);
--	ret = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
--					NULL);
--	if (ret) {
-+	gsel = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
-+					 NULL);
-+	if (gsel < 0) {
- 		mutex_unlock(&rza1_pctl->mutex);
--		return ret;
-+		return gsel;
+---
+ drivers/usb/gadget/udc/net2280.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+--- a/drivers/usb/gadget/udc/net2280.c
++++ b/drivers/usb/gadget/udc/net2280.c
+@@ -1545,11 +1545,14 @@ static int net2280_pullup(struct usb_gad
+ 		writel(tmp | BIT(USB_DETECT_ENABLE), &dev->usb->usbctl);
+ 	} else {
+ 		writel(tmp & ~BIT(USB_DETECT_ENABLE), &dev->usb->usbctl);
+-		stop_activity(dev, dev->driver);
++		stop_activity(dev, NULL);
  	}
  
--	ret = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
--					  mux_confs);
--	if (ret)
-+	fsel = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
-+					   mux_confs);
-+	if (fsel < 0) {
-+		ret = fsel;
- 		goto remove_group;
--	mutex_unlock(&rza1_pctl->mutex);
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 
++	if (!is_on && dev->driver)
++		dev->driver->disconnect(&dev->gadget);
++
+ 	return 0;
+ }
+ 
+@@ -2466,8 +2469,11 @@ static void stop_activity(struct net2280
+ 		nuke(&dev->ep[i]);
+ 
+ 	/* report disconnect; the driver is already quiesced */
+-	if (driver)
++	if (driver) {
++		spin_unlock(&dev->lock);
+ 		driver->disconnect(&dev->gadget);
++		spin_lock(&dev->lock);
 +	}
  
- 	dev_info(rza1_pctl->dev, "Parsed function and group %s with %d pins\n",
- 				 grpname, npins);
-@@ -1083,15 +1085,15 @@ static int rza1_dt_node_to_map(struct pi
- 	(*map)->data.mux.group = np->name;
- 	(*map)->data.mux.function = np->name;
- 	*num_maps = 1;
-+	mutex_unlock(&rza1_pctl->mutex);
+ 	usb_reinit(dev);
+ }
+@@ -3341,6 +3347,8 @@ next_endpoints:
+ 		BIT(PCI_RETRY_ABORT_INTERRUPT))
  
- 	return 0;
+ static void handle_stat1_irqs(struct net2280 *dev, u32 stat)
++__releases(dev->lock)
++__acquires(dev->lock)
+ {
+ 	struct net2280_ep	*ep;
+ 	u32			tmp, num, mask, scratch;
+@@ -3381,12 +3389,14 @@ static void handle_stat1_irqs(struct net
+ 			if (disconnect || reset) {
+ 				stop_activity(dev, dev->driver);
+ 				ep0_start(dev);
++				spin_unlock(&dev->lock);
+ 				if (reset)
+ 					usb_gadget_udc_reset
+ 						(&dev->gadget, dev->driver);
+ 				else
+ 					(dev->driver->disconnect)
+ 						(&dev->gadget);
++				spin_lock(&dev->lock);
+ 				return;
+ 			}
+ 		}
+@@ -3405,6 +3415,7 @@ static void handle_stat1_irqs(struct net
+ 	tmp = BIT(SUSPEND_REQUEST_CHANGE_INTERRUPT);
+ 	if (stat & tmp) {
+ 		writel(tmp, &dev->regs->irqstat1);
++		spin_unlock(&dev->lock);
+ 		if (stat & BIT(SUSPEND_REQUEST_INTERRUPT)) {
+ 			if (dev->driver->suspend)
+ 				dev->driver->suspend(&dev->gadget);
+@@ -3415,6 +3426,7 @@ static void handle_stat1_irqs(struct net
+ 				dev->driver->resume(&dev->gadget);
+ 			/* at high speed, note erratum 0133 */
+ 		}
++		spin_lock(&dev->lock);
+ 		stat &= ~tmp;
+ 	}
  
- remove_function:
--	mutex_lock(&rza1_pctl->mutex);
--	pinmux_generic_remove_last_function(pctldev);
-+	pinmux_generic_remove_function(pctldev, fsel);
- 
- remove_group:
--	pinctrl_generic_remove_last_group(pctldev);
-+	pinctrl_generic_remove_group(pctldev, gsel);
- 	mutex_unlock(&rza1_pctl->mutex);
- 
- 	dev_info(rza1_pctl->dev, "Unable to parse function and group %s\n",
 
 
