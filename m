@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E26C1ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B17ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999DB2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999DB2083A
+	by mail.kernel.org (Postfix) with ESMTP id 5A8712083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8712083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388380AbeIXSkl (ORCPT
+        id S2387942AbeIXSkv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:40:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58758 "EHLO
+        Mon, 24 Sep 2018 14:40:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58768 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388284AbeIXSkk (ORCPT
+        with ESMTP id S1730741AbeIXSku (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:40:40 -0400
+        Mon, 24 Sep 2018 14:40:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CBF31092;
-        Mon, 24 Sep 2018 12:38:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A657107F;
+        Mon, 24 Sep 2018 12:38:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.18 139/235] perf tools: Fix maps__find_symbol_by_name()
-Date:   Mon, 24 Sep 2018 13:52:05 +0200
-Message-Id: <20180924113119.586592620@linuxfoundation.org>
+        stable@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>,
+        Stan Johnson <userm57@yahoo.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.18 140/235] of: fix phandle cache creation for DTs with no phandles
+Date:   Mon, 24 Sep 2018 13:52:06 +0200
+Message-Id: <20180924113119.652905591@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,64 +54,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Rob Herring <robh@kernel.org>
 
-commit 03db8b583d1c3c84963e08e2abf6c79081da5c31 upstream.
+commit e54192b48da75f025ae4b277925eaf6aca1d13bd upstream.
 
-Commit 1c5aae7710bb ("perf machine: Create maps for x86 PTI entry
-trampolines") revealed a problem with maps__find_symbol_by_name() that
-resulted in probes not being found e.g.
+With commit 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of
+of_find_node_by_phandle()"), a G3 PowerMac fails to boot. The root cause
+is the DT for this system has no phandle properties when booted with
+BootX. of_populate_phandle_cache() does not handle the case of no
+phandles correctly. The problem is roundup_pow_of_two() for 0 is
+undefined. The implementation subtracts 1 underflowing and then things
+are in the weeds.
 
-	$ sudo perf probe xsk_mmap
-	xsk_mmap is out of .text, skip it.
-	Probe point 'xsk_mmap' not found.
-	   Error: Failed to add events.
-
-maps__find_symbol_by_name() can optionally return the map of the found
-symbol. It can get the map wrong because, in fact, the symbol is found
-on the map's dso, not allowing for the possibility that the dso has more
-than one map. Fix by always checking the map contains the symbol.
-
-Reported-by: Björn Töpel <bjorn.topel@intel.com>
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Björn Töpel <bjorn.topel@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 1c5aae7710bb ("perf machine: Create maps for x86 PTI entry trampolines")
-Link: http://lkml.kernel.org/r/20180907085116.25782-1-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
+Cc: stable@vger.kernel.org # 4.17+
+Reported-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Reviewed-by: Frank Rowand <frank.rowand@sony.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/map.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/of/base.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -590,6 +590,13 @@ struct symbol *map_groups__find_symbol(s
- 	return NULL;
- }
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -118,6 +118,9 @@ void of_populate_phandle_cache(void)
+ 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+ 			phandles++;
  
-+static bool map__contains_symbol(struct map *map, struct symbol *sym)
-+{
-+	u64 ip = map->unmap_ip(map, sym->start);
++	if (!phandles)
++		goto out;
 +
-+	return ip >= map->start && ip < map->end;
-+}
-+
- struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
- 					 struct map **mapp)
- {
-@@ -605,6 +612,10 @@ struct symbol *maps__find_symbol_by_name
+ 	cache_entries = roundup_pow_of_two(phandles);
+ 	phandle_cache_mask = cache_entries - 1;
  
- 		if (sym == NULL)
- 			continue;
-+		if (!map__contains_symbol(pos, sym)) {
-+			sym = NULL;
-+			continue;
-+		}
- 		if (mapp != NULL)
- 			*mapp = pos;
- 		goto out;
 
 
