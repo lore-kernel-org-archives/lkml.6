@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735C5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF92ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 365A0208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 365A0208D9
+	by mail.kernel.org (Postfix) with ESMTP id 6682F214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6682F214D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731680AbeIXSP3 (ORCPT
+        id S1731684AbeIXSPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:15:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55256 "EHLO
+        Mon, 24 Sep 2018 14:15:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729811AbeIXSP3 (ORCPT
+        with ESMTP id S1729811AbeIXSPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:15:29 -0400
+        Mon, 24 Sep 2018 14:15:32 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0DEE1099;
-        Mon, 24 Sep 2018 12:13:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEB641099;
+        Mon, 24 Sep 2018 12:13:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 034/173] perf test: Fix subtest number when showing results
-Date:   Mon, 24 Sep 2018 13:51:08 +0200
-Message-Id: <20180924113118.460122235@linuxfoundation.org>
+Subject: [PATCH 4.14 035/173] gfs2: Dont reject a supposedly full bitmap if we have blocks reserved
+Date:   Mon, 24 Sep 2018 13:51:09 +0200
+Message-Id: <20180924113118.532230927@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -55,69 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Bob Peterson <rpeterso@redhat.com>
 
-[ Upstream commit 9ef0112442bdddef5fb55adf20b3a5464b33de75 ]
+[ Upstream commit e79e0e1428188b24c3b57309ffa54a33c4ae40c4 ]
 
-Perf test 40 for example has several subtests numbered 1-4 when
-displaying the start of the subtest. When the subtest results
-are displayed the subtests are numbered 0-3.
+Before this patch, you could get into situations like this:
 
-Use this command to generate trace output:
+1. Process 1 searches for X free blocks, finds them, makes a reservation
+2. Process 2 searches for free blocks in the same rgrp, but now the
+   bitmap is full because process 1's reservation is skipped over.
+   So it marks the bitmap as GBF_FULL.
+3. Process 1 tries to allocate blocks from its own reservation, but
+   since the GBF_FULL bit is set, it skips over the rgrp and searches
+   elsewhere, thus not using its own reservation.
 
-  [root@s35lp76 perf]# ./perf test -Fv 40 2>/tmp/bpf1
+This patch adds an additional check to allow processes to use their
+own reservations.
 
-Fix this by adjusting the subtest number when show the
-subtest result.
-
-Output before:
-
-  [root@s35lp76 perf]# egrep '(^40\.[0-4]| subtest [0-4]:)' /tmp/bpf1
-  40.1: Basic BPF filtering                                 :
-  BPF filter subtest 0: Ok
-  40.2: BPF pinning                                         :
-  BPF filter subtest 1: Ok
-  40.3: BPF prologue generation                             :
-  BPF filter subtest 2: Ok
-  40.4: BPF relocation checker                              :
-  BPF filter subtest 3: Ok
-  [root@s35lp76 perf]#
-
-Output after:
-
-  root@s35lp76 ~]# egrep '(^40\.[0-4]| subtest [0-4]:)' /tmp/bpf1
-  40.1: Basic BPF filtering                                 :
-  BPF filter subtest 1: Ok
-  40.2: BPF pinning                                         :
-  BPF filter subtest 2: Ok
-  40.3: BPF prologue generation                             :
-  BPF filter subtest 3: Ok
-  40.4: BPF relocation checker                              :
-  BPF filter subtest 4: Ok
-  [root@s35lp76 ~]#
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180724134858.100644-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/builtin-test.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/gfs2/rgrp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -589,7 +589,7 @@ static int __cmd_test(int argc, const ch
- 			for (subi = 0; subi < subn; subi++) {
- 				pr_info("%2d.%1d: %-*s:", i, subi + 1, subw,
- 					t->subtest.get_desc(subi));
--				err = test_and_print(t, skip, subi);
-+				err = test_and_print(t, skip, subi + 1);
- 				if (err != TEST_OK && t->subtest.skip_if_fail)
- 					skip = true;
- 			}
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -1665,7 +1665,8 @@ static int gfs2_rbm_find(struct gfs2_rbm
+ 
+ 	while(1) {
+ 		bi = rbm_bi(rbm);
+-		if (test_bit(GBF_FULL, &bi->bi_flags) &&
++		if ((ip == NULL || !gfs2_rs_active(&ip->i_res)) &&
++		    test_bit(GBF_FULL, &bi->bi_flags) &&
+ 		    (state == GFS2_BLKST_FREE))
+ 			goto next_bitmap;
+ 
 
 
