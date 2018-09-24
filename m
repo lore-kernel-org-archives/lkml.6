@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31AAECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81990C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A2820C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34DA6214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="NeSNiwMn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96A2820C0A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gSbR3d+J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34DA6214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389154AbeIXUyE (ORCPT
+        id S2389168AbeIXUyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:54:04 -0400
+        Mon, 24 Sep 2018 16:54:06 -0400
 Received: from mail-eopbgr720135.outbound.protection.outlook.com ([40.107.72.135]:34196
         "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389133AbeIXUyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:54:03 -0400
+        id S1730582AbeIXUyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:54:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9l1ZkJ8F6Z5ijGvSTUXs/eSNokcK39ILg6TyG4w4zbs=;
- b=NeSNiwMnoynlcCUKAr9Qco1Q4QMQ+ivL0EoQ/4LkNflVPApl3R0OoDeZJY3REsCwMp8b6tLS6QGwhRw7nMvYP2B8KafsQK8ciL9W52yQHGN2a9dNIUFhH1ilPO1E0NUX2t4oeh59aYGLN0YN/OJLqh91nwRQZ1m1R3FRzigFD3k=
+ bh=P2S/Rgt1aQ43u5i7AdbVNNWrnI+dOnTNfi9lcHXkz18=;
+ b=gSbR3d+J3e8avSS/cxC8vUI5uDy1iXMuBmhQakT0FLTJD/M/SxJdNSXL8H/5si6HTUjXAb0C0CDmbvOzAdQYHwy6po2sXEutVl1PSPlVmWGYf1PaETNzY0w/2Vn9p4vSmpUBl/s+GppCqhphxdFXXUiMeeYOqdRxDKyPZMZBHcM=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0821.namprd21.prod.outlook.com (10.173.192.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -42,17 +42,17 @@ Received: from CY4PR21MB0776.namprd21.prod.outlook.com
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+CC:     Ilan Peer <ilan.peer@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 14/18] mac80211: fix a race between restart and
- CSA flows
-Thread-Topic: [PATCH AUTOSEL 4.4 14/18] mac80211: fix a race between restart
- and CSA flows
-Thread-Index: AQHUVBXZVuP3V6+vPUahiIglQcjlDw==
-Date:   Mon, 24 Sep 2018 14:49:52 +0000
-Message-ID: <20180924144942.164688-14-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.4 15/18] mac80211: Fix station bandwidth setting
+ after channel switch
+Thread-Topic: [PATCH AUTOSEL 4.4 15/18] mac80211: Fix station bandwidth
+ setting after channel switch
+Thread-Index: AQHUVBXaQq07i8HAiUiGQ0us9cvfEg==
+Date:   Mon, 24 Sep 2018 14:49:53 +0000
+Message-ID: <20180924144942.164688-15-alexander.levin@microsoft.com>
 References: <20180924144942.164688-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144942.164688-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,30 +61,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:747APZUCued+n1HF5fXjC1iqyCJ/t0JJdRBOB8Qk5MVmEXN5ck3rYsrih+00OtuGOZ0MqHQmpGjvmUTisgCl8hZiNeRs5f+hY1ThaSgu/15B5Da+5SQxA6Ub2TjsU9EJlOaD/lIZbHNGv/nmlyKRZiYidFIU8rqS3r9E8wsqkB/pA3TZVfJVfIB1JXNuvCO1R2mkP2YHWLvayf4occiZQ6jO8+boQ/8/fE5UEqIvgDYeDtACqrl9NRCDHBEI+FnAubkTFaHyFp+ZUP/R/UdtNbTRWFS5bSXdht4aFkjokqVt6IAGyd2QPDeS+mABLaq1jrd+Bj3xEX7mK3PkM8d9UGW42jVHxH6qTLl2aASJKTMLs2ZHv6cvFAPg4BgEhEHt8QumLIedzQ+0DllVHMlfa37dW4r92fpqnlaRwNdfDipv0E/5XlBnxcN+BTsrqxBRHrC+O1SkBaZE6SchesfEZg==;5:lx5sPd0gQoNp++BrcK3pcckIDJBx4hH99LtH+pSxMEZE8EZKM9alQFs5ZF5c7FxyYVWWykkz4E+j8M+xus29xW0xdoazPZ/lzu1UXcohs97Z+2hS8r1FHnTuloaoxKFeFzCRfbdrNxecWUvNt8pgP5dCAuUs9ePfP22zRZR9Lp4=;7:7mlLVjn11LmEBMZO0nrlH4TVwvbb7g5IVHc7chD9XLmDSIbheP/pqH6EcKtXtOjSYQxjQcyaWzr1Vc/H32ikNKhsNelpVpgTFgnmzZbYX9TjaiRkaupZZiWmDaNsXyY2dCKGIbwX31eajSVnmX0MU0VfTWg5M0n17s/X6Ycba2uDufWqDJTzq5PTfjxasLNgdDFRU9Pq0f6siK6frqTKaHEOWIkQ04OCpr97wzBknM0f5mj1gu/BIkQ0OjSr+kfq
-x-ms-office365-filtering-correlation-id: e602e4b3-7265-4973-174a-08d6222d2d9e
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:EOfGd1xv8Q9boeddO5LoXs+OuqZZWEWQqF8QdbeANqCsGSfDKkQkp8OGD+VPsXyta+gW+bd+kEgkMwe6knj4IM7Eg3gV4E1ioptCy/v9vZ/Ynp+MEaEvl5ta0ku6kmimS1TMO8S6NiqxYOkq+olAGOvLqswTDi//1RLki0yXcZU2Bqb7Ng2i1O+enXlaWvkUDghwWL8Ra1m+ZJubQgR1XGS5sI/qy3fZv1fJLcMbIQOWDofEiIRYhQiTB/JRN1TeqDSmhnnOU19RDvp6LIOcYo0gDhHDYlsNnsjf7ZMr1y8y4SwUsVRR4NdXAroVe5qesPVahNPN0AwuSd6RKm/PUeISP8tcZnDD3+wCjOU6Ui3lntw/NNlZfgtkmtR8M2kAdz7Po74Bi6lS/KWYNfTMbK7adXkqpGgxuHMTJe8D1hgfJt/Z7aZjIGX16Dgjx0U1Gjj+H6t0WWgBep1iGXH0PA==;5:jJbWzt8qFfU8JEXjZ510j9YYYpX/YNVBrR1rexSpvQbWAwPDZ5WgXLELHlNwrxV7rfVDIlvGl7X1Oz28ZC+BQbvko2FLXk5G7pQlB5vNnPxgv09olMFsIzRJ222DAV+PTaEkWwgsRn/TNy6bK+80z86IirheGJJgwajTV9YoDnQ=;7:tvT0nAu+IaYRZR4H9KXLYl5WnL/yQFxeU1nMPr/IE/HDEkkAgnZ8pPw6KqeZn2IKDoNXpHPUGbocOzdFSdbXn0eHF7xrQk6cl6lix1jwUJZ7vbhEj1NeGuSChHCrY4/3e+w2oBN0GAj8gPA0sfqCs0XzC4YEN14ILh2mhgqom5a5hPlt37MHM3SUx6r8VzZ5iV4mEIUQnrpnmWFlVkniDlwYGI4RLJOIGpqKyM/ky9PxrRacvwZNZ8JBF6u06fOb
+x-ms-office365-filtering-correlation-id: e6018c03-d940-4d5a-dc9f-08d6222d2df0
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0821;
 x-ms-traffictypediagnostic: CY4PR21MB0821:
-x-microsoft-antispam-prvs: <CY4PR21MB0821822A0FC5F23796F6249BFB170@CY4PR21MB0821.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB08214D7912CF30F20A625C3BFB170@CY4PR21MB0821.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0821;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0821;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(136003)(396003)(366004)(199004)(189003)(102836004)(5660300001)(53936002)(6512007)(6436002)(256004)(14444005)(217873002)(6666003)(6486002)(2501003)(10090500001)(2906002)(68736007)(5250100002)(97736004)(107886003)(66066001)(36756003)(4326008)(25786009)(1076002)(3846002)(6116002)(2900100001)(8936002)(81166006)(81156014)(8676002)(86612001)(86362001)(7736002)(305945005)(72206003)(186003)(26005)(10290500003)(6506007)(6346003)(478600001)(14454004)(110136005)(2616005)(446003)(11346002)(476003)(76176011)(486006)(54906003)(99286004)(105586002)(106356001)(71190400001)(71200400001)(22452003)(316002)(21314002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(136003)(396003)(366004)(199004)(189003)(102836004)(5660300001)(53936002)(6512007)(6436002)(256004)(14444005)(217873002)(6666003)(6486002)(2501003)(10090500001)(2906002)(68736007)(5250100002)(97736004)(107886003)(66066001)(36756003)(4326008)(25786009)(1076002)(3846002)(6116002)(2900100001)(8936002)(81166006)(81156014)(8676002)(86612001)(86362001)(7736002)(305945005)(72206003)(186003)(26005)(10290500003)(6506007)(6346003)(478600001)(14454004)(110136005)(2616005)(446003)(11346002)(476003)(76176011)(486006)(54906003)(99286004)(105586002)(106356001)(71190400001)(71200400001)(22452003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: jGF6UFz4CFMhxkfOiTA/ejw1+2dPio0Pyzogio1vqTfL2inHXutUXYflE963hpxFYiumD9+FmXCZcIH7Ndx0+qlTOZ51fdwXR0kN+GrcJdhjC+ZPK0VtkJPr6/xoIx/K7/zzcOLOMEZ8USAgHBfjlOJQEUyUgdKNcosshrlbQ6AGgm9dozEn2+ZBlbfWlQe2n+9Hzu2JSJKaEM3vD6efyh3+LLYzqZNOAGkBAX/RYcqLI3oobWUB/p0XzOUr0678T9KLxmJ565usJlubnP9SXRrtzeA09y0xLixHYvpgFhzX7BkKYLff11Thuijrl0UbeKiXiJFVSwZ7vZCiZEJLJzmk5juTaTV5QKlItNQqhm4=
+x-microsoft-antispam-message-info: bEUbkTwWNvQnq4ZzyhN1GmwCG4+VOD+8MVWDaW/fsS+Mv5sUwUlSbe+zkvRL1Vcj4ytKxubYXnfLFIMSHZZq/lJs2ACMPAeUnzvVju8CD8bop6rUNUQxO2s1jXNb/LVtD6Kk7rcKHdFoZQgsnNJ7RQfGzjlPEtp+l0qKub6nACxrad5BF8q9Z6WaSmxeb2JP+M04SHpCm7Dce+tCVQZkuEmvMy/Y5jSXKU/TwGd4P1awPz0+Rhewd5eX8W2SJ6lYHgcMzjXyR+5c0FcDXvgLg5d+jg2pir4I+6FgsuM0dMTSqtm7DZeVpUyfF/CAoh31S0LO7ZhJKft3IcG8PfzS/IBQweW5x8FfQE0IOETpLQw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e602e4b3-7265-4973-174a-08d6222d2d9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:49:52.5709
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6018c03-d940-4d5a-dc9f-08d6222d2df0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:49:53.0763
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,97 +94,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Ilan Peer <ilan.peer@intel.com>
 
-[ Upstream commit f3ffb6c3a28963657eb8b02a795d75f2ebbd5ef4 ]
+[ Upstream commit 0007e94355fdb71a1cf5dba0754155cba08f0666 ]
 
-We hit a problem with iwlwifi that was caused by a bug in
-mac80211. A bug in iwlwifi caused the firwmare to crash in
-certain cases in channel switch. Because of that bug,
-drv_pre_channel_switch would fail and trigger the restart
-flow.
-Now we had the hw restart worker which runs on the system's
-workqueue and the csa_connection_drop_work worker that runs
-on mac80211's workqueue that can run together. This is
-obviously problematic since the restart work wants to
-reconfigure the connection, while the csa_connection_drop_work
-worker does the exact opposite: it tries to disconnect.
+When performing a channel switch flow for a managed interface, the
+flow did not update the bandwidth of the AP station and the rate
+scale algorithm. In case of a channel width downgrade, this would
+result with the rate scale algorithm using a bandwidth that does not
+match the interface channel configuration.
 
-Fix this by cancelling the csa_connection_drop_work worker
-in the restart worker.
+Fix this by updating the AP station bandwidth and rate scaling algorithm
+before the actual channel change in case of a bandwidth downgrade, or
+after the actual channel change in case of a bandwidth upgrade.
 
-Note that this can sound racy: we could have:
-
-driver   iface_work   CSA_work   restart_work
-+++++++++++++++++++++++++++++++++++++++++++++
-              |
- <--drv_cs ---|
-<FW CRASH!>
--CS FAILED-->
-              |                       |
-              |                 cancel_work(CSA)
-           schedule                   |
-           CSA work                   |
-                         |            |
-                        Race between those 2
-
-But this is not possible because we flush the workqueue
-in the restart worker before we cancel the CSA worker.
-That would be bullet proof if we could guarantee that
-we schedule the CSA worker only from the iface_work
-which runs on the workqueue (and not on the system's
-workqueue), but unfortunately we do have an instance
-in which we schedule the CSA work outside the context
-of the workqueue (ieee80211_chswitch_done).
-
-Note also that we should probably cancel other workers
-like beacon_connection_loss_work and possibly others
-for different types of interfaces, at the very least,
-IBSS should suffer from the exact same problem, but for
-now, do the minimum to fix the actual bug that was actually
-experienced and reproduced.
-
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Ilan Peer <ilan.peer@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/mac80211/main.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ net/mac80211/mlme.c | 53 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/net/mac80211/main.c b/net/mac80211/main.c
-index d784d29a4fd6..15d23aeea634 100644
---- a/net/mac80211/main.c
-+++ b/net/mac80211/main.c
-@@ -253,8 +253,27 @@ static void ieee80211_restart_work(struct work_struct =
-*work)
- 	     "%s called with hardware scan in progress\n", __func__);
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index 005cd8796505..a5e11280f405 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -1021,6 +1021,10 @@ static void ieee80211_chswitch_work(struct work_stru=
+ct *work)
+ 	 */
 =20
- 	rtnl_lock();
--	list_for_each_entry(sdata, &local->interfaces, list)
-+	list_for_each_entry(sdata, &local->interfaces, list) {
-+		/*
-+		 * XXX: there may be more work for other vif types and even
-+		 * for station mode: a good thing would be to run most of
-+		 * the iface type's dependent _stop (ieee80211_mg_stop,
-+		 * ieee80211_ibss_stop) etc...
-+		 * For now, fix only the specific bug that was seen: race
-+		 * between csa_connection_drop_work and us.
-+		 */
-+		if (sdata->vif.type =3D=3D NL80211_IFTYPE_STATION) {
+ 	if (sdata->reserved_chanctx) {
++		struct ieee80211_supported_band *sband =3D NULL;
++		struct sta_info *mgd_sta =3D NULL;
++		enum ieee80211_sta_rx_bandwidth bw =3D IEEE80211_STA_RX_BW_20;
++
+ 		/*
+ 		 * with multi-vif csa driver may call ieee80211_csa_finish()
+ 		 * many times while waiting for other interfaces to use their
+@@ -1029,6 +1033,48 @@ static void ieee80211_chswitch_work(struct work_stru=
+ct *work)
+ 		if (sdata->reserved_ready)
+ 			goto out;
+=20
++		if (sdata->vif.bss_conf.chandef.width !=3D
++		    sdata->csa_chandef.width) {
 +			/*
-+			 * This worker is scheduled from the iface worker that
-+			 * runs on mac80211's workqueue, so we can't be
-+			 * scheduling this worker after the cancel right here.
-+			 * The exception is ieee80211_chswitch_done.
-+			 * Then we can have a race...
++			 * For managed interface, we need to also update the AP
++			 * station bandwidth and align the rate scale algorithm
++			 * on the bandwidth change. Here we only consider the
++			 * bandwidth of the new channel definition (as channel
++			 * switch flow does not have the full HT/VHT/HE
++			 * information), assuming that if additional changes are
++			 * required they would be done as part of the processing
++			 * of the next beacon from the AP.
 +			 */
-+			cancel_work_sync(&sdata->u.mgd.csa_connection_drop_work);
++			switch (sdata->csa_chandef.width) {
++			case NL80211_CHAN_WIDTH_20_NOHT:
++			case NL80211_CHAN_WIDTH_20:
++			default:
++				bw =3D IEEE80211_STA_RX_BW_20;
++				break;
++			case NL80211_CHAN_WIDTH_40:
++				bw =3D IEEE80211_STA_RX_BW_40;
++				break;
++			case NL80211_CHAN_WIDTH_80:
++				bw =3D IEEE80211_STA_RX_BW_80;
++				break;
++			case NL80211_CHAN_WIDTH_80P80:
++			case NL80211_CHAN_WIDTH_160:
++				bw =3D IEEE80211_STA_RX_BW_160;
++				break;
++			}
++
++			mgd_sta =3D sta_info_get(sdata, ifmgd->bssid);
++			sband =3D
++				local->hw.wiphy->bands[sdata->csa_chandef.chan->band];
 +		}
- 		flush_delayed_work(&sdata->dec_tailroom_needed_wk);
-+	}
- 	ieee80211_scan_cancel(local);
- 	ieee80211_reconfig(local);
- 	rtnl_unlock();
++
++		if (sdata->vif.bss_conf.chandef.width >
++		    sdata->csa_chandef.width) {
++			mgd_sta->sta.bandwidth =3D bw;
++			rate_control_rate_update(local, sband, mgd_sta,
++						 IEEE80211_RC_BW_CHANGED);
++		}
++
+ 		ret =3D ieee80211_vif_use_reserved_context(sdata);
+ 		if (ret) {
+ 			sdata_info(sdata,
+@@ -1039,6 +1085,13 @@ static void ieee80211_chswitch_work(struct work_stru=
+ct *work)
+ 			goto out;
+ 		}
+=20
++		if (sdata->vif.bss_conf.chandef.width <
++		    sdata->csa_chandef.width) {
++			mgd_sta->sta.bandwidth =3D bw;
++			rate_control_rate_update(local, sband, mgd_sta,
++						 IEEE80211_RC_BW_CHANGED);
++		}
++
+ 		goto out;
+ 	}
+=20
 --=20
 2.17.1
