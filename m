@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BE7ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6ECDECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD56214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD56214AB
+	by mail.kernel.org (Postfix) with ESMTP id 8E7ED214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E7ED214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbeIXSai (ORCPT
+        id S2387614AbeIXSam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:30:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57492 "EHLO
+        Mon, 24 Sep 2018 14:30:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57502 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732882AbeIXSai (ORCPT
+        with ESMTP id S1733078AbeIXSal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:30:38 -0400
+        Mon, 24 Sep 2018 14:30:41 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 004E11018;
-        Mon, 24 Sep 2018 12:28:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 281671018;
+        Mon, 24 Sep 2018 12:28:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Ha?asa <khalasa@piap.pl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, John Keeping <john@metanate.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 036/235] media: tw686x: Fix oops on buffer alloc failure
-Date:   Mon, 24 Sep 2018 13:50:22 +0200
-Message-Id: <20180924113108.617197071@linuxfoundation.org>
+Subject: [PATCH 4.18 037/235] dmaengine: pl330: fix irq race with terminate_all
+Date:   Mon, 24 Sep 2018 13:50:23 +0200
+Message-Id: <20180924113108.737341785@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,53 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Krzysztof Ha?asa <khalasa@piap.pl>
+From: John Keeping <john@metanate.com>
 
-[ Upstream commit 5a1a2f63d840dc2631505b607e11ff65ac1b7d3c ]
+[ Upstream commit e49756544a21f5625b379b3871d27d8500764670 ]
 
-The error path currently calls tw686x_video_free() which requires
-vc->dev to be initialized, causing a NULL dereference on uninitizalized
-channels.
+In pl330_update() when checking if a channel has been aborted, the
+channel's lock is not taken, only the overall pl330_dmac lock.  But in
+pl330_terminate_all() the aborted flag (req_running==-1) is set under
+the channel lock and not the pl330_dmac lock.
 
-Fix this by setting the vc->dev fields for all the channels first.
+With threaded interrupts, this leads to a potential race:
 
-Fixes: f8afaa8dbc0d ("[media] tw686x: Introduce an interface to support multiple DMA modes")
+    pl330_terminate_all	        pl330_update
+    -------------------         ------------
+    lock channel
+                                entry
+    lock pl330
+    _stop channel
+    unlock pl330
+                                lock pl330
+                                check req_running != -1
+    req_running = -1
+                                _start channel
 
-Signed-off-by: Krzysztof Ha?asa <khalasa@piap.pl>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/tw686x/tw686x-video.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/dma/pl330.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/media/pci/tw686x/tw686x-video.c
-+++ b/drivers/media/pci/tw686x/tw686x-video.c
-@@ -1190,6 +1190,14 @@ int tw686x_video_init(struct tw686x_dev
- 			return err;
- 	}
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -2257,13 +2257,14 @@ static int pl330_terminate_all(struct dm
  
-+	/* Initialize vc->dev and vc->ch for the error path */
-+	for (ch = 0; ch < max_channels(dev); ch++) {
-+		struct tw686x_video_channel *vc = &dev->video_channels[ch];
+ 	pm_runtime_get_sync(pl330->ddma.dev);
+ 	spin_lock_irqsave(&pch->lock, flags);
 +
-+		vc->dev = dev;
-+		vc->ch = ch;
-+	}
-+
- 	for (ch = 0; ch < max_channels(dev); ch++) {
- 		struct tw686x_video_channel *vc = &dev->video_channels[ch];
- 		struct video_device *vdev;
-@@ -1198,9 +1206,6 @@ int tw686x_video_init(struct tw686x_dev
- 		spin_lock_init(&vc->qlock);
- 		INIT_LIST_HEAD(&vc->vidq_queued);
- 
--		vc->dev = dev;
--		vc->ch = ch;
+ 	spin_lock(&pl330->lock);
+ 	_stop(pch->thread);
+-	spin_unlock(&pl330->lock);
 -
- 		/* default settings */
- 		err = tw686x_set_standard(vc, V4L2_STD_NTSC);
- 		if (err)
+ 	pch->thread->req[0].desc = NULL;
+ 	pch->thread->req[1].desc = NULL;
+ 	pch->thread->req_running = -1;
++	spin_unlock(&pl330->lock);
++
+ 	power_down = pch->active;
+ 	pch->active = false;
+ 
 
 
