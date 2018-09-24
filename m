@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C1DC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B56C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204132148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204132148C
+	by mail.kernel.org (Postfix) with ESMTP id 486F72148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486F72148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387991AbeIXSf5 (ORCPT
+        id S2388063AbeIXSgC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:35:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58390 "EHLO
+        Mon, 24 Sep 2018 14:36:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58400 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730598AbeIXSf4 (ORCPT
+        with ESMTP id S2387467AbeIXSgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:35:56 -0400
+        Mon, 24 Sep 2018 14:36:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A922E1018;
-        Mon, 24 Sep 2018 12:34:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FEB91018;
+        Mon, 24 Sep 2018 12:34:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>,
-        Andrew Banman <abanman@hpe.com>
-Subject: [PATCH 4.18 106/235] ipmi: Move BT capabilities detection to the detect call
-Date:   Mon, 24 Sep 2018 13:51:32 +0200
-Message-Id: <20180924113116.190671490@linuxfoundation.org>
+        stable@vger.kernel.org, George Cherian <george.cherian@cavium.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.18 107/235] ipmi: Fix I2C client removal in the SSIF driver
+Date:   Mon, 24 Sep 2018 13:51:33 +0200
+Message-Id: <20180924113116.360812596@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,183 +53,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Corey Minyard <cminyard@mvista.com>
 
-commit c86ba91be75702c013bbf7379542920b6920e98f upstream.
+commit 0745dde62835be7e2afe62fcdb482fcad79cb743 upstream.
 
-The capabilities detection was being done as part of the normal
-state machine, but it was possible for it to be running while
-the upper layers of the IPMI driver were initializing the
-device, resulting in error and failure to initialize.
+The SSIF driver was removing any client that came in through the
+platform interface, but it should only remove clients that it
+added.  On a failure in the probe function, this could result
+in the following oops when the driver is removed and the
+client gets unregistered twice:
 
-Move the capabilities detection to the the detect function,
-so it's done before anything else runs on the device.  This also
-simplifies the state machine and removes some code, as a bonus.
+ CPU: 107 PID: 30266 Comm: rmmod Not tainted 4.18.0+ #80
+ Hardware name: Cavium Inc. Saber/Saber, BIOS Cavium reference firmware version 7.0 08/04/2018
+ pstate: 60400009 (nZCv daif +PAN -UAO)
+ pc : kernfs_find_ns+0x28/0x120
+ lr : kernfs_find_and_get_ns+0x40/0x60
+ sp : ffff00002310fb50
+ x29: ffff00002310fb50 x28: ffff800a8240f800
+ x27: 0000000000000000 x26: 0000000000000000
+ x25: 0000000056000000 x24: ffff000009073000
+ x23: ffff000008998b38 x22: 0000000000000000
+ x21: ffff800ed86de820 x20: 0000000000000000
+ x19: ffff00000913a1d8 x18: 0000000000000000
+ x17: 0000000000000000 x16: 0000000000000000
+ x15: 0000000000000000 x14: 5300737265766972
+ x13: 643d4d4554535953 x12: 0000000000000030
+ x11: 0000000000000030 x10: 0101010101010101
+ x9 : ffff800ea06cc3f9 x8 : 0000000000000000
+ x7 : 0000000000000141 x6 : ffff000009073000
+ x5 : ffff800adb706b00 x4 : 0000000000000000
+ x3 : 00000000ffffffff x2 : 0000000000000000
+ x1 : ffff000008998b38 x0 : ffff000008356760
+ Process rmmod (pid: 30266, stack limit = 0x00000000e218418d)
+ Call trace:
+  kernfs_find_ns+0x28/0x120
+  kernfs_find_and_get_ns+0x40/0x60
+  sysfs_unmerge_group+0x2c/0x6c
+  dpm_sysfs_remove+0x34/0x70
+  device_del+0x58/0x30c
+  device_unregister+0x30/0x7c
+  i2c_unregister_device+0x84/0x90 [i2c_core]
+  ssif_platform_remove+0x38/0x98 [ipmi_ssif]
+  platform_drv_remove+0x2c/0x6c
+  device_release_driver_internal+0x168/0x1f8
+  driver_detach+0x50/0xbc
+  bus_remove_driver+0x74/0xe8
+  driver_unregister+0x34/0x5c
+  platform_driver_unregister+0x20/0x2c
+  cleanup_ipmi_ssif+0x50/0xd82c [ipmi_ssif]
+  __arm64_sys_delete_module+0x1b4/0x220
+  el0_svc_handler+0x104/0x160
+  el0_svc+0x8/0xc
+ Code: aa1e03e0 aa0203f6 aa0103f7 d503201f (7940e280)
+ ---[ end trace 09f0e34cce8e2d8c ]---
+ Kernel panic - not syncing: Fatal exception
+ SMP: stopping secondary CPUs
+ Kernel Offset: disabled
+ CPU features: 0x23800c38
 
+So track the clients that the SSIF driver adds and only remove
+those.
+
+Reported-by: George Cherian <george.cherian@cavium.com>
 Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Reported-by: Andrew Banman <abanman@hpe.com>
-Tested-by: Andrew Banman <abanman@hpe.com>
-Cc: <stable@vger.kernel.org>
+Tested-by: George Cherian <george.cherian@cavium.com>
+Cc: <stable@vger.kernel.org> # 4.14.x
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_bt_sm.c |   92 +++++++++++++++++++++--------------------
- 1 file changed, 48 insertions(+), 44 deletions(-)
+ drivers/char/ipmi/ipmi_ssif.c |   17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
---- a/drivers/char/ipmi/ipmi_bt_sm.c
-+++ b/drivers/char/ipmi/ipmi_bt_sm.c
-@@ -59,8 +59,6 @@ enum bt_states {
- 	BT_STATE_RESET3,
- 	BT_STATE_RESTART,
- 	BT_STATE_PRINTME,
--	BT_STATE_CAPABILITIES_BEGIN,
--	BT_STATE_CAPABILITIES_END,
- 	BT_STATE_LONG_BUSY	/* BT doesn't get hosed :-) */
- };
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -181,6 +181,8 @@ struct ssif_addr_info {
+ 	struct device *dev;
+ 	struct i2c_client *client;
  
-@@ -86,7 +84,6 @@ struct si_sm_data {
- 	int		error_retries;	/* end of "common" fields */
- 	int		nonzero_status;	/* hung BMCs stay all 0 */
- 	enum bt_states	complete;	/* to divert the state machine */
--	int		BT_CAP_outreqs;
- 	long		BT_CAP_req2rsp;
- 	int		BT_CAP_retries;	/* Recommended retries */
- };
-@@ -137,8 +134,6 @@ static char *state2txt(unsigned char sta
- 	case BT_STATE_RESET3:		return("RESET3");
- 	case BT_STATE_RESTART:		return("RESTART");
- 	case BT_STATE_LONG_BUSY:	return("LONG_BUSY");
--	case BT_STATE_CAPABILITIES_BEGIN: return("CAP_BEGIN");
--	case BT_STATE_CAPABILITIES_END:	return("CAP_END");
++	struct i2c_client *added_client;
++
+ 	struct mutex clients_mutex;
+ 	struct list_head clients;
+ 
+@@ -1641,15 +1643,7 @@ static int ssif_probe(struct i2c_client
+ 
+  out:
+ 	if (rv) {
+-		/*
+-		 * Note that if addr_info->client is assigned, we
+-		 * leave it.  The i2c client hangs around even if we
+-		 * return a failure here, and the failure here is not
+-		 * propagated back to the i2c code.  This seems to be
+-		 * design intent, strange as it may be.  But if we
+-		 * don't leave it, ssif_platform_remove will not remove
+-		 * the client like it should.
+-		 */
++		addr_info->client = NULL;
+ 		dev_err(&client->dev, "Unable to start IPMI SSIF: %d\n", rv);
+ 		kfree(ssif_info);
  	}
- 	return("BAD STATE");
- }
-@@ -185,7 +180,6 @@ static unsigned int bt_init_data(struct
- 	bt->complete = BT_STATE_IDLE;	/* end here */
- 	bt->BT_CAP_req2rsp = BT_NORMAL_TIMEOUT * USEC_PER_SEC;
- 	bt->BT_CAP_retries = BT_NORMAL_RETRY_LIMIT;
--	/* BT_CAP_outreqs == zero is a flag to read BT Capabilities */
- 	return 3; /* We claim 3 bytes of space; ought to check SPMI table */
- }
+@@ -1669,7 +1663,8 @@ static int ssif_adapter_handler(struct d
+ 	if (adev->type != &i2c_adapter_type)
+ 		return 0;
  
-@@ -451,7 +445,7 @@ static enum si_sm_result error_recovery(
+-	i2c_new_device(to_i2c_adapter(adev), &addr_info->binfo);
++	addr_info->added_client = i2c_new_device(to_i2c_adapter(adev),
++						 &addr_info->binfo);
  
- static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
- {
--	unsigned char status, BT_CAP[8];
-+	unsigned char status;
- 	static enum bt_states last_printed = BT_STATE_PRINTME;
- 	int i;
+ 	if (!addr_info->adapter_name)
+ 		return 1; /* Only try the first I2C adapter by default. */
+@@ -1842,7 +1837,7 @@ static int ssif_platform_remove(struct p
+ 		return 0;
  
-@@ -504,12 +498,6 @@ static enum si_sm_result bt_event(struct
- 		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
- 			BT_CONTROL(BT_H_BUSY);
+ 	mutex_lock(&ssif_infos_mutex);
+-	i2c_unregister_device(addr_info->client);
++	i2c_unregister_device(addr_info->added_client);
  
--		bt->timeout = bt->BT_CAP_req2rsp;
--
--		/* Read BT capabilities if it hasn't been done yet */
--		if (!bt->BT_CAP_outreqs)
--			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
--					SI_SM_CALL_WITHOUT_DELAY);
- 		BT_SI_SM_RETURN(SI_SM_IDLE);
- 
- 	case BT_STATE_XACTION_START:
-@@ -614,37 +602,6 @@ static enum si_sm_result bt_event(struct
- 		BT_STATE_CHANGE(BT_STATE_XACTION_START,
- 				SI_SM_CALL_WITH_DELAY);
- 
--	/*
--	 * Get BT Capabilities, using timing of upper level state machine.
--	 * Set outreqs to prevent infinite loop on timeout.
--	 */
--	case BT_STATE_CAPABILITIES_BEGIN:
--		bt->BT_CAP_outreqs = 1;
--		{
--			unsigned char GetBT_CAP[] = { 0x18, 0x36 };
--			bt->state = BT_STATE_IDLE;
--			bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
--		}
--		bt->complete = BT_STATE_CAPABILITIES_END;
--		BT_STATE_CHANGE(BT_STATE_XACTION_START,
--				SI_SM_CALL_WITH_DELAY);
--
--	case BT_STATE_CAPABILITIES_END:
--		i = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
--		bt_init_data(bt, bt->io);
--		if ((i == 8) && !BT_CAP[2]) {
--			bt->BT_CAP_outreqs = BT_CAP[3];
--			bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
--			bt->BT_CAP_retries = BT_CAP[7];
--		} else
--			printk(KERN_WARNING "IPMI BT: using default values\n");
--		if (!bt->BT_CAP_outreqs)
--			bt->BT_CAP_outreqs = 1;
--		printk(KERN_WARNING "IPMI BT: req2rsp=%ld secs retries=%d\n",
--			bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
--		bt->timeout = bt->BT_CAP_req2rsp;
--		return SI_SM_CALL_WITHOUT_DELAY;
--
- 	default:	/* should never occur */
- 		return error_recovery(bt,
- 				      status,
-@@ -655,6 +612,11 @@ static enum si_sm_result bt_event(struct
- 
- static int bt_detect(struct si_sm_data *bt)
- {
-+	unsigned char GetBT_CAP[] = { 0x18, 0x36 };
-+	unsigned char BT_CAP[8];
-+	enum si_sm_result smi_result;
-+	int rv;
-+
- 	/*
- 	 * It's impossible for the BT status and interrupt registers to be
- 	 * all 1's, (assuming a properly functioning, self-initialized BMC)
-@@ -665,6 +627,48 @@ static int bt_detect(struct si_sm_data *
- 	if ((BT_STATUS == 0xFF) && (BT_INTMASK_R == 0xFF))
- 		return 1;
- 	reset_flags(bt);
-+
-+	/*
-+	 * Try getting the BT capabilities here.
-+	 */
-+	rv = bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
-+	if (rv) {
-+		dev_warn(bt->io->dev,
-+			 "Can't start capabilities transaction: %d\n", rv);
-+		goto out_no_bt_cap;
-+	}
-+
-+	smi_result = SI_SM_CALL_WITHOUT_DELAY;
-+	for (;;) {
-+		if (smi_result == SI_SM_CALL_WITH_DELAY ||
-+		    smi_result == SI_SM_CALL_WITH_TICK_DELAY) {
-+			schedule_timeout_uninterruptible(1);
-+			smi_result = bt_event(bt, jiffies_to_usecs(1));
-+		} else if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
-+			smi_result = bt_event(bt, 0);
-+		} else
-+			break;
-+	}
-+
-+	rv = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
-+	bt_init_data(bt, bt->io);
-+	if (rv < 8) {
-+		dev_warn(bt->io->dev, "bt cap response too short: %d\n", rv);
-+		goto out_no_bt_cap;
-+	}
-+
-+	if (BT_CAP[2]) {
-+		dev_warn(bt->io->dev, "Error fetching bt cap: %x\n", BT_CAP[2]);
-+out_no_bt_cap:
-+		dev_warn(bt->io->dev, "using default values\n");
-+	} else {
-+		bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
-+		bt->BT_CAP_retries = BT_CAP[7];
-+	}
-+
-+	dev_info(bt->io->dev, "req2rsp=%ld secs retries=%d\n",
-+		 bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
-+
- 	return 0;
- }
- 
+ 	list_del(&addr_info->link);
+ 	kfree(addr_info);
 
 
