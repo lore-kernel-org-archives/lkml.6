@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88099ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9016C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A0BD208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A0BD208D9
+	by mail.kernel.org (Postfix) with ESMTP id 8BE4720C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BE4720C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730754AbeIXSNe (ORCPT
+        id S1730934AbeIXSNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:13:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54848 "EHLO
+        Mon, 24 Sep 2018 14:13:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54856 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbeIXSNd (ORCPT
+        with ESMTP id S1728551AbeIXSNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:13:33 -0400
+        Mon, 24 Sep 2018 14:13:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BEA101086;
-        Mon, 24 Sep 2018 12:11:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A5671088;
+        Mon, 24 Sep 2018 12:11:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 075/111] mtdchar: fix overflows in adjustment of `count`
-Date:   Mon, 24 Sep 2018 13:52:42 +0200
-Message-Id: <20180924113112.413050665@linuxfoundation.org>
+Subject: [PATCH 4.9 076/111] evm: Dont deadlock if a crypto algorithm is unavailable
+Date:   Mon, 24 Sep 2018 13:52:43 +0200
+Message-Id: <20180924113112.489493700@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -52,53 +53,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Matthew Garrett <mjg59@google.com>
 
-[ Upstream commit 6c6bc9ea84d0008024606bf5ba10519e20d851bf ]
+[ Upstream commit e2861fa71641c6414831d628a1f4f793b6562580 ]
 
-The first checks in mtdchar_read() and mtdchar_write() attempt to limit
-`count` such that `*ppos + count <= mtd->size`. However, they ignore the
-possibility of `*ppos > mtd->size`, allowing the calculation of `count` to
-wrap around. `mtdchar_lseek()` prevents seeking beyond mtd->size, but the
-pread/pwrite syscalls bypass this.
+When EVM attempts to appraise a file signed with a crypto algorithm the
+kernel doesn't have support for, it will cause the kernel to trigger a
+module load. If the EVM policy includes appraisal of kernel modules this
+will in turn call back into EVM - since EVM is holding a lock until the
+crypto initialisation is complete, this triggers a deadlock. Add a
+CRYPTO_NOLOAD flag and skip module loading if it's set, and add that flag
+in the EVM case in order to fail gracefully with an error message
+instead of deadlocking.
 
-I haven't found any codepath on which this actually causes dangerous
-behavior, but it seems like a sensible change anyway.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/mtdchar.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ crypto/api.c                        |    2 +-
+ include/linux/crypto.h              |    5 +++++
+ security/integrity/evm/evm_crypto.c |    3 ++-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -160,8 +160,12 @@ static ssize_t mtdchar_read(struct file
+--- a/crypto/api.c
++++ b/crypto/api.c
+@@ -215,7 +215,7 @@ struct crypto_alg *crypto_larval_lookup(
+ 	type &= mask;
  
- 	pr_debug("MTD_read\n");
+ 	alg = crypto_alg_lookup(name, type, mask);
+-	if (!alg) {
++	if (!alg && !(mask & CRYPTO_NOLOAD)) {
+ 		request_module("crypto-%s", name);
  
--	if (*ppos + count > mtd->size)
--		count = mtd->size - *ppos;
-+	if (*ppos + count > mtd->size) {
-+		if (*ppos < mtd->size)
-+			count = mtd->size - *ppos;
-+		else
-+			count = 0;
-+	}
+ 		if (!((type ^ CRYPTO_ALG_NEED_FALLBACK) & mask &
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -109,6 +109,11 @@
+ #define CRYPTO_ALG_OPTIONAL_KEY		0x00004000
  
- 	if (!count)
- 		return 0;
-@@ -246,7 +250,7 @@ static ssize_t mtdchar_write(struct file
- 
- 	pr_debug("MTD_write\n");
- 
--	if (*ppos == mtd->size)
-+	if (*ppos >= mtd->size)
- 		return -ENOSPC;
- 
- 	if (*ppos + count > mtd->size)
+ /*
++ * Don't trigger module loading
++ */
++#define CRYPTO_NOLOAD			0x00008000
++
++/*
+  * Transform masks and values (for crt_flags).
+  */
+ #define CRYPTO_TFM_NEED_KEY		0x00000001
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -94,7 +94,8 @@ static struct shash_desc *init_desc(char
+ 		mutex_lock(&mutex);
+ 		if (*tfm)
+ 			goto out;
+-		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_ALG_ASYNC);
++		*tfm = crypto_alloc_shash(algo, 0,
++					  CRYPTO_ALG_ASYNC | CRYPTO_NOLOAD);
+ 		if (IS_ERR(*tfm)) {
+ 			rc = PTR_ERR(*tfm);
+ 			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
 
 
