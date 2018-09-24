@@ -2,148 +2,125 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30262ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA54C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D231D2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:44:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D231D2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B1FF2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:45:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KI9VG8+2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1FF2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387739AbeIYArf (ORCPT
+        id S2387753AbeIYAtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 20:47:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730253AbeIYAre (ORCPT
+        Mon, 24 Sep 2018 20:49:18 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35391 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727290AbeIYAtS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 20:47:34 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OIi2X9031491
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 14:44:03 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mq3jsvyv9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 14:44:03 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 24 Sep 2018 12:43:55 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 12:43:50 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OIhm8523134452
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 11:43:48 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A8B4BE054;
-        Mon, 24 Sep 2018 12:43:48 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 116A7BE051;
-        Mon, 24 Sep 2018 12:43:43 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 12:43:43 -0600 (MDT)
-Subject: Re: [PATCH v10 11/26] s390: vfio-ap: implement mediated device open
- callback
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <e1ff9918-a1ab-31b1-0b32-a3980770d2ac@linux.ibm.com>
- <09a6b9e5-e335-14cf-debd-de0f92dafd5e@redhat.com>
- <ebe81ebf-9b61-dbf6-743e-6145162cdcfb@linux.ibm.com>
- <69b5e3d3-5d44-37c0-ca10-720345852134@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 24 Sep 2018 14:43:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 24 Sep 2018 20:49:18 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p12-v6so9426239pfh.2;
+        Mon, 24 Sep 2018 11:45:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FjiUbqm4sKEvGIQO0y/278aRNsA2PyTdOrFuTKjaUrQ=;
+        b=KI9VG8+2W9zWmIf45NyfFC/q1FHhblzXKxJHXCICn2OV8AKimaNfqvBRQNeSh0Udw3
+         kHQnA6uigs7u5mptkOfTMJld4i3kd3NGL4C4cTy8Jgcu/OtdBKqtSTYqdS4N6NUAL5Tf
+         CZ6W4zhI+Rso+fqA+YqbqySu48lHfzs0/+zSLFBi8xdO9ftT+9wukzxJGwy2Ch2YZ6H3
+         1iD3FBMuoT32u+PcjUiH9mY8OtoVMNSazVUUtLU5pfyzzUfdbwm3dewgb7xJ/lfvTVBg
+         YxHIDkq+hd6da+vEhCdD/Lg+A8tFf5LQvnbP46mtDtdxFGyH+dxOHfxFt6z7ZxICUJqI
+         L+GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FjiUbqm4sKEvGIQO0y/278aRNsA2PyTdOrFuTKjaUrQ=;
+        b=nwjor2Pjw6oPPjpcGQ3vRBPqMs54qmLWOsvGHM9dsSzwsMpIDwYoAUK1m5gznIfjEk
+         haldlx+NGcbJAMvh8nJVv6h/RULIDMD7PuXoCS1z4c5SBWxLhhC5BMBFB9iSpByspVeG
+         8bwXKtW6FzKqhl2lrWT4sEk/cRs1U36jbNFt/6+inbiCD71YkJRfLfO828idvzyg1/So
+         bCdI8ni0Y9uorn7kxxlRi/r1lERCfxEMKXcbssFESzu9gLR+ZdGaIw3++wulAq8XCOZ+
+         Tln36wM7itGX4cwyat9lv4lQuPKlAjPdVZNSEFvaUgPwZqyrmk8UuxbenTTUErfQg/bB
+         vgZw==
+X-Gm-Message-State: ABuFfojENMrm4nRJt4Q7+58R10RON2wxetVYoLNzncrJNhE7qIZbaIbZ
+        ZYwRi+Y17JolrPxLKhjAiD0=
+X-Google-Smtp-Source: ACcGV60mu0LCdg51l4ePmKNdN2c8x2gVd3418blglG3FD2ckUARyNpHq06HHVv1ZYBgFBnc+B0Ek/Q==
+X-Received: by 2002:a62:68c3:: with SMTP id d186-v6mr139886pfc.70.1537814746819;
+        Mon, 24 Sep 2018 11:45:46 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id y7-v6sm56375pge.8.2018.09.24.11.45.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 11:45:45 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 11:45:43 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC/PATCH 2/5] device property: introduce notion of subnodes
+ for legacy boards
+Message-ID: <20180924184543.GB156847@dtor-ws>
+References: <20180917181603.125492-1-dmitry.torokhov@gmail.com>
+ <20180917181603.125492-3-dmitry.torokhov@gmail.com>
+ <20180920135348.GF11965@kuha.fi.intel.com>
+ <20180921233119.GA44099@dtor-ws>
+ <20180924132050.GK11965@kuha.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <69b5e3d3-5d44-37c0-ca10-720345852134@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092418-0004-0000-0000-00001490F06F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009764; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01093071; UDB=6.00564923; IPR=6.00873108;
- MB=3.00023485; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 18:43:54
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092418-0005-0000-0000-000088ECC539
-Message-Id: <9f227089-8135-922c-fbe0-015085767a18@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240178
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924132050.GK11965@kuha.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 02:40 PM, David Hildenbrand wrote:
-> On 24/09/2018 18:07, Tony Krowiak wrote:
->> On 09/24/2018 04:40 AM, David Hildenbrand wrote:
->>>
->>>>     /**
->>>> - * Verify that the AP instructions are available on the guest. This is
->>>> indicated
->>>> - * via the  KVM_S390_VM_CPU_FEAT_AP CPU model feature.
->>>> + * Verify that the AP instructions are being interpreted by firmware
->>>> for the
->>>> + * guest. This is indicated by the kvm->arch.crypto.apie flag.
->>>>      */
->>>>     static int kvm_ap_validate_crypto_setup(struct kvm *kvm)
->>>>     {
->>>> -	if (test_bit_inv(KVM_S390_VM_CPU_FEAT_AP, kvm->arch.cpu_feat))
->>>> +	if (kvm->arch.crypto.apie)
->>>>     		return 0;
->>>
->>> I wonder if this check makes sense, because apie can be toggled during
->>> runtime. I guess it would be sufficient to check if the ap control block
->>> is available and apie is supported by the HW.
->>
->> I am not clear about what you are getting at here, but I'll attempt
->> to respond. There is no need to check if the AP control block (CRYCB)
->> is available as the address is set in the CRYCBD three instructions
->> above, even if AP instructions are not available. Regarding whether apie
->> is supported by the hardware, the value of vcpu->kvm->arch.crypto.apie
->> can not be set unless it is supported by the HW. In the patch (24/26)
->> that provides the VM attributes to toggle this value, it can only be
->> turned on if the AP instructions are available. I might also note that
->> the kvm_ap_validate_crypto_setup() function is called whenever one of
->> the VM crypto attributes is changed, so it makes sense that decisions
->> made in this function are based on a change to a VM crypto attribute. In
->> my first pass at changing this function, I checked
->> ap_instructions_available() here, but after considering all of the
->> above, it made sense to me to check the apie flag.
->>
+On Mon, Sep 24, 2018 at 04:20:50PM +0300, Heikki Krogerus wrote:
+> Hi Dmitry,
 > 
-> I prefer ap_instructions_available(). As I said, kvm->arch.crypto.apie
-> is a moving target.
-
-Okay then.
-
+> On Fri, Sep 21, 2018 at 04:31:19PM -0700, Dmitry Torokhov wrote:
+> > > > +	if (!parent_pset)
+> > > > +		return ERR_PTR(-EINVAL);
+> > > > +
+> > > > +	p = pset_create_set(properties);
+> > > > +	if (IS_ERR(p))
+> > > > +		return ERR_CAST(p);
+> > > > +
+> > > > +	p->dev = dev;
+> > > 
+> > > That looks wrong.
+> > > 
+> > > I'm guessing the assumption here is that the child nodes will never be
+> > > assigned to their own devices, but you can't do that. It will limit
+> > > the use of the child nodes to a very small number of cases, possibly
+> > > only to gpios.
+> > 
+> > If I need to assign a node to a device I'll use device_add_properties()
+> > API. device_add_child_properties() is for nodes living "below" the
+> > device.
 > 
+> device_add_properties() is not available to us before we have the
+> actual struct device meant for the properties. If the child device is
+> populated outside of the "boardfiles" then we have to be able to link
+> it to the child node afterwards.
 
+I think we are talking about totally different use cases and that is why
+we are having hard time coming to a mutually agreeable solution. Could
+you please describe in more detail what you would like to achieve,
+and preferably show how it is described now with DT and/or ACPI, so that
+I have a better frame of reference.
+
+Thanks.
+
+-- 
+Dmitry
