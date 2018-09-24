@@ -2,127 +2,149 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDB6ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AB1C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9FD62098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:18:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1657D2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:18:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGA1CVwi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9FD62098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="MHVeGi16"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1657D2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbeIYBVr (ORCPT
+        id S1732038AbeIYBWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:21:47 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46408 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730681AbeIYBVr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:21:47 -0400
-Received: by mail-io1-f65.google.com with SMTP id y12-v6so18494904ioj.13;
-        Mon, 24 Sep 2018 12:18:08 -0700 (PDT)
+        Mon, 24 Sep 2018 21:22:05 -0400
+Received: from mail-sn1nam01on0079.outbound.protection.outlook.com ([104.47.32.79]:4928
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730681AbeIYBWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 21:22:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EhO0/3mSuRoG627z5xnGrgaF/Hb/lTjMYfYD0g75Ctg=;
-        b=OGA1CVwi5MLh5ynp02rtK5I3KmZNhfrQlwOR84lNthjcDgQdmiVZmdIup5K9qHozws
-         cHAoHj/995/3Vd+mH/5KqWwZrYxMMPax9jnTrz1Rc14BM1A9d1anyEN5SUWKmsbIqYXb
-         a7l8kYPfyJAr1FSy8FhNK6zhBWT3nseiJJNyv/4l/d+ATq6soG9H2Uw7bYHGYAxIYPHi
-         /MlqShHqVRUT8sEHH+oYmAYZyuudwzXrqhmqaRVwlw9bWn8z3rOTMhacu33tZPfwu0U+
-         xcL/IeEXbn8jFsbKouo+HFyEEXhJ0Z14FoiWyooK7As6NmRG/VQAlLFZkjMD2NEPUErm
-         996g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EhO0/3mSuRoG627z5xnGrgaF/Hb/lTjMYfYD0g75Ctg=;
-        b=UHqImH5WP2xJTGqPdJWlEno2BWSOWR+CM/n3DWkg6TYughdVq7Rp0AoHqrvpRArlz/
-         0wrsSOCSp2GLrPEJbOSEVndqethWprcadOMbu02Prr+tmBK1b4RrlFDhIBlOOOJ7ai8Y
-         cfhhVG021wyZbpFUq9Pq2T/HxIEmHBCX3mZsiBIdKdLRbqQ3M+Me51CfAQpvzZMxjKHg
-         mI9aP2aQhZUppzTpgsoFEZJqXWQuaOC49kM8g6w6o70LszUreQLaJyGAmnm/wNAZD6jJ
-         uZ4Kr7YzbFxMsMUM6/CrQQHfNeC2GLjIoR62vG0Gv4Nw3vdVu7x0mHJq8OSjf4yq+7i2
-         ITlQ==
-X-Gm-Message-State: ABuFfojvPpnOnoY2uddyBtnDQVhIft+2tfBbzl5Y1rnPPKJSn9se2OxU
-        RhP/v8EUQdldALnap1wOnA==
-X-Google-Smtp-Source: ACcGV608xHdv4lb81rTCjm8iIulQ5hl9ByRnHT0VjlJkIsE6RrnhWYXTP9DXZG567Sj35HRBvh5Dog==
-X-Received: by 2002:a6b:b955:: with SMTP id j82-v6mr251545iof.158.1537816688484;
-        Mon, 24 Sep 2018 12:18:08 -0700 (PDT)
-Received: from r (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
-        by smtp.gmail.com with ESMTPSA id o127-v6sm2754852itg.24.2018.09.24.12.18.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 12:18:07 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 15:18:04 -0400
-From:   r yang <decatf@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Message-ID: <20180924191804.GA20060@r>
-References: <20180921220149.17136-1-decatf@gmail.com>
- <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uODk2J+KPyFcEm4R8sNIsPEbC9xLlI2N3ZE+6oP/hp4=;
+ b=MHVeGi16r9ZxJcJ/2d9RuxhwIuJtl2Hyjy1vkuJSSf6gsPp/kJP/TOhFAM65lDFBKiSVkei8qiga6lHUBBwrZyZsA0FzqjMbBxj39zaqmkdyndSVC102gFXgtwa03rQWxBAswhL30JEEbYw0Gp0J04IDM2dQaLYcNcko3bsrcYQ=
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.38.138) by
+ DM5PR12MB1947.namprd12.prod.outlook.com (10.175.90.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Mon, 24 Sep 2018 19:18:24 +0000
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::3dd3:8627:430e:c3d3]) by DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::3dd3:8627:430e:c3d3%3]) with mapi id 15.20.1164.024; Mon, 24 Sep 2018
+ 19:18:24 +0000
+From:   Gary R Hook <ghook@amd.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "Hook, Gary" <Gary.Hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] crypto: ccp: Remove forward declaration
+Thread-Topic: [PATCH] crypto: ccp: Remove forward declaration
+Thread-Index: AQHUVCu+pP0dlJnsRUaui4HOI4H1AaT/zl6A
+Date:   Mon, 24 Sep 2018 19:18:23 +0000
+Message-ID: <33c9afa7-ea62-1248-1da4-381f93238627@amd.com>
+References: <20180924172615.25591-1-natechancellor@gmail.com>
+In-Reply-To: <20180924172615.25591-1-natechancellor@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CY4PR03CA0018.namprd03.prod.outlook.com
+ (2603:10b6:903:33::28) To DM5PR12MB1449.namprd12.prod.outlook.com
+ (2603:10b6:4:d::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Gary.Hook@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1947;20:AgHuN7PKu00Hj0PuHTjJA/4Rfb9lC6wFY1ns2JjtzQfCJfc5mbdlDBn2uxlpoZgLaKr7NSriJn5uCGvJdv2Ks6HElignOXTA85/z50n0/Fnkm267pAwVghsIodjQW8ttp6DdGDoDlvIC7NZzzHfN8zXbANnvh2DDxiD/xKWcdn2zIcvoLYGLHJ/8KSb45Eo1BmueNWjszNOpXQ382zXQfrqCu6xNSvXVBGNKyY4/gQ45SE1uZlWtQZ0Hs6qeqqov
+x-ms-office365-filtering-correlation-id: c7a64b0b-00fb-4a6e-84c7-08d622527eec
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1947;
+x-ms-traffictypediagnostic: DM5PR12MB1947:
+x-microsoft-antispam-prvs: <DM5PR12MB1947C3F0EA3B7EC3159B61E3FD170@DM5PR12MB1947.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(211936372134217)(153496737603132)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:DM5PR12MB1947;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1947;
+x-forefront-prvs: 0805EC9467
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(39860400002)(376002)(366004)(189003)(199004)(229853002)(575784001)(186003)(478600001)(72206003)(26005)(31686004)(5250100002)(66066001)(446003)(3846002)(110136005)(2616005)(2900100001)(5660300001)(54906003)(6506007)(53546011)(99286004)(486006)(52116002)(36756003)(386003)(102836004)(53936002)(256004)(11346002)(476003)(316002)(76176011)(97736004)(81166006)(14454004)(6512007)(2906002)(106356001)(25786009)(6436002)(6246003)(81156014)(8936002)(8676002)(4326008)(305945005)(105586002)(68736007)(31696002)(6486002)(7736002)(71200400001)(14444005)(39060400002)(6116002)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1947;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 1O9KtApmDR9IufQqwbdybC6FoSc9WP4rFXkefVFEn6jWJWA49CqWwi1Pwjqi5BBktXAchU6MYticcel7o00f+aiCKpByNkKxVn3D7E0PXdw+qRmNtjnMEHsyeO4hXGXLdTazI1boOTYR3Hu0D9RkUtKau2MXVqxDMdBjSp0kCY/1+aarqbDZ19o/iS73VzYveDlxeLH6oxnBgCzGMr8QP7TTsW/giJFR1RW902oUEr1j9SAy8IWRsXtH4Ktr428r70wl/ig3SJz8XbZDXdmOD7CG41pajGPN1oTnQFGr3v4gISx3CSMAzSinOxe80fMJXxBK53L5o6c7lv7PMFHFp1boQaARsXJ44wiwXy+8Xgk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <56836D7413406F4191B4356291A47C5F@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7a64b0b-00fb-4a6e-84c7-08d622527eec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 19:18:23.8627
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1947
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 11:08:03AM +0300, Peter De Schrijver wrote:
-> On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
-> > The current behavior is that clk_round_rate would return the same clock
-> > rate passed to it for valid PLL configurations. This change will return
-> > the exact rate the PLL will provide in accordance with clk API.
-> > 
-> > Signed-off-by: ryang <decatf@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-pll.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> > index 17a058c3bbc1..36014a6ec42e 100644
-> > --- a/drivers/clk/tegra/clk-pll.c
-> > +++ b/drivers/clk/tegra/clk-pll.c
-> > @@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	cfg->output_rate >>= p_div;
-> > +	if (cfg->m == 0) {
-> > +		cfg->output_rate = 0;
-> 
-> I think a WARN_ON() is appropriate here. the input divider should never be 0.
-> 
-> Peter.
-> 
-
-Should it return -EINVAL (or some error) too? _calc_rate is also in the
-clk_set_rate code path. I think we want to avoid programming the
-register to 0 input divider all together?
-
-> > +	} else {
-> > +		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
-> > +		cfg->output_rate >>= p_div;
-> > +	}
-> >  
-> >  	if (pll->params->pdiv_tohw) {
-> >  		ret = _p_div_to_hw(hw, 1 << p_div);
-> > -- 
-> > 2.17.1
-> > 
+T24gMDkvMjQvMjAxOCAxMjoyNiBQTSwgTmF0aGFuIENoYW5jZWxsb3Igd3JvdGU6DQo+IENsYW5n
+IGVtaXRzIGEgd2FybmluZyBhYm91dCB0aGlzIGNvbnN0cnVjdDoNCj4gDQo+IGRyaXZlcnMvY3J5
+cHRvL2NjcC9zcC1wbGF0Zm9ybS5jOjM2OjM2OiB3YXJuaW5nOiB0ZW50YXRpdmUgYXJyYXkNCj4g
+ZGVmaW5pdGlvbiBhc3N1bWVkIHRvIGhhdmUgb25lIGVsZW1lbnQNCj4gc3RhdGljIGNvbnN0IHN0
+cnVjdCBhY3BpX2RldmljZV9pZCBzcF9hY3BpX21hdGNoW107DQo+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIF4NCj4gMSB3YXJuaW5nIGdlbmVyYXRlZC4NCj4gDQo+IEp1c3Qg
+cmVtb3ZlIHRoZSBmb3J3YXJkIGRlY2xhcmF0aW9ucyBhbmQgbW92ZSB0aGUgaW5pdGlhbGl6YXRp
+b25zIHVwDQo+IHNvIHRoYXQgdGhleSBjYW4gYmUgdXNlZCBpbiBzcF9nZXRfb2ZfdmVyc2lvbiBh
+bmQgc3BfZ2V0X2FjcGlfdmVyc2lvbi4NCg0KSSdtIG5vdCBnb2luZyB0byBvdXQgYW5kIG91dCBv
+YmplY3QgdG8gdGhpcyBqdXN0IHlldC4NCg0KSSBhbSBub3QgYSBjbGFuZyBleHBlcnQuIENhbiB5
+b3UgcGxlYXNlIHByb3ZpZGUgYSBtYWtlIGNvbW1hbmQgdGhhdCANCndvdWxkIGV4cGxhaW4gaG93
+IHlvdSBwcmVjaXBpdGF0ZWQgdGhpcyBjb21wbGFpbnQ/DQoNCg0KPiBSZXBvcnRlZC1ieTogTmlj
+ayBEZXNhdWxuaWVycyA8bmRlc2F1bG5pZXJzQGdvb2dsZS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6
+IE5hdGhhbiBDaGFuY2VsbG9yIDxuYXRlY2hhbmNlbGxvckBnbWFpbC5jb20+DQo+IC0tLQ0KPiAg
+IGRyaXZlcnMvY3J5cHRvL2NjcC9zcC1wbGF0Zm9ybS5jIHwgNTMgKysrKysrKysrKysrKysrLS0t
+LS0tLS0tLS0tLS0tLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgMjgg
+ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcnlwdG8vY2NwL3NwLXBs
+YXRmb3JtLmMgYi9kcml2ZXJzL2NyeXB0by9jY3Avc3AtcGxhdGZvcm0uYw0KPiBpbmRleCA3MTcz
+NGYyNTRmZDEuLmI3NWRjN2RiMmQ0YSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jcnlwdG8vY2Nw
+L3NwLXBsYXRmb3JtLmMNCj4gKysrIGIvZHJpdmVycy9jcnlwdG8vY2NwL3NwLXBsYXRmb3JtLmMN
+Cj4gQEAgLTMzLDggKzMzLDMxIEBAIHN0cnVjdCBzcF9wbGF0Zm9ybSB7DQo+ICAgCXVuc2lnbmVk
+IGludCBpcnFfY291bnQ7DQo+ICAgfTsNCj4gICANCj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3QgYWNw
+aV9kZXZpY2VfaWQgc3BfYWNwaV9tYXRjaFtdOw0KPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9k
+ZXZpY2VfaWQgc3Bfb2ZfbWF0Y2hbXTsNCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc3BfZGV2X3Zk
+YXRhIGRldl92ZGF0YVtdID0gew0KPiArCXsNCj4gKwkJLmJhciA9IDAsDQo+ICsjaWZkZWYgQ09O
+RklHX0NSWVBUT19ERVZfU1BfQ0NQDQo+ICsJCS5jY3BfdmRhdGEgPSAmY2NwdjNfcGxhdGZvcm0s
+DQo+ICsjZW5kaWYNCj4gKwl9LA0KPiArfTsNCj4gKw0KPiArI2lmZGVmIENPTkZJR19BQ1BJDQo+
+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGFjcGlfZGV2aWNlX2lkIHNwX2FjcGlfbWF0Y2hbXSA9IHsN
+Cj4gKwl7ICJBTURJMEMwMCIsIChrZXJuZWxfdWxvbmdfdCkmZGV2X3ZkYXRhWzBdIH0sDQo+ICsJ
+eyB9LA0KPiArfTsNCj4gK01PRFVMRV9ERVZJQ0VfVEFCTEUoYWNwaSwgc3BfYWNwaV9tYXRjaCk7
+DQo+ICsjZW5kaWYNCj4gKw0KPiArI2lmZGVmIENPTkZJR19PRg0KPiArc3RhdGljIGNvbnN0IHN0
+cnVjdCBvZl9kZXZpY2VfaWQgc3Bfb2ZfbWF0Y2hbXSA9IHsNCj4gKwl7IC5jb21wYXRpYmxlID0g
+ImFtZCxjY3Atc2VhdHRsZS12MWEiLA0KPiArCSAgLmRhdGEgPSAoY29uc3Qgdm9pZCAqKSZkZXZf
+dmRhdGFbMF0gfSwNCj4gKwl7IH0sDQo+ICt9Ow0KPiArTU9EVUxFX0RFVklDRV9UQUJMRShvZiwg
+c3Bfb2ZfbWF0Y2gpOw0KPiArI2VuZGlmDQo+ICAgDQo+ICAgc3RhdGljIHN0cnVjdCBzcF9kZXZf
+dmRhdGEgKnNwX2dldF9vZl92ZXJzaW9uKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
+ICAgew0KPiBAQCAtMjAxLDMyICsyMjQsNiBAQCBzdGF0aWMgaW50IHNwX3BsYXRmb3JtX3Jlc3Vt
+ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgIH0NCj4gICAjZW5kaWYNCj4gICAN
+Cj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3BfZGV2X3ZkYXRhIGRldl92ZGF0YVtdID0gew0KPiAt
+CXsNCj4gLQkJLmJhciA9IDAsDQo+IC0jaWZkZWYgQ09ORklHX0NSWVBUT19ERVZfU1BfQ0NQDQo+
+IC0JCS5jY3BfdmRhdGEgPSAmY2NwdjNfcGxhdGZvcm0sDQo+IC0jZW5kaWYNCj4gLQl9LA0KPiAt
+fTsNCj4gLQ0KPiAtI2lmZGVmIENPTkZJR19BQ1BJDQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0IGFj
+cGlfZGV2aWNlX2lkIHNwX2FjcGlfbWF0Y2hbXSA9IHsNCj4gLQl7ICJBTURJMEMwMCIsIChrZXJu
+ZWxfdWxvbmdfdCkmZGV2X3ZkYXRhWzBdIH0sDQo+IC0JeyB9LA0KPiAtfTsNCj4gLU1PRFVMRV9E
+RVZJQ0VfVEFCTEUoYWNwaSwgc3BfYWNwaV9tYXRjaCk7DQo+IC0jZW5kaWYNCj4gLQ0KPiAtI2lm
+ZGVmIENPTkZJR19PRg0KPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgc3Bfb2Zf
+bWF0Y2hbXSA9IHsNCj4gLQl7IC5jb21wYXRpYmxlID0gImFtZCxjY3Atc2VhdHRsZS12MWEiLA0K
+PiAtCSAgLmRhdGEgPSAoY29uc3Qgdm9pZCAqKSZkZXZfdmRhdGFbMF0gfSwNCj4gLQl7IH0sDQo+
+IC19Ow0KPiAtTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgc3Bfb2ZfbWF0Y2gpOw0KPiAtI2VuZGlm
+DQo+IC0NCj4gICBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBzcF9wbGF0Zm9ybV9kcml2
+ZXIgPSB7DQo+ICAgCS5kcml2ZXIgPSB7DQo+ICAgCQkubmFtZSA9ICJjY3AiLA0KPiANCg0K
