@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C40C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45221ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97BAE2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97BAE2083A
+	by mail.kernel.org (Postfix) with ESMTP id 0A2AC2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2AC2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389112AbeIXSqG (ORCPT
+        id S2389118AbeIXSqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:46:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59550 "EHLO
+        Mon, 24 Sep 2018 14:46:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59558 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387512AbeIXSqF (ORCPT
+        with ESMTP id S2387512AbeIXSqJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:46:05 -0400
+        Mon, 24 Sep 2018 14:46:09 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2B791099;
-        Mon, 24 Sep 2018 12:44:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22642109A;
+        Mon, 24 Sep 2018 12:44:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Wei Xu <xuwei5@hisilicon.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 172/235] net: hns3: Fix return value error in hns3_reset_notify_down_enet
-Date:   Mon, 24 Sep 2018 13:52:38 +0200
-Message-Id: <20180924113122.055272882@linuxfoundation.org>
+Subject: [PATCH 4.18 173/235] ARM: hisi: check of_iomap and fix missing of_node_put
+Date:   Mon, 24 Sep 2018 13:52:39 +0200
+Message-Id: <20180924113122.144624231@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,35 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 6b1385cc251ae9f26b720fa5c8c00bf19af336ae ]
+[ Upstream commit 81646a3d39ef14749301374a3a0b8311384cd412 ]
 
-When doing reset, netdev has not been brought up is not an error,
-it means that we do not need do the stop operation, so just return
-zero.
+of_find_compatible_node() returns a device node with refcount incremented
+and thus needs an explicit of_node_put(). Further relying on an unchecked
+of_iomap() which can return NULL is problematic here, after all ctrl_base
+is critical enough for hix5hd2_set_cpu() to call BUG() if not available
+so a check seems mandated here.
 
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+0002 Fixes: commit 06cc5c1d4d73 ("ARM: hisi: enable hix5hd2 SoC")
+Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-hisi/hotplug.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3422,7 +3422,7 @@ static int hns3_reset_notify_down_enet(s
- 	struct net_device *ndev = kinfo->netdev;
+--- a/arch/arm/mach-hisi/hotplug.c
++++ b/arch/arm/mach-hisi/hotplug.c
+@@ -180,11 +180,15 @@ static bool hix5hd2_hotplug_init(void)
+ 	struct device_node *np;
  
- 	if (!netif_running(ndev))
--		return -EIO;
-+		return 0;
- 
- 	return hns3_nic_net_stop(ndev);
+ 	np = of_find_compatible_node(NULL, NULL, "hisilicon,cpuctrl");
+-	if (np) {
+-		ctrl_base = of_iomap(np, 0);
+-		return true;
+-	}
+-	return false;
++	if (!np)
++		return false;
++
++	ctrl_base = of_iomap(np, 0);
++	of_node_put(np);
++	if (!ctrl_base)
++		return false;
++
++	return true;
  }
+ 
+ void hix5hd2_set_cpu(int cpu, bool enable)
 
 
