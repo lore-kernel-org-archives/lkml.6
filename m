@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7267FECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74647ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3784D21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3784D21486
+	by mail.kernel.org (Postfix) with ESMTP id 3A57721486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A57721486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387405AbeIXS3d (ORCPT
+        id S2387413AbeIXS3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:29:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57320 "EHLO
+        Mon, 24 Sep 2018 14:29:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57328 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbeIXS3c (ORCPT
+        with ESMTP id S1730233AbeIXS3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:29:32 -0400
+        Mon, 24 Sep 2018 14:29:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 096711018;
-        Mon, 24 Sep 2018 12:27:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 396011018;
+        Mon, 24 Sep 2018 12:27:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Feras Daoud <ferasda@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.18 002/235] net/mlx5: Fix use-after-free in self-healing flow
-Date:   Mon, 24 Sep 2018 13:49:48 +0200
-Message-Id: <20180924113104.288158003@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 020/235] ALSA: msnd: Fix the default sample sizes
+Date:   Mon, 24 Sep 2018 13:50:06 +0200
+Message-Id: <20180924113106.625987004@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,91 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 76d5581c870454be5f1f1a106c57985902e7ea20 ]
+[ Upstream commit 7c500f9ea139d0c9b80fdea5a9c911db3166ea54 ]
 
-When the mlx5 health mechanism detects a problem while the driver
-is in the middle of init_one or remove_one, the driver needs to prevent
-the health mechanism from scheduling future work; if future work
-is scheduled, there is a problem with use-after-free: the system WQ
-tries to run the work item (which has been freed) at the scheduled
-future time.
+The default sample sizes set by msnd driver are bogus; it sets ALSA
+PCM format, not the actual bit width.
 
-Prevent this by disabling work item scheduling in the health mechanism
-when the driver is in the middle of init_one() or remove_one().
-
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Reviewed-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/health.c |   10 +++++++++-
- drivers/net/ethernet/mellanox/mlx5/core/main.c   |    6 +++---
- include/linux/mlx5/driver.h                      |    2 +-
- 3 files changed, 13 insertions(+), 5 deletions(-)
+ sound/isa/msnd/msnd_pinnacle.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
-@@ -331,9 +331,17 @@ void mlx5_start_health_poll(struct mlx5_
- 	add_timer(&health->timer);
- }
+--- a/sound/isa/msnd/msnd_pinnacle.c
++++ b/sound/isa/msnd/msnd_pinnacle.c
+@@ -82,10 +82,10 @@
  
--void mlx5_stop_health_poll(struct mlx5_core_dev *dev)
-+void mlx5_stop_health_poll(struct mlx5_core_dev *dev, bool disable_health)
+ static void set_default_audio_parameters(struct snd_msnd *chip)
  {
- 	struct mlx5_core_health *health = &dev->priv.health;
-+	unsigned long flags;
-+
-+	if (disable_health) {
-+		spin_lock_irqsave(&health->wq_lock, flags);
-+		set_bit(MLX5_DROP_NEW_HEALTH_WORK, &health->flags);
-+		set_bit(MLX5_DROP_NEW_RECOVERY_WORK, &health->flags);
-+		spin_unlock_irqrestore(&health->wq_lock, flags);
-+	}
- 
- 	del_timer_sync(&health->timer);
+-	chip->play_sample_size = DEFSAMPLESIZE;
++	chip->play_sample_size = snd_pcm_format_width(DEFSAMPLESIZE);
+ 	chip->play_sample_rate = DEFSAMPLERATE;
+ 	chip->play_channels = DEFCHANNELS;
+-	chip->capture_sample_size = DEFSAMPLESIZE;
++	chip->capture_sample_size = snd_pcm_format_width(DEFSAMPLESIZE);
+ 	chip->capture_sample_rate = DEFSAMPLERATE;
+ 	chip->capture_channels = DEFCHANNELS;
  }
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -1266,7 +1266,7 @@ err_cleanup_once:
- 		mlx5_cleanup_once(dev);
- 
- err_stop_poll:
--	mlx5_stop_health_poll(dev);
-+	mlx5_stop_health_poll(dev, boot);
- 	if (mlx5_cmd_teardown_hca(dev)) {
- 		dev_err(&dev->pdev->dev, "tear_down_hca failed, skip cleanup\n");
- 		goto out_err;
-@@ -1325,7 +1325,7 @@ static int mlx5_unload_one(struct mlx5_c
- 	mlx5_free_irq_vectors(dev);
- 	if (cleanup)
- 		mlx5_cleanup_once(dev);
--	mlx5_stop_health_poll(dev);
-+	mlx5_stop_health_poll(dev, cleanup);
- 	err = mlx5_cmd_teardown_hca(dev);
- 	if (err) {
- 		dev_err(&dev->pdev->dev, "tear_down_hca failed, skip cleanup\n");
-@@ -1587,7 +1587,7 @@ static int mlx5_try_fast_unload(struct m
- 	 * with the HCA, so the health polll is no longer needed.
- 	 */
- 	mlx5_drain_health_wq(dev);
--	mlx5_stop_health_poll(dev);
-+	mlx5_stop_health_poll(dev, false);
- 
- 	ret = mlx5_cmd_force_teardown_hca(dev);
- 	if (ret) {
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -1042,7 +1042,7 @@ int mlx5_cmd_free_uar(struct mlx5_core_d
- void mlx5_health_cleanup(struct mlx5_core_dev *dev);
- int mlx5_health_init(struct mlx5_core_dev *dev);
- void mlx5_start_health_poll(struct mlx5_core_dev *dev);
--void mlx5_stop_health_poll(struct mlx5_core_dev *dev);
-+void mlx5_stop_health_poll(struct mlx5_core_dev *dev, bool disable_health);
- void mlx5_drain_health_wq(struct mlx5_core_dev *dev);
- void mlx5_trigger_health_work(struct mlx5_core_dev *dev);
- void mlx5_drain_health_recovery(struct mlx5_core_dev *dev);
 
 
