@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6395ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AC9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6FD2148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B6FD2148C
+	by mail.kernel.org (Postfix) with ESMTP id C066421486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C066421486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387680AbeIXSbC (ORCPT
+        id S2387689AbeIXSbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:31:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57558 "EHLO
+        Mon, 24 Sep 2018 14:31:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57568 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732800AbeIXSbC (ORCPT
+        with ESMTP id S1732800AbeIXSbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:31:02 -0400
+        Mon, 24 Sep 2018 14:31:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A54B91018;
-        Mon, 24 Sep 2018 12:29:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8E7E1018;
+        Mon, 24 Sep 2018 12:29:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vakul Garg <vakul.garg@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 007/235] net/tls: Set count of SG entries if sk_alloc_sg returns -ENOSPC
-Date:   Mon, 24 Sep 2018 13:49:53 +0200
-Message-Id: <20180924113105.027790477@linuxfoundation.org>
+        stable@vger.kernel.org, Huy Nguyen <huyn@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.18 008/235] net/mlx5: Check for error in mlx5_attach_interface
+Date:   Mon, 24 Sep 2018 13:49:54 +0200
+Message-Id: <20180924113105.139503955@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -51,48 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vakul Garg <vakul.garg@nxp.com>
+From: Huy Nguyen <huyn@mellanox.com>
 
-[ Upstream commit 52ea992cfac357b73180d5c051dca43bc8d20c2a ]
+[ Upstream commit 47bc94b82291e007da61ee1b3d18c77871f3e158 ]
 
-tls_sw_sendmsg() allocates plaintext and encrypted SG entries using
-function sk_alloc_sg(). In case the number of SG entries hit
-MAX_SKB_FRAGS, sk_alloc_sg() returns -ENOSPC and sets the variable for
-current SG index to '0'. This leads to calling of function
-tls_push_record() with 'sg_encrypted_num_elem = 0' and later causes
-kernel crash. To fix this, set the number of SG elements to the number
-of elements in plaintext/encrypted SG arrays in case sk_alloc_sg()
-returns -ENOSPC.
+Currently, mlx5_attach_interface does not check for error
+after calling intf->attach or intf->add. When these two calls
+fails, the client is not initialized and will cause issues such as
+kernel panic on invalid address in the teardown path (mlx5_detach_interface)
 
-Fixes: 3c4d7559159b ("tls: kernel TLS support")
-Signed-off-by: Vakul Garg <vakul.garg@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 737a234bb638 ("net/mlx5: Introduce attach/detach to interface API")
+Signed-off-by: Huy Nguyen <huyn@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tls/tls_sw.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -149,6 +149,9 @@ static int alloc_encrypted_sg(struct soc
- 			 &ctx->sg_encrypted_num_elem,
- 			 &ctx->sg_encrypted_size, 0);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+@@ -132,11 +132,11 @@ void mlx5_add_device(struct mlx5_interfa
+ 	delayed_event_start(priv);
  
-+	if (rc == -ENOSPC)
-+		ctx->sg_encrypted_num_elem = ARRAY_SIZE(ctx->sg_encrypted_data);
+ 	dev_ctx->context = intf->add(dev);
+-	set_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state);
+-	if (intf->attach)
+-		set_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state);
+-
+ 	if (dev_ctx->context) {
++		set_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state);
++		if (intf->attach)
++			set_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state);
 +
- 	return rc;
- }
+ 		spin_lock_irq(&priv->ctx_lock);
+ 		list_add_tail(&dev_ctx->list, &priv->ctx_list);
  
-@@ -162,6 +165,9 @@ static int alloc_plaintext_sg(struct soc
- 			 &ctx->sg_plaintext_num_elem, &ctx->sg_plaintext_size,
- 			 tls_ctx->pending_open_record_frags);
- 
-+	if (rc == -ENOSPC)
-+		ctx->sg_plaintext_num_elem = ARRAY_SIZE(ctx->sg_plaintext_data);
+@@ -211,12 +211,17 @@ static void mlx5_attach_interface(struct
+ 	if (intf->attach) {
+ 		if (test_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state))
+ 			goto out;
+-		intf->attach(dev, dev_ctx->context);
++		if (intf->attach(dev, dev_ctx->context))
++			goto out;
 +
- 	return rc;
- }
+ 		set_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state);
+ 	} else {
+ 		if (test_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state))
+ 			goto out;
+ 		dev_ctx->context = intf->add(dev);
++		if (!dev_ctx->context)
++			goto out;
++
+ 		set_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state);
+ 	}
  
 
 
