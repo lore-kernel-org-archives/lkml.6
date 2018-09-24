@@ -2,257 +2,535 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A594C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAB7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D492086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:39:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="otRFGpEG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D492086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A41B20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:42:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A41B20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbeIXPkm (ORCPT
+        id S1728021AbeIXPnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:40:42 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54955 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbeIXPkm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:40:42 -0400
-Received: by mail-it1-f195.google.com with SMTP id f14-v6so9645544ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 02:39:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=rXSy+f/xFrIW3UekOR/sM4aOb0HGFwzohHwzU029xC0=;
-        b=otRFGpEGX1N0EQTG0XhhtPUtFNf3Hecq0RtQAKkm61avoNDsKhdhCfV3INsqfjyB8k
-         5nqhLa4Iw3QmelD2mp581c5tBv4tOgvndfTCLymo0TM1XkdRBWEoMXMXMWXaTARkZnsw
-         wlZ5cZIU3b2fw7g2NtpeIUlsYZ95T1yH/R/9Q6lZw67U+hSColwvzl5tjcnkQvrlqcFR
-         qqKR/31MO2DwFcloFTA0TppVIjiTELCVBTEDmi2xJQI3lVgKu8Z6v26M2qQQof9n3qwr
-         FYHtSt1bY4XTphRe6dSlcV7TM/443gM1krKJEwt0ax0xclWl0BgfTkmqbc0/TPaChfH2
-         yh4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=rXSy+f/xFrIW3UekOR/sM4aOb0HGFwzohHwzU029xC0=;
-        b=K8PBt+SBzcndCry6Tj60eBaOiwiac7ezvpwjt59/1nh45+EYd+eXYfVADF4c5mWHgG
-         lzyWzeZW+ZtL1qWbmRogxIxG3tPzhbp2yY3kd5humbrGlNDCgz9CDo+NOTKdcAT8QPxW
-         cfIab1jYo4114Jpz99wi1H1Ya0MjO7Z4yUEHUxxw9kB4BdouVHlnUg5qXO0+9ch12Wxl
-         2QNFImUSiZlNBY+OT4W9LwNlLR63goYlZMczy9DAAbcGQgMva65csrRAusY9j50zcmZw
-         He8eyXoM/3IPoK/JdLw4CvsAgIKxcPqwN99dqx84fz2a5XxJAlrLTwEUxo7EW1vYgk4g
-         QU+A==
-X-Gm-Message-State: APzg51DneqE0zTw+s5Y4vtjG7gbHTwqGnlSwaPtc+n0J4IKT/Qix2U/G
-        eG2PKR6aY93iJViWkXZCKjR0+UwJQ4Nz0bI5Pm9DMQ==
-X-Google-Smtp-Source: ANB0VdY+hFtb3mxtyw80c0Ub5DlN4mERgA+Dz2DcEC1g2oLLan5/2YSt/jCJEoQh5aBg00Efu1VNAdyiFCQiPFv/gOw=
-X-Received: by 2002:a02:4009:: with SMTP id n9-v6mr8752678jaa.19.1537781969376;
- Mon, 24 Sep 2018 02:39:29 -0700 (PDT)
+        Mon, 24 Sep 2018 11:43:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48318 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbeIXPnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:43:14 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BFF6A7F6A0;
+        Mon, 24 Sep 2018 09:42:01 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A3519379F;
+        Mon, 24 Sep 2018 09:42:01 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 6C0161808855;
+        Mon, 24 Sep 2018 09:42:00 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 05:41:59 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Jan Kara <jack@suse.cz>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Ross Zwisler <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        niteshnarayanlal@hotmail.com, lcapitulino@redhat.com,
+        Igor Mammedov <imammedo@redhat.com>,
+        Eric Blake <eblake@redhat.com>
+Message-ID: <1204243972.15515798.1537782119951.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAPcyv4gy-ONZz=PnXN92xYnyRX0rhu7Oq-_jPWJekbYQjNKRiw@mail.gmail.com>
+References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-4-pagupta@redhat.com> <CAPcyv4gy-ONZz=PnXN92xYnyRX0rhu7Oq-_jPWJekbYQjNKRiw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] virtio-pmem: Add virtio pmem driver
 MIME-Version: 1.0
-Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 02:39:08
- -0700 (PDT)
-In-Reply-To: <CAG_fn=WwmJONmipmqdZkNj8K0Z-ZRmEiCvG4qt_fHknGYQe5Cg@mail.gmail.com>
-References: <000000000000565ab805768bf006@google.com> <125732064.15444205.1537718529926.JavaMail.zimbra@redhat.com>
- <CACT4Y+Z1G_QMG_PQu_ZwHsyhwyh_DBOG4mX9n=va08w3Z7j02Q@mail.gmail.com>
- <1040580049.15456466.1537740558279.JavaMail.zimbra@redhat.com> <CAG_fn=WwmJONmipmqdZkNj8K0Z-ZRmEiCvG4qt_fHknGYQe5Cg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 24 Sep 2018 11:39:08 +0200
-Message-ID: <CACT4Y+a8_4=dmZavdmZjPOraqYAtjBB228TjurbwLKSgJ9+J7Q@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in memcmp (2)
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Vladis Dronov <vdronov@redhat.com>,
-        syzbot <syzbot+d3402c47f680ff24b29c@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        sunlianwen <sunlw.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.65.193.131, 10.4.195.6]
+Thread-Topic: virtio-pmem: Add virtio pmem driver
+Thread-Index: O2xK7RuQHwBLvgXctDUcgKgtPS87Ew==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 24 Sep 2018 09:42:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 8:53 AM, Alexander Potapenko <glider@google.com> wrote:
-> On Mon, Sep 24, 2018 at 12:09 AM Vladis Dronov <vdronov@redhat.com> wrote:
->>
->> Hello, Dmirty,
->>
->> Thank you for the reply. Can we please, discuss this further?
-> Hi Vladis,
->> > You can see on dashboard that the last crash
->> > for the second version (2) happened just few days ago. So this is a
->> > different bug.
-> FWIW I've just double-checked that the reproducer provided by
-> syzkaller in the original message still triggers the report from the
-> original message in the latest KMSAN tree (which already contains the
-> __hw_addr_add_ex() fix from April).
->> Well... yes and no. When I was looking at this bug (bug?id=088efeac32fd) I was looking
->> at the report at "2018/05/09 18:55" (https://syzkaller.appspot.com/text?tag=CrashReport&x=141b707b800000),
->> since it was the only report with a reproducer. This was my error.
->>
->> The error and the call trace in this report are:
->>
->> >>>
->> BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
->> CPU: 0 PID: 38 Comm: kworker/0:1 Not tainted 4.17.0-rc3+ #88
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Workqueue: ipv6_addrconf addrconf_dad_work
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
->>  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
->>  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
->>  memcmp+0x119/0x180 lib/string.c:861
->>  __hw_addr_add_ex net/core/dev_addr_lists.c:61 [inline]
->>  __dev_mc_add+0x1fc/0x900 net/core/dev_addr_lists.c:670
->>  dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
->>  igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
->>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
->>  addrconf_join_solict net/ipv6/addrconf.c:2103 [inline]
->>  addrconf_dad_begin net/ipv6/addrconf.c:3853 [inline]
->>  addrconf_dad_work+0x462/0x2a20 net/ipv6/addrconf.c:3979
->>  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
->>  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
->>  kthread+0x539/0x720 kernel/kthread.c:239
->>  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
->>
->> Local variable description: ----buf@igmp6_group_added
->> Variable was created at:
->>  igmp6_group_added+0x4a/0xa00 net/ipv6/mcast.c:650
->>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
->> <<<
->>
->> It is the same like in bug?id=3887c0d99aecb27d085180c5222d245d08a30806
->> which, after some more test, made me believe these bugs are duplicate
->> and are fixed by the same commit.
->>
->> But let's look at another report at "2018/09/12 21:00"
->> (https://syzkaller.appspot.com/text?tag=CrashReport&x=14f99b71400000)
->> at the bug (bug?id=088efeac32fd), the one you've mentioned as
->> "the last crash for the second version (2) happened just few days ago".
->>
->> Its error and the call trace are completely different:
->>
->> >>>
->> BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
->> CPU: 0 PID: 6107 Comm: syz-executor4 Not tainted 4.19.0-rc3+ #45
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x14b/0x190 lib/dump_stack.c:113
->>  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
->>  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
->>  memcmp+0x11d/0x180 lib/string.c:863
->>  dev_uc_add_excl+0x165/0x7b0 net/core/dev_addr_lists.c:464
->>  ndo_dflt_fdb_add net/core/rtnetlink.c:3463 [inline]
->>  rtnl_fdb_add+0x1081/0x1270 net/core/rtnetlink.c:3558
->>  rtnetlink_rcv_msg+0xa0b/0x1530 net/core/rtnetlink.c:4715
->>  netlink_rcv_skb+0x36e/0x5f0 net/netlink/af_netlink.c:2454
->>  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4733
->>  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
->>  netlink_unicast+0x1638/0x1720 net/netlink/af_netlink.c:1343
->>  netlink_sendmsg+0x1205/0x1290 net/netlink/af_netlink.c:1908
->>  sock_sendmsg_nosec net/socket.c:621 [inline]
->>  sock_sendmsg net/socket.c:631 [inline]
->> ...
->> Uninit was created at:
->> ...
->>  slab_post_alloc_hook mm/slab.h:446 [inline]
->>  slab_alloc_node mm/slub.c:2718 [inline]
->>  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4351
->>  __kmalloc_reserve net/core/skbuff.c:138 [inline]
->>  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
->>  alloc_skb include/linux/skbuff.h:996 [inline]
->>  netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
->>  netlink_sendmsg+0xb49/0x1290 net/netlink/af_netlink.c:1883
->>  sock_sendmsg_nosec net/socket.c:621 [inline]
->>  sock_sendmsg net/socket.c:631 [inline]
->>  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
->> <<<
->>
->> This is a different bug. How come these 2 different reports for 2 different
->> bugs have ended in the same syzkaller report (bug?id=088efeac32fd) ?
->
-> I suspect this is because syzbot used the top stack frame as the
-> report signature.
-> There's a mechanism to ignore frames like memcmp() in the reports, not
-> sure why didn't it work in this case (maybe it just wasn't in place at
-> the time the report happened).
->> One bug is fixed by the "net: fix uninit-value in __hw_addr_add_ex()" commit,
->> the second one is not, but they are still in the same syzkaller report.
->>
->> This was the reason of my confusion. I'm not sure how to fix this. If it is possible,
->> probably we need to cancel/revoke "#syz fix: net: fix uninit-value in __hw_addr_add_ex()"
->> for this syzkaller report (bug?id=088efeac32fd). And then "split" it into 2 or
->> more different reports, but I'm not sure if this is possible.
->>
->> Probably, syzkaller needs to look deeper into the KMSAN reports to differentiate
->> KMSAN errors happening because of different reasons.
->>
->> > On Sun, Sep 23, 2018 at 6:02 PM, Vladis Dronov <vdronov@redhat.com> wrote:
->> > > #syz fix: net: fix uninit-value in __hw_addr_add_ex()
->> >
->> > Hi Vladis,
->> >
->> > This can be fixed with "net: fix uninit-value in __hw_addr_add_ex()".
->> > That commit landed in April, syzbot waited till the commit reached all
->> > tested trees, and then closed the bug.
->> > But the similar bug continued to happen, so syzbot created second
->> > version of this bug (2). You can see on dashboard that the last crash
->> > for the second version (2) happened just few days ago. So this is a
->> > different bug.
+Hi Dan,
 
+Thanks for the review. Please find my reply inline.
 
-Precisely discriminating bugs (root causes) bases on crash text is
-generally undecidable problem, even for humans. We even can have
-literally equal crash texts, which are still different bugs. And we
-can have significantly differently looking crash texts, which are
-actually caused by the same root cause. syzbot extracts some
-"identity" string for each crash and than uses that string to
-discriminate crashes and sort them into bins. This identity string is
-what you see in email subject and bug title on dashboard. This method
-can have both false positives and false negatives, but works
-reasonably well in most cases and looks like the best practical
-option.
+> > This patch adds virtio-pmem driver for KVM guest.
+> >
+> > Guest reads the persistent memory range information from
+> > Qemu over VIRTIO and registers it on nvdimm_bus. It also
+> > creates a nd_region object with the persistent memory
+> > range information so that existing 'nvdimm/pmem' driver
+> > can reserve this into system memory map. This way
+> > 'virtio-pmem' driver uses existing functionality of pmem
+> > driver to register persistent memory compatible for DAX
+> > capable filesystems.
+> >
+> > This also provides function to perform guest flush over
+> > VIRTIO from 'pmem' driver when userspace performs flush
+> > on DAX memory range.
+> >
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > ---
+> >  drivers/virtio/Kconfig           |   9 ++
+> >  drivers/virtio/Makefile          |   1 +
+> >  drivers/virtio/virtio_pmem.c     | 255
+> >  +++++++++++++++++++++++++++++++++++++++
+> >  include/uapi/linux/virtio_ids.h  |   1 +
+> >  include/uapi/linux/virtio_pmem.h |  40 ++++++
+> >  5 files changed, 306 insertions(+)
+> >  create mode 100644 drivers/virtio/virtio_pmem.c
+> >  create mode 100644 include/uapi/linux/virtio_pmem.h
+> >
+> > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+> > index 3589764..a331e23 100644
+> > --- a/drivers/virtio/Kconfig
+> > +++ b/drivers/virtio/Kconfig
+> > @@ -42,6 +42,15 @@ config VIRTIO_PCI_LEGACY
+> >
+> >           If unsure, say Y.
+> >
+> > +config VIRTIO_PMEM
+> > +       tristate "Support for virtio pmem driver"
+> > +       depends on VIRTIO
+> > +       help
+> > +       This driver provides support for virtio based flushing interface
+> > +       for persistent memory range.
+> > +
+> > +       If unsure, say M.
+> > +
+> >  config VIRTIO_BALLOON
+> >         tristate "Virtio balloon driver"
+> >         depends on VIRTIO
+> > diff --git a/drivers/virtio/Makefile b/drivers/virtio/Makefile
+> > index 3a2b5c5..cbe91c6 100644
+> > --- a/drivers/virtio/Makefile
+> > +++ b/drivers/virtio/Makefile
+> > @@ -6,3 +6,4 @@ virtio_pci-y := virtio_pci_modern.o virtio_pci_common.o
+> >  virtio_pci-$(CONFIG_VIRTIO_PCI_LEGACY) += virtio_pci_legacy.o
+> >  obj-$(CONFIG_VIRTIO_BALLOON) += virtio_balloon.o
+> >  obj-$(CONFIG_VIRTIO_INPUT) += virtio_input.o
+> > +obj-$(CONFIG_VIRTIO_PMEM) += virtio_pmem.o
+> > diff --git a/drivers/virtio/virtio_pmem.c b/drivers/virtio/virtio_pmem.c
+> > new file mode 100644
+> > index 0000000..c22cc87
+> > --- /dev/null
+> > +++ b/drivers/virtio/virtio_pmem.c
+> > @@ -0,0 +1,255 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * virtio_pmem.c: Virtio pmem Driver
+> > + *
+> > + * Discovers persistent memory range information
+> > + * from host and provides a virtio based flushing
+> > + * interface.
+> > + */
+> > +#include <linux/virtio.h>
+> > +#include <linux/module.h>
+> > +#include <linux/virtio_ids.h>
+> > +#include <linux/virtio_config.h>
+> > +#include <uapi/linux/virtio_pmem.h>
+> > +#include <linux/spinlock.h>
+> > +#include <linux/libnvdimm.h>
+> > +#include <linux/nd.h>
+> 
+> I think we need to split this driver into 2 files,
+> drivers/virtio/pmem.c would discover and register the virtual pmem
+> device with the libnvdimm core, and drivers/nvdimm/virtio.c would
+> house virtio_pmem_flush().
 
-For this exact instance (memcmp) we actually improved the analysis
-logic recently:
-https://github.com/google/syzkaller/commit/0e29942f77715486995d996f80f82742812d75a2#diff-abe1515f011fad2659ff218f9eea9ae1
-But this crash was analyzed and reported before the change. So if this
-crash happens again it should be reported as "in __hw_addr_add_ex"
-now.
+o.k. Will split the driver into two files as suggested.
 
-Re __hw_addr_add_ex bug, as Alex noted the crash was detected _after_
-the fixing commit went in. So it's something new and different and
-can't be fixed by the older commit.
+> 
+> > +
+> > +struct virtio_pmem_request {
+> > +       /* Host return status corresponding to flush request */
+> > +       int ret;
+> > +
+> > +       /* command name*/
+> > +       char name[16];
+> > +
+> > +       /* Wait queue to process deferred work after ack from host */
+> > +       wait_queue_head_t host_acked;
+> > +       bool done;
+> > +
+> > +       /* Wait queue to process deferred work after virt queue buffer
+> > avail */
+> > +       wait_queue_head_t wq_buf;
+> 
+> Why does this need wait_queue's per request? shouldn't this be per-device?
 
-There are no general, single guideline as to what to do when several
-different bugs glued together into a single bug. Fixing at least one
-of them (any) in the context of the bug is good, fixing both is good
-too. When/if a bug is closed, new occurrences of similar crashes (the
-same identity string) will lead to creation of a new bug. So if we fix
-only one and close the bug, eventually the second one will lead to a
-new bug (won't be lost), now dedicated to this second crash.
+This is used to wait flush calling threads when virtio queue is full. 
+wait_queue in request struct binds waitqueue and request. When host acknowledges
+guest, first waiting request is selected and corresponding thread is woken-up.
 
-Now syzbot thinks that this bug is fixed/closed:
-https://syzkaller.appspot.com/bug?extid=d3402c47f680ff24b29c
-There is specifically no "undo" functionality, because it's inherently
-racy with creation of a new version of this bugs by new crashes. So if
-of these crashes will happen again, syzbot will open new bugs (now
-with better discriminated titles). We can wait for that. Or we can
-submit new fixes without waiting for new syzbot bugs (adding
-Reported-by to new commits referencing this bug should not do any
-harm).
+Alternatively, we can use "add_wait_queue_exclusive" with device wait_queue.
+This will wake up only one exclusive process waiting. This will avoid using 
+additional list for tracking.
 
-Hope this clarifies things a bit.
+> 
+> > +       bool wq_buf_avail;
+> > +       struct list_head list;
+> > +};
+> > +
+> > +struct virtio_pmem {
+> > +       struct virtio_device *vdev;
+> > +
+> > +       /* Virtio pmem request queue */
+> > +       struct virtqueue *req_vq;
+> > +
+> > +       /* nvdimm bus registers virtio pmem device */
+> > +       struct nvdimm_bus *nvdimm_bus;
+> > +       struct nvdimm_bus_descriptor nd_desc;
+> > +
+> > +       /* List to store deferred work if virtqueue is full */
+> > +       struct list_head req_list;
+> > +
+> > +       /* Synchronize virtqueue data */
+> > +       spinlock_t pmem_lock;
+> > +
+> > +       /* Memory region information */
+> > +       uint64_t start;
+> > +       uint64_t size;
+> > +};
+> > +
+> > +static struct virtio_device_id id_table[] = {
+> > +       { VIRTIO_ID_PMEM, VIRTIO_DEV_ANY_ID },
+> > +       { 0 },
+> > +};
+> > +
+> > + /* The interrupt handler */
+> > +static void host_ack(struct virtqueue *vq)
+> > +{
+> > +       unsigned int len;
+> > +       unsigned long flags;
+> > +       struct virtio_pmem_request *req, *req_buf;
+> > +       struct virtio_pmem *vpmem = vq->vdev->priv;
+> > +
+> > +       spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> > +       while ((req = virtqueue_get_buf(vq, &len)) != NULL) {
+> > +               req->done = true;
+> > +               wake_up(&req->host_acked);
+> > +
+> > +               if (!list_empty(&vpmem->req_list)) {
+> > +                       req_buf = list_first_entry(&vpmem->req_list,
+> > +                                       struct virtio_pmem_request, list);
+> > +                       list_del(&vpmem->req_list);
+> > +                       req_buf->wq_buf_avail = true;
+> > +                       wake_up(&req_buf->wq_buf);
+> > +               }
+> > +       }
+> > +       spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> > +}
+> > + /* Initialize virt queue */
+> > +static int init_vq(struct virtio_pmem *vpmem)
+> > +{
+> > +       struct virtqueue *vq;
+> > +
+> > +       /* single vq */
+> > +       vpmem->req_vq = vq = virtio_find_single_vq(vpmem->vdev,
+> > +                               host_ack, "flush_queue");
+> > +       if (IS_ERR(vq))
+> > +               return PTR_ERR(vq);
+> > +
+> > +       spin_lock_init(&vpmem->pmem_lock);
+> > +       INIT_LIST_HEAD(&vpmem->req_list);
+> > +
+> > +       return 0;
+> > +};
+> > +
+> > + /* The request submission function */
+> > +static int virtio_pmem_flush(struct nd_region *nd_region)
+> > +{
+> > +       int err;
+> > +       unsigned long flags;
+> > +       struct scatterlist *sgs[2], sg, ret;
+> > +       struct virtio_device *vdev =
+> > +               dev_to_virtio(nd_region->dev.parent->parent);
+> 
+> That's a long de-ref chain I would just stash the vdev in
+> nd_region->provider_data.
 
-Thanks
+Sure. Will use 'nd_region->provider_data' for vdev.
+
+> 
+> > +       struct virtio_pmem *vpmem = vdev->priv;
+> > +       struct virtio_pmem_request *req = kmalloc(sizeof(*req),
+> > GFP_KERNEL);
+> > +
+> > +       if (!req)
+> > +               return -ENOMEM;
+> > +
+> > +       req->done = req->wq_buf_avail = false;
+> > +       strcpy(req->name, "FLUSH");
+> > +       init_waitqueue_head(&req->host_acked);
+> > +       init_waitqueue_head(&req->wq_buf);
+> > +
+> > +       spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> > +       sg_init_one(&sg, req->name, strlen(req->name));
+> > +       sgs[0] = &sg;
+> > +       sg_init_one(&ret, &req->ret, sizeof(req->ret));
+> > +       sgs[1] = &ret;
+> > +       err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req, GFP_ATOMIC);
+> > +       if (err) {
+> > +               dev_err(&vdev->dev, "failed to send command to virtio pmem
+> > device\n");
+> > +
+> > +               list_add_tail(&vpmem->req_list, &req->list);
+> > +               spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> > +
+> > +               /* When host has read buffer, this completes via host_ack
+> > */
+> > +               wait_event(req->wq_buf, req->wq_buf_avail);
+> > +               spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> > +       }
+> > +       virtqueue_kick(vpmem->req_vq);
+> > +       spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> > +
+> > +       /* When host has read buffer, this completes via host_ack */
+> > +       wait_event(req->host_acked, req->done);
+> 
+> Hmm, this seems awkward if this is called from pmem_make_request. If
+> we need to wait for completion that should be managed by the guest
+> block layer. I.e. make_request should just queue request and then
+> trigger bio_endio() when the response comes back.
+
+We are plugging VIRTIO based flush callback for virtio_pmem driver. If pmem 
+driver (pmem_make_request) has to queue request we have to plug "blk_mq_ops" 
+callbacks for corresponding  VIRTIO vqs. AFAICU there is no existing multiqueue 
+code merged for pmem driver yet, though i could see patches by Dave upstream.
+
+Anything I am missing here?   
+
+> 
+> However this does mean that nvdimm_flush() becomes asynchronous. So
+> maybe we need to pass in a 'sync' flag or the bio directly to indicate
+> this is an asynchronous flush request from pmem_make_request() vs a
+> synchronous one from nsio_rw_bytes().
+
+Sure.
+
+> 
+> > +       err = req->ret;
+> > +       kfree(req);
+> > +
+> > +       return err;
+> > +};
+> > +EXPORT_SYMBOL_GPL(virtio_pmem_flush);
+> > +
+> > +static int virtio_pmem_probe(struct virtio_device *vdev)
+> > +{
+> > +       int err = 0;
+> > +       struct resource res;
+> > +       struct virtio_pmem *vpmem;
+> > +       struct nvdimm_bus *nvdimm_bus;
+> > +       struct nd_region_desc ndr_desc;
+> > +       int nid = dev_to_node(&vdev->dev);
+> > +       struct nd_region *nd_region;
+> > +
+> > +       if (!vdev->config->get) {
+> > +               dev_err(&vdev->dev, "%s failure: config disabled\n",
+> > +                       __func__);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       vdev->priv = vpmem = devm_kzalloc(&vdev->dev, sizeof(*vpmem),
+> > +                       GFP_KERNEL);
+> > +       if (!vpmem) {
+> > +               err = -ENOMEM;
+> > +               goto out_err;
+> > +       }
+> > +
+> > +       vpmem->vdev = vdev;
+> > +       err = init_vq(vpmem);
+> > +       if (err)
+> > +               goto out_err;
+> > +
+> > +       virtio_cread(vpmem->vdev, struct virtio_pmem_config,
+> > +                       start, &vpmem->start);
+> > +       virtio_cread(vpmem->vdev, struct virtio_pmem_config,
+> > +                       size, &vpmem->size);
+> > +
+> > +       res.start = vpmem->start;
+> > +       res.end   = vpmem->start + vpmem->size-1;
+> > +       vpmem->nd_desc.provider_name = "virtio-pmem";
+> > +       vpmem->nd_desc.module = THIS_MODULE;
+> > +
+> > +       vpmem->nvdimm_bus = nvdimm_bus = nvdimm_bus_register(&vdev->dev,
+> > +                                               &vpmem->nd_desc);
+> > +       if (!nvdimm_bus)
+> > +               goto out_vq;
+> > +
+> > +       dev_set_drvdata(&vdev->dev, nvdimm_bus);
+> > +       memset(&ndr_desc, 0, sizeof(ndr_desc));
+> > +
+> > +       ndr_desc.res = &res;
+> > +       ndr_desc.numa_node = nid;
+> > +       ndr_desc.flush = virtio_pmem_flush;
+> > +       set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+> > +       nd_region = nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc);
+> > +
+> > +       if (!nd_region)
+> > +               goto out_nd;
+> > +
+> > +       //virtio_device_ready(vdev);
+> > +       return 0;
+> > +out_nd:
+> > +       err = -ENXIO;
+> > +       nvdimm_bus_unregister(nvdimm_bus);
+> > +out_vq:
+> > +       vdev->config->del_vqs(vdev);
+> > +out_err:
+> > +       dev_err(&vdev->dev, "failed to register virtio pmem memory\n");
+> > +       return err;
+> > +}
+> > +
+> > +static void virtio_pmem_remove(struct virtio_device *vdev)
+> > +{
+> > +       struct virtio_pmem *vpmem = vdev->priv;
+> > +       struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
+> > +
+> > +       nvdimm_bus_unregister(nvdimm_bus);
+> > +       vdev->config->del_vqs(vdev);
+> > +       kfree(vpmem);
+> > +}
+> > +
+> > +#ifdef CONFIG_PM_SLEEP
+> > +static int virtio_pmem_freeze(struct virtio_device *vdev)
+> > +{
+> > +       /* todo: handle freeze function */
+> > +       return -EPERM;
+> > +}
+> > +
+> > +static int virtio_pmem_restore(struct virtio_device *vdev)
+> > +{
+> > +       /* todo: handle restore function */
+> > +       return -EPERM;
+> > +}
+> > +#endif
+> 
+> As far as I can see there's nothing to do on a power transition, I
+> would just omit this completely.
+
+o.k Will remove these handlers.
+
+> 
+> > +
+> > +
+> > +static struct virtio_driver virtio_pmem_driver = {
+> > +       .driver.name            = KBUILD_MODNAME,
+> > +       .driver.owner           = THIS_MODULE,
+> > +       .id_table               = id_table,
+> > +       .probe                  = virtio_pmem_probe,
+> > +       .remove                 = virtio_pmem_remove,
+> > +#ifdef CONFIG_PM_SLEEP
+> > +       .freeze                 = virtio_pmem_freeze,
+> > +       .restore                = virtio_pmem_restore,
+> > +#endif
+> > +};
+> > +
+> > +module_virtio_driver(virtio_pmem_driver);
+> > +MODULE_DEVICE_TABLE(virtio, id_table);
+> > +MODULE_DESCRIPTION("Virtio pmem driver");
+> > +MODULE_LICENSE("GPL");
+> > diff --git a/include/uapi/linux/virtio_ids.h
+> > b/include/uapi/linux/virtio_ids.h
+> > index 6d5c3b2..3463895 100644
+> > --- a/include/uapi/linux/virtio_ids.h
+> > +++ b/include/uapi/linux/virtio_ids.h
+> > @@ -43,5 +43,6 @@
+> >  #define VIRTIO_ID_INPUT        18 /* virtio input */
+> >  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
+> >  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
+> > +#define VIRTIO_ID_PMEM         25 /* virtio pmem */
+> >
+> >  #endif /* _LINUX_VIRTIO_IDS_H */
+> > diff --git a/include/uapi/linux/virtio_pmem.h
+> > b/include/uapi/linux/virtio_pmem.h
+> > new file mode 100644
+> > index 0000000..c7c22a5
+> > --- /dev/null
+> > +++ b/include/uapi/linux/virtio_pmem.h
+> > @@ -0,0 +1,40 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * This header, excluding the #ifdef __KERNEL__ part, is BSD licensed so
+> > + * anyone can use the definitions to implement compatible drivers/servers:
+> 
+> The SPDX identifier does not match this BSD license, and the whole
+> point of the SPDX identifier is to get out of the need to have these
+> large text blobs of license goop.
+
+Right, just copied this. Will remove these BSD lines.
+
+> 
+> > + *
+> > + *
+> > + * Redistribution and use in source and binary forms, with or without
+> > + * modification, are permitted provided that the following conditions
+> > + * are met:
+> > + * 1. Redistributions of source code must retain the above copyright
+> > + *    notice, this list of conditions and the following disclaimer.
+> > + * 2. Redistributions in binary form must reproduce the above copyright
+> > + *    notice, this list of conditions and the following disclaimer in the
+> > + *    documentation and/or other materials provided with the distribution.
+> > + * 3. Neither the name of IBM nor the names of its contributors
+> > + *    may be used to endorse or promote products derived from this
+> > software
+> > + *    without specific prior written permission.
+> > + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+> > ``AS IS''
+> > + * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+> > THE
+> > + * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+> > PURPOSE
+> > + * ARE DISCLAIMED.  IN NO EVENT SHALL IBM OR CONTRIBUTORS BE LIABLE
+> > + * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+> > CONSEQUENTIAL
+> > + * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+> > + * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+> > + * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+> > STRICT
+> > + * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+> > WAY
+> > + * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+> > + * SUCH DAMAGE.
+> > + *
+> > + * Copyright (C) Red Hat, Inc., 2018-2019
+> > + * Copyright (C) Pankaj Gupta <pagupta@redhat.com>, 2018
+> > + */
+> > +#ifndef _UAPI_LINUX_VIRTIO_PMEM_H
+> > +#define _UAPI_LINUX_VIRTIO_PMEM_H
+> > +
+> > +struct virtio_pmem_config {
+> > +       __le64 start;
+> > +       __le64 size;
+> > +};
+> > +#endif
+> 
+> Why does this need to be in the uapi?
+
+This struct is defined by userspace(Qemu) and used by kernel to fetch
+values passed by qemu device.
+
+Thanks,
+Pankaj
