@@ -2,319 +2,364 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E9EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EF7ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF76214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XggRhTE+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF76214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EF432145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF432145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729959AbeIXR5z (ORCPT
+        id S1729971AbeIXR55 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:57:55 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33076 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729224AbeIXR5y (ORCPT
+        Mon, 24 Sep 2018 13:57:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51980 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729122AbeIXR54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:57:54 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8OBtgvl116461;
-        Mon, 24 Sep 2018 06:55:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1537790143;
-        bh=hUdBf9vjxXe1TjFiip0/2DgJcq62053eCSgV1t4oUk0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=XggRhTE+wsxCj+aDzX1KaljCW9//r6zmwMz08FW3eV0NJB/we5QU8PQO34cCVtUxI
-         ET1vsKLwpKgtOGyuQmMbW8ehF7+eZi/mJlJshDSDNV7lxOzUCxYt5pmx3+piRloLRk
-         k4Z/a9bodZYRlWT9GdUC2Gh+aTcKaPTr/VsONYLM=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8OBtgID007639;
-        Mon, 24 Sep 2018 06:55:42 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 24
- Sep 2018 06:55:43 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 24 Sep 2018 06:55:42 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8OBtcBE009209;
-        Mon, 24 Sep 2018 06:55:39 -0500
-Subject: Re: [PATCH 02/10] phy: Add configuration interface
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <linux-media@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-References: <cover.ee6158898d563fcc01d45c9652501180bccff0f0.1536138624.git-series.maxime.ripard@bootlin.com>
- <a739a2d623c3e60373a73e1ec206c2aa35c4a742.1536138624.git-series.maxime.ripard@bootlin.com>
- <1ed01c1f-76d5-fa96-572b-9bfd269ad11b@ti.com>
- <20180906145622.kwxvkcuerbeqsj6b@flea>
- <1a169fad-72b7-fac0-1254-cac5d8304740@ti.com>
- <20180912084242.skxbwbgluakakyg6@flea>
- <e0d7db11-7ec1-cb98-4e62-12d78d1ba65b@ti.com>
- <20180919121436.ztjnxofe66quddeq@flea>
- <93088385-126b-6bfb-70e4-16f7b949d299@ti.com>
- <20180924095435.77hh7lrpq7wkss2o@flea>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <b5ebd9a5-f43b-728b-1d7f-0f7b08021f39@ti.com>
-Date:   Mon, 24 Sep 2018 17:25:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 24 Sep 2018 13:57:56 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4C291073;
+        Mon, 24 Sep 2018 11:56:07 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/70] 4.4.158-stable review
+Date:   Mon, 24 Sep 2018 13:51:59 +0200
+Message-Id: <20180924113058.420454070@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <20180924095435.77hh7lrpq7wkss2o@flea>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.158-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.158-rc1
+X-KernelTest-Deadline: 2018-09-26T11:31+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+This is the start of the stable review cycle for the 4.4.158 release.
+There are 70 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-On Monday 24 September 2018 03:24 PM, Maxime Ripard wrote:
-> Hi,
-> 
-> On Mon, Sep 24, 2018 at 02:18:35PM +0530, Kishon Vijay Abraham I wrote:
->> On Wednesday 19 September 2018 05:44 PM, Maxime Ripard wrote:
->>> Hi,
->>>
->>> On Fri, Sep 14, 2018 at 02:18:37PM +0530, Kishon Vijay Abraham I wrote:
->>>>>>>>> +/**
->>>>>>>>> + * phy_validate() - Checks the phy parameters
->>>>>>>>> + * @phy: the phy returned by phy_get()
->>>>>>>>> + * @mode: phy_mode the configuration is applicable to.
->>>>>>>>> + * @opts: Configuration to check
->>>>>>>>> + *
->>>>>>>>> + * Used to check that the current set of parameters can be handled by
->>>>>>>>> + * the phy. Implementations are free to tune the parameters passed as
->>>>>>>>> + * arguments if needed by some implementation detail or
->>>>>>>>> + * constraints. It will not change any actual configuration of the
->>>>>>>>> + * PHY, so calling it as many times as deemed fit will have no side
->>>>>>>>> + * effect.
->>>>>>>>> + *
->>>>>>>>> + * Returns: 0 if successful, an negative error code otherwise
->>>>>>>>> + */
->>>>>>>>> +int phy_validate(struct phy *phy, enum phy_mode mode,
->>>>>>>>> +		  union phy_configure_opts *opts)
->>>>>>>>
->>>>>>>> IIUC the consumer driver will pass configuration options (or PHY parameters)
->>>>>>>> which will be validated by the PHY driver and in some cases the PHY driver can
->>>>>>>> modify the configuration options? And these modified configuration options will
->>>>>>>> again be given to phy_configure?
->>>>>>>>
->>>>>>>> Looks like it's a round about way of doing the same thing.
->>>>>>>
->>>>>>> Not really. The validate callback allows to check whether a particular
->>>>>>> configuration would work, and try to negotiate a set of configurations
->>>>>>> that both the consumer and the PHY could work with.
->>>>>>
->>>>>> Maybe the PHY should provide the list of supported features to the consumer
->>>>>> driver and the consumer should select a supported feature?
->>>>>
->>>>> It's not really about the features it supports, but the boundaries it
->>>>> might have on those features. For example, the same phy integrated in
->>>>> two different SoCs will probably have some limit on the clock rate it
->>>>> can output because of the phy design itself, but also because of the
->>>>> clock that is fed into that phy, and that will be different from one
->>>>> SoC to the other.
->>>>>
->>>>> This integration will prevent us to use some clock rates on the first
->>>>> SoC, while the second one would be totally fine with it.
->>>>
->>>> If there's a clock that is fed to the PHY from the consumer, then the consumer
->>>> driver should model a clock provider and the PHY can get a reference to it
->>>> using clk_get(). Rockchip and Arasan eMMC PHYs has already used something like
->>>> that.
->>>
->>> That would be doable, but no current driver has had this in their
->>> binding. So that would prevent any further rework, and make that whole
->>> series moot. And while I could live without the Allwinner part, the
->>> Cadence one is really needed.
->>
->> We could add a binding and modify the driver to to register a clock provider.
->> That could be included in this series itself.
-> 
-> That wouldn't work for device whose bindings need to remain backward
-> compatible. And the Allwinner part at least is in that case.
+Responses should be made by Wed Sep 26 11:30:25 UTC 2018.
+Anything received after that time might be too late.
 
-Er..
-> 
-> I think we should aim at making it a norm for newer bindings, but we
-> still have to support the old ones that cannot be changed.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.158-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-There are drivers which support both the old and new bindings. Allwinner could
-be in that category.
-> 
->>>> Assuming the PHY can get a reference to the clock provided by the consumer,
->>>> what are the parameters we'll be able to get rid of in struct
->>>> phy_configure_opts_mipi_dphy?
->>>
->>> hs_clock_rate and lp_clock_rate. All the other ones are needed.
->>
->> For a start we could use that and get rid of hs_clock_rate and lp_clock_rate in
->> phy_configure_opts_mipi_dphy.
-> 
-> As I was saying above, I'm not sure we can do that.
-> 
->> We could also use phy_set_bus_width() for lanes.
-> 
-> I overlooked this function somehow, it indeed looks like we can remove
-> the lanes part in favor of this function.
-> 
->>>
->>>> I'm sorry but I'm not convinced a consumer driver should have all the details
->>>> that are added in phy_configure_opts_mipi_dphy.
->>>
->>> If it can convince you, here is the parameters that are needed by all
->>> the MIPI-DSI drivers currently in Linux to configure their PHY:
->>>
->>>   - cdns-dsi (drivers/gpu/drm/bridge/cdns-dsi.c)
->>>     - hs_clk_rate
->>>     - lanes
->>>     - videomode
->>>
->>>   - kirin (drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c)
->>>     - hs_exit
->>>     - hs_prepare
->>>     - hs_trail
->>>     - hs_zero
->>>     - lpx
->>>     - ta_get
->>>     - ta_go
->>>     - wakeup
->>>
->>>   - msm (drivers/gpu/drm/msm/dsi/*)
->>>     - clk_post
->>>     - clk_pre
->>>     - clk_prepare
->>>     - clk_trail
->>>     - clk_zero
->>>     - hs_clk_rate
->>>     - hs_exit
->>>     - hs_prepare
->>>     - hs_trail
->>>     - hs_zero
->>>     - lp_clk_rate
->>>     - ta_get
->>>     - ta_go
->>>     - ta_sure
->>>
->>>   - mtk (drivers/gpu/drm/mediatek/mtk_dsi.c)
->>>     - hs_clk_rate
->>>     - hs_exit
->>>     - hs_prepare
->>>     - hs_trail
->>>     - hs_zero
->>>     - lpx
->>>
->>>   - sun4i (drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c)
->>>     - clk_post
->>>     - clk_pre
->>>     - clk_prepare
->>>     - clk_zero
->>>     - hs_prepare
->>>     - hs_trail
->>>     - lanes
->>>     - lp_clk_rate
->>>
->>>   - tegra (drivers/gpu/drm/tegra/dsi.c)
->>>     - clk_post
->>>     - clk_pre
->>>     - clk_prepare
->>>     - clk_trail
->>>     - clk_zero
->>>     - hs_exit
->>>     - hs_prepare
->>>     - hs_trail
->>>     - hs_zero
->>>     - lpx
->>>     - ta_get
->>>     - ta_go
->>>     - ta_sure
->>>
->>>   - vc4 (drivers/gpu/drm/vc4/vc4_dsi.c)
->>>     - hs_clk_rate
->>>     - lanes
->>>
->>> Now, for MIPI-CSI receivers:
->>>
->>>   - marvell-ccic (drivers/media/platform/marvell-ccic/mcam-core.c)
->>>     - clk_term_en
->>>     - clk_settle
->>>     - d_term_en
->>>     - hs_settle
->>>     - lp_clk_rate
->>>
->>>   - omap4iss (drivers/staging/media/omap4iss/iss_csiphy.c)
->>>     - clk_miss
->>>     - clk_settle
->>>     - clk_term
->>>     - hs_settle
->>>     - hs_term
->>>     - lanes
->>>
->>>   - rcar-vin (drivers/media/platform/rcar-vin/rcar-csi2.c)
->>>     - hs_clk_rate
->>>     - lanes
->>>
->>>   - ti-vpe (drivers/media/platform/ti-vpe/cal.c)
->>>     - clk_term_en
->>>     - d_term_en
->>>     - hs_settle
->>>     - hs_term
->>
->> Thank you for providing the exhaustive list.
->>
->>> So the timings expressed in the structure are the set of all the ones
->>> currently used in the tree by DSI and CSI drivers. I would consider
->>> that a good proof that it would be useful.
->>
->> The problem I see here is each platform (PHY) will have it's own set of
->> parameters and we have to keep adding members to phy_configure_opts which is
->> not scalable. We should try to find a correlation between generic PHY modes and
->> these parameters (at-least for a subset).
-> 
-> I definitely understand you skepticism towards someone coming in and
-> dropping such a big list of obscure parameters :)
+thanks,
 
-That's part of my concern. The other concern is consumer driver having to know
-so much internal details of the PHY. None of the other consumers (PCIe, USB,
-etc) had to know so much internals of the PHY.
-> 
-> However, those values are actually the whole list of parameters
-> defined by the MIPI-DPHY standard, so I really don't expect drivers to
-> need more than that. As you can see, most drivers allow less
-> parameters to be configured, but all of them are defined within those
-> parameters. So I'm not sure we need to worry about an ever-expanding
-> list of parameters: we have a limited set of parameters defined, and
-> from an authoritative source, so we can also push back if someone
-> wants to add a parameter that is implementation specific.
+greg k-h
 
-Your commit log mentioned there are a few parameters in addition to what is
-specified in the MIPI D-PHY spec :-/
+-------------
+Pseudo-Shortlog of commits:
 
-"The parameters added here are the one defined in the MIPI D-PHY spec, plus
-some parameters that were used by a number of PHY drivers currently found
-in the linux kernel."
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.158-rc1
 
-Thanks
-Kishon
+Paul Burton <paul.burton@imgtec.com>
+    MIPS: VDSO: Drop gic_get_usm_range() usage
+
+Paul Burton <paul.burton@mips.com>
+    MIPS: VDSO: Match data page cache colouring when D$ aliases
+
+David Rivshin <drivshin@allworx.com>
+    drivers: net: cpsw: fix segfault in case of bad phy-handle
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    mei: bus: type promotion bug in mei_nfc_if_version()
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: ti_usb_3410_5052: fix array underflow in completion handler
+
+Douglas Anderson <dianders@chromium.org>
+    pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    IB/nes: Fix a compiler warning
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    drm/panel: type promotion bug in s6e8aa0_read_mtp_id()
+
+John Stultz <john.stultz@linaro.org>
+    selftest: timers: Tweak raw_skew to SKIP when ADJ_OFFSET/other clock adjustments are in progress
+
+Timo Wischer <twischer@de.adit-jv.com>
+    ALSA: pcm: Fix snd_interval_refine first/last with open min/max
+
+Zhouyang Jia <jiazhouyang09@gmail.com>
+    rtc: bq4802: add error handling for devm_ioremap
+
+Wei Lu <wei.lu2@amd.com>
+    drm/amdkfd: Fix error codes in kfd_get_process
+
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+    gpiolib: Mark gpio_suffixes array with __maybe_unused
+
+Robin Murphy <robin.murphy@arm.com>
+    coresight: tpiu: Fix disabling timeouts
+
+Suzuki K Poulose <suzuki.poulose@arm.com>
+    coresight: Handle errors in finding input/output ports
+
+Julia Lawall <Julia.Lawall@lip6.fr>
+    parport: sunbpp: fix error return code
+
+Thierry Reding <treding@nvidia.com>
+    drm/nouveau: tegra: Detach from ARM DMA/IOMMU mapping
+
+Nicholas Mc Guire <hofrat@osadl.org>
+    ARM: hisi: check of_iomap and fix missing of_node_put
+
+Nicholas Mc Guire <hofrat@osadl.org>
+    ARM: hisi: fix error handling and missing of_node_put
+
+Nicholas Mc Guire <hofrat@osadl.org>
+    ARM: hisi: handle of_iomap and fix missing of_node_put
+
+Paul Burton <paul.burton@mips.com>
+    MIPS: loongson64: cs5536: Fix PCI_OHCI_INT_REG reads
+
+Jann Horn <jannh@google.com>
+    mtdchar: fix overflows in adjustment of `count`
+
+Ronny Chevalier <ronny.chevalier@hp.com>
+    audit: fix use-after-free in audit_add_watch
+
+Maciej W. Rozycki <macro@mips.com>
+    binfmt_elf: Respect error return from `regset->active'
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    CIFS: fix wrapping bugs in num_entries()
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    cifs: prevent integer overflow in nxt_dir_entry()
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()
+
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    USB: yurex: Fix buffer over-read in yurex_write()
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    usb: misc: uss720: Fix two sleep-in-atomic-context bugs
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: io_ti: fix array underflow in completion handler
+
+Alan Stern <stern@rowland.harvard.edu>
+    USB: net2280: Fix erroneous synchronization change
+
+Maxence Duprès <xpros64@hotmail.fr>
+    USB: add quirk for WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    usb: host: u132-hcd: Fix a sleep-in-atomic-context bug in u132_get_frame()
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    usb: Avoid use-after-free by flushing endpoints early in usb_set_interface()
+
+Tim Anderson <tsa@biglakesoftware.com>
+    USB: Add quirk to support DJI CineSSD
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    usb: Don't die twice if PCI xhci host is not responding in resume
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    misc: hmc6352: fix potential Spectre v1
+
+K. Y. Srinivasan <kys@microsoft.com>
+    Tools: hv: Fix a bug in the key delete code
+
+Aaron Knister <aaron.s.knister@nasa.gov>
+    IB/ipoib: Avoid a race condition between start_xmit and cm_rep_handler
+
+Juergen Gross <jgross@suse.com>
+    xen/netfront: fix waiting for xenbus state change
+
+Bin Yang <bin.yang@intel.com>
+    pstore: Fix incorrect persistent ram buffer mapping
+
+Parav Pandit <parav@mellanox.com>
+    RDMA/cma: Protect cma dev list with lock
+
+Xiao Liang <xiliang@redhat.com>
+    xen-netfront: fix warn message as irq device name has '/'
+
+Michael Müller <michael@fds-team.de>
+    crypto: sharah - Unregister correct algorithms for SAHARA 3
+
+Randy Dunlap <rdunlap@infradead.org>
+    platform/x86: toshiba_acpi: Fix defined but not used build warnings
+
+Julian Wiedmann <jwi@linux.ibm.com>
+    s390/qeth: reset layer2 attribute on layer switch
+
+Julian Wiedmann <jwi@linux.ibm.com>
+    s390/qeth: fix race in used-buffer accounting
+
+Loic Poulain <loic.poulain@linaro.org>
+    arm64: dts: qcom: db410c: Fix Bluetooth LED trigger
+
+Vitaly Kuznetsov <vkuznets@redhat.com>
+    xen-netfront: fix queue name setting
+
+Manikanta Pubbisetty <mpubbise@codeaurora.org>
+    mac80211: restrict delayed tailroom needed decrement
+
+Paul Cercueil <paul@crapouillou.net>
+    MIPS: jz4740: Bump zload address
+
+Nicholas Piggin <npiggin@gmail.com>
+    powerpc/powernv: opal_put_chars partial write fix
+
+Sandipan Das <sandipan@linux.ibm.com>
+    perf powerpc: Fix callchain ip filtering
+
+Krzysztof Kozlowski <krzk@kernel.org>
+    ARM: exynos: Clear global variable on init error path
+
+Fredrik Noring <noring@nocrew.org>
+    fbdev: Distinguish between interlaced and progressive modes
+
+Sandipan Das <sandipan@linux.ibm.com>
+    perf powerpc: Fix callchain ip filtering when return address is in a register
+
+Randy Dunlap <rdunlap@infradead.org>
+    fbdev/via: fix defined but not used warning
+
+Anton Vasilyev <vasilyev@ispras.ru>
+    video: goldfishfb: fix memory leak on driver remove
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    fbdev: omapfb: off by one in omapfb_register_client()
+
+Randy Dunlap <rdunlap@infradead.org>
+    mtd/maps: fix solutionengine.c printk format warnings
+
+Hans Verkuil <hverkuil@xs4all.nl>
+    media: videobuf2-core: check for q->error in vb2_core_qbuf()
+
+Felix Fietkau <nbd@nbd.name>
+    MIPS: ath79: fix system restart
+
+John Keeping <john@metanate.com>
+    dmaengine: pl330: fix irq race with terminate_all
+
+Masahiro Yamada <yamada.masahiro@socionext.com>
+    kbuild: add .DELETE_ON_ERROR special target
+
+Nicholas Mc Guire <hofrat@osadl.org>
+    clk: imx6ul: fix missing of_node_put()
+
+Andreas Gruenbacher <agruenba@redhat.com>
+    gfs2: Special-case rindex for gfs2_grow
+
+YueHaibing <yuehaibing@huawei.com>
+    xfrm: fix 'passing zero to ERR_PTR()' warning
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb-audio: Fix multiple definitions in AU0828_DEVICE() macro
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: msnd: Fix the default sample sizes
+
+Miao Zhong <zhongmiao@hisilicon.com>
+    iommu/arm-smmu-v3: sync the OVACKFLG to PRIQ consumer register
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +--
+ arch/arm/mach-exynos/suspend.c                     |  1 +
+ arch/arm/mach-hisi/hotplug.c                       | 41 ++++++++++++++--------
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi          |  2 +-
+ arch/mips/ath79/setup.c                            |  1 +
+ arch/mips/include/asm/mach-ath79/ath79.h           |  1 +
+ arch/mips/jz4740/Platform                          |  2 +-
+ arch/mips/kernel/vdso.c                            | 35 ++++++++++++------
+ arch/mips/loongson64/common/cs5536/cs5536_ohci.c   |  2 +-
+ arch/powerpc/platforms/powernv/opal.c              |  2 +-
+ drivers/clk/imx/clk-imx6ul.c                       |  1 +
+ drivers/crypto/sahara.c                            |  4 +--
+ drivers/dma/pl330.c                                |  5 +--
+ drivers/gpio/gpiolib.h                             |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c           |  2 ++
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 13 +++++++
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c      |  2 +-
+ drivers/hwtracing/coresight/coresight-tpiu.c       |  7 ++--
+ drivers/hwtracing/coresight/coresight.c            |  7 ++--
+ drivers/infiniband/core/cma.c                      | 12 ++++---
+ drivers/infiniband/hw/nes/nes.h                    |  2 +-
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c            |  2 ++
+ drivers/iommu/arm-smmu-v3.c                        |  1 +
+ drivers/media/v4l2-core/videobuf2-core.c           |  5 +++
+ drivers/misc/hmc6352.c                             |  2 ++
+ drivers/misc/mei/bus-fixup.c                       |  2 +-
+ drivers/mtd/maps/solutionengine.c                  |  6 ++--
+ drivers/mtd/mtdchar.c                              | 10 ++++--
+ drivers/net/ethernet/ti/cpsw.c                     | 37 +++++++++++--------
+ drivers/net/xen-netfront.c                         | 30 ++++++++--------
+ drivers/parport/parport_sunbpp.c                   |  8 +++--
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c           | 32 ++++++++++++-----
+ drivers/platform/x86/toshiba_acpi.c                |  3 +-
+ drivers/rtc/rtc-bq4802.c                           |  4 +++
+ drivers/s390/net/qeth_core_main.c                  |  3 +-
+ drivers/s390/net/qeth_core_sys.c                   |  1 +
+ drivers/usb/class/cdc-wdm.c                        |  2 +-
+ drivers/usb/core/hcd-pci.c                         |  2 --
+ drivers/usb/core/message.c                         | 11 ++++++
+ drivers/usb/core/quirks.c                          |  7 ++++
+ drivers/usb/gadget/udc/net2280.c                   | 16 +++++++--
+ drivers/usb/host/u132-hcd.c                        |  2 +-
+ drivers/usb/misc/uss720.c                          |  4 +--
+ drivers/usb/misc/yurex.c                           |  5 +--
+ drivers/usb/serial/io_ti.h                         |  2 +-
+ drivers/usb/serial/ti_usb_3410_5052.h              |  2 +-
+ drivers/usb/storage/scsiglue.c                     |  9 +++++
+ drivers/usb/storage/unusual_devs.h                 |  7 ++++
+ drivers/video/fbdev/core/modedb.c                  | 41 ++++++++++++++++------
+ drivers/video/fbdev/goldfishfb.c                   |  1 +
+ drivers/video/fbdev/omap/omapfb_main.c             |  2 +-
+ drivers/video/fbdev/via/viafbdev.c                 |  3 +-
+ fs/binfmt_elf.c                                    |  2 +-
+ fs/cifs/readdir.c                                  | 11 ++++--
+ fs/cifs/smb2pdu.c                                  | 25 +++++++------
+ fs/gfs2/bmap.c                                     |  2 +-
+ fs/pstore/ram_core.c                               | 17 +++++++--
+ kernel/audit_watch.c                               | 12 ++++++-
+ net/mac80211/cfg.c                                 |  2 +-
+ net/mac80211/key.c                                 | 24 ++++++++-----
+ net/xfrm/xfrm_policy.c                             |  5 ++-
+ scripts/Kbuild.include                             |  3 ++
+ sound/core/pcm_lib.c                               | 14 +++++---
+ sound/isa/msnd/msnd_pinnacle.c                     |  4 +--
+ sound/usb/quirks-table.h                           |  3 +-
+ tools/hv/hv_kvp_daemon.c                           |  2 +-
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c  | 10 ++++--
+ tools/testing/selftests/timers/raw_skew.c          |  5 +++
+ 68 files changed, 389 insertions(+), 162 deletions(-)
+
+
