@@ -2,121 +2,129 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91852C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6A4C43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CEF204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 569E2204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:17:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYBoVGOs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45CEF204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uDYE7WKI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 569E2204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbeIYEVf (ORCPT
+        id S1728252AbeIYEV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:21:35 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37740 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbeIYEVf (ORCPT
+        Tue, 25 Sep 2018 00:21:58 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44975 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeIYEV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:21:35 -0400
-Received: by mail-wm1-f65.google.com with SMTP id n11-v6so11548362wmc.2;
-        Mon, 24 Sep 2018 15:17:12 -0700 (PDT)
+        Tue, 25 Sep 2018 00:21:57 -0400
+Received: by mail-pg1-f194.google.com with SMTP id g2-v6so1927845pgu.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pZClakj9wE9OIq8QtcJn1pxtv+5BPs0+ahFjrse7UwI=;
-        b=YYBoVGOsFTolcuUOVXsD9Cpfjv4qFegUKVe7Hh1Pw0EHJlfdt5ygiIxw4XE7GPJUBB
-         v0rtwjGhnGOLMwib0p3xHEeeSl7kx3jq9OZhNwXiCUPckYvz4KnvMTIZhZCTF1nJAwQw
-         73gBqRJ0vEoMWD5ivGGxbErpbLmnM3oAp/Q3vhFjnELVODZjwuJ8WUMVFzKZI3ZdE278
-         NUyFFqdEl5gJG8MVtioZTQ78Vx62Croqg7Y93kMluOkomtz/cDVuIyKMt+K2SKAluET/
-         0+W5aHjS9cmE4TspyxtFJOi10EZ2WT+rf/HmhN3gyVB2NLEmz2q6r0WPvidWUK3O9+HM
-         ewCw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ENOmxeDqlifT4/aQHAl0iI/GV0Cv1Mq4ufYsStbiU9c=;
+        b=uDYE7WKIstuacDKDaHykxDHusf6mejWa1DTZYskLar+zF6ONelvLC15vS62FkA88aK
+         wq0UVuygSrBEL5BI5/cXzqF2IfDZAhnkS3TBkWIKtFoGd73rRI42F5QcvGKlqDLru4Eb
+         2biHtqmtQzF7JzjZPAVJqaso+mzxmYQrtMj+UGbKVchvUbKeNaqScFc/MaXYkh7mXaPd
+         VANT478DqKeL4PJSECcnWbsp5Lo9enpR7uA3+aKLHXhZDwo3DlWsYHM1SbM54VMvYeH/
+         Ik7tPQbmRXhgcuAI5XEBpoU33upaIwJsv5jYnqF/4dkVI96+BDr9zfYjSY2Uc8p9A/IG
+         MJGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pZClakj9wE9OIq8QtcJn1pxtv+5BPs0+ahFjrse7UwI=;
-        b=KGKKiebz8MU4Ezud7tgWrTFg3cWuBGT++gtLh+/Z80ZZ1cx1psvP9xCQOHgWxz04Pf
-         V8JJ7ee6dj6p2q0s5XphckkhF4Q9a2HrhyFWb10PuiK9pcYztVyl6gO11JviLYk5DMMx
-         qdOIcFkX9cV0lhuFvuCrIYqfau40VQKtWWGRnuJLlMQC/odCMb0FQSlkSYjZL7yWjBEU
-         BdQJ080cbfk4ssnnFjrGVuQUxc7aKEbxXi5CC1xSMoLlSk4M/uMdW08jIR8TV3j2sobZ
-         fhXwhaxzVfYIJOPU5ox+xaL+Vsl3+ejHVfIi726VVwFSGTzuHcYhfSoX84wGsOZ3J/Sq
-         EK/w==
-X-Gm-Message-State: ABuFfogCk6CSQHiPSpSR6lOvKs7M2qMVzfI0pvnCpzn58ZIn/iJEpPLS
-        x3hAtFS01n8a8173frlO0Z3+fTA+J3S7bA==
-X-Google-Smtp-Source: ACcGV61Ty1Hq+oyGoXqSwgG6/073zovbOwz0Sj9lk0aMZKi6Uz/zmTcM/RXiMROcNJxd0L0dURBWWA==
-X-Received: by 2002:a1c:f210:: with SMTP id s16-v6mr266956wmc.36.1537827431247;
-        Mon, 24 Sep 2018 15:17:11 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id g2-v6sm209533wmh.16.2018.09.24.15.17.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 15:17:10 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] qed: Avoid constant logical operation warning in qed_vf_pf_acquire
-Date:   Mon, 24 Sep 2018 15:17:03 -0700
-Message-Id: <20180924221703.26454-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ENOmxeDqlifT4/aQHAl0iI/GV0Cv1Mq4ufYsStbiU9c=;
+        b=stFu86NizdM/4ppNmetO6OaAvtRnMc20EsECRMFOJo2zDwclneXcY8fGLRwaMlgCLQ
+         z4+asw9vzl67JPIMVXJqV//Bi/naaAbV4H2zDagpCV0/pBOjMfqgBPOvVA7EIRUqW7ns
+         i5j92zXrv+bVXlDRFc0sw8El8RN3QZ7vVnNKLySS4c1r4q6ucpHFXgA0ITLtnG2uuArQ
+         RDRdKxot8bQaYQskAOdXJCC83VC7kWTDOJ76EI/Gr2MpqRUtrsJ5iNPBlMFbvXkbIOt8
+         5oJazGqUmYxJoS9O9tTc92qu6q+WuCytpbAqOp1/UdIStDiWvR5hQuGoUQg0rrGeAWrp
+         vcGQ==
+X-Gm-Message-State: ABuFfoiCvmJW/lLMHUYW/FPeTi2wSbz+qarlx5ghoWNmw9dE7ELD0248
+        99+RnML0KIdsBBgTZn/5E/4ZY7O0lmxS5eUsbP8Ddw==
+X-Google-Smtp-Source: ACcGV63wMf9IFRG7v+0z/iXoVK2vE97BjRjuoqwEeUOvjaZn1h3s5NmbdRaMvb6xfDs5KUgfErkNJfkF7rOpCke4H2Q=
+X-Received: by 2002:a17:902:b7c2:: with SMTP id v2-v6mr674313plz.238.1537827454412;
+ Mon, 24 Sep 2018 15:17:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180924173344.27952-1-natechancellor@gmail.com>
+In-Reply-To: <20180924173344.27952-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 24 Sep 2018 15:17:23 -0700
+Message-ID: <CAKwvOd=3s8BEALmMvG4nL5Ke1Acnn6dy9NebNiBYi455FKRWxA@mail.gmail.com>
+Subject: Re: [PATCH] cachefiles: Explicitly cast enumerated type in put_object
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when a constant is used in a boolean context as it thinks a
-bitwise operation may have been intended.
+On Mon, Sep 24, 2018 at 10:33 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns when one enumerated type is implicitly converted to another.
+>
+> fs/cachefiles/namei.c:247:50: warning: implicit conversion from
+> enumeration type 'enum cachefiles_obj_ref_trace' to different
+> enumeration type 'enum fscache_obj_ref_trace' [-Wenum-conversion]
+>         cache->cache.ops->put_object(&xobject->fscache,
+> cachefiles_obj_put_wait_retry);
 
-drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: warning: use of logical
-'&&' with constant operand [-Wconstant-logical-operand]
-        if (!p_iov->b_pre_fp_hsi &&
-                                 ^
-drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: note: use '&' for a
-bitwise operation
-        if (!p_iov->b_pre_fp_hsi &&
-                                 ^~
-                                 &
-drivers/net/ethernet/qlogic/qed/qed_vf.c:415:27: note: remove constant
-to silence this warning
-        if (!p_iov->b_pre_fp_hsi &&
-                                ~^~
-1 warning generated.
+That's an interesting pattern; cachefiles_obj_ref_trace's first
+enumeration's value is set to the final enumeration's value in
+fscache_obj_ref_trace.  This fix is ok to me; though I would ask the
+maintainer consider just merging the enums into one (unless there are
+more than one other enums doing the same pattern (which doesn't seem
+to be the case)).  Thanks for the patch.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-This has been here since commit 1fe614d10f45 ("qed: Relax VF firmware
-requirements") and I am not entirely sure why since 0 isn't a special
-case. Just remove the statement causing Clang to warn since it isn't
-required.
+>
+> Silence this warning by explicitly casting to fscache_obj_ref_trace,
+> which is also done in put_object.
+>
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  fs/cachefiles/namei.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index af2b17b21b94..15e5988a83de 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -244,11 +244,13 @@ static int cachefiles_mark_object_active(struct cachefiles_cache *cache,
+>
+>         ASSERT(!test_bit(CACHEFILES_OBJECT_ACTIVE, &xobject->flags));
+>
+> -       cache->cache.ops->put_object(&xobject->fscache, cachefiles_obj_put_wait_retry);
+> +       cache->cache.ops->put_object(&xobject->fscache,
+> +               (enum fscache_obj_ref_trace)cachefiles_obj_put_wait_retry);
+>         goto try_again;
+>
+>  requeue:
+> -       cache->cache.ops->put_object(&xobject->fscache, cachefiles_obj_put_wait_timeo);
+> +       cache->cache.ops->put_object(&xobject->fscache,
+> +               (enum fscache_obj_ref_trace)cachefiles_obj_put_wait_timeo);
+>         _leave(" = -ETIMEDOUT");
+>         return -ETIMEDOUT;
+>  }
+> --
+> 2.19.0
+>
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/126
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/net/ethernet/qlogic/qed/qed_vf.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-index fcd8da08274f..be118d057b92 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
-@@ -413,7 +413,6 @@ static int qed_vf_pf_acquire(struct qed_hwfn *p_hwfn)
- 	}
- 
- 	if (!p_iov->b_pre_fp_hsi &&
--	    ETH_HSI_VER_MINOR &&
- 	    (resp->pfdev_info.minor_fp_hsi < ETH_HSI_VER_MINOR)) {
- 		DP_INFO(p_hwfn,
- 			"PF is using older fastpath HSI; %02x.%02x is configured\n",
 -- 
-2.19.0
-
+Thanks,
+~Nick Desaulniers
