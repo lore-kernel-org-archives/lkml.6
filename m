@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EBEC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2A5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E18D920877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E18D920877
+	by mail.kernel.org (Postfix) with ESMTP id 61D4820877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D4820877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbeIXSE0 (ORCPT
+        id S1730948AbeIXSEa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:04:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53748 "EHLO
+        Mon, 24 Sep 2018 14:04:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53758 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729639AbeIXSEZ (ORCPT
+        with ESMTP id S1729639AbeIXSE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:04:25 -0400
+        Mon, 24 Sep 2018 14:04:29 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72D2D106D;
-        Mon, 24 Sep 2018 12:02:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E682A106D;
+        Mon, 24 Sep 2018 12:02:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.9 055/111] mei: ignore not found client in the enumeration
-Date:   Mon, 24 Sep 2018 13:52:22 +0200
-Message-Id: <20180924113110.406252928@linuxfoundation.org>
+        stable@vger.kernel.org, Tim Anderson <tsa@biglakesoftware.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.9 056/111] USB: Add quirk to support DJI CineSSD
+Date:   Mon, 24 Sep 2018 13:52:23 +0200
+Message-Id: <20180924113110.498171115@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -52,58 +51,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Tim Anderson <tsa@biglakesoftware.com>
 
-commit 8d2d8935d30cc2acc57a3196dc10dfa8d5cbcdab upstream.
+commit f45681f9becaa65111ed0a691ccf080a0cd5feb8 upstream.
 
-Some of the ME clients are available only for BIOS operation and are
-removed during hand off to an OS. However the removal is not instant.
-A client may be visible on the client list when the mei driver requests
-for enumeration, while the subsequent request for properties will be
-answered with client not found error value. The default behavior
-for an error is to perform client reset while this error is harmless and
-the link reset should be prevented. This issue started to be visible due to
-suspend/resume timing changes. Currently reported only on the Haswell
-based system.
+This device does not correctly handle the LPM operations.
 
-Fixes:
-[33.564957] mei_me 0000:00:16.0: hbm: properties response: wrong status = 1 CLIENT_NOT_FOUND
-[33.564978] mei_me 0000:00:16.0: mei_irq_read_handler ret = -71.
-[33.565270] mei_me 0000:00:16.0: unexpected reset: dev_state = INIT_CLIENTS fw status = 1E000255 60002306 00000200 00004401 00000000 00000010
+Also, the device cannot handle ATA pass-through commands
+and locks up when attempted while running in super speed.
 
-Cc: <stable@vger.kernel.org>
-Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+This patch adds the equivalent quirk logic as found in uas.
+
+Signed-off-by: Tim Anderson <tsa@biglakesoftware.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/mei/hbm.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/usb/core/quirks.c          |    3 +++
+ drivers/usb/storage/scsiglue.c     |    9 +++++++++
+ drivers/usb/storage/unusual_devs.h |    7 +++++++
+ 3 files changed, 19 insertions(+)
 
---- a/drivers/misc/mei/hbm.c
-+++ b/drivers/misc/mei/hbm.c
-@@ -1137,15 +1137,18 @@ int mei_hbm_dispatch(struct mei_device *
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -259,6 +259,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
  
- 		props_res = (struct hbm_props_response *)mei_msg;
++	/* DJI CineSSD */
++	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* INTEL VALUE SSD */
+ 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
  
--		if (props_res->status) {
-+		if (props_res->status == MEI_HBMS_CLIENT_NOT_FOUND) {
-+			dev_dbg(dev->dev, "hbm: properties response: %d CLIENT_NOT_FOUND\n",
-+				props_res->me_addr);
-+		} else if (props_res->status) {
- 			dev_err(dev->dev, "hbm: properties response: wrong status = %d %s\n",
- 				props_res->status,
- 				mei_hbm_status_str(props_res->status));
- 			return -EPROTO;
-+		} else {
-+			mei_hbm_me_cl_add(dev, props_res);
- 		}
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -392,6 +392,15 @@ static int queuecommand_lck(struct scsi_
+ 		return 0;
+ 	}
  
--		mei_hbm_me_cl_add(dev, props_res);
--
- 		/* request property for the next client */
- 		if (mei_hbm_prop_req(dev, props_res->me_addr + 1))
- 			return -EIO;
++	if ((us->fflags & US_FL_NO_ATA_1X) &&
++			(srb->cmnd[0] == ATA_12 || srb->cmnd[0] == ATA_16)) {
++		memcpy(srb->sense_buffer, usb_stor_sense_invalidCDB,
++		       sizeof(usb_stor_sense_invalidCDB));
++		srb->result = SAM_STAT_CHECK_CONDITION;
++		done(srb);
++		return 0;
++	}
++
+ 	/* enqueue the command and wake up the control thread */
+ 	srb->scsi_done = done;
+ 	us->srb = srb;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2307,6 +2307,13 @@ UNUSUAL_DEV(  0x2735, 0x100b, 0x0000, 0x
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_GO_SLOW ),
+ 
++/* Reported-by: Tim Anderson <tsa@biglakesoftware.com> */
++UNUSUAL_DEV(  0x2ca3, 0x0031, 0x0000, 0x9999,
++		"DJI",
++		"CineSSD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_NO_ATA_1X),
++
+ /*
+  * Reported by Frederic Marchal <frederic.marchal@wowcompany.com>
+  * Mio Moov 330
 
 
