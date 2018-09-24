@@ -2,237 +2,159 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A7CC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F11ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5180E2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 749F020989
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:46:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BjdjvdwO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5180E2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="IpKFhwLc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749F020989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbeIXPpA (ORCPT
+        id S1728235AbeIXPrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:45:00 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54584 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeIXPo7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:44:59 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180924094342euoutp0154a34d80780d17f8613d0d4b0e9971c5~XTMiVAOTr2119121191euoutp01O;
-        Mon, 24 Sep 2018 09:43:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180924094342euoutp0154a34d80780d17f8613d0d4b0e9971c5~XTMiVAOTr2119121191euoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1537782222;
-        bh=726bnIJMb0wLjQreKFN5gJWwhAg/m1QD0m/DhMsrOTk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=BjdjvdwOxMTMEfZ+Rw3RWRY7qkAoqwLT4iHKxsJ81GfH0RJReQWu3PUFyH5kdpdNo
-         W2gs3W95q3vdi0y2yibnrthP8Z7lhcFggUz9WxRjy9NZzXk0FSK+qw3y6pU1n5lRPQ
-         Knc2fy5/KbR8AGFhEHNDN6O58F3FeytSBC51NYzo=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180924094341eucas1p11938ef2f0e9b2940afaf061eeb10878f~XTMhfgzon0949609496eucas1p1E;
-        Mon, 24 Sep 2018 09:43:41 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id EE.FC.04806.CC1B8AB5; Mon, 24
-        Sep 2018 10:43:40 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N;
-        Mon, 24 Sep 2018 09:43:39 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180924094339eusmtrp2bbf0b24381befcb603a462e828eb120f~XTMf70DTU1162911629eusmtrp2T;
-        Mon, 24 Sep 2018 09:43:39 +0000 (GMT)
-X-AuditID: cbfec7f5-79db79c0000012c6-4d-5ba8b1ccaece
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id FE.C1.04128.BC1B8AB5; Mon, 24
-        Sep 2018 10:43:39 +0100 (BST)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180924094338eusmtip1c0e7ab75c421028ebf5e323898e1008f~XTMen-Fr-2500325003eusmtip1o;
-        Mon, 24 Sep 2018 09:43:38 +0000 (GMT)
-Subject: Re: [PATCH 0/2] gpiolib: Fix issues introduced by fast bitmap
- processing path
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jiri Slaby <jslaby@suse.com>, Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Rojhalat Ibrahim <imr@rtschenk.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Mon, 24 Sep 2018 11:43:37 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        Mon, 24 Sep 2018 11:47:21 -0400
+Received: from mail-eopbgr30103.outbound.protection.outlook.com ([40.107.3.103]:65344
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727497AbeIXPrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:47:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=djM1e3ddDajlglH0sYY/29a1vVgNmlKYMRbcp4pJpS0=;
+ b=IpKFhwLcrvmE2jO4PJnnxe8DZilKzZq6zJ9+FnyiqC0yWHZEDicrnORhRyFuwnywOfN/BE2MRrChxPE6MbSDzHZkClIeOvbGlhWHhqsYNO+/WxefqDje2RvG2oFU7jHWFFJMR8ojVAr95MEdfaE8Wkqym86aRfR+vtCa7Yo5hu0=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=aryabinin@virtuozzo.com; 
+Received: from [172.16.25.12] (185.231.240.5) by
+ VI1PR08MB3263.eurprd08.prod.outlook.com (2603:10a6:803:3d::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.22; Mon, 24 Sep 2018 09:46:03 +0000
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+To:     Ming Lei <ming.lei@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Lameter <cl@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
+ <20180920063129.GB12913@lst.de> <87h8ij0zot.fsf@vitty.brq.redhat.com>
+ <20180923224206.GA13618@ming.t460p>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
+Date:   Mon, 24 Sep 2018 12:46:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180923235336.22148-1-jmkrzyszt@gmail.com>
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180923224206.GA13618@ming.t460p>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTdxje7+64u5aVHPWD38DE2G2wkUw0w+RddEYXs9yWuCzZli1j2Tzh
-        Vsj40J6wuWRJBwZZw1IEN/CoFgdJkcGKqHx0fK2tlAW0VBGlImGmOJGPMQWDBccoBxv/Pe/7
-        Ps/7vM8fL0tqg3Q0m5Z5RDRkCuk6Wk01dj25+krv+eqkbcWXE8F7x0lCoPM4Aov3GAWtvUEG
-        glNuBu752wjIq7TTYO6eRDCSW0NAf6NMwsn6aQL6RgtpcCxOkOD11jNQVWINg5MLNgLO5ldR
-        cMG6gKDg6QyCM+4pCq47LDS4F80IyrztBPRWfs9AxbHpMLj/ZwwUuS4wMFg6wUBXxUZoc1oR
-        3Gi8QsG8o4uBa+YTBIy23aSgo/9tuH2iBIGn7kPwWC0IHo//Qe+J43tKO0j+wY29/PUBH8k/
-        ni2m+B87yxm+ra6M5i+eGyT4vpZwfrjdRfEt8h2Gn/77U360qIThG2q+o/mhgVaad7oKEN9x
-        upZ5N+Zj9a4UMT0tRzQk7D6gTm1yz9OHBmO++vZpLW1EP0SZkIrFXCK+EvwZmZCa1XLVCJtn
-        8xmlmEF45uo4qRSPEB7uuUysSjqdDwllYEN4bqBzRfIXwja/HGZCLLuO+wjPjaCQYP0SrLcZ
-        lzeRnCMc99+8T4cGNLcdmyZNdIhPcS/isbN7QnAD9wmed+wMMTRcJP79VIAKYRX3GvY5ZskQ
-        JrnNOO9S+QqOwv6AdfkezA2rcJW5m1DEObjWXU2GdmJuHx4f2aHcvw4/8FxkFLwJL7asavMQ
-        Pl4mM0pRiPAlSzOtsHZil8e3nIvkXsZ2R4LS3osHLUOEsj8C35qMVO6JwMWNpSu2GlyQr1XY
-        sVj2/PKf7W9918gipJPXpJTXJJPXJJP/961AVA2KErOlDL0ovZopfrlVEjKk7Ez91uSsjAa0
-        9BE9/3hmm1H7wkEn4like1bzzLAtSRsm5EhHM5wIs6RuveZN/1JLkyIc/Vo0ZH1myE4XJSeK
-        YSldlCYi/vMkLacXjohfiOIh0bA6JVhVtBH1UGNDd6OnqjvCLYHx+ecNradeaohMCBjjs4Ty
-        pjr9fn2t3fdTycDrW9KMYx6040lqINkePPf+aKA1yej33Yp95J5IbIp7r5vbfODwr4vNHzxX
-        HnubO9/7Ts1bu3ThG1WCektu8Vzc7so3Njw8sy/Zvj/67uHcFO1B16bCF7Z9I1Xd01FSqrA9
-        njRIwr+UKGFEDQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTVxjHPfde7r3AmtwVhCP4lmaGbWaVFrEPhhH5oifLNrf5YZsIrtM7
-        MKPU9LZGliXibDZoVEAQXGUWAhNGdDjATkgL5LajMjCVCSggRgz4DmMLMCc414ImfPudc/6/
-        k+dJ/jytPMbG8PtyzKIpR5+tYsOY7v98I291/1KXFu/pWQv+EZmGsY7vEFT4rQy4ep5y8HTS
-        y8HdITcFR6obWCi8PIHg9jf1FPQ57TSUXpii4Or4URZanz+mwe+/wEFNiSMESudrKaj6toaB
-        Jsc8gvxn0wjOeCcZuNZawYL3eSGCU/42Cnqqj3FQaZ0Kgfv3YqHI08TBYPljDjoro8AtOxD0
-        O68wMNfaycEfhcUUjLuvM9De9w4MF5cg8J3/GHyOCgSzj0bZLXGku7ydJg/7U8m1gV6azM6c
-        YEhZx2mOuM+fYknzT4MUudoSTm61eRjSYh/hyNRfGWS8qIQjjfUFLLk54GKJ7MlHpP2Hc9wH
-        sTvVySajxSyuzTJK5rdVaRrQqjVJoNZuTFJrEnTpm7WJqg0pyXvF7H0HRNOGlM/UWb9659j9
-        g7EHDz87x+ahk9E2FMpjYSPukP+mbCiMVwo/Ijwiu9jFh5W4qywvZJEj8PyAjV0MTSB8eLo0
-        cOD5COET/OQ2CmYiA1hXfnThI1pwheOG8kZuUahFuMuev5BiBQ22TdgWZIWQgs96ooLICOvw
-        g6otwcRyYRf+rcS6MINCeBV3fT/GBDlUSMK9rTN0kGlhEz7TNPqC1+AjF0+/4Gg8NOagipDS
-        vkS3L1HsSxT7EqUSMfUoUrRIhkyDpFVLeoNkyclU7zEaGlGgis7Of5svIdvkDhkJPFK9oqgb
-        rk1ThugPSLkGGWGeVkUqtg4FrhR79blfiSbjbpMlW5RklBjYrZiOWb7HGCh2jnm3JlGjgySN
-        LkGXsAlU0Qp/fO5OpZCpN4tfiuJ+0fTSo/jQmDwkOvDqllWmz6dT78Rd0icfSq3KNFbvOHQ5
-        LvWjn73ZGc7j68tka8b2d6Mj3l+PA9LN4fZVTvdFTmm1rpgoeG9NlIuc1b4RPhP1WvO6wV01
-        6enLlsX3bm/49J8bYcaCL2Y3q2z3V37dxvYp5y3b+gue+O5dGf1wbquv7nfjn7qMrteRipGy
-        9Jo3aZOk/x8pQTLVoAMAAA==
-Message-Id: <20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5~XTMgQ4GFs1339913399eucas1p2N@eucas1p2.samsung.com>
-X-CMS-MailID: 20180924094339eucas1p282f2f7cb627c183fe87da044edb90fa5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2
-References: <2785169.v6aIfS3K2k@z50>
-        <CGME20180923235237epcas3p3aa946da71a07da1bc3cd0e8cce3473b2@epcas3p3.samsung.com>
-        <20180923235336.22148-1-jmkrzyszt@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [185.231.240.5]
+X-ClientProxiedBy: VI1PR0501CA0044.eurprd05.prod.outlook.com
+ (2603:10a6:800:60::30) To VI1PR08MB3263.eurprd08.prod.outlook.com
+ (2603:10a6:803:3d::18)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 790bf0ad-6d17-4715-5a11-08d622028b96
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3263;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3263;3:qJhZY/sAq+Pftz8EzmsyDfcmdsVZ3FWsJdltQwpJ7yF3lDtmXH0GUkNz7a6J/6qcB5GRSZvSrzdBxmgKqsAY89ZhpdBnhB1vEMuyCmdlJWaGzc0mhSop9znB7q4KDI+ZXvcp6hV3sLnxVyTtYkqt4L2M6IEHWoKbmcdSoFmIwbagLDfpoHlG0B9RiVkdQRj4/M0JmNfqmQjvrRz0sLT/Pu85dGgDXFLkKM7cxN9RRImrLJE3qW1scgk5RK7A+I+K;25:QoKsL+uUYyjDtRu3dUktrN1t3I7dOdkyF1oQCdjnKFI+tAjpgZe4aTyQrkmPR/bm0LZJhyoFdlG5MpUdrG8NeYuP3oL9HXkLhuU7MLuPW5QZMPEe0S2QjlaWpIZ9jXmvRLe35sW7ckk2cm2sV4mWcw5YNKAYHLvjRrc7jBALKTpGaF/lXcZXD8XRXRw34lMVXMaELT2T23J17yvEuQnmalsPzP6kjM4PHgf1tqGPgZTCPWebv7BsCo5pQhS0zjCjxvx/By8eowbU8Yc2RsLbM6xJ8CxUj4yxlJvfTXrXphqAt+5ulB/FicqoBvUkoayC9xQGgRENRyWGaK8EEM4x/w==;31:gzCjaBb0VSqcKK27iJlfUhpNxNNyUWHnxV9xCzYY2/LlP/cM/Xj3NABcAaKrika1LfslbNZH6F3BbdyPRDGeFJh3ULFUvL8SQ5p23PO/O86qpFqM9Cl3F22nh4TWy0uBa4JlMhAV36S6/7L0j+NcAO0gNPKZ2ChC4J3hiQk+sCdU+cmhrayms8WkVEGngnJXGOVRP+9hbXiOklfh7G/kArHCzqHgNHRiqNRskSGfxFM=
+X-MS-TrafficTypeDiagnostic: VI1PR08MB3263:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3263;20:44t3u9NCOHTElJhWMd+YMgx3yoESb2s+F5vXoIbNXJ2IicLsdwI6m/M/p2b+ioDEEpwuNAZVfxvoAj5kCeCxvks+PYmHsXZPoFMAimI2CIEWBURecJadh2nBxaNVmsZ3zFnLSFmWpNSCwmiM3YO/f0JPO5DCSNItmxorJSu/KTOWKfBFkjKio1GvlQSZuJ6xK8ro0SLIJAPxYwcR9hTPcuG9VQnnsDhcAZSEQjFkNLJGW3YjJuZYuOmFGveex2FRYUwF8HfKtTyMsZsPrHZKgCcAaSZhUlXXTXgBCRt2QqS+fHOt59ZuiWcSl1rGPYTvPYpL520P3JpxwpgNbWGYTY22TwOor5KUu3nbis9kn6RjZ36Jy+aWT79xE5S9cnWbfUma12ls+KUgUFeQidgHmbcHXrkSkV5vEMAT5pRQ3UaBUujSFpG4y6zq1fdApyFryJc0+eo7vc4oH+VjRrFvX6h8ksOQmfaY7xss1ifgCzyduFmX5LwilLhHt+cmhIQL;4:FIA6EV6ofUGj1X15yJnFtwqPIRyrRdymGClLU6IIeB7UDAo6m9HEd2zMg++9mEPtO/UDeRhO+s/ZXO4u0LCuRpLETfXdnCPM2QHvxaIzHpPQQkNNqTN5D4WuQamdPi7jpZUgIxdUl8w+Abk/LJob8PykU9By2IZBcNdx4dweTXTI/9jmQkSG2I7xIiHw6UfgdhU/R55UiaLEaj77BByuytA9s7auP5JpFQ+mbas8LrDZ2wXPipejzvfsI6cYA2FbRogrK1QmYUwqPtvMTYJHiQ==
+X-Microsoft-Antispam-PRVS: <VI1PR08MB3263BABF9EC90036D5486C2BB0170@VI1PR08MB3263.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149066)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051);SRVR:VI1PR08MB3263;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3263;
+X-Forefront-PRVS: 0805EC9467
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(136003)(366004)(39840400004)(396003)(346002)(376002)(199004)(189003)(186003)(77096007)(16526019)(81156014)(81166006)(50466002)(93886005)(8676002)(316002)(53546011)(386003)(8936002)(478600001)(2486003)(23676004)(52146003)(52116002)(68736007)(86362001)(26005)(36756003)(2616005)(956004)(476003)(6486002)(97736004)(486006)(16576012)(229853002)(105586002)(11346002)(54906003)(110136005)(58126008)(230700001)(106356001)(31686004)(76176011)(47776003)(65956001)(66066001)(31696002)(53936002)(4326008)(3846002)(65806001)(6116002)(6246003)(39060400002)(25786009)(2906002)(5660300001)(446003)(7736002)(6666003)(65826007)(305945005)(7416002)(64126003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB3263;H:[172.16.25.12];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4TUIzMjYzOzIzOkMyL2t4SzFlQTdIeHJTQXduWkFRWXF5Wm4y?=
+ =?utf-8?B?aWxSOHVLOHIzV3ZiNmN1eTRDOUNmZDdZVFV5YWtmaTNJTWI3c2grOVQ4MFB4?=
+ =?utf-8?B?Z1YzemZiOG8vUVVRRFpzdDh1Y0RIanNEWkNYVklLYm9LdldtcGJ4WkhxbjJH?=
+ =?utf-8?B?eTJ0MkJEOU9nUEs3aGFlOGtrQm8vZW5ISXdsV3lwd3VjdGt2OENUaDJxVzJj?=
+ =?utf-8?B?ejVCdUpaTk02SEdKaFdhQXU1b1Vrd241eFg0TUlKVHREZFBWM0VZSDQzUi94?=
+ =?utf-8?B?NVJxeVd3Y25ZYSswekp5RzlweHJoemRkdGFDeUpWanArdmF1MHl4RjRHcjUx?=
+ =?utf-8?B?OWVOUERqNHpTdVFJbytrd0pUeTZlZllCaGc5Z3BmOHhTRzRsZ0R5bGRoMjAy?=
+ =?utf-8?B?OFlCZmlJUUExQmdZNFRzTzdqZ1RaVUlpbXM3YnV0UWNxVXZhMDhSNVhGT3hM?=
+ =?utf-8?B?b2JFT1VZWUpJYnM4WndRVDlPODk4dGtUN2FRV1VBTUFnUzZ6NENvbGd2TU1l?=
+ =?utf-8?B?eUJZUzlRL002ck5mbzUxQVVHQWh6dEhpSDNXSkpucHRpYTFSYkdFb0hDazZV?=
+ =?utf-8?B?WDVGc1BtN01XSVpJd3pWb1hSZk5pYi9udU1Eb0hlUmFaOE5tNy9sUXp2MnA4?=
+ =?utf-8?B?QUpjWXZ5bFBVU3U5RHIyUlNnUkNSem0xWnY5MG1KNFU3R2lCYnB5Ukp3NTlK?=
+ =?utf-8?B?NU5kZ0hCSnQ5M1FDOW1nU2pBdnRQUG81VVZVYWoyamJoSGU3ZHVJa2NWZnJN?=
+ =?utf-8?B?SVNyZXhQQmpJZ2ZCaEFCY250OEtBRW1KcFdRSHlvbGYwRk5RTm5oTnlvbEUy?=
+ =?utf-8?B?WGZvRUR5UlZtRGp3R0JNeGx6UUFLU2k3UmlKaXJwVk1UOVNOQzgvT0VUY0NK?=
+ =?utf-8?B?dXRJMElYMHFwK1ozTWdSZ0JyM3BnOU52NHVvL1V6WldUMGgzTEREM1NtZXhx?=
+ =?utf-8?B?RVpXNzhSSU03MGkrWm1acHA5b2NyZHR1QjFjdDlDMkhUbVBVRndEN1lVTnRX?=
+ =?utf-8?B?aS8zU2lzZFRoTHhycGJNM0Z4T2luM1dLSVhpUDNmVzJVYjQ3ZEN2dDF4ek9O?=
+ =?utf-8?B?bytpTXZ3Y0R2dVIySVBrZkhRcU9aYW5WaEFGYnJydlJPcGZhUGlqaFVLaHBW?=
+ =?utf-8?B?b3I3aEZWdjJSUGZHYllSMVY3NjRIZ1h0Yk9YQ1dIYW9QWGE3OGdYeHdDSFpK?=
+ =?utf-8?B?bzVlRnpvTUJyOWF6bktUUXh5SmtDcUd6Vm9NbFBFQ1NHd3c4NHg5QUY1dFZJ?=
+ =?utf-8?B?bmVzTUJidkcySXZDaG9CbHlQNFE4aUtqTXNvYURhSUUyVEhOZkttcGQzSXRx?=
+ =?utf-8?B?c2VMaXovWDFTRXhwenF1bzkvNmZQOXQ5eHNucHFvbXNTLytHRzd2MzArMUc3?=
+ =?utf-8?B?Nk5aZkoxNVpBemhteXdrVzV2U2pUTEl1cFFMMEVYNjBTaTJicTZSdnNRdnlp?=
+ =?utf-8?B?WmlyVlFqL2p3dnJmdEFuV3FpK0dNbjdxVzdFdnlXb3UraGZjVFZFcHlrZ0NO?=
+ =?utf-8?B?S3VDVElWZFJOYm1manYyMlhpZExEWnVQYnozd0VhM3VKV04yMUQxbUNyV1J1?=
+ =?utf-8?B?elk3ZWQwbjBMbjNRSHAwOXZLWldIdEtxcGVzbldtWFl4YmNrUElHS0FicmJM?=
+ =?utf-8?B?V3BydjJEbzAwMWg1eWRicGZvTWIxdnBCMjZ5Q0hnWVpVQjUvanhMblhLSnFS?=
+ =?utf-8?B?bnlnRXkyNWd2ZmU2SlVJdjlhNjdPMEI0L1BTajc5ajJuUlhTeUhvWkJ4Rlh2?=
+ =?utf-8?B?WHRIbzNUQmRvR1pJRkk5dTZkMXIwN1JGZTM1bU1tQjlsVTd4bVZsV05pMFlm?=
+ =?utf-8?B?cmZmL2xNK0VWdllyVWg0ZDBsYTIvekJLbkgrQ1JYSzdVVjduMmlVelp4R05m?=
+ =?utf-8?B?Ukh1QUZoYytvWExzc3ZKQnhWbG5yaE9lQnA2TUdXaUIwTlBkd0JPNS91eDFv?=
+ =?utf-8?B?YlA2L2dtMGVxRWhIT1ZqSUtNS1N1RE0zVWJOa1pPamU4c2h4MGxCQ0xRZmt1?=
+ =?utf-8?B?Nm5JNlpDUStkdjl2TUVuTGUyYmpKNTc5WGJRUT09?=
+X-Microsoft-Antispam-Message-Info: mQBgfOzOTa+53Iox3vK0h5slKB53iiDstYIc+Zlq9UHeESLlIw10gBzWP6G8Z55iwptB2V9I9eJjBjyXvNIgZi/c7z3v/JvDQ6m7YTkcYrSTEXJytky8jkzkOXELlWeuxwdntAnI73ghgL08QcFi0JAJpott/oo468dAaBG/tb17x4sCZOJhukR1RULMj+qs8ZFxBA/NxWxC289FZ/NXJkZNp2D+aJK/AA1/qwTB5wK8LOEgivZ0XLQbRhd8Lvdgly+aD8hDVTr3KcwOqBx3W3OQyRyciGm2ran1TA3u/RrmrS5rHJHzs9giZojswSmZZIBn48xslDV+zxK5EpfFzzH2A38uqwzRWYBfWG8U52o=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3263;6:1h602Hbkg0w9t8IHLA1JsVgqJEspp2V9uvWMl1HIn9euOJmHB82XMPrvlsbdpjS/SiinnerzHbYOKbedDxxguwOGK4QjqazmZMDHU2cTWJr2lydilUB2A28NxW0qZ1zZnJTo5fsHMxFrQDG9gNL+LyqutiacRNzOIMIYiUgmCZChmi1FqvyFSxlmDQ99zmuLPhJYI3yWnlOHdqCTr+I+mwqWVLns8HSHlN+j+s9nQepy1Ki9QZPQVYJ0/ZvoI7QvIzXF1Fi1yG3ObdTiKNGiqMpKP5qSvoIs953tpTa5TzCBVd+aEX4S7UrhlbXSzgHKx5Dgx82MOkXgZ2y3roTY6i4VqScXMlHhix0hO+CJTDqA6/xHKu3LcfRs7Ey6aFwRjqFFEbjG3Btzs0B7pYljPFiw7hIyHOxwHE+ZcYoUgnaxEv6+nFATQzPGHsNIX2YVVCPzgIhNsB4zB++Uppdgsg==;5:+D3+hVZf+a1p1gfzwDVf/oKgXsT4w/7cs0M+n8k0ipMmhh9/KN3Yb1LZnDQaRKHe2EfSPmohK1Jv4palsAnO2CvWJZi1InR6LV2yKt8mFGky/z0y1lqXRm7wVvFDo5Qt+F5bW/4XxsDJI5JcPHiZY+p9r1vVPuZUUD4+PI4uDOE=;7:hVE0600fE+syYDFHganaBsromPki3j0gIx6tYzRHeQluXOdo9J2FcLO5481cL0jgpZVrCSu4FUYJMue692VcYnE2CKFOkzG5R2pV0qiuV+HQ1vhKMuBJd7OkA8EvhiQjM7xk1w5Jh6VpVJIB9YdsoqLjRYW5itvIp7szGanFZh3wy9UNCBLQLFrNj5cY8tRTKOVcy/4IKKT79WdFUIBmBzv8LO0TPu18K3PIcTYhXTBx/+j2sH21dtEvzRpvoI37
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3263;20:cM78hhi6T6nJVD3fX3cADlaz3iZnkpOoIeDlmOYVEmB1mj5YVhmRjN0UGBp/kTyjkoGa5eMkaDzhbN8aVPV/Gfd4Fo/Hf/XlHbRPBEOBOVLsaP9qBy/jiWP9gyeKuBuPUGFY29KVZfF/mg++0Cq4AHutAGAsJC+KigLeuDcNbi4=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2018 09:46:03.7137 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 790bf0ad-6d17-4715-5a11-08d622028b96
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3263
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
+On 09/24/2018 01:42 AM, Ming Lei wrote:
+> On Fri, Sep 21, 2018 at 03:04:18PM +0200, Vitaly Kuznetsov wrote:
+>> Christoph Hellwig <hch@lst.de> writes:
+>>
+>>> On Wed, Sep 19, 2018 at 05:15:43PM +0800, Ming Lei wrote:
+>>>> 1) does kmalloc-N slab guarantee to return N-byte aligned buffer?  If
+>>>> yes, is it a stable rule?
+>>>
+>>> This is the assumption in a lot of the kernel, so I think if somethings
+>>> breaks this we are in a lot of pain.
 
-On 2018-09-24 01:53, Janusz Krzysztofik wrote:
-> While investigating possible reasons of GPIO fast bitmap processing
-> related boot hang on Samsung Snow Chromebook, reported by Marek
-> Szyprowski (thanks!), I've discovered one coding bug, addressed by
-> PATCH 1/2 of this series, and one potential regression introduced at
-> design level of the solution, hopefully fixed by PATCH 2/2.  See
-> commit messages for details.
->
-> Janusz Krzysztofik (2):
->        gpiolib: Fix missing updates of bitmap index
->        gpiolib: Fix array members of same chip processed separately
->
-> The fixes should resolve the boot hang observed by Marek, however the
-> second change excludes that particular case from fast bitmap processing
-> and restores the old behaviour.
+This assumption is not correct. And it's not correct at least from the beginning of the
+git era, which is even before SLUB allocator appeared. With CONFIG_DEBUG_SLAB=y
+the same as with CONFIG_SLUB_DEBUG_ON=y kmalloc return 'unaligned' objects.
+The guaranteed arch-and-config-independent alignment of kmalloc() result is "sizeof(void*)".
 
-I confirm, that the above 2 patches fixes boot issue on Samsung Snow
-Chromebook with next-20180920.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> Hence, it is possible still another
-> issue which have had an influence on that boot hang exists in the code.
-> In order to fully verify the fix, it would have to be tested on a
-> platform where an array of GPIO descriptors is used which starts from
-> at least two consecutive pins of one GPIO chip in hardware order,
-> starting ftom 0, followed by one or more pins belonging to other
-> chip(s).
->
-> In order to verify if separate calls to .set() chip callback for each
-> pin instead of one call to .set_multiple() is actually the reason of
-> boot hang on Samsung Snow Chromebook, the affected driver -
-> drivers/mmc/core/pwrseq_simple.c - would have to be temporarily
-> modified for testing purposes so it calls gpiod_set_value() for each
-> pin instead of gpiod_set_array_value() for all of them.  If that would
-> also result in boot hang, we could be sure the issue was really the
-> one addressed by the second fix.  Marek, could you please try to
-> perform such test?
-
-Yes, I've just tested next-20180920 only with the first patch from this
-patchset and the mentioned change to drivers/mmc/core/pwrseq_simple.c.
-It boots fine, so indeed the issue is in handling of arrays of gpios.
-
-Just to be sure I did it right, this is my change to the mentioned file:
-
-diff --git a/drivers/mmc/core/pwrseq_simple.c 
-b/drivers/mmc/core/pwrseq_simple.c
-index 7f882a2bb872..9397dc1f2e38 100644
---- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -38,16 +38,11 @@ static void mmc_pwrseq_simple_set_gpios_value(struct 
-mmc_pwrseq_simple *pwrseq,
-                                               int value)
-  {
-         struct gpio_descs *reset_gpios = pwrseq->reset_gpios;
-+       int i;
-
--       if (!IS_ERR(reset_gpios)) {
--               DECLARE_BITMAP(values, BITS_PER_TYPE(value));
--               int nvalues = reset_gpios->ndescs;
--
--               values[0] = value;
--
--               gpiod_set_array_value_cansleep(nvalues, reset_gpios->desc,
--                                              reset_gpios->info, values);
--       }
-+       if (!IS_ERR(reset_gpios))
-+               for (i = 0; i < reset_gpios->ndescs; i++)
-+ gpiod_set_value_cansleep(reset_gpios->desc[i], value);
-  }
-
-  static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
+If objects has higher alignment requirement, the could be allocated via specifically created kmem_cache.
 
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> 
+> Even some of buffer address is _not_ L1 cache size aligned, this way is
+> totally broken wrt. DMA to/from this buffer.
+> 
+> So this issue has to be fixed in slab debug side.
+> 
 
+Well, this definitely would increase memory consumption. Many (probably most) of the kmalloc()
+users doesn't need such alignment, why should they pay the cost? 
