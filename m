@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90069C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11A7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51774208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51774208E3
+	by mail.kernel.org (Postfix) with ESMTP id 65215208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65215208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbeIXRjh (ORCPT
+        id S1729110AbeIXRjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:39:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50410 "EHLO
+        Mon, 24 Sep 2018 13:39:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeIXRjg (ORCPT
+        with ESMTP id S1726241AbeIXRjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:39:36 -0400
+        Mon, 24 Sep 2018 13:39:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7600C106F;
-        Mon, 24 Sep 2018 11:37:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D12F61065;
+        Mon, 24 Sep 2018 11:37:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        icytxw@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Tan Hu <tan.hu@zte.com.cn>,
+        Jiang Biao <jiang.biao2@zte.com.cn>,
+        Julian Anastasov <ja@ssi.bg>,
+        Simon Horman <horms@verge.net.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 008/105] mm/fadvise.c: fix signed overflow UBSAN complaint
-Date:   Mon, 24 Sep 2018 13:32:54 +0200
-Message-Id: <20180924113114.131762375@linuxfoundation.org>
+Subject: [PATCH 3.18 009/105] ipvs: fix race between ip_vs_conn_new() and ip_vs_del_dest()
+Date:   Mon, 24 Sep 2018 13:32:55 +0200
+Message-Id: <20180924113114.240920035@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -55,52 +55,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Tan Hu <tan.hu@zte.com.cn>
 
-[ Upstream commit a718e28f538441a3b6612da9ff226973376cdf0f ]
+[ Upstream commit a53b42c11815d2357e31a9403ae3950517525894 ]
 
-Signed integer overflow is undefined according to the C standard.  The
-overflow in ksys_fadvise64_64() is deliberate, but since it is signed
-overflow, UBSAN complains:
+We came across infinite loop in ipvs when using ipvs in docker
+env.
 
-	UBSAN: Undefined behaviour in mm/fadvise.c:76:10
-	signed integer overflow:
-	4 + 9223372036854775805 cannot be represented in type 'long long int'
+When ipvs receives new packets and cannot find an ipvs connection,
+it will create a new connection, then if the dest is unavailable
+(i.e. IP_VS_DEST_F_AVAILABLE), the packet will be dropped sliently.
 
-Use unsigned types to do math.  Unsigned overflow is defined so UBSAN
-will not complain about it.  This patch doesn't change generated code.
+But if the dropped packet is the first packet of this connection,
+the connection control timer never has a chance to start and the
+ipvs connection cannot be released. This will lead to memory leak, or
+infinite loop in cleanup_net() when net namespace is released like
+this:
 
-[akpm@linux-foundation.org: add comment explaining the casts]
-Link: http://lkml.kernel.org/r/20180629184453.7614-1-aryabinin@virtuozzo.com
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reported-by: <icytxw@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+    ip_vs_conn_net_cleanup at ffffffffa0a9f31a [ip_vs]
+    __ip_vs_cleanup at ffffffffa0a9f60a [ip_vs]
+    ops_exit_list at ffffffff81567a49
+    cleanup_net at ffffffff81568b40
+    process_one_work at ffffffff810a851b
+    worker_thread at ffffffff810a9356
+    kthread at ffffffff810b0b6f
+    ret_from_fork at ffffffff81697a18
+
+race condition:
+    CPU1                           CPU2
+    ip_vs_in()
+      ip_vs_conn_new()
+                                   ip_vs_del_dest()
+                                     __ip_vs_unlink_dest()
+                                       ~IP_VS_DEST_F_AVAILABLE
+      cp->dest && !IP_VS_DEST_F_AVAILABLE
+      __ip_vs_conn_put
+    ...
+    cleanup_net  ---> infinite looping
+
+Fix this by checking whether the timer already started.
+
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
+Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Acked-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/fadvise.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/netfilter/ipvs/ip_vs_core.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/mm/fadvise.c
-+++ b/mm/fadvise.c
-@@ -66,8 +66,12 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
- 		goto out;
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -1692,13 +1692,20 @@ ip_vs_in(unsigned int hooknum, struct sk
+ 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
+ 		/* the destination server is not available */
+ 
+-		if (sysctl_expire_nodest_conn(ipvs)) {
++		__u32 flags = cp->flags;
++
++		/* when timer already started, silently drop the packet.*/
++		if (timer_pending(&cp->timer))
++			__ip_vs_conn_put(cp);
++		else
++			ip_vs_conn_put(cp);
++
++		if (sysctl_expire_nodest_conn(ipvs) &&
++		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
+ 			/* try to expire the connection immediately */
+ 			ip_vs_conn_expire_now(cp);
+ 		}
+-		/* don't restart its timer, and silently
+-		   drop the packet. */
+-		__ip_vs_conn_put(cp);
++
+ 		return NF_DROP;
  	}
  
--	/* Careful about overflows. Len == 0 means "as much as possible" */
--	endbyte = offset + len;
-+	/*
-+	 * Careful about overflows. Len == 0 means "as much as possible".  Use
-+	 * unsigned math because signed overflows are undefined and UBSan
-+	 * complains.
-+	 */
-+	endbyte = (u64)offset + (u64)len;
- 	if (!len || endbyte < len)
- 		endbyte = -1;
- 	else
 
 
