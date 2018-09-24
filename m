@@ -6,53 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CF1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B25C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FECF20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FECF20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 8F15C21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F15C21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbeIXSSD (ORCPT
+        id S1732222AbeIXSSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:18:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55758 "EHLO
+        Mon, 24 Sep 2018 14:18:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55766 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSSC (ORCPT
+        with ESMTP id S1731487AbeIXSSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:18:02 -0400
+        Mon, 24 Sep 2018 14:18:06 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1613310AA;
-        Mon, 24 Sep 2018 12:16:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F7BC10AB;
+        Mon, 24 Sep 2018 12:16:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Pavel Machek <pavel@ucw.cz>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable@vger.kernel.org, Xiao Liang <xiliang@redhat.com>,
         Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        joro@8bytes.org, Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 073/173] x86/mm/pti: Add an overflow check to pti_clone_pmds()
-Date:   Mon, 24 Sep 2018 13:51:47 +0200
-Message-Id: <20180924113121.409580745@linuxfoundation.org>
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 074/173] xen-netfront: fix warn message as irq device name has /
+Date:   Mon, 24 Sep 2018 13:51:48 +0200
+Message-Id: <20180924113121.486882924@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -70,62 +53,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joerg Roedel <jroedel@suse.de>
+From: Xiao Liang <xiliang@redhat.com>
 
-[ Upstream commit 935232ce28dfabff1171e5a7113b2d865fa9ee63 ]
+[ Upstream commit 21f2706b20100bb3db378461ab9b8e2035309b5b ]
 
-The addr counter will overflow if the last PMD of the address space is
-cloned, resulting in an endless loop.
+There is a call trace generated after commit 2d408c0d4574b01b9ed45e02516888bf925e11a9(
+xen-netfront: fix queue name setting). There is no 'device/vif/xx-q0-tx' file found
+under /proc/irq/xx/.
 
-Check for that and bail out of the loop when it happens.
+This patch only picks up device type and id as its name.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-mm@kvack.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Laight <David.Laight@aculab.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Eduardo Valentin <eduval@amazon.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: aliguori@amazon.com
-Cc: daniel.gruss@iaik.tugraz.at
-Cc: hughd@google.com
-Cc: keescook@google.com
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Waiman Long <llong@redhat.com>
-Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-25-git-send-email-joro@8bytes.org
+With the patch, now /proc/interrupts looks like below and the warning message gone:
+ 70:         21          0          0          0   xen-dyn    -event     vif0-q0-tx
+ 71:         15          0          0          0   xen-dyn    -event     vif0-q0-rx
+ 72:         14          0          0          0   xen-dyn    -event     vif0-q1-tx
+ 73:         33          0          0          0   xen-dyn    -event     vif0-q1-rx
+ 74:         12          0          0          0   xen-dyn    -event     vif0-q2-tx
+ 75:         24          0          0          0   xen-dyn    -event     vif0-q2-rx
+ 76:         19          0          0          0   xen-dyn    -event     vif0-q3-tx
+ 77:         21          0          0          0   xen-dyn    -event     vif0-q3-rx
+
+Below is call trace information without this patch:
+
+name 'device/vif/0-q0-tx'
+WARNING: CPU: 2 PID: 37 at fs/proc/generic.c:174 __xlate_proc_name+0x85/0xa0
+RIP: 0010:__xlate_proc_name+0x85/0xa0
+RSP: 0018:ffffb85c40473c18 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000000006
+RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff984c7f516930
+RBP: ffffb85c40473cb8 R08: 000000000000002c R09: 0000000000000229
+R10: 0000000000000000 R11: 0000000000000001 R12: ffffb85c40473c98
+R13: ffffb85c40473cb8 R14: ffffb85c40473c50 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff984c7f500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f69b6899038 CR3: 000000001c20a006 CR4: 00000000001606e0
+Call Trace:
+__proc_create+0x45/0x230
+? snprintf+0x49/0x60
+proc_mkdir_data+0x35/0x90
+register_handler_proc+0xef/0x110
+? proc_register+0xfc/0x110
+? proc_create_data+0x70/0xb0
+__setup_irq+0x39b/0x660
+? request_threaded_irq+0xad/0x160
+request_threaded_irq+0xf5/0x160
+? xennet_tx_buf_gc+0x1d0/0x1d0 [xen_netfront]
+bind_evtchn_to_irqhandler+0x3d/0x70
+? xenbus_alloc_evtchn+0x41/0xa0
+netback_changed+0xa46/0xcda [xen_netfront]
+? find_watch+0x40/0x40
+xenwatch_thread+0xc5/0x160
+? finish_wait+0x80/0x80
+kthread+0x112/0x130
+? kthread_create_worker_on_cpu+0x70/0x70
+ret_from_fork+0x35/0x40
+Code: 81 5c 00 48 85 c0 75 cc 5b 49 89 2e 31 c0 5d 4d 89 3c 24 41 5c 41 5d 41 5e 41 5f c3 4c 89 ee 48 c7 c7 40 4f 0e b4 e8 65 ea d8 ff <0f> 0b b8 fe ff ff ff 5b 5d 41 5c 41 5d 41 5e 41 5f c3 66 0f 1f
+---[ end trace 650e5561b0caab3a ]---
+
+Signed-off-by: Xiao Liang <xiliang@redhat.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/pti.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/xen-netfront.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -291,6 +291,10 @@ pti_clone_pmds(unsigned long start, unsi
- 		p4d_t *p4d;
- 		pud_t *pud;
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1603,6 +1603,7 @@ static int xennet_init_queue(struct netf
+ {
+ 	unsigned short i;
+ 	int err = 0;
++	char *devid;
  
-+		/* Overflow check */
-+		if (addr < start)
-+			break;
-+
- 		pgd = pgd_offset_k(addr);
- 		if (WARN_ON(pgd_none(*pgd)))
- 			return;
+ 	spin_lock_init(&queue->tx_lock);
+ 	spin_lock_init(&queue->rx_lock);
+@@ -1610,8 +1611,9 @@ static int xennet_init_queue(struct netf
+ 	setup_timer(&queue->rx_refill_timer, rx_refill_timeout,
+ 		    (unsigned long)queue);
+ 
+-	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
+-		 queue->info->xbdev->nodename, queue->id);
++	devid = strrchr(queue->info->xbdev->nodename, '/') + 1;
++	snprintf(queue->name, sizeof(queue->name), "vif%s-q%u",
++		 devid, queue->id);
+ 
+ 	/* Initialise tx_skbs as a free chain containing every entry. */
+ 	queue->tx_skb_freelist = 0;
 
 
