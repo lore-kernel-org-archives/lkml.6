@@ -2,208 +2,174 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581F1ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A2CECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13B8020C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B8020C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AA9720C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:20:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA9720C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732304AbeIXSVY (ORCPT
+        id S1732298AbeIXSSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:21:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36151 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731934AbeIXSVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:21:23 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9008E20970; Mon, 24 Sep 2018 14:19:29 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 582E2208DC;
-        Mon, 24 Sep 2018 14:19:19 +0200 (CEST)
-Date:   Mon, 24 Sep 2018 14:19:20 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH 02/10] phy: Add configuration interface
-Message-ID: <20180924121920.kv4e4qkorvexmyj7@flea>
-References: <a739a2d623c3e60373a73e1ec206c2aa35c4a742.1536138624.git-series.maxime.ripard@bootlin.com>
- <1ed01c1f-76d5-fa96-572b-9bfd269ad11b@ti.com>
- <20180906145622.kwxvkcuerbeqsj6b@flea>
- <1a169fad-72b7-fac0-1254-cac5d8304740@ti.com>
- <20180912084242.skxbwbgluakakyg6@flea>
- <e0d7db11-7ec1-cb98-4e62-12d78d1ba65b@ti.com>
- <20180919121436.ztjnxofe66quddeq@flea>
- <93088385-126b-6bfb-70e4-16f7b949d299@ti.com>
- <20180924095435.77hh7lrpq7wkss2o@flea>
- <b5ebd9a5-f43b-728b-1d7f-0f7b08021f39@ti.com>
+        Mon, 24 Sep 2018 14:18:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55840 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731493AbeIXSSn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:18:43 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6637310AB;
+        Mon, 24 Sep 2018 12:16:52 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, George Cherian <george.cherian@cavium.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.14 081/173] ipmi: Fix I2C client removal in the SSIF driver
+Date:   Mon, 24 Sep 2018 13:51:55 +0200
+Message-Id: <20180924113122.007094534@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
+References: <20180924113114.334025954@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="trjigjmmd2pyq2b4"
-Content-Disposition: inline
-In-Reply-To: <b5ebd9a5-f43b-728b-1d7f-0f7b08021f39@ti.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
---trjigjmmd2pyq2b4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-Hi!
+From: Corey Minyard <cminyard@mvista.com>
 
-(stripping the mail a bit)
+commit 0745dde62835be7e2afe62fcdb482fcad79cb743 upstream.
 
-On Mon, Sep 24, 2018 at 05:25:26PM +0530, Kishon Vijay Abraham I wrote:
-> >>>>> This integration will prevent us to use some clock rates on the fir=
-st
-> >>>>> SoC, while the second one would be totally fine with it.
-> >>>>
-> >>>> If there's a clock that is fed to the PHY from the consumer, then th=
-e consumer
-> >>>> driver should model a clock provider and the PHY can get a reference=
- to it
-> >>>> using clk_get(). Rockchip and Arasan eMMC PHYs has already used some=
-thing like
-> >>>> that.
-> >>>
-> >>> That would be doable, but no current driver has had this in their
-> >>> binding. So that would prevent any further rework, and make that whole
-> >>> series moot. And while I could live without the Allwinner part, the
-> >>> Cadence one is really needed.
-> >>
-> >> We could add a binding and modify the driver to to register a clock pr=
-ovider.
-> >> That could be included in this series itself.
-> >=20
-> > That wouldn't work for device whose bindings need to remain backward
-> > compatible. And the Allwinner part at least is in that case.
->=20
-> Er..
->=20
-> > I think we should aim at making it a norm for newer bindings, but we
-> > still have to support the old ones that cannot be changed.
->=20
-> There are drivers which support both the old and new bindings. Allwinner =
-could
-> be in that category.
+The SSIF driver was removing any client that came in through the
+platform interface, but it should only remove clients that it
+added.  On a failure in the probe function, this could result
+in the following oops when the driver is removed and the
+client gets unregistered twice:
 
-Yes, definitely. However, in order to support the old binding, we'd
-still need to have a way to give the clock rates to the phy when we
-don't have that clock provider. So I don't really see how we could
-remove those fields, even if we start introducing new bindings.
+ CPU: 107 PID: 30266 Comm: rmmod Not tainted 4.18.0+ #80
+ Hardware name: Cavium Inc. Saber/Saber, BIOS Cavium reference firmware version 7.0 08/04/2018
+ pstate: 60400009 (nZCv daif +PAN -UAO)
+ pc : kernfs_find_ns+0x28/0x120
+ lr : kernfs_find_and_get_ns+0x40/0x60
+ sp : ffff00002310fb50
+ x29: ffff00002310fb50 x28: ffff800a8240f800
+ x27: 0000000000000000 x26: 0000000000000000
+ x25: 0000000056000000 x24: ffff000009073000
+ x23: ffff000008998b38 x22: 0000000000000000
+ x21: ffff800ed86de820 x20: 0000000000000000
+ x19: ffff00000913a1d8 x18: 0000000000000000
+ x17: 0000000000000000 x16: 0000000000000000
+ x15: 0000000000000000 x14: 5300737265766972
+ x13: 643d4d4554535953 x12: 0000000000000030
+ x11: 0000000000000030 x10: 0101010101010101
+ x9 : ffff800ea06cc3f9 x8 : 0000000000000000
+ x7 : 0000000000000141 x6 : ffff000009073000
+ x5 : ffff800adb706b00 x4 : 0000000000000000
+ x3 : 00000000ffffffff x2 : 0000000000000000
+ x1 : ffff000008998b38 x0 : ffff000008356760
+ Process rmmod (pid: 30266, stack limit = 0x00000000e218418d)
+ Call trace:
+  kernfs_find_ns+0x28/0x120
+  kernfs_find_and_get_ns+0x40/0x60
+  sysfs_unmerge_group+0x2c/0x6c
+  dpm_sysfs_remove+0x34/0x70
+  device_del+0x58/0x30c
+  device_unregister+0x30/0x7c
+  i2c_unregister_device+0x84/0x90 [i2c_core]
+  ssif_platform_remove+0x38/0x98 [ipmi_ssif]
+  platform_drv_remove+0x2c/0x6c
+  device_release_driver_internal+0x168/0x1f8
+  driver_detach+0x50/0xbc
+  bus_remove_driver+0x74/0xe8
+  driver_unregister+0x34/0x5c
+  platform_driver_unregister+0x20/0x2c
+  cleanup_ipmi_ssif+0x50/0xd82c [ipmi_ssif]
+  __arm64_sys_delete_module+0x1b4/0x220
+  el0_svc_handler+0x104/0x160
+  el0_svc+0x8/0xc
+ Code: aa1e03e0 aa0203f6 aa0103f7 d503201f (7940e280)
+ ---[ end trace 09f0e34cce8e2d8c ]---
+ Kernel panic - not syncing: Fatal exception
+ SMP: stopping secondary CPUs
+ Kernel Offset: disabled
+ CPU features: 0x23800c38
 
-> >>> So the timings expressed in the structure are the set of all the ones
-> >>> currently used in the tree by DSI and CSI drivers. I would consider
-> >>> that a good proof that it would be useful.
-> >>
-> >> The problem I see here is each platform (PHY) will have it's own set of
-> >> parameters and we have to keep adding members to phy_configure_opts wh=
-ich is
-> >> not scalable. We should try to find a correlation between generic PHY =
-modes and
-> >> these parameters (at-least for a subset).
-> >=20
-> > I definitely understand you skepticism towards someone coming in and
-> > dropping such a big list of obscure parameters :)
->=20
-> That's part of my concern. The other concern is consumer driver having to=
- know
-> so much internal details of the PHY. None of the other consumers (PCIe, U=
-SB,
-> etc) had to know so much internals of the PHY.
+So track the clients that the SSIF driver adds and only remove
+those.
 
-I guess that's true to some extent, but it also feels a bit like a
-self-realizing prophecy. The phy framework also didn't provide any way
-to change the phy configuration based on some runtime values up until
-now, and we have a good example with the MIPI-DSI and MIPI-CSI drivers
-that given the constructs used in these drivers, if the phy framework
-had allowed it, they would have used it.
+Reported-by: George Cherian <george.cherian@cavium.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Tested-by: George Cherian <george.cherian@cavium.com>
+Cc: <stable@vger.kernel.org> # 4.14.x
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Also, speaking of USB, we've had some configuration that was done in
-some private functions exported by the phy drivers themselves. So
-there is a use case for such an interface even for other, less
-configurable, phy types.
+---
+ drivers/char/ipmi/ipmi_ssif.c |   19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-I even planned for that, since the phy_validate and phy_configure
-functions are passed an union, in order to make it extensible to other
-phy types easily.
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -184,6 +184,8 @@ struct ssif_addr_info {
+ 	struct device *dev;
+ 	struct i2c_client *client;
+ 
++	struct i2c_client *added_client;
++
+ 	struct mutex clients_mutex;
+ 	struct list_head clients;
+ 
+@@ -1710,15 +1712,7 @@ static int ssif_probe(struct i2c_client
+ 
+  out:
+ 	if (rv) {
+-		/*
+-		 * Note that if addr_info->client is assigned, we
+-		 * leave it.  The i2c client hangs around even if we
+-		 * return a failure here, and the failure here is not
+-		 * propagated back to the i2c code.  This seems to be
+-		 * design intent, strange as it may be.  But if we
+-		 * don't leave it, ssif_platform_remove will not remove
+-		 * the client like it should.
+-		 */
++		addr_info->client = NULL;
+ 		dev_err(&client->dev, "Unable to start IPMI SSIF: %d\n", rv);
+ 		kfree(ssif_info);
+ 	}
+@@ -1737,7 +1731,8 @@ static int ssif_adapter_handler(struct d
+ 	if (adev->type != &i2c_adapter_type)
+ 		return 0;
+ 
+-	i2c_new_device(to_i2c_adapter(adev), &addr_info->binfo);
++	addr_info->added_client = i2c_new_device(to_i2c_adapter(adev),
++						 &addr_info->binfo);
+ 
+ 	if (!addr_info->adapter_name)
+ 		return 1; /* Only try the first I2C adapter by default. */
+@@ -2018,8 +2013,8 @@ static int ssif_platform_remove(struct p
+ 		return 0;
+ 
+ 	mutex_lock(&ssif_infos_mutex);
+-	if (addr_info->client)
+-		i2c_unregister_device(addr_info->client);
++	if (addr_info->added_client)
++		i2c_unregister_device(addr_info->added_client);
+ 
+ 	list_del(&addr_info->link);
+ 	kfree(addr_info);
 
-I guess that both the fact that the configuration is simpler for the
-phy types supported so far, and that the phy and its consumer are very
-integrated, didn't make it necessary to have such an interface so
-far. But with MIPI-DPHY, we have both a quite extensive configuration
-to make, and the phys and their consumers seem to be a bit more
-loosely integrated. HDMI phys seem to be in pretty much the same case
-too.
 
-> > However, those values are actually the whole list of parameters
-> > defined by the MIPI-DPHY standard, so I really don't expect drivers to
-> > need more than that. As you can see, most drivers allow less
-> > parameters to be configured, but all of them are defined within those
-> > parameters. So I'm not sure we need to worry about an ever-expanding
-> > list of parameters: we have a limited set of parameters defined, and
-> > from an authoritative source, so we can also push back if someone
-> > wants to add a parameter that is implementation specific.
->=20
-> Your commit log mentioned there are a few parameters in addition to what =
-is
-> specified in the MIPI D-PHY spec :-/
->=20
-> "The parameters added here are the one defined in the MIPI D-PHY spec, pl=
-us
-> some parameters that were used by a number of PHY drivers currently found
-> in the linux kernel."
-
-I should have phrased that better then, sorry. The only additions that
-were made were the lanes number (that we agreed to remove), the high
-speed and low power clock rates, and the video timings.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---trjigjmmd2pyq2b4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluo1kcACgkQ0rTAlCFN
-r3QSkg//QvNcniiBPADCYWrwY43VcAb3kkap7cIUjC+t8Qdgd36eHBiyQxWIQQUY
-nAWa0SG/S7UjWIKzzCNpEfoiqg4zEAKnY8k0pbmLkuI3xPZxGvVKMBNsnAPwgXp1
-4qAO23AXFoujj426xIq++4pP3iyntw3InG2Xc+nb9a1HrF8X7UdzRQI0lBwshjgK
-mRxLRCaDvCIysFkEgiyGqDciKyu97pSk2XMFtxsoZENLB+0ib+2GGHJJa2Ev/Flu
-nx6xzHaH9Xk2HMj17/7OcDtxhJ/2UW14et2B5nLQy+yMcIod83SJJ1uPeF740fO6
-vZWdfEo3tVe6msBsv/j2m7UqJoacYTHexTOKveqxiO9vNb3iZ9gZXErql88+krZ8
-jjW7jfdrtvGhVwCQFhFvxXbOgvc0yyzx80EP9oP4OuJw2Fqc5tLtXQZmqj27+Rly
-HWBTdN76NIIOviXuCUjcWv/VBosEh3FuxBIR0BvlzrwP0TZ7ybVyoYFlPlOFa6hr
-BKBZYBnQ8hxceiUPERsVvGIWfka0lpDl2slWbNK6UWtnZQbPrQIeVUdWIws8ePYD
-PvthSZRUtnRdF9I3Uopf01KGZWFu7STIDtoVcHdmgH9pfi4U3qxf90IgdROzdm/Z
-aSwgrMjhlHObo+nAzPTJ65dH8XWG0RM0PMNnNnsnz8u3sOmdY8M=
-=5xwp
------END PGP SIGNATURE-----
-
---trjigjmmd2pyq2b4--
