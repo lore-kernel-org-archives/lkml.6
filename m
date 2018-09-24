@@ -3,114 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91679C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64481ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E352083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E352083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 28EDF2087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:37:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28EDF2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730877AbeIXVjR (ORCPT
+        id S1730936AbeIXVj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:39:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43706 "EHLO mx1.redhat.com"
+        Mon, 24 Sep 2018 17:39:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44671 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbeIXVjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:39:16 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51FBD30001DE;
-        Mon, 24 Sep 2018 15:36:32 +0000 (UTC)
-Received: from llong.com (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3723F106A7AD;
-        Mon, 24 Sep 2018 15:36:28 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v3] clocksource: Warn if too many missing ticks are detected
-Date:   Mon, 24 Sep 2018 11:36:15 -0400
-Message-Id: <1537803375-31667-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 24 Sep 2018 15:36:32 +0000 (UTC)
+        id S1727770AbeIXVj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:39:57 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4A28B20725; Mon, 24 Sep 2018 17:37:10 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F28CE204AE;
+        Mon, 24 Sep 2018 17:37:09 +0200 (CEST)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, yelena@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net] net: mvneta: fix the remaining Rx descriptor unmapping issues
+References: <20180924145613.27307-1-antoine.tenart@bootlin.com>
+Date:   Mon, 24 Sep 2018 17:37:10 +0200
+In-Reply-To: <20180924145613.27307-1-antoine.tenart@bootlin.com> (Antoine
+        Tenart's message of "Mon, 24 Sep 2018 16:56:13 +0200")
+Message-ID: <874leegb4p.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clocksource watchdog, when running, is scheduled on all the CPUs in
-the system sequentially on a round-robin fashion with a period of 0.5s.
-A bug in the 4.18 kernel is causing missing ticks when nohz_full
-is specified. Under some circumstances, this causes the watchdog to
-incorrectly state that the TSC is unstable because of counter overflow
-in the hpet watchdog clock source after a few minutes delay.
-
-That particular bug is fixed by the 4.19 commit 7059b36636beab ("sched:
-idle: Avoid retaining the tick when it has been stopped"). To make it
-easier to catch this kind of bug in the future, a check is added to see
-if there is too much delay in the invocation of the watchdog callback
-and print a warning once if it happens.
-
-v3: Do the check only when SYSTEM_RUNNING & print the delay as well.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/time/clocksource.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 0e6e97a..e5d2e38 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -208,11 +208,40 @@ static void clocksource_watchdog(struct timer_list *unused)
- 	u64 csnow, wdnow, cslast, wdlast, delta;
- 	int64_t wd_nsec, cs_nsec;
- 	int next_cpu, reset_pending;
-+	static bool prev_running; /* Set if previously in SYSTEM_RUNNING */
+Hi Antoine,
  
- 	spin_lock(&watchdog_lock);
- 	if (!watchdog_running)
- 		goto out;
- 
-+	/*
-+	 * When the timer tick is incorrectly stopped on a CPU with
-+	 * pending events, for example, it is possible that the
-+	 * clocksource watchdog will stop running for a sufficiently
-+	 * long enough time to cause overflow in the delta computation
-+	 * leading to incorrect report of unstable clock source.
-+	 * So print a warning if there is unusually large delay (> 0.5s)
-+	 * in the invocation of the watchdog. That can indicate a hidden
-+	 * bug in the timer tick code.
-+	 *
-+	 * This check is performed only when the system is previously
-+	 * running in the SYSTEM_RUNNING state as large delay may happen
-+	 * when running in other states, especially when self-tests are
-+	 * being run. If the watchdog was previously in the running state,
-+	 * that will make sure that the current timer expiry happened in
-+	 * that state too.
-+	 */
-+	if (prev_running) {
-+		unsigned long delay = jiffies - watchdog_timer.expires;
-+
-+		if (delay > WATCHDOG_INTERVAL) {
-+			pr_warn("watchdog delayed by %ld ticks!\n", delay);
-+			WARN_ON_ONCE(1);
-+		}
-+	} else if (system_state == SYSTEM_RUNNING) {
-+		prev_running = true;
-+	}
-+
- 	reset_pending = atomic_read(&watchdog_reset_pending);
- 
- 	list_for_each_entry(cs, &watchdog_list, wd_list) {
+ On lun., sept. 24 2018, Antoine Tenart <antoine.tenart@bootlin.com> wrote:
+
+> With CONFIG_DMA_API_DEBUG enabled we get DMA unmapping warning in
+> various places of the mvneta driver, for example when putting down an
+> interface while traffic is passing through.
+>
+> The issue is when using s/w buffer management, the Rx buffers are mapped
+> using dma_map_page but unmapped with dma_unmap_single. This patch fixes
+> this by using the right unmapping function.
+>
+> Fixes: 562e2f467e71 ("net: mvneta: Improve the buffer allocation method for SWBM")
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+
+Given the clarification provided by Yelen, this patch looks good:
+
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+
+Thanks,
+
+Gregory
+
+
+> ---
+>  drivers/net/ethernet/marvell/mvneta.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+> index 2db9708f2e24..b4ed7d394d07 100644
+> --- a/drivers/net/ethernet/marvell/mvneta.c
+> +++ b/drivers/net/ethernet/marvell/mvneta.c
+> @@ -1890,8 +1890,8 @@ static void mvneta_rxq_drop_pkts(struct mvneta_port *pp,
+>  		if (!data || !(rx_desc->buf_phys_addr))
+>  			continue;
+>  
+> -		dma_unmap_single(pp->dev->dev.parent, rx_desc->buf_phys_addr,
+> -				 MVNETA_RX_BUF_SIZE(pp->pkt_size), DMA_FROM_DEVICE);
+> +		dma_unmap_page(pp->dev->dev.parent, rx_desc->buf_phys_addr,
+> +			       PAGE_SIZE, DMA_FROM_DEVICE);
+>  		__free_page(data);
+>  	}
+>  }
+> @@ -2039,9 +2039,8 @@ static int mvneta_rx_swbm(struct napi_struct *napi,
+>  						frag_offset, frag_size,
+>  						PAGE_SIZE);
+>  
+> -				dma_unmap_single(dev->dev.parent, phys_addr,
+> -						 PAGE_SIZE,
+> -						 DMA_FROM_DEVICE);
+> +				dma_unmap_page(dev->dev.parent, phys_addr,
+> +					       PAGE_SIZE, DMA_FROM_DEVICE);
+>  
+>  				rxq->left_size -= frag_size;
+>  			}
+> -- 
+> 2.17.1
+>
+
 -- 
-1.8.3.1
-
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
