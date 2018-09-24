@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBD9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF64C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B498721486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B498721486
+	by mail.kernel.org (Postfix) with ESMTP id 1D6D521486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6D521486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbeIXRlS (ORCPT
+        id S1729286AbeIXRl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:41:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50678 "EHLO
+        Mon, 24 Sep 2018 13:41:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50688 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727494AbeIXRlS (ORCPT
+        with ESMTP id S1727494AbeIXRlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:41:18 -0400
+        Mon, 24 Sep 2018 13:41:25 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4D04106F;
-        Mon, 24 Sep 2018 11:39:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC29A106F;
+        Mon, 24 Sep 2018 11:39:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Machata <petrm@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        "Daniel J. Axtens" <daniel.axtens@canonical.com>,
+        Mauricio Faria de Oliveira <mfo@canonical.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 053/105] net: dcb: For wild-card lookups, use priority -1, not 0
-Date:   Mon, 24 Sep 2018 13:33:39 +0200
-Message-Id: <20180924113119.048430778@linuxfoundation.org>
+Subject: [PATCH 3.18 054/105] partitions/aix: append null character to print data from disk
+Date:   Mon, 24 Sep 2018 13:33:40 +0200
+Message-Id: <20180924113119.120027741@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -53,72 +54,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Machata <petrm@mellanox.com>
+From: Mauricio Faria de Oliveira <mfo@canonical.com>
 
-[ Upstream commit 08193d1a893c802c4b807e4d522865061f4e9f4f ]
+[ Upstream commit d43fdae7bac2def8c4314b5a49822cb7f08a45f1 ]
 
-The function dcb_app_lookup walks the list of specified DCB APP entries,
-looking for one that matches a given criteria: ifindex, selector,
-protocol ID and optionally also priority. The "don't care" value for
-priority is set to 0, because that priority has not been allowed under
-CEE regime, which predates the IEEE standardization.
+Even if properly initialized, the lvname array (i.e., strings)
+is read from disk, and might contain corrupt data (e.g., lack
+the null terminating character for strings).
 
-Under IEEE, 0 is a valid priority number. But because dcb_app_lookup
-considers zero a wild card, attempts to add an APP entry with priority 0
-fail when other entries exist for a given ifindex / selector / PID
-triplet.
+So, make sure the partition name string used in pr_warn() has
+the null terminating character.
 
-Fix by changing the wild-card value to -1.
-
-Signed-off-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6ceea22bbbc8 ("partitions: add aix lvm partition support files")
+Suggested-by: Daniel J. Axtens <daniel.axtens@canonical.com>
+Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dcb/dcbnl.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ block/partitions/aix.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/dcb/dcbnl.c
-+++ b/net/dcb/dcbnl.c
-@@ -1728,7 +1728,7 @@ static struct dcb_app_type *dcb_app_look
- 		if (itr->app.selector == app->selector &&
- 		    itr->app.protocol == app->protocol &&
- 		    itr->ifindex == ifindex &&
--		    (!prio || itr->app.priority == prio))
-+		    ((prio == -1) || itr->app.priority == prio))
- 			return itr;
+--- a/block/partitions/aix.c
++++ b/block/partitions/aix.c
+@@ -281,10 +281,14 @@ int aix_partition(struct parsed_partitio
+ 				next_lp_ix += 1;
+ 		}
+ 		for (i = 0; i < state->limit; i += 1)
+-			if (lvip[i].pps_found && !lvip[i].lv_is_contiguous)
++			if (lvip[i].pps_found && !lvip[i].lv_is_contiguous) {
++				char tmp[sizeof(n[i].name) + 1]; // null char
++
++				snprintf(tmp, sizeof(tmp), "%s", n[i].name);
+ 				pr_warn("partition %s (%u pp's found) is "
+ 					"not contiguous\n",
+-					n[i].name, lvip[i].pps_found);
++					tmp, lvip[i].pps_found);
++			}
+ 		kfree(pvd);
  	}
- 
-@@ -1763,7 +1763,8 @@ u8 dcb_getapp(struct net_device *dev, st
- 	u8 prio = 0;
- 
- 	spin_lock_bh(&dcb_lock);
--	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
-+	itr = dcb_app_lookup(app, dev->ifindex, -1);
-+	if (itr)
- 		prio = itr->app.priority;
- 	spin_unlock_bh(&dcb_lock);
- 
-@@ -1791,7 +1792,8 @@ int dcb_setapp(struct net_device *dev, s
- 
- 	spin_lock_bh(&dcb_lock);
- 	/* Search for existing match and replace */
--	if ((itr = dcb_app_lookup(new, dev->ifindex, 0))) {
-+	itr = dcb_app_lookup(new, dev->ifindex, -1);
-+	if (itr) {
- 		if (new->priority)
- 			itr->app.priority = new->priority;
- 		else {
-@@ -1824,7 +1826,8 @@ u8 dcb_ieee_getapp_mask(struct net_devic
- 	u8 prio = 0;
- 
- 	spin_lock_bh(&dcb_lock);
--	if ((itr = dcb_app_lookup(app, dev->ifindex, 0)))
-+	itr = dcb_app_lookup(app, dev->ifindex, -1);
-+	if (itr)
- 		prio |= 1 << itr->app.priority;
- 	spin_unlock_bh(&dcb_lock);
- 
+ 	kfree(n);
 
 
