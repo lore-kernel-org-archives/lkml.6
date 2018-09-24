@@ -2,124 +2,95 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_QP_LONG_LINE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78719ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20E9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E0742087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30B172087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kv1WvvSz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E0742087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=cesnet.cz header.i=@cesnet.cz header.b="SaiEXStG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B172087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cesnet.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbeIXQD4 (ORCPT
+        id S1728597AbeIXQEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:03:56 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39503 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbeIXQD4 (ORCPT
+        Mon, 24 Sep 2018 12:04:00 -0400
+Received: from office2.cesnet.cz ([195.113.144.244]:56654 "EHLO
+        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbeIXQD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:03:56 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s14-v6so19013484wrw.6;
-        Mon, 24 Sep 2018 03:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MNLFd7QrndQt4PRPqqNDEiABg2LCao1AVXUarCAWJ50=;
-        b=Kv1WvvSz2uiVk5/1N1nvu8+RAC1PTS3YW6qQz8iOSIih/3hk/n3wxkECXYrGUATJ4W
-         /LfBato8Ms5+g3bKmurWi9JkKGbjGX5N1euoggNGbF4VKQPjTDnyU8DCY4p1dB2ZDoqt
-         Rca9u8qE7I1BGzU05H3nW/c+Rdih6yjH0DAFQACmnjO/2btEjXZvhBTpKexe3iSsRapZ
-         M9ISUJtB35SC9MkHl2X09+HAJ105aYq7SjJFUFeEFfjar7ehrjDwo0l+3hihpErT4Gbn
-         WsWUUeam4R1a1/s0rBY/Mts1H3fQP6J9Yw/frUb8vgUtZts3hCzQGsFKO30XKHWptWjf
-         RYbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MNLFd7QrndQt4PRPqqNDEiABg2LCao1AVXUarCAWJ50=;
-        b=rJoOmk7o+pxI7VM0nGBYwTCfijXr2SAjGp3qk/Kw+PIiN+HtQXUrwaBIqxe7M1qGpm
-         9CVZg4jZhDL69jM/TeuY+pd1HLzOu5xesi/j/XMQ7u6dLFC44q+iQmyNepL/WaDjOfVs
-         bPSNbK0KOHI0m/S6efG1QJzuOLTAOx5VSgVIwlzDBdzyy7rWNoe9msrXTCNQ/xZK1oVP
-         bWYwUF7mSIJJljGcN5UTbwtOucHni+f8ELRNj4sumuWVyZbQ6uvrJfyGEcSWyx4lI9y8
-         z6vxi48gLdEOv7jIw7EnXvWwsDSuFO7NNvccrNee0hbZe3I3AZ4980W9J6vrF+AAy+fB
-         2ngA==
-X-Gm-Message-State: ABuFfojvsasUIl92JMRdko/7YL6Cjtnsdzx17R0+XG7KdGB2WxVMHSqm
-        oMh4WPdLKOQuRWFU5Ra8vkA=
-X-Google-Smtp-Source: ACcGV63fmR9DJc7KIrefErIgNP/xcI0lvalYd3JVbSOhWSprVfP2u+zX77am6JlmKNLmgaMnfWBWiQ==
-X-Received: by 2002:a5d:6b01:: with SMTP id v1-v6mr7728844wrw.208.1537783358515;
-        Mon, 24 Sep 2018 03:02:38 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm32709976wrw.32.2018.09.24.03.02.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 03:02:37 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 12:02:36 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/20] iommu/tegra: gart: Remove pr_fmt and clean up
- includes
-Message-ID: <20180924100236.GC21032@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-2-digetx@gmail.com>
+        Mon, 24 Sep 2018 12:03:59 -0400
+Received: from localhost (ip-78-45-154-186.net.upcbroadband.cz [78.45.154.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by office2.cesnet.cz (Postfix) with ESMTPSA id 27531400074;
+        Mon, 24 Sep 2018 12:02:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+        s=office2; t=1537783361;
+        bh=phMCcRPhiu73eSp4pl4+2N/29MiXHy/zMlDbpY55Hb4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=SaiEXStGVPH3r133hecm1RVve7Lurl+QXRLDZBXhxgT6iZXz1UH7ugTGa3fmDP6P5
+         qD4RQIXRkZh0wYBeGzXC7JlTWNKrA6IyCDCnppppswx57kL15hZ2RD+zYTFXUf7ygs
+         XE3UDec5tG6oHnS8eoWdWbXu/ftlxw4e80Ye+DC8=
+From:   =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Baruch Siach <baruch@tkos.co.il>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since =?iso-8859-1?Q?"PCI:_mvebu:_Only_remap_I/O_space_if_configured"?=
+Date:   Mon, 24 Sep 2018 12:02:33 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="/e2eDi0V/xtL+Mc8"
-Content-Disposition: inline
-In-Reply-To: <20180924004153.8232-2-digetx@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <a3da76eb-7d17-40ba-a98d-c4a743240785@cesnet.cz>
+In-Reply-To: <20180913104241.65db8243@windsurf>
+References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
+ <87zhwm4kl6.fsf@tkos.co.il> <20180912231050.GX30658@n2100.armlinux.org.uk>
+ <20180913094515.351967bb@windsurf>
+ <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
+ <20180913104241.65db8243@windsurf>
+Organization: CESNET
+User-Agent: Trojita/v0.7-361-gfee56b6f-dirty; Qt/5.11.0; xcb; Linux; Gentoo Base System release 2.4.1
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>>> What about something like the below. I tested it, including the error
+>>> case by forcing an -EPROBE_DEFER. The new pci_unmap_io() is modeled
+>>> after pci_unmap_iospace(). Actually, I would prefer to use
+>>> pci_remap_iospace() and pci_unmap_iospace() but for now this API
+>>> doesn't allow overloading the memory type used for the mapping. =20
+>>=20
+>> Thanks for providing this fix so quickly, Thomas. I can confirm that this=20=
 
---/e2eDi0V/xtL+Mc8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> patch -- tested on top of=20
+>> 54eda9df17f3215b9ed16629ee71ea07413efdaf ("Merge=20
+>> tag 'pci-v4.19-fixes-1' of=20
+>> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci").=20
+>> Disclaimer: I=20
+>> have zero familiarity with Linux' PCI code.
+>>=20
+>> Tested-by: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
+>
+> Thanks for the testing. I'll wait for Russell to say if he is happy
+> (or not) with the addition of pci_unmap_io() in the ARM code, if that's
+> the case, I'll send a proper patch to fix the issue.
 
-On Mon, Sep 24, 2018 at 03:41:34AM +0300, Dmitry Osipenko wrote:
-> Remove unneeded headers inclusion and sort the headers in alphabet order.
-> Remove pr_fmt macro since there is no pr_*() in the code and it doesn't
-> affect dev_*() functions.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/iommu/tegra-gart.c | 17 +++++------------
->  1 file changed, 5 insertions(+), 12 deletions(-)
+Hi Thomas, Russell,
+is there a proper patch for this? I've just verified that 4.19-rc5 won't=20
+boot for me either. Thomas' quick patch applies and makes the problem go=20
+away.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---/e2eDi0V/xtL+Mc8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluotjwACgkQ3SOs138+
-s6EJNQ/8C8OQQcJoWQDwGESE4ytOjiWHDNPhc0XsQEuG8u4DM5HYVyvVz/6JJueu
-c4ULiv94xRlnFCUmMfRwx0KhShIcMtXOhYqsFKSfE8Fx8KANrJ9yN+MSVankOXa7
-eHZKoa5YWrjdxO8zD0pCLh+GOE+3LCaiPfmdX+Rscx2istC7kVYD1FFqm1G8wyIs
-seLgXm6kNU84PP/uAMYb0PqYJ49IT9TuZDoRZXeX8qaGBd7argRj8iDuZeQ9E0uQ
-xyUTSh2Ap1WTDBQRiliUN/8G2ASQW/cmCfWACqxjk65t7eiEa6hSuGusLmpQm5t3
-YWx7NdbbVD7QwJolk7wgaDZmzYhGtRjV+hHH1YnhrJ6mXXuInGvP45iCbCe8M1m1
-XVcXpdf6PxX/QC1rep9NQl0rJ7as2RHlUrVlvb6JH3zCrPDNBeIITP6sG2gI6RYJ
-f0Di5EcY2NwzJN7UOseUyM2dtcoqZF7308XB20XN2M+GRlPQ55MP2ihHgeU29AX0
-wv4/uR8AVHAJxfRg5gm7cLZoGBiAD/YrcmJDjdwwAZBR7/3vmHCWy1irwmIBFCTZ
-K46owmn08oWOST++7DTGQUpvtNLrU2F55Mwo+4noOgslxG9WD7QoV/EEUfZAVaRL
-UHZ1IkoHHVRaXQgDHosZo+vakiWd5Vc5Vj2GukC+fnJK1+IdAdE=
-=6xDZ
------END PGP SIGNATURE-----
-
---/e2eDi0V/xtL+Mc8--
+With kind regards,
+Jan
