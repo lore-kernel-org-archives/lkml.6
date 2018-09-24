@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E036ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55A1ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C3E21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C3E21486
+	by mail.kernel.org (Postfix) with ESMTP id 7BB9921486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB9921486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733002AbeIXS1i (ORCPT
+        id S1733010AbeIXS1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:27:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57010 "EHLO
+        Mon, 24 Sep 2018 14:27:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57024 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730683AbeIXS1h (ORCPT
+        with ESMTP id S1730683AbeIXS1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:27:37 -0400
+        Mon, 24 Sep 2018 14:27:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63AF0108B;
-        Mon, 24 Sep 2018 12:25:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17E9F108B;
+        Mon, 24 Sep 2018 12:25:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zubin Mithra <zsm@chromium.org>
-Subject: [PATCH 4.14 166/173] net/ipv6: prevent use after free in ip6_route_mpath_notify
-Date:   Mon, 24 Sep 2018 13:53:20 +0200
-Message-Id: <20180924113127.224183751@linuxfoundation.org>
+        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.14 167/173] e1000e: Remove Other from EIAC
+Date:   Mon, 24 Sep 2018 13:53:21 +0200
+Message-Id: <20180924113127.289044233@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,110 +53,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Benjamin Poirier <bpoirier@suse.com>
 
-commit f7225172f25aaf0dfd9ad65f05be8da5d6108b12 upstream.
+commit 745d0bd3af99ccc8c5f5822f808cd133eadad6ac upstream.
 
-syzbot reported a use-after-free:
+It was reported that emulated e1000e devices in vmware esxi 6.5 Build
+7526125 do not link up after commit 4aea7a5c5e94 ("e1000e: Avoid receiver
+overrun interrupt bursts", v4.15-rc1). Some tracing shows that after
+e1000e_trigger_lsc() is called, ICR reads out as 0x0 in e1000_msix_other()
+on emulated e1000e devices. In comparison, on real e1000e 82574 hardware,
+icr=0x80000004 (_INT_ASSERTED | _LSC) in the same situation.
 
-BUG: KASAN: use-after-free in ip6_route_mpath_notify+0xe9/0x100 net/ipv6/route.c:4180
-Read of size 4 at addr ffff8801bf789cf0 by task syz-executor756/4555
+Some experimentation showed that this flaw in vmware e1000e emulation can
+be worked around by not setting Other in EIAC. This is how it was before
+16ecba59bc33 ("e1000e: Do not read ICR in Other interrupt", v4.5-rc1).
 
-CPU: 1 PID: 4555 Comm: syz-executor756 Not tainted 4.17.0-rc7+ #78
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1b9/0x294 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
- __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
- ip6_route_mpath_notify+0xe9/0x100 net/ipv6/route.c:4180
- ip6_route_multipath_add+0x615/0x1910 net/ipv6/route.c:4303
- inet6_rtm_newroute+0xe3/0x160 net/ipv6/route.c:4391
- ...
-
-Allocated by task 4555:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
- dst_alloc+0xbb/0x1d0 net/core/dst.c:104
- __ip6_dst_alloc+0x35/0xa0 net/ipv6/route.c:361
- ip6_dst_alloc+0x29/0xb0 net/ipv6/route.c:376
- ip6_route_info_create+0x4d4/0x3a30 net/ipv6/route.c:2834
- ip6_route_multipath_add+0xc7e/0x1910 net/ipv6/route.c:4240
- inet6_rtm_newroute+0xe3/0x160 net/ipv6/route.c:4391
- ...
-
-Freed by task 4555:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
- dst_destroy+0x267/0x3c0 net/core/dst.c:140
- dst_release_immediate+0x71/0x9e net/core/dst.c:205
- fib6_add+0xa40/0x1650 net/ipv6/ip6_fib.c:1305
- __ip6_ins_rt+0x6c/0x90 net/ipv6/route.c:1011
- ip6_route_multipath_add+0x513/0x1910 net/ipv6/route.c:4267
- inet6_rtm_newroute+0xe3/0x160 net/ipv6/route.c:4391
- ...
-
-The problem is that rt_last can point to a deleted route if the insert
-fails.
-
-One reproducer is to insert a route and then add a multipath route that
-has a duplicate nexthop.e.g,:
-    $ ip -6 ro add vrf red 2001:db8:101::/64 nexthop via 2001:db8:1::2
-    $ ip -6 ro append vrf red 2001:db8:101::/64 nexthop via 2001:db8:1::4 nexthop via 2001:db8:1::2
-
-Fix by not setting rt_last until the it is verified the insert succeeded.
-
-Backport Note:
-- Upstream has replaced rt6_info usage with fib6_info in 8d1c802b281
-("net/ipv6: Flip FIB entries to fib6_info")
-- fib6_info_release was introduced upstream in 93531c674315
-("net/ipv6: separate handling of FIB entries from dst based routes"),
-but is not present in stable kernels; 4.14.y relies on dst_release/
-ip6_rt_put/dst_release_immediate.
-
-Fixes: 3b1137fe7482 ("net: ipv6: Change notifications for multipath add to RTA_MULTIPATH")
-Cc: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
+Fixes: 4aea7a5c5e94 ("e1000e: Avoid receiver overrun interrupt bursts")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/route.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -3239,11 +3239,16 @@ static int ip6_route_multipath_add(struc
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -1914,6 +1914,8 @@ static irqreturn_t e1000_msix_other(int
+ 	bool enable = true;
  
- 	err_nh = NULL;
- 	list_for_each_entry(nh, &rt6_nh_list, next) {
--		rt_last = nh->rt6_info;
- 		err = __ip6_ins_rt(nh->rt6_info, info, &nh->mxc, extack);
--		/* save reference to first route for notification */
--		if (!rt_notif && !err)
--			rt_notif = nh->rt6_info;
+ 	icr = er32(ICR);
++	ew32(ICR, E1000_ICR_OTHER);
 +
-+		if (!err) {
-+			/* save reference to last route successfully inserted */
-+			rt_last = nh->rt6_info;
-+
-+			/* save reference to first route for notification */
-+			if (!rt_notif)
-+				rt_notif = nh->rt6_info;
-+		}
+ 	if (icr & E1000_ICR_RXO) {
+ 		ew32(ICR, E1000_ICR_RXO);
+ 		enable = false;
+@@ -2036,7 +2038,6 @@ static void e1000_configure_msix(struct
+ 		       hw->hw_addr + E1000_EITR_82574(vector));
+ 	else
+ 		writel(1, hw->hw_addr + E1000_EITR_82574(vector));
+-	adapter->eiac_mask |= E1000_IMS_OTHER;
  
- 		/* nh->rt6_info is used or freed at this point, reset to NULL*/
- 		nh->rt6_info = NULL;
+ 	/* Cause Tx interrupts on every write back */
+ 	ivar |= BIT(31);
+@@ -2261,7 +2262,7 @@ static void e1000_irq_enable(struct e100
+ 
+ 	if (adapter->msix_entries) {
+ 		ew32(EIAC_82574, adapter->eiac_mask & E1000_EIAC_MASK_82574);
+-		ew32(IMS, adapter->eiac_mask | E1000_IMS_LSC);
++		ew32(IMS, adapter->eiac_mask | E1000_IMS_OTHER | E1000_IMS_LSC);
+ 	} else if (hw->mac.type >= e1000_pch_lpt) {
+ 		ew32(IMS, IMS_ENABLE_MASK | E1000_IMS_ECCER);
+ 	} else {
 
 
