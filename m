@@ -2,120 +2,198 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB90ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A830ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B47752087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47752087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 023CD2087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023CD2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731134AbeIXWeP (ORCPT
+        id S1730564AbeIXWjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:34:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60990 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726400AbeIXWeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:34:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E34C9AD66;
-        Mon, 24 Sep 2018 16:31:14 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 16F5D1E3615; Mon, 24 Sep 2018 18:31:14 +0200 (CEST)
-Date:   Mon, 24 Sep 2018 18:31:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Jan Kara <jack@suse.cz>, Ming Lei <ming.lei@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        syzbot 
-        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
-        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v4] block/loop: Serialize ioctl operations.
-Message-ID: <20180924163114.GG28775@quack2.suse.cz>
-References: <1537009136-4839-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1af79300-cb04-36e3-a650-168a5942161f@i-love.sakura.ne.jp>
- <20180923220300.GA12589@ming.t460p>
- <ba535251-c206-6242-3e6d-a4ed825c8114@i-love.sakura.ne.jp>
- <20180924123108.GD28775@quack2.suse.cz>
- <c51b5ce0-befb-5b7f-1aab-588d0f14d7b8@i-love.sakura.ne.jp>
+        Mon, 24 Sep 2018 18:39:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38466 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728137AbeIXWjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 18:39:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46B1680D;
+        Mon, 24 Sep 2018 09:36:23 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 14B013F5BD;
+        Mon, 24 Sep 2018 09:36:21 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 17:36:19 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Jun Yao <yaojun8558363@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/6] arm64/mm: Populate the swapper_pg_dir by fixmap.
+Message-ID: <20180924163619.rx7bae67i5isq2fy@lakrids.cambridge.arm.com>
+References: <20180917044333.30051-1-yaojun8558363@gmail.com>
+ <20180917044333.30051-6-yaojun8558363@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c51b5ce0-befb-5b7f-1aab-588d0f14d7b8@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180917044333.30051-6-yaojun8558363@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 24-09-18 22:05:20, Tetsuo Handa wrote:
-> On 2018/09/24 21:31, Jan Kara wrote:
-> > On Mon 24-09-18 19:29:10, Tetsuo Handa wrote:
-> >> On 2018/09/24 7:03, Ming Lei wrote:
-> >>> On Sat, Sep 22, 2018 at 09:39:02PM +0900, Tetsuo Handa wrote:
-> >>>> Hello, Ming Lei.
-> >>>>
-> >>>> I'd like to hear your comment on this patch regarding the ordering of
-> >>>> stopping kernel thread.
-> >>>>
-> >>>>   > In order to enforce this strategy, this patch inversed
-> >>>>   > loop_reread_partitions() and loop_unprepare_queue() in loop_clr_fd().
-> >>>>   > I don't know whether it breaks something, but I don't have testcases.
-> >>>>
-> >>>> Until 3.19, kthread_stop(lo->lo_thread) was called before
-> >>>> ioctl_by_bdev(bdev, BLKRRPART, 0) is called.
-> >>>> During 4.0 to 4.3, the loop module was using "kloopd" workqueue.
-> >>>> But since 4.4, loop_reread_partitions(lo, bdev) is called before
-> >>>> loop_unprepare_queue(lo) is called. And this patch is trying to change to
-> >>>> call loop_unprepare_queue() before loop_reread_partitions() is called.
-> >>>> Is there some reason we need to preserve current ordering?
-> >>>
-> >>> IMO, both the two orders are fine, and what matters is that 'lo->lo_state'
-> >>> is updated before loop_reread_partitions(), then any IO from loop_reread_partitions
-> >>> will be failed, so it shouldn't be a big deal wrt. the order between
-> >>> loop_reread_partitions() and loop_unprepare_queue().
-> >>
-> >> OK. Thank you. Here is v4 patch (only changelog was updated).
-> >> Andrew, can we test this patch in the -mm tree?
-> >>
-> >> From 2278250ac8c5b912f7eb7af55e36ed40e2f7116b Mon Sep 17 00:00:00 2001
-> >> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> >> Date: Mon, 24 Sep 2018 18:58:37 +0900
-> >> Subject: [PATCH v4] block/loop: Serialize ioctl operations.
-> >>
-> >> syzbot is reporting NULL pointer dereference [1] which is caused by
-> >> race condition between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
-> >> ioctl(other_loop_fd, LOOP_SET_FD, loop_fd) due to traversing other
-> >> loop devices without holding corresponding locks.
-> >>
-> >> syzbot is also reporting circular locking dependency between bdev->bd_mutex
-> >> and lo->lo_ctl_mutex [2] which is caused by calling blkdev_reread_part()
-> >> with lock held.
-> > 
-> > Thanks for looking into the loop crashes Tetsuo. I was looking into the
-> > loop code and trying to understand how your patch fixes them but I've
-> > failed. Can you please elaborate a bit on how exactly LOOP_CLR_FD and
-> > LOOP_SET_FD race to hit NULL pointer dereference? I don't really see the
-> > code traversing other loop devices as you mention in your changelog so I'm
-> > probably missing something. Thanks.
-> > 
+On Mon, Sep 17, 2018 at 12:43:32PM +0800, Jun Yao wrote:
+> Since we will move the swapper_pg_dir to rodata section, we need a
+> way to update it. The fixmap can handle it. When the swapper_pg_dir
+> needs to be updated, we map it dynamically. The map will be
+> canceled after the update is complete. In this way, we can defend
+> against KSMA(Kernel Space Mirror Attack).
 > 
-> That is explained in a discussion for [1] at
-> https://groups.google.com/forum/#!msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ
-> .  In the current code, the location of dangerous traversal is in
-> loop_validate_file().
+> Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
+> ---
+>  arch/arm64/include/asm/pgtable.h | 38 ++++++++++++++++++++++++++------
+>  arch/arm64/mm/mmu.c              | 25 +++++++++++++++++++--
+>  2 files changed, 54 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index b11d6fc62a62..9e643fc2453d 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -429,8 +429,29 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+>  				 PUD_TYPE_TABLE)
+>  #endif
+>  
+> +extern pgd_t init_pg_dir[PTRS_PER_PGD];
+> +extern pgd_t init_pg_end[];
+> +extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+> +extern pgd_t swapper_pg_end[];
+> +extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
+> +extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
+> +
+> +extern void set_swapper_pgd(pgd_t *pgdp, pgd_t pgd);
+> +
+> +static inline bool in_swapper_pgdir(void *addr)
+> +{
+> +	return ((unsigned long)addr & PAGE_MASK) ==
+> +		((unsigned long)swapper_pg_dir & PAGE_MASK);
+> +}
+> +
+>  static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
+>  {
+> +#ifdef __PAGETABLE_PMD_FOLDED
+> +	if (in_swapper_pgdir(pmdp)) {
+> +		set_swapper_pgd((pgd_t *)pmdp, __pgd(pmd_val(pmd)));
+> +		return;
+> +	}
+> +#endif
+>  	WRITE_ONCE(*pmdp, pmd);
+>  
+>  	if (pmd_valid(pmd))
+> @@ -484,6 +505,12 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+>  
+>  static inline void set_pud(pud_t *pudp, pud_t pud)
+>  {
+> +#ifdef __PAGETABLE_PUD_FOLDED
+> +	if (in_swapper_pgdir(pudp)) {
+> +		set_swapper_pgd((pgd_t *)pudp, __pgd(pud_val(pud)));
+> +		return;
+> +	}
+> +#endif
+>  	WRITE_ONCE(*pudp, pud);
+>  
+>  	if (pud_valid(pud))
+> @@ -538,6 +565,10 @@ static inline phys_addr_t pud_page_paddr(pud_t pud)
+>  
+>  static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
+>  {
+> +	if (in_swapper_pgdir(pgdp)) {
+> +		set_swapper_pgd(pgdp, pgd);
+> +		return;
+> +	}
 
-OK, thanks for explanation! I'll send some comments in reply to your patch.
+It's somewhat frustrating that we have to duplicate this logic across
+all of set_p{m,u,g}d(), rather than this living in set_pgd(), passing
+the value up set_pmd() -> set_pud() -> set_pgd().
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I see that the generic no-p{m,u}d headers force this structure, and I
+haven't come up with anything better. :/
+
+>  	WRITE_ONCE(*pgdp, pgd);
+>  	dsb(ishst);
+>  }
+> @@ -718,13 +749,6 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+>  }
+>  #endif
+>  
+> -extern pgd_t init_pg_dir[PTRS_PER_PGD];
+> -extern pgd_t init_pg_end[];
+> -extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+> -extern pgd_t swapper_pg_end[];
+> -extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
+> -extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
+> -
+>  /*
+>   * Encode and decode a swap entry:
+>   *	bits 0-1:	present (must be zero)
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 71532bcd76c1..a8a60927f716 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -67,6 +67,24 @@ static pte_t bm_pte[PTRS_PER_PTE] __page_aligned_bss;
+>  static pmd_t bm_pmd[PTRS_PER_PMD] __page_aligned_bss __maybe_unused;
+>  static pud_t bm_pud[PTRS_PER_PUD] __page_aligned_bss __maybe_unused;
+>  
+> +static DEFINE_SPINLOCK(swapper_pgdir_lock);
+> +
+> +void set_swapper_pgd(pgd_t *pgdp, pgd_t pgd)
+> +{
+> +	pgd_t *fixmap_pgdp;
+> +
+> +	spin_lock(&swapper_pgdir_lock);
+> +	fixmap_pgdp = pgd_set_fixmap(__pa(pgdp));
+> +	WRITE_ONCE(*fixmap_pgdp, pgd);
+> +	/*
+> +	 * We need dsb(ishst) here to ensure the page-table-walker sees
+> +	 * our new entry before set_p?d() returns. The fixmap's
+> +	 * flush_tlb_kernel_range() via clear_fixmap() does this for us.
+> +	 */
+> +	pgd_clear_fixmap();
+> +	spin_unlock(&swapper_pgdir_lock);
+> +}
+
+I'm rather worried that we could deadlock here.
+
+Are we certain we never poke the kernel page tables in IRQ context?
+
+Otherwise, this looks fine to me.
+
+Thanks,
+Mark.
+
+> +
+>  pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+>  			      unsigned long size, pgprot_t vma_prot)
+>  {
+> @@ -629,8 +647,11 @@ static void __init map_kernel(pgd_t *pgdp)
+>   */
+>  void __init paging_init(void)
+>  {
+> -	map_kernel(swapper_pg_dir);
+> -	map_mem(swapper_pg_dir);
+> +	pgd_t *pgdp = pgd_set_fixmap(__pa_symbol(swapper_pg_dir));
+> +
+> +	map_kernel(pgdp);
+> +	map_mem(pgdp);
+> +	pgd_clear_fixmap();
+>  	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+>  	init_mm.pgd = swapper_pg_dir;
+>  }
+> -- 
+> 2.17.1
+> 
