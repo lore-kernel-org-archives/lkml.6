@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374ABECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D8AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2252208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2252208D9
+	by mail.kernel.org (Postfix) with ESMTP id DF27C208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF27C208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732081AbeIXSRV (ORCPT
+        id S1732093AbeIXSRY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55570 "EHLO
+        Mon, 24 Sep 2018 14:17:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55584 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSRU (ORCPT
+        with ESMTP id S1730150AbeIXSRX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:20 -0400
+        Mon, 24 Sep 2018 14:17:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 56DE710A5;
-        Mon, 24 Sep 2018 12:15:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B2F310AA;
+        Mon, 24 Sep 2018 12:15:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 021/173] clk: imx6ul: fix missing of_node_put()
-Date:   Mon, 24 Sep 2018 13:50:55 +0200
-Message-Id: <20180924113117.032565324@linuxfoundation.org>
+Subject: [PATCH 4.14 022/173] clk: core: Potentially free connection id
+Date:   Mon, 24 Sep 2018 13:50:56 +0200
+Message-Id: <20180924113117.169915851@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,32 +53,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-[ Upstream commit 11177e7a7aaef95935592072985526ebf0a3df43 ]
+[ Upstream commit 365f7a89c881e84f1ebc925f65f899d5d7ce547e ]
 
-of_find_compatible_node() is returning a device node with refcount
-incremented and must be explicitly decremented after the last use
-which is right after the us in of_iomap() here.
+Patch "clk: core: Copy connection id" made it so that the connector id
+'con_id' is kstrdup_const()ed to cater to drivers that pass non-constant
+connection ids. The patch added the corresponding kfree_const to
+__clk_free_clk(), but struct clk's can be freed also via __clk_put().
+Add the kfree_const call to __clk_put() and add comments to both
+functions to remind that the logic in them should be kept in sync.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
+Fixes: 253160a8ad06 ("clk: core: Copy connection id")
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/imx/clk-imx6ul.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -135,6 +135,7 @@ static void __init imx6ul_clocks_init(st
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2557,6 +2557,7 @@ struct clk *__clk_create_clk(struct clk_
+ 	return clk;
+ }
  
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-anatop");
- 	base = of_iomap(np, 0);
-+	of_node_put(np);
- 	WARN_ON(!base);
++/* keep in sync with __clk_put */
+ void __clk_free_clk(struct clk *clk)
+ {
+ 	clk_prepare_lock();
+@@ -2922,6 +2923,7 @@ int __clk_get(struct clk *clk)
+ 	return 1;
+ }
  
- 	clks[IMX6UL_PLL1_BYPASS_SRC] = imx_clk_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
++/* keep in sync with __clk_free_clk */
+ void __clk_put(struct clk *clk)
+ {
+ 	struct module *owner;
+@@ -2943,6 +2945,7 @@ void __clk_put(struct clk *clk)
+ 
+ 	module_put(owner);
+ 
++	kfree_const(clk->con_id);
+ 	kfree(clk);
+ }
+ 
 
 
