@@ -2,103 +2,205 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5A9C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B82C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D8E2204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:51:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8E2204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9617520685
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:52:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9617520685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387543AbeIXSaX (ORCPT
+        id S1730097AbeIXSyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:30:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57452 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730974AbeIXSaW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:30:22 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BFA11018;
-        Mon, 24 Sep 2018 12:28:28 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 032/235] clk: core: Potentially free connection id
-Date:   Mon, 24 Sep 2018 13:50:18 +0200
-Message-Id: <20180924113108.106343137@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
-References: <20180924113103.999624566@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 14:54:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:34972 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728448AbeIXSyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:54:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48B7C18A;
+        Mon, 24 Sep 2018 05:52:50 -0700 (PDT)
+Received: from [10.4.13.92] (e112298-lin.emea.arm.com [10.4.13.92])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE83E3F5BD;
+        Mon, 24 Sep 2018 05:52:47 -0700 (PDT)
+Subject: Re: [PATCH 06/10] irqchip/gic-v3-its: Allow use of pre-programmed LPI
+ tables
+To:     Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <20180921195954.21574-1-marc.zyngier@arm.com>
+ <20180921195954.21574-7-marc.zyngier@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <e3c26829-ad1e-7b4f-1fef-b32222bb1692@arm.com>
+Date:   Mon, 24 Sep 2018 13:52:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180921195954.21574-7-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Mikko Perttunen <mperttunen@nvidia.com>
-
-[ Upstream commit 365f7a89c881e84f1ebc925f65f899d5d7ce547e ]
-
-Patch "clk: core: Copy connection id" made it so that the connector id
-'con_id' is kstrdup_const()ed to cater to drivers that pass non-constant
-connection ids. The patch added the corresponding kfree_const to
-__clk_free_clk(), but struct clk's can be freed also via __clk_put().
-Add the kfree_const call to __clk_put() and add comments to both
-functions to remind that the logic in them should be kept in sync.
-
-Fixes: 253160a8ad06 ("clk: core: Copy connection id")
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clk/clk.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2933,6 +2933,7 @@ struct clk *__clk_create_clk(struct clk_
- 	return clk;
- }
- 
-+/* keep in sync with __clk_put */
- void __clk_free_clk(struct clk *clk)
- {
- 	clk_prepare_lock();
-@@ -3312,6 +3313,7 @@ int __clk_get(struct clk *clk)
- 	return 1;
- }
- 
-+/* keep in sync with __clk_free_clk */
- void __clk_put(struct clk *clk)
- {
- 	struct module *owner;
-@@ -3345,6 +3347,7 @@ void __clk_put(struct clk *clk)
- 
- 	module_put(owner);
- 
-+	kfree_const(clk->con_id);
- 	kfree(clk);
- }
- 
 
 
+On 21/09/18 20:59, Marc Zyngier wrote:
+> In order to cope with kexec and GICv3, let's try and spot when
+> we're booting with LPIs already enabled, and the tables already
+> programmed into the redistributors.
+> 
+> This code is currently guarded by a predicate that is always false,
+> meaning this is not functionnal just yet.
+> 
+
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>   drivers/irqchip/irq-gic-v3-its.c | 73 ++++++++++++++++++++++++++------
+>   1 file changed, 61 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index c2f1138034fd..e29ce9f2ac8a 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -52,6 +52,7 @@
+>   #define ITS_FLAGS_SAVE_SUSPEND_STATE		(1ULL << 3)
+>   
+>   #define RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING	(1 << 0)
+> +#define RDIST_FLAGS_RD_TABLES_PREALLOCATED	(1 << 1)
+>   
+>   static u32 lpi_id_bits;
+>   
+> @@ -1628,18 +1629,32 @@ static void its_free_prop_table(struct page *prop_page)
+>   
+>   static int __init its_alloc_lpi_prop_table(void)
+>   {
+> -	struct page *page;
+> +	if (gic_rdists->flags & RDIST_FLAGS_RD_TABLES_PREALLOCATED) {
+> +		u64 val;
+>   
+> -	lpi_id_bits = min_t(u32, GICD_TYPER_ID_BITS(gic_rdists->gicd_typer),
+> -				ITS_MAX_LPI_NRBITS);
+> -	page = its_allocate_prop_table(GFP_NOWAIT);
+> -	if (!page) {
+> -		pr_err("Failed to allocate PROPBASE\n");
+> -		return -ENOMEM;
+> -	}
+> +		val = gicr_read_propbaser(gic_data_rdist_rd_base() + GICR_PROPBASER);
+> +		lpi_id_bits = (val & GICR_PROPBASER_IDBITS_MASK) + 1;
+>   
+> -	gic_rdists->prop_table_pa = page_to_phys(page);
+> -	gic_rdists->prop_table_va = page_address(page);
+> +		gic_rdists->prop_table_pa = val & GENMASK_ULL(51, 12);
+> +		gic_rdists->prop_table_va = memremap(gic_rdists->prop_table_pa,
+> +						     LPI_PROPBASE_SZ,
+> +						     MEMREMAP_WB);
+> +		gic_reset_prop_table(gic_rdists->prop_table_va);
+> +	} else {
+> +		struct page *page;
+> +
+> +		lpi_id_bits = min_t(u32,
+> +				    GICD_TYPER_ID_BITS(gic_rdists->gicd_typer),
+> +				    ITS_MAX_LPI_NRBITS);
+> +		page = its_allocate_prop_table(GFP_NOWAIT);
+> +		if (!page) {
+> +			pr_err("Failed to allocate PROPBASE\n");
+> +			return -ENOMEM;
+> +		}
+> +
+> +		gic_rdists->prop_table_pa = page_to_phys(page);
+> +		gic_rdists->prop_table_va = page_address(page);
+> +	}
+>   
+>   	pr_info("GICv3: using LPI property table @%pa\n",
+>   		&gic_rdists->prop_table_pa);
+> @@ -1948,10 +1963,27 @@ static void its_free_pending_table(struct page *pt)
+>   	free_pages((unsigned long)page_address(pt), get_order(LPI_PENDBASE_SZ));
+>   }
+>   
+> +static bool enabled_lpis_allowed(void)
+> +{
+> +	return false;
+> +}
+> +
+>   static int __init allocate_lpi_tables(void)
+>   {
+> +	u64 val;
+>   	int err, cpu;
+>   
+> +	/*
+> +	 * If LPIs are enabled while we run this from the boot CPU,
+> +	 * flag the RD tables as pre-allocated if the stars do align.
+> +	 */
+> +	val = readl_relaxed(gic_data_rdist_rd_base() + GICR_CTLR);
+> +	if ((val & GICR_CTLR_ENABLE_LPIS) && enabled_lpis_allowed()) {
+> +		gic_rdists->flags |= (RDIST_FLAGS_RD_TABLES_PREALLOCATED |
+> +				      RDIST_FLAGS_PROPBASE_NEEDS_FLUSHING);
+> +		pr_info("GICv3: Using preallocated redistributor tables\n");
+> +	}
+> +
+>   	err = its_alloc_lpi_prop_table();
+>   	if (err)
+>   		return err;
+> @@ -1986,6 +2018,18 @@ static void its_cpu_init_lpis(void)
+>   	if (gic_data_rdist()->lpi_enabled)
+>   		return;
+>   
+> +	val = readl_relaxed(rbase + GICR_CTLR);
+> +	if ((gic_rdists->flags & RDIST_FLAGS_RD_TABLES_PREALLOCATED) &&
+> +	    (val & GICR_CTLR_ENABLE_LPIS)) {
+> +		paddr = gicr_read_pendbaser(rbase + GICR_PENDBASER);
+> +		paddr &= GENMASK_ULL(51, 16);
+> +
+> +		its_free_pending_table(gic_data_rdist()->pend_page);
+> +		gic_data_rdist()->pend_page = NULL;
+> +
+> +		goto out;
+> +	}
+> +
+>   	pend_page = gic_data_rdist()->pend_page;
+>   	paddr = page_to_phys(pend_page);
+>   
+> @@ -2040,9 +2084,11 @@ static void its_cpu_init_lpis(void)
+>   
+>   	/* Make sure the GIC has seen the above */
+>   	dsb(sy);
+> +out:
+>   	gic_data_rdist()->lpi_enabled = true;
+> -	pr_info("GICv3: CPU%d: using LPI pending table @%pa\n",
+> +	pr_info("GICv3: CPU%d: using %s LPI pending table @%pa\n",
+>   		smp_processor_id(),
+> +		gic_data_rdist()->pend_page ? "allocated" : "reserved",
+>   		&paddr);
+>   }
+>   
+> @@ -3535,8 +3581,11 @@ static int redist_disable_lpis(void)
+>   	 * If coming via a CPU hotplug event, we don't need to disable
+>   	 * LPIs before trying to re-enable them. They are already
+>   	 * configured and all is well in the world.
+> +	 *
+> +	 * If running with preallocated tables, there is nothing to do.
+>   	 */
+> -	if (gic_data_rdist()->lpi_enabled)
+> +	if (gic_data_rdist()->lpi_enabled ||
+> +	    (gic_rdists->flags & RDIST_FLAGS_RD_TABLES_PREALLOCATED))
+>   		return 0;
+>   
+>   	/*
+> 
+
+-- 
+Julien Thierry
