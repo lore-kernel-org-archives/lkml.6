@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A580C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AF6ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB26214FE
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EB26214FE
+	by mail.kernel.org (Postfix) with ESMTP id 0425921486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0425921486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733201AbeIXS2r (ORCPT
+        id S1733215AbeIXS2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:28:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57180 "EHLO
+        Mon, 24 Sep 2018 14:28:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57192 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732223AbeIXS2q (ORCPT
+        with ESMTP id S1732223AbeIXS2t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:28:46 -0400
+        Mon, 24 Sep 2018 14:28:49 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 232621094;
-        Mon, 24 Sep 2018 12:26:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5017F108B;
+        Mon, 24 Sep 2018 12:26:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Oros <poros@redhat.com>,
-        Ivan Vecera <ivecera@redhat.com>,
+        stable@vger.kernel.org, William Tu <u9012063@gmail.com>,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 001/235] be2net: Fix memory leak in be_cmd_get_profile_config()
-Date:   Mon, 24 Sep 2018 13:49:47 +0200
-Message-Id: <20180924113104.195024203@linuxfoundation.org>
+Subject: [PATCH 4.18 010/235] erspan: fix error handling for erspan tunnel
+Date:   Mon, 24 Sep 2018 13:49:56 +0200
+Message-Id: <20180924113105.358629274@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -51,31 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Petr Oros <poros@redhat.com>
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-[ Upstream commit 9d7f19dc4673fbafebfcbf30eb90e09fa7d1c037 ]
+[ Upstream commit 51dc63e3911fbb1f0a7a32da2fe56253e2040ea4 ]
 
-DMA allocated memory is lost in be_cmd_get_profile_config() when we
-call it with non-NULL port_res parameter.
+When processing icmp unreachable message for erspan tunnel, tunnel id
+should be erspan_net_id instead of ipgre_net_id.
 
-Signed-off-by: Petr Oros <poros@redhat.com>
-Reviewed-by: Ivan Vecera <ivecera@redhat.com>
+Fixes: 84e54fe0a5ea ("gre: introduce native tunnel support for ERSPAN")
+Cc: William Tu <u9012063@gmail.com>
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Acked-by: William Tu <u9012063@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/emulex/benet/be_cmds.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_gre.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/emulex/benet/be_cmds.c
-+++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
-@@ -4500,7 +4500,7 @@ int be_cmd_get_profile_config(struct be_
- 				port_res->max_vfs += le16_to_cpu(pcie->num_vfs);
- 			}
- 		}
--		return status;
-+		goto err;
- 	}
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -178,6 +178,9 @@ static void ipgre_err(struct sk_buff *sk
  
- 	pcie = be_get_pcie_desc(resp->func_param, desc_count,
+ 	if (tpi->proto == htons(ETH_P_TEB))
+ 		itn = net_generic(net, gre_tap_net_id);
++	else if (tpi->proto == htons(ETH_P_ERSPAN) ||
++		 tpi->proto == htons(ETH_P_ERSPAN2))
++		itn = net_generic(net, erspan_net_id);
+ 	else
+ 		itn = net_generic(net, ipgre_net_id);
+ 
 
 
