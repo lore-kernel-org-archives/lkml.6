@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E3CECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D6DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 692892145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:01:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692892145D
+	by mail.kernel.org (Postfix) with ESMTP id 3A7D42145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:01:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A7D42145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeIXNBq (ORCPT
+        id S1727612AbeIXNCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 09:01:46 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:44389 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbeIXNBq (ORCPT
+        Mon, 24 Sep 2018 09:02:09 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45930 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727565AbeIXNCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 09:01:46 -0400
-Received: by mail-vs1-f66.google.com with SMTP id v18-v6so7687632vsl.11;
-        Mon, 24 Sep 2018 00:01:08 -0700 (PDT)
+        Mon, 24 Sep 2018 09:02:09 -0400
+Received: by mail-vs1-f67.google.com with SMTP id x198-v6so7681674vsx.12;
+        Mon, 24 Sep 2018 00:01:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Wwj24f5g0ZiQpkO0aqADUB5HNc2kD6qfDDTVqriMcIk=;
-        b=eLBOomQWHMwrf4c9XvzSdOZmdOAsKV0CUGedOUqeR7+FWd80fc6zlvFojUH+bznfeU
-         LSNU4wmurd+RCrBLysTQdQTmmuCpXgsAHX+F+ka4g+t1FCoIuJ8IGRRe7tVCODsMy65S
-         PMUAB1iyQyI/MiS9BDRv7FSK5wSJLlD9qaR/sa3SBI/f3NtQ0J8CMDcCwUx5BIo9kPly
-         yjcR4BHL5u5TkiV6a+cOnCpGEC1JPLzPl2Z7o//3Rr8eQoDqErpX66j/+HamdBgafcbX
-         zQoEC/VRHRPnyyF0NT5KFKxKyXgOMJVVrGI5xmW6hMrdDEoBXF6v4XKy7p+lJUS00hLu
-         2azg==
-X-Gm-Message-State: APzg51BuVI+A8RCmN/NsQDyISr5ERTTQf/KI2ODcZ3/R/Z9dD8UG5LCX
-        tqH8kZA2urq9skBYPZwQKWEGTVRl77O8KGXg1Oo=
-X-Google-Smtp-Source: ANB0Vdbr5wFsWRfulPg+ilgtGXkoFGtGpgWIa90m3ssbrDqCGYfMN0ccF548NePJJnggKEJbVgLiDV6P+1KTPhqldxo=
-X-Received: by 2002:a67:3a51:: with SMTP id h78-v6mr1871323vsa.63.1537772463437;
- Mon, 24 Sep 2018 00:01:03 -0700 (PDT)
+        bh=v5qEmwmXRXWmngUmez8sdcstFoFkLbd6cTbu2TYg++4=;
+        b=BAllTHxs5u/N/WJfgh77SkxoiiOjcu3iX1q9OrIgrDOn0sqPrC72AO5NgVVfORtIIy
+         cVfuacFuNr8a1ZoovFDTZK56w4E4lyqD8r8L+LB801/jXnTaNEBgWu+wgRTMJQNGG5Xj
+         WRauHnU2wgBt3YPqAjxrXaLTk3IAVdMxxs+UD3FrVQeyAmNr0lcVNCDGnpg3uh+vqLGW
+         vXscBGUuPvuCPZHyz4IAeTcbRBbP117buEYx6tQFwlepUhxGO/YUQxBO5mVAQ6a0+yXu
+         xiI32OmARTe07B+lsIW49KI4OtDqXr93pdHWhXC9Uvf0+ueQremKJKGO0JFrWkeDms1O
+         LfcQ==
+X-Gm-Message-State: APzg51Ckulmu8FGPe6LlmrIQjp5Xk3aI1+W7tiVW6NO/vi++9k6wCDDT
+        DEpnfBy8ImiAO/8eg5xdkpymV/Urwr5ndhFdymw7mJoo
+X-Google-Smtp-Source: ACcGV60szOYpY2EVmgDxnj73L0icabJWfd8T2A4Ren23FwlFab51Rkp6Ns7mOhhDbRHFIoNafNopaT1Y+4QcUq11CRE=
+X-Received: by 2002:a67:6e06:: with SMTP id j6-v6mr2106920vsc.152.1537772490471;
+ Mon, 24 Sep 2018 00:01:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org> <1537455973-12468-2-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1537455973-12468-2-git-send-email-firoz.khan@linaro.org>
+References: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org> <1537455973-12468-3-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1537455973-12468-3-git-send-email-firoz.khan@linaro.org>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 Sep 2018 09:00:51 +0200
-Message-ID: <CAMuHMdWLx6JcVTt0FsCD3rj_kgT8vRWapzApbZT=XGWios5R1Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] m68k: Rename system call table file name
+Date:   Mon, 24 Sep 2018 09:01:19 +0200
+Message-ID: <CAMuHMdWST+PJM8EChBpbToycmXWyt6icNM0x6H9FWtHOMQK7aQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] m68k: Replace NR_syscalls macro from asm/unistd.h
 To:     firoz.khan@linaro.org
 Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
         Greg KH <gregkh@linuxfoundation.org>,
@@ -67,14 +67,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Sep 20, 2018 at 5:06 PM Firoz Khan <firoz.khan@linaro.org> wrote:
-> The system call table entries are present in syscalltable.S. One of
-> the patch in this patch series will auto-generate the system call
-> table entries using the system call table generation script and
-> which'll replace the existig table file.
+> NR_syscalls macro holds the number of system call exist in m68k
+> architecture. This macro is currently the part of asm/unistd.h file.
+> We have to change the value of NR_syscalls, if we add or delete a
+> system call.
 >
-> In order to come up with a common naming convention across all
-> architecture, we need to change the file name to syscall_table.S.
-> This change will unify the implementation across all architecture.
+> One of patch in this patch series has a script which will generate
+> a uapi header based on syscall.tbl file. The syscall.tbl file
+> contains the number of system call information. So we have two
+> option to update NR_syscalls value.
+>
+> 1. Update NR_syscalls in asm/unistd.h manually by counting the
+>    no.of system calls. No need to update NR_syscalls untill
+>    we either add a new system call or delete an existing system
+>    call.
+>
+> 2. We can keep this feature it above mentioned script, that'll
+>    count the number of syscalls and keep it in a generated file.
+>    In this case we don't need to explicitly update NR_syscalls
+>    in asm/unistd.h file.
+>
+> The 2nd option will be the recommended one. For that, I come up
+> with another macro - __NR_syscalls which will be updated by the
+> script and it will be present in api/asm/unistd.h. While __NR_syscalls
+> isn't strictly part of the uapi, having it as part of the generated
+> header to simplifies the implementation. So we need to enclose this
+> macro with #ifdef __KERNEL__ to avoid side effects.
 >
 > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 
