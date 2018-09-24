@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C79FC46470
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD887ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07BE214C1
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F07BE214C1
+	by mail.kernel.org (Postfix) with ESMTP id 8575B20877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8575B20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730933AbeIXSGe (ORCPT
+        id S1730971AbeIXSGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:06:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53850 "EHLO
+        Mon, 24 Sep 2018 14:06:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53856 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728702AbeIXSGe (ORCPT
+        with ESMTP id S1728666AbeIXSGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:06:34 -0400
+        Mon, 24 Sep 2018 14:06:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88020107A;
-        Mon, 24 Sep 2018 12:04:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 973E1107A;
+        Mon, 24 Sep 2018 12:04:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 4.9 067/111] usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()
-Date:   Mon, 24 Sep 2018 13:52:34 +0200
-Message-Id: <20180924113111.668558851@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Piotr Sawicki <p.sawicki2@partner.samsung.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 032/111] Smack: Fix handling of IPv4 traffic received by PF_INET6 sockets
+Date:   Mon, 24 Sep 2018 13:51:59 +0200
+Message-Id: <20180924113107.794721923@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -50,36 +53,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Piotr Sawicki <p.sawicki2@partner.samsung.com>
 
-commit 6e22e3af7bb3a7b9dc53cb4687659f6e63fca427 upstream.
+[ Upstream commit 129a99890936766f4b69b9da7ed88366313a9210 ]
 
-wdm_in_callback() is a completion handler function for the USB driver.
-So it should not sleep. But it calls service_outstanding_interrupt(),
-which calls usb_submit_urb() with GFP_KERNEL.
+A socket which has sk_family set to PF_INET6 is able to receive not
+only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+Prior to this patch, the smk_skb_to_addr_ipv6() could have been
+called for socket buffers containing IPv4 packets, in result such
+traffic was allowed.
 
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/class/cdc-wdm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/smack/smack_lsm.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/class/cdc-wdm.c
-+++ b/drivers/usb/class/cdc-wdm.c
-@@ -470,7 +470,7 @@ static int service_outstanding_interrupt
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3966,15 +3966,19 @@ static int smack_socket_sock_rcv_skb(str
+ 	struct smack_known *skp = NULL;
+ 	int rc = 0;
+ 	struct smk_audit_info ad;
++	u16 family = sk->sk_family;
+ #ifdef CONFIG_AUDIT
+ 	struct lsm_network_audit net;
+ #endif
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	struct sockaddr_in6 sadd;
+ 	int proto;
++
++	if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
++		family = PF_INET;
+ #endif /* CONFIG_IPV6 */
  
- 	set_bit(WDM_RESPONDING, &desc->flags);
- 	spin_unlock_irq(&desc->iuspin);
--	rv = usb_submit_urb(desc->response, GFP_KERNEL);
-+	rv = usb_submit_urb(desc->response, GFP_ATOMIC);
- 	spin_lock_irq(&desc->iuspin);
- 	if (rv) {
- 		dev_err(&desc->intf->dev,
+-	switch (sk->sk_family) {
++	switch (family) {
+ 	case PF_INET:
+ #ifdef CONFIG_SECURITY_SMACK_NETFILTER
+ 		/*
+@@ -3992,7 +3996,7 @@ static int smack_socket_sock_rcv_skb(str
+ 		 */
+ 		netlbl_secattr_init(&secattr);
+ 
+-		rc = netlbl_skbuff_getattr(skb, sk->sk_family, &secattr);
++		rc = netlbl_skbuff_getattr(skb, family, &secattr);
+ 		if (rc == 0)
+ 			skp = smack_from_secattr(&secattr, ssp);
+ 		else
+@@ -4005,7 +4009,7 @@ access_check:
+ #endif
+ #ifdef CONFIG_AUDIT
+ 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+-		ad.a.u.net->family = sk->sk_family;
++		ad.a.u.net->family = family;
+ 		ad.a.u.net->netif = skb->skb_iif;
+ 		ipv4_skb_to_auditdata(skb, &ad.a, NULL);
+ #endif
+@@ -4019,7 +4023,7 @@ access_check:
+ 		rc = smk_bu_note("IPv4 delivery", skp, ssp->smk_in,
+ 					MAY_WRITE, rc);
+ 		if (rc != 0)
+-			netlbl_skbuff_err(skb, sk->sk_family, rc, 0);
++			netlbl_skbuff_err(skb, family, rc, 0);
+ 		break;
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	case PF_INET6:
+@@ -4035,7 +4039,7 @@ access_check:
+ 			skp = smack_net_ambient;
+ #ifdef CONFIG_AUDIT
+ 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
+-		ad.a.u.net->family = sk->sk_family;
++		ad.a.u.net->family = family;
+ 		ad.a.u.net->netif = skb->skb_iif;
+ 		ipv6_skb_to_auditdata(skb, &ad.a, NULL);
+ #endif /* CONFIG_AUDIT */
 
 
