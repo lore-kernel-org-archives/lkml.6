@@ -2,124 +2,143 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 745BCECE561
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ED1C433F4
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 04:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10856214FF
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 04:39:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6241820C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 04:39:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Pm2niKlS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10856214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=mvista-com.20150623.gappssmtp.com header.i=@mvista-com.20150623.gappssmtp.com header.b="YPBUg3ca"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6241820C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mvista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeIXKjO (ORCPT
+        id S1727443AbeIXKg3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 06:39:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:54283 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeIXKjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 06:39:13 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42JWgL1WSrz9s8F;
-        Mon, 24 Sep 2018 14:38:54 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1537763939;
-        bh=gsGsJMLeUzPXsva8iCq4uM+zGWVQA2f9njOVr8UPD1E=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Pm2niKlSK127kId+SsK2C4vqs83kxteeQsWf70mt+sjaA4iZbJOrEN7yrxPdashG7
-         pL6QeAi8KstwWkJj+yBUDIvlhzYAT5OVXWEgntSgk0g8fKyPeGZdUiHI50Di2VuCJu
-         U8DAuJZPMg6uhtlo6Mw6r3k7GR1E+Fh/n4khzZTWkbvKQQt0uZR4Nr5BUe10u6Yvil
-         2o6hvaFjLYijn8YOgXr45C5JKSw2sI+vw01qFH0wreMJEO7dZ9lrL7Js/54jdijj+D
-         Fa0hyeRTcvF/798/nfbGiJc1HEHN2G7GfLY7+UH6Wwnu3h8enGz9cI4cR5JUHebLVO
-         DbPTKzgK4TfAw==
-Date:   Mon, 24 Sep 2018 14:38:53 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jia He <jia.he@hxt-semitech.com>,
-        James Morse <james.morse@arm.com>
-Subject: linux-next: manual merge of the akpm-current tree with the arm64
- tree
-Message-ID: <20180924143853.0f6cc235@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/H9NPypStBoDAPCLASOe0of0"; protocol="application/pgp-signature"
+        Mon, 24 Sep 2018 06:36:29 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46040 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeIXKg3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 06:36:29 -0400
+Received: by mail-pl1-f195.google.com with SMTP id j8-v6so8532729pll.12
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 21:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mvista-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=/HACrf5Tu+AFLWvxevDv+YUccBR9VUVbHvWi9W3Q3SM=;
+        b=YPBUg3ca8xtoi0h1eE8c6fzRdSFu6zsT6GFUkG6iO6ieUEXrYRlaIDEUJitaeVvvxF
+         z3tyH6xj3P/DjOC1h+gLIqAV4Z8R4RGS09P2wV+V2NgL60E8lqfouTmsbfncQvFDXWh8
+         i7YvqTvvqYtSiSYJx33BNHOsGU3oGdihGdtYtGtAc4Kldq/IZer224ipKbwIsXDFutYG
+         CVIcuUISReFkAfiWfwJfHxHGYqrKkfnznayxX9Ym1GmEJpK10Xst+pzfdeI2+Do4wHZQ
+         D4KKxm6VqkImXbK9o2mzCA1KC2UhJTpEqMxy50DdHkxYmVy6+0+ZNhgV5ERbed+7HGIe
+         icnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/HACrf5Tu+AFLWvxevDv+YUccBR9VUVbHvWi9W3Q3SM=;
+        b=eM0s/CEdqQAaCFtNTRLu8ky1cmlrFkyvSdEIHr5/1uWs6TZfWY8oKfbHp2GvhC+naB
+         ozRHDEMbpxiEKQ1nB0spK+8FhszPVOKN+axI3lhvcziU0JqLw1LRZfkwzLykA2+iqBj0
+         qt9ax30z92mGfIaWpMUxx/puk/nR9FkrfCj1BoWoE4FrU7ErKDcswb7oVfLLtc1KrMAO
+         FkOtZrd0c2D/opiFwf1qldBfaKuxh24wqEYbFdrkUfHUMXVoZbWfAvX5srzyxS9aRKKt
+         xNZP/hjJgxw3fCvTEd60kajZo5IhqE5WgTfMwqHjdMyfJaAVNFfYRr9hfsn7uLC/w9sT
+         rsPQ==
+X-Gm-Message-State: ABuFfojNb7jaIxw9oDFkvEEHV3JWf2Q2vTYBoQGnXtxoG5TE9rq31Spf
+        UjZRHdH6UHmus2MoPy1WMlO72A==
+X-Google-Smtp-Source: ACcGV61bgClgG0RoAM1KGI0mgmKz6/4VypR1SOi8wi4plaqh1/tnxAhoag1B72a+PRl959MnRwx9EQ==
+X-Received: by 2002:a17:902:710e:: with SMTP id a14-v6mr4660629pll.179.1537763777253;
+        Sun, 23 Sep 2018 21:36:17 -0700 (PDT)
+Received: from mercury.CELSYSJYN.IN ([182.72.92.62])
+        by smtp.gmail.com with ESMTPSA id d81-v6sm53071725pfj.122.2018.09.23.21.36.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 23 Sep 2018 21:36:16 -0700 (PDT)
+From:   Silesh C V <svellattu@mvista.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Silesh C V <svellattu@mvista.com>
+Subject: [PATCH] Driver core: add bus_find_device_by_fwnode
+Date:   Mon, 24 Sep 2018 10:05:55 +0530
+Message-Id: <1537763755-28871-1-git-send-email-svellattu@mvista.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/H9NPypStBoDAPCLASOe0of0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Some drivers need to find the device on a bus having a specific firmware
+node. Currently, such drivers have their own implementations to do this.
+Provide a helper similar to bus_find_device_by_name so that each driver
+does not have to reinvent this.
 
-Hi all,
+Signed-off-by: Silesh C V <svellattu@mvista.com>
+---
+ drivers/base/bus.c     | 26 ++++++++++++++++++++++++++
+ include/linux/device.h |  3 +++
+ 2 files changed, 29 insertions(+)
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 8bfd27e..148b198 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -17,6 +17,7 @@
+ #include <linux/string.h>
+ #include <linux/mutex.h>
+ #include <linux/sysfs.h>
++#include <linux/of.h>
+ #include "base.h"
+ #include "power/power.h"
+ 
+@@ -373,6 +374,31 @@ struct device *bus_find_device_by_name(struct bus_type *bus,
+ }
+ EXPORT_SYMBOL_GPL(bus_find_device_by_name);
+ 
++static int match_fwnode(struct device *dev, void *data)
++{
++	struct fwnode_handle *fwnode = data;
++	struct device_node *of_node = to_of_node(fwnode);
++
++	if (of_node)
++		return dev->of_node == of_node;
++	else
++		return dev->fwnode == fwnode;
++}
++
++/**
++ * bus_find_device_by_fwnode - device iterator for locating a particular device
++ * having a specific firmware node
++ * @bus: bus type
++ * @start: Device to begin with
++ * @fwnode: firmware node of the device to match
++ */
++struct device *bus_find_device_by_fwnode(struct bus_type *bus, struct device *start,
++					struct fwnode_handle *fwnode)
++{
++	return bus_find_device(bus, start, (void *)fwnode, match_fwnode);
++}
++EXPORT_SYMBOL_GPL(bus_find_device_by_fwnode);
++
+ /**
+  * subsys_find_device_by_id - find a device with a specific enumeration number
+  * @subsys: subsystem
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 8f88254..09384f6 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -171,6 +171,9 @@ struct device *bus_find_device(struct bus_type *bus, struct device *start,
+ struct device *bus_find_device_by_name(struct bus_type *bus,
+ 				       struct device *start,
+ 				       const char *name);
++struct device *bus_find_device_by_fwnode(struct bus_type *bus,
++				       struct device *start,
++				       struct fwnode_handle *fwnode);
+ struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
+ 					struct device *hint);
+ int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+-- 
+1.9.1
 
-  arch/arm64/Kconfig
-
-between commit:
-
-  8a695a587333 ("arm64: Kconfig: Remove ARCH_HAS_HOLES_MEMORYMODEL")
-
-from the arm64 tree and commit:
-
-  e1405baa7db1 ("arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/Kconfig
-index da5e6f085561,f8a618a292f4..000000000000
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@@ -785,7 -786,8 +785,8 @@@ config ARCH_FLATMEM_ENABL
-  	def_bool !NUMA
- =20
-  config HAVE_ARCH_PFN_VALID
- -	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
- +	def_bool y
-+ 	select HAVE_MEMBLOCK_PFN_VALID
- =20
-  config HW_PERF_EVENTS
-  	def_bool y
-
---Sig_/H9NPypStBoDAPCLASOe0of0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluoal0ACgkQAVBC80lX
-0GzA2gf+JPxzWjqtncHmMA8RMrcz6djQDW3CzrEtkwWtrnFuxYL9Lx9Yr4or6PuU
-g7URYczAKCv70UvrMvEFWnIcWUQBBwUvwEfYxxBspuk8pq7YUaf4Awxolp0RxJFm
-RoS2MHeLuAgRvqCJaQdzwCs9AzHom9Y8ZF0r06uFxbm0w3by9+aPwbvtagZ/vnDG
-DDstnRphjNnxxqrCEPJB1zf0/SbaIEMOl08JsFwakBudTAv50EXc7dQS+vMNQGy9
-1ojHaVGeqieiVfSWRr9tFK+a9aisRvbGxiRaHMeph54VvbzqeD9Shfm6bnP4UDbS
-9oPNA8wZqoEoRaC79WNbvD3Thv0vwg==
-=tlOH
------END PGP SIGNATURE-----
-
---Sig_/H9NPypStBoDAPCLASOe0of0--
