@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12526C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DC3ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBAED20833
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAED20833
+	by mail.kernel.org (Postfix) with ESMTP id 3AA8820833
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AA8820833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729793AbeIXR5E (ORCPT
+        id S1729809AbeIXR5I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:57:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51846 "EHLO
+        Mon, 24 Sep 2018 13:57:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51860 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbeIXR5D (ORCPT
+        with ESMTP id S1728154AbeIXR5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:57:03 -0400
+        Mon, 24 Sep 2018 13:57:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0EAA1073;
-        Mon, 24 Sep 2018 11:55:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 366FA1073;
+        Mon, 24 Sep 2018 11:55:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Michael=20M=C3=BCller?= <michael@fds-team.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Xiao Liang <xiliang@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 27/70] crypto: sharah - Unregister correct algorithms for SAHARA 3
-Date:   Mon, 24 Sep 2018 13:52:26 +0200
-Message-Id: <20180924113101.587854924@linuxfoundation.org>
+Subject: [PATCH 4.4 28/70] xen-netfront: fix warn message as irq device name has /
+Date:   Mon, 24 Sep 2018 13:52:27 +0200
+Message-Id: <20180924113101.745051070@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -53,42 +53,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Müller <michael@fds-team.de>
+From: Xiao Liang <xiliang@redhat.com>
 
-[ Upstream commit 0e7d4d932ffc23f75efb31a8c2ac2396c1b81c55 ]
+[ Upstream commit 21f2706b20100bb3db378461ab9b8e2035309b5b ]
 
-This patch fixes two typos related to unregistering algorithms supported by
-SAHARAH 3. In sahara_register_algs the wrong algorithms are unregistered
-in case of an error. In sahara_unregister_algs the wrong array is used to
-determine the iteration count.
+There is a call trace generated after commit 2d408c0d4574b01b9ed45e02516888bf925e11a9(
+xen-netfront: fix queue name setting). There is no 'device/vif/xx-q0-tx' file found
+under /proc/irq/xx/.
 
-Signed-off-by: Michael Müller <michael@fds-team.de>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This patch only picks up device type and id as its name.
+
+With the patch, now /proc/interrupts looks like below and the warning message gone:
+ 70:         21          0          0          0   xen-dyn    -event     vif0-q0-tx
+ 71:         15          0          0          0   xen-dyn    -event     vif0-q0-rx
+ 72:         14          0          0          0   xen-dyn    -event     vif0-q1-tx
+ 73:         33          0          0          0   xen-dyn    -event     vif0-q1-rx
+ 74:         12          0          0          0   xen-dyn    -event     vif0-q2-tx
+ 75:         24          0          0          0   xen-dyn    -event     vif0-q2-rx
+ 76:         19          0          0          0   xen-dyn    -event     vif0-q3-tx
+ 77:         21          0          0          0   xen-dyn    -event     vif0-q3-rx
+
+Below is call trace information without this patch:
+
+name 'device/vif/0-q0-tx'
+WARNING: CPU: 2 PID: 37 at fs/proc/generic.c:174 __xlate_proc_name+0x85/0xa0
+RIP: 0010:__xlate_proc_name+0x85/0xa0
+RSP: 0018:ffffb85c40473c18 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000000006
+RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff984c7f516930
+RBP: ffffb85c40473cb8 R08: 000000000000002c R09: 0000000000000229
+R10: 0000000000000000 R11: 0000000000000001 R12: ffffb85c40473c98
+R13: ffffb85c40473cb8 R14: ffffb85c40473c50 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff984c7f500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f69b6899038 CR3: 000000001c20a006 CR4: 00000000001606e0
+Call Trace:
+__proc_create+0x45/0x230
+? snprintf+0x49/0x60
+proc_mkdir_data+0x35/0x90
+register_handler_proc+0xef/0x110
+? proc_register+0xfc/0x110
+? proc_create_data+0x70/0xb0
+__setup_irq+0x39b/0x660
+? request_threaded_irq+0xad/0x160
+request_threaded_irq+0xf5/0x160
+? xennet_tx_buf_gc+0x1d0/0x1d0 [xen_netfront]
+bind_evtchn_to_irqhandler+0x3d/0x70
+? xenbus_alloc_evtchn+0x41/0xa0
+netback_changed+0xa46/0xcda [xen_netfront]
+? find_watch+0x40/0x40
+xenwatch_thread+0xc5/0x160
+? finish_wait+0x80/0x80
+kthread+0x112/0x130
+? kthread_create_worker_on_cpu+0x70/0x70
+ret_from_fork+0x35/0x40
+Code: 81 5c 00 48 85 c0 75 cc 5b 49 89 2e 31 c0 5d 4d 89 3c 24 41 5c 41 5d 41 5e 41 5f c3 4c 89 ee 48 c7 c7 40 4f 0e b4 e8 65 ea d8 ff <0f> 0b b8 fe ff ff ff 5b 5d 41 5c 41 5d 41 5e 41 5f c3 66 0f 1f
+---[ end trace 650e5561b0caab3a ]---
+
+Signed-off-by: Xiao Liang <xiliang@redhat.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/sahara.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/xen-netfront.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/sahara.c
-+++ b/drivers/crypto/sahara.c
-@@ -1363,7 +1363,7 @@ err_sha_v4_algs:
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1608,6 +1608,7 @@ static int xennet_init_queue(struct netf
+ {
+ 	unsigned short i;
+ 	int err = 0;
++	char *devid;
  
- err_sha_v3_algs:
- 	for (j = 0; j < k; j++)
--		crypto_unregister_ahash(&sha_v4_algs[j]);
-+		crypto_unregister_ahash(&sha_v3_algs[j]);
+ 	spin_lock_init(&queue->tx_lock);
+ 	spin_lock_init(&queue->rx_lock);
+@@ -1615,8 +1616,9 @@ static int xennet_init_queue(struct netf
+ 	setup_timer(&queue->rx_refill_timer, rx_refill_timeout,
+ 		    (unsigned long)queue);
  
- err_aes_algs:
- 	for (j = 0; j < i; j++)
-@@ -1379,7 +1379,7 @@ static void sahara_unregister_algs(struc
- 	for (i = 0; i < ARRAY_SIZE(aes_algs); i++)
- 		crypto_unregister_alg(&aes_algs[i]);
+-	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
+-		 queue->info->xbdev->nodename, queue->id);
++	devid = strrchr(queue->info->xbdev->nodename, '/') + 1;
++	snprintf(queue->name, sizeof(queue->name), "vif%s-q%u",
++		 devid, queue->id);
  
--	for (i = 0; i < ARRAY_SIZE(sha_v4_algs); i++)
-+	for (i = 0; i < ARRAY_SIZE(sha_v3_algs); i++)
- 		crypto_unregister_ahash(&sha_v3_algs[i]);
- 
- 	if (dev->version > SAHARA_VERSION_3)
+ 	/* Initialise tx_skbs as a free chain containing every entry. */
+ 	queue->tx_skb_freelist = 0;
 
 
