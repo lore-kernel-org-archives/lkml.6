@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9243EECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC39ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B432148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B432148C
+	by mail.kernel.org (Postfix) with ESMTP id D486121486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D486121486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729230AbeIXRkt (ORCPT
+        id S1729234AbeIXRk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:40:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50566 "EHLO
+        Mon, 24 Sep 2018 13:40:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50576 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeIXRkr (ORCPT
+        with ESMTP id S1726074AbeIXRk5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:40:47 -0400
+        Mon, 24 Sep 2018 13:40:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D307F1070;
-        Mon, 24 Sep 2018 11:39:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4DB8C106F;
+        Mon, 24 Sep 2018 11:39:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Adam Radford <aradford@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 048/105] scsi: 3ware: fix return 0 on the error path of probe
-Date:   Mon, 24 Sep 2018 13:33:34 +0200
-Message-Id: <20180924113118.672752883@linuxfoundation.org>
+Subject: [PATCH 3.18 049/105] Bluetooth: hidp: Fix handling of strncpy for hid->name information
+Date:   Mon, 24 Sep 2018 13:33:35 +0200
+Message-Id: <20180924113118.752994106@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -53,105 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Marcel Holtmann <marcel@holtmann.org>
 
-[ Upstream commit 4dc98c1995482262e70e83ef029135247fafe0f2 ]
+[ Upstream commit b3cadaa485f0c20add1644a5c877b0765b285c0c ]
 
-tw_probe() returns 0 in case of fail of tw_initialize_device_extension(),
-pci_resource_start() or tw_reset_sequence() and releases resources.
-twl_probe() returns 0 in case of fail of twl_initialize_device_extension(),
-pci_iomap() and twl_reset_sequence().  twa_probe() returns 0 in case of
-fail of tw_initialize_device_extension(), ioremap() and
-twa_reset_sequence().
+This fixes two issues with setting hid->name information.
 
-The patch adds retval initialization for these cases.
+  CC      net/bluetooth/hidp/core.o
+In function ‘hidp_setup_hid’,
+    inlined from ‘hidp_session_dev_init’ at net/bluetooth/hidp/core.c:815:9,
+    inlined from ‘hidp_session_new’ at net/bluetooth/hidp/core.c:953:8,
+    inlined from ‘hidp_connection_add’ at net/bluetooth/hidp/core.c:1366:8:
+net/bluetooth/hidp/core.c:778:2: warning: ‘strncpy’ output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  strncpy(hid->name, req->name, sizeof(req->name) - 1);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Found by Linux Driver Verification project (linuxtesting.org).
+  CC      net/bluetooth/hidp/core.o
+net/bluetooth/hidp/core.c: In function ‘hidp_setup_hid’:
+net/bluetooth/hidp/core.c:778:38: warning: argument to ‘sizeof’ in ‘strncpy’ call is the same expression as the source; did you mean to use the size of the destination? [-Wsizeof-pointer-memaccess]
+  strncpy(hid->name, req->name, sizeof(req->name));
+                                      ^
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Acked-by: Adam Radford <aradford@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/3w-9xxx.c |    6 +++++-
- drivers/scsi/3w-sas.c  |    3 +++
- drivers/scsi/3w-xxxx.c |    2 ++
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ net/bluetooth/hidp/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/3w-9xxx.c
-+++ b/drivers/scsi/3w-9xxx.c
-@@ -2057,6 +2057,7 @@ static int twa_probe(struct pci_dev *pde
+--- a/net/bluetooth/hidp/core.c
++++ b/net/bluetooth/hidp/core.c
+@@ -763,7 +763,7 @@ static int hidp_setup_hid(struct hidp_se
+ 	hid->version = req->version;
+ 	hid->country = req->country;
  
- 	if (twa_initialize_device_extension(tw_dev)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x25, "Failed to initialize device extension");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
+-	strncpy(hid->name, req->name, sizeof(req->name) - 1);
++	strncpy(hid->name, req->name, sizeof(hid->name));
  
-@@ -2079,6 +2080,7 @@ static int twa_probe(struct pci_dev *pde
- 	tw_dev->base_addr = ioremap(mem_addr, mem_len);
- 	if (!tw_dev->base_addr) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x35, "Failed to ioremap");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
-@@ -2086,8 +2088,10 @@ static int twa_probe(struct pci_dev *pde
- 	TW_DISABLE_INTERRUPTS(tw_dev);
- 
- 	/* Initialize the card */
--	if (twa_reset_sequence(tw_dev, 0))
-+	if (twa_reset_sequence(tw_dev, 0)) {
-+		retval = -ENOMEM;
- 		goto out_iounmap;
-+	}
- 
- 	/* Set host specific parameters */
- 	if ((pdev->device == PCI_DEVICE_ID_3WARE_9650SE) ||
---- a/drivers/scsi/3w-sas.c
-+++ b/drivers/scsi/3w-sas.c
-@@ -1613,6 +1613,7 @@ static int twl_probe(struct pci_dev *pde
- 
- 	if (twl_initialize_device_extension(tw_dev)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1a, "Failed to initialize device extension");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
- 
-@@ -1627,6 +1628,7 @@ static int twl_probe(struct pci_dev *pde
- 	tw_dev->base_addr = pci_iomap(pdev, 1, 0);
- 	if (!tw_dev->base_addr) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1c, "Failed to ioremap");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
-@@ -1636,6 +1638,7 @@ static int twl_probe(struct pci_dev *pde
- 	/* Initialize the card */
- 	if (twl_reset_sequence(tw_dev, 0)) {
- 		TW_PRINTK(tw_dev->host, TW_DRIVER, 0x1d, "Controller reset failed during probe");
-+		retval = -ENOMEM;
- 		goto out_iounmap;
- 	}
- 
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -2291,6 +2291,7 @@ static int tw_probe(struct pci_dev *pdev
- 
- 	if (tw_initialize_device_extension(tw_dev)) {
- 		printk(KERN_WARNING "3w-xxxx: Failed to initialize device extension.");
-+		retval = -ENOMEM;
- 		goto out_free_device_extension;
- 	}
- 
-@@ -2305,6 +2306,7 @@ static int tw_probe(struct pci_dev *pdev
- 	tw_dev->base_addr = pci_resource_start(pdev, 0);
- 	if (!tw_dev->base_addr) {
- 		printk(KERN_WARNING "3w-xxxx: Failed to get io address.");
-+		retval = -ENOMEM;
- 		goto out_release_mem_region;
- 	}
- 
+ 	snprintf(hid->phys, sizeof(hid->phys), "%pMR",
+ 		 &l2cap_pi(session->ctrl_sock->sk)->chan->src);
 
 
