@@ -6,44 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD2EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAED2ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07AAB2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AAB2083A
+	by mail.kernel.org (Postfix) with ESMTP id 9FB0B2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB0B2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388861AbeIXSn4 (ORCPT
+        id S2388876AbeIXSn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:43:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59226 "EHLO
+        Mon, 24 Sep 2018 14:43:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59250 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbeIXSnz (ORCPT
+        with ESMTP id S1729543AbeIXSn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:43:55 -0400
+        Mon, 24 Sep 2018 14:43:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED5EC109E;
-        Mon, 24 Sep 2018 12:41:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 672C8109F;
+        Mon, 24 Sep 2018 12:41:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, akiyks@gmail.com,
-        boqun.feng@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        linux-arch@vger.kernel.org, luc.maranget@inria.fr,
-        npiggin@gmail.com, parri.andrea@gmail.com,
-        stern@rowland.harvard.edu, will.deacon@arm.com,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 166/235] sched/core: Use smp_mb() in wake_woken_function()
-Date:   Mon, 24 Sep 2018 13:52:32 +0200
-Message-Id: <20180924113121.613527884@linuxfoundation.org>
+Subject: [PATCH 4.18 184/235] drm/nouveau: Fix runtime PM leak in drm_open()
+Date:   Mon, 24 Sep 2018 13:52:50 +0200
+Message-Id: <20180924113122.975801292@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -61,128 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
+From: Lyude Paul <lyude@redhat.com>
 
-[ Upstream commit 76e079fefc8f62bd9b2cd2950814d1ee806e31a5 ]
+[ Upstream commit 922a8c82fafdec99688bbaea6c5889f562a42cdc ]
 
-wake_woken_function() synchronizes with wait_woken() as follows:
+Noticed this as I was skimming through, if we fail to allocate memory
+for cli we'll end up returning without dropping the runtime PM ref we
+got. Additionally, we'll even return the wrong return code! (ret most
+likely will == 0 here, we want -ENOMEM).
 
-  [wait_woken]                       [wake_woken_function]
-
-  entry->flags &= ~wq_flag_woken;    condition = true;
-  smp_mb();                          smp_wmb();
-  if (condition)                     wq_entry->flags |= wq_flag_woken;
-     break;
-
-This commit replaces the above smp_wmb() with an smp_mb() in order to
-guarantee that either wait_woken() sees the wait condition being true
-or the store to wq_entry->flags in woken_wake_function() follows the
-store in wait_woken() in the coherence order (so that the former can
-eventually be observed by wait_woken()).
-
-The commit also fixes a comment associated to set_current_state() in
-wait_woken(): the comment pairs the barrier in set_current_state() to
-the above smp_wmb(), while the actual pairing involves the barrier in
-set_current_state() and the barrier executed by the try_to_wake_up()
-in wake_woken_function().
-
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akiyks@gmail.com
-Cc: boqun.feng@gmail.com
-Cc: dhowells@redhat.com
-Cc: j.alglave@ucl.ac.uk
-Cc: linux-arch@vger.kernel.org
-Cc: luc.maranget@inria.fr
-Cc: npiggin@gmail.com
-Cc: parri.andrea@gmail.com
-Cc: stern@rowland.harvard.edu
-Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/20180716180605.16115-10-paulmck@linux.vnet.ibm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/wait.c |   47 +++++++++++++++++++++--------------------------
- 1 file changed, 21 insertions(+), 26 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_drm.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/wait.c
-+++ b/kernel/sched/wait.c
-@@ -392,35 +392,36 @@ static inline bool is_kthread_should_sto
-  *     if (condition)
-  *         break;
-  *
-- *     p->state = mode;				condition = true;
-- *     smp_mb(); // A				smp_wmb(); // C
-- *     if (!wq_entry->flags & WQ_FLAG_WOKEN)	wq_entry->flags |= WQ_FLAG_WOKEN;
-- *         schedule()				try_to_wake_up();
-- *     p->state = TASK_RUNNING;		    ~~~~~~~~~~~~~~~~~~
-- *     wq_entry->flags &= ~WQ_FLAG_WOKEN;		condition = true;
-- *     smp_mb() // B				smp_wmb(); // C
-- *						wq_entry->flags |= WQ_FLAG_WOKEN;
-- * }
-- * remove_wait_queue(&wq_head, &wait);
-+ *     // in wait_woken()			// in woken_wake_function()
-  *
-+ *     p->state = mode;				wq_entry->flags |= WQ_FLAG_WOKEN;
-+ *     smp_mb(); // A				try_to_wake_up():
-+ *     if (!(wq_entry->flags & WQ_FLAG_WOKEN))	   <full barrier>
-+ *         schedule()				   if (p->state & mode)
-+ *     p->state = TASK_RUNNING;			      p->state = TASK_RUNNING;
-+ *     wq_entry->flags &= ~WQ_FLAG_WOKEN;	~~~~~~~~~~~~~~~~~~
-+ *     smp_mb(); // B				condition = true;
-+ * }						smp_mb(); // C
-+ * remove_wait_queue(&wq_head, &wait);		wq_entry->flags |= WQ_FLAG_WOKEN;
-  */
- long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
- {
--	set_current_state(mode); /* A */
- 	/*
--	 * The above implies an smp_mb(), which matches with the smp_wmb() from
--	 * woken_wake_function() such that if we observe WQ_FLAG_WOKEN we must
--	 * also observe all state before the wakeup.
-+	 * The below executes an smp_mb(), which matches with the full barrier
-+	 * executed by the try_to_wake_up() in woken_wake_function() such that
-+	 * either we see the store to wq_entry->flags in woken_wake_function()
-+	 * or woken_wake_function() sees our store to current->state.
- 	 */
-+	set_current_state(mode); /* A */
- 	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !is_kthread_should_stop())
- 		timeout = schedule_timeout(timeout);
- 	__set_current_state(TASK_RUNNING);
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -908,8 +908,10 @@ nouveau_drm_open(struct drm_device *dev,
+ 	get_task_comm(tmpname, current);
+ 	snprintf(name, sizeof(name), "%s[%d]", tmpname, pid_nr(fpriv->pid));
  
- 	/*
--	 * The below implies an smp_mb(), it too pairs with the smp_wmb() from
--	 * woken_wake_function() such that we must either observe the wait
--	 * condition being true _OR_ WQ_FLAG_WOKEN such that we will not miss
--	 * an event.
-+	 * The below executes an smp_mb(), which matches with the smp_mb() (C)
-+	 * in woken_wake_function() such that either we see the wait condition
-+	 * being true or the store to wq_entry->flags in woken_wake_function()
-+	 * follows ours in the coherence order.
- 	 */
- 	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); /* B */
+-	if (!(cli = kzalloc(sizeof(*cli), GFP_KERNEL)))
+-		return ret;
++	if (!(cli = kzalloc(sizeof(*cli), GFP_KERNEL))) {
++		ret = -ENOMEM;
++		goto done;
++	}
  
-@@ -430,14 +431,8 @@ EXPORT_SYMBOL(wait_woken);
- 
- int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
- {
--	/*
--	 * Although this function is called under waitqueue lock, LOCK
--	 * doesn't imply write barrier and the users expects write
--	 * barrier semantics on wakeup functions.  The following
--	 * smp_wmb() is equivalent to smp_wmb() in try_to_wake_up()
--	 * and is paired with smp_store_mb() in wait_woken().
--	 */
--	smp_wmb(); /* C */
-+	/* Pairs with the smp_store_mb() in wait_woken(). */
-+	smp_mb(); /* C */
- 	wq_entry->flags |= WQ_FLAG_WOKEN;
- 
- 	return default_wake_function(wq_entry, mode, sync, key);
+ 	ret = nouveau_cli_init(drm, name, cli);
+ 	if (ret)
 
 
