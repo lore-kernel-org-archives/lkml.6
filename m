@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0312EECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 139EDC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7CEF21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CEF21486
+	by mail.kernel.org (Postfix) with ESMTP id C502920676
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C502920676
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388561AbeIXSmL (ORCPT
+        id S2388572AbeIXSmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:42:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58938 "EHLO
+        Mon, 24 Sep 2018 14:42:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58952 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387846AbeIXSmK (ORCPT
+        with ESMTP id S2387512AbeIXSmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:42:10 -0400
+        Mon, 24 Sep 2018 14:42:14 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EEEE109B;
-        Mon, 24 Sep 2018 12:40:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55FC6109B;
+        Mon, 24 Sep 2018 12:40:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Puschmann <pp@emlix.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 154/235] Bluetooth: Use lock_sock_nested in bt_accept_enqueue
-Date:   Mon, 24 Sep 2018 13:52:20 +0200
-Message-Id: <20180924113120.719754331@linuxfoundation.org>
+Subject: [PATCH 4.18 155/235] evm: Dont deadlock if a crypto algorithm is unavailable
+Date:   Mon, 24 Sep 2018 13:52:21 +0200
+Message-Id: <20180924113120.823615680@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,100 +53,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Philipp Puschmann <pp@emlix.com>
+From: Matthew Garrett <mjg59@google.com>
 
-[ Upstream commit b71c69c26b4916d11b8d403d8e667bbd191f1b8f ]
+[ Upstream commit e2861fa71641c6414831d628a1f4f793b6562580 ]
 
-Fixes this warning that was provoked by a pairing:
+When EVM attempts to appraise a file signed with a crypto algorithm the
+kernel doesn't have support for, it will cause the kernel to trigger a
+module load. If the EVM policy includes appraisal of kernel modules this
+will in turn call back into EVM - since EVM is holding a lock until the
+crypto initialisation is complete, this triggers a deadlock. Add a
+CRYPTO_NOLOAD flag and skip module loading if it's set, and add that flag
+in the EVM case in order to fail gracefully with an error message
+instead of deadlocking.
 
-[60258.016221] WARNING: possible recursive locking detected
-[60258.021558] 4.15.0-RD1812-BSP #1 Tainted: G           O
-[60258.027146] --------------------------------------------
-[60258.032464] kworker/u5:0/70 is trying to acquire lock:
-[60258.037609]  (sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP){+.+.}, at: [<87759073>] bt_accept_enqueue+0x3c/0x74
-[60258.046863]
-[60258.046863] but task is already holding lock:
-[60258.052704]  (sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP){+.+.}, at: [<d22d7106>] l2cap_sock_new_connection_cb+0x1c/0x88
-[60258.062905]
-[60258.062905] other info that might help us debug this:
-[60258.069441]  Possible unsafe locking scenario:
-[60258.069441]
-[60258.075368]        CPU0
-[60258.077821]        ----
-[60258.080272]   lock(sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP);
-[60258.085510]   lock(sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP);
-[60258.090748]
-[60258.090748]  *** DEADLOCK ***
-[60258.090748]
-[60258.096676]  May be due to missing lock nesting notation
-[60258.096676]
-[60258.103472] 5 locks held by kworker/u5:0/70:
-[60258.107747]  #0:  ((wq_completion)%shdev->name#2){+.+.}, at: [<9460d092>] process_one_work+0x130/0x4fc
-[60258.117263]  #1:  ((work_completion)(&hdev->rx_work)){+.+.}, at: [<9460d092>] process_one_work+0x130/0x4fc
-[60258.126942]  #2:  (&conn->chan_lock){+.+.}, at: [<7877c8c3>] l2cap_connect+0x80/0x4f8
-[60258.134806]  #3:  (&chan->lock/2){+.+.}, at: [<2e16c724>] l2cap_connect+0x8c/0x4f8
-[60258.142410]  #4:  (sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP){+.+.}, at: [<d22d7106>] l2cap_sock_new_connection_cb+0x1c/0x88
-[60258.153043]
-[60258.153043] stack backtrace:
-[60258.157413] CPU: 1 PID: 70 Comm: kworker/u5:0 Tainted: G           O     4.15.0-RD1812-BSP #1
-[60258.165945] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[60258.172485] Workqueue: hci0 hci_rx_work
-[60258.176331] Backtrace:
-[60258.178797] [<8010c9fc>] (dump_backtrace) from [<8010ccbc>] (show_stack+0x18/0x1c)
-[60258.186379]  r7:80e55fe4 r6:80e55fe4 r5:20050093 r4:00000000
-[60258.192058] [<8010cca4>] (show_stack) from [<809864e8>] (dump_stack+0xb0/0xdc)
-[60258.199301] [<80986438>] (dump_stack) from [<8016ecc8>] (__lock_acquire+0xffc/0x11d4)
-[60258.207144]  r9:5e2bb019 r8:630f974c r7:ba8a5940 r6:ba8a5ed8 r5:815b5220 r4:80fa081c
-[60258.214901] [<8016dccc>] (__lock_acquire) from [<8016f620>] (lock_acquire+0x78/0x98)
-[60258.222655]  r10:00000040 r9:00000040 r8:808729f0 r7:00000001 r6:00000000 r5:60050013
-[60258.230491]  r4:00000000
-[60258.233045] [<8016f5a8>] (lock_acquire) from [<806ee974>] (lock_sock_nested+0x64/0x88)
-[60258.240970]  r7:00000000 r6:b796e870 r5:00000001 r4:b796e800
-[60258.246643] [<806ee910>] (lock_sock_nested) from [<808729f0>] (bt_accept_enqueue+0x3c/0x74)
-[60258.255004]  r8:00000001 r7:ba7d3c00 r6:ba7d3ea4 r5:ba7d2000 r4:b796e800
-[60258.261717] [<808729b4>] (bt_accept_enqueue) from [<808aa39c>] (l2cap_sock_new_connection_cb+0x68/0x88)
-[60258.271117]  r5:b796e800 r4:ba7d2000
-[60258.274708] [<808aa334>] (l2cap_sock_new_connection_cb) from [<808a294c>] (l2cap_connect+0x190/0x4f8)
-[60258.283933]  r5:00000001 r4:ba6dce00
-[60258.287524] [<808a27bc>] (l2cap_connect) from [<808a4a14>] (l2cap_recv_frame+0x744/0x2cf8)
-[60258.295800]  r10:ba6dcf24 r9:00000004 r8:b78d8014 r7:00000004 r6:bb05d000 r5:00000004
-[60258.303635]  r4:bb05d008
-[60258.306183] [<808a42d0>] (l2cap_recv_frame) from [<808a7808>] (l2cap_recv_acldata+0x210/0x214)
-[60258.314805]  r10:b78e7800 r9:bb05d960 r8:00000001 r7:bb05d000 r6:0000000c r5:b7957a80
-[60258.322641]  r4:ba6dce00
-[60258.325188] [<808a75f8>] (l2cap_recv_acldata) from [<8087630c>] (hci_rx_work+0x35c/0x4e8)
-[60258.333374]  r6:80e5743c r5:bb05d7c8 r4:b7957a80
-[60258.338004] [<80875fb0>] (hci_rx_work) from [<8013dc7c>] (process_one_work+0x1a4/0x4fc)
-[60258.346018]  r10:00000001 r9:00000000 r8:baabfef8 r7:ba997500 r6:baaba800 r5:baaa5d00
-[60258.353853]  r4:bb05d7c8
-[60258.356401] [<8013dad8>] (process_one_work) from [<8013e028>] (worker_thread+0x54/0x5cc)
-[60258.364503]  r10:baabe038 r9:baaba834 r8:80e05900 r7:00000088 r6:baaa5d18 r5:baaba800
-[60258.372338]  r4:baaa5d00
-[60258.374888] [<8013dfd4>] (worker_thread) from [<801448f8>] (kthread+0x134/0x160)
-[60258.382295]  r10:ba8310b8 r9:bb07dbfc r8:8013dfd4 r7:baaa5d00 r6:00000000 r5:baaa8ac0
-[60258.390130]  r4:ba831080
-[60258.392682] [<801447c4>] (kthread) from [<801080b4>] (ret_from_fork+0x14/0x20)
-[60258.399915]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:801447c4
-[60258.407751]  r4:baaa8ac0 r3:baabe000
-
-Signed-off-by: Philipp Puschmann <pp@emlix.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bluetooth/af_bluetooth.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ crypto/api.c                        |    2 +-
+ include/linux/crypto.h              |    5 +++++
+ security/integrity/evm/evm_crypto.c |    3 ++-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/net/bluetooth/af_bluetooth.c
-+++ b/net/bluetooth/af_bluetooth.c
-@@ -159,7 +159,7 @@ void bt_accept_enqueue(struct sock *pare
- 	BT_DBG("parent %p, sk %p", parent, sk);
+--- a/crypto/api.c
++++ b/crypto/api.c
+@@ -229,7 +229,7 @@ static struct crypto_alg *crypto_larval_
+ 	mask &= ~(CRYPTO_ALG_LARVAL | CRYPTO_ALG_DEAD);
  
- 	sock_hold(sk);
--	lock_sock(sk);
-+	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
- 	list_add_tail(&bt_sk(sk)->accept_q, &bt_sk(parent)->accept_q);
- 	bt_sk(sk)->parent = parent;
- 	release_sock(sk);
+ 	alg = crypto_alg_lookup(name, type, mask);
+-	if (!alg) {
++	if (!alg && !(mask & CRYPTO_NOLOAD)) {
+ 		request_module("crypto-%s", name);
+ 
+ 		if (!((type ^ CRYPTO_ALG_NEED_FALLBACK) & mask &
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -113,6 +113,11 @@
+ #define CRYPTO_ALG_OPTIONAL_KEY		0x00004000
+ 
+ /*
++ * Don't trigger module loading
++ */
++#define CRYPTO_NOLOAD			0x00008000
++
++/*
+  * Transform masks and values (for crt_flags).
+  */
+ #define CRYPTO_TFM_NEED_KEY		0x00000001
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -97,7 +97,8 @@ static struct shash_desc *init_desc(char
+ 		mutex_lock(&mutex);
+ 		if (*tfm)
+ 			goto out;
+-		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_ALG_ASYNC);
++		*tfm = crypto_alloc_shash(algo, 0,
++					  CRYPTO_ALG_ASYNC | CRYPTO_NOLOAD);
+ 		if (IS_ERR(*tfm)) {
+ 			rc = PTR_ERR(*tfm);
+ 			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
 
 
