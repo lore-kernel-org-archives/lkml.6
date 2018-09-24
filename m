@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E3FECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53113ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD8120877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD8120877
+	by mail.kernel.org (Postfix) with ESMTP id 0B2AF20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2AF20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbeIXSEi (ORCPT
+        id S1730304AbeIXSFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:04:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53772 "EHLO
+        Mon, 24 Sep 2018 14:05:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53488 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729932AbeIXSEh (ORCPT
+        with ESMTP id S1730384AbeIXSCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:04:37 -0400
+        Mon, 24 Sep 2018 14:02:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B949D64;
-        Mon, 24 Sep 2018 12:02:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B98B8D64;
+        Mon, 24 Sep 2018 12:00:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manikanta Pubbisetty <mpubbise@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 031/111] mac80211: restrict delayed tailroom needed decrement
-Date:   Mon, 24 Sep 2018 13:51:58 +0200
-Message-Id: <20180924113107.687176869@linuxfoundation.org>
+Subject: [PATCH 4.9 006/111] ALSA: msnd: Fix the default sample sizes
+Date:   Mon, 24 Sep 2018 13:51:33 +0200
+Message-Id: <20180924113104.672947993@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -53,138 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manikanta Pubbisetty <mpubbise@codeaurora.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 133bf90dbb8b873286f8ec2e81ba26e863114b8c ]
+[ Upstream commit 7c500f9ea139d0c9b80fdea5a9c911db3166ea54 ]
 
-As explained in ieee80211_delayed_tailroom_dec(), during roam,
-keys of the old AP will be destroyed and new keys will be
-installed. Deletion of the old key causes
-crypto_tx_tailroom_needed_cnt to go from 1 to 0 and the new key
-installation causes a transition from 0 to 1.
+The default sample sizes set by msnd driver are bogus; it sets ALSA
+PCM format, not the actual bit width.
 
-Whenever crypto_tx_tailroom_needed_cnt transitions from 0 to 1,
-we invoke synchronize_net(); the reason for doing this is to avoid
-a race in the TX path as explained in increment_tailroom_need_count().
-This synchronize_net() operation can be slow and can affect the station
-roam time. To avoid this, decrementing the crypto_tx_tailroom_needed_cnt
-is delayed for a while so that upon installation of new key the
-transition would be from 1 to 2 instead of 0 to 1 and thereby
-improving the roam time.
-
-This is all correct for a STA iftype, but deferring the tailroom_needed
-decrement for other iftypes may be unnecessary.
-
-For example, let's consider the case of a 4-addr client connecting to
-an AP for which AP_VLAN interface is also created, let the initial
-value for tailroom_needed on the AP be 1.
-
-* 4-addr client connects to the AP (AP: tailroom_needed = 1)
-* AP will clear old keys, delay decrement of tailroom_needed count
-* AP_VLAN is created, it takes the tailroom count from master
-  (AP_VLAN: tailroom_needed = 1, AP: tailroom_needed = 1)
-* Install new key for the station, assume key is plumbed in the HW,
-  there won't be any change in tailroom_needed count on AP iface
-* Delayed decrement of tailroom_needed count on AP
-  (AP: tailroom_needed = 0, AP_VLAN: tailroom_needed = 1)
-
-Because of the delayed decrement on AP iface, tailroom_needed count goes
-out of sync between AP(master iface) and AP_VLAN(slave iface) and
-there would be unnecessary tailroom created for the packets going
-through AP_VLAN iface.
-
-Also, WARN_ONs were observed while trying to bring down the AP_VLAN
-interface:
-(warn_slowpath_common) (warn_slowpath_null+0x18/0x20)
-(warn_slowpath_null) (ieee80211_free_keys+0x114/0x1e4)
-(ieee80211_free_keys) (ieee80211_del_virtual_monitor+0x51c/0x850)
-(ieee80211_del_virtual_monitor) (ieee80211_stop+0x30/0x3c)
-(ieee80211_stop) (__dev_close_many+0x94/0xb8)
-(__dev_close_many) (dev_close_many+0x5c/0xc8)
-
-Restricting delayed decrement to station interface alone fixes the problem
-and it makes sense to do so because delayed decrement is done to improve
-roam time which is applicable only for client devices.
-
-Signed-off-by: Manikanta Pubbisetty <mpubbise@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/cfg.c |    2 +-
- net/mac80211/key.c |   24 +++++++++++++++---------
- 2 files changed, 16 insertions(+), 10 deletions(-)
+ sound/isa/msnd/msnd_pinnacle.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -454,7 +454,7 @@ static int ieee80211_del_key(struct wiph
- 		goto out_unlock;
- 	}
+--- a/sound/isa/msnd/msnd_pinnacle.c
++++ b/sound/isa/msnd/msnd_pinnacle.c
+@@ -82,10 +82,10 @@
  
--	ieee80211_key_free(key, true);
-+	ieee80211_key_free(key, sdata->vif.type == NL80211_IFTYPE_STATION);
- 
- 	ret = 0;
-  out_unlock:
---- a/net/mac80211/key.c
-+++ b/net/mac80211/key.c
-@@ -648,11 +648,15 @@ int ieee80211_key_link(struct ieee80211_
+ static void set_default_audio_parameters(struct snd_msnd *chip)
  {
- 	struct ieee80211_local *local = sdata->local;
- 	struct ieee80211_key *old_key;
--	int idx, ret;
--	bool pairwise;
--
--	pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
--	idx = key->conf.keyidx;
-+	int idx = key->conf.keyidx;
-+	bool pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
-+	/*
-+	 * We want to delay tailroom updates only for station - in that
-+	 * case it helps roaming speed, but in other cases it hurts and
-+	 * can cause warnings to appear.
-+	 */
-+	bool delay_tailroom = sdata->vif.type == NL80211_IFTYPE_STATION;
-+	int ret;
- 
- 	mutex_lock(&sdata->local->key_mtx);
- 
-@@ -680,14 +684,14 @@ int ieee80211_key_link(struct ieee80211_
- 	increment_tailroom_need_count(sdata);
- 
- 	ieee80211_key_replace(sdata, sta, pairwise, old_key, key);
--	ieee80211_key_destroy(old_key, true);
-+	ieee80211_key_destroy(old_key, delay_tailroom);
- 
- 	ieee80211_debugfs_key_add(key);
- 
- 	if (!local->wowlan) {
- 		ret = ieee80211_key_enable_hw_accel(key);
- 		if (ret)
--			ieee80211_key_free(key, true);
-+			ieee80211_key_free(key, delay_tailroom);
- 	} else {
- 		ret = 0;
- 	}
-@@ -922,7 +926,8 @@ void ieee80211_free_sta_keys(struct ieee
- 		ieee80211_key_replace(key->sdata, key->sta,
- 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
- 				key, NULL);
--		__ieee80211_key_destroy(key, true);
-+		__ieee80211_key_destroy(key, key->sdata->vif.type ==
-+					NL80211_IFTYPE_STATION);
- 	}
- 
- 	for (i = 0; i < NUM_DEFAULT_KEYS; i++) {
-@@ -932,7 +937,8 @@ void ieee80211_free_sta_keys(struct ieee
- 		ieee80211_key_replace(key->sdata, key->sta,
- 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
- 				key, NULL);
--		__ieee80211_key_destroy(key, true);
-+		__ieee80211_key_destroy(key, key->sdata->vif.type ==
-+					NL80211_IFTYPE_STATION);
- 	}
- 
- 	mutex_unlock(&local->key_mtx);
+-	chip->play_sample_size = DEFSAMPLESIZE;
++	chip->play_sample_size = snd_pcm_format_width(DEFSAMPLESIZE);
+ 	chip->play_sample_rate = DEFSAMPLERATE;
+ 	chip->play_channels = DEFCHANNELS;
+-	chip->capture_sample_size = DEFSAMPLESIZE;
++	chip->capture_sample_size = snd_pcm_format_width(DEFSAMPLESIZE);
+ 	chip->capture_sample_rate = DEFSAMPLERATE;
+ 	chip->capture_channels = DEFCHANNELS;
+ }
 
 
