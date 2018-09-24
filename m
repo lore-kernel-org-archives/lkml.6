@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5818ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BBCC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E1A20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E1A20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 4DBCB208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DBCB208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732406AbeIXSTQ (ORCPT
+        id S1732418AbeIXSTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:19:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55904 "EHLO
+        Mon, 24 Sep 2018 14:19:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55976 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbeIXSTP (ORCPT
+        with ESMTP id S1730570AbeIXSTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:19:15 -0400
+        Mon, 24 Sep 2018 14:19:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BA11109F;
-        Mon, 24 Sep 2018 12:17:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15C1C107E;
+        Mon, 24 Sep 2018 12:17:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Anderson <tsa@biglakesoftware.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.14 088/173] USB: Add quirk to support DJI CineSSD
-Date:   Mon, 24 Sep 2018 13:52:02 +0200
-Message-Id: <20180924113122.539901560@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.14 089/173] usb: uas: add support for more quirk flags
+Date:   Mon, 24 Sep 2018 13:52:03 +0200
+Message-Id: <20180924113122.602674608@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -51,73 +50,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tim Anderson <tsa@biglakesoftware.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit f45681f9becaa65111ed0a691ccf080a0cd5feb8 upstream.
+commit 42d1c6d4a06a77b3ab206a919b9050c3080f3a71 upstream.
 
-This device does not correctly handle the LPM operations.
+The hope that UAS devices would be less broken than old style storage
+devices has turned out to be unfounded. Make UAS support more of the
+quirk flags of the old driver.
 
-Also, the device cannot handle ATA pass-through commands
-and locks up when attempted while running in super speed.
-
-This patch adds the equivalent quirk logic as found in uas.
-
-Signed-off-by: Tim Anderson <tsa@biglakesoftware.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c          |    3 +++
- drivers/usb/storage/scsiglue.c     |    9 +++++++++
- drivers/usb/storage/unusual_devs.h |    7 +++++++
- 3 files changed, 19 insertions(+)
+ drivers/usb/storage/uas.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -259,6 +259,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
- 
-+	/* DJI CineSSD */
-+	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* INTEL VALUE SSD */
- 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
- 
---- a/drivers/usb/storage/scsiglue.c
-+++ b/drivers/usb/storage/scsiglue.c
-@@ -392,6 +392,15 @@ static int queuecommand_lck(struct scsi_
- 		return 0;
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -842,6 +842,27 @@ static int uas_slave_configure(struct sc
+ 		sdev->skip_ms_page_8 = 1;
+ 		sdev->wce_default_on = 1;
  	}
- 
-+	if ((us->fflags & US_FL_NO_ATA_1X) &&
-+			(srb->cmnd[0] == ATA_12 || srb->cmnd[0] == ATA_16)) {
-+		memcpy(srb->sense_buffer, usb_stor_sense_invalidCDB,
-+		       sizeof(usb_stor_sense_invalidCDB));
-+		srb->result = SAM_STAT_CHECK_CONDITION;
-+		done(srb);
-+		return 0;
-+	}
 +
- 	/* enqueue the command and wake up the control thread */
- 	srb->scsi_done = done;
- 	us->srb = srb;
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2307,6 +2307,13 @@ UNUSUAL_DEV(  0x2735, 0x100b, 0x0000, 0x
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_GO_SLOW ),
- 
-+/* Reported-by: Tim Anderson <tsa@biglakesoftware.com> */
-+UNUSUAL_DEV(  0x2ca3, 0x0031, 0x0000, 0x9999,
-+		"DJI",
-+		"CineSSD",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_NO_ATA_1X),
++	/*
++	 * Some disks return the total number of blocks in response
++	 * to READ CAPACITY rather than the highest block number.
++	 * If this device makes that mistake, tell the sd driver.
++	 */
++	if (devinfo->flags & US_FL_FIX_CAPACITY)
++		sdev->fix_capacity = 1;
 +
- /*
-  * Reported by Frederic Marchal <frederic.marchal@wowcompany.com>
-  * Mio Moov 330
++	/*
++	 * Some devices don't like MODE SENSE with page=0x3f,
++	 * which is the command used for checking if a device
++	 * is write-protected.  Now that we tell the sd driver
++	 * to do a 192-byte transfer with this command the
++	 * majority of devices work fine, but a few still can't
++	 * handle it.  The sd driver will simply assume those
++	 * devices are write-enabled.
++	 */
++	if (devinfo->flags & US_FL_NO_WP_DETECT)
++		sdev->skip_ms_page_3f = 1;
++
+ 	scsi_change_queue_depth(sdev, devinfo->qdepth - 2);
+ 	return 0;
+ }
 
 
