@@ -2,115 +2,114 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEBCC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE87FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9113720883
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:33:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9113720883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 91C5B2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:34:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C5B2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbeIXQfU (ORCPT
+        id S1728525AbeIXQfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:35:20 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60072 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbeIXQfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:35:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4EFC80D;
-        Mon, 24 Sep 2018 03:33:55 -0700 (PDT)
-Received: from [10.4.13.23] (en101.Emea.Arm.com [10.4.13.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAC1F3F5B3;
-        Mon, 24 Sep 2018 03:33:53 -0700 (PDT)
-Subject: Re: [PATCH 02/10] irqchip/gic-v3-its: Consolidate LPI_PENDBASE_SZ
- usage
-To:     Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20180921195954.21574-1-marc.zyngier@arm.com>
- <20180921195954.21574-3-marc.zyngier@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
-Date:   Mon, 24 Sep 2018 11:33:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 24 Sep 2018 12:35:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56278 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727730AbeIXQfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 12:35:37 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4ABA308FB8F;
+        Mon, 24 Sep 2018 10:34:12 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A0A0C104C529;
+        Mon, 24 Sep 2018 10:34:04 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 12:34:02 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+Subject: Re: [PATCH v10 03/26] KVM: s390: refactor crypto initialization
+Message-ID: <20180924123402.51e231a7.cohuck@redhat.com>
+In-Reply-To: <e340e3ec-4f8f-1f7b-b2f5-6fec77c4c5f9@linux.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1536781396-13601-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <e340e3ec-4f8f-1f7b-b2f5-6fec77c4c5f9@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <20180921195954.21574-3-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 24 Sep 2018 10:34:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Fri, 21 Sep 2018 19:18:57 -0400
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-On 21/09/18 20:59, Marc Zyngier wrote:
-> LPI_PENDING_SZ is always used in conjunction with a max(). Let's
-> factor this in the definition of the macro, and simplify the rest
-> of the code.
+> On 09/12/2018 03:42 PM, Tony Krowiak wrote:
+> > From: Tony Krowiak <akrowiak@linux.ibm.com>
+> > 
+> > This patch refactors the code that initializes and sets up the
+> > crypto configuration for a guest. The following changes are
+> > implemented via this patch:
+> > 
+> > 1. Prior to the introduction of AP device virtualization, it
+> >     was not necessary to provide guest access to the CRYCB
+> >     unless the MSA extension 3 (MSAX3) facility was installed
+> >     on the host system. With the introduction of AP device
+> >     virtualization, the CRYCB must be made accessible to the
+> >     guest if the AP instructions are installed on the host
+> >     and are to be provided to the guest.
+> > 
+> > 2. Introduces a flag indicating AP instructions executed on
+> >     the guest shall be interpreted by the firmware. It is
+> >     initialized to indicate AP instructions are to be
+> >     to be interpreted and is used to set the SIE bit for
+> >     each vcpu during vcpu setup.
+> > 
+> > Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> > Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> > Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> > Acked-by: Janosch Frank <frankja@linux.ibm.com>
+> > Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> > Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> > Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> > ---
+> >   arch/s390/include/asm/kvm_host.h |    2 +
+> >   arch/s390/include/uapi/asm/kvm.h |    1 +
+> >   arch/s390/kvm/kvm-s390.c         |   71 ++++++++++++++++++--------------------
+> >   3 files changed, 37 insertions(+), 37 deletions(-)
+
+(...)
+
+> The fixup! patch below modifies this patch (03/26) to illustrate how
 > 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->   drivers/irqchip/irq-gic-v3-its.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
+> David's recommendation will be implemented for v11 of the series. It
 > 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index c2df341ff6fa..ed6aab11e019 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -62,7 +62,7 @@ static u32 lpi_id_bits;
->    */
->   #define LPI_NRBITS		lpi_id_bits
->   #define LPI_PROPBASE_SZ		ALIGN(BIT(LPI_NRBITS), SZ_64K)
-> -#define LPI_PENDBASE_SZ		ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K)
-> +#define LPI_PENDBASE_SZ		max_t(u32, SZ_64K, ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K))
-
-minor nit: The ALIGN() already aligns the given value up to the required
-alignment. So, if the LPI_NRBITS is guaranteed to be non-zero,
-we could simply drop the max_t().
-
-Rest looks good to me.
-
-Suzuki
-
->   
->   #define LPI_PROP_DEFAULT_PRIO	0xa0
->   
-> @@ -1924,12 +1924,9 @@ static int its_alloc_collections(struct its_node *its)
->   static struct page *its_allocate_pending_table(gfp_t gfp_flags)
->   {
->   	struct page *pend_page;
-> -	/*
-> -	 * The pending pages have to be at least 64kB aligned,
-> -	 * hence the 'max(LPI_PENDBASE_SZ, SZ_64K)' below.
-> -	 */
-> +
->   	pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
-> -				get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
-> +				get_order(LPI_PENDBASE_SZ));
->   	if (!pend_page)
->   		return NULL;
->   
-> @@ -1941,8 +1938,7 @@ static struct page *its_allocate_pending_table(gfp_t gfp_flags)
->   
->   static void its_free_pending_table(struct page *pt)
->   {
-> -	free_pages((unsigned long)page_address(pt),
-> -		   get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
-> +	free_pages((unsigned long)page_address(pt), get_order(LPI_PENDBASE_SZ));
->   }
->   
->   static void its_cpu_init_lpis(void)
+> is one of three fixup! patches (the other two are in responses to
+> 11/26
+>   and 25/26) included to generate discussion in v10 rather than
 > 
+> waiting until v11 for comments.
+
+(...)
+
+Looks good to me.
