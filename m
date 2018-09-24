@@ -2,167 +2,220 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195FEECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3311C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29D72098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9532098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:18:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nTFp+MAx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A29D72098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="RZDHWqk5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9532098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbeIXTRj (ORCPT
+        id S1730408AbeIXTUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 15:17:39 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35005 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728984AbeIXTRj (ORCPT
+        Mon, 24 Sep 2018 15:20:31 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44309 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728917AbeIXTUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 15:17:39 -0400
-Received: by mail-it1-f196.google.com with SMTP id 139-v6so10389540itf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 06:15:31 -0700 (PDT)
+        Mon, 24 Sep 2018 15:20:30 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v16-v6so19646431wro.11
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 06:18:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Vbh+QkqFOS1mpPI7VNq21NTg36d6Xym2Vz1F6SyU6P4=;
-        b=nTFp+MAxyhMU0I1y6JoPeAh274ygU5Cv9h20PUMGKGP/MMime4Ac02hmgoDDbZk3NL
-         JeyFYi5RNESF5SS2oUnvKN+OIoQtTeGb+ezeYKp330y5Xl3oZXSvjr6PRjWaIrpc+TPd
-         8vB0l09yPst5Z8YiOR1Y9ZJloC2lduDq1w/iLwytqFOJQgSztpNJ3ZNNqtI0hJLy2kn1
-         MKruHwUGTpHa33FVdUWVqVHgQxLA+y5n0rFVTZ4p53cMFRMiAsCSbFnyGO9NHez2RuEX
-         HsNuNPuzrfoOo/t9x9pLFRdgkdkwWnBQnU/06oCu49gESnkQihbffMY5plOwj5hlMVUV
-         /FBQ==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1Qla0hf/ZuwJB9W2b8qP9+0liT+B/PNXuD+YQ09ZjwM=;
+        b=RZDHWqk5JC6Iq/Faq/F7GnjnbPgXbH3fwhTxG+axWebvAtK+/fTsmpignIcruUoOOn
+         qtf8gICjO58Db92Q57poYmF61Lc1EBXOxfzZrIbrkjUItqzzZ18t1kxECJhK8xAMOHD2
+         q8IXPGmz1E1CPoXGTw6ABLn+owT9QI76Y+BsosTe21gBL5NP2ZYyRfTd1gfsdJbheM3L
+         ui9fwRZDNW2mY3fIU6HnhGkLR2EjM+nKx1pdAjNaKGvUnN/uWv7Y4nwNqkcqMnLie/y1
+         iGGPdt+Qm6Ye5NbZtjKJ0pLACB7ZMDh44pYlTdgZD98Al0R9TJNbtkyqxPwdwUjdYhIb
+         JKRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Vbh+QkqFOS1mpPI7VNq21NTg36d6Xym2Vz1F6SyU6P4=;
-        b=BqRdihfboybxxmSLMywMN4BKxkECulKxuDMuELgW3hMW81Kp/tVXSHv6M5uffuq0Ci
-         h9nlk7IX/5W44ieeDMk7EHl/AuMhmFCc07n0w/ULv2ZhjU+5AnAlpqUA0Esh1cWAmGnG
-         c+diFrs+otp3X2Vy28pRInuBFBVGzSgZrNiigjSbDkeV9KNFJjQVO7iGuL3rXXpbRxUv
-         7/JDFyPCjHa1t6lFc/SSOCMbjP1i98V+a5sVynb9nI5gIWHyuG7NwwnuojyTEaL2wpkF
-         laRbMCzE3nM6VqFA3aKvzZ8FZLW1gx+Y8+c2UWYG5ANDgTSDnGMRKlk09XOyxkprXRQd
-         u9VQ==
-X-Gm-Message-State: APzg51DkZmylS3S4KH3/yW9S0Cv+mVhuk3qTld0Tm7fbXcQYBg9IiXT7
-        OmQn8zOAyQg0uBlHvdH33J8pah4IB2UZKjp0kuuwOQ==
-X-Google-Smtp-Source: ACcGV61cYJ/w15oCHYWJV2/R5jMhmCqseBwBctvZhVoFv8uw9dVKOdpxA/TcY3jhH0dYLn6ZAboP/sctHtOrrAgjt4w=
-X-Received: by 2002:a24:140f:: with SMTP id 15-v6mr7931338itg.57.1537794930317;
- Mon, 24 Sep 2018 06:15:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1Qla0hf/ZuwJB9W2b8qP9+0liT+B/PNXuD+YQ09ZjwM=;
+        b=lBKt1o0jU/8Pt94tXhO4bFd8ysWJrgkVmW0Lz1/2L05GB1gmY09RQEPMV0m7fwZg/T
+         KnGuEOz2H7dfgualGN17EMx6HK5wmdzLVhn5dViFYkgXTXWhB3f2C3FHaAiqBAsVnn0j
+         Sj7/Mi7cgSIO0mWQY+kTiDeAXrv1UXApObyAhz3k5EITWU/GwaxUDZyC2MGuBrWJZFIk
+         WGpKQc3RFVdKI2C+3TqyClcfG27BV49TxDMeDOp7ytdkW2YW9VtmUBPiie2q5YWXAEod
+         lk+VTintrc69SD9l3kW5w86/1SWkCSXtgiE21E4PUTexNsIlqujOL+nE+MB+KBetsJpl
+         uWyA==
+X-Gm-Message-State: ABuFfojY7FxkZKGfk7zHBYX5gmKWlyP8qlOgmNTPrlI0SfyUT0Lct6Lf
+        U0xzRxsH61yxnV9bOP+EDrbzgg==
+X-Google-Smtp-Source: ACcGV63HomWHl2wKG49SOZTPGSSPTlV7wCxTf99mgHUBau1EeAjAMDi5GJn/iRKRakoIMQWndQOMvQ==
+X-Received: by 2002:a5d:4c49:: with SMTP id n9-v6mr8795920wrt.71.1537795100027;
+        Mon, 24 Sep 2018 06:18:20 -0700 (PDT)
+Received: from brauner.io (p5097958a.dip0.t-ipconnect.de. [80.151.149.138])
+        by smtp.gmail.com with ESMTPSA id b22-v6sm11359947wme.48.2018.09.24.06.18.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 06:18:18 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 15:18:16 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>, aviro@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] fsmount: do not use legacy MS_ flags
+Message-ID: <20180924131815.76topcqqh3spyvvp@brauner.io>
+References: <20180922132106.wfa6xaxwbu276qka@brauner.io>
+ <20180921155455.flkf5vdrm3vgn6do@brauner.io>
+ <20180920151214.15484-6-mszeredi@redhat.com>
+ <20180920151214.15484-1-mszeredi@redhat.com>
+ <17157.1537542475@warthog.procyon.org.uk>
+ <20311.1537548756@warthog.procyon.org.uk>
+ <8221.1537631312@warthog.procyon.org.uk>
+ <3868.1537742717@warthog.procyon.org.uk>
+ <30364.1537771838@warthog.procyon.org.uk>
+ <29956.1537792665@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 06:15:09
- -0700 (PDT)
-In-Reply-To: <348002473.15454693.1537737330932.JavaMail.zimbra@redhat.com>
-References: <956405482.15417289.1537693839327.JavaMail.zimbra@redhat.com>
- <1722725855.15417291.1537693865632.JavaMail.zimbra@redhat.com>
- <CACT4Y+anBfjFnKget7zu75uZVOV6ZT3-RPshaVt2a_4R3ararg@mail.gmail.com> <348002473.15454693.1537737330932.JavaMail.zimbra@redhat.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 24 Sep 2018 15:15:09 +0200
-Message-ID: <CACT4Y+YEnZsVMjKRmpM3eGtw=2O10k8S3a=Ltodaf77T7tut_A@mail.gmail.com>
-Subject: Re: general protection fault in usb_find_alt_setting
-To:     Vladis Dronov <vdronov@redhat.com>
-Cc:     syzbot 
-        <bot+c99ecc8a2c68eb7e06cf2f652e60d63d6fbe2f31@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        kai heng feng <kai.heng.feng@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ouaxp4t3sd3or2bq"
+Content-Disposition: inline
+In-Reply-To: <29956.1537792665@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 23, 2018 at 11:15 PM, Vladis Dronov <vdronov@redhat.com> wrote:
-> Hello, Dmitry,
->
-> Thank you for the reply. I probably do not properly understand how
-> syzcaller works then. Can you please, have a look at my reasoning.
->
-> The bug:
->
-> https://syzkaller.appspot.com/bug?id=4b88ff5aa6aa88f9283a45cc62f16e55b0722131
-> (Reported-by: syzbot+c99ecc8a2c68eb7e06cf2f652e60d63d6fbe2f31@syzkaller.appspotmail.com,
-> "[upstream] general protection fault in usb_find_alt_setting")
->
-> was not fixed. it was closed as invalid, so, afaiu, all the work has stopped for it.
->
-> So syzbot did not wait until the fixing commit reached all tested trees, and the
-> crash was not spotted again _after_ that.
->
-> Then I look at the bug:
->
-> https://syzkaller.appspot.com/bug?id=a0ec6260a1d37288a4508250fe30a5604ceec666
-> (Reported-by: syzbot+19c3aaef85a89d451eac@syzkaller.appspotmail.com,
-> "[upstream] general protection fault in usb_find_alt_setting (2)")
->
-> And I see the crash happens at the same place _and_ at the same code:
->
-> (bug id=a0ec6260a1d3)
-> RIP: 0010:usb_find_alt_setting+0x38/0x310 drivers/usb/core/usb.c:231
-> Code: ... fd 48 8d 7b 04 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 86 02 00 00
-> (bug id=4b88ff5aa6aa)
-> Code: ... fd 48 8d 7b 04 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 a1 02 00
-> RIP: usb_find_alt_setting+0x38/0x310 drivers/usb/core/usb.c:231 RSP: ffff88005893f610
->
-> This makes me be sure these are the same bug (dup) which are fixed by the same
-> commit "USB: handle NULL config in usb_find_alt_setting()".
->
-> As I'm kinda a perfectionist, I would like to mark (bug id=4b88ff5aa6aa) as
-> fixed by this commit and not closed as invalid.
 
+--ouaxp4t3sd3or2bq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bad: I did not check status of the first version of the bug:
-https://syzkaller.appspot.com/bug?id=4b88ff5aa6aa88f9283a45cc62f16e55b0722131
+On Mon, Sep 24, 2018 at 01:37:45PM +0100, David Howells wrote:
+> Christian Brauner <christian@brauner.io> wrote:
+>=20
+> > I have thought a little more about splitting up the mount flags into
+> > sensible sets. I think the following four sets make sense:
+> >
+> > enum {
+> >         MOUNT_ATTR_PROPAGATION =3D 1,
+> >         MOUNT_ATTR_SECURITY,
+> >         MOUNT_ATTR_SYNC,
+> >         MOUNT_ATTR_TIME,
+> > };
+>=20
+> Al (I think it was) has been against splitting them up before (I've previ=
+ously
+> proposed splitting the topology propagation flags from the mount attribut=
+es).
 
-The thing is that "fixed" and "invalid" are considered terminal states
-for a bug. syzbot ignores all commands for them. This was done to
-avoid races between re-opening an old bug and syzbot creating a new
-version of the same bug at the same time. And also to simplify overall
-process: bugs moving monotonically to terminal states. So at the
-moment it's unfortunately not possible to go back and say that this
-was a dup rather than invalid, like one would do in a real bug
-tracker.
-As a rule of thumb: things still on dashboard need some action, things
-that are already not on the dashboard do not need any attention.
+Right, that request could probably be fulfilled by the first draft for
+this idea that I had but didn't send out.
+Basically, having a sequential enum that only ever gets bumped when we
+run out of flags in a set, i.e.
 
-The reason for closing the first one was noted here:
-https://groups.google.com/d/msg/syzkaller-bugs/Iqf80RqXK14/SSYd1aAtAQAJ
-Taking into account the huge number of bugs, it can make more sense to
-clean up the dashboard from old, most likely irrelevant bugs to
-increase chances of fixing other bugs. In this case it was a wrong
-decision, probably a part of a sweeping clean up. But syzbot created a
-new bug for this since it started happening again, so in the end
-everything worked as intended.
+enum {
+        MOUNT_ATTR_SET_1 =3D 1,
+        MOUNT_ATTR_SET_2 =3D 2,
+        MOUNT_ATTR_SET_3 =3D 3,
+        .
+        .
+        .
+};
 
-I understand this all can look somewhat confusing initially. The
-system built as an attempt to chew hundreds of bugs per month with
-limited human resources.
+Then we would currently only define a single set
+enum {
+        MOUNT_ATTR_SET_1 =3D 1,
+};
 
-But we need perfectionists for lots of the open bugs on the dashboard!
-https://syzkaller.appspot.com#upstream
+dump all the current mount flags we would like to support in there and
+call it a day until we run out of flags at which point we introduce
+MOUNT_ATTR_SET_2.
+But honestly, I find defining cuts by forming sets of logically related
+flags to be more intuitive and transparent for kernel- and userspace.
+But I'm just another muppet with an opinion. :)
 
+>=20
+> > #define MOUNT_ATTR_NOATIME     (1<<1)
+> > #define MOUNT_ATTR_RELATIME    (1<<3)
+> > #define MOUNT_ATTR_STRICTATIME (1<<4)
+>=20
+> These aren't independent, but are actually settings on the same dial, so I
+> would suggest that they shouldn't be separate flags.  I'm not sure about
+> LAZYTIME though.
 
-> ----- Original Message -----
->> From: "Dmitry Vyukov" <dvyukov@google.com>
->> On Sun, Sep 23, 2018 at 11:11 AM, Vladis Dronov <vdronov@redhat.com> wrote:
->> > #syz fix: USB: handle NULL config in usb_find_alt_setting()
->> > #syz dup: general protection fault in usb_find_alt_setting (2)
->>
->> Same here.
->> syzbot process designed in such way that it will not open second
->> version of the bug (2) for the same bug. syzbot waits until the fixing
->> commit reaches all tested tree and only then closes a bug. If the
->> crash is spotted again _after_ that, then syzbot creates second
->> version of the bug (2). But at that point it has to be a different bug
->> requiring a different fix.
->> So this should not be a dup, and should not fixed with the same commit
->> as the first version.
+So what you or Miklos suggested before, namely making them an enum too?
+
+>=20
+> > enum {
+> >         MOUNT_ATTR_PROPAGATION =3D 1,
+> >         MOUNT_ATTR_SECURITY,
+> >         MOUNT_ATTR_SECURITY_1 =3D MOUNT_ATTR_SECURITY,
+> >         MOUNT_ATTR_SYNC,
+> >         MOUNT_ATTR_TIME,
+> >         MOUNT_ATTR_SECURITY_2,
+> > };
+>=20
+> In UAPI headers, always explicitly number your symbols, even in an enum, =
+just
+> to make sure that the numbers don't get transparently changed by accident.
+
++1 and thanks for the tip!
+
+>=20
+> > These flags will likely become AT_* flags or be tied to a syscall
+> > afaict.
+> >
+> > #define MS_REMOUNT      32
+> > #define MS_BIND	        4096
+> > #define MS_MOVE	        8192
+> > #define MS_REC	        16384
+>=20
+> MS_REMOUNT: fd =3D fspick(); fscommand(fd, FSCONFIG_CMD_RECONFIGURE);
+>=20
+> MS_REMOUNT|MS_BIND: mount_setattr().
+>=20
+> MS_BIND: fd =3D open_tree(..., OPEN_TREE_CLONE); move_mount(fd, "", ...);
+>=20
+> MS_MOVE: fd =3D open_tree(..., 0); move_mount(fd, "", ...);
+>=20
+> MS_REC: AT_RECURSIVE
+>=20
+> > Internal sb flags will not be part of the new mount attr sets. (They
+> > should - imho - not be exposed to userspace at all.):
+>=20
+> Agreed.
+>=20
+> > What remains is an odd duck that probably could be thrown into security
+> > but also *shrug*
+> >
+> > #define MS_I_VERSION    (1<<23)
+>=20
+> Um.  I think it would probably belong with atime settings.
+>=20
+> David
+
+--ouaxp4t3sd3or2bq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE7btrcuORLb1XUhEwjrBW1T7ssS0FAluo5BcACgkQjrBW1T7s
+sS0O5w//UJUVK32uvIzX3Bbr7rxqWvq7kBRP952YMXnbqFhQFVE3C2oLRZ4EE4NT
+w1N+1MZQ4Rrf7Q5627Z529hyYCe0BfJSHyf3fkGyWX2wvdt1DOQtzW4PSdIFKZ4Z
+bF9h92cZtHGJwipRkMFZFKbpy93A87QKYrwtTDN1Rz0+OlwEF6vyewVk0gLSjrdw
+7CR8OnebLVjquhZXdunbkGkewh4Dz8OHmTWILXzqUEHkVxY62KljzCsuUn+fZsGn
+y+vKmCWRsTP8JXLzjD6yZqi031uy/LDv5evhQn3tmt9w8kJl5KLUNDaRYUwSmjS/
+ih6BPmFp5xcuRdC+eAg2T3A6dgK9fg2nXp4OP7e3JWS89BdzmyYng8H31JXES9l9
+tAcK6UZdgOPwSrQY2dhATKS5lnybA3tqa3wcbS/oLuGZxGraU208tRGcfjZiXHVf
+G2XgWkvdxYY+nSpJdWKTLhQQnyDy+oMCcKp/m8kB1jjAz9HrsuP5TF/OSUnSzJz3
+bniuNK6h38UZi8xvF5G8JhFrKLPzclKZog4lguSEt/1EYmLANbZTcj+pC7iZxri8
+YEHL20IIcrB+Q98RqCbrOB4lSO0+3ksacLYGky1On9qddvjaa1/Qbn+pNaRjgfAr
+HrRpQiJ1sw8q2U3iHRN/j3G6+/9dUz5e3DsjSTXwfwGuYMGnurk=
+=zvds
+-----END PGP SIGNATURE-----
+
+--ouaxp4t3sd3or2bq--
