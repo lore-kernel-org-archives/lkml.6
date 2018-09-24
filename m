@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A098ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDF6ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 583AA21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 583AA21486
+	by mail.kernel.org (Postfix) with ESMTP id 1608D214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1608D214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729637AbeIXRnc (ORCPT
+        id S1729647AbeIXRng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:43:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51062 "EHLO
+        Mon, 24 Sep 2018 13:43:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51072 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbeIXRnc (ORCPT
+        with ESMTP id S1727650AbeIXRnf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:43:32 -0400
+        Mon, 24 Sep 2018 13:43:35 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C00261072;
-        Mon, 24 Sep 2018 11:41:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F1BB51072;
+        Mon, 24 Sep 2018 11:41:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tim Anderson <tsa@biglakesoftware.com>,
+        stable@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
         Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 3.18 085/105] USB: Add quirk to support DJI CineSSD
-Date:   Mon, 24 Sep 2018 13:34:11 +0200
-Message-Id: <20180924113121.495826342@linuxfoundation.org>
+Subject: [PATCH 3.18 086/105] usb: Avoid use-after-free by flushing endpoints early in usb_set_interface()
+Date:   Mon, 24 Sep 2018 13:34:12 +0200
+Message-Id: <20180924113121.583064792@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -51,73 +53,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tim Anderson <tsa@biglakesoftware.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit f45681f9becaa65111ed0a691ccf080a0cd5feb8 upstream.
+commit f9a5b4f58b280c1d26255376713c132f93837621 upstream.
 
-This device does not correctly handle the LPM operations.
+The steps taken by usb core to set a new interface is very different from
+what is done on the xHC host side.
 
-Also, the device cannot handle ATA pass-through commands
-and locks up when attempted while running in super speed.
+xHC hardware will do everything in one go. One command is used to set up
+new endpoints, free old endpoints, check bandwidth, and run the new
+endpoints.
 
-This patch adds the equivalent quirk logic as found in uas.
+All this is done by xHC when usb core asks the hcd to check for
+available bandwidth. At this point usb core has not yet flushed the old
+endpoints, which will cause use-after-free issues in xhci driver as
+queued URBs are cancelled on a re-allocated endpoint.
 
-Signed-off-by: Tim Anderson <tsa@biglakesoftware.com>
+To resolve this add a call to usb_disable_interface() which will flush
+the endpoints before calling usb_hcd_alloc_bandwidth()
+
+Additional checks in xhci driver will also be implemented to gracefully
+handle stale URB cancel on freed and re-allocated endpoints
+
+Cc: <stable@vger.kernel.org>
+Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c          |    3 +++
- drivers/usb/storage/scsiglue.c     |    9 +++++++++
- drivers/usb/storage/unusual_devs.h |    7 +++++++
- 3 files changed, 19 insertions(+)
+ drivers/usb/core/message.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -249,6 +249,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
- 
-+	/* DJI CineSSD */
-+	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* INTEL VALUE SSD */
- 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
- 
---- a/drivers/usb/storage/scsiglue.c
-+++ b/drivers/usb/storage/scsiglue.c
-@@ -341,6 +341,15 @@ static int queuecommand_lck(struct scsi_
- 		return 0;
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -1282,6 +1282,11 @@ void usb_enable_interface(struct usb_dev
+  * is submitted that needs that bandwidth.  Some other operating systems
+  * allocate bandwidth early, when a configuration is chosen.
+  *
++ * xHCI reserves bandwidth and configures the alternate setting in
++ * usb_hcd_alloc_bandwidth(). If it fails the original interface altsetting
++ * may be disabled. Drivers cannot rely on any particular alternate
++ * setting being in effect after a failure.
++ *
+  * This call is synchronous, and may not be used in an interrupt context.
+  * Also, drivers must not change altsettings while urbs are scheduled for
+  * endpoints in that interface; all such urbs must first be completed
+@@ -1317,6 +1322,12 @@ int usb_set_interface(struct usb_device
+ 			 alternate);
+ 		return -EINVAL;
  	}
++	/*
++	 * usb3 hosts configure the interface in usb_hcd_alloc_bandwidth,
++	 * including freeing dropped endpoint ring buffers.
++	 * Make sure the interface endpoints are flushed before that
++	 */
++	usb_disable_interface(dev, iface, false);
  
-+	if ((us->fflags & US_FL_NO_ATA_1X) &&
-+			(srb->cmnd[0] == ATA_12 || srb->cmnd[0] == ATA_16)) {
-+		memcpy(srb->sense_buffer, usb_stor_sense_invalidCDB,
-+		       sizeof(usb_stor_sense_invalidCDB));
-+		srb->result = SAM_STAT_CHECK_CONDITION;
-+		done(srb);
-+		return 0;
-+	}
-+
- 	/* enqueue the command and wake up the control thread */
- 	srb->scsi_done = done;
- 	us->srb = srb;
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2188,6 +2188,13 @@ UNUSUAL_DEV(  0x4146, 0xba01, 0x0100, 0x
- 		"Micro Mini 1GB",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL, US_FL_NOT_LOCKABLE ),
- 
-+/* Reported-by: Tim Anderson <tsa@biglakesoftware.com> */
-+UNUSUAL_DEV(  0x2ca3, 0x0031, 0x0000, 0x9999,
-+		"DJI",
-+		"CineSSD",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_NO_ATA_1X),
-+
- /*
-  * Nick Bowler <nbowler@elliptictech.com>
-  * SCSI stack spams (otherwise harmless) error messages.
+ 	/* Make sure we have enough bandwidth for this alternate interface.
+ 	 * Remove the current alt setting and add the new alt setting.
 
 
