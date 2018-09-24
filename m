@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF95ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3588C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB7721486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB7721486
+	by mail.kernel.org (Postfix) with ESMTP id 778ED21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778ED21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbeIXR7o (ORCPT
+        id S1730345AbeIXR7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:59:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52310 "EHLO
+        Mon, 24 Sep 2018 13:59:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52324 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729194AbeIXR7n (ORCPT
+        with ESMTP id S1729194AbeIXR7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:59:43 -0400
+        Mon, 24 Sep 2018 13:59:48 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5E0BD64;
-        Mon, 24 Sep 2018 11:57:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21B3DD64;
+        Mon, 24 Sep 2018 11:58:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rivshin <drivshin@allworx.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>
-Subject: [PATCH 4.4 68/70] drivers: net: cpsw: fix segfault in case of bad phy-handle
-Date:   Mon, 24 Sep 2018 13:53:07 +0200
-Message-Id: <20180924113107.847362997@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Rene Nielsen <rene.nielsen@microsemi.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.4 69/70] MIPS: VDSO: Match data page cache colouring when D$ aliases
+Date:   Mon, 24 Sep 2018 13:53:08 +0200
+Message-Id: <20180924113107.984774618@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -52,82 +54,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Rivshin <drivshin@allworx.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit d733f7542ad47cf73e033c90cf55158587e1d060 upstream.
+commit 0f02cfbc3d9e413d450d8d0fd660077c23f67eff upstream.
 
-If an emac node has a phy-handle property that points to something
-which is not a phy, then a segmentation fault will occur when the
-interface is brought up. This is because while phy_connect() will
-return ERR_PTR() on failure, of_phy_connect() will return NULL.
-The common error check uses IS_ERR(), and so missed when
-of_phy_connect() fails. The NULL pointer is then dereferenced.
+When a system suffers from dcache aliasing a user program may observe
+stale VDSO data from an aliased cache line. Notably this can break the
+expectation that clock_gettime(CLOCK_MONOTONIC, ...) is, as its name
+suggests, monotonic.
 
-Also, the common error message referenced slave->data->phy_id,
-which would be empty in the case of phy-handle. Instead, use the
-name of the device_node as a useful identifier. And in the phy_id
-case add the error code for completeness.
+In order to ensure that users observe updates to the VDSO data page as
+intended, align the user mappings of the VDSO data page such that their
+cache colouring matches that of the virtual address range which the
+kernel will use to update the data page - typically its unmapped address
+within kseg0.
 
-Fixes: 9e42f715264f ("drivers: net: cpsw: add phy-handle parsing")
-Signed-off-by: David Rivshin <drivshin@allworx.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[SZ Lin (林上智): Tweak the patch to use original print function of dev_info()]
-Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
+This ensures that we don't introduce aliasing cache lines for the VDSO
+data page, and therefore that userland will observe updates without
+requiring cache invalidation.
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
+Reported-by: Rene Nielsen <rene.nielsen@microsemi.com>
+Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Patchwork: https://patchwork.linux-mips.org/patch/20344/
+Tested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Tested-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/ti/cpsw.c |   37 +++++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
 
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1164,25 +1164,34 @@ static void cpsw_slave_open(struct cpsw_
- 		cpsw_ale_add_mcast(priv->ale, priv->ndev->broadcast,
- 				   1 << slave_port, 0, 0, ALE_MCAST_FWD_2);
+
+---
+ arch/mips/kernel/vdso.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -14,12 +14,14 @@
+ #include <linux/init.h>
+ #include <linux/ioport.h>
+ #include <linux/irqchip/mips-gic.h>
++#include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/timekeeper_internal.h>
  
--	if (slave->data->phy_node)
-+	if (slave->data->phy_node) {
- 		slave->phy = of_phy_connect(priv->ndev, slave->data->phy_node,
- 				 &cpsw_adjust_link, 0, slave->data->phy_if);
--	else
-+		if (!slave->phy) {
-+			dev_err(priv->dev, "phy \"%s\" not found on slave %d\n",
-+				slave->data->phy_node->full_name,
-+				slave->slave_num);
-+			return;
-+		}
-+	} else {
- 		slave->phy = phy_connect(priv->ndev, slave->data->phy_id,
- 				 &cpsw_adjust_link, slave->data->phy_if);
--	if (IS_ERR(slave->phy)) {
--		dev_err(priv->dev, "phy %s not found on slave %d\n",
--			slave->data->phy_id, slave->slave_num);
--		slave->phy = NULL;
--	} else {
--		dev_info(priv->dev, "phy found : id is : 0x%x\n",
--			 slave->phy->phy_id);
--		phy_start(slave->phy);
--
--		/* Configure GMII_SEL register */
--		cpsw_phy_sel(&priv->pdev->dev, slave->phy->interface,
--			     slave->slave_num);
-+		if (IS_ERR(slave->phy)) {
-+			dev_err(priv->dev,
-+				"phy \"%s\" not found on slave %d, err %ld\n",
-+				slave->data->phy_id, slave->slave_num,
-+				PTR_ERR(slave->phy));
-+			slave->phy = NULL;
-+			return;
-+		}
+ #include <asm/abi.h>
++#include <asm/page.h>
+ #include <asm/vdso.h>
+ 
+ /* Kernel-provided data used by the VDSO. */
+@@ -118,12 +120,30 @@ int arch_setup_additional_pages(struct l
+ 	vvar_size = gic_size + PAGE_SIZE;
+ 	size = vvar_size + image->size;
+ 
++	/*
++	 * Find a region that's large enough for us to perform the
++	 * colour-matching alignment below.
++	 */
++	if (cpu_has_dc_aliases)
++		size += shm_align_mask + 1;
++
+ 	base = get_unmapped_area(NULL, 0, size, 0, 0);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret = base;
+ 		goto out;
  	}
-+
-+	dev_info(priv->dev, "phy found : id is : 0x%x\n", slave->phy->phy_id);
-+
-+	phy_start(slave->phy);
-+
-+	/* Configure GMII_SEL register */
-+	cpsw_phy_sel(&priv->pdev->dev, slave->phy->interface, slave->slave_num);
- }
  
- static inline void cpsw_add_default_vlan(struct cpsw_priv *priv)
++	/*
++	 * If we suffer from dcache aliasing, ensure that the VDSO data page
++	 * mapping is coloured the same as the kernel's mapping of that memory.
++	 * This ensures that when the kernel updates the VDSO data userland
++	 * will observe it without requiring cache invalidations.
++	 */
++	if (cpu_has_dc_aliases) {
++		base = __ALIGN_MASK(base, shm_align_mask);
++		base += ((unsigned long)&vdso_data - gic_size) & shm_align_mask;
++	}
++
+ 	data_addr = base + gic_size;
+ 	vdso_addr = data_addr + PAGE_SIZE;
+ 
 
 
