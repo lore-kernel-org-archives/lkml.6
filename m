@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7417ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0B8C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B36421486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B36421486
+	by mail.kernel.org (Postfix) with ESMTP id 31B1121486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B1121486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733233AbeIXS25 (ORCPT
+        id S1733245AbeIXS3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:28:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57210 "EHLO
+        Mon, 24 Sep 2018 14:29:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57218 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732223AbeIXS24 (ORCPT
+        with ESMTP id S1730526AbeIXS3A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:28:56 -0400
+        Mon, 24 Sep 2018 14:29:00 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CAF77108B;
-        Mon, 24 Sep 2018 12:27:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DF281094;
+        Mon, 24 Sep 2018 12:27:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 012/235] tcp: really ignore MSG_ZEROCOPY if no SO_ZEROCOPY
-Date:   Mon, 24 Sep 2018 13:49:58 +0200
-Message-Id: <20180924113105.617367236@linuxfoundation.org>
+        stable@vger.kernel.org, Roi Dayan <roid@mellanox.com>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.18 013/235] net/mlx5: Fix not releasing read lock when adding flow rules
+Date:   Mon, 24 Sep 2018 13:49:59 +0200
+Message-Id: <20180924113105.740944115@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,53 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincent Whitchurch <vincent.whitchurch@axis.com>
+From: Roi Dayan <roid@mellanox.com>
 
-[ Upstream commit 5cf4a8532c992bb22a9ecd5f6d93f873f4eaccc2 ]
+[ Upstream commit 071304772fc747d5df13c51f1cf48a4b922a5e0d ]
 
-According to the documentation in msg_zerocopy.rst, the SO_ZEROCOPY
-flag was introduced because send(2) ignores unknown message flags and
-any legacy application which was accidentally passing the equivalent of
-MSG_ZEROCOPY earlier should not see any new behaviour.
+If building match list fg fails and we never jumped to
+search_again_locked label then the function returned without
+unlocking the read lock.
 
-Before commit f214f915e7db ("tcp: enable MSG_ZEROCOPY"), a send(2) call
-which passed the equivalent of MSG_ZEROCOPY without setting SO_ZEROCOPY
-would succeed.  However, after that commit, it fails with -ENOBUFS.  So
-it appears that the SO_ZEROCOPY flag fails to fulfill its intended
-purpose.  Fix it.
-
-Fixes: f214f915e7db ("tcp: enable MSG_ZEROCOPY")
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: bd71b08ec2ee ("net/mlx5: Support multiple updates of steering rules in parallel")
+Signed-off-by: Roi Dayan <roid@mellanox.com>
+Reviewed-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/skbuff.c |    3 ---
- net/ipv4/tcp.c    |    2 +-
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -939,9 +939,6 @@ struct ubuf_info *sock_zerocopy_alloc(st
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -1797,6 +1797,8 @@ search_again_locked:
+ 	if (err) {
+ 		if (take_write)
+ 			up_write_ref_node(&ft->node);
++		else
++			up_read_ref_node(&ft->node);
+ 		return ERR_PTR(err);
+ 	}
  
- 	WARN_ON_ONCE(!in_task());
- 
--	if (!sock_flag(sk, SOCK_ZEROCOPY))
--		return NULL;
--
- 	skb = sock_omalloc(sk, 0, GFP_KERNEL);
- 	if (!skb)
- 		return NULL;
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1186,7 +1186,7 @@ int tcp_sendmsg_locked(struct sock *sk,
- 
- 	flags = msg->msg_flags;
- 
--	if (flags & MSG_ZEROCOPY && size) {
-+	if (flags & MSG_ZEROCOPY && size && sock_flag(sk, SOCK_ZEROCOPY)) {
- 		if (sk->sk_state != TCP_ESTABLISHED) {
- 			err = -EINVAL;
- 			goto out_err;
 
 
