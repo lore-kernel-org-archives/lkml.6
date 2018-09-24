@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46727ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F1FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C212086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC4A52086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:01:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="g0kldtku"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C212086B
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="SB6oW+vG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC4A52086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387411AbeIXUvo (ORCPT
+        id S1733292AbeIXUvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:51:44 -0400
-Received: from mail-eopbgr710132.outbound.protection.outlook.com ([40.107.71.132]:35136
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 24 Sep 2018 16:51:43 -0400
+Received: from mail-eopbgr690129.outbound.protection.outlook.com ([40.107.69.129]:55616
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731986AbeIXUvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:51:41 -0400
+        id S1733177AbeIXUvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:51:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e2o2NEc4AFx3/AKfhGrHxWE/bNJ17OgEQu9LPWzY+oA=;
- b=g0kldtkuEPJIRa4NBU4xSrZKXk3QtBY3MyTZ+ucQqbm/Z+pE8gqcE5ixKg+x6RryxeZ7JrHOHhH8VkviPB7+Au77O2VmGuynR6Ap2ZSBEuF4vinNT8VLcwRELpdGgAFR0ZvzHyVTeUcfXy/imJAAghLt25EXvyRrMg15qv3q7qU=
+ bh=XiO3VSYoAOWjUaXR2Y/6D46sNxW8sRq9YSit5yhQ1IU=;
+ b=SB6oW+vGY8M3RGKnFLpgvq4rGbEEZRczF4YcZf7Ois1YbZIm+RHxF/tdBNtcl78C17U6xVnqqtgEwEDtrMArscvx/chYKm0LcDM1mlp1qGdoBS6SMCyiz2eNKKoxZI0/gMPgew3DdsZTFibNqlPu0Z6LovLgYA7FLuDzd43aRJU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
+ CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.5; Mon, 24 Sep 2018 14:48:52 +0000
+ 15.20.1207.2; Mon, 24 Sep 2018 14:49:02 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:48:52 +0000
+ 14:49:02 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Arunk Khandavalli <akhandav@codeaurora.org>,
-        Jouni Malinen <jouni@codeaurora.org>,
+CC:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 36/76] cfg80211: nl80211_update_ft_ies() to
- validate NL80211_ATTR_IE
-Thread-Topic: [PATCH AUTOSEL 4.18 36/76] cfg80211: nl80211_update_ft_ies() to
- validate NL80211_ATTR_IE
-Thread-Index: AQHUVBWk+XX4+7mR1EmRBJljyxwtfg==
-Date:   Mon, 24 Sep 2018 14:48:23 +0000
-Message-ID: <20180924144751.164410-35-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 60/76] mac80211: fix a race between restart and
+ CSA flows
+Thread-Topic: [PATCH AUTOSEL 4.18 60/76] mac80211: fix a race between restart
+ and CSA flows
+Thread-Index: AQHUVBWtkpFiB4JlkEeD6ctyChXerQ==
+Date:   Mon, 24 Sep 2018 14:48:37 +0000
+Message-ID: <20180924144751.164410-59-alexander.levin@microsoft.com>
 References: <20180924144751.164410-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,71 +61,130 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:JZBcLlQAdcDlodvFHMPx3GK1GVlDV92tA0BzCNf4mc+/ADD7b5zT0EXUrkOzh3VNKJvyjqRlmyCR+fvF1BKtX1IBON6eM94bw5XENh+Y6V29nc1rNs6R2riy9Yqd7sP+oUlTgrP6EkeiDN1TRZrxC0Sen54uF4L9vx30r+z9bOthbAEdQ0b3QInZAg1SEhnhledzd57GMDtrnFKPLm/gJlf7np/pdLJSC3mjNKBzSJyrNFQhSVbqxfEo8LWAXf4c6h5m7bIfXGxg4m6OgGswCdis/I6EBwFHjlA4au+40xsUNKYPCLB3gEVjMDd6udl3Ksr/EgPB2kvPxwtKbPGL67IQHuqHy+i/02Hi799ZWmq0Qc93yPp7k+wueM/fKTiS2Soq5gQnSnh9b7TYNyhJXlbVmemzUpBQvkwUxmk8u8GAvKEE+nF5qChtNMUjeGr8BMVODvpib06k95bLFHOr2Q==;5:G9skSiPfSrpTh0Q+Ou05nd5mdfGPNSA0qfV0Iis6V/VXVHgX0Bhf8anuaeCaI8tdpsQRRN9G7JMFIbdQCI109ezRPn+S7F7sQOZdu2WtXEfOT92VKHBjHWDbrAlnX37VJbQUYmLxdeU0urpgp5/jR9VdPwQGEtvW4CEgSznr+E4=;7:lg6ewm0jSD6hCVFHfaeyHR/o5tsbOGBBhYW3IDRH7qbhk92m4b1mJMfKB3TCVk9rtxj9SKbFzh95l53VT60PNgrz/JuwS6kdOybkyTiPPNJqPQKhsritSqf9ew5k/5lkeHfr/7B2NmfHC20bTpeu13wSB8dW7LXIosejVjWKC8Ebg27qNFKnowEYO80UGqLsBhy2cSqkVcEbpXc0uFeajgufjwmlmHrPBDZ2Q2r15RMNBseofy5pWcVz9qs+Q4CD
-x-ms-office365-filtering-correlation-id: 09fca9c2-9b85-4c22-bb99-08d6222cd882
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:4JqIIhcDM+bjaVgA8dBjX3DFJmZbLAi4Aren5MdFFMcUkJLx38QijNmA2ExeheLta8yZ8+vxejE0j7sY05GSWE4xatgV6SpoRQ34OogT039xpkOWN8Jtzhx4KVYUwR+VkFZDUDdJnKyvENI/rwOB7w8cMFlS3eZHyFmmbJapZN7lf/+ZELJMuIG67FfLSmni5vFoupStWCZAXvntpLqALdksKJxX9L8TMO/6PYwF6syYlDtBI1cMAQGoSkPznfbGu/037ccTX+vjGwAqDbY5oITRfKB78CoXXBjrG1lTbHuaqVUXlOouyqet9pqDJfxWa6qPEtw3Jxw2GLZVLc1LBq4RiPtnOYmVrdJtysoKSophO0Q59gyGQCkAuxW3+vSZbjsp4Lt1xrSDdG0THJdjEM5nSK1f8Jtj3ctaD1mBw0b3g5N6jZ3aOa5/q9OxD1n22SvIN+mz7zy+uZurk1HCLQ==;5:VSQDgN7hjr0CetLTqYPKQ/x3jKSVLfOS2aCjJBKvVh8v0aSceFCCMKMAfgay9+WVIKuX5E0fAr9Fnx0sv4n7Vh0IQF3dFU+I+Qst87JwzFleovHYTMPQRnz5UY/PS4Z6RyDNVaQBMhEy0TkDzjDoz21H/K/sbudHxu/oz4mOC/Y=;7:vMdSTDFjRT2bk22pdC5ssoNQNLSDCI22aODyINKv+gP1tfThjqI6VeedE5uTvII5WzbICVg+V3VSPuEbjK1Ewjtoy4Bzxa5c7BsjrnoTypfW6a9JCQKXBxfVLS5UmkFs20o81cXSzA2Du82GrV4o0BQ+qZbqUJCZVdJPV22r9sBGw5vIonhXbMvB324QtrqXSPuohMr0kW3viTyNIniDTV2wC9zrQkcl511zUVbdXKBZm5crzDwE4eUL+khpLray
+x-ms-office365-filtering-correlation-id: ce1425ed-10fd-47b6-611b-08d6222cdea7
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
-x-ms-traffictypediagnostic: CY4PR21MB0855:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
+x-ms-traffictypediagnostic: CY4PR21MB0744:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0855B3D2D93776F1A56464D5FB170@CY4PR21MB0855.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB0744C61AFE8A640850692488FB170@CY4PR21MB0744.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(486006)(81166006)(6436002)(110136005)(54906003)(10290500003)(6666003)(86362001)(446003)(6486002)(68736007)(2900100001)(86612001)(476003)(6512007)(1076002)(2616005)(305945005)(81156014)(105586002)(10090500001)(14454004)(71200400001)(106356001)(316002)(7736002)(71190400001)(478600001)(11346002)(6116002)(8936002)(5660300001)(3846002)(72206003)(97736004)(8676002)(6506007)(25786009)(36756003)(66066001)(2906002)(5250100002)(76176011)(26005)(14444005)(217873002)(107886003)(186003)(256004)(102836004)(22452003)(15760500003)(2501003)(99286004)(53936002)(4326008)(15650500001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(39860400002)(376002)(366004)(189003)(199004)(11346002)(446003)(476003)(86362001)(186003)(81166006)(6506007)(8676002)(81156014)(6666003)(5660300001)(486006)(99286004)(53936002)(305945005)(6512007)(6436002)(2616005)(71200400001)(71190400001)(68736007)(6486002)(102836004)(10090500001)(7736002)(36756003)(97736004)(86612001)(316002)(3846002)(6116002)(1076002)(217873002)(14444005)(256004)(54906003)(110136005)(107886003)(10290500003)(4326008)(478600001)(22452003)(5250100002)(26005)(8936002)(2906002)(2501003)(2900100001)(66066001)(72206003)(105586002)(14454004)(76176011)(25786009)(106356001)(21314002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: UNN6TumoEXW3DfOiExtXfktXOTGyqdxVPAuG1Wjq38TxWttEXkR2zRXrlk8lOy2HxlAyCxX1oYpMc71zoH+agQHJkLfvFmrAN/oapOLC+JFW25in38M3yPTMJ1oK9i7AckVxvJUBUbwn/zXrEHKYQG2UOvjsmvoy48bbLbGl6R3PSrn0p1JIwztqSkLNIOF8akW7hrY3yOGhSl7gsBY62BxQpNy6c94qBWvUv+OZeu6BOZODUF/4Xqag29gEx7xJWXWZO3t4ni/v6PHwRZEup54O5KEJ58Aehlotfk9FTlOwK1u6e86lsT+oqZbbfRCVe722fPPb/lHALTEi4eFDNQ6ZtlnTS0AMXWkn5sXPTgA=
+x-microsoft-antispam-message-info: mMeQJ8cgko81obm9HMF/wMbKdRqHkQYpKofEZrVtYAhSB3MCRhXrjQJzNHQJVGbw+c4SDksuXUOUByC+cACBZIpnqQQkN8UPh4jE3bKJHtyEd3y63mkVNgkdKBDRDah2OhlnUZJ8H1wL8rvVE5s/2lHmAYZP+fMtyDIHyWZTd6VY55NJlkKqEvl50z4oy6E8EhcON01eKD+wMsVYXoUU4UR4MNLtYqY9yLE6l7Q0woLkpa20ZcVFSUdDKrHKqJV6wJ6QrIC2Fwxw0naWkzuSewzBxyYVfONxcLsfUx0H1UDvujGIPy/akiM2rw5J2bLzQSjguj0o04DoLdYjJRhJdae928imh9nGHb00OsDapT8=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09fca9c2-9b85-4c22-bb99-08d6222cd882
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:23.3745
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce1425ed-10fd-47b6-611b-08d6222cdea7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:37.6062
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arunk Khandavalli <akhandav@codeaurora.org>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 4f0223bfe9c3e62d8f45a85f1ef1b18a8a263ef9 ]
+[ Upstream commit f3ffb6c3a28963657eb8b02a795d75f2ebbd5ef4 ]
 
-nl80211_update_ft_ies() tried to validate NL80211_ATTR_IE with
-is_valid_ie_attr() before dereferencing it, but that helper function
-returns true in case of NULL pointer (i.e., attribute not included).
-This can result to dereferencing a NULL pointer. Fix that by explicitly
-checking that NL80211_ATTR_IE is included.
+We hit a problem with iwlwifi that was caused by a bug in
+mac80211. A bug in iwlwifi caused the firwmare to crash in
+certain cases in channel switch. Because of that bug,
+drv_pre_channel_switch would fail and trigger the restart
+flow.
+Now we had the hw restart worker which runs on the system's
+workqueue and the csa_connection_drop_work worker that runs
+on mac80211's workqueue that can run together. This is
+obviously problematic since the restart work wants to
+reconfigure the connection, while the csa_connection_drop_work
+worker does the exact opposite: it tries to disconnect.
 
-Fixes: 355199e02b83 ("cfg80211: Extend support for IEEE 802.11r Fast BSS Tr=
-ansition")
-Signed-off-by: Arunk Khandavalli <akhandav@codeaurora.org>
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
+Fix this by cancelling the csa_connection_drop_work worker
+in the restart worker.
+
+Note that this can sound racy: we could have:
+
+driver   iface_work   CSA_work   restart_work
++++++++++++++++++++++++++++++++++++++++++++++
+              |
+ <--drv_cs ---|
+<FW CRASH!>
+-CS FAILED-->
+              |                       |
+              |                 cancel_work(CSA)
+           schedule                   |
+           CSA work                   |
+                         |            |
+                        Race between those 2
+
+But this is not possible because we flush the workqueue
+in the restart worker before we cancel the CSA worker.
+That would be bullet proof if we could guarantee that
+we schedule the CSA worker only from the iface_work
+which runs on the workqueue (and not on the system's
+workqueue), but unfortunately we do have an instance
+in which we schedule the CSA work outside the context
+of the workqueue (ieee80211_chswitch_done).
+
+Note also that we should probably cancel other workers
+like beacon_connection_loss_work and possibly others
+for different types of interfaces, at the very least,
+IBSS should suffer from the exact same problem, but for
+now, do the minimum to fix the actual bug that was actually
+experienced and reproduced.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/main.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index ce0149a86c13..733ccf867972 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -12099,6 +12099,7 @@ static int nl80211_update_ft_ies(struct sk_buff *sk=
-b, struct genl_info *info)
- 		return -EOPNOTSUPP;
+diff --git a/net/mac80211/main.c b/net/mac80211/main.c
+index 27cd64acaf00..66cbddd65b47 100644
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -255,8 +255,27 @@ static void ieee80211_restart_work(struct work_struct =
+*work)
 =20
- 	if (!info->attrs[NL80211_ATTR_MDID] ||
-+	    !info->attrs[NL80211_ATTR_IE] ||
- 	    !is_valid_ie_attr(info->attrs[NL80211_ATTR_IE]))
- 		return -EINVAL;
+ 	flush_work(&local->radar_detected_work);
+ 	rtnl_lock();
+-	list_for_each_entry(sdata, &local->interfaces, list)
++	list_for_each_entry(sdata, &local->interfaces, list) {
++		/*
++		 * XXX: there may be more work for other vif types and even
++		 * for station mode: a good thing would be to run most of
++		 * the iface type's dependent _stop (ieee80211_mg_stop,
++		 * ieee80211_ibss_stop) etc...
++		 * For now, fix only the specific bug that was seen: race
++		 * between csa_connection_drop_work and us.
++		 */
++		if (sdata->vif.type =3D=3D NL80211_IFTYPE_STATION) {
++			/*
++			 * This worker is scheduled from the iface worker that
++			 * runs on mac80211's workqueue, so we can't be
++			 * scheduling this worker after the cancel right here.
++			 * The exception is ieee80211_chswitch_done.
++			 * Then we can have a race...
++			 */
++			cancel_work_sync(&sdata->u.mgd.csa_connection_drop_work);
++		}
+ 		flush_delayed_work(&sdata->dec_tailroom_needed_wk);
++	}
+ 	ieee80211_scan_cancel(local);
 =20
+ 	/* make sure any new ROC will consider local->in_reconfig */
 --=20
 2.17.1
