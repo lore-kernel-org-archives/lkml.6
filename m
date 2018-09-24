@@ -2,181 +2,153 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D2BECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32403C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B585321480
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:23:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcRxbbsW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B585321480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DCCF9214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:24:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCCF9214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbeIXUZp (ORCPT
+        id S1729271AbeIXU0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:25:45 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37237 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbeIXUZp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:25:45 -0400
-Received: by mail-wr1-f66.google.com with SMTP id u12-v6so19868790wrr.4;
-        Mon, 24 Sep 2018 07:23:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Si0/x9SME+yYiJCX7KylcChYCVre+6JeZ3GeFVRFZ08=;
-        b=KcRxbbsWO6BJTXLbBBuKVwgGIcz39DhLaTEWKE1ht0lOevmVzaUQw5Z0V6YeE7073r
-         aq7aR+pXT5OaFuxbyk07vJy+wsCZ5B9Z2WrrZuiM9AbLq0K6i/EQ5e1/wPfPnGgWOzOe
-         sn5JtDN+S3d0rGIPNc6eWtkP8xrH4Wp1LbMubK3+ysb9EmLqSf1cuvfkBtpF1CSN7wyz
-         i9PRTrm9t/uCCM3FEX/2Dw7zEoRvZHReXCn9Yl+j/XDSpK9/BxA2HGLQI0EnnuamKEx0
-         EeGIek9+IBQqdQ3vVGiP+EQPCdrwhj7Ur5dYYZKovFH23iAcJdAdJjyvUPv666Be87bV
-         RBLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Si0/x9SME+yYiJCX7KylcChYCVre+6JeZ3GeFVRFZ08=;
-        b=Keat++dh0Lj5DnUp50TnA1znq0aSKtPNpoUtGV1/m1odF2TJbc6U6Lt2evUP5KHhNV
-         YCZdjl4PtoVlrmeo2sw//jmsmeOsqGmpn6A1/ECrP7gAI8PbTB4h12Z0fHwDzAuXk3Bt
-         GTCc/xoog99HrcYY7ZpY7ciCtVouXZXMTziAf4zRWYDexb/UZWJDYnbyYdcVbWBSVy/q
-         fZGnFXi+MhKvXHAn3XesT7bAt5gsmMVL78OmFp3L5pgJVoRhjk5gaGQx64SNzc/sAxQK
-         VBSJ/67n6FE9nSXsBfVKp5klabOjeLa6jLbwzhEjB76J1c9Tc6Jhn81f60GYXeZPkdRx
-         8VLQ==
-X-Gm-Message-State: ABuFfojRBqGBez84VLSsPk+7Y8MvdX7YqDQXYbnlN0C3nG3Ahbw8FIGD
-        kwK1Xr8fpS234UuKqNWkEW0=
-X-Google-Smtp-Source: ACcGV61Ixzlqpyk1r3mhSMEyfLTqV50w8rVsSqwTg8oWU9Eu4SdTG3qif/UJ3u0bg29lXOWrHBe8QQ==
-X-Received: by 2002:adf:fe06:: with SMTP id n6-v6mr9169169wrr.171.1537799000121;
-        Mon, 24 Sep 2018 07:23:20 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id x204-v6sm13237977wmg.27.2018.09.24.07.23.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 07:23:19 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 16:23:18 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     stefan.wahren@i2se.com, gohai@sukzessiv.net,
-        hsweeten@visionengravers.com, gottfried.haider@gmail.com,
-        loic.pallardy@st.com, broonie@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org
-Subject: Re: [RESEND PATCH] Revert "pwm: Set class for exported channels in
- sysfs"
-Message-ID: <20180924142318.GG23547@ulmo>
-References: <1537538567-5377-1-git-send-email-fabrice.gasnier@st.com>
- <20180924115301.GV21032@ulmo>
- <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
+        Mon, 24 Sep 2018 16:26:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40046 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727050AbeIXU0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:26:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0A7A1ACCC;
+        Mon, 24 Sep 2018 14:24:10 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 16:24:08 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     zhe.he@windriver.com
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
+        pasha.tatashin@oracle.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, osalvador@suse.de, iamjoonsoo.kim@lge.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm/page_alloc: Fix panic caused by passing
+ debug_guardpage_minorder or kernelcore to command line
+Message-ID: <20180924142408.GC18685@dhcp22.suse.cz>
+References: <1537628013-243902-1-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="B8ONY/mu/bqBak9m"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
+In-Reply-To: <1537628013-243902-1-git-send-email-zhe.he@windriver.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat 22-09-18 22:53:32, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
+> 
+> debug_guardpage_minorder_setup and cmdline_parse_kernelcore do not check
+> input argument before using it. The argument would be a NULL pointer if
+> "debug_guardpage_minorder" or "kernelcore", without its value, is set in
+> command line and thus causes the following panic.
+> 
+> PANIC: early exception 0xe3 IP 10:ffffffffa08146f1 error 0 cr2 0x0
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #11
+> [    0.000000] RIP: 0010:parse_option_str+0x11/0x90
+> ...
+> [    0.000000] Call Trace:
+> [    0.000000]  cmdline_parse_kernelcore+0x19/0x41
+> [    0.000000]  do_early_param+0x57/0x8e
+> [    0.000000]  parse_args+0x208/0x320
+> [    0.000000]  ? rdinit_setup+0x30/0x30
+> [    0.000000]  parse_early_options+0x29/0x2d
+> [    0.000000]  ? rdinit_setup+0x30/0x30
+> [    0.000000]  parse_early_param+0x36/0x4d
+> [    0.000000]  setup_arch+0x336/0x99e
+> [    0.000000]  start_kernel+0x6f/0x4ee
+> [    0.000000]  x86_64_start_reservations+0x24/0x26
+> [    0.000000]  x86_64_start_kernel+0x6f/0x72
+> [    0.000000]  secondary_startup_64+0xa4/0xb0
+> 
+> This patch adds a check to prevent the panic
 
---B8ONY/mu/bqBak9m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is this something we deeply care about? The kernel command line
+interface is to be used by admins who know what they are doing.  Using
+random or wrong values for these parameters can have detrimental effects
+on the system. This particular case would blow up early, good. At least
+it is visible immediately. This and many other parameters could have a
+seemingly valid input (e.g. not a missing value) and subtle runtime
+effect. You won't blow up immediately but the system is hardly usable
+and the early checking cannot possible catch all those cases. Take a
+mem=$N copied from one machine to another with a different memory
+layout. While 2G can be perfectly fine on one a different machine might
+result on a completely unusable system because the available RAM is
+place higher.
 
-On Mon, Sep 24, 2018 at 03:59:03PM +0200, Fabrice Gasnier wrote:
-> On 09/24/2018 01:53 PM, Thierry Reding wrote:
-> > On Fri, Sep 21, 2018 at 04:02:47PM +0200, Fabrice Gasnier wrote:
-> >> This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it cau=
-ses
-> >> regression with multiple pwm chip. It creates a new entry in
-> >> '/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export=
-':
-> >> - 1st time export will create an entry in /sys/class/pwm/pwmX
-> >> - when another export happens on another pwmchip, it can't be created
-> >> (e.g. -EEXIST)
-> >>
-> >> This also changes existing ABI (Documentation/ABI/testing/sysfs-class-=
-pwm):
-> >> - pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
-> >>
-> >> Example on stm32 (stm32429i-eval) platform:
-> >> $ ls /sys/class/pwm
-> >> pwmchip0 pwmchip4
-> >>
-> >> $ cd /sys/class/pwm/pwmchip0/
-> >> $ echo 0 > export
-> >> $ ls /sys/class/pwm
-> >> pwm0 pwmchip0 pwmchip4
-> >>
-> >> $ cd /sys/class/pwm/pwmchip4/
-> >> $ echo 0 > export
-> >> sysfs: cannot create duplicate filename '/class/pwm/pwm0'
-> >> ...Exception stack follows...
-> >>
-> >> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> >> ---
-> >>  drivers/pwm/sysfs.c | 1 -
-> >>  1 file changed, 1 deletion(-)
-> >=20
-> > Can we come up with an alternative that allows us to have both? We want
-> > uevent and proper sysfs creation, or is that not possible?
->=20
-> Hi Thierry, all,
->=20
-> With current approach:
-> - "export->child.class =3D parent->class"
-> - ABI (e.g. "pwm%d") device name isn't unique with multiple pwm chip.
-> I think this is not possible.
->=20
-> Trying to think of an alternative... I just did a quick test, by
-> changing device name, to take pwmchip into account:
-> +       export->child.class =3D parent->class;
->         export->child.release =3D pwm_export_release;
->         export->child.parent =3D parent;
->         export->child.devt =3D MKDEV(0, 0);
->         export->child.groups =3D pwm_groups;
-> -       dev_set_name(&export->child, "pwm%u", pwm->hwpwm);
-> +       dev_set_name(&export->child, "pwmchip%d-pwm%u", chip->base,
-> pwm->hwpwm);
->=20
-> But this also impacts existing ABI :-(
-> Would you have suggestions to send an uevent, without modifying ABI ?
+So I am really wondering. Do we really want a lot of code to catch
+kernel command line incorrect inputs? Does it really lead to better
+quality overall? IMHO, we do have a proper documentation and we should
+trust those starting the kernel.
 
-I don't quite understand why, in the example you show in the commit
-message, the pwmX nodes appear in the top-level /sys/class/pwm
-directory. According to Documentation/ABI/testing/sysfs-class-pwm they
-should appear as /sys/class/pwm/pwmchipN/pwmX. I can only imagine that
-setting the class may have changed that. If so, perhaps we can
-workaround that by creating a new class that is not parent->class?
+> and adds KBUILD_MODNAME to prints.
 
-Thierry
+This doesn't seem to be done in this patch. Probably a left over
+from the previous version.
 
---B8ONY/mu/bqBak9m
-Content-Type: application/pgp-signature; name="signature.asc"
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> Cc: stable@vger.kernel.org
+> Cc: akpm@linux-foundation.org
+> Cc: mhocko@suse.com
+> Cc: vbabka@suse.cz
+> Cc: pasha.tatashin@oracle.com
+> Cc: mgorman@techsingularity.net
+> Cc: aaron.lu@intel.com
+> Cc: osalvador@suse.de
+> Cc: iamjoonsoo.kim@lge.com
+> ---
+> v2:
+> Use more clear error info
+> Split the addition of KBUILD_MODNAME out
+> 
+>  mm/page_alloc.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 89d2a2a..f34cae1 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -630,6 +630,12 @@ static int __init debug_guardpage_minorder_setup(char *buf)
+>  {
+>  	unsigned long res;
+>  
+> +	if (!buf) {
+> +		pr_err("kernel option debug_guardpage_minorder requires an \
+> +			argument\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	if (kstrtoul(buf, 10, &res) < 0 ||  res > MAX_ORDER / 2) {
+>  		pr_err("Bad debug_guardpage_minorder value\n");
+>  		return 0;
+> @@ -6952,6 +6958,11 @@ static int __init cmdline_parse_core(char *p, unsigned long *core,
+>   */
+>  static int __init cmdline_parse_kernelcore(char *p)
+>  {
+> +	if (!p) {
+> +		pr_err("kernel option kernelcore requires an argument\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	/* parse kernelcore=mirror */
+>  	if (parse_option_str(p, "mirror")) {
+>  		mirrored_kernelcore = true;
+> -- 
+> 2.7.4
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluo81YACgkQ3SOs138+
-s6GxAA//WkdXn0Zu2emfyYspUknO2Yb9looGZZElPqNLt0YPaWPcryc8JSxRE5p/
-aE31wGjwOK6eHRWgqWI18XC0W/67yyzF9MgzzcM39JW+ApM1OfEOShItNj8Xs1aS
-/9GgndxL2NpaSxkIiZJd/yhJOYMIQtyvpuy+0ealFLB+XNah2jW8r9I07xD+bWwL
-UjLIA2cB/o8kdTuxF0aOW0nG4j/O74hI+ctyFqobPFEG7+ggtLgCqLhZvEydD5g1
-tItLAcR73YQ9ZLWunePCdJIAiKY6eaITCaLyYR35pFHMSC5vHp9M1maqHQpsGtjA
-602kPP3em0UOr+92421mIjYWwgR08d03TKtzOMn0g2lvKVmPIbxrv5Z6H9c+ueJl
-q4QY14ogGdUTRA/ODiBET97P9OGfWsYB91qSwfDzool+7wgG5oxdNzXIjUFsW/89
-X1ny7+ULzMe6ft3x7ePOnRW+15t7pYILWQRsgd/4IVJGfH1wfP/GrAWkJ1JZyybq
-dDogVXTU4nhIhTc1T5m9WwCp41VkXoQVPUo8P7tpWExa0oq8mH8CPZSJZLGfE+Bc
-DF6wIfUhjJuyf0xBezDTAEfmHwRwLHI5uGV2tJUbD13NrlK3TxBFlF6751M12btK
-yZvYqbbiF+QPLF1pNMHD3r1m3Hm0wuE+DwnUA+PvqkofCnCueps=
-=FmsP
------END PGP SIGNATURE-----
-
---B8ONY/mu/bqBak9m--
+-- 
+Michal Hocko
+SUSE Labs
