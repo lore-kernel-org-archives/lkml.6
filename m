@@ -2,39 +2,42 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58CD9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C6AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E0D0208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0D0208D9
+	by mail.kernel.org (Postfix) with ESMTP id DE8FD208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE8FD208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732617AbeIXSUY (ORCPT
+        id S1732630AbeIXSU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:20:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56124 "EHLO
+        Mon, 24 Sep 2018 14:20:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56132 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730063AbeIXSUX (ORCPT
+        with ESMTP id S1730063AbeIXSU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:20:23 -0400
+        Mon, 24 Sep 2018 14:20:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7AB861087;
-        Mon, 24 Sep 2018 12:18:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D39A107E;
+        Mon, 24 Sep 2018 12:18:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 058/173] efi/arm: preserve early mapping of UEFI memory map longer for BGRT
-Date:   Mon, 24 Sep 2018 13:51:32 +0200
-Message-Id: <20180924113120.265209514@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 101/173] cifs: prevent integer overflow in nxt_dir_entry()
+Date:   Mon, 24 Sep 2018 13:52:15 +0200
+Message-Id: <20180924113123.493910670@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,58 +55,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 3ea86495aef2f6de26b7cb1599ba350dd6a0c521 ]
+commit 8ad8aa353524d89fa2e09522f3078166ff78ec42 upstream.
 
-The BGRT code validates the contents of the table against the UEFI
-memory map, and so it expects it to be mapped when the code runs.
+The "old_entry + le32_to_cpu(pDirInfo->NextEntryOffset)" can wrap
+around so I have added a check for integer overflow.
 
-On ARM, this is currently not the case, since we tear down the early
-mapping after efi_init() completes, and only create the permanent
-mapping in arm_enable_runtime_services(), which executes as an early
-initcall, but still leaves a window where the UEFI memory map is not
-mapped.
-
-So move the call to efi_memmap_unmap() from efi_init() to
-arm_enable_runtime_services().
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-[will: fold in EFI_MEMMAP attribute check from Ard]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: Dr Silvio Cesare of InfoSect <silvio.cesare@gmail.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/firmware/efi/arm-init.c    |    1 -
- drivers/firmware/efi/arm-runtime.c |    4 +++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -259,7 +259,6 @@ void __init efi_init(void)
+---
+ fs/cifs/readdir.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+--- a/fs/cifs/readdir.c
++++ b/fs/cifs/readdir.c
+@@ -376,8 +376,15 @@ static char *nxt_dir_entry(char *old_ent
  
- 	reserve_regions();
- 	efi_esrt_init();
--	efi_memmap_unmap();
- 
- 	memblock_reserve(params.mmap & PAGE_MASK,
- 			 PAGE_ALIGN(params.mmap_size +
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -122,11 +122,13 @@ static int __init arm_enable_runtime_ser
- {
- 	u64 mapsize;
- 
--	if (!efi_enabled(EFI_BOOT)) {
-+	if (!efi_enabled(EFI_BOOT) || !efi_enabled(EFI_MEMMAP)) {
- 		pr_info("EFI services will not be available.\n");
- 		return 0;
- 	}
- 
-+	efi_memmap_unmap();
+ 		new_entry = old_entry + sizeof(FIND_FILE_STANDARD_INFO) +
+ 				pfData->FileNameLength;
+-	} else
+-		new_entry = old_entry + le32_to_cpu(pDirInfo->NextEntryOffset);
++	} else {
++		u32 next_offset = le32_to_cpu(pDirInfo->NextEntryOffset);
 +
- 	if (efi_runtime_disabled()) {
- 		pr_info("EFI runtime services will be disabled.\n");
- 		return 0;
++		if (old_entry + next_offset < old_entry) {
++			cifs_dbg(VFS, "invalid offset %u\n", next_offset);
++			return NULL;
++		}
++		new_entry = old_entry + next_offset;
++	}
+ 	cifs_dbg(FYI, "new entry %p old entry %p\n", new_entry, old_entry);
+ 	/* validate that new_entry is not past end of SMB */
+ 	if (new_entry >= end_of_smb) {
 
 
