@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C1CC433F4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A605DECE561
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3999D20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 696FD214FE
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:31:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3999D20C0A
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 696FD214FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731648AbeIXTdU (ORCPT
+        id S1731719AbeIXTdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 24 Sep 2018 15:33:20 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48517 "EHLO huawei.com"
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48504 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731569AbeIXTdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 15:33:20 -0400
+        id S1730354AbeIXTdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 15:33:19 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C4D1DB193C318;
+        by Forcepoint Email with ESMTP id BCF7D70186710;
         Mon, 24 Sep 2018 21:31:05 +0800 (CST)
 Received: from SHA150392835-N.china.huawei.com (10.45.48.175) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
@@ -36,9 +36,9 @@ To:     <christoffer.dall@arm.com>, <marc.zyngier@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>
 CC:     <gengdongjiu@huawei.com>
-Subject: [PATCH 2/2] arm/arm64: KVM: share the check for vcpu events capability
-Date:   Mon, 24 Sep 2018 21:30:00 +0800
-Message-ID: <20180924133000.10244-3-gengdongjiu@huawei.com>
+Subject: [PATCH 1/2] arm/arm64: KVM: rename function kvm_arch_dev_ioctl_check_extension()
+Date:   Mon, 24 Sep 2018 21:29:59 +0800
+Message-ID: <20180924133000.10244-2-gengdongjiu@huawei.com>
 X-Mailer: git-send-email 2.11.0.windows.1
 In-Reply-To: <20180924133000.10244-1-gengdongjiu@huawei.com>
 References: <20180924133000.10244-1-gengdongjiu@huawei.com>
@@ -51,47 +51,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 539aee0edb9f ("KVM: arm64: Share the parts of
-get/set events useful to 32bit") shares the get/set events
-helper for arm64 and arm32, it is better also share the check
-for vcpu events capability.
+Rename kvm_arch_dev_ioctl_check_extension() to
+kvm_arch_vm_ioctl_check_extension(), because it does
+not have any relationship with device.
 
-User space will check whether KVM supports vcpu events through
-KVM_CAP_VCPU_EVENTS IOCTL.
-
+Cc: James Morse <james.morse@arm.com> 
 Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
 ---
-For the 32 bit guest migration, it needs to enable the vcpu events
+I remeber James also mentioned that rename this function.
 
 ---
- arch/arm64/kvm/reset.c | 1 -
- virt/kvm/arm/arm.c     | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/include/asm/kvm_host.h   | 2 +-
+ arch/arm64/include/asm/kvm_host.h | 2 +-
+ arch/arm64/kvm/reset.c            | 4 ++--
+ virt/kvm/arm/arm.c                | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index 3ad482d..3ee29db 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -273,7 +273,7 @@ static inline void __cpu_init_stage2(void)
+ 	kvm_call_hyp(__init_stage2_translation);
+ }
+ 
+-static inline int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
++static inline int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ {
+ 	return 0;
+ }
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 3d6d733..c20537f 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -53,7 +53,7 @@
+ 
+ int __attribute_const__ kvm_target_cpu(void);
+ int kvm_reset_vcpu(struct kvm_vcpu *vcpu);
+-int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext);
++int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext);
+ void __extended_idmap_trampoline(phys_addr_t boot_pgd, phys_addr_t idmap_start);
+ 
+ struct kvm_arch {
 diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index fd37c53..e50245e 100644
+index e37c78b..fd37c53 100644
 --- a/arch/arm64/kvm/reset.c
 +++ b/arch/arm64/kvm/reset.c
-@@ -82,7 +82,6 @@ int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 		break;
- 	case KVM_CAP_SET_GUEST_DEBUG:
- 	case KVM_CAP_VCPU_ATTRIBUTES:
--	case KVM_CAP_VCPU_EVENTS:
+@@ -55,12 +55,12 @@ static bool cpu_has_32bit_el1(void)
+ }
+ 
+ /**
+- * kvm_arch_dev_ioctl_check_extension
++ * kvm_arch_vm_ioctl_check_extension
+  *
+  * We currently assume that the number of HW registers is uniform
+  * across all CPUs (see cpuinfo_sanity_check).
+  */
+-int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
++int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ {
+ 	int r;
+ 
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index c92053b..40e79ea 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -240,7 +240,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
  		r = 1;
  		break;
  	default:
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 40e79ea..64e5d97 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -212,6 +212,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_READONLY_MEM:
- 	case KVM_CAP_MP_STATE:
- 	case KVM_CAP_IMMEDIATE_EXIT:
-+	case KVM_CAP_VCPU_EVENTS:
- 		r = 1;
+-		r = kvm_arch_dev_ioctl_check_extension(kvm, ext);
++		r = kvm_arch_vm_ioctl_check_extension(kvm, ext);
  		break;
- 	case KVM_CAP_ARM_SET_DEVICE_ADDR:
+ 	}
+ 	return r;
 -- 
 1.9.1
 
