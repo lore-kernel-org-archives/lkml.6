@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E149ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6969ECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3562087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 716A9214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="GRV6ppGP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E3562087A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="EiVfnTHO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716A9214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389079AbeIXUx6 (ORCPT
+        id S2389117AbeIXUyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:53:58 -0400
+        Mon, 24 Sep 2018 16:54:00 -0400
 Received: from mail-eopbgr720135.outbound.protection.outlook.com ([40.107.72.135]:34196
         "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731770AbeIXUx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:53:56 -0400
+        id S1731084AbeIXUx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:53:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EgOHig2LEjr3+Fu02Mbuoq5FN5uroW2DhmQAcHwLnME=;
- b=GRV6ppGPsgImaKAvXY8MvcvtxzSoEyr+UXSPPWniD/ge5oYcJU3jZIJ5Ewk4qPWDWUh1K0qNlLMyk+9iLZy2qHGjeLzYbVzUDywwpaYziMjpVFwOIfEFiguFMa+cfefSjQpzBLn14hD3f+MAlz9E81WnxcYyAyNDfVS+Cos5Ots=
+ bh=R+k6R4Fgn+eqcYYIDDiJE83Rop6/I3ULv2MS3LR9gmE=;
+ b=EiVfnTHOsidsSq6zMoYUeNYMZHya0KQC3woDAczRyWNUWnuFunMWLXRxqROANiRr6f6B0OtfyPsgBGUMdQBoYmRWt07dJqJAJJ1zDvJlPdKuVlJ3+vSVuaIWmgRHioFqHxg3mONOsq+DSPwdPj3AxUM2Epjyi9CUel5WpYnupIA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0821.namprd21.prod.outlook.com (10.173.192.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Mon, 24 Sep 2018 14:51:07 +0000
+ 15.20.1207.3; Mon, 24 Sep 2018 14:51:08 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:51:07 +0000
+ 14:51:08 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Arunk Khandavalli <akhandav@codeaurora.org>,
-        Jouni Malinen <jouni@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+CC:     Xiao Ni <xni@redhat.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 06/18] cfg80211: nl80211_update_ft_ies() to
- validate NL80211_ATTR_IE
-Thread-Topic: [PATCH AUTOSEL 4.4 06/18] cfg80211: nl80211_update_ft_ies() to
- validate NL80211_ATTR_IE
-Thread-Index: AQHUVBXXSUprk/SZc0SZ7CKu4lGydA==
+Subject: [PATCH AUTOSEL 4.4 07/18] RAID10 BUG_ON in raise_barrier when force
+ is true and conf->barrier is 0
+Thread-Topic: [PATCH AUTOSEL 4.4 07/18] RAID10 BUG_ON in raise_barrier when
+ force is true and conf->barrier is 0
+Thread-Index: AQHUVBXXUm36IVavNUqfnYbd3wtBxQ==
 Date:   Mon, 24 Sep 2018 14:49:48 +0000
-Message-ID: <20180924144942.164688-6-alexander.levin@microsoft.com>
+Message-ID: <20180924144942.164688-7-alexander.levin@microsoft.com>
 References: <20180924144942.164688-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144942.164688-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,30 +59,30 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:dI8RDzz9iGVphgIJALftTqKdFLtU3qne6nGloce1qOsdo4U/4iIbP4FLU3Qregv/M43dlBCfCfrV6Agny0vR/I5/ozjSBiwmepe812OEjD3Cny+CW3xbDRHLGAqj5ZrKNR/i/n+0MwCunPq753WTzKmpSw2XMngoeAmaa4lKvfZuFEoMYq0+vc8RzGUFMutGe0ORQX5zzHIlSeZ8YpWbgoLDIPAhXWQJ/sQvn6CWA80/9KX0VKP710/6IYXQVgG1DXQxIdjfhr+G3RvrFEeAIqYO17QPYII56Ji65T1ps/wtlJjjUgycf3Ci5uBqHn1V02xj3/L2cLZUSNdpqocTxd3f47UiguLc6EQOBcvs81o+ClOqdtwvz682kF7RKemWZll0JKQZN2JxGwp6HBPfa35JlfQwBIPvjdxTRdPfGYVU13R4zxPCTEaS4bKYbsifXITucm7A/ktpPPxMUAmjig==;5:UX0HW0/x/Kab33QKXLteX296L1DSlAS+5jAUY7hZGnatbviy6tooYtn33P/5hvJNpnv18JXcNmtYSNDzrIHVKs8QtruA92hgLu0bvJhsUMY79SiSLTjezYtnn+iOmk/nepMoLDKnX7KQ/OQKMBEP935N8RkI7OJ3ERMAxc/V4JU=;7:sqqEI2AdR86ehYePbb+hxWN91h6kk6au0ogzewk07FpZGy4hoTGYT6HusmR79vgupYM5N75dF8pCLsI+jl2z6pX0McWtl2hLbzjcxTczzT/auPKTy3uURGOrBpwO3StajYQgmi5UGfoZZAR+SmLF8bp+iEQd7qRqrjSfB6pJ5/KfPszmJdCEsLxuR5yr0eOwQQPj0vMibamzdeTIrNwvecoOOx7DncnjC0WIkv0/2SEVzCVJWqmIqFZqLSL4fp35
-x-ms-office365-filtering-correlation-id: e58b7e24-0c0a-4d30-36fe-08d6222d28f9
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:G0JKJDmyZNy5B7V1m/ffStIZ++uXhn8rZTULxorZBDUxOxyWsfceV+CTGd3juhlNs+R2k6uvXKjN6qUQiAHd1CSalmo+JSDSU8SUzz3wqDcI+7aqOXd5PQiF6jsm1FrGXrM0rl3MUuIPVYBQg1DWxQnmGcWYYNqcO1UaJSyCB7xCtv+LAhlfwL0FQhplO5WfD7RAIi26Lu5YxkZRFD/lgpg/ACrY5sxB0HjCso8U4hE5XXG1GV35J7HqE0PZUi8zsRVVMW8EQFJtJwbaaoUJXMZAJP3lo1vIzANnxvonrHQrAEi/VINkdZ0cVIIAFDNd2ROIUZyci1/e3VgXrW5H50mDoHpYG6JkoAaoQ3pZhWuUC9KeBosdkOYJeZH9vaiBA0sht9+8cbh+vGovOy/boc+06zTmnciOwI/76+4HrgnSLEgeIeG5cnocE0UOuSi3nGOCTa/ASnzDg4obQ+6CiA==;5:qyIPk0pXboMLaCOXiAboFOhs6PsSvFhxOEKU73h1fF/ilT7pAF6vOMLHnL7d/QSjKxSQCDtU5G4ZNESX50k3FyMQP7bmKRuacl7MU5A13N3So2YFMrhLpEkl5jctWnC6z7pFhGEJYYduAnjoUgl+E3wjmU3OL33JW+fA+3cqi30=;7:YZK8xkh1A+az9P92XEjzHx7jCWaq17LjTBqMm5/05Zm8wP9DqXVplbWqBarJGbSMDCd6DoaViAWSZJj8DSsk1LWasFNy/+I1nXTPjBQLgYX3NQ6FzwkZvPDj+gDaosO/kkewhmDTr8H9MX+PYZiOebluve63BHSHIAyfJqfWvEeQ8uX80bUdHEtbmiKFrnaDBzPJEokcSwABC8wOrp+pjKb7xwyCa9uHR0rVJBEfFLEtz40CuRZ+Er5xUj1t7QD4
+x-ms-office365-filtering-correlation-id: 5b9a98f7-95fa-44c7-b319-08d6222d293e
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0821;
 x-ms-traffictypediagnostic: CY4PR21MB0821:
-x-microsoft-antispam-prvs: <CY4PR21MB0821B9423F0BB0C256D88C02FB170@CY4PR21MB0821.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB08216BDB9367C9B1CDC71070FB170@CY4PR21MB0821.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(67672495146484)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0821;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0821;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(136003)(396003)(366004)(199004)(189003)(102836004)(5660300001)(53936002)(6512007)(6436002)(256004)(14444005)(217873002)(6666003)(6486002)(2501003)(15650500001)(10090500001)(2906002)(68736007)(5250100002)(97736004)(107886003)(66066001)(36756003)(4326008)(25786009)(1076002)(3846002)(6116002)(2900100001)(8936002)(81166006)(81156014)(8676002)(86612001)(86362001)(7736002)(305945005)(72206003)(186003)(26005)(10290500003)(6506007)(6346003)(478600001)(14454004)(110136005)(2616005)(446003)(11346002)(476003)(76176011)(486006)(54906003)(15760500003)(99286004)(105586002)(106356001)(71190400001)(71200400001)(22452003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(136003)(396003)(366004)(199004)(189003)(102836004)(5660300001)(53936002)(6512007)(6436002)(256004)(14444005)(217873002)(6666003)(6486002)(2501003)(10090500001)(2906002)(68736007)(5250100002)(97736004)(107886003)(66066001)(36756003)(4326008)(25786009)(1076002)(3846002)(6116002)(2900100001)(8936002)(81166006)(81156014)(8676002)(86612001)(575784001)(86362001)(7736002)(305945005)(72206003)(186003)(26005)(10290500003)(6506007)(6346003)(478600001)(14454004)(110136005)(2616005)(446003)(11346002)(476003)(76176011)(486006)(54906003)(99286004)(105586002)(106356001)(71190400001)(71200400001)(22452003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: u/y4Qqd5ZSgkrTeI6z9B53vTBRNetqyP7ic90l9T+bcTHNK/QBHj+ZdngwgpVsh/4SW6ewzxkJ010qy1KO2/u58IiuAo7YU3K4ojpUwaGL1Z4oG985/tjU6DzGpT+Sxpoex/SBZfaaa+6mzhZkhJgZ7Kw+GZ1V0PvMbbJkXkLK/6Wbi5ouzhpM+g9m7so+54cKNoLNWQ0wYXWk+J5dCU4GFV89HZfukVxXGJIxz8nBVI3eiJ6z6e5FH7nCbgXTQ3l385FO+PtXcKQ84jZMlt6xGtR0nzvONFUejx9BE/9wbxXkgApezEvcUmVWHlAPZhSiG2V5abYe+BuvLs1CjnefIZbghrhWqv4yoaGD6yHtE=
+x-microsoft-antispam-message-info: JB7Liw2tmg891L56ADTT4LvkzAvPqbLptKxa34IuNaK62670Fe3n/4DwAVVTG/tLKkoYRMNK/Cmt0KMungrzvhDK8aBmReenMGwqCdxJRP4iq3w7wDi1Q0IQusM/7DBFUmcjLAAGnCAu7kCOXFFkCUxrpk3m4o+6Tw7K8IChwUiKniQeLUUrH2Z1JlC1CwwhBAmISwLE1OjOORjFAM4N14wRMI/D9BbNHKwFhZuZ1pJRmKPs6rTic64w+ZrmIhfziKixXXT9fckWnZUuE9J19XeldzdGIe6tmczdXYQRwFQQ4D3JtAnLWprkKYPCtedWrkSPgX0pN1gY9XMKtNLteYMKB79h/KNpnQ93kJ99qwQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e58b7e24-0c0a-4d30-36fe-08d6222d28f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:49:48.4135
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b9a98f7-95fa-44c7-b319-08d6222d293e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:49:48.9169
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -94,38 +92,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arunk Khandavalli <akhandav@codeaurora.org>
+From: Xiao Ni <xni@redhat.com>
 
-[ Upstream commit 4f0223bfe9c3e62d8f45a85f1ef1b18a8a263ef9 ]
+[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
 
-nl80211_update_ft_ies() tried to validate NL80211_ATTR_IE with
-is_valid_ie_attr() before dereferencing it, but that helper function
-returns true in case of NULL pointer (i.e., attribute not included).
-This can result to dereferencing a NULL pointer. Fix that by explicitly
-checking that NL80211_ATTR_IE is included.
+In raid10 reshape_request it gets max_sectors in read_balance. If the under=
+layer disks
+have bad blocks, the max_sectors is less than last. It will call goto read_=
+more many
+times. It calls raise_barrier(conf, sectors_done !=3D 0) every time. In thi=
+s condition
+sectors_done is not 0. So the value passed to the argument force of raise_b=
+arrier is
+true.
 
-Fixes: 355199e02b83 ("cfg80211: Extend support for IEEE 802.11r Fast BSS Tr=
-ansition")
-Signed-off-by: Arunk Khandavalli <akhandav@codeaurora.org>
-Signed-off-by: Jouni Malinen <jouni@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+In raise_barrier it checks conf->barrier when force is true. If force is tr=
+ue and
+conf->barrier is 0, it panic. In this case reshape_request submits bio to u=
+nder layer
+disks. And in the callback function of the bio it calls lower_barrier. If t=
+he bio
+finishes before calling raise_barrier again, it can trigger the BUG_ON.
+
+Add one pair of raise_barrier/lower_barrier to fix this bug.
+
+Signed-off-by: Xiao Ni <xni@redhat.com>
+Suggested-by: Neil Brown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/raid10.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index b07fd8b8b50c..642a78079ae1 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -10014,6 +10014,7 @@ static int nl80211_update_ft_ies(struct sk_buff *sk=
-b, struct genl_info *info)
- 		return -EOPNOTSUPP;
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 8a731bdd268e..89111d455b71 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4336,11 +4336,12 @@ static sector_t reshape_request(struct mddev *mddev=
+, sector_t sector_nr,
+ 		allow_barrier(conf);
+ 	}
 =20
- 	if (!info->attrs[NL80211_ATTR_MDID] ||
-+	    !info->attrs[NL80211_ATTR_IE] ||
- 	    !is_valid_ie_attr(info->attrs[NL80211_ATTR_IE]))
- 		return -EINVAL;
++	raise_barrier(conf, 0);
+ read_more:
+ 	/* Now schedule reads for blocks from sector_nr to last */
+ 	r10_bio =3D mempool_alloc(conf->r10buf_pool, GFP_NOIO);
+ 	r10_bio->state =3D 0;
+-	raise_barrier(conf, sectors_done !=3D 0);
++	raise_barrier(conf, 1);
+ 	atomic_set(&r10_bio->remaining, 0);
+ 	r10_bio->mddev =3D mddev;
+ 	r10_bio->sector =3D sector_nr;
+@@ -4445,6 +4446,8 @@ static sector_t reshape_request(struct mddev *mddev, =
+sector_t sector_nr,
+ 	if (sector_nr <=3D last)
+ 		goto read_more;
 =20
++	lower_barrier(conf);
++
+ 	/* Now that we have done the whole section we can
+ 	 * update reshape_progress
+ 	 */
 --=20
 2.17.1
