@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC913ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6927CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6135820C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E9092145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:13:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dCUzUo6y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6135820C0A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VT32eHns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E9092145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeIXOMa (ORCPT
+        id S1727540AbeIXOOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:12:30 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39899 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeIXOM3 (ORCPT
+        Mon, 24 Sep 2018 10:14:10 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:33950 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726914AbeIXOOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:12:29 -0400
-Received: by mail-it1-f195.google.com with SMTP id w200-v6so1150812itc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 01:11:36 -0700 (PDT)
+        Mon, 24 Sep 2018 10:14:09 -0400
+Received: by mail-io1-f65.google.com with SMTP id h16-v6so6597133ioj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 01:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PlkHYqfm/OcI9dWSaGFletmPJsWJa9K+glsS+ZMx/aM=;
-        b=dCUzUo6ykF7dX3U550+ahyUNwiGOoROpCpM//E4AustwPBVT8J5SDjGmHcp9Qyk/Er
-         jyrYlmuHj2ZuJlOB2rbV3nw/YMemXKNprzN24i+LbHxg5ljXmfiKLFQzmpKatjLv+nxy
-         D1H8Lf+0TgJpED7C5pc78koiPxnyk/deRRYpA=
+        bh=tuCpIlcdQTeV/K7rYvlgsPf7U0bVlHvEfKgiDfhDHvs=;
+        b=VT32eHnsqo34eMWXwaJmjSagmgbjREwJEg3Oo655D0ogCmuCOq3AUW7CXZRJk4yHZW
+         tyCdK19SnYanYL4kGt8YMw4cDC9bPfRxbCobVkISd9lPVRoNbBUZ3MDDVMbrC3Omjlh4
+         Ypy6dKJLFUtLRhgABiSr8N3xSUzzR6cs+xDM0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PlkHYqfm/OcI9dWSaGFletmPJsWJa9K+glsS+ZMx/aM=;
-        b=uAI+M/z4h7VARGfNGNCh6wNPGH14A4H9HguG+h9WP2fqw5DrBB3dR4WfkYXbdr4Jfw
-         /Woi0c+veMTW5tHcE2Vw0YMqeI1XonSAaaKV6KNu2wpqCRLFmEYe2IOXM/8fXn9lbv+p
-         ekSB1jOr0nCB+/VTYRymNps5mHfwHzzPUhA6VZcT5cznSqSTLlFaqvJVPCZyI+wSf2Ds
-         5KQa2ClEO9lJ2+LiClHSRodWfJoh4E9sz8a8xCRG3AHge/j/4H8canmh99z+Gx5x03FK
-         PoJb6V4FZxvJludGKAp4ybzQjJpq/9kYkI/F14Gkr/daTuNJDGEBrg8QX9OGBe91TodS
-         /w3w==
-X-Gm-Message-State: APzg51D5LtzUDne/0hp7bEumaCuAyWxCm7jHsFyWdJAXWhHjrZEVobRg
-        5x9PTdPtin2wonnrobi+awsMDAz+tNReyYQjkKq4Yg==
-X-Google-Smtp-Source: ANB0VdZgdi4zT0JqzPxuW7yyKdlorpobyaCX2A+HOYD7OSpAwsPZ3tuKYFn0IRQLE3ibxsvNXZwsU6NVmj7VaJxZW4c=
-X-Received: by 2002:a02:2505:: with SMTP id g5-v6mr8190725jag.112.1537776696397;
- Mon, 24 Sep 2018 01:11:36 -0700 (PDT)
+        bh=tuCpIlcdQTeV/K7rYvlgsPf7U0bVlHvEfKgiDfhDHvs=;
+        b=c0XvaFjvAht5+0n3Fm7QNlImRvN3fYap6Ta3dAtSDrZyGYLYTbRw4zPwVVa/wj0otf
+         Cxf4CLdDjjE4bcUUiX5I2h1mDTVUj5ddMjigZ40MzyFX1L/6DMYZf1tojwByNdXZgxHn
+         uj+hVSssjpnlsR8sgbSGb2YNJvVRNfJPG7TyDe71aTgmzfdnGvX6iroAsLXxTszXZarv
+         fTWKlkRXOCdSldyoinOYBlW/N5ishMF2m58ASAxQMnzjGJJH/cNALzASeTwQ+7dnHdOm
+         fhYBO0UgvdRYLtgZPJSRja6njkwLkvRJ0pe5BxEnylvLv0Z+FsH//sk3S9FNiAZpZ5dd
+         6oag==
+X-Gm-Message-State: ABuFfohRb8e9vhaH7M6eM22Yed5CWaz0A8LHfcW+x3kNMbybuRyyvr8V
+        5VYY8KWP7LyQB28T1kFDHW7PjInZHndbabaUeTG98w==
+X-Google-Smtp-Source: ACcGV60jffR0gaxbH3Vbw/lU1LGhXZ36zx4v91f3ANt16Mo8JSUuDe3E9mRsPPUwcyg0oa6ijdsqsjzeDzVZ2kEPnaw=
+X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr7161376iog.175.1537776795785;
+ Mon, 24 Sep 2018 01:13:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <2785169.v6aIfS3K2k@z50> <20180923235336.22148-1-jmkrzyszt@gmail.com>
- <20180923235336.22148-2-jmkrzyszt@gmail.com>
-In-Reply-To: <20180923235336.22148-2-jmkrzyszt@gmail.com>
+ <20180923235336.22148-3-jmkrzyszt@gmail.com>
+In-Reply-To: <20180923235336.22148-3-jmkrzyszt@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 24 Sep 2018 10:11:23 +0200
-Message-ID: <CACRpkdZ-pcy=pBKaLUPOZ5jf2bsp2X2u6QCLCWJ1H_XdNY9wtw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpiolib: Fix missing updates of bitmap index
+Date:   Mon, 24 Sep 2018 10:13:02 +0200
+Message-ID: <CACRpkdbF=Yda3Wqii6dkDjqPzuh43Vb4nvPVrxLet3MYo0qUrw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpiolib: Fix array members of same chip processed separately
 To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
@@ -101,17 +101,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Sep 24, 2018 at 1:52 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-> In new code introduced by commit b17566a6b08b ("gpiolib: Implement fast
-> processing path in get/set array"), bitmap index is not updated with
-> next found zero bit position as it should while skipping over pins
-> already processed via fast bitmap path, possibly resulting in an
-> infinite loop.  Fix it.
+> New code introduced by commit bf9346f5d47b ("gpiolib: Identify arrays
+> matching GPIO hardware") forcibly tries to find an array member which
+> has its array index number equal to its hardware pin number and set
+> up an array info for possible fast bitmap processing of all arrray
+> pins belonging to that chip which also satisfy that numbering rule.
 >
+> Depending on array content, it may happen that consecutive array
+> members which belong to the same chip but don't have array indexes
+> equal to their pin hardware numbers will be split into groups, some of
+> them processed together via the fast bitmap path, and rest of them
+> separetely.  However, applications may expect all those pins being
+> processed together with a single call to .set_multiple() chip callback,
+> like that was done before the change.
+>
+> Limit applicability of fast bitmap processing path to cases where all
+> pins of consecutive array members starting from 0 which belong to the
+> same chip have their hardware numbers equal to their corresponding
+> array indexes.  That should still speed up processing of applications
+> using whole GPIO banks as I/O ports, while not breaking simultaneous
+> manipulation of consecutive pins of the same chip which don't follow
+> the equal numbering rule.
+>
+> Cc: Jonathan Corbet <corbet@lwn.net>
 > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
 Patch applied!
-
-Thanks for working on getting this into shape!
 
 Yours,
 Linus Walleij
