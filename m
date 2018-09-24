@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBACECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 615B7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 622B52098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1939A2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:08:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="m2z4cYeU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622B52098A
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dpgolzdR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1939A2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731008AbeIYBLO (ORCPT
+        id S1731282AbeIYBLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:11:14 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35305 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729023AbeIYBLO (ORCPT
+        Mon, 24 Sep 2018 21:11:45 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41725 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729103AbeIYBLp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:11:14 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o18-v6so11184283wmc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:07:37 -0700 (PDT)
+        Mon, 24 Sep 2018 21:11:45 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j15-v6so16717727wrt.8
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=9tO1OxNRZEW2K309hw9cqNAiL4Xe9Gj7Z3SHCzwLQjk=;
-        b=m2z4cYeUtwdhURzszsG79NMjSi91laP3HVB1hKU/Grp8/jN9fR+O7a+dSEt+0exX3e
-         R1ayozJlvbxIW5vc16Fz5UMmLXatvlq2wx+0yYXJSEdJHFEvbCNtZZe4Acl33UzCuL+F
-         jK4M0e1/XQGVFYQs9Lwir6Y3i3Cf/A51Grl0pBZq7RlzicH4QtaBGbhfJ/Kr90pqN+jW
-         XCVJcqMLnmSi0ch/HAnxmeFvxbGJeHV7JaOVEd2JHgwfUJ7pVbyq6x9ktH2BosieH05y
-         MSYfVcw3FskWogth6mBo7ZbMJ80sXEugU4IvRR1jfwIrVQYMhPtNQVKm9ZJl5JKUmxML
-         dV0w==
+        bh=3J4CVQHO9HWtG82mk+W/eGOS3TcgtxFosGmKY1xcdkE=;
+        b=dpgolzdR5Y1LamRylYbalf3VQjtt3zb7VQih8WPHNCiDTAy/TEjEHyqbmrG9m1akPz
+         1FBAOryHIpflg1Al6LR+jbR+oMsGuS6yNPC2HtbjMrzBTm36msSFVyLxc+U9R8BfUrQd
+         VazSQTR4hoL6CXhVxcsy2ngSyWXeVCH1agfyTgXsAQPZgn7Rk0IBr02cRKphQKkVHfcR
+         MrPGCGBTk6sCfWdyrFUigT2YtNrCxDKmg+omijmS8KaD2xddeqGiQ3Mf5pmUJZ31kSdU
+         2NHRWp2Jv8vffhpcwVk+Mst64woxrQR9qyGvrpudje4TUV/xPiloldmLHUcQ2FsdjzIC
+         AcYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=9tO1OxNRZEW2K309hw9cqNAiL4Xe9Gj7Z3SHCzwLQjk=;
-        b=VCxOXORAShtTcbLGjsYmxS81uIxxESZVmwg8sxIh0lc5DO8QGBt+zJ36Zt9j3ms8aE
-         Q9CIuHFnnfh70PPzN5rEabjdXN0c8tssLaocxw7nXB3C1wrYU+4/dhBT1oPB4fFJTTfC
-         sWs01g/Iq0MkckslseyZZtKgBghIG9PaXKG486fIOS8vD3bG/2W+GNVXoSLo57GF9PL5
-         39ZlgEuKlz6j5ZUffd/lLdvAcyzEfgomhQMVmOkFbIh8OvMuDomZmjfFziOA9Vr1r5um
-         Jd6c7+qTxlR7CMQyPjvuvtmttqiAr0AK0wyIMVoHo5ALRkK2SlCSUR32xbdNYqqYPsQK
-         qh2w==
-X-Gm-Message-State: APzg51DlTb6VCOfzrdvWD40aNvMTNvWq2NpXM8n2g6WM+FzI/0xMYZMu
-        relNU1lUDr8CS9JOROE0FHYoL8AN4w0=
-X-Google-Smtp-Source: ACcGV60AUkpw26cgCFME9c4F2FjKhVV592pOA5aLuhDUCl2T+cAZel1iNxt/H0GFAKoFWlw0QqEmtA==
-X-Received: by 2002:a1c:3bd4:: with SMTP id i203-v6mr8360725wma.73.1537816056434;
-        Mon, 24 Sep 2018 12:07:36 -0700 (PDT)
+        bh=3J4CVQHO9HWtG82mk+W/eGOS3TcgtxFosGmKY1xcdkE=;
+        b=hgM2LUL5UywgVGidIpyXmhnXmrtLpOMrQMQb2HkBAmUd7uX/0xCh89GBCeJ5brt/LJ
+         Xdqr19k97q26ASCX2v+0+TotLDKlcbVqNk8c/9UfHCYLIZCKG/ehTFz1hsiZF7lsvl9K
+         CP0+WiYcUzzmTAgsTQviA6pHyXNgjJgviVCEiy6edO9EXFDCJpy54thQK4kYN5mW+QWz
+         AeyBtvQsC1QG01j5A0DeOoflckKZ/8WM5n1MqcNB0+yhOpPdLzm2uAfn7hSeAxNZTeEr
+         6opUAYBronipgbUjSaU2zYnFiHPOY6PTuqEvKDt4WsRRhi88ablpR5kEWMYZqFoKeSOa
+         UmpA==
+X-Gm-Message-State: ABuFfoiLxzdldYLUx/VUgSll54l8sxuo+0hRao9cI2jahPrqb+nGVh1L
+        pnbkrX1rSpVVlB6j0ibsOqUeVQ==
+X-Google-Smtp-Source: ACcGV61jy3RZ2Ajd2v8y1CLb8EL4jyPXFn7VX39am4EpP6XbbC7qVzhwfrw2etLB8gdsqZEcm5ljjA==
+X-Received: by 2002:adf:df8b:: with SMTP id z11-v6mr130310wrl.113.1537816088050;
+        Mon, 24 Sep 2018 12:08:08 -0700 (PDT)
 Received: from ?IPv6:2a01:cb1d:4ce:ea00:6c78:1f23:6bb3:14f6? ([2a01:cb1d:4ce:ea00:6c78:1f23:6bb3:14f6])
-        by smtp.gmail.com with ESMTPSA id h73-v6sm37704178wma.11.2018.09.24.12.07.34
+        by smtp.gmail.com with ESMTPSA id z4-v6sm61114wrt.89.2018.09.24.12.08.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 12:07:35 -0700 (PDT)
-Subject: Re: [PATCH v2 6/7] drm: meson: use xxxsetbits32
+        Mon, 24 Sep 2018 12:08:07 -0700 (PDT)
+Subject: Re: [PATCH v2 7/7] net: stmmac: dwmac-meson8b: use xxxsetbits32
 To:     Corentin Labbe <clabbe@baylibre.com>, Gilles.Muller@lip6.fr,
         Julia.Lawall@lip6.fr, agust@denx.de, airlied@linux.ie,
         alexandre.torgue@st.com, alistair@popple.id.au,
@@ -77,7 +77,7 @@ Cc:     cocci@systeme.lip6.fr, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         netdev@vger.kernel.org
 References: <1537815856-31728-1-git-send-email-clabbe@baylibre.com>
- <1537815856-31728-7-git-send-email-clabbe@baylibre.com>
+ <1537815856-31728-8-git-send-email-clabbe@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -105,12 +105,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
  Acmp6h8g
 Organization: Baylibre
-Message-ID: <9925d909-5f50-499d-744d-f59170e8899a@baylibre.com>
-Date:   Mon, 24 Sep 2018 21:07:33 +0200
+Message-ID: <b87baa02-66e7-b855-478a-6d0bb4d39bad@baylibre.com>
+Date:   Mon, 24 Sep 2018 21:08:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1537815856-31728-7-git-send-email-clabbe@baylibre.com>
+In-Reply-To: <1537815856-31728-8-git-send-email-clabbe@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -119,24 +119,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Corentin,
-
 On 24/09/2018 21:04, Corentin Labbe wrote:
-> This patch convert meson DRM driver to use all xxxsetbits32 functions.
+> This patch convert meson stmmac glue driver to use all xxxsetbits32 functions.
 > 
 > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 > ---
->  drivers/gpu/drm/meson/meson_crtc.c      | 14 ++++---
->  drivers/gpu/drm/meson/meson_dw_hdmi.c   | 33 +++++++++--------
->  drivers/gpu/drm/meson/meson_plane.c     | 13 ++++---
->  drivers/gpu/drm/meson/meson_registers.h |  3 --
->  drivers/gpu/drm/meson/meson_venc.c      | 13 ++++---
->  drivers/gpu/drm/meson/meson_venc_cvbs.c |  4 +-
->  drivers/gpu/drm/meson/meson_viu.c       | 65 +++++++++++++++++----------------
->  drivers/gpu/drm/meson/meson_vpp.c       | 22 +++++------
->  8 files changed, 86 insertions(+), 81 deletions(-)
+>  .../net/ethernet/stmicro/stmmac/dwmac-meson8b.c    | 56 +++++++++-------------
+>  1 file changed, 22 insertions(+), 34 deletions(-)
 > 
 [...]
 
 Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Neil Armstrong <narmstrong@baylibre.com>
