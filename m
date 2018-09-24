@@ -2,130 +2,173 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B95C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A805EECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94022214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Tw65y5Yr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94022214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BA8F2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA8F2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733265AbeIXUvm (ORCPT
+        id S2387496AbeIXUvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:51:42 -0400
-Received: from mail-eopbgr690114.outbound.protection.outlook.com ([40.107.69.114]:33005
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733120AbeIXUvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:51:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DnV6NyMHgof1eAcNwZnENyYgl3qyu6UMaBP3BQL9S6s=;
- b=Tw65y5YrHN/zwwQRO1epvkdYvbfx97LYKd5mgycojM4C48rK8gzbO91MVzBfBKxtB0aHQSNOxQ33ySSkee/xawT9mfEEMVlliBZ8czEzeH1EpGGjp6/dIW9zEfwJVjW7Tr5lBVE5EhVV4Go0NggLancH9VvdGGFAV6sIeHPq0nQ=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.2; Mon, 24 Sep 2018 14:49:02 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:49:02 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "Dreyfuss, Haim" <haim.dreyfuss@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 59/76] mac80211: fix WMM TXOP calculation
-Thread-Topic: [PATCH AUTOSEL 4.18 59/76] mac80211: fix WMM TXOP calculation
-Thread-Index: AQHUVBWsVWyHquSJqEOz9CPWyjpU+w==
-Date:   Mon, 24 Sep 2018 14:48:37 +0000
-Message-ID: <20180924144751.164410-58-alexander.levin@microsoft.com>
-References: <20180924144751.164410-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:y+bLg+an4COxvCgm7CdEC/YQaxrFUpyVzj5yzpjEiwFXGR14RKAy+mTErHmzRhpYpEfuiLLUaSjWAlhyxL1n3y0Ry7U+g71Pd3WV+UUOZjfy1Czg9AykKDnujXN3mvzpqlhL8iHxKZogqmAJ0UlI2sARfjnG06+pJBvsw+NZTaucq/bIykYy6BDJfntmuhWkPLC++5R8UshyUaXXN8sa83QjHrx7hidMborkFYgRWTH6ES0qjkj6CU0klAuMLy5yI40y8sP/KfVjOwtkpaH9/M03Wbr5KfbYXNBXWme2x5vOZLsFp3h8htbOXmxPxqVrkABkFSQTTVk30bar2kUEv4qgKp02EyNnCef2Sj2HTsc9hcPf6VgkWNqnMEQpcv5EQQWzRyCNUDB+eLBpNQIg4VlGde4306vZ6ToCqHxUNfpLSBDgTskVCRojyLG4yQj1z2oJaJ8TS9QHwhTiZ6GL1g==;5:GhkFhrGBeQETZnLEhj/MgYF7gb6thQji9MOnH7LyvAegtL9zJ7A5y6ImOnVsI+HuRbMaD8w73u9WOrfJ9fob7f9WxDuxeME6U+HQk6dIf99iH+S+XFzl/ymvVcRqbrUhPOhg2StdRQV5lp7Xd5JQ/UR4H+BZJgaGlidJlDaWJcA=;7:v+yNyrRPRBLmZyARBtHHAnCZeoyX/QAlBpn39MhWW4lWHDgSg7/nbujT5M/eyBz/ordV1gq9qeHYWOeNyjfNO0dvCVqcQDp33bfuexFYdXEwaqHC4U3O9C4asTgOYq4A49pD0lnPSYIyYiCL2NPLlk8p6bcEv+rPt9hHlCLu1JvS8Jii5BvAiBTLgzCCc9vYglXFWGbv5RRU3XyC7x0padd0saT0WYDPWI1+n7HVVVGExV0MQ0f41JZUi6ABfF7s
-x-ms-office365-filtering-correlation-id: 8ef93f9f-8c00-4694-464f-08d6222cde77
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
-x-ms-traffictypediagnostic: CY4PR21MB0744:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0744B3D2A7DC054B15BCA382FB170@CY4PR21MB0744.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
-x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(39860400002)(376002)(366004)(189003)(199004)(11346002)(446003)(476003)(86362001)(186003)(81166006)(6506007)(8676002)(81156014)(6666003)(5660300001)(486006)(99286004)(53936002)(305945005)(6512007)(6436002)(2616005)(71200400001)(71190400001)(68736007)(6486002)(102836004)(10090500001)(7736002)(36756003)(97736004)(86612001)(316002)(3846002)(6116002)(1076002)(217873002)(14444005)(256004)(54906003)(110136005)(107886003)(10290500003)(4326008)(478600001)(22452003)(5250100002)(26005)(8936002)(2906002)(2501003)(2900100001)(66066001)(72206003)(105586002)(14454004)(76176011)(25786009)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: e11RL2ZPBq8xTAWnk9nuriu3P420szKwI7nZpBE62Rb7t3oQgMfBeOtqaROACvxTKsGYxgKSc1/RefPJ9WcCO2A74CQ8PXqoMIpCYtnnQok0mrdWIWZH6oJfJL5NHLjnnzn37taA95NpljigQB3/qMRUvEB6Y8KhOI4+q7LAQh6KPeyWs48Yl1OPbY03viHQ9PzoJL6yeepWReCKioRwdwjW8ocYvzIFTexTa6uA1F5q6QWs+tQbnkTrU+UrEJ+/LTSpGGqNDpfKHyNJ4e79VPaHvgNcwUrREaE2QOvFnsOqTU3PIolqrWLBEpTNeqjSLxhq5LWB9HZr30El//j43tlwLQ9S4nSGQP/zYtgEdJk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 24 Sep 2018 16:51:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42303 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733159AbeIXUvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:51:41 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7F59820723; Mon, 24 Sep 2018 16:49:08 +0200 (CEST)
+Received: from localhost (unknown [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5104C20725;
+        Mon, 24 Sep 2018 16:49:08 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 2/3] rtc: ab8500: let the core handle range
+Date:   Mon, 24 Sep 2018 16:49:01 +0200
+Message-Id: <20180924144902.607-2-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924144902.607-1-alexandre.belloni@bootlin.com>
+References: <20180924144902.607-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ef93f9f-8c00-4694-464f-08d6222cde77
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:37.1128
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dreyfuss, Haim" <haim.dreyfuss@intel.com>
+Let the core handle offsetting and windowing the RTC range.
+The RTC has a 24 bit counter for minutes plus a seconds counter.
+Keep the epoch at the beginning of 2000.
 
-[ Upstream commit abd76d255d69d70206c01b9cb19ba36a9c1df6a1 ]
-
-In commit 9236c4523e5b ("mac80211: limit wmm params to comply
-with ETSI requirements"), we have limited the WMM parameters to
-comply with 802.11 and ETSI standard.  Mistakenly the TXOP value
-was caluclated wrong.  Fix it by taking the minimum between
-802.11 to ETSI to make sure we are not violating both.
-
-Fixes: e552af058148 ("mac80211: limit wmm params to comply with ETSI requir=
-ements")
-Signed-off-by: Haim Dreyfuss <haim.dreyfuss@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- net/mac80211/util.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/rtc/rtc-ab8500.c | 53 +++-------------------------------------
+ 1 file changed, 4 insertions(+), 49 deletions(-)
 
-diff --git a/net/mac80211/util.c b/net/mac80211/util.c
-index c80187d6e6bb..93b5bb849ad7 100644
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@ -1151,8 +1151,7 @@ void ieee80211_regulatory_limit_wmm_params(struct iee=
-e80211_sub_if_data *sdata,
- 	qparam->cw_min =3D max_t(u16, qparam->cw_min, wmm_ac->cw_min);
- 	qparam->cw_max =3D max_t(u16, qparam->cw_max, wmm_ac->cw_max);
- 	qparam->aifs =3D max_t(u8, qparam->aifs, wmm_ac->aifsn);
--	qparam->txop =3D !qparam->txop ? wmm_ac->cot / 32 :
--		min_t(u16, qparam->txop, wmm_ac->cot / 32);
-+	qparam->txop =3D min_t(u16, qparam->txop, wmm_ac->cot / 32);
- 	rcu_read_unlock();
+diff --git a/drivers/rtc/rtc-ab8500.c b/drivers/rtc/rtc-ab8500.c
+index e97015e5c63e..2e2671b84ab0 100644
+--- a/drivers/rtc/rtc-ab8500.c
++++ b/drivers/rtc/rtc-ab8500.c
+@@ -46,7 +46,6 @@
+ #define RTC_STATUS_DATA			0x01
+ 
+ #define COUNTS_PER_SEC			(0xF000 / 60)
+-#define AB8500_RTC_EPOCH		2000
+ 
+ static const u8 ab8500_rtc_time_regs[] = {
+ 	AB8500_RTC_WATCH_TMIN_HI_REG, AB8500_RTC_WATCH_TMIN_MID_REG,
+@@ -59,23 +58,6 @@ static const u8 ab8500_rtc_alarm_regs[] = {
+ 	AB8500_RTC_ALRM_MIN_LOW_REG
+ };
+ 
+-/* Calculate the seconds from 1970 to 01-01-2000 00:00:00 */
+-static unsigned long get_elapsed_seconds(int year)
+-{
+-	unsigned long secs;
+-	struct rtc_time tm = {
+-		.tm_year = year - 1900,
+-		.tm_mday = 1,
+-	};
+-
+-	/*
+-	 * This function calculates secs from 1970 and not from
+-	 * 1900, even if we supply the offset from year 1900.
+-	 */
+-	rtc_tm_to_time(&tm, &secs);
+-	return secs;
+-}
+-
+ static int ab8500_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ {
+ 	unsigned long timeout = jiffies + HZ;
+@@ -118,9 +100,6 @@ static int ab8500_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	secs =	secs / COUNTS_PER_SEC;
+ 	secs =	secs + (mins * 60);
+ 
+-	/* Add back the initially subtracted number of seconds */
+-	secs += get_elapsed_seconds(AB8500_RTC_EPOCH);
+-
+ 	rtc_time_to_tm(secs, tm);
+ 	return 0;
  }
-=20
---=20
-2.17.1
+@@ -131,21 +110,8 @@ static int ab8500_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	unsigned char buf[ARRAY_SIZE(ab8500_rtc_time_regs)];
+ 	unsigned long no_secs, no_mins, secs = 0;
+ 
+-	if (tm->tm_year < (AB8500_RTC_EPOCH - 1900)) {
+-		dev_dbg(dev, "year should be equal to or greater than %d\n",
+-				AB8500_RTC_EPOCH);
+-		return -EINVAL;
+-	}
+-
+-	/* Get the number of seconds since 1970 */
+ 	rtc_tm_to_time(tm, &secs);
+ 
+-	/*
+-	 * Convert it to the number of seconds since 01-01-2000 00:00:00, since
+-	 * we only have a small counter in the RTC.
+-	 */
+-	secs -= get_elapsed_seconds(AB8500_RTC_EPOCH);
+-
+ 	no_mins = secs / 60;
+ 
+ 	no_secs = secs % 60;
+@@ -202,9 +168,6 @@ static int ab8500_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
+ 	mins = (buf[0] << 16) | (buf[1] << 8) | (buf[2]);
+ 	secs = mins * 60;
+ 
+-	/* Add back the initially subtracted number of seconds */
+-	secs += get_elapsed_seconds(AB8500_RTC_EPOCH);
+-
+ 	rtc_time_to_tm(secs, &alarm->time);
+ 
+ 	return rtc_valid_tm(&alarm->time);
+@@ -224,12 +187,6 @@ static int ab8500_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
+ 	unsigned long mins, secs = 0, cursec = 0;
+ 	struct rtc_time curtm;
+ 
+-	if (alarm->time.tm_year < (AB8500_RTC_EPOCH - 1900)) {
+-		dev_dbg(dev, "year should be equal to or greater than %d\n",
+-				AB8500_RTC_EPOCH);
+-		return -EINVAL;
+-	}
+-
+ 	/* Get the number of seconds since 1970 */
+ 	rtc_tm_to_time(&alarm->time, &secs);
+ 
+@@ -245,12 +202,6 @@ static int ab8500_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alarm)
+ 		return -EINVAL;
+ 	}
+ 
+-	/*
+-	 * Convert it to the number of seconds since 01-01-2000 00:00:00, since
+-	 * we only have a small counter in the RTC.
+-	 */
+-	secs -= get_elapsed_seconds(AB8500_RTC_EPOCH);
+-
+ 	mins = secs / 60;
+ 
+ 	buf[2] = mins & 0xFF;
+@@ -445,6 +396,10 @@ static int ab8500_rtc_probe(struct platform_device *pdev)
+ 
+ 	rtc->uie_unsupported = 1;
+ 
++	rtc->range_max = (1ULL << 24) * 60 - 1; // 24-bit minutes + 59 secs
++	rtc->start_secs = RTC_TIMESTAMP_BEGIN_2000;
++	rtc->set_start_time = true;
++
+ 	err = rtc_add_group(rtc, &ab8500_rtc_sysfs_files);
+ 	if (err)
+ 		return err;
+-- 
+2.19.0
+
