@@ -4,91 +4,153 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2B1ECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D704BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B2D2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B2D2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 970822087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:53:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 970822087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbeIYC5I (ORCPT
+        id S1728202AbeIYC5d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:57:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:41860 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbeIYC5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:57:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82C017A9;
-        Mon, 24 Sep 2018 13:53:04 -0700 (PDT)
-Received: from [10.37.9.1] (unknown [10.37.9.1])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A9FA3F5B7;
-        Mon, 24 Sep 2018 13:53:02 -0700 (PDT)
-Subject: Re: [PATCH v7 1/9] KVM: arm/arm64: Ensure only THP is candidate for
- adjustment
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     marc.zyngier@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        stable@vger.kernel.org
-References: <20180924174552.8387-1-punit.agrawal@arm.com>
- <20180924174552.8387-2-punit.agrawal@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <2827f67b-d734-aca5-d790-c350a81f0792@arm.com>
-Date:   Mon, 24 Sep 2018 21:54:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 24 Sep 2018 22:57:33 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34148 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727659AbeIYC5d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 22:57:33 -0400
+Received: by mail-qt1-f195.google.com with SMTP id x23-v6so11079839qtr.1;
+        Mon, 24 Sep 2018 13:53:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pIrtdQ364BeyHhq+FNO7GGk/sMLbUf4kKqcB3Gpb1I0=;
+        b=WRwwnEc/e7MRJ5erX6Nj2KGLRXiA5UCvkMeM3/td1sKr9TBBq2y9guDl/3RNehr+hD
+         cLRfAgRqjF9CyPTwG0/oqNicA7rkDBycf+UR5dgRB+MJBiahJ/7udhkwuHCxYvCNCUh7
+         5QC8wXZsCGUpSKml7l7m18GtE/2dkqnWF8l50IHDH7uorIrmeLhsoI0NFOAUl9LlhVcP
+         kI++iQ57g0SHoJQOYGMINf+iwbmuL1qSeFUrcXpJWnBUnum/lFcHUusxgxMoBoieByqt
+         c/7AbZbCZMWh3/z4iQeh6AskrjTjweB6TnrZQm2bg5c3cOHFVrBQR+iICLoItaMiNBtM
+         N5iQ==
+X-Gm-Message-State: ABuFfoguFPtFxzAILFK+XU2wJJgnxvMa599L0ouQCtK1zRV5kVeoNUzk
+        fzENA9I8kJ+1nnpCgMLZ4e1PPA2B9axZEHNKgg4=
+X-Google-Smtp-Source: ACcGV61z02eSwVfJbY0fvvqTjpZ94LZDg6tQ1XzrFcsKZCa1MUJR3dgXFarwtqyUn0DfDFeV5UZRyvMUKnu4sLTY/kk=
+X-Received: by 2002:ac8:7254:: with SMTP id l20-v6mr479300qtp.213.1537822409634;
+ Mon, 24 Sep 2018 13:53:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180924174552.8387-2-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com>
+ <1527631130-20045-2-git-send-email-ray.jui@broadcom.com> <CAL_Jsq+ac6dmHKS6m0h5N3bv=VseKVL8XLU5K7j1Rn=mgFNLsA@mail.gmail.com>
+ <20180918134152.GA31440@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20180918134152.GA31440@e107981-ln.cambridge.arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 24 Sep 2018 22:53:13 +0200
+Message-ID: <CAK8P3a3cWHK=DNCFn+p_NjSyXhoLQw07EVedVf5-UFdz4V4OPA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] PCI: iproc: Update iProc PCI binding for INTx support
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Ray Jui <ray.jui@broadcom.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Punit,
+On Tue, Sep 18, 2018 at 3:42 PM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Mon, Jun 04, 2018 at 09:17:49AM -0500, Rob Herring wrote:
+> > +Arnd
+> >
+> > On Tue, May 29, 2018 at 4:58 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+> > > Update the iProc PCIe binding document for better modeling of the legacy
+> > > interrupt (INTx) support
+> > >
+> > > Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> > > ---
+> > >  .../devicetree/bindings/pci/brcm,iproc-pcie.txt    | 31 +++++++++++++++++-----
+> > >  1 file changed, 24 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt b/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+> > > index b8e48b4..7ea24dc 100644
+> > > --- a/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+> > > +++ b/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+> > > @@ -13,9 +13,6 @@ controller, used in Stingray
+> > >    PAXB-based root complex is used for external endpoint devices. PAXC-based
+> > >  root complex is connected to emulated endpoint devices internal to the ASIC
+> > >  - reg: base address and length of the PCIe controller I/O register space
+> > > -- #interrupt-cells: set to <1>
+> > > -- interrupt-map-mask and interrupt-map, standard PCI properties to define the
+> > > -  mapping of the PCIe interface to interrupt numbers
+> > >  - linux,pci-domain: PCI domain ID. Should be unique for each host controller
+> > >  - bus-range: PCI bus numbers covered
+> > >  - #address-cells: set to <3>
+> > > @@ -41,6 +38,16 @@ Required:
+> > >  - brcm,pcie-ob-axi-offset: The offset from the AXI address to the internal
+> > >  address used by the iProc PCIe core (not the PCIe address)
+> > >
+> > > +Legacy interrupt (INTx) support (optional):
+> > > +
+> > > +Note INTx is for PAXB only.
+> > > +
+> > > +- interrupt-controller: claims itself as an interrupt controller for INTx
+> > > +- #interrupt-cells: set to <1>
+> > > +- interrupt-map-mask and interrupt-map, standard PCI properties to define
+> > > +the mapping of the PCIe interface to interrupt numbers
+> > > +- interrupts: interrupt line wired to the generic GIC for INTx support
+> > > +
+> > >  MSI support (optional):
+> > >
+> > >  For older platforms without MSI integrated in the GIC, iProc PCIe core provides
+> > > @@ -77,9 +84,14 @@ Example:
+> > >                 compatible = "brcm,iproc-pcie";
+> > >                 reg = <0x18012000 0x1000>;
+> > >
+> > > +               interrupt-controller;
+> > >                 #interrupt-cells = <1>;
+> > > -               interrupt-map-mask = <0 0 0 0>;
+> > > -               interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
+> > > +               interrupt-map-mask = <0 0 0 7>;
+> > > +               interrupt-map = <0 0 0 1 &pcie0 1>,
+> >
+> > Are you sure this works? The irq parsing code will ignore
+> > interrupt-map if interrupt-controller is found. In other words, you
+> > should have one or the other, but not both.
+> >
+> > Maybe it happens to work because "pcie0" is this node and your irq
+> > numbers are the same.
+> >
+> > Arnd, any thoughts on this?
+>
+> To start with, I think the destination IRQ number is wrong, what the
+> mappings actually do is mapping the PCI interrupt line (ie #INTA, #INTB,
+> #INTC, #INTD) to input {0,1,2,3} of the PCI host bridge (pseudo)
+> interrupt controller.
+>
+> I really want to clean this up since currently there are different
+> DT bindings defining this in different ways which resulted in
+> non-consistent kernel code.
+>
+> AFAICS, the Aardvark PCIe controller bindings define the mapping
+> as I expect:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/pci/aardvark-pci.txt?h=v4.19-rc4
+>
+> but I would like to get Rob and Arnd viewpoint on this so that
+> we can close this topic once for all.
 
-On 09/24/2018 06:45 PM, Punit Agrawal wrote:
-> PageTransCompoundMap() returns true for hugetlbfs and THP
-> hugepages. This behaviour incorrectly leads to stage 2 faults for
-> unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
-> treated as THP faults.
-> 
-> Tighten the check to filter out hugetlbfs pages. This also leads to
-> consistently mapping all unsupported hugepage sizes as PTE level
-> entries at stage 2.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Suzuki Poulose <suzuki.poulose@arm.com>
-> Cc: stable@vger.kernel.org # v4.13+
-> ---
->   virt/kvm/arm/mmu.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index 7e477b3cae5b..c23a1b323aad 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -1231,8 +1231,14 @@ static bool transparent_hugepage_adjust(kvm_pfn_t *pfnp, phys_addr_t *ipap)
->   {
->   	kvm_pfn_t pfn = *pfnp;
->   	gfn_t gfn = *ipap >> PAGE_SHIFT;
-> +	struct page *page = pfn_to_page(pfn);
->   
-> -	if (PageTransCompoundMap(pfn_to_page(pfn))) {
-> +	/*
-> +	 * PageTransCompoungMap() returns true for THP and
-> +	 * hugetlbfs. Make sure the adjustment is done only for THP
-> +	 * pages.
-> +	 */
-> +	if (!PageHuge(page) && PageTransCompoundMap(page)) {
+It seems ambiguous at best, as Rob suggested it may only
+work by accident. Since there is only one upstream interrupt,
+could we simply list <GIC_SPI 100 IRQ_TYPE_NONE> as
+the destination for any IntX?
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+        Arnd
