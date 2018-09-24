@@ -2,169 +2,355 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_DBL_ABUSE_MALW autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18965ECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510FCC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5272098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF59C2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:37:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="X3UT+glc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5272098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjjYSX2S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF59C2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbeIYCjG (ORCPT
+        id S1727602AbeIYCl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:39:06 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:37472 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727440AbeIYCjG (ORCPT
+        Mon, 24 Sep 2018 22:41:29 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34027 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727408AbeIYCl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:39:06 -0400
-Received: by mail-io1-f66.google.com with SMTP id v14-v6so18736926iob.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 13:35:07 -0700 (PDT)
+        Mon, 24 Sep 2018 22:41:29 -0400
+Received: by mail-wm1-f66.google.com with SMTP id j25-v6so10868738wmc.1;
+        Mon, 24 Sep 2018 13:37:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zGovwL34m3Q5BD9+4dJtUpU8TqZLav+XmYRhRA5U/9M=;
-        b=X3UT+glcIJb5oLsdvNnVZeUDurKxQTpOAFdYnLr3OlV0sBpTq6a94MZoGR8IvcacWi
-         sci5aWT713EV2DJQpkH/xCNeB3usHjcNQyi+ol5GSysPgkHuvYymR4EL6vRQxms5pQMk
-         YRWBxRwX5/6pied75MvOCaYrhRewsOfmKEs+aZtfv+VLzRjXTB/AECC/RfXaG9RfZ4Ce
-         bikpGFk0O6hKxe5Qz4a3h61PGSMngFNyukLb54m3abzgr+7nH70mKxhGwvwbp+3WZiEr
-         VHzMDU9Zh5s2NRqfk5zVX6Aou5/uZPDgAkxDy2/UXnASmwKA8nFZjPeBXGauj+Vp67DV
-         eXJA==
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=nnqqUrXYArlVoT3RtJCvHHD2Y6DiO/ed09vGXHTBKkg=;
+        b=KjjYSX2SLoLrokm2QqdQ7XxXsV5RVQ9VZ8BAWOP3YQLQA08x2JookIQmEBZ8nbh6h7
+         AvE40yRzdKTTeuV4HITVVHp6YpFXzWY17JTZF7DVv6xTwYAQgsHZJa2rOgwrMsxwEgVu
+         h0/+e0jGosKiXwtr7xFdn2asMwaUFhJGbuoXutua05BYBkFHYsRIlRr/M8xOzwTgVUkb
+         WOA1UE22ohG4bzM7ZTLqUAWLyo58cX0QHSgEJlpbGBY5BxPkoKsdqkyqH4mv/X7Ov1cU
+         xuKDrGoP9N0OIHN6BA+KNDq3w5DPuSc/oy8bVuIsz2kjGy68CQTX7ysQdj7l6Q63TJTg
+         OOSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zGovwL34m3Q5BD9+4dJtUpU8TqZLav+XmYRhRA5U/9M=;
-        b=rwPK9hTp9XoqqZzhAhHNZI3uqqqfEorbAQ2WfaoZICZvHWjLGcG7S9cEnbeNHzfohg
-         Lp39mBn4m8/zjErEigW6k6cM9QMsSeKSu+u5IlhuNx9l/xB9Ajzs5I66G0eQSCRpKvAS
-         uCcqTg2w/4hkkNbuZztS+mmhsUjjGo+CJmXxyoGFsnyq+ibuSMf6AzZ4s4kSWs2i3QEZ
-         DFEsYScVzg/gKBCuv3EhUiIr8GpNC/UZqFfMO/sytfry4NF16whRBlzoyjtrH0wkp+1q
-         d1jvLx8doihOBi4BcmYOPfWtCB//jBA20fI80VOLSmwha/5onJHNWw/amkdX6MSepSdv
-         BECg==
-X-Gm-Message-State: ABuFfohTHF+MUPWQSny6S2d5Ez+WEz9CNd8wwXOlPuNJXAwjsLkrdeM9
-        K7EhyVM/ciIBON5myX3E0f8GrA==
-X-Google-Smtp-Source: ACcGV61ECXbxJxiwQwEyDEDcELQXpE4eIuuZ37a3ZaLiDV+6S+ztWuUYuJIdSoXN7kaQSj+n3ut79A==
-X-Received: by 2002:a6b:5903:: with SMTP id n3-v6mr519122iob.176.1537821306779;
-        Mon, 24 Sep 2018 13:35:06 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id y25-v6sm5740417ita.3.2018.09.24.13.35.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 13:35:06 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1g4XZR-00080t-5a; Mon, 24 Sep 2018 14:35:05 -0600
-Date:   Mon, 24 Sep 2018 14:35:05 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        qat-linux@intel.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-iio@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to
- generic_compat_ioctl_ptrarg
-Message-ID: <20180924203505.GC6008@ziepe.ca>
-References: <20180912150142.157913-1-arnd@arndb.de>
- <20180912151134.436719-1-arnd@arndb.de>
- <20180914203506.GE35251@wrath>
- <20180914205748.GC19965@ZenIV.linux.org.uk>
- <20180918175108.GF35251@wrath>
- <20180918175952.GJ11367@ziepe.ca>
- <CAK8P3a17GY89in7PeLk1F2T-0Xq=sCrwwntM+Y4BCpXheUC+qQ@mail.gmail.com>
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=nnqqUrXYArlVoT3RtJCvHHD2Y6DiO/ed09vGXHTBKkg=;
+        b=oV97mSi9Q0MQ+QlOZ5MAlDKmH4NUlqHlc5utQ5EdYhdI/JWPqMMWujnwLbkkT+1gSp
+         XJKXxejV5LmmD/OiXMBXtb3+d/PIB2fIdSHbhXOIpmN6sYeoM5EnVK+oClBbleNipTet
+         YjYYLs2pvRtjyGfqC2vVF3hfxqLUA478UV8e6lQtisPX7M/50btIn9elNnC3A9Pis1Os
+         pTAZPEmTtUBYLjypwGyDDmvzosaOph7Ey61FK1u5MA3BaDWh3n2Ol2x0KHc8ah0e98r2
+         qJQAgm2MP5d20O3ets89dbA4r2JhmEIBMkldn5xyXWQLHfjFa0sRHsCdVNN63ZrBAnz4
+         8JfA==
+X-Gm-Message-State: ABuFfojIuGNT4fC3v111Yvr7EjaWaebgPjiuaNCyvv3ejPdcGmyEtveV
+        LCLlUOifBrLfga2qaSvI0g==
+X-Google-Smtp-Source: ACcGV62JELTZQJMXGPDHhV2bjIFEK9jJaeQNNoerrb8H7xDlIN1xhdivxkyvTj1EtQtYNR+1DSLUlg==
+X-Received: by 2002:a1c:1f87:: with SMTP id f129-v6mr58422wmf.153.1537821445399;
+        Mon, 24 Sep 2018 13:37:25 -0700 (PDT)
+Received: from android-dhcp-8-1-0-d4-38-9c-a2-1f-05.home (host86-147-9-252.range86-147.btcentralplus.com. [86.147.9.252])
+        by smtp.gmail.com with ESMTPSA id v2-v6sm220798wrs.54.2018.09.24.13.37.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 13:37:24 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 21:37:22 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180924185306.GO1367@tuxbook-pro>
+References: <20180812142413.20856-1-ctatlor97@gmail.com> <20180924185306.GO1367@tuxbook-pro>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a17GY89in7PeLk1F2T-0Xq=sCrwwntM+Y4BCpXheUC+qQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] pinctrl: qcom: Add sdm660 pinctrl driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     linux-arm-msm@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Craig <ctatlor97@gmail.com>
+Message-ID: <E53FA3AA-422C-4504-AD67-99D219D39D77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 10:18:52PM +0200, Arnd Bergmann wrote:
-> On Tue, Sep 18, 2018 at 7:59 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Tue, Sep 18, 2018 at 10:51:08AM -0700, Darren Hart wrote:
-> > > On Fri, Sep 14, 2018 at 09:57:48PM +0100, Al Viro wrote:
-> > > > On Fri, Sep 14, 2018 at 01:35:06PM -0700, Darren Hart wrote:
-> > > >
-> > > > > Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
-> > > > >
-> > > > > As for a longer term solution, would it be possible to init fops in such
-> > > > > a way that the compat_ioctl call defaults to generic_compat_ioctl_ptrarg
-> > > > > so we don't have to duplicate this boilerplate for every ioctl fops
-> > > > > structure?
-> > > >
-> > > >     Bad idea, that...  Because several years down the road somebody will add
-> > > > an ioctl that takes an unsigned int for argument.  Without so much as looking
-> > > > at your magical mystery macro being used to initialize file_operations.
-> > >
-> > > Fair, being explicit in the declaration as it is currently may be
-> > > preferable then.
-> >
-> > It would be much cleaner and safer if you could arrange things to add
-> > something like this to struct file_operations:
-> >
-> >   long (*ptr_ioctl) (struct file *, unsigned int, void __user *);
-> >
-> > Where the core code automatically converts the unsigned long to the
-> > void __user * as appropriate.
-> >
-> > Then it just works right always and the compiler will help address
-> > Al's concern down the road.
-> 
-> I think if we wanted to do this with a new file operation, the best
-> way would be to do the copy_from_user()/copy_to_user() in the caller
-> as well.
+
+
+On 24 September 2018 19:53:06 BST, Bjorn Andersson <bjorn=2Eandersson@lina=
+ro=2Eorg> wrote:
+>On Sun 12 Aug 07:24 PDT 2018, Craig Tatlor wrote:
 >
-> We already do this inside of some subsystems, notably drivers/media/,
-> and it simplifies the implementation of the ioctl handler function
-> significantly. We obviously cannot do this in general, both because of
-> traditional drivers that have 16-bit command codes (drivers/tty and others)
-> and also because of drivers that by accident defined the commands
-> incorrectly and use the wrong type or the wrong direction in the
-> definition.
-
-That could work well, but the first idea could be done globally and
-mechanically, while this would require very careful per-driver
-investigation. 
-
-Particularly if the core code has worse performance.. ie due to
-kmalloc calls or something.
-
-I think it would make more sense to start by having the core do the
-case to __user and then add another entry point to have the core do
-the copy_from_user, and so on.
-
-Jason
+>> Add initial pinctrl driver to support pin configuration with
+>> pinctrl framework for sdm660=2E
+>> Based off CAF implementation=2E
+>>=20
+>> Signed-off-by: Craig Tatlor <ctatlor97@gmail=2Ecom>
+>> ---
+>>=20
+>> Changes from v1:
+>>   Adds gpio-ranges property to bindings
+>>=20
+>>=20
+>>  =2E=2E=2E/bindings/pinctrl/qcom,sdm660-pinctrl=2Etxt  |  202 +++
+>
+>As the DT binding part of the patch is significant, please split it
+>into
+>its own patch=2E
+>
+Right
+>>  drivers/pinctrl/qcom/Kconfig                  |   10 +
+>>  drivers/pinctrl/qcom/Makefile                 |    1 +
+>>  drivers/pinctrl/qcom/pinctrl-sdm660=2Ec         | 1451
+>+++++++++++++++++
+>>  4 files changed, 1663 insertions(+)
+>>  create mode 100644
+>Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl=2Etxt
+>>  create mode 100644 drivers/pinctrl/qcom/pinctrl-sdm660=2Ec
+>>=20
+>> diff --git
+>a/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl=2Etxt
+>b/Documentation/devicetree/bindings/pinctrl/qcom,sdm660-pinctrl=2Etxt
+>[=2E=2E]
+>> +- function:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: Specify the alternative function to be configured for
+>the
+>> +		    specified pins=2E Functions are only valid for gpio pins=2E
+>> +		    Valid values are:
+>> +
+>> +		    blsp_uart1, blsp_spi1, blsp_i2c1, blsp_uim1, atest_tsens,
+>> +		    bimc_dte1, dac_calib0, blsp_spi8, blsp_uart8, blsp_uim8,
+>> +		    qdss_cti_trig_out_b, bimc_dte0, dac_calib1,
+>qdss_cti_trig_in_b,
+>> +		    dac_calib2, atest_tsens2, atest_usb1, blsp_spi10, blsp_uart10,
+>> +		    blsp_uim10, atest_bbrx1, atest_usb13, atest_bbrx0,
+>atest_usb12,
+>> +		    mdp_vsync, edp_lcd, blsp_i2c10, atest_gpsadc1, atest_usb11,
+>> +		    atest_gpsadc0, edp_hot, atest_usb10, m_voc, dac_gpio,
+>atest_char,
+>> +		    cam_mclk, pll_bypassnl, qdss_stm7, blsp_i2c8,
+>qdss_tracedata_b,
+>> +		    pll_reset, qdss_stm6, qdss_stm5, qdss_stm4, atest_usb2,
+>cci_i2c,
+>> +		    qdss_stm3, dac_calib3, atest_usb23, atest_char3, dac_calib4,
+>> +		    qdss_stm2, atest_usb22, atest_char2, qdss_stm1, dac_calib5,
+>> +		    atest_usb21, atest_char1, dbg_out, qdss_stm0, dac_calib6,
+>> +		    atest_usb20, atest_char0, dac_calib10, qdss_stm10,
+>> +		    qdss_cti_trig_in_a, cci_timer4, blsp_spi6, blsp_uart6,
+>blsp_uim6,
+>> +		    blsp2_spi, qdss_stm9, qdss_cti_trig_out_a, dac_calib11,
+>> +		    qdss_stm8, cci_timer0, qdss_stm13, dac_calib7, cci_timer1,
+>> +		    qdss_stm12, dac_calib8, cci_timer2, blsp1_spi, qdss_stm11,
+>> +		    dac_calib9, cci_timer3, cci_async, dac_calib12, blsp_i2c6,
+>> +		    qdss_tracectl_a, dac_calib13, qdss_traceclk_a, dac_calib14,
+>> +		    dac_calib15, hdmi_rcv, dac_calib16, hdmi_cec, pwr_modem,
+>> +		    dac_calib17, hdmi_ddc, pwr_nav, dac_calib18, pwr_crypto,
+>> +		    dac_calib19, hdmi_hot, dac_calib20, dac_calib21, pci_e0,
+>> +		    dac_calib22, dac_calib23, dac_calib24, tsif1_sync,
+>dac_calib25,
+>> +		    sd_write, tsif1_error, blsp_spi2, blsp_uart2, blsp_uim2,
+>> +		    qdss_cti, blsp_i2c2, blsp_spi3, blsp_uart3, blsp_uim3,
+>blsp_i2c3,
+>> +		    uim3, blsp_spi9, blsp_uart9, blsp_uim9, blsp10_spi, blsp_i2c9,
+>> +		    blsp_spi7, blsp_uart7, blsp_uim7, qdss_tracedata_a, blsp_i2c7,
+>> +		    qua_mi2s, gcc_gp1_clk_a, ssc_irq, uim4, blsp_spi11,
+>blsp_uart11,
+>> +		    blsp_uim11, gcc_gp2_clk_a, gcc_gp3_clk_a, blsp_i2c11,
+>cri_trng0,
+>> +		    cri_trng1, cri_trng, qdss_stm18, pri_mi2s, qdss_stm17,
+>blsp_spi4,
+>> +		    blsp_uart4, blsp_uim4, qdss_stm16, qdss_stm15, blsp_i2c4,
+>> +		    qdss_stm14, dac_calib26, spkr_i2s, audio_ref, lpass_slimbus,
+>> +		    isense_dbg, tsense_pwm1, tsense_pwm2, btfm_slimbus, ter_mi2s,
+>> +		    qdss_stm22, qdss_stm21, qdss_stm20, qdss_stm19, gcc_gp1_clk_b,
+>> +		    sec_mi2s, blsp_spi5, blsp_uart5, blsp_uim5, gcc_gp2_clk_b,
+>> +		    gcc_gp3_clk_b, blsp_i2c5, blsp_spi12, blsp_uart12, blsp_uim12,
+>> +		    qdss_stm25, qdss_stm31, blsp_i2c12, qdss_stm30, qdss_stm29,
+>> +		    tsif1_clk, qdss_stm28, tsif1_en, tsif1_data, sdc4_cmd,
+>qdss_stm27,
+>> +		    qdss_traceclk_b, tsif2_error, sdc43, vfr_1, qdss_stm26,
+>tsif2_clk,
+>> +		    sdc4_clk, qdss_stm24, tsif2_en, sdc42, qdss_stm23,
+>qdss_tracectl_b,
+>> +		    sd_card, tsif2_data, sdc41, tsif2_sync, sdc40, mdp_vsync_p_b,
+>> +		    ldo_en, mdp_vsync_s_b, ldo_update, blsp11_uart_tx_b,
+>blsp11_uart_rx_b,
+>> +		    blsp11_i2c_sda_b, prng_rosc, blsp11_i2c_scl_b, uim2, uim1,
+>uim_batt,
+>> +		    pci_e2, pa_indicator, adsp_ext, ddr_bist, qdss_tracedata_11,
+>> +		    qdss_tracedata_12, modem_tsync, nav_dr, nav_pps, pci_e1,
+>gsm_tx,
+>> +		    qspi_cs, ssbi2, ssbi1, mss_lte, qspi_clk, qspi0, qspi1, qspi2,
+>qspi3,
+>> +		    gpio
+>
+>Please review this list, there are a few items in here that are not
+>valid functions in your driver=2E
+>
+Okay, will do
+>[=2E=2E]
+>> +
+>> +Example:
+>> +
+>> +	tlmm: pinctrl@1010000 {
+>> +		compatible =3D "qcom,sdm660-pinctrl";
+>> +		reg =3D <0x1010000 0x300000>;
+>> +		interrupts =3D <0 208 0>;
+>
+>Replace the 0s in the interrupts specifier=2E
+Okay
+>
+>> +		gpio-controller;
+>> +		gpio-ranges =3D <&tlmm 0 0 114>;
+>> +		#gpio-cells =3D <2>;
+>> +		interrupt-controller;
+>> +		#interrupt-cells =3D <2>;
+>> +
+>> +		uart_console_active: uart_console_active {
+>> +			mux {
+>> +				pins =3D "gpio4", "gpio5";
+>> +				function =3D "blsp_uart8";
+>> +			};
+>> +
+>> +			config {
+>> +				pins =3D "gpio4", "gpio5";
+>> +				drive-strength =3D <2>;
+>> +				bias-disable;
+>> +			};
+>> +		};
+>
+>This example isn't valid=2E Please update it, or just drop the pinctrl
+>state from the example=2E
+>
+Right, will drop it
+>> +	};
+>> diff --git a/drivers/pinctrl/qcom/Kconfig
+>b/drivers/pinctrl/qcom/Kconfig
+>> index 195492033075=2E=2E091beadb8a1c 100644
+>> --- a/drivers/pinctrl/qcom/Kconfig
+>> +++ b/drivers/pinctrl/qcom/Kconfig
+>> @@ -147,6 +147,16 @@ config PINCTRL_QCOM_SSBI_PMIC
+>>           which are using SSBI for communication with SoC=2E Example
+>PMIC's
+>>           devices are pm8058 and pm8921=2E
+>> =20
+>> +config PINCTRL_SDM660
+>> +       tristate "Qualcomm Technologies Inc SDM660 pin controller
+>driver"
+>> +       depends on GPIOLIB && OF
+>> +       select PINCTRL_MSM
+>> +       help
+>> +         This is the pinctrl, pinmux, pinconf and gpiolib driver for
+>the
+>> +         Qualcomm Technologies Inc TLMM block found on the Qualcomm
+>> +         Technologies Inc SDM660 platform=2E
+>> +
+>> +
+>
+>Extra empty line
+Yeah
+>
+>>  config PINCTRL_SDM845
+>>         tristate "Qualcomm Technologies Inc SDM845 pin controller
+>driver"
+>>         depends on GPIOLIB && OF
+>> diff --git a/drivers/pinctrl/qcom/Makefile
+>b/drivers/pinctrl/qcom/Makefile
+>> index 0c6f3ddc296d=2E=2E9b08808a2f1c 100644
+>> --- a/drivers/pinctrl/qcom/Makefile
+>> +++ b/drivers/pinctrl/qcom/Makefile
+>> @@ -19,4 +19,5 @@ obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) +=3D
+>pinctrl-spmi-gpio=2Eo
+>>  obj-$(CONFIG_PINCTRL_QCOM_SPMI_PMIC) +=3D pinctrl-spmi-mpp=2Eo
+>>  obj-$(CONFIG_PINCTRL_QCOM_SSBI_PMIC) +=3D pinctrl-ssbi-gpio=2Eo
+>>  obj-$(CONFIG_PINCTRL_QCOM_SSBI_PMIC) +=3D pinctrl-ssbi-mpp=2Eo
+>> +obj-$(CONFIG_PINCTRL_SDM660)   +=3D pinctrl-sdm660=2Eo
+>>  obj-$(CONFIG_PINCTRL_SDM845) +=3D pinctrl-sdm845=2Eo
+>> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660=2Ec
+>b/drivers/pinctrl/qcom/pinctrl-sdm660=2Ec
+>> new file mode 100644
+>> index 000000000000=2E=2Eded56111f168
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/qcom/pinctrl-sdm660=2Ec
+>> @@ -0,0 +1,1451 @@
+>> +// SPDX-License-Identifier: GPL-2=2E0
+>> +/*
+>> + * Copyright (c) 2016, The Linux Foundation=2E All rights reserved=2E
+>> + * Copyright (c) 2018, Craig Tatlor=2E
+>> + */
+>> +
+>> +#include <linux/module=2Eh>
+>> +#include <linux/of=2Eh>
+>> +#include <linux/platform_device=2Eh>
+>> +#include <linux/pinctrl/pinctrl=2Eh>
+>> +
+>> +#include "pinctrl-msm=2Eh"
+>> +
+>> +#define NORTH	0x00900000
+>> +#define CENTER	0x00500000
+>> +#define SOUTH	0x00100000
+>
+>Please respin this on top of the QCS404 series, where we describe each
+>tile explicitly in DT=2E
+>
+>The three regions are:
+>
+>South:  0x03100000 size 0x300000
+>Center: 0x03500000 size 0x300000
+>North:  0x03900000 size 0x300000
+Right, will do
+>
+>[=2E=2E]
+>> +static const unsigned int sdc1_clk_pins[] =3D { 114 };
+>> +static const unsigned int sdc1_cmd_pins[] =3D { 115 };
+>> +static const unsigned int sdc1_data_pins[] =3D { 116 };
+>> +static const unsigned int sdc2_clk_pins[] =3D { 117 };
+>> +static const unsigned int sdc2_cmd_pins[] =3D { 118 };
+>> +static const unsigned int sdc2_data_pins[] =3D { 119 };
+>> +static const unsigned int sdc1_rclk_pins[] =3D { 120 };
+>
+>The numbering of these "fake" pins isn't significant, so please reorder
+>sdc1_rclk to follow the other sdc1 pins=2E
+Yup
+>
+>> +
+>> +enum sdm660_functions {
+>> +	msm_mux_blsp_spi1,
+>
+>There's no harm in sorting this list, but it makes it easier to read=2E
+>> +
+Okay, will do, alphabetically I guess?
+>> +static const struct msm_function sdm660_functions[] =3D {
+>> +	FUNCTION(blsp_spi1),
+>
+>Ditto=2E
+>
+>[=2E=2E]
+>> +static const struct msm_pingroup sdm660_groups[] =3D {
+>[=2E=2E]
+>> +	SDC_QDSD_PINGROUP(sdc1_clk, 0x99a000, 13, 6),
+>> +	SDC_QDSD_PINGROUP(sdc1_cmd, 0x99a000, 11, 3),
+>> +	SDC_QDSD_PINGROUP(sdc1_data, 0x99a000, 9, 0),
+>> +	SDC_QDSD_PINGROUP(sdc2_clk, 0x99b000, 14, 6),
+>> +	SDC_QDSD_PINGROUP(sdc2_cmd, 0x99b000, 11, 3),
+>> +	SDC_QDSD_PINGROUP(sdc2_data, 0x99b000, 9, 0),
+>> +	SDC_QDSD_PINGROUP(sdc1_rclk, 0x99a000, 15, 0),
+>
+>Move the sdc1_rclk up to the other sdc1 groups=2E
+Right
+>
+>> +};
+>
+>Regards,
+>Bjorn
