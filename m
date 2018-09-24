@@ -2,156 +2,378 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE7DC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8007EC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEF5B2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 092C320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:03:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Md4QH35r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF5B2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FR2Y2xVv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092C320C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbeIXVFH (ORCPT
+        id S1729957AbeIXVFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:05:07 -0400
-Received: from mail-eopbgr710090.outbound.protection.outlook.com ([40.107.71.90]:26752
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733212AbeIXUvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:51:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ATjAgFmO4AOn4bhIB3NkS5e4G0w3SnL7c83vqqRmxfM=;
- b=Md4QH35r22jMCaubpqrK0zqSBa5LGkgCEHgfymbfMOYcZVVc7htcg/sT8p/+87BdTXxztkJcgD9cAROEiv0ji5jWhRevlig9eINSqi+LnVowRrktaRTvTqUS+eEs8Noa3GhTUDg+QyPOUcMc8Zb+hBJ5Q3FkIzmjNF3KlvY/VT0=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.5; Mon, 24 Sep 2018 14:48:56 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:48:56 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Xiao Ni <xni@redhat.com>, Shaohua Li <shli@fb.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 46/76] RAID10 BUG_ON in raise_barrier when force
- is true and conf->barrier is 0
-Thread-Topic: [PATCH AUTOSEL 4.18 46/76] RAID10 BUG_ON in raise_barrier when
- force is true and conf->barrier is 0
-Thread-Index: AQHUVBWoG2X23mUZZkybAsIgMhcrNQ==
-Date:   Mon, 24 Sep 2018 14:48:30 +0000
-Message-ID: <20180924144751.164410-45-alexander.levin@microsoft.com>
-References: <20180924144751.164410-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:jPwJ+gRsEc+rDW/A+3VJ3NgxXSbbQBh026zq0l1ZomCbs4b844DNxmNOsjtO3MGeXVV2sOwB8SOwmYPGnMSVgD/EhOS9n7FA1+Pf2InIVB6gw3ylHZaC2ikyZsMsLt+fMMfbr03moNbwbLVrvXe+VBWA2friflisiUGV4j5I5i2Z3q4M2SUGp9L7chHAKR0jHCfgG44h11rXhnfh9s2EmmXwZWfybyVCx/ZRP102db/9NI/phypmk1aGLszSoLLItPGmvVecX4nQr/FiHMzsug+agz+3M8VXdO+qbJaDYyh9zoEhufLO4icIF1886sFJvPgFxEpwUBv+HCqZ9Z057lix1wRfY/8DXWKy8oEG1CourwEuB+Z7Jol1qw/3YOVzosoGRF2hN+MKuoSZ5qgk8RQ3nYwoLhR1AqAiHLaJCUI9EtV7tI1BQGl6aSTlE6G+CdvgVNhVmqFw6Xe2zu1yEQ==;5:ryS9QN60kkoiptrtZgg+NNX1c9xWdhHqVpvfMlwxV0LfN0Jwbna9VVvddCyBY+joGfoQkwKqbHGcKXxuwLbSFkBnWwDIw2R0JvjLTphfMpvTT/XGBvbi6YLNInxEiIoUCSnGMEfg56iMMccIVxqEtiVlfeygqAcsP5y8NPGF6hE=;7:cGdqu8WEmqCSMil4DHTkTJY/dKaW6Xj6Wqj4TFQMoszFJxu/wGbj53xEb7mYasLBXxBBPu1Jn35WuVZy3L7zVzTTQ+yfZNgx5giS8wSoCYxW/2E24u58u4ye6mlbozbyyiqqqIwUL5DVuGdLvk19Zl1LXT5f/SqhTsrQAzeMNZ++E6AvlvoHp1JW78fnMagqpX7CreV3d1LFzEDBEm1f0Tq9q/VauPSSLegIWzVfxUyat9Z/WciRJv5RQTKJ/BLf
-x-ms-office365-filtering-correlation-id: 5d47e3b6-edff-495a-696e-08d6222cdb1c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
-x-ms-traffictypediagnostic: CY4PR21MB0855:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0855AEEB308B111EA3C49E8EFB170@CY4PR21MB0855.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(67672495146484)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
-x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(486006)(81166006)(6436002)(110136005)(54906003)(10290500003)(6666003)(86362001)(446003)(575784001)(6486002)(68736007)(2900100001)(86612001)(476003)(6512007)(1076002)(2616005)(305945005)(81156014)(105586002)(10090500001)(14454004)(71200400001)(106356001)(316002)(7736002)(71190400001)(478600001)(11346002)(6116002)(8936002)(5660300001)(3846002)(72206003)(97736004)(8676002)(6506007)(25786009)(36756003)(66066001)(2906002)(5250100002)(76176011)(26005)(14444005)(217873002)(107886003)(186003)(256004)(102836004)(22452003)(2501003)(99286004)(53936002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: U7oo8XQKuY9fPBu0B1A/7q0zA5MTUBg4J2uBdMTyEhJEwFaRTl5OnBDgkc3XkalJk40j4xmkZiM9HazBVdywurX9zdLafVQBz8Np9VnrjzBSyrXVPFRme0PiQm8uXglUJid8uAZD/etlvSxmncsZTibAA7FONakMYjODMX88jGqBNUkA8vxttBCHeLCtFCC0HREYCMB4ZtvLfz99aMLbI1iHrr7F+4ElyUC4hIHLnGomIFXsAQuSheoY4a7YFjoebC+QvFo//6YVSqz8cK21m+CA7FZ5UPFnu8A9h4+wURxCoYwTTr9FosBVi7t6XJ3ZTrvjE6YWdTwzAEOJJtWs8yRXnQIBYfXgaXunOAzEE8s=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 24 Sep 2018 17:05:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728924AbeIXVFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:05:42 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EAC02086B;
+        Mon, 24 Sep 2018 15:02:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537801386;
+        bh=Kjxr+0z8vC+/8kJJMMOvIvyDFE+fIkEs4l6gTjjuiqs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FR2Y2xVvCMTFOBOK+MNppNo7t4U+yzPDl6Vw8Xhi9pagsBKQb5bSDQhaOFsC72Nee
+         puHyJ5fI9YwYvweoqcwv1gPyo5ivzK3aRxzz2ik3EFnkIlpBsmSiNHonAUJMZ/W/vg
+         O2SU/82WH0B8DoSZqENUWZSDtmRDVMJ2k3u3P1/A=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        John Garry <john.garry@huawei.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kim Phillips <kim.phillips@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-trace-devel@vger.kernel.org,
+        Namhyung Kim <namhyung@kernel.org>,
+        Sangwon Hong <qpakzk@gmail.com>,
+        Sean V Kelley <seanvk.dev@oregontracks.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        William Cohen <wcohen@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [GIT PULL 00/27] perf/core improvements and fixes
+Date:   Mon, 24 Sep 2018 12:02:15 -0300
+Message-Id: <20180924150242.14235-1-acme@kernel.org>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d47e3b6-edff-495a-696e-08d6222cdb1c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:30.1711
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiao Ni <xni@redhat.com>
+Hi Ingo,
 
-[ Upstream commit 1d0ffd264204eba1861865560f1f7f7a92919384 ]
+	Please consider pulling, this is on top of
+perf-core-for-mingo-4.20-20180919, that is not yet in tip.
 
-In raid10 reshape_request it gets max_sectors in read_balance. If the under=
-layer disks
-have bad blocks, the max_sectors is less than last. It will call goto read_=
-more many
-times. It calls raise_barrier(conf, sectors_done !=3D 0) every time. In thi=
-s condition
-sectors_done is not 0. So the value passed to the argument force of raise_b=
-arrier is
-true.
+- Arnaldo
 
-In raise_barrier it checks conf->barrier when force is true. If force is tr=
-ue and
-conf->barrier is 0, it panic. In this case reshape_request submits bio to u=
-nder layer
-disks. And in the callback function of the bio it calls lower_barrier. If t=
-he bio
-finishes before calling raise_barrier again, it can trigger the BUG_ON.
+Test results at the end of this message, as usual.
 
-Add one pair of raise_barrier/lower_barrier to fix this bug.
+The following changes since commit 24ef0fd0a1f389b156e6ef0edd71072728831bd9:
 
-Signed-off-by: Xiao Ni <xni@redhat.com>
-Suggested-by: Neil Brown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/md/raid10.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+  perf python: Use -Wno-redundant-decls to build with PYTHON=python3 (2018-09-19 10:25:13 -0300)
 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 35bd3a62451b..8c93d44a052c 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4531,11 +4531,12 @@ static sector_t reshape_request(struct mddev *mddev=
-, sector_t sector_nr,
- 		allow_barrier(conf);
- 	}
-=20
-+	raise_barrier(conf, 0);
- read_more:
- 	/* Now schedule reads for blocks from sector_nr to last */
- 	r10_bio =3D raid10_alloc_init_r10buf(conf);
- 	r10_bio->state =3D 0;
--	raise_barrier(conf, sectors_done !=3D 0);
-+	raise_barrier(conf, 1);
- 	atomic_set(&r10_bio->remaining, 0);
- 	r10_bio->mddev =3D mddev;
- 	r10_bio->sector =3D sector_nr;
-@@ -4631,6 +4632,8 @@ static sector_t reshape_request(struct mddev *mddev, =
-sector_t sector_nr,
- 	if (sector_nr <=3D last)
- 		goto read_more;
-=20
-+	lower_barrier(conf);
-+
- 	/* Now that we have done the whole section we can
- 	 * update reshape_progress
- 	 */
---=20
-2.17.1
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-4.20-20180919
+
+for you to fetch changes up to 24ef0fd0a1f389b156e6ef0edd71072728831bd9:
+
+  perf python: Use -Wno-redundant-decls to build with PYTHON=python3 (2018-09-19 10:25:13 -0300)
+
+----------------------------------------------------------------
+perf/core improvements and fixes:
+
+perf test:
+
+- Add watchpoint entry (Ravi Bangoria)
+
+Build fixes:
+
+- Initialize perf_data_file fd field to fix building the CTF (trace format)
+  converter with with gcc 4.8.4 on Ubuntu 14.04 (Jérémie Galarneau)
+
+- Use -Wno-redundant-decls to build with PYTHON=python3 to
+  build the python binding, fixing the build in systems such
+  as Clear Linux (Arnaldo Carvalho de Melo)
+
+Hardware tracing:
+
+- Suppress AUX/OVERWRITE records (Alexander Shishkin)
+
+Infrastructure:
+
+- Adopt PTR_ERR_OR_ZERO from the kernel and use it in
+  the bpf-loader instead of open coded equivalent (Ding Xiang)
+
+- Improve the event ordering code to make it clear and fix
+  a bug related to freeing of events when using pipe mode
+  from 'record' to 'inject' (Jiri Olsa)
+
+- Some prep work to facilitate per-cpu threads to write
+  record data to per-cpu files (Jiri Olsa)
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+
+Test results:
+
+The first ones are container (docker) based builds of tools/perf with
+and without libelf support.  Where clang is available, it is also used
+to build perf with/without libelf, and building with LIBCLANGLLVM=1
+(built-in clang) with gcc and clang when clang and its devel libraries
+are installed.
+
+The objtool and samples/bpf/ builds are disabled now that I'm switching from
+using the sources in a local volume to fetching them from a http server to
+build it inside the container, to make it easier to build in a container cluster.
+Those will come back later.
+
+Several are cross builds, the ones with -x-ARCH and the android one, and those
+may not have all the features built, due to lack of multi-arch devel packages,
+available and being used so far on just a few, like
+debian:experimental-x-{arm64,mipsel}.
+
+The 'perf test' one will perform a variety of tests exercising
+tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
+with a variety of command line event specifications to then intercept the
+sys_perf_event syscall to check that the perf_event_attr fields are set up as
+expected, among a variety of other unit tests.
+
+Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
+with a variety of feature sets, exercising the build with an incomplete set of
+features as well as with a complete one. It is planned to have it run on each
+of the containers mentioned above, using some container orchestration
+infrastructure. Get in contact if interested in helping having this in place.
+
+The Clear Linux container is building with NO_CLANG=1, the problem preventing
+its use when building for python3 has been identified and the next builds will
+build in ClearLinux with both gcc and clang. This time around only gcc was
+used.
+
+  # dm
+   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
+   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   5 alpine:3.8                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   6 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
+   7 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
+   8 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+   9 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+  10 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+  11 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+  12 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
+  13 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
+  14 clearlinux:latest             : Ok   gcc (Clear Linux OS for Intel Architecture) 8.2.1 20180502
+  15 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
+  16 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
+  17 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+  18 debian:experimental           : Ok   gcc (Debian 8.2.0-4) 8.2.0
+  19 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 8.2.0-4) 8.2.0
+  20 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 8.2.0-4) 8.2.0
+  21 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 8.1.0-12) 8.1.0
+  22 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 8.2.0-4) 8.2.0
+  23 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+  24 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
+  25 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  26 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  27 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
+  28 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
+  29 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+  30 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+  31 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6)
+  32 fedora:28                     : Ok   gcc (GCC) 8.1.1 20180712 (Red Hat 8.1.1-5)
+  33 fedora:rawhide                : Ok   gcc (GCC) 8.2.1 20180905 (Red Hat 8.2.1-3)
+  34 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 7.3.0-r3 p1.4) 7.3.0
+  35 mageia:5                      : Ok   gcc (GCC) 4.9.2
+  36 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
+  37 opensuse:13.2                 : Ok   gcc (SUSE Linux) 4.8.3 20140627 [gcc-4_8-branch revision 212064]
+  38 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
+  39 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
+  40 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
+  41 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.1 20180323 [gcc-7-branch revision 258812]
+  42 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23.0.1)
+  43 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28.0.1)
+  44 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+  45 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
+  46 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.5-2017.10) 5.5.0
+  47 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+  48 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  49 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  50 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  51 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  52 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  53 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+  54 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
+  55 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
+  56 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  57 ubuntu:18.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 7.3.0-16ubuntu3) 7.3.0
+  58 ubuntu:18.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.3.0-16ubuntu3) 7.3.0
+  59 ubuntu:18.04-x-m68k           : Ok   m68k-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  60 ubuntu:18.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  61 ubuntu:18.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  62 ubuntu:18.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  63 ubuntu:18.04-x-riscv64        : Ok   riscv64-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  64 ubuntu:18.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  65 ubuntu:18.04-x-sh4            : Ok   sh4-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  66 ubuntu:18.04-x-sparc64        : Ok   sparc64-linux-gnu-gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  67 ubuntu:18.10                  : Ok   gcc (Ubuntu 8.2.0-4ubuntu1) 8.2.0
+
+  # uname -a
+  Linux jouet 4.19.0-rc4-00022-gad3273d5f1b9 #1 SMP Mon Sep 17 17:18:22 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
+  # git log --oneline -1
+  d35c595bf005 perf vendor events arm64: Revise core JSON events for eMAG
+  # perf version --build-options
+  perf version 4.19.rc2.gd35c595
+                   dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+      dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+                   glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
+                    gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
+           syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+                  libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
+                  libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+                 libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+  numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+                 libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+               libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+                libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+               libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+               libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+      libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+                    zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+                    lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+               get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+                     bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+  # perf test
+   1: vmlinux symtab matches kallsyms                       : Ok
+   2: Detect openat syscall event                           : Ok
+   3: Detect openat syscall event on all cpus               : Ok
+   4: Read samples using the mmap interface                 : Ok
+   5: Test data source output                               : Ok
+   6: Parse event definition strings                        : Ok
+   7: Simple expression parser                              : Ok
+   8: PERF_RECORD_* events & perf_sample fields             : Ok
+   9: Parse perf pmu format                                 : Ok
+  10: DSO data read                                         : Ok
+  11: DSO data cache                                        : Ok
+  12: DSO data reopen                                       : Ok
+  13: Roundtrip evsel->name                                 : Ok
+  14: Parse sched tracepoints fields                        : Ok
+  15: syscalls:sys_enter_openat event fields                : Ok
+  16: Setup struct perf_event_attr                          : Ok
+  17: Match and link multiple hists                         : Ok
+  18: 'import perf' in python                               : Ok
+  19: Breakpoint overflow signal handler                    : Ok
+  20: Breakpoint overflow sampling                          : Ok
+  21: Breakpoint accounting                                 : Ok
+  22: Watchpoint                                            :
+  22.1: Read Only Watchpoint                                : Skip
+  22.2: Write Only Watchpoint                               : Ok
+  22.3: Read / Write Watchpoint                             : Ok
+  22.4: Modify Watchpoint                                   : Ok
+  23: Number of exit events of a simple workload            : Ok
+  24: Software clock events period values                   : Ok
+  25: Object code reading                                   : Ok
+  26: Sample parsing                                        : Ok
+  27: Use a dummy software event to keep tracking           : Ok
+  28: Parse with no sample_id_all bit set                   : Ok
+  29: Filter hist entries                                   : Ok
+  30: Lookup mmap thread                                    : Ok
+  31: Share thread mg                                       : Ok
+  32: Sort output of hist entries                           : Ok
+  33: Cumulate child hist entries                           : Ok
+  34: Track with sched_switch                               : Ok
+  35: Filter fds with revents mask in a fdarray             : Ok
+  36: Add fd to a fdarray, making it autogrow               : Ok
+  37: kmod_path__parse                                      : Ok
+  38: Thread map                                            : Ok
+  39: LLVM search and compile                               :
+  39.1: Basic BPF llvm compile                              : Ok
+  39.2: kbuild searching                                    : Ok
+  39.3: Compile source for BPF prologue generation          : Ok
+  39.4: Compile source for BPF relocation                   : Ok
+  40: Session topology                                      : Ok
+  41: BPF filter                                            :
+  41.1: Basic BPF filtering                                 : Ok
+  41.2: BPF pinning                                         : Ok
+  41.3: BPF prologue generation                             : Ok
+  41.4: BPF relocation checker                              : Ok
+  42: Synthesize thread map                                 : Ok
+  43: Remove thread map                                     : Ok
+  44: Synthesize cpu map                                    : Ok
+  45: Synthesize stat config                                : Ok
+  46: Synthesize stat                                       : Ok
+  47: Synthesize stat round                                 : Ok
+  48: Synthesize attr update                                : Ok
+  49: Event times                                           : Ok
+  50: Read backward ring buffer                             : Ok
+  51: Print cpu map                                         : Ok
+  52: Probe SDT events                                      : Ok
+  53: is_printable_array                                    : Ok
+  54: Print bitmap                                          : Ok
+  55: perf hooks                                            : Ok
+  56: builtin clang support                                 : Skip (not compiled in)
+  57: unit_number__scnprintf                                : Ok
+  58: mem2node                                              : Ok
+  59: x86 rdpmc                                             : Ok
+  60: Convert perf time to TSC                              : Ok
+  61: DWARF unwind                                          : Ok
+  62: x86 instruction decoder - new instructions            : Ok
+  63: x86 bp modify                                         : Ok
+  64: Use vfs_getname probe to get syscall args filenames   : Ok
+  65: Check open filename arg using perf trace + vfs_getname: Ok
+  66: probe libc's inet_pton & backtrace it with ping       : Ok
+  67: Add vfs_getname probe to get syscall args filenames   : Ok
+  
+  $ make -C tools/perf build-test
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+  - tarpkg: ./tests/perf-targz-src-pkg .
+            make_install_bin_O: make install-bin
+             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
+                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
+                make_no_gtk2_O: make NO_GTK2=1
+                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
+                   make_pure_O: make
+             make_no_libnuma_O: make NO_LIBNUMA=1
+                make_install_O: make install
+           make_no_libunwind_O: make NO_LIBUNWIND=1
+             make_no_libperl_O: make NO_LIBPERL=1
+              make_no_libbpf_O: make NO_LIBBPF=1
+  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
+                   make_help_O: make help
+            make_no_auxtrace_O: make NO_AUXTRACE=1
+         make_with_clangllvm_O: make LIBCLANGLLVM=1
+               make_no_slang_O: make NO_SLANG=1
+        make_with_babeltrace_O: make LIBBABELTRACE=1
+              make_clean_all_O: make clean all
+       make_util_pmu_bison_o_O: make util/pmu-bison.o
+   make_install_prefix_slash_O: make install prefix=/tmp/krava/
+            make_no_libaudit_O: make NO_LIBAUDIT=1
+             make_util_map_o_O: make util/map.o
+                  make_debug_O: make DEBUG=1
+           make_no_libpython_O: make NO_LIBPYTHON=1
+           make_no_backtrace_O: make NO_BACKTRACE=1
+           make_no_libbionic_O: make NO_LIBBIONIC=1
+            make_no_demangle_O: make NO_DEMANGLE=1
+                   make_tags_O: make tags
+                 make_static_O: make LDFLAGS=-static
+                 make_perf_o_O: make perf.o
+              make_no_libelf_O: make NO_LIBELF=1
+                    make_doc_O: make doc
+                make_no_newt_O: make NO_NEWT=1
+         make_install_prefix_O: make install prefix=/tmp/krava
+  OK
+  make: Leaving directory '/home/acme/git/perf/tools/perf'
+  $ 
