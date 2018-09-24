@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90E1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920EBECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8532A21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8532A21486
+	by mail.kernel.org (Postfix) with ESMTP id 4C79D2064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C79D2064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389310AbeIXSrL (ORCPT
+        id S2389325AbeIXSrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59732 "EHLO
+        Mon, 24 Sep 2018 14:47:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59750 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730322AbeIXSrK (ORCPT
+        with ESMTP id S1730322AbeIXSrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:10 -0400
+        Mon, 24 Sep 2018 14:47:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B4605109F;
-        Mon, 24 Sep 2018 12:45:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14A1D109E;
+        Mon, 24 Sep 2018 12:45:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurence Oberman <loberman@redhat.com>,
+        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
         Omar Sandoval <osandov@fb.com>,
         Bart Van Assche <bart.vanassche@wdc.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
+        linux-scsi@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
         Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 228/235] blk-mq: only attempt to merge bio if there is rq in sw queue
-Date:   Mon, 24 Sep 2018 13:53:34 +0200
-Message-Id: <20180924113125.776960794@linuxfoundation.org>
+Subject: [PATCH 4.18 229/235] blk-mq: avoid to synchronize rcu inside blk_cleanup_queue()
+Date:   Mon, 24 Sep 2018 13:53:35 +0200
+Message-Id: <20180924113125.837160833@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -58,43 +59,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit b04f50ab8a74129b3041a2836c33c916be3c6667 ]
+[ Upstream commit 1311326cf4755c7ffefd20f576144ecf46d9906b ]
 
-Only attempt to merge bio iff the ctx->rq_list isn't empty, because:
+SCSI probing may synchronously create and destroy a lot of request_queues
+for non-existent devices. Any synchronize_rcu() in queue creation or
+destroy path may introduce long latency during booting, see detailed
+description in comment of blk_register_queue().
 
-1) for high-performance SSD, most of times dispatch may succeed, then
-there may be nothing left in ctx->rq_list, so don't try to merge over
-sw queue if it is empty, then we can save one acquiring of ctx->lock
+This patch removes one synchronize_rcu() inside blk_cleanup_queue()
+for this case, commit c2856ae2f315d75(blk-mq: quiesce queue before freeing queue)
+needs synchronize_rcu() for implementing blk_mq_quiesce_queue(), but
+when queue isn't initialized, it isn't necessary to do that since
+only pass-through requests are involved, no original issue in
+scsi_execute() at all.
 
-2) we can't expect good merge performance on per-cpu sw queue, and missing
-one merge on sw queue won't be a big deal since tasks can be scheduled from
-one CPU to another.
+Without this patch and previous one, it may take more 20+ seconds for
+virtio-scsi to complete disk probe. With the two patches, the time becomes
+less than 100ms.
 
-Cc: Laurence Oberman <loberman@redhat.com>
+Fixes: c2856ae2f315d75 ("blk-mq: quiesce queue before freeing queue")
+Reported-by: Andrew Jones <drjones@redhat.com>
 Cc: Omar Sandoval <osandov@fb.com>
 Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Tested-by: Kashyap Desai <kashyap.desai@broadcom.com>
-Reported-by: Kashyap Desai <kashyap.desai@broadcom.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: linux-scsi@vger.kernel.org
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Tested-by: Andrew Jones <drjones@redhat.com>
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq-sched.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ block/blk-core.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -339,7 +339,8 @@ bool __blk_mq_sched_bio_merge(struct req
- 		return e->type->ops.mq.bio_merge(hctx, bio);
- 	}
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -791,9 +791,13 @@ void blk_cleanup_queue(struct request_qu
+ 	 * make sure all in-progress dispatch are completed because
+ 	 * blk_freeze_queue() can only complete all requests, and
+ 	 * dispatch may still be in-progress since we dispatch requests
+-	 * from more than one contexts
++	 * from more than one contexts.
++	 *
++	 * No need to quiesce queue if it isn't initialized yet since
++	 * blk_freeze_queue() should be enough for cases of passthrough
++	 * request.
+ 	 */
+-	if (q->mq_ops)
++	if (q->mq_ops && blk_queue_init_done(q))
+ 		blk_mq_quiesce_queue(q);
  
--	if (hctx->flags & BLK_MQ_F_SHOULD_MERGE) {
-+	if ((hctx->flags & BLK_MQ_F_SHOULD_MERGE) &&
-+			!list_empty_careful(&ctx->rq_list)) {
- 		/* default per sw-queue merge */
- 		spin_lock(&ctx->lock);
- 		ret = blk_mq_attempt_merge(q, ctx, bio);
+ 	/* for synchronous bio-based driver finish in-flight integrity i/o */
 
 
