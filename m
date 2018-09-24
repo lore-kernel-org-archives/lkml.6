@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B68C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D25C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB0820877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB0820877
+	by mail.kernel.org (Postfix) with ESMTP id F14A820877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F14A820877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730783AbeIXSD2 (ORCPT
+        id S1730790AbeIXSDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:03:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53618 "EHLO
+        Mon, 24 Sep 2018 14:03:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53632 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729750AbeIXSD1 (ORCPT
+        with ESMTP id S1729750AbeIXSDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:03:27 -0400
+        Mon, 24 Sep 2018 14:03:31 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B5621080;
-        Mon, 24 Sep 2018 12:01:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C141ED64;
+        Mon, 24 Sep 2018 12:01:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        stable@vger.kernel.org, Hanna Hawa <hannah@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 043/111] drivers/base: stop new probing during shutdown
-Date:   Mon, 24 Sep 2018 13:52:10 +0200
-Message-Id: <20180924113109.233881162@linuxfoundation.org>
+Subject: [PATCH 4.9 044/111] dmaengine: mv_xor_v2: kill the tasklets upon exit
+Date:   Mon, 24 Sep 2018 13:52:11 +0200
+Message-Id: <20180924113109.369449945@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -52,55 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pingfan Liu <kernelfans@gmail.com>
+From: Hanna Hawa <hannah@marvell.com>
 
-[ Upstream commit 3297c8fc65af5d40501ea7cddff1b195cae57e4e ]
+[ Upstream commit 8bbafed8dd5cfa81071b50ead5cb60367fdef3a9 ]
 
-There is a race window in device_shutdown(), which may cause
--1. parent device shut down before child or
--2. no shutdown on a new probing device.
+The mv_xor_v2 driver uses a tasklet, initialized during the probe()
+routine. However, it forgets to cleanup the tasklet using
+tasklet_kill() function during the remove() routine, which this patch
+fixes. This prevents the tasklet from potentially running after the
+module has been removed.
 
-For 1st, taking the following scenario:
-         device_shutdown                        new plugin device
-  list_del_init(parent_dev);
-  spin_unlock(list_lock);
-                                                  device_add(child)
-                                                  probe child
-  shutdown parent_dev
-       --> now child is on the tail of devices_kset
+Fixes: 19a340b1a820 ("dmaengine: mv_xor_v2: new driver")
 
-For 2nd, taking the following scenario:
-         device_shutdown                        new plugin device
-                                                  device_add(dev)
-  device_lock(dev);
-  ...
-  device_unlock(dev);
-                                                  probe dev
-       --> now, the new occurred dev has no opportunity to shutdown
-
-To fix this race issue, just prevent the new probing request. With this
-logic, device_shutdown() is more similar to dpm_prepare().
-
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Hanna Hawa <hannah@marvell.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/dma/mv_xor_v2.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2072,6 +2072,9 @@ void device_shutdown(void)
- {
- 	struct device *dev, *parent;
+--- a/drivers/dma/mv_xor_v2.c
++++ b/drivers/dma/mv_xor_v2.c
+@@ -844,6 +844,8 @@ static int mv_xor_v2_remove(struct platf
  
-+	wait_for_device_probe();
-+	device_block_probing();
+ 	platform_msi_domain_free_irqs(&pdev->dev);
+ 
++	tasklet_kill(&xor_dev->irq_tasklet);
 +
- 	spin_lock(&devices_kset->list_lock);
- 	/*
- 	 * Walk the devices list backward, shutting down each in turn.
+ 	clk_disable_unprepare(xor_dev->clk);
+ 
+ 	return 0;
 
 
