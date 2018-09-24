@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C844C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CD6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D82D42145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82D42145D
+	by mail.kernel.org (Postfix) with ESMTP id 636A32145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636A32145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbeIXR4b (ORCPT
+        id S1729643AbeIXR4f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:56:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51786 "EHLO
+        Mon, 24 Sep 2018 13:56:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728388AbeIXR4a (ORCPT
+        with ESMTP id S1728388AbeIXR4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:56:30 -0400
+        Mon, 24 Sep 2018 13:56:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 002C31072;
-        Mon, 24 Sep 2018 11:54:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79C5E1071;
+        Mon, 24 Sep 2018 11:54:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manikanta Pubbisetty <mpubbise@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 21/70] mac80211: restrict delayed tailroom needed decrement
-Date:   Mon, 24 Sep 2018 13:52:20 +0200
-Message-Id: <20180924113100.886554248@linuxfoundation.org>
+Subject: [PATCH 4.4 22/70] xen-netfront: fix queue name setting
+Date:   Mon, 24 Sep 2018 13:52:21 +0200
+Message-Id: <20180924113101.080230486@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -53,138 +53,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manikanta Pubbisetty <mpubbise@codeaurora.org>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit 133bf90dbb8b873286f8ec2e81ba26e863114b8c ]
+[ Upstream commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 ]
 
-As explained in ieee80211_delayed_tailroom_dec(), during roam,
-keys of the old AP will be destroyed and new keys will be
-installed. Deletion of the old key causes
-crypto_tx_tailroom_needed_cnt to go from 1 to 0 and the new key
-installation causes a transition from 0 to 1.
+Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
+open") changed the initialization order: xennet_create_queues() now
+happens before we do register_netdev() so using netdev->name in
+xennet_init_queue() is incorrect, we end up with the following in
+/proc/interrupts:
 
-Whenever crypto_tx_tailroom_needed_cnt transitions from 0 to 1,
-we invoke synchronize_net(); the reason for doing this is to avoid
-a race in the TX path as explained in increment_tailroom_need_count().
-This synchronize_net() operation can be slow and can affect the station
-roam time. To avoid this, decrementing the crypto_tx_tailroom_needed_cnt
-is delayed for a while so that upon installation of new key the
-transition would be from 1 to 2 instead of 0 to 1 and thereby
-improving the roam time.
+ 60:        139          0   xen-dyn    -event     eth%d-q0-tx
+ 61:        265          0   xen-dyn    -event     eth%d-q0-rx
+ 62:        234          0   xen-dyn    -event     eth%d-q1-tx
+ 63:          1          0   xen-dyn    -event     eth%d-q1-rx
 
-This is all correct for a STA iftype, but deferring the tailroom_needed
-decrement for other iftypes may be unnecessary.
+and this looks ugly. Actually, using early netdev name (even when it's
+already set) is also not ideal: nowadays we tend to rename eth devices
+and queue name may end up not corresponding to the netdev name.
 
-For example, let's consider the case of a 4-addr client connecting to
-an AP for which AP_VLAN interface is also created, let the initial
-value for tailroom_needed on the AP be 1.
+Use nodename from xenbus device for queue naming: this can't change in VM's
+lifetime. Now /proc/interrupts looks like
 
-* 4-addr client connects to the AP (AP: tailroom_needed = 1)
-* AP will clear old keys, delay decrement of tailroom_needed count
-* AP_VLAN is created, it takes the tailroom count from master
-  (AP_VLAN: tailroom_needed = 1, AP: tailroom_needed = 1)
-* Install new key for the station, assume key is plumbed in the HW,
-  there won't be any change in tailroom_needed count on AP iface
-* Delayed decrement of tailroom_needed count on AP
-  (AP: tailroom_needed = 0, AP_VLAN: tailroom_needed = 1)
+ 62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
+ 63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
+ 64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
+ 65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
 
-Because of the delayed decrement on AP iface, tailroom_needed count goes
-out of sync between AP(master iface) and AP_VLAN(slave iface) and
-there would be unnecessary tailroom created for the packets going
-through AP_VLAN iface.
-
-Also, WARN_ONs were observed while trying to bring down the AP_VLAN
-interface:
-(warn_slowpath_common) (warn_slowpath_null+0x18/0x20)
-(warn_slowpath_null) (ieee80211_free_keys+0x114/0x1e4)
-(ieee80211_free_keys) (ieee80211_del_virtual_monitor+0x51c/0x850)
-(ieee80211_del_virtual_monitor) (ieee80211_stop+0x30/0x3c)
-(ieee80211_stop) (__dev_close_many+0x94/0xb8)
-(__dev_close_many) (dev_close_many+0x5c/0xc8)
-
-Restricting delayed decrement to station interface alone fixes the problem
-and it makes sense to do so because delayed decrement is done to improve
-roam time which is applicable only for client devices.
-
-Signed-off-by: Manikanta Pubbisetty <mpubbise@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/cfg.c |    2 +-
- net/mac80211/key.c |   24 +++++++++++++++---------
- 2 files changed, 16 insertions(+), 10 deletions(-)
+ drivers/net/xen-netfront.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -286,7 +286,7 @@ static int ieee80211_del_key(struct wiph
- 		goto out_unlock;
- 	}
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1616,7 +1616,7 @@ static int xennet_init_queue(struct netf
+ 		    (unsigned long)queue);
  
--	ieee80211_key_free(key, true);
-+	ieee80211_key_free(key, sdata->vif.type == NL80211_IFTYPE_STATION);
+ 	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
+-		 queue->info->netdev->name, queue->id);
++		 queue->info->xbdev->nodename, queue->id);
  
- 	ret = 0;
-  out_unlock:
---- a/net/mac80211/key.c
-+++ b/net/mac80211/key.c
-@@ -647,11 +647,15 @@ int ieee80211_key_link(struct ieee80211_
- {
- 	struct ieee80211_local *local = sdata->local;
- 	struct ieee80211_key *old_key;
--	int idx, ret;
--	bool pairwise;
--
--	pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
--	idx = key->conf.keyidx;
-+	int idx = key->conf.keyidx;
-+	bool pairwise = key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE;
-+	/*
-+	 * We want to delay tailroom updates only for station - in that
-+	 * case it helps roaming speed, but in other cases it hurts and
-+	 * can cause warnings to appear.
-+	 */
-+	bool delay_tailroom = sdata->vif.type == NL80211_IFTYPE_STATION;
-+	int ret;
- 
- 	mutex_lock(&sdata->local->key_mtx);
- 
-@@ -679,14 +683,14 @@ int ieee80211_key_link(struct ieee80211_
- 	increment_tailroom_need_count(sdata);
- 
- 	ieee80211_key_replace(sdata, sta, pairwise, old_key, key);
--	ieee80211_key_destroy(old_key, true);
-+	ieee80211_key_destroy(old_key, delay_tailroom);
- 
- 	ieee80211_debugfs_key_add(key);
- 
- 	if (!local->wowlan) {
- 		ret = ieee80211_key_enable_hw_accel(key);
- 		if (ret)
--			ieee80211_key_free(key, true);
-+			ieee80211_key_free(key, delay_tailroom);
- 	} else {
- 		ret = 0;
- 	}
-@@ -874,7 +878,8 @@ void ieee80211_free_sta_keys(struct ieee
- 		ieee80211_key_replace(key->sdata, key->sta,
- 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
- 				key, NULL);
--		__ieee80211_key_destroy(key, true);
-+		__ieee80211_key_destroy(key, key->sdata->vif.type ==
-+					NL80211_IFTYPE_STATION);
- 	}
- 
- 	for (i = 0; i < NUM_DEFAULT_KEYS; i++) {
-@@ -884,7 +889,8 @@ void ieee80211_free_sta_keys(struct ieee
- 		ieee80211_key_replace(key->sdata, key->sta,
- 				key->conf.flags & IEEE80211_KEY_FLAG_PAIRWISE,
- 				key, NULL);
--		__ieee80211_key_destroy(key, true);
-+		__ieee80211_key_destroy(key, key->sdata->vif.type ==
-+					NL80211_IFTYPE_STATION);
- 	}
- 
- 	mutex_unlock(&local->key_mtx);
+ 	/* Initialise tx_skbs as a free chain containing every entry. */
+ 	queue->tx_skb_freelist = 0;
 
 
