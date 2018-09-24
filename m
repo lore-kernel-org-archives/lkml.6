@@ -2,290 +2,778 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D99ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC78C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641C521486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:35:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 641C521486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B63E2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:38:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="TshJPBst"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B63E2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeIXOgq (ORCPT
+        id S1727722AbeIXOjC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:36:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43690 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbeIXOgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:36:46 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E7F0B30832C1;
-        Mon, 24 Sep 2018 08:35:48 +0000 (UTC)
-Received: from [10.36.117.232] (ovpn-117-232.ams2.redhat.com [10.36.117.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 450E75D9C9;
-        Mon, 24 Sep 2018 08:35:42 +0000 (UTC)
-Subject: Re: [PATCH v10 03/26] KVM: s390: refactor crypto initialization
-To:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-4-git-send-email-akrowiak@linux.vnet.ibm.com>
- <e340e3ec-4f8f-1f7b-b2f5-6fec77c4c5f9@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <3403a255-8125-18f7-45b8-bb6a8a9f7f84@redhat.com>
-Date:   Mon, 24 Sep 2018 10:35:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 24 Sep 2018 10:39:02 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:53098 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeIXOjC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 10:39:02 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7DF9C10C1106;
+        Mon, 24 Sep 2018 01:38:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1537778284; bh=WOQVB/NdKbd6nk9E2EGQHlOEBIVUVHp4jPuZl1kj6/s=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=TshJPBstOVE5swYh+oUsnybgzTOPdff+9yuCZXO4waDvanp8/30gw3hqBQzpavEyA
+         QCrvwVs7USosccA4uLX38iquOldXSVSCcrtbC+7eRzewfM2BSk3coXf5MGJft2YwQL
+         /rmOHFQsO7ioWrs4HiQQ440eFV2/ABPdU0crpYLxi4iF2Y+QPecIJQk45TFI6E90hF
+         u4/x/U6Bts9XiLHvdGn5isj9Hxz2nqFK2fdCtfkvoi5y66Ml1dwR+B3btZA5KtU1cU
+         eZ1/ff3uyW+biR/wvQ7dvK8DINrA89dPz2eBjV+RcA6FT67bDzENPAGRhVsPaNUw1R
+         tUJ4C5GXcYuMg==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id EB5055D3E;
+        Mon, 24 Sep 2018 01:38:01 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 24 Sep 2018 01:38:01 -0700
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 24 Sep 2018 10:37:59 +0200
+Received: from [10.107.25.102] (10.107.25.102) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 24 Sep 2018 10:37:58 +0200
+Subject: Re: [RESEND PATCH v3 2/2] PCI: meson: add the Amlogic Meson PCIe
+ controller driver
+To:     Hanjie Lin <hanjie.lin@amlogic.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC:     Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        "Rob Herring" <robh@kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>
+References: <1537509820-52040-1-git-send-email-hanjie.lin@amlogic.com>
+ <1537509820-52040-3-git-send-email-hanjie.lin@amlogic.com>
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <cd234d38-b162-c8c2-edb8-9f1b96d53253@synopsys.com>
+Date:   Mon, 24 Sep 2018 09:34:46 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <e340e3ec-4f8f-1f7b-b2f5-6fec77c4c5f9@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1537509820-52040-3-git-send-email-hanjie.lin@amlogic.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 24 Sep 2018 08:35:49 +0000 (UTC)
+X-Originating-IP: [10.107.25.102]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/09/2018 01:18, Tony Krowiak wrote:
-> On 09/12/2018 03:42 PM, Tony Krowiak wrote:
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> This patch refactors the code that initializes and sets up the
->> crypto configuration for a guest. The following changes are
->> implemented via this patch:
->>
->> 1. Prior to the introduction of AP device virtualization, it
->>     was not necessary to provide guest access to the CRYCB
->>     unless the MSA extension 3 (MSAX3) facility was installed
->>     on the host system. With the introduction of AP device
->>     virtualization, the CRYCB must be made accessible to the
->>     guest if the AP instructions are installed on the host
->>     and are to be provided to the guest.
->>
->> 2. Introduces a flag indicating AP instructions executed on
->>     the guest shall be interpreted by the firmware. It is
->>     initialized to indicate AP instructions are to be
->>     to be interpreted and is used to set the SIE bit for
->>     each vcpu during vcpu setup.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Acked-by: Janosch Frank <frankja@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/include/asm/kvm_host.h |    2 +
->>   arch/s390/include/uapi/asm/kvm.h |    1 +
->>   arch/s390/kvm/kvm-s390.c         |   71 ++++++++++++++++++--------------------
->>   3 files changed, 37 insertions(+), 37 deletions(-)
->>
+Hi Hanjie,
+
+On 21/09/2018 07:03, Hanjie Lin wrote:
+> From: Yue Wang <yue.wang@amlogic.com>
 > 
-> (...)
+> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+> PCI core. This patch adds the driver support for Meson PCIe controller.
 > 
->> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
->> index 9a50f02..8c23afc 100644
->> --- a/arch/s390/include/uapi/asm/kvm.h
->> +++ b/arch/s390/include/uapi/asm/kvm.h
->> @@ -130,6 +130,7 @@ struct kvm_s390_vm_cpu_machine {
->>   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
->>   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
->>   #define KVM_S390_VM_CPU_FEAT_KSS	13
->> +#define KVM_S390_VM_CPU_FEAT_AP		14
->>   struct kvm_s390_vm_cpu_feat {
->>   	__u64 feat[16];
->>   };
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index 876fbb2..d717041 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -40,6 +40,7 @@
->>   #include <asm/sclp.h>
->>   #include <asm/cpacf.h>
->>   #include <asm/timex.h>
->> +#include <asm/ap.h>
->>   #include "kvm-s390.h"
->>   #include "gaccess.h"
->>   
-> 
-> (...)
-> 
->> @@ -2586,17 +2575,25 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->>   
->>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->>   {
->> -	if (!test_kvm_facility(vcpu->kvm, 76))
->> +	/*
->> +	 * If neither the AP instructions nor the MSAX3 facility are configured
->> +	 * for the guest, there is nothing to set up.
->> +	 */
->> +	if (!test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP) &&
->> +	    !test_kvm_facility(vcpu->kvm, 76))
->>   		return;
->>   
->> +	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->>   	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
->>   
->> +	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
->> +		vcpu->arch.sie_block->eca |= ECA_APIE;
->> +
->> +	/* Set up protected key support */
->>   	if (vcpu->kvm->arch.crypto.aes_kw)
->>   		vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->>   	if (vcpu->kvm->arch.crypto.dea_kw)
->>   		vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
->> -
->> -	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->>   }
->>   
->>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
->>
-> 
-> The fixup! patch below modifies this patch (03/26) to illustrate how
-> 
-> David's recommendation will be implemented for v11 of the series. It
-> 
-> is one of three fixup! patches (the other two are in responses to
-> 11/26
->   and 25/26) included to generate discussion in v10 rather than
-> 
-> waiting until v11 for comments.
-> 
-> -----------------------------------8<-----------------------------------
-> 
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> Date: Thu, 20 Sep 2018 12:26:08 -0400
-> Subject: [FIXUP v10] fixup!: KVM: s390: refactor crypto initialization
-> 
+> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
+> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
 > ---
->   arch/s390/include/asm/kvm_host.h |    1 +
->   arch/s390/include/uapi/asm/kvm.h |    1 -
->   arch/s390/kvm/kvm-s390.c         |    9 ++++-----
->   3 files changed, 5 insertions(+), 6 deletions(-)
+>  drivers/pci/controller/dwc/Kconfig     |  12 +
+>  drivers/pci/controller/dwc/Makefile    |   1 +
+>  drivers/pci/controller/dwc/pci-meson.c | 617 +++++++++++++++++++++++++++++++++
+>  3 files changed, 630 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pci-meson.c
 > 
-> diff --git a/arch/s390/include/asm/kvm_host.h 
-> b/arch/s390/include/asm/kvm_host.h
-> index 423cce7..79fa0a3 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -718,6 +718,7 @@ struct kvm_s390_crypto {
->   	__u32 crycbd;
->   	__u8 aes_kw;
->   	__u8 dea_kw;
-> +	__u8 apie;
->   };
-> 
->   #define APCB0_MASK_SIZE 1
-> diff --git a/arch/s390/include/uapi/asm/kvm.h 
-> b/arch/s390/include/uapi/asm/kvm.h
-> index 8c23afc..9a50f02 100644
-> --- a/arch/s390/include/uapi/asm/kvm.h
-> +++ b/arch/s390/include/uapi/asm/kvm.h
-> @@ -130,7 +130,6 @@ struct kvm_s390_vm_cpu_machine {
->   #define KVM_S390_VM_CPU_FEAT_PFMFI	11
->   #define KVM_S390_VM_CPU_FEAT_SIGPIF	12
->   #define KVM_S390_VM_CPU_FEAT_KSS	13
-> -#define KVM_S390_VM_CPU_FEAT_AP		14
->   struct kvm_s390_vm_cpu_feat {
->   	__u64 feat[16];
->   };
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index d717041..ae4769b 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -2576,17 +2576,16 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->   {
->   	/*
-> -	 * If neither the AP instructions nor the MSAX3 facility are configured
-> -	 * for the guest, there is nothing to set up.
-> +	 * If the AP instructions are not available and the MSAX3 facility
-> +	 * is not configured for the guest, there is nothing to set up.
->   	 */
-> -	if (!test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP) &&
-> -	    !test_kvm_facility(vcpu->kvm, 76))
-> +	if (!ap_instructions_available() && !test_kvm_facility(vcpu->kvm, 76))
->   		return;
-> 
->   	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->   	vcpu->arch.sie_block->ecb3 &= ~(ECB3_AES | ECB3_DEA);
-> 
-> -	if (test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
-> +	if (vcpu->kvm->arch.crypto.apie)
->   		vcpu->arch.sie_block->eca |= ECA_APIE;
-> 
->   	/* Set up protected key support */
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 91b0194..6cb36f6 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -193,4 +193,16 @@ config PCIE_HISI_STB
+>  	help
+>            Say Y here if you want PCIe controller support on HiSilicon STB SoCs
+>  
+> +config PCI_MESON
+> +	bool "MESON PCIe controller"
+> +	depends on PCI
+> +	depends on PCI_MSI_IRQ_DOMAIN
+
+I would suggest to compress the previous 2 line into in just one, like:
+depends on PCI && PCI_MSI_IRQ_DOMAIN
+
+Regards,
+Gustavo
+
+> +	select PCIEPORTBUS
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Say Y here if you want to enable PCI controller support on Amlogic
+> +	  SoCs. The PCI controller on Amlogic is based on DesignWare hardware
+> +	  and therefore the driver re-uses the DesignWare core functions to
+> +	  implement the driver.
+> +
+>  endmenu
+> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> index 5d2ce72..cf676bd 100644
+> --- a/drivers/pci/controller/dwc/Makefile
+> +++ b/drivers/pci/controller/dwc/Makefile
+> @@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
+>  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
+>  obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
+>  obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
+> +obj-$(CONFIG_PCI_MESON) += pci-meson.o
+>  
+>  # The following drivers are for devices that use the generic ACPI
+>  # pci_root.c driver but don't support standard ECAM config access.
+> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+> new file mode 100644
+> index 0000000..9c92a89
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pci-meson.c
+> @@ -0,0 +1,617 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PCIe host controller driver for Amlogic MESON SoCs
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Yue Wang <yue.wang@amlogic.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/pci.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/resource.h>
+> +#include <linux/types.h>
+> +#include <linux/reset.h>
+> +
+> +#include "pcie-designware.h"
+> +
+> +#define to_meson_pcie(x) dev_get_drvdata((x)->dev)
+> +
+> +/* External local bus interface registers */
+> +#define PLR_OFFSET			0x700
+> +#define PCIE_PORT_LINK_CTRL_OFF		(PLR_OFFSET + 0x10)
+> +#define FAST_LINK_MODE			BIT(7)
+> +#define LINK_CAPABLE_MASK		GENMASK(21, 16)
+> +#define LINK_CAPABLE_X1			BIT(16)
+> +
+> +#define PCIE_GEN2_CTRL_OFF		(PLR_OFFSET + 0x10c)
+> +#define NUM_OF_LANES_MASK		GENMASK(12, 8)
+> +#define NUM_OF_LANES_X1			BIT(8)
+> +#define DIRECT_SPEED_CHANGE		BIT(17)
+> +
+> +#define TYPE1_HDR_OFFSET		0x0
+> +#define PCIE_STATUS_COMMAND		(TYPE1_HDR_OFFSET + 0x04)
+> +#define PCI_IO_EN			BIT(0)
+> +#define PCI_MEM_SPACE_EN		BIT(1)
+> +#define PCI_BUS_MASTER_EN		BIT(2)
+> +
+> +#define PCIE_BASE_ADDR0			(TYPE1_HDR_OFFSET + 0x10)
+> +#define PCIE_BASE_ADDR1			(TYPE1_HDR_OFFSET + 0x14)
+> +
+> +#define PCIE_CAP_OFFSET			0x70
+> +#define PCIE_DEV_CTRL_DEV_STUS		(PCIE_CAP_OFFSET + 0x08)
+> +#define PCIE_CAP_MAX_PAYLOAD_MASK	GENMASK(7, 5)
+> +#define PCIE_CAP_MAX_PAYLOAD_SIZE(x)	((x) << 5)
+> +#define PCIE_CAP_MAX_READ_REQ_MASK	GENMASK(14, 12)
+> +#define PCIE_CAP_MAX_READ_REQ_SIZE(x)	((x) << 12)
+> +
+> +#define PCI_CLASS_REVISION_MASK		GENMASK(7, 0)
+> +
+> +/* PCIe specific config registers */
+> +#define PCIE_CFG0			0x0
+> +#define APP_LTSSM_ENABLE		BIT(7)
+> +
+> +#define PCIE_CFG_STATUS12		0x30
+> +#define IS_SMLH_LINK_UP(x)		((x) & (1 << 6))
+> +#define IS_RDLH_LINK_UP(x)		((x) & (1 << 16))
+> +#define IS_LTSSM_UP(x)			((((x) >> 10) & 0x1f) == 0x11)
+> +
+> +#define PCIE_CFG_STATUS17		0x44
+> +#define PM_CURRENT_STATE(x)		(((x) >> 7) & 0x1)
+> +
+> +#define WAIT_LINKUP_TIMEOUT		2000
+> +#define PORT_CLK_RATE			100000000UL
+> +#define MAX_PAYLOAD_SIZE		256
+> +#define MAX_READ_REQ_SIZE		256
+> +#define MESON_PCIE_PHY_POWERUP		0x1c
+> +#define PCIE_RESET_DELAY		500
+> +#define PCIE_SHARED_RESET		1
+> +#define PCIE_NORMAL_RESET		0
+> +
+> +enum pcie_data_rate {
+> +	PCIE_GEN1,
+> +	PCIE_GEN2,
+> +	PCIE_GEN3,
+> +	PCIE_GEN4
+> +};
+> +
+> +struct meson_pcie_mem_res {
+> +	void __iomem *elbi_base; /* DT 0th resource */
+> +	void __iomem *cfg_base; /* DT 1nd resource */
+> +	void __iomem *phy_base; /* DT 2nd resource */
+> +};
+> +
+> +struct meson_pcie_clk_res {
+> +	struct clk *clk;
+> +	struct clk *mipi_gate;
+> +	struct clk *port_clk;
+> +	struct clk *general_clk;
+> +};
+> +
+> +struct meson_pcie_rc_reset {
+> +	struct reset_control *phy;
+> +	struct reset_control *port;
+> +	struct reset_control *apb;
+> +};
+> +
+> +struct meson_pcie {
+> +	struct dw_pcie pci;
+> +	struct meson_pcie_mem_res mem_res;
+> +	struct meson_pcie_clk_res clk_res;
+> +	struct meson_pcie_rc_reset mrst;
+> +	struct gpio_desc *reset_gpio;
+> +
+> +	enum of_gpio_flags gpio_flag;
+> +	int pcie_num;
+> +	u32 port_num;
+> +	u32 device_attch;
+> +};
+> +
+> +static struct reset_control *meson_pcie_get_reset(struct meson_pcie *mp,
+> +						  const char *id,
+> +						  u32 reset_type)
+> +{
+> +	struct device *dev = mp->pci.dev;
+> +	struct reset_control *reset;
+> +
+> +	if (reset_type == PCIE_SHARED_RESET)
+> +		reset = devm_reset_control_get_shared(dev, id);
+> +	else
+> +		reset = devm_reset_control_get(dev, id);
+> +
+> +	return reset;
+> +}
+> +
+> +static int meson_pcie_get_resets(struct meson_pcie *mp)
+> +{
+> +	struct meson_pcie_rc_reset *mrst = &mp->mrst;
+> +
+> +	mrst->phy = meson_pcie_get_reset(mp, "phy", PCIE_SHARED_RESET);
+> +	if (IS_ERR(mrst->phy))
+> +		return PTR_ERR(mrst->phy);
+> +	reset_control_deassert(mrst->phy);
+> +
+> +	mrst->port = meson_pcie_get_reset(mp, "port", PCIE_NORMAL_RESET);
+> +	if (IS_ERR(mrst->port))
+> +		return PTR_ERR(mrst->port);
+> +	reset_control_deassert(mrst->port);
+> +
+> +	mrst->apb = meson_pcie_get_reset(mp, "apb", PCIE_SHARED_RESET);
+> +	if (IS_ERR(mrst->apb))
+> +		return PTR_ERR(mrst->apb);
+> +	reset_control_deassert(mrst->apb);
+> +
+> +	return 0;
+> +}
+> +
+> +static void __iomem *meson_pcie_get_mem_shared(struct platform_device *pdev,
+> +					       struct meson_pcie *mp,
+> +					       const char *id)
+> +{
+> +	struct resource *res;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, id);
+> +
+> +	return ioremap(res->start, resource_size(res));
+> +}
+> +
+> +static void __iomem *meson_pcie_get_mem(struct platform_device *pdev,
+> +					struct meson_pcie *mp,
+> +					const char *id)
+> +{
+> +	struct device *dev = mp->pci.dev;
+> +	struct resource *res;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, id);
+> +
+> +	return devm_ioremap_resource(dev, res);
+> +}
+> +
+> +static int meson_pcie_get_mems(struct platform_device *pdev,
+> +			       struct meson_pcie *mp)
+> +{
+> +	mp->mem_res.elbi_base = meson_pcie_get_mem(pdev, mp, "elbi");
+> +	if (IS_ERR(mp->mem_res.elbi_base))
+> +		return PTR_ERR(mp->mem_res.elbi_base);
+> +
+> +	mp->mem_res.cfg_base = meson_pcie_get_mem(pdev, mp, "cfg");
+> +	if (IS_ERR(mp->mem_res.cfg_base))
+> +		return PTR_ERR(mp->mem_res.cfg_base);
+> +
+> +	mp->mem_res.phy_base = meson_pcie_get_mem_shared(pdev, mp, "phy");
+> +	if (IS_ERR(mp->mem_res.phy_base))
+> +		return PTR_ERR(mp->mem_res.phy_base);
+> +
+> +	return 0;
+> +}
+> +
+> +static void meson_pcie_power_on(struct meson_pcie *mp)
+> +{
+> +	writel(MESON_PCIE_PHY_POWERUP, mp->mem_res.phy_base);
+> +}
+> +
+> +static void meson_pcie_reset(struct meson_pcie *mp)
+> +{
+> +	struct meson_pcie_rc_reset *mrst = &mp->mrst;
+> +
+> +	reset_control_assert(mrst->phy);
+> +	udelay(PCIE_RESET_DELAY);
+> +	reset_control_deassert(mrst->phy);
+> +	udelay(PCIE_RESET_DELAY);
+> +
+> +	reset_control_assert(mrst->port);
+> +	reset_control_assert(mrst->apb);
+> +	udelay(PCIE_RESET_DELAY);
+> +	reset_control_deassert(mrst->port);
+> +	reset_control_deassert(mrst->apb);
+> +	udelay(PCIE_RESET_DELAY);
+> +}
+> +
+> +static inline struct clk *meson_pcie_probe_clock(struct device *dev,
+> +						 const char *id, u64 rate)
+> +{
+> +	struct clk *clk = NULL;
+> +	int ret;
+> +
+> +	clk = devm_clk_get(dev, id);
+> +	if (IS_ERR(clk))
+> +		return clk;
+> +
+> +	if (rate) {
+> +		ret = clk_set_rate(clk, rate);
+> +		if (ret) {
+> +			dev_err(dev, "set clk rate failed, ret = %d\n", ret);
+> +			return ERR_PTR(ret);
+> +		}
+> +	}
+> +
+> +	ret = clk_prepare_enable(clk);
+> +	if (ret) {
+> +		dev_err(dev, "couldn't enable clk\n");
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	devm_add_action_or_reset(dev,
+> +				 (void (*) (void *))clk_disable_unprepare,
+> +				 clk);
+> +
+> +	return clk;
+> +}
+> +
+> +static int meson_pcie_probe_clocks(struct meson_pcie *mp)
+> +{
+> +	struct device *dev = mp->pci.dev;
+> +	struct meson_pcie_clk_res *res = &mp->clk_res;
+> +
+> +	res->port_clk = meson_pcie_probe_clock(dev, "port", PORT_CLK_RATE);
+> +	if (IS_ERR(res->port_clk))
+> +		return PTR_ERR(res->port_clk);
+> +
+> +	res->mipi_gate = meson_pcie_probe_clock(dev, "pcie_mipi_en", 0);
+> +	if (IS_ERR(res->mipi_gate))
+> +		return PTR_ERR(res->mipi_gate);
+> +
+> +	res->general_clk = meson_pcie_probe_clock(dev, "pcie_general", 0);
+> +	if (IS_ERR(res->general_clk))
+> +		return PTR_ERR(res->general_clk);
+> +
+> +	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
+> +	if (IS_ERR(res->clk))
+> +		return PTR_ERR(res->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
+> +{
+> +	writel(val, mp->mem_res.elbi_base + reg);
+> +}
+> +
+> +static inline u32 meson_elb_readl(struct meson_pcie *mp, u32 reg)
+> +{
+> +	return readl(mp->mem_res.elbi_base + reg);
+> +}
+> +
+> +static inline u32 meson_cfg_readl(struct meson_pcie *mp, u32 reg)
+> +{
+> +	return readl(mp->mem_res.cfg_base + reg);
+> +}
+> +
+> +static inline void meson_cfg_writel(struct meson_pcie *mp, u32 val, u32 reg)
+> +{
+> +	writel(val, mp->mem_res.cfg_base + reg);
+> +}
+> +
+> +static void meson_pcie_assert_reset(struct meson_pcie *mp)
+> +{
+> +	gpiod_set_value_cansleep(mp->reset_gpio, 0);
+> +	udelay(500);
+> +	gpiod_set_value_cansleep(mp->reset_gpio, 1);
+> +}
+> +
+> +static void meson_pcie_init_dw(struct meson_pcie *mp)
+> +{
+> +	u32 val = 0;
+> +
+> +	val = meson_cfg_readl(mp, PCIE_CFG0);
+> +	val |= APP_LTSSM_ENABLE;
+> +	meson_cfg_writel(mp, val, PCIE_CFG0);
+> +
+> +	val = meson_elb_readl(mp, PCIE_PORT_LINK_CTRL_OFF);
+> +	val &= ~LINK_CAPABLE_MASK;
+> +	meson_elb_writel(mp, val, PCIE_PORT_LINK_CTRL_OFF);
+> +
+> +	val = meson_elb_readl(mp, PCIE_PORT_LINK_CTRL_OFF);
+> +	val |= LINK_CAPABLE_X1 | FAST_LINK_MODE;
+> +	meson_elb_writel(mp, val, PCIE_PORT_LINK_CTRL_OFF);
+> +
+> +	val = meson_elb_readl(mp, PCIE_GEN2_CTRL_OFF);
+> +	val &= ~NUM_OF_LANES_MASK;
+> +	meson_elb_writel(mp, val, PCIE_GEN2_CTRL_OFF);
+> +
+> +	val = meson_elb_readl(mp, PCIE_GEN2_CTRL_OFF);
+> +	val |= NUM_OF_LANES_X1 | DIRECT_SPEED_CHANGE;
+> +	meson_elb_writel(mp, val, PCIE_GEN2_CTRL_OFF);
+> +
+> +	meson_elb_writel(mp, 0x0, PCIE_BASE_ADDR0);
+> +	meson_elb_writel(mp, 0x0, PCIE_BASE_ADDR1);
+> +}
+> +
+> +static int meson_size_to_payload(int size)
+> +{
+> +	if (size & (size - 1) || size < 128 || size > 4096)
+> +		return 1;
+> +
+> +	return fls(size) - 8;
+> +}
+> +
+> +static void meson_set_max_payload(struct meson_pcie *mp, int size)
+> +{
+> +	u32 val = 0;
+> +	int max_payload_size = meson_size_to_payload(size);
+> +
+> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+> +	val &= ~PCIE_CAP_MAX_PAYLOAD_MASK;
+> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+> +
+> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+> +	val |= PCIE_CAP_MAX_PAYLOAD_SIZE(max_payload_size);
+> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+> +}
+> +
+> +static void meson_set_max_rd_req_size(struct meson_pcie *mp, int size)
+> +{
+> +	u32 val = 0;
+> +	int max_rd_req_size = meson_size_to_payload(size);
+> +
+> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+> +	val &= ~PCIE_CAP_MAX_READ_REQ_MASK;
+> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+> +
+> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+> +	val |= PCIE_CAP_MAX_READ_REQ_SIZE(max_rd_req_size);
+> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+> +}
+> +
+> +static inline void meson_enable_memory_space(struct meson_pcie *mp)
+> +{
+> +	/* Set the RC Bus Master, Memory Space and I/O Space enables */
+> +	meson_elb_writel(mp, PCI_IO_EN | PCI_MEM_SPACE_EN | PCI_BUS_MASTER_EN,
+> +			 PCIE_STATUS_COMMAND);
+> +}
+> +
+> +static int meson_pcie_establish_link(struct meson_pcie *mp)
+> +{
+> +	struct dw_pcie *pci = &mp->pci;
+> +	struct pcie_port *pp = &pci->pp;
+> +
+> +	meson_pcie_init_dw(mp);
+> +	meson_set_max_payload(mp, MAX_PAYLOAD_SIZE);
+> +	meson_set_max_rd_req_size(mp, MAX_READ_REQ_SIZE);
+> +
+> +	dw_pcie_setup_rc(pp);
+> +	meson_enable_memory_space(mp);
+> +
+> +	meson_pcie_assert_reset(mp);
+> +
+> +	/* check if the link is up or not */
+> +	if (!dw_pcie_wait_for_link(pci))
+> +		return 0;
+> +
+> +	return -ETIMEDOUT;
+> +}
+> +
+> +static void meson_pcie_msi_init(struct meson_pcie *mp)
+> +{
+> +	struct pcie_port *pp = &mp->pci.pp;
+> +
+> +	dw_pcie_msi_init(pp);
+> +}
+> +
+> +static void meson_pcie_enable_interrupts(struct meson_pcie *mp)
+> +{
+> +	if (IS_ENABLED(CONFIG_PCI_MSI))
+> +		meson_pcie_msi_init(mp);
+> +}
+> +
+> +static u32 meson_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base,
+> +			       u32 reg, size_t size)
+> +{
+> +	u32 val;
+> +
+> +	dw_pcie_read(base + reg, size, &val);
+> +
+> +	return val;
+> +}
+> +
+> +static void meson_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base,
+> +				 u32 reg, size_t size, u32 val)
+> +{
+> +	dw_pcie_write(base + reg, size, val);
+> +}
+> +
+> +static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
+> +				  u32 *val)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct meson_pcie *mp = to_meson_pcie(pci);
+> +
+> +	if (!mp->device_attch)
+> +		return 0;
+> +
+> +	/* the device class is not reported correctly from the register */
+> +	if (where == PCI_CLASS_REVISION) {
+> +		*val = readl(pci->dbi_base + PCI_CLASS_REVISION);
+> +		/* keep revision id */
+> +		*val &= PCI_CLASS_REVISION_MASK;
+> +		*val |= PCI_CLASS_BRIDGE_PCI << 16;
+> +		return PCIBIOS_SUCCESSFUL;
+> +	}
+> +
+> +	return dw_pcie_read(pci->dbi_base + where, size, val);
+> +}
+> +
+> +static int meson_pcie_wr_own_conf(struct pcie_port *pp, int where,
+> +				  int size, u32 val)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct meson_pcie *mp = to_meson_pcie(pci);
+> +
+> +	if (!mp->device_attch)
+> +		return 0;
+> +
+> +	return dw_pcie_write(pci->dbi_base + where, size, val);
+> +}
+> +
+> +static int meson_pcie_link_up(struct dw_pcie *pci)
+> +{
+> +	struct meson_pcie *mp = to_meson_pcie(pci);
+> +	struct device *dev = pci->dev;
+> +	u32 smlh_up = 0;
+> +	u32 ltssm_up = 0;
+> +	u32 rdlh_up = 0;
+> +	u32 speed_okay = 0;
+> +	u32 cnt = 0;
+> +	u32 state12, state17;
+> +
+> +	while (smlh_up == 0 || rdlh_up == 0 || ltssm_up == 0 ||
+> +	       speed_okay == 0) {
+> +		udelay(20);
+> +
+> +		state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
+> +		state17 = meson_cfg_readl(mp, PCIE_CFG_STATUS17);
+> +		smlh_up = IS_SMLH_LINK_UP(state12);
+> +		rdlh_up = IS_RDLH_LINK_UP(state12);
+> +		ltssm_up = IS_LTSSM_UP(state12);
+> +
+> +		if (PM_CURRENT_STATE(state17) < PCIE_GEN3)
+> +			speed_okay = 1;
+> +
+> +		if (smlh_up)
+> +			dev_dbg(dev, "smlh_link_up is on\n");
+> +		if (rdlh_up)
+> +			dev_dbg(dev, "rdlh_link_up is on\n");
+> +		if (ltssm_up)
+> +			dev_dbg(dev, "ltssm_up is on\n");
+> +		if (speed_okay)
+> +			dev_dbg(dev, "speed_okay\n");
+> +
+> +		cnt++;
+> +
+> +		if (cnt >= WAIT_LINKUP_TIMEOUT) {
+> +			dev_err(dev, "Error: Wait linkup timeout.\n");
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return 1;
+> +}
+> +
+> +static int meson_pcie_host_init(struct pcie_port *pp)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> +	struct meson_pcie *mp = to_meson_pcie(pci);
+> +	int ret;
+> +
+> +	ret = meson_pcie_establish_link(mp);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	mp->device_attch = 1;
+> +	meson_pcie_enable_interrupts(mp);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dw_pcie_host_ops meson_pcie_host_ops = {
+> +	.rd_own_conf = meson_pcie_rd_own_conf,
+> +	.wr_own_conf = meson_pcie_wr_own_conf,
+> +	.host_init = meson_pcie_host_init,
+> +};
+> +
+> +static int meson_add_pcie_port(struct meson_pcie *mp,
+> +			       struct platform_device *pdev)
+> +{
+> +	struct dw_pcie *pci = &mp->pci;
+> +	struct pcie_port *pp = &pci->pp;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +		pp->msi_irq = platform_get_irq(pdev, 0);
+> +		if (pp->msi_irq < 0) {
+> +			dev_err(dev, "failed to get msi irq\n");
+> +			return pp->msi_irq;
+> +		}
+> +	}
+> +
+> +	pp->root_bus_nr = -1;
+> +	pp->ops = &meson_pcie_host_ops;
+> +	pci->dbi_base = mp->mem_res.elbi_base;
+> +
+> +	ret = dw_pcie_host_init(pp);
+> +	if (ret) {
+> +		dev_err(dev, "failed to initialize host\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dw_pcie_ops dw_pcie_ops = {
+> +	.read_dbi = meson_pcie_read_dbi,
+> +	.write_dbi = meson_pcie_write_dbi,
+> +	.link_up = meson_pcie_link_up,
+> +};
+> +
+> +static int meson_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct dw_pcie *pci;
+> +	struct meson_pcie *mp;
+> +	int ret;
+> +
+> +	mp = devm_kzalloc(dev, sizeof(*mp), GFP_KERNEL);
+> +	if (!mp)
+> +		return -ENOMEM;
+> +
+> +	pci = &mp->pci;
+> +	pci->dev = dev;
+> +	pci->ops = &dw_pcie_ops;
+> +
+> +	mp->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(mp->reset_gpio)) {
+> +		dev_err(dev, "Get reset gpio failed\n");
+> +		return PTR_ERR(mp->reset_gpio);
+> +	}
+> +
+> +	ret = meson_pcie_get_resets(mp);
+> +	if (ret) {
+> +		dev_err(dev, "Get reset resource failed, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = meson_pcie_get_mems(pdev, mp);
+> +	if (ret) {
+> +		dev_err(dev, "Get memory resource failed, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	meson_pcie_power_on(mp);
+> +	meson_pcie_reset(mp);
+> +
+> +	ret = meson_pcie_probe_clocks(mp);
+> +	if (ret) {
+> +		dev_err(dev, "Init clock resources failed, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, mp);
+> +
+> +	ret = meson_add_pcie_port(mp, pdev);
+> +	if (ret < 0)
+> +		dev_err(dev, "Add PCIE port failed, %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id meson_pcie_of_match[] = {
+> +	{
+> +		.compatible = "amlogic,axg-pcie",
+> +	},
+> +	{},
+> +};
+> +
+> +static struct platform_driver meson_pcie_driver = {
+> +	.probe = meson_pcie_probe,
+> +	.driver = {
+> +		.name = "meson-pcie",
+> +		.of_match_table = meson_pcie_of_match,
+> +	},
+> +};
+> +
+> +builtin_platform_driver(meson_pcie_driver);
 > 
 
-Looks sane, too.
-
--- 
-
-Thanks,
-
-David / dhildenb
