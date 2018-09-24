@@ -2,843 +2,235 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DATE_IN_PAST_12_24,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23425ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41252C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE6220666
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:54:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="yGITmzmi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADE6220666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id ED6EF20666
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:55:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6EF20666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731903AbeIXSQf (ORCPT
+        id S1731849AbeIXSQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:16:35 -0400
-Received: from mail-eopbgr40047.outbound.protection.outlook.com ([40.107.4.47]:43072
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730171AbeIXSQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:16:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BHfTce6XIrUNuTpqs821HkOHevujbW8EHLeERjp7C44=;
- b=yGITmzminRlP7aHBflvJL00h4kqT0VX/feyT8CGiVu1dImC4QH7DrtYvxHijElpu6kYY6//qIIRraSURuwLaGQxSILGkDvKNrXf6Msi7BUmxSA7LeVIh2P9As2wciBFjyMzsCfPo6UTxn0YszQEli2OvwbDxdu2jtWP1gDLfYCU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
-Received: from uefi-OptiPlex-790.ap.freescale.net (14.143.30.134) by
- VI1PR04MB4798.eurprd04.prod.outlook.com (2603:10a6:803:53::27) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Mon, 24 Sep 2018 12:14:32 +0000
-From:   Vabhav Sharma <vabhav.sharma@nxp.com>
-To:     sudeep.holla@arm.com, oss@buserror.net,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com
-Cc:     linux@armlinux.org.uk, V.Sethi@nxp.com, udit.kumar@nxp.com,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
-        Zhang Ying-22455 <ying.zhang22455@nxp.com>,
-        Nipun Gupta <nipun.gupta@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>
-Subject: [PATCH v3 5/6] arm64: dts: add QorIQ LX2160A SoC support
-Date:   Mon, 24 Sep 2018 05:39:00 +0530
-Message-Id: <1537747741-6245-6-git-send-email-vabhav.sharma@nxp.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+        Mon, 24 Sep 2018 14:16:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55416 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731429AbeIXSQV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:16:21 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E85E1099;
+        Mon, 24 Sep 2018 12:14:30 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Sandipan Das <sandipan@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Maynard Johnson <maynard@us.ibm.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 045/173] perf powerpc: Fix callchain ip filtering
+Date:   Mon, 24 Sep 2018 13:51:19 +0200
+Message-Id: <20180924113119.299714159@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
+References: <20180924113114.334025954@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [14.143.30.134]
-X-ClientProxiedBy: BM1PR0101CA0011.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:18::21) To VI1PR04MB4798.eurprd04.prod.outlook.com
- (2603:10a6:803:53::27)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 986476a9-f80f-4c52-bf21-08d622174c2c
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4798;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4798;3:wXn/+9BrozLirmZjjWZpG4BBhcDrv0+M+fh2E+FqT4rtKRFMFLuN/AW6N/2SlrXnvuSSVNV063NbxBIYdDvdowSODWGTB/gLtXx0zu1YV0OAp6q5YuAPvk94gx74OSY/4Ra76muISsQAD+bS3w1iU1hgBancecbDbk4SX5w7CpaHY2D7rBPVooWxN6ZbZUMv8zfAlh5Rp+06Qlw98HxfUaU1SyAdP5PEZXY/XisiqfmCFFmFyAf6u0dHfMkXPtRt;25:MdojyOodXGEkFYOFerw/GXRa3g2E3kC3Fu6tCNoWB99Dm/Ce3BUJ+l5ssYxHPHvyKsvr4+AO9iZ1fge8SY3z1Tvh/1Ssx+Zgqe5WZjYP2kRmSj7ilsj7DpaNgkQlNQl39HF5MiiWI8J1AQxWrCtCjtUrZ+0cpRykSXbs0iziA7HoCYyjltMFh/koZ/ufdUp6ZkpGFNUEwf7eNzlZpK1+nJZc1thMnJCjAB9NioL+yxEEiJn4BFXmx2YSYYURsuCIbYF3tLbncJS0N13QJD/Ibo+3s5QYhSpL/hxiVnV3YZF/QdFq6JFIQhwxdeAC+pxCOyNiTz2LSbTSxJ6BfLsE8Q==;31:B1VrKidnQDekW7lwFYG2ve/CVPPXwi6fLmyPBktNvF35YUbqAqN/qnbGU9ySLGTGivKFKL1PURdcokia0OyLy/irbp79ccVkk7NW0FtqfKv1lpvMyHOcH8TUpD37BsUifosUaprKUuuzSFwwiyxXw/65AiBxCYi7Uyyqh0fwf7jwKZD8uKPCg86QvByzIy5MzXnGpzJALHJKgvhsIplxcQ8BlGlzfnPwy3w6dRBM4Cs=
-X-MS-TrafficTypeDiagnostic: VI1PR04MB4798:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4798;20:i/IAUHiB68gTylMuWxZcuCX9sy1zvvfq1Xj8552cyvtw0Kq7EeO9MpD3HuuZ+zJbvOMZp+0Dyaq0Y+JSHW4nWhdXP8KAM+vC0KwsxdHICBB4CAqKT88HsOHHrDLNPVtDmK3GwVfc/vxO8jxFJIcP76OD6zPkmlSYd/dh0hcK7pcofuvVWHMUFwwueaSlYw/fL+soFAahioCOYDbINMk0J6J6SkVssmnvDJTobAxNvqyfkdTllOvSCJsif5AULyAJFRd7oJtBMg+Tm1wDkfQdw5wxMCXq1Fy36khVPsU8YxRMjy/YejUe0VcRvcJo5OdVWcRKtdGxyUMC2jabZ1vtfE851osGbK5zPRm1d2O8cHdfv6zLtip0OiHemj35GR2gH3j3vBRhoK9eRNT4tMq+TwaxhePPww6lrtAJj8C+lp6xXuRMcMHkC+XOtdD0Hq+9ALGuib4C5E4mYJ18njUgki2BaDtj1w/bX6fBdP6sKWDpGVvlGoxjGIG0tLpkFT3/;4:ZLGbmbOXkmETx9qy709LMndKw67wBOFS038r3XcYSKd2cgzpcRqrb68AyXavlBOqr9H2nYO+I/9KhTz3x2JlWedl7cmX8gyQxd1vsTjkkh/oeCf41tyc0VpVR9jYVtNO09oCoo0d2xH6FKQvApPkTmHuDqJ3aGadjPnXGxunMKvcskQ0bycW0D9MhyS/SwC1FnhRUrMLP6G3eR6B/KAKf8h2I5N2oxa6hCn53k7hIhRGu0o4pEKoBgZKuY/OERLlElKiVnVfilNzvS7QPWNnUg+Qv+PIkd+C6h/TUEmbrlJH+woBB6RR/fyx3TTXXVuI
-X-Microsoft-Antispam-PRVS: <VI1PR04MB479817F6E30144FCBA30368DF3170@VI1PR04MB4798.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:VI1PR04MB4798;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4798;
-X-Forefront-PRVS: 0805EC9467
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(4326008)(97736004)(5660300001)(6512007)(14444005)(48376002)(6506007)(86362001)(47776003)(53936002)(386003)(6666003)(25786009)(52116002)(76176011)(51416003)(956004)(50466002)(186003)(7736002)(54906003)(81166006)(16586007)(7416002)(486006)(36756003)(575784001)(50226002)(6116002)(44832011)(68736007)(5009440100003)(26005)(446003)(305945005)(11346002)(16526019)(2906002)(66066001)(478600001)(106356001)(81156014)(105586002)(8936002)(2616005)(316002)(3846002)(476003)(8676002)(6486002)(110426005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4798;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB4798;23:2V83NRF6JKw28KzPJSUAcWfVmRu1XGIAJ25OmYdba?=
- =?us-ascii?Q?h1OecFbaTyEkhNMuwDdpvQFCqb0+raaxjKi/uqUs8gNgp5LHpuWJ4gfAs8UC?=
- =?us-ascii?Q?NPXKBu8JpSb5nMopMhkPlBHRfNEbmfZji2ngIXu0xZ97NmdtL+BQeqb6gn1f?=
- =?us-ascii?Q?T7T4OP0MQKebvAjqjklUyZSwv94al6fGWkNXXmdwlNsyEnDqjtLw3EGWDH1K?=
- =?us-ascii?Q?G7ab+Rr1ojMwtwEyF0pNxN0JeiDSsONYh1/3vssVYbLfKfoHVgWhkx/E5esd?=
- =?us-ascii?Q?RFxLiK98NG2JvlgC1nUMLwJ+xLGmOU7Iwvq1tVO1HCRDdcuJes74CadCI4i2?=
- =?us-ascii?Q?ARRbGMs61Nn9ayStV4Fg8v813CxVEEGxrPMruNpbohxOVbfBUeTV2+kEwQCX?=
- =?us-ascii?Q?vyYn6Dh4fjPXoajUu7vr2ZuoTdUpZbxk+9U+GAvmQU+epAUvn0R+nhKjBYF9?=
- =?us-ascii?Q?TMctqcnkEKNKDSAorrIyzywKFrjhmnQt+CSjhi6llwSCyjgy1zoV6y/Rqq6F?=
- =?us-ascii?Q?ZPOCUStKKqqcPDhOPo9fZ+6exTzOmPNs1pOMGyE2IIVCVa2eonN0KswoGrN7?=
- =?us-ascii?Q?oFTprf/qQ4vomvmbH/wKqrNRnMEvgvnXzrGzZAzvn4JLBS9YAfr/uPiPiwPY?=
- =?us-ascii?Q?6gs6AQxxpcKiFuStCMJ0qBIIy+BKwpM3RH7VLNqZkGzl/RvbMw/zLS5e39WV?=
- =?us-ascii?Q?YrivcHyHat9j5H5sf+xD7AlUXm21I9LZ7xXzZmZ/bvGcpLir2/5XZwQt6lKi?=
- =?us-ascii?Q?4/HYRMzR4/jFUicLrRwJOttqg3h05O3Ls9acyw5aDa2a8Evb1ZtiVTZgVPKp?=
- =?us-ascii?Q?s7f3DCDFUNb+4dL5fA8GZeoObxzJhBIERV+6sfiUHpxP3sEYLlfDNyosvKZH?=
- =?us-ascii?Q?lunGVDcPb420cQhQ8EoqcikYg2/GBhY3BAtdTKWDekCzio/pAyMC1c+rnGye?=
- =?us-ascii?Q?lNCBczTUetx/F5tzDSm1V7alhn8ww9xmgWgExUy0L4Im8ensdEsB8HwpZv/u?=
- =?us-ascii?Q?pmLf972XHa4bHKaRVt/yTjMP3uOen463qXNO/OCh3y6/x083eZVXkQfkxbd7?=
- =?us-ascii?Q?V+xofLrMpmDGEs3PdgwgOuT/udlEl6RRV7JDnHcINMCBtJ+I0fb9vjV4b9+a?=
- =?us-ascii?Q?PshncTWwuHzebEwNuutazXG1QfI41lexyBKlZemS8aWRXhUcdXqkDpN2l04f?=
- =?us-ascii?Q?4taiMl6aKysPGWcOfCzitOhVZH1ITttMYt/28o5Gf2Bsi6Ki3VxI4I1MbHlx?=
- =?us-ascii?Q?kqMeROIS90/cvv6DXt+7uVU7LP1XOTHwuwDtsR8Hj84rb9GUEEcuxebvnrwx?=
- =?us-ascii?Q?7D3XsWV38joCwwofMtLBB3wRMLXIzL9qUruwrjSMINC?=
-X-Microsoft-Antispam-Message-Info: oMcfcKSljgrnNzAwD132gEatunWn6pApAxq312dm7ujN6TS9fJgOoH+fKY3mdWhODRqQuGgWcNsIgEHspbfLa1Zf/Vy7dpzpYwmiYz6dLlKhIOhYf9Pkkl2bT6Zc39WqLjIRlCNva7bHMoG7pasM65ozmmuB2X68EoWJViMAsJkTm5IEcu6/NoJFj0QZdJTaX4v3RQ+zmXcmz6Q50q/cnZbdbrOW7PGuqj/R+ZHYt4jMruS+Vh52k+5E7ZLCklPdKZiZ1ylZPwKo8vlGAqY5OTHuKCEktQ8V0NPMHdqsoYbc7EiEniEqm728erpqLLP6BCWfNV0FcWqaBn6EIyBTMNlYiH/IaMnL1jTI5Yoy0Nw=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4798;6:ECwgtKnBXSe6D1srHF2tCOBSkDly7A3je/Sho+Gh8ge8lIFndXyWj9uxzTmjGaIV2M1+kkkhZN0SftDL4zrlSbNYdNChqeK+hVyNX85wxM4tFn+OIgfmZ55KjZnqb/iGukFaR/uvB6CuUoW24xDpKNZHuM4F/d87WUROma7K/XU5atJ3DFdrMOMflQ7+mcvtc4FGig1sgQ4nK/bgSaFTfVU0GiaDIKuE68wAxkg43NUBCq697P/tpnXVV2ayb0OqePRIYM7cEHDijUxHtVeXscm4gjHHKNbwYxvVsaOCrqfLeKBbuOPpFXNv4hUEEOGwbowxcobm5JvOXAGJ9EiE9wVJ9dRAid22q2B/jucCwDsz+53JRyRq4Wm27d/BU+b7V0iAO9qrRjOjYtU/YDF6ykBs/QughaepK7GmQghKZojK5xbh+VIyMGjlxw/nlhYrjDd+nHXQuqRhB4Vp278QlA==;5:DN8ZnlcoR1B4NAejI5fAWBjaB1VxygQOo7gwxAANh4RFgbMEguWMlOtwptYlY3snl0nJeE8Jdf1W4pRWOTosTc1uDHWih6rVPPyk8wziiJKqqR0KN397MUNW/pswtPlp6UXzsgOJmAKeRQWPcWd5zm8RcAVo+cZ+LasUzYJ+hd8=;7:vFA5z6jGVL5BXC2a9FarDhxVeS76dZ/rEC0dynDcAV6n249Pd4p071iLINgFT4l2mS4BEI78uUdxH94Gv5KCwjibwkaAO0a5ob0s/IBpf88HEPwsEKxk2mPfxBs5ga1H0kuxq9IUorX9dvbtviqPCwAqityoxnkwc1DinwzbQGWg82vNq6jy3YrXJgp/2Z+UBNg2nrdLYxD0CQNJBWgzsBPjWaPyJK2uqMpnNZOSiSsh9eFY8+PC0OoNRKEzveOU
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2018 12:14:32.5845
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 986476a9-f80f-4c52-bf21-08d622174c2c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4798
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LX2160A SoC is based on Layerscape Chassis Generation 3.2 Architecture.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-LX2160A features an advanced 16 64-bit ARM v8 CortexA72 processor cores
-in 8 cluster, CCN508, GICv3,two 64-bit DDR4 memory controller, 8 I2C
-controllers, 3 dspi, 2 esdhc,2 USB 3.0, mmu 500, 3 SATA, 4 PL011 SBSA
-UARTs etc.
+------------------
 
-Signed-off-by: Ramneek Mehresh <ramneek.mehresh@nxp.com>
-Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+From: Sandipan Das <sandipan@linux.ibm.com>
+
+[ Upstream commit c715fcfda5a08edabaa15508742be926b7ee51db ]
+
+For powerpc64, redundant entries in the callchain are filtered out by
+determining the state of the return address and the stack frame using
+DWARF debug information.
+
+For making these filtering decisions we must analyze the debug
+information for the location corresponding to the program counter value,
+i.e. the first entry in the callchain, and not the LR value; otherwise,
+perf may filter out either the second or the third entry in the
+callchain incorrectly.
+
+This can be observed on a powerpc64le system running Fedora 27 as shown
+below.
+
+Case 1 - Attaching a probe at inet_pton+0x8 (binary offset 0x15af28).
+         Return address is still in LR and a new stack frame is not yet
+         allocated. The LR value, i.e. the second entry, should not be
+	 filtered out.
+
+  # objdump -d /usr/lib64/libc-2.26.so | less
+  ...
+  000000000010eb10 <gaih_inet.constprop.7>:
+  ...
+    10fa48:       78 bb e4 7e     mr      r4,r23
+    10fa4c:       0a 00 60 38     li      r3,10
+    10fa50:       d9 b4 04 48     bl      15af28 <inet_pton+0x8>
+    10fa54:       00 00 00 60     nop
+    10fa58:       ac f4 ff 4b     b       10ef04 <gaih_inet.constprop.7+0x3f4>
+  ...
+  0000000000110450 <getaddrinfo>:
+  ...
+    1105a8:       54 00 ff 38     addi    r7,r31,84
+    1105ac:       58 00 df 38     addi    r6,r31,88
+    1105b0:       69 e5 ff 4b     bl      10eb18 <gaih_inet.constprop.7+0x8>
+    1105b4:       78 1b 71 7c     mr      r17,r3
+    1105b8:       50 01 7f e8     ld      r3,336(r31)
+  ...
+  000000000015af20 <inet_pton>:
+    15af20:       0b 00 4c 3c     addis   r2,r12,11
+    15af24:       e0 c1 42 38     addi    r2,r2,-15904
+    15af28:       a6 02 08 7c     mflr    r0
+    15af2c:       f0 ff c1 fb     std     r30,-16(r1)
+    15af30:       f8 ff e1 fb     std     r31,-8(r1)
+  ...
+
+  # perf probe -x /usr/lib64/libc-2.26.so -a inet_pton+0x8
+  # perf record -e probe_libc:inet_pton -g ping -6 -c 1 ::1
+  # perf script
+
+Before:
+
+  ping  4507 [002] 514985.546540: probe_libc:inet_pton: (7fffa7dbaf28)
+              7fffa7dbaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
+              7fffa7d705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
+                 13fb52d70 _init+0xbfc (/usr/bin/ping)
+              7fffa7c836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
+              7fffa7c83898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+
+After:
+
+  ping  4507 [002] 514985.546540: probe_libc:inet_pton: (7fffa7dbaf28)
+              7fffa7dbaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
+              7fffa7d6fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
+              7fffa7d705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
+                 13fb52d70 _init+0xbfc (/usr/bin/ping)
+              7fffa7c836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
+              7fffa7c83898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+
+Case 2 - Attaching a probe at _int_malloc+0x180 (binary offset 0x9cf10).
+         Return address in still in LR and a new stack frame has already
+         been allocated but not used. The caller's caller, i.e. the third
+	 entry, is invalid and should be filtered out and not the second
+	 one.
+
+  # objdump -d /usr/lib64/libc-2.26.so | less
+  ...
+  000000000009cd90 <_int_malloc>:
+     9cd90:       17 00 4c 3c     addis   r2,r12,23
+     9cd94:       70 a3 42 38     addi    r2,r2,-23696
+     9cd98:       26 00 80 7d     mfcr    r12
+     9cd9c:       f8 ff e1 fb     std     r31,-8(r1)
+     9cda0:       17 00 e4 3b     addi    r31,r4,23
+     9cda4:       d8 ff 61 fb     std     r27,-40(r1)
+     9cda8:       78 23 9b 7c     mr      r27,r4
+     9cdac:       1f 00 bf 2b     cmpldi  cr7,r31,31
+     9cdb0:       f0 ff c1 fb     std     r30,-16(r1)
+     9cdb4:       b0 ff c1 fa     std     r22,-80(r1)
+     9cdb8:       78 1b 7e 7c     mr      r30,r3
+     9cdbc:       08 00 81 91     stw     r12,8(r1)
+     9cdc0:       11 ff 21 f8     stdu    r1,-240(r1)
+     9cdc4:       4c 01 9d 41     bgt     cr7,9cf10 <_int_malloc+0x180>
+     9cdc8:       20 00 a4 2b     cmpldi  cr7,r4,32
+  ...
+     9cf08:       00 00 00 60     nop
+     9cf0c:       00 00 42 60     ori     r2,r2,0
+     9cf10:       e4 06 ff 7b     rldicr  r31,r31,0,59
+     9cf14:       40 f8 a4 7f     cmpld   cr7,r4,r31
+     9cf18:       68 05 9d 41     bgt     cr7,9d480 <_int_malloc+0x6f0>
+  ...
+  000000000009e3c0 <tcache_init.part.4>:
+  ...
+     9e420:       40 02 80 38     li      r4,576
+     9e424:       78 fb e3 7f     mr      r3,r31
+     9e428:       71 e9 ff 4b     bl      9cd98 <_int_malloc+0x8>
+     9e42c:       00 00 a3 2f     cmpdi   cr7,r3,0
+     9e430:       78 1b 7e 7c     mr      r30,r3
+  ...
+  000000000009f7a0 <__libc_malloc>:
+  ...
+     9f8f8:       00 00 89 2f     cmpwi   cr7,r9,0
+     9f8fc:       1c ff 9e 40     bne     cr7,9f818 <__libc_malloc+0x78>
+     9f900:       c9 ea ff 4b     bl      9e3c8 <tcache_init.part.4+0x8>
+     9f904:       00 00 00 60     nop
+     9f908:       e8 90 22 e9     ld      r9,-28440(r2)
+  ...
+
+  # perf probe -x /usr/lib64/libc-2.26.so -a _int_malloc+0x180
+  # perf record -e probe_libc:_int_malloc -g ./test-malloc
+  # perf script
+
+Before:
+
+  test-malloc  6554 [009] 515975.797403: probe_libc:_int_malloc: (7fffa6e6cf10)
+              7fffa6e6cf10 _int_malloc+0x180 (/usr/lib64/libc-2.26.so)
+              7fffa6dd0000 [unknown] (/usr/lib64/libc-2.26.so)
+              7fffa6e6f904 malloc+0x164 (/usr/lib64/libc-2.26.so)
+              7fffa6e6f9fc malloc+0x25c (/usr/lib64/libc-2.26.so)
+                  100006b4 main+0x38 (/home/testuser/test-malloc)
+              7fffa6df36a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
+              7fffa6df3898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+
+After:
+
+  test-malloc  6554 [009] 515975.797403: probe_libc:_int_malloc: (7fffa6e6cf10)
+              7fffa6e6cf10 _int_malloc+0x180 (/usr/lib64/libc-2.26.so)
+              7fffa6e6e42c tcache_init.part.4+0x6c (/usr/lib64/libc-2.26.so)
+              7fffa6e6f904 malloc+0x164 (/usr/lib64/libc-2.26.so)
+              7fffa6e6f9fc malloc+0x25c (/usr/lib64/libc-2.26.so)
+                  100006b4 main+0x38 (/home/sandipan/test-malloc)
+              7fffa6df36a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
+              7fffa6df3898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
+                         0 [unknown] ([unknown])
+
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Maynard Johnson <maynard@us.ibm.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Fixes: a60335ba3298 ("perf tools powerpc: Adjust callchain based on DWARF debug info")
+Link: http://lkml.kernel.org/r/24bb726d91ed173aebc972ec3f41a2ef2249434e.1530724939.git.sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 693 +++++++++++++++++++++++++
- 1 file changed, 693 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-new file mode 100644
-index 0000000..46eea16
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-@@ -0,0 +1,693 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Device Tree Include file for Layerscape-LX2160A family SoC.
-+//
-+// Copyright 2018 NXP
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/memreserve/ 0x80000000 0x00010000;
-+
-+/ {
-+	compatible = "fsl,lx2160a";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		// 8 clusters having 2 Cortex-A72 cores each
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x0>;
-+			clocks = <&clockgen 1 0>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster0_l2>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x1>;
-+			clocks = <&clockgen 1 0>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster0_l2>;
-+		};
-+
-+		cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x100>;
-+			clocks = <&clockgen 1 1>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster1_l2>;
-+		};
-+
-+		cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x101>;
-+			clocks = <&clockgen 1 1>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster1_l2>;
-+		};
-+
-+		cpu@200 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x200>;
-+			clocks = <&clockgen 1 2>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster2_l2>;
-+		};
-+
-+		cpu@201 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x201>;
-+			clocks = <&clockgen 1 2>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster2_l2>;
-+		};
-+
-+		cpu@300 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x300>;
-+			clocks = <&clockgen 1 3>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster3_l2>;
-+		};
-+
-+		cpu@301 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x301>;
-+			clocks = <&clockgen 1 3>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster3_l2>;
-+		};
-+
-+		cpu@400 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x400>;
-+			clocks = <&clockgen 1 4>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster4_l2>;
-+		};
-+
-+		cpu@401 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x401>;
-+			clocks = <&clockgen 1 4>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster4_l2>;
-+		};
-+
-+		cpu@500 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x500>;
-+			clocks = <&clockgen 1 5>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster5_l2>;
-+		};
-+
-+		cpu@501 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x501>;
-+			clocks = <&clockgen 1 5>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster5_l2>;
-+		};
-+
-+		cpu@600 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x600>;
-+			clocks = <&clockgen 1 6>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster6_l2>;
-+		};
-+
-+		cpu@601 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x601>;
-+			clocks = <&clockgen 1 6>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster6_l2>;
-+		};
-+
-+		cpu@700 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x700>;
-+			clocks = <&clockgen 1 7>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster7_l2>;
-+		};
-+
-+		cpu@701 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a72";
-+			reg = <0x701>;
-+			clocks = <&clockgen 1 7>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <128>;
-+			i-cache-size = <0xC000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <192>;
-+			next-level-cache = <&cluster7_l2>;
-+		};
-+
-+		cluster0_l2: l2-cache0 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+
-+		cluster1_l2: l2-cache1 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+
-+		cluster2_l2: l2-cache2 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+
-+		cluster3_l2: l2-cache3 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+
-+		cluster4_l2: l2-cache4 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+
-+		cluster5_l2: l2-cache5 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+
-+		cluster6_l2: l2-cache6 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+
-+		cluster7_l2: l2-cache7 {
-+			compatible = "cache";
-+			cache-size = <0x100000>;
-+			cache-line-size = <64>;
-+			cache-sets = <1024>;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	gic: interrupt-controller@6000000 {
-+		compatible = "arm,gic-v3";
-+		reg = <0x0 0x06000000 0 0x10000>, // GIC Dist
-+			<0x0 0x06200000 0 0x200000>, // GICR (RD_base +
-+						     // SGI_base)
-+			<0x0 0x0c0c0000 0 0x2000>, // GICC
-+			<0x0 0x0c0d0000 0 0x1000>, // GICH
-+			<0x0 0x0c0e0000 0 0x20000>; // GICV
-+		#interrupt-cells = <3>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+		interrupt-controller;
-+		interrupts = <1 9 0x4>;
-+
-+		its: gic-its@6020000 {
-+			compatible = "arm,gic-v3-its";
-+			msi-controller;
-+			reg = <0x0 0x6020000 0 0x20000>;
-+		};
-+	};
-+
-+	rstcr: syscon@1e60000 {
-+		compatible = "syscon";
-+		reg = <0x0 0x1e60000 0x0 0x4>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <1 13 4>,
-+			     <1 14 4>,
-+			     <1 11 4>,
-+			     <1 10 4>;
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a72-pmu";
-+		interrupts = <1 7 0x8>; // PMU PPI, Level low type
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	memory@80000000 {
-+		// DRAM space - 1, size : 2 GB DRAM
-+		device_type = "memory";
-+		reg = <0x00000000 0x80000000 0 0x80000000>;
-+	};
-+
-+	ddr1: memory-controller@1080000 {
-+		compatible = "fsl,qoriq-memory-controller";
-+		reg = <0x0 0x1080000 0x0 0x1000>;
-+		interrupts = <0 17 0x4>;
-+		little-endian;
-+	};
-+
-+	ddr2: memory-controller@1090000 {
-+		compatible = "fsl,qoriq-memory-controller";
-+		reg = <0x0 0x1090000 0x0 0x1000>;
-+		interrupts = <0 18 0x4>;
-+		little-endian;
-+	};
-+
-+	sysclk: sysclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+		clock-output-names = "sysclk";
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		clockgen: clocking@1300000 {
-+			compatible = "fsl,lx2160a-clockgen";
-+			reg = <0 0x1300000 0 0xa0000>;
-+			#clock-cells = <2>;
-+			clocks = <&sysclk>;
-+		};
-+
-+		crypto: crypto@8000000 {
-+			compatible = "fsl,sec-v5.0", "fsl,sec-v4.0";
-+			fsl,sec-era = <10>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0x0 0x00 0x8000000 0x100000>;
-+			reg = <0x00 0x8000000 0x0 0x100000>;
-+			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
-+			dma-coherent;
-+			status = "disabled";
-+
-+			sec_jr0: jr@10000 {
-+				compatible = "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        = <0x10000 0x10000>;
-+				interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			sec_jr1: jr@20000 {
-+				compatible = "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        = <0x20000 0x10000>;
-+				interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			sec_jr2: jr@30000 {
-+				compatible = "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        = <0x30000 0x10000>;
-+				interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			sec_jr3: jr@40000 {
-+				compatible = "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        = <0x40000 0x10000>;
-+				interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+		};
-+
-+		dcfg: dcfg@1e00000 {
-+			compatible = "fsl,lx2160a-dcfg", "syscon";
-+			reg = <0x0 0x1e00000 0x0 0x10000>;
-+			little-endian;
-+		};
-+
-+		gpio0: gpio@2300000 {
-+			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2300000 0x0 0x10000>;
-+			interrupts = <0 36 0x4>; // Level high type
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio1: gpio@2310000 {
-+			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2310000 0x0 0x10000>;
-+			interrupts = <0 36 0x4>; // Level high type
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio2: gpio@2320000 {
-+			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2320000 0x0 0x10000>;
-+			interrupts = <0 37 0x4>; // Level high type
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		gpio3: gpio@2330000 {
-+			compatible = "fsl,qoriq-gpio";
-+			reg = <0x0 0x2330000 0x0 0x10000>;
-+			interrupts = <0 37 0x4>; // Level high type
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+
-+		i2c0: i2c@2000000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2000000 0x0 0x10000>;
-+			interrupts = <0 34 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			fsl-scl-gpio = <&gpio2 15 0>;
-+			status = "disabled";
-+		};
-+
-+		i2c1: i2c@2010000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2010000 0x0 0x10000>;
-+			interrupts = <0 34 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			status = "disabled";
-+		};
-+
-+		i2c2: i2c@2020000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2020000 0x0 0x10000>;
-+			interrupts = <0 35 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@2030000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2030000 0x0 0x10000>;
-+			interrupts = <0 35 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			status = "disabled";
-+		};
-+
-+		i2c4: i2c@2040000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2040000 0x0 0x10000>;
-+			interrupts = <0 74 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			fsl-scl-gpio = <&gpio2 16 0>;
-+			status = "disabled";
-+		};
-+
-+		i2c5: i2c@2050000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2050000 0x0 0x10000>;
-+			interrupts = <0 74 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@2060000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2060000 0x0 0x10000>;
-+			interrupts = <0 75 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			status = "disabled";
-+		};
-+
-+		i2c7: i2c@2070000 {
-+			compatible = "fsl,vf610-i2c";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x0 0x2070000 0x0 0x10000>;
-+			interrupts = <0 75 0x4>; // Level high type
-+			clock-names = "i2c";
-+			clocks = <&clockgen 4 7>;
-+			status = "disabled";
-+		};
-+
-+		uart0: serial@21c0000 {
-+			device_type = "serial";
-+			compatible = "arm,pl011","arm,sbsa-uart";
-+			reg = <0x0 0x21c0000 0x0 0x1000>;
-+			interrupts = <0 32 0x4>;	// Level high type
-+			current-speed = <115200>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@21d0000 {
-+			device_type = "serial";
-+			compatible = "arm,pl011","arm,sbsa-uart";
-+			reg = <0x0 0x21d0000 0x0 0x1000>;
-+			interrupts = <0 33 0x4>;	// Level high type
-+			current-speed = <115200>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@21e0000 {
-+			device_type = "serial";
-+			compatible = "arm,pl011","arm,sbsa-uart";
-+			reg = <0x0 0x21e0000 0x0 0x1000>;
-+			interrupts = <0 72 0x4>;	// Level high type
-+			current-speed = <115200>;
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@21f0000 {
-+			device_type = "serial";
-+			compatible = "arm,pl011","arm,sbsa-uart";
-+			reg = <0x0 0x21f0000 0x0 0x1000>;
-+			interrupts = <0 73 0x4>;	// Level high type
-+			current-speed = <115200>;
-+			status = "disabled";
-+		};
-+
-+		smmu: iommu@5000000 {
-+			compatible = "arm,mmu-500";
-+			reg = <0 0x5000000 0 0x800000>;
-+			#iommu-cells = <1>;
-+			#global-interrupts = <14>;
-+			interrupts = <0 13 4>, // global secure fault
-+				     <0 14 4>, // combined secure interrupt
-+				     <0 15 4>, // global non-secure fault
-+				     <0 16 4>, // combined non-secure interrupt
-+				// performance counter interrupts 0-9
-+				     <0 211 4>, <0 212 4>,
-+				     <0 213 4>, <0 214 4>,
-+				     <0 215 4>, <0 216 4>,
-+				     <0 217 4>, <0 218 4>,
-+				     <0 219 4>, <0 220 4>,
-+				// per context interrupt, 64 interrupts
-+				     <0 146 4>, <0 147 4>,
-+				     <0 148 4>, <0 149 4>,
-+				     <0 150 4>, <0 151 4>,
-+				     <0 152 4>, <0 153 4>,
-+				     <0 154 4>, <0 155 4>,
-+				     <0 156 4>, <0 157 4>,
-+				     <0 158 4>, <0 159 4>,
-+				     <0 160 4>, <0 161 4>,
-+				     <0 162 4>, <0 163 4>,
-+				     <0 164 4>, <0 165 4>,
-+				     <0 166 4>, <0 167 4>,
-+				     <0 168 4>, <0 169 4>,
-+				     <0 170 4>, <0 171 4>,
-+				     <0 172 4>, <0 173 4>,
-+				     <0 174 4>, <0 175 4>,
-+				     <0 176 4>, <0 177 4>,
-+				     <0 178 4>, <0 179 4>,
-+				     <0 180 4>, <0 181 4>,
-+				     <0 182 4>, <0 183 4>,
-+				     <0 184 4>, <0 185 4>,
-+				     <0 186 4>, <0 187 4>,
-+				     <0 188 4>, <0 189 4>,
-+				     <0 190 4>, <0 191 4>,
-+				     <0 192 4>, <0 193 4>,
-+				     <0 194 4>, <0 195 4>,
-+				     <0 196 4>, <0 197 4>,
-+				     <0 198 4>, <0 199 4>,
-+				     <0 200 4>, <0 201 4>,
-+				     <0 202 4>, <0 203 4>,
-+				     <0 204 4>, <0 205 4>,
-+				     <0 206 4>, <0 207 4>,
-+				     <0 208 4>, <0 209 4>;
-+			dma-coherent;
-+		};
-+
-+		usb0: usb3@3100000 {
-+			compatible = "snps,dwc3";
-+			reg = <0x0 0x3100000 0x0 0x10000>;
-+			interrupts = <0 80 0x4>; // Level high type
-+			dr_mode = "host";
-+			snps,quirk-frame-length-adjustment = <0x20>;
-+			snps,dis_rxdet_inp3_quirk;
-+			status = "disabled";
-+		};
-+
-+		usb1: usb3@3110000 {
-+			compatible = "snps,dwc3";
-+			reg = <0x0 0x3110000 0x0 0x10000>;
-+			interrupts = <0 81 0x4>; // Level high type
-+			dr_mode = "host";
-+			snps,quirk-frame-length-adjustment = <0x20>;
-+			snps,dis_rxdet_inp3_quirk;
-+			status = "disabled";
-+		};
-+
-+		watchdog@23a0000 {
-+			compatible = "arm,sbsa-gwdt";
-+			reg = <0x0 0x23a0000 0 0x1000>,
-+			      <0x0 0x2390000 0 0x1000>;
-+			interrupts = <0 59 4>;
-+			timeout-sec = <30>;
-+		};
-+
-+	};
-+};
--- 
-2.7.4
+--- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
++++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+@@ -250,7 +250,7 @@ int arch_skip_callchain_idx(struct threa
+ 	if (!chain || chain->nr < 3)
+ 		return skip_slot;
+ 
+-	ip = chain->ips[2];
++	ip = chain->ips[1];
+ 
+ 	thread__find_addr_location(thread, PERF_RECORD_MISC_USER,
+ 			MAP__FUNCTION, ip, &al);
+
 
