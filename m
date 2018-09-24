@@ -2,45 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAD_ENC_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F039EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C95C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6AF9208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6AF9208E3
+	by mail.kernel.org (Postfix) with ESMTP id 383D3208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383D3208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbeIXRif (ORCPT
+        id S1728900AbeIXRii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:38:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50116 "EHLO
+        Mon, 24 Sep 2018 13:38:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728817AbeIXRie (ORCPT
+        with ESMTP id S1728817AbeIXRig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:38:34 -0400
+        Mon, 24 Sep 2018 13:38:36 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 77CFF1061;
-        Mon, 24 Sep 2018 11:36:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C2A8B1065;
+        Mon, 24 Sep 2018 11:36:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 002/105] hfsplus: dont return 0 when fill_super() failed
-Date:   Mon, 24 Sep 2018 13:32:48 +0200
-Message-Id: <20180924113113.456720450@linuxfoundation.org>
+Subject: [PATCH 3.18 020/105] smb3: fix reset of bytes read and written stats
+Date:   Mon, 24 Sep 2018 13:33:06 +0200
+Message-Id: <20180924113115.610259455@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -58,47 +52,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit 7464726cb5998846306ed0a7d6714afb2e37b25d ]
+[ Upstream commit c281bc0c7412308c7ec0888904f7c99353da4796 ]
 
-syzbot is reporting NULL pointer dereference at mount_fs() [1].  This is
-because hfsplus_fill_super() is by error returning 0 when
-hfsplus_fill_super() detected invalid filesystem image, and mount_bdev()
-is returning NULL because dget(s->s_root) == NULL if s->s_root == NULL,
-and mount_fs() is accessing root->d_sb because IS_ERR(root) == false if
-root == NULL.  Fix this by returning -EINVAL when hfsplus_fill_super()
-detected invalid filesystem image.
+echo 0 > /proc/fs/cifs/Stats is supposed to reset the stats
+but there were four (see example below) that were not reset
+(bytes read and witten, total vfs ops and max ops
+at one time).
 
-[1] https://syzkaller.appspot.com/bug?id=21acb6850cecbc960c927229e597158cf35f33d0
+...
+0 session 0 share reconnects
+Total vfs operations: 100 maximum at one time: 2
 
-Link: http://lkml.kernel.org/r/d83ce31a-874c-dd5b-f790-41405983a5be@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>
-Reviewed-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+1) \\localhost\test
+SMBs: 0
+Bytes read: 502092  Bytes written: 31457286
+TreeConnects: 0 total 0 failed
+TreeDisconnects: 0 total 0 failed
+...
+
+This patch fixes cifs_stats_proc_write to properly reset
+those four.
+
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/hfsplus/super.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/cifs_debug.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -518,8 +518,10 @@ static int hfsplus_fill_super(struct sup
- 	hfsplus_cat_build_key(sb, fd.search_key, HFSPLUS_ROOT_CNID, &str);
- 	if (!hfs_brec_read(&fd, &entry, sizeof(entry))) {
- 		hfs_find_exit(&fd);
--		if (entry.type != cpu_to_be16(HFSPLUS_FOLDER))
-+		if (entry.type != cpu_to_be16(HFSPLUS_FOLDER)) {
-+			err = -EINVAL;
- 			goto out_put_root;
-+		}
- 		inode = hfsplus_iget(sb, be32_to_cpu(entry.folder.id));
- 		if (IS_ERR(inode)) {
- 			err = PTR_ERR(inode);
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -271,6 +271,10 @@ static ssize_t cifs_stats_proc_write(str
+ 		atomic_set(&totBufAllocCount, 0);
+ 		atomic_set(&totSmBufAllocCount, 0);
+ #endif /* CONFIG_CIFS_STATS2 */
++		spin_lock(&GlobalMid_Lock);
++		GlobalMaxActiveXid = 0;
++		GlobalCurrentXid = 0;
++		spin_unlock(&GlobalMid_Lock);
+ 		spin_lock(&cifs_tcp_ses_lock);
+ 		list_for_each(tmp1, &cifs_tcp_ses_list) {
+ 			server = list_entry(tmp1, struct TCP_Server_Info,
+@@ -283,6 +287,10 @@ static ssize_t cifs_stats_proc_write(str
+ 							  struct cifs_tcon,
+ 							  tcon_list);
+ 					atomic_set(&tcon->num_smbs_sent, 0);
++					spin_lock(&tcon->stat_lock);
++					tcon->bytes_read = 0;
++					tcon->bytes_written = 0;
++					spin_unlock(&tcon->stat_lock);
+ 					if (server->ops->clear_stats)
+ 						server->ops->clear_stats(tcon);
+ 				}
 
 
