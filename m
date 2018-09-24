@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 689E0ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 415D4C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E17421486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E17421486
+	by mail.kernel.org (Postfix) with ESMTP id 06BFE2148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06BFE2148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733076AbeIXS2K (ORCPT
+        id S1733088AbeIXS2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:28:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57100 "EHLO
+        Mon, 24 Sep 2018 14:28:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57112 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730440AbeIXS2J (ORCPT
+        with ESMTP id S1732421AbeIXS2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:28:09 -0400
+        Mon, 24 Sep 2018 14:28:12 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9D0881094;
-        Mon, 24 Sep 2018 12:26:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB8EA1098;
+        Mon, 24 Sep 2018 12:26:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
-        Sasha Neftin <sasha.neftin@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.14 173/173] e1000e: Fix check_for_link return value with autoneg off
-Date:   Mon, 24 Sep 2018 13:53:27 +0200
-Message-Id: <20180924113127.569249115@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 145/173] input: rohm_bu21023: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+Date:   Mon, 24 Sep 2018 13:52:59 +0200
+Message-Id: <20180924113126.179643116@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,49 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Poirier <bpoirier@suse.com>
+From: Peter Rosin <peda@axentia.se>
 
-commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 upstream.
+[ Upstream commit 193c2a07cfaacb9249ab0e3d34bce32490879355 ]
 
-When autoneg is off, the .check_for_link callback functions clear the
-get_link_status flag and systematically return a "pseudo-error". This means
-that the link is not detected as up until the next execution of the
-e1000_watchdog_task() 2 seconds later.
+Locking the root adapter for __i2c_transfer will deadlock if the
+device sits behind a mux-locked I2C mux. Switch to the finer-grained
+i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
+sit behind a mux-locked mux, the two locking variants are equivalent.
 
-Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/ethernet/intel/e1000e/ich8lan.c |    2 +-
- drivers/net/ethernet/intel/e1000e/mac.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/touchscreen/rohm_bu21023.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1598,7 +1598,7 @@ static s32 e1000_check_for_copper_link_i
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
+--- a/drivers/input/touchscreen/rohm_bu21023.c
++++ b/drivers/input/touchscreen/rohm_bu21023.c
+@@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2
+ 	msg[1].len = len;
+ 	msg[1].buf = buf;
  
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -443,7 +443,7 @@ s32 e1000e_check_for_copper_link(struct
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
+-	i2c_lock_adapter(adap);
++	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
  
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
+ 	for (i = 0; i < 2; i++) {
+ 		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
+@@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2
+ 		}
+ 	}
+ 
+-	i2c_unlock_adapter(adap);
++	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
+ 
+ 	return ret;
+ }
 
 
