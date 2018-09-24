@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5458C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA6AECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A54521477
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622EF21477
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:47:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfSJ8q3L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A54521477
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKU2WXpx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622EF21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbeIXGqe (ORCPT
+        id S1727561AbeIXGqk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 02:46:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44679 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbeIXGqe (ORCPT
+        Mon, 24 Sep 2018 02:46:40 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38371 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbeIXGqk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 02:46:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g2-v6so405336pgu.11;
-        Sun, 23 Sep 2018 17:46:57 -0700 (PDT)
+        Mon, 24 Sep 2018 02:46:40 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r77-v6so3287538pgr.5;
+        Sun, 23 Sep 2018 17:47:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ouqXLjUunN0zjItu13Z4M/nn8hcgnEka9D6ynQqkQts=;
-        b=BfSJ8q3L7S3UhQoP5s5ZbIXTB6pPwwl7TSYhUyrIxThgh0kCyN8WBd3KhOzR6kJJhp
-         KzoGoTvNAUJLpXp14avtHvUMgY6w5VAq213zp4Fmndx73kKMnzNGi9FpXCZoXaWLiBhr
-         SWSGe6SeF0/5ormFH32R3cezDL84AcGGGKqw1Ud+y4o77QSD27f5v0vWWUCIxYq49g1v
-         bYXAVakpl8RQu5fdN5MAaa+zed8ntgedJx5UjADA1ILwRZLgtABPMb4t17+JA3AIG6Mh
-         d1uHjr2qv3W5QVybv6mIWjXATvS1EgISZu3Hlc/OMXKhaNAnE5gKxNwoDoAXW7sWeMPv
-         JEqQ==
+        bh=AJU/OMIS95Lf3Tx6/awWt2CDF0phION8a6f3KzZn+vM=;
+        b=gKU2WXpxx8gqqyh9kjjIL4k/qRd2WzOpM+IKV5piWz2GX5/tyarPgCbA6n++7TpHSu
+         4SLmpcq1nOXWToTd/tD5RuSlDVIJsU9i/mn3YykJxX0XqkZR92pftQiNN7lDUhq4Kj67
+         UjxKLE1h+xzwxLumupaRjbWHURw6lwSrfhflLA/wLJggyA8qXq6366zQLkiav7/Hufq+
+         EioahlQNjhr/3zorOmPEHXjNaH24O14kJzABOul0pD60gKw1dmix8waGP+R9kL2q7pGT
+         9WXwfSpuNYiGqvbLDfLXfkAHCjGuNK4/yGrdMRPvdEAj2sJJebBge/LKDvYvHOzlqJnT
+         Joqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ouqXLjUunN0zjItu13Z4M/nn8hcgnEka9D6ynQqkQts=;
-        b=Cz/XVg+mW/tf7FMVaTKa/40TmOf4J94uwx6FX+aL+6jF9hJ6KHMKvVBu1R6fgJmwDi
-         sYw9irTRpc5uqEnJdnXuQJt23J/kE2HyU4tyZg4F3KYaB1WTW1k1mu1j+g4rZZ6gkJOJ
-         Tc5hYRszcsh/8aIGCzKXIyoR1pICBJz9jwoClJ6c7JV2TRutB/zFy0wXV1NYBTYNjJuO
-         JARX9pBvMlDnyzNQF12EVmDhGPzYGDY7PJMbHnAzIqh+FELts8Lo92qmi//IZu4dCalI
-         p4Q1ZaA5Cr978/u+6/fQbQB1TYw1fD+Y5sEx2v2MHFJgfRRRzfl5xSYxv1g83RNFUaVr
-         f2GQ==
-X-Gm-Message-State: ABuFfoi0/OlEWNnpdM7yYztqlHG+05StxGdjkiRH2tvL3CbYuMqkUJ6M
-        uJYPAOXy6W65fSWIGH5Mrmw=
-X-Google-Smtp-Source: ACcGV61Yp8r3Hla30JwcleOAq02poWVLVt7pfIt8hCmMUqg0heCx5hndpVcDs9PDE+MgkRR2d4PVjQ==
-X-Received: by 2002:a63:d256:: with SMTP id t22-v6mr7193480pgi.335.1537750017015;
-        Sun, 23 Sep 2018 17:46:57 -0700 (PDT)
+        bh=AJU/OMIS95Lf3Tx6/awWt2CDF0phION8a6f3KzZn+vM=;
+        b=jNjvLptCg0Tzu8zIYgTJE1hF4/pf9AsNLkhMniwnpXIHQ5QNgANaQBlvc0TbewFFtL
+         dX5aZ2dOdMrxNd8wcdINtIpIkMecSjojoUhGZtjq2RXbvNnCQ0CGAOlO00KqOuNnXcm2
+         Js9aA1zzoYdRTizj9deQB5o8tO2DrkRARYnyPdhivvGKuimu2BxgxDg8Oh3/bIU5T2Fu
+         0JC3McNqVOeqO1vEyEznjm4uO3GphvkVa3cvfcqWxNvyjn0NszDP3BL9rPGcvJvEtw+T
+         tehRIJspJU9saHzZfWrBxirF645yBpvdB49RcIvbe0AAtl1/ulobO+9OYgVF0U+7d+wV
+         I49Q==
+X-Gm-Message-State: APzg51B22gXciIh/MXn89EtCaZI8VtKOZliY1GaBSuLAkdCa45YMVpTC
+        M1VLQV2EeQkYvtdT8PMfsG4=
+X-Google-Smtp-Source: ANB0VdZgCXGORQFbxvpnupv3C+fgv6mQsLbDdYx5GH9zmi1/bifO5LaL7vL0WdyOaiyNTVMpJcJqvQ==
+X-Received: by 2002:a62:7510:: with SMTP id q16-v6mr8046015pfc.225.1537750022895;
+        Sun, 23 Sep 2018 17:47:02 -0700 (PDT)
 Received: from localhost.localdomain (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.gmail.com with ESMTPSA id 82-v6sm5121839pfr.115.2018.09.23.17.46.51
+        by smtp.gmail.com with ESMTPSA id 82-v6sm5121839pfr.115.2018.09.23.17.46.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 17:46:56 -0700 (PDT)
+        Sun, 23 Sep 2018 17:47:02 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/20] memory: tegra: Read client ID on GART page fault
-Date:   Mon, 24 Sep 2018 03:41:43 +0300
-Message-Id: <20180924004153.8232-11-digetx@gmail.com>
+Subject: [PATCH v4 11/20] memory: tegra: Use of_device_get_match_data()
+Date:   Mon, 24 Sep 2018 03:41:44 +0300
+Message-Id: <20180924004153.8232-12-digetx@gmail.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924004153.8232-1-digetx@gmail.com>
 References: <20180924004153.8232-1-digetx@gmail.com>
@@ -80,45 +80,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the device tree binding changes, now Memory Controller has access to
-GART registers. Hence it is now possible to read client ID on GART page
-fault to get information about what memory client causes the fault.
+There is no need to match device with the DT node since it was already
+matched, use of_device_get_match_data() helper to get the match-data.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/mc.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/memory/tegra/mc.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index 1b4ceefd82f9..5454ffe5b2e0 100644
+index 5454ffe5b2e0..cdc33f93cf7c 100644
 --- a/drivers/memory/tegra/mc.c
 +++ b/drivers/memory/tegra/mc.c
-@@ -38,6 +38,7 @@
+@@ -11,8 +11,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
++#include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <linux/sort.h>
  
- #define MC_ERR_ADR 0x0c
+@@ -619,23 +618,18 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
  
-+#define MC_GART_ERROR_REQ		0x30
- #define MC_DECERR_EMEM_OTHERS_STATUS	0x58
- #define MC_SECURITY_VIOLATION_STATUS	0x74
+ static int tegra_mc_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *match;
+ 	struct resource *res;
+ 	struct tegra_mc *mc;
+ 	void *isr;
+ 	int err;
  
-@@ -575,8 +576,15 @@ static __maybe_unused irqreturn_t tegra20_mc_irq(int irq, void *data)
- 			break;
+-	match = of_match_node(tegra_mc_of_match, pdev->dev.of_node);
+-	if (!match)
+-		return -ENODEV;
+-
+ 	mc = devm_kzalloc(&pdev->dev, sizeof(*mc), GFP_KERNEL);
+ 	if (!mc)
+ 		return -ENOMEM;
  
- 		case MC_INT_INVALID_GART_PAGE:
--			dev_err_ratelimited(mc->dev, "%s\n", error);
--			continue;
-+			reg = MC_GART_ERROR_REQ;
-+			value = mc_readl(mc, reg);
-+
-+			id = (value >> 1) & mc->soc->client_id_mask;
-+			desc = error_names[2];
-+
-+			if (value & BIT(0))
-+				direction = "write";
-+			break;
+ 	platform_set_drvdata(pdev, mc);
+ 	spin_lock_init(&mc->lock);
+-	mc->soc = match->data;
++	mc->soc = of_device_get_match_data(&pdev->dev);
+ 	mc->dev = &pdev->dev;
  
- 		case MC_INT_SECURITY_VIOLATION:
- 			reg = MC_SECURITY_VIOLATION_STATUS;
+ 	/* length of MC tick in nanoseconds */
 -- 
 2.19.0
 
