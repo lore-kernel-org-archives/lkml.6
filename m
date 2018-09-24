@@ -2,103 +2,88 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48288C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC32ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB72921480
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:18:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB72921480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
+	by mail.kernel.org (Postfix) with ESMTP id 21C3D208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C3D208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732958AbeIXXVi (ORCPT
+        id S1733095AbeIXXVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 19:21:38 -0400
-Received: from www381.your-server.de ([78.46.137.84]:49108 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728758AbeIXXVi (ORCPT
+        Mon, 24 Sep 2018 19:21:54 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45240 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729008AbeIXXVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 19:21:38 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <lars@metafoo.de>)
-        id 1g4UV5-0003SI-4M; Mon, 24 Sep 2018 19:18:23 +0200
-Received: from [188.174.126.27] (helo=[192.168.178.22])
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <lars@metafoo.de>)
-        id 1g4UV4-000V1l-U5; Mon, 24 Sep 2018 19:18:23 +0200
-Subject: Re: [PATCH] iio: adc: Fix potential integer overflow
-To:     Jonathan Cameron <jic23@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180918125314.GA12752@embeddedor.com>
- <20180922144230.7d5e6c80@archlinux>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <b16657d2-250e-2cef-5aca-2c32b3fac8a4@metafoo.de>
-Date:   Mon, 24 Sep 2018 19:18:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 24 Sep 2018 19:21:54 -0400
+Received: by mail-ed1-f66.google.com with SMTP id j2-v6so3639297edp.12;
+        Mon, 24 Sep 2018 10:18:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=stqb3sC4bsi7+FVU3qTZFQ2qIQ8ZS4hAa3YPz1rbdAw=;
+        b=PQk7YwtFYCRMIk7oL99Mu1a2+LVZaezzObJ3Y0nUM9i9WzEk6/LWUWIvAo6gv4WFvL
+         VZNuZ5NHBDc54ie/qS7GI01tWLbuLansLISSNE0nfyK1bZhqtxxO7RtURTtQfOWuAejF
+         AS+aZmWkl+iZHsnscq2uoWJ4QPdGHt7LAjQR+56tgWjdnInXrEiACcU3oAQhDrAuwLFA
+         /dM3JWhkbq4geV1XB3ggksqtlWr4tVyel8jWvr1391J67LHxM1NnDtghYkmiHm0e7Bn8
+         AMVLGDk4vfpEnc6J4dmb1Dr94YAkKezj6deDGxO2F43NUOI1ngAbnwG5wBI1Gg2uzl2k
+         ad3A==
+X-Gm-Message-State: ABuFfohNoDOEPK59N5Bvz/hhMf723pR8l6keNL7llMW0Cfp/fOnN7FkI
+        x926vqFEog9dmXuZGsz4oBE=
+X-Google-Smtp-Source: ACcGV63uzFb5dSAB2svAZMJMY4+7+bG5kFHYHNg6exocJJcI1dLoj/JcgPcuaBwe5zxAYRy9js+WvQ==
+X-Received: by 2002:aa7:c759:: with SMTP id c25-v6mr1259781eds.231.1537809524521;
+        Mon, 24 Sep 2018 10:18:44 -0700 (PDT)
+Received: from kozik-lap ([178.38.103.27])
+        by smtp.googlemail.com with ESMTPSA id y42-v6sm4320448edb.83.2018.09.24.10.18.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 10:18:43 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 19:18:41 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 2/2] ARM: dts: exynos: DT for v4.20 (or 5.0)
+Message-ID: <20180924171841.GA11520@kozik-lap>
+References: <20180921174520.9126-1-krzk@kernel.org>
+ <20180923134742.pugsdeozfp3lp56a@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20180922144230.7d5e6c80@archlinux>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24981/Mon Sep 24 15:50:40 2018)
+Content-Disposition: inline
+In-Reply-To: <20180923134742.pugsdeozfp3lp56a@localhost>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/22/2018 03:42 PM, Jonathan Cameron wrote:
-> On Tue, 18 Sep 2018 07:53:14 -0500
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+On Sun, Sep 23, 2018 at 06:47:42AM -0700, Olof Johansson wrote:
+> Hi,
 > 
->> Cast factor to s64 in order to give the compiler complete information
->> about the proper arithmetic to use and avoid a potential integer
->> overflow. Notice that such variable is being used in a context
->> that expects an expression of type s64 (64 bits, signed).
->>
->> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
->> Fixes: e13d757279bb ("iio: adc: Add QCOM SPMI PMIC5 ADC driver")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/iio/adc/qcom-vadc-common.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/adc/qcom-vadc-common.c b/drivers/iio/adc/qcom-vadc-common.c
->> index dcd7fb5..e360e27 100644
->> --- a/drivers/iio/adc/qcom-vadc-common.c
->> +++ b/drivers/iio/adc/qcom-vadc-common.c
->> @@ -282,7 +282,7 @@ static int qcom_vadc_scale_code_voltage_factor(u16 adc_code,
->>  	voltage = div64_s64(voltage, data->full_scale_code_volt);
->>  	if (voltage > 0) {
->>  		voltage *= prescale->den;
->> -		temp = prescale->num * factor;
->> +		temp = prescale->num * (s64)factor;
-> So factor is an unsigned int so could be 32 bits.  In reality it only
-> takes a small set of values between 1 and 1000
+> On Fri, Sep 21, 2018 at 07:45:19PM +0200, Krzysztof Kozlowski wrote:
+> > Hi,
+> > 
+> > Nothing special, description in tag.
 > 
-> Maximum numerator is 10 so a maximum of 10,000.
+> Hmm. Point 12 is special, I'd say.
 > 
-> Hence this is a false positive, be it one that would be very hard
-> for a static checker to identify.
+> I commented on the patch, and I don't want to hold everything else up so it
+> might make sense to separate that out and send a fresh pull request with the
+> base material while that part is discussed a bit more.
 
-I think the reason why it complains is because temp is s64. So it infers
-that the idea was that the result of the multiplication can be larger
-than 64 bit. For 32bit * 32bit -> 32bit it should not complain.
+I was thinking about any special merging care and effects. I did not
+hide this point 12 as it received pretty big explanation.
 
-> 
-> So that moves it from a fix to a warning suppression change.
-> I have no problem with those, but description needs to reflect that.
+I will resend this pull without this commit. Thanks!
 
-Maybe just change the type of temp to u32. There is also
-mul_u64_u32_div() which could be used here to further simplify things.
+Best regards,
+Krzysztof
+
