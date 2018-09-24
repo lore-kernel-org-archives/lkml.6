@@ -2,148 +2,154 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B225ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E18C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EE872145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:06:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EE872145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E8052145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 07:08:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lj+lK9ZX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lj+lK9ZX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E8052145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbeIXNHC (ORCPT
+        id S1727569AbeIXNJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 09:07:02 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:46718 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeIXNHC (ORCPT
+        Mon, 24 Sep 2018 09:09:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58882 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbeIXNJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 09:07:02 -0400
-Received: by mail-vs1-f67.google.com with SMTP id t21-v6so414789vso.13;
-        Mon, 24 Sep 2018 00:06:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=atJCC9VMEiaDkzdVbNfdtQvJtPKDSxocl3cN0gdm8lE=;
-        b=QL1aE7+CZKcgDZqRDIscw4QR7O4dYS2VoXuddRJKoUVtYXjG38G4qVfZirvbNKP9Oh
-         NdzRKUOMmg9+4eqkwNvwPNTyT4TmS7Cms0Y/RH1PdreUUSkfkQPyms10IttByByUgBH/
-         FT0KDlMiANXCgI1kM2JXvOzkutqtvQlQPzdFM9dle4miVhfnwqisoTuPscd5K1d9fbaE
-         BO8DC8C8ptawmoGiigiWFTtAMAFTwbGAIH5qgPANG4soKxQCuJpAEGm23JzM/3xF8Wuz
-         EeikPZsJCC1jSpA4YEwgel7s2nGb7nIgLIG2qcNI4VfQnHAMDfcz+UISH+NQbK065/eH
-         /jKw==
-X-Gm-Message-State: APzg51Bdf7PZjtnFa7/SplQiY9/ifYLC8YCOdw0lqchchM4DHzdM9gqg
-        34TXKvRoFVTxW5hSVML8ENLLuuux9HnHMH78eck=
-X-Google-Smtp-Source: ANB0VdZ0BnWucGjvlH5WR104RYfPIKv34uSjxtZOl/RaAnpQ8wnxBi1WUyf4p0blTkG7YUmIgz4tMcZpq53Lgsn4ovk=
-X-Received: by 2002:a67:3a51:: with SMTP id h78-v6mr1875131vsa.63.1537772781979;
- Mon, 24 Sep 2018 00:06:21 -0700 (PDT)
+        Mon, 24 Sep 2018 09:09:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AE449605FF; Mon, 24 Sep 2018 07:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537772920;
+        bh=nx/ThUbDFVqDJLJWFy//XAzMziLD6Xqqgqncvcf8ef0=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=lj+lK9ZXqeai0+FKSWDWqdqTneqEujMlhYuoJQC1VfgnDLpxj13ne6S9nEIFloeBt
+         sy3uQIpvyM7+VvNn/DvqTqZN34q+FJjrVOYd2J4lMVZTDjLKMd8IcdiKm7N8gt3Nzt
+         U9Rtxut+Z/bJ5+ZSoByFJI56Ke24Tb9FsuPVJyWI=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 553D5601C3;
+        Mon, 24 Sep 2018 07:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537772920;
+        bh=nx/ThUbDFVqDJLJWFy//XAzMziLD6Xqqgqncvcf8ef0=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=lj+lK9ZXqeai0+FKSWDWqdqTneqEujMlhYuoJQC1VfgnDLpxj13ne6S9nEIFloeBt
+         sy3uQIpvyM7+VvNn/DvqTqZN34q+FJjrVOYd2J4lMVZTDjLKMd8IcdiKm7N8gt3Nzt
+         U9Rtxut+Z/bJ5+ZSoByFJI56Ke24Tb9FsuPVJyWI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 553D5601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [PATCH v3 2/2] remoteproc: qcom: Introduce Non-PAS ADSP PIL
+ driver
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, bgoswami@codeaurora.org,
+        srinivas.kandagatla@linaro.org, linux-kernel-owner@vger.kernel.org
+References: <1535975560-8200-1-git-send-email-rohitkr@codeaurora.org>
+ <1535975560-8200-3-git-send-email-rohitkr@codeaurora.org>
+ <a93b3178a09584dc0b4bed55ca4816a3@codeaurora.org>
+ <79bee282-e8a4-a1e6-56e3-6ea7e20c0233@codeaurora.org>
+Message-ID: <614ab0e7-b751-4bf9-72f9-33fdd57594ec@codeaurora.org>
+Date:   Mon, 24 Sep 2018 12:38:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1537455973-12468-1-git-send-email-firoz.khan@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 Sep 2018 09:06:09 +0200
-Message-ID: <CAMuHMdVnnBRyt1MdNz4=nT4_ahPVUa8ReYkK1_cACsykPEJ_Kg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] System call table generation support
-To:     firoz.khan@linaro.org
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        marcin.juszkiewicz@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <79bee282-e8a4-a1e6-56e3-6ea7e20c0233@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 5:06 PM Firoz Khan <firoz.khan@linaro.org> wrote:
-> The purpose of this patch series is:
-> 1. We can easily add/modify/delete system call by changing entry
-> in syscall.tbl file. No need to manually edit many files.
->
-> 2. It is easy to unify the system call implementation across all
-> the architectures.
->
-> The system call tables are in different format in all architecture
-> and it will be difficult to manually add or modify the system calls
-> in the respective files manually. To make it easy by keeping a script
-> and which'll generate the header file and syscall table file so this
-> change will unify them across all architectures.
->
-> syscall.tbl contains the list of available system calls along with
-> system call number and corresponding entry point. Add a new system
-> call in this architecture will be possible by adding new entry in
-> the syscall.tbl file.
->
-> Adding a new table entry consisting of:
->         - System call number.
->         - ABI.
->         - System call name.
->         - Entry point name.
->         - Compat entry name, if required.
->
-> ARM, s390 and x86 architecuture does exist the similar support. I
-> leverage their implementation to come up with a generic solution.
->
-> I have done the same support for work for alpha, microblaze, sparc,
-> mips, parisc, powerpc, sh, sparc, and xtensa. But I started sending
-> the patch for one architecuture for review. Below mentioned git
-> repository contains more details.
-> Git repo:- https://github.com/frzkhn/system_call_table_generator/
->
-> Added an extra patch to keep __IGNORE* entries in asm/unistd.h.
->
-> Finally, this is the ground work for solving the Y2038 issue. We
-> need to add/change two dozen of system calls to solve Y2038 issue.
-> So this patch series will help to easily modify from existing
-> system call to Y2038 compatible system calls.
->
-> Firoz Khan (5):
->   m68k: Rename system call table file name
->   m68k: Replace NR_syscalls macro from asm/unistd.h
->   m68k: Added system call table generation support
->   m68k: uapi header and system call table file generation
->   m68k: added __IGNORE* entries in asm/unistd.h
->
->  arch/m68k/Makefile                      |   3 +
->  arch/m68k/include/asm/Kbuild            |   1 +
->  arch/m68k/include/asm/unistd.h          |  10 +-
->  arch/m68k/include/uapi/asm/Kbuild       |   1 +
->  arch/m68k/include/uapi/asm/unistd.h     | 385 +-----------------------------
->  arch/m68k/kernel/Makefile               |   2 +-
->  arch/m68k/kernel/syscall_table.S        |  14 ++
->  arch/m68k/kernel/syscalls/Makefile      |  37 +++
->  arch/m68k/kernel/syscalls/syscall.tbl   | 369 +++++++++++++++++++++++++++++
->  arch/m68k/kernel/syscalls/syscallhdr.sh |  39 ++++
->  arch/m68k/kernel/syscalls/syscalltbl.sh |  28 +++
->  arch/m68k/kernel/syscalltable.S         | 403 --------------------------------
->  12 files changed, 502 insertions(+), 790 deletions(-)
->  create mode 100644 arch/m68k/kernel/syscall_table.S
->  create mode 100644 arch/m68k/kernel/syscalls/Makefile
->  create mode 100644 arch/m68k/kernel/syscalls/syscall.tbl
->  create mode 100644 arch/m68k/kernel/syscalls/syscallhdr.sh
->  create mode 100644 arch/m68k/kernel/syscalls/syscalltbl.sh
->  delete mode 100644 arch/m68k/kernel/syscalltable.S
 
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Gr{oetje,eeting}s,
+On 9/24/2018 12:19 PM, Rohit Kumar wrote:
+> Thanks Sibi for reviewing.
+>
+>
+> On 9/22/2018 1:11 AM, Sibi Sankar wrote:
+>> Hi Rohit,
+>>
+>> On 2018-09-03 17:22, Rohit kumar wrote:
+>>> This adds Non PAS ADSP PIL driver for Qualcomm
+>>> Technologies Inc SoCs.
+>>> Added initial support for SDM845 with ADSP bootup and
+>>> shutdown operation handled from Application Processor
+>>> SubSystem(APSS).
+>>>
+>>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>>> ---
+>> ....
+...
+>> ....
+>> Also I see the following warns on stopping the adsp remoteproc, 
+>> couldn't root cause it though:
+>
+> It should be issue in Q6 drivers. I will check and update q6 drivers. 
+> Thanks for reporting.
+>
 
-                        Geert
+Checked this warning. This is a core driver issue fixed with 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/base/core.c?h=next-20180924&id=2ec16150179888b81717d1d3ce84e634f4736af2 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>>  device_del+0x84/0x29c
+>>  platform_device_del+0x2c/0x88
+>>  platform_device_unregister+0x1c/0x30
+>>  of_platform_device_destroy+0x98/0xa8
+>>  device_for_each_child+0x54/0xa4
+>>  of_platform_depopulate+0x38/0x54
+>>  q6asm_remove+0x1c/0x2c
+>>  apr_device_remove+0x38/0x70
+>>  device_release_driver_internal+0x124/0x1c8
+>>  device_release_driver+0x24/0x30
+>>  bus_remove_device+0xcc/0xe4
+>>  device_del+0x1f8/0x29c
+>>  device_unregister+0x1c/0x30
+>>  apr_remove_device+0x1c/0x2c
+>>  device_for_each_child+0x54/0xa4
+>>  apr_remove+0x28/0x34
+>>  rpmsg_dev_remove+0x48/0x70
+>>  device_release_driver_internal+0x124/0x1c8
+>>  device_release_driver+0x24/0x30
+>>  bus_remove_device+0xcc/0xe4
+>>  device_del+0x1f8/0x29c
+>>  device_unregister+0x1c/0x30
+>>  qcom_glink_remove_device+0x1c/0x2c
+>>  device_for_each_child+0x54/0xa4
+>>  qcom_glink_native_remove+0x54/0x15c
+>>  qcom_glink_smem_unregister+0x1c/0x30
+>>  glink_subdev_stop+0x1c/0x2c [qcom_common]
+>>  rproc_stop+0x40/0xc0
+>>  rproc_shutdown+0x6c/0xc0
+>>  rproc_del+0x28/0xa0
+>>  adsp_remove+0x20/0x5c [qcom_adsp_pil]
+>>  platform_drv_remove+0x28/0x50
+>>  device_release_driver_internal+0x124/0x1c8
+>>  driver_detach+0x44/0x80
+>>  bus_remove_driver+0x78/0x9c
+>>  driver_unregister+0x34/0x54
+>>  platform_driver_unregister+0x1c/0x28
+>>  cleanup_module+0x14/0x6bc [qcom_adsp_pil]
+>>  SyS_delete_module+0x1c4/0x214
+>>
+>
+> Thanks,
+> Rohit
+Thanks
