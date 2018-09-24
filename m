@@ -2,291 +2,113 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A313ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A827AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14E22145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:48:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XFVEpeQV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14E22145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C6FE2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:49:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C6FE2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbeIXRu0 (ORCPT
+        id S1728998AbeIXRvW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:50:26 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34552 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeIXRu0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:50:26 -0400
-Received: by mail-io1-f66.google.com with SMTP id h16-v6so7016969ioj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 04:48:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Mn+i50RmcCgSWcLcAQofhZ5lI1QtQIaMo0Rx4A5Yi8U=;
-        b=XFVEpeQV3b9fF8QFBIfIuJKr1hgmCgAvy/CzerAj17+9mLBmoHrGQApVPJjunnViRm
-         pgjspTjNe5PBXvinClG7756inCXleUBEc06jM7piRo6GiMoa8OMOKon0L8navBcdiGY7
-         Lrt77QPo+USFkP4oq0p1faziLd/zRD7GTdWx4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Mn+i50RmcCgSWcLcAQofhZ5lI1QtQIaMo0Rx4A5Yi8U=;
-        b=Bv5Z+4VtqsSCi/BjZJhd9D7SW/uFryI4PW96QkU7pQPdtaRM0XglsevXb0Fxd98lHN
-         OqTI5wkgt/cm4OLm2mP+X20ea7OxIl+Sv0mozlD5a3Ig1l4SEF6ZuYucIdhYcWVAbCcL
-         8PEdkoFmhhbPSUzllrhKaXbL4TGs2p7+yrMOa5rCMOoxyvlLfejiN4mRwkPFOi/3bBCc
-         ANAqDvuqJcKzM9friOjqUQKRcNatJtDA8S9ptpWRPgwm6aRRzhUov5I1sPqShs33QdU7
-         8U1DbJzYMB95bB3MK/k1juunQpFRU9x52LwhiJV+7AmTO9lvtlWhFafudEiEWRyHO/q/
-         b8nQ==
-X-Gm-Message-State: ABuFfogBmgKT754AkkoPK+SOSWG+orkIAVwndPTWxWpEv2k7+WHKSmey
-        Ub1eqwQPtKUSmnE3JOS/VvohtUftlIYSsYvPbydyHg==
-X-Google-Smtp-Source: ACcGV621/HCmCtDIavucDAXE4stMHjT9SmDJt4rIqbYQmmcQikQUaKF08dG1GixtuhbicnboBvO1Uhwr/01ABnCrK6Q=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr7645918iof.173.1537789722774;
- Mon, 24 Sep 2018 04:48:42 -0700 (PDT)
+        Mon, 24 Sep 2018 13:51:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43214 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727229AbeIXRvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:51:21 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D3EB381F09;
+        Mon, 24 Sep 2018 11:49:39 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2922E84967;
+        Mon, 24 Sep 2018 11:49:34 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 13:49:31 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v10 00/26] guest dedicated crypto adapters
+Message-ID: <20180924134931.6c67a3d2.cohuck@redhat.com>
+In-Reply-To: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <20180919021100.3380-1-keescook@chromium.org> <20180919021100.3380-2-keescook@chromium.org>
-In-Reply-To: <20180919021100.3380-2-keescook@chromium.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 24 Sep 2018 13:48:30 +0200
-Message-ID: <CAKv+Gu8v0e-6Xv4_1W5qcUV_3Hed9rTXmJ9vzYTf1jEHnyaxaQ@mail.gmail.com>
-Subject: Re: [PATCH crypto-next 01/23] crypto: skcipher - Introduce crypto_sync_skcipher
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 24 Sep 2018 11:49:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Sep 2018 at 04:11, Kees Cook <keescook@chromium.org> wrote:
->
-> In preparation for removal of VLAs due to skcipher requests on the stack
-> via SKCIPHER_REQUEST_ON_STACK() usage, this introduces the infrastructure
-> for the "sync skcipher" tfm, which is for handling the on-stack cases of
-> skcipher, which are always non-ASYNC and have a known limited request
-> size.
->
-> The crypto API additions:
->
->         struct crypto_sync_skcipher (wrapper for struct crypto_skcipher)
->         crypto_alloc_sync_skcipher()
->         crypto_free_sync_skcipher()
->         crypto_sync_skcipher_setkey()
->         crypto_sync_skcipher_get_flags()
->         crypto_sync_skcipher_set_flags()
->         crypto_sync_skcipher_clear_flags()
->         crypto_sync_skcipher_blocksize()
->         crypto_sync_skcipher_ivsize()
->         crypto_sync_skcipher_reqtfm()
->         skcipher_request_set_sync_tfm()
->         SYNC_SKCIPHER_REQUEST_ON_STACK() (with tfm type check)
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Wed, 12 Sep 2018 15:42:50 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Abstract:
+> ========
+> 
+> On s390, we have cryptographic coprocessor cards, which are modeled on
+> Linux as devices on the AP bus. Each card can be partitioned into domains
+> which can be thought of as a set of hardware registers for processing 
+> crypto commands. Crypto commands are sent to a specific domain within a
+> card is via a queue which is identified as a (card,domain) tuple. We model 
+> this something like the following (assuming we have access to cards 3 and 
+> 4 and domains 1 and 2):
+> 
+> AP -> card3 -> queue (3,1)
+>             -> queue (3,2)
+>    -> card4 -> queue (4,1)
+>             -> queue (4,2)  
+> 
+> If we want to virtualize this, we can use a feature provided by the
+> hardware. We basically attach a satellite control block to our main
+> hardware virtualization control block and the hardware takes care of
+> most of the rest.
+> 
+> For this control block, we don't specify explicit tuples, but a list of
+> cards and a list of domains. The guest will get access to the cross
+> product.
+> 
+> Because of this, we need to take care that the lists provided to
+> different guests don't overlap; i.e., we need to enforce sane
+> configurations. Otherwise, one guest may get access to things like
+> secret keys for another guest.
+> 
+> The idea of this patch set is to introduce a new device, the matrix
+> device. This matrix device hangs off a different root and acts as the
+> parent node for mdev devices.
+> 
+> If you now want to give the tuples (4,1) and (4,2), you need to do the
+> following:
+> 
+> - Make sure the queues (4,1) and (4,2) belong to vfio_ap (see patches
+>   #5 and #6)
+> - Create the mediated device.
+> - Assign card 4 and domains 1 and 2 to the mediated device
+> - Optionally activate the mediated device.
+> 
+> QEMU will now simply consume the mediated device and things should work.
+> 
+> For a complete description of the architecture and concepts underlying
+> the design, see the Documentation/s390/vfio-ap.txt file included with this
+> patch set.
 
-> ---
->  crypto/skcipher.c         | 24 +++++++++++++
->  include/crypto/skcipher.h | 75 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 99 insertions(+)
->
-> diff --git a/crypto/skcipher.c b/crypto/skcipher.c
-> index 0bd8c6caa498..4caab81d2d02 100644
-> --- a/crypto/skcipher.c
-> +++ b/crypto/skcipher.c
-> @@ -949,6 +949,30 @@ struct crypto_skcipher *crypto_alloc_skcipher(const char *alg_name,
->  }
->  EXPORT_SYMBOL_GPL(crypto_alloc_skcipher);
->
-> +struct crypto_sync_skcipher *crypto_alloc_sync_skcipher(
-> +                               const char *alg_name, u32 type, u32 mask)
-> +{
-> +       struct crypto_skcipher *tfm;
-> +
-> +       /* Only sync algorithms allowed. */
-> +       mask |= CRYPTO_ALG_ASYNC;
-> +
-> +       tfm = crypto_alloc_tfm(alg_name, &crypto_skcipher_type2, type, mask);
-> +
-> +       /*
-> +        * Make sure we do not allocate something that might get used with
-> +        * an on-stack request: check the request size.
-> +        */
-> +       if (!IS_ERR(tfm) && WARN_ON(crypto_skcipher_reqsize(tfm) >
-> +                                   MAX_SYNC_SKCIPHER_REQSIZE)) {
-> +               crypto_free_skcipher(tfm);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       return (struct crypto_sync_skcipher *)tfm;
-> +}
-> +EXPORT_SYMBOL_GPL(crypto_alloc_sync_skcipher);
-> +
->  int crypto_has_skcipher2(const char *alg_name, u32 type, u32 mask)
->  {
->         return crypto_type_has_alg(alg_name, &crypto_skcipher_type2,
-> diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
-> index 2f327f090c3e..d00ce90dc7da 100644
-> --- a/include/crypto/skcipher.h
-> +++ b/include/crypto/skcipher.h
-> @@ -65,6 +65,10 @@ struct crypto_skcipher {
->         struct crypto_tfm base;
->  };
->
-> +struct crypto_sync_skcipher {
-> +       struct crypto_skcipher base;
-> +};
-> +
->  /**
->   * struct skcipher_alg - symmetric key cipher definition
->   * @min_keysize: Minimum key size supported by the transformation. This is the
-> @@ -139,6 +143,19 @@ struct skcipher_alg {
->         struct crypto_alg base;
->  };
->
-> +#define MAX_SYNC_SKCIPHER_REQSIZE      384
-> +/*
-> + * This performs a type-check against the "tfm" argument to make sure
-> + * all users have the correct skcipher tfm for doing on-stack requests.
-> + */
-> +#define SYNC_SKCIPHER_REQUEST_ON_STACK(name, tfm) \
-> +       char __##name##_desc[sizeof(struct skcipher_request) + \
-> +                            MAX_SYNC_SKCIPHER_REQSIZE + \
-> +                            (!(sizeof((struct crypto_sync_skcipher *)1 == \
-> +                                      (typeof(tfm))1))) \
-> +                           ] CRYPTO_MINALIGN_ATTR; \
-> +       struct skcipher_request *name = (void *)__##name##_desc
-> +
->  #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
->         char __##name##_desc[sizeof(struct skcipher_request) + \
->                 crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
-> @@ -197,6 +214,9 @@ static inline struct crypto_skcipher *__crypto_skcipher_cast(
->  struct crypto_skcipher *crypto_alloc_skcipher(const char *alg_name,
->                                               u32 type, u32 mask);
->
-> +struct crypto_sync_skcipher *crypto_alloc_sync_skcipher(const char *alg_name,
-> +                                             u32 type, u32 mask);
-> +
->  static inline struct crypto_tfm *crypto_skcipher_tfm(
->         struct crypto_skcipher *tfm)
->  {
-> @@ -212,6 +232,11 @@ static inline void crypto_free_skcipher(struct crypto_skcipher *tfm)
->         crypto_destroy_tfm(tfm, crypto_skcipher_tfm(tfm));
->  }
->
-> +static inline void crypto_free_sync_skcipher(struct crypto_sync_skcipher *tfm)
-> +{
-> +       crypto_free_skcipher(&tfm->base);
-> +}
-> +
->  /**
->   * crypto_has_skcipher() - Search for the availability of an skcipher.
->   * @alg_name: is the cra_name / name or cra_driver_name / driver name of the
-> @@ -280,6 +305,12 @@ static inline unsigned int crypto_skcipher_ivsize(struct crypto_skcipher *tfm)
->         return tfm->ivsize;
->  }
->
-> +static inline unsigned int crypto_sync_skcipher_ivsize(
-> +       struct crypto_sync_skcipher *tfm)
-> +{
-> +       return crypto_skcipher_ivsize(&tfm->base);
-> +}
-> +
->  static inline unsigned int crypto_skcipher_alg_chunksize(
->         struct skcipher_alg *alg)
->  {
-> @@ -356,6 +387,12 @@ static inline unsigned int crypto_skcipher_blocksize(
->         return crypto_tfm_alg_blocksize(crypto_skcipher_tfm(tfm));
->  }
->
-> +static inline unsigned int crypto_sync_skcipher_blocksize(
-> +       struct crypto_sync_skcipher *tfm)
-> +{
-> +       return crypto_skcipher_blocksize(&tfm->base);
-> +}
-> +
->  static inline unsigned int crypto_skcipher_alignmask(
->         struct crypto_skcipher *tfm)
->  {
-> @@ -379,6 +416,24 @@ static inline void crypto_skcipher_clear_flags(struct crypto_skcipher *tfm,
->         crypto_tfm_clear_flags(crypto_skcipher_tfm(tfm), flags);
->  }
->
-> +static inline u32 crypto_sync_skcipher_get_flags(
-> +       struct crypto_sync_skcipher *tfm)
-> +{
-> +       return crypto_skcipher_get_flags(&tfm->base);
-> +}
-> +
-> +static inline void crypto_sync_skcipher_set_flags(
-> +       struct crypto_sync_skcipher *tfm, u32 flags)
-> +{
-> +       crypto_skcipher_set_flags(&tfm->base, flags);
-> +}
-> +
-> +static inline void crypto_sync_skcipher_clear_flags(
-> +       struct crypto_sync_skcipher *tfm, u32 flags)
-> +{
-> +       crypto_skcipher_clear_flags(&tfm->base, flags);
-> +}
-> +
->  /**
->   * crypto_skcipher_setkey() - set key for cipher
->   * @tfm: cipher handle
-> @@ -401,6 +456,12 @@ static inline int crypto_skcipher_setkey(struct crypto_skcipher *tfm,
->         return tfm->setkey(tfm, key, keylen);
->  }
->
-> +static inline int crypto_sync_skcipher_setkey(struct crypto_sync_skcipher *tfm,
-> +                                        const u8 *key, unsigned int keylen)
-> +{
-> +       return crypto_skcipher_setkey(&tfm->base, key, keylen);
-> +}
-> +
->  static inline unsigned int crypto_skcipher_default_keysize(
->         struct crypto_skcipher *tfm)
->  {
-> @@ -422,6 +483,14 @@ static inline struct crypto_skcipher *crypto_skcipher_reqtfm(
->         return __crypto_skcipher_cast(req->base.tfm);
->  }
->
-> +static inline struct crypto_sync_skcipher *crypto_sync_skcipher_reqtfm(
-> +       struct skcipher_request *req)
-> +{
-> +       struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-> +
-> +       return container_of(tfm, struct crypto_sync_skcipher, base);
-> +}
-> +
->  /**
->   * crypto_skcipher_encrypt() - encrypt plaintext
->   * @req: reference to the skcipher_request handle that holds all information
-> @@ -500,6 +569,12 @@ static inline void skcipher_request_set_tfm(struct skcipher_request *req,
->         req->base.tfm = crypto_skcipher_tfm(tfm);
->  }
->
-> +static inline void skcipher_request_set_sync_tfm(struct skcipher_request *req,
-> +                                           struct crypto_sync_skcipher *tfm)
-> +{
-> +       skcipher_request_set_tfm(req, &tfm->base);
-> +}
-> +
->  static inline struct skcipher_request *skcipher_request_cast(
->         struct crypto_async_request *req)
->  {
-> --
-> 2.17.1
->
+I did not spot anything major, and if v11 addresses the issues raised
+by various reviewers I don't see why it should not be merged (interface
+looks sane). I skipped looking at the vsie stuff, though ;)
