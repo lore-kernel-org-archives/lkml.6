@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A6BECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48ACECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D516F214C1
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D516F214C1
+	by mail.kernel.org (Postfix) with ESMTP id 7A214214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A214214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731470AbeIXSOe (ORCPT
+        id S1731479AbeIXSOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:14:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55064 "EHLO
+        Mon, 24 Sep 2018 14:14:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55074 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbeIXSOd (ORCPT
+        with ESMTP id S1728195AbeIXSOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:14:33 -0400
+        Mon, 24 Sep 2018 14:14:38 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07933107D;
-        Mon, 24 Sep 2018 12:12:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79ABD1081;
+        Mon, 24 Sep 2018 12:12:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+93a5839deb355537440f@syzkaller.appspotmail.com,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        rds-devel@oss.oracle.com, Cong Wang <xiyou.wangcong@gmail.com>,
-        Santosh Shilimkar <santosh.shilimkar@oarcle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 004/173] rds: fix two RCU related problems
-Date:   Mon, 24 Sep 2018 13:50:38 +0200
-Message-Id: <20180924113114.845407997@linuxfoundation.org>
+        stable@vger.kernel.org, Huy Nguyen <huyn@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 005/173] net/mlx5: Check for error in mlx5_attach_interface
+Date:   Mon, 24 Sep 2018 13:50:39 +0200
+Message-Id: <20180924113114.988646553@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -56,62 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Huy Nguyen <huyn@mellanox.com>
 
-[ Upstream commit cc4dfb7f70a344f24c1c71e298deea0771dadcb2 ]
+[ Upstream commit 47bc94b82291e007da61ee1b3d18c77871f3e158 ]
 
-When a rds sock is bound, it is inserted into the bind_hash_table
-which is protected by RCU. But when releasing rds sock, after it
-is removed from this hash table, it is freed immediately without
-respecting RCU grace period. This could cause some use-after-free
-as reported by syzbot.
+Currently, mlx5_attach_interface does not check for error
+after calling intf->attach or intf->add. When these two calls
+fails, the client is not initialized and will cause issues such as
+kernel panic on invalid address in the teardown path (mlx5_detach_interface)
 
-Mark the rds sock with SOCK_RCU_FREE before inserting it into the
-bind_hash_table, so that it would be always freed after a RCU grace
-period.
-
-The other problem is in rds_find_bound(), the rds sock could be
-freed in between rhashtable_lookup_fast() and rds_sock_addref(),
-so we need to extend RCU read lock protection in rds_find_bound()
-to close this race condition.
-
-Reported-and-tested-by: syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com
-Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
-Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc: rds-devel@oss.oracle.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oarcle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 737a234bb638 ("net/mlx5: Introduce attach/detach to interface API")
+Signed-off-by: Huy Nguyen <huyn@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rds/bind.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/net/rds/bind.c
-+++ b/net/rds/bind.c
-@@ -60,11 +60,13 @@ struct rds_sock *rds_find_bound(__be32 a
- 	u64 key = ((u64)addr << 32) | port;
- 	struct rds_sock *rs;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
+@@ -132,11 +132,11 @@ void mlx5_add_device(struct mlx5_interfa
+ 	delayed_event_start(priv);
  
--	rs = rhashtable_lookup_fast(&bind_hash_table, &key, ht_parms);
-+	rcu_read_lock();
-+	rs = rhashtable_lookup(&bind_hash_table, &key, ht_parms);
- 	if (rs && !sock_flag(rds_rs_to_sk(rs), SOCK_DEAD))
- 		rds_sock_addref(rs);
- 	else
- 		rs = NULL;
-+	rcu_read_unlock();
+ 	dev_ctx->context = intf->add(dev);
+-	set_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state);
+-	if (intf->attach)
+-		set_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state);
+-
+ 	if (dev_ctx->context) {
++		set_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state);
++		if (intf->attach)
++			set_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state);
++
+ 		spin_lock_irq(&priv->ctx_lock);
+ 		list_add_tail(&dev_ctx->list, &priv->ctx_list);
  
- 	rdsdebug("returning rs %p for %pI4:%u\n", rs, &addr,
- 		ntohs(port));
-@@ -157,6 +159,7 @@ int rds_bind(struct socket *sock, struct
- 		goto out;
+@@ -211,12 +211,17 @@ static void mlx5_attach_interface(struct
+ 	if (intf->attach) {
+ 		if (test_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state))
+ 			goto out;
+-		intf->attach(dev, dev_ctx->context);
++		if (intf->attach(dev, dev_ctx->context))
++			goto out;
++
+ 		set_bit(MLX5_INTERFACE_ATTACHED, &dev_ctx->state);
+ 	} else {
+ 		if (test_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state))
+ 			goto out;
+ 		dev_ctx->context = intf->add(dev);
++		if (!dev_ctx->context)
++			goto out;
++
+ 		set_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state);
  	}
  
-+	sock_set_flag(sk, SOCK_RCU_FREE);
- 	ret = rds_add_bound(rs, sin->sin_addr.s_addr, &sin->sin_port);
- 	if (ret)
- 		goto out;
 
 
