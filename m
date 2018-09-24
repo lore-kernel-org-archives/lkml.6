@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2730ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CB0C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2B552145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B552145D
+	by mail.kernel.org (Postfix) with ESMTP id 6BD2721486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:56:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BD2721486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbeIXR6D (ORCPT
+        id S1730030AbeIXR6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:58:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51998 "EHLO
+        Mon, 24 Sep 2018 13:58:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52004 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729224AbeIXR6C (ORCPT
+        with ESMTP id S1729224AbeIXR6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:58:02 -0400
+        Mon, 24 Sep 2018 13:58:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 767E81074;
-        Mon, 24 Sep 2018 11:56:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F3D21075;
+        Mon, 24 Sep 2018 11:56:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 43/70] USB: yurex: Fix buffer over-read in yurex_write()
-Date:   Mon, 24 Sep 2018 13:52:42 +0200
-Message-Id: <20180924113104.779915878@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 4.4 44/70] usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()
+Date:   Mon, 24 Sep 2018 13:52:43 +0200
+Message-Id: <20180924113104.900101278@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -51,55 +50,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-commit 7e10f14ebface44a48275c8d6dc1caae3668d5a9 upstream.
+commit 6e22e3af7bb3a7b9dc53cb4687659f6e63fca427 upstream.
 
-If the written data starts with a digit, yurex_write() tries to parse
-it as an integer using simple_strtoull().  This requires a null-
-terminator, and currently there's no guarantee that there is one.
+wdm_in_callback() is a completion handler function for the USB driver.
+So it should not sleep. But it calls service_outstanding_interrupt(),
+which calls usb_submit_urb() with GFP_KERNEL.
 
-(The sample program at
-https://github.com/NeoCat/YUREX-driver-for-Linux/blob/master/sample/yurex_clock.pl
-writes an integer without a null terminator.  It seems like it must
-have worked by chance!)
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-Always add a null byte after the written data.  Enlarge the buffer
-to allow for this.
+This bug is found by my static analysis tool DSAC.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/yurex.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/usb/class/cdc-wdm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -439,13 +439,13 @@ static ssize_t yurex_write(struct file *
- {
- 	struct usb_yurex *dev;
- 	int i, set = 0, retval = 0;
--	char buffer[16];
-+	char buffer[16 + 1];
- 	char *data = buffer;
- 	unsigned long long c, c2 = 0;
- 	signed long timeout = 0;
- 	DEFINE_WAIT(wait);
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -453,7 +453,7 @@ static int clear_wdm_read_flag(struct wd
  
--	count = min(sizeof(buffer), count);
-+	count = min(sizeof(buffer) - 1, count);
- 	dev = file->private_data;
- 
- 	/* verify that we actually have some data to write */
-@@ -464,6 +464,7 @@ static ssize_t yurex_write(struct file *
- 		retval = -EFAULT;
- 		goto error;
- 	}
-+	buffer[count] = 0;
- 	memset(dev->cntl_buffer, CMD_PADDING, YUREX_BUF_SIZE);
- 
- 	switch (buffer[0]) {
+ 	set_bit(WDM_RESPONDING, &desc->flags);
+ 	spin_unlock_irq(&desc->iuspin);
+-	rv = usb_submit_urb(desc->response, GFP_KERNEL);
++	rv = usb_submit_urb(desc->response, GFP_ATOMIC);
+ 	spin_lock_irq(&desc->iuspin);
+ 	if (rv) {
+ 		dev_err(&desc->intf->dev,
 
 
