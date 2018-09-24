@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE36C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F2AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3B662145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B662145D
+	by mail.kernel.org (Postfix) with ESMTP id CB9292145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9292145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbeIXR6y (ORCPT
+        id S1730176AbeIXR65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:58:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52130 "EHLO
+        Mon, 24 Sep 2018 13:58:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729106AbeIXR6y (ORCPT
+        with ESMTP id S1729106AbeIXR65 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:58:54 -0400
+        Mon, 24 Sep 2018 13:58:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 801561075;
-        Mon, 24 Sep 2018 11:57:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF9191071;
+        Mon, 24 Sep 2018 11:57:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 54/70] drm/nouveau: tegra: Detach from ARM DMA/IOMMU mapping
-Date:   Mon, 24 Sep 2018 13:52:53 +0200
-Message-Id: <20180924113106.129663968@linuxfoundation.org>
+Subject: [PATCH 4.4 55/70] parport: sunbpp: fix error return code
+Date:   Mon, 24 Sep 2018 13:52:54 +0200
+Message-Id: <20180924113106.244573967@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -55,70 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thierry Reding <treding@nvidia.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-[ Upstream commit b59fb482b52269977ee5de205308e5b236a03917 ]
+[ Upstream commit faa1a47388b33623e4d504c23569188907b039a0 ]
 
-Depending on the kernel configuration, early ARM architecture setup code
-may have attached the GPU to a DMA/IOMMU mapping that transparently uses
-the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
-backed buffers (a special bit in the GPU's MMU page tables indicates the
-memory path to take: via the SMMU or directly to the memory controller).
-Transparently backing DMA memory with an IOMMU prevents Nouveau from
-properly handling such memory accesses and causes memory access faults.
+Return an error code on failure.  Change leading spaces to tab on the
+first if.
 
-As a side-note: buffers other than those allocated in instance memory
-don't need to be physically contiguous from the GPU's perspective since
-the GPU can map them into contiguous buffers using its own MMU. Mapping
-these buffers through the IOMMU is unnecessary and will even lead to
-performance degradation because of the additional translation. One
-exception to this are compressible buffers which need large pages. In
-order to enable these large pages, multiple small pages will have to be
-combined into one large (I/O virtually contiguous) mapping via the
-IOMMU. However, that is a topic outside the scope of this fix and isn't
-currently supported. An implementation will want to explicitly create
-these large pages in the Nouveau driver, so detaching from a DMA/IOMMU
-mapping would still be required.
+Problem found using Coccinelle.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/parport/parport_sunbpp.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-@@ -23,6 +23,10 @@
- #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
- #include "priv.h"
+--- a/drivers/parport/parport_sunbpp.c
++++ b/drivers/parport/parport_sunbpp.c
+@@ -286,12 +286,16 @@ static int bpp_probe(struct platform_dev
  
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+#include <asm/dma-iommu.h>
-+#endif
-+
- static int
- nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
- {
-@@ -85,6 +89,15 @@ nvkm_device_tegra_probe_iommu(struct nvk
- 	unsigned long pgsize_bitmap;
- 	int ret;
- 
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+	if (dev->archdata.mapping) {
-+		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+
-+		arm_iommu_detach_device(dev);
-+		arm_iommu_release_mapping(mapping);
+ 	ops = kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
+ 		      GFP_KERNEL);
+-        if (!ops)
++	if (!ops) {
++		err = -ENOMEM;
+ 		goto out_unmap;
 +	}
-+#endif
-+
- 	if (!tdev->func->iommu_bit)
- 		return;
  
+ 	dprintk(("register_port\n"));
+-	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops)))
++	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops))) {
++		err = -ENOMEM;
+ 		goto out_free_ops;
++	}
+ 
+ 	p->size = size;
+ 	p->dev = &op->dev;
 
 
