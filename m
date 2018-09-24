@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E5BC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCDAC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4813521486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4813521486
+	by mail.kernel.org (Postfix) with ESMTP id 6F09821486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F09821486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387771AbeIXSbh (ORCPT
+        id S2387783AbeIXSbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:31:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57670 "EHLO
+        Mon, 24 Sep 2018 14:31:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57686 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733082AbeIXSbg (ORCPT
+        with ESMTP id S1733271AbeIXSbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:31:36 -0400
+        Mon, 24 Sep 2018 14:31:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3EEA1098;
-        Mon, 24 Sep 2018 12:29:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FB001098;
+        Mon, 24 Sep 2018 12:29:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Aleksandar Markovic <aleksandar.markovic@mips.com>,
-        Miodrag Dinic <miodrag.dinic@mips.com>,
-        Goran Ferenc <goran.ferenc@mips.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Florian Tobias Schandinat <FlorianSchandinat@gmx.de>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 053/235] video: goldfishfb: fix memory leak on driver remove
-Date:   Mon, 24 Sep 2018 13:50:39 +0200
-Message-Id: <20180924113110.435235634@linuxfoundation.org>
+Subject: [PATCH 4.18 054/235] fbdev/via: fix defined but not used warning
+Date:   Mon, 24 Sep 2018 13:50:40 +0200
+Message-Id: <20180924113110.509595667@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -55,37 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 5958fde72d04e7b8c6de3669d1f794a90997e3eb ]
+[ Upstream commit b6566b47a67e07fdca44cf51abb14e2fbe17d3eb ]
 
-goldfish_fb_probe() allocates memory for fb, but goldfish_fb_remove() does
-not have deallocation of fb, which leads to memory leak on probe/remove.
+Fix a build warning in viafbdev.c when CONFIG_PROC_FS is not enabled
+by marking the unused function as __maybe_unused.
 
-The patch adds deallocation into goldfish_fb_remove().
+../drivers/video/fbdev/via/viafbdev.c:1471:12: warning: 'viafb_sup_odev_proc_show' defined but not used [-Wunused-function]
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Cc: Aleksandar Markovic <aleksandar.markovic@mips.com>
-Cc: Miodrag Dinic <miodrag.dinic@mips.com>
-Cc: Goran Ferenc <goran.ferenc@mips.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/goldfishfb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/video/fbdev/via/viafbdev.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/goldfishfb.c
-+++ b/drivers/video/fbdev/goldfishfb.c
-@@ -301,6 +301,7 @@ static int goldfish_fb_remove(struct pla
- 	dma_free_coherent(&pdev->dev, framesize, (void *)fb->fb.screen_base,
- 						fb->fb.fix.smem_start);
- 	iounmap(fb->reg_base);
-+	kfree(fb);
- 	return 0;
- }
+--- a/drivers/video/fbdev/via/viafbdev.c
++++ b/drivers/video/fbdev/via/viafbdev.c
+@@ -19,6 +19,7 @@
+  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+  */
  
++#include <linux/compiler.h>
+ #include <linux/module.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+@@ -1468,7 +1469,7 @@ static const struct file_operations viaf
+ 
+ #endif /* CONFIG_FB_VIA_DIRECT_PROCFS */
+ 
+-static int viafb_sup_odev_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused viafb_sup_odev_proc_show(struct seq_file *m, void *v)
+ {
+ 	via_odev_to_seq(m, supported_odev_map[
+ 		viaparinfo->shared->chip_info.gfx_chip_name]);
 
 
