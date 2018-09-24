@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545DEC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12526C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8992145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8992145D
+	by mail.kernel.org (Postfix) with ESMTP id CBAED20833
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAED20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbeIXR44 (ORCPT
+        id S1729793AbeIXR5E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:56:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51834 "EHLO
+        Mon, 24 Sep 2018 13:57:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729757AbeIXR4z (ORCPT
+        with ESMTP id S1728154AbeIXR5D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:56:55 -0400
+        Mon, 24 Sep 2018 13:57:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 981131072;
-        Mon, 24 Sep 2018 11:55:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0EAA1073;
+        Mon, 24 Sep 2018 11:55:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Azael Avalos <coproscefalo@gmail.com>,
-        platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andy@infradead.org>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Michael=20M=C3=BCller?= <michael@fds-team.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 26/70] platform/x86: toshiba_acpi: Fix defined but not used build warnings
-Date:   Mon, 24 Sep 2018 13:52:25 +0200
-Message-Id: <20180924113101.494396911@linuxfoundation.org>
+Subject: [PATCH 4.4 27/70] crypto: sharah - Unregister correct algorithms for SAHARA 3
+Date:   Mon, 24 Sep 2018 13:52:26 +0200
+Message-Id: <20180924113101.587854924@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -55,44 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Michael Müller <michael@fds-team.de>
 
-[ Upstream commit c2e2a618eb7104e18fdcf739d4d911563812a81c ]
+[ Upstream commit 0e7d4d932ffc23f75efb31a8c2ac2396c1b81c55 ]
 
-Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
-by marking the unused function as __maybe_unused.
+This patch fixes two typos related to unregistering algorithms supported by
+SAHARAH 3. In sahara_register_algs the wrong algorithms are unregistered
+in case of an error. In sahara_unregister_algs the wrong array is used to
+determine the iteration count.
 
-../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show' defined but not used [-Wunused-function]
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Azael Avalos <coproscefalo@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Michael Müller <michael@fds-team.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/toshiba_acpi.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/crypto/sahara.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/platform/x86/toshiba_acpi.c
-+++ b/drivers/platform/x86/toshiba_acpi.c
-@@ -34,6 +34,7 @@
- #define TOSHIBA_ACPI_VERSION	"0.23"
- #define PROC_INTERFACE_VERSION	1
+--- a/drivers/crypto/sahara.c
++++ b/drivers/crypto/sahara.c
+@@ -1363,7 +1363,7 @@ err_sha_v4_algs:
  
-+#include <linux/compiler.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/init.h>
-@@ -1472,7 +1473,7 @@ static const struct file_operations keys
- 	.write		= keys_proc_write,
- };
+ err_sha_v3_algs:
+ 	for (j = 0; j < k; j++)
+-		crypto_unregister_ahash(&sha_v4_algs[j]);
++		crypto_unregister_ahash(&sha_v3_algs[j]);
  
--static int version_proc_show(struct seq_file *m, void *v)
-+static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
- 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
+ err_aes_algs:
+ 	for (j = 0; j < i; j++)
+@@ -1379,7 +1379,7 @@ static void sahara_unregister_algs(struc
+ 	for (i = 0; i < ARRAY_SIZE(aes_algs); i++)
+ 		crypto_unregister_alg(&aes_algs[i]);
+ 
+-	for (i = 0; i < ARRAY_SIZE(sha_v4_algs); i++)
++	for (i = 0; i < ARRAY_SIZE(sha_v3_algs); i++)
+ 		crypto_unregister_ahash(&sha_v3_algs[i]);
+ 
+ 	if (dev->version > SAHARA_VERSION_3)
 
 
