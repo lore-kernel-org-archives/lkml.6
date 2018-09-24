@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4786CECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D407AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 093DE214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 093DE214AB
+	by mail.kernel.org (Postfix) with ESMTP id 98E8221486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98E8221486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387826AbeIXSb5 (ORCPT
+        id S2387839AbeIXScC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:31:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57738 "EHLO
+        Mon, 24 Sep 2018 14:32:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57752 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730962AbeIXSb4 (ORCPT
+        with ESMTP id S1733273AbeIXScC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:31:56 -0400
+        Mon, 24 Sep 2018 14:32:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 027AC1098;
-        Mon, 24 Sep 2018 12:30:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4FEA11098;
+        Mon, 24 Sep 2018 12:30:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 058/235] omapfb: rename omap2 module to omap2fb.ko
-Date:   Mon, 24 Sep 2018 13:50:44 +0200
-Message-Id: <20180924113110.833583083@linuxfoundation.org>
+Subject: [PATCH 4.18 041/235] block: allow max_discard_segments to be stacked
+Date:   Mon, 24 Sep 2018 13:50:27 +0200
+Message-Id: <20180924113109.273838066@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,43 +53,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mike Snitzer <snitzer@redhat.com>
 
-[ Upstream commit 4bcd8c90ac0f27d3d76fcfc50582ff3685059de9 ]
+[ Upstream commit 42c9cdfe1e11e083dceb0f0c4977b758cf7403b9 ]
 
-In a kernel configuration with both CONFIG_FB_OMAP=m and CONFIG_FB_OMAP2=m,
-Kbuild fails to point out that we have two modules with the same name (omapfb.ko),
-but instead fails with a cryptic error message like:
+Set max_discard_segments to USHRT_MAX in blk_set_stacking_limits() so
+that blk_stack_limits() can stack up this limit for stacked devices.
 
-ERROR: "omapfb_register_panel" [drivers/video/fbdev/omap/lcd_osk.ko] undefined!
+before:
 
-This can now happen when building a randconfig kernel with CONFIG_ARCH_OMAP1,
-as the omap1 fbdev driver depends on that, whiel the omap2 fbdev driver can
-now be built anywhere with CONFIG_COMPILE_TEST.
+$ cat /sys/block/nvme0n1/queue/max_discard_segments
+256
+$ cat /sys/block/dm-0/queue/max_discard_segments
+1
 
-The solution is to rename one of the two modules, so for consistency with
-the directory naming I decided to rename the omap2 version to omap2fb.ko.
+after:
 
-Fixes: 7378f1149884 ("media: omap2: omapfb: allow building it with COMPILE_TEST")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+$ cat /sys/block/nvme0n1/queue/max_discard_segments
+256
+$ cat /sys/block/dm-0/queue/max_discard_segments
+256
+
+Fixes: 1e739730c5b9e ("block: optionally merge discontiguous discard bios into a single request")
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/omap2/omapfb/Makefile |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ block/blk-settings.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/omap2/omapfb/Makefile
-+++ b/drivers/video/fbdev/omap2/omapfb/Makefile
-@@ -2,5 +2,5 @@
- obj-$(CONFIG_OMAP2_VRFB) += vrfb.o
- obj-y += dss/
- obj-y += displays/
--obj-$(CONFIG_FB_OMAP2) += omapfb.o
--omapfb-y := omapfb-main.o omapfb-sysfs.o omapfb-ioctl.o
-+obj-$(CONFIG_FB_OMAP2) += omap2fb.o
-+omap2fb-y := omapfb-main.o omapfb-sysfs.o omapfb-ioctl.o
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -128,7 +128,7 @@ void blk_set_stacking_limits(struct queu
+ 
+ 	/* Inherit limits from component devices */
+ 	lim->max_segments = USHRT_MAX;
+-	lim->max_discard_segments = 1;
++	lim->max_discard_segments = USHRT_MAX;
+ 	lim->max_hw_sectors = UINT_MAX;
+ 	lim->max_segment_size = UINT_MAX;
+ 	lim->max_sectors = UINT_MAX;
 
 
