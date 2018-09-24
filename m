@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDABC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D4EECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C223121486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C223121486
+	by mail.kernel.org (Postfix) with ESMTP id DCABC21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCABC21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732981AbeIXS1a (ORCPT
+        id S1732990AbeIXS1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:27:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56992 "EHLO
+        Mon, 24 Sep 2018 14:27:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730683AbeIXS13 (ORCPT
+        with ESMTP id S1730683AbeIXS1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:27:29 -0400
+        Mon, 24 Sep 2018 14:27:32 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06D1F108B;
-        Mon, 24 Sep 2018 12:25:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 302F5108B;
+        Mon, 24 Sep 2018 12:25:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaechul Lee <jcsing.lee@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 164/173] ASoC: samsung: Fix invalid argument when devm_gpiod_get is called
-Date:   Mon, 24 Sep 2018 13:53:18 +0200
-Message-Id: <20180924113127.125235357@linuxfoundation.org>
+Subject: [PATCH 4.14 165/173] drm/i915: Apply the GTT write flush for all !llc machines
+Date:   Mon, 24 Sep 2018 13:53:19 +0200
+Message-Id: <20180924113127.174758304@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,40 +53,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaechul Lee <jcsing.lee@samsung.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 975b6a93088e83a41ba2f0dec2f086678fdb2a7a upstream.
+commit c5ba5b24657e473b1c64b0a614b168a635a2c935 upstream.
 
-devm_gpiod_get is called with GPIOF_OUT_INIT_LOW but the function doesn't
-allow the parameters. Unluckily, GPIOF_OUT_INIT_LOW is same value as
-GPIOD_ASIS and gpio direction isn't set properly.
+We also see the delayed GTT write issue on i915g/i915gm, so let's
+presume that it is a universal problem for all !llc machines, and that we
+just haven't yet noticed on g33, gen4 and gen5 machines.
 
-Muted stream comes up when I try recording some sounds on TM2. mic-bias
-gpiod state can't be changed because the gpiod is created with the invalid
-parameter. The gpio should be set GPIOD_OUT_HIGH.
+v2: Use a register that exists on all platforms
 
-Fixes: 1bfbc260a5b4 ("ASoC: samsung: Add machine driver for Exynos5433 based TM2 board")
-Signed-off-by: Jaechul Lee <jcsing.lee@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Testcase: igt/gem_mmap_gtt/coherency # i915gm
+References: https://bugs.freedesktop.org/show_bug.cgi?id=102577
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20170907184520.5032-1-chris@chris-wilson.co.uk
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/soc/samsung/tm2_wm5110.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/i915/i915_gem.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/samsung/tm2_wm5110.c
-+++ b/sound/soc/samsung/tm2_wm5110.c
-@@ -436,8 +436,7 @@ static int tm2_probe(struct platform_dev
- 	snd_soc_card_set_drvdata(card, priv);
- 	card->dev = dev;
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -687,10 +687,10 @@ flush_write_domain(struct drm_i915_gem_o
  
--	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias",
--						GPIOF_OUT_INIT_LOW);
-+	priv->gpio_mic_bias = devm_gpiod_get(dev, "mic-bias", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpio_mic_bias)) {
- 		dev_err(dev, "Failed to get mic bias gpio\n");
- 		return PTR_ERR(priv->gpio_mic_bias);
+ 	switch (obj->base.write_domain) {
+ 	case I915_GEM_DOMAIN_GTT:
+-		if (INTEL_GEN(dev_priv) >= 6 && !HAS_LLC(dev_priv)) {
++		if (!HAS_LLC(dev_priv)) {
+ 			intel_runtime_pm_get(dev_priv);
+ 			spin_lock_irq(&dev_priv->uncore.lock);
+-			POSTING_READ_FW(RING_ACTHD(dev_priv->engine[RCS]->mmio_base));
++			POSTING_READ_FW(RING_HEAD(dev_priv->engine[RCS]->mmio_base));
+ 			spin_unlock_irq(&dev_priv->uncore.lock);
+ 			intel_runtime_pm_put(dev_priv);
+ 		}
 
 
