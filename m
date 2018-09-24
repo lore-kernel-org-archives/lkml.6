@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B6DECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 135DBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE66D2064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE66D2064D
+	by mail.kernel.org (Postfix) with ESMTP id CC8482064D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8482064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388995AbeIXSrd (ORCPT
+        id S2389356AbeIXSrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59798 "EHLO
+        Mon, 24 Sep 2018 14:47:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731200AbeIXSrd (ORCPT
+        with ESMTP id S2388556AbeIXSrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:33 -0400
+        Mon, 24 Sep 2018 14:47:36 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93AF7109A;
-        Mon, 24 Sep 2018 12:45:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CFC07109A;
+        Mon, 24 Sep 2018 12:45:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 233/235] clk: tegra: bpmp: Dont crash when a clock fails to register
-Date:   Mon, 24 Sep 2018 13:53:39 +0200
-Message-Id: <20180924113126.051718087@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.18 234/235] mei: bus: type promotion bug in mei_nfc_if_version()
+Date:   Mon, 24 Sep 2018 13:53:40 +0200
+Message-Id: <20180924113126.113229959@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,46 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit f7b3182232c82bb9769e2d5471d702bae2972d2b ]
+commit b40b3e9358fbafff6a4ba0f4b9658f6617146f9c upstream.
 
-When registering clocks, we just skip any that fail to register
-(leaving a NULL hole in the clock table). However, our of_xlate
-function still tries to dereference each entry while looking for
-the clock with the requested id, causing a crash if any clocks
-failed to register. Add a check to of_xlate to skip any NULL
-clocks.
+We accidentally removed the check for negative returns
+without considering the issue of type promotion.
+The "if_version_length" variable is type size_t so if __mei_cl_recv()
+returns a negative then "bytes_recv" is type promoted
+to a high positive value and treated as success.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 582ab27a063a ("mei: bus: fix received data size check in NFC fixup")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clk/tegra/clk-bpmp.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/clk/tegra/clk-bpmp.c
-+++ b/drivers/clk/tegra/clk-bpmp.c
-@@ -586,9 +586,15 @@ static struct clk_hw *tegra_bpmp_clk_of_
- 	unsigned int id = clkspec->args[0], i;
- 	struct tegra_bpmp *bpmp = data;
+
+---
+ drivers/misc/mei/bus-fixup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/misc/mei/bus-fixup.c
++++ b/drivers/misc/mei/bus-fixup.c
+@@ -267,7 +267,7 @@ static int mei_nfc_if_version(struct mei
  
--	for (i = 0; i < bpmp->num_clocks; i++)
--		if (bpmp->clocks[i]->id == id)
--			return &bpmp->clocks[i]->hw;
-+	for (i = 0; i < bpmp->num_clocks; i++) {
-+		struct tegra_bpmp_clk *clk = bpmp->clocks[i];
-+
-+		if (!clk)
-+			continue;
-+
-+		if (clk->id == id)
-+			return &clk->hw;
-+	}
- 
- 	return NULL;
- }
+ 	ret = 0;
+ 	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length, 0);
+-	if (bytes_recv < if_version_length) {
++	if (bytes_recv < 0 || bytes_recv < if_version_length) {
+ 		dev_err(bus->dev, "Could not read IF version\n");
+ 		ret = -EIO;
+ 		goto err;
 
 
