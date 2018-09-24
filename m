@@ -2,216 +2,137 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82F1ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0CAC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D9D2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:50:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D9D2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B5042145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:52:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="T6uDC/e5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5042145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbeIXRwa (ORCPT
+        id S1728469AbeIXRy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:52:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51298 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728007AbeIXRwa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:52:30 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OBdX8M131239
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 07:50:46 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mpw7engdb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 07:50:46 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Mon, 24 Sep 2018 12:50:44 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 12:50:39 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OBob6i53608564
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 11:50:37 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8EBF5AE053;
-        Mon, 24 Sep 2018 14:49:39 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9FC67AE058;
-        Mon, 24 Sep 2018 14:49:38 +0100 (BST)
-Received: from oc0155643701.ibm.com (unknown [9.152.224.150])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 14:49:38 +0100 (BST)
-Subject: Re: [PATCH v10 10/26] KVM: s390: interfaces to clear CRYCB masks
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-11-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180924130153.766eaec7.cohuck@redhat.com>
-From:   Halil Pasic <pasic@linux.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pasic@linux.ibm.com; prefer-encrypt=mutual; keydata=
- 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
-Date:   Mon, 24 Sep 2018 13:50:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 24 Sep 2018 13:54:28 -0400
+Received: from erza.pados.hu ([176.9.136.194]:35616 "EHLO erza.pados.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727290AbeIXRy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:54:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=References:In-Reply-To:Cc:To:Subject:Message-ID:From:
+        Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=zqce1NMi+8hhKt4c2Gk/M6jsu/ScNdS3uP8LWP+Clws=; b=T6uDC/e5FGZmsKRorJxHyEg0Pa
+        0sw09TcqQCBg4e+7khdgS474i6EHU4a6Lv6tYd5L3LdfWieCRd85OJdl/8LtCgkxfWVoE+SeRI74m
+        zjEiiMAXGXYalb+EL+pu+fOrDbsTmmkmV+V+gAVobx6tMwZjrNhj1i680v/XsX7illybDr3w7AKfp
+        Lqds+zno+MuWgDkZAFgDbel+QUB5UDVRGf+tEnZ8Lra3/XwJIqhFNWaZezJ7gr5MN9UlNHyzFXM5b
+        nKEdiIh9F47oUGlcQjO7K6Bv5EH17aMSoFsMqAtrcebOW1oK6Z7cYUpws6ER+XLBjeU/CfJaT7SLG
+        YFyo5NTQ==;
+Received: from localhost ([127.0.0.1] helo=webmail.pados.hu)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1g4PPs-0002hT-Hz; Mon, 24 Sep 2018 13:52:40 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180924130153.766eaec7.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092411-4275-0000-0000-000002BED5D3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092411-4276-0000-0000-000037C8E2C4
-Message-Id: <42b23a01-bee1-0c87-3f81-320c40bcb7c9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=932 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240119
+Date:   Mon, 24 Sep 2018 11:52:38 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: RainLoop/1.12.0
+From:   "Karoly Pados" <pados@pados.hu>
+Message-ID: <48c673281bec5fbb4b8b84ed884c000a@pados.hu>
+Subject: Re: [PATCH v5] USB: serial: ftdi_sio: implement GPIO support for
+ FT-X devices
+To:     "Johan Hovold" <johan@kernel.org>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Loic Poulain" <loic.poulain@linaro.org>
+In-Reply-To: <20180924084756.GD5101@localhost>
+References: <20180924084756.GD5101@localhost>
+ <20180923160330.2184-1-pados@pados.hu>
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  Oops, I sent v4 again, so it had no changes at all. Can't
+   I just resend v5 instead of calling it v6? September 24, 2018 10:48 AM, "Johan
+    Hovold" <johan@kernel.org> wrote: > On Sun, Sep 23, 2018 at 06:03:30PM +0200,
+    Karoly Pados wrote: > >> This patch allows using the CBUS pins of FT-X devices
+    as GPIO in CBUS >> bitbanging mode. There is no conflict between the GPIO
+    and VCP >> functionality in this mode. Tested on FT230X and FT231X. >> >>
+    As there is no way to request the current CBUS register configuration >>
+   from the device, all CBUS pins are set to a known state when the first >>
+   GPIO is requested. This allows using libftdi to set the GPIO pins >> before
+    loading this module for UART functionality, a behavior that >> existing applications
+    might be relying upon (though no specific case >> is known to the authors
+    of this patch). >> >> Signed-off-by: Karoly Pados <pados@pados.hu> >> ---
+    >> Changelog: >> - v2: Fix compile error when CONFIG_GPIOLIB is not defined.
+    >> - v3: Incorporate review feedback. >> - v4: Include linux/gpio/driver.h
+    unconditionally. >> Replace and invert gpio_input with gpio_output. >> Make
+    ftdi_gpio_direction_get return 0/1. >> Change dev_err msg in ftdi_set_bitmode_req.
+    >> Change formatting of error checking in ftdi_gpio_get. >> Drop dev_err
+   in ftdi_gpio_set. >> Remove some line breaks and empty lines. >> Change error
+    handling in ftdi_read_eeprom (and adjust caller). >> Replace SIO->FTX in
+   FTDI_SIO_CBUS_MUX_GPIO macro name. >> - v5: Read only 4 bytes from eeprom
+   in ftx_gpioconf_init. >> Compare ftdi_read_eeprom result with 0 instead of
+    eq. cehck. >> Reserve 4 GPIOs even for FT234X. >> Release CBUS after gpiochip
+    deregister to avoid possible race. >> Adjust comment on FTDI_SIO_SET_BITMODE
+    macro. >> Protect GPIO value/dir setting with mutex. > > This patch doesn't
+    add any locking so I'm assuming you posted the wrong > version of the patch.
+    > >> Add support for gpiochip.get_multiple and set_multiple. >> Add names
+    to GPIO lines. > > I'll wait for v6. > > Thanks, > Johan [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+                             See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: pados.hu]
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/24/2018 01:01 PM, Cornelia Huck wrote:
-> On Wed, 12 Sep 2018 15:43:00 -0400
-> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> 
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
->> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
->> not get out of sync.
-> 
-> Hm, that patch description does not quite match what the patch actually
-> does...
-> 
-
-You mean it is not obvious where the masks get cleared? Well the APCB is
-defined to contain exactly the three masks. As far as I can tell the patch
-description is correct.
-
-Regards,
-Halil
-
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Acked-by: Halil Pasic <pasic@linux.ibm.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>  arch/s390/include/asm/kvm_host.h |    2 ++
->>  arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
->>  2 files changed, 17 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
->> index 423cce7..1e758fe 100644
->> --- a/arch/s390/include/asm/kvm_host.h
->> +++ b/arch/s390/include/asm/kvm_host.h
->> @@ -858,6 +858,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
->>  void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
->>  				 struct kvm_async_pf *work);
->>  
->> +void kvm_arch_crypto_clear_masks(struct kvm *kvm);
->> +
->>  extern int sie64a(struct kvm_s390_sie_block *, u64 *);
->>  extern char sie_exit;
->>  
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index d717041..ac4c93f 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -2033,6 +2033,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
->>  		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->>  }
->>  
->> +void kvm_arch_crypto_clear_masks(struct kvm *kvm)
->> +{
->> +	mutex_lock(&kvm->lock);
->> +	kvm_s390_vcpu_block_all(kvm);
->> +
->> +	memset(&kvm->arch.crypto.crycb->apcb0, 0,
->> +	       sizeof(kvm->arch.crypto.crycb->apcb0));
->> +	memset(&kvm->arch.crypto.crycb->apcb1, 0,
->> +	       sizeof(kvm->arch.crypto.crycb->apcb1));
->> +
->> +	kvm_s390_vcpu_unblock_all(kvm);
->> +	mutex_unlock(&kvm->lock);
->> +}
->> +EXPORT_SYMBOL_GPL(kvm_arch_crypto_clear_masks);
-> 
-> ...although this function looks fine.
-> 
->> +
->>  static u64 kvm_s390_get_initial_cpuid(void)
->>  {
->>  	struct cpuid cpuid;
-> 
-
+Oops, I sent v4 again, so it had no changes at all. Can't I just resend v=
+5 instead of calling it v6? =0A=0ASeptember 24, 2018 10:48 AM, "Johan Hov=
+old" <johan@kernel.org> wrote:=0A=0A> On Sun, Sep 23, 2018 at 06:03:30PM =
++0200, Karoly Pados wrote:=0A> =0A>> This patch allows using the CBUS pin=
+s of FT-X devices as GPIO in CBUS=0A>> bitbanging mode. There is no confl=
+ict between the GPIO and VCP=0A>> functionality in this mode. Tested on F=
+T230X and FT231X.=0A>> =0A>> As there is no way to request the current CB=
+US register configuration=0A>> from the device, all CBUS pins are set to =
+a known state when the first=0A>> GPIO is requested. This allows using li=
+bftdi to set the GPIO pins=0A>> before loading this module for UART funct=
+ionality, a behavior that=0A>> existing applications might be relying upo=
+n (though no specific case=0A>> is known to the authors of this patch).=
+=0A>> =0A>> Signed-off-by: Karoly Pados <pados@pados.hu>=0A>> ---=0A>> Ch=
+angelog:=0A>> - v2: Fix compile error when CONFIG_GPIOLIB is not defined.=
+=0A>> - v3: Incorporate review feedback.=0A>> - v4: Include linux/gpio/dr=
+iver.h unconditionally.=0A>> Replace and invert gpio_input with gpio_outp=
+ut.=0A>> Make ftdi_gpio_direction_get return 0/1.=0A>> Change dev_err msg=
+ in ftdi_set_bitmode_req.=0A>> Change formatting of error checking in ftd=
+i_gpio_get.=0A>> Drop dev_err in ftdi_gpio_set.=0A>> Remove some line bre=
+aks and empty lines.=0A>> Change error handling in ftdi_read_eeprom (and =
+adjust caller).=0A>> Replace SIO->FTX in FTDI_SIO_CBUS_MUX_GPIO macro nam=
+e.=0A>> - v5: Read only 4 bytes from eeprom in ftx_gpioconf_init.=0A>> Co=
+mpare ftdi_read_eeprom result with 0 instead of eq. cehck.=0A>> Reserve 4=
+ GPIOs even for FT234X.=0A>> Release CBUS after gpiochip deregister to av=
+oid possible race.=0A>> Adjust comment on FTDI_SIO_SET_BITMODE macro.=0A>=
+> Protect GPIO value/dir setting with mutex.=0A> =0A> This patch doesn't =
+add any locking so I'm assuming you posted the wrong=0A> version of the p=
+atch.=0A> =0A>> Add support for gpiochip.get_multiple and set_multiple.=
+=0A>> Add names to GPIO lines.=0A> =0A> I'll wait for v6.=0A> =0A> Thanks=
+,=0A> Johan
