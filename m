@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599C9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A8BECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D77021486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D77021486
+	by mail.kernel.org (Postfix) with ESMTP id 2C9F921486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9F921486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbeIXR7i (ORCPT
+        id S1730326AbeIXR7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:59:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52298 "EHLO
+        Mon, 24 Sep 2018 13:59:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52302 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729649AbeIXR7h (ORCPT
+        with ESMTP id S1729649AbeIXR7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:59:37 -0400
+        Mon, 24 Sep 2018 13:59:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72FC6D64;
-        Mon, 24 Sep 2018 11:57:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4206D64;
+        Mon, 24 Sep 2018 11:57:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 66/70] USB: serial: ti_usb_3410_5052: fix array underflow in completion handler
-Date:   Mon, 24 Sep 2018 13:53:05 +0200
-Message-Id: <20180924113107.610844010@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.4 67/70] mei: bus: type promotion bug in mei_nfc_if_version()
+Date:   Mon, 24 Sep 2018 13:53:06 +0200
+Message-Id: <20180924113107.730860632@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -50,38 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 5dfdd24eb3d39d815bc952ae98128e967c9bba49 upstream.
+commit b40b3e9358fbafff6a4ba0f4b9658f6617146f9c upstream.
 
-Similarly to a recently reported bug in io_ti, a malicious USB device
-could set port_number to a negative value and we would underflow the
-port array in the interrupt completion handler.
+We accidentally removed the check for negative returns
+without considering the issue of type promotion.
+The "if_version_length" variable is type size_t so if __mei_cl_recv()
+returns a negative then "bytes_recv" is type promoted
+to a high positive value and treated as success.
 
-As these devices only have one or two ports, fix this by making sure we
-only consider the seventh bit when determining the port number (and
-ignore bits 0xb0 which are typically set to 0x30).
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 582ab27a063a ("mei: bus: fix received data size check in NFC fixup")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 
 ---
- drivers/usb/serial/ti_usb_3410_5052.h |    2 +-
+ drivers/misc/mei/bus-fixup.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/ti_usb_3410_5052.h
-+++ b/drivers/usb/serial/ti_usb_3410_5052.h
-@@ -227,7 +227,7 @@ struct ti_interrupt {
- } __attribute__((packed));
+--- a/drivers/misc/mei/bus-fixup.c
++++ b/drivers/misc/mei/bus-fixup.c
+@@ -151,7 +151,7 @@ static int mei_nfc_if_version(struct mei
  
- /* Interrupt codes */
--#define TI_GET_PORT_FROM_CODE(c)	(((c) >> 4) - 3)
-+#define TI_GET_PORT_FROM_CODE(c)	(((c) >> 6) & 0x01)
- #define TI_GET_FUNC_FROM_CODE(c)	((c) & 0x0f)
- #define TI_CODE_HARDWARE_ERROR		0xFF
- #define TI_CODE_DATA_ERROR		0x03
+ 	ret = 0;
+ 	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length);
+-	if (bytes_recv < if_version_length) {
++	if (bytes_recv < 0 || bytes_recv < if_version_length) {
+ 		dev_err(bus->dev, "Could not read IF version\n");
+ 		ret = -EIO;
+ 		goto err;
 
 
