@@ -2,71 +2,228 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A49C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75CAC004D2
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0516120833
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:35:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0516120833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7428920C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:39:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uE2itUuj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7428920C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbeIYEkF (ORCPT
+        id S1726821AbeIYEno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:40:05 -0400
-Received: from mga07.intel.com ([134.134.136.100]:35398 "EHLO mga07.intel.com"
+        Tue, 25 Sep 2018 00:43:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbeIYEkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:40:05 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 15:35:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,299,1534834800"; 
-   d="scan'208";a="76951355"
-Received: from rkchitto-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.24])
-  by orsmga006.jf.intel.com with ESMTP; 24 Sep 2018 15:35:11 -0700
-Date:   Tue, 25 Sep 2018 01:35:13 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc:     Tomas Winkler <tomas.winkler@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/21] tpm: factor out tpm_startup function
-Message-ID: <20180924223513.GB12088@linux.intel.com>
-References: <20180921135820.20549-1-tomas.winkler@intel.com>
- <20180921135820.20549-12-tomas.winkler@intel.com>
- <060a3dc0-046e-198c-f476-8c490140e9d6@linux.vnet.ibm.com>
+        id S1725986AbeIYEno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 25 Sep 2018 00:43:44 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2407120833;
+        Mon, 24 Sep 2018 22:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537828756;
+        bh=CnIat8W/j9t/BMsn4wRV2CB5yLb7W6p7xHUv3RjcVhQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uE2itUujlbXtHU8Ee/eL9kS+XBTZoySCnXvkhbuhhZAhlZleDcam3/eqMm/Y7wRO9
+         nQhQC0E/MgO7em0LajR2ewLEtB/Dj8FbCp2n335f5zkfkhcZl7fTEE/twBy8hCcCXt
+         CtOon9alwE+RScNBpsQvqRMu81HZHI2o7PUbi6R0=
+Date:   Mon, 24 Sep 2018 17:39:14 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v6 04/13] PCI/P2PDMA: Introduce configfs/sysfs enable
+ attribute helpers
+Message-ID: <20180924223914.GP224714@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180913001156.4115-1-logang@deltatee.com>
+ <20180913001156.4115-5-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <060a3dc0-046e-198c-f476-8c490140e9d6@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180913001156.4115-5-logang@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 08:21:10PM +0530, Nayna Jain wrote:
-> On 09/21/2018 07:28 PM, Tomas Winkler wrote:
-> > TPM manual startup is used only from within TPM 1.x or TPM 2.x
-> > code, hence remove tpm_startup() function from tpm-interface.c
-> > and add two static functions implementations tpm1_startup()
-> > and tpm2_startup() into to tpm1-cmd.c and tpm2-cmd.c respectively.
-> > 
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > Tested-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
+On Wed, Sep 12, 2018 at 06:11:47PM -0600, Logan Gunthorpe wrote:
+> Users of the P2PDMA infrastructure will typically need a way for
+> the user to tell the kernel to use P2P resources. Typically
+> this will be a simple on/off boolean operation but sometimes
+> it may be desirable for the user to specify the exact device to
+> use for the P2P operation.
+> 
+> Add new helpers for attributes which take a boolean or a PCI device.
+> Any boolean, or the word 'auto' turn P2P on or off. Specifying a full
+> PCI device name/BDF will select the specific device.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 
-Probably my bad, had an unfortunate misconfiguration in my vim/git
-setup. Sorry.
+I appreciate your update to drop "auto" and show 0/1/pci_name().
+When you post that, include my:
 
-/Jarkko
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> ---
+>  drivers/pci/p2pdma.c       | 83 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/pci-p2pdma.h | 15 +++++++
+>  2 files changed, 98 insertions(+)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 29bd40a87768..3da848f3fe72 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -9,6 +9,7 @@
+>   */
+>  
+>  #define pr_fmt(fmt) "pci-p2pdma: " fmt
+> +#include <linux/ctype.h>
+>  #include <linux/pci-p2pdma.h>
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+> @@ -856,3 +857,85 @@ int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+>  	return nents;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_p2pdma_map_sg);
+> +
+> +/**
+> + * pci_p2pdma_enable_store - parse a configfs/sysfs attribute store
+> + *		to enable p2pdma
+> + * @page: contents of the value to be stored
+> + * @p2p_dev: returns the PCI device that was selected to be used
+> + *		(if 'auto', 'none or a boolean isn't the store value)
+> + * @use_p2pdma: returns whether to enable p2pdma or not
+> + *
+> + * Parses an attribute value to decide whether to enable p2pdma.
+> + * The value can select a PCI device (using it's full BDF device
+> + * name), a boolean, or 'auto'. 'auto' and a true boolean value
+> + * have the same meaning. A false value disables p2pdma and
+> + * a PCI device enables it to use a specific device as the
+> + * backing provider.
+> + *
+> + * pci_p2pdma_enable_show() should be used as the show operation for
+> + * the attribute.
+> + *
+> + * Returns 0 on success
+> + */
+> +int pci_p2pdma_enable_store(const char *page, struct pci_dev **p2p_dev,
+> +			    bool *use_p2pdma)
+> +{
+> +	struct device *dev;
+> +
+> +	dev = bus_find_device_by_name(&pci_bus_type, NULL, page);
+> +	if (dev) {
+> +		*use_p2pdma = true;
+> +		*p2p_dev = to_pci_dev(dev);
+> +
+> +		if (!pci_has_p2pmem(*p2p_dev)) {
+> +			pr_err("PCI device has no peer-to-peer memory: %s\n",
+> +			       page);
+> +			pci_dev_put(*p2p_dev);
+> +			return -ENODEV;
+> +		}
+> +
+> +		return 0;
+> +	} else if (sysfs_streq(page, "auto")) {
+> +		*use_p2pdma = true;
+> +		return 0;
+> +	} else if ((page[0] == '0' || page[0] == '1') && !iscntrl(page[1])) {
+> +		/*
+> +		 * If the user enters a PCI device that  doesn't exist
+> +		 * like "0000:01:00.1", we don't want strtobool to think
+> +		 * it's a '0' when it's clearly not what the user wanted.
+> +		 * So we require 0's and 1's to be exactly one character.
+> +		 */
+> +	} else if (!strtobool(page, use_p2pdma)) {
+> +		return 0;
+> +	}
+> +
+> +	pr_err("No such PCI device: %.*s\n", (int)strcspn(page, "\n"), page);
+> +	return -ENODEV;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_p2pdma_enable_store);
+> +
+> +/**
+> + * pci_p2pdma_enable_show - show a configfs/sysfs attribute indicating
+> + *		whether p2pdma is enabled
+> + * @page: contents of the stored value
+> + * @p2p_dev: the selected p2p device (NULL if no device is selected)
+> + * @use_p2pdma: whether p2pdme has been enabled
+> + *
+> + * Attributes that use pci_p2pdma_enable_store() should use this function
+> + * to show the value of the attribute.
+> + *
+> + * Returns 0 on success
+> + */
+> +ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
+> +			       bool use_p2pdma)
+> +{
+> +	if (!use_p2pdma)
+> +		return sprintf(page, "none\n");
+> +
+> +	if (!p2p_dev)
+> +		return sprintf(page, "auto\n");
+> +
+> +	return sprintf(page, "%s\n", pci_name(p2p_dev));
+> +}
+> +EXPORT_SYMBOL_GPL(pci_p2pdma_enable_show);
+> diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+> index 2f03dbbf5af6..377de4d73767 100644
+> --- a/include/linux/pci-p2pdma.h
+> +++ b/include/linux/pci-p2pdma.h
+> @@ -38,6 +38,10 @@ void pci_p2pmem_free_sgl(struct pci_dev *pdev, struct scatterlist *sgl);
+>  void pci_p2pmem_publish(struct pci_dev *pdev, bool publish);
+>  int pci_p2pdma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+>  		      enum dma_data_direction dir);
+> +int pci_p2pdma_enable_store(const char *page, struct pci_dev **p2p_dev,
+> +			    bool *use_p2pdma);
+> +ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
+> +			       bool use_p2pdma);
+>  #else /* CONFIG_PCI_P2PDMA */
+>  static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
+>  		size_t size, u64 offset)
+> @@ -105,5 +109,16 @@ static inline int pci_p2pdma_map_sg(struct device *dev,
+>  {
+>  	return 0;
+>  }
+> +static inline int pci_p2pdma_enable_store(const char *page,
+> +		struct pci_dev **p2p_dev, bool *use_p2pdma)
+> +{
+> +	*use_p2pdma = false;
+> +	return 0;
+> +}
+> +static inline ssize_t pci_p2pdma_enable_show(char *page,
+> +		struct pci_dev *p2p_dev, bool use_p2pdma)
+> +{
+> +	return sprintf(page, "none\n");
+> +}
+>  #endif /* CONFIG_PCI_P2PDMA */
+>  #endif /* _LINUX_PCI_P2P_H */
+> -- 
+> 2.19.0
+> 
