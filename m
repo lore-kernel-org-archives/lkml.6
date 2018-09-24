@@ -6,37 +6,53 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CE5ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D2CECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26B7A21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B7A21486
+	by mail.kernel.org (Postfix) with ESMTP id E406A21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E406A21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388194AbeIXSeb (ORCPT
+        id S2388203AbeIXSeh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:34:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58212 "EHLO
+        Mon, 24 Sep 2018 14:34:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58270 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729844AbeIXSea (ORCPT
+        with ESMTP id S1729816AbeIXSeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:34:30 -0400
+        Mon, 24 Sep 2018 14:34:37 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01D221018;
-        Mon, 24 Sep 2018 12:32:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0A4C1099;
+        Mon, 24 Sep 2018 12:32:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiang Biao <jiang.biao2@zte.com.cn>,
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        dave.hansen@linux.intel.com, luto@kernel.org, hpa@zytor.com,
-        albcamus@gmail.com, zhong.weidong@zte.com.cn,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 095/235] x86/pti: Check the return value of pti_user_pagetable_walk_pmd()
-Date:   Mon, 24 Sep 2018 13:51:21 +0200
-Message-Id: <20180924113114.774100032@linuxfoundation.org>
+        Pavel Machek <pavel@ucw.cz>, "H . Peter Anvin" <hpa@zytor.com>,
+        linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        joro@8bytes.org, Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 096/235] x86/mm/pti: Add an overflow check to pti_clone_pmds()
+Date:   Mon, 24 Sep 2018 13:51:22 +0200
+Message-Id: <20180924113114.858873958@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,63 +70,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiang Biao <jiang.biao2@zte.com.cn>
+From: Joerg Roedel <jroedel@suse.de>
 
-[ Upstream commit 8c934e01a7ce685d98e970880f5941d79272c654 ]
+[ Upstream commit 935232ce28dfabff1171e5a7113b2d865fa9ee63 ]
 
-pti_user_pagetable_walk_pmd() can return NULL, so the return value should
-be checked to prevent a NULL pointer dereference.
+The addr counter will overflow if the last PMD of the address space is
+cloned, resulting in an endless loop.
 
-Add the check and a warning when the PMD allocation fails.
+Check for that and bail out of the loop when it happens.
 
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: hpa@zytor.com
-Cc: albcamus@gmail.com
-Cc: zhong.weidong@zte.com.cn
-Link: https://lkml.kernel.org/r/1532045192-49622-2-git-send-email-jiang.biao2@zte.com.cn
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: linux-mm@kvack.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David Laight <David.Laight@aculab.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Eduardo Valentin <eduval@amazon.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: aliguori@amazon.com
+Cc: daniel.gruss@iaik.tugraz.at
+Cc: hughd@google.com
+Cc: keescook@google.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Waiman Long <llong@redhat.com>
+Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
+Cc: joro@8bytes.org
+Link: https://lkml.kernel.org/r/1531906876-13451-25-git-send-email-joro@8bytes.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/mm/pti.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/x86/mm/pti.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
 --- a/arch/x86/mm/pti.c
 +++ b/arch/x86/mm/pti.c
-@@ -206,7 +206,7 @@ static pmd_t *pti_user_pagetable_walk_pm
- 	BUILD_BUG_ON(p4d_large(*p4d) != 0);
- 	if (p4d_none(*p4d)) {
- 		unsigned long new_pud_page = __get_free_page(gfp);
--		if (!new_pud_page)
-+		if (WARN_ON_ONCE(!new_pud_page))
- 			return NULL;
+@@ -306,6 +306,10 @@ pti_clone_pmds(unsigned long start, unsi
+ 		p4d_t *p4d;
+ 		pud_t *pud;
  
- 		set_p4d(p4d, __p4d(_KERNPG_TABLE | __pa(new_pud_page)));
-@@ -220,7 +220,7 @@ static pmd_t *pti_user_pagetable_walk_pm
- 	}
- 	if (pud_none(*pud)) {
- 		unsigned long new_pmd_page = __get_free_page(gfp);
--		if (!new_pmd_page)
-+		if (WARN_ON_ONCE(!new_pmd_page))
- 			return NULL;
- 
- 		set_pud(pud, __pud(_KERNPG_TABLE | __pa(new_pmd_page)));
-@@ -242,9 +242,13 @@ static pmd_t *pti_user_pagetable_walk_pm
- static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
- {
- 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
--	pmd_t *pmd = pti_user_pagetable_walk_pmd(address);
-+	pmd_t *pmd;
- 	pte_t *pte;
- 
-+	pmd = pti_user_pagetable_walk_pmd(address);
-+	if (!pmd)
-+		return NULL;
++		/* Overflow check */
++		if (addr < start)
++			break;
 +
- 	/* We can't do anything sensible if we hit a large mapping. */
- 	if (pmd_large(*pmd)) {
- 		WARN_ON(1);
+ 		pgd = pgd_offset_k(addr);
+ 		if (WARN_ON(pgd_none(*pgd)))
+ 			return;
 
 
