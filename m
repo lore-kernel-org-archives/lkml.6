@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC44CECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2AAC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F7D20877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80F7D20877
+	by mail.kernel.org (Postfix) with ESMTP id 273AB20877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273AB20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbeIXSJp (ORCPT
+        id S1731353AbeIXSJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:09:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54368 "EHLO
+        Mon, 24 Sep 2018 14:09:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54378 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728516AbeIXSJn (ORCPT
+        with ESMTP id S1728516AbeIXSJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:09:43 -0400
+        Mon, 24 Sep 2018 14:09:48 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90DC61086;
-        Mon, 24 Sep 2018 12:07:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCC8B1081;
+        Mon, 24 Sep 2018 12:07:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Yanhui He <yanhuih@vmware.com>,
         Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.9 107/111] e1000e: Fix queue interrupt re-raising in Other interrupt
-Date:   Mon, 24 Sep 2018 13:53:14 +0200
-Message-Id: <20180924113115.841220945@linuxfoundation.org>
+Subject: [PATCH 4.9 108/111] e1000e: Avoid missed interrupts following ICR read
+Date:   Mon, 24 Sep 2018 13:53:15 +0200
+Message-Id: <20180924113115.955142347@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -57,40 +57,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Benjamin Poirier <bpoirier@suse.com>
 
-commit 361a954e6a7215de11a6179ad9bdc07d7e394b04 upstream.
+commit 116f4a640b3197401bc93b8adc6c35040308ceff upstream.
 
-Restores the ICS write for Rx/Tx queue interrupts which was present before
-commit 16ecba59bc33 ("e1000e: Do not read ICR in Other interrupt", v4.5-rc1)
-but was not restored in commit 4aea7a5c5e94
-("e1000e: Avoid receiver overrun interrupt bursts", v4.15-rc1).
+The 82574 specification update errata 12 states that interrupts may be
+missed if ICR is read while INT_ASSERTED is not set. Avoid that problem by
+setting all bits related to events that can trigger the Other interrupt in
+IMS.
 
-This re-raises the queue interrupts in case the txq or rxq bits were set in
-ICR and the Other interrupt handler read and cleared ICR before the queue
-interrupt was raised.
+The Other interrupt is raised for such events regardless of whether or not
+they are set in IMS. However, only when they are set is the INT_ASSERTED
+bit also set in ICR.
 
-Fixes: 4aea7a5c5e94 ("e1000e: Avoid receiver overrun interrupt bursts")
+By doing this, we ensure that INT_ASSERTED is always set when we read ICR
+in e1000_msix_other() and steer clear of the errata. This also ensures that
+ICR will automatically be cleared on read, therefore we no longer need to
+clear bits explicitly.
+
 Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
 Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
 Tested-by: Aaron Brown <aaron.f.brown@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+[bwh: Backported to 4.9: adjust context]
 Cc: Yanhui He <yanhuih@vmware.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/intel/e1000e/defines.h |   21 ++++++++++++++++++++-
+ drivers/net/ethernet/intel/e1000e/netdev.c  |   11 ++++-------
+ 2 files changed, 24 insertions(+), 8 deletions(-)
 
+--- a/drivers/net/ethernet/intel/e1000e/defines.h
++++ b/drivers/net/ethernet/intel/e1000e/defines.h
+@@ -400,6 +400,10 @@
+ #define E1000_ICR_RXDMT0        0x00000010 /* Rx desc min. threshold (0) */
+ #define E1000_ICR_RXO           0x00000040 /* Receiver Overrun */
+ #define E1000_ICR_RXT0          0x00000080 /* Rx timer intr (ring 0) */
++#define E1000_ICR_MDAC          0x00000200 /* MDIO Access Complete */
++#define E1000_ICR_SRPD          0x00010000 /* Small Receive Packet Detected */
++#define E1000_ICR_ACK           0x00020000 /* Receive ACK Frame Detected */
++#define E1000_ICR_MNG           0x00040000 /* Manageability Event Detected */
+ #define E1000_ICR_ECCER         0x00400000 /* Uncorrectable ECC Error */
+ /* If this bit asserted, the driver should claim the interrupt */
+ #define E1000_ICR_INT_ASSERTED	0x80000000
+@@ -407,7 +411,7 @@
+ #define E1000_ICR_RXQ1          0x00200000 /* Rx Queue 1 Interrupt */
+ #define E1000_ICR_TXQ0          0x00400000 /* Tx Queue 0 Interrupt */
+ #define E1000_ICR_TXQ1          0x00800000 /* Tx Queue 1 Interrupt */
+-#define E1000_ICR_OTHER         0x01000000 /* Other Interrupts */
++#define E1000_ICR_OTHER         0x01000000 /* Other Interrupt */
+ 
+ /* PBA ECC Register */
+ #define E1000_PBA_ECC_COUNTER_MASK  0xFFF00000 /* ECC counter mask */
+@@ -431,12 +435,27 @@
+ 	E1000_IMS_RXSEQ  |    \
+ 	E1000_IMS_LSC)
+ 
++/* These are all of the events related to the OTHER interrupt.
++ */
++#define IMS_OTHER_MASK ( \
++	E1000_IMS_LSC  | \
++	E1000_IMS_RXO  | \
++	E1000_IMS_MDAC | \
++	E1000_IMS_SRPD | \
++	E1000_IMS_ACK  | \
++	E1000_IMS_MNG)
++
+ /* Interrupt Mask Set */
+ #define E1000_IMS_TXDW      E1000_ICR_TXDW      /* Transmit desc written back */
+ #define E1000_IMS_LSC       E1000_ICR_LSC       /* Link Status Change */
+ #define E1000_IMS_RXSEQ     E1000_ICR_RXSEQ     /* Rx sequence error */
+ #define E1000_IMS_RXDMT0    E1000_ICR_RXDMT0    /* Rx desc min. threshold */
++#define E1000_IMS_RXO       E1000_ICR_RXO       /* Receiver Overrun */
+ #define E1000_IMS_RXT0      E1000_ICR_RXT0      /* Rx timer intr */
++#define E1000_IMS_MDAC      E1000_ICR_MDAC      /* MDIO Access Complete */
++#define E1000_IMS_SRPD      E1000_ICR_SRPD      /* Small Receive Packet */
++#define E1000_IMS_ACK       E1000_ICR_ACK       /* Receive ACK Frame Detected */
++#define E1000_IMS_MNG       E1000_ICR_MNG       /* Manageability Event */
+ #define E1000_IMS_ECCER     E1000_ICR_ECCER     /* Uncorrectable ECC Error */
+ #define E1000_IMS_RXQ0      E1000_ICR_RXQ0      /* Rx Queue 0 Interrupt */
+ #define E1000_IMS_RXQ1      E1000_ICR_RXQ1      /* Rx Queue 1 Interrupt */
 --- a/drivers/net/ethernet/intel/e1000e/netdev.c
 +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -1916,6 +1916,9 @@ static irqreturn_t e1000_msix_other(int
- 	icr = er32(ICR);
- 	ew32(ICR, E1000_ICR_OTHER);
+@@ -1911,16 +1911,12 @@ static irqreturn_t e1000_msix_other(int
+ 	struct net_device *netdev = data;
+ 	struct e1000_adapter *adapter = netdev_priv(netdev);
+ 	struct e1000_hw *hw = &adapter->hw;
+-	u32 icr;
+-
+-	icr = er32(ICR);
+-	ew32(ICR, E1000_ICR_OTHER);
++	u32 icr = er32(ICR);
  
-+	if (icr & adapter->eiac_mask)
-+		ew32(ICS, (icr & adapter->eiac_mask));
-+
+ 	if (icr & adapter->eiac_mask)
+ 		ew32(ICS, (icr & adapter->eiac_mask));
+ 
  	if (icr & E1000_ICR_LSC) {
- 		ew32(ICR, E1000_ICR_LSC);
+-		ew32(ICR, E1000_ICR_LSC);
  		hw->mac.get_link_status = true;
+ 		/* guard against interrupt when we're going down */
+ 		if (!test_bit(__E1000_DOWN, &adapter->state))
+@@ -1928,7 +1924,7 @@ static irqreturn_t e1000_msix_other(int
+ 	}
+ 
+ 	if (!test_bit(__E1000_DOWN, &adapter->state))
+-		ew32(IMS, E1000_IMS_OTHER);
++		ew32(IMS, E1000_IMS_OTHER | IMS_OTHER_MASK);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -2255,7 +2251,8 @@ static void e1000_irq_enable(struct e100
+ 
+ 	if (adapter->msix_entries) {
+ 		ew32(EIAC_82574, adapter->eiac_mask & E1000_EIAC_MASK_82574);
+-		ew32(IMS, adapter->eiac_mask | E1000_IMS_OTHER | E1000_IMS_LSC);
++		ew32(IMS, adapter->eiac_mask | E1000_IMS_OTHER |
++		     IMS_OTHER_MASK);
+ 	} else if ((hw->mac.type == e1000_pch_lpt) ||
+ 		   (hw->mac.type == e1000_pch_spt)) {
+ 		ew32(IMS, IMS_ENABLE_MASK | E1000_IMS_ECCER);
 
 
