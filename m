@@ -2,70 +2,92 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FADC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B983EC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBE121480
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EBE121480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EC0721480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:26:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC0721480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbeIXU2G (ORCPT
+        id S1731773AbeIXU2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:28:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41711 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728888AbeIXU2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:28:05 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 56473207CF; Mon, 24 Sep 2018 16:25:40 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 304C420725;
-        Mon, 24 Sep 2018 16:25:40 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     Gregory Clement <gregory.clement@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/3] rtc: armada38x: add range
-Date:   Mon, 24 Sep 2018 16:25:35 +0200
-Message-Id: <20180924142536.27801-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924142536.27801-1-alexandre.belloni@bootlin.com>
-References: <20180924142536.27801-1-alexandre.belloni@bootlin.com>
+        Mon, 24 Sep 2018 16:28:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40368 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729045AbeIXU2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:28:35 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3B583ACCC;
+        Mon, 24 Sep 2018 14:26:10 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 16:26:09 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     zhe.he@windriver.com
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
+        pasha.tatashin@oracle.com, mgorman@techsingularity.net,
+        aaron.lu@intel.com, osalvador@suse.de, iamjoonsoo.kim@lge.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mm/page_alloc: Add KBUILD_MODNAME
+Message-ID: <20180924142609.GD18685@dhcp22.suse.cz>
+References: <1537628013-243902-1-git-send-email-zhe.he@windriver.com>
+ <1537628013-243902-2-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537628013-243902-2-git-send-email-zhe.he@windriver.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RTC is a 32bit seconds counter.
+On Sat 22-09-18 22:53:33, zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
+> 
+> Add KBUILD_MODNAME to make prints more clear.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-armada38x.c | 2 ++
- 1 file changed, 2 insertions(+)
+Please be more explicit. Examples of before and after would be really
+helpful.
 
-diff --git a/drivers/rtc/rtc-armada38x.c b/drivers/rtc/rtc-armada38x.c
-index b74338d6dde6..d0278ad0a7f9 100644
---- a/drivers/rtc/rtc-armada38x.c
-+++ b/drivers/rtc/rtc-armada38x.c
-@@ -577,6 +577,8 @@ static __init int armada38x_rtc_probe(struct platform_device *pdev)
- 	/* Update RTC-MBUS bridge timing parameters */
- 	rtc->data->update_mbus_timing(rtc);
- 
-+	rtc->rtc_dev->range_max = U32_MAX;
-+
- 	ret = rtc_register_device(rtc->rtc_dev);
- 	if (ret)
- 		dev_err(&pdev->dev, "Failed to register RTC device: %d\n", ret);
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> Cc: akpm@linux-foundation.org
+> Cc: mhocko@suse.com
+> Cc: vbabka@suse.cz
+> Cc: pasha.tatashin@oracle.com
+> Cc: mgorman@techsingularity.net
+> Cc: aaron.lu@intel.com
+> Cc: osalvador@suse.de
+> Cc: iamjoonsoo.kim@lge.com
+> ---
+> v2:
+> Split the addition of KBUILD_MODNAME out
+> 
+>  mm/page_alloc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index f34cae1..ead9556 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -14,6 +14,8 @@
+>   *          (lots of bits borrowed from Ingo Molnar & Andrew Morton)
+>   */
+>  
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+>  #include <linux/stddef.h>
+>  #include <linux/mm.h>
+>  #include <linux/swap.h>
+> -- 
+> 2.7.4
+> 
+
 -- 
-2.19.0
-
+Michal Hocko
+SUSE Labs
