@@ -2,43 +2,40 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C882AECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AE7ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DBF5208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DBF5208D9
+	by mail.kernel.org (Postfix) with ESMTP id B8687208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8687208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731092AbeIXSNs (ORCPT
+        id S1731110AbeIXSNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:13:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54906 "EHLO
+        Mon, 24 Sep 2018 14:13:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54914 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730074AbeIXSNs (ORCPT
+        with ESMTP id S1730074AbeIXSNw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:13:48 -0400
+        Mon, 24 Sep 2018 14:13:52 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 86AD51082;
-        Mon, 24 Sep 2018 12:11:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 960621088;
+        Mon, 24 Sep 2018 12:12:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 079/111] efi/esrt: Only call efi_mem_reserve() for boot services memory
-Date:   Mon, 24 Sep 2018 13:52:46 +0200
-Message-Id: <20180924113112.744539116@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.9 070/111] CIFS: fix wrapping bugs in num_entries()
+Date:   Mon, 24 Sep 2018 13:52:37 +0200
+Message-Id: <20180924113111.974059538@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -56,59 +53,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 61f0d55569463a1af897117ff47d202b0ccb2e24 ]
+commit 56446f218af1133c802dad8e9e116f07f381846c upstream.
 
-The following commit:
+The problem is that "entryptr + next_offset" and "entryptr + len + size"
+can wrap.  I ended up changing the type of "entryptr" because it makes
+the math easier when we don't have to do so much casting.
 
-  7e1550b8f208 ("efi: Drop type and attribute checks in efi_mem_desc_lookup()")
-
-refactored the implementation of efi_mem_desc_lookup() so that the type
-check is moved to the callers, one of which is the x86 version of
-efi_arch_mem_reserve(), where we added a modified check that only takes
-EFI_BOOT_SERVICES_DATA regions into account.
-
-This is reasonable, since it is the only memory type that requires this,
-but doing so uncovered some unexpected behavior in the ESRT code, which
-permits the ESRT table to reside in other types of memory than what the
-UEFI spec mandates (i.e., EFI_BOOT_SERVICES_DATA), and unconditionally
-calls efi_mem_reserve() on the region in question. This may result in
-errors such as
-
-  esrt: Reserving ESRT space from 0x000000009c810318 to 0x000000009c810350.
-  efi: Failed to lookup EFI memory descriptor for 0x000000009c810318
-
-when the ESRT table is not in EFI_BOOT_SERVICES_DATA memory, but we try
-to reserve it nonetheless.
-
-So make the call to efi_mem_reserve() conditional on the memory type.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Jones <pjones@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/firmware/efi/esrt.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/firmware/efi/esrt.c
-+++ b/drivers/firmware/efi/esrt.c
-@@ -333,7 +333,8 @@ void __init efi_esrt_init(void)
+---
+ fs/cifs/smb2pdu.c |   25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2565,33 +2565,38 @@ num_entries(char *bufstart, char *end_of
+ 	int len;
+ 	unsigned int entrycount = 0;
+ 	unsigned int next_offset = 0;
+-	FILE_DIRECTORY_INFO *entryptr;
++	char *entryptr;
++	FILE_DIRECTORY_INFO *dir_info;
  
- 	end = esrt_data + size;
- 	pr_info("Reserving ESRT space from %pa to %pa.\n", &esrt_data, &end);
--	efi_mem_reserve(esrt_data, esrt_data_size);
-+	if (md.type == EFI_BOOT_SERVICES_DATA)
-+		efi_mem_reserve(esrt_data, esrt_data_size);
+ 	if (bufstart == NULL)
+ 		return 0;
  
- 	pr_debug("esrt-init: loaded.\n");
- err_memunmap:
+-	entryptr = (FILE_DIRECTORY_INFO *)bufstart;
++	entryptr = bufstart;
+ 
+ 	while (1) {
+-		entryptr = (FILE_DIRECTORY_INFO *)
+-					((char *)entryptr + next_offset);
+-
+-		if ((char *)entryptr + size > end_of_buf) {
++		if (entryptr + next_offset < entryptr ||
++		    entryptr + next_offset > end_of_buf ||
++		    entryptr + next_offset + size > end_of_buf) {
+ 			cifs_dbg(VFS, "malformed search entry would overflow\n");
+ 			break;
+ 		}
+ 
+-		len = le32_to_cpu(entryptr->FileNameLength);
+-		if ((char *)entryptr + len + size > end_of_buf) {
++		entryptr = entryptr + next_offset;
++		dir_info = (FILE_DIRECTORY_INFO *)entryptr;
++
++		len = le32_to_cpu(dir_info->FileNameLength);
++		if (entryptr + len < entryptr ||
++		    entryptr + len > end_of_buf ||
++		    entryptr + len + size > end_of_buf) {
+ 			cifs_dbg(VFS, "directory entry name would overflow frame end of buf %p\n",
+ 				 end_of_buf);
+ 			break;
+ 		}
+ 
+-		*lastentry = (char *)entryptr;
++		*lastentry = entryptr;
+ 		entrycount++;
+ 
+-		next_offset = le32_to_cpu(entryptr->NextEntryOffset);
++		next_offset = le32_to_cpu(dir_info->NextEntryOffset);
+ 		if (!next_offset)
+ 			break;
+ 	}
 
 
