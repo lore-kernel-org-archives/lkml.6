@@ -7,128 +7,146 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EBFECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A1AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A522087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 001FA214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:00:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="DGhcg7zO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A522087A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="NdQ+P2pM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 001FA214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbeIXVDK (ORCPT
+        id S2387695AbeIXUwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:03:10 -0400
-Received: from mail-eopbgr710104.outbound.protection.outlook.com ([40.107.71.104]:46976
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 24 Sep 2018 16:52:14 -0400
+Received: from mail-by2nam01on0130.outbound.protection.outlook.com ([104.47.34.130]:30464
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387733AbeIXUwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:52:15 -0400
+        id S1731441AbeIXUwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:52:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8aunIi3i14ud8t0GXaDrQjCnmEKinGx7sH0JLP7Tg7Y=;
- b=DGhcg7zOeQOEtH01XShWv65USqd77K+gWbFrgUUo5j86laiTE18Yqv/IS5xqhF35Vq33otNKmj44T3MKoYJfMhORPeCjlOfx5GrTv76mbMoAo15CwVcS+2TJjYLauztkG7Hp7vCEJhjRqLK5fT3QZFBT3pgLO753+feaaPQPnjc=
+ bh=H6Ynzesq3t0mdxk6H+uOXP2FGAqpnKPG3eU05DG1234=;
+ b=NdQ+P2pMVH6p8viks4dXkT9jFYIuitc2Dt5FwOEBb4P4A48gy2fpJA612gky2F9ux2WF0R52TygJvh6v1mRlhGulHiThuNE+5YcL+PVrzIPYURWl+Ls+ISfbkE3J4U5QNE6NIbS/uYKtgy6gv/HApsccEyymZqltqiD4bfOauh4=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0471.namprd21.prod.outlook.com (10.172.121.149) with Microsoft SMTP
+ CY4PR21MB0181.namprd21.prod.outlook.com (10.173.193.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Mon, 24 Sep 2018 14:49:37 +0000
+ 15.20.1207.3; Mon, 24 Sep 2018 14:49:40 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:49:37 +0000
+ 14:49:40 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+CC:     Varun Prakash <varun@chelsio.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 72/76] tools/vm/page-types.c: fix "defined but
- not used" warning
-Thread-Topic: [PATCH AUTOSEL 4.18 72/76] tools/vm/page-types.c: fix "defined
- but not used" warning
-Thread-Index: AQHUVBWwFKPJ6cg5F024DrNzZeRsRQ==
-Date:   Mon, 24 Sep 2018 14:48:43 +0000
-Message-ID: <20180924144751.164410-71-alexander.levin@microsoft.com>
-References: <20180924144751.164410-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 05/36] scsi: csiostor: add a check for NULL
+ pointer after kmalloc()
+Thread-Topic: [PATCH AUTOSEL 4.14 05/36] scsi: csiostor: add a check for NULL
+ pointer after kmalloc()
+Thread-Index: AQHUVBW4QBhmJiyPjUuuo9ZcJm2QTQ==
+Date:   Mon, 24 Sep 2018 14:48:56 +0000
+Message-ID: <20180924144851.164533-5-alexander.levin@microsoft.com>
+References: <20180924144851.164533-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180924144851.164533-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0471;6:znjYJjy6/xum0BzVhZg7OYzAtOls54XJ/NS1fJKOXtWrKf9/ZdFP2pYi60r2g/zXWnbhgmZp3dsmL3KG9VV6BGMbYjQqyF/JRlyXPJ2dvxFJc61vk9ZnReEFn9oWx4Gihw0iE4Nno65q1soGPCv+c10tvxoMrSXUO8VhjReAYzH45jFCwvi/HfOTGLhDCF3j2tar0jeRX5ZbqPL3D5mpv6ITMiQAwTb9Uw8bWElJW62ovrBk+zwK8jylZMZRrxMbJ05EqLJLm7rKtJCAyHshtGY5jhPM8HbwZPJQFhKvSDxIuAQ4jtZH4ObpzDJHPq8qUZ3qITT53rqPcZu1catrCcAWIaUVQ9rC4wxsMrNW2BC9SC+nP/BAMzmETSe0ZyP6bzTxdhitBG/EmV4ISsu100zf5ZQ41K+TNtAGQ33c0Ja3tcORp9D+fy1Qhfzhe7c6212MoC6wRgM+rEqud5X5Yg==;5:VqUmtPgsch5mIozQXVHmg/Mk+yKJyQI4bpq3bmjm41b/ATzC/Tpm/SBRW22L7PMty618hI2tLIIjkGT1mbqSEM4AYhK2qi5/FuZQcvKtFlxVyo42dUhpTOE+aR3UOREHOZzZWj8gWGkSXzym9I0ZMFBdFoiwX0vfsKxkKpI5xEA=;7:L8e9odKHZDLj8viyQinlAWD9FzlBZ/QWXWTn6wDgYgboPBwgvRpsKh2hx9ovcGyoJcqkXz0Io6uN29lEOreNTFyB5v9EQAh8dM+U9QTzOSWpyP+tcsapJkw7rG5s5y9atsU21ls3OCDsh1iSbMAEvW8/wInWU6Bzjj72tc+ktGo12KR0OogIsRpGQpPGhPHVOmz7hfurJfXcDz64Im/PWRb19p8rovjsOvUJtRANdCtqkmK3c69/gSAWMDdwcs+I
-x-ms-office365-filtering-correlation-id: 66e97d07-ca1d-4d08-58f3-08d6222cf360
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0181;6:fQ6V+MJmy1cl4mHVR5r+QEM7pnGW5GSIlBspVExNPlaefey43We+sTF6DXHKgaOeGm1OrDNllMWAHhCqtjLrvtDORtIr4GFco436zIxSUGNqK8bXIL6vLN6Pjgqcd4gPcqY8uTmWXIIr/QL7Y9oE9lVzPnJVVx+J0P5IrZbr1xZPkw9fKScyxFWGG5zOzlxm6E0BwlsZyDFYTOMhq66wF4gYlEtRGniqCCbcuT9HH7WifepPrkIYq67sHCbc0rFfXcSeOjdF72Q+9XmeC0kAnDWbdHZhpkMlETc0RZx/wnD+DPQYWEx6GDr2Lfe4pVeJZiYduVIaDEUFjJt4vH34hs+1Zsfo6RxZ5f71u9+Kfr/XDe6N+t9ibtQwqfjcuqbvf8qHgxukOorQCV6jvpmEPISPI8T1IU0ROwsKhCWRKiZ6vRU2ggjGf3zPgCmLTVGUFhChhB6x6kF8xAfCe9/qIw==;5:LIleJGUTUYa+GIGckLq4AEhRXQOTZoupwIi6R2GZ7uQUrtRqzEKj6YIBzv9Q0AZgIWeL2Y3yTQpbI2c2cdmUsqSPXzX/LI5bG/B7wUXYHlNm0EVJNR141qhvlcv7uyXoxai4Mo7wqkU7kFxrrILjBwzqB81LEdTpsbepks8OJbo=;7:f+fHStuwAN1tUJAtDTs6xPtdW1m+oE8tBTIYPgGMqIaswFYIQWl9iRoMzTX+l/G+8uLnFO95o38SvaMwda33bWMu0l+pcTVe7xt3GfM1n3mJ/hDiukWobimTPkvOBUVb5Ia+WhL+AXJ5cEgN6OkF/h/XPY0ebqxMJWJW0oE3deP8to0uYTFBi1BeJKisqDkHx7JC7095g+k+qBql1jzZSY/owH+nxF5FDwElinztltDMPvxrU2ratAI0ou/stNx4
+x-ms-office365-filtering-correlation-id: b1635574-2634-40ed-4ea7-08d6222cf54d
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0471;
-x-ms-traffictypediagnostic: CY4PR21MB0471:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR21MB0181;
+x-ms-traffictypediagnostic: CY4PR21MB0181:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB04718B879A0F5B47665ABB2BFB170@CY4PR21MB0471.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(42068640409301)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB018158B8FD5E99CC16C15DAAFB170@CY4PR21MB0181.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(198206253151910)(146099531331640)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0471;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0471;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0181;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0181;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(366004)(39860400002)(346002)(199004)(189003)(6512007)(105586002)(256004)(53936002)(106356001)(10090500001)(6486002)(217873002)(1076002)(6436002)(71190400001)(97736004)(71200400001)(446003)(476003)(11346002)(54906003)(316002)(2616005)(86362001)(2906002)(86612001)(8676002)(5250100002)(26005)(81166006)(81156014)(36756003)(10290500003)(4326008)(478600001)(2501003)(7736002)(110136005)(966005)(2900100001)(186003)(6666003)(22452003)(102836004)(25786009)(305945005)(68736007)(107886003)(76176011)(486006)(6116002)(6506007)(72206003)(3846002)(99286004)(6306002)(66066001)(8936002)(5660300001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0471;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(136003)(346002)(396003)(189003)(199004)(575784001)(10290500003)(6116002)(26005)(102836004)(3846002)(5660300001)(22452003)(110136005)(10090500001)(8676002)(1076002)(54906003)(105586002)(186003)(316002)(106356001)(2501003)(6436002)(97736004)(6486002)(107886003)(7736002)(36756003)(478600001)(72206003)(14454004)(71200400001)(71190400001)(305945005)(256004)(14444005)(5250100002)(217873002)(6666003)(2616005)(68736007)(53936002)(81166006)(81156014)(2900100001)(476003)(86612001)(4326008)(8936002)(486006)(99286004)(6512007)(86362001)(2906002)(25786009)(66066001)(6506007)(11346002)(446003)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0181;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: AhZJiolexZrq8Oyhhlc7WAa6SOh5E7j9zVdzoqYVLp6/JdndScblyv2qHXgWwHMVr755M7Oc/r27HZA0ShGVOkBZohX/TCoRDYSQAoPjMx4jlDi9iUMGxz6UwXm/7GlJge4DhpvYFN6rSiIyhk1Lk3KZ01TA6nc+PFXs5UzaG0mPBOeOIhD4GamhGJkEM6FZKQGup5YM25QEMcotmGCWJH8+02GpmW1uNKsc/snpYb/CzSx7nec9WqzfZSqJj3QUXjsclbULXN9d0KzIqdDIYGMccFazd7qPLBs1/hHLajXm5VEbj5KTQG66cErxxFHSv1brGKsGjsj4rkE8IwWJQDukd2m/L+jGUx4/9t/qV4s=
+x-microsoft-antispam-message-info: 9nKCz0TWkDPPRAaV9fMjbF35/AoyajiaFA/8LRdYN044t6ENFznz7zQ8uM5LO0cy+X+ERRU9Nh9nP7qVAoip6ADsIIaHwArOrICj6P4Gmc6pR0xQZQ/FF/8vqwdmMWu6cKoAa3oDKqSOmKiLcIHb10XZYz9uW8ztUtpK8quAusLIpuwP5KnWyb7Q93/U8m6h/Erli6nYC8xmxc7TAWY3RVZxwzIQMpDL1qlaF2+lBxXm5vjBexESl+ZMzjDmI62eGa5GoAYsg70dAwVdYEMD+3zsySYMC5YG+iD5sJE5P1Bq15Kj1rm4EWj0CXfVEBQ6Z5o5jKiSVXW334sMG2oMGALwpZjIZNhxzmmEtxFONHU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66e97d07-ca1d-4d08-58f3-08d6222cf360
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:43.8463
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1635574-2634-40ed-4ea7-08d6222cf54d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:56.5778
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0471
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 7ab660f8baecfe26c1c267fa8e64d2073feae2bb ]
+[ Upstream commit 89809b028b6f54187b7d81a0c69b35d394c52e62 ]
 
-debugfs_known_mountpoints[] is not used any more, so let's remove it.
-
-Link: http://lkml.kernel.org/r/1535102651-19418-1-git-send-email-n-horiguch=
-i@ah.jp.nec.com
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/vm/page-types.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/scsi/csiostor/csio_hw.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
-index cce853dca691..a4c31fb2887b 100644
---- a/tools/vm/page-types.c
-+++ b/tools/vm/page-types.c
-@@ -156,12 +156,6 @@ static const char * const page_flag_names[] =3D {
- };
+diff --git a/drivers/scsi/csiostor/csio_hw.c b/drivers/scsi/csiostor/csio_h=
+w.c
+index 5be0086142ca..ab30db8c36c6 100644
+--- a/drivers/scsi/csiostor/csio_hw.c
++++ b/drivers/scsi/csiostor/csio_hw.c
+@@ -2010,8 +2010,8 @@ static int csio_hw_prep_fw(struct csio_hw *hw, struct=
+ fw_info *fw_info,
+ }
 =20
-=20
--static const char * const debugfs_known_mountpoints[] =3D {
--	"/sys/kernel/debug",
--	"/debug",
--	0,
--};
--
  /*
-  * data structures
+- * Returns -EINVAL if attempts to flash the firmware failed
+- * else returns 0,
++ * Returns -EINVAL if attempts to flash the firmware failed,
++ * -ENOMEM if memory allocation failed else returns 0,
+  * if flashing was not attempted because the card had the
+  * latest firmware ECANCELED is returned
   */
+@@ -2039,6 +2039,13 @@ csio_hw_flash_fw(struct csio_hw *hw, int *reset)
+ 		return -EINVAL;
+ 	}
+=20
++	/* allocate memory to read the header of the firmware on the
++	 * card
++	 */
++	card_fw =3D kmalloc(sizeof(*card_fw), GFP_KERNEL);
++	if (!card_fw)
++		return -ENOMEM;
++
+ 	if (csio_is_t5(pci_dev->device & CSIO_HW_CHIP_MASK))
+ 		fw_bin_file =3D FW_FNAME_T5;
+ 	else
+@@ -2052,11 +2059,6 @@ csio_hw_flash_fw(struct csio_hw *hw, int *reset)
+ 		fw_size =3D fw->size;
+ 	}
+=20
+-	/* allocate memory to read the header of the firmware on the
+-	 * card
+-	 */
+-	card_fw =3D kmalloc(sizeof(*card_fw), GFP_KERNEL);
+-
+ 	/* upgrade FW logic */
+ 	ret =3D csio_hw_prep_fw(hw, fw_info, fw_data, fw_size, card_fw,
+ 			 hw->fw_state, reset);
 --=20
 2.17.1
