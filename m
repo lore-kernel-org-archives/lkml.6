@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05C9C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0910ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9734721486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9734721486
+	by mail.kernel.org (Postfix) with ESMTP id 964542083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964542083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388893AbeIXSoF (ORCPT
+        id S2388902AbeIXSoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:44:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59276 "EHLO
+        Mon, 24 Sep 2018 14:44:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388102AbeIXSoF (ORCPT
+        with ESMTP id S2387712AbeIXSoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:44:05 -0400
+        Mon, 24 Sep 2018 14:44:11 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33831109F;
-        Mon, 24 Sep 2018 12:42:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8FA51109A;
+        Mon, 24 Sep 2018 12:42:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Boris Pismenny <borisp@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 186/235] drm/nouveau: tegra: Detach from ARM DMA/IOMMU mapping
-Date:   Mon, 24 Sep 2018 13:52:52 +0200
-Message-Id: <20180924113123.154710693@linuxfoundation.org>
+Subject: [PATCH 4.18 187/235] tls: Fix zerocopy_from_iter iov handling
+Date:   Mon, 24 Sep 2018 13:52:53 +0200
+Message-Id: <20180924113123.208656314@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -55,70 +52,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thierry Reding <treding@nvidia.com>
+From: Boris Pismenny <borisp@mellanox.com>
 
-[ Upstream commit b59fb482b52269977ee5de205308e5b236a03917 ]
+[ Upstream commit 4718799817c5a30ae723eda21f3a6c7d8701b1a4 ]
 
-Depending on the kernel configuration, early ARM architecture setup code
-may have attached the GPU to a DMA/IOMMU mapping that transparently uses
-the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
-backed buffers (a special bit in the GPU's MMU page tables indicates the
-memory path to take: via the SMMU or directly to the memory controller).
-Transparently backing DMA memory with an IOMMU prevents Nouveau from
-properly handling such memory accesses and causes memory access faults.
+zerocopy_from_iter iterates over the message, but it doesn't revert the
+updates made by the iov iteration. This patch fixes it. Now, the iov can
+be used after calling zerocopy_from_iter.
 
-As a side-note: buffers other than those allocated in instance memory
-don't need to be physically contiguous from the GPU's perspective since
-the GPU can map them into contiguous buffers using its own MMU. Mapping
-these buffers through the IOMMU is unnecessary and will even lead to
-performance degradation because of the additional translation. One
-exception to this are compressible buffers which need large pages. In
-order to enable these large pages, multiple small pages will have to be
-combined into one large (I/O virtually contiguous) mapping via the
-IOMMU. However, that is a topic outside the scope of this fix and isn't
-currently supported. An implementation will want to explicitly create
-these large pages in the Nouveau driver, so detaching from a DMA/IOMMU
-mapping would still be required.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes: 3c4d75591 ("tls: kernel TLS support")
+Signed-off-by: Boris Pismenny <borisp@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/tls/tls_sw.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-@@ -23,6 +23,10 @@
- #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
- #include "priv.h"
- 
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+#include <asm/dma-iommu.h>
-+#endif
-+
- static int
- nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -286,7 +286,7 @@ static int zerocopy_from_iter(struct soc
+ 			      int length, int *pages_used,
+ 			      unsigned int *size_used,
+ 			      struct scatterlist *to, int to_max_pages,
+-			      bool charge)
++			      bool charge, bool revert)
  {
-@@ -105,6 +109,15 @@ nvkm_device_tegra_probe_iommu(struct nvk
- 	unsigned long pgsize_bitmap;
- 	int ret;
+ 	struct page *pages[MAX_SKB_FRAGS];
  
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+	if (dev->archdata.mapping) {
-+		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
-+
-+		arm_iommu_detach_device(dev);
-+		arm_iommu_release_mapping(mapping);
-+	}
-+#endif
-+
- 	if (!tdev->func->iommu_bit)
- 		return;
+@@ -337,6 +337,8 @@ static int zerocopy_from_iter(struct soc
+ out:
+ 	*size_used = size;
+ 	*pages_used = num_elem;
++	if (revert)
++		iov_iter_revert(from, size);
+ 
+ 	return rc;
+ }
+@@ -438,7 +440,7 @@ alloc_encrypted:
+ 				&ctx->sg_plaintext_size,
+ 				ctx->sg_plaintext_data,
+ 				ARRAY_SIZE(ctx->sg_plaintext_data),
+-				true);
++				true, false);
+ 			if (ret)
+ 				goto fallback_to_reg_send;
+ 
+@@ -826,7 +828,7 @@ int tls_sw_recvmsg(struct sock *sk,
+ 				err = zerocopy_from_iter(sk, &msg->msg_iter,
+ 							 to_copy, &pages,
+ 							 &chunk, &sgin[1],
+-							 MAX_SKB_FRAGS,	false);
++							 MAX_SKB_FRAGS,	false, true);
+ 				if (err < 0)
+ 					goto fallback_to_reg_recv;
  
 
 
