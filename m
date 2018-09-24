@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53113ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E8DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2AF20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2AF20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 7FAC920877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FAC920877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbeIXSFq (ORCPT
+        id S1730536AbeIXSFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:05:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53488 "EHLO
+        Mon, 24 Sep 2018 14:05:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53788 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730384AbeIXSCh (ORCPT
+        with ESMTP id S1730352AbeIXSFr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:02:37 -0400
+        Mon, 24 Sep 2018 14:05:47 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B98B8D64;
-        Mon, 24 Sep 2018 12:00:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EA8F61074;
+        Mon, 24 Sep 2018 12:03:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 006/111] ALSA: msnd: Fix the default sample sizes
-Date:   Mon, 24 Sep 2018 13:51:33 +0200
-Message-Id: <20180924113104.672947993@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.9 058/111] usb: Avoid use-after-free by flushing endpoints early in usb_set_interface()
+Date:   Mon, 24 Sep 2018 13:52:25 +0200
+Message-Id: <20180924113110.684068950@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -51,34 +53,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit 7c500f9ea139d0c9b80fdea5a9c911db3166ea54 ]
+commit f9a5b4f58b280c1d26255376713c132f93837621 upstream.
 
-The default sample sizes set by msnd driver are bogus; it sets ALSA
-PCM format, not the actual bit width.
+The steps taken by usb core to set a new interface is very different from
+what is done on the xHC host side.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+xHC hardware will do everything in one go. One command is used to set up
+new endpoints, free old endpoints, check bandwidth, and run the new
+endpoints.
+
+All this is done by xHC when usb core asks the hcd to check for
+available bandwidth. At this point usb core has not yet flushed the old
+endpoints, which will cause use-after-free issues in xhci driver as
+queued URBs are cancelled on a re-allocated endpoint.
+
+To resolve this add a call to usb_disable_interface() which will flush
+the endpoints before calling usb_hcd_alloc_bandwidth()
+
+Additional checks in xhci driver will also be implemented to gracefully
+handle stale URB cancel on freed and re-allocated endpoints
+
+Cc: <stable@vger.kernel.org>
+Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/isa/msnd/msnd_pinnacle.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/isa/msnd/msnd_pinnacle.c
-+++ b/sound/isa/msnd/msnd_pinnacle.c
-@@ -82,10 +82,10 @@
+---
+ drivers/usb/core/message.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -1279,6 +1279,11 @@ void usb_enable_interface(struct usb_dev
+  * is submitted that needs that bandwidth.  Some other operating systems
+  * allocate bandwidth early, when a configuration is chosen.
+  *
++ * xHCI reserves bandwidth and configures the alternate setting in
++ * usb_hcd_alloc_bandwidth(). If it fails the original interface altsetting
++ * may be disabled. Drivers cannot rely on any particular alternate
++ * setting being in effect after a failure.
++ *
+  * This call is synchronous, and may not be used in an interrupt context.
+  * Also, drivers must not change altsettings while urbs are scheduled for
+  * endpoints in that interface; all such urbs must first be completed
+@@ -1314,6 +1319,12 @@ int usb_set_interface(struct usb_device
+ 			 alternate);
+ 		return -EINVAL;
+ 	}
++	/*
++	 * usb3 hosts configure the interface in usb_hcd_alloc_bandwidth,
++	 * including freeing dropped endpoint ring buffers.
++	 * Make sure the interface endpoints are flushed before that
++	 */
++	usb_disable_interface(dev, iface, false);
  
- static void set_default_audio_parameters(struct snd_msnd *chip)
- {
--	chip->play_sample_size = DEFSAMPLESIZE;
-+	chip->play_sample_size = snd_pcm_format_width(DEFSAMPLESIZE);
- 	chip->play_sample_rate = DEFSAMPLERATE;
- 	chip->play_channels = DEFCHANNELS;
--	chip->capture_sample_size = DEFSAMPLESIZE;
-+	chip->capture_sample_size = snd_pcm_format_width(DEFSAMPLESIZE);
- 	chip->capture_sample_rate = DEFSAMPLERATE;
- 	chip->capture_channels = DEFCHANNELS;
- }
+ 	/* Make sure we have enough bandwidth for this alternate interface.
+ 	 * Remove the current alt setting and add the new alt setting.
 
 
