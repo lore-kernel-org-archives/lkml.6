@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18168C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82531C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D061F2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D061F2083A
+	by mail.kernel.org (Postfix) with ESMTP id 436CD2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436CD2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388535AbeIXSmE (ORCPT
+        id S2388547AbeIXSmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:42:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58912 "EHLO
+        Mon, 24 Sep 2018 14:42:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729165AbeIXSmD (ORCPT
+        with ESMTP id S2387876AbeIXSmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:42:03 -0400
+        Mon, 24 Sep 2018 14:42:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1266109A;
-        Mon, 24 Sep 2018 12:40:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ECA2F109B;
+        Mon, 24 Sep 2018 12:40:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 152/235] bpf: fix rcu annotations in compute_effective_progs()
-Date:   Mon, 24 Sep 2018 13:52:18 +0200
-Message-Id: <20180924113120.557117770@linuxfoundation.org>
+Subject: [PATCH 4.18 153/235] spi: dw: fix possible race condition
+Date:   Mon, 24 Sep 2018 13:52:19 +0200
+Message-Id: <20180924113120.644318048@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,56 +54,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Gushchin <guro@fb.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 3960f4fd6585608e8cc285d9665821985494e147 ]
+[ Upstream commit 66b19d762378785d1568b5650935205edfeb0503 ]
 
-The progs local variable in compute_effective_progs() is marked
-as __rcu, which is not correct. This is a local pointer, which
-is initialized by bpf_prog_array_alloc(), which also now
-returns a generic non-rcu pointer.
+It is possible to get an interrupt as soon as it is requested.  dw_spi_irq
+does spi_controller_get_devdata(master) and expects it to be different than
+NULL. However, spi_controller_set_devdata() is called after request_irq(),
+resulting in the following crash:
 
-The real rcu-protected pointer is *array (array is a pointer
-to an RCU-protected pointer), so the assignment should be performed
-using rcu_assign_pointer().
+CPU 0 Unable to handle kernel paging request at virtual address 00000030, epc == 8058e09c, ra == 8018ff90
+[...]
+Call Trace:
+[<8058e09c>] dw_spi_irq+0x8/0x64
+[<8018ff90>] __handle_irq_event_percpu+0x70/0x1d4
+[<80190128>] handle_irq_event_percpu+0x34/0x8c
+[<801901c4>] handle_irq_event+0x44/0x80
+[<801951a8>] handle_level_irq+0xdc/0x194
+[<8018f580>] generic_handle_irq+0x38/0x50
+[<804c6924>] ocelot_irq_handler+0x104/0x1c0
 
-Fixes: 324bda9e6c5a ("bpf: multi program support for cgroup+bpf")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/cgroup.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/spi/spi-dw.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -95,7 +95,7 @@ static int compute_effective_progs(struc
- 				   enum bpf_attach_type type,
- 				   struct bpf_prog_array __rcu **array)
- {
--	struct bpf_prog_array __rcu *progs;
-+	struct bpf_prog_array *progs;
- 	struct bpf_prog_list *pl;
- 	struct cgroup *p = cgrp;
- 	int cnt = 0;
-@@ -120,13 +120,12 @@ static int compute_effective_progs(struc
- 					    &p->bpf.progs[type], node) {
- 				if (!pl->prog)
- 					continue;
--				rcu_dereference_protected(progs, 1)->
--					progs[cnt++] = pl->prog;
-+				progs->progs[cnt++] = pl->prog;
- 			}
- 		p = cgroup_parent(p);
- 	} while (p);
+--- a/drivers/spi/spi-dw.c
++++ b/drivers/spi/spi-dw.c
+@@ -485,6 +485,8 @@ int dw_spi_add_host(struct device *dev,
+ 	dws->dma_inited = 0;
+ 	dws->dma_addr = (dma_addr_t)(dws->paddr + DW_SPI_DR);
  
--	*array = progs;
-+	rcu_assign_pointer(*array, progs);
- 	return 0;
- }
++	spi_controller_set_devdata(master, dws);
++
+ 	ret = request_irq(dws->irq, dw_spi_irq, IRQF_SHARED, dev_name(dev),
+ 			  master);
+ 	if (ret < 0) {
+@@ -518,7 +520,6 @@ int dw_spi_add_host(struct device *dev,
+ 		}
+ 	}
  
+-	spi_controller_set_devdata(master, dws);
+ 	ret = devm_spi_register_controller(dev, master);
+ 	if (ret) {
+ 		dev_err(&master->dev, "problem registering spi master\n");
 
 
