@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEEEECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E190EECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31FDB2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:47:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31FDB2145D
+	by mail.kernel.org (Postfix) with ESMTP id 910682145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:47:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 910682145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbeIXRs6 (ORCPT
+        id S1729277AbeIXRtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:48:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51372 "EHLO
+        Mon, 24 Sep 2018 13:49:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50104 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729075AbeIXRs5 (ORCPT
+        with ESMTP id S1728840AbeIXRia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:48:57 -0400
+        Mon, 24 Sep 2018 13:38:30 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5CB31071;
-        Mon, 24 Sep 2018 11:47:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B8A41061;
+        Mon, 24 Sep 2018 11:36:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fredrik Noring <noring@nocrew.org>,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Gustavo Romero <gromero@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 072/105] fbdev: Distinguish between interlaced and progressive modes
-Date:   Mon, 24 Sep 2018 13:33:58 +0200
-Message-Id: <20180924113120.487901833@linuxfoundation.org>
+Subject: [PATCH 3.18 019/105] selftests/powerpc: Kill child processes on SIGINT
+Date:   Mon, 24 Sep 2018 13:33:05 +0200
+Message-Id: <20180924113115.467861231@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -53,123 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fredrik Noring <noring@nocrew.org>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit 1ba0a59cea41ea05fda92daaf2a2958a2246b9cf ]
+[ Upstream commit 7c27a26e1ed5a7dd709aa19685d2c98f64e1cf0c ]
 
-I discovered the problem when developing a frame buffer driver for the
-PlayStation 2 (not yet merged), using the following video modes for the
-PlayStation 3 in drivers/video/fbdev/ps3fb.c:
+There are some powerpc selftests, as tm/tm-unavailable, that run for a long
+period (>120 seconds), and if it is interrupted, as pressing CRTL-C
+(SIGINT), the foreground process (harness) dies but the child process and
+threads continue to execute (with PPID = 1 now) in background.
 
-    }, {
-        /* 1080if */
-        "1080if", 50, 1920, 1080, 13468, 148, 484, 36, 4, 88, 5,
-        FB_SYNC_BROADCAST, FB_VMODE_INTERLACED
-    }, {
-        /* 1080pf */
-        "1080pf", 50, 1920, 1080, 6734, 148, 484, 36, 4, 88, 5,
-        FB_SYNC_BROADCAST, FB_VMODE_NONINTERLACED
-    },
+In this case, you'd think the whole test exited, but there are remaining
+threads and processes being executed in background. Sometimes these
+zombies processes are doing annoying things, as consuming the whole CPU or
+dumping things to STDOUT.
 
-In ps3fb_probe, the mode_option module parameter is used with fb_find_mode
-but it can only select the interlaced variant of 1920x1080 since the loop
-matching the modes does not take the difference between interlaced and
-progressive modes into account.
+This patch fixes this problem by attaching an empty signal handler to
+SIGINT in the harness process. This handler will interrupt (EINTR) the
+parent process waitpid() call, letting the code to follow through the
+normal flow, which will kill all the processes in the child process group.
 
-In short, without the patch, progressive 1920x1080 cannot be chosen as a
-mode_option parameter since fb_find_mode (falsely) thinks interlace is a
-perfect match.
+This patch also fixes a typo.
 
-Signed-off-by: Fredrik Noring <noring@nocrew.org>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>
-[b.zolnierkie: updated patch description]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/core/modedb.c |   41 +++++++++++++++++++++++++++-----------
- 1 file changed, 30 insertions(+), 11 deletions(-)
+ tools/testing/selftests/powerpc/harness.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/drivers/video/fbdev/core/modedb.c
-+++ b/drivers/video/fbdev/core/modedb.c
-@@ -533,7 +533,7 @@ static int fb_try_mode(struct fb_var_scr
-  *
-  *     Valid mode specifiers for @mode_option:
-  *
-- *     <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][m] or
-+ *     <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][p][m] or
-  *     <name>[-<bpp>][@<refresh>]
-  *
-  *     with <xres>, <yres>, <bpp> and <refresh> decimal numbers and
-@@ -542,10 +542,10 @@ static int fb_try_mode(struct fb_var_scr
-  *      If 'M' is present after yres (and before refresh/bpp if present),
-  *      the function will compute the timings using VESA(tm) Coordinated
-  *      Video Timings (CVT).  If 'R' is present after 'M', will compute with
-- *      reduced blanking (for flatpanels).  If 'i' is present, compute
-- *      interlaced mode.  If 'm' is present, add margins equal to 1.8%
-- *      of xres rounded down to 8 pixels, and 1.8% of yres. The char
-- *      'i' and 'm' must be after 'M' and 'R'. Example:
-+ *      reduced blanking (for flatpanels).  If 'i' or 'p' are present, compute
-+ *      interlaced or progressive mode.  If 'm' is present, add margins equal
-+ *      to 1.8% of xres rounded down to 8 pixels, and 1.8% of yres. The chars
-+ *      'i', 'p' and 'm' must be after 'M' and 'R'. Example:
-  *
-  *      1024x768MR-8@60m - Reduced blank with margins at 60Hz.
-  *
-@@ -586,7 +586,8 @@ int fb_find_mode(struct fb_var_screeninf
- 		unsigned int namelen = strlen(name);
- 		int res_specified = 0, bpp_specified = 0, refresh_specified = 0;
- 		unsigned int xres = 0, yres = 0, bpp = default_bpp, refresh = 0;
--		int yres_specified = 0, cvt = 0, rb = 0, interlace = 0;
-+		int yres_specified = 0, cvt = 0, rb = 0;
-+		int interlace_specified = 0, interlace = 0;
- 		int margins = 0;
- 		u32 best, diff, tdiff;
+--- a/tools/testing/selftests/powerpc/harness.c
++++ b/tools/testing/selftests/powerpc/harness.c
+@@ -81,13 +81,13 @@ wait:
+ 	return status;
+ }
  
-@@ -637,9 +638,17 @@ int fb_find_mode(struct fb_var_screeninf
- 				if (!cvt)
- 					margins = 1;
- 				break;
-+			case 'p':
-+				if (!cvt) {
-+					interlace = 0;
-+					interlace_specified = 1;
-+				}
-+				break;
- 			case 'i':
--				if (!cvt)
-+				if (!cvt) {
- 					interlace = 1;
-+					interlace_specified = 1;
-+				}
- 				break;
- 			default:
- 				goto done;
-@@ -708,11 +717,21 @@ done:
- 			if ((name_matches(db[i], name, namelen) ||
- 			     (res_specified && res_matches(db[i], xres, yres))) &&
- 			    !fb_try_mode(var, info, &db[i], bpp)) {
--				if (refresh_specified && db[i].refresh == refresh)
--					return 1;
-+				const int db_interlace = (db[i].vmode &
-+					FB_VMODE_INTERLACED ? 1 : 0);
-+				int score = abs(db[i].refresh - refresh);
-+
-+				if (interlace_specified)
-+					score += abs(db_interlace - interlace);
-+
-+				if (!interlace_specified ||
-+				    db_interlace == interlace)
-+					if (refresh_specified &&
-+					    db[i].refresh == refresh)
-+						return 1;
+-static void alarm_handler(int signum)
++static void sig_handler(int signum)
+ {
+-	/* Jut wake us up from waitpid */
++	/* Just wake us up from waitpid */
+ }
  
--				if (abs(db[i].refresh - refresh) < diff) {
--					diff = abs(db[i].refresh - refresh);
-+				if (score < diff) {
-+					diff = score;
- 					best = i;
- 				}
- 			}
+-static struct sigaction alarm_action = {
+-	.sa_handler = alarm_handler,
++static struct sigaction sig_action = {
++	.sa_handler = sig_handler,
+ };
+ 
+ int test_harness(int (test_function)(void), char *name)
+@@ -97,8 +97,14 @@ int test_harness(int (test_function)(voi
+ 	test_start(name);
+ 	test_set_git_version(GIT_VERSION);
+ 
+-	if (sigaction(SIGALRM, &alarm_action, NULL)) {
+-		perror("sigaction");
++	if (sigaction(SIGINT, &sig_action, NULL)) {
++		perror("sigaction (sigint)");
++		test_error(name);
++		return 1;
++	}
++
++	if (sigaction(SIGALRM, &sig_action, NULL)) {
++		perror("sigaction (sigalrm)");
+ 		test_error(name);
+ 		return 1;
+ 	}
 
 
