@@ -2,100 +2,78 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6C5ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D11ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB92720833
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:58:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB92720833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1102320833
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:58:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1102320833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729986AbeIXR6A (ORCPT
+        id S1731494AbeIXTAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:58:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51994 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729122AbeIXR57 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:57:59 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AEF11072;
-        Mon, 24 Sep 2018 11:56:14 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 4.4 34/70] misc: hmc6352: fix potential Spectre v1
-Date:   Mon, 24 Sep 2018 13:52:33 +0200
-Message-Id: <20180924113102.735368447@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
-References: <20180924113058.420454070@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 15:00:53 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:52850 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728650AbeIXTAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 15:00:52 -0400
+Received: from wd0156.dip.tu-dresden.de ([141.76.108.156] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1g4QRM-0001HS-9y; Mon, 24 Sep 2018 14:58:16 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Akash Gajjar <Akash_Gajjar@mentor.com>
+Cc:     Deepak_Das@mentor.com, Pragnesh_Patel@mentor.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Shunqian Zheng <zhengsq@rock-chips.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Randy Li <ayaka@soulik.info>, Chris Zhong <zyw@rock-chips.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: update pinmux setting in rk3399.dtsi
+Date:   Mon, 24 Sep 2018 14:58:15 +0200
+Message-ID: <1621920.B7a7Pky3iO@phil>
+In-Reply-To: <1537368317-22170-1-git-send-email-Akash_Gajjar@mentor.com>
+References: <Akash_Gajjar@mentor.com> <1537368317-22170-1-git-send-email-Akash_Gajjar@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Hi Akash,
 
-------------------
+Am Mittwoch, 19. September 2018, 16:45:15 CEST schrieb Akash Gajjar:
+> replace pin numbers with equivalent pin macro in rk3399.dtsi
+> 
+> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+so far my "policy" has been to have new stuff use the constants
+but not mass-converting the old entries, due to me being anxious
+about accidentially breaking some seldom used settings.
 
-commit de916736aaaadddbd6061472969f667b14204aa9 upstream.
+With the newly added linebreaks your change looks pretty much hand-
+generated, so I guess there is a bit of probability for typos creeping in
+and it of course also only adapts one of the Rockchip socs.
 
-val is indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+So while I _may_ be persuaded of a scripted conversion [including seeing
+the script] doing all Rockchip socs (per architecture) at once, I currently
+somehow prefer keeping the status quo ;-)
 
-This issue was detected with the help of Smatch:
 
-drivers/misc/hmc6352.c:54 compass_store() warn: potential spectre issue
-'map' [r]
-
-Fix this by sanitizing val before using it to index map
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/misc/hmc6352.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/drivers/misc/hmc6352.c
-+++ b/drivers/misc/hmc6352.c
-@@ -27,6 +27,7 @@
- #include <linux/err.h>
- #include <linux/delay.h>
- #include <linux/sysfs.h>
-+#include <linux/nospec.h>
- 
- static DEFINE_MUTEX(compass_mutex);
- 
-@@ -50,6 +51,7 @@ static int compass_store(struct device *
- 		return ret;
- 	if (val >= strlen(map))
- 		return -EINVAL;
-+	val = array_index_nospec(val, strlen(map));
- 	mutex_lock(&compass_mutex);
- 	ret = compass_command(c, map[val]);
- 	mutex_unlock(&compass_mutex);
+Heiko
 
 
