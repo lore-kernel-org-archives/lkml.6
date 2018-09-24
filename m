@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEB4C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 575B7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B234E208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B234E208D9
+	by mail.kernel.org (Postfix) with ESMTP id 111EA208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111EA208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732721AbeIXSUs (ORCPT
+        id S1732726AbeIXSUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:20:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56204 "EHLO
+        Mon, 24 Sep 2018 14:20:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56214 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730495AbeIXSUr (ORCPT
+        with ESMTP id S1730221AbeIXSUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:20:47 -0400
+        Mon, 24 Sep 2018 14:20:52 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 284FC107E;
-        Mon, 24 Sep 2018 12:18:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 669E61087;
+        Mon, 24 Sep 2018 12:19:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        James Morris <james.morris@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 115/173] KVM: PPC: Book3S HV: Add of_node_put() in success path
-Date:   Mon, 24 Sep 2018 13:52:29 +0200
-Message-Id: <20180924113124.522959041@linuxfoundation.org>
+Subject: [PATCH 4.14 116/173] security: check for kstrdup() failure in lsm_append()
+Date:   Mon, 24 Sep 2018 13:52:30 +0200
+Message-Id: <20180924113124.591086636@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,35 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 51eaa08f029c7343df846325d7cf047be8b96e81 ]
+[ Upstream commit 87ea58433208d17295e200d56be5e2a4fe4ce7d6 ]
 
-The call to of_find_compatible_node() is returning a pointer with
-incremented refcount so it must be explicitly decremented after the
-last use. As here it is only being used for checking of node presence
-but the result is not actually used in the success path it can be
-dropped immediately.
+lsm_append() should return -ENOMEM if memory allocation failed.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit f725758b899f ("KVM: PPC: Book3S HV: Use OPAL XICS emulation on POWER9")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Fixes: d69dece5f5b6 ("LSM: Add /sys/kernel/security/lsm")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kvm/book3s_hv.c |    2 ++
+ security/security.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -4356,6 +4356,8 @@ static int kvmppc_book3s_init_hv(void)
- 			pr_err("KVM-HV: Cannot determine method for accessing XICS\n");
- 			return -ENODEV;
- 		}
-+		/* presence of intc confirmed - node can be dropped again */
-+		of_node_put(np);
- 	}
- #endif
+--- a/security/security.c
++++ b/security/security.c
+@@ -111,6 +111,8 @@ static int lsm_append(char *new, char **
  
+ 	if (*result == NULL) {
+ 		*result = kstrdup(new, GFP_KERNEL);
++		if (*result == NULL)
++			return -ENOMEM;
+ 	} else {
+ 		/* Check if it is the last registered name */
+ 		if (match_last_lsm(*result, new))
 
 
