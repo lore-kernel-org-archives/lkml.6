@@ -2,170 +2,159 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9CAECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 249F3C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280F7206B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280F7206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C7B2820877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=odi.ch header.i=@odi.ch header.b="CJt46tDs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7B2820877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=odi.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730575AbeIXSCC (ORCPT
+        id S1730583AbeIXSCE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:02:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52608 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbeIXSCB (ORCPT
+        Mon, 24 Sep 2018 14:02:04 -0400
+Received: from vie01a-dmta-ch02-3.mx.upcmail.net ([84.116.36.96]:61002 "EHLO
+        vie01a-dmta-ch02-3.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728131AbeIXSCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:02:01 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE777107B;
-        Mon, 24 Sep 2018 12:00:14 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Sandipan Das <sandipan@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Maynard Johnson <maynard@us.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 024/111] perf powerpc: Fix callchain ip filtering when return address is in a register
-Date:   Mon, 24 Sep 2018 13:51:51 +0200
-Message-Id: <20180924113106.850154437@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
-References: <20180924113103.337261320@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 14:02:03 -0400
+Received: from [172.31.216.44] (helo=vie01a-pemc-psmtp-pe02)
+        by vie01a-dmta-ch02.mx.upcmail.net with esmtp (Exim 4.88)
+        (envelope-from <odi@odi.ch>)
+        id 1g4PXD-0003Ri-A0
+        for linux-kernel@vger.kernel.org; Mon, 24 Sep 2018 14:00:15 +0200
+Received: from gandalf.odi.ch ([84.74.184.48])
+        by vie01a-pemc-psmtp-pe02 with SMTP @ mailcloud.upcmail.net
+        id fQ051y01o134B7001Q075Z; Mon, 24 Sep 2018 14:00:07 +0200
+X-SourceIP: 84.74.184.48
+X-Authenticated-Sender: odi.ch@hispeed.ch
+Received: from [10.11.1.254] (unknown [81.7.230.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by gandalf.odi.ch (Postfix) with ESMTPSA id 9436C460512;
+        Mon, 24 Sep 2018 14:00:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=odi.ch; s=mail;
+        t=1537790405; bh=yyg0Meuo538ckQbZtOkklKfr1yANKUss4Vhj2KFJtFQ=;
+        h=From:To:Subject:Date;
+        b=CJt46tDsb2DRO0ixA8Y4LsLyS0mnNueSXQdyQD4w2V3tKnVqt6yZ+pao8xWLefa0k
+         eKBRa0dPUaMBN4SkTuGPeIZpmBf7GZSV9RS/NOF/CdUxboJTCmD91U4sz5EIEJEorw
+         /75p7+eZE6QxAGku5Yqv9CuCuhWmBybLj8bX8cHM=
+From:   =?UTF-8?Q?Ortwin_Gl=c3=bcck?= <odi@odi.ch>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+Subject: r8169 hang on 4.18
+Message-ID: <332fecce-3fab-1c92-1558-67a1d90d6372@odi.ch>
+Date:   Mon, 24 Sep 2018 14:00:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Hi,
 
-------------------
+Stable kernel has stability problems on r8169 that were not present in 4.17.3:
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+[    0.000000] Linux version 4.18.8 (kbuild@lofw) (gcc version 7.3.0 (Gentoo 7.3.0-r3 p1.4)) #70 SMP 
+PREEMPT Mon Sep 17 17:56:57 CEST 2018
+[    0.000000] Command line: BOOT_IMAGE=/boot/linux-4.18.8 root=LABEL=ROOT ro rootfstype=ext4 
+net.ifnames=0 pci=nomsi
 
-[ Upstream commit 9068533e4f470daf2b0f29c71d865990acd8826e ]
+[    1.772849] r8169 Gigabit Ethernet driver 2.3LK-NAPI loaded
+[    1.772852] r8169 0000:07:00.0: can't disable ASPM; OS doesn't have ASPM control
+[    1.784948] r8169 0000:07:00.0 eth4: RTL8168h/8111h, 50:9a:4c:2e:92:be, XID 54100800, IRQ 16
+[    1.784949] r8169 0000:07:00.0 eth4: jumbo features [frames: 9200 bytes, tx checksumming: ko]
 
-For powerpc64, perf will filter out the second entry in the callchain,
-i.e. the LR value, if the return address of the function corresponding
-to the probed location has already been saved on its caller's stack.
+We saw the interface unresponsive twice during the last 3 days with:
 
-The state of the return address is determined using debug information.
-At any point within a function, if the return address is already saved
-somewhere, a DWARF expression can tell us about its location. If the
-return address in still in LR only, no DWARF expression would exist.
+[Mon Sep 24 11:35:56 2018] ------------[ cut here ]------------
+[Mon Sep 24 11:35:56 2018] NETDEV WATCHDOG: wan (r8169): transmit queue 0 timed out
+[Mon Sep 24 11:35:56 2018] WARNING: CPU: 2 PID: 0 at net/sched/sch_generic.c:461 
+dev_watchdog+0x215/0x220
+[Mon Sep 24 11:35:56 2018] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.18.8 #70
+[Mon Sep 24 11:35:56 2018] Hardware name: Dell Inc. OptiPlex 3050/0W0CHX, BIOS 1.6.5 09/09/2017
+[Mon Sep 24 11:35:56 2018] RIP: 0010:dev_watchdog+0x215/0x220
+[Mon Sep 24 11:35:56 2018] Code: 49 63 4c 24 e8 eb 8c 4c 89 ef c6 05 1a 19 ca 00 01 e8 5f 52 fd ff 
+89 d9 4c 89 ee 48 c7 c7 78 ab 67 89 48 89 c2 e8 1b 2b 49 ff <0f> 0b eb be 0f 1f 80 00 00 00 00 41 57 
+45 89 cf 41 56 49 89 d6 41
+[Mon Sep 24 11:35:56 2018] RSP: 0018:ffff96f05dd03e98 EFLAGS: 00010282
+[Mon Sep 24 11:35:56 2018] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000006
+[Mon Sep 24 11:35:56 2018] RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff96f05dd15350
+[Mon Sep 24 11:35:56 2018] RBP: ffff96f0462ee41c R08: 0000000000000001 R09: 000000000000133d
+[Mon Sep 24 11:35:56 2018] R10: 0000000000000202 R11: 0000000000000000 R12: ffff96f0462ee438
+[Mon Sep 24 11:35:56 2018] R13: ffff96f0462ee000 R14: 0000000000000001 R15: ffff96f0455eaa80
+[Mon Sep 24 11:35:56 2018] FS:  0000000000000000(0000) GS:ffff96f05dd00000(0000) knlGS:0000000000000000
+[Mon Sep 24 11:35:56 2018] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[Mon Sep 24 11:35:56 2018] CR2: 000055c9498766e0 CR3: 00000000bb80a006 CR4: 00000000003606e0
+[Mon Sep 24 11:35:56 2018] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[Mon Sep 24 11:35:56 2018] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[Mon Sep 24 11:35:56 2018] Call Trace:
+[Mon Sep 24 11:35:56 2018]  <IRQ>
+[Mon Sep 24 11:35:56 2018]  ? pfifo_fast_reset+0x130/0x130
+[Mon Sep 24 11:35:56 2018]  ? pfifo_fast_reset+0x130/0x130
+[Mon Sep 24 11:35:56 2018]  call_timer_fn+0x11/0x70
+[Mon Sep 24 11:35:56 2018]  expire_timers+0x8e/0xa0
+[Mon Sep 24 11:35:56 2018]  run_timer_softirq+0xb9/0x160
+[Mon Sep 24 11:35:56 2018]  ? __hrtimer_run_queues+0x135/0x1a0
+[Mon Sep 24 11:35:56 2018]  ? hw_breakpoint_pmu_read+0x10/0x10
+[Mon Sep 24 11:35:56 2018]  ? ktime_get+0x39/0x90
+[Mon Sep 24 11:35:56 2018]  ? lapic_next_event+0x20/0x20
+[Mon Sep 24 11:35:56 2018]  __do_softirq+0xcb/0x1f8
+[Mon Sep 24 11:35:56 2018]  irq_exit+0xa9/0xb0
+[Mon Sep 24 11:35:56 2018]  smp_apic_timer_interrupt+0x59/0x90
+[Mon Sep 24 11:35:56 2018]  apic_timer_interrupt+0xf/0x20
+[Mon Sep 24 11:35:56 2018]  </IRQ>
+[Mon Sep 24 11:35:56 2018] RIP: 0010:cpuidle_enter_state+0x129/0x200
+[Mon Sep 24 11:35:56 2018] Code: 45 00 89 c3 e8 d8 3b 55 ff 65 8b 3d b1 eb 45 77 e8 8c 3a 55 ff 31 
+ff 49 89 c4 e8 72 43 55 ff fb 48 ba cf f7 53 e3 a5 9b c4 20 <4c> 89 e1 4c 29 e9 48 89 c8 48 c1 f9 3f 
+48 f7 ea b8 ff ff ff 7f 48
+[Mon Sep 24 11:35:56 2018] RSP: 0018:ffff9a93c06e7ea8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+[Mon Sep 24 11:35:56 2018] RAX: ffff96f05dd1f800 RBX: 0000000000000003 RCX: 000000000000001f
+[Mon Sep 24 11:35:56 2018] RDX: 20c49ba5e353f7cf RSI: 00000000258f0602 RDI: 0000000000000000
+[Mon Sep 24 11:35:56 2018] RBP: ffff96f05dd25ee0 R08: 00000000000002b4 R09: 00000000ffffffff
+[Mon Sep 24 11:35:56 2018] R10: ffff9a93c06e7e90 R11: 0000000000000142 R12: 00012ec849a182b9
+[Mon Sep 24 11:35:56 2018] R13: 00012ec8499ddf88 R14: 0000000000000003 R15: 0000000000000000
+[Mon Sep 24 11:35:56 2018]  ? cpuidle_enter_state+0x11e/0x200
+[Mon Sep 24 11:35:56 2018]  do_idle+0x1c0/0x200
+[Mon Sep 24 11:35:56 2018]  cpu_startup_entry+0x6a/0x70
+[Mon Sep 24 11:35:56 2018]  start_secondary+0x18a/0x1c0
+[Mon Sep 24 11:35:56 2018]  secondary_startup_64+0xa5/0xb0
+[Mon Sep 24 11:35:56 2018] ---[ end trace 327bd9c035abe307 ]---
 
-Typically, the instructions in a function's prologue first copy the LR
-value to R0 and then pushes R0 on to the stack. If LR has already been
-copied to R0 but R0 is yet to be pushed to the stack, we can still get a
-DWARF expression that says that the return address is in R0. This is
-indicating that getting a DWARF expression for the return address does
-not guarantee the fact that it has already been saved on the stack.
+This is the built-in ethernet port on a Dell main board:
+07:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express 
+Gigabit Ethernet Controller [10ec:8168] (rev 15)
+         Subsystem: Dell RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [1028:07a3]
+         Flags: bus master, fast devsel, latency 0, IRQ 16
+         I/O ports at e000 [size=256]
+         Memory at f7404000 (64-bit, non-prefetchable) [size=4K]
+         Memory at f7400000 (64-bit, non-prefetchable) [size=16K]
+         Capabilities: [40] Power Management version 3
+         Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
+         Capabilities: [70] Express Endpoint, MSI 01
+         Capabilities: [b0] MSI-X: Enable- Count=4 Masked-
+         Capabilities: [100] Advanced Error Reporting
+         Capabilities: [140] Virtual Channel
+         Capabilities: [160] Device Serial Number 01-00-00-00-68-4c-e0-00
+         Capabilities: [170] Latency Tolerance Reporting
+         Capabilities: [178] L1 PM Substates
+         Kernel driver in use: r8169
 
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
+The box has an extra 4-way ethernet card that uses the same driver. We had to set pci=nomsi because 
+the card frequently behaved erratic with msi on.
 
-  # objdump -d /usr/lib64/libc-2.26.so | less
-  ...
-  000000000015af20 <inet_pton>:
-    15af20:       0b 00 4c 3c     addis   r2,r12,11
-    15af24:       e0 c1 42 38     addi    r2,r2,-15904
-    15af28:       a6 02 08 7c     mflr    r0
-    15af2c:       f0 ff c1 fb     std     r30,-16(r1)
-    15af30:       f8 ff e1 fb     std     r31,-8(r1)
-    15af34:       78 1b 7f 7c     mr      r31,r3
-    15af38:       78 23 83 7c     mr      r3,r4
-    15af3c:       78 2b be 7c     mr      r30,r5
-    15af40:       10 00 01 f8     std     r0,16(r1)
-    15af44:       c1 ff 21 f8     stdu    r1,-64(r1)
-    15af48:       28 00 81 f8     std     r4,40(r1)
-  ...
+Thanks,
 
-  # readelf --debug-dump=frames-interp /usr/lib64/libc-2.26.so | less
-  ...
-  00027024 0000000000000024 00027028 FDE cie=00000000 pc=000000000015af20..000000000015af88
-     LOC           CFA      r30   r31   ra
-  000000000015af20 r1+0     u     u     u
-  000000000015af34 r1+0     c-16  c-8   r0
-  000000000015af48 r1+64    c-16  c-8   c+16
-  000000000015af5c r1+0     c-16  c-8   c+16
-  000000000015af78 r1+0     u     u
-  ...
-
-  # perf probe -x /usr/lib64/libc-2.26.so -a inet_pton+0x18
-  # perf record -e probe_libc:inet_pton -g ping -6 -c 1 ::1
-  # perf script
-
-Before:
-
-  ping  2829 [005] 512917.460174: probe_libc:inet_pton: (7fff7e2baf38)
-              7fff7e2baf38 __GI___inet_pton+0x18 (/usr/lib64/libc-2.26.so)
-              7fff7e2705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
-                 12f152d70 _init+0xbfc (/usr/bin/ping)
-              7fff7e1836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fff7e183898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-After:
-
-  ping  2829 [005] 512917.460174: probe_libc:inet_pton: (7fff7e2baf38)
-              7fff7e2baf38 __GI___inet_pton+0x18 (/usr/lib64/libc-2.26.so)
-              7fff7e26fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
-              7fff7e2705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
-                 12f152d70 _init+0xbfc (/usr/bin/ping)
-              7fff7e1836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fff7e183898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Maynard Johnson <maynard@us.ibm.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/66e848a7bdf2d43b39210a705ff6d828a0865661.1530724939.git.sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/arch/powerpc/util/skip-callchain-idx.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
---- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-+++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-@@ -58,9 +58,13 @@ static int check_return_reg(int ra_regno
- 	}
- 
- 	/*
--	 * Check if return address is on the stack.
-+	 * Check if return address is on the stack. If return address
-+	 * is in a register (typically R0), it is yet to be saved on
-+	 * the stack.
- 	 */
--	if (nops != 0 || ops != NULL)
-+	if ((nops != 0 || ops != NULL) &&
-+		!(nops == 1 && ops[0].atom == DW_OP_regx &&
-+			ops[0].number2 == 0 && ops[0].offset == 0))
- 		return 0;
- 
- 	/*
-
-
+Ortwin
