@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A11DECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579A4ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E964420877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E964420877
+	by mail.kernel.org (Postfix) with ESMTP id 1853A20877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1853A20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731005AbeIXSHH (ORCPT
+        id S1731019AbeIXSHK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:07:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53914 "EHLO
+        Mon, 24 Sep 2018 14:07:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53926 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbeIXSHG (ORCPT
+        with ESMTP id S1730865AbeIXSHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:07:06 -0400
+        Mon, 24 Sep 2018 14:07:09 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1074F1080;
-        Mon, 24 Sep 2018 12:05:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F6981080;
+        Mon, 24 Sep 2018 12:05:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 035/111] nfp: avoid buffer leak when FW communication fails
-Date:   Mon, 24 Sep 2018 13:52:02 +0200
-Message-Id: <20180924113108.224380267@linuxfoundation.org>
+Subject: [PATCH 4.9 036/111] xen-netfront: fix queue name setting
+Date:   Mon, 24 Sep 2018 13:52:03 +0200
+Message-Id: <20180924113108.369983372@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -54,79 +53,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit 07300f774fec9519663a597987a4083225588be4 ]
+[ Upstream commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 ]
 
-After device is stopped we reset the rings by moving all free buffers
-to positions [0, cnt - 2], and clear the position cnt - 1 in the ring.
-We then proceed to clear the read/write pointers.  This means that if
-we try to reset the ring again the code will assume that the next to
-fill buffer is at position 0 and swap it with cnt - 1.  Since we
-previously cleared position cnt - 1 it will lead to leaking the first
-buffer and leaving ring in a bad state.
+Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
+open") changed the initialization order: xennet_create_queues() now
+happens before we do register_netdev() so using netdev->name in
+xennet_init_queue() is incorrect, we end up with the following in
+/proc/interrupts:
 
-This scenario can only happen if FW communication fails, in which case
-the ring will never be used again, so the fact it's in a bad state will
-not be noticed.  Buffer leak is the only problem.  Don't try to move
-buffers in the ring if the read/write pointers indicate the ring was
-never used or have already been reset.
+ 60:        139          0   xen-dyn    -event     eth%d-q0-tx
+ 61:        265          0   xen-dyn    -event     eth%d-q0-rx
+ 62:        234          0   xen-dyn    -event     eth%d-q1-tx
+ 63:          1          0   xen-dyn    -event     eth%d-q1-rx
 
-nfp_net_clear_config_and_disable() is now fully idempotent.
+and this looks ugly. Actually, using early netdev name (even when it's
+already set) is also not ideal: nowadays we tend to rename eth devices
+and queue name may end up not corresponding to the netdev name.
 
-Found by code inspection, FW communication failures are very rare,
-and reconfiguring a live device is not common either, so it's unlikely
-anyone has ever noticed the leak.
+Use nodename from xenbus device for queue naming: this can't change in VM's
+lifetime. Now /proc/interrupts looks like
 
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+ 62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
+ 63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
+ 64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
+ 65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
+
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/net/xen-netfront.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -990,7 +990,7 @@ static void nfp_net_tx_complete(struct n
-  * @nn:		NFP Net device
-  * @tx_ring:	TX ring structure
-  *
-- * Assumes that the device is stopped
-+ * Assumes that the device is stopped, must be idempotent.
-  */
- static void
- nfp_net_tx_ring_reset(struct nfp_net *nn, struct nfp_net_tx_ring *tx_ring)
-@@ -1144,13 +1144,18 @@ static void nfp_net_rx_give_one(struct n
-  * nfp_net_rx_ring_reset() - Reflect in SW state of freelist after disable
-  * @rx_ring:	RX ring structure
-  *
-- * Warning: Do *not* call if ring buffers were never put on the FW freelist
-- *	    (i.e. device was not enabled)!
-+ * Assumes that the device is stopped, must be idempotent.
-  */
- static void nfp_net_rx_ring_reset(struct nfp_net_rx_ring *rx_ring)
- {
- 	unsigned int wr_idx, last_idx;
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1630,7 +1630,7 @@ static int xennet_init_queue(struct netf
+ 		    (unsigned long)queue);
  
-+	/* wr_p == rd_p means ring was never fed FL bufs.  RX rings are always
-+	 * kept at cnt - 1 FL bufs.
-+	 */
-+	if (rx_ring->wr_p == 0 && rx_ring->rd_p == 0)
-+		return;
-+
- 	/* Move the empty entry to the end of the list */
- 	wr_idx = rx_ring->wr_p % rx_ring->cnt;
- 	last_idx = rx_ring->cnt - 1;
-@@ -1919,6 +1924,8 @@ static void nfp_net_vec_clear_ring_data(
- /**
-  * nfp_net_clear_config_and_disable() - Clear control BAR and disable NFP
-  * @nn:      NFP Net device to reconfigure
-+ *
-+ * Warning: must be fully idempotent.
-  */
- static void nfp_net_clear_config_and_disable(struct nfp_net *nn)
- {
+ 	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
+-		 queue->info->netdev->name, queue->id);
++		 queue->info->xbdev->nodename, queue->id);
+ 
+ 	/* Initialise tx_skbs as a free chain containing every entry. */
+ 	queue->tx_skb_freelist = 0;
 
 
