@@ -2,90 +2,97 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8A3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7705ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2D37214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D37214D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 747D920877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747D920877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730753AbeIXSDO (ORCPT
+        id S1730767AbeIXSDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:03:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44872 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730031AbeIXSDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:03:13 -0400
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7105C307DA25;
-        Mon, 24 Sep 2018 12:01:27 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 385922010D70;
-        Mon, 24 Sep 2018 12:01:23 +0000 (UTC)
-Date:   Mon, 24 Sep 2018 14:01:20 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v10 10/26] KVM: s390: interfaces to clear CRYCB masks
-Message-ID: <20180924140120.398a3293.cohuck@redhat.com>
-In-Reply-To: <42b23a01-bee1-0c87-3f81-320c40bcb7c9@linux.ibm.com>
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1536781396-13601-11-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180924130153.766eaec7.cohuck@redhat.com>
-        <42b23a01-bee1-0c87-3f81-320c40bcb7c9@linux.ibm.com>
-Organization: Red Hat GmbH
+        Mon, 24 Sep 2018 14:03:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53594 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730031AbeIXSDP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:03:15 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD519D64;
+        Mon, 24 Sep 2018 12:01:28 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Azael Avalos <coproscefalo@gmail.com>,
+        platform-driver-x86@vger.kernel.org,
+        Andy Shevchenko <andy@infradead.org>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 041/111] platform/x86: toshiba_acpi: Fix defined but not used build warnings
+Date:   Mon, 24 Sep 2018 13:52:08 +0200
+Message-Id: <20180924113108.968250211@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
+References: <20180924113103.337261320@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 24 Sep 2018 12:01:27 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 13:50:36 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-> On 09/24/2018 01:01 PM, Cornelia Huck wrote:
-> > On Wed, 12 Sep 2018 15:43:00 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >   
-> >> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> >>
-> >> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
-> >> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
-> >> not get out of sync.  
-> > 
-> > Hm, that patch description does not quite match what the patch actually
-> > does...
-> >   
-> 
-> You mean it is not obvious where the masks get cleared? Well the APCB is
-> defined to contain exactly the three masks. As far as I can tell the patch
-> description is correct.
+------------------
 
-No, I was referring to "two new KVM interface[s]". The patch just
-introduces a new function that clears the masks (well, maybe you can
-call this an "interface"). So
+From: Randy Dunlap <rdunlap@infradead.org>
 
-s/two new KVM interface/a function in KVM/
+[ Upstream commit c2e2a618eb7104e18fdcf739d4d911563812a81c ]
 
-and I'd be happy :) (sorry for being too vague)
+Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
+by marking the unused function as __maybe_unused.
+
+../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show' defined but not used [-Wunused-function]
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Azael Avalos <coproscefalo@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Andy Shevchenko <andy@infradead.org>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/platform/x86/toshiba_acpi.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/platform/x86/toshiba_acpi.c
++++ b/drivers/platform/x86/toshiba_acpi.c
+@@ -34,6 +34,7 @@
+ #define TOSHIBA_ACPI_VERSION	"0.24"
+ #define PROC_INTERFACE_VERSION	1
+ 
++#include <linux/compiler.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+@@ -1687,7 +1688,7 @@ static const struct file_operations keys
+ 	.write		= keys_proc_write,
+ };
+ 
+-static int version_proc_show(struct seq_file *m, void *v)
++static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
+ 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
+
+
