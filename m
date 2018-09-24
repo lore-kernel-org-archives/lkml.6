@@ -2,194 +2,1180 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0882ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6255C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 626FE2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:34:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="lULLH9v2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 626FE2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
+	by mail.kernel.org (Postfix) with ESMTP id CE24C2148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE24C2148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeIXOfH (ORCPT
+        id S1727806AbeIXOgh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:35:07 -0400
-Received: from mail-he1eur01on0133.outbound.protection.outlook.com ([104.47.0.133]:4373
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727463AbeIXOfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:35:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P3sY9LGvrOrMy80OvxckvZjXiF8Xoy2iB1GTLowJxlI=;
- b=lULLH9v2W+aL8Yvh8Z47y9vdO0N9h+h681MFE4+YiHU4MTrK86WpuEDJaNrvaeOeP+/HOHobTZTuUapoNC2K5p/Aotqpm4X6DEwLsskQdtjRcnBd0kwJyJaDNAO/Ve5eBcrMOED66ToLY+2dSw5V4iZ3vkpUQbv2s2hzJgLutrY=
-Received: from DB6PR07CA0121.eurprd07.prod.outlook.com (2603:10a6:6:16::14) by
- DB6PR07MB4199.eurprd07.prod.outlook.com (2603:10a6:6:50::32) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.12; Mon, 24 Sep 2018 08:34:06 +0000
-Received: from VE1EUR03FT037.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e09::207) by DB6PR07CA0121.outlook.office365.com
- (2603:10a6:6:16::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1185.13 via Frontend
- Transport; Mon, 24 Sep 2018 08:34:05 +0000
-Authentication-Results: spf=pass (sender IP is 131.228.2.241)
- smtp.mailfrom=nokia.com; infradead.org; dkim=none (message not signed)
- header.d=none;infradead.org; dmarc=pass action=none header.from=nokia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nokia.com designates
- 131.228.2.241 as permitted sender) receiver=protection.outlook.com;
- client-ip=131.228.2.241; helo=mailrelay.int.nokia.com;
-Received: from mailrelay.int.nokia.com (131.228.2.241) by
- VE1EUR03FT037.mail.protection.outlook.com (10.152.19.70) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.1185.13 via Frontend Transport; Mon, 24 Sep 2018 08:34:05 +0000
-Received: from fihe3nok0735.emea.nsn-net.net (localhost [127.0.0.1])
-        by fihe3nok0735.emea.nsn-net.net (8.14.9/8.14.5) with ESMTP id w8O8XKQl010535
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Sep 2018 11:33:20 +0300
-Received: from [10.151.73.229] ([10.151.73.229])
-        by fihe3nok0735.emea.nsn-net.net (8.14.9/8.14.5) with ESMTP id w8O8XKwo010529;
-        Mon, 24 Sep 2018 11:33:20 +0300
-X-HPESVCS-Source-Ip: 10.151.73.229
-Subject: Re: [PATCH] tools: Remove conflicting BITS_PER_LONG define
-To:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CC:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20180912170232.25258-1-alexander.sverdlin@nokia.com>
- <20180912190107.GA5502@redhat.com> <20180912192129.GB13738@kernel.org>
- <562288b4-aac6-182a-6f75-23d32dbdcad5@nokia.com>
- <20180919130318.GB3717@redhat.com>
-From:   Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Message-ID: <b9a95224-ece8-a23b-e759-48d3f89b3067@nokia.com>
-Date:   Mon, 24 Sep 2018 10:33:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 24 Sep 2018 10:36:37 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:36545 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeIXOgh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 10:36:37 -0400
+X-Originating-IP: 212.171.96.138
+Received: from w540 (host138-96-dynamic.171-212-r.retail.telecomitalia.it [212.171.96.138])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 874341C0007;
+        Mon, 24 Sep 2018 08:35:33 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 10:35:27 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] [media] imx214: Add imx214 camera sensor driver
+Message-ID: <20180924083527.GA3065@w540>
+References: <20180921100920.8656-1-ricardo.ribalda@gmail.com>
+ <20180921100920.8656-2-ricardo.ribalda@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180919130318.GB3717@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:131.228.2.241;IPV:CAL;SCL:-1;CTRY:FI;EFV:NLI;SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(396003)(136003)(2980300002)(438002)(189003)(199004)(81156014)(81166006)(8676002)(305945005)(486006)(126002)(106466001)(36756003)(186003)(356003)(476003)(54906003)(26005)(86362001)(47776003)(6916009)(44832011)(64126003)(58126008)(8936002)(316002)(65826007)(31696002)(77096007)(2906002)(229853002)(230700001)(31686004)(106002)(478600001)(446003)(76176011)(26826003)(97736004)(6246003)(4326008)(93886005)(2486003)(14444005)(23676004)(22756006)(53936002)(11346002)(50466002)(65956001)(68736007)(336012)(2616005)(65806001)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR07MB4199;H:mailrelay.int.nokia.com;FPR:;SPF:Pass;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;VE1EUR03FT037;1:io1UQDo+w7ZR+47zbIXm6ZWMsIu7dDhDct52qT43NQsoZFu7bcH//ceyZMCHFE80YkKiAW3NCb5nGKZ9ZM/JdWh5b755IdG/gYAgOytJpAZAxwQARGW8J8wUvJhgPYef
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e789c34d-8bbd-4cb9-af95-08d621f87d54
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328);SRVR:DB6PR07MB4199;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;3:RpOa6wXjqH+I+Rbxuz1WWmtwFyn+44LX8PbF0awQcW3f2sO/NA/8gDiyaAfEvFLAWR9o89yzZ1EbVc1vRtJM6UZd9LXKJwYVjr7nHcff6qlfuB01O73g7OkEEu9+dWrT29Qg5keiDusig8wIKLMbNEo9fAKdWx7UwJTAVyUHbE81rImB/BleaPhVn0Oav2JJOewipFVIfMInqMy5EZmkcSZCkNES79PNWUyVTmm03MJkrH21o46v45TSHJUldmEegJRiLBn4uzFpAV0/FleBmEyaDJDR4iZ7OJAGbtJ4ry51GL8MyvNK/ODkkcTd0toD8+mCmGCOt53+ZzvvXqLHl4ZyEOWOE0Kw+6dseKWhZQk=;25:RbVdVfkvjuGx35qnuNtzn3ziXf4usFOuEC2Dawti9za2lS2UI6jOt8iccYEz5P/6wmBNso+NQ0QKaWmb/peTHVqBtqikA86WlhDloCzUHY/VF1LL3NOiRGk5LPeE5MIrrvh9vOUmuqr4R1nxeCXfNqws9TutboW6pOmDQTcs7DP+//ipCyrITwMoCvAwCVjBXgQf2ij/lgDQyIEN4I947eJnYUfDBRMxKx78b/nVv/0YG9MqiW7qHgRTaeOhjwkROgnn8mahmeuOTieIQoskgCNjrySFO/0lXu0PmCEthx65DmGIOnwKm3uCk/IXLTAHaW82SRtikOtJSH1rADZUyg==
-X-MS-TrafficTypeDiagnostic: DB6PR07MB4199:
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;31:HoNEkJ9+/a+n8+yRhypZ3fYoGJLOI2TUNHEII1t5+kxlSnOpeRKaSO92nA/aHruB0VUrukYUYDXb8AH3RUWdDXFJ4mOBJ9uUAMJA0gt0W+zzVLz6Evu00niCaQc2vhLuv84ge34/3JT+XnnkW/2SgxJbpBJ7hBT7ATmnsggkjQNshL1TUGhDcIkBWaTPpRdECjRWX7zwdNiOQGeXrGc/ml67IiXsQTrMnS1OMPjAzUI=;20:UNFZWzrnjaMKfY8wlGZUfOh8mMW4jkRIS+jCWjRnXbJ/TwMK/s5nJNU0z5qiFEKnf4aSkqV3h7+NCKvG7NPfdZy03AX/hBFDy531cJS2N1DJWbvFx3u+Cz4aYw7BoHGjkMgeOxQY/OYJPCSUtVFbYp2kHakT6qD0+5nVZRsM0O66HUxq6/F8S/O1YC/7eRcUIyDbiuN24cmYu2ZMYnjsB9rLYIpT5DgSDr8LZHpRe9KPg17sXjiVE5u+TQtokpZNMlxObyGhrcI9TeFRi2Q+KYvx2chU5HFuTEMKseWc5j8o0DTppduNIaRMFfyKNGgYeEEpCaEHQUxUiatXP6dgn0bRNC0s/Go5IcQZ8EJtY/krUWR7Ui5IRPOxRa1ZB17v3fFKku1af3IebOMy4ZtLGvcwbKGALv8/jUpsonyKk79MmirjOjvLl8tkfk9KHEghcMZfsIQNFEzTjSGHx0aHsgMCM8DF5QTJVfg9EU4/UhgCjRVyBm8XzUiyRx6Qs2QU5zHXxJW86W1DzEuiLkLZQa/IBP35d+xaz9eNfIFsz00Dn+gZk8gl4137g4EGBflttUJ1vN34Jndws70MLrOSJQGo4cGzgTDs4qGZfKIbB68=
-X-Microsoft-Antispam-PRVS: <DB6PR07MB4199B3DCE1D8E7578BFAF7AE88170@DB6PR07MB4199.eurprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(11241501184)(806099)(944501410)(52105095)(93006095)(93004095)(6055026)(149066)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:DB6PR07MB4199;BCL:0;PCL:0;RULEID:;SRVR:DB6PR07MB4199;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;4:dtlZuG7Gu9dDRqg8PiO8CWiq8FgEwA4uYC7hGiuJVbJmT6nN5/lrGmDRyLnFQHLXm3fYI2M1lKcQqGJxFhts7lJmH1qoMSD5aZMkfTK2A/m0ndxnRGLo7JDtD3GNk+2yRFtrjOOfadlp0Q6wbjS8EbvRVsBLuOlFZGwe1ZDGoWVrK1MmXim6l+043SzEXRgLZIRhDj4EmUPn13WHkWBCO9P9iWxdV8p/Qe7mIWTiz26zyJLudhRZ9OuG5YIlzT6e94haiyox3io9ket6yq1v1w==
-X-Forefront-PRVS: 0805EC9467
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA3TUI0MTk5OzIzOk5rU2FzcGhuUEdJcU4vOWdpZjN6VnJiYUUw?=
- =?utf-8?B?Wk1RVVU5YlJ4aGJKK0UzenA3SHBRek9rZGpGemF5cXZFQ1oxV01kMGFITVhT?=
- =?utf-8?B?SWRxRWU2NmxhVkM3UlV2d0VSNy9VRy8vMklQUG5MSjN3U0pIQmdxMHpBNEdo?=
- =?utf-8?B?TXRTQ2g2SEV6WkRmdTBxdXZDYy9VdnZtTFpjRFUrd3BDR2ErbTUwQnFBU01Z?=
- =?utf-8?B?RVN6bmh1by9yZUhQUTk4QmZnL2YvZGtOanFyNzJVcWhDQ2NkQytvTU1SOE9p?=
- =?utf-8?B?YklmZDdxZ090dnY3SlJLNzYzZXUyZmdMQ0tzdzhUaWsxb1pkcWZGTTBwQ1hQ?=
- =?utf-8?B?RVdRM1Z6bFk4LzQ2aDNIcjFERHZNSDh0L0NWMnhMTG41VzFsdWtvY091WnZq?=
- =?utf-8?B?Zngva3Fkc3RLUWxScmJyU0RheHVxb0IwcktsZHByeFhMcVhCV3hxRHVMYjA3?=
- =?utf-8?B?UVBqeFo3dWYxNFIwbEoxV0xuT0xKL2h4di9JQ2EzV2k2K2pQdkRXU21Fc1Vu?=
- =?utf-8?B?emJyUnkxUTJvNFJzL1RVc1hHWGZWeG5DZkFPTiszdXhRNStTWmpoS201YTFE?=
- =?utf-8?B?UC9HcWpBNEhoMG9BempHNSthQzJvV3p4R2w3djJJU1BUWFByY1pVdXQ4VmUx?=
- =?utf-8?B?M1I2TkxNU1ovSUhhdklRWDdlZFZabXAxNG5VZVp5QzJiNHlmRWdMdDdvS08z?=
- =?utf-8?B?NjVqSHRTK1VLL3JacTRGS1pnYldVREc2TGprQjVJcktQd3ZBeTJQTmJNRjRv?=
- =?utf-8?B?U3Q4clM4anVXSWlZQ2VudDdHZlo3NUtFZU41bGQxMUZxcGh6Rk0xcjlMUlVT?=
- =?utf-8?B?Z1BPanZzWWwwbTNkcGNiZFZCdGhETTY4RHhVbmdkU1N6UFdabkNhWlU3aXYy?=
- =?utf-8?B?dmFIZml6TkZHUS9nbmdSclpRYjVlaGgvVVc2aEtGL1JVQjZybFZMMCs3UmtM?=
- =?utf-8?B?STFpSFBDTkM0NHoyTzc5cUlDOWttRHRPYmtUUWhyeFdNRHhRQmsvOS9TQVRJ?=
- =?utf-8?B?emc0ZmY0NEpRcVFIV2FUQW5CR1FMc05RYVNsVnpMeVczRFFhWU1iT2dqSlp5?=
- =?utf-8?B?T2Nld0p6S0JQUHlPb0VqbVpTZzBnMU9SOXFtV3kzK1YxdzE4NUtsVFpwTFpY?=
- =?utf-8?B?OWZXaHgvWnByR3lDY1hKTFIyNm1jK2RDdVE3UTRqaCtwRDJrOUxlT0VuWnRE?=
- =?utf-8?B?TzJiTmo2Ym9zMXRoZ1JuWmNVRndabWdxQ3dhdGROdVJkcmh5TklNMmo3MHBh?=
- =?utf-8?B?SkhsRHBrekp1K2xiWVhkU04wcTNBbUF5Y0g5TlZZYTlSN0ZUNTZyVUZveVlC?=
- =?utf-8?B?OXFla215SlVkMVVsbEVMQ0I4cWVxRUpZTzNIaEZURmZtSXB2bENvb1MzVldN?=
- =?utf-8?B?d0FUdG1LT29BTWlwc2czcUpteVNvNTVyVDV2bjR5QUhkdmFiTldOaHFCK0V6?=
- =?utf-8?B?ajYxOVdtUWRlb2tGaXRnSDhMNjQwcUZzcERXckkySGdQSFdqM2hjemR3T1Jq?=
- =?utf-8?B?UmJmaUNXVjN2a1NYdENCemdWZ0I4S0ZrWkhNOEoxMjlUU1lhTWdoU3BBckRq?=
- =?utf-8?B?SWN6bExsNExSMUlHMjZjWjd4V3hIQ3E2bjVzc1dhd2FYUEJNZDQya0VCQUlU?=
- =?utf-8?B?d25KK1VNdmtKd0hlUkRpUmhXNE9vYVMxcHphTGh6STQ5UVBHR3ZPVVc2WGM2?=
- =?utf-8?B?eENzajYzeWlJUXlIK3YyS3p0d2E0eXZkSldDU25ZZmJBanJUYk5XeFN6RUZ5?=
- =?utf-8?Q?jsbjlWiViHhXLIFx1Wrs3NFGOUY2MvyjpI7Cg=3D?=
-X-Microsoft-Antispam-Message-Info: ONXwQjdsJg0MvTITVX7cf6vEH/A/1PCtrMSFrGoHzkqy+kWnFp/bKpoeiIoaRgg1xRpEpi7UolY31J1Wxa8kk7E8VaP/7dOnLb40mv6iFZBxSFH/mDTa73TcNJ6nN8hXId+LOAH9xpTOBK8FqOJIX8b1RyORK1YvT0l2Gwad1ztzEXI1DDgswDwhQf28qdv9rAWg05zoyqWokCHyj2aJbE/rRmRi+AsyDVsxknxawJaq5IwOhlpZb9mUsaFx57qeryySZLJOgHeJDttR4W1nIovpuEvSULmwDEOda68n/1A+/cOOOX4WctnMY81sLkxPx87b1qhZaXbbGHs9rsbZXp1a3jv2iIZnZS0/OQgLg0ujq/CVqirSV/e6kedPlDALBOmhD8EKN3b+N5EJeD0XKj2FcLe2Jthw1b5pr05KSh+H2M1SLx93BOXgEr6k6Hk8
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;6:nLlb5OQ7v6iXbALKvmfQfKsnMDKfJ6Jga/hGM4duxqlKmkFCNNuwwqzUxIY8B5YqYnFIPOd/VoAImeAWX08rbcigU6suzm5fjfYfTmg8dcJ4VZyrJPjcVwGvut33JY7FTpPjCGVIjELFuCnWCGL0XAXQw+c3HxMqpr03mNnJ6FTAe2LocxE6rzNP4w8o0rPFc9F2x9UOV2VebbU2eOGM4nPQlVYecIDkD6IvbSjG1/kXsKJwRpSQusw6f13FT9jzUqO2yNSRV5H61TlsFZbilqYWpr2ox0XzocCdg8p9xOAxaL3NWuUUUpyJ1FW2V1FsRtfQm0w/0/ZBir3YNmSLWw5r4wMZ/o9QxXIvarhkvgZLbNyND1QQuzacdExC7/Wycm0QKOF/6dB2pycmjZawWBEhbM9lh+13HXj43cd7VBNOBH9IWWDbbmhWOFwaFh0k0zBEEw+i5gun9x1CXgNfcg==;5:y36i4sFQDt9bavvykHw4onzg8zOu9CAuPdPnBSMOxUu8P1gGStkQ/79knk4nJxzWMw0vIybR+VOVEby3f/MiNJIk8mTCgFKx7dBl859pci2UY0kRMfJKAxp/itWOfv7vGQtivU67RfNxQOnz/S8QdNiaOQPNO2EA2jrap9sp2kQ=;7:JqWu+ptCgYu834nFCQLLn2x5GovRaXhWYUNeKW1MXVwpGzYSTactk6sB9sojZTQns3n/csiltcn/pwjrxZyo1L/mcmWn5vrBxB3D9xiQQki2ygNMdnB3+5SeKHL1UV3i5tpUlSr8hOWpBeq5LMgoVb1JNfhVrXSOI7xEZnoW68bvylQX2v6rqTygS4p8rBf/fyk48UCjM+UTgFlQWxJRK59EjaWxVWt1BhLROu/fboZizNlDiDRj8SIsZlYCTr/B
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2018 08:34:05.5780
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e789c34d-8bbd-4cb9-af95-08d621f87d54
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5d471751-9675-428d-917b-70f44f9630b0;Ip=[131.228.2.241];Helo=[mailrelay.int.nokia.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR07MB4199
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Disposition: inline
+In-Reply-To: <20180921100920.8656-2-ricardo.ribalda@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Arnaldo,
 
->>>> Em Wed, Sep 12, 2018 at 07:02:32PM +0200, Alexander Sverdlin escreveu:
->>>>>   CC       .../tools/objtool/builtin-check.o
->>>>>   ...
->>>>> In file included from .../tools/arch/x86/include/uapi/asm/bitsperlong.h:11:0,
->>>>>                  from .../tools/include/asm-generic/bitops/__ffs.h:6,
->>>>>                  from .../tools/include/asm-generic/bitops.h:16,
->>>>>                  from .../tools/include/linux/bitops.h:35,
->>>>>                  from .../tools/include/linux/hashtable.h:13,
->>>>>                  from elf.h:24,
->>>>>                  from check.h:22,
->>>>>                  from builtin-check.c:30:
->>>>> .../tools/include/asm-generic/bitsperlong.h:8:0: error: "BITS_PER_LONG" redefined [-Werror]
->>>>>  #define BITS_PER_LONG (__CHAR_BIT__ * __SIZEOF_LONG__)
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-[...]
+Hi Ricardo,
+   thanks for the patch.
 
-finally I more or less know what happens here. In the actual Linux we have two files defining the
-same define:
+A few comments, please see below.
 
->> # 1 ".../tools/include/linux/bitops.h" 1
 
-#ifndef BITS_PER_LONG
-# define BITS_PER_LONG __WORDSIZE
-#endif
+On Fri, Sep 21, 2018 at 12:09:20PM +0200, Ricardo Ribalda Delgado wrote:
+> Add a V4L2 sub-device driver for the Sony IMX214 image sensor.
+> This is a camera sensor using the I2C bus for control and the
+> CSI-2 bus for data.
+>
+> Tested on a DB820c alike board with Intrinsyc Open-Q 13MP camera.
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> ---
+> Since v2: Thanks Sakari Ailus <sakari.ailus@linux.intel.com>
+> - Use regulator_bulk
+> - Do not set voltages, let the DT do that
+> - missing consts
+> - remove i2c_client
+>
+>  MAINTAINERS                |   8 +
+>  drivers/media/i2c/Kconfig  |  12 +
+>  drivers/media/i2c/Makefile |   1 +
+>  drivers/media/i2c/imx214.c | 956 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 977 insertions(+)
+>  create mode 100644 drivers/media/i2c/imx214.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9989925f658d..2ae68894e700 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13521,6 +13521,14 @@ S:	Maintained
+>  F:	drivers/ssb/
+>  F:	include/linux/ssb/
+>
+> +SONY IMX214 SENSOR DRIVER
+> +M:	Ricardo Ribalda <ricardo.ribalda@gmail.com>
+> +L:	linux-media@vger.kernel.org
+> +T:	git git://linuxtv.org/media_tree.git
+> +S:	Maintained
+> +F:	drivers/media/i2c/imx214.c
+> +F:	Documentation/devicetree/bindings/media/i2c/imx214.txt
+> +
+>  SONY IMX258 SENSOR DRIVER
+>  M:	Sakari Ailus <sakari.ailus@linux.intel.com>
+>  L:	linux-media@vger.kernel.org
+> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+> index bfdb494686bf..d9416b3a090c 100644
+> --- a/drivers/media/i2c/Kconfig
+> +++ b/drivers/media/i2c/Kconfig
+> @@ -595,6 +595,18 @@ config VIDEO_APTINA_PLL
+>  config VIDEO_SMIAPP_PLL
+>  	tristate
+>
+> +config VIDEO_IMX214
+> +	tristate "Sony IMX214 sensor support"
+> +	depends on GPIOLIB && I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+> +	depends on OF
+> +	depends on MEDIA_CAMERA_SUPPORT
+> +	help
+> +	  This is a Video4Linux2 sensor driver for the Sony
+> +	  IMX214 camera.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called imx214.
+> +
+>  config VIDEO_IMX258
+>  	tristate "Sony IMX258 sensor support"
+>  	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+> index a94eb03d10d4..61305edc6165 100644
+> --- a/drivers/media/i2c/Makefile
+> +++ b/drivers/media/i2c/Makefile
+> @@ -106,6 +106,7 @@ obj-$(CONFIG_VIDEO_I2C)		+= video-i2c.o
+>  obj-$(CONFIG_VIDEO_ML86V7667)	+= ml86v7667.o
+>  obj-$(CONFIG_VIDEO_OV2659)	+= ov2659.o
+>  obj-$(CONFIG_VIDEO_TC358743)	+= tc358743.o
+> +obj-$(CONFIG_VIDEO_IMX214)	+= imx214.o
+>  obj-$(CONFIG_VIDEO_IMX258)	+= imx258.o
+>  obj-$(CONFIG_VIDEO_IMX274)	+= imx274.o
+>
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> new file mode 100644
+> index 000000000000..ea5beba13b04
+> --- /dev/null
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -0,0 +1,956 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * imx214.c - imx214 sensor driver
+> + *
+> + * Copyright 2018 Qtechnology A/S
+> + *
+> + * Ricardo Ribalda <ricardo.ribalda@gmail.com>
+> + */
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/clk.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/delay.h>
+> +#include <linux/regmap.h>
+> +#include <media/media-entity.h>
+> +#include <media/v4l2-fwnode.h>
+> +#include <media/v4l2-subdev.h>
+> +#include <media/v4l2-ctrls.h>
 
->> # 6 ".../tools/include/asm-generic/bitsperlong.h" 2
+Nit: could you sort header files please?
 
-#ifdef __SIZEOF_LONG__
-#define BITS_PER_LONG (__CHAR_BIT__ * __SIZEOF_LONG__)
-#else
-#define BITS_PER_LONG __WORDSIZE
-#endif
+> +
+> +#define IMX214_DEFAULT_CLK_FREQ	24000000
+> +#define IMX214_DEFAULT_PIXEL_RATE 384000000
+> +#define IMX214_WIDTH 4096
+> +#define IMX214_HEIGHT 2304
 
-So the two defines only work together if bitsperlong.h is included first.
-In objtool both files are included and for most people bitsperlong.h is indeed
-included first.
+I don't see the two above defines ever used.
 
-> I'll try and get one for building a x86_64 tools/perf,
-> tools/lib/{api,bpf,traceevent} to see if I manage to reproduce the
-> problem you're reporting.
+> +#define IMX214_FPS 30
+> +#define IMX214_MBUS_CODE MEDIA_BUS_FMT_SRGGB10_1X10
+> +
+> +static const char * const imx214_supply_name[] = {
+> +	"vdda",
+> +	"vddd",
+> +	"vdddo",
+> +};
+> +
+> +#define IMX214_NUM_SUPPLIES ARRAY_SIZE(imx214_supply_name)
+> +
+> +struct imx214 {
+> +	struct device *dev;
+> +	struct clk *xclk;
+> +	struct regmap *regmap;
+> +
+> +	struct v4l2_fwnode_endpoint ep;
+> +	struct v4l2_subdev sd;
+> +	struct media_pad pad;
+> +	struct v4l2_mbus_framefmt fmt;
+> +	struct v4l2_rect crop;
+> +
+> +	struct v4l2_ctrl_handler ctrls;
+> +	struct v4l2_ctrl *pixel_rate;
+> +	struct v4l2_ctrl *link_freq;
+> +
+> +	struct regulator_bulk_data	supplies[IMX214_NUM_SUPPLIES];
+> +
+> +	struct gpio_desc *enable_gpio;
+> +
+> +	bool power_on;
+> +};
+> +
+> +struct reg_8 {
+> +	u16 addr;
+> +	u8 val;
+> +};
+> +
+> +static const struct reg_8 mode_1920x1080[];
+> +static const struct reg_8 mode_4096x2304[];
 
-One way to reproduce the reverted include order is to take a HOST compiler
-built against old Linux headers, namely 2.6.30 and older.
-This is because of the changes in asm/types.h.
+Can you move those regsiter tables here and avoid forward declaring
+them, or is there a reason I am missing for not doing that?
 
-It would be possible to put a guard into bitsperlong.h (#ifndef BITS_PER_LONG),
-but it just doesn't look correct to me that we have two files defining the same
-thing once quite simple, in the second case even more tricky.
+> +
+> +/*
+> + * Declare modes in order, from biggest
+> + * to smallest height.
+> + */
+> +static const struct imx214_mode {
+> +	u32 width;
+> +	u32 height;
+> +	const struct reg_8 *reg_table;
+> +} imx214_modes[] = {
+> +	{
+> +		.width = 4096,
+> +		.height = 2304,
+> +		.reg_table = mode_4096x2304,
+> +	},
+> +	{
+> +		.width = 1920,
+> +		.height = 1080,
+> +		.reg_table = mode_1920x1080,
+> +	},
+> +};
+> +
+> +static inline struct imx214 *to_imx214(struct v4l2_subdev *sd)
+> +{
+> +	return container_of(sd, struct imx214, sd);
+> +}
+> +
+> +static int imx214_set_power_on(struct imx214 *imx214)
+> +{
+> +	int ret;
+> +
+> +	gpiod_set_value_cansleep(imx214->enable_gpio, 0);
+> +	usleep_range(10, 20);
+> +
+> +	ret = regulator_bulk_enable(IMX214_NUM_SUPPLIES, imx214->supplies);
+> +	if (ret < 0) {
+> +		dev_err(imx214->dev, "failed to enable regulators: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	usleep_range(2000, 3000);
+> +
+> +	ret = clk_prepare_enable(imx214->xclk);
+> +	if (ret < 0) {
+> +		dev_err(imx214->dev, "clk prepare enable failed\n");
+> +		return ret;
+> +	}
+> +
+> +
+> +	gpiod_set_value_cansleep(imx214->enable_gpio, 1);
+> +	usleep_range(12000, 15000);
+> +
+> +	return 0;
+> +}
+> +
+> +static void imx214_set_power_off(struct imx214 *imx214)
+> +{
+> +	gpiod_set_value_cansleep(imx214->enable_gpio, 0);
+> +
+> +	clk_disable_unprepare(imx214->xclk);
+> +
+> +	regulator_bulk_disable(IMX214_NUM_SUPPLIES, imx214->supplies);
+> +}
+> +
+> +static int imx214_s_power(struct v4l2_subdev *sd, int on)
+> +{
+> +	struct imx214 *imx214 = to_imx214(sd);
+> +	int ret = 0;
+> +
+> +	on = !!on;
+> +
+> +	if (imx214->power_on == on)
+> +		return 0;
+> +
+> +	if (on)
+> +		ret = imx214_set_power_on(imx214);
+> +	else
+> +		imx214_set_power_off(imx214);
+> +
+> +	imx214->power_on = on;
 
--- 
-Best regards,
-Alexander Sverdlin.
+Nit: blank line before return, here and in other places in the driver.
+
+> +	return 0;
+> +}
+> +
+> +static int imx214_enum_mbus_code(struct v4l2_subdev *sd,
+> +				 struct v4l2_subdev_pad_config *cfg,
+> +				 struct v4l2_subdev_mbus_code_enum *code)
+> +{
+> +	if (code->index > 0)
+> +		return -EINVAL;
+> +
+> +	code->code = IMX214_MBUS_CODE;
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx214_enum_frame_size(struct v4l2_subdev *subdev,
+> +				  struct v4l2_subdev_pad_config *cfg,
+> +				  struct v4l2_subdev_frame_size_enum *fse)
+> +{
+> +	if (fse->code != IMX214_MBUS_CODE)
+> +		return -EINVAL;
+> +
+> +	if (fse->index >= ARRAY_SIZE(imx214_modes))
+> +		return -EINVAL;
+> +
+> +	fse->min_width = fse->max_width = imx214_modes[fse->index].width;
+> +	fse->min_height = fse->max_height = imx214_modes[fse->index].height;
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_VIDEO_ADV_DEBUG
+> +static int imx214_s_register(struct v4l2_subdev *subdev,
+> +			      const struct v4l2_dbg_register *reg)
+> +{
+> +	struct imx214 *imx214 = container_of(subdev, struct imx214, sd);
+> +
+> +	return regmap_write(imx214->regmap, reg->reg, reg->val);
+> +}
+> +
+> +static int imx214_g_register(struct v4l2_subdev *subdev,
+> +			      struct v4l2_dbg_register *reg)
+> +{
+> +	struct imx214 *imx214 = container_of(subdev, struct imx214, sd);
+> +	unsigned int aux;
+> +	int ret;
+> +
+> +	reg->size = 1;
+> +	ret = regmap_read(imx214->regmap, reg->reg, &aux);
+> +	reg->val = aux;
+> +	return ret;
+> +}
+> +#endif
+> +
+> +static const struct v4l2_subdev_core_ops imx214_core_ops = {
+> +#ifdef CONFIG_VIDEO_ADV_DEBUG
+> +	.g_register = imx214_g_register,
+> +	.s_register = imx214_s_register,
+> +#endif
+> +	.s_power = imx214_s_power,
+> +};
+> +
+> +static struct v4l2_mbus_framefmt *
+> +__imx214_get_pad_format(struct imx214 *imx214,
+> +			struct v4l2_subdev_pad_config *cfg,
+> +			unsigned int pad,
+> +			enum v4l2_subdev_format_whence which)
+> +{
+> +	switch (which) {
+> +	case V4L2_SUBDEV_FORMAT_TRY:
+> +		return v4l2_subdev_get_try_format(&imx214->sd, cfg, pad);
+> +	case V4L2_SUBDEV_FORMAT_ACTIVE:
+> +		return &imx214->fmt;
+> +	default:
+> +		return NULL;
+> +	}
+> +}
+> +
+> +static int imx214_get_format(struct v4l2_subdev *sd,
+> +			     struct v4l2_subdev_pad_config *cfg,
+> +			     struct v4l2_subdev_format *format)
+> +{
+> +	struct imx214 *imx214 = to_imx214(sd);
+> +
+> +	format->format = *__imx214_get_pad_format(imx214, cfg, format->pad,
+> +						  format->which);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct v4l2_rect *
+> +__imx214_get_pad_crop(struct imx214 *imx214, struct v4l2_subdev_pad_config *cfg,
+> +		      unsigned int pad, enum v4l2_subdev_format_whence which)
+> +{
+> +	switch (which) {
+> +	case V4L2_SUBDEV_FORMAT_TRY:
+> +		return v4l2_subdev_get_try_crop(&imx214->sd, cfg, pad);
+> +	case V4L2_SUBDEV_FORMAT_ACTIVE:
+> +		return &imx214->crop;
+> +	default:
+> +		return NULL;
+> +	}
+> +}
+> +
+> +static int imx214_find_mode(u32 height)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; (i < ARRAY_SIZE(imx214_modes) - 1) ; i++)
+> +		if (height >= imx214_modes[i].width)
+
+Comparing height and width?
+
+> +			return i;
+> +	return i;
+> +}
+> +
+> +static int imx214_set_format(struct v4l2_subdev *sd,
+> +			     struct v4l2_subdev_pad_config *cfg,
+> +			     struct v4l2_subdev_format *format)
+> +{
+> +	struct imx214 *imx214 = to_imx214(sd);
+> +	struct v4l2_mbus_framefmt *__format;
+> +	struct v4l2_rect *__crop;
+> +	int mode;
+> +
+> +	__crop = __imx214_get_pad_crop(imx214, cfg, format->pad, format->which);
+> +
+> +	mode = format ? imx214_find_mode(format->format.height) : 0;
+> +
+> +	__crop->width = imx214_modes[mode].width;
+> +	__crop->height = imx214_modes[mode].height;
+> +
+> +	__format = __imx214_get_pad_format(imx214, cfg, format->pad,
+> +					   format->which);
+> +	__format->width = __crop->width;
+> +	__format->height = __crop->height;
+> +	__format->code = IMX214_MBUS_CODE;
+> +	__format->field = V4L2_FIELD_NONE;
+> +	__format->colorspace = V4L2_COLORSPACE_SRGB;
+> +	__format->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(__format->colorspace);
+> +	__format->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true,
+> +				__format->colorspace, __format->ycbcr_enc);
+> +	__format->xfer_func = V4L2_MAP_XFER_FUNC_DEFAULT(__format->colorspace);
+> +
+> +	format->format = *__format;
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx214_get_selection(struct v4l2_subdev *sd,
+> +				struct v4l2_subdev_pad_config *cfg,
+> +				struct v4l2_subdev_selection *sel)
+> +{
+> +	struct imx214 *imx214 = to_imx214(sd);
+> +
+> +	if (sel->target != V4L2_SEL_TGT_CROP)
+> +		return -EINVAL;
+> +
+> +	sel->r = *__imx214_get_pad_crop(imx214, cfg, sel->pad,
+> +					sel->which);
+> +	return 0;
+> +}
+> +
+> +static int imx214_entity_init_cfg(struct v4l2_subdev *subdev,
+> +				  struct v4l2_subdev_pad_config *cfg)
+> +{
+> +	struct v4l2_subdev_format fmt = { };
+> +
+> +	fmt.which = cfg ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_FORMAT_ACTIVE;
+> +	fmt.format.width = imx214_modes[0].width;
+> +	fmt.format.height = imx214_modes[0].height;
+> +
+> +	imx214_set_format(subdev, cfg, &fmt);
+> +
+> +	return 0;
+> +}
+> +
+> +enum { IMX214_TABLE_WAIT_MS = 0,
+> +	IMX214_TABLE_END,
+> +	IMX214_MAX_RETRIES,
+> +	IMX214_WAIT_MS};
+> +
+> +/*From imx214_mode_tbls.h*/
+> +static const struct reg_8 mode_4096x2304[] = {
+> +	{0x0114, 0x03},
+> +	{0x0220, 0x00},
+> +	{0x0221, 0x11},
+> +	{0x0222, 0x01},
+> +	{0x0340, 0x0C},
+> +	{0x0341, 0x7A},
+> +	{0x0342, 0x13},
+> +	{0x0343, 0x90},
+> +	{0x0344, 0x00},
+> +	{0x0345, 0x38},
+> +	{0x0346, 0x01},
+> +	{0x0347, 0x98},
+> +	{0x0348, 0x10},
+> +	{0x0349, 0x37},
+> +	{0x034A, 0x0A},
+> +	{0x034B, 0x97},
+> +	{0x0381, 0x01},
+> +	{0x0383, 0x01},
+> +	{0x0385, 0x01},
+> +	{0x0387, 0x01},
+> +	{0x0900, 0x00},
+> +	{0x0901, 0x00},
+> +	{0x0902, 0x00},
+> +	{0x3000, 0x35},
+> +	{0x3054, 0x01},
+> +	{0x305C, 0x11},
+> +
+> +	{0x0112, 0x0A},
+> +	{0x0113, 0x0A},
+> +	{0x034C, 0x10},
+> +	{0x034D, 0x00},
+> +	{0x034E, 0x09},
+> +	{0x034F, 0x00},
+> +	{0x0401, 0x00},
+> +	{0x0404, 0x00},
+> +	{0x0405, 0x10},
+> +	{0x0408, 0x00},
+> +	{0x0409, 0x00},
+> +	{0x040A, 0x00},
+> +	{0x040B, 0x00},
+> +	{0x040C, 0x10},
+> +	{0x040D, 0x00},
+> +	{0x040E, 0x09},
+> +	{0x040F, 0x00},
+> +
+> +	{0x0301, 0x05},
+> +	{0x0303, 0x02},
+> +	{0x0305, 0x03},
+> +	{0x0306, 0x00},
+> +	{0x0307, 0x96},
+> +	{0x0309, 0x0A},
+> +	{0x030B, 0x01},
+> +	{0x0310, 0x00},
+> +
+> +	{0x0820, 0x12},
+> +	{0x0821, 0xC0},
+> +	{0x0822, 0x00},
+> +	{0x0823, 0x00},
+> +
+> +	{0x3A03, 0x09},
+> +	{0x3A04, 0x50},
+> +	{0x3A05, 0x01},
+> +
+> +	{0x0B06, 0x01},
+> +	{0x30A2, 0x00},
+> +
+> +	{0x30B4, 0x00},
+> +
+> +	{0x3A02, 0xFF},
+> +
+> +	{0x3011, 0x00},
+> +	{0x3013, 0x01},
+> +
+> +	{0x0202, 0x0C},
+> +	{0x0203, 0x70},
+> +	{0x0224, 0x01},
+> +	{0x0225, 0xF4},
+> +
+> +	{0x0204, 0x00},
+> +	{0x0205, 0x00},
+> +	{0x020E, 0x01},
+> +	{0x020F, 0x00},
+> +	{0x0210, 0x01},
+> +	{0x0211, 0x00},
+> +	{0x0212, 0x01},
+> +	{0x0213, 0x00},
+> +	{0x0214, 0x01},
+> +	{0x0215, 0x00},
+> +	{0x0216, 0x00},
+> +	{0x0217, 0x00},
+> +
+> +	{0x4170, 0x00},
+> +	{0x4171, 0x10},
+> +	{0x4176, 0x00},
+> +	{0x4177, 0x3C},
+> +	{0xAE20, 0x04},
+> +	{0xAE21, 0x5C},
+> +
+> +	{IMX214_TABLE_WAIT_MS, 10},
+> +	{0x0138, 0x01},
+> +	{IMX214_TABLE_END, 0x00}
+> +};
+> +
+> +static const struct reg_8 mode_1920x1080[] = {
+> +	{0x0114, 0x03},
+> +	{0x0220, 0x00},
+> +	{0x0221, 0x11},
+> +	{0x0222, 0x01},
+> +	{0x0340, 0x0C},
+> +	{0x0341, 0x7A},
+> +	{0x0342, 0x13},
+> +	{0x0343, 0x90},
+> +	{0x0344, 0x04},
+> +	{0x0345, 0x78},
+> +	{0x0346, 0x03},
+> +	{0x0347, 0xFC},
+> +	{0x0348, 0x0B},
+> +	{0x0349, 0xF7},
+> +	{0x034A, 0x08},
+> +	{0x034B, 0x33},
+> +	{0x0381, 0x01},
+> +	{0x0383, 0x01},
+> +	{0x0385, 0x01},
+> +	{0x0387, 0x01},
+> +	{0x0900, 0x00},
+> +	{0x0901, 0x00},
+> +	{0x0902, 0x00},
+> +	{0x3000, 0x35},
+> +	{0x3054, 0x01},
+> +	{0x305C, 0x11},
+> +
+> +	{0x0112, 0x0A},
+> +	{0x0113, 0x0A},
+> +	{0x034C, 0x07},
+> +	{0x034D, 0x80},
+> +	{0x034E, 0x04},
+> +	{0x034F, 0x38},
+> +	{0x0401, 0x00},
+> +	{0x0404, 0x00},
+> +	{0x0405, 0x10},
+> +	{0x0408, 0x00},
+> +	{0x0409, 0x00},
+> +	{0x040A, 0x00},
+> +	{0x040B, 0x00},
+> +	{0x040C, 0x07},
+> +	{0x040D, 0x80},
+> +	{0x040E, 0x04},
+> +	{0x040F, 0x38},
+> +
+> +	{0x0301, 0x05},
+> +	{0x0303, 0x02},
+> +	{0x0305, 0x03},
+> +	{0x0306, 0x00},
+> +	{0x0307, 0x96},
+> +	{0x0309, 0x0A},
+> +	{0x030B, 0x01},
+> +	{0x0310, 0x00},
+> +
+> +	{0x0820, 0x12},
+> +	{0x0821, 0xC0},
+> +	{0x0822, 0x00},
+> +	{0x0823, 0x00},
+> +
+> +	{0x3A03, 0x04},
+> +	{0x3A04, 0xF8},
+> +	{0x3A05, 0x02},
+> +
+> +	{0x0B06, 0x01},
+> +	{0x30A2, 0x00},
+> +
+> +	{0x30B4, 0x00},
+> +
+> +	{0x3A02, 0xFF},
+> +
+> +	{0x3011, 0x00},
+> +	{0x3013, 0x01},
+> +
+> +	{0x0202, 0x0C},
+> +	{0x0203, 0x70},
+> +	{0x0224, 0x01},
+> +	{0x0225, 0xF4},
+> +
+> +	{0x0204, 0x00},
+> +	{0x0205, 0x00},
+> +	{0x020E, 0x01},
+> +	{0x020F, 0x00},
+> +	{0x0210, 0x01},
+> +	{0x0211, 0x00},
+> +	{0x0212, 0x01},
+> +	{0x0213, 0x00},
+> +	{0x0214, 0x01},
+> +	{0x0215, 0x00},
+> +	{0x0216, 0x00},
+> +	{0x0217, 0x00},
+> +
+> +	{0x4170, 0x00},
+> +	{0x4171, 0x10},
+> +	{0x4176, 0x00},
+> +	{0x4177, 0x3C},
+> +	{0xAE20, 0x04},
+> +	{0xAE21, 0x5C},
+> +
+> +	{IMX214_TABLE_WAIT_MS, 10},
+> +	{0x0138, 0x01},
+> +	{IMX214_TABLE_END, 0x00}
+> +};
+> +
+> +static struct reg_8 mode_table_common[] = {
+> +	/* software reset */
+> +
+> +	/* software standby settings */
+> +	{0x0100, 0x00},
+> +
+> +	/* ATR setting */
+> +	{0x9300, 0x02},
+> +
+> +	/* external clock setting */
+> +	{0x0136, 0x18},
+> +	{0x0137, 0x00},
+> +
+> +	/* global setting */
+> +	/* basic config */
+> +	{0x0101, 0x00},
+> +	{0x0105, 0x01},
+> +	{0x0106, 0x01},
+> +	{0x4550, 0x02},
+> +	{0x4601, 0x00},
+> +	{0x4642, 0x05},
+> +	{0x6227, 0x11},
+> +	{0x6276, 0x00},
+> +	{0x900E, 0x06},
+> +	{0xA802, 0x90},
+> +	{0xA803, 0x11},
+> +	{0xA804, 0x62},
+> +	{0xA805, 0x77},
+> +	{0xA806, 0xAE},
+> +	{0xA807, 0x34},
+> +	{0xA808, 0xAE},
+> +	{0xA809, 0x35},
+> +	{0xA80A, 0x62},
+> +	{0xA80B, 0x83},
+> +	{0xAE33, 0x00},
+> +
+> +	/* analog setting */
+> +	{0x4174, 0x00},
+> +	{0x4175, 0x11},
+> +	{0x4612, 0x29},
+> +	{0x461B, 0x12},
+> +	{0x461F, 0x06},
+> +	{0x4635, 0x07},
+> +	{0x4637, 0x30},
+> +	{0x463F, 0x18},
+> +	{0x4641, 0x0D},
+> +	{0x465B, 0x12},
+> +	{0x465F, 0x11},
+> +	{0x4663, 0x11},
+> +	{0x4667, 0x0F},
+> +	{0x466F, 0x0F},
+> +	{0x470E, 0x09},
+> +	{0x4909, 0xAB},
+> +	{0x490B, 0x95},
+> +	{0x4915, 0x5D},
+> +	{0x4A5F, 0xFF},
+> +	{0x4A61, 0xFF},
+> +	{0x4A73, 0x62},
+> +	{0x4A85, 0x00},
+> +	{0x4A87, 0xFF},
+> +
+> +	/* embedded data */
+> +	{0x5041, 0x04},
+> +	{0x583C, 0x04},
+> +	{0x620E, 0x04},
+> +	{0x6EB2, 0x01},
+> +	{0x6EB3, 0x00},
+> +	{0x9300, 0x02},
+> +
+> +	/* imagequality */
+> +	/* HDR setting */
+> +	{0x3001, 0x07},
+> +	{0x6D12, 0x3F},
+> +	{0x6D13, 0xFF},
+> +	{0x9344, 0x03},
+> +	{0x9706, 0x10},
+> +	{0x9707, 0x03},
+> +	{0x9708, 0x03},
+> +	{0x9E04, 0x01},
+> +	{0x9E05, 0x00},
+> +	{0x9E0C, 0x01},
+> +	{0x9E0D, 0x02},
+> +	{0x9E24, 0x00},
+> +	{0x9E25, 0x8C},
+> +	{0x9E26, 0x00},
+> +	{0x9E27, 0x94},
+> +	{0x9E28, 0x00},
+> +	{0x9E29, 0x96},
+> +
+> +	/* CNR parameter setting */
+> +	{0x69DB, 0x01},
+> +
+> +	/* Moire reduction */
+> +	{0x6957, 0x01},
+> +
+> +	/* image enhancment */
+> +	{0x6987, 0x17},
+> +	{0x698A, 0x03},
+> +	{0x698B, 0x03},
+> +
+> +	/* white balanace */
+> +	{0x0B8E, 0x01},
+> +	{0x0B8F, 0x00},
+> +	{0x0B90, 0x01},
+> +	{0x0B91, 0x00},
+> +	{0x0B92, 0x01},
+> +	{0x0B93, 0x00},
+> +	{0x0B94, 0x01},
+> +	{0x0B95, 0x00},
+> +
+> +	/* ATR setting */
+> +	{0x6E50, 0x00},
+> +	{0x6E51, 0x32},
+> +	{0x9340, 0x00},
+> +	{0x9341, 0x3C},
+> +	{0x9342, 0x03},
+> +	{0x9343, 0xFF},
+> +	{IMX214_TABLE_END, 0x00}
+> +};
+> +
+> +#define MAX_CMD 4
+> +static int imx214_write_table(struct imx214 *imx214,
+> +				const struct reg_8 table[])
+> +{
+> +	u8 vals[MAX_CMD];
+> +	int ret;
+> +	int i;
+> +
+> +	for (table = table; table->addr != IMX214_TABLE_END ; table++) {
+> +		if (table->addr == IMX214_TABLE_WAIT_MS) {
+> +			msleep(table->val);
+
+usleep_range might be better for 10msec sleeps?
+
+> +			continue;
+> +		}
+> +
+> +		for (i = 0; i < MAX_CMD; i++) {
+> +			if (table[i].addr != (table[0].addr + i))
+> +				break;
+> +			vals[i] = table[i].val;
+> +		}
+> +
+> +		ret = regmap_bulk_write(imx214->regmap, table->addr, vals, i);
+
+I'm not saying using regmap is wrong, but makes this function a bit
+cumbersome. You have delays as part of the command tables, that's
+fine, and you want to wait everytime you meet one, then proceed to
+write the rest. If you have your own write functions, this would look
+simpler, and if regmap helps in anyway in caching writes, you're anyway
+sending up to 4 entries at a time, which I think makes the regmap caching
+useless, imho.
+
+> +
+> +		if (ret) {
+> +			dev_err(imx214->dev, "write_table error: %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		table += i - 1;
+> +
+empty new line
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+two empty new lines.
+
+> +
+> +static int imx214_s_stream(struct v4l2_subdev *subdev, int enable)
+> +{
+> +	struct imx214 *imx214 = to_imx214(subdev);
+> +	int ret;
+> +
+> +	if (enable) {
+> +		int mode = imx214_find_mode(imx214->fmt.height);
+
+You're calling this function a few times, could you consider caching
+mode instead? Or does it make your code mode complex?
+
+> +
+> +		ret = imx214_write_table(imx214, mode_table_common);
+> +		if (ret < 0) {
+> +			dev_err(imx214->dev, "could not sent common table %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +		ret = imx214_write_table(imx214, imx214_modes[mode].reg_table);
+> +		if (ret < 0) {
+> +			dev_err(imx214->dev, "could not sent mode table %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +		ret = v4l2_ctrl_handler_setup(&imx214->ctrls);
+
+is it fine to call this multiple times, at streamon time?
+
+> +		if (ret < 0) {
+> +			dev_err(imx214->dev, "could not sync v4l2 controls\n");
+> +			return ret;
+> +		}
+> +		ret = regmap_write(imx214->regmap, 0x100, 1);
+> +		if (ret < 0) {
+> +			dev_err(imx214->dev, "could not sent start table %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +	} else {
+> +		ret = regmap_write(imx214->regmap, 0x100, 0);
+> +		if (ret < 0) {
+> +			dev_err(imx214->dev, "could not sent stop table %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx214_g_frame_interval(struct v4l2_subdev *subdev,
+> +				      struct v4l2_subdev_frame_interval *fival)
+> +{
+> +	fival->pad = 0;
+> +	fival->interval.numerator = 1;
+> +	fival->interval.denominator = IMX214_FPS;
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx214_enum_frame_interval(struct v4l2_subdev *subdev,
+> +				struct v4l2_subdev_pad_config *cfg,
+> +				struct v4l2_subdev_frame_interval_enum *fie)
+> +{
+> +	int mode;
+> +
+> +	if (fie->index != 0)
+> +		return -EINVAL;
+> +
+> +	mode = imx214_find_mode(fie->height);
+> +
+> +	fie->code = IMX214_MBUS_CODE;
+> +	fie->width = imx214_modes[mode].width;
+> +	fie->height = imx214_modes[mode].height;
+> +	fie->interval.numerator = 1;
+> +	fie->interval.denominator = IMX214_MBUS_CODE;
+
+denominator = MBUS_CODE ?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_subdev_video_ops imx214_video_ops = {
+> +	.s_stream = imx214_s_stream,
+> +	.g_frame_interval = imx214_g_frame_interval,
+> +	.s_frame_interval = imx214_g_frame_interval,
+> +};
+> +
+> +static const struct v4l2_subdev_pad_ops imx214_subdev_pad_ops = {
+> +	.enum_mbus_code = imx214_enum_mbus_code,
+> +	.enum_frame_size = imx214_enum_frame_size,
+> +	.enum_frame_interval = imx214_enum_frame_interval,
+> +	.get_fmt = imx214_get_format,
+> +	.set_fmt = imx214_set_format,
+> +	.get_selection = imx214_get_selection,
+> +	.init_cfg = imx214_entity_init_cfg,
+> +};
+> +
+> +static const struct v4l2_subdev_ops imx214_subdev_ops = {
+> +	.core = &imx214_core_ops,
+> +	.video = &imx214_video_ops,
+> +	.pad = &imx214_subdev_pad_ops,
+> +};
+> +
+> +static const struct regmap_config sensor_regmap_config = {
+> +	.reg_bits = 16,
+> +	.val_bits = 8,
+> +	.cache_type = REGCACHE_RBTREE,
+> +};
+> +
+> +static int imx214_get_regulators(struct device *dev, struct imx214 *imx214)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < IMX214_NUM_SUPPLIES; i++)
+> +		imx214->supplies[i].supply = imx214_supply_name[i];
+> +
+> +	return devm_regulator_bulk_get(dev,
+> +				       IMX214_NUM_SUPPLIES,
+> +				       imx214->supplies);
+> +}
+> +
+> +static int imx214_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct imx214 *imx214;
+> +	struct fwnode_handle *endpoint;
+> +	int ret;
+> +	static const s64 link_freq[] = {
+> +		(IMX214_DEFAULT_PIXEL_RATE * 10LL) / 8,
+> +	};
+> +
+> +	imx214 = devm_kzalloc(dev, sizeof(*imx214), GFP_KERNEL);
+> +	if (!imx214)
+> +		return -ENOMEM;
+> +
+> +	imx214->dev = dev;
+> +
+> +	endpoint = fwnode_graph_get_next_endpoint(
+> +		of_fwnode_handle(client->dev.of_node), NULL);
+> +	if (!endpoint) {
+> +		dev_err(dev, "endpoint node not found\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = v4l2_fwnode_endpoint_parse(endpoint, &imx214->ep);
+
+is imx214->ep used anywhere else apart from probe? can it just be a
+variable local to this function?
+
+> +	fwnode_handle_put(endpoint);
+> +	if (ret < 0) {
+> +		dev_err(dev, "parsing endpoint node failed\n");
+> +		return ret;
+> +	}
+> +
+> +	if (imx214->ep.bus_type != V4L2_MBUS_CSI2) {
+> +		dev_err(dev, "invalid bus type (%u), must be CSI2 (%u)\n",
+> +			imx214->ep.bus_type, V4L2_MBUS_CSI2);
+> +		return -EINVAL;
+> +	}
+> +
+> +	imx214->xclk = devm_clk_get(dev, "xclk");
+> +	if (IS_ERR(imx214->xclk)) {
+> +		dev_err(dev, "could not get xclk");
+> +		return PTR_ERR(imx214->xclk);
+> +	}
+> +
+> +	ret = clk_set_rate(imx214->xclk, IMX214_DEFAULT_CLK_FREQ);
+> +	if (ret) {
+> +		dev_err(dev, "could not set xclk frequency\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = imx214_get_regulators(dev, imx214);
+> +	if (ret < 0) {
+> +		dev_err(dev, "cannot get regulators\n");
+> +		return ret;
+> +	}
+> +
+> +	imx214->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
+> +	if (IS_ERR(imx214->enable_gpio)) {
+> +		dev_err(dev, "cannot get enable gpio\n");
+> +		return PTR_ERR(imx214->enable_gpio);
+> +	}
+> +
+> +	imx214->regmap = devm_regmap_init_i2c(client, &sensor_regmap_config);
+> +	if (IS_ERR(imx214->regmap)) {
+> +		dev_err(dev, "regmap init failed\n");
+> +		return PTR_ERR(imx214->regmap);
+> +	}
+> +
+> +	v4l2_ctrl_handler_init(&imx214->ctrls, 2);
+> +
+> +	imx214->pixel_rate = v4l2_ctrl_new_std(&imx214->ctrls, NULL,
+> +					       V4L2_CID_PIXEL_RATE, 0,
+> +					       IMX214_DEFAULT_PIXEL_RATE, 1,
+> +					       IMX214_DEFAULT_PIXEL_RATE);
+
+Is it fine not to provide a ctrl_ops structure to read/write controls?
+
+Thanks
+   j
+
+> +	imx214->link_freq = v4l2_ctrl_new_int_menu(&imx214->ctrls, NULL,
+> +						   V4L2_CID_LINK_FREQ,
+> +						   ARRAY_SIZE(link_freq) - 1,
+> +						   0, link_freq);
+> +	if (imx214->link_freq)
+> +		imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +	ret = imx214->ctrls.error;
+> +	if (ret) {
+> +		dev_err(&client->dev, "%s control init failed (%d)\n",
+> +				__func__, ret);
+> +		goto free_ctrl;
+> +	}
+> +
+> +	imx214->sd.ctrl_handler = &imx214->ctrls;
+> +	ret = v4l2_ctrl_handler_setup(imx214->sd.ctrl_handler);
+> +	if (ret) {
+> +		dev_err(&client->dev,
+> +			"Error %d setting default controls\n", ret);
+> +		goto free_ctrl;
+> +	}
+> +
+> +	v4l2_i2c_subdev_init(&imx214->sd, client, &imx214_subdev_ops);
+> +	imx214->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +	imx214->pad.flags = MEDIA_PAD_FL_SOURCE;
+> +	imx214->sd.dev = &client->dev;
+> +	imx214->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> +
+> +	ret = media_entity_pads_init(&imx214->sd.entity, 1, &imx214->pad);
+> +	if (ret < 0) {
+> +		dev_err(dev, "could not register media entity\n");
+> +		goto free_ctrl;
+> +	}
+> +
+> +	imx214_entity_init_cfg(&imx214->sd, NULL);
+> +
+> +	ret = v4l2_async_register_subdev_sensor_common(&imx214->sd);
+> +	if (ret < 0) {
+> +		dev_err(dev, "could not register v4l2 device\n");
+> +		goto free_entity;
+> +	}
+> +
+> +	return 0;
+> +
+> +free_entity:
+> +	media_entity_cleanup(&imx214->sd.entity);
+> +free_ctrl:
+> +	v4l2_ctrl_handler_free(&imx214->ctrls);
+> +
+> +	return ret;
+> +}
+> +
+> +static int imx214_remove(struct i2c_client *client)
+> +{
+> +	struct v4l2_subdev *sd = i2c_get_clientdata(client);
+> +	struct imx214 *imx214 = to_imx214(sd);
+> +
+> +	v4l2_async_unregister_subdev(&imx214->sd);
+> +	media_entity_cleanup(&imx214->sd.entity);
+> +	v4l2_ctrl_handler_free(&imx214->ctrls);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id imx214_of_match[] = {
+> +	{ .compatible = "sony,imx214" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, imx214_of_match);
+> +
+> +static struct i2c_driver imx214_i2c_driver = {
+> +	.driver = {
+> +		.of_match_table = imx214_of_match,
+> +		.name  = "imx214",
+> +	},
+> +	.probe_new  = imx214_probe,
+> +	.remove = imx214_remove,
+> +};
+> +
+> +module_i2c_driver(imx214_i2c_driver);
+> +
+> +MODULE_DESCRIPTION("Sony IMX214 Camera drier");
+> +MODULE_AUTHOR("Ricardo Ribalda <ricardo.ribalda@gmail.com>");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.18.0
+>
+
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbqKHCAAoJEHI0Bo8WoVY8TmUP/i5bTg+84I+bILII0o3hsx7q
+G0/uZSQFWWcvpRgKKZUVNnSCzUiDASqCTKDBV34JMuJjIluugEZurOkoIFQ2neKh
+KYS9cnh52fZIyojvZfvwA304WS9WWKcCx3FhOtsEWLeaUP8ASfrJKSVothvVBXqg
+0mQk2AuvkhF1YyLM6eCdZOHX5jdACErDcnjt3f3nd9sXC6GAfpmYizjfEGqHlQER
+B4eNByhvzLINUVncoZAuXeVfgQlPJvdqgsWXtFcaW7mhpUw9SOSJrfqiZ+e+UaOL
+tCd6gvCW2O7K6Pn6aBa8/NnOuPJ5edd5SX54nexMltzy3snVfwZy/wpl1pBr26F0
+hdqsPM4a/b9BLkpsP6BCf0rzwltltD8ZrgS1pHZwCr013NjIMGWuPElArAa0lTQn
+y8DeZE9rf+drKo6JSJZEcWsH2kiZTbNu9vBUoXcr0O48aVJz8I0aI1ptoQp8+9dJ
+rEwFBNrzIo3xw0VgG55G0GsPgJV9DyJJd7NVxhz979afNGMqXnoxlxxm4VOLFkKb
+3Vt+jQS5ZlWGVCYZS9pL47FshMrlqL0rht8ODRCY5INpTF+4k8R32vut6A252U5E
+CSxuJQu38Ch0WJVwn2eta0dOegICVMtj+uRhy6wu6YqoPt+kMqAOv9LK5rxQYUOD
+mWk+XaFEvhO9MDuOpclE
+=likt
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
