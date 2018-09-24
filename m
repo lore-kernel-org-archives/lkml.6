@@ -3,84 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC0BECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 03:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE9CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 04:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A120821480
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 03:43:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A120821480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 34A0320676
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 04:00:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A0320676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeIXJnO (ORCPT
+        id S1727406AbeIXKAJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 05:43:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:53899 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeIXJnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 05:43:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42JVR16ZX3z9s5c;
-        Mon, 24 Sep 2018 13:43:09 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Rob Herring <robh@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-next <linux-next@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Sep 20
-In-Reply-To: <CAL_JsqLRRCdOWABiTYHp7jupdiLfPRv95OSKWVB-HX=cevdQMg@mail.gmail.com>
-References: <20180920151243.5524c6ca@canb.auug.org.au> <87d0t8jvym.fsf@concordia.ellerman.id.au> <20180920210711.4561abee@canb.auug.org.au> <20180920211755.1fabd744@canb.auug.org.au> <CAL_JsqLRRCdOWABiTYHp7jupdiLfPRv95OSKWVB-HX=cevdQMg@mail.gmail.com>
-Date:   Mon, 24 Sep 2018 13:43:09 +1000
-Message-ID: <871s9j7e7m.fsf@concordia.ellerman.id.au>
+        Mon, 24 Sep 2018 06:00:09 -0400
+Received: from p3plsmtpa11-06.prod.phx3.secureserver.net ([68.178.252.107]:34000
+        "EHLO p3plsmtpa11-06.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726158AbeIXKAJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 06:00:09 -0400
+Received: from [172.20.2.189] ([50.227.211.198])
+        by :SMTPAUTH: with ESMTPSA
+        id 4I2VgpvGU5FoM4I2Vg8P9O; Sun, 23 Sep 2018 21:00:04 -0700
+Subject: Re: [Patch v7 21/22] CIFS: SMBD: Upper layer performs SMB read via
+ RDMA write through memory registration
+To:     Stefan Metzmacher <metze@samba.org>,
+        Long Li <longli@exchange.microsoft.com>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Tom Talpey <ttalpey@microsoft.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+References: <20171107085514.12693-1-longli@exchange.microsoft.com>
+ <20171107085514.12693-22-longli@exchange.microsoft.com>
+ <9b02dadb-d21b-7a8d-7803-910041f66047@talpey.com>
+ <a7680efb-6ecf-0f70-2fde-55c2b69b534b@samba.org>
+ <699de6ba-201a-fd4f-bcac-234e13f33afc@talpey.com>
+ <f9c791af-28d0-5107-e41a-31eee03cbda0@samba.org>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <de042465-e9b9-3782-00ce-38943053c7b6@talpey.com>
+Date:   Sun, 23 Sep 2018 21:00:03 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <f9c791af-28d0-5107-e41a-31eee03cbda0@samba.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHTKu28keoM1hNFG83iqXMF0hu10sX2VgZIohaxos2hMN1hfflEF9zFGazBXlso3OrjwJY74sqk0HIBfnzjbnOSsWEPbBsJ33B3uQx9OKfzaK8prO7ho
+ qynBKFrRyPgwgdRXMv6VmNzfGkMeszs3iEXCHOdtNKcmGqz1c1QsabviWeYSWnzrEpt8MqwU1Z3yhy0kyMzECJJXHRmu2QnvTBVlPquXLAcEcMDDeStbNu2h
+ FIOTB1A9x5nN/KTe0tMzt3poDXSwjvCAuYJiomx60zyJE4AwDvF0L5O+Hwx607fcsEl0d9c+mIgIqkmXNH0d6yKmw8V09/K0W9+aH/cToZ0QUGUVssgQ9yRn
+ 75hAW+qke/rr6QQZixl1ChMpo4TnPpFKb3XB05DXrmoJssA6YuzvL/oZVGUtrKk6Y9C0zfvgxgVTY+cqyC+iiyHd9KZX7Dzu2cv2BoSRBYQaE4LJFp0GIwUm
+ nRgihVK7ueg+Wee5mHqLYGeLEeEetOlDt5TWCvzeUCPOEdnRan8ZRNaTm0g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh@kernel.org> writes:
-> On Thu, Sep 20, 2018 at 4:18 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> On Thu, 20 Sep 2018 21:10:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > On Thu, 20 Sep 2018 20:37:37 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
->> > > Oodles of:
->> > >
->> > >   # < make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-  allnoconfig
->> > >   # make -s -j 48 ARCH=arm64 O=/kisskb/build/linux-next_arm64-allnoconfig_arm64 CROSS_COMPILE=/opt/cross/kisskb/br-aarch64-glibc-2016.08-613-ge98b4dd/bin/aarch64-linux-
->> > >   /bin/sh: 1: pkg-config: not found
->>       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On 9/23/2018 2:24 PM, Stefan Metzmacher wrote:
+> Hi Tom,
+> 
+>>> I just tested that setting:
+>>>
+>>> mr->iova &= (PAGE_SIZE - 1);
+>>> mr->iova |= 0xFFFFFFFF00000000;
+>>>
+>>> after the ib_map_mr_sg() and before doing the IB_WR_REG_MR, seems to
+>>> work.
 >>
->> > don't have it installed on my build machine either ...  do we have
->> > pkg-config installed in the build images?
->>
->> Duh! ;-)
->>
->> According to the commit message we gained a kconfig dependency on
->> pkg-config in 4.18.  I wonder what else depends on it.
->>
->> Ah:
->>
->> "pkg-config
->> ----------
->>
->> The build system, as of 4.18, requires pkg-config to check for installed
->> kconfig tools and to determine flags settings for use in
->> 'make {g,x}config'.  Previously pkg-config was being used but not
->> verified or documented."
->
-> Looks like until a recent commit, this also included nconfig and
-> menuconfig, but those were dropped after some complaints. I'll rework
-> this to make things work with pkg-config.
+>> Good! As you know, we were concerned about it after seeing that
+>> the ib_dma_map_sg() code was unconditionally setting it to the
+>> dma_mapped address. By salting those FFFF's with varying data,
+>> this should give your FRWR regions stronger integrity in addition
+>> to not leaking kernel "addresses" to the wire.
+> 
+> Just wondering... Isn't the thing we use called FRMR?
 
-OK thanks.
+They're basically the same concept, it's a subtle difference.
 
-I'll install pkg-config in the kisskb builders anyway, so in future at
-least that part will work.
+FRMR = Fast Register Memory Region
+FRWR = Fast Register Work Request
 
-cheers
+The memory region is the mr itself, this is created early on.
+
+The work request is built when actually binding the physical
+pages to the region, and setting the offset, length, etc, which
+is what's happening in the routine that I made the comment on.
+
+So, for this discussion I chose to say FRWR. Sorry for any
+confusion!
+
+Tom.
