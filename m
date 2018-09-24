@@ -2,148 +2,156 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF9CECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F71C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1043C20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1043C20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A3AF21480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:42:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XqzdjxtZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A3AF21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731617AbeIXTgy (ORCPT
+        id S1730875AbeIXTpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 15:36:54 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35894 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730700AbeIXTgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 15:36:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BBC480D;
-        Mon, 24 Sep 2018 06:34:41 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3900B3F5B7;
-        Mon, 24 Sep 2018 06:34:40 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 14:34:37 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jun Yao <yaojun8558363@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, james.morse@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/6] arm64/mm: Create the initial page table in the
- init_pg_dir.
-Message-ID: <20180924133437.zr2u5c42rfmhro6o@lakrids.cambridge.arm.com>
-References: <20180917044333.30051-1-yaojun8558363@gmail.com>
- <20180917044333.30051-4-yaojun8558363@gmail.com>
+        Mon, 24 Sep 2018 15:45:03 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55371 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727816AbeIXTpD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 15:45:03 -0400
+Received: by mail-it1-f193.google.com with SMTP id c23-v6so2401346itd.5
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 06:42:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MTQ1NShy3bxgeWoHM3ppxoyzRgZbW/MIott7aAlB6Nk=;
+        b=XqzdjxtZctxlHUWndXjitFY+KxuBLGHVOV3w1Hn92FPxkYs8EXAS7oNbr7E95zLt20
+         hoDAMDbhQNAL5D9bJ9WczMhgGyoYPfwR90a3bjk7JBWOiQB93wH1Kx4TNX2VBeo0N2aM
+         kNS7Fp+KcCt+VYIwVDOWd0tjntsJlhBG1et/RNjCKKS1l0/kJU38cLhFbbL4OF0yQiy8
+         ykFgCvSHnnjpQ2KS16kvzrfBheq1iAHQaoyF7A8RdK9qA6rJaCa9jyxUgTea/2kQ4S77
+         h3V2EVB6Vo6KO7SJ7Rzo5XnbFPtfXyezy6IabRLaI5wzKWO7HZDGRTTK7ZqhSvxgOJQ+
+         q90w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MTQ1NShy3bxgeWoHM3ppxoyzRgZbW/MIott7aAlB6Nk=;
+        b=FGDvWI8CqZoaP0iZUG5rPhAdDWPqJEO9ltSmSj/JEV2tJUj7tiNCr/ccT9cnlpJOWu
+         05PD9Cx8RS5sxo3ASTIb11kodcyK6aeezZk0sP84hhe8LcRYSoO17bdmBNPeE/3/1mg1
+         xMqwJQXI7r3DfviWYeTALZTM+eDcWem6SU5Q/xnUnT5ZRXr2rYdl1unrAquFsoY1Nx23
+         yPOdPEXbpPK+xWw+CqXb4howXwSAScubUxgxepOxPIAPcEOjo8KmjeRBTxFnbqb7vnAn
+         GIT5EqTwNOPL0q/L6MhXGAcCtYMSu2NdYDoR5l38S9n4Pywhxya9XAoL41Jx5anS+aJF
+         IvZA==
+X-Gm-Message-State: APzg51Ai74jIK6QivgYhVdC/Ecwe4Rhlyl9pPm1Xy3gKdDoHIMuejN+P
+        ghBxsGITITE7OLh1aK/mHqnxws688Sz8631MigSyxw==
+X-Google-Smtp-Source: ANB0VdZtTkmTCddzy4tgHZCIa9QH+38g0xtg7UGEYOzinxCc4VDX7+U2VeNdQX4KoTKzPBoiJ3VOj5XGfDzwaxypaX4=
+X-Received: by 2002:a02:c04e:: with SMTP id u14-v6mr9503177jam.110.1537796568200;
+ Mon, 24 Sep 2018 06:42:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917044333.30051-4-yaojun8558363@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 06:42:27
+ -0700 (PDT)
+In-Reply-To: <20180922125256.GB14042@bombadil.infradead.org>
+References: <CAPhKKr_XFzGcBBuQ51w7HjZd_Kq3nTOB6uAFG2vP5JH+Vx_eng@mail.gmail.com>
+ <20180922125256.GB14042@bombadil.infradead.org>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 24 Sep 2018 15:42:27 +0200
+Message-ID: <CACT4Y+ZN0OcTkY0ahvF0CGZv1bbLHGH2aEbCFuQzpC498cNojw@mail.gmail.com>
+Subject: Re: [Announce] LPC 2018: Testing and Fuzzing Microconference
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dhaval Giani <dhaval.giani@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        alice.ferrazzi@gmail.com, Kevin Hilman <khilman@baylibre.com>,
+        Tim Bird <tbird20d@gmail.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        gustavo.padovan@collabora.co.uk,
+        "Carpenter,Dan" <dan.carpenter@oracle.com>, knut.omang@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 12:43:30PM +0800, Jun Yao wrote:
-> Create the initial page table in the init_pg_dir. And update the
-> init_mm.pgd to make sure that pgd_offset_k() works correctly. When
-> the final page table is created, we redirect the init_mm.pgd to the
-> swapper_pg_dir.
-> 
-> Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
-> ---
->  arch/arm64/include/asm/pgtable.h | 2 ++
->  arch/arm64/kernel/asm-offsets.c  | 1 +
->  arch/arm64/kernel/head.S         | 9 +++++++--
->  arch/arm64/mm/mmu.c              | 1 +
->  4 files changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 2ab2031b778c..b11d6fc62a62 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -718,6 +718,8 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
->  }
->  #endif
->  
-> +extern pgd_t init_pg_dir[PTRS_PER_PGD];
-> +extern pgd_t init_pg_end[];
->  extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
->  extern pgd_t swapper_pg_end[];
->  extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
-> diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-> index 323aeb5f2fe6..43f52cfdfad4 100644
-> --- a/arch/arm64/kernel/asm-offsets.c
-> +++ b/arch/arm64/kernel/asm-offsets.c
-> @@ -82,6 +82,7 @@ int main(void)
->    DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
->    BLANK();
->    DEFINE(MM_CONTEXT_ID,		offsetof(struct mm_struct, context.id.counter));
-> +  DEFINE(MM_PGD,		offsetof(struct mm_struct, pgd));
->    BLANK();
->    DEFINE(VMA_VM_MM,		offsetof(struct vm_area_struct, vm_mm));
->    DEFINE(VMA_VM_FLAGS,		offsetof(struct vm_area_struct, vm_flags));
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index de2aaea00bd2..cf8a58211b80 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -376,7 +376,7 @@ __create_page_tables:
->  	/*
->  	 * Map the kernel image (starting with PHYS_OFFSET).
->  	 */
-> -	adrp	x0, swapper_pg_dir
-> +	adrp	x0, init_pg_dir
->  	mov_q	x5, KIMAGE_VADDR + TEXT_OFFSET	// compile time __va(_text)
->  	add	x5, x5, x23			// add KASLR displacement
->  	mov	x4, PTRS_PER_PGD
-> @@ -439,6 +439,11 @@ __primary_switched:
->  	bl	__pi_memset
->  	dsb	ishst				// Make zero page visible to PTW
->  
-> +	// Update init_mm.pgd
-> +	adrp	x0, init_pg_dir
-> +	adr_l	x1, init_mm
-> +	str	x0, [x1, #MM_PGD]
-> +
+On Sat, Sep 22, 2018 at 2:52 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Wed, Sep 19, 2018 at 10:13:15AM -0700, Dhaval Giani wrote:
+>> Sasha and I are pleased to announce the Testing and Fuzzing track at
+>> LPC [ 1 ]. We are planning to continue the discussions from last
+>> year's microconference [2]. Many discussions from the Automated
+>> Testing Summit [3] will also continue, and a final agenda will come up
+>> only soon after that.
+>>
+>> Suggested Topics
+>>
+>> - Syzbot/syzkaller
+>> - ATS
+>> - Distro/stable testing
+>> - kernelci
+>> - kernelci auto bisection
+>> - Unit testing framework
+>>
+>> We look forward to other interesting topics for this microconference
+>> as a reply to this email.
+>
+> I would like to talk about the IDA test suite that was recently merged.
+> See lib/test_ida.c.  It can be built as a module (CONFIG_TEST_IDA=m),
+> built-in (=y) or built in userspace (as part of the radix tree test
+> suite for historical reasons) along with the current kernel code.
+>
+> Being able to build the test suite in userspace allows for much more
+> rapid development.  Building it in kernel space offers testing across
+> a wide range of configurations that I don't have access to and can't
+> necessarily simulate well in userspace.
+>
+> My userspace implementation of kmalloc() simulates failures (in a rather
+> heavy-handed way; every non-GFP_KERNEL allocation fails).  That's rather
+> harder to simulate in kernel space.  I'd like there to be a way for a
+> kernel space test suite to ask for kmalloc failures so that the failure
+> paths can be tested.
 
-We should be able to set this up statically with INIT_MM_CONTEXT(). i.e.
-in <asm/mmu.h> have:
+Hi Matthew,
 
-#define INIT_MM_CONTEXT(name)	\
-	.pgd = init_pg_dir
+kmalloc fault injection is already implemented with
+CONFIG_FAULT_INJECTION. For original fault injection, you more-or-less
+ask to fail X% of allocations at random. It's great for testing
+servers for stability, but not so well suited for testing. Recently
+I've added so-called "systematic" fault injection
+(/proc/thread-self/fail-nth) which is perfect for unit testing. It
+allows to ask to fail N-th allocation request in the current task. So
+a unit test for a syscall can do:
 
-Thanks,
-Mark.
+for (i = 0;; i++) {
+  write(/proc/thread-self/fail-nth, i);
+  syscall_under_test();
+  if (read(/proc/thread-self/fail-nth) != 0)
+    break;
+}
 
->  #ifdef CONFIG_KASAN
->  	bl	kasan_early_init
->  #endif
-> @@ -833,7 +838,7 @@ __primary_switch:
->  	mrs	x20, sctlr_el1			// preserve old SCTLR_EL1 value
->  #endif
->  
-> -	adrp	x1, swapper_pg_dir
-> +	adrp	x1, init_pg_dir
->  	bl	__enable_mmu
->  #ifdef CONFIG_RELOCATABLE
->  	bl	__relocate_kernel
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 65f86271f02b..af80dca335ce 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -646,6 +646,7 @@ void __init paging_init(void)
->  	cpu_replace_ttbr1(__va(pgd_phys));
->  	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
->  	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
-> +	init_mm.pgd = swapper_pg_dir;
->  
->  	pgd_clear_fixmap();
->  	memblock_free(pgd_phys, PAGE_SIZE);
-> -- 
-> 2.17.1
-> 
+which allows to examine each failure site one-by-one systematically
+(without making random processes on the machine fail too).
+
+
+> I think the idea of building parts of the core kernel libraries in
+> userspace and testing them there has greater generality than just the
+> IDA, IDR, XArray & radix tree and might profitably be adopted by other
+> parts of lib/.  The userspace simulation of other parts of the kernel
+> may well need to be extended.
+
+This would be great. Besides providing faster turn-around time, this
+allow us to finally have something like:
+
+make test [subsystem]
+
+which will run all tests for the subsystem locally (in parallel,
+giving final OK/FAIL). This is not possible to in-kernel tests,
+because they require a machine and an image, and it's not possible to
+support everything that people use.
