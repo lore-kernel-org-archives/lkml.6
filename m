@@ -2,127 +2,352 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5012C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01CDECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA802098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:02:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA802098A
+	by mail.kernel.org (Postfix) with ESMTP id 585922098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:07:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 585922098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbeIXRDd (ORCPT
+        id S1728709AbeIXRJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:03:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36304 "EHLO mx1.redhat.com"
+        Mon, 24 Sep 2018 13:09:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37170 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbeIXRDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:03:33 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
+        id S1725982AbeIXRJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:09:01 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 724B94E8BC;
-        Mon, 24 Sep 2018 11:02:02 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 407B430A605D;
-        Mon, 24 Sep 2018 11:01:56 +0000 (UTC)
-Date:   Mon, 24 Sep 2018 13:01:53 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v10 10/26] KVM: s390: interfaces to clear CRYCB masks
-Message-ID: <20180924130153.766eaec7.cohuck@redhat.com>
-In-Reply-To: <1536781396-13601-11-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1536781396-13601-11-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        by mx1.redhat.com (Postfix) with ESMTPS id CB42630015C7;
+        Mon, 24 Sep 2018 11:07:28 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 970F75D9C9;
+        Mon, 24 Sep 2018 11:07:28 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 37D644BB74;
+        Mon, 24 Sep 2018 11:07:28 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 07:07:27 -0400 (EDT)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Jan Kara <jack@suse.cz>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Ross Zwisler <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        niteshnarayanlal@hotmail.com, lcapitulino@redhat.com,
+        Igor Mammedov <imammedo@redhat.com>,
+        Eric Blake <eblake@redhat.com>
+Message-ID: <1194924202.15592813.1537787247884.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAPcyv4js9hWfXPK++a0DhDwtk1pBazMvb9H-X2OQy18uemUhGw@mail.gmail.com>
+References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-3-pagupta@redhat.com> <CAPcyv4js9hWfXPK++a0DhDwtk1pBazMvb9H-X2OQy18uemUhGw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] libnvdimm: nd_region flush callback support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 24 Sep 2018 11:02:02 +0000 (UTC)
+X-Originating-IP: [10.67.116.59, 10.4.195.14]
+Thread-Topic: libnvdimm: nd_region flush callback support
+Thread-Index: WJnpUUSn+oeG+KsiCkMMDViWY6PSwA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 24 Sep 2018 11:07:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018 15:43:00 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> > This patch adds functionality to perform flush from guest
+> > to host over VIRTIO. We are registering a callback based
+> > on 'nd_region' type. virtio_pmem driver requires this special
+> > flush function. For rest of the region types we are registering
+> > existing flush function. Report error returned by host fsync
+> > failure to userspace.
+> >
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
 > 
-> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
-> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
-> not get out of sync.
+> This looks ok to me, just some nits below.
+> 
+> > ---
+> >  drivers/acpi/nfit/core.c     |  7 +++++--
+> >  drivers/nvdimm/claim.c       |  3 ++-
+> >  drivers/nvdimm/pmem.c        | 12 ++++++++----
+> >  drivers/nvdimm/region_devs.c | 12 ++++++++++--
+> >  include/linux/libnvdimm.h    |  4 +++-
+> >  5 files changed, 28 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> > index b072cfc..cd63b69 100644
+> > --- a/drivers/acpi/nfit/core.c
+> > +++ b/drivers/acpi/nfit/core.c
+> > @@ -2216,6 +2216,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk,
+> > unsigned int bw,
+> >  {
+> >         u64 cmd, offset;
+> >         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[DCR];
+> > +       struct nd_region *nd_region = nfit_blk->nd_region;
+> >
+> >         enum {
+> >                 BCW_OFFSET_MASK = (1ULL << 48)-1,
+> > @@ -2234,7 +2235,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk,
+> > unsigned int bw,
+> >                 offset = to_interleave_offset(offset, mmio);
+> >
+> >         writeq(cmd, mmio->addr.base + offset);
+> > -       nvdimm_flush(nfit_blk->nd_region);
+> > +       nd_region->flush(nd_region);
+> 
+> I would keep the indirect function call override inside of
+> nvdimm_flush. Then this hunk can go away...
 
-Hm, that patch description does not quite match what the patch actually
-does...
+Sure. Will change.
 
 > 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Acked-by: Halil Pasic <pasic@linux.ibm.com>
-> Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  arch/s390/include/asm/kvm_host.h |    2 ++
->  arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
->  2 files changed, 17 insertions(+), 0 deletions(-)
+> >
+> >         if (nfit_blk->dimm_flags & NFIT_BLK_DCR_LATCH)
+> >                 readq(mmio->addr.base + offset);
+> > @@ -2245,6 +2246,7 @@ static int acpi_nfit_blk_single_io(struct nfit_blk
+> > *nfit_blk,
+> >                 unsigned int lane)
+> >  {
+> >         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[BDW];
+> > +       struct nd_region *nd_region = nfit_blk->nd_region;
+> >         unsigned int copied = 0;
+> >         u64 base_offset;
+> >         int rc;
+> > @@ -2283,7 +2285,8 @@ static int acpi_nfit_blk_single_io(struct nfit_blk
+> > *nfit_blk,
+> >         }
+> >
+> >         if (rw)
+> > -               nvdimm_flush(nfit_blk->nd_region);
+> > +               nd_region->flush(nd_region);
+> > +
+> >
 > 
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 423cce7..1e758fe 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -858,6 +858,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
->  void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
->  				 struct kvm_async_pf *work);
->  
-> +void kvm_arch_crypto_clear_masks(struct kvm *kvm);
-> +
->  extern int sie64a(struct kvm_s390_sie_block *, u64 *);
->  extern char sie_exit;
->  
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index d717041..ac4c93f 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -2033,6 +2033,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
->  		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->  }
->  
-> +void kvm_arch_crypto_clear_masks(struct kvm *kvm)
-> +{
-> +	mutex_lock(&kvm->lock);
-> +	kvm_s390_vcpu_block_all(kvm);
-> +
-> +	memset(&kvm->arch.crypto.crycb->apcb0, 0,
-> +	       sizeof(kvm->arch.crypto.crycb->apcb0));
-> +	memset(&kvm->arch.crypto.crycb->apcb1, 0,
-> +	       sizeof(kvm->arch.crypto.crycb->apcb1));
-> +
-> +	kvm_s390_vcpu_unblock_all(kvm);
-> +	mutex_unlock(&kvm->lock);
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_arch_crypto_clear_masks);
+> ...ditto, no need to touch this code.
 
-...although this function looks fine.
+Sure.
 
-> +
->  static u64 kvm_s390_get_initial_cpuid(void)
->  {
->  	struct cpuid cpuid;
+> 
+> >         rc = read_blk_stat(nfit_blk, lane) ? -EIO : 0;
+> >         return rc;
+> > diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
+> > index fb667bf..49dce9c 100644
+> > --- a/drivers/nvdimm/claim.c
+> > +++ b/drivers/nvdimm/claim.c
+> > @@ -262,6 +262,7 @@ static int nsio_rw_bytes(struct nd_namespace_common
+> > *ndns,
+> >  {
+> >         struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+> >         unsigned int sz_align = ALIGN(size + (offset & (512 - 1)), 512);
+> > +       struct nd_region *nd_region = to_nd_region(ndns->dev.parent);
+> >         sector_t sector = offset >> 9;
+> >         int rc = 0;
+> >
+> > @@ -301,7 +302,7 @@ static int nsio_rw_bytes(struct nd_namespace_common
+> > *ndns,
+> >         }
+> >
+> >         memcpy_flushcache(nsio->addr + offset, buf, size);
+> > -       nvdimm_flush(to_nd_region(ndns->dev.parent));
+> > +       nd_region->flush(nd_region);
+> 
+> For this you would need to teach nsio_rw_bytes() that the flush can fail.
 
+Sure.
+
+> 
+> >
+> >         return rc;
+> >  }
+> > diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> > index 6071e29..ba57cfa 100644
+> > --- a/drivers/nvdimm/pmem.c
+> > +++ b/drivers/nvdimm/pmem.c
+> > @@ -201,7 +201,8 @@ static blk_qc_t pmem_make_request(struct request_queue
+> > *q, struct bio *bio)
+> >         struct nd_region *nd_region = to_region(pmem);
+> >
+> >         if (bio->bi_opf & REQ_PREFLUSH)
+> > -               nvdimm_flush(nd_region);
+> > +               bio->bi_status = nd_region->flush(nd_region);
+> > +
+> 
+> Let's have nvdimm_flush() return 0 or -EIO if it fails since thats
+> what nsio_rw_bytes() expects, and you'll need to translate that to:
+> BLK_STS_IOERR
+
+o.k. Will change it as per suggestion.
+
+> 
+> >
+> >         do_acct = nd_iostat_start(bio, &start);
+> >         bio_for_each_segment(bvec, bio, iter) {
+> > @@ -216,7 +217,7 @@ static blk_qc_t pmem_make_request(struct request_queue
+> > *q, struct bio *bio)
+> >                 nd_iostat_end(bio, start);
+> >
+> >         if (bio->bi_opf & REQ_FUA)
+> > -               nvdimm_flush(nd_region);
+> > +               bio->bi_status = nd_region->flush(nd_region);
+> 
+> Same comment.
+
+Sure.
+
+> 
+> >
+> >         bio_endio(bio);
+> >         return BLK_QC_T_NONE;
+> > @@ -517,6 +518,7 @@ static int nd_pmem_probe(struct device *dev)
+> >  static int nd_pmem_remove(struct device *dev)
+> >  {
+> >         struct pmem_device *pmem = dev_get_drvdata(dev);
+> > +       struct nd_region *nd_region = to_region(pmem);
+> >
+> >         if (is_nd_btt(dev))
+> >                 nvdimm_namespace_detach_btt(to_nd_btt(dev));
+> > @@ -528,14 +530,16 @@ static int nd_pmem_remove(struct device *dev)
+> >                 sysfs_put(pmem->bb_state);
+> >                 pmem->bb_state = NULL;
+> >         }
+> > -       nvdimm_flush(to_nd_region(dev->parent));
+> > +       nd_region->flush(nd_region);
+> 
+> Not needed if the indirect function call moves inside nvdimm_flush().
+
+o.k
+
+> 
+> >
+> >         return 0;
+> >  }
+> >
+> >  static void nd_pmem_shutdown(struct device *dev)
+> >  {
+> > -       nvdimm_flush(to_nd_region(dev->parent));
+> > +       struct nd_region *nd_region = to_nd_region(dev->parent);
+> > +
+> > +       nd_region->flush(nd_region);
+> >  }
+> >
+> >  static void nd_pmem_notify(struct device *dev, enum nvdimm_event event)
+> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> > index fa37afc..a170a6b 100644
+> > --- a/drivers/nvdimm/region_devs.c
+> > +++ b/drivers/nvdimm/region_devs.c
+> > @@ -290,7 +290,7 @@ static ssize_t deep_flush_store(struct device *dev,
+> > struct device_attribute *att
+> >                 return rc;
+> >         if (!flush)
+> >                 return -EINVAL;
+> > -       nvdimm_flush(nd_region);
+> > +       nd_region->flush(nd_region);
+> 
+> Let's pass the error code through if the flush fails.
+
+o.k
+
+> 
+> >
+> >         return len;
+> >  }
+> > @@ -1065,6 +1065,11 @@ static struct nd_region *nd_region_create(struct
+> > nvdimm_bus *nvdimm_bus,
+> >         dev->of_node = ndr_desc->of_node;
+> >         nd_region->ndr_size = resource_size(ndr_desc->res);
+> >         nd_region->ndr_start = ndr_desc->res->start;
+> > +       if (ndr_desc->flush)
+> > +               nd_region->flush = ndr_desc->flush;
+> > +       else
+> > +               nd_region->flush = nvdimm_flush;
+> > +
+> 
+> We'll need to rename the existing nvdimm_flush() to generic_nvdimm_flush().
+
+Sure.
+
+> 
+> >         nd_device_register(dev);
+> >
+> >         return nd_region;
+> > @@ -1109,7 +1114,7 @@ EXPORT_SYMBOL_GPL(nvdimm_volatile_region_create);
+> >   * nvdimm_flush - flush any posted write queues between the cpu and pmem
+> >   media
+> >   * @nd_region: blk or interleaved pmem region
+> >   */
+> > -void nvdimm_flush(struct nd_region *nd_region)
+> > +int nvdimm_flush(struct nd_region *nd_region)
+> >  {
+> >         struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+> >         int i, idx;
+> > @@ -1133,7 +1138,10 @@ void nvdimm_flush(struct nd_region *nd_region)
+> >                 if (ndrd_get_flush_wpq(ndrd, i, 0))
+> >                         writeq(1, ndrd_get_flush_wpq(ndrd, i, idx));
+> >         wmb();
+> > +
+> > +       return 0;
+> >  }
+> > +
+> 
+> Needless newline.
+
+Will remove this.
+
+> 
+> >  EXPORT_SYMBOL_GPL(nvdimm_flush);
+> >
+> >  /**
+> > diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> > index 097072c..3af7177 100644
+> > --- a/include/linux/libnvdimm.h
+> > +++ b/include/linux/libnvdimm.h
+> > @@ -115,6 +115,7 @@ struct nd_mapping_desc {
+> >         int position;
+> >  };
+> >
+> > +struct nd_region;
+> >  struct nd_region_desc {
+> >         struct resource *res;
+> >         struct nd_mapping_desc *mapping;
+> > @@ -126,6 +127,7 @@ struct nd_region_desc {
+> >         int numa_node;
+> >         unsigned long flags;
+> >         struct device_node *of_node;
+> > +       int (*flush)(struct nd_region *nd_region);
+> >  };
+> >
+> >  struct device;
+> > @@ -201,7 +203,7 @@ unsigned long nd_blk_memremap_flags(struct
+> > nd_blk_region *ndbr);
+> >  unsigned int nd_region_acquire_lane(struct nd_region *nd_region);
+> >  void nd_region_release_lane(struct nd_region *nd_region, unsigned int
+> >  lane);
+> >  u64 nd_fletcher64(void *addr, size_t len, bool le);
+> > -void nvdimm_flush(struct nd_region *nd_region);
+> > +int nvdimm_flush(struct nd_region *nd_region);
+> >  int nvdimm_has_flush(struct nd_region *nd_region);
+> >  int nvdimm_has_cache(struct nd_region *nd_region);
+> >
+> > --
+> > 2.9.3
+> >
+> 
+
+Thanks,
+Pankaj
