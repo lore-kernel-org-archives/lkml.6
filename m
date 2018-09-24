@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2C5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE89ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2172098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:38:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A2172098A
+	by mail.kernel.org (Postfix) with ESMTP id 116602098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:38:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 116602098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733194AbeIYAlp (ORCPT
+        id S1729909AbeIYAmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 20:41:45 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:36328 "EHLO
+        Mon, 24 Sep 2018 20:42:16 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:36300 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729598AbeIYAlo (ORCPT
+        with ESMTP id S1726363AbeIYAlo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Sep 2018 20:41:44 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1g4VkD-0002qj-Uk; Mon, 24 Sep 2018 14:38:05 -0400
+        id 1g4VkD-0002qj-Rn; Mon, 24 Sep 2018 14:38:05 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, kernel-team@fb.com, songliubraving@fb.com,
         mingo@kernel.org, will.deacon@arm.com, hpa@zytor.com,
         luto@kernel.org, npiggin@gmail.com, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 6/7] Add freed_tables element to flush_tlb_info
-Date:   Mon, 24 Sep 2018 14:37:58 -0400
-Message-Id: <20180924183759.23955-7-riel@surriel.com>
+Subject: [PATCH 4/7] smp,cpumask: introduce on_each_cpu_cond_mask
+Date:   Mon, 24 Sep 2018 14:37:56 -0400
+Message-Id: <20180924183759.23955-5-riel@surriel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180924183759.23955-1-riel@surriel.com>
 References: <20180924183759.23955-1-riel@surriel.com>
@@ -44,40 +44,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pass the information on to native_flush_tlb_others.
-
-No functional changes.
+Introduce a variant of on_each_cpu_cond that iterates only over the
+CPUs in a cpumask, in order to avoid making callbacks for every single
+CPU in the system when we only need to test a subset.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- arch/x86/include/asm/tlbflush.h | 1 +
- arch/x86/mm/tlb.c               | 1 +
- 2 files changed, 2 insertions(+)
+ include/linux/smp.h |  4 ++++
+ kernel/smp.c        | 17 +++++++++++++----
+ kernel/up.c         | 14 +++++++++++---
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index ae1ef755cb94..dc4d99579984 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -511,6 +511,7 @@ struct flush_tlb_info {
- 	unsigned long		start;
- 	unsigned long		end;
- 	u64			new_tlb_gen;
-+	bool			freed_tables;
- };
+diff --git a/include/linux/smp.h b/include/linux/smp.h
+index 9fb239e12b82..a56f08ff3097 100644
+--- a/include/linux/smp.h
++++ b/include/linux/smp.h
+@@ -53,6 +53,10 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 		smp_call_func_t func, void *info, bool wait,
+ 		gfp_t gfp_flags);
  
- #define local_flush_tlb() __flush_tlb()
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 62f147b0f6b7..5d73bde0e4c8 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -578,6 +578,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
++void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
++		smp_call_func_t func, void *info, bool wait,
++		gfp_t gfp_flags, const struct cpumask *mask);
++
+ int smp_call_function_single_async(int cpu, call_single_data_t *csd);
  
- 	struct flush_tlb_info info = {
- 		.mm = mm,
-+		.freed_tables = freed_tables,
- 	};
+ #ifdef CONFIG_SMP
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 2dbc842dd385..f4cf1b0bb3b8 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -667,9 +667,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
+  * You must not call this function with disabled interrupts or
+  * from a hardware interrupt handler or from a bottom half handler.
+  */
+-void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
++void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
+ 			smp_call_func_t func, void *info, bool wait,
+-			gfp_t gfp_flags)
++			gfp_t gfp_flags, const struct cpumask *mask)
+ {
+ 	cpumask_var_t cpus;
+ 	int cpu, ret;
+@@ -678,7 +678,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
  
- 	cpu = get_cpu();
+ 	if (likely(zalloc_cpumask_var(&cpus, (gfp_flags|__GFP_NOWARN)))) {
+ 		preempt_disable();
+-		for_each_online_cpu(cpu)
++		for_each_cpu(cpu, mask)
+ 			if (cond_func(cpu, info))
+ 				__cpumask_set_cpu(cpu, cpus);
+ 		on_each_cpu_mask(cpus, func, info, wait);
+@@ -690,7 +690,7 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 		 * just have to IPI them one by one.
+ 		 */
+ 		preempt_disable();
+-		for_each_online_cpu(cpu)
++		for_each_cpu(cpu, mask)
+ 			if (cond_func(cpu, info)) {
+ 				ret = smp_call_function_single(cpu, func,
+ 								info, wait);
+@@ -699,6 +699,15 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 		preempt_enable();
+ 	}
+ }
++EXPORT_SYMBOL(on_each_cpu_cond_mask);
++
++void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
++			smp_call_func_t func, void *info, bool wait,
++			gfp_t gfp_flags)
++{
++	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags,
++				cpu_online_mask);
++}
+ EXPORT_SYMBOL(on_each_cpu_cond);
+ 
+ static void do_nothing(void *unused)
+diff --git a/kernel/up.c b/kernel/up.c
+index 42c46bf3e0a5..ff536f9cc8a2 100644
+--- a/kernel/up.c
++++ b/kernel/up.c
+@@ -68,9 +68,9 @@ EXPORT_SYMBOL(on_each_cpu_mask);
+  * Preemption is disabled here to make sure the cond_func is called under the
+  * same condtions in UP and SMP.
+  */
+-void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+-		      smp_call_func_t func, void *info, bool wait,
+-		      gfp_t gfp_flags)
++void on_each_cpu_cond_mask(bool (*cond_func)(int cpu, void *info),
++			   smp_call_func_t func, void *info, bool wait,
++			   gfp_t gfp_flags, const struct cpumask *mask)
+ {
+ 	unsigned long flags;
+ 
+@@ -82,6 +82,14 @@ void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
+ 	}
+ 	preempt_enable();
+ }
++EXPORT_SYMBOL(on_each_cpu_cond_mask);
++
++void on_each_cpu_cond(bool (*cond_func)(int cpu, void *info),
++		      smp_call_func_t func, void *info, bool wait,
++		      gfp_t gfp_flags)
++{
++	on_each_cpu_cond_mask(cond_func, func, info, wait, gfp_flags, NULL);
++}
+ EXPORT_SYMBOL(on_each_cpu_cond);
+ 
+ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
 -- 
 2.17.1
 
