@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37299ECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A580C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF10D2148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF10D2148C
+	by mail.kernel.org (Postfix) with ESMTP id 2EB26214FE
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EB26214FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733193AbeIXS2n (ORCPT
+        id S1733201AbeIXS2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:28:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57174 "EHLO
+        Mon, 24 Sep 2018 14:28:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57180 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732223AbeIXS2n (ORCPT
+        with ESMTP id S1732223AbeIXS2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:28:43 -0400
+        Mon, 24 Sep 2018 14:28:46 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD681108B;
-        Mon, 24 Sep 2018 12:26:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 232621094;
+        Mon, 24 Sep 2018 12:26:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tuomas Tynkkynen <tuomas@tuxera.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 141/173] staging: bcm2835-audio: Dont leak workqueue if open fails
-Date:   Mon, 24 Sep 2018 13:52:55 +0200
-Message-Id: <20180924113125.948959994@linuxfoundation.org>
+        stable@vger.kernel.org, Petr Oros <poros@redhat.com>,
+        Ivan Vecera <ivecera@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 001/235] be2net: Fix memory leak in be_cmd_get_profile_config()
+Date:   Mon, 24 Sep 2018 13:49:47 +0200
+Message-Id: <20180924113104.195024203@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
-References: <20180924113114.334025954@linuxfoundation.org>
+In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
+References: <20180924113103.999624566@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,64 +47,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Tuomas Tynkkynen <tuomas@tuxera.com>
+From: Petr Oros <poros@redhat.com>
 
-[ Upstream commit 678c5b119307c40f9a17152512f9c949d0ec7292 ]
+[ Upstream commit 9d7f19dc4673fbafebfcbf30eb90e09fa7d1c037 ]
 
-Currently, if bcm2835_audio_open() fails partway, the allocated
-workqueue is leaked. Avoid that.
+DMA allocated memory is lost in be_cmd_get_profile_config() when we
+call it with non-NULL port_res parameter.
 
-While at it, propagate the return value of
-bcm2835_audio_open_connection() on failure instead of returning -1.
-
-Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Petr Oros <poros@redhat.com>
+Reviewed-by: Ivan Vecera <ivecera@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c |   16 +++++++-----
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/emulex/benet/be_cmds.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
-@@ -442,16 +442,16 @@ int bcm2835_audio_open(struct bcm2835_al
- 	my_workqueue_init(alsa_stream);
- 
- 	ret = bcm2835_audio_open_connection(alsa_stream);
--	if (ret) {
--		ret = -1;
--		goto exit;
--	}
-+	if (ret)
-+		goto free_wq;
-+
- 	instance = alsa_stream->instance;
- 	LOG_DBG(" instance (%p)\n", instance);
- 
- 	if (mutex_lock_interruptible(&instance->vchi_mutex)) {
- 		LOG_DBG("Interrupted whilst waiting for lock on (%d)\n", instance->num_connections);
--		return -EINTR;
-+		ret = -EINTR;
-+		goto free_wq;
+--- a/drivers/net/ethernet/emulex/benet/be_cmds.c
++++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
+@@ -4500,7 +4500,7 @@ int be_cmd_get_profile_config(struct be_
+ 				port_res->max_vfs += le16_to_cpu(pcie->num_vfs);
+ 			}
+ 		}
+-		return status;
++		goto err;
  	}
- 	vchi_service_use(instance->vchi_handle[0]);
  
-@@ -474,7 +474,11 @@ int bcm2835_audio_open(struct bcm2835_al
- unlock:
- 	vchi_service_release(instance->vchi_handle[0]);
- 	mutex_unlock(&instance->vchi_mutex);
--exit:
-+
-+free_wq:
-+	if (ret)
-+		destroy_workqueue(alsa_stream->my_wq);
-+
- 	return ret;
- }
- 
+ 	pcie = be_get_pcie_desc(resp->func_param, desc_count,
 
 
