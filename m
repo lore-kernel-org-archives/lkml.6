@@ -6,35 +6,33 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF86ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370B9ECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C4D21486
+	by mail.kernel.org (Postfix) with ESMTP id F040C2083A
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11C4D21486
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F040C2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388508AbeIXSlq (ORCPT
+        id S2388500AbeIXSl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:41:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58884 "EHLO
+        Mon, 24 Sep 2018 14:41:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58904 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731437AbeIXSlp (ORCPT
+        with ESMTP id S1730577AbeIXSl7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:41:45 -0400
+        Mon, 24 Sep 2018 14:41:59 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B05491099;
-        Mon, 24 Sep 2018 12:39:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42EDF1099;
+        Mon, 24 Sep 2018 12:40:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 150/235] mtdchar: fix overflows in adjustment of `count`
-Date:   Mon, 24 Sep 2018 13:52:16 +0200
-Message-Id: <20180924113120.400607752@linuxfoundation.org>
+        stable@vger.kernel.org, Laurent Roux <xpros64@hotmail.fr>
+Subject: [PATCH 4.18 125/235] USB: add quirk for WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
+Date:   Mon, 24 Sep 2018 13:51:51 +0200
+Message-Id: <20180924113118.553103072@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,53 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Maxence Duprès <xpros64@hotmail.fr>
 
-[ Upstream commit 6c6bc9ea84d0008024606bf5ba10519e20d851bf ]
+commit 9b83a1c301ad6d24988a128c69b42cbaaf537d82 upstream.
 
-The first checks in mtdchar_read() and mtdchar_write() attempt to limit
-`count` such that `*ppos + count <= mtd->size`. However, they ignore the
-possibility of `*ppos > mtd->size`, allowing the calculation of `count` to
-wrap around. `mtdchar_lseek()` prevents seeking beyond mtd->size, but the
-pread/pwrite syscalls bypass this.
+WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
+cause a -EPROTO error, a communication restart and loop again.
 
-I haven't found any codepath on which this actually causes dangerous
-behavior, but it seems like a sensible change anyway.
+This issue has already been fixed for KS25.
+https://lore.kernel.org/patchwork/patch/753077/
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+I just add device 201 for KS49 in quirks.c to get it works.
+
+Signed-off-by: Laurent Roux <xpros64@hotmail.fr>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/mtd/mtdchar.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -160,8 +160,12 @@ static ssize_t mtdchar_read(struct file
+---
+ drivers/usb/core/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -178,6 +178,10 @@ static const struct usb_device_id usb_qu
+ 	/* CBM - Flash disk */
+ 	{ USB_DEVICE(0x0204, 0x6025), .driver_info = USB_QUIRK_RESET_RESUME },
  
- 	pr_debug("MTD_read\n");
- 
--	if (*ppos + count > mtd->size)
--		count = mtd->size - *ppos;
-+	if (*ppos + count > mtd->size) {
-+		if (*ppos < mtd->size)
-+			count = mtd->size - *ppos;
-+		else
-+			count = 0;
-+	}
- 
- 	if (!count)
- 		return 0;
-@@ -246,7 +250,7 @@ static ssize_t mtdchar_write(struct file
- 
- 	pr_debug("MTD_write\n");
- 
--	if (*ppos == mtd->size)
-+	if (*ppos >= mtd->size)
- 		return -ENOSPC;
- 
- 	if (*ppos + count > mtd->size)
++	/* WORLDE Controller KS49 or Prodipe MIDI 49C USB controller */
++	{ USB_DEVICE(0x0218, 0x0201), .driver_info =
++			USB_QUIRK_CONFIG_INTF_STRINGS },
++
+ 	/* WORLDE easy key (easykey.25) MIDI controller  */
+ 	{ USB_DEVICE(0x0218, 0x0401), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
 
 
