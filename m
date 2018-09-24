@@ -2,126 +2,122 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2250FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AF0C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF0C020C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C98120C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:48:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+VtQQLc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0C020C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="huZFyatj";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oE4mDh/d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C98120C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbeIXOtA (ORCPT
+        id S1728117AbeIXOtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:49:00 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37273 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbeIXOs7 (ORCPT
+        Mon, 24 Sep 2018 10:49:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56062 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727525AbeIXOtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:48:59 -0400
-Received: by mail-lf1-f67.google.com with SMTP id a82-v6so548008lfa.4;
-        Mon, 24 Sep 2018 01:47:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6EtsiX4dVSUFCHVjq+4RPr9o1tjvrOWFDvhK8fisacc=;
-        b=B+VtQQLcDBrn7jPHbm8D8XEze7UPCtG6BPBr7m6bC2Ko0ndY6EJahb10YoLiey+eBn
-         gy3HI7z0asRNybdhuGf8/2ehm5JiUqhmIVTeVAdQ47dj/QLbfRHxOWy9K1I+YRsg5I1B
-         MiOEX4VShMj9Ij7nkdfDWIXCp7d/D03vKpLmTzSwcvTqfSuEXwcZRNWMnakd6OG688mI
-         bMzQQZieKC4x6HPmr0/r2l5s/bDTfn+w3MJP0ht8GtIoGbC2ntGfT71DXOO2ljaYxnTE
-         lco2nd2gllR+oKQex12fPhYc6qrQIdSDpADPaK+mLkjzFgC4y798h3QPKp7tDIhwQFvL
-         pF8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6EtsiX4dVSUFCHVjq+4RPr9o1tjvrOWFDvhK8fisacc=;
-        b=sg4FXE29xh6Zke8H7LomHGolRZ9X6r7fgStJEeVYnaTU1qXPaABnnC5JoHRCihRHWz
-         8r9HeS+AjdHFdMG7PVNveiCSUrtVn9H7EW+qlqElkDJRsct1ghqwa3mgx6VKpuHPY9v2
-         5LtcjWGeciITboZBftQrzxBVdDu49aGAJlOKgQv9P0nBmTOLUPwlyDCoifWzZI6Mr2UO
-         QiHMrnpbZ59nSeTjLVXluuOjxx91eeJ053htgrMBPDoI0LfCQajFBHK/mv7zCuvD5DaG
-         6LwkUEG96ZSGsG+0tCXYfO7AQL0jCt2Q+twwzDVW11k8JvV3VMzN+HUAA0PR8yr6Y3lY
-         EMlA==
-X-Gm-Message-State: APzg51CxBYE6cI5d7//jQaR4wXMF2xXndl/Y0YoptlCXwb5ZMfaz5dvq
-        B3iI5QOiUZ1SJSeT8KvLd9s=
-X-Google-Smtp-Source: ANB0VdZjHwMsd9fqRnAkKNyzP5GPytvdC3YNqT4BFwUxlYbZ75NxqIbXZcpaPvo9P9qG0TFi1R1Ozw==
-X-Received: by 2002:a19:1709:: with SMTP id n9-v6mr5771150lfi.74.1537778878923;
-        Mon, 24 Sep 2018 01:47:58 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id f22-v6sm6283537ljk.11.2018.09.24.01.47.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 01:47:58 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1g4MX6-0004wo-2l; Mon, 24 Sep 2018 10:47:56 +0200
-Date:   Mon, 24 Sep 2018 10:47:56 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Karoly Pados <pados@pados.hu>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: Re: [PATCH v5] USB: serial: ftdi_sio: implement GPIO support for
- FT-X devices
-Message-ID: <20180924084756.GD5101@localhost>
-References: <20180923160330.2184-1-pados@pados.hu>
+        Mon, 24 Sep 2018 10:49:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 59EC0607A2; Mon, 24 Sep 2018 08:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537778883;
+        bh=n7AITtKARulfNUSfXJtsqKnjsZjKQ9zhN/HqebvXRVc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=huZFyatjFiAACA8dkO0b503/C498iHXlBE3KOUxl0NTnr5CyhV+jlgv9bDEMozaZs
+         UCK/kkLtavbHXW93v9Ac6NL+0Hbza1Oe3irp63lVclpPwPLtQxPS6M/vX+JTL6I5MK
+         MAL0JaOkwgv/cd7y+n5dyiMsseCyRRCYzPFjcLJ4=
+Received: from [10.242.6.76] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A4061605FD;
+        Mon, 24 Sep 2018 08:47:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537778882;
+        bh=n7AITtKARulfNUSfXJtsqKnjsZjKQ9zhN/HqebvXRVc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oE4mDh/dybs2uebiNuVjYG9euIX5yFs7gYA1alkDBryTBo3YiCbHiq/rUEu2WZb0v
+         oPx8fyHoBgzjOitFtotbFUinkGTIXMFb3fb7g86GzN07Bqi/D/QaucwHJYqeZx4rky
+         uInTz7hdIgCXAcl96dE1D1sYHzliMMSbuu1EmZD4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A4061605FD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+Subject: Re: [PATCH V14 1/2] scsi: ufs: set the device reference clock setting
+To:     Avri Altman <Avri.Altman@wdc.com>,
+        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
+        "cang@codeaurora.org" <cang@codeaurora.org>,
+        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
+        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
+        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
+        "evgreen@chromium.org" <evgreen@chromium.org>,
+        "riteshh@codeaurora.org" <riteshh@codeaurora.org>
+Cc:     "stummala@codeaurora.org" <stummala@codeaurora.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1537770516-28410-1-git-send-email-sayalil@codeaurora.org>
+ <1537770516-28410-2-git-send-email-sayalil@codeaurora.org>
+ <SN6PR04MB49250F1D665127DBA82137A3FC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+Message-ID: <0761c2c2-4366-0a20-6789-10c4c9498908@codeaurora.org>
+Date:   Mon, 24 Sep 2018 14:17:54 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180923160330.2184-1-pados@pados.hu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <SN6PR04MB49250F1D665127DBA82137A3FC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 23, 2018 at 06:03:30PM +0200, Karoly Pados wrote:
-> This patch allows using the CBUS pins of FT-X devices as GPIO in CBUS
-> bitbanging mode. There is no conflict between the GPIO and VCP
-> functionality in this mode. Tested on FT230X and FT231X.
-> 
-> As there is no way to request the current CBUS register configuration
-> from the device, all CBUS pins are set to a known state when the first
-> GPIO is requested. This allows using libftdi to set the GPIO pins
-> before loading this module for UART functionality, a behavior that
-> existing applications might be relying upon (though no specific case
-> is known to the authors of this patch).
-> 
-> Signed-off-by: Karoly Pados <pados@pados.hu>
-> ---
-> Changelog:
-> - v2: Fix compile error when CONFIG_GPIOLIB is not defined.
-> - v3: Incorporate review feedback.
-> - v4: Include linux/gpio/driver.h unconditionally.
->       Replace and invert gpio_input with gpio_output.
->       Make ftdi_gpio_direction_get return 0/1.
->       Change dev_err msg in ftdi_set_bitmode_req.
->       Change formatting of error checking in ftdi_gpio_get.
->       Drop dev_err in ftdi_gpio_set.
->       Remove some line breaks and empty lines.
->       Change error handling in ftdi_read_eeprom (and adjust caller).
->       Replace SIO->FTX in FTDI_SIO_CBUS_MUX_GPIO macro name.
-> - v5: Read only 4 bytes from eeprom in ftx_gpioconf_init.
->       Compare ftdi_read_eeprom result with 0 instead of eq. cehck.
->       Reserve 4 GPIOs even for FT234X.
->       Release CBUS after gpiochip deregister to avoid possible race.
->       Adjust comment on FTDI_SIO_SET_BITMODE macro.
->       Protect GPIO value/dir setting with mutex.
 
-This patch doesn't add any locking so I'm assuming you posted the wrong
-version of the patch.
+On 9/24/2018 1:28 PM, Avri Altman wrote:
+>> +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
+>> +       {19200000, REF_CLK_FREQ_19_2_MHZ},
+>> +       {26000000, REF_CLK_FREQ_26_MHZ},
+>> +       {38400000, REF_CLK_FREQ_38_4_MHZ},
+>> +       {52000000, REF_CLK_FREQ_52_MHZ},
+>> +       {0, REF_CLK_FREQ_INVAL},
+>> +};
+>> +
+>> +static inline enum ufs_ref_clk_freq
+>> +ufs_get_bref_clk_from_hz(u32 freq)
+>> +{
+>> +       int i = 0;
+>> +
+>> +       while (ufs_ref_clk_freqs[i].freq_hz != freq) {
+>> +               if (!ufs_ref_clk_freqs[i].freq_hz)
+>> +                       return REF_CLK_FREQ_INVAL;
+> Is the if clause really needed?
+> you will return REF_CLK_FREQ_INVAL anyway
+Yes. the if condition makes sure to return REF_CLK_FREQ_INVAL if freq is 
+not what we expect.
+>
+>> +               i++;
+> You might overrun here if freq is not what you've expected
+Above if condition "if (!ufs_ref_clk_freqs[i].freq_hz)" prevents such 
+overrun
+as we will reach end of ufs_ref_clk_freqs[] (i.e upto  0, 
+REF_CLK_FREQ_INVAL) when there is no match and thus we will return 
+REF_CLK_FREQ_INVAL.
+>> +       }
+>> +
+>> +       return ufs_ref_clk_freqs[i].val;
+>> +}
 
->       Add support for gpiochip.get_multiple and set_multiple.
->       Add names to GPIO lines.
-
-I'll wait for v6.
-
-Thanks,
-Johan
