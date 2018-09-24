@@ -2,466 +2,147 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 708D6C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 06:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D791ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 06:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BFFE2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 06:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA6492087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 06:31:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lm2qDsHI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YTACMZAg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BFFE2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PJ55igBH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6492087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeIXMaI (ORCPT
+        id S1727414AbeIXMcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 08:30:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42276 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727388AbeIXMaH (ORCPT
+        Mon, 24 Sep 2018 08:32:04 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53364 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbeIXMcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 08:30:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 88DD0606DB; Mon, 24 Sep 2018 06:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537770574;
-        bh=sX6ALofdJBJO8AVVnN3ccVu6S6xrn3UCeWfq+nuTTSw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lm2qDsHIb0jtZWnVJ6YKPTAFb4h9SVbpcMeDcTSNNd2aPEj2j/Ax3MO/CzRXTiNZm
-         yyPPsGcrHG74qxRSrGd/CcGA3YDdoN2dvM66Ptd4lsG9kXsKi6nkWUkJ8Udauv37aF
-         z2zEYG+fok+muHdJgImytIVo8E60UmNyo5XGliPU=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EBE3360275;
-        Mon, 24 Sep 2018 06:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537770573;
-        bh=sX6ALofdJBJO8AVVnN3ccVu6S6xrn3UCeWfq+nuTTSw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YTACMZAg4yfBGontqZNQS0Rs23DvvbMpiuJqrMBZwTxRX3N3UZxLkUQfRQkEn2tDa
-         ThX3QHkRu74AjWqGZp6vNX8qzEkcHzUm2CZVP3Yh3Q+IF52fj0RiGEmmB4dd+Ik+c2
-         tfHOvOx+iqCSG3oXW+S606Aez+hvT2MLQlosy/nI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EBE3360275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     stummala@codeaurora.org, adrian.hunter@intel.com,
-        jlbec@evilplan.org, linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V14 2/2] scsi: ufs: Add configfs support for UFS provisioning
-Date:   Mon, 24 Sep 2018 11:58:36 +0530
-Message-Id: <1537770516-28410-3-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1537770516-28410-1-git-send-email-sayalil@codeaurora.org>
-References: <1537770516-28410-1-git-send-email-sayalil@codeaurora.org>
+        Mon, 24 Sep 2018 08:32:04 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b19-v6so8392487wme.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 23:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jpSmRTRJCcAtMIqv2ySojQvX0ghayb0jRLFlp2rJGzE=;
+        b=PJ55igBHpib/gW81zRXjbZPnW5Q6K/MXXKrHbi0d2zgPLidKVdcx2IxQnu8Ov7J6KS
+         4jqWmwzqGtrQnAchwhV75llfrmETlQnoUevgvf6acrOJA/2fKX9P/zy3LJPz/rqPJjGE
+         zokqk1j8Th2s62+6Y9XY7ST1zLZMFIln6Squs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jpSmRTRJCcAtMIqv2ySojQvX0ghayb0jRLFlp2rJGzE=;
+        b=eybx97p76g4LkDK1bkH1ZXpVYLPcde8RNrsZ6RZk2JfGWUnrwKMrUuMo7/DuI/C4Nz
+         qgboy4ghy+o53jC0ysHyIt3V5NGChGrtl2sla+l0KLGLEuiePc6kt1MCKTUM2X7CQ1VA
+         AhH6ccuradlvdU/cQdNdMobJDWjtOeZbhUbmuqt85BG9K7+rY2KSRO3PkgwDwHK4cLSi
+         Lwq0Eg3KJrwCW5/MZBWiTB2AfkjsiwBBQoc6e9G8HTunK5C+VC81WWX+TOkCitiLsxWI
+         gOAGEjvQvhuzPm79IO+RP0+k3hAW97S8tOuVsFs6TXKtFAkvZjO44TfXIg1ucEWlrHbY
+         4aYg==
+X-Gm-Message-State: APzg51Cqpgamn2VVRDI6dkYfJA30aBEziga5xG4G/1x8C2vmP+NUVTkn
+        2rjWFYpmpIs/9iLrzhnCqhU5tA==
+X-Google-Smtp-Source: ANB0VdZztPR7SoNRbYA1Iczwh4ZB7RTMNX2is3+znHBglx2xnEbokIdTX+B36KDv1VOFN4pkFqhAGA==
+X-Received: by 2002:a1c:88cd:: with SMTP id k196-v6mr5216759wmd.17.1537770689556;
+        Sun, 23 Sep 2018 23:31:29 -0700 (PDT)
+Received: from [192.168.0.41] (89.154.136.77.rev.sfr.net. [77.136.154.89])
+        by smtp.googlemail.com with ESMTPSA id 200-v6sm29562946wmv.6.2018.09.23.23.31.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Sep 2018 23:31:28 -0700 (PDT)
+Subject: Re: [PATCH 1/2] clocksource/drivers: Unify the names to timer-*
+ format
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Joachim Eastwood <manabian@gmail.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Tony Prisk <linux@prisktech.co.nz>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "moderated list:ARM/ACTIONS SEMI ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <1537762569-18657-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180924062828.4yh3aumcuiihojgu@pengutronix.de>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <7451938d-c600-f070-d1c7-1c77f79518b0@linaro.org>
+Date:   Mon, 24 Sep 2018 08:31:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180924062828.4yh3aumcuiihojgu@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds configfs support to provision UFS device at
-runtime. This feature can be primarily useful in factory or
-assembly line as some devices may be required to be configured
-multiple times during initial system development phase.
-Configuration Descriptors can be written multiple times until
-bConfigDescrLock attribute is zero.
+On 24/09/2018 08:28, Uwe Kleine-König wrote:
+> On Mon, Sep 24, 2018 at 06:15:17AM +0200, Daniel Lezcano wrote:
+>> In order to make some housekeeping in the directory, this patch renames
+>> drivers to the timer-* format in order to unify their names.
+>>
+>> There is no functional changes.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>  MAINTAINERS                               |  10 +-
+>>  drivers/clocksource/Makefile              |  26 +-
+>>  drivers/clocksource/cadence_ttc_timer.c   | 543 ------------------------------
+>>  drivers/clocksource/fsl_ftm_timer.c       | 376 ---------------------
+>>  drivers/clocksource/owl-timer.c           | 173 ----------
+>>  drivers/clocksource/qcom-timer.c          | 258 --------------
+>>  drivers/clocksource/time-armada-370-xp.c  | 416 -----------------------
+>>  drivers/clocksource/time-efm32.c          | 287 ----------------
+>>  drivers/clocksource/time-lpc32xx.c        | 314 -----------------
+>>  drivers/clocksource/time-orion.c          | 192 -----------
+>>  drivers/clocksource/time-pistachio.c      | 218 ------------
+>>  drivers/clocksource/timer-armada-370-xp.c | 416 +++++++++++++++++++++++
+>>  drivers/clocksource/timer-cadence-ttc.c   | 543 ++++++++++++++++++++++++++++++
+>>  drivers/clocksource/timer-efm32.c         | 287 ++++++++++++++++
+>>  drivers/clocksource/timer-fsl-ftm.c       | 376 +++++++++++++++++++++
+>>  drivers/clocksource/timer-lpc32xx.c       | 314 +++++++++++++++++
+>>  drivers/clocksource/timer-orion.c         | 192 +++++++++++
+>>  drivers/clocksource/timer-owl.c           | 173 ++++++++++
+>>  drivers/clocksource/timer-pistachio.c     | 218 ++++++++++++
+>>  drivers/clocksource/timer-qcom.c          | 258 ++++++++++++++
+>>  drivers/clocksource/timer-versatile.c     |  44 +++
+>>  drivers/clocksource/timer-vf-pit.c        | 204 +++++++++++
+>>  drivers/clocksource/timer-vt8500.c        | 168 +++++++++
+>>  drivers/clocksource/timer-zevio.c         | 218 ++++++++++++
+>>  drivers/clocksource/versatile.c           |  44 ---
+>>  drivers/clocksource/vf_pit_timer.c        | 204 -----------
+>>  drivers/clocksource/vt8500_timer.c        | 168 ---------
+>>  drivers/clocksource/zevio-timer.c         | 218 ------------
+>>  28 files changed, 3429 insertions(+), 3429 deletions(-)
+> 
+> Wow, with git format-patch -M this should look much smaller and so
+> easier to review.
 
-Configuration descriptor buffer consists of Device and Unit
-descriptor configurable parameters which are parsed from vendor
-specific provisioning file and then passed via configfs node at
-runtime to provision ufs device.
-CONFIG_CONFIGFS_FS and CONFIG_SCSI_UFS_PROVISION needs to be enabled
-for using this feature.
+Yes, I forgot the option :/
 
-Usage:
-1) To read current configuration descriptor with index X
-   (where index X can be 0/1/2/3) :
-   cat /config/<device_name>/ufs_config_desc_X
 
-2) To write configuration descriptor with index X :
-   echo <config_desc_buf> > /config/<device_name>/ufs_config_desc_X
-
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/configfs-driver-ufs |  12 ++
- drivers/scsi/ufs/Kconfig                      |  10 ++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 237 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                     |   3 +-
- drivers/scsi/ufs/ufshcd.h                     |  18 ++
- 6 files changed, 280 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
-
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..6743ea9
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,12 @@
-+What:		/config/*/ufs_config_desc_X
-+Date:		Jun 2018
-+KernelVersion:	4.20
-+Description:
-+		This file shows bytes of the current ufs configuration descriptor
-+		with index X (where X = 0/1/2/3) set in device. This can be used to
-+		provision ufs device if bConfigDescrLock is 0.
-+		For more details, refer 14.1.6.3 Configuration Descriptor and
-+		table 14-12 - Unit Descriptor configurable parameters from specs for
-+		description and format of each configuration descriptor parameter.
-+		Parameters of Configuration descriptor buffer for respective index
-+		needs to be passed as bytes in space separated format.
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index e27b4d4..6e7ff35 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
- 
- 	  Select this if you have UFS controller on QCOM chipset.
- 	  If unsure, say N.
-+
-+config SCSI_UFS_PROVISION
-+	bool "Runtime UFS Provisioning support"
-+	depends on SCSI_UFSHCD && CONFIGFS_FS
-+	help
-+	  This enables runtime UFS provisioning support. This can be used
-+	  primarily during assembly line as some devices may be required to
-+	  be configured multiple times during initial development phase.
-+
-+	  If unsure, say N.
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..09880b9 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_SCSI_UFS_PROVISION) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..8f6a5d3
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018, Linux Foundation.
-+
-+#include <linux/configfs.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
-+{
-+	struct config_group *group = to_config_group(item);
-+	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
-+	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
-+
-+	return hba;
-+}
-+
-+static ssize_t ufs_config_desc_show(struct config_item *item, char *buf,
-+				    u8 index)
-+{
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+	u8 *desc_buf = NULL;
-+	int desc_buf_len = hba->desc_size.conf_desc;
-+	int i, ret, curr_len = 0;
-+
-+	desc_buf = kzalloc(desc_buf_len, GFP_KERNEL);
-+	if (!desc_buf)
-+		return -ENOMEM;
-+
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+					    QUERY_DESC_IDN_CONFIGURATION, index,
-+					    0, desc_buf, &desc_buf_len);
-+	if (ret)
-+		goto out;
-+
-+	for (i = 0; i < desc_buf_len; i++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				"0x%x ", desc_buf[i]);
-+
-+out:
-+	kfree(desc_buf);
-+	return ret ? ret : curr_len;
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(struct config_item *item, const char *buf,
-+				   size_t count, u8 index)
-+{
-+	char *strbuf;
-+	char *strbuf_copy;
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+	u8 *desc_buf = NULL;
-+	int desc_buf_len = hba->desc_size.conf_desc;
-+	char *token;
-+	int i, ret;
-+	u8 value;
-+	u32 config_desc_lock = 0;
-+
-+	desc_buf = kzalloc(desc_buf_len, GFP_KERNEL);
-+	if (!desc_buf)
-+		return -ENOMEM;
-+
-+	strbuf = kstrdup(buf, GFP_KERNEL);
-+	if (!strbuf) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	strbuf_copy = strbuf;
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+				QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0,
-+				&config_desc_lock);
-+	if (ret)
-+		goto out;
-+
-+	if (config_desc_lock) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+			__func__, config_desc_lock);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/*
-+	 * First read the current configuration descriptor
-+	 * and then update with user provided parameters
-+	 */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+					    QUERY_DESC_IDN_CONFIGURATION, index,
-+					    0, desc_buf, &desc_buf_len);
-+	if (ret)
-+		goto out;
-+
-+	for (i = 0; i < desc_buf_len; i++) {
-+		token = strsep(&strbuf_copy, " ");
-+		if (!token)
-+			break;
-+
-+		ret = kstrtou8(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: Invalid value %s writing UFS configuration descriptor %u\n",
-+				__func__, token, index);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		desc_buf[i] = value;
-+	}
-+
-+	/* Write configuration descriptor to provision ufs */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-+					    QUERY_DESC_IDN_CONFIGURATION, index,
-+					    0, desc_buf, &desc_buf_len);
-+	if (!ret)
-+		dev_info(hba->dev, "%s: UFS Configuration Descriptor %u written\n",
-+			 __func__, index);
-+
-+out:
-+	kfree(strbuf);
-+	kfree(desc_buf);
-+	return ret ? ret : count;
-+}
-+
-+static ssize_t ufs_config_desc_0_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 0);
-+}
-+
-+static ssize_t ufs_config_desc_0_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 0);
-+}
-+
-+static ssize_t ufs_config_desc_1_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 1);
-+}
-+
-+static ssize_t ufs_config_desc_1_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 1);
-+}
-+
-+static ssize_t ufs_config_desc_2_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 2);
-+}
-+
-+static ssize_t ufs_config_desc_2_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 2);
-+}
-+
-+static ssize_t ufs_config_desc_3_show(struct config_item *item, char *buf)
-+{
-+	return ufs_config_desc_show(item, buf, 3);
-+}
-+
-+static ssize_t ufs_config_desc_3_store(struct config_item *item,
-+				       const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(item, buf, count, 3);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision_0 = {
-+	.ca_name	= "ufs_config_desc_0",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_0_show,
-+	.store		= ufs_config_desc_0_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_1 = {
-+	.ca_name	= "ufs_config_desc_1",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_1_show,
-+	.store		= ufs_config_desc_1_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_2 = {
-+	.ca_name	= "ufs_config_desc_2",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_2_show,
-+	.store		= ufs_config_desc_2_store,
-+};
-+
-+static struct configfs_attribute ufshcd_attr_provision_3 = {
-+	.ca_name	= "ufs_config_desc_3",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_config_desc_3_show,
-+	.store		= ufs_config_desc_3_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision_0,
-+	&ufshcd_attr_provision_1,
-+	&ufshcd_attr_provision_2,
-+	&ufshcd_attr_provision_3,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+	int ret;
-+	struct config_item *cg_item;
-+	struct configfs_subsystem *subsys;
-+
-+	cg_item = &hba->subsys.su_group.cg_item;
-+	snprintf(cg_item->ci_namebuf, CONFIGFS_ITEM_NAME_LEN, "%s", name);
-+	cg_item->ci_type = &ufscfg_type;
-+
-+	subsys = &hba->subsys;
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret)
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+}
-+
-+void ufshcd_configfs_exit(struct ufs_hba *hba)
-+{
-+	configfs_unregister_subsystem(&hba->subsys);
-+}
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 64c62db..d06fbdb 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7708,6 +7708,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit(hba);
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -7962,7 +7963,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
--
-+	ufshcd_configfs_init(hba, dev_name(hba->dev));
- 	return 0;
- 
- out_remove_scsi_host:
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 45013b6..f348b4b 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -37,6 +37,7 @@
- #ifndef _UFSHCD_H
- #define _UFSHCD_H
- 
-+#include <linux/configfs.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -515,6 +516,9 @@ struct ufs_hba {
- 
- 	struct Scsi_Host *host;
- 	struct device *dev;
-+#ifdef CONFIG_SCSI_UFS_PROVISION
-+	struct configfs_subsystem subsys;
-+#endif
- 	/*
- 	 * This field is to keep a reference to "scsi_device" corresponding to
- 	 * "UFS device" W-LU.
-@@ -868,6 +872,20 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
- 
-+/* Expose UFS configfs API's */
-+#ifndef CONFIG_SCSI_UFS_PROVISION
-+static inline void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+}
-+
-+static inline void ufshcd_configfs_exit(struct ufs_hba *hba)
-+{
-+}
-+#else
-+void ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
-+void ufshcd_configfs_exit(struct ufs_hba *hba);
-+#endif
-+
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
- 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
