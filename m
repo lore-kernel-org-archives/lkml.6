@@ -2,97 +2,189 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65F0ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F9AECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9116520883
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7861B20883
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:56:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lvcEFd/F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9116520883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="O/D3GOj2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7861B20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbeIXV7b (ORCPT
+        id S1731884AbeIXV7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:59:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46526 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729466AbeIXV7b (ORCPT
+        Mon, 24 Sep 2018 17:59:36 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54038 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729466AbeIXV7g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:59:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cd4dloH5vUxWJQ5leOBmd7ke16LGZpzczxS1cOU2ocY=; b=lvcEFd/FkCnOvcIA9+Te4gNEo
-        YIfCQuvA6fyV7/4R7THppO4Y7yGnXTzcgi8prVaDxSwhWpD7x+nEFNdkF6YQ+2adEKJP+G8uZ/8zU
-        IRyidsymuVscr4wc7J/Z0cWUMrPhX1Ius+G53BBzXhPioPgea99PL+cbY4gFWoq1HS5yYmN6yEdI4
-        L1pYAZ5AyxfWgCGvYvdO58ljgULkndj3dlsC9aqWrPwdwKLDN/0mYCYK0586cYdF1D4s/gKaOGwHI
-        hXgbJG/0rYb6bBKrD6S8XfcQUSfwLAfUYCJAp5Okb/tW0M1N+6g8EeK5fMPfAZx37zIPRiDCDW40Q
-        4xZgpAZ2A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g4TDg-0003bK-3C; Mon, 24 Sep 2018 15:56:20 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 87CC52029F875; Mon, 24 Sep 2018 17:56:16 +0200 (CEST)
-Date:   Mon, 24 Sep 2018 17:56:16 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
- default
-Message-ID: <20180924155616.GA7060@hirez.programming.kicks-ass.net>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-15-patrick.bellasi@arm.com>
- <20180904134748.GA4974@localhost.localdomain>
- <20180906144053.GD25636@e110439-lin>
- <20180914111003.GC24082@hirez.programming.kicks-ass.net>
- <20180914140732.GR1413@e110439-lin>
- <20180914142813.GM24124@hirez.programming.kicks-ass.net>
- <20180917122723.GS1413@e110439-lin>
- <20180921091308.GD24082@hirez.programming.kicks-ass.net>
- <20180924151400.GT1413@e110439-lin>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924151400.GT1413@e110439-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 24 Sep 2018 17:59:36 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8OFtVmG007031;
+        Mon, 24 Sep 2018 15:56:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : subject
+ : from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=corp-2018-07-02;
+ bh=JeXS/Oe0a3nuKVWXJ4CvZTHHp94Hw951F4lmmWOQeYM=;
+ b=O/D3GOj2TOFczuXaxzMhkIU/FjEcdYVthnTPeCcwhhvuDdiEyoR8ctk8hEuvYer4VU2V
+ fXKHWwGqSPyJYeeuS/Oc+SDdtyraLigWL78JV+BNxCwdgQtbb8gUUUKEe4L78Jym65oa
+ a/sPbvMRnDqV4ndaSf9ISg6VRqlQxEQPuxmmLvMxZXO71tuG7RWkp8X8di59CbR+DwNa
+ ldh1LBvfZ2pBVsmPITlAYxEkS+alUbXAApjIxJ/gMSRkCM8bMGOmDSj7FmctfCikIzp7
+ f4lG++SLjINaXptK9kxHNfUv4bdqinOpBYycHNyp3OrFCSKD4e6pU0Dsv6iDV1muAimY zA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2mnd5t6sa1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Sep 2018 15:56:11 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8OFu9EQ023565
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Sep 2018 15:56:10 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8OFu8jn029849;
+        Mon, 24 Sep 2018 15:56:08 GMT
+Received: from asu.omang.mine.nu (/80.203.111.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Sep 2018 08:56:08 -0700
+Message-ID: <1537804564.23582.113.camel@oracle.com>
+Subject: Re: [Announce] LPC 2018: Testing and Fuzzing Microconference
+From:   Knut Omang <knut.omang@oracle.com>
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Dhaval Giani <dhaval.giani@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        alice.ferrazzi@gmail.com, Kevin Hilman <khilman@baylibre.com>,
+        Tim Bird <tbird20d@gmail.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        gustavo.padovan@collabora.co.uk,
+        "Carpenter,Dan" <dan.carpenter@oracle.com>
+Date:   Mon, 24 Sep 2018 17:56:04 +0200
+In-Reply-To: <CACT4Y+ZN0OcTkY0ahvF0CGZv1bbLHGH2aEbCFuQzpC498cNojw@mail.gmail.com>
+References: <CAPhKKr_XFzGcBBuQ51w7HjZd_Kq3nTOB6uAFG2vP5JH+Vx_eng@mail.gmail.com>
+         <20180922125256.GB14042@bombadil.infradead.org>
+         <CACT4Y+ZN0OcTkY0ahvF0CGZv1bbLHGH2aEbCFuQzpC498cNojw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9025 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809240157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 04:14:00PM +0100, Patrick Bellasi wrote:
-> On 21-Sep 11:13, Peter Zijlstra wrote:
-> > Laptops with active cooling however...
+On Mon, 2018-09-24 at 15:42 +0200, Dmitry Vyukov wrote:
+> On Sat, Sep 22, 2018 at 2:52 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> > On Wed, Sep 19, 2018 at 10:13:15AM -0700, Dhaval Giani wrote:
+> >> Sasha and I are pleased to announce the Testing and Fuzzing track at
+> >> LPC [ 1 ]. We are planning to continue the discussions from last
+> >> year's microconference [2]. Many discussions from the Automated
+> >> Testing Summit [3] will also continue, and a final agenda will come up
+> >> only soon after that.
+> >>
+> >> Suggested Topics
+> >>
+> >> - Syzbot/syzkaller
+> >> - ATS
+> >> - Distro/stable testing
+> >> - kernelci
+> >> - kernelci auto bisection
+> >> - Unit testing framework
+> >>
+> >> We look forward to other interesting topics for this microconference
+> >> as a reply to this email.
+> >
+> > I would like to talk about the IDA test suite that was recently merged.
+> > See lib/test_ida.c.  It can be built as a module (CONFIG_TEST_IDA=m),
+> > built-in (=y) or built in userspace (as part of the radix tree test
+> > suite for historical reasons) along with the current kernel code.
+> >
+> > Being able to build the test suite in userspace allows for much more
+> > rapid development.  Building it in kernel space offers testing across
+> > a wide range of configurations that I don't have access to and can't
+> > necessarily simulate well in userspace.
+> >
+> > My userspace implementation of kmalloc() simulates failures (in a rather
+> > heavy-handed way; every non-GFP_KERNEL allocation fails).  That's rather
+> > harder to simulate in kernel space.  I'd like there to be a way for a
+> > kernel space test suite to ask for kmalloc failures so that the failure
+> > paths can be tested.
 > 
-> How do you see active cooling playing a role ?
+> Hi Matthew,
 > 
-> Are you thinking, for example, at reduced fan noise if we remain below
-> a certain OPP ?
+> kmalloc fault injection is already implemented with
+> CONFIG_FAULT_INJECTION. For original fault injection, you more-or-less
+> ask to fail X% of allocations at random. It's great for testing
+> servers for stability, but not so well suited for testing. Recently
+> I've added so-called "systematic" fault injection
+> (/proc/thread-self/fail-nth) which is perfect for unit testing. It
+> allows to ask to fail N-th allocation request in the current task. So
+> a unit test for a syscall can do:
 > 
-> Are you factoring fans power consumptions into the overall P consumption ?
+> for (i = 0;; i++) {
+>   write(/proc/thread-self/fail-nth, i);
+>   syscall_under_test();
+>   if (read(/proc/thread-self/fail-nth) != 0)
+>     break;
+> }
+> 
+> which allows to examine each failure site one-by-one systematically
+> (without making random processes on the machine fail too).
+> 
+> 
+> > I think the idea of building parts of the core kernel libraries in
+> > userspace and testing them there has greater generality than just the
+> > IDA, IDR, XArray & radix tree and might profitably be adopted by other
+> > parts of lib/.  The userspace simulation of other parts of the kernel
+> > may well need to be extended.
+> 
+> This would be great. Besides providing faster turn-around time, this
+> allow us to finally have something like:
+> 
+> make test [subsystem]
+> 
+> which will run all tests for the subsystem locally (in parallel,
+> giving final OK/FAIL). This is not possible to in-kernel tests,
+> because they require a machine and an image, and it's not possible to
+> support everything that people use.
 
-Nothing as fancy as that; I just figured that with a larger cooling
-capacity, you can push chips higher onto that curve past the optimal
-IPC/Watt point. Make it go fast etc..
+With KTF (https://github.com/oracle/ktf) we are using kprobes to inject 
+modifying behaviour (by modifying a function's return value or input).
+
+To cater for the needs for failover testing from user space, our approach 
+is what we call "hybrid tests", where parts of the test execute in user land and 
+parts of the test execute in the kernel. 
+
+One limitation with config based test functionality is that it requires
+rebuilding the kernel to enable the functionality. I think having the tests
+available for running even on pre-existing kernels can be of great value.
+
+I agree with Matthew in that there's good time savings to be made to be
+able to "lift" code out of the kernel and execute it completely in user space.
+The challenge is to be able to compile the kernel code in user land unmodified. 
+The pieces under lib/ is probably the easiest ones since they have few 
+dependencies on other kernel components.
+
+If interesting, I could say a few words in this context about some work I did 
+to allow me to run the Infiniband driver I was working on - and also developed 
+the precursor of KTF for 
+(https://github.com/oracle/linux-uek/tree/uek4/master/drivers/infiniband/hw/sif)
+- entirely in user space under valgrind.
+I used it a.o. to test the fairly complex page table management driver code for the on-
+board MMU. I have wanted to make it available in a similar way as KTF, just haven't had
+the time to get back to it yet.
+
+Knut
