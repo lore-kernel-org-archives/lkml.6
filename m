@@ -2,166 +2,88 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22074ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7CDC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D25A82098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:42:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D25A82098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 90F242098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:42:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F242098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731745AbeIXWpW (ORCPT
+        id S1732054AbeIXWpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:45:22 -0400
-Received: from foss.arm.com ([217.140.101.70]:38560 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726400AbeIXWpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:45:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 440C780D;
-        Mon, 24 Sep 2018 09:42:21 -0700 (PDT)
-Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BB9F3F5BD;
-        Mon, 24 Sep 2018 09:42:19 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 17:42:58 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
- "PCI: mvebu: Only remap I/O space if configured"
-Message-ID: <20180924164258.GA19513@red-moon>
-References: <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
- <20180913104241.65db8243@windsurf>
- <20180924101213.GO30658@n2100.armlinux.org.uk>
- <20180924122614.70738b5c@windsurf>
- <20180924111341.GP30658@n2100.armlinux.org.uk>
- <20180924141203.3df9707a@windsurf>
- <20180924124620.GA10322@e107981-ln.cambridge.arm.com>
- <20180924151040.5e57462b@windsurf>
- <20180924141512.GA11875@e107981-ln.cambridge.arm.com>
- <20180924165218.26c7c418@windsurf>
+        Mon, 24 Sep 2018 18:45:50 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36811 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbeIXWpu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 18:45:50 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g4Twe-0005ni-Hw; Mon, 24 Sep 2018 16:42:48 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mailbox: bcm-flexrm-mailbox: fix spelling mistake "toogle" -> "toggle"
+Date:   Mon, 24 Sep 2018 17:42:48 +0100
+Message-Id: <20180924164248.2180-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924165218.26c7c418@windsurf>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 04:52:18PM +0200, Thomas Petazzoni wrote:
-> Hello,
-> 
-> On Mon, 24 Sep 2018 15:15:12 +0100, Lorenzo Pieralisi wrote:
-> 
-> > I understand that, I wanted to make sure we come up with a fix asap
-> > and what I put forward would cover everything discussed in this thread,
-> > at least temporarily, giving us time to check ISA related issues while
-> > unmapping IO space.
-> 
-> Something like this should implemented what you suggest I guess:
-> 
-> diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
-> index 50eb0729385b..a41d79b8d46a 100644
-> --- a/drivers/pci/controller/pci-mvebu.c
-> +++ b/drivers/pci/controller/pci-mvebu.c
-> @@ -1145,7 +1145,6 @@ static int mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
->  {
->         struct device *dev = &pcie->pdev->dev;
->         struct device_node *np = dev->of_node;
-> -       unsigned int i;
->         int ret;
->  
->         INIT_LIST_HEAD(&pcie->resources);
-> @@ -1179,13 +1178,58 @@ static int mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
->                                          resource_size(&pcie->io) - 1);
->                 pcie->realio.name = "PCI I/O";
->  
-> +               pci_add_resource(&pcie->resources, &pcie->realio);
-> +       }
-> +
-> +       return devm_request_pci_bus_resources(dev, &pcie->resources);
-> +}
-> +
-> +/*
-> + * This is a copy of pci_host_probe(), except that it does the I/O
-> + * remap as the last step, once we are sure we won't fail.
-> + *
-> + * It should be removed once the I/O remap error handling issue has
-> + * been sorted out.
-> + */
-> +static int mvebu_pci_host_probe(struct pci_host_bridge *bridge)
-> +{
-> +       struct mvebu_pcie *pcie;
-> +       struct pci_bus *bus, *child;
-> +       int ret;
-> +
-> +       ret = pci_scan_root_bus_bridge(bridge);
-> +       if (ret < 0) {
-> +               dev_err(bridge->dev.parent, "Scanning root bridge failed");
-> +               return ret;
-> +       }
-> +
-> +       pcie = pci_host_bridge_priv(bridge);
-> +       if (resource_size(&pcie->io) != 0) {
-> +               unsigned int i;
-> +
->                 for (i = 0; i < resource_size(&pcie->realio); i += SZ_64K)
->                         pci_ioremap_io(i, pcie->io.start + i);
-> +       }
->  
-> -               pci_add_resource(&pcie->resources, &pcie->realio);
-> +       bus = bridge->bus;
-> +
-> +       /*
-> +        * We insert PCI resources into the iomem_resource and
-> +        * ioport_resource trees in either pci_bus_claim_resources()
-> +        * or pci_bus_assign_resources().
-> +        */
-> +       if (pci_has_flag(PCI_PROBE_ONLY)) {
-> +               pci_bus_claim_resources(bus);
-> +       } else {
-> +               pci_bus_size_bridges(bus);
-> +               pci_bus_assign_resources(bus);
-> +
-> +               list_for_each_entry(child, &bus->children, node)
-> +                       pcie_bus_configure_settings(child);
->         }
->  
-> -       return devm_request_pci_bus_resources(dev, &pcie->resources);
-> +       pci_bus_add_devices(bus);
-> +       return 0;
->  }
->  
->  static int mvebu_pcie_probe(struct platform_device *pdev)
-> @@ -1268,7 +1312,7 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
->         bridge->align_resource = mvebu_pcie_align_resource;
->         bridge->msi = pcie->msi;
->  
-> -       return pci_host_probe(bridge);
-> +       return mvebu_pci_host_probe(bridge);
->  }
->  
->  static const struct of_device_id mvebu_pcie_of_match_table[] = {
-> 
-> If that's what you meant, I'll go ahead and test on actual hardware and
-> submit as a proper patch.
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes, that's what I meant, I hope that you will have some bandwidth to
-discuss a way forward for v4.21, when this fix is merged (I think that
-v4.20 is a tall order but we can try if you will have time to post the
-patches - I suspect your fix will go in -rc6 if Bjorn can pull it this
-week).
+Trivial fix to spelling mistake in function name flexrm_flip_header_toogle,
+rename it to flexrm_flip_header_toggle.
 
-Lorenzo
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/mailbox/bcm-flexrm-mailbox.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
+index 8ab077ff58f4..d7a8ed7d8097 100644
+--- a/drivers/mailbox/bcm-flexrm-mailbox.c
++++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+@@ -375,7 +375,7 @@ static u32 flexrm_estimate_header_desc_count(u32 nhcnt)
+ 	return hcnt;
+ }
+ 
+-static void flexrm_flip_header_toogle(void *desc_ptr)
++static void flexrm_flip_header_toggle(void *desc_ptr)
+ {
+ 	u64 desc = flexrm_read_desc(desc_ptr);
+ 
+@@ -709,7 +709,7 @@ static void *flexrm_spu_write_descs(struct brcm_message *msg, u32 nhcnt,
+ 	wmb();
+ 
+ 	/* Flip toggle bit in header */
+-	flexrm_flip_header_toogle(orig_desc_ptr);
++	flexrm_flip_header_toggle(orig_desc_ptr);
+ 
+ 	return desc_ptr;
+ }
+@@ -838,7 +838,7 @@ static void *flexrm_sba_write_descs(struct brcm_message *msg, u32 nhcnt,
+ 	wmb();
+ 
+ 	/* Flip toggle bit in header */
+-	flexrm_flip_header_toogle(orig_desc_ptr);
++	flexrm_flip_header_toggle(orig_desc_ptr);
+ 
+ 	return desc_ptr;
+ }
+-- 
+2.17.1
+
