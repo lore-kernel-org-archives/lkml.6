@@ -2,45 +2,40 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51BFECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1B4C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BFD20877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78BFD20877
+	by mail.kernel.org (Postfix) with ESMTP id 5302320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5302320C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731235AbeIXSI4 (ORCPT
+        id S1731244AbeIXSJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:08:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54186 "EHLO
+        Mon, 24 Sep 2018 14:09:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54198 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728516AbeIXSI4 (ORCPT
+        with ESMTP id S1729339AbeIXSJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:08:56 -0400
+        Mon, 24 Sep 2018 14:09:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D0CA107B;
-        Mon, 24 Sep 2018 12:07:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BDA11080;
+        Mon, 24 Sep 2018 12:07:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        John Stultz <john.stultz@linaro.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 098/111] selftest: timers: Tweak raw_skew to SKIP when ADJ_OFFSET/other clock adjustments are in progress
-Date:   Mon, 24 Sep 2018 13:53:05 +0200
-Message-Id: <20180924113114.738389747@linuxfoundation.org>
+Subject: [PATCH 4.9 099/111] drm/panel: type promotion bug in s6e8aa0_read_mtp_id()
+Date:   Mon, 24 Sep 2018 13:53:06 +0200
+Message-Id: <20180924113114.886344347@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -58,52 +53,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Stultz <john.stultz@linaro.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 1416270f4a1ae83ea84156ceba19a66a8f88be1f ]
+[ Upstream commit cd0e0ca69109d025b1a1b6609f70682db62138b0 ]
 
-In the past we've warned when ADJ_OFFSET was in progress, usually
-caused by ntpd or some other time adjusting daemon running in non
-steady sate, which can cause the skew calculations to be
-incorrect.
+The ARRAY_SIZE() macro is type size_t.  If s6e8aa0_dcs_read() returns a
+negative error code, then "ret < ARRAY_SIZE(id)" is false because the
+negative error code is type promoted to a high positive value.
 
-Thus, this patch checks to see if the clock was being adjusted
-when we fail so that we don't cause false negatives.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Miroslav Lichvar <mlichvar@redhat.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org
-Suggested-by: Miroslav Lichvar <mlichvar@redhat.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-v2: Widened the checks to look for other clock adjustments that
-    could happen, as suggested by Miroslav
-v3: Fixed up commit message
+Fixes: 02051ca06371 ("drm/panel: add S6E8AA0 driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180704093807.s3lqsb2v6dg2k43d@kili.mountain
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/timers/raw_skew.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/timers/raw_skew.c
-+++ b/tools/testing/selftests/timers/raw_skew.c
-@@ -146,6 +146,11 @@ int main(int argv, char **argc)
- 	printf(" %lld.%i(act)", ppm/1000, abs((int)(ppm%1000)));
+--- a/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
++++ b/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
+@@ -823,7 +823,7 @@ static void s6e8aa0_read_mtp_id(struct s
+ 	int ret, i;
  
- 	if (llabs(eppm - ppm) > 1000) {
-+		if (tx1.offset || tx2.offset ||
-+		    tx1.freq != tx2.freq || tx1.tick != tx2.tick) {
-+			printf("	[SKIP]\n");
-+			return ksft_exit_skip("The clock was adjusted externally. Shutdown NTPd or other time sync daemons\n");
-+		}
- 		printf("	[FAILED]\n");
- 		return ksft_exit_fail();
- 	}
+ 	ret = s6e8aa0_dcs_read(ctx, 0xd1, id, ARRAY_SIZE(id));
+-	if (ret < ARRAY_SIZE(id) || id[0] == 0x00) {
++	if (ret < 0 || ret < ARRAY_SIZE(id) || id[0] == 0x00) {
+ 		dev_err(ctx->dev, "read id failed\n");
+ 		ctx->error = -EIO;
+ 		return;
 
 
