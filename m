@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4977C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8257FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708B420842
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708B420842
+	by mail.kernel.org (Postfix) with ESMTP id 4660821486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4660821486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389433AbeIXSro (ORCPT
+        id S2389372AbeIXSrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59824 "EHLO
+        Mon, 24 Sep 2018 14:47:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59836 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388898AbeIXSrn (ORCPT
+        with ESMTP id S1730401AbeIXSrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:43 -0400
+        Mon, 24 Sep 2018 14:47:47 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FA14109A;
-        Mon, 24 Sep 2018 12:45:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBE5E109A;
+        Mon, 24 Sep 2018 12:45:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Lu <wei.lu2@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 209/235] drm/amdkfd: Fix error codes in kfd_get_process
-Date:   Mon, 24 Sep 2018 13:53:15 +0200
-Message-Id: <20180924113124.753977236@linuxfoundation.org>
+Subject: [PATCH 4.18 210/235] rtc: bq4802: add error handling for devm_ioremap
+Date:   Mon, 24 Sep 2018 13:53:16 +0200
+Message-Id: <20180924113124.821758723@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,35 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Lu <wei.lu2@amd.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit e47cb828eb3fca3e8999a0b9aa053dda18552071 ]
+[ Upstream commit 7874b919866ba91bac253fa219d3d4c82bb944df ]
 
-Return ERR_PTR(-EINVAL) if kfd_get_process fails to find the process.
-This fixes kernel oopses when a child process calls KFD ioctls with
-a file descriptor inherited from the parent process.
+When devm_ioremap fails, the lack of error-handling code may
+cause unexpected results.
 
-Signed-off-by: Wei Lu <wei.lu2@amd.com>
-Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Acked-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+This patch adds error-handling code after calling devm_ioremap.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_process.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rtc/rtc-bq4802.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-@@ -244,6 +244,8 @@ struct kfd_process *kfd_get_process(cons
- 		return ERR_PTR(-EINVAL);
- 
- 	process = find_process(thread);
-+	if (!process)
-+		return ERR_PTR(-EINVAL);
- 
- 	return process;
- }
+--- a/drivers/rtc/rtc-bq4802.c
++++ b/drivers/rtc/rtc-bq4802.c
+@@ -162,6 +162,10 @@ static int bq4802_probe(struct platform_
+ 	} else if (p->r->flags & IORESOURCE_MEM) {
+ 		p->regs = devm_ioremap(&pdev->dev, p->r->start,
+ 					resource_size(p->r));
++		if (!p->regs){
++			err = -ENOMEM;
++			goto out;
++		}
+ 		p->read = bq4802_read_mem;
+ 		p->write = bq4802_write_mem;
+ 	} else {
 
 
