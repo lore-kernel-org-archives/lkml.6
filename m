@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E94ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B22BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B6D0208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B6D0208D9
+	by mail.kernel.org (Postfix) with ESMTP id 42700208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42700208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731973AbeIXSQx (ORCPT
+        id S1731987AbeIXSQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:16:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55486 "EHLO
+        Mon, 24 Sep 2018 14:16:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55502 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728560AbeIXSQv (ORCPT
+        with ESMTP id S1728560AbeIXSQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:16:51 -0400
+        Mon, 24 Sep 2018 14:16:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58DDE109E;
-        Mon, 24 Sep 2018 12:15:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E9C910A0;
+        Mon, 24 Sep 2018 12:15:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oder Chiou <oder_chiou@realtek.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 051/173] ASoC: rt5514: Fix the issue of the delay volume applied
-Date:   Mon, 24 Sep 2018 13:51:25 +0200
-Message-Id: <20180924113119.733106337@linuxfoundation.org>
+Subject: [PATCH 4.14 052/173] MIPS: jz4740: Bump zload address
+Date:   Mon, 24 Sep 2018 13:51:26 +0200
+Message-Id: <20180924113119.828994309@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,45 +54,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oder Chiou <oder_chiou@realtek.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit d96f8bd28cd0bae3e6702ae90df593628ef6906f ]
+[ Upstream commit c6ea7e9747318e5a6774995f4f8e3e0f7c0fa8ba ]
 
-The patch fixes the issue of the delay volume applied.
+Having the zload address at 0x8060.0000 means the size of the
+uncompressed kernel cannot be bigger than around 6 MiB, as it is
+deflated at address 0x8001.0000.
 
-Signed-off-by: Oder Chiou <oder_chiou@realtek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This limit is too small; a kernel with some built-in drivers and things
+like debugfs enabled will already be over 6 MiB in size, and so will
+fail to extract properly.
+
+To fix this, we bump the zload address from 0x8060.0000 to 0x8100.0000.
+
+This is fine, as all the boards featuring Ingenic JZ SoCs have at least
+32 MiB of RAM, and use u-boot or compatible bootloaders which won't
+hardcode the load address but read it from the uImage's header.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19787/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/rt5514.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/mips/jz4740/Platform |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/soc/codecs/rt5514.c
-+++ b/sound/soc/codecs/rt5514.c
-@@ -64,8 +64,8 @@ static const struct reg_sequence rt5514_
- 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
- 	{RT5514_ANA_CTRL_ADCFED,	0x00000800},
- 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
--	{RT5514_DOWNFILTER0_CTRL3,	0x10000362},
--	{RT5514_DOWNFILTER1_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
-+	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
- };
- 
- static const struct reg_default rt5514_reg[] = {
-@@ -92,10 +92,10 @@ static const struct reg_default rt5514_r
- 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
- 	{RT5514_DOWNFILTER0_CTRL1,	0x00020c2f},
- 	{RT5514_DOWNFILTER0_CTRL2,	0x00020c2f},
--	{RT5514_DOWNFILTER0_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
- 	{RT5514_DOWNFILTER1_CTRL1,	0x00020c2f},
- 	{RT5514_DOWNFILTER1_CTRL2,	0x00020c2f},
--	{RT5514_DOWNFILTER1_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
- 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
- 	{RT5514_ANA_CTRL_LDO18_16,	0x02000345},
- 	{RT5514_ANA_CTRL_ADC12,		0x0000a2a8},
+--- a/arch/mips/jz4740/Platform
++++ b/arch/mips/jz4740/Platform
+@@ -1,4 +1,4 @@
+ platform-$(CONFIG_MACH_INGENIC)	+= jz4740/
+ cflags-$(CONFIG_MACH_INGENIC)	+= -I$(srctree)/arch/mips/include/asm/mach-jz4740
+ load-$(CONFIG_MACH_INGENIC)	+= 0xffffffff80010000
+-zload-$(CONFIG_MACH_INGENIC)	+= 0xffffffff80600000
++zload-$(CONFIG_MACH_INGENIC)	+= 0xffffffff81000000
 
 
