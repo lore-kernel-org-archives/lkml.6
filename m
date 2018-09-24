@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE70EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54389ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70225208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70225208D9
+	by mail.kernel.org (Postfix) with ESMTP id 197A1208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197A1208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732016AbeIXSRD (ORCPT
+        id S1732029AbeIXSRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55524 "EHLO
+        Mon, 24 Sep 2018 14:17:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55536 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSRC (ORCPT
+        with ESMTP id S1730150AbeIXSRF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:02 -0400
+        Mon, 24 Sep 2018 14:17:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7811A10A0;
-        Mon, 24 Sep 2018 12:15:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C7E810A4;
+        Mon, 24 Sep 2018 12:15:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Piotr Sawicki <p.sawicki2@partner.samsung.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 054/173] Smack: Fix handling of IPv4 traffic received by PF_INET6 sockets
-Date:   Mon, 24 Sep 2018 13:51:28 +0200
-Message-Id: <20180924113119.964565167@linuxfoundation.org>
+Subject: [PATCH 4.14 055/173] wan/fsl_ucc_hdlc: use IS_ERR_VALUE() to check return value of qe_muram_alloc
+Date:   Mon, 24 Sep 2018 13:51:29 +0200
+Message-Id: <20180924113120.050079768@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,83 +52,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Piotr Sawicki <p.sawicki2@partner.samsung.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 129a99890936766f4b69b9da7ed88366313a9210 ]
+[ Upstream commit fd800f646402c0f85547166b59ca065175928b7b ]
 
-A socket which has sk_family set to PF_INET6 is able to receive not
-only IPv6 but also IPv4 traffic (IPv4-mapped IPv6 addresses).
+qe_muram_alloc return a unsigned long integer,which should not
+compared with zero. check it using IS_ERR_VALUE() to fix this.
 
-Prior to this patch, the smk_skb_to_addr_ipv6() could have been
-called for socket buffers containing IPv4 packets, in result such
-traffic was allowed.
-
-Signed-off-by: Piotr Sawicki <p.sawicki2@partner.samsung.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/smack/smack_lsm.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/wan/fsl_ucc_hdlc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3960,15 +3960,19 @@ static int smack_socket_sock_rcv_skb(str
- 	struct smack_known *skp = NULL;
- 	int rc = 0;
- 	struct smk_audit_info ad;
-+	u16 family = sk->sk_family;
- #ifdef CONFIG_AUDIT
- 	struct lsm_network_audit net;
- #endif
- #if IS_ENABLED(CONFIG_IPV6)
- 	struct sockaddr_in6 sadd;
- 	int proto;
-+
-+	if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
-+		family = PF_INET;
- #endif /* CONFIG_IPV6 */
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -192,7 +192,7 @@ static int uhdlc_init(struct ucc_hdlc_pr
+ 	priv->ucc_pram_offset = qe_muram_alloc(sizeof(struct ucc_hdlc_param),
+ 				ALIGNMENT_OF_UCC_HDLC_PRAM);
  
--	switch (sk->sk_family) {
-+	switch (family) {
- 	case PF_INET:
- #ifdef CONFIG_SECURITY_SMACK_NETFILTER
- 		/*
-@@ -3986,7 +3990,7 @@ static int smack_socket_sock_rcv_skb(str
- 		 */
- 		netlbl_secattr_init(&secattr);
+-	if (priv->ucc_pram_offset < 0) {
++	if (IS_ERR_VALUE(priv->ucc_pram_offset)) {
+ 		dev_err(priv->dev, "Can not allocate MURAM for hdlc parameter.\n");
+ 		ret = -ENOMEM;
+ 		goto free_tx_bd;
+@@ -228,14 +228,14 @@ static int uhdlc_init(struct ucc_hdlc_pr
  
--		rc = netlbl_skbuff_getattr(skb, sk->sk_family, &secattr);
-+		rc = netlbl_skbuff_getattr(skb, family, &secattr);
- 		if (rc == 0)
- 			skp = smack_from_secattr(&secattr, ssp);
- 		else
-@@ -3999,7 +4003,7 @@ access_check:
- #endif
- #ifdef CONFIG_AUDIT
- 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
--		ad.a.u.net->family = sk->sk_family;
-+		ad.a.u.net->family = family;
- 		ad.a.u.net->netif = skb->skb_iif;
- 		ipv4_skb_to_auditdata(skb, &ad.a, NULL);
- #endif
-@@ -4013,7 +4017,7 @@ access_check:
- 		rc = smk_bu_note("IPv4 delivery", skp, ssp->smk_in,
- 					MAY_WRITE, rc);
- 		if (rc != 0)
--			netlbl_skbuff_err(skb, sk->sk_family, rc, 0);
-+			netlbl_skbuff_err(skb, family, rc, 0);
- 		break;
- #if IS_ENABLED(CONFIG_IPV6)
- 	case PF_INET6:
-@@ -4029,7 +4033,7 @@ access_check:
- 			skp = smack_net_ambient;
- #ifdef CONFIG_AUDIT
- 		smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
--		ad.a.u.net->family = sk->sk_family;
-+		ad.a.u.net->family = family;
- 		ad.a.u.net->netif = skb->skb_iif;
- 		ipv6_skb_to_auditdata(skb, &ad.a, NULL);
- #endif /* CONFIG_AUDIT */
+ 	/* Alloc riptr, tiptr */
+ 	riptr = qe_muram_alloc(32, 32);
+-	if (riptr < 0) {
++	if (IS_ERR_VALUE(riptr)) {
+ 		dev_err(priv->dev, "Cannot allocate MURAM mem for Receive internal temp data pointer\n");
+ 		ret = -ENOMEM;
+ 		goto free_tx_skbuff;
+ 	}
+ 
+ 	tiptr = qe_muram_alloc(32, 32);
+-	if (tiptr < 0) {
++	if (IS_ERR_VALUE(tiptr)) {
+ 		dev_err(priv->dev, "Cannot allocate MURAM mem for Transmit internal temp data pointer\n");
+ 		ret = -ENOMEM;
+ 		goto free_riptr;
 
 
