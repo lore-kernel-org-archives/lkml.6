@@ -2,41 +2,40 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5917ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CD4ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9D820877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9D820877
+	by mail.kernel.org (Postfix) with ESMTP id 4B1E720C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1E720C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731071AbeIXSHk (ORCPT
+        id S1731079AbeIXSHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:07:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54008 "EHLO
+        Mon, 24 Sep 2018 14:07:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54016 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730330AbeIXSHj (ORCPT
+        with ESMTP id S1730330AbeIXSHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:07:39 -0400
+        Mon, 24 Sep 2018 14:07:46 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EAC7107B;
-        Mon, 24 Sep 2018 12:05:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 995971080;
+        Mon, 24 Sep 2018 12:05:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Enrico Scholz <enrico.scholz@sigma-chemnitz.de>,
-        Jan Luebbe <jlu@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 083/111] gpu: ipu-v3: csi: pass back mbus_code_to_bus_cfg error codes
-Date:   Mon, 24 Sep 2018 13:52:50 +0200
-Message-Id: <20180924113113.096367499@linuxfoundation.org>
+Subject: [PATCH 4.9 084/111] mmc: tegra: prevent HS200 on Tegra 3
+Date:   Mon, 24 Sep 2018 13:52:51 +0200
+Message-Id: <20180924113113.162211375@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -54,82 +53,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit d36d0e6309dd8137cf438cbb680e72eb63c81425 ]
+[ Upstream commit 127407e36f4fe3a1d5e8b9998b479956ce83a7dc ]
 
-mbus_code_to_bus_cfg() can fail on unknown mbus codes; pass back the
-error to the caller.
+The stack assumes that SDHC controller which support SD3.0 (SDR104) do
+support HS200. This is not the case for Tegra 3, which does support SD
+3.0
+but only supports eMMC spec 4.41.
 
-Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
-[p.zabel@pengutronix.de - renamed rc to ret for consistency]
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Use SDHCI_QUIRK2_BROKEN_HS200 to indicate that the controller does not
+support HS200.
+
+Note that commit 156e14b126ff ("mmc: sdhci: fix caps2 for HS200") added
+the tie between SD3.0 (SDR104) and HS200. I don't think that this is
+necessarly true. It is fully legitimate to support SD3.0 and not support
+HS200. The quirk naming suggests something is broken in the controller,
+but this is not the case: The controller simply does not support HS200.
+
+Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/ipu-v3/ipu-csi.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/ipu-v3/ipu-csi.c
-+++ b/drivers/gpu/ipu-v3/ipu-csi.c
-@@ -316,13 +316,17 @@ static int mbus_code_to_bus_cfg(struct i
- /*
-  * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
-  */
--static void fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
-+static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
- 				 struct v4l2_mbus_config *mbus_cfg,
- 				 struct v4l2_mbus_framefmt *mbus_fmt)
- {
-+	int ret;
-+
- 	memset(csicfg, 0, sizeof(*csicfg));
- 
--	mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
-+	ret = mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
-+	if (ret < 0)
-+		return ret;
- 
- 	switch (mbus_cfg->type) {
- 	case V4L2_MBUS_PARALLEL:
-@@ -353,6 +357,8 @@ static void fill_csi_bus_cfg(struct ipu_
- 		/* will never get here, keep compiler quiet */
- 		break;
- 	}
-+
-+	return 0;
- }
- 
- int ipu_csi_init_interface(struct ipu_csi *csi,
-@@ -362,8 +368,11 @@ int ipu_csi_init_interface(struct ipu_cs
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 width, height, data = 0;
-+	int ret;
- 
--	fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	if (ret < 0)
-+		return ret;
- 
- 	/* set default sensor frame width and height */
- 	width = mbus_fmt->width;
-@@ -567,11 +576,14 @@ int ipu_csi_set_mipi_datatype(struct ipu
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 temp;
-+	int ret;
- 
- 	if (vc > 3)
- 		return -EINVAL;
- 
--	mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
-+	ret = mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
-+	if (ret < 0)
-+		return ret;
- 
- 	spin_lock_irqsave(&csi->lock, flags);
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -350,7 +350,8 @@ static const struct sdhci_pltfm_data sdh
+ 		  SDHCI_QUIRK_NO_HISPD_BIT |
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+-	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
++	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
++		   SDHCI_QUIRK2_BROKEN_HS200,
+ 	.ops  = &tegra_sdhci_ops,
+ };
  
 
 
