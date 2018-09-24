@@ -2,352 +2,638 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C01CDECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D754FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 585922098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 585922098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 77C3521480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:08:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N7PgiPu5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kIxSOAad"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77C3521480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbeIXRJB (ORCPT
+        id S1728736AbeIXRJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:09:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37170 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725982AbeIXRJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:09:01 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 24 Sep 2018 13:09:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52572 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeIXRJm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:09:42 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 325B76060A; Mon, 24 Sep 2018 11:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537787289;
+        bh=MKrnYdJwoDsckGjHjWv/QykALLtZPKvyi2k5LXDRUKA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=N7PgiPu5FJcRmvzL/QIpgFDEGtH8GiAlMsEBMSswkrL5hYGRe+JTC7XnN/YPYkgwC
+         Vi4hIs2M19a0Txtiyd3EYgoaeLH2j6u1pHrG9/DRSRkx4UHESC8irzDtPBSubhWKVa
+         zaqg7AxbZbZ6K4weIU1hA7WIGh/wDB4IdxALDRiQ=
+Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CB42630015C7;
-        Mon, 24 Sep 2018 11:07:28 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 970F75D9C9;
-        Mon, 24 Sep 2018 11:07:28 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 37D644BB74;
-        Mon, 24 Sep 2018 11:07:28 +0000 (UTC)
-Date:   Mon, 24 Sep 2018 07:07:27 -0400 (EDT)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-nvdimm <linux-nvdimm@ml01.01.org>, Jan Kara <jack@suse.cz>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Kevin Wolf <kwolf@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Ross Zwisler <ross.zwisler@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        niteshnarayanlal@hotmail.com, lcapitulino@redhat.com,
-        Igor Mammedov <imammedo@redhat.com>,
-        Eric Blake <eblake@redhat.com>
-Message-ID: <1194924202.15592813.1537787247884.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CAPcyv4js9hWfXPK++a0DhDwtk1pBazMvb9H-X2OQy18uemUhGw@mail.gmail.com>
-References: <20180831133019.27579-1-pagupta@redhat.com> <20180831133019.27579-3-pagupta@redhat.com> <CAPcyv4js9hWfXPK++a0DhDwtk1pBazMvb9H-X2OQy18uemUhGw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] libnvdimm: nd_region flush callback support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.59, 10.4.195.14]
-Thread-Topic: libnvdimm: nd_region flush callback support
-Thread-Index: WJnpUUSn+oeG+KsiCkMMDViWY6PSwA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 24 Sep 2018 11:07:29 +0000 (UTC)
+        (Authenticated sender: rohitkr@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 860FE6031A;
+        Mon, 24 Sep 2018 11:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537787287;
+        bh=MKrnYdJwoDsckGjHjWv/QykALLtZPKvyi2k5LXDRUKA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kIxSOAad7QNm3R2LWBqMMsluMIPVrIDT2tbVyJKh7SReu/e6z2B+mG5hIMDB6/K2U
+         lJCzJlQWYHD2I9KyGGrgCywDlKvGcZzvuxKEom9BWRyRix5KtntP7U3HOASP7SJZ95
+         Q71LivUBll9RyR/nohLcdkKjuR1ePl+Eo69bd/O0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 860FE6031A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+From:   Rohit kumar <rohitkr@codeaurora.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, bgoswami@codeaurora.org,
+        rohkumar@qti.qualcomm.com
+Cc:     Rohit kumar <rohitkr@codeaurora.org>
+Subject: [PATCH v4] remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
+Date:   Mon, 24 Sep 2018 16:37:50 +0530
+Message-Id: <1537787270-29630-1-git-send-email-rohitkr@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds Non PAS ADSP PIL driver for Qualcomm
+Technologies Inc SoCs.
+Added initial support for SDM845 with ADSP bootup and
+shutdown operation handled from Application Processor
+SubSystem(APSS).
 
-> > This patch adds functionality to perform flush from guest
-> > to host over VIRTIO. We are registering a callback based
-> > on 'nd_region' type. virtio_pmem driver requires this special
-> > flush function. For rest of the region types we are registering
-> > existing flush function. Report error returned by host fsync
-> > failure to userspace.
-> >
-> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> 
-> This looks ok to me, just some nits below.
-> 
-> > ---
-> >  drivers/acpi/nfit/core.c     |  7 +++++--
-> >  drivers/nvdimm/claim.c       |  3 ++-
-> >  drivers/nvdimm/pmem.c        | 12 ++++++++----
-> >  drivers/nvdimm/region_devs.c | 12 ++++++++++--
-> >  include/linux/libnvdimm.h    |  4 +++-
-> >  5 files changed, 28 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> > index b072cfc..cd63b69 100644
-> > --- a/drivers/acpi/nfit/core.c
-> > +++ b/drivers/acpi/nfit/core.c
-> > @@ -2216,6 +2216,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk,
-> > unsigned int bw,
-> >  {
-> >         u64 cmd, offset;
-> >         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[DCR];
-> > +       struct nd_region *nd_region = nfit_blk->nd_region;
-> >
-> >         enum {
-> >                 BCW_OFFSET_MASK = (1ULL << 48)-1,
-> > @@ -2234,7 +2235,7 @@ static void write_blk_ctl(struct nfit_blk *nfit_blk,
-> > unsigned int bw,
-> >                 offset = to_interleave_offset(offset, mmio);
-> >
-> >         writeq(cmd, mmio->addr.base + offset);
-> > -       nvdimm_flush(nfit_blk->nd_region);
-> > +       nd_region->flush(nd_region);
-> 
-> I would keep the indirect function call override inside of
-> nvdimm_flush. Then this hunk can go away...
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+---
+Changes since v3:
+	Addressed comments posted by Sibi
 
-Sure. Will change.
+This patch is dependent on the rpmh powerdomain driver https://lkml.org/lkml/2018/6/27/7
+and renaming of Hexagon v5 PAS driver https://patchwork.kernel.org/patch/10601119/ .
 
-> 
-> >
-> >         if (nfit_blk->dimm_flags & NFIT_BLK_DCR_LATCH)
-> >                 readq(mmio->addr.base + offset);
-> > @@ -2245,6 +2246,7 @@ static int acpi_nfit_blk_single_io(struct nfit_blk
-> > *nfit_blk,
-> >                 unsigned int lane)
-> >  {
-> >         struct nfit_blk_mmio *mmio = &nfit_blk->mmio[BDW];
-> > +       struct nd_region *nd_region = nfit_blk->nd_region;
-> >         unsigned int copied = 0;
-> >         u64 base_offset;
-> >         int rc;
-> > @@ -2283,7 +2285,8 @@ static int acpi_nfit_blk_single_io(struct nfit_blk
-> > *nfit_blk,
-> >         }
-> >
-> >         if (rw)
-> > -               nvdimm_flush(nfit_blk->nd_region);
-> > +               nd_region->flush(nd_region);
-> > +
-> >
-> 
-> ...ditto, no need to touch this code.
+ drivers/remoteproc/Kconfig         |  14 ++
+ drivers/remoteproc/Makefile        |   1 +
+ drivers/remoteproc/qcom_adsp_pil.c | 502 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 517 insertions(+)
+ create mode 100644 drivers/remoteproc/qcom_adsp_pil.c
 
-Sure.
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 8894935..f554669 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -140,6 +140,20 @@ config QCOM_Q6V5_WCSS
+ 	  Say y here to support the Qualcomm Peripheral Image Loader for the
+ 	  Hexagon V5 based WCSS remote processors.
+ 
++config QCOM_ADSP_PIL
++	tristate "Qualcomm Technology Inc ADSP Peripheral Image Loader"
++	depends on OF && ARCH_QCOM
++	depends on QCOM_SMEM
++	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
++	depends on QCOM_SYSMON || QCOM_SYSMON=n
++	select MFD_SYSCON
++	select QCOM_MDT_LOADER
++	select QCOM_Q6V5_COMMON
++	select QCOM_RPROC_COMMON
++	help
++	  Say y here to support the Peripheral Image Loader
++	  for the Qualcomm Technology Inc. ADSP remote processors.
++
+ config QCOM_SYSMON
+ 	tristate "Qualcomm sysmon driver"
+ 	depends on RPMSG
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 050f41a..0e1b89c 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
+ obj-$(CONFIG_QCOM_Q6V5_MSS)		+= qcom_q6v5_mss.o
+ obj-$(CONFIG_QCOM_Q6V5_PAS)		+= qcom_q6v5_pas.o
+ obj-$(CONFIG_QCOM_Q6V5_WCSS)		+= qcom_q6v5_wcss.o
++obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
+ obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
+ obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
+ qcom_wcnss_pil-y			+= qcom_wcnss.o
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+new file mode 100644
+index 0000000..f2f5e56
+--- /dev/null
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -0,0 +1,502 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Qualcomm Technology Inc. ADSP Peripheral Image Loader for SDM845.
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/firmware.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++#include <linux/remoteproc.h>
++#include <linux/reset.h>
++#include <linux/soc/qcom/mdt_loader.h>
++#include <linux/soc/qcom/smem.h>
++#include <linux/soc/qcom/smem_state.h>
++
++#include "qcom_common.h"
++#include "qcom_q6v5.h"
++#include "remoteproc_internal.h"
++
++/* time out value */
++#define ACK_TIMEOUT			1000
++#define BOOT_FSM_TIMEOUT		10000
++/* mask values */
++#define EVB_MASK			GENMASK(27, 4)
++/*QDSP6SS register offsets*/
++#define RST_EVB_REG			0x10
++#define CORE_START_REG			0x400
++#define BOOT_CMD_REG			0x404
++#define BOOT_STATUS_REG			0x408
++#define RET_CFG_REG			0x1C
++/*TCSR register offsets*/
++#define LPASS_MASTER_IDLE_REG		0x8
++#define LPASS_HALTACK_REG		0x4
++#define LPASS_PWR_ON_REG		0x10
++#define LPASS_HALTREQ_REG		0x0
++
++/* list of clocks required by ADSP PIL */
++static const char * const adsp_clk_id[] = {
++	"sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
++	"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
++};
++
++struct adsp_pil_data {
++	int crash_reason_smem;
++	const char *firmware_name;
++
++	const char *ssr_name;
++	const char *sysmon_name;
++	int ssctl_id;
++};
++
++struct qcom_adsp {
++	struct device *dev;
++	struct rproc *rproc;
++
++	struct qcom_q6v5 q6v5;
++
++	struct clk *xo;
++
++	int num_clks;
++	struct clk_bulk_data *clks;
++
++	void __iomem *qdsp6ss_base;
++
++	struct reset_control *pdc_sync_reset;
++	struct reset_control *cc_lpass_restart;
++
++	struct regmap *halt_map;
++	unsigned int halt_lpass;
++
++	int crash_reason_smem;
++
++	struct completion start_done;
++	struct completion stop_done;
++
++	phys_addr_t mem_phys;
++	phys_addr_t mem_reloc;
++	void *mem_region;
++	size_t mem_size;
++
++	struct qcom_rproc_glink glink_subdev;
++	struct qcom_rproc_ssr ssr_subdev;
++	struct qcom_sysmon *sysmon;
++};
++
++static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
++{
++	unsigned long timeout;
++	unsigned int val;
++	int ret;
++
++	/* Reset the retention logic */
++	val = readl(adsp->qdsp6ss_base + RET_CFG_REG);
++	val |= 0x1;
++	writel(val, adsp->qdsp6ss_base + RET_CFG_REG);
++
++	clk_bulk_disable_unprepare(adsp->num_clks, adsp->clks);
++
++	/* QDSP6 master port needs to be explicitly halted */
++	ret = regmap_read(adsp->halt_map,
++			adsp->halt_lpass + LPASS_PWR_ON_REG, &val);
++	if (ret || !val)
++		goto reset;
++
++	ret = regmap_read(adsp->halt_map,
++			adsp->halt_lpass + LPASS_MASTER_IDLE_REG,
++			&val);
++	if (ret || val)
++		goto reset;
++
++	regmap_write(adsp->halt_map,
++			adsp->halt_lpass + LPASS_HALTREQ_REG, 1);
++
++	/* Wait for halt ACK from QDSP6 */
++	timeout = jiffies + msecs_to_jiffies(ACK_TIMEOUT);
++	for (;;) {
++		ret = regmap_read(adsp->halt_map,
++			adsp->halt_lpass + LPASS_HALTACK_REG, &val);
++		if (ret || val || time_after(jiffies, timeout))
++			break;
++
++		usleep_range(1000, 1100);
++	}
++
++	ret = regmap_read(adsp->halt_map,
++			adsp->halt_lpass + LPASS_MASTER_IDLE_REG, &val);
++	if (ret || !val)
++		dev_err(adsp->dev, "port failed halt\n");
++
++reset:
++	/* Assert the LPASS PDC Reset */
++	reset_control_assert(adsp->pdc_sync_reset);
++	/* Place the LPASS processor into reset */
++	reset_control_assert(adsp->cc_lpass_restart);
++	/* wait after asserting subsystem restart from AOSS */
++	usleep_range(200, 300);
++
++	/* Clear the halt request for the AXIM and AHBM for Q6 */
++	regmap_write(adsp->halt_map, adsp->halt_lpass + LPASS_HALTREQ_REG, 0);
++
++	/* De-assert the LPASS PDC Reset */
++	reset_control_deassert(adsp->pdc_sync_reset);
++	/* Remove the LPASS reset */
++	reset_control_deassert(adsp->cc_lpass_restart);
++	/* wait after de-asserting subsystem restart from AOSS */
++	usleep_range(200, 300);
++
++	return 0;
++}
++
++static int adsp_load(struct rproc *rproc, const struct firmware *fw)
++{
++	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++
++	return qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
++			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
++			     &adsp->mem_reloc);
++}
++
++static int adsp_start(struct rproc *rproc)
++{
++	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	int ret;
++	unsigned int val;
++
++	qcom_q6v5_prepare(&adsp->q6v5);
++
++	ret = clk_prepare_enable(adsp->xo);
++	if (ret)
++		goto disable_irqs;
++
++	dev_pm_genpd_set_performance_state(adsp->dev, INT_MAX);
++	ret = pm_runtime_get_sync(adsp->dev);
++	if (ret)
++		goto disable_xo_clk;
++
++	ret = clk_bulk_prepare_enable(adsp->num_clks, adsp->clks);
++	if (ret) {
++		dev_err(adsp->dev, "adsp clk_enable failed\n");
++		goto disable_power_domain;
++	}
++
++	/* Program boot address */
++	writel(adsp->mem_phys >> 4, adsp->qdsp6ss_base + RST_EVB_REG);
++
++	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset */
++	writel(0x1, adsp->qdsp6ss_base + CORE_START_REG);
++
++	/* Trigger boot FSM to start QDSP6 */
++	writel(0x1, adsp->qdsp6ss_base + BOOT_CMD_REG);
++
++	/* Wait for core to come out of reset */
++	ret = readl_poll_timeout(adsp->qdsp6ss_base + BOOT_STATUS_REG,
++			val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
++	if (ret) {
++		dev_err(adsp->dev, "failed to bootup adsp\n");
++		goto disable_adsp_clks;
++	}
++
++	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5 * HZ));
++	if (ret == -ETIMEDOUT) {
++		dev_err(adsp->dev, "start timed out\n");
++		goto disable_adsp_clks;
++	}
++
++	return 0;
++
++disable_adsp_clks:
++	clk_bulk_disable_unprepare(adsp->num_clks, adsp->clks);
++disable_power_domain:
++	dev_pm_genpd_set_performance_state(adsp->dev, 0);
++	pm_runtime_put(adsp->dev);
++disable_xo_clk:
++	clk_disable_unprepare(adsp->xo);
++disable_irqs:
++	qcom_q6v5_unprepare(&adsp->q6v5);
++
++	return ret;
++}
++
++static void qcom_adsp_pil_handover(struct qcom_q6v5 *q6v5)
++{
++	struct qcom_adsp *adsp = container_of(q6v5, struct qcom_adsp, q6v5);
++
++	clk_disable_unprepare(adsp->xo);
++	dev_pm_genpd_set_performance_state(adsp->dev, 0);
++	pm_runtime_put(adsp->dev);
++}
++
++static int adsp_stop(struct rproc *rproc)
++{
++	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	int handover;
++	int ret;
++
++	ret = qcom_q6v5_request_stop(&adsp->q6v5);
++	if (ret == -ETIMEDOUT)
++		dev_err(adsp->dev, "timed out on wait\n");
++
++	ret = qcom_adsp_shutdown(adsp);
++	if (ret)
++		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
++
++	handover = qcom_q6v5_unprepare(&adsp->q6v5);
++	if (handover)
++		qcom_adsp_pil_handover(&adsp->q6v5);
++
++	return ret;
++}
++
++static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	int offset;
++
++	offset = da - adsp->mem_reloc;
++	if (offset < 0 || offset + len > adsp->mem_size)
++		return NULL;
++
++	return adsp->mem_region + offset;
++}
++
++static const struct rproc_ops adsp_ops = {
++	.start = adsp_start,
++	.stop = adsp_stop,
++	.da_to_va = adsp_da_to_va,
++	.parse_fw = qcom_register_dump_segments,
++	.load = adsp_load,
++};
++
++static int adsp_init_clock(struct qcom_adsp *adsp)
++{
++	int i, ret;
++
++	adsp->xo = devm_clk_get(adsp->dev, "xo");
++	if (IS_ERR(adsp->xo)) {
++		ret = PTR_ERR(adsp->xo);
++		if (ret != -EPROBE_DEFER)
++			dev_err(adsp->dev, "failed to get xo clock");
++		return ret;
++	}
++
++	adsp->num_clks = ARRAY_SIZE(adsp_clk_id);
++	adsp->clks = devm_kcalloc(adsp->dev, adsp->num_clks,
++				sizeof(*adsp->clks), GFP_KERNEL);
++	if (IS_ERR(adsp->clks)) {
++		ret = PTR_ERR(adsp->clks);
++		if (ret != -EPROBE_DEFER)
++			dev_err(adsp->dev, "failed to get adsp clock");
++		return ret;
++	}
++
++	for (i = 0; i < adsp->num_clks; i++)
++		adsp->clks[i].id = adsp_clk_id[i];
++
++	return devm_clk_bulk_get(adsp->dev, adsp->num_clks, adsp->clks);
++}
++
++static int adsp_init_reset(struct qcom_adsp *adsp)
++{
++	adsp->pdc_sync_reset = devm_reset_control_get_exclusive(adsp->dev,
++			"pdc_sync");
++	if (IS_ERR(adsp->pdc_sync_reset)) {
++		dev_err(adsp->dev, "failed to acquire pdc_sync reset\n");
++		return PTR_ERR(adsp->pdc_sync_reset);
++	}
++
++	adsp->cc_lpass_restart = devm_reset_control_get_exclusive(adsp->dev,
++			"cc_lpass");
++	if (IS_ERR(adsp->cc_lpass_restart)) {
++		dev_err(adsp->dev, "failed to acquire cc_lpass restart\n");
++		return PTR_ERR(adsp->cc_lpass_restart);
++	}
++
++	return 0;
++}
++
++static int adsp_init_mmio(struct qcom_adsp *adsp,
++				struct platform_device *pdev)
++{
++	struct device_node *syscon;
++	struct resource *res;
++	int ret;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	adsp->qdsp6ss_base = devm_ioremap(&pdev->dev, res->start,
++			resource_size(res));
++	if (IS_ERR(adsp->qdsp6ss_base)) {
++		dev_err(adsp->dev, "failed to map QDSP6SS registers\n");
++		return PTR_ERR(adsp->qdsp6ss_base);
++	}
++
++	syscon = of_parse_phandle(pdev->dev.of_node, "qcom,halt-regs", 0);
++	if (!syscon) {
++		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
++		return -EINVAL;
++	}
++
++	adsp->halt_map = syscon_node_to_regmap(syscon);
++	of_node_put(syscon);
++	if (IS_ERR(adsp->halt_map))
++		return PTR_ERR(adsp->halt_map);
++
++	ret = of_property_read_u32_index(pdev->dev.of_node, "qcom,halt-regs",
++			1, &adsp->halt_lpass);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "no offset in syscon\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
++{
++	struct device_node *node;
++	struct resource r;
++	int ret;
++
++	node = of_parse_phandle(adsp->dev->of_node, "memory-region", 0);
++	if (!node) {
++		dev_err(adsp->dev, "no memory-region specified\n");
++		return -EINVAL;
++	}
++
++	ret = of_address_to_resource(node, 0, &r);
++	if (ret)
++		return ret;
++
++	adsp->mem_phys = adsp->mem_reloc = r.start;
++	adsp->mem_size = resource_size(&r);
++	adsp->mem_region = devm_ioremap_wc(adsp->dev,
++				adsp->mem_phys, adsp->mem_size);
++	if (!adsp->mem_region) {
++		dev_err(adsp->dev, "unable to map memory region: %pa+%zx\n",
++			&r.start, adsp->mem_size);
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
++static int adsp_probe(struct platform_device *pdev)
++{
++	const struct adsp_pil_data *desc;
++	struct qcom_adsp *adsp;
++	struct rproc *rproc;
++	int ret;
++
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
++	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
++			    desc->firmware_name, sizeof(*adsp));
++	if (!rproc) {
++		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
++		return -ENOMEM;
++	}
++
++	adsp = (struct qcom_adsp *)rproc->priv;
++	adsp->dev = &pdev->dev;
++	adsp->rproc = rproc;
++	platform_set_drvdata(pdev, adsp);
++
++	ret = adsp_alloc_memory_region(adsp);
++	if (ret)
++		goto free_rproc;
++
++	ret = adsp_init_clock(adsp);
++	if (ret)
++		goto free_rproc;
++
++	pm_runtime_enable(adsp->dev);
++
++	ret = adsp_init_reset(adsp);
++	if (ret)
++		goto disable_pm;
++
++	ret = adsp_init_mmio(adsp, pdev);
++	if (ret)
++		goto disable_pm;
++
++	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
++			     qcom_adsp_pil_handover);
++	if (ret)
++		goto disable_pm;
++
++	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
++	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
++	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
++					      desc->sysmon_name,
++					      desc->ssctl_id);
++
++	ret = rproc_add(rproc);
++	if (ret)
++		goto disable_pm;
++
++	return 0;
++
++disable_pm:
++	pm_runtime_disable(adsp->dev);
++free_rproc:
++	rproc_free(rproc);
++
++	return ret;
++}
++
++static int adsp_remove(struct platform_device *pdev)
++{
++	struct qcom_adsp *adsp = platform_get_drvdata(pdev);
++
++	rproc_del(adsp->rproc);
++
++	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
++	qcom_remove_sysmon_subdev(adsp->sysmon);
++	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
++	pm_runtime_disable(adsp->dev);
++	rproc_free(adsp->rproc);
++
++	return 0;
++}
++
++static const struct adsp_pil_data adsp_resource_init = {
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mdt",
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
++};
++
++static const struct of_device_id adsp_of_match[] = {
++	{ .compatible = "qcom,sdm845-adsp-pil",
++	  .data = &adsp_resource_init},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, adsp_of_match);
++
++static struct platform_driver adsp_pil_driver = {
++	.probe = adsp_probe,
++	.remove = adsp_remove,
++	.driver = {
++		.name = "qcom_adsp_pil",
++		.of_match_table = adsp_of_match,
++	},
++};
++
++module_platform_driver(adsp_pil_driver);
++MODULE_DESCRIPTION("QTI SDM845 ADSP Peripheral Image Loader");
++MODULE_LICENSE("GPL v2");
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-> 
-> >         rc = read_blk_stat(nfit_blk, lane) ? -EIO : 0;
-> >         return rc;
-> > diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
-> > index fb667bf..49dce9c 100644
-> > --- a/drivers/nvdimm/claim.c
-> > +++ b/drivers/nvdimm/claim.c
-> > @@ -262,6 +262,7 @@ static int nsio_rw_bytes(struct nd_namespace_common
-> > *ndns,
-> >  {
-> >         struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
-> >         unsigned int sz_align = ALIGN(size + (offset & (512 - 1)), 512);
-> > +       struct nd_region *nd_region = to_nd_region(ndns->dev.parent);
-> >         sector_t sector = offset >> 9;
-> >         int rc = 0;
-> >
-> > @@ -301,7 +302,7 @@ static int nsio_rw_bytes(struct nd_namespace_common
-> > *ndns,
-> >         }
-> >
-> >         memcpy_flushcache(nsio->addr + offset, buf, size);
-> > -       nvdimm_flush(to_nd_region(ndns->dev.parent));
-> > +       nd_region->flush(nd_region);
-> 
-> For this you would need to teach nsio_rw_bytes() that the flush can fail.
-
-Sure.
-
-> 
-> >
-> >         return rc;
-> >  }
-> > diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> > index 6071e29..ba57cfa 100644
-> > --- a/drivers/nvdimm/pmem.c
-> > +++ b/drivers/nvdimm/pmem.c
-> > @@ -201,7 +201,8 @@ static blk_qc_t pmem_make_request(struct request_queue
-> > *q, struct bio *bio)
-> >         struct nd_region *nd_region = to_region(pmem);
-> >
-> >         if (bio->bi_opf & REQ_PREFLUSH)
-> > -               nvdimm_flush(nd_region);
-> > +               bio->bi_status = nd_region->flush(nd_region);
-> > +
-> 
-> Let's have nvdimm_flush() return 0 or -EIO if it fails since thats
-> what nsio_rw_bytes() expects, and you'll need to translate that to:
-> BLK_STS_IOERR
-
-o.k. Will change it as per suggestion.
-
-> 
-> >
-> >         do_acct = nd_iostat_start(bio, &start);
-> >         bio_for_each_segment(bvec, bio, iter) {
-> > @@ -216,7 +217,7 @@ static blk_qc_t pmem_make_request(struct request_queue
-> > *q, struct bio *bio)
-> >                 nd_iostat_end(bio, start);
-> >
-> >         if (bio->bi_opf & REQ_FUA)
-> > -               nvdimm_flush(nd_region);
-> > +               bio->bi_status = nd_region->flush(nd_region);
-> 
-> Same comment.
-
-Sure.
-
-> 
-> >
-> >         bio_endio(bio);
-> >         return BLK_QC_T_NONE;
-> > @@ -517,6 +518,7 @@ static int nd_pmem_probe(struct device *dev)
-> >  static int nd_pmem_remove(struct device *dev)
-> >  {
-> >         struct pmem_device *pmem = dev_get_drvdata(dev);
-> > +       struct nd_region *nd_region = to_region(pmem);
-> >
-> >         if (is_nd_btt(dev))
-> >                 nvdimm_namespace_detach_btt(to_nd_btt(dev));
-> > @@ -528,14 +530,16 @@ static int nd_pmem_remove(struct device *dev)
-> >                 sysfs_put(pmem->bb_state);
-> >                 pmem->bb_state = NULL;
-> >         }
-> > -       nvdimm_flush(to_nd_region(dev->parent));
-> > +       nd_region->flush(nd_region);
-> 
-> Not needed if the indirect function call moves inside nvdimm_flush().
-
-o.k
-
-> 
-> >
-> >         return 0;
-> >  }
-> >
-> >  static void nd_pmem_shutdown(struct device *dev)
-> >  {
-> > -       nvdimm_flush(to_nd_region(dev->parent));
-> > +       struct nd_region *nd_region = to_nd_region(dev->parent);
-> > +
-> > +       nd_region->flush(nd_region);
-> >  }
-> >
-> >  static void nd_pmem_notify(struct device *dev, enum nvdimm_event event)
-> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-> > index fa37afc..a170a6b 100644
-> > --- a/drivers/nvdimm/region_devs.c
-> > +++ b/drivers/nvdimm/region_devs.c
-> > @@ -290,7 +290,7 @@ static ssize_t deep_flush_store(struct device *dev,
-> > struct device_attribute *att
-> >                 return rc;
-> >         if (!flush)
-> >                 return -EINVAL;
-> > -       nvdimm_flush(nd_region);
-> > +       nd_region->flush(nd_region);
-> 
-> Let's pass the error code through if the flush fails.
-
-o.k
-
-> 
-> >
-> >         return len;
-> >  }
-> > @@ -1065,6 +1065,11 @@ static struct nd_region *nd_region_create(struct
-> > nvdimm_bus *nvdimm_bus,
-> >         dev->of_node = ndr_desc->of_node;
-> >         nd_region->ndr_size = resource_size(ndr_desc->res);
-> >         nd_region->ndr_start = ndr_desc->res->start;
-> > +       if (ndr_desc->flush)
-> > +               nd_region->flush = ndr_desc->flush;
-> > +       else
-> > +               nd_region->flush = nvdimm_flush;
-> > +
-> 
-> We'll need to rename the existing nvdimm_flush() to generic_nvdimm_flush().
-
-Sure.
-
-> 
-> >         nd_device_register(dev);
-> >
-> >         return nd_region;
-> > @@ -1109,7 +1114,7 @@ EXPORT_SYMBOL_GPL(nvdimm_volatile_region_create);
-> >   * nvdimm_flush - flush any posted write queues between the cpu and pmem
-> >   media
-> >   * @nd_region: blk or interleaved pmem region
-> >   */
-> > -void nvdimm_flush(struct nd_region *nd_region)
-> > +int nvdimm_flush(struct nd_region *nd_region)
-> >  {
-> >         struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
-> >         int i, idx;
-> > @@ -1133,7 +1138,10 @@ void nvdimm_flush(struct nd_region *nd_region)
-> >                 if (ndrd_get_flush_wpq(ndrd, i, 0))
-> >                         writeq(1, ndrd_get_flush_wpq(ndrd, i, idx));
-> >         wmb();
-> > +
-> > +       return 0;
-> >  }
-> > +
-> 
-> Needless newline.
-
-Will remove this.
-
-> 
-> >  EXPORT_SYMBOL_GPL(nvdimm_flush);
-> >
-> >  /**
-> > diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> > index 097072c..3af7177 100644
-> > --- a/include/linux/libnvdimm.h
-> > +++ b/include/linux/libnvdimm.h
-> > @@ -115,6 +115,7 @@ struct nd_mapping_desc {
-> >         int position;
-> >  };
-> >
-> > +struct nd_region;
-> >  struct nd_region_desc {
-> >         struct resource *res;
-> >         struct nd_mapping_desc *mapping;
-> > @@ -126,6 +127,7 @@ struct nd_region_desc {
-> >         int numa_node;
-> >         unsigned long flags;
-> >         struct device_node *of_node;
-> > +       int (*flush)(struct nd_region *nd_region);
-> >  };
-> >
-> >  struct device;
-> > @@ -201,7 +203,7 @@ unsigned long nd_blk_memremap_flags(struct
-> > nd_blk_region *ndbr);
-> >  unsigned int nd_region_acquire_lane(struct nd_region *nd_region);
-> >  void nd_region_release_lane(struct nd_region *nd_region, unsigned int
-> >  lane);
-> >  u64 nd_fletcher64(void *addr, size_t len, bool le);
-> > -void nvdimm_flush(struct nd_region *nd_region);
-> > +int nvdimm_flush(struct nd_region *nd_region);
-> >  int nvdimm_has_flush(struct nd_region *nd_region);
-> >  int nvdimm_has_cache(struct nd_region *nd_region);
-> >
-> > --
-> > 2.9.3
-> >
-> 
-
-Thanks,
-Pankaj
