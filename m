@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A2CECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63DDC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA9720C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:20:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA9720C0A
+	by mail.kernel.org (Postfix) with ESMTP id 8B16720C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B16720C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732298AbeIXSSo (ORCPT
+        id S1732163AbeIXSXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:18:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55840 "EHLO
+        Mon, 24 Sep 2018 14:23:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56230 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731493AbeIXSSn (ORCPT
+        with ESMTP id S1730815AbeIXSXF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:18:43 -0400
+        Mon, 24 Sep 2018 14:23:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6637310AB;
-        Mon, 24 Sep 2018 12:16:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F1D81087;
+        Mon, 24 Sep 2018 12:21:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, George Cherian <george.cherian@cavium.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.14 081/173] ipmi: Fix I2C client removal in the SSIF driver
-Date:   Mon, 24 Sep 2018 13:51:55 +0200
-Message-Id: <20180924113122.007094534@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Joel Becker <jlbec@evilplan.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 118/173] configfs: fix registered group removal
+Date:   Mon, 24 Sep 2018 13:52:32 +0200
+Message-Id: <20180924113124.695436699@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -51,125 +53,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Mike Christie <mchristi@redhat.com>
 
-commit 0745dde62835be7e2afe62fcdb482fcad79cb743 upstream.
+[ Upstream commit cc57c07343bd071cdf1915a91a24ab7d40c9b590 ]
 
-The SSIF driver was removing any client that came in through the
-platform interface, but it should only remove clients that it
-added.  On a failure in the probe function, this could result
-in the following oops when the driver is removed and the
-client gets unregistered twice:
+This patch fixes a bug where configfs_register_group had added
+a group in a tree, and userspace has done a rmdir on a dir somewhere
+above that group and we hit a kernel crash. The problem is configfs_rmdir
+will detach everything under it and unlink groups on the default_groups
+list. It will not unlink groups added with configfs_register_group so when
+configfs_unregister_group is called to drop its references to the group/items
+we crash when we try to access the freed dentrys.
 
- CPU: 107 PID: 30266 Comm: rmmod Not tainted 4.18.0+ #80
- Hardware name: Cavium Inc. Saber/Saber, BIOS Cavium reference firmware version 7.0 08/04/2018
- pstate: 60400009 (nZCv daif +PAN -UAO)
- pc : kernfs_find_ns+0x28/0x120
- lr : kernfs_find_and_get_ns+0x40/0x60
- sp : ffff00002310fb50
- x29: ffff00002310fb50 x28: ffff800a8240f800
- x27: 0000000000000000 x26: 0000000000000000
- x25: 0000000056000000 x24: ffff000009073000
- x23: ffff000008998b38 x22: 0000000000000000
- x21: ffff800ed86de820 x20: 0000000000000000
- x19: ffff00000913a1d8 x18: 0000000000000000
- x17: 0000000000000000 x16: 0000000000000000
- x15: 0000000000000000 x14: 5300737265766972
- x13: 643d4d4554535953 x12: 0000000000000030
- x11: 0000000000000030 x10: 0101010101010101
- x9 : ffff800ea06cc3f9 x8 : 0000000000000000
- x7 : 0000000000000141 x6 : ffff000009073000
- x5 : ffff800adb706b00 x4 : 0000000000000000
- x3 : 00000000ffffffff x2 : 0000000000000000
- x1 : ffff000008998b38 x0 : ffff000008356760
- Process rmmod (pid: 30266, stack limit = 0x00000000e218418d)
- Call trace:
-  kernfs_find_ns+0x28/0x120
-  kernfs_find_and_get_ns+0x40/0x60
-  sysfs_unmerge_group+0x2c/0x6c
-  dpm_sysfs_remove+0x34/0x70
-  device_del+0x58/0x30c
-  device_unregister+0x30/0x7c
-  i2c_unregister_device+0x84/0x90 [i2c_core]
-  ssif_platform_remove+0x38/0x98 [ipmi_ssif]
-  platform_drv_remove+0x2c/0x6c
-  device_release_driver_internal+0x168/0x1f8
-  driver_detach+0x50/0xbc
-  bus_remove_driver+0x74/0xe8
-  driver_unregister+0x34/0x5c
-  platform_driver_unregister+0x20/0x2c
-  cleanup_ipmi_ssif+0x50/0xd82c [ipmi_ssif]
-  __arm64_sys_delete_module+0x1b4/0x220
-  el0_svc_handler+0x104/0x160
-  el0_svc+0x8/0xc
- Code: aa1e03e0 aa0203f6 aa0103f7 d503201f (7940e280)
- ---[ end trace 09f0e34cce8e2d8c ]---
- Kernel panic - not syncing: Fatal exception
- SMP: stopping secondary CPUs
- Kernel Offset: disabled
- CPU features: 0x23800c38
+The patch just adds a check for if a rmdir has been done above
+us and if so just does the unlink part of unregistration.
 
-So track the clients that the SSIF driver adds and only remove
-those.
+Sorry if you are getting this multiple times. I thouhgt I sent
+this to some of you and lkml, but I do not see it.
 
-Reported-by: George Cherian <george.cherian@cavium.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Tested-by: George Cherian <george.cherian@cavium.com>
-Cc: <stable@vger.kernel.org> # 4.14.x
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Joel Becker <jlbec@evilplan.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/char/ipmi/ipmi_ssif.c |   19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ fs/configfs/dir.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -184,6 +184,8 @@ struct ssif_addr_info {
- 	struct device *dev;
- 	struct i2c_client *client;
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -1777,6 +1777,16 @@ void configfs_unregister_group(struct co
+ 	struct dentry *dentry = group->cg_item.ci_dentry;
+ 	struct dentry *parent = group->cg_item.ci_parent->ci_dentry;
  
-+	struct i2c_client *added_client;
++	mutex_lock(&subsys->su_mutex);
++	if (!group->cg_item.ci_parent->ci_group) {
++		/*
++		 * The parent has already been unlinked and detached
++		 * due to a rmdir.
++		 */
++		goto unlink_group;
++	}
++	mutex_unlock(&subsys->su_mutex);
 +
- 	struct mutex clients_mutex;
- 	struct list_head clients;
+ 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
+ 	spin_lock(&configfs_dirent_lock);
+ 	configfs_detach_prep(dentry, NULL);
+@@ -1791,6 +1801,7 @@ void configfs_unregister_group(struct co
+ 	dput(dentry);
  
-@@ -1710,15 +1712,7 @@ static int ssif_probe(struct i2c_client
- 
-  out:
- 	if (rv) {
--		/*
--		 * Note that if addr_info->client is assigned, we
--		 * leave it.  The i2c client hangs around even if we
--		 * return a failure here, and the failure here is not
--		 * propagated back to the i2c code.  This seems to be
--		 * design intent, strange as it may be.  But if we
--		 * don't leave it, ssif_platform_remove will not remove
--		 * the client like it should.
--		 */
-+		addr_info->client = NULL;
- 		dev_err(&client->dev, "Unable to start IPMI SSIF: %d\n", rv);
- 		kfree(ssif_info);
- 	}
-@@ -1737,7 +1731,8 @@ static int ssif_adapter_handler(struct d
- 	if (adev->type != &i2c_adapter_type)
- 		return 0;
- 
--	i2c_new_device(to_i2c_adapter(adev), &addr_info->binfo);
-+	addr_info->added_client = i2c_new_device(to_i2c_adapter(adev),
-+						 &addr_info->binfo);
- 
- 	if (!addr_info->adapter_name)
- 		return 1; /* Only try the first I2C adapter by default. */
-@@ -2018,8 +2013,8 @@ static int ssif_platform_remove(struct p
- 		return 0;
- 
- 	mutex_lock(&ssif_infos_mutex);
--	if (addr_info->client)
--		i2c_unregister_device(addr_info->client);
-+	if (addr_info->added_client)
-+		i2c_unregister_device(addr_info->added_client);
- 
- 	list_del(&addr_info->link);
- 	kfree(addr_info);
+ 	mutex_lock(&subsys->su_mutex);
++unlink_group:
+ 	unlink_group(group);
+ 	mutex_unlock(&subsys->su_mutex);
+ }
 
 
