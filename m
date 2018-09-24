@@ -2,100 +2,94 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08336C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08BFECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C101320676
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:23:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C101320676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CD8D20676
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:24:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CD8D20676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbeIXX1I (ORCPT
+        id S1731979AbeIXX1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 19:27:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:39278 "EHLO foss.arm.com"
+        Mon, 24 Sep 2018 19:27:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46826 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbeIXX1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 19:27:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5FD380D;
-        Mon, 24 Sep 2018 10:23:56 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D75B73F5BD;
-        Mon, 24 Sep 2018 10:23:53 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 18:23:51 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
- default
-Message-ID: <20180924172351.GV1413@e110439-lin>
-References: <20180828135324.21976-15-patrick.bellasi@arm.com>
- <20180904134748.GA4974@localhost.localdomain>
- <20180906144053.GD25636@e110439-lin>
- <20180914111003.GC24082@hirez.programming.kicks-ass.net>
- <20180914140732.GR1413@e110439-lin>
- <20180914142813.GM24124@hirez.programming.kicks-ass.net>
- <20180917122723.GS1413@e110439-lin>
- <20180921091308.GD24082@hirez.programming.kicks-ass.net>
- <20180924151400.GT1413@e110439-lin>
- <20180924155616.GA7060@hirez.programming.kicks-ass.net>
+        id S1726133AbeIXX1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 19:27:20 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B65F220731; Mon, 24 Sep 2018 19:24:06 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7065720379;
+        Mon, 24 Sep 2018 19:23:56 +0200 (CEST)
+Date:   Mon, 24 Sep 2018 19:23:56 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     <christophe.kerello@st.com>
+Cc:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH 2/3] mtd: rawnand: stm32_fmc2: add STM32 FMC2 NAND flash
+ controller driver
+Message-ID: <20180924192356.5f2e56fd@bbrezillon>
+In-Reply-To: <1537199260-7280-3-git-send-email-christophe.kerello@st.com>
+References: <1537199260-7280-1-git-send-email-christophe.kerello@st.com>
+        <1537199260-7280-3-git-send-email-christophe.kerello@st.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180924155616.GA7060@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-Sep 17:56, Peter Zijlstra wrote:
-> On Mon, Sep 24, 2018 at 04:14:00PM +0100, Patrick Bellasi wrote:
-> > On 21-Sep 11:13, Peter Zijlstra wrote:
-> > > Laptops with active cooling however...
-> > 
-> > How do you see active cooling playing a role ?
-> > 
-> > Are you thinking, for example, at reduced fan noise if we remain below
-> > a certain OPP ?
-> > 
-> > Are you factoring fans power consumptions into the overall P consumption ?
-> 
-> Nothing as fancy as that; I just figured that with a larger cooling
-> capacity, you can push chips higher onto that curve past the optimal
-> IPC/Watt point. Make it go fast etc..
+Hi Christophe,
 
-That very concept of "optimal IPC/Watt" point is not something easy to
-define considering a monotonic function and without considering the
-specific optimization goals.
+On Mon, 17 Sep 2018 17:47:39 +0200
+<christophe.kerello@st.com> wrote:
 
-It really sounds like saying that an LP problem has a unique solution
-independently from the optimization function.
+> +struct stm32_fmc2 {
+> +	struct nand_chip chip;
+> +	struct device *dev;
+> +	void __iomem *io_base;
+> +	void __iomem *data_base[FMC2_MAX_CE];
+> +	void __iomem *cmd_base[FMC2_MAX_CE];
+> +	void __iomem *addr_base[FMC2_MAX_CE];
+> +	phys_addr_t io_phys_addr;
+> +	phys_addr_t data_phys_addr[FMC2_MAX_CE];
+> +	struct clk *clk;
+> +
+> +	struct dma_chan *dma_tx_ch;
+> +	struct dma_chan *dma_rx_ch;
+> +	struct dma_chan *dma_ecc_ch;
+> +	struct sg_table dma_data_sg;
+> +	struct sg_table dma_ecc_sg;
+> +	u8 *ecc_buf;
+> +	int dma_ecc_len;
+> +
+> +	struct completion complete;
+> +	struct completion dma_data_complete;
+> +	struct completion dma_ecc_complete;
+> +
+> +	struct stm32_fmc2_timings timings;
+> +	u8 cs_assigned;
+> +	int cs_sel;
+> +	int ncs;
+> +	int cs_used[FMC2_MAX_CE];
+> +};
 
-Do you think we should "mandate" an optimization function from kernel
-space? I'm not saying it does not make sense, but I find it at least a
-strong implementation enforcement.
+Can we have a clear separation between the NAND controller and NAND
+chip structures. I know you only support a single chip per-controller
+right now, but I prefer to have things clearly separated from the
+beginning. 
 
--- 
-#include <best/regards.h>
+Regards,
 
-Patrick Bellasi
+Boris
