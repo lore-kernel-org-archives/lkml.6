@@ -2,167 +2,67 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F99BC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0535ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C206A206B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:32:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C206A206B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 618EC2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:38:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618EC2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729476AbeIYAgC (ORCPT
+        id S1729589AbeIYAlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 20:36:02 -0400
-Received: from mga01.intel.com ([192.55.52.88]:14514 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729144AbeIYAgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 20:36:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 11:32:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,298,1534834800"; 
-   d="scan'208";a="93313315"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 24 Sep 2018 11:32:15 -0700
-Received: from [10.252.24.57] (abudanko-mobl.ccr.corp.intel.com [10.252.24.57])
-        by linux.intel.com (Postfix) with ESMTP id 8E9205801CD;
-        Mon, 24 Sep 2018 11:32:12 -0700 (PDT)
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914082653.GG24224@krava> <20180914082858.GH24224@krava>
- <71153c79-f0b9-4bf7-7491-202f46c6b5ed@linux.intel.com>
- <4f63c3d5-2a33-28ed-4e45-086045e9ab50@linux.intel.com>
- <20180923193001.GD30923@krava>
- <15042139-23ee-3bb7-4307-276e505a4607@linux.intel.com>
- <c37d1c7d-9f98-4aed-e621-6b3b76d3d3d9@linux.intel.com>
- <20180924142927.GA22809@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <5ac85264-50a5-8e70-0c12-7cb0da433a42@linux.intel.com>
-Date:   Mon, 24 Sep 2018 21:32:11 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180924142927.GA22809@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 24 Sep 2018 20:41:37 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:36286 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbeIYAlh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 20:41:37 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1g4VkD-0002qj-Lj; Mon, 24 Sep 2018 14:38:05 -0400
+From:   Rik van Riel <riel@surriel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, kernel-team@fb.com, songliubraving@fb.com,
+        mingo@kernel.org, will.deacon@arm.com, hpa@zytor.com,
+        luto@kernel.org, npiggin@gmail.com
+Subject: [PATCH 0/7] x86/mm/tlb: make lazy TLB mode even lazier
+Date:   Mon, 24 Sep 2018 14:37:52 -0400
+Message-Id: <20180924183759.23955-1-riel@surriel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Linus asked me to come up with a smaller patch set to get the benefits
+of lazy TLB mode, so I spent some time trying out various permutations
+of the code, with a few workloads that do lots of context switches, and
+also happen to have a fair number of TLB flushes a second.
 
-On 24.09.2018 17:29, Jiri Olsa wrote:
-> On Mon, Sep 24, 2018 at 04:09:09PM +0300, Alexey Budankov wrote:
->> Hi,
->>
->> On 24.09.2018 10:02, Alexey Budankov wrote:
->>> Hi,
->>>
->>> On 23.09.2018 22:30, Jiri Olsa wrote:
->>>> On Fri, Sep 21, 2018 at 09:13:08AM +0300, Alexey Budankov wrote:
->>>>
->>>> SNIP
->>>>
->>>>> Events:
->>>>> cpu/period=P,event=0x3c/Duk;CPU_CLK_UNHALTED.THREAD
->>>>> cpu/period=P,umask=0x3/Duk;CPU_CLK_UNHALTED.REF_TSC
->>>>> cpu/period=P,event=0xc0/Duk;INST_RETIRED.ANY
->>>>> cpu/period=0xaae61,event=0xc2,umask=0x10/uk;UOPS_RETIRED.ALL
->>>>> cpu/period=0x11171,event=0xc2,umask=0x20/uk;UOPS_RETIRED.SCALAR_SIMD
->>>>> cpu/period=0x11171,event=0xc2,umask=0x40/uk;UOPS_RETIRED.PACKED_SIMD
->>>>>
->>>>> =================================================
->>>>>
->>>>> Command:
->>>>> /usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf.thr record --threads=T \
->>>>> 	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
->>>>>         -e cpu/period=P,event=0x3c/Duk,\
->>>>>            cpu/period=P,umask=0x3/Duk,\
->>>>>            cpu/period=P,event=0xc0/Duk,\
->>>>>            cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
->>>>>            cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
->>>>>            cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
->>>>>          --clockid=monotonic_raw -- ./matrix.(icc|gcc)
->>>>
->>>> hum, so I guess the results suck because of the -a option,
->>>> getting extra samples for all the perf record threads
->>>>
->>>> could you try without the -a? you monitor only user events,
->>>> so you're interested only in ./matrix.* samples, right?
->>>
->>> Ok, trying without -a, in per-process mode. 
->>
->> Command:
->>
->> /usr/bin/time ./perf.thr record --threads=T \
->> 	-N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
->> 	-e cpu/period=P,event=0x3c/Duk,\
->> 	   cpu/period=P,umask=0x3/Duk,\
->> 	   cpu/period=P,event=0xc0/Duk,\
->> 	   cpu/period=0xaae61,event=0xc2,umask=0x10/uk,\
->> 	   cpu/period=0x11171,event=0xc2,umask=0x20/uk,\
->> 	   cpu/period=0x11171,event=0xc2,umask=0x40/uk \
->> 	--clockid=monotonic_raw -- ./matrix.gcc
->>
->> Workload: matrix multiplication in 128 threads
->>
->> T : 272
->> 	P (period, ms)       : 0.35 
->> 	runtime overhead (%) : 13x ~ 87.73 / 6.81
-> 
-> how do you meassure this?
+Both of the workloads tested are memcache style workloads, running
+on two socket systems. One of the workloads has around 300,000
+context switches a second, and around 19,000 TLB flushes.
 
-This is the ratio of elapsed times:
-runtime overhead (%) : elapsed_time_under_profiling / elapsed_time
-i.e.
+The first patch in the series, of always using lazy TLB mode,
+reduces CPU use around 1% on both Haswell and Broadwell systems.
 
-/usr/bin/time ./matrix.gcc
-...
-767.03user 11.17system 0:06.81elapsed 11424%CPU (0avgtext+0avgdata 100756maxresident)k
-88inputs+0outputs (0major+139898minor)pagefaults 0swaps
+The rest of the series reduces the number of TLB flush IPIs by
+about 1,500 a second, resulting in a 0.2% reduction in CPU use,
+on top of the 1% seen by just enabling lazy TLB mode.
 
-so elapsed_time = 6.81 sec
+These are the low hanging fruits in the context switch code.
 
-elapsed_time_uder_profiling is elapsed value from output of 
+The big thing remaining is the reference count overhead of
+the lazy TLB mm_struct, but getting rid of that is rather a
+lot of code for a small performance gain. Not quite what
+Linus asked for :)
 
-/usr/bin/time ./perf.thr record --threads=T ...
 
-> 
->> 	data loss (%)        : 0
->> 	LOST events          : 36
->> 	SAMPLE events        : 8048542
->>         perf.data size (GiB) : 10
-> 
-> any idea why does it have some much more samples?
-
-Presumably, this is because period is 350us and this is the smallest 
-one that perf.thr manages to capture data without data loss (=0) when T=272.
-However, during collection, I get message that max sampling frequency 
-is lowered to 3KHz.
-
-Thanks,
-Alexey
-
-> 
-> thanks,
-> jirka
-> 
