@@ -2,40 +2,46 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5ECECE567
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0C3ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31EBA20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EBA20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 5103920C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5103920C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732316AbeIXSXO (ORCPT
+        id S1732352AbeIXSXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:23:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56256 "EHLO
+        Mon, 24 Sep 2018 14:23:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56272 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732275AbeIXSXN (ORCPT
+        with ESMTP id S1732318AbeIXSXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:23:13 -0400
+        Mon, 24 Sep 2018 14:23:16 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 813AC10A7;
-        Mon, 24 Sep 2018 12:21:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 97D62108A;
+        Mon, 24 Sep 2018 12:21:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.14 102/173] CIFS: fix wrapping bugs in num_entries()
-Date:   Mon, 24 Sep 2018 13:52:16 +0200
-Message-Id: <20180924113123.567675031@linuxfoundation.org>
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Christ van Willegen <cvwillegen@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 120/173] pinctrl: pinmux: Return selector to the pinctrl driver
+Date:   Mon, 24 Sep 2018 13:52:34 +0200
+Message-Id: <20180924113124.799928646@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,75 +59,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 56446f218af1133c802dad8e9e116f07f381846c upstream.
+[ Upstream commit f913cfce4ee49a3382a9ff95696f49a46e56e974 ]
 
-The problem is that "entryptr + next_offset" and "entryptr + len + size"
-can wrap.  I ended up changing the type of "entryptr" because it makes
-the math easier when we don't have to do so much casting.
+We must return the selector from pinmux_generic_add_function() so
+pin controller device drivers can remove the right group if needed
+for deferred probe for example. And we now must make sure that a
+proper name is passed so we can use it to check if the entry already
+exists.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Note that fixes are also needed for the pin controller drivers to
+use the selector value.
+
+Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
+managing groups")
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: Christ van Willegen <cvwillegen@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Tested-By: H. Nikolaus Schaller <hns@goldelico.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2pdu.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ drivers/pinctrl/pinmux.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2939,33 +2939,38 @@ num_entries(char *bufstart, char *end_of
- 	int len;
- 	unsigned int entrycount = 0;
- 	unsigned int next_offset = 0;
--	FILE_DIRECTORY_INFO *entryptr;
-+	char *entryptr;
-+	FILE_DIRECTORY_INFO *dir_info;
- 
- 	if (bufstart == NULL)
- 		return 0;
- 
--	entryptr = (FILE_DIRECTORY_INFO *)bufstart;
-+	entryptr = bufstart;
- 
- 	while (1) {
--		entryptr = (FILE_DIRECTORY_INFO *)
--					((char *)entryptr + next_offset);
--
--		if ((char *)entryptr + size > end_of_buf) {
-+		if (entryptr + next_offset < entryptr ||
-+		    entryptr + next_offset > end_of_buf ||
-+		    entryptr + next_offset + size > end_of_buf) {
- 			cifs_dbg(VFS, "malformed search entry would overflow\n");
- 			break;
- 		}
- 
--		len = le32_to_cpu(entryptr->FileNameLength);
--		if ((char *)entryptr + len + size > end_of_buf) {
-+		entryptr = entryptr + next_offset;
-+		dir_info = (FILE_DIRECTORY_INFO *)entryptr;
-+
-+		len = le32_to_cpu(dir_info->FileNameLength);
-+		if (entryptr + len < entryptr ||
-+		    entryptr + len > end_of_buf ||
-+		    entryptr + len + size > end_of_buf) {
- 			cifs_dbg(VFS, "directory entry name would overflow frame end of buf %p\n",
- 				 end_of_buf);
- 			break;
- 		}
- 
--		*lastentry = (char *)entryptr;
-+		*lastentry = entryptr;
- 		entrycount++;
- 
--		next_offset = le32_to_cpu(entryptr->NextEntryOffset);
-+		next_offset = le32_to_cpu(dir_info->NextEntryOffset);
- 		if (!next_offset)
- 			break;
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -308,7 +308,6 @@ static int pinmux_func_name_to_selector(
+ 		selector++;
  	}
+ 
+-	dev_err(pctldev->dev, "function '%s' not supported\n", function);
+ 	return -EINVAL;
+ }
+ 
+@@ -777,6 +776,16 @@ int pinmux_generic_add_function(struct p
+ 				void *data)
+ {
+ 	struct function_desc *function;
++	int selector;
++
++	if (!name)
++		return -EINVAL;
++
++	selector = pinmux_func_name_to_selector(pctldev, name);
++	if (selector >= 0)
++		return selector;
++
++	selector = pctldev->num_functions;
+ 
+ 	function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
+ 	if (!function)
+@@ -787,12 +796,11 @@ int pinmux_generic_add_function(struct p
+ 	function->num_group_names = num_groups;
+ 	function->data = data;
+ 
+-	radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
+-			  function);
++	radix_tree_insert(&pctldev->pin_function_tree, selector, function);
+ 
+ 	pctldev->num_functions++;
+ 
+-	return 0;
++	return selector;
+ }
+ EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
+ 
 
 
