@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3315C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C816CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5107120685
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5107120685
+	by mail.kernel.org (Postfix) with ESMTP id 8D1F220685
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1F220685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbeIXRmA (ORCPT
+        id S1729389AbeIXRmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:42:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50764 "EHLO
+        Mon, 24 Sep 2018 13:42:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50776 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728894AbeIXRmA (ORCPT
+        with ESMTP id S1728894AbeIXRmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:42:00 -0400
+        Mon, 24 Sep 2018 13:42:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B84F61070;
-        Mon, 24 Sep 2018 11:40:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13EDF1072;
+        Mon, 24 Sep 2018 11:40:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 3.18 060/105] netfilter: x_tables: avoid stack-out-of-bounds read in xt_copy_counters_from_user
-Date:   Mon, 24 Sep 2018 13:33:46 +0200
-Message-Id: <20180924113119.562763240@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>, stable@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 061/105] mm: get rid of vmacache_flush_all() entirely
+Date:   Mon, 24 Sep 2018 13:33:47 +0200
+Message-Id: <20180924113119.634208923@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -54,49 +54,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit e466af75c074e76107ae1cd5a2823e9c61894ffb upstream.
+commit 7a9cdebdcc17e426fb5287e4a82db1dfe86339b2 upstream.
 
-syzkaller reports an out of bound read in strlcpy(), triggered
-by xt_copy_counters_from_user()
+Jann Horn points out that the vmacache_flush_all() function is not only
+potentially expensive, it's buggy too.  It also happens to be entirely
+unnecessary, because the sequence number overflow case can be avoided by
+simply making the sequence number be 64-bit.  That doesn't even grow the
+data structures in question, because the other adjacent fields are
+already 64-bit.
 
-Fix this by using memcpy(), then forcing a zero byte at the last position
-of the destination, as Florian did for the non COMPAT code.
+So simplify the whole thing by just making the sequence number overflow
+case go away entirely, which gets rid of all the complications and makes
+the code faster too.  Win-win.
 
-Fixes: d7591f0c41ce ("netfilter: x_tables: introduce and use xt_copy_counters_from_user")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Willem de Bruijn <willemb@google.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Greg Hackmann <ghackmann@google.com>
+[ Oleg Nesterov points out that the VMACACHE_FULL_FLUSHES statistics
+  also just goes away entirely with this ]
+
+Reported-by: Jann Horn <jannh@google.com>
+Suggested-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: stable@kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/x_tables.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/mm_types.h |    2 +-
+ include/linux/sched.h    |    2 +-
+ include/linux/vmacache.h |    5 -----
+ mm/debug.c               |    4 ++--
+ mm/vmacache.c            |   36 ------------------------------------
+ 5 files changed, 4 insertions(+), 45 deletions(-)
 
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -877,7 +877,7 @@ void *xt_copy_counters_from_user(const v
- 		if (copy_from_user(&compat_tmp, user, sizeof(compat_tmp)) != 0)
- 			return ERR_PTR(-EFAULT);
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -345,7 +345,7 @@ struct kioctx_table;
+ struct mm_struct {
+ 	struct vm_area_struct *mmap;		/* list of VMAs */
+ 	struct rb_root mm_rb;
+-	u32 vmacache_seqnum;                   /* per-thread vmacache */
++	u64 vmacache_seqnum;                   /* per-thread vmacache */
+ #ifdef CONFIG_MMU
+ 	unsigned long (*get_unmapped_area) (struct file *filp,
+ 				unsigned long addr, unsigned long len,
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1315,7 +1315,7 @@ struct task_struct {
+ 	unsigned brk_randomized:1;
+ #endif
+ 	/* per-thread vma caching */
+-	u32 vmacache_seqnum;
++	u64 vmacache_seqnum;
+ 	struct vm_area_struct *vmacache[VMACACHE_SIZE];
+ #if defined(SPLIT_RSS_COUNTING)
+ 	struct task_rss_stat	rss_stat;
+--- a/include/linux/vmacache.h
++++ b/include/linux/vmacache.h
+@@ -15,7 +15,6 @@ static inline void vmacache_flush(struct
+ 	memset(tsk->vmacache, 0, sizeof(tsk->vmacache));
+ }
  
--		strlcpy(info->name, compat_tmp.name, sizeof(info->name));
-+		memcpy(info->name, compat_tmp.name, sizeof(info->name) - 1);
- 		info->num_counters = compat_tmp.num_counters;
- 		user += sizeof(compat_tmp);
- 	} else
-@@ -890,9 +890,9 @@ void *xt_copy_counters_from_user(const v
- 		if (copy_from_user(info, user, sizeof(*info)) != 0)
- 			return ERR_PTR(-EFAULT);
+-extern void vmacache_flush_all(struct mm_struct *mm);
+ extern void vmacache_update(unsigned long addr, struct vm_area_struct *newvma);
+ extern struct vm_area_struct *vmacache_find(struct mm_struct *mm,
+ 						    unsigned long addr);
+@@ -29,10 +28,6 @@ extern struct vm_area_struct *vmacache_f
+ static inline void vmacache_invalidate(struct mm_struct *mm)
+ {
+ 	mm->vmacache_seqnum++;
+-
+-	/* deal with overflows */
+-	if (unlikely(mm->vmacache_seqnum == 0))
+-		vmacache_flush_all(mm);
+ }
  
--		info->name[sizeof(info->name) - 1] = '\0';
- 		user += sizeof(*info);
- 	}
-+	info->name[sizeof(info->name) - 1] = '\0';
+ #endif /* __LINUX_VMACACHE_H */
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -166,7 +166,7 @@ EXPORT_SYMBOL(dump_vma);
  
- 	size = sizeof(struct xt_counters);
- 	size *= info->num_counters;
+ void dump_mm(const struct mm_struct *mm)
+ {
+-	pr_emerg("mm %p mmap %p seqnum %d task_size %lu\n"
++	pr_emerg("mm %p mmap %p seqnum %llu task_size %lu\n"
+ #ifdef CONFIG_MMU
+ 		"get_unmapped_area %p\n"
+ #endif
+@@ -196,7 +196,7 @@ void dump_mm(const struct mm_struct *mm)
+ #endif
+ 		"%s",	/* This is here to hold the comma */
+ 
+-		mm, mm->mmap, mm->vmacache_seqnum, mm->task_size,
++		mm, mm->mmap, (long long) mm->vmacache_seqnum, mm->task_size,
+ #ifdef CONFIG_MMU
+ 		mm->get_unmapped_area,
+ #endif
+--- a/mm/vmacache.c
++++ b/mm/vmacache.c
+@@ -6,42 +6,6 @@
+ #include <linux/vmacache.h>
+ 
+ /*
+- * Flush vma caches for threads that share a given mm.
+- *
+- * The operation is safe because the caller holds the mmap_sem
+- * exclusively and other threads accessing the vma cache will
+- * have mmap_sem held at least for read, so no extra locking
+- * is required to maintain the vma cache.
+- */
+-void vmacache_flush_all(struct mm_struct *mm)
+-{
+-	struct task_struct *g, *p;
+-
+-	/*
+-	 * Single threaded tasks need not iterate the entire
+-	 * list of process. We can avoid the flushing as well
+-	 * since the mm's seqnum was increased and don't have
+-	 * to worry about other threads' seqnum. Current's
+-	 * flush will occur upon the next lookup.
+-	 */
+-	if (atomic_read(&mm->mm_users) == 1)
+-		return;
+-
+-	rcu_read_lock();
+-	for_each_process_thread(g, p) {
+-		/*
+-		 * Only flush the vmacache pointers as the
+-		 * mm seqnum is already set and curr's will
+-		 * be set upon invalidation when the next
+-		 * lookup is done.
+-		 */
+-		if (mm == p->mm)
+-			vmacache_flush(p);
+-	}
+-	rcu_read_unlock();
+-}
+-
+-/*
+  * This task may be accessing a foreign mm via (for example)
+  * get_user_pages()->find_vma().  The vmacache is task-local and this
+  * task's vmacache pertains to a different mm (ie, its own).  There is
 
 
