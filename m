@@ -2,148 +2,88 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA6EECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EC7ECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E77321480
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:01:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbkORAp5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E77321480
+	by mail.kernel.org (Postfix) with ESMTP id 9FDFF20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:03:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDFF20C0A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeIYCEw (ORCPT
+        id S1727241AbeIYCGx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:04:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726265AbeIYCEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:04:51 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D5DA20C0A;
-        Mon, 24 Sep 2018 20:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537819259;
-        bh=6N2QS3Qkbz8RZL0tANYJUmUe653BAdA/qRn1gZU63O8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LbkORAp5yr/MlNtqMqId4uTNjbiIhJ3EtHGJ6HUDlRAX5vQ3lvWJvT61cRwYvNLn0
-         NJYcjn7e+jQWEFaPi+xDT2n7oXHmmy8aNVM0ErZUMwZ8yV/DH7nCHHlYg4WvU90ebE
-         754wDme9M7r9Xg/7xhBqOSIWKlXxnXuGo/i9flmk=
-Date:   Mon, 24 Sep 2018 21:00:56 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Eugen Hristev <eugen.hristev@microchip.com>
-Cc:     <ludovic.desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/2] iio: adc: at91: fix acking DRDY irq on simple
- conversions
-Message-ID: <20180924210056.2cae9439@archlinux>
-In-Reply-To: <9846e106-8baf-b491-29ca-8306be9527ee@microchip.com>
-References: <1537447238-18674-1-git-send-email-eugen.hristev@microchip.com>
-        <20180922113123.2c8da044@archlinux>
-        <9846e106-8baf-b491-29ca-8306be9527ee@microchip.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 24 Sep 2018 22:06:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58456 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725824AbeIYCGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 22:06:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1BE3CAF71;
+        Mon, 24 Sep 2018 20:02:59 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 22:02:58 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [patch v2] mm, thp: always specify ineligible vmas as nh in smaps
+Message-ID: <20180924200258.GK18685@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com>
+ <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz>
+ <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1809241227370.241621@chino.kir.corp.google.com>
+ <20180924195603.GJ18685@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924195603.GJ18685@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 09:19:43 +0300
-Eugen Hristev <eugen.hristev@microchip.com> wrote:
-
-> On 22.09.2018 13:31, Jonathan Cameron wrote:
-> > On Thu, 20 Sep 2018 15:40:37 +0300
-> > Eugen Hristev <eugen.hristev@microchip.com> wrote:
-> >   
-> >> When doing simple conversions, the driver did not acknowledge the DRDY irq.
-> >> If this irq is not acked, it will be left pending, and as soon as a trigger
-> >> is enabled, the irq handler will be called, it doesn't know why this irq
-> >> has occurred because no channel is pending, and then we will have irq loop
-> >> and board will hang.
-> >>
-> >> Fixes 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-> >> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> >> Cc: <stable@vger.kernel.org>
-> >> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> >> ---
-> >>   drivers/iio/adc/at91_adc.c | 5 +++++
-> >>   1 file changed, 5 insertions(+)
-> >>
-> >> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
-> >> index 44b5168..e85f859 100644
-> >> --- a/drivers/iio/adc/at91_adc.c
-> >> +++ b/drivers/iio/adc/at91_adc.c
-> >> @@ -712,6 +712,11 @@ static int at91_adc_read_raw(struct iio_dev *idev,
-> >>   		at91_adc_writel(st, AT91_ADC_CHDR,
-> >>   				AT91_ADC_CH(chan->channel));
-> >>   		at91_adc_writel(st, AT91_ADC_IDR, BIT(chan->channel));
-> >> +		/*
-> >> +		 * we need to ack the DRDY irq, otherwise it will be
-> >> +		 * left pending and irq handler will be confused
-> >> +		 */
-> >> +		at91_adc_readl(st, AT91_ADC_LCDR);  
+On Mon 24-09-18 21:56:03, Michal Hocko wrote:
+> On Mon 24-09-18 12:30:07, David Rientjes wrote:
+> > Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> > introduced a regression in that userspace cannot always determine the set
+> > of vmas where thp is ineligible.
 > > 
-> > I'm curious as to how things were working before.  Does this only occur
-> > if we do a raw_read whilst the buffer is enabled?  
+> > Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+> > to determine if a vma is eligible to be backed by hugepages.
 > 
-> No. The situation is that the read raw does not properly cleans itself 
-> up after it's done.
-> The DRDY bit is cleared only when LCDR (last converted data ) is being read.
-> Even if we read the per channel conversion data, the LCDR still needs to 
-> be read to clear this irq status.
-> The driver does not use the DRDY irq but this irq status is still being 
-> set in the status register.
-
-Hmm. That is somewhat nasty if it results in false interrupts when you
-then enable them.
-
+> I was under impression that nh resp hg flags only tell about the madvise
+> status. How do you exactly use these flags in an application?
 > 
-> > 
-> > I would have assumed when it's not enabled, the irq would be masked and
-> > never generated in the first place...
-> > 
-> > It may be that what we actually need to do is to prevent read_raw accesses
-> > when the buffer is enabled (like lots of other drivers do precisely to
-> > avoid this sort of condition). The problem there comes if we have
-> > existing applications doing this combination as we are then breaking
-> > userspace. If that's the case we'll need to be a bit more clever.
-> > 
-> > Hammering down an irq state in a non irq handling path isn't a good
-> > solution.  
+> Your eligible rules as defined here:
 > 
-> Ok, I will move the clearing of the DRDY (LCDR read) in the irq path 
-> then, and send a v2.
-
-If that can be done cleanly, let us go with that approach. If not
-what you have here with the addition of a comments saying that the
-interrupt status is not masked, merely the interrupt and as a result needs
-clearing for when you later enabled the interrupt, is fine.
-
-This definitely sounds like one of those bits of hardware that
-you can write software to use safely but they certainly didn't make
-it easy to do so!
-
-Jonathan
+> > + [*] A process mapping is eligible to be backed by transparent hugepages (thp)
+> > +     depending on system-wide settings and the mapping itself.  See
+> > +     Documentation/admin-guide/mm/transhuge.rst for default behavior.  If a
+> > +     mapping has a flag of "nh", it is not eligible to be backed by hugepages
+> > +     in any condition, either because of prctl(PR_SET_THP_DISABLE) or
+> > +     madvise(MADV_NOHUGEPAGE).  PR_SET_THP_DISABLE takes precedence over any
+> > +     MADV_HUGEPAGE.
 > 
+> doesn't seem to match the reality. I do not see all the file backed
+> mappings to be nh marked. So is this really about eligibility rather
+> than the madvise status? Maybe it is just the above documentation that
+> needs to be updated.
 > 
-> > 
-> > Jonathan
-> >   
-> >>   
-> >>   		st->last_value = 0;
-> >>   		st->done = false;  
-> >   
+> That being said, I do not object to the patch, I am just trying to
+> understand what is the intended usage for the flag that does try to say
+> more than the madvise status.
 
+And moreover, how is the PR_SET_THP_DISABLE any different from the
+global THP disabled case. Do we want to set all vmas to nh as well?
+-- 
+Michal Hocko
+SUSE Labs
