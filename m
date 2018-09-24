@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F631C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1F6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E719F21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E719F21486
+	by mail.kernel.org (Postfix) with ESMTP id 4541C21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4541C21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387453AbeIXS3v (ORCPT
+        id S2387460AbeIXS3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:29:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57364 "EHLO
+        Mon, 24 Sep 2018 14:29:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57378 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbeIXS3u (ORCPT
+        with ESMTP id S1730233AbeIXS3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:29:50 -0400
+        Mon, 24 Sep 2018 14:29:54 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5970D1018;
-        Mon, 24 Sep 2018 12:27:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E7B81018;
+        Mon, 24 Sep 2018 12:27:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 024/235] amd-xgbe: use dma_mapping_error to check map errors
-Date:   Mon, 24 Sep 2018 13:50:10 +0200
-Message-Id: <20180924113107.117393431@linuxfoundation.org>
+Subject: [PATCH 4.18 025/235] nfp: dont fail probe on pci_sriov_set_totalvfs() errors
+Date:   Mon, 24 Sep 2018 13:50:11 +0200
+Message-Id: <20180924113107.241756604@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,45 +54,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit b24dbfe9ce03d9f83306616f22fb0e04e8960abe ]
+[ Upstream commit 5b0ced17edc5710d4e946392d0f2934a9e07b37f ]
 
-The dma_mapping_error() returns true or false, but we want
-to return -ENOMEM if there was an error.
+On machines with buggy ACPI tables or when SR-IOV is already enabled
+we may not be able to set the SR-IOV VF limit in sysfs, it's not fatal
+because the limit is imposed by the driver anyway.  Only the sysfs
+'sriov_totalvfs' attribute will be too high.  Print an error to inform
+user about the failure but allow probe to continue.
 
-Fixes: 174fd2597b0b ("amd-xgbe: Implement split header receive support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amd/xgbe/xgbe-desc.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/netronome/nfp/nfp_main.c |   20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
---- a/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
-@@ -289,7 +289,7 @@ static int xgbe_alloc_pages(struct xgbe_
- 	struct page *pages = NULL;
- 	dma_addr_t pages_dma;
- 	gfp_t gfp;
--	int order, ret;
-+	int order;
+--- a/drivers/net/ethernet/netronome/nfp/nfp_main.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_main.c
+@@ -236,16 +236,20 @@ static int nfp_pcie_sriov_read_nfd_limit
+ 	int err;
  
- again:
- 	order = alloc_order;
-@@ -316,10 +316,9 @@ again:
- 	/* Map the pages */
- 	pages_dma = dma_map_page(pdata->dev, pages, 0,
- 				 PAGE_SIZE << order, DMA_FROM_DEVICE);
--	ret = dma_mapping_error(pdata->dev, pages_dma);
--	if (ret) {
-+	if (dma_mapping_error(pdata->dev, pages_dma)) {
- 		put_page(pages);
--		return ret;
-+		return -ENOMEM;
- 	}
+ 	pf->limit_vfs = nfp_rtsym_read_le(pf->rtbl, "nfd_vf_cfg_max_vfs", &err);
+-	if (!err)
+-		return pci_sriov_set_totalvfs(pf->pdev, pf->limit_vfs);
++	if (err) {
++		/* For backwards compatibility if symbol not found allow all */
++		pf->limit_vfs = ~0;
++		if (err == -ENOENT)
++			return 0;
  
- 	pa->pages = pages;
+-	pf->limit_vfs = ~0;
+-	/* Allow any setting for backwards compatibility if symbol not found */
+-	if (err == -ENOENT)
+-		return 0;
++		nfp_warn(pf->cpp, "Warning: VF limit read failed: %d\n", err);
++		return err;
++	}
+ 
+-	nfp_warn(pf->cpp, "Warning: VF limit read failed: %d\n", err);
+-	return err;
++	err = pci_sriov_set_totalvfs(pf->pdev, pf->limit_vfs);
++	if (err)
++		nfp_warn(pf->cpp, "Failed to set VF count in sysfs: %d\n", err);
++	return 0;
+ }
+ 
+ static int nfp_pcie_sriov_enable(struct pci_dev *pdev, int num_vfs)
 
 
