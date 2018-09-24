@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2229C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37670ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7326220877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:09:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7326220877
+	by mail.kernel.org (Postfix) with ESMTP id E7BB1206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:10:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BB1206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730895AbeIXSLn (ORCPT
+        id S1730393AbeIXSCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:11:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53824 "EHLO
+        Mon, 24 Sep 2018 14:02:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53196 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729250AbeIXSGP (ORCPT
+        with ESMTP id S1729233AbeIXSCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:06:15 -0400
+        Mon, 24 Sep 2018 14:02:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19EFA107A;
-        Mon, 24 Sep 2018 12:04:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B67031086;
+        Mon, 24 Sep 2018 12:00:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 063/111] USB: serial: io_ti: fix array underflow in completion handler
-Date:   Mon, 24 Sep 2018 13:52:30 +0200
-Message-Id: <20180924113111.149387021@linuxfoundation.org>
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 027/111] ARM: exynos: Clear global variable on init error path
+Date:   Mon, 24 Sep 2018 13:51:54 +0200
+Message-Id: <20180924113107.217053027@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -51,38 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit 691a03cfe8ca483f9c48153b869d354e4ae3abef upstream.
+[ Upstream commit cd4806911cee3901bc2b5eb95603cf1958720b57 ]
 
-As reported by Dan Carpenter, a malicious USB device could set
-port_number to a negative value and we would underflow the port array in
-the interrupt completion handler.
+For most of Exynos SoCs, Power Management Unit (PMU) address space is
+mapped into global variable 'pmu_base_addr' very early when initializing
+PMU interrupt controller.  A lot of other machine code depends on it so
+when doing iounmap() on this address, clear the global as well to avoid
+usage of invalid value (pointing to unmapped memory region).
 
-As these devices only have one or two ports, fix this by making sure we
-only consider the seventh bit when determining the port number (and
-ignore bits 0xb0 which are typically set to 0x30).
+Properly mapped PMU address space is a requirement for all other machine
+code so this fix is purely theoretical.  Boot will fail immediately in
+many other places after following this error path.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/io_ti.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-exynos/suspend.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/serial/io_ti.h
-+++ b/drivers/usb/serial/io_ti.h
-@@ -178,7 +178,7 @@ struct ump_interrupt {
- }  __attribute__((packed));
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -252,6 +252,7 @@ static int __init exynos_pmu_irq_init(st
+ 					  NULL);
+ 	if (!domain) {
+ 		iounmap(pmu_base_addr);
++		pmu_base_addr = NULL;
+ 		return -ENOMEM;
+ 	}
  
- 
--#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 4) - 3)
-+#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 6) & 0x01)
- #define TIUMP_GET_FUNC_FROM_CODE(c)	((c) & 0x0f)
- #define TIUMP_INTERRUPT_CODE_LSR	0x03
- #define TIUMP_INTERRUPT_CODE_MSR	0x04
 
 
