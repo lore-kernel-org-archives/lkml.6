@@ -3,38 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADE5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC72C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16E8221486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E8221486
+	by mail.kernel.org (Postfix) with ESMTP id AA01C21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA01C21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387931AbeIXScq (ORCPT
+        id S2387938AbeIXScv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:32:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57866 "EHLO
+        Mon, 24 Sep 2018 14:32:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57876 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730894AbeIXScp (ORCPT
+        with ESMTP id S1730894AbeIXScu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:32:45 -0400
+        Mon, 24 Sep 2018 14:32:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EAB0A1099;
-        Mon, 24 Sep 2018 12:30:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 280041098;
+        Mon, 24 Sep 2018 12:30:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oder Chiou <oder_chiou@realtek.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 068/235] ASoC: rt5514: Fix the issue of the delay volume applied
-Date:   Mon, 24 Sep 2018 13:50:54 +0200
-Message-Id: <20180924113112.057409261@linuxfoundation.org>
+Subject: [PATCH 4.18 042/235] IB/ipoib: Fix error return code in ipoib_dev_init()
+Date:   Mon, 24 Sep 2018 13:50:28 +0200
+Message-Id: <20180924113109.399161891@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,45 +53,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oder Chiou <oder_chiou@realtek.com>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-[ Upstream commit d96f8bd28cd0bae3e6702ae90df593628ef6906f ]
+[ Upstream commit 99a7e2bf704d64c966dfacede1ba2d9b47cb676e ]
 
-The patch fixes the issue of the delay volume applied.
+Fix to return a negative error code from the ipoib_neigh_hash_init()
+error handling case instead of 0, as done elsewhere in this function.
 
-Signed-off-by: Oder Chiou <oder_chiou@realtek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 515ed4f3aab4 ("IB/IPoIB: Separate control and data related initializations")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/rt5514.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/soc/codecs/rt5514.c
-+++ b/sound/soc/codecs/rt5514.c
-@@ -64,8 +64,8 @@ static const struct reg_sequence rt5514_
- 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
- 	{RT5514_ANA_CTRL_ADCFED,	0x00000800},
- 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
--	{RT5514_DOWNFILTER0_CTRL3,	0x10000362},
--	{RT5514_DOWNFILTER1_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
-+	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
- };
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -1787,7 +1787,8 @@ int ipoib_dev_init(struct net_device *de
+ 		goto out_free_pd;
+ 	}
  
- static const struct reg_default rt5514_reg[] = {
-@@ -92,10 +92,10 @@ static const struct reg_default rt5514_r
- 	{RT5514_ASRC_IN_CTRL1,		0x00000003},
- 	{RT5514_DOWNFILTER0_CTRL1,	0x00020c2f},
- 	{RT5514_DOWNFILTER0_CTRL2,	0x00020c2f},
--	{RT5514_DOWNFILTER0_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER0_CTRL3,	0x10000352},
- 	{RT5514_DOWNFILTER1_CTRL1,	0x00020c2f},
- 	{RT5514_DOWNFILTER1_CTRL2,	0x00020c2f},
--	{RT5514_DOWNFILTER1_CTRL3,	0x10000362},
-+	{RT5514_DOWNFILTER1_CTRL3,	0x10000352},
- 	{RT5514_ANA_CTRL_LDO10,		0x00028604},
- 	{RT5514_ANA_CTRL_LDO18_16,	0x02000345},
- 	{RT5514_ANA_CTRL_ADC12,		0x0000a2a8},
+-	if (ipoib_neigh_hash_init(priv) < 0) {
++	ret = ipoib_neigh_hash_init(priv);
++	if (ret) {
+ 		pr_warn("%s failed to init neigh hash\n", dev->name);
+ 		goto out_dev_uninit;
+ 	}
 
 
