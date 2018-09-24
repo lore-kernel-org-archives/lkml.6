@@ -2,121 +2,105 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056D6C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D5DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3C0921486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3C0921486
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BE9F52083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9F52083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387675AbeIXSjo (ORCPT
+        id S2387858AbeIXSjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:39:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728937AbeIXSjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:39:43 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 52C9E30DF6E7;
-        Mon, 24 Sep 2018 12:37:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EA5ED30A605C;
-        Mon, 24 Sep 2018 12:37:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180924094755.lkwdbrrayfrp45uu@brauner.io>
-References: <20180924094755.lkwdbrrayfrp45uu@brauner.io> <20180922161406.6beo2ob6ki2otrjx@brauner.io> <20180922132106.wfa6xaxwbu276qka@brauner.io> <20180921155455.flkf5vdrm3vgn6do@brauner.io> <20180920151214.15484-6-mszeredi@redhat.com> <20180920151214.15484-1-mszeredi@redhat.com> <17157.1537542475@warthog.procyon.org.uk> <20311.1537548756@warthog.procyon.org.uk> <8221.1537631312@warthog.procyon.org.uk> <3868.1537742717@warthog.procyon.org.uk> <30364.1537771838@warthog.procyon.org.uk>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     dhowells@redhat.com, Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>, aviro@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] fsmount: do not use legacy MS_ flags
+        Mon, 24 Sep 2018 14:39:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58618 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728937AbeIXSjq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:39:46 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 216F6107F;
+        Mon, 24 Sep 2018 12:37:48 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 086/235] drivers/base: stop new probing during shutdown
+Date:   Mon, 24 Sep 2018 13:51:12 +0200
+Message-Id: <20180924113113.625835894@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
+References: <20180924113103.999624566@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <29955.1537792665.1@warthog.procyon.org.uk>
-Date:   Mon, 24 Sep 2018 13:37:45 +0100
-Message-ID: <29956.1537792665@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 24 Sep 2018 12:37:47 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> wrote:
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-> I have thought a little more about splitting up the mount flags into
-> sensible sets. I think the following four sets make sense:
->
-> enum {
->         MOUNT_ATTR_PROPAGATION = 1,
->         MOUNT_ATTR_SECURITY,
->         MOUNT_ATTR_SYNC,
->         MOUNT_ATTR_TIME,
-> };
+------------------
 
-Al (I think it was) has been against splitting them up before (I've previously
-proposed splitting the topology propagation flags from the mount attributes).
+From: Pingfan Liu <kernelfans@gmail.com>
 
-> #define MOUNT_ATTR_NOATIME     (1<<1)
-> #define MOUNT_ATTR_RELATIME    (1<<3)
-> #define MOUNT_ATTR_STRICTATIME (1<<4)
+[ Upstream commit 3297c8fc65af5d40501ea7cddff1b195cae57e4e ]
 
-These aren't independent, but are actually settings on the same dial, so I
-would suggest that they shouldn't be separate flags.  I'm not sure about
-LAZYTIME though.
+There is a race window in device_shutdown(), which may cause
+-1. parent device shut down before child or
+-2. no shutdown on a new probing device.
 
-> enum {
->         MOUNT_ATTR_PROPAGATION = 1,
->         MOUNT_ATTR_SECURITY,
->         MOUNT_ATTR_SECURITY_1 = MOUNT_ATTR_SECURITY,
->         MOUNT_ATTR_SYNC,
->         MOUNT_ATTR_TIME,
->         MOUNT_ATTR_SECURITY_2,
-> };
+For 1st, taking the following scenario:
+         device_shutdown                        new plugin device
+  list_del_init(parent_dev);
+  spin_unlock(list_lock);
+                                                  device_add(child)
+                                                  probe child
+  shutdown parent_dev
+       --> now child is on the tail of devices_kset
 
-In UAPI headers, always explicitly number your symbols, even in an enum, just
-to make sure that the numbers don't get transparently changed by accident.
+For 2nd, taking the following scenario:
+         device_shutdown                        new plugin device
+                                                  device_add(dev)
+  device_lock(dev);
+  ...
+  device_unlock(dev);
+                                                  probe dev
+       --> now, the new occurred dev has no opportunity to shutdown
 
-> These flags will likely become AT_* flags or be tied to a syscall
-> afaict.
->
-> #define MS_REMOUNT      32
-> #define MS_BIND	        4096
-> #define MS_MOVE	        8192
-> #define MS_REC	        16384
+To fix this race issue, just prevent the new probing request. With this
+logic, device_shutdown() is more similar to dpm_prepare().
 
-MS_REMOUNT: fd = fspick(); fscommand(fd, FSCONFIG_CMD_RECONFIGURE);
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/base/core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-MS_REMOUNT|MS_BIND: mount_setattr().
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2809,6 +2809,9 @@ void device_shutdown(void)
+ {
+ 	struct device *dev, *parent;
+ 
++	wait_for_device_probe();
++	device_block_probing();
++
+ 	spin_lock(&devices_kset->list_lock);
+ 	/*
+ 	 * Walk the devices list backward, shutting down each in turn.
 
-MS_BIND: fd = open_tree(..., OPEN_TREE_CLONE); move_mount(fd, "", ...);
 
-MS_MOVE: fd = open_tree(..., 0); move_mount(fd, "", ...);
-
-MS_REC: AT_RECURSIVE
-
-> Internal sb flags will not be part of the new mount attr sets. (They
-> should - imho - not be exposed to userspace at all.):
-
-Agreed.
-
-> What remains is an odd duck that probably could be thrown into security
-> but also *shrug*
->
-> #define MS_I_VERSION    (1<<23)
-
-Um.  I think it would probably belong with atime settings.
-
-David
