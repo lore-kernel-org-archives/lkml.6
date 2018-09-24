@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 677C9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EC0C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4D6206B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4D6206B6
+	by mail.kernel.org (Postfix) with ESMTP id 28F1221486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F1221486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388645AbeIXSmg (ORCPT
+        id S2388662AbeIXSmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:42:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59016 "EHLO
+        Mon, 24 Sep 2018 14:42:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59026 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388623AbeIXSmf (ORCPT
+        with ESMTP id S2388652AbeIXSmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:42:35 -0400
+        Mon, 24 Sep 2018 14:42:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7B07109B;
-        Mon, 24 Sep 2018 12:40:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8B6A109A;
+        Mon, 24 Sep 2018 12:40:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Joel Becker <jlbec@evilplan.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 161/235] configfs: fix registered group removal
-Date:   Mon, 24 Sep 2018 13:52:27 +0200
-Message-Id: <20180924113121.241203878@linuxfoundation.org>
+        stable@vger.kernel.org, Junki Kato <junki.kato.xk@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.18 126/235] usb: gadget: udc: renesas_usb3: fix maxpacket size of ep0
+Date:   Mon, 24 Sep 2018 13:51:52 +0200
+Message-Id: <20180924113118.624099612@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,60 +52,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Christie <mchristi@redhat.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit cc57c07343bd071cdf1915a91a24ab7d40c9b590 ]
+commit dfe1a51d2a36647f74cbad478801efa7cf394376 upstream.
 
-This patch fixes a bug where configfs_register_group had added
-a group in a tree, and userspace has done a rmdir on a dir somewhere
-above that group and we hit a kernel crash. The problem is configfs_rmdir
-will detach everything under it and unlink groups on the default_groups
-list. It will not unlink groups added with configfs_register_group so when
-configfs_unregister_group is called to drop its references to the group/items
-we crash when we try to access the freed dentrys.
+This patch fixes an issue that maxpacket size of ep0 is incorrect
+for SuperSpeed. Otherwise, CDC NCM class with SuperSpeed doesn't
+work correctly on this driver because its control read data size
+is more than 64 bytes.
 
-The patch just adds a check for if a rmdir has been done above
-us and if so just does the unlink part of unregistration.
-
-Sorry if you are getting this multiple times. I thouhgt I sent
-this to some of you and lkml, but I do not see it.
-
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Joel Becker <jlbec@evilplan.org>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-by: Junki Kato <junki.kato.xk@renesas.com>
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Cc: <stable@vger.kernel.org> # v4.5+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Junki Kato <junki.kato.xk@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/configfs/dir.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
 
---- a/fs/configfs/dir.c
-+++ b/fs/configfs/dir.c
-@@ -1777,6 +1777,16 @@ void configfs_unregister_group(struct co
- 	struct dentry *dentry = group->cg_item.ci_dentry;
- 	struct dentry *parent = group->cg_item.ci_parent->ci_dentry;
- 
-+	mutex_lock(&subsys->su_mutex);
-+	if (!group->cg_item.ci_parent->ci_group) {
-+		/*
-+		 * The parent has already been unlinked and detached
-+		 * due to a rmdir.
-+		 */
-+		goto unlink_group;
-+	}
-+	mutex_unlock(&subsys->su_mutex);
-+
- 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
- 	spin_lock(&configfs_dirent_lock);
- 	configfs_detach_prep(dentry, NULL);
-@@ -1791,6 +1801,7 @@ void configfs_unregister_group(struct co
- 	dput(dentry);
- 
- 	mutex_lock(&subsys->su_mutex);
-+unlink_group:
- 	unlink_group(group);
- 	mutex_unlock(&subsys->su_mutex);
- }
+---
+ drivers/usb/gadget/udc/renesas_usb3.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -787,12 +787,15 @@ static void usb3_irq_epc_int_1_speed(str
+ 	switch (speed) {
+ 	case USB_STA_SPEED_SS:
+ 		usb3->gadget.speed = USB_SPEED_SUPER;
++		usb3->gadget.ep0->maxpacket = USB3_EP0_SS_MAX_PACKET_SIZE;
+ 		break;
+ 	case USB_STA_SPEED_HS:
+ 		usb3->gadget.speed = USB_SPEED_HIGH;
++		usb3->gadget.ep0->maxpacket = USB3_EP0_HSFS_MAX_PACKET_SIZE;
+ 		break;
+ 	case USB_STA_SPEED_FS:
+ 		usb3->gadget.speed = USB_SPEED_FULL;
++		usb3->gadget.ep0->maxpacket = USB3_EP0_HSFS_MAX_PACKET_SIZE;
+ 		break;
+ 	default:
+ 		usb3->gadget.speed = USB_SPEED_UNKNOWN;
+@@ -2451,7 +2454,7 @@ static int renesas_usb3_init_ep(struct r
+ 			/* for control pipe */
+ 			usb3->gadget.ep0 = &usb3_ep->ep;
+ 			usb_ep_set_maxpacket_limit(&usb3_ep->ep,
+-						USB3_EP0_HSFS_MAX_PACKET_SIZE);
++						USB3_EP0_SS_MAX_PACKET_SIZE);
+ 			usb3_ep->ep.caps.type_control = true;
+ 			usb3_ep->ep.caps.dir_in = true;
+ 			usb3_ep->ep.caps.dir_out = true;
 
 
