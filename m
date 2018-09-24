@@ -2,110 +2,158 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2434ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC17C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5749208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5749208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 418AB208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418AB208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbeIXRiB (ORCPT
+        id S1728552AbeIXRiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:38:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50004 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeIXRiB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:38:01 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BA111061;
-        Mon, 24 Sep 2018 11:36:16 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 010/105] mfd: sm501: Set coherent_dma_mask when creating subdevices
-Date:   Mon, 24 Sep 2018 13:32:56 +0200
-Message-Id: <20180924113114.395050978@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
-References: <20180924113113.268650190@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 13:38:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42018 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728397AbeIXRiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:38:02 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B3F90308421A;
+        Mon, 24 Sep 2018 11:36:23 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C482A9CBC;
+        Mon, 24 Sep 2018 11:36:13 +0000 (UTC)
+Date:   Mon, 24 Sep 2018 13:36:11 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v10 13/26] s390: vfio-ap: zeroize the AP queues
+Message-ID: <20180924133611.01fef50e.cohuck@redhat.com>
+In-Reply-To: <1536781396-13601-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1536781396-13601-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 24 Sep 2018 11:36:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Wed, 12 Sep 2018 15:43:03 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-------------------
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Let's call PAPQ(ZAPQ) to zeroize a queue for each queue configured
+> for a mediated matrix device when it is released.
+> 
+> Zeroizing a queue resets the queue, clears all pending
+> messages for the queue entries and disables adapter interruptions
+> associated with the queue.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c |   44 +++++++++++++++++++++++++++++++++++++
+>  1 files changed, 44 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index f8b276a..48b1b78 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -829,6 +829,49 @@ static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+>  	return NOTIFY_OK;
+>  }
+>  
+> +static int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
+> +				    unsigned int retry)
+> +{
+> +	struct ap_queue_status status;
+> +
+> +	do {
+> +		status = ap_zapq(AP_MKQID(apid, apqi));
+> +		switch (status.response_code) {
+> +		case AP_RESPONSE_NORMAL:
+> +			return 0;
+> +		case AP_RESPONSE_RESET_IN_PROGRESS:
+> +		case AP_RESPONSE_BUSY:
+> +			msleep(20);
+> +			break;
+> +		default:
+> +			/* things are really broken, give up */
+> +			return -EIO;
+> +		}
+> +	} while (retry--);
+> +
+> +	return -EBUSY;
 
-From: Guenter Roeck <linux@roeck-us.net>
+So, this function may either return 0, -EIO (things are really broken),
+or -EBUSY (still busy after multiple tries)...
 
-[ Upstream commit 2f606da78230f09cf1a71fde6ee91d0c710fa2b2 ]
+> +}
+> +
+> +static int vfio_ap_mdev_reset_queues(struct mdev_device *mdev)
+> +{
+> +	int ret;
+> +	int rc = 0;
+> +	unsigned long apid, apqi;
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> +
+> +	for_each_set_bit_inv(apid, matrix_mdev->matrix.apm,
+> +			     matrix_mdev->matrix.apm_max + 1) {
+> +		for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm,
+> +				     matrix_mdev->matrix.aqm_max + 1) {
+> +			ret = vfio_ap_mdev_reset_queue(apid, apqi, 1);
+> +			if (ret)
+> +				rc = ret;
 
-Instantiating the sm501 OHCI subdevice results in a kernel warning.
+...and here, we return the last error of any of the resets. Two
+questions:
 
-sm501-usb sm501-usb: SM501 OHCI
-sm501-usb sm501-usb: new USB bus registered, assigned bus number 1
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516
-ohci_init+0x194/0x2d8
-Modules linked in:
+- Does it make sense to continue if we get -EIO? IOW, does "really
+  broken" only refer to a certain tuple and other tuples still can/need
+  to be reset?
+- Is the return code useful in any way, as we don't know which tuple it
+  refers to?
 
-CPU: 0 PID: 1 Comm: swapper Tainted: G        W
-4.18.0-rc7-00178-g0b5b1f9a78b5 #1
-PC is at ohci_init+0x194/0x2d8
-PR is at ohci_init+0x168/0x2d8
-PC  : 8c27844c SP  : 8f81dd94 SR  : 40008001
-TEA : 29613060
-R0  : 00000000 R1  : 00000000 R2  : 00000000 R3  : 00000202
-R4  : 8fa98b88 R5  : 8c277e68 R6  : 00000000 R7  : 00000000
-R8  : 8f965814 R9  : 8c388100 R10 : 8fa98800 R11 : 8fa98928
-R12 : 8c48302c R13 : 8fa98920 R14 : 8c48302c
-MACH: 00000096 MACL: 0000017c GBR : 00000000 PR  : 8c278420
-
-Call trace:
- [<(ptrval)>] usb_add_hcd+0x1e8/0x6ec
- [<(ptrval)>] _dev_info+0x0/0x54
- [<(ptrval)>] arch_local_save_flags+0x0/0x8
- [<(ptrval)>] arch_local_irq_restore+0x0/0x24
- [<(ptrval)>] ohci_hcd_sm501_drv_probe+0x114/0x2d8
-...
-
-Initialize coherent_dma_mask when creating SM501 subdevices to fix
-the problem.
-
-Fixes: b6d6454fdb66f ("mfd: SM501 core driver")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/mfd/sm501.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/mfd/sm501.c
-+++ b/drivers/mfd/sm501.c
-@@ -714,6 +714,7 @@ sm501_create_subdev(struct sm501_devdata
- 	smdev->pdev.name = name;
- 	smdev->pdev.id = sm->pdev_id;
- 	smdev->pdev.dev.parent = sm->dev;
-+	smdev->pdev.dev.coherent_dma_mask = 0xffffffff;
- 
- 	if (res_count) {
- 		smdev->pdev.resource = (struct resource *)(smdev+1);
-
+> +		}
+> +	}
+> +
+> +	return rc;
+> +}
+> +
+>  static int vfio_ap_mdev_open(struct mdev_device *mdev)
+>  {
+>  	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> @@ -859,6 +902,7 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
+>  	if (matrix_mdev->kvm)
+>  		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
+>  
+> +	vfio_ap_mdev_reset_queues(mdev);
+>  	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>  				 &matrix_mdev->group_notifier);
+>  	matrix_mdev->kvm = NULL;
 
