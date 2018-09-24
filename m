@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3A7C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6E7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 210D420C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210D420C0A
+	by mail.kernel.org (Postfix) with ESMTP id CA9AA20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:17:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA9AA20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732323AbeIXSSr (ORCPT
+        id S1732332AbeIXSSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:18:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55848 "EHLO
+        Mon, 24 Sep 2018 14:18:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbeIXSSq (ORCPT
+        with ESMTP id S1729919AbeIXSSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:18:46 -0400
+        Mon, 24 Sep 2018 14:18:53 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C16710A7;
-        Mon, 24 Sep 2018 12:16:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D66610A7;
+        Mon, 24 Sep 2018 12:17:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        David Binderman <dcb314@hotmail.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 4.14 082/173] Tools: hv: Fix a bug in the key delete code
-Date:   Mon, 24 Sep 2018 13:51:56 +0200
-Message-Id: <20180924113122.066766907@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 4.14 083/173] misc: hmc6352: fix potential Spectre v1
+Date:   Mon, 24 Sep 2018 13:51:57 +0200
+Message-Id: <20180924113122.169647464@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,33 +51,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: K. Y. Srinivasan <kys@microsoft.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 86503bd35dec0ce363e9fdbf5299927422ed3899 upstream.
+commit de916736aaaadddbd6061472969f667b14204aa9 upstream.
 
-Fix a bug in the key delete code - the num_records range
-from 0 to num_records-1.
+val is indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Reported-by: David Binderman <dcb314@hotmail.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+This issue was detected with the help of Smatch:
+
+drivers/misc/hmc6352.c:54 compass_store() warn: potential spectre issue
+'map' [r]
+
+Fix this by sanitizing val before using it to index map
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/hv/hv_kvp_daemon.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/hmc6352.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -286,7 +286,7 @@ static int kvp_key_delete(int pool, cons
- 		 * Found a match; just move the remaining
- 		 * entries up.
- 		 */
--		if (i == num_records) {
-+		if (i == (num_records - 1)) {
- 			kvp_file_info[pool].num_records--;
- 			kvp_update_file(pool);
- 			return 0;
+--- a/drivers/misc/hmc6352.c
++++ b/drivers/misc/hmc6352.c
+@@ -27,6 +27,7 @@
+ #include <linux/err.h>
+ #include <linux/delay.h>
+ #include <linux/sysfs.h>
++#include <linux/nospec.h>
+ 
+ static DEFINE_MUTEX(compass_mutex);
+ 
+@@ -50,6 +51,7 @@ static int compass_store(struct device *
+ 		return ret;
+ 	if (val >= strlen(map))
+ 		return -EINVAL;
++	val = array_index_nospec(val, strlen(map));
+ 	mutex_lock(&compass_mutex);
+ 	ret = compass_command(c, map[val]);
+ 	mutex_unlock(&compass_mutex);
 
 
