@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1A0ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A95C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E17521486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E17521486
+	by mail.kernel.org (Postfix) with ESMTP id 0885A2148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0885A2148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387636AbeIXSau (ORCPT
+        id S2387646AbeIXSax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:30:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57530 "EHLO
+        Mon, 24 Sep 2018 14:30:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57540 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732275AbeIXSat (ORCPT
+        with ESMTP id S1731929AbeIXSaw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:30:49 -0400
+        Mon, 24 Sep 2018 14:30:52 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4125D1094;
-        Mon, 24 Sep 2018 12:28:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8BEEA1018;
+        Mon, 24 Sep 2018 12:28:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+93a5839deb355537440f@syzkaller.appspotmail.com,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        rds-devel@oss.oracle.com, Cong Wang <xiyou.wangcong@gmail.com>,
-        Santosh Shilimkar <santosh.shilimkar@oarcle.com>,
+        stable@vger.kernel.org, Jon Maloy <jon.maloy@ericsson.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 004/235] rds: fix two RCU related problems
-Date:   Mon, 24 Sep 2018 13:49:50 +0200
-Message-Id: <20180924113104.696412478@linuxfoundation.org>
+Subject: [PATCH 4.18 005/235] tipc: orphan sock in tipc_release()
+Date:   Mon, 24 Sep 2018 13:49:51 +0200
+Message-Id: <20180924113104.776291653@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -58,60 +55,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit cc4dfb7f70a344f24c1c71e298deea0771dadcb2 ]
+[ Upstream commit 0a3b8b2b215f9e84b82ae97df71292ccfd92b1e7 ]
 
-When a rds sock is bound, it is inserted into the bind_hash_table
-which is protected by RCU. But when releasing rds sock, after it
-is removed from this hash table, it is freed immediately without
-respecting RCU grace period. This could cause some use-after-free
-as reported by syzbot.
+Before we unlock the sock in tipc_release(), we have to
+detach sk->sk_socket from sk, otherwise a parallel
+tipc_sk_fill_sock_diag() could stil read it after we
+free this socket.
 
-Mark the rds sock with SOCK_RCU_FREE before inserting it into the
-bind_hash_table, so that it would be always freed after a RCU grace
-period.
-
-The other problem is in rds_find_bound(), the rds sock could be
-freed in between rhashtable_lookup_fast() and rds_sock_addref(),
-so we need to extend RCU read lock protection in rds_find_bound()
-to close this race condition.
-
-Reported-and-tested-by: syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com
-Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
-Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc: rds-devel@oss.oracle.com
+Fixes: c30b70deb5f4 ("tipc: implement socket diagnostics for AF_TIPC")
+Reported-and-tested-by: syzbot+48804b87c16588ad491d@syzkaller.appspotmail.com
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Cc: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oarcle.com>
+Acked-by: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rds/bind.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/tipc/socket.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/rds/bind.c
-+++ b/net/rds/bind.c
-@@ -60,11 +60,13 @@ struct rds_sock *rds_find_bound(__be32 a
- 	u64 key = ((u64)addr << 32) | port;
- 	struct rds_sock *rs;
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -578,6 +578,7 @@ static int tipc_release(struct socket *s
+ 	sk_stop_timer(sk, &sk->sk_timer);
+ 	tipc_sk_remove(tsk);
  
--	rs = rhashtable_lookup_fast(&bind_hash_table, &key, ht_parms);
-+	rcu_read_lock();
-+	rs = rhashtable_lookup(&bind_hash_table, &key, ht_parms);
- 	if (rs && !sock_flag(rds_rs_to_sk(rs), SOCK_DEAD))
- 		rds_sock_addref(rs);
- 	else
- 		rs = NULL;
-+	rcu_read_unlock();
- 
- 	rdsdebug("returning rs %p for %pI4:%u\n", rs, &addr,
- 		ntohs(port));
-@@ -157,6 +159,7 @@ int rds_bind(struct socket *sock, struct
- 		goto out;
- 	}
- 
-+	sock_set_flag(sk, SOCK_RCU_FREE);
- 	ret = rds_add_bound(rs, sin->sin_addr.s_addr, &sin->sin_port);
- 	if (ret)
- 		goto out;
++	sock_orphan(sk);
+ 	/* Reject any messages that accumulated in backlog queue */
+ 	release_sock(sk);
+ 	tipc_dest_list_purge(&tsk->cong_links);
 
 
