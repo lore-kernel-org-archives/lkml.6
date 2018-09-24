@@ -7,176 +7,125 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F018EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EB1ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED9F2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0E7F2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gvwNiT61"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED9F2098A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ETchV8X8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0E7F2098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387861AbeIXUwS (ORCPT
+        id S2387897AbeIXUwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 24 Sep 2018 16:52:18 -0400
-Received: from mail-co1nam03on0115.outbound.protection.outlook.com ([104.47.40.115]:2846
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+Received: from mail-by2nam03on0127.outbound.protection.outlook.com ([104.47.42.127]:17577
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387653AbeIXUwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387658AbeIXUwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Sep 2018 16:52:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SddpUUMtdVJEdZpHJZ4S0iWyxg5LxENJ803iPMwHzWg=;
- b=gvwNiT615eHG6M50zXIIpBmd5RbfeiGqo3NmEusI8pczDfKuPMtfIm1WS2oSjRWb9g2o8aROkmvvRZVE8yByMVYAIRZjAYhbrD1vO3LUzsTUUYB6MSjB7AiOer6w/7dmvVfr+369tWSeM2lwvB7fdN0GtEIxzNPGI7N6CEPMRe0=
+ bh=1nkvT4wMFQXpI/lnd0pXsgeZtrtms7bAr6vRNtislhk=;
+ b=ETchV8X8Xa4kHXij5tPQj1K74HUYTcmJmcWJYdrlmWWjoKqZ6G6m+zUz5rB5Qx68NgNzJE3PkbIBS6xHIQKx8SDBv2LZbKSW9q95g/tsdah9NJ0ezPA9oZe9MFHmmJJRF/YF8BEORhsOtqVLb7ZMFTodzserDz4tfBpuvs7RvTw=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0471.namprd21.prod.outlook.com (10.172.121.149) with Microsoft SMTP
+ CY4PR21MB0181.namprd21.prod.outlook.com (10.173.193.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Mon, 24 Sep 2018 14:49:36 +0000
+ 15.20.1207.3; Mon, 24 Sep 2018 14:49:41 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:49:36 +0000
+ 14:49:41 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Zong Li <zong@andestech.com>,
-        Greentime Hu <greentime@andestech.com>,
+CC:     Danek Duvall <duvall@comfychair.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 69/76] nds32: Fix get_user/put_user macro expand
- pointer problem
-Thread-Topic: [PATCH AUTOSEL 4.18 69/76] nds32: Fix get_user/put_user macro
- expand pointer problem
-Thread-Index: AQHUVBWvfGqAW1E5wUSaD5cSJ+iEvA==
-Date:   Mon, 24 Sep 2018 14:48:42 +0000
-Message-ID: <20180924144751.164410-68-alexander.levin@microsoft.com>
-References: <20180924144751.164410-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 06/36] mac80211: correct use of
+ IEEE80211_VHT_CAP_RXSTBC_X
+Thread-Topic: [PATCH AUTOSEL 4.14 06/36] mac80211: correct use of
+ IEEE80211_VHT_CAP_RXSTBC_X
+Thread-Index: AQHUVBW45HIbicvL90SrSWVdByIkww==
+Date:   Mon, 24 Sep 2018 14:48:57 +0000
+Message-ID: <20180924144851.164533-6-alexander.levin@microsoft.com>
+References: <20180924144851.164533-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180924144851.164533-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0471;6:Asn9JzBsLwlhDnKABlJmXBHsNImWRabyjnJDA7BgdgBUZx+LFuuvuCZU8avdK2EnkRuf5nzZH+ZYQGWy1dwYoef83LhWEsdF66fZm+tuQqXqOBEr51K0e9mTJU2ybnUK8Ya9+Wl/mjGSlG4IoLwSSmmAVdVM6zKorsbIiB1ziN8bB0mzF2mTm8QP+TN6qIULELZdXui1XvOKLWFbghheq3FTOughf6MFWPXDn9WWEEbduecgd4EY1sf/ln++tgT5pfERiMlMV86aP1nfbDO1x+kMtA26p8kzF8Jj3PrikvPJrd+vry5LZha215iPSJXzJJ+NISRVUvMHucbR+4Ua5EAjb3H22Pa+DBg6MNYDuXNV/+mFeBNf21ZRw4ZCw7/j8eqnQvTcScfDj2lWyFh5rF12YTR0N8aMUCNHgvTi2v8Q7rMoPXUXo1e66hHi+KgHQHnepfkPaURLlbhr5W+gEQ==;5:U0MExbQDh4MCsCMqy2RTsuGsTKnK4gFomuAQyFPVSrtxPNclK130p1bAjjHDP8ZizfzUoRdcVyVK7i9GWmTM2D+BfJcY6fq5wWJcPGOJaojB/jM7K2GcQGPQRfGVFMX+2zWZxykq9Gm93SB0XO7/7ljxgycTAsvezHVq/hWcHVs=;7:5iSHWJdZkygYuzxWoHcG0CAWC8QOziTpY3jKt+pwOuRlcmaNDLReeJ4isG4+NYN4lJbJ/qpkF7NC9mC6tbb01edoptyjtdo2q31AcHF2G6mj7rR4bJZ2MEHjL3nSudyMsjPC8bvYblCdLfKs/QaEcfp8W82rOScumy87SilnjgFh0wvSA8EPyWU9TPtiqXImNHB+OphSFbTMDhPYf5WsK0YUHJqxDaEuXAPMUsi0AINks5zduGMHL7wMf4H7CI/z
-x-ms-office365-filtering-correlation-id: 8328cf2e-a690-4c3d-6905-08d6222cf288
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0181;6:kFoIR93/96wvBCH32B2GeSS8820Ha8yDkb8sqjeipTNaTeQo/dHkTFuzNuqxOkEZdvc8kjPdNGEDjGbuCXhUPDw/S4C+6qRnQHJb06Oq/6sEyLaAgFRIkV3lOhPuLmc/OiqChpg2/e90qVlYWPisUvP+M773uiG6VYsz6nm4vGIHYbzJ1JCRG8UsO6KV/Tx1HhllMwGDjHdYL394tqEvZWKf2lxBqwP4GW3CLu671anCAp4bn5D5S81Wi9T6gRkow13enFAbB4LZhkbwPfj0nJcdkAU4vt5TKjj6WGagvbAchVal6UAosMyQh+xUtxvB0oghaQwpA1v1tKX13ooDIZ4+KLMfRKGsOXvJRQhOSGMpKszmxS/Pt7ClsQGntgAHsYhAF9HGHl90o57XMwjzMD0ZS/vZL7cu3blXH4XGD+Hd6y0AHXCZ79ey1dX8Y4tXp2n3aTv0NrHXOyuSRczPBA==;5:fVIswa6/5nCte1lxMOAkkxEVmjz+f0mKGF3FiPo3GybKZHlz2spN2sbz1yPA9IMDTdYLrTN1mevFvnwRQaNk8ytIXh/bjAyDixrA/O15Kk5Vznydrvm7523d7SYVonpbPSuUazV+dWhzwesPW7j9KK3CDqxZN2Qtn9v5+x/XHNo=;7:5qgECbPWMv8SU5Fk6wXlNd729hAc+cyd9ZCEFlhvvz7kM+NRGElwjbPX6UqyT/4aDkhE7Eqj/7jllM7oT3ImMtWV8Oj5qRjzUE4PZCbWbvmoW1CoKuFxszGJhf4gt2CZcYgPJJesNs5dh7m+7ayGIW9qo+6NkqbMEzRGdrtxtHJyj4z3Bayu2FIlHlQFT2GcL6TQBV6lsk3IeipFVXSZD44m1WvMn8kQrqLv1sFSkVybvOX5CUHtHemwMJDQ8F5+
+x-ms-office365-filtering-correlation-id: 831525f8-5e37-4a75-7ee6-08d6222cf57c
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0471;
-x-ms-traffictypediagnostic: CY4PR21MB0471:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR21MB0181;
+x-ms-traffictypediagnostic: CY4PR21MB0181:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB04715509937BDD753B07FDAAFB170@CY4PR21MB0471.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB018151CA367A3411E13D0D1BFB170@CY4PR21MB0181.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0471;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0471;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0181;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0181;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(366004)(39860400002)(346002)(199004)(189003)(6512007)(105586002)(256004)(53936002)(14444005)(106356001)(10090500001)(6486002)(217873002)(1076002)(6436002)(71190400001)(97736004)(71200400001)(446003)(476003)(11346002)(54906003)(316002)(2616005)(86362001)(2906002)(86612001)(8676002)(5250100002)(26005)(81166006)(81156014)(36756003)(10290500003)(4326008)(478600001)(2501003)(7736002)(110136005)(2900100001)(186003)(6666003)(22452003)(102836004)(25786009)(305945005)(68736007)(107886003)(76176011)(486006)(6116002)(6506007)(72206003)(3846002)(99286004)(66066001)(8936002)(5660300001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0471;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(136003)(346002)(396003)(189003)(199004)(575784001)(10290500003)(6116002)(26005)(102836004)(3846002)(5660300001)(22452003)(110136005)(10090500001)(8676002)(1076002)(54906003)(105586002)(186003)(316002)(106356001)(2501003)(6436002)(97736004)(6486002)(107886003)(7736002)(36756003)(478600001)(72206003)(14454004)(71200400001)(71190400001)(305945005)(256004)(5250100002)(217873002)(6666003)(2616005)(68736007)(53936002)(81166006)(81156014)(2900100001)(476003)(86612001)(15760500003)(4326008)(8936002)(486006)(99286004)(6512007)(86362001)(2906002)(25786009)(66066001)(6506007)(11346002)(446003)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0181;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 1PIDeb5Mw8h4HsZbV23oIQsvYXnTjp3EfIWmAHHfS4ibsvRYFE93L0HiutScgQ20ehu90baGKZXITmZyQQikHKejYpGJfaVRpWv1u9aE5AWcnF/8wr46Fk2vtJ0mNnOURZYnM/TX5Qmb/yV+LFh8qZ+wGRV6XYNoxco1WBixTLB63dlC2Tci1Wkb+LAbgM9UT3WUi6HCS+QEQVfk3OAcRpvn+l2Iqdwt8hUTaapN4sMeUEOZxlmcZ0123jxT4wFUaRVaFYIBe5pMPQ1BHWMpOrmsWy/ZMyd93jASDUpIItmebaoyZcsorNiqN/HXTBqPjHyygIo5WrtwFl09U/vgq8xqlV+htfb7txJekI4ehRo=
+x-microsoft-antispam-message-info: m36qKqQy1Ar1dBdNnzJadgCr2cNOjpytbZbxCRh8+hToPqELi12lZ6Q2LR5VH5J+xXBopaURYiGDNvXgE6ZGx6ZMfx8hfwemihVlVBK7fbt3/M4Mv6tK4AKcQF1Fix1juhgvzVljOsTP/moz1ujG1P8yhjzuf3PLrdKMdF55YgwIfzIQyePOcGRK81A+HBEmDakAbCi6s00A4jgspHxsKnIcaJHH+PBPznMWL29o9EHaeJn3PQDC9TprvjDIaluDN/1A92JTTKXRfMduf+iKLkWk1QAX8YTbAp4w8hyiHfN6iazI0HuVHFX+IR3JR7HPJv3nKFQG9Xe85/XZJnDqgCe+NWrywaJrqC44Rb2ZVDA=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8328cf2e-a690-4c3d-6905-08d6222cf288
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:42.3251
+X-MS-Exchange-CrossTenant-Network-Message-Id: 831525f8-5e37-4a75-7ee6-08d6222cf57c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:57.0502
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0471
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zong Li <zong@andestech.com>
+From: Danek Duvall <duvall@comfychair.org>
 
-[ Upstream commit 6cce95a6c7d288ac2126eee4b95df448b9015b84 ]
+[ Upstream commit 67d1ba8a6dc83d90cd58b89fa6cbf9ae35a0cf7f ]
 
-The pointer argument of macro need to be taken out once first, and then
-use the new pointer in the macro body.
+The mod mask for VHT capabilities intends to say that you can override
+the number of STBC receive streams, and it does, but only by accident.
+The IEEE80211_VHT_CAP_RXSTBC_X aren't bits to be set, but values (albeit
+left-shifted).  ORing the bits together gets the right answer, but we
+should use the _MASK macro here instead.
 
-In kernel/trace/trace.c, get_user(ch, ubuf++) causes the unexpected
-increment after expand the macro.
-
-Signed-off-by: Zong Li <zong@andestech.com>
-Acked-by: Greentime Hu <greentime@andestech.com>
-Signed-off-by: Greentime Hu <greentime@andestech.com>
+Signed-off-by: Danek Duvall <duvall@comfychair.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/nds32/include/asm/uaccess.h | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ net/mac80211/main.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/nds32/include/asm/uaccess.h b/arch/nds32/include/asm/uacc=
-ess.h
-index 18a009f3804d..3f771e0595e8 100644
---- a/arch/nds32/include/asm/uaccess.h
-+++ b/arch/nds32/include/asm/uaccess.h
-@@ -78,8 +78,9 @@ static inline void set_fs(mm_segment_t fs)
- #define get_user(x,p)							\
- ({									\
- 	long __e =3D -EFAULT;						\
--	if(likely(access_ok(VERIFY_READ,  p, sizeof(*p)))) {		\
--		__e =3D __get_user(x,p);					\
-+	const __typeof__(*(p)) __user *__p =3D (p);			\
-+	if(likely(access_ok(VERIFY_READ, __p, sizeof(*__p)))) {		\
-+		__e =3D __get_user(x, __p);				\
- 	} else								\
- 		x =3D 0;							\
- 	__e;								\
-@@ -99,10 +100,10 @@ static inline void set_fs(mm_segment_t fs)
-=20
- #define __get_user_err(x,ptr,err)					\
- do {									\
--	unsigned long __gu_addr =3D (unsigned long)(ptr);			\
-+	const __typeof__(*(ptr)) __user *__gu_addr =3D (ptr);		\
- 	unsigned long __gu_val;						\
--	__chk_user_ptr(ptr);						\
--	switch (sizeof(*(ptr))) {					\
-+	__chk_user_ptr(__gu_addr);					\
-+	switch (sizeof(*(__gu_addr))) {					\
- 	case 1:								\
- 		__get_user_asm("lbi",__gu_val,__gu_addr,err);		\
- 		break;							\
-@@ -119,7 +120,7 @@ do {									\
- 		BUILD_BUG(); 						\
- 		break;							\
- 	}								\
--	(x) =3D (__typeof__(*(ptr)))__gu_val;				\
-+	(x) =3D (__typeof__(*(__gu_addr)))__gu_val;			\
- } while (0)
-=20
- #define __get_user_asm(inst,x,addr,err)					\
-@@ -169,8 +170,9 @@ do {									\
- #define put_user(x,p)							\
- ({									\
- 	long __e =3D -EFAULT;						\
--	if(likely(access_ok(VERIFY_WRITE,  p, sizeof(*p)))) {		\
--		__e =3D __put_user(x,p);					\
-+	__typeof__(*(p)) __user *__p =3D (p);				\
-+	if(likely(access_ok(VERIFY_WRITE, __p, sizeof(*__p)))) {	\
-+		__e =3D __put_user(x, __p);				\
- 	}								\
- 	__e;								\
- })
-@@ -189,10 +191,10 @@ do {									\
-=20
- #define __put_user_err(x,ptr,err)					\
- do {									\
--	unsigned long __pu_addr =3D (unsigned long)(ptr);			\
--	__typeof__(*(ptr)) __pu_val =3D (x);				\
--	__chk_user_ptr(ptr);						\
--	switch (sizeof(*(ptr))) {					\
-+	__typeof__(*(ptr)) __user *__pu_addr =3D (ptr);			\
-+	__typeof__(*(__pu_addr)) __pu_val =3D (x);			\
-+	__chk_user_ptr(__pu_addr);					\
-+	switch (sizeof(*(__pu_addr))) {					\
- 	case 1:								\
- 		__put_user_asm("sbi",__pu_val,__pu_addr,err);		\
- 		break;							\
+diff --git a/net/mac80211/main.c b/net/mac80211/main.c
+index cb5b22b61388..9a3dd1467e24 100644
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@ -467,10 +467,7 @@ static const struct ieee80211_vht_cap mac80211_vht_cap=
+a_mod_mask =3D {
+ 		cpu_to_le32(IEEE80211_VHT_CAP_RXLDPC |
+ 			    IEEE80211_VHT_CAP_SHORT_GI_80 |
+ 			    IEEE80211_VHT_CAP_SHORT_GI_160 |
+-			    IEEE80211_VHT_CAP_RXSTBC_1 |
+-			    IEEE80211_VHT_CAP_RXSTBC_2 |
+-			    IEEE80211_VHT_CAP_RXSTBC_3 |
+-			    IEEE80211_VHT_CAP_RXSTBC_4 |
++			    IEEE80211_VHT_CAP_RXSTBC_MASK |
+ 			    IEEE80211_VHT_CAP_TXSTBC |
+ 			    IEEE80211_VHT_CAP_SU_BEAMFORMER_CAPABLE |
+ 			    IEEE80211_VHT_CAP_SU_BEAMFORMEE_CAPABLE |
 --=20
 2.17.1
