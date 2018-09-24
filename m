@@ -2,657 +2,96 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A99D7ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC32ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4065720877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S0CpeMtf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mW23HSua"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4065720877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 3141E20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:08:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3141E20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730915AbeIXSKJ (ORCPT
+        id S1731344AbeIXSKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:10:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34492 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729112AbeIXSKI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:10:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 45BAC60274; Mon, 24 Sep 2018 12:08:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537790899;
-        bh=WvuZ7+BhlsKDxc3JzMnLfULpBK8PoKsuMb68CBxN9OI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S0CpeMtfXn9S+yV3bRfX4+FujYNsEKFwS5GUyrdMzTDukBF9dr4SppjF/uchxHl1T
-         oJQBC+5E7naus0ABqDwRz56rjJzNlYjU6E5nYpBd61m5QvtbNI3KbHtv/VBc3ghxdQ
-         ouHKD7mjXiXzn7f+0KuzxAu82j0HvbGIeTn/RQO8=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 26794600C1;
-        Mon, 24 Sep 2018 12:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1537790897;
-        bh=WvuZ7+BhlsKDxc3JzMnLfULpBK8PoKsuMb68CBxN9OI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mW23HSua+vtTcz9+9gsja53SaVFgErsA0HbAiW3trTp0argtbdDftutmx61fi6CIW
-         QKrz90cOcUXYzyIGS1/zzyEvs0DrGhpQvj9bvh/LQP598XwvorRSIuaAQW2TEqvNph
-         0pZrk+Kc3GLi7NmUqUU27gDRXdB6yeHZpbkodlx8=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Mon, 24 Sep 2018 14:10:12 -0400
+Received: from shell.v3.sk ([90.176.6.54]:59435 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730322AbeIXSKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:10:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 508C0BA2D5;
+        Mon, 24 Sep 2018 14:08:19 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id mVOH_OqHBSbU; Mon, 24 Sep 2018 14:08:16 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id A4A6FBA2D8;
+        Mon, 24 Sep 2018 14:08:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id wjupdijVJjrh; Mon, 24 Sep 2018 14:08:15 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id C29F4BA2D5;
+        Mon, 24 Sep 2018 14:08:14 +0200 (CEST)
+Message-ID: <cba084f2a3fc438b64ca222014ed679638aebfb1.camel@v3.sk>
+Subject: Re: [PATCH] Revert "uapi/linux/keyctl.h: don't use C++ reserved
+ keyword as a struct member name"
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org
+Date:   Mon, 24 Sep 2018 14:08:13 +0200
+In-Reply-To: <26184.1537790420@warthog.procyon.org.uk>
+References: <20180924094723.487697-1-lkundrak@v3.sk>
+         <26184.1537790420@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.0 (3.30.0-1.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Sep 2018 17:38:17 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Rohit kumar <rohitkr@codeaurora.org>
-Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        plai@codeaurora.org, bgoswami@codeaurora.org,
-        rohkumar@qti.qualcomm.com, linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH v4] remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
-In-Reply-To: <1537787270-29630-1-git-send-email-rohitkr@codeaurora.org>
-References: <1537787270-29630-1-git-send-email-rohitkr@codeaurora.org>
-Message-ID: <fd08a37b0c5c495cbf68a94af2606b9c@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rohit,
+On Mon, 2018-09-24 at 13:00 +0100, David Howells wrote:
+> Lubomir Rintel <lkundrak@v3.sk> wrote:
+> 
+> > This changes UAPI, breaking iwd and libell:
+> > 
+> >   ell/key.c: In function 'kernel_dh_compute':
+> >   ell/key.c:205:38: error: 'struct keyctl_dh_params' has no member
+> > named 'private'; did you mean 'dh_private'?
+> >     struct keyctl_dh_params params = { .private = private,
+> >                                         ^~~~~~~
+> >                                         dh_private
+> > 
+> > This reverts commit 8a2336e549d385bb0b46880435b411df8d8200e8.
+> > 
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: <stable@vger.kernel.org>
+> 
+> Can I stick your Signed-off-by on it?
 
-Thanks for the quick turnaround, the patches look fine.
+   1. Yes, please do.
 
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
-Tested-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-On 2018-09-24 16:37, Rohit kumar wrote:
-> This adds Non PAS ADSP PIL driver for Qualcomm
-> Technologies Inc SoCs.
-> Added initial support for SDM845 with ADSP bootup and
-> shutdown operation handled from Application Processor
-> SubSystem(APSS).
 > 
-> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-> ---
-> Changes since v3:
-> 	Addressed comments posted by Sibi
-> 
-> This patch is dependent on the rpmh powerdomain driver
-> https://lkml.org/lkml/2018/6/27/7
-> and renaming of Hexagon v5 PAS driver
-> https://patchwork.kernel.org/patch/10601119/ .
-> 
->  drivers/remoteproc/Kconfig         |  14 ++
->  drivers/remoteproc/Makefile        |   1 +
->  drivers/remoteproc/qcom_adsp_pil.c | 502 
-> +++++++++++++++++++++++++++++++++++++
->  3 files changed, 517 insertions(+)
->  create mode 100644 drivers/remoteproc/qcom_adsp_pil.c
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 8894935..f554669 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -140,6 +140,20 @@ config QCOM_Q6V5_WCSS
->  	  Say y here to support the Qualcomm Peripheral Image Loader for the
->  	  Hexagon V5 based WCSS remote processors.
-> 
-> +config QCOM_ADSP_PIL
-> +	tristate "Qualcomm Technology Inc ADSP Peripheral Image Loader"
-> +	depends on OF && ARCH_QCOM
-> +	depends on QCOM_SMEM
-> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
-> +	depends on QCOM_SYSMON || QCOM_SYSMON=n
-> +	select MFD_SYSCON
-> +	select QCOM_MDT_LOADER
-> +	select QCOM_Q6V5_COMMON
-> +	select QCOM_RPROC_COMMON
-> +	help
-> +	  Say y here to support the Peripheral Image Loader
-> +	  for the Qualcomm Technology Inc. ADSP remote processors.
-> +
->  config QCOM_SYSMON
->  	tristate "Qualcomm sysmon driver"
->  	depends on RPMSG
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index 050f41a..0e1b89c 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -19,6 +19,7 @@ obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
->  obj-$(CONFIG_QCOM_Q6V5_MSS)		+= qcom_q6v5_mss.o
->  obj-$(CONFIG_QCOM_Q6V5_PAS)		+= qcom_q6v5_pas.o
->  obj-$(CONFIG_QCOM_Q6V5_WCSS)		+= qcom_q6v5_wcss.o
-> +obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
->  obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
->  obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
->  qcom_wcnss_pil-y			+= qcom_wcnss.o
-> diff --git a/drivers/remoteproc/qcom_adsp_pil.c
-> b/drivers/remoteproc/qcom_adsp_pil.c
-> new file mode 100644
-> index 0000000..f2f5e56
-> --- /dev/null
-> +++ b/drivers/remoteproc/qcom_adsp_pil.c
-> @@ -0,0 +1,502 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Qualcomm Technology Inc. ADSP Peripheral Image Loader for SDM845.
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/firmware.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/reset.h>
-> +#include <linux/soc/qcom/mdt_loader.h>
-> +#include <linux/soc/qcom/smem.h>
-> +#include <linux/soc/qcom/smem_state.h>
-> +
-> +#include "qcom_common.h"
-> +#include "qcom_q6v5.h"
-> +#include "remoteproc_internal.h"
-> +
-> +/* time out value */
-> +#define ACK_TIMEOUT			1000
-> +#define BOOT_FSM_TIMEOUT		10000
-> +/* mask values */
-> +#define EVB_MASK			GENMASK(27, 4)
-> +/*QDSP6SS register offsets*/
-> +#define RST_EVB_REG			0x10
-> +#define CORE_START_REG			0x400
-> +#define BOOT_CMD_REG			0x404
-> +#define BOOT_STATUS_REG			0x408
-> +#define RET_CFG_REG			0x1C
-> +/*TCSR register offsets*/
-> +#define LPASS_MASTER_IDLE_REG		0x8
-> +#define LPASS_HALTACK_REG		0x4
-> +#define LPASS_PWR_ON_REG		0x10
-> +#define LPASS_HALTREQ_REG		0x0
-> +
-> +/* list of clocks required by ADSP PIL */
-> +static const char * const adsp_clk_id[] = {
-> +	"sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", 
-> "lpass_ahbm_aon_cbcr",
-> +	"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
-> +};
-> +
-> +struct adsp_pil_data {
-> +	int crash_reason_smem;
-> +	const char *firmware_name;
-> +
-> +	const char *ssr_name;
-> +	const char *sysmon_name;
-> +	int ssctl_id;
-> +};
-> +
-> +struct qcom_adsp {
-> +	struct device *dev;
-> +	struct rproc *rproc;
-> +
-> +	struct qcom_q6v5 q6v5;
-> +
-> +	struct clk *xo;
-> +
-> +	int num_clks;
-> +	struct clk_bulk_data *clks;
-> +
-> +	void __iomem *qdsp6ss_base;
-> +
-> +	struct reset_control *pdc_sync_reset;
-> +	struct reset_control *cc_lpass_restart;
-> +
-> +	struct regmap *halt_map;
-> +	unsigned int halt_lpass;
-> +
-> +	int crash_reason_smem;
-> +
-> +	struct completion start_done;
-> +	struct completion stop_done;
-> +
-> +	phys_addr_t mem_phys;
-> +	phys_addr_t mem_reloc;
-> +	void *mem_region;
-> +	size_t mem_size;
-> +
-> +	struct qcom_rproc_glink glink_subdev;
-> +	struct qcom_rproc_ssr ssr_subdev;
-> +	struct qcom_sysmon *sysmon;
-> +};
-> +
-> +static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
-> +{
-> +	unsigned long timeout;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	/* Reset the retention logic */
-> +	val = readl(adsp->qdsp6ss_base + RET_CFG_REG);
-> +	val |= 0x1;
-> +	writel(val, adsp->qdsp6ss_base + RET_CFG_REG);
-> +
-> +	clk_bulk_disable_unprepare(adsp->num_clks, adsp->clks);
-> +
-> +	/* QDSP6 master port needs to be explicitly halted */
-> +	ret = regmap_read(adsp->halt_map,
-> +			adsp->halt_lpass + LPASS_PWR_ON_REG, &val);
-> +	if (ret || !val)
-> +		goto reset;
-> +
-> +	ret = regmap_read(adsp->halt_map,
-> +			adsp->halt_lpass + LPASS_MASTER_IDLE_REG,
-> +			&val);
-> +	if (ret || val)
-> +		goto reset;
-> +
-> +	regmap_write(adsp->halt_map,
-> +			adsp->halt_lpass + LPASS_HALTREQ_REG, 1);
-> +
-> +	/* Wait for halt ACK from QDSP6 */
-> +	timeout = jiffies + msecs_to_jiffies(ACK_TIMEOUT);
-> +	for (;;) {
-> +		ret = regmap_read(adsp->halt_map,
-> +			adsp->halt_lpass + LPASS_HALTACK_REG, &val);
-> +		if (ret || val || time_after(jiffies, timeout))
-> +			break;
-> +
-> +		usleep_range(1000, 1100);
-> +	}
-> +
-> +	ret = regmap_read(adsp->halt_map,
-> +			adsp->halt_lpass + LPASS_MASTER_IDLE_REG, &val);
-> +	if (ret || !val)
-> +		dev_err(adsp->dev, "port failed halt\n");
-> +
-> +reset:
-> +	/* Assert the LPASS PDC Reset */
-> +	reset_control_assert(adsp->pdc_sync_reset);
-> +	/* Place the LPASS processor into reset */
-> +	reset_control_assert(adsp->cc_lpass_restart);
-> +	/* wait after asserting subsystem restart from AOSS */
-> +	usleep_range(200, 300);
-> +
-> +	/* Clear the halt request for the AXIM and AHBM for Q6 */
-> +	regmap_write(adsp->halt_map, adsp->halt_lpass + LPASS_HALTREQ_REG, 
-> 0);
-> +
-> +	/* De-assert the LPASS PDC Reset */
-> +	reset_control_deassert(adsp->pdc_sync_reset);
-> +	/* Remove the LPASS reset */
-> +	reset_control_deassert(adsp->cc_lpass_restart);
-> +	/* wait after de-asserting subsystem restart from AOSS */
-> +	usleep_range(200, 300);
-> +
-> +	return 0;
-> +}
-> +
-> +static int adsp_load(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +
-> +	return qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
-> +			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
-> +			     &adsp->mem_reloc);
-> +}
-> +
-> +static int adsp_start(struct rproc *rproc)
-> +{
-> +	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	int ret;
-> +	unsigned int val;
-> +
-> +	qcom_q6v5_prepare(&adsp->q6v5);
-> +
-> +	ret = clk_prepare_enable(adsp->xo);
-> +	if (ret)
-> +		goto disable_irqs;
-> +
-> +	dev_pm_genpd_set_performance_state(adsp->dev, INT_MAX);
-> +	ret = pm_runtime_get_sync(adsp->dev);
-> +	if (ret)
-> +		goto disable_xo_clk;
-> +
-> +	ret = clk_bulk_prepare_enable(adsp->num_clks, adsp->clks);
-> +	if (ret) {
-> +		dev_err(adsp->dev, "adsp clk_enable failed\n");
-> +		goto disable_power_domain;
-> +	}
-> +
-> +	/* Program boot address */
-> +	writel(adsp->mem_phys >> 4, adsp->qdsp6ss_base + RST_EVB_REG);
-> +
-> +	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset 
-> */
-> +	writel(0x1, adsp->qdsp6ss_base + CORE_START_REG);
-> +
-> +	/* Trigger boot FSM to start QDSP6 */
-> +	writel(0x1, adsp->qdsp6ss_base + BOOT_CMD_REG);
-> +
-> +	/* Wait for core to come out of reset */
-> +	ret = readl_poll_timeout(adsp->qdsp6ss_base + BOOT_STATUS_REG,
-> +			val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
-> +	if (ret) {
-> +		dev_err(adsp->dev, "failed to bootup adsp\n");
-> +		goto disable_adsp_clks;
-> +	}
-> +
-> +	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5 * 
-> HZ));
-> +	if (ret == -ETIMEDOUT) {
-> +		dev_err(adsp->dev, "start timed out\n");
-> +		goto disable_adsp_clks;
-> +	}
-> +
-> +	return 0;
-> +
-> +disable_adsp_clks:
-> +	clk_bulk_disable_unprepare(adsp->num_clks, adsp->clks);
-> +disable_power_domain:
-> +	dev_pm_genpd_set_performance_state(adsp->dev, 0);
-> +	pm_runtime_put(adsp->dev);
-> +disable_xo_clk:
-> +	clk_disable_unprepare(adsp->xo);
-> +disable_irqs:
-> +	qcom_q6v5_unprepare(&adsp->q6v5);
-> +
-> +	return ret;
-> +}
-> +
-> +static void qcom_adsp_pil_handover(struct qcom_q6v5 *q6v5)
-> +{
-> +	struct qcom_adsp *adsp = container_of(q6v5, struct qcom_adsp, q6v5);
-> +
-> +	clk_disable_unprepare(adsp->xo);
-> +	dev_pm_genpd_set_performance_state(adsp->dev, 0);
-> +	pm_runtime_put(adsp->dev);
-> +}
-> +
-> +static int adsp_stop(struct rproc *rproc)
-> +{
-> +	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	int handover;
-> +	int ret;
-> +
-> +	ret = qcom_q6v5_request_stop(&adsp->q6v5);
-> +	if (ret == -ETIMEDOUT)
-> +		dev_err(adsp->dev, "timed out on wait\n");
-> +
-> +	ret = qcom_adsp_shutdown(adsp);
-> +	if (ret)
-> +		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
-> +
-> +	handover = qcom_q6v5_unprepare(&adsp->q6v5);
-> +	if (handover)
-> +		qcom_adsp_pil_handover(&adsp->q6v5);
-> +
-> +	return ret;
-> +}
-> +
-> +static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
-> +{
-> +	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	int offset;
-> +
-> +	offset = da - adsp->mem_reloc;
-> +	if (offset < 0 || offset + len > adsp->mem_size)
-> +		return NULL;
-> +
-> +	return adsp->mem_region + offset;
-> +}
-> +
-> +static const struct rproc_ops adsp_ops = {
-> +	.start = adsp_start,
-> +	.stop = adsp_stop,
-> +	.da_to_va = adsp_da_to_va,
-> +	.parse_fw = qcom_register_dump_segments,
-> +	.load = adsp_load,
-> +};
-> +
-> +static int adsp_init_clock(struct qcom_adsp *adsp)
-> +{
-> +	int i, ret;
-> +
-> +	adsp->xo = devm_clk_get(adsp->dev, "xo");
-> +	if (IS_ERR(adsp->xo)) {
-> +		ret = PTR_ERR(adsp->xo);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(adsp->dev, "failed to get xo clock");
-> +		return ret;
-> +	}
-> +
-> +	adsp->num_clks = ARRAY_SIZE(adsp_clk_id);
-> +	adsp->clks = devm_kcalloc(adsp->dev, adsp->num_clks,
-> +				sizeof(*adsp->clks), GFP_KERNEL);
-> +	if (IS_ERR(adsp->clks)) {
-> +		ret = PTR_ERR(adsp->clks);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(adsp->dev, "failed to get adsp clock");
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < adsp->num_clks; i++)
-> +		adsp->clks[i].id = adsp_clk_id[i];
-> +
-> +	return devm_clk_bulk_get(adsp->dev, adsp->num_clks, adsp->clks);
-> +}
-> +
-> +static int adsp_init_reset(struct qcom_adsp *adsp)
-> +{
-> +	adsp->pdc_sync_reset = devm_reset_control_get_exclusive(adsp->dev,
-> +			"pdc_sync");
-> +	if (IS_ERR(adsp->pdc_sync_reset)) {
-> +		dev_err(adsp->dev, "failed to acquire pdc_sync reset\n");
-> +		return PTR_ERR(adsp->pdc_sync_reset);
-> +	}
-> +
-> +	adsp->cc_lpass_restart = devm_reset_control_get_exclusive(adsp->dev,
-> +			"cc_lpass");
-> +	if (IS_ERR(adsp->cc_lpass_restart)) {
-> +		dev_err(adsp->dev, "failed to acquire cc_lpass restart\n");
-> +		return PTR_ERR(adsp->cc_lpass_restart);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int adsp_init_mmio(struct qcom_adsp *adsp,
-> +				struct platform_device *pdev)
-> +{
-> +	struct device_node *syscon;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	adsp->qdsp6ss_base = devm_ioremap(&pdev->dev, res->start,
-> +			resource_size(res));
-> +	if (IS_ERR(adsp->qdsp6ss_base)) {
-> +		dev_err(adsp->dev, "failed to map QDSP6SS registers\n");
-> +		return PTR_ERR(adsp->qdsp6ss_base);
-> +	}
-> +
-> +	syscon = of_parse_phandle(pdev->dev.of_node, "qcom,halt-regs", 0);
-> +	if (!syscon) {
-> +		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	adsp->halt_map = syscon_node_to_regmap(syscon);
-> +	of_node_put(syscon);
-> +	if (IS_ERR(adsp->halt_map))
-> +		return PTR_ERR(adsp->halt_map);
-> +
-> +	ret = of_property_read_u32_index(pdev->dev.of_node, "qcom,halt-regs",
-> +			1, &adsp->halt_lpass);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "no offset in syscon\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
-> +{
-> +	struct device_node *node;
-> +	struct resource r;
-> +	int ret;
-> +
-> +	node = of_parse_phandle(adsp->dev->of_node, "memory-region", 0);
-> +	if (!node) {
-> +		dev_err(adsp->dev, "no memory-region specified\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = of_address_to_resource(node, 0, &r);
-> +	if (ret)
-> +		return ret;
-> +
-> +	adsp->mem_phys = adsp->mem_reloc = r.start;
-> +	adsp->mem_size = resource_size(&r);
-> +	adsp->mem_region = devm_ioremap_wc(adsp->dev,
-> +				adsp->mem_phys, adsp->mem_size);
-> +	if (!adsp->mem_region) {
-> +		dev_err(adsp->dev, "unable to map memory region: %pa+%zx\n",
-> +			&r.start, adsp->mem_size);
-> +		return -EBUSY;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int adsp_probe(struct platform_device *pdev)
-> +{
-> +	const struct adsp_pil_data *desc;
-> +	struct qcom_adsp *adsp;
-> +	struct rproc *rproc;
-> +	int ret;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
-> +			    desc->firmware_name, sizeof(*adsp));
-> +	if (!rproc) {
-> +		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	adsp = (struct qcom_adsp *)rproc->priv;
-> +	adsp->dev = &pdev->dev;
-> +	adsp->rproc = rproc;
-> +	platform_set_drvdata(pdev, adsp);
-> +
-> +	ret = adsp_alloc_memory_region(adsp);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	ret = adsp_init_clock(adsp);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	pm_runtime_enable(adsp->dev);
-> +
-> +	ret = adsp_init_reset(adsp);
-> +	if (ret)
-> +		goto disable_pm;
-> +
-> +	ret = adsp_init_mmio(adsp, pdev);
-> +	if (ret)
-> +		goto disable_pm;
-> +
-> +	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, 
-> desc->crash_reason_smem,
-> +			     qcom_adsp_pil_handover);
-> +	if (ret)
-> +		goto disable_pm;
-> +
-> +	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
-> +	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
-> +	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
-> +					      desc->sysmon_name,
-> +					      desc->ssctl_id);
-> +
-> +	ret = rproc_add(rproc);
-> +	if (ret)
-> +		goto disable_pm;
-> +
-> +	return 0;
-> +
-> +disable_pm:
-> +	pm_runtime_disable(adsp->dev);
-> +free_rproc:
-> +	rproc_free(rproc);
-> +
-> +	return ret;
-> +}
-> +
-> +static int adsp_remove(struct platform_device *pdev)
-> +{
-> +	struct qcom_adsp *adsp = platform_get_drvdata(pdev);
-> +
-> +	rproc_del(adsp->rproc);
-> +
-> +	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
-> +	qcom_remove_sysmon_subdev(adsp->sysmon);
-> +	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
-> +	pm_runtime_disable(adsp->dev);
-> +	rproc_free(adsp->rproc);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct adsp_pil_data adsp_resource_init = {
-> +	.crash_reason_smem = 423,
-> +	.firmware_name = "adsp.mdt",
-> +	.ssr_name = "lpass",
-> +	.sysmon_name = "adsp",
-> +	.ssctl_id = 0x14,
-> +};
-> +
-> +static const struct of_device_id adsp_of_match[] = {
-> +	{ .compatible = "qcom,sdm845-adsp-pil",
-> +	  .data = &adsp_resource_init},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, adsp_of_match);
-> +
-> +static struct platform_driver adsp_pil_driver = {
-> +	.probe = adsp_probe,
-> +	.remove = adsp_remove,
-> +	.driver = {
-> +		.name = "qcom_adsp_pil",
-> +		.of_match_table = adsp_of_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(adsp_pil_driver);
-> +MODULE_DESCRIPTION("QTI SDM845 ADSP Peripheral Image Loader");
-> +MODULE_LICENSE("GPL v2");
+> David
 
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
