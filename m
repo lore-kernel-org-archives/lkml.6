@@ -2,127 +2,603 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896E2C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2255EC43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 425CA20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:34:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sCFI7gl+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425CA20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A8EC8214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EC8214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeIYFjJ (ORCPT
+        id S1727405AbeIYFo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 01:39:09 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52976 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeIYFjJ (ORCPT
+        Tue, 25 Sep 2018 01:44:58 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:34033 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725982AbeIYFo6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 01:39:09 -0400
-Received: by mail-wm1-f67.google.com with SMTP id l7-v6so6614908wme.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 16:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8i4uKV5XaHAEjVazlfVR+fRPrWqLxr5v70/JSIs4Vgw=;
-        b=sCFI7gl+T1qJ8dsDGe7QGZY9kPf9QApbGzHzUH5hzsqVkQ9QM0ttXICJz2Msg7WTq3
-         G9Giz7za7UkRmX7QNludzXvbpou9cibZGYyGwtdrFMIZ3vthKaQZEugEFKBwmo2j2mG5
-         WDx8ASZVe1g5/mVEqLq2+t/5Jz/0kaXEbue2Io0ESQzXTo/aWD6/A6ZBdtqtj3vo6ZHA
-         ibqZ/hDv99mUqD7wsFeVYzCgvLuv4uEbbVVr5ufEyRZnnXImGDS39nM46qo0UHTCzBh9
-         mXG6Hzm7aNNnAhK7027bW2vmirQbhdjUv2xYnLCMXGC8627SI7hlnjVu3jsWETtE+jSt
-         wjAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8i4uKV5XaHAEjVazlfVR+fRPrWqLxr5v70/JSIs4Vgw=;
-        b=VPsI6z7EfppgisiCO6XxKLRDU2MSY0q8ZyW474IiuDnIY/cXaMWcB8/bgRj7NXaX0h
-         yv9QkWbvWj98IHqfi6f5OHTzPPNR0rucxssRQRPekr9V3iP5RwmjA7ROQP+d0mW80Z3S
-         Wje+9EaHbSPCrvMe54Aj3ejahLJOakUCcbGFFZzL2tvD+S5fQR1FnD/x6LXhdL2peE9k
-         4t+AzhbQWNP8x/O6CKiLI0jbNGc8xrWFCf7tfh6uQHeSrgZjtH+aZIDF31QqdDZPlCUA
-         XdPC1vi8UqHjt5dqioSFV0U2L8pL0n7woShu0zGrAd0TDKhEuFD6SZvt1SyY1gW/wz+l
-         zDrQ==
-X-Gm-Message-State: ABuFfoiJ7aoCmiONY04bh3qfexP46ijLNiPVaeoXtdA5zX57XD3YiI5B
-        vKfK4EsUB+Ff8HD0eXyrIL4=
-X-Google-Smtp-Source: ACcGV62jrB03Qo5pPgXuBmakmwJNfNK+hBq1Nk/fPOUstvcYGxAuYp5VHUCGPZbFCYRpi1W6gDyVYg==
-X-Received: by 2002:a1c:7dce:: with SMTP id y197-v6mr356934wmc.78.1537832069778;
-        Mon, 24 Sep 2018 16:34:29 -0700 (PDT)
-Received: from localhost.co.uk ([2a01:388:3ce:110::1:c])
-        by smtp.gmail.com with ESMTPSA id l12-v6sm467783wrv.29.2018.09.24.16.34.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 16:34:28 -0700 (PDT)
-From:   Aymen Qader <qader.aymen@gmail.com>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: vc04_services: Update TODO re: arm64
-Date:   Tue, 25 Sep 2018 00:34:26 +0100
-Message-Id: <20180924233426.32609-1-qader.aymen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180924224835.32539-1-qader.aymen@gmail.com>
-References: <20180924224835.32539-1-qader.aymen@gmail.com>
+        Tue, 25 Sep 2018 01:44:58 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437523|-1;CH=blue;FP=13425807019204285553|1|1|14|0|-1|-1|-1;HT=e02c03312;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CvLsHm9_1537832384;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CvLsHm9_1537832384)
+          by smtp.aliyun-inc.com(10.147.44.145);
+          Tue, 25 Sep 2018 07:39:44 +0800
+From:   Guo Ren <ren_guo@c-sky.com>
+To:     akpm@linux-foundation.org, arnd@arndb.de,
+        daniel.lezcano@linaro.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, jason@lakedaemon.net,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, peterz@infradead.org, robh@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        devicetree@vger.kernel.org, green.hu@gmail.com, palmer@sifive.com,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V5 15/30] csky: Debug and Ptrace GDB
+Date:   Tue, 25 Sep 2018 07:39:18 +0800
+Message-Id: <a23b652c2ab55b129f729a57ec765550da1d2c16.1537789737.git.ren_guo@c-sky.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1537789736.git.ren_guo@c-sky.com>
+References: <cover.1537789736.git.ren_guo@c-sky.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the TODO item to remove manual cache flushing from bulk_receive.
-This was previously done in this commit:
+This patch adds arch ptrace implementation, stack dump and bug.h.
 
-(7e8dbdea) staging: bcm2835-camera: Remove explicit cache flush
-operations
-
-Also remove the unnecessary asm/cacheflush.h header.
-
-Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
-v2: Make commit message clearer
+ arch/csky/include/asm/bug.h         |  26 +++
+ arch/csky/include/uapi/asm/ptrace.h | 104 ++++++++++++
+ arch/csky/kernel/dumpstack.c        |  65 ++++++++
+ arch/csky/kernel/ptrace.c           | 318 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 513 insertions(+)
+ create mode 100644 arch/csky/include/asm/bug.h
+ create mode 100644 arch/csky/include/uapi/asm/ptrace.h
+ create mode 100644 arch/csky/kernel/dumpstack.c
+ create mode 100644 arch/csky/kernel/ptrace.c
 
- drivers/staging/vc04_services/bcm2835-camera/TODO         | 6 ------
- drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c | 1 -
- 2 files changed, 7 deletions(-)
-
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/TODO b/drivers/staging/vc04_services/bcm2835-camera/TODO
-index cefce72d814f..6c2b4ffe4996 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/TODO
-+++ b/drivers/staging/vc04_services/bcm2835-camera/TODO
-@@ -15,9 +15,3 @@ padding in the V4L2 spec, but that padding doesn't match what the
- hardware can do.  If we exposed the native padding requirements
- through the V4L2 "multiplanar" formats, the firmware would have one
- less copy it needed to do.
--
--3) Port to ARM64
--
--The bulk_receive() does some manual cache flushing that are 32-bit ARM
--only, which we should convert to proper cross-platform APIs.
--
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-index 51e5b04ff0f5..6e5c1d4ee122 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -21,7 +21,6 @@
- #include <linux/slab.h>
- #include <linux/completion.h>
- #include <linux/vmalloc.h>
--#include <asm/cacheflush.h>
- #include <media/videobuf2-vmalloc.h>
- 
- #include "mmal-common.h"
+diff --git a/arch/csky/include/asm/bug.h b/arch/csky/include/asm/bug.h
+new file mode 100644
+index 0000000..10b9028
+--- /dev/null
++++ b/arch/csky/include/asm/bug.h
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#ifndef __ASM_CSKY_BUG_H
++#define __ASM_CSKY_BUG_H
++
++#include <linux/compiler.h>
++#include <linux/const.h>
++#include <linux/types.h>
++
++#define BUG()							\
++do {								\
++	asm volatile ("bkpt\n");				\
++	unreachable();						\
++} while (0)
++
++#define HAVE_ARCH_BUG
++
++#include <asm-generic/bug.h>
++
++struct pt_regs;
++
++void die_if_kernel (char *str, struct pt_regs *regs, int nr);
++void show_regs(struct pt_regs *);
++
++#endif /* __ASM_CSKY_BUG_H */
+diff --git a/arch/csky/include/uapi/asm/ptrace.h b/arch/csky/include/uapi/asm/ptrace.h
+new file mode 100644
+index 0000000..688c6fd
+--- /dev/null
++++ b/arch/csky/include/uapi/asm/ptrace.h
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#ifndef _CSKY_PTRACE_H
++#define _CSKY_PTRACE_H
++
++#ifndef __ASSEMBLY__
++
++struct pt_regs {
++	unsigned long	tls;
++	unsigned long	lr;
++	unsigned long	pc;
++	unsigned long	sr;
++	unsigned long	usp;
++
++	/*
++	 * a0, a1, a2, a3:
++	 * abiv1: r2, r3, r4, r5
++	 * abiv2: r0, r1, r2, r3
++	 */
++	unsigned long	orig_a0;
++	unsigned long	a0;
++	unsigned long	a1;
++	unsigned long	a2;
++	unsigned long	a3;
++
++	/*
++	 * ABIV2: r4 ~ r13
++	 * ABIV1: r6 ~ r14, r1
++	 */
++	unsigned long	regs[10];
++
++#if defined(__CSKYABIV2__)
++	/* r16 ~ r30 */
++	unsigned long	exregs[15];
++
++	unsigned long	rhi;
++	unsigned long	rlo;
++	unsigned long	pad; /* reserved */
++#endif
++};
++
++struct user_fp {
++	unsigned long	vr[96];
++	unsigned long	fcr;
++	unsigned long	fesr;
++	unsigned long	fid;
++	unsigned long	reserved;
++};
++
++/*
++ * Switch stack for switch_to after push pt_regs.
++ *
++ * ABI_CSKYV2: r4 ~ r11, r15 ~ r17, r26 ~ r30;
++ * ABI_CSKYV1: r8 ~ r14, r15;
++ */
++struct  switch_stack {
++#if defined(__CSKYABIV2__)
++	unsigned long   r4;
++        unsigned long   r5;
++        unsigned long   r6;
++        unsigned long   r7;
++	unsigned long   r8;
++        unsigned long   r9;
++        unsigned long   r10;
++        unsigned long   r11;
++#else
++	unsigned long   r8;
++        unsigned long   r9;
++        unsigned long   r10;
++        unsigned long   r11;
++        unsigned long   r12;
++        unsigned long   r13;
++        unsigned long   r14;
++#endif
++        unsigned long   r15;
++#if defined(__CSKYABIV2__)
++        unsigned long   r16;
++        unsigned long   r17;
++        unsigned long   r26;
++        unsigned long   r27;
++        unsigned long   r28;
++        unsigned long   r29;
++        unsigned long   r30;
++#endif
++};
++
++#ifdef __KERNEL__
++
++#define PS_S            0x80000000              /* Supervisor Mode */
++
++#define arch_has_single_step() (1)
++#define current_pt_regs() \
++	(struct pt_regs *)((char *)current_thread_info() + THREAD_SIZE) - 1
++
++#define user_stack_pointer(regs) ((regs)->usp)
++
++#define user_mode(regs) (!((regs)->sr & PS_S))
++#define instruction_pointer(regs) ((regs)->pc)
++#define profile_pc(regs) instruction_pointer(regs)
++
++#endif /* __KERNEL__ */
++#endif /* __ASSEMBLY__ */
++#endif /* _CSKY_PTRACE_H */
+diff --git a/arch/csky/kernel/dumpstack.c b/arch/csky/kernel/dumpstack.c
+new file mode 100644
+index 0000000..c7e46d8
+--- /dev/null
++++ b/arch/csky/kernel/dumpstack.c
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/ptrace.h>
++
++int kstack_depth_to_print = 48;
++
++void show_trace(unsigned long *stack)
++{
++	unsigned long *endstack;
++	unsigned long addr;
++	int i;
++
++	pr_info("Call Trace:\n");
++	addr = (unsigned long)stack + THREAD_SIZE - 1;
++	endstack = (unsigned long *)(addr & -THREAD_SIZE);
++	i = 0;
++	while (stack + 1 <= endstack) {
++		addr = *stack++;
++		/*
++		 * If the address is either in the text segment of the
++		 * kernel, or in the region which contains vmalloc'ed
++		 * memory, it *may* be the address of a calling
++		 * routine; if so, print it so that someone tracing
++		 * down the cause of the crash will be able to figure
++		 * out the call path that was taken.
++		 */
++		if (__kernel_text_address(addr)) {
++#ifndef CONFIG_KALLSYMS
++			if (i % 5 == 0)
++				pr_cont("\n       ");
++#endif
++			pr_cont(" [<%08lx>] %pS\n", addr, (void *)addr);
++			i++;
++		}
++	}
++	pr_cont("\n");
++}
++
++void show_stack(struct task_struct *task, unsigned long *stack)
++{
++	unsigned long *p;
++	unsigned long *endstack;
++	int i;
++
++	if (!stack) {
++		if (task)
++			stack = (unsigned long *)task->thread.esp0;
++		else
++			stack = (unsigned long *)&stack;
++	}
++	endstack = (unsigned long *)(((unsigned long)stack + THREAD_SIZE - 1) & -THREAD_SIZE);
++
++	pr_info("Stack from %08lx:", (unsigned long)stack);
++	p = stack;
++	for (i = 0; i < kstack_depth_to_print; i++) {
++		if (p + 1 > endstack)
++			break;
++		if (i % 8 == 0)
++			pr_cont("\n       ");
++		pr_cont(" %08lx", *p++);
++	}
++	pr_cont("\n");
++	show_trace(stack);
++}
+diff --git a/arch/csky/kernel/ptrace.c b/arch/csky/kernel/ptrace.c
+new file mode 100644
+index 0000000..23c6ef2
+--- /dev/null
++++ b/arch/csky/kernel/ptrace.c
+@@ -0,0 +1,318 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
++
++#include <linux/elf.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/mm.h>
++#include <linux/ptrace.h>
++#include <linux/regset.h>
++#include <linux/sched.h>
++#include <linux/signal.h>
++#include <linux/smp.h>
++#include <linux/uaccess.h>
++#include <linux/user.h>
++
++#include <asm/thread_info.h>
++#include <asm/page.h>
++#include <asm/pgtable.h>
++#include <asm/processor.h>
++#include <asm/asm-offsets.h>
++
++#include <abi/regdef.h>
++
++/* sets the trace bits. */
++#define TRACE_MODE_SI      1 << 14
++#define TRACE_MODE_RUN     0
++#define TRACE_MODE_MASK    ~(0x3 << 14)
++
++/*
++ * Make sure the single step bit is not set.
++ */
++static void singlestep_disable(struct task_struct *tsk)
++{
++	struct pt_regs *regs;
++
++	regs = task_pt_regs(tsk);
++	regs->sr = (regs->sr & TRACE_MODE_MASK) | TRACE_MODE_RUN;
++}
++
++static void singlestep_enable(struct task_struct *tsk)
++{
++	struct pt_regs *regs;
++
++	regs = task_pt_regs(tsk);
++	regs->sr = (regs->sr & TRACE_MODE_MASK) | TRACE_MODE_SI;
++}
++
++/*
++ * Make sure the single step bit is set.
++ */
++void user_enable_single_step(struct task_struct *child)
++{
++	if (child->thread.esp0 == 0) return;
++	singlestep_enable(child);
++}
++
++void user_disable_single_step(struct task_struct *child)
++{
++	if (child->thread.esp0 == 0) return;
++	singlestep_disable(child);
++}
++
++enum csky_regset {
++	REGSET_GPR,
++	REGSET_FPR,
++};
++
++static int gpr_get(struct task_struct *target,
++		   const struct user_regset *regset,
++		   unsigned int pos, unsigned int count,
++		   void *kbuf, void __user *ubuf)
++{
++	struct pt_regs *regs;
++
++	regs = task_pt_regs(target);
++
++	/* Abiv1 regs->tls is fake and we need sync here. */
++	regs->tls = task_thread_info(target)->tp_value;
++
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
++}
++
++static int gpr_set(struct task_struct *target,
++		    const struct user_regset *regset,
++		    unsigned int pos, unsigned int count,
++		    const void *kbuf, const void __user *ubuf)
++{
++	int ret;
++	struct pt_regs regs;
++
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &regs, 0, -1);
++	if (ret)
++		return ret;
++
++	regs.sr = task_pt_regs(target)->sr;
++
++	task_thread_info(target)->tp_value = regs.tls;
++
++	*task_pt_regs(target) = regs;
++
++	return 0;
++}
++
++static int fpr_get(struct task_struct *target,
++		   const struct user_regset *regset,
++		   unsigned int pos, unsigned int count,
++		   void *kbuf, void __user *ubuf)
++{
++	struct user_fp *regs = (struct user_fp *)&target->thread.user_fp;
++
++#if defined(CONFIG_CPU_HAS_FPUV2) && !defined(CONFIG_CPU_HAS_VDSP)
++	int i;
++	struct user_fp tmp = *regs;
++
++	for (i = 0; i < 16; i++) {
++		tmp.vr[i*4] = regs->vr[i*2];
++		tmp.vr[i*4 + 1] = regs->vr[i*2 + 1];
++	}
++
++	for (i = 0; i < 32; i++) {
++		tmp.vr[64 + i] = regs->vr[32 + i];
++	}
++
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, &tmp, 0, -1);
++#else
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
++#endif
++}
++
++static int fpr_set(struct task_struct *target,
++		   const struct user_regset *regset,
++		   unsigned int pos, unsigned int count,
++		   const void *kbuf, const void __user *ubuf)
++{
++	int ret;
++	struct user_fp *regs = (struct user_fp *)&target->thread.user_fp;
++
++#if defined(CONFIG_CPU_HAS_FPUV2) && !defined(CONFIG_CPU_HAS_VDSP)
++	int i;
++	struct user_fp tmp;
++
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &tmp, 0, -1);
++
++	*regs = tmp;
++
++	for (i = 0; i < 16; i++) {
++		regs->vr[i*2] = tmp.vr[i*4];
++		regs->vr[i*2 + 1] = tmp.vr[i*4 + 1];
++	}
++
++	for (i = 0; i < 32; i++) {
++		regs->vr[32 + i] = tmp.vr[64 + i];
++	}
++#else
++	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, regs, 0, -1);
++#endif
++
++	return ret;
++}
++
++static const struct user_regset csky_regsets[] = {
++	[REGSET_GPR] = {
++		.core_note_type = NT_PRSTATUS,
++		.n = ELF_NGREG,
++		.size = sizeof(u32),
++		.align = sizeof(u32),
++		.get = &gpr_get,
++		.set = &gpr_set,
++	},
++	[REGSET_FPR] = {
++		.core_note_type = NT_PRFPREG,
++		.n = sizeof(struct user_fp) / sizeof(u32),
++		.size = sizeof(u32),
++		.align = sizeof(u32),
++		.get = &fpr_get,
++		.set = &fpr_set,
++	},
++};
++
++static const struct user_regset_view user_csky_view = {
++	.name = "csky",
++	.e_machine = ELF_ARCH,
++	.regsets = csky_regsets,
++	.n = ARRAY_SIZE(csky_regsets),
++};
++
++const struct user_regset_view *task_user_regset_view(struct task_struct *task)
++{
++	return &user_csky_view;
++}
++
++void ptrace_disable(struct task_struct *child)
++{
++	singlestep_disable(child);
++}
++
++long arch_ptrace(struct task_struct *child, long request,
++		 unsigned long addr, unsigned long data)
++{
++	long ret = -EIO;
++
++	switch (request) {
++	default:
++		ret = ptrace_request(child, request, addr, data);
++		break;
++	}
++
++	return ret;
++}
++
++/*
++ * If process's system calls is traces, do some corresponding handles in this
++ * fuction before entering system call function and after exiting system call
++ * fuction.
++ */
++asmlinkage void syscall_trace(int why, struct pt_regs * regs)
++{
++	long saved_why;
++	/*
++	 * Save saved_why, why is used to denote syscall entry/exit;
++	 * why = 0:entry, why = 1: exit
++	 */
++	saved_why = regs->regs[SYSTRACE_SAVENUM];
++	regs->regs[SYSTRACE_SAVENUM] = why;
++
++	/* the 0x80 provides a way for the tracing parent to distinguish
++	   between a syscall stop and SIGTRAP delivery */
++	ptrace_notify(SIGTRAP | ((current->ptrace & PT_TRACESYSGOOD)
++				? 0x80 : 0));
++	/*
++	 * this isn't the same as continuing with a signal, but it will do
++	 * for normal use.  strace only continues with a signal if the
++	 * stopping signal is not SIGTRAP.  -brl
++	 */
++	if (current->exit_code) {
++		send_sig(current->exit_code, current, 1);
++		current->exit_code = 0;
++	}
++
++	regs->regs[SYSTRACE_SAVENUM] = saved_why;
++	return;
++}
++
++void show_regs(struct pt_regs *fp)
++{
++	unsigned long   *sp;
++	unsigned char   *tp;
++	int	i;
++
++	pr_info("\nCURRENT PROCESS:\n\n");
++	pr_info("COMM=%s PID=%d\n", current->comm, current->pid);
++
++	if (current->mm) {
++		pr_info("TEXT=%08x-%08x DATA=%08x-%08x BSS=%08x-%08x\n",
++		       (int) current->mm->start_code,
++		       (int) current->mm->end_code,
++		       (int) current->mm->start_data,
++		       (int) current->mm->end_data,
++		       (int) current->mm->end_data,
++		       (int) current->mm->brk);
++		pr_info("USER-STACK=%08x  KERNEL-STACK=%08x\n\n",
++		       (int) current->mm->start_stack,
++		       (int) (((unsigned long) current) + 2 * PAGE_SIZE));
++	}
++
++	pr_info("PC: 0x%08lx\n", (long)fp->pc);
++	pr_info("orig_a0: 0x%08lx\n", fp->orig_a0);
++	pr_info("PSR: 0x%08lx\n", (long)fp->sr);
++
++	pr_info("a0: 0x%08lx  a1: 0x%08lx  a2: 0x%08lx  a3: 0x%08lx\n",
++	       fp->a0, fp->a1, fp->a2, fp->a3);
++#if defined(__CSKYABIV2__)
++	pr_info("r4: 0x%08lx  r5: 0x%08lx    r6: 0x%08lx    r7: 0x%08lx\n",
++	       fp->regs[0], fp->regs[1], fp->regs[2], fp->regs[3]);
++	pr_info("r8: 0x%08lx  r9: 0x%08lx   r10: 0x%08lx   r11: 0x%08lx\n",
++	       fp->regs[4], fp->regs[5], fp->regs[6], fp->regs[7]);
++	pr_info("r12 0x%08lx  r13: 0x%08lx   r15: 0x%08lx\n",
++	       fp->regs[8], fp->regs[9], fp->lr);
++	pr_info("r16:0x%08lx   r17: 0x%08lx   r18: 0x%08lx    r19: 0x%08lx\n",
++	       fp->exregs[0], fp->exregs[1], fp->exregs[2], fp->exregs[3]);
++	pr_info("r20 0x%08lx   r21: 0x%08lx   r22: 0x%08lx    r23: 0x%08lx\n",
++	       fp->exregs[4], fp->exregs[5], fp->exregs[6], fp->exregs[7]);
++	pr_info("r24 0x%08lx   r25: 0x%08lx   r26: 0x%08lx    r27: 0x%08lx\n",
++	       fp->exregs[8], fp->exregs[9], fp->exregs[10], fp->exregs[11]);
++	pr_info("r28 0x%08lx   r29: 0x%08lx   r30: 0x%08lx    tls: 0x%08lx\n",
++	       fp->exregs[12], fp->exregs[13], fp->exregs[14], fp->tls);
++	pr_info("hi 0x%08lx     lo: 0x%08lx \n",
++	       fp->rhi, fp->rlo);
++#else
++	pr_info("r6: 0x%08lx   r7: 0x%08lx   r8: 0x%08lx   r9: 0x%08lx\n",
++	       fp->regs[0], fp->regs[1], fp->regs[2], fp->regs[3]);
++	pr_info("r10: 0x%08lx   r11: 0x%08lx   r12: 0x%08lx   r13: 0x%08lx\n",
++	       fp->regs[4], fp->regs[5], fp->regs[6], fp->regs[7]);
++	pr_info("r14 0x%08lx   r1: 0x%08lx   r15: 0x%08lx\n",
++	       fp->regs[8], fp->regs[9], fp->lr);
++#endif
++
++	pr_info("\nCODE:");
++	tp = ((unsigned char *) fp->pc) - 0x20;
++	tp += ((int)tp % 4) ? 2 : 0;
++	for (sp = (unsigned long *) tp, i = 0; (i < 0x40);  i += 4) {
++		if ((i % 0x10) == 0)
++			pr_cont("\n%08x: ", (int) (tp + i));
++		pr_cont("%08x ", (int) *sp++);
++	}
++	pr_cont("\n");
++
++	pr_info("\nKERNEL STACK:");
++	tp = ((unsigned char *) fp) - 0x40;
++	for (sp = (unsigned long *) tp, i = 0; (i < 0xc0); i += 4) {
++		if ((i % 0x10) == 0)
++			pr_cont("\n%08x: ", (int) (tp + i));
++		pr_cont("%08x ", (int) *sp++);
++	}
++	pr_cont("\n");
++
++	return;
++}
 -- 
-2.17.1
+2.7.4
 
