@@ -2,180 +2,84 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED6FECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24666ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9410204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9410204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id CAEC620666
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:17:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="BeK/oilc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAEC620666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732389AbeIXVR6 (ORCPT
+        id S1730397AbeIXVT4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:17:58 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:15707 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729767AbeIXVR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:17:56 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42Jnnc02LQz9ttRd;
-        Mon, 24 Sep 2018 17:15:16 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id mqgycbOVGZzt; Mon, 24 Sep 2018 17:15:15 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42Jnnb6Z7Tz9ttCD;
-        Mon, 24 Sep 2018 17:15:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6B4068B7B7;
-        Mon, 24 Sep 2018 17:15:16 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id iW2tTkWvZIcI; Mon, 24 Sep 2018 17:15:16 +0200 (CEST)
-Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4003C8B7B6;
-        Mon, 24 Sep 2018 17:15:16 +0200 (CEST)
-Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 2F20B70ACF; Mon, 24 Sep 2018 15:15:16 +0000 (UTC)
-Message-Id: <e84d65fb4744cf8260eb2fc9474765a7f3a60573.1537801613.git.christophe.leroy@c-s.fr>
-In-Reply-To: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
-References: <2b934594d21ade67a4092637cf9e6b7d2d131187.1537801613.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 2/2] powerpc/64: add stack protector support
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 24 Sep 2018 15:15:16 +0000 (UTC)
+        Mon, 24 Sep 2018 17:19:56 -0400
+Received: from a9-54.smtp-out.amazonses.com ([54.240.9.54]:56082 "EHLO
+        a9-54.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728880AbeIXVT4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:19:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1537802236;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=+QBuj6XrdiWV8lRoyI1QXhMT9WgCuArxoRXSkAT50QE=;
+        b=BeK/oilc4LLwaLq3ZvzDm7HaMNAjSQlVF+C3dWRpeh+K32j8NcNk3WmaMkajk5hU
+        fjoeFcARD+neLQ/noYa4Zc0SbaMlC9br8MQ+YOZSIe8BUZcqKj52SqMp53ctMX9Lz8/
+        vygbtKMl15AcnMQEtk9aGrPUFQOnT8DWH2eX9Wps=
+Date:   Mon, 24 Sep 2018 15:17:16 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Bart Van Assche <bvanassche@acm.org>
+cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+In-Reply-To: <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
+Message-ID: <010001660c27f079-7ba54431-6f0c-430a-8db5-2398a8e761f0-000000@email.amazonses.com>
+References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com> <20180920063129.GB12913@lst.de> <87h8ij0zot.fsf@vitty.brq.redhat.com> <20180923224206.GA13618@ming.t460p> <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
+ <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.09.24-54.240.9.54
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On PPC64, as register r13 points to the paca_struct at all time,
-this patch adds a copy of the canary there, which is copied at
-task_switch.
-That new canary is then used by using the following GCC options:
--mstack-protector-guard=tls
--mstack-protector-guard-reg=r13
--mstack-protector-guard-offset=offsetof(struct paca_struct, canary))
+On Mon, 24 Sep 2018, Bart Van Assche wrote:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig                      | 2 +-
- arch/powerpc/Makefile                     | 8 ++++++++
- arch/powerpc/include/asm/paca.h           | 3 +++
- arch/powerpc/include/asm/stackprotector.h | 3 +++
- arch/powerpc/kernel/asm-offsets.c         | 3 +++
- arch/powerpc/kernel/entry_64.S            | 4 ++++
- 6 files changed, 22 insertions(+), 1 deletion(-)
+> /*
+>  * kmalloc and friends return ARCH_KMALLOC_MINALIGN aligned
+>  * pointers. kmem_cache_alloc and friends return ARCH_SLAB_MINALIGN
+>  * aligned pointers.
+>  */
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 3bcb05929931..602eea723624 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -180,7 +180,7 @@ config PPC
- 	select HAVE_ARCH_SECCOMP_FILTER
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_CBPF_JIT			if !PPC64
--	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-guard=tls) && PPC32
-+	select HAVE_STACKPROTECTOR		if $(cc-option,-mstack-protector-guard=tls)
- 	select HAVE_CONTEXT_TRACKING		if PPC64
- 	select HAVE_DEBUG_KMEMLEAK
- 	select HAVE_DEBUG_STACKOVERFLOW
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 45b8eb4d8fe7..81552c7b46eb 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -113,7 +113,11 @@ KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
- endif
- 
- cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
-+ifdef CONFIG_PPC64
-+cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r13
-+else
- cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r2
-+endif
- 
- LDFLAGS_vmlinux-y := -Bstatic
- LDFLAGS_vmlinux-$(CONFIG_RELOCATABLE) := -pie
-@@ -411,8 +415,12 @@ ifdef CONFIG_STACKPROTECTOR
- prepare: stack_protector_prepare
- 
- stack_protector_prepare: prepare0
-+ifdef CONFIG_PPC64
-+	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "PACA_CANARY") print $$3;}' include/generated/asm-offsets.h))
-+else
- 	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TASK_CANARY") print $$3;}' include/generated/asm-offsets.h))
- endif
-+endif
- 
- # Use the file '.tmp_gas_check' for binutils tests, as gas won't output
- # to stdout and these checks are run even on install targets.
-diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
-index 6d6b3706232c..98d883e58945 100644
---- a/arch/powerpc/include/asm/paca.h
-+++ b/arch/powerpc/include/asm/paca.h
-@@ -246,6 +246,9 @@ struct paca_struct {
- 	struct slb_entry *mce_faulty_slbs;
- 	u16 slb_save_cache_ptr;
- #endif /* CONFIG_PPC_BOOK3S_64 */
-+#ifdef CONFIG_STACKPROTECTOR
-+	unsigned long canary;
-+#endif
- } ____cacheline_aligned;
- 
- extern struct paca_struct **paca_ptrs;
-diff --git a/arch/powerpc/include/asm/stackprotector.h b/arch/powerpc/include/asm/stackprotector.h
-index 263e2aab1862..e81991955c0d 100644
---- a/arch/powerpc/include/asm/stackprotector.h
-+++ b/arch/powerpc/include/asm/stackprotector.h
-@@ -29,6 +29,9 @@ static __always_inline void boot_init_stack_canary(void)
- 	canary ^= LINUX_VERSION_CODE;
- 
- 	current->stack_canary = canary;
-+#ifdef CONFIG_PPC64
-+	get_paca()->canary = canary;
-+#endif
- }
- 
- #endif	/* _ASM_STACKPROTECTOR_H */
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index a992f7a53cf3..773dee55b3f6 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -81,6 +81,9 @@ int main(void)
- 	OFFSET(MM, task_struct, mm);
- #ifdef CONFIG_STACKPROTECTOR
- 	OFFSET(TASK_CANARY, task_struct, stack_canary);
-+#ifdef CONFIG_PPC64
-+	OFFSET(PACA_CANARY, paca_struct, canary);
-+#endif
- #endif
- 	OFFSET(MMCONTEXTID, mm_struct, context.id);
- #ifdef CONFIG_PPC64
-diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-index 77a888bfcb53..573fa879d785 100644
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -624,6 +624,10 @@ _GLOBAL(_switch)
- 
- 	addi	r6,r4,-THREAD	/* Convert THREAD to 'current' */
- 	std	r6,PACACURRENT(r13)	/* Set new 'current' */
-+#if defined(CONFIG_STACKPROTECTOR)
-+	ld	r6, TASK_CANARY(r6)
-+	std	r6, PACA_CANARY(r13)
-+#endif
- 
- 	ld	r8,KSP(r4)	/* new stack pointer */
- #ifdef CONFIG_PPC_BOOK3S_64
--- 
-2.13.3
+kmalloc alignment is only guaranteed to ARCH_KMALLOC_MINALIGN. That power
+of 2 byte caches (without certain options) are aligned to the power of 2
+is due to the nature that these objects are stored in SLUB. Other
+allocators may behave different and actually different debug options
+result in different alignments. You cannot rely on that.
 
+ARCH_KMALLOC minalign shows the mininum alignment guarantees. If that is
+not sufficient and you do not want to change the arch guarantees then you
+can open you own slab cache with kmem_cache_create() where you can specify
+different alignment requirements.
