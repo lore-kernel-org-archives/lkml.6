@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBDFC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2FBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A5B520C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A5B520C0A
+	by mail.kernel.org (Postfix) with ESMTP id 774A12098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:04:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774A12098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730374AbeIXWE0 (ORCPT
+        id S1730693AbeIXWHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:04:26 -0400
-Received: from cock.li ([185.100.85.212]:59978 "EHLO cock.li"
+        Mon, 24 Sep 2018 18:07:21 -0400
+Received: from cock.li ([185.100.85.212]:34534 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729008AbeIXWE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:04:26 -0400
+        id S1729466AbeIXWHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 18:07:21 -0400
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537804892; bh=URh9qHFeCo38PKQdUpck3eEvRCHNHalmUuyYg8Id3A0=;
+        t=1537805067; bh=XqBB8qB2LXjmWMgtZQZHdP6yo0++qIFcVG3ZGwsdYBM=;
         h=Date:From:To:Subject:From;
-        b=frrEtdBq/7uKZLaD3qLe3Ljr5NEGjbSSOdBSideB91XK3UWtCSPXENWf+vJD2EfXA
-         MGhsiQy9K7yxi1V10J5VuEQnGIcgH6uqMcYFeVgoFExKDBQ9uZ+6rxHkYCDOjeGpy2
-         erwL4KeyuhhXjxXMGo0d/Rjw6Z+JmrleQakgiZwwEa9uWXYu96c1zzMQlAOB8mhg8o
-         EBEFybNbct3SyYMz3dkH4vxkYcv2gfBVKvm0kd+1Vd5SgYm/6ru9g9woY8hittGysb
-         sGqrRqKmjtVHqSsw+yJTdxxwdSdYWmq6yWCTZ5lQsYL2AG31boEKL99hZC+dCXV9v5
-         ZFXXg3ZQrwSGg==
+        b=oNgq8JlCHSqWx2KMWT8o3hfqoT+voSw0iJ3T0XzEUIdzfgRLFmAfXB3tCwaikLa0L
+         gW4YDXkCk/m/IvXF4nCN66qhPq/blH+HTt+AbEgpr0CnizXBYD8bA47Gs87Ef1RySj
+         SwLXrZXgBFu6QvY0ad1sq651UohvncQ0UvSzuYKIfH+/pOWakDPOJzRRinRqeluW0u
+         4QfpT2gXzFcie3GudFlrfJxGd3AwR6bSs94wl42cDGDaaQKG2QjxFiDRNLeXjQTCxv
+         FOxSXpQZ9kcZCsQgpDvnDpOMWbVfvseG4fOzK9oQn46Hxnh0hdXvjMd1DZIVtMTI1S
+         K9QJvjc8tkakg==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Sep 2018 16:01:31 +0000
+Date:   Mon, 24 Sep 2018 16:04:27 +0000
 From:   gratuitouslicensesarerevocable@redchan.it
-To:     linux-kernel@vger.kernel.org, dng@lists.dyne.org
-Subject: Code of Conduct: Yes mjg59 (Matthew Garrett) Consent _is_ important.
- gratuitous licenses are revocable at will.
-Message-ID: <cc250c152beff5435a88965798b05790@redchan.it>
+To:     linux-kernel@vger.kernel.org
+Subject: Gratuitous licenses are revocable (Solution to being barred from
+ participation: revoke past contributions) (Code of Conduct) (Womyn in Tech)
+Message-ID: <2301ed76745740cfe364763612c314d5@redchan.it>
 X-Sender: gratuitouslicensesarerevocable@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,44 +48,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Spurned linux contributors SHOULD revoke the license grant they have 
-given regarding their code. In the case of the linux kernel; These are 
-typically gratuities and can be rescinded at the will of the grantor.
+Gratuitous licenses are revocable by the grantor.
 
-> ecree wrote:
-> That is presuming my consent against me, and consent is very important 
-> to me.
+Each of the gratis linux kernel contributors can revoke their license 
+grant (to the project or anyone else who did not pay consideration) at 
+their pleasure.
 
-> mjg59 (Matthew Garrett) wrote:
-> It's not presuming your consent at all, it's adding a condition to your 
-> future participation. If you find that condition unacceptable then you 
-> should let your employers know - they can either make a case to the 
-> Linux Foundation or move you to another role. Remember that 
-> participation in the kernel is a privilege, not a right, and our 
-> involvement as always been at the whims of Linus. I'm well aware of how 
-> much it sucks when he makes decisions I don't like without consulting 
-> with the rest of the community, and I'm also aware that there's nothing 
-> I can do about it.
+If and when they are ejected from kernel work, when the gift horse is 
+stared in the mouth for not being a feminist, or for not opposing 
+child-marraige-of-girls-to-men (allowed by YHWH in Devarim chapter 22 
+verse 28 (na'ar), also allowed by Sunni Islam, along with other good 
+pro-male religions) with sufficient vigor, or for not supporting other 
+aspects of the anglo-american religion... they should do so.
 
-Consent is important, keeping the rights-holders happy is important.
-A gratuitous license is revocable at the will of the grantor.
-If ecree holds copyright to his contributions, and he sought no 
-consideration (usually money) from the licensee, he can revoke the 
-license grant at any time under US property law.
+Bruce Perens: You stated you don't "need" stick-in-the-mud contributors 
+anymore. Yes you do: old stick-in-the-mud contributors who contributed 
+to projects without copyright-assignment can revoke their grant at will 
+and put into question the legality of said projects if they wish to.
 
-Contributors to the linux code base do not typically sign over their 
-copyrights to linux or a foundation, instead retaining the copyright 
-themselves.
-Contributors (here specifically: copyright holders) to the linux code 
-base do not typically take money from those to whom they license their 
-work.
+You seem somewhat ignorant of US law...
 
-Do the math.
-Property 101.
-There is a reason Moglen required assignments to the FSF for gnu related 
-work, and the public story does not give the whole truth regarding 
-intent.
-(estopple won't save you, nor will it save would-have-been potential 
-future licensees)
+> Bruce Perens wrote:
+> I am 60 and I *can* deal with this. I have many things to get done, and
+> can't afford to have the stick-in-the-mud guys on a project any longer. 
+> If
+> you want to paint yourself into a corner, that is your right, but IMO 
+> it's
+> a poor choice.
 
-(And yes, I am a lawyer (but not yours))
+It is disgusting that you, Bruce Perens, express a will to treat gratis 
+contributors as if they were employees or servants of yourself: that the 
+moment you imagine that you do not rely on them anymore, you assert a 
+will to eject them because they do not follow your belief system. They 
+can and they should strike back against you in such a case, and against 
+all who attempt to impose upon them.
+
+> Martin Steigerwald wrote:
+> Luckily on LKML he or she got almost no attention.
+Sometimes silence is assent. You will notice that no one has refuted the 
+issue I have raised in any detail. Why do you think Moglen has had the 
+FSF collecting copyright assignments for decades? Did you really think 
+the publicly released story was all there was to it?
