@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814F5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3330C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E5C21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46E5C21486
+	by mail.kernel.org (Postfix) with ESMTP id A39B621486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39B621486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730387AbeIXSAI (ORCPT
+        id S1730400AbeIXSAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:00:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52372 "EHLO
+        Mon, 24 Sep 2018 14:00:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729245AbeIXSAH (ORCPT
+        with ESMTP id S1729146AbeIXSAM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:00:07 -0400
+        Mon, 24 Sep 2018 14:00:12 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EA09D64;
-        Mon, 24 Sep 2018 11:58:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7EA05D64;
+        Mon, 24 Sep 2018 11:58:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurent Roux <xpros64@hotmail.fr>
-Subject: [PATCH 4.4 39/70] USB: add quirk for WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
-Date:   Mon, 24 Sep 2018 13:52:38 +0200
-Message-Id: <20180924113104.137288009@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        "D. Ziesche" <dziesche@zes.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.4 40/70] USB: net2280: Fix erroneous synchronization change
+Date:   Mon, 24 Sep 2018 13:52:39 +0200
+Message-Id: <20180924113104.330340268@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -50,38 +52,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maxence Duprès <xpros64@hotmail.fr>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 9b83a1c301ad6d24988a128c69b42cbaaf537d82 upstream.
+commit dec3c23c9aa1815f07d98ae0375b4cbc10971e13 upstream.
 
-WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
-cause a -EPROTO error, a communication restart and loop again.
+Commit f16443a034c7 ("USB: gadgetfs, dummy-hcd, net2280: fix locking
+for callbacks") was based on a serious misunderstanding.  It
+introduced regressions into both the dummy-hcd and net2280 drivers.
 
-This issue has already been fixed for KS25.
-https://lore.kernel.org/patchwork/patch/753077/
+The problem in dummy-hcd was fixed by commit 7dbd8f4cabd9 ("USB:
+dummy-hcd: Fix erroneous synchronization change"), but the problem in
+net2280 remains.  Namely: the ->disconnect(), ->suspend(), ->resume(),
+and ->reset() callbacks must be invoked without the private lock held;
+otherwise a deadlock will occur when the callback routine tries to
+interact with the UDC driver.
 
-I just add device 201 for KS49 in quirks.c to get it works.
+This patch largely is a reversion of the relevant parts of
+f16443a034c7.  It also drops the private lock around the calls to
+->suspend() and ->resume() (something the earlier patch forgot to do).
+This is safe from races with device interrupts because it occurs
+within the interrupt handler.
 
-Signed-off-by: Laurent Roux <xpros64@hotmail.fr>
-Cc: stable <stable@vger.kernel.org>
+Finally, the patch changes where the ->disconnect() callback is
+invoked when net2280_pullup() turns the pullup off.  Rather than
+making the callback from within stop_activity() at a time when dropping
+the private lock could be unsafe, the callback is moved to a point
+after the lock has already been dropped.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: f16443a034c7 ("USB: gadgetfs, dummy-hcd, net2280: fix locking for callbacks")
+Reported-by: D. Ziesche <dziesche@zes.com>
+Tested-by: D. Ziesche <dziesche@zes.com>
+CC: <stable@vger.kernel.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/gadget/udc/net2280.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -37,6 +37,10 @@ static const struct usb_device_id usb_qu
- 	/* CBM - Flash disk */
- 	{ USB_DEVICE(0x0204, 0x6025), .driver_info = USB_QUIRK_RESET_RESUME },
+--- a/drivers/usb/gadget/udc/net2280.c
++++ b/drivers/usb/gadget/udc/net2280.c
+@@ -1542,11 +1542,14 @@ static int net2280_pullup(struct usb_gad
+ 		writel(tmp | BIT(USB_DETECT_ENABLE), &dev->usb->usbctl);
+ 	} else {
+ 		writel(tmp & ~BIT(USB_DETECT_ENABLE), &dev->usb->usbctl);
+-		stop_activity(dev, dev->driver);
++		stop_activity(dev, NULL);
+ 	}
  
-+	/* WORLDE Controller KS49 or Prodipe MIDI 49C USB controller */
-+	{ USB_DEVICE(0x0218, 0x0201), .driver_info =
-+			USB_QUIRK_CONFIG_INTF_STRINGS },
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+ 
++	if (!is_on && dev->driver)
++		dev->driver->disconnect(&dev->gadget);
 +
- 	/* WORLDE easy key (easykey.25) MIDI controller  */
- 	{ USB_DEVICE(0x0218, 0x0401), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
+ 	return 0;
+ }
+ 
+@@ -2425,8 +2428,11 @@ static void stop_activity(struct net2280
+ 		nuke(&dev->ep[i]);
+ 
+ 	/* report disconnect; the driver is already quiesced */
+-	if (driver)
++	if (driver) {
++		spin_unlock(&dev->lock);
+ 		driver->disconnect(&dev->gadget);
++		spin_lock(&dev->lock);
++	}
+ 
+ 	usb_reinit(dev);
+ }
+@@ -3272,6 +3278,8 @@ next_endpoints:
+ 		BIT(PCI_RETRY_ABORT_INTERRUPT))
+ 
+ static void handle_stat1_irqs(struct net2280 *dev, u32 stat)
++__releases(dev->lock)
++__acquires(dev->lock)
+ {
+ 	struct net2280_ep	*ep;
+ 	u32			tmp, num, mask, scratch;
+@@ -3312,12 +3320,14 @@ static void handle_stat1_irqs(struct net
+ 			if (disconnect || reset) {
+ 				stop_activity(dev, dev->driver);
+ 				ep0_start(dev);
++				spin_unlock(&dev->lock);
+ 				if (reset)
+ 					usb_gadget_udc_reset
+ 						(&dev->gadget, dev->driver);
+ 				else
+ 					(dev->driver->disconnect)
+ 						(&dev->gadget);
++				spin_lock(&dev->lock);
+ 				return;
+ 			}
+ 		}
+@@ -3336,6 +3346,7 @@ static void handle_stat1_irqs(struct net
+ 	tmp = BIT(SUSPEND_REQUEST_CHANGE_INTERRUPT);
+ 	if (stat & tmp) {
+ 		writel(tmp, &dev->regs->irqstat1);
++		spin_unlock(&dev->lock);
+ 		if (stat & BIT(SUSPEND_REQUEST_INTERRUPT)) {
+ 			if (dev->driver->suspend)
+ 				dev->driver->suspend(&dev->gadget);
+@@ -3346,6 +3357,7 @@ static void handle_stat1_irqs(struct net
+ 				dev->driver->resume(&dev->gadget);
+ 			/* at high speed, note erratum 0133 */
+ 		}
++		spin_lock(&dev->lock);
+ 		stat &= ~tmp;
+ 	}
+ 
 
 
