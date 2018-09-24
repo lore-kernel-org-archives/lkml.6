@@ -2,116 +2,168 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8A5ECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3C9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF971208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:17:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF971208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id B6C0C208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:20:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C0C208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbeIYDV3 (ORCPT
+        id S1728503AbeIYDY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 23:21:29 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43232 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728463AbeIYDV2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 23:21:28 -0400
-Received: by mail-qt1-f196.google.com with SMTP id l16-v6so10634574qtq.10;
-        Mon, 24 Sep 2018 14:17:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R2zzxBgg/8NvVC9r2LVRNtyuv4apxgAqKmjDoDkBQsY=;
-        b=m3oub87+2L5CaG6KqUGUFCNFQAh+IrATvLMlnDkH5vH3Cq3ScmDIWXq/nCE970LGWH
-         PSozLPvte5ls1QAfav8sFFjdOkRHD8ETgMrOxXm9lxM8TCX2Cpy2N4PIEyU5dEFVUl7Z
-         5MQ6uK9dmLueOOIRL6FgijpzVWANeUpJe0nRoZysKC5Q/jm4hLDXzxCV8s9bFtfCymkc
-         wtzz8LkVOTUkRBAA+c0b1N+QO4xGgUIq32hFTndEJCjEMqU+Pmo2Ue0VdLi6gDjIGf5U
-         o+fkdsGnOw6GQGj/fZiFzYzOGS7rVs3a3SJP9OXr+3QtTux8JbMBlNv7m/qzj3qcfoXa
-         +fLw==
-X-Gm-Message-State: ABuFfognNM3UYjrlcnxl0oD2qAXRuTecXojnyT2GEkkkR1Zw9An6Z+Db
-        WJOgaKTl4FB6msszpMtnfQm9eFHHDwFX59WcSL4=
-X-Google-Smtp-Source: ACcGV600+tboLwtxr6q8SyQHIWnW+YzCxl/7gTIqTN76ybjiM0uW8wcQwahSSBcAthjiW96c6jblRT0dWwUCS6IUl9k=
-X-Received: by 2002:aed:3f08:: with SMTP id p8-v6mr545436qtf.185.1537823837231;
- Mon, 24 Sep 2018 14:17:17 -0700 (PDT)
+        Mon, 24 Sep 2018 23:24:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42120 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728192AbeIYDYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 23:24:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D927A7A9;
+        Mon, 24 Sep 2018 14:20:45 -0700 (PDT)
+Received: from [10.37.9.1] (unknown [10.37.9.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08ECF3F5B7;
+        Mon, 24 Sep 2018 14:20:42 -0700 (PDT)
+Subject: Re: [PATCH v7 9/9] KVM: arm64: Add support for creating PUD hugepages
+ at stage 2
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     marc.zyngier@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20180924174552.8387-1-punit.agrawal@arm.com>
+ <20180924174552.8387-10-punit.agrawal@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <4df146fc-f9b0-882e-becb-056111a444d4@arm.com>
+Date:   Mon, 24 Sep 2018 22:21:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180912150142.157913-1-arnd@arndb.de> <20180912151134.436719-1-arnd@arndb.de>
- <20180914203506.GE35251@wrath> <20180914205748.GC19965@ZenIV.linux.org.uk>
- <20180918175108.GF35251@wrath> <20180918175952.GJ11367@ziepe.ca>
- <CAK8P3a17GY89in7PeLk1F2T-0Xq=sCrwwntM+Y4BCpXheUC+qQ@mail.gmail.com> <20180924203505.GC6008@ziepe.ca>
-In-Reply-To: <20180924203505.GC6008@ziepe.ca>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 24 Sep 2018 23:17:01 +0200
-Message-ID: <CAK8P3a1Bh9NnncbcT0X4fKWC7B0FnqYyEMUwB6MvmzaNO7VhFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to generic_compat_ioctl_ptrarg
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        David Miller <davem@davemloft.net>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        qat-linux@intel.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-iio@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180924174552.8387-10-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 10:35 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Mon, Sep 24, 2018 at 10:18:52PM +0200, Arnd Bergmann wrote:
-> > On Tue, Sep 18, 2018 at 7:59 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > On Tue, Sep 18, 2018 at 10:51:08AM -0700, Darren Hart wrote:
-> > > > On Fri, Sep 14, 2018 at 09:57:48PM +0100, Al Viro wrote:
-> > > > > On Fri, Sep 14, 2018 at 01:35:06PM -0700, Darren Hart wrote:
-> > We already do this inside of some subsystems, notably drivers/media/,
-> > and it simplifies the implementation of the ioctl handler function
-> > significantly. We obviously cannot do this in general, both because of
-> > traditional drivers that have 16-bit command codes (drivers/tty and others)
-> > and also because of drivers that by accident defined the commands
-> > incorrectly and use the wrong type or the wrong direction in the
-> > definition.
->
-> That could work well, but the first idea could be done globally and
-> mechanically, while this would require very careful per-driver
-> investigation.
->
-> Particularly if the core code has worse performance.. ie due to
-> kmalloc calls or something.
->
-> I think it would make more sense to start by having the core do the
-> case to __user and then add another entry point to have the core do
-> the copy_from_user, and so on.
+Hi Punit,
 
-Having six separate callback pointers to implement a single
-system call seems a bit excessive though.
 
-        Arnd
+On 09/24/2018 06:45 PM, Punit Agrawal wrote:
+> KVM only supports PMD hugepages at stage 2. Now that the various page
+> handling routines are updated, extend the stage 2 fault handling to
+> map in PUD hugepages.
+> 
+> Addition of PUD hugepage support enables additional page sizes (e.g.,
+> 1G with 4K granule) which can be useful on cores that support mapping
+> larger block sizes in the TLB entries.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+
+
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index a42b9505c9a7..a8e86b926ee0 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -84,11 +84,14 @@ void kvm_clear_hyp_idmap(void);
+>   
+>   #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+>   #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
+> +#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+>   
+>   #define kvm_pud_pfn(pud)	({ BUG(); 0; })
+>   
+>   
+>   #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
+> +/* No support for pud hugepages */
+> +#define kvm_pud_mkhuge(pud)	(pud)
+>   
+
+shouldn't this be BUG() like other PUD huge helpers for arm32 ?
+
+>   /*
+>    * The following kvm_*pud*() functions are provided strictly to allow
+> @@ -105,6 +108,23 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+>   	return false;
+>   }
+>   
+> +static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
+> +{
+> +	BUG();
+> +}
+> +
+> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+> +{
+> +	BUG();
+> +	return pud;
+> +}
+> +
+> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+> +{
+> +	BUG();
+> +	return pud;
+> +}
+> +
+
+
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 3ff7ebb262d2..5b8163537bc2 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+
+...
+
+
+> @@ -1669,7 +1746,28 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>   	needs_exec = exec_fault ||
+>   		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
+>   
+> -	if (hugetlb && vma_pagesize == PMD_SIZE) {
+> +	if (hugetlb && vma_pagesize == PUD_SIZE) {
+> +		/*
+> +		 * Assuming that PUD level always exists at Stage 2 -
+> +		 * this is true for 4k pages with 40 bits IPA
+> +		 * currently supported.
+> +		 *
+> +		 * When using 64k pages, 40bits of IPA results in
+> +		 * using only 2-levels at Stage 2. Overlooking this
+> +		 * problem for now as a PUD hugepage with 64k pages is
+> +		 * too big (4TB) to be practical.
+> +		 */
+> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
+
+Is this based on the Dynamic IPA series ? The cover letter seems
+to suggest that it is. But I don't see the check to make sure we have
+stage2 PUD level here before we go ahead and try PUD huge page at
+stage2. Also the comment above seems outdated in that case.
+
+> +
+> +		new_pud = kvm_pud_mkhuge(new_pud);
+> +		if (writable)
+> +			new_pud = kvm_s2pud_mkwrite(new_pud);
+> +
+> +		if (needs_exec)
+> +			new_pud = kvm_s2pud_mkexec(new_pud);
+> +
+> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
+> +	} else if (hugetlb && vma_pagesize == PMD_SIZE) {
+>   		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+>   
+>   		new_pmd = kvm_pmd_mkhuge(new_pmd);
+> 
+
+
+Suzuki
