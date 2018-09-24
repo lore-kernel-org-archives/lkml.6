@@ -2,167 +2,86 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A6BC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51673C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE12C2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:22:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE12C2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EBF5F21480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:24:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBF5F21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731277AbeIXWZE (ORCPT
+        id S1732152AbeIXW1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:25:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:38316 "EHLO foss.arm.com"
+        Mon, 24 Sep 2018 18:27:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55320 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbeIXWZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:25:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C50EB18A;
-        Mon, 24 Sep 2018 09:22:07 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.emea.arm.com [10.4.12.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B326A3F5BD;
-        Mon, 24 Sep 2018 09:22:05 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 17:22:03 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux@armlinux.org.uk,
-        steve.capper@linaro.org, juju.sung@mediatek.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        miles.chen@mediatek.com, Simon Horman <horms@verge.net.au>,
-        jian-min.lui@mediatek.com, kernel-team@android.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 1/3] arm: mm: reordering memory type table
-Message-ID: <20180924162202.GD52978@arrakis.emea.arm.com>
-References: <20180917004451.174527-1-minchan@kernel.org>
- <20180917004451.174527-2-minchan@kernel.org>
+        id S1729013AbeIXW1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 18:27:37 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A701A4FCD8;
+        Mon, 24 Sep 2018 16:24:40 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.217])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C4E85C220;
+        Mon, 24 Sep 2018 16:24:38 +0000 (UTC)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 RESEND 3/5] KVM: x86: hyperv: use get_vcpu_by_vpidx() in kvm_hv_flush_tlb()
+In-Reply-To: <87r2hs7cco.fsf@vitty.brq.redhat.com>
+References: <20180822101832.31763-1-vkuznets@redhat.com> <20180822101832.31763-4-vkuznets@redhat.com> <8da03d2a-5405-f363-f081-e4bc46b106e3@redhat.com> <87r2hs7cco.fsf@vitty.brq.redhat.com>
+Date:   Mon, 24 Sep 2018 18:24:36 +0200
+Message-ID: <87zhw62797.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917004451.174527-2-minchan@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 24 Sep 2018 16:24:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 09:44:49AM +0900, Minchan Kim wrote:
-> To use bit 5 in page table as L_PTE_SPECIAL, we need a room for that.
-> It seems we don't need 4 bits for the memory type with ARMv6+.
-> If it's true, let's reorder bits to make bit 5 free.
-> 
-> We will use the bit for L_PTE_SPECIAL in next patch.
-> 
-> A note from Catalin
-> "
-> > Anyway, on ARMv7 or ARMv6+LPAE, the non-shared device gets mapped to
+Vitaly Kuznetsov <vkuznets@redhat.com> writes:
 
-I meant 'ARMv7+LPAE' since ARMv6 never had the LPAE feature (please
-correct the code comment below as well).
+> Paolo Bonzini <pbonzini@redhat.com> writes:
+>
+>> On 22/08/2018 12:18, Vitaly Kuznetsov wrote:
+>>> VP_INDEX almost always matches VCPU id and get_vcpu_by_vpidx() is fast,
+>>> use it instead of traversing full vCPU list every time.
+>>
+>> ... but if it doesn't, the algorithm is now quadratic, isn't i?
+>
+> Yes,
+>
+> I even had an implementation with a logarythmic search back in v2 but
+> we had a discussion with Roman and he convinced me this is an overkill
+> and not currently required. It seems that with Qemu this is true indeed,
+> vp_index always matches vcpu is but in case some other userspace decides
+> to break this unwritten rule users may experience significant slowdown.
 
-I was wrong with the classic ARMv7, only ARMv7+LPAE makes all device
-memory shareable in hardware (even if not enabled). With classic ARMv7
-(that is pre-Cortex-A7/A15), the shareable bit in combination with PRRR
-allows the Device Non-shareable configuration.
+Hi Paolo,
 
-Anyway, it doesn't matter here since the L_PTE_SHARED bit is set
-separately in the mem_types[] array, the L_PTE_MT_* definitions are just
-for the actual memory type ignoring shareability. We just need to make
-sure the comments are correct.
+could you please clarify what needs to be done to get this merged? In
+particular, are you OK with my comment above or do we need to do
+something with it (e.g. get back to the 'logarythmic search' from v2)?
 
-> > shared device in hardware. Looking through the arm32 code, it seems that
-> > MT_DEVICE_NONSHARED is used by arch/arm/mach-shmobile/setup-r8a7779.c
-> > and IIUC that's a v7 platform (R-Car H1, Cortex-A9). I think the above
-> > should be defined to L_PTE_MT_DEV_SHARED, unless I miss any place where
-> > DEV_NONSHARED is relevant on ARMv6 (adding Simon to confirm on shmbile).
+In kvm/queue I can see only 'x86/hyper-v: rename ipi_arg_{ex,non_ex}
+structures' patch from this series applied.
 
-It would be good to figure out the DEV_NONSHARED on ARMv6 relevance. I
-don't think we break R-Car H1 since the shareability bit wouldn't be set
-for DEV_NONSHARED.
-
-> diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
-> index 92fd2c8a9af0..514b13c27b43 100644
-> --- a/arch/arm/include/asm/pgtable-2level.h
-> +++ b/arch/arm/include/asm/pgtable-2level.h
-> @@ -164,14 +164,25 @@
->  #define L_PTE_MT_BUFFERABLE	(_AT(pteval_t, 0x01) << 2)	/* 0001 */
->  #define L_PTE_MT_WRITETHROUGH	(_AT(pteval_t, 0x02) << 2)	/* 0010 */
->  #define L_PTE_MT_WRITEBACK	(_AT(pteval_t, 0x03) << 2)	/* 0011 */
-> +#define L_PTE_MT_DEV_SHARED	(_AT(pteval_t, 0x04) << 2)	/* 0100 */
-> +#define L_PTE_MT_VECTORS	(_AT(pteval_t, 0x05) << 2)	/* 0101 */
->  #define L_PTE_MT_MINICACHE	(_AT(pteval_t, 0x06) << 2)	/* 0110 (sa1100, xscale) */
->  #define L_PTE_MT_WRITEALLOC	(_AT(pteval_t, 0x07) << 2)	/* 0111 */
-> -#define L_PTE_MT_DEV_SHARED	(_AT(pteval_t, 0x04) << 2)	/* 0100 */
-> -#define L_PTE_MT_DEV_NONSHARED	(_AT(pteval_t, 0x0c) << 2)	/* 1100 */
-> +#if defined(CONFIG_CPU_V7) || defined (CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K)
-> +/*
-> + * On ARMv7 or ARMv6+LPAE, the non-shared device gets mapped to
-> + * shared device in hardware.
-> + */
-
-I would change this to something like:
-
-/*
- * On ARMv7 or ARMv7+LPAE, the non-shared and shared device types get
- * mapped to the same TEX remapping index. On classic ARMv7, the
- * shareability is controlled by the PRRR[17:16] field, indexed by
- * L_PTE_SHARED. On ARMv7+LPAE the device mapping is always shareable.
- */
-
-> +#define L_PTE_MT_DEV_NONSHARED	L_PTE_MT_DEV_SHARED
-> +#define L_PTE_MT_DEV_WC		L_PTE_MT_BUFFERABLE
-> +#define L_PTE_MT_DEV_CACHED	L_PTE_MT_WRITEBACK
-> +#define L_PTE_MT_MASK		(_AT(pteval_t, 0x07) << 2)
-> +#else
->  #define L_PTE_MT_DEV_WC		(_AT(pteval_t, 0x09) << 2)	/* 1001 */
->  #define L_PTE_MT_DEV_CACHED	(_AT(pteval_t, 0x0b) << 2)	/* 1011 */
-> -#define L_PTE_MT_VECTORS	(_AT(pteval_t, 0x0f) << 2)	/* 1111 */
-> -#define L_PTE_MT_MASK		(_AT(pteval_t, 0x0f) << 2)
-> +#define L_PTE_MT_DEV_NONSHARED	(_AT(pteval_t, 0x0c) << 2)	/* 1100 */
-> +#define L_PTE_MT_MASK           (_AT(pteval_t, 0x0f) << 2)
-> +#endif
->  
->  #ifndef __ASSEMBLY__
->  
-> diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
-> index 81d0efb055c6..367a89d5aeca 100644
-> --- a/arch/arm/mm/proc-macros.S
-> +++ b/arch/arm/mm/proc-macros.S
-> @@ -138,7 +138,7 @@
->  	.long	PTE_CACHEABLE					@ L_PTE_MT_WRITETHROUGH
->  	.long	PTE_CACHEABLE | PTE_BUFFERABLE			@ L_PTE_MT_WRITEBACK
->  	.long	PTE_BUFFERABLE					@ L_PTE_MT_DEV_SHARED
-> -	.long	0x00						@ unused
-> +	.long	PTE_CACHEABLE | PTE_BUFFERABLE | PTE_EXT_APX	@ L_PTE_MT_VECTORS
->  	.long	0x00						@ L_PTE_MT_MINICACHE (not present)
->  	.long	PTE_EXT_TEX(1) | PTE_CACHEABLE | PTE_BUFFERABLE	@ L_PTE_MT_WRITEALLOC
->  	.long	0x00						@ unused
-> @@ -148,7 +148,7 @@
->  	.long	PTE_EXT_TEX(2)					@ L_PTE_MT_DEV_NONSHARED
->  	.long	0x00						@ unused
->  	.long	0x00						@ unused
-> -	.long	PTE_CACHEABLE | PTE_BUFFERABLE | PTE_EXT_APX	@ L_PTE_MT_VECTORS
-> +	.long	0x00						@ unused
->  	.endm
-
-Looking at the L_PTE_MT_VECTORS uses, I don't think this gives you what
-you intended. vecs_pgprot in build_mem_type_table() actually combines
-the cache policy bits with L_PTE_MT_VECTORS and this might have been the
-reason why it was on the last position (all bits 1). So the default
-cachepolicy of L_PTE_MT_WRITEBACK or'ed with the new L_PTE_MT_VECTORS
-gives you 0b0111 which is position 7 instead of 5. This would map onto
-L_PTE_MT_WRITEALLOC (which is not that bad) but misses the APX bit which
-marks the vectors page r/w for kernel and ro for user.
-
-I don't think this matters since the kernel no longer writes to the
-vectors page at run-time but it needs cleaning up a bit (and testing in
-case I missed something). IOW, do we still need a dedicated mapping type
-for the vectors or we can simply use the read-only user page attributes?
+Thanks,
 
 -- 
-Catalin
+Vitaly
