@@ -2,40 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C39ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E99ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 658C02148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 658C02148C
+	by mail.kernel.org (Postfix) with ESMTP id 2309721486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2309721486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729274AbeIXRlh (ORCPT
+        id S1729301AbeIXRlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:41:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50696 "EHLO
+        Mon, 24 Sep 2018 13:41:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbeIXRlg (ORCPT
+        with ESMTP id S1726328AbeIXRlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:41:36 -0400
+        Mon, 24 Sep 2018 13:41:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 511CE106F;
-        Mon, 24 Sep 2018 11:39:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B57BC106F;
+        Mon, 24 Sep 2018 11:39:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauricio Faria de Oliveira <mfo@canonical.com>,
-        Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Zumeng Chen <zumeng.chen@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 055/105] partitions/aix: fix usage of uninitialized lv_info and lvname structures
-Date:   Mon, 24 Sep 2018 13:33:41 +0200
-Message-Id: <20180924113119.195864457@linuxfoundation.org>
+Subject: [PATCH 3.18 056/105] mfd: ti_am335x_tscadc: Fix struct clk memory leak
+Date:   Mon, 24 Sep 2018 13:33:42 +0200
+Message-Id: <20180924113119.276789148@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -53,58 +52,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mfo@canonical.com>
+From: Zumeng Chen <zumeng.chen@gmail.com>
 
-[ Upstream commit 14cb2c8a6c5dae57ee3e2da10fa3db2b9087e39e ]
+[ Upstream commit c2b1509c77a99a0dcea0a9051ca743cb88385f50 ]
 
-The if-block that sets a successful return value in aix_partition()
-uses 'lvip[].pps_per_lv' and 'n[].name' potentially uninitialized.
+Use devm_elk_get() to let Linux manage struct clk memory to avoid the following
+memory leakage report:
 
-For example, if 'numlvs' is zero or alloc_lvn() fails, neither is
-initialized, but are used anyway if alloc_pvd() succeeds after it.
+unreferenced object 0xdd75efc0 (size 64):
+  comm "systemd-udevd", pid 186, jiffies 4294945126 (age 1195.750s)
+  hex dump (first 32 bytes):
+    61 64 63 5f 74 73 63 5f 66 63 6b 00 00 00 00 00  adc_tsc_fck.....
+    00 00 00 00 92 03 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<c0a15260>] kmemleak_alloc+0x40/0x74
+    [<c0287a10>] __kmalloc_track_caller+0x198/0x388
+    [<c0255610>] kstrdup+0x40/0x5c
+    [<c025565c>] kstrdup_const+0x30/0x3c
+    [<c0636630>] __clk_create_clk+0x60/0xac
+    [<c0630918>] clk_get_sys+0x74/0x144
+    [<c0630cdc>] clk_get+0x5c/0x68
+    [<bf0ac540>] ti_tscadc_probe+0x260/0x468 [ti_am335x_tscadc]
+    [<c06f3c0c>] platform_drv_probe+0x60/0xac
+    [<c06f1abc>] driver_probe_device+0x214/0x2dc
+    [<c06f1c18>] __driver_attach+0x94/0xc0
+    [<c06efe2c>] bus_for_each_dev+0x90/0xa0
+    [<c06f1470>] driver_attach+0x28/0x30
+    [<c06f1030>] bus_add_driver+0x184/0x1ec
+    [<c06f2b74>] driver_register+0xb0/0xf0
+    [<c06f3b4c>] __platform_driver_register+0x40/0x54
 
-So, make the alloc_pvd() call conditional on their initialization.
-
-This has been hit when attaching an apparently corrupted/stressed
-AIX LUN, misleading the kernel to pr_warn() invalid data and hang.
-
-    [...] partition (null) (11 pp's found) is not contiguous
-    [...] partition (null) (2 pp's found) is not contiguous
-    [...] partition (null) (3 pp's found) is not contiguous
-    [...] partition (null) (64 pp's found) is not contiguous
-
-Fixes: 6ceea22bbbc8 ("partitions: add aix lvm partition support files")
-Signed-off-by: Mauricio Faria de Oliveira <mfo@canonical.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Zumeng Chen <zumeng.chen@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/partitions/aix.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mfd/ti_am335x_tscadc.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/block/partitions/aix.c
-+++ b/block/partitions/aix.c
-@@ -177,7 +177,7 @@ int aix_partition(struct parsed_partitio
- 	u32 vgda_sector = 0;
- 	u32 vgda_len = 0;
- 	int numlvs = 0;
--	struct pvd *pvd;
-+	struct pvd *pvd = NULL;
- 	struct lv_info {
- 		unsigned short pps_per_lv;
- 		unsigned short pps_found;
-@@ -231,10 +231,11 @@ int aix_partition(struct parsed_partitio
- 				if (lvip[i].pps_per_lv)
- 					foundlvs += 1;
- 			}
-+			/* pvd loops depend on n[].name and lvip[].pps_per_lv */
-+			pvd = alloc_pvd(state, vgda_sector + 17);
- 		}
- 		put_dev_sector(sect);
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -227,14 +227,13 @@ static	int ti_tscadc_probe(struct platfo
+ 	 * The TSC_ADC_SS controller design assumes the OCP clock is
+ 	 * at least 6x faster than the ADC clock.
+ 	 */
+-	clk = clk_get(&pdev->dev, "adc_tsc_fck");
++	clk = devm_clk_get(&pdev->dev, "adc_tsc_fck");
+ 	if (IS_ERR(clk)) {
+ 		dev_err(&pdev->dev, "failed to get TSC fck\n");
+ 		err = PTR_ERR(clk);
+ 		goto err_disable_clk;
  	}
--	pvd = alloc_pvd(state, vgda_sector + 17);
- 	if (pvd) {
- 		int numpps = be16_to_cpu(pvd->pp_count);
- 		int psn_part1 = be32_to_cpu(pvd->psn_part1);
+ 	clock_rate = clk_get_rate(clk);
+-	clk_put(clk);
+ 	tscadc->clk_div = clock_rate / ADC_CLK;
+ 
+ 	/* TSCADC_CLKDIV needs to be configured to the value minus 1 */
 
 
