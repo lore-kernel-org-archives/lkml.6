@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FE9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D69ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D59D21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D59D21486
+	by mail.kernel.org (Postfix) with ESMTP id CC5DE208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5DE208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732141AbeIXSRm (ORCPT
+        id S1732144AbeIXSRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55630 "EHLO
+        Mon, 24 Sep 2018 14:17:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSRm (ORCPT
+        with ESMTP id S1730150AbeIXSRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:42 -0400
+        Mon, 24 Sep 2018 14:17:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3F8910A5;
-        Mon, 24 Sep 2018 12:15:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12B9810A7;
+        Mon, 24 Sep 2018 12:15:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 059/173] nfp: avoid buffer leak when FW communication fails
-Date:   Mon, 24 Sep 2018 13:51:33 +0200
-Message-Id: <20180924113120.365498532@linuxfoundation.org>
+Subject: [PATCH 4.14 068/173] i2c: aspeed: Fix initial values of master and slave state
+Date:   Mon, 24 Sep 2018 13:51:42 +0200
+Message-Id: <20180924113121.043570764@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,79 +54,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 
-[ Upstream commit 07300f774fec9519663a597987a4083225588be4 ]
+[ Upstream commit 517fde0eb5a8f46c54ba6e2c36e32563b23cb14f ]
 
-After device is stopped we reset the rings by moving all free buffers
-to positions [0, cnt - 2], and clear the position cnt - 1 in the ring.
-We then proceed to clear the read/write pointers.  This means that if
-we try to reset the ring again the code will assume that the next to
-fill buffer is at position 0 and swap it with cnt - 1.  Since we
-previously cleared position cnt - 1 it will lead to leaking the first
-buffer and leaving ring in a bad state.
+This patch changes the order of enum aspeed_i2c_master_state and
+enum aspeed_i2c_slave_state defines to make their initial value to
+ASPEED_I2C_MASTER_INACTIVE and ASPEED_I2C_SLAVE_STOP respectively.
+In case of multi-master use, if a slave data comes ahead of the
+first master xfer, master_state starts from an invalid state so
+this change fixes the issue.
 
-This scenario can only happen if FW communication fails, in which case
-the ring will never be used again, so the fact it's in a bad state will
-not be noticed.  Buffer leak is the only problem.  Don't try to move
-buffers in the ring if the read/write pointers indicate the ring was
-never used or have already been reset.
-
-nfp_net_clear_config_and_disable() is now fully idempotent.
-
-Found by code inspection, FW communication failures are very rare,
-and reconfiguring a live device is not common either, so it's unlikely
-anyone has ever noticed the leak.
-
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-aspeed.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -1087,7 +1087,7 @@ static bool nfp_net_xdp_complete(struct
-  * @dp:		NFP Net data path struct
-  * @tx_ring:	TX ring structure
-  *
-- * Assumes that the device is stopped
-+ * Assumes that the device is stopped, must be idempotent.
-  */
- static void
- nfp_net_tx_ring_reset(struct nfp_net_dp *dp, struct nfp_net_tx_ring *tx_ring)
-@@ -1289,13 +1289,18 @@ static void nfp_net_rx_give_one(const st
-  * nfp_net_rx_ring_reset() - Reflect in SW state of freelist after disable
-  * @rx_ring:	RX ring structure
-  *
-- * Warning: Do *not* call if ring buffers were never put on the FW freelist
-- *	    (i.e. device was not enabled)!
-+ * Assumes that the device is stopped, must be idempotent.
-  */
- static void nfp_net_rx_ring_reset(struct nfp_net_rx_ring *rx_ring)
- {
- 	unsigned int wr_idx, last_idx;
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -110,22 +110,22 @@
+ #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
  
-+	/* wr_p == rd_p means ring was never fed FL bufs.  RX rings are always
-+	 * kept at cnt - 1 FL bufs.
-+	 */
-+	if (rx_ring->wr_p == 0 && rx_ring->rd_p == 0)
-+		return;
-+
- 	/* Move the empty entry to the end of the list */
- 	wr_idx = D_IDX(rx_ring, rx_ring->wr_p);
- 	last_idx = rx_ring->cnt - 1;
-@@ -2505,6 +2510,8 @@ static void nfp_net_vec_clear_ring_data(
- /**
-  * nfp_net_clear_config_and_disable() - Clear control BAR and disable NFP
-  * @nn:      NFP Net device to reconfigure
-+ *
-+ * Warning: must be fully idempotent.
-  */
- static void nfp_net_clear_config_and_disable(struct nfp_net *nn)
- {
+ enum aspeed_i2c_master_state {
++	ASPEED_I2C_MASTER_INACTIVE,
+ 	ASPEED_I2C_MASTER_START,
+ 	ASPEED_I2C_MASTER_TX_FIRST,
+ 	ASPEED_I2C_MASTER_TX,
+ 	ASPEED_I2C_MASTER_RX_FIRST,
+ 	ASPEED_I2C_MASTER_RX,
+ 	ASPEED_I2C_MASTER_STOP,
+-	ASPEED_I2C_MASTER_INACTIVE,
+ };
+ 
+ enum aspeed_i2c_slave_state {
++	ASPEED_I2C_SLAVE_STOP,
+ 	ASPEED_I2C_SLAVE_START,
+ 	ASPEED_I2C_SLAVE_READ_REQUESTED,
+ 	ASPEED_I2C_SLAVE_READ_PROCESSED,
+ 	ASPEED_I2C_SLAVE_WRITE_REQUESTED,
+ 	ASPEED_I2C_SLAVE_WRITE_RECEIVED,
+-	ASPEED_I2C_SLAVE_STOP,
+ };
+ 
+ struct aspeed_i2c_bus {
 
 
