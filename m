@@ -2,167 +2,188 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0954ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BB6ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE750208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:19:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE750208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 22C44208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:19:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XXAxFOFE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C44208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733196AbeIXXWc (ORCPT
+        id S1733232AbeIXXWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 24 Sep 2018 19:22:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39070 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729008AbeIXXWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 19:22:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E16680D;
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41137 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729830AbeIXXWc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 19:22:32 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m77-v6so599961pfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=u302fKFfvjR4Su78UTIHyKLv0/aGktvMw/1By3CXA2M=;
+        b=XXAxFOFEZPkFumXPzEAH5ikrlOI9gNDxrArIdlelxO/dqnxfMP8TOWoyptMBk+zsJy
+         wlFp3KBZWSePNaDIvNldzFpKvdao1zzRIxXZSN9xf+cvcc5gyG5gzvggZS/MY4euD8cI
+         Y/DUTeJTayBGMqtzmm561mPhhuZM0V9SXDdXw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u302fKFfvjR4Su78UTIHyKLv0/aGktvMw/1By3CXA2M=;
+        b=ug/E4ZzIDLQRepIVHz375FJCeJ45UjMtNscULfXm+GdaCQGRqY+csGXpXJ1QMmrwVx
+         6qHT+JObDIRidyRkgUF/ReEheWFVCeuJxthjEKHKdJYFL2YtDg8zZdm/2fFA8uE3UjJH
+         0YkkSdsBH7tTjVtSgRut3MoX77D9nI3sArX020/SL6p779jJa+I4Twi5pG4ALi7Qh/pK
+         9Nu2z6jCaHWUQqqFLnuCgqzhvzWY0VRJ2BKK1qzatjcJppfXHpyWDxR/vMAW3s/hl1/c
+         Fo5qz3QBSHMcxDiH+Ww5K1ZH4EaSWHPYrLVYgNQgtNV2vpGJgHwG9tjNicsQy/8OM2u1
+         GQ3w==
+X-Gm-Message-State: ABuFfoiyGDG+i3MO0okRV4mtBacQ1VOCPMKTkHkQfOmIo3odaNpRStaQ
+        kZ2LH11D2VwuP0znHZeVORIUAA==
+X-Google-Smtp-Source: ACcGV60M2UPhE+PdmOG+fTca7SOKJuhEKPAwhC7MoAObKXdBBNd9a/JB4vY7k42lS0eLejpE+dV7CA==
+X-Received: by 2002:a63:1c61:: with SMTP id c33-v6mr10339560pgm.109.1537809562443;
         Mon, 24 Sep 2018 10:19:22 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF6683F5BD;
-        Mon, 24 Sep 2018 10:19:19 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 18:19:17 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
- default
-Message-ID: <20180924171917.GU1413@e110439-lin>
-References: <20180828135324.21976-15-patrick.bellasi@arm.com>
- <20180904134748.GA4974@localhost.localdomain>
- <20180906144053.GD25636@e110439-lin>
- <20180914111003.GC24082@hirez.programming.kicks-ass.net>
- <20180914140732.GR1413@e110439-lin>
- <20180914142813.GM24124@hirez.programming.kicks-ass.net>
- <20180917122723.GS1413@e110439-lin>
- <20180921091308.GD24082@hirez.programming.kicks-ass.net>
- <20180924151400.GT1413@e110439-lin>
- <20180924162640.GB7060@hirez.programming.kicks-ass.net>
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t141-v6sm48810350pgb.27.2018.09.24.10.19.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 10:19:21 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 10:23:42 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     kishon@ti.com, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, subhashj@codeaurora.org,
+        evgreen@chromium.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/3] phy: qcom-ufs: Remove stale methods that handle ref
+ clk
+Message-ID: <20180924172342.GK1367@tuxbook-pro>
+References: <20180904101719.18049-1-vivek.gautam@codeaurora.org>
+ <20180904101719.18049-2-vivek.gautam@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924162640.GB7060@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180904101719.18049-2-vivek.gautam@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24-Sep 18:26, Peter Zijlstra wrote:
-> On Mon, Sep 24, 2018 at 04:14:00PM +0100, Patrick Bellasi wrote:
+On Tue 04 Sep 03:17 PDT 2018, Vivek Gautam wrote:
+
+> Remove ufs_qcom_phy_enable/(disable)_dev_ref_clk() that
+> are not being used by any code.
 > 
-> > ... still it's difficult to give a precise definition of knee point,
-> > unless you know about platforms which have a sharp change in energy
-> > efficiency.
-> > 
-> > The only cases we know about are those where:
-> > 
-> > A) multiple frequencies uses the same voltage, e.g.
-> > 
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-On a side note, the following plots represents ee^-1, or eventually,
-the P on the y axise... my bad.... but you got the meaning anyway ;)
+Thanks for the ping Vivek, I didn't spot these when you posted them.
 
-> > 
-> >      ^                                     *
-> >      | Energy                              O
-> >      | efficiency                         O+
-> >      |                                   O |
-> >      |                                 O*  |
-> >      |                              O**    |
-> >      |   O**                    O***       |
-> >      |   +  O**            O****           |
-> >      |   |     O**   O*****                |
-> >      |   |        O**                      |
-> >      |   |          +                      |
-> >      |   |  Same V  |   Increasing V       |
-> >      +---+----------+----------------------+----------->
-> >          |          |                      | Frequency
-> >          L          M                      H
-> > 
-> > B) there is a big frequency gap between low frequency OPPs and high
-> >    frequency OPPs, e.g.
-> > 
-> >                                        O
-> >     ^                                **+
-> >     | Energy                       **  |
-> >     | efficiency                 **    |
-> >     |                          **      |
-> >     |                        **        |
-> >     |                      **          |
-> >     |                    **            |
-> >     |                  **              |
-> >     |               O**                |
-> >     |        O******+                  |
-> >     |O*******       |                  |
-> >     |               |                  |
-> >     ++--------------+------------------+------>
-> >      |              |                  |  Frequency
-> >      L              M                  H
-> > 
-> > 
-> > In case A, all the OPPs left of M are dominated by M in terms
-> > of energy efficiency and normally they should be never used.
-> > Unless you are under thermal constraints and you still want to keep
-> > your code running even if at a lower rate and energy efficiency.
-> > At this point, however, you already invalidated all the OPPs right of
-> > M and, on the remaining, you still struggle do define the knee point.
-> > 
-> > In case B... I'm wondering it such a conf even makes sense ;)
-> > Is there really some platform out there with such a "non homogeneously
-> > distributed" set of available frequencies ?
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/phy/qualcomm/phy-qcom-ufs.c | 50 -------------------------------------
+>  include/linux/phy/phy-qcom-ufs.h    | 14 -----------
+>  2 files changed, 64 deletions(-)
 > 
-> Well, the curve is a second or third order polynomial (when V~f -> fV^2
-> -> f^3), so it shoots up at some point. There's not really anything you
-> can do about that. But if you're willing to put in active cooling and
-> lots of energy, you can make it go fast :-)
-
-Sure... until you don't melt the silicon you can push the frequency.
-
-However, if you are going for such aggressive active cooling, perhaps
-your interest for energy efficiency it's already a very low priority
-goal.
-
-> Therefore I was thinking:
+> diff --git a/drivers/phy/qualcomm/phy-qcom-ufs.c b/drivers/phy/qualcomm/phy-qcom-ufs.c
+> index c5493ea51282..f2979ccad00a 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-ufs.c
+> @@ -431,56 +431,6 @@ static void ufs_qcom_phy_disable_ref_clk(struct ufs_qcom_phy *phy)
+>  	}
+>  }
+>  
+> -#define UFS_REF_CLK_EN	(1 << 5)
+> -
+> -static void ufs_qcom_phy_dev_ref_clk_ctrl(struct phy *generic_phy, bool enable)
+> -{
+> -	struct ufs_qcom_phy *phy = get_ufs_qcom_phy(generic_phy);
+> -
+> -	if (phy->dev_ref_clk_ctrl_mmio &&
+> -	    (enable ^ phy->is_dev_ref_clk_enabled)) {
+> -		u32 temp = readl_relaxed(phy->dev_ref_clk_ctrl_mmio);
+> -
+> -		if (enable)
+> -			temp |= UFS_REF_CLK_EN;
+> -		else
+> -			temp &= ~UFS_REF_CLK_EN;
+> -
+> -		/*
+> -		 * If we are here to disable this clock immediately after
+> -		 * entering into hibern8, we need to make sure that device
+> -		 * ref_clk is active atleast 1us after the hibern8 enter.
+> -		 */
+> -		if (!enable)
+> -			udelay(1);
+> -
+> -		writel_relaxed(temp, phy->dev_ref_clk_ctrl_mmio);
+> -		/* ensure that ref_clk is enabled/disabled before we return */
+> -		wmb();
+> -		/*
+> -		 * If we call hibern8 exit after this, we need to make sure that
+> -		 * device ref_clk is stable for atleast 1us before the hibern8
+> -		 * exit command.
+> -		 */
+> -		if (enable)
+> -			udelay(1);
+> -
+> -		phy->is_dev_ref_clk_enabled = enable;
+> -	}
+> -}
+> -
+> -void ufs_qcom_phy_enable_dev_ref_clk(struct phy *generic_phy)
+> -{
+> -	ufs_qcom_phy_dev_ref_clk_ctrl(generic_phy, true);
+> -}
+> -EXPORT_SYMBOL_GPL(ufs_qcom_phy_enable_dev_ref_clk);
+> -
+> -void ufs_qcom_phy_disable_dev_ref_clk(struct phy *generic_phy)
+> -{
+> -	ufs_qcom_phy_dev_ref_clk_ctrl(generic_phy, false);
+> -}
+> -EXPORT_SYMBOL_GPL(ufs_qcom_phy_disable_dev_ref_clk);
+> -
+>  /* Turn ON M-PHY RMMI interface clocks */
+>  static int ufs_qcom_phy_enable_iface_clk(struct ufs_qcom_phy *phy)
+>  {
+> diff --git a/include/linux/phy/phy-qcom-ufs.h b/include/linux/phy/phy-qcom-ufs.h
+> index 0a2c18a9771d..9dd85071bcce 100644
+> --- a/include/linux/phy/phy-qcom-ufs.h
+> +++ b/include/linux/phy/phy-qcom-ufs.h
+> @@ -17,20 +17,6 @@
+>  
+>  #include "phy.h"
+>  
+> -/**
+> - * ufs_qcom_phy_enable_dev_ref_clk() - Enable the device
+> - * ref clock.
+> - * @phy: reference to a generic phy.
+> - */
+> -void ufs_qcom_phy_enable_dev_ref_clk(struct phy *phy);
+> -
+> -/**
+> - * ufs_qcom_phy_disable_dev_ref_clk() - Disable the device
+> - * ref clock.
+> - * @phy: reference to a generic phy.
+> - */
+> -void ufs_qcom_phy_disable_dev_ref_clk(struct phy *phy);
+> -
+>  int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes);
+>  void ufs_qcom_phy_save_controller_version(struct phy *phy,
+>  			u8 major, u16 minor, u16 step);
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
 > 
-> > Maybe we can define a threshold
-> > for a "EE derivative ratio", but it will still be quite arbitrary.
-> 
-> Because up until de/df=.5 we gain more performance than we loose ee.
-
-You mean up until de < df ?
-
-IOW... the threshold should be de == df => 45deg tangent ?
-
-> But I might not have appreciated the fact that when we work with
-> imaginary cost units that skews the .5.
-
-The main skew IMO comes from the fact the energy efficiency
-"tipping point" is very much application / user specific...
-and it can also change depending on the usage scenario for the
-same user and platform.
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
