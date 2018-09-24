@@ -2,39 +2,44 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A453AECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1667C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B3821486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:23:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B3821486
+	by mail.kernel.org (Postfix) with ESMTP id 653EA2148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:23:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 653EA2148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732715AbeIXSZ0 (ORCPT
+        id S1732730AbeIXSZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:25:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56672 "EHLO
+        Mon, 24 Sep 2018 14:25:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56692 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732043AbeIXSZZ (ORCPT
+        with ESMTP id S1732124AbeIXSZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:25:25 -0400
+        Mon, 24 Sep 2018 14:25:28 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 791F0107E;
-        Mon, 24 Sep 2018 12:23:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87911107E;
+        Mon, 24 Sep 2018 12:23:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        stable@vger.kernel.org, Quentin Perret <quentin.perret@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, patrick.bellasi@arm.com,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 136/173] parport: sunbpp: fix error return code
-Date:   Mon, 24 Sep 2018 13:52:50 +0200
-Message-Id: <20180924113125.668967533@linuxfoundation.org>
+Subject: [PATCH 4.14 137/173] sched/fair: Fix util_avg of new tasks for asymmetric systems
+Date:   Mon, 24 Sep 2018 13:52:51 +0200
+Message-Id: <20180924113125.732139449@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,44 +57,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Quentin Perret <quentin.perret@arm.com>
 
-[ Upstream commit faa1a47388b33623e4d504c23569188907b039a0 ]
+[ Upstream commit 8fe5c5a937d0f4e84221631833a2718afde52285 ]
 
-Return an error code on failure.  Change leading spaces to tab on the
-first if.
+When a new task wakes-up for the first time, its initial utilization
+is set to half of the spare capacity of its CPU. The current
+implementation of post_init_entity_util_avg() uses SCHED_CAPACITY_SCALE
+directly as a capacity reference. As a result, on a big.LITTLE system, a
+new task waking up on an idle little CPU will be given ~512 of util_avg,
+even if the CPU's capacity is significantly less than that.
 
-Problem found using Coccinelle.
+Fix this by computing the spare capacity with arch_scale_cpu_capacity().
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dietmar.eggemann@arm.com
+Cc: morten.rasmussen@arm.com
+Cc: patrick.bellasi@arm.com
+Link: http://lkml.kernel.org/r/20180612112215.25448-1-quentin.perret@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/parport/parport_sunbpp.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/parport/parport_sunbpp.c
-+++ b/drivers/parport/parport_sunbpp.c
-@@ -286,12 +286,16 @@ static int bpp_probe(struct platform_dev
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -757,11 +757,12 @@ static void attach_entity_cfs_rq(struct
+  * To solve this problem, we also cap the util_avg of successive tasks to
+  * only 1/2 of the left utilization budget:
+  *
+- *   util_avg_cap = (1024 - cfs_rq->avg.util_avg) / 2^n
++ *   util_avg_cap = (cpu_scale - cfs_rq->avg.util_avg) / 2^n
+  *
+- * where n denotes the nth task.
++ * where n denotes the nth task and cpu_scale the CPU capacity.
+  *
+- * For example, a simplest series from the beginning would be like:
++ * For example, for a CPU with 1024 of capacity, a simplest series from
++ * the beginning would be like:
+  *
+  *  task  util_avg: 512, 256, 128,  64,  32,   16,    8, ...
+  * cfs_rq util_avg: 512, 768, 896, 960, 992, 1008, 1016, ...
+@@ -773,7 +774,8 @@ void post_init_entity_util_avg(struct sc
+ {
+ 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 	struct sched_avg *sa = &se->avg;
+-	long cap = (long)(SCHED_CAPACITY_SCALE - cfs_rq->avg.util_avg) / 2;
++	long cpu_scale = arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
++	long cap = (long)(cpu_scale - cfs_rq->avg.util_avg) / 2;
  
- 	ops = kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
- 		      GFP_KERNEL);
--        if (!ops)
-+	if (!ops) {
-+		err = -ENOMEM;
- 		goto out_unmap;
-+	}
- 
- 	dprintk(("register_port\n"));
--	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops)))
-+	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops))) {
-+		err = -ENOMEM;
- 		goto out_free_ops;
-+	}
- 
- 	p->size = size;
- 	p->dev = &op->dev;
+ 	if (cap > 0) {
+ 		if (cfs_rq->avg.util_avg != 0) {
 
 
