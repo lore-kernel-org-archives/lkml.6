@@ -2,136 +2,115 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392C4ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BFFC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E51A62064D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C333220C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:06:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="prby4oN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51A62064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YyqV+INi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C333220C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbeIXOGL (ORCPT
+        id S1727684AbeIXOH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:06:11 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37481 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeIXOGL (ORCPT
+        Mon, 24 Sep 2018 10:07:29 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15778 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbeIXOH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:06:11 -0400
-Received: by mail-io1-f68.google.com with SMTP id v14-v6so16907067iob.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 01:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cg7ZN9rBKFhzm979WWrn1nn7WRK1ovFnc4AB+fqH32Q=;
-        b=prby4oN1HTN/SwFxgjrH09d779vxemm9xENoW0FWyc2uyq4z7sMVjbtOo+W6YUSk6L
-         u+D38nEAhMi6xA0g0FMsowmLX9hEm+2pMynhe5z36sTeRWZfWqkwBVhL+4TQHrHLZWsX
-         HLkcVvoERArBeG3ZFAm5bMnNP0VOCkJd7tuHLv17vGD+QjmSYcM7N/k4EYfOn095QYne
-         UWEFFj4PHjOAbWVi1p021mqRVl3z3tooPv1xfR+zJ1S9kYqM02+eosib7FrIDdO3lNhB
-         vCWW5tV1/UBUGaUV508hoMzDpng/X6C82L6Rt/F4TAHXFpiFd3v08n1/5CNU77Y40GGc
-         EMgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cg7ZN9rBKFhzm979WWrn1nn7WRK1ovFnc4AB+fqH32Q=;
-        b=e6Tw9jOzp0cuK3LCAoytN5RuJBSlgkg7AajYAqwPIN74Up7RtvCMmFLWUENt557kjC
-         6pvfdHEn8+S7h0aBTH94/WKqnDI5aafy1h3juTsfan5on994A1mCI8nTeaCCV5OdDxLP
-         nk0B6cUM9VwDyDhAeK7m7TWZzfRFKCfVc8qsQU3q01HRrhFCOl++tnyaWxsbN/ABErFs
-         1PWuqFnWMTkL+uGzvtXiZfDzJQaVApbgXnqQpB1rzxEGkfgrxA7agsRoCqIv3H+g5T/b
-         wp/QqwWxt8feGlDV3B8nN6KfRLhS2Tt9WXIIYO2H8zcGO9V400uYSHsaftWAQA0CQVvM
-         C5Ew==
-X-Gm-Message-State: ABuFfoi8VKKntosu/ZMKhLWse/wQEhXMHWy9nRq+ir6rZ0sW1O/0xtAm
-        Nat1hzRimlM1CLjOVSyxYfPVEkkfkTKu8bDQDC0hQQ==
-X-Google-Smtp-Source: ACcGV60qLbhetcHvr9y5t0CcRZbt8o/hFNTa6+KC2ibrWin+tMxmJFXEdyt6Afu1pK7/5Bo74/9HTyt5RlLjA3W2FcY=
-X-Received: by 2002:a6b:f316:: with SMTP id m22-v6mr6652026ioh.271.1537776319174;
- Mon, 24 Sep 2018 01:05:19 -0700 (PDT)
+        Mon, 24 Sep 2018 10:07:29 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ba89b0f0000>; Mon, 24 Sep 2018 01:06:39 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Sep 2018 01:06:37 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Sep 2018 01:06:37 -0700
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 24 Sep
+ 2018 08:06:37 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1002)
+        id 861C8F8076D; Mon, 24 Sep 2018 11:06:31 +0300 (EEST)
+Date:   Mon, 24 Sep 2018 11:06:31 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     ryang <decatf@gmail.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
+Message-ID: <20180924080631.GE7636@tbergstrom-lnx.Nvidia.com>
+References: <20180921220037.16862-1-decatf@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 01:04:58
- -0700 (PDT)
-In-Reply-To: <CAK8P3a19i72D3NRDEK+B5wRY-J8uQqQ5twRpTWn0641S6m-GTA@mail.gmail.com>
-References: <20180921001513.12504-1-Jason@zx2c4.com> <CALCETrULOFr=oQFMVT4qxPTWEQ++G82HCuxRoA=Sr4Z8kmMbYQ@mail.gmail.com>
- <5b94d2f4-eb4a-e00e-5fdf-7f770c26f0da@virtuozzo.com> <CACT4Y+bEf3GQ7zyfFd_PDOW3Cgh0Ot+KbUo4rHij5oSPYPJUNQ@mail.gmail.com>
- <CAK8P3a19i72D3NRDEK+B5wRY-J8uQqQ5twRpTWn0641S6m-GTA@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 24 Sep 2018 10:04:58 +0200
-Message-ID: <CACT4Y+Zfk-JBPQboNDvReW5A+ii1NwpuZZUXzb5uo__S9ynbbw@mail.gmail.com>
-Subject: Re: [PATCH] framewarn: expand KASAN_EXTRA exception to KASAN
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Alexander Potapenko <glider@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1537776400; bh=JBa6cNfMJOdqf+mnmUeztcbQDvOdMgoxkEdEFDmNxF4=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=YyqV+INiayn3aOno02S6LXOW0sWnGUsctCcFMYlklVjtBFxSMR0GCr9JuopbPzTAL
+         FnRxi1DHkiSG8TaFE2ls15v8e96ckVMBZgL/A6o3lT5+FIpRrJYGMTaSZAwoiUI+Sk
+         +Q4BEhhoVq81vNJ1revzE91frty/RWAuDisl/fvtTQYB31BwaT42IbyaYPW9GkhiTr
+         KYNw6o8yx9Hqk2Fcb/x/bUtQon/fKfYKhyITvZv22DmLLDpl2gKCPwhm0iIMzPzl08
+         7xsfGFq2vTXJxvgEnpgqJe2JovzCcPRnzHEf+gjnN6Rtt15gn/j3OCwHDxDq2zjF9C
+         K19Eu7NB7k6qA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 22, 2018 at 4:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Sep 21, 2018 at 2:45 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->> On Fri, Sep 21, 2018 at 11:25 AM, Andrey Ryabinin
->> <aryabinin@virtuozzo.com> wrote:
->> > On 09/21/2018 04:50 AM, Andy Lutomirski wrote:
->> >> This patch seems reasonable, but you emailed the wrong people :)
->> >>
->> >> On Thu, Sep 20, 2018 at 5:15 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->> >>>
->> >>> It turns out that KASAN in general will bloat stack frames in unexpected
->> >>> ways, not just KASAN_EXTRA. So, this patch trivially changes that
->> >>> default to be associated with KASAN instead of KASAN_EXTRA.
->> >>>
->> >
->> > KASAN_EXTRA bloats stack more than just KASAN, that's why the limit is higher than just for KASAN.
->> > If want more details, tead the changelog from commit e7c52b84fb18f08ce49b6067ae6285aca79084a8
->> >
->> > If anything causes "stack frame > 2048" warning for KASAN we should at least try to fix it,
->> > I mean reduce stack usage.
->>
->>
->> +Nick who is also hitting these warnings on clang/arm64 build. As far
->> as I understand the situation there is much worse.
->>
->> I would be good to understand/fix the worst offenders. But the stack
->> size increase with KASAN is a real, inherent thing. So if we live very
->> close the edge, we can get people using different compilers and/or
->> versions of compilers constantly breaking each other. And clang hits
->> this warnings in lots of places today just because the current code
->> was tailored to gcc over long period, i.e. allowing more locals where
->> gcc happened to handle that better and having fewer locals where gcc
->> happened to handle it worse. But for another compiler all these
->> assumptions are significantly perturbed.
->>
->> Nick, do you know what frame size limit eliminates the bulk of
->> warnings on clang? Is 3072 a reasonable limit allowing to fix the
->> remaining outliners?
->
-> I do not consider 3072 a reasonable limit at all. For gcc, we managed to fix or
-> work around all the bugs that caused excessive stack usage. In almost all
-> cases there was something seriously wrong with code generation. I added
-> the KASAN_EXTRA option for the one thing that added an inherent significant
-> overhead to the stack usage.
->
-> llvm apparently has a similar bug to what we fixed in gcc. I created a
-> reduced test case for one of the file at:
-> https://bugs.llvm.org/show_bug.cgi?id=38809
->
-> Unfortunately, nobody has commented on that so far, but in the
-> meantime I think the best workaround would be to disable asan-stack
-> entirely when building with clang, and moving it to KASAN_EXTRA
-> there, like we did with the scope check on gcc.
+On Fri, Sep 21, 2018 at 06:00:37PM -0400, ryang wrote:
+> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
+> rate is zero. This avoids the infinite loop and uses a slightly more
+> optimized p divider calculation.
+> 
 
-Good point. I CCed more people on https://bugs.llvm.org/show_bug.cgi?id=38809
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+
+At some point we should also limit pdiv to its maximum possible value, but
+that's not so obvious as we need to take into account PLLs where pdiv is
+non-linear.
+
+Peter.
+
+> Signed-off-by: ryang <decatf@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 830d1c87fa7c..17a058c3bbc1 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -582,9 +582,8 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>  	}
+>  
+>  	/* Raise VCO to guarantee 0.5% accuracy */
+> -	for (cfg->output_rate = rate; cfg->output_rate < 200 * cfreq;
+> -	     cfg->output_rate <<= 1)
+> -		p_div++;
+> +	p_div = rate ? fls((200 * cfreq) / rate) : 0;
+> +	cfg->output_rate = rate << p_div;
+>  
+>  	cfg->m = parent_rate / cfreq;
+>  	cfg->n = cfg->output_rate / cfreq;
+> -- 
+> 2.17.1
+> 
