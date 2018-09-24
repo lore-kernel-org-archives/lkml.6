@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6ECDECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDB5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7ED214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E7ED214AB
+	by mail.kernel.org (Postfix) with ESMTP id 3398E21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3398E21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387614AbeIXSam (ORCPT
+        id S2387624AbeIXSaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:30:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57502 "EHLO
+        Mon, 24 Sep 2018 14:30:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733078AbeIXSal (ORCPT
+        with ESMTP id S1732275AbeIXSap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:30:41 -0400
+        Mon, 24 Sep 2018 14:30:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 281671018;
-        Mon, 24 Sep 2018 12:28:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BF761018;
+        Mon, 24 Sep 2018 12:28:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Keeping <john@metanate.com>,
-        Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
+        John Crispin <john@phrozen.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 037/235] dmaengine: pl330: fix irq race with terminate_all
-Date:   Mon, 24 Sep 2018 13:50:23 +0200
-Message-Id: <20180924113108.737341785@linuxfoundation.org>
+Subject: [PATCH 4.18 038/235] MIPS: ath79: fix system restart
+Date:   Mon, 24 Sep 2018 13:50:24 +0200
+Message-Id: <20180924113108.866333740@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,55 +55,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Keeping <john@metanate.com>
+From: Felix Fietkau <nbd@nbd.name>
 
-[ Upstream commit e49756544a21f5625b379b3871d27d8500764670 ]
+[ Upstream commit f8a7bfe1cb2c1ebfa07775c9c8ac0ad3ba8e5ff5 ]
 
-In pl330_update() when checking if a channel has been aborted, the
-channel's lock is not taken, only the overall pl330_dmac lock.  But in
-pl330_terminate_all() the aborted flag (req_running==-1) is set under
-the channel lock and not the pl330_dmac lock.
+This patch disables irq on reboot to fix hang issues that were observed
+due to pending interrupts.
 
-With threaded interrupts, this leads to a potential race:
-
-    pl330_terminate_all	        pl330_update
-    -------------------         ------------
-    lock channel
-                                entry
-    lock pl330
-    _stop channel
-    unlock pl330
-                                lock pl330
-                                check req_running != -1
-    req_running = -1
-                                _start channel
-
-Signed-off-by: John Keeping <john@metanate.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: John Crispin <john@phrozen.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19913/
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/pl330.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/mips/ath79/setup.c                  |    1 +
+ arch/mips/include/asm/mach-ath79/ath79.h |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -2257,13 +2257,14 @@ static int pl330_terminate_all(struct dm
+--- a/arch/mips/ath79/setup.c
++++ b/arch/mips/ath79/setup.c
+@@ -40,6 +40,7 @@ static char ath79_sys_type[ATH79_SYS_TYP
  
- 	pm_runtime_get_sync(pl330->ddma.dev);
- 	spin_lock_irqsave(&pch->lock, flags);
-+
- 	spin_lock(&pl330->lock);
- 	_stop(pch->thread);
--	spin_unlock(&pl330->lock);
--
- 	pch->thread->req[0].desc = NULL;
- 	pch->thread->req[1].desc = NULL;
- 	pch->thread->req_running = -1;
-+	spin_unlock(&pl330->lock);
-+
- 	power_down = pch->active;
- 	pch->active = false;
+ static void ath79_restart(char *command)
+ {
++	local_irq_disable();
+ 	ath79_device_reset_set(AR71XX_RESET_FULL_CHIP);
+ 	for (;;)
+ 		if (cpu_wait)
+--- a/arch/mips/include/asm/mach-ath79/ath79.h
++++ b/arch/mips/include/asm/mach-ath79/ath79.h
+@@ -134,6 +134,7 @@ static inline u32 ath79_pll_rr(unsigned
+ static inline void ath79_reset_wr(unsigned reg, u32 val)
+ {
+ 	__raw_writel(val, ath79_reset_base + reg);
++	(void) __raw_readl(ath79_reset_base + reg); /* flush */
+ }
  
+ static inline u32 ath79_reset_rr(unsigned reg)
 
 
