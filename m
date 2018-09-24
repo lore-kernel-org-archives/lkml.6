@@ -2,135 +2,350 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20D5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 06:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40249ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 06:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C0820C0A
+	by mail.kernel.org (Postfix) with ESMTP id ECE562148C
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 06:49:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C0820C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J+n+Cn9v";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="juFoqWko"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE562148C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeIXMsE (ORCPT
+        id S1727551AbeIXMuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 08:48:04 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37759 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeIXMsE (ORCPT
+        Mon, 24 Sep 2018 08:50:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51966 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbeIXMuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 08:48:04 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1g4KeA-0003In-Py; Mon, 24 Sep 2018 08:47:06 +0200
-Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <sha@pengutronix.de>)
-        id 1g4Ke7-0007IH-SK; Mon, 24 Sep 2018 08:47:03 +0200
-Date:   Mon, 24 Sep 2018 08:47:03 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Rob Herring <robh@kernel.org>, linux-imx@nxp.com,
-        Abel Vesa <abelvesa@linux.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 4/5] clk: imx: add imx composite clock
-Message-ID: <20180924064703.GY4097@pengutronix.de>
-References: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
- <1537531894-18499-5-git-send-email-abel.vesa@nxp.com>
+        Mon, 24 Sep 2018 08:50:08 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 729C96021C; Mon, 24 Sep 2018 06:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537771771;
+        bh=DrOyZ1MykU48zWV/hg4ScRxziIxh4y2BsGYxT5wxofE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=J+n+Cn9vyD5ZduH1TByNcoslLDcefiamM/m1pID7DPCewNZ1r/TxbhHPD34oxrRMj
+         MfY0+YWdBQABHLAGzxhgCLRH3Rjr40GOqsSYApqq4ejx7lPR/lb71Eys0q5N0Ji7GA
+         aNgvqAJjZHy1XFtIkPw51CwqczkC9M5bcQstNFc0=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7FF86021C;
+        Mon, 24 Sep 2018 06:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1537771770;
+        bh=DrOyZ1MykU48zWV/hg4ScRxziIxh4y2BsGYxT5wxofE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=juFoqWkoKh9PY2635/8Ps+yPmsT8MuBmAje8f9aFhRwYOOT2pAl3TGecjLU/p/43z
+         l4KvOWYf/3f1UsGsqd/PnV/MuDNdoU6ZhDdm7KBXIcvWCCtuBQDFqOeSnF7WhHPlq1
+         rZT4kOVdlNSylO90IkNzsXrlu1nvqqeuoMo1iLWE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7FF86021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [PATCH v3 2/2] remoteproc: qcom: Introduce Non-PAS ADSP PIL
+ driver
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, bgoswami@codeaurora.org,
+        srinivas.kandagatla@linaro.org, linux-kernel-owner@vger.kernel.org
+References: <1535975560-8200-1-git-send-email-rohitkr@codeaurora.org>
+ <1535975560-8200-3-git-send-email-rohitkr@codeaurora.org>
+ <a93b3178a09584dc0b4bed55ca4816a3@codeaurora.org>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <79bee282-e8a4-a1e6-56e3-6ea7e20c0233@codeaurora.org>
+Date:   Mon, 24 Sep 2018 12:19:24 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537531894-18499-5-git-send-email-abel.vesa@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 08:39:50 up 129 days, 18:20, 153 users,  load average: 0.68, 1.36,
- 1.30
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <a93b3178a09584dc0b4bed55ca4816a3@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abel,
+Thanks Sibi for reviewing.
 
-On Fri, Sep 21, 2018 at 03:11:33PM +0300, Abel Vesa wrote:
-> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
-> divider, the idea here is to combine all of those into one composite clock,
-> but we need to deal with both predivider and divider at the same time and
-> therefore we add the imx_clk_composite_divider_ops and register the composite
-> clock with those.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/clk/imx/Makefile        |   1 +
->  drivers/clk/imx/clk-composite.c | 156 ++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h           |  14 ++++
->  3 files changed, 171 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-composite.c
-> 
-> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
-> +					unsigned long rate,
-> +					unsigned long parent_rate)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	unsigned long prediv_rate;
-> +	unsigned long flags = 0;
-> +	int prediv_value;
-> +	int div_value;
-> +	u32 val;
-> +
-> +	prediv_value = divider_get_val(rate, parent_rate, NULL,
-> +				PCG_PREDIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
-> +	if (prediv_value < 0)
-> +		return prediv_value;
-> +
-> +	prediv_rate = DIV_ROUND_UP_ULL((u64)parent_rate, prediv_value + 1);
-> +
-> +	div_value = divider_get_val(rate, prediv_rate, NULL,
-> +				PCG_DIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
-> +	if (div_value < 0)
-> +		return div_value;
 
-Does this work with expected accuracy? Consider the best divider you are
-looking for is 9. With the above you'll end up with a predivider of 8
-and a postdivider of 1 instead of the optimum divider values of 3 and 3.
+On 9/22/2018 1:11 AM, Sibi Sankar wrote:
+> Hi Rohit,
+>
+> On 2018-09-03 17:22, Rohit kumar wrote:
+>> This adds Non PAS ADSP PIL driver for Qualcomm
+>> Technologies Inc SoCs.
+>> Added initial support for SDM845 with ADSP bootup and
+>> shutdown operation handled from Application Processor
+>> SubSystem(APSS).
+>>
+>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>> ---
+> ....
+>> +    select QCOM_MDT_LOADER
+>> +    select QCOM_Q6V5_COMMON
+>> +    select QCOM_RPROC_COMMON
+>> +    help
+>> +      Say y here to support the Peripherial Image Loader
+>
+> replace Peripherial/Peripheral.
 
-I think you have to iterate over all possible divider combinations and
-then use the best one found. The original divider code does this, albeit
-a little obfuscated.
+sure
+> ....
+>> +#include <linux/clk.h>
+>> +#include <linux/firmware.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/io.h>
+>> +#include <linux/reset.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/pm_domain.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/remoteproc.h>
+>> +#include <linux/soc/qcom/mdt_loader.h>
+>> +#include <linux/soc/qcom/smem.h>
+>> +#include <linux/soc/qcom/smem_state.h>
+>> +
+>
+> The headers should be in alphabetical order.
+>
 
-You have to do the same in round_rate aswell.
+ok, will do
+> ....
+>> +    struct reset_control *pdc_sync_reset;
+>> +    struct reset_control *cc_lpass_restart;
+>> +
+>> +    struct regmap *halt_map;
+>> +    unsigned int  halt_lpass;
+>
+> remove the double spaces above.
 
-Sorry, I missed that when I last looked at it in v6.
+ok
+> ....
+>> +    if (ret || val)
+>> +        goto reset;
+>> +
+>> +    regmap_write(adsp->halt_map,
+>> +            adsp->halt_lpass + LPASS_HALTREQ_REG, 1);
+>> +
+>> +    /*  Wait for halt ACK from QDSP6 */
+>
+> Minor nit, please remove the double spaces in the comment above.
 
-Sascha
+ok
+>
+>> +    timeout = jiffies + msecs_to_jiffies(ACK_TIMEOUT);
+>> +    for (;;) {
+>> +        ret = regmap_read(adsp->halt_map,
+>> +            adsp->halt_lpass + LPASS_HALTACK_REG, &val);
+>> +        if (ret || val || time_after(jiffies, timeout))
+>> +            break;
+>> +
+>> +        udelay(1000);
+>
+> According to Documentation/timers/timers-howto.txt please use 
+> usleep_range()
+> when the delay range is between(10us - 20ms).
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+okay, will update in next spin.
+>
+>> +    }
+>> +
+>> +    ret = regmap_read(adsp->halt_map,
+>> +            adsp->halt_lpass + LPASS_MASTER_IDLE_REG, &val);
+> ....
+>> +    /* wait after asserting subsystem restart from AOSS */
+>> +    udelay(200);
+>
+> ditto
+
+ok
+>
+>> +
+>> +    /* Clear the halt request for the AXIM and AHBM for Q6 */
+>> +    regmap_write(adsp->halt_map, adsp->halt_lpass + 
+>> LPASS_HALTREQ_REG, 0);
+>> +
+>> +    /* De-assert the LPASS PDC Reset */
+>> +    reset_control_deassert(adsp->pdc_sync_reset);
+>> +    /* Remove the LPASS reset */
+>> +    reset_control_deassert(adsp->cc_lpass_restart);
+>> +    /* wait after de-asserting subsystem restart from AOSS */
+>> +    udelay(200);
+>
+> ditto
+>
+>> +
+>> +    return 0;
+>> +}
+> ....
+>> +static int adsp_start(struct rproc *rproc)
+>> +{
+>> +    struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>> +    int ret;
+>> +    unsigned int val;
+>> +
+>> +    qcom_q6v5_prepare(&adsp->q6v5);
+>> +
+>> +    ret = clk_prepare_enable(adsp->xo);
+>> +    if (ret)
+>> +        return ret;
+>
+> please call qcom_q6v5_unprepare on clk_prepare_enable failure to 
+> disable_irqs
+>
+
+sure, will do that
+>> +
+>> +    dev_pm_genpd_set_performance_state(adsp->dev, INT_MAX);
+>> +    ret = pm_runtime_get_sync(adsp->dev);
+>> +    if (ret)
+>> +        goto disable_xo_clk;
+>> +
+> ....
+>> +static int adsp_init_reset(struct qcom_adsp *adsp)
+>> +{
+>> +    adsp->pdc_sync_reset = devm_reset_control_get_exclusive(adsp->dev,
+>> +            "pdc_sync");
+>> +    if (IS_ERR(adsp->pdc_sync_reset)) {
+>> +        dev_err(adsp->dev, "failed to acquire pdc_sync reset\n");
+>> +        return PTR_ERR(adsp->pdc_sync_reset);
+>> +    }
+>
+> Bjorn, should we return EPROBE_DEFER here since PDC global reset 
+> controller can be a module?
+>
+
+devm_reset_control_get_exclusive itself returns EPROBE_DEFER until PDC 
+reset driver is probed.
+return PTR_ERR(adsp->pdc_sync_reset) handles this case.
+
+>> +
+>> +    adsp->cc_lpass_restart = 
+>> devm_reset_control_get_exclusive(adsp->dev,
+>> +            "cc_lpass");
+>> +    if (IS_ERR(adsp->cc_lpass_restart)) {
+>> +        dev_err(adsp->dev, "failed to acquire cc_lpass restart\n");
+>> +        return PTR_ERR(adsp->cc_lpass_restart);
+>> +    }
+>> +
+>> +    return 0;
+> ....
+>> +static int adsp_remove(struct platform_device *pdev)
+>> +{
+>> +    struct qcom_adsp *adsp = platform_get_drvdata(pdev);
+>> +
+>> +    rproc_del(adsp->rproc);
+>> +
+>> +    qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
+>> +    qcom_remove_sysmon_subdev(adsp->sysmon);
+>> +    qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
+>> +    rproc_free(adsp->rproc);
+>> +    pm_runtime_disable(adsp->dev);
+>> +
+>
+> rmmod of the driver resulted in the following kernel panic:
+> having a pm_runtime_disable after rproc_free seems to be the cause of 
+> the kernel panic.
+> Please call pm_runtime_disable before rproc_free.
+>
+
+Thanks for pointing out, will update.
+> do_raw_spin_lock+0x28/0x118
+> __raw_spin_lock_irq+0x30/0x3c
+> __pm_runtime_disable+0x28/0xf4
+> adsp_remove+0x4c/0x5c [qcom_adsp_pil]
+> platform_drv_remove+0x28/0x50
+> device_release_driver_internal+0x124/0x1c8
+> driver_detach+0x44/0x80
+> bus_remove_driver+0x78/0x9c
+> driver_unregister+0x34/0x54
+> platform_driver_unregister+0x1c/0x28
+> cleanup_module+0x14/0x6bc [qcom_adsp_pil]
+> SyS_delete_module+0x1c4/0x214
+>
+>> +    return 0;
+>> +}
+>> +
+>> +static const struct adsp_pil_data adsp_resource_init = {
+>> +    .crash_reason_smem = 423,
+>> +    .firmware_name = "adsp.mdt",
+>> +    .ssr_name = "lpass",
+>> +    .sysmon_name = "adsp",
+>> +    .ssctl_id = 0x14,
+>> +};
+> ....
+>> +module_platform_driver(adsp_pil_driver);
+>> +MODULE_DESCRIPTION("QTi SDM845 ADSP Peripherial Image Loader");
+>
+> replace QTi/QTI and Peripherial/Peripheral.
+>
+ok
+> ....
+> Also I see the following warns on stopping the adsp remoteproc, 
+> couldn't root cause it though:
+
+It should be issue in Q6 drivers. I will check and update q6 drivers. 
+Thanks for reporting.
+
+>  device_del+0x84/0x29c
+>  platform_device_del+0x2c/0x88
+>  platform_device_unregister+0x1c/0x30
+>  of_platform_device_destroy+0x98/0xa8
+>  device_for_each_child+0x54/0xa4
+>  of_platform_depopulate+0x38/0x54
+>  q6asm_remove+0x1c/0x2c
+>  apr_device_remove+0x38/0x70
+>  device_release_driver_internal+0x124/0x1c8
+>  device_release_driver+0x24/0x30
+>  bus_remove_device+0xcc/0xe4
+>  device_del+0x1f8/0x29c
+>  device_unregister+0x1c/0x30
+>  apr_remove_device+0x1c/0x2c
+>  device_for_each_child+0x54/0xa4
+>  apr_remove+0x28/0x34
+>  rpmsg_dev_remove+0x48/0x70
+>  device_release_driver_internal+0x124/0x1c8
+>  device_release_driver+0x24/0x30
+>  bus_remove_device+0xcc/0xe4
+>  device_del+0x1f8/0x29c
+>  device_unregister+0x1c/0x30
+>  qcom_glink_remove_device+0x1c/0x2c
+>  device_for_each_child+0x54/0xa4
+>  qcom_glink_native_remove+0x54/0x15c
+>  qcom_glink_smem_unregister+0x1c/0x30
+>  glink_subdev_stop+0x1c/0x2c [qcom_common]
+>  rproc_stop+0x40/0xc0
+>  rproc_shutdown+0x6c/0xc0
+>  rproc_del+0x28/0xa0
+>  adsp_remove+0x20/0x5c [qcom_adsp_pil]
+>  platform_drv_remove+0x28/0x50
+>  device_release_driver_internal+0x124/0x1c8
+>  driver_detach+0x44/0x80
+>  bus_remove_driver+0x78/0x9c
+>  driver_unregister+0x34/0x54
+>  platform_driver_unregister+0x1c/0x28
+>  cleanup_module+0x14/0x6bc [qcom_adsp_pil]
+>  SyS_delete_module+0x1c4/0x214
+>
+
+Thanks,
+Rohit
