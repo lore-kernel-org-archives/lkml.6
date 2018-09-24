@@ -2,127 +2,191 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 283ECC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BBBECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81CD2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:46:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="S9UgYfoV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81CD2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	by mail.kernel.org (Postfix) with ESMTP id 6CB142098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:46:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB142098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730104AbeIXUs3 (ORCPT
+        id S1730220AbeIXUtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:48:29 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:15528 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeIXUs2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:48:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1537800359; x=1569336359;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:mime-version:
-   content-transfer-encoding;
-  bh=0DI+O59Dhkb0SPwEqcPUpxX1y8iSLvfYTy+WDtv+TlU=;
-  b=S9UgYfoV4+XSrqhPggKs58Ijjb95HOofJCJcf2UymZLMmY14V+Ki+EXH
-   1bNIX5dhjoxLkFW/iqvwDkfVeUStDrT71pKYSEAegHB4+k2W+suQLaPbY
-   16KWvYRf2qyrmgYYmEojtvpahfcp2JNnJYgVXKN1eG/q7VNCT09LsIniL
-   M=;
-X-IronPort-AV: E=Sophos;i="5.54,298,1534809600"; 
-   d="scan'208";a="760017054"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Sep 2018 14:45:45 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
-        by email-inbound-relay-2c-6f38efd9.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w8OEje7B058834
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 14:45:43 GMT
-Received: from EX13D08UEE001.ant.amazon.com (10.43.62.126) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 24 Sep 2018 14:45:42 +0000
-Received: from EX13D02EUB004.ant.amazon.com (10.43.166.221) by
- EX13D08UEE001.ant.amazon.com (10.43.62.126) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 24 Sep 2018 14:45:42 +0000
-Received: from EX13D02EUB004.ant.amazon.com ([10.43.166.221]) by
- EX13D02EUB004.ant.amazon.com ([10.43.166.221]) with mapi id 15.00.1367.000;
- Mon, 24 Sep 2018 14:45:41 +0000
-From:   "Stecklina, Julian" <jsteckli@amazon.de>
-To:     "khalid.aziz@oracle.com" <khalid.aziz@oracle.com>
-CC:     "juerg.haefliger@hpe.com" <juerg.haefliger@hpe.com>,
-        "deepa.srinivasan@oracle.com" <deepa.srinivasan@oracle.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "pradeep.vincent@oracle.com" <pradeep.vincent@oracle.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kanth.ghatraju@oracle.com" <kanth.ghatraju@oracle.com>,
-        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-        "liran.alon@oracle.com" <liran.alon@oracle.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "keescook@google.com" <keescook@google.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "chris.hyser@oracle.com" <chris.hyser@oracle.com>,
-        "tyhicks@canonical.com" <tyhicks@canonical.com>,
-        "john.haxby@oracle.com" <john.haxby@oracle.com>,
-        "jcm@redhat.com" <jcm@redhat.com>
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-Thread-Topic: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-Thread-Index: AQHUTmwG79KNqwwvs0u9NBSNsaJp1qT2qd0AgAjj0oA=
-Date:   Mon, 24 Sep 2018 14:45:41 +0000
-Message-ID: <1537800341.9745.20.camel@amazon.de>
-References: <CA+55aFxyUdhYjnQdnmWAt8tTwn4HQ1xz3SAMZJiawkLpMiJ_+w@mail.gmail.com>
-         <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
-         <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
-         <ciirm8zhwyiqh4.fsf@u54ee758033e858cfa736.ant.amazon.com>
-         <ciirm8efdy916l.fsf@u54ee758033e858cfa736.ant.amazon.com>
-         <5efc291c-b0ed-577e-02d1-285d080c293d@oracle.com>
-         <ciirm8va743105.fsf@u54ee758033e858cfa736.ant.amazon.com>
-         <7221975d-6b67-effa-2747-06c22c041e78@oracle.com>
-In-Reply-To: <7221975d-6b67-effa-2747-06c22c041e78@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.20]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D5DA42683F56B14396B5512A9BB52777@amazon.com>
+        Mon, 24 Sep 2018 16:49:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43392 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729122AbeIXUtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:49:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 80ED9AD4D;
+        Mon, 24 Sep 2018 14:46:45 +0000 (UTC)
+Subject: Re: [PATCH] bug fix for making cache device failed
+To:     Dongbo Cao <cdbdyx@163.com>
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180921061418.3131-1-cdbdyx@163.com>
+From:   Coly Li <colyli@suse.de>
+Message-ID: <22662faa-22da-11c6-e093-c89ee86a448a@suse.de>
+Date:   Mon, 24 Sep 2018 22:46:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+In-Reply-To: <20180921061418.3131-1-cdbdyx@163.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTA5LTE4IGF0IDE3OjAwIC0wNjAwLCBLaGFsaWQgQXppeiB3cm90ZToNCj4g
-SSB0ZXN0ZWQgdGhlIGtlcm5lbCB3aXRoIHRoaXMgbmV3IGNvZGUuIFdoZW4gYm9vdGVkIHdpdGhv
-dXQNCj4gInhwZm90bGJmbHVzaCIswqANCj4gdGhlcmUgaXMgbm8gbWVhbmluZ2Z1bCBjaGFuZ2Ug
-aW4gc3lzdGVtIHRpbWUgd2l0aCBrZXJuZWwgY29tcGlsZS4gDQoNClRoYXQncyBnb29kIG5ld3Mh
-IFNvIHRoZSBsb2NrIG9wdGltaXphdGlvbnMgc2VlbSB0byBoZWxwLg0KDQo+IEtlcm5lbMKgDQo+
-IGxvY2tzIHVwIGR1cmluZyBib290dXAgd2hlbiBib290ZWQgd2l0aCB4cGZvdGxiZmx1c2g6DQoN
-CkkgZGlkbid0IHRlc3QgdGhlIHZlcnNpb24gd2l0aCBUTEIgZmx1c2hlcywgYmVjYXVzZSBpdCdz
-IGNsZWFyIHRoYXQgdGhlDQpvdmVyaGVhZCBpcyBzbyBiYWQgdGhhdCBubyBvbmUgd2FudHMgdG8g
-dXNlIHRoaXMuDQoNCkl0IHNob3VsZG4ndCBsb2NrIHVwIHRob3VnaCwgc28gbWF5YmUgdGhlcmUg
-aXMgc3RpbGwgYSByYWNlIGNvbmRpdGlvbg0Kc29tZXdoZXJlLiBJJ2xsIGdpdmUgdGhpcyBhIHNw
-aW4gb24gbXkgZW5kIGxhdGVyIHRoaXMgd2Vlay4NCg0KVGhhbmtzIGZvciB0cnlpbmcgdGhpcyBv
-dXQhDQoNCkp1bGlhbg0KQW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJtYW55IEdtYkgKQmVy
-bGluIC0gRHJlc2RlbiAtIEFhY2hlbgptYWluIG9mZmljZTogS3JhdXNlbnN0ci4gMzgsIDEwMTE3
-IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJlcjogRHIuIFJhbGYgSGVyYnJpY2gsIENocmlzdGlhbiBT
-Y2hsYWVnZXIKVXN0LUlEOiBERTI4OTIzNzg3OQpFaW5nZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBD
-aGFybG90dGVuYnVyZyBIUkIgMTQ5MTczIEIK
 
+On 9/21/18 2:14 PM, Dongbo Cao wrote:
+> 1)when the nbuckets of cache device is smaller than 1024, make cache device will trigger BUG_ON in kernel, add a condition to avoid this.
+> 2)split original if condition code into separate ones to make it clearly to debug.
+>
+> Signed-off-by: Dongbo Cao <cdbdyx@163.com>
+
+Hi Dongbo,
+
+
+In general the patch is good to me. But could you please to split this 
+patch into 2 patches?  One is for split original if-condition code, one 
+is for the panic fix.
+
+Then it might be more clear to me.
+
+Thanks.
+
+Coly Li
+
+
+> ---
+>   drivers/md/bcache/super.c | 87 ++++++++++++++++++++++++++++++++-------
+>   1 file changed, 73 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index fa4058e4..47d122ed 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -2017,6 +2017,8 @@ static int cache_alloc(struct cache *ca)
+>   	size_t free;
+>   	size_t btree_buckets;
+>   	struct bucket *b;
+> +	int ret = -ENOMEM;
+> +	const char *err = NULL;
+>   
+>   	__module_get(THIS_MODULE);
+>   	kobject_init(&ca->kobj, &bch_cache_ktype);
+> @@ -2034,27 +2036,82 @@ static int cache_alloc(struct cache *ca)
+>   	 */
+>   	btree_buckets = ca->sb.njournal_buckets ?: 8;
+>   	free = roundup_pow_of_two(ca->sb.nbuckets) >> 10;
+> +	if (!free) {
+> +		ret = -EPERM;
+> +		err = "ca->sb.nbuckets is too small";
+> +		goto err_free;
+> +	}
+>   
+> -	if (!init_fifo(&ca->free[RESERVE_BTREE], btree_buckets, GFP_KERNEL) ||
+> -	    !init_fifo_exact(&ca->free[RESERVE_PRIO], prio_buckets(ca), GFP_KERNEL) ||
+> -	    !init_fifo(&ca->free[RESERVE_MOVINGGC], free, GFP_KERNEL) ||
+> -	    !init_fifo(&ca->free[RESERVE_NONE], free, GFP_KERNEL) ||
+> -	    !init_fifo(&ca->free_inc,	free << 2, GFP_KERNEL) ||
+> -	    !init_heap(&ca->heap,	free << 3, GFP_KERNEL) ||
+> -	    !(ca->buckets	= vzalloc(array_size(sizeof(struct bucket),
+> -						     ca->sb.nbuckets))) ||
+> -	    !(ca->prio_buckets	= kzalloc(array3_size(sizeof(uint64_t),
+> -						      prio_buckets(ca), 2),
+> -					  GFP_KERNEL)) ||
+> -	    !(ca->disk_buckets	= alloc_bucket_pages(GFP_KERNEL, ca)))
+> -		return -ENOMEM;
+> +	if (!init_fifo(&ca->free[RESERVE_BTREE], btree_buckets,
+> +						GFP_KERNEL)) {
+> +		err = "ca->free[RESERVE_BTREE] alloc failed";
+> +		goto err_btree_alloc;
+> +	}
+> +	if (!init_fifo_exact(&ca->free[RESERVE_PRIO], prio_buckets(ca),
+> +							GFP_KERNEL)) {
+> +		err = "ca->free[RESERVE_PRIO] alloc failed";
+> +		goto err_prio_alloc;
+> +	}
+> +	if (!init_fifo(&ca->free[RESERVE_MOVINGGC], free, GFP_KERNEL)) {
+> +		err = "ca->free[RESERVE_MOVINGGC] alloc failed";
+> +		goto err_movinggc_alloc;
+> +	}
+> +	if (!init_fifo(&ca->free[RESERVE_NONE], free, GFP_KERNEL)) {
+> +		err = "ca->free[RESERVE_NONE] alloc failed";
+> +		goto err_none_alloc;
+> +	}
+> +	if (!init_fifo(&ca->free_inc, free << 2, GFP_KERNEL)) {
+> +		err = "ca->free_inc alloc failed";
+> +		goto err_free_inc_alloc;
+> +	}
+> +	if (!init_heap(&ca->heap, free << 3, GFP_KERNEL)) {
+> +		err = "ca->heap alloc failed";
+> +		goto err_heap_alloc;
+> +	}
+> +	if (!(ca->buckets = vzalloc(array_size(sizeof(struct bucket),
+> +						ca->sb.nbuckets)))) {
+> +		err = "ca->buckets alloc failed";
+> +		goto err_buckets_alloc;
+> +	}
+> +	if (!(ca->prio_buckets = kzalloc(array3_size(sizeof(uint64_t),
+> +						prio_buckets(ca), 2),
+> +							GFP_KERNEL))) {
+> +		err = "ca->prio_buckets alloc failed";
+> +		goto err_prio_buckets_alloc;
+> +	}
+> +	if (!(ca->disk_buckets = alloc_bucket_pages(GFP_KERNEL, ca))) {
+> +		err = "ca->disk_buckets alloc failed";
+> +		goto err_disk_buckets_alloc;
+> +	}
+>   
+>   	ca->prio_last_buckets = ca->prio_buckets + prio_buckets(ca);
+>   
+>   	for_each_bucket(b, ca)
+>   		atomic_set(&b->pin, 0);
+> -
+>   	return 0;
+> +
+> +err_disk_buckets_alloc:
+> +	kfree(ca->prio_buckets);
+> +err_prio_buckets_alloc:
+> +	vfree(ca->buckets);
+> +err_buckets_alloc:
+> +	free_heap(&ca->heap);
+> +err_heap_alloc:
+> +	free_fifo(&ca->free_inc);
+> +err_free_inc_alloc:
+> +	free_fifo(&ca->free[RESERVE_NONE]);
+> +err_none_alloc:
+> +	free_fifo(&ca->free[RESERVE_MOVINGGC]);
+> +err_movinggc_alloc:
+> +	free_fifo(&ca->free[RESERVE_PRIO]);
+> +err_prio_alloc:
+> +	free_fifo(&ca->free[RESERVE_BTREE]);
+> +err_btree_alloc:
+> +err_free:
+> +	module_put(THIS_MODULE);
+> +	if (err)
+> +		pr_notice("error %s: %s", ca->cache_dev_name, err);
+> +	return ret;
+>   }
+>   
+>   static int register_cache(struct cache_sb *sb, struct page *sb_page,
+> @@ -2080,6 +2137,8 @@ static int register_cache(struct cache_sb *sb, struct page *sb_page,
+>   		blkdev_put(bdev, FMODE_READ|FMODE_WRITE|FMODE_EXCL);
+>   		if (ret == -ENOMEM)
+>   			err = "cache_alloc(): -ENOMEM";
+> +		else if (ret == -EPERM)
+> +			err = "cache_alloc(): cache device is too small";
+>   		else
+>   			err = "cache_alloc(): unknown error";
+>   		goto err;
