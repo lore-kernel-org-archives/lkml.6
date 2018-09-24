@@ -2,202 +2,111 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27928ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1BAC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B66112083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:38:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oyoXxFah"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66112083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6838E2087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:42:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6838E2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730421AbeIXVl3 (ORCPT
+        id S1729795AbeIXVpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:41:29 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39830 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeIXVl2 (ORCPT
+        Mon, 24 Sep 2018 17:45:04 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39456 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeIXVpE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:41:28 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s14-v6so20151287wrw.6;
-        Mon, 24 Sep 2018 08:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=o3FyP2jco71996jGdaIIk834N/BVDrFl+zt7fThFWA8=;
-        b=oyoXxFahIyuL2b2feYmDejrMFuuT3Ku2ZS6p8exy//NmGzeQV8qX1JaDuv7sYylreG
-         EPX4Nh5x+zhiFP6s5rKJBkpvcM71bDCgiSsKiVPyUOB+XxC8vwhT16PUdwCvfR/YCMi6
-         5zV4g4t7nvci0tfVqd2MWunPNONeAY1SzXRETCcd4KByNf4R39ARaTO5CjeWXtoaigf4
-         1ZqCl27uX9PEojhg56Tkuqz1YY9hAO5R180bsOFjsjvmo5z0pojYtj6d1lvegsDmExLF
-         Tqpdu0/kDZQkh6pHwMBkeIKdYRpiv9Gy+cfqPqg/Hd1cZTdBjFSUxyZubvJVCa/WBKC5
-         DPGA==
+        Mon, 24 Sep 2018 17:45:04 -0400
+Received: by mail-qt1-f194.google.com with SMTP id c25-v6so4168657qtp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 08:42:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=o3FyP2jco71996jGdaIIk834N/BVDrFl+zt7fThFWA8=;
-        b=qQh9cjdcyR19cCKJ/U8ntDN5ZTQtrl4CO2HrHjMfsClfVNnViZb+RTbakIHuEH9i8j
-         2xdhIPbp75UV08+iqoLLhHXe+tk4NZ1gn0J/xeqshyjejVtjB0uZR8ARDPxwoVBxKpSJ
-         quv8D/n457qbj5w5ONhzkbUluKkVpC5oX2ZCtph8owT/OUEONNva95KM54AdI8aszk6h
-         RmSKK5rcDHRHmGFYvGWScd8aAjqw11hIptP0oVP8FqqhpnYpIAa1SNS8srx+Pk1SrSlO
-         PQtUoH+QCBPu86F46QSg0+JrZoEQEzGqjNYwTwZAMHOl1FeZ092E804Sm0Ky3V4UC5+Z
-         EZfA==
-X-Gm-Message-State: ABuFfoh07OddEIDOh4pVcEcB8TA7bwXJOZ6sw2V/89X5257Zfq7RHt16
-        z6pLzOR8vU6x5UKMaNFlgh31v2/s
-X-Google-Smtp-Source: ACcGV63jK+zl3kpye4mMlZtrx0Tp4d5WSqQO+sz5AjFsdKBKjL6Faa7jXBu8zbf/cfAtFJGmfd5BOg==
-X-Received: by 2002:a5d:51ce:: with SMTP id n14-v6mr9066337wrv.107.1537803521118;
-        Mon, 24 Sep 2018 08:38:41 -0700 (PDT)
-Received: from 640k.lan (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
-        by smtp.gmail.com with ESMTPSA id x15-v6sm29421152wrt.53.2018.09.24.08.38.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 08:38:40 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: [PATCH] KVM: x86: never trap MSR_KERNEL_GS_BASE
-Date:   Mon, 24 Sep 2018 17:38:39 +0200
-Message-Id: <1537803519-17941-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LJqsjI10EjsQdn2hNpexsOrBkjiIBLMshrPrWfxVD0E=;
+        b=cmqj9+DlhnUkKp3oLfDVJX9Xp0OyRUAwi8aAor9BzMPrs9v48gsvW0fpzECCdr090T
+         7zeSl/wsBCC8qHU3xPbiPYuKt6e5SAzeZ+7hum7sEXYJ6ZJofM+YP5bqYTqbBQSs0UqS
+         CzixcOCKF+Ranl2853VbEtcur1Hs/rlvvK69vLQRX3wzVfBZJB5F09Is91LbadN0tvZI
+         N/lVbOp/sKlH11k7ohfYriftMhsi4Ozqgwg0H7N8Ts3dtyALd4jc8f2nP4FqKWdYONpw
+         0zml0qcyBfL9U+FRQgOkzAFl1a04fh/AO1qHJvdirzmlwnOjL8ydL8g0n8VU2tgFbDBd
+         yJxg==
+X-Gm-Message-State: APzg51CHQs9Y4PRaNksaK6f8XFQfiAh/GFJ7eC0I9gGfEk153A5REFQq
+        hVCfKG1Dq/TvoVEY8pxCQ5ZulnXicbxmh1UIZaM=
+X-Google-Smtp-Source: ACcGV63UqeBn6kKq6x0os3i5eBrSqzBysQu93ZkfDx9OqnSy12AcZ3JiQ6S5mO4UerOdW1SDEo7Bt7+VZBeDzH+q4Vs=
+X-Received: by 2002:aed:3f08:: with SMTP id p8-v6mr803366qtf.185.1537803737266;
+ Mon, 24 Sep 2018 08:42:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <1537764195-19117-1-git-send-email-daniel.lezcano@linaro.org>
+ <CAK8P3a0YjbCHRHaTzev-rwi5qM3aBeFUUObL1dPKww_o_J_2vw@mail.gmail.com> <bfffe304-b42c-b2a2-f164-642469aff640@mleia.com>
+In-Reply-To: <bfffe304-b42c-b2a2-f164-642469aff640@mleia.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 24 Sep 2018 17:42:00 +0200
+Message-ID: <CAK8P3a0mSqO+VFHLMYHYa01HjDxbrZejNkxC8-eHKKpVsGvt3A@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Set ARM/LPC18XX architecture orphan
+To:     Vladimir Zapolskiy <vz@mleia.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Joachim Eastwood <manabian@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        arm-soc <arm@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM has an old optimization whereby accesses to the kernel GS base MSR
-are trapped when the guest is in 32-bit and not when it is in 64-bit mode.
-The idea is that swapgs is not available in 32-bit mode and thus the
-guest has no reason to access the MSR unless in 64-bit mode.  Therefore
-32-bit applications need not pay the price of switching the kernel GS
-base between the host and the guest values, 64-bit applications.
+On Mon, Sep 24, 2018 at 5:19 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+> On 09/24/2018 04:19 PM, Arnd Bergmann wrote:
+> > On Mon, Sep 24, 2018 at 6:43 AM Daniel Lezcano
+> > <daniel.lezcano@linaro.org> wrote:
+> >>
+> >> While sending patches around, Joachim Eastwood was Cc'ed but I got an error
+> >> its mailbox was full and the mail can not be delivered which makes me think
+> >> there is no body at the other end of the line.
+> >>
+> >> After doing some statistics, it appears the latest commit as author/commiter
+> >> is:
+> >>
+> >> commit b16ebc017ebf52a81e5e88743ccd68fc25e99ba9
+> >> Author: Joachim Eastwood <manabian@gmail.com>
+> >> Date:   Mon Oct 31 14:45:17 2016 +0000
+> >>
+> >> Remove the maintainer entry and set the component as orphan.
+> >>
+> >> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> >> Cc: Arnd Bergmann <arnd@arndb.de>
+> >
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> >
+> > I also checked the github account and any other mails I could
+> > find from Joachim, which stopped around the same time.
+> >
+> > I've added the lpc32xx maintainers to Cc, as the two platforms are
+> > related. Maybe they are interested in picking up support for this
+> > as well, and/or merge the two directories into one (there is only
+> > one trivial file in mach-lpc18xx, the rest are drivers).
+> >
+>
+> I'm interested in maintenance of lpc18xx/lpc43xx, I have one board
+> powered by LPC4357, so it would make the maintenance easier for me,
+> also multiple controllers are equal on lpc18xx/lpc43xx and lpc32xx,
+> and thus familiar to me.
+>
+> And I greatly appreciate Joachim's contribution, all platform drivers
+> written by Joachim are of perfect quality.
+>
+> I'll send a patch to MAINTAINERS later on.
 
-However, this optimization adds complexity to the code for little
-benefit (these days most guests are going to be 64-bit anyway) and in fact
-broke after commit 678e315e78a7 ("KVM: vmx: add dedicated utility to
-access guest's kernel_gs_base", 2018-08-06); the guest kernel GS base
-can be corrupted across SMIs and UEFI Secure Boot is therefore broken
-(a secure boot Linux guest, for example, fails to reach the login prompt
-about half the time).  This patch just removes the optimization; the
-kernel GS base MSR is now never trapped by KVM, similarly to the FS and
-GS base MSRs.
+Awesome, thanks for stepping up!
 
-Fixes: 678e315e78a780dbef384b92339c8414309dbc11
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx.c | 47 ++++++++++-------------------------------------
- 1 file changed, 10 insertions(+), 37 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 06412ba46aa3..8b066480224b 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -121,7 +121,6 @@
- 
- #define MSR_BITMAP_MODE_X2APIC		1
- #define MSR_BITMAP_MODE_X2APIC_APICV	2
--#define MSR_BITMAP_MODE_LM		4
- 
- #define KVM_VMX_TSC_MULTIPLIER_MAX     0xffffffffffffffffULL
- 
-@@ -2899,8 +2898,7 @@ static void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
- 		vmx->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
- 	}
- 
--	if (is_long_mode(&vmx->vcpu))
--		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-+	wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
- #else
- 	savesegment(fs, fs_sel);
- 	savesegment(gs, gs_sel);
-@@ -2951,8 +2949,7 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
- 	vmx->loaded_cpu_state = NULL;
- 
- #ifdef CONFIG_X86_64
--	if (is_long_mode(&vmx->vcpu))
--		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-+	rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
- #endif
- 	if (host_state->ldt_sel || (host_state->gs_sel & 7)) {
- 		kvm_load_ldt(host_state->ldt_sel);
-@@ -2980,24 +2977,19 @@ static void vmx_prepare_switch_to_host(struct vcpu_vmx *vmx)
- #ifdef CONFIG_X86_64
- static u64 vmx_read_guest_kernel_gs_base(struct vcpu_vmx *vmx)
- {
--	if (is_long_mode(&vmx->vcpu)) {
--		preempt_disable();
--		if (vmx->loaded_cpu_state)
--			rdmsrl(MSR_KERNEL_GS_BASE,
--			       vmx->msr_guest_kernel_gs_base);
--		preempt_enable();
--	}
-+	preempt_disable();
-+	if (vmx->loaded_cpu_state)
-+		rdmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-+	preempt_enable();
- 	return vmx->msr_guest_kernel_gs_base;
- }
- 
- static void vmx_write_guest_kernel_gs_base(struct vcpu_vmx *vmx, u64 data)
- {
--	if (is_long_mode(&vmx->vcpu)) {
--		preempt_disable();
--		if (vmx->loaded_cpu_state)
--			wrmsrl(MSR_KERNEL_GS_BASE, data);
--		preempt_enable();
--	}
-+	preempt_disable();
-+	if (vmx->loaded_cpu_state)
-+		wrmsrl(MSR_KERNEL_GS_BASE, data);
-+	preempt_enable();
- 	vmx->msr_guest_kernel_gs_base = data;
- }
- #endif
-@@ -5073,19 +5065,6 @@ static void vmx_set_efer(struct kvm_vcpu *vcpu, u64 efer)
- 	if (!msr)
- 		return;
- 
--	/*
--	 * MSR_KERNEL_GS_BASE is not intercepted when the guest is in
--	 * 64-bit mode as a 64-bit kernel may frequently access the
--	 * MSR.  This means we need to manually save/restore the MSR
--	 * when switching between guest and host state, but only if
--	 * the guest is in 64-bit mode.  Sync our cached value if the
--	 * guest is transitioning to 32-bit mode and the CPU contains
--	 * guest state, i.e. the cache is stale.
--	 */
--#ifdef CONFIG_X86_64
--	if (!(efer & EFER_LMA))
--		(void)vmx_read_guest_kernel_gs_base(vmx);
--#endif
- 	vcpu->arch.efer = efer;
- 	if (efer & EFER_LMA) {
- 		vm_entry_controls_setbit(to_vmx(vcpu), VM_ENTRY_IA32E_MODE);
-@@ -6078,9 +6057,6 @@ static u8 vmx_msr_bitmap_mode(struct kvm_vcpu *vcpu)
- 			mode |= MSR_BITMAP_MODE_X2APIC_APICV;
- 	}
- 
--	if (is_long_mode(vcpu))
--		mode |= MSR_BITMAP_MODE_LM;
--
- 	return mode;
- }
- 
-@@ -6121,9 +6097,6 @@ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu)
- 	if (!changed)
- 		return;
- 
--	vmx_set_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW,
--				  !(mode & MSR_BITMAP_MODE_LM));
--
- 	if (changed & (MSR_BITMAP_MODE_X2APIC | MSR_BITMAP_MODE_X2APIC_APICV))
- 		vmx_update_msr_bitmap_x2apic(msr_bitmap, mode);
- 
--- 
-1.8.3.1
-
+       Arnd
