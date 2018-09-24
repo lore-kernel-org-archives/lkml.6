@@ -2,92 +2,101 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 081BBC43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01C2C43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D6A20676
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:20:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="A08oMoaw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D6A20676
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	by mail.kernel.org (Postfix) with ESMTP id AF42C20676
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:20:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF42C20676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeIYFZA (ORCPT
+        id S1727435AbeIYFZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 01:25:00 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35360 "EHLO
+        Tue, 25 Sep 2018 01:25:14 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38518 "EHLO
         mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbeIYFZA (ORCPT
+        with ESMTP id S1726200AbeIYFZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 01:25:00 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z14-v6so6442409qtn.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 16:20:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vFV4dnlatzbguNcNR/N13waU+Yimxo+sUEj115HJZJA=;
-        b=A08oMoawSGdS/ISuOn8gkzopwRW4qrK+cXoWiBa5VTKbq3zBNAVqR9bAJfhunAwehA
-         UlKkHN0/nLwS15g6Lo0uGVL9NRp8p1vkuWX0ZQ8HWONifYRB1tVgbPUvQuY87DMGm7eh
-         7oiqbLKvOEPW3Wfl/w1mIEsrilboPQQGigGl4=
+        Tue, 25 Sep 2018 01:25:13 -0400
+Received: by mail-qt1-f196.google.com with SMTP id z13-v6so11442060qts.5;
+        Mon, 24 Sep 2018 16:20:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vFV4dnlatzbguNcNR/N13waU+Yimxo+sUEj115HJZJA=;
-        b=qT6FU+I/5dqr04lkzPRTIfCbynqkOQNrXsEouza+2VHtGtOERN1yxUGElzc78jnwSm
-         VWRBKA6UPZYnRUBPEVTUTmXwILLxzJf77tkUqkN3cItdYH9P6HXfDIIqFukNzkNWVHyD
-         j7CBrLDx66/80fhJJ8b8dj3d8ZO7QKAAkyinFUsHKebxhhzWx76Xg0OzNouJtgsORS9t
-         W/aG2CfVaJJgdbhuDh3faMRoaUdEKUGqrG5qcP1LZACnPpq/R9u8pdgaTsWD5LDEratZ
-         tiRG8nStxk7YRU49KajuUO9ywd0Vhv2rB+yi27BZPQi4oxGYOOkn5Vqwa5mKCCKQVMz3
-         1PdA==
-X-Gm-Message-State: ABuFfogCMVjN1zGY2pOcBLlZBbwcMC4r4rgJqbrlWg2DyJdLA/8x1Jnt
-        jJNKUkJQOKCXPYXFvRDTYY35fe2bWXgCjBo22UJ68g==
-X-Google-Smtp-Source: ACcGV6293BhLYBqd+Jcq7bV3cjqa+bqry9aCHoUa3t5UlTxwehMeUNeOLBpJYGy84K8VLnA4GrvEYkhbtkxKdi2k/0I=
-X-Received: by 2002:aed:3667:: with SMTP id e94-v6mr869282qtb.285.1537831224427;
- Mon, 24 Sep 2018 16:20:24 -0700 (PDT)
+        bh=sntkWnum36qVZfBM72w1Jk/PN7SLij+DjkMsFYrgChk=;
+        b=dqKvzwhfGb+2NfwrO30hgsPS87Ujjo+WAFR17n5ROuD7aWCpRQ1JVoK3805EKifTl4
+         qb9oyTNkKsg0KfbkQ1aeYuhhsA3TPcWOxsZ2RfafEZC9/XTNEae/04lco6JQ9GxnXJ3t
+         y9KKhbUd6CYR4AmmapHtSE0Qu7/r+68SoIZIbvJ16Z6CK2CS/D9P/cXwHKPmZXLSVInP
+         5R6JOMMh5jZhYtZppJayrvji8YYX5jUsz4I37p/FuA2EswQuCACLQjVkdy0NQjXXmesv
+         vVYnjPyHpqQF3vGfugXjAWvCYAknzSlL45yYJE1Z3NOlkNI/Ow7r+Hq1e0uCNjqCfKZg
+         A91Q==
+X-Gm-Message-State: ABuFfog9cWBLR78U+uYzOKegpxYD9UMDFlxryH3K9cAdi4s+zpGbZrLN
+        fYbNCvpjGHfMNpErUdFkSH4n/o6DnHBZl4xJhfc=
+X-Google-Smtp-Source: ACcGV60aEtu2inOmzwY1eByRX1HMfoBUgvfhX/AqrXTur0GXFapiEGsS2AEQIUQtXi/Q2nMpr4d8zitMI/teXTmxQQI=
+X-Received: by 2002:a0c:ad8e:: with SMTP id w14-v6mr846714qvc.149.1537831238185;
+ Mon, 24 Sep 2018 16:20:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180919221331.2511558-1-taoren@fb.com> <CACRpkdZGjvLZY7snev5W2rRGgO7bQsSqn5u2v5Nw0tH9sa4yBw@mail.gmail.com>
- <84F9ED20-0964-462E-B389-39B107A232D3@fb.com> <CACPK8XeEZeMskkxNChhNSO+brpoPJ5FqweWNXe22BpyytwCwFw@mail.gmail.com>
- <E3FA56EF-0B3C-4DBE-9A63-428EB342887D@fb.com>
-In-Reply-To: <E3FA56EF-0B3C-4DBE-9A63-428EB342887D@fb.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 25 Sep 2018 08:50:11 +0930
-Message-ID: <CACPK8Xd03w51FM8iJsFNhWkpRFMhy97XZpxOhbRwbD3ytQcRbg@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/drivers/fttmr010: fix set_next_event handler
-To:     Tao Ren <taoren@fb.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+References: <1533792466-4227-1-git-send-email-firoz.khan@linaro.org>
+ <1533792466-4227-4-git-send-email-firoz.khan@linaro.org> <27544098-abc8-db2e-5625-179d13fa63df@xilinx.com>
+ <CALxhOngGqB2hY1MaEpTZvpgKTP9rwqbnMpgRKT9NQuZ4CXOcew@mail.gmail.com>
+In-Reply-To: <CALxhOngGqB2hY1MaEpTZvpgKTP9rwqbnMpgRKT9NQuZ4CXOcew@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 25 Sep 2018 01:20:21 +0200
+Message-ID: <CAK8P3a0sYYzFyLLjfUuvWOijTsqpOnG2HGDA4nSRmR6YkM6W9A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] microblaze: uapi header and system call table file generation
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>, cov@fb.com,
-        Tian Fang <tfang@fb.com>
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 22 Sep 2018 at 03:41, Tao Ren <taoren@fb.com> wrote:
+On Tue, Sep 18, 2018 at 9:12 AM Firoz Khan <firoz.khan@linaro.org> wrote:
 >
-> On 9/20/18, 8:33 PM, "Joel Stanley" <joel@jms.id.au> wrote:
+> On 9 August 2018 at 12:42, Michal Simek <michal.simek@xilinx.com> wrote:
+> > On 9.8.2018 07:27, Firoz Khan wrote:
+
+> >> diff --git a/arch/microblaze/include/asm/Kbuild b/arch/microblaze/include/asm/Kbuild
+> >> index fe6a6c6..99225ab 100644
+> >> --- a/arch/microblaze/include/asm/Kbuild
+> >> +++ b/arch/microblaze/include/asm/Kbuild
+> >> @@ -30,3 +30,5 @@ generic-y += trace_clock.h
+> >>  generic-y += vga.h
+> >>  generic-y += word-at-a-time.h
+> >>  generic-y += xor.h
+> >> +
+> >> +generated-y += syscall_table.h
+> >> \ No newline at end of file
+> >
+> > This doesn't look right.
 >
-> > I gave this a spin on the ast2400. It looked okay, but I was wondering
-> > if you could share you test case so I can run the same test?
->
-> Thank you Joel for the testing.
-> Sure I can share the test (a small c program which measures delay introduced by nanosleep()), but what would be the preferred way to share it? Like a format-patch? Or maybe I should refine the test and send to openbmc for review?
+> You mean I have to keep something like this?
+>  generic-y += xor.h
+> -
+> -generated-y += syscall_table.h
+> \ No newline at end of file
+> +generic-y += syscall_table.h
+> \ No newline at end of file
 
-Whatever method is easiest for you. A patch file or a tarball is fine.
-I will then add it to the set of tests I run when testing aspeed
-kernels.
+The "\ No newline at end of file" line is produced by
+git format-patch when you have accidentally removed
+the newline at the end. Most editors don't even allow
+you to do that, so I don't know what went wrong.
 
-Cheers,
-
-Joel
+       Arnd
