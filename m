@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B56C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE2AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 486F72148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486F72148C
+	by mail.kernel.org (Postfix) with ESMTP id 705D721486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705D721486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388063AbeIXSgC (ORCPT
+        id S2388307AbeIXSgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:36:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58400 "EHLO
+        Mon, 24 Sep 2018 14:36:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58408 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387467AbeIXSgB (ORCPT
+        with ESMTP id S2387489AbeIXSgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:36:01 -0400
+        Mon, 24 Sep 2018 14:36:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FEB91018;
-        Mon, 24 Sep 2018 12:34:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76F381018;
+        Mon, 24 Sep 2018 12:34:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, George Cherian <george.cherian@cavium.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.18 107/235] ipmi: Fix I2C client removal in the SSIF driver
-Date:   Mon, 24 Sep 2018 13:51:33 +0200
-Message-Id: <20180924113116.360812596@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c75f181dc8429d2eb887@syzkaller.appspotmail.com,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.18 108/235] ovl: fix oopses in ovl_fill_super() failure paths
+Date:   Mon, 24 Sep 2018 13:51:34 +0200
+Message-Id: <20180924113116.469311945@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -51,123 +52,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 0745dde62835be7e2afe62fcdb482fcad79cb743 upstream.
+commit 8c25741aaad8be6fbe51510e917c740e0059cf83 upstream.
 
-The SSIF driver was removing any client that came in through the
-platform interface, but it should only remove clients that it
-added.  On a failure in the probe function, this could result
-in the following oops when the driver is removed and the
-client gets unregistered twice:
+ovl_free_fs() dereferences ofs->workbasedir and ofs->upper_mnt in cases when
+those might not have been initialized yet.
 
- CPU: 107 PID: 30266 Comm: rmmod Not tainted 4.18.0+ #80
- Hardware name: Cavium Inc. Saber/Saber, BIOS Cavium reference firmware version 7.0 08/04/2018
- pstate: 60400009 (nZCv daif +PAN -UAO)
- pc : kernfs_find_ns+0x28/0x120
- lr : kernfs_find_and_get_ns+0x40/0x60
- sp : ffff00002310fb50
- x29: ffff00002310fb50 x28: ffff800a8240f800
- x27: 0000000000000000 x26: 0000000000000000
- x25: 0000000056000000 x24: ffff000009073000
- x23: ffff000008998b38 x22: 0000000000000000
- x21: ffff800ed86de820 x20: 0000000000000000
- x19: ffff00000913a1d8 x18: 0000000000000000
- x17: 0000000000000000 x16: 0000000000000000
- x15: 0000000000000000 x14: 5300737265766972
- x13: 643d4d4554535953 x12: 0000000000000030
- x11: 0000000000000030 x10: 0101010101010101
- x9 : ffff800ea06cc3f9 x8 : 0000000000000000
- x7 : 0000000000000141 x6 : ffff000009073000
- x5 : ffff800adb706b00 x4 : 0000000000000000
- x3 : 00000000ffffffff x2 : 0000000000000000
- x1 : ffff000008998b38 x0 : ffff000008356760
- Process rmmod (pid: 30266, stack limit = 0x00000000e218418d)
- Call trace:
-  kernfs_find_ns+0x28/0x120
-  kernfs_find_and_get_ns+0x40/0x60
-  sysfs_unmerge_group+0x2c/0x6c
-  dpm_sysfs_remove+0x34/0x70
-  device_del+0x58/0x30c
-  device_unregister+0x30/0x7c
-  i2c_unregister_device+0x84/0x90 [i2c_core]
-  ssif_platform_remove+0x38/0x98 [ipmi_ssif]
-  platform_drv_remove+0x2c/0x6c
-  device_release_driver_internal+0x168/0x1f8
-  driver_detach+0x50/0xbc
-  bus_remove_driver+0x74/0xe8
-  driver_unregister+0x34/0x5c
-  platform_driver_unregister+0x20/0x2c
-  cleanup_ipmi_ssif+0x50/0xd82c [ipmi_ssif]
-  __arm64_sys_delete_module+0x1b4/0x220
-  el0_svc_handler+0x104/0x160
-  el0_svc+0x8/0xc
- Code: aa1e03e0 aa0203f6 aa0103f7 d503201f (7940e280)
- ---[ end trace 09f0e34cce8e2d8c ]---
- Kernel panic - not syncing: Fatal exception
- SMP: stopping secondary CPUs
- Kernel Offset: disabled
- CPU features: 0x23800c38
+Fix the initialization order for these fields.
 
-So track the clients that the SSIF driver adds and only remove
-those.
-
-Reported-by: George Cherian <george.cherian@cavium.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Tested-by: George Cherian <george.cherian@cavium.com>
-Cc: <stable@vger.kernel.org> # 4.14.x
+Reported-by: syzbot+c75f181dc8429d2eb887@syzkaller.appspotmail.com
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc:  <stable@vger.kernel.org> # v4.15
+Fixes: 95e6d4177cb7 ("ovl: grab reference to workbasedir early")
+Fixes: a9075cdb467d ("ovl: factor out ovl_free_fs() helper")
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_ssif.c |   17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ fs/overlayfs/super.c |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -181,6 +181,8 @@ struct ssif_addr_info {
- 	struct device *dev;
- 	struct i2c_client *client;
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -970,16 +970,6 @@ static int ovl_get_upper(struct ovl_fs *
+ 	if (err)
+ 		goto out;
  
-+	struct i2c_client *added_client;
+-	err = -EBUSY;
+-	if (ovl_inuse_trylock(upperpath->dentry)) {
+-		ofs->upperdir_locked = true;
+-	} else if (ofs->config.index) {
+-		pr_err("overlayfs: upperdir is in-use by another mount, mount with '-o index=off' to override exclusive upperdir protection.\n");
+-		goto out;
+-	} else {
+-		pr_warn("overlayfs: upperdir is in-use by another mount, accessing files from both mounts will result in undefined behavior.\n");
+-	}
+-
+ 	upper_mnt = clone_private_mount(upperpath);
+ 	err = PTR_ERR(upper_mnt);
+ 	if (IS_ERR(upper_mnt)) {
+@@ -990,6 +980,17 @@ static int ovl_get_upper(struct ovl_fs *
+ 	/* Don't inherit atime flags */
+ 	upper_mnt->mnt_flags &= ~(MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME);
+ 	ofs->upper_mnt = upper_mnt;
 +
- 	struct mutex clients_mutex;
- 	struct list_head clients;
- 
-@@ -1641,15 +1643,7 @@ static int ssif_probe(struct i2c_client
- 
-  out:
- 	if (rv) {
--		/*
--		 * Note that if addr_info->client is assigned, we
--		 * leave it.  The i2c client hangs around even if we
--		 * return a failure here, and the failure here is not
--		 * propagated back to the i2c code.  This seems to be
--		 * design intent, strange as it may be.  But if we
--		 * don't leave it, ssif_platform_remove will not remove
--		 * the client like it should.
--		 */
-+		addr_info->client = NULL;
- 		dev_err(&client->dev, "Unable to start IPMI SSIF: %d\n", rv);
- 		kfree(ssif_info);
++	err = -EBUSY;
++	if (ovl_inuse_trylock(ofs->upper_mnt->mnt_root)) {
++		ofs->upperdir_locked = true;
++	} else if (ofs->config.index) {
++		pr_err("overlayfs: upperdir is in-use by another mount, mount with '-o index=off' to override exclusive upperdir protection.\n");
++		goto out;
++	} else {
++		pr_warn("overlayfs: upperdir is in-use by another mount, accessing files from both mounts will result in undefined behavior.\n");
++	}
++
+ 	err = 0;
+ out:
+ 	return err;
+@@ -1089,8 +1090,10 @@ static int ovl_get_workdir(struct ovl_fs
+ 		goto out;
  	}
-@@ -1669,7 +1663,8 @@ static int ssif_adapter_handler(struct d
- 	if (adev->type != &i2c_adapter_type)
- 		return 0;
  
--	i2c_new_device(to_i2c_adapter(adev), &addr_info->binfo);
-+	addr_info->added_client = i2c_new_device(to_i2c_adapter(adev),
-+						 &addr_info->binfo);
++	ofs->workbasedir = dget(workpath.dentry);
++
+ 	err = -EBUSY;
+-	if (ovl_inuse_trylock(workpath.dentry)) {
++	if (ovl_inuse_trylock(ofs->workbasedir)) {
+ 		ofs->workdir_locked = true;
+ 	} else if (ofs->config.index) {
+ 		pr_err("overlayfs: workdir is in-use by another mount, mount with '-o index=off' to override exclusive workdir protection.\n");
+@@ -1099,7 +1102,6 @@ static int ovl_get_workdir(struct ovl_fs
+ 		pr_warn("overlayfs: workdir is in-use by another mount, accessing files from both mounts will result in undefined behavior.\n");
+ 	}
  
- 	if (!addr_info->adapter_name)
- 		return 1; /* Only try the first I2C adapter by default. */
-@@ -1842,7 +1837,7 @@ static int ssif_platform_remove(struct p
- 		return 0;
- 
- 	mutex_lock(&ssif_infos_mutex);
--	i2c_unregister_device(addr_info->client);
-+	i2c_unregister_device(addr_info->added_client);
- 
- 	list_del(&addr_info->link);
- 	kfree(addr_info);
+-	ofs->workbasedir = dget(workpath.dentry);
+ 	err = ovl_make_workdir(ofs, &workpath);
+ 	if (err)
+ 		goto out;
 
 
