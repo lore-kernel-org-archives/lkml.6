@@ -2,92 +2,133 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19BC7C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA57ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E07E72098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:58:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="eZql249J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E07E72098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
+	by mail.kernel.org (Postfix) with ESMTP id 130C92098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:59:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 130C92098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbeIXUAz (ORCPT
+        id S1730926AbeIXUCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:00:55 -0400
-Received: from cock.li ([185.100.85.212]:51260 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728249AbeIXUAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:00:55 -0400
-X-Greylist: delayed 308 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Sep 2018 16:00:53 EDT
+        Mon, 24 Sep 2018 16:02:08 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15102 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728809AbeIXUCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:02:08 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8ODrpGt025143;
+        Mon, 24 Sep 2018 15:59:06 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2mnb6x3jgd-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 24 Sep 2018 15:59:06 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 575FD46;
+        Mon, 24 Sep 2018 13:59:05 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2C362A57D;
+        Mon, 24 Sep 2018 13:59:05 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.45) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 24 Sep
+ 2018 15:59:04 +0200
+Subject: Re: [RESEND PATCH] Revert "pwm: Set class for exported channels in
+ sysfs"
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <stefan.wahren@i2se.com>, <gohai@sukzessiv.net>,
+        <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
+        <loic.pallardy@st.com>, <broonie@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+References: <1537538567-5377-1-git-send-email-fabrice.gasnier@st.com>
+ <20180924115301.GV21032@ulmo>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
+Date:   Mon, 24 Sep 2018 15:59:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1537797208; bh=meGlyYFO3FLcKY+GW84R6o2xB1AGa6ovzuaOu0fPfQY=;
-        h=Date:From:To:Subject:From;
-        b=eZql249JAyESnsAsaNYkDS1C9+nVCbMUxopB8Bqj5j+YDbasBddGjb6fCZPF4adYE
-         YqfqMxcbazxX0Q2KcZpJ0iG9eOwysb2/KNLmQs0lqSJuCsJ7n+3AWW1j4CQcGHdD5F
-         dcPVyFvZjLWA+34x/m8cCWk5KmloY7TgpoKaK2bo2fRyLWZeZ+q/tF1bVQ2t7IMceb
-         LVucnFw1PS6rJsT0SG27GXMVAksIFuspmcC8xZjyAPdri1ZShngiRrNi4Tktuh8a7d
-         YRi7+WiNFSH9vN4TbEuvmV12Dh9I+OWoA+CbvayNOn+P04jmySp4ZImbLk9UZT8cTn
-         3ExKPqo8D29pg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180924115301.GV21032@ulmo>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 24 Sep 2018 13:53:28 +0000
-From:   gratuitouslicensesarerevocable@redchan.it
-To:     linux-kernel@vger.kernel.org
-Subject: Gratuitous licenses are revocable
-Message-ID: <755c8c523403ced734df84175e4c3dbc@redchan.it>
-X-Sender: gratuitouslicensesarerevocable@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gratuitous licenses are revocable by the grantor.
+On 09/24/2018 01:53 PM, Thierry Reding wrote:
+> On Fri, Sep 21, 2018 at 04:02:47PM +0200, Fabrice Gasnier wrote:
+>> This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
+>> regression with multiple pwm chip. It creates a new entry in
+>> '/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
+>> - 1st time export will create an entry in /sys/class/pwm/pwmX
+>> - when another export happens on another pwmchip, it can't be created
+>> (e.g. -EEXIST)
+>>
+>> This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
+>> - pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
+>>
+>> Example on stm32 (stm32429i-eval) platform:
+>> $ ls /sys/class/pwm
+>> pwmchip0 pwmchip4
+>>
+>> $ cd /sys/class/pwm/pwmchip0/
+>> $ echo 0 > export
+>> $ ls /sys/class/pwm
+>> pwm0 pwmchip0 pwmchip4
+>>
+>> $ cd /sys/class/pwm/pwmchip4/
+>> $ echo 0 > export
+>> sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+>> ...Exception stack follows...
+>>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>> ---
+>>  drivers/pwm/sysfs.c | 1 -
+>>  1 file changed, 1 deletion(-)
+> 
+> Can we come up with an alternative that allows us to have both? We want
+> uevent and proper sysfs creation, or is that not possible?
 
-Each of the gratis linux kernel contributors can revoke their license 
-grant (to the project or anyone else who did not pay consideration) at 
-their pleasure.
+Hi Thierry, all,
 
-If and when they are ejected from kernel work, when the gift horse is 
-stared in the mouth for not being a feminist, or for not opposing 
-child-marraige-of-girls-to-men (allowed by YHWH in Devarim chapter 22 
-verse 28 (na'ar), also allowed by Sunni Islam, along with other good 
-pro-male religions) with sufficient vigor, or for not supporting other 
-aspects of the anglo-american religion... they should do so.
+With current approach:
+- "export->child.class = parent->class"
+- ABI (e.g. "pwm%d") device name isn't unique with multiple pwm chip.
+I think this is not possible.
 
-Bruce Perens: You stated you don't "need" stick-in-the-mud contributors 
-anymore. Yes you do: old stick-in-the-mud contributors who contributed 
-to projects without copyright-assignment can revoke their grant at will 
-and put into question the legality of said projects if they wish to.
+Trying to think of an alternative... I just did a quick test, by
+changing device name, to take pwmchip into account:
++       export->child.class = parent->class;
+        export->child.release = pwm_export_release;
+        export->child.parent = parent;
+        export->child.devt = MKDEV(0, 0);
+        export->child.groups = pwm_groups;
+-       dev_set_name(&export->child, "pwm%u", pwm->hwpwm);
++       dev_set_name(&export->child, "pwmchip%d-pwm%u", chip->base,
+pwm->hwpwm);
 
-You seem somewhat ignorant of US law...
+But this also impacts existing ABI :-(
+Would you have suggestions to send an uevent, without modifying ABI ?
 
-> Bruce Perens wrote:
-> I am 60 and I *can* deal with this. I have many things to get done, and
-> can't afford to have the stick-in-the-mud guys on a project any longer. 
-> If
-> you want to paint yourself into a corner, that is your right, but IMO 
-> it's
-> a poor choice.
+Please advise,
+Best regards,
+Fabrice
 
-It is disgusting that you, Bruce Perens,  express a will to treat gratis 
-contributors as if they were employees or servants of yourself: that the 
-moment you imagine that you do not rely on them anymore, you assert a 
-will to eject them because they do not follow your belief  system.  They 
-can and they should strike back against you in such a case, and against 
-all who attempt to impose upon them.
-
-> Martin Steigerwald wrote:
-> Luckily on LKML he or she got almost no attention.
-Sometimes silence is assent. You will notice that no one has refuted the 
-issue I have raised in any detail. Why do you think Moglen has had the 
-FSF collecting copyright assignments for decades? Did you really think 
-the publicly released story was all there was to it?
+> 
+> Thierry
+> 
