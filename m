@@ -2,124 +2,106 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A04C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB1FC43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A21772098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A573B20833
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:25:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PedXSke9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A21772098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="bBL57ewW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A573B20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeIYE3M (ORCPT
+        id S1726323AbeIYE3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:29:12 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42037 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbeIYE3M (ORCPT
+        Tue, 25 Sep 2018 00:29:50 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:35720 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725978AbeIYE3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:29:12 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l9-v6so9747685pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nPsCcGf6cqRbLlFm5vki7CQZA54KjLndaCU+NsNfKjA=;
-        b=PedXSke9IRYWTST9VNoLPznOduH+0O1VqMYY7Y4XsW7pFnixGh9ZCFBpFVqxHqkWZ+
-         WaNKYB0ekJxkbIcT5hfYuZfY8cjAobijEhWnd7Kct2p/958ewgKQPCNp5DBjB137Boj9
-         EXGioGjAjflhp6wx0ltTRNjwYuZXEzJW3LRRXsxu9E+NPFtgEJrgkpXRxZnRZ+bbPkxY
-         QHn8myvQInJQ0wjWamGalURwBQIp1M9lGM9somyS3z2BBNQkS2OktbWrWBofMi+OxaOz
-         pea7nlwkawiudx86ldFbYdmInCSU+WF2Z+EX5sfEeBvOJd11xCEzYt8deuF75B1x8WW7
-         tCqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nPsCcGf6cqRbLlFm5vki7CQZA54KjLndaCU+NsNfKjA=;
-        b=VWbLf8Zp07OFHKqN1UbdIgsr2NOQbT1HoC6EPUhlKN0WHZWlR7HtM78UDz5TCeuend
-         8GGO7+J0/wx3xKED9I4GPjlof7HngGUx5dy6llsZ0rcEsU9POUKgeNDl3ShQQTc9aGIz
-         YrlXLdyPNQiSNVK6WK1FPbIHqeCpPdMnogl2FgYJupmmbCkpSY/LFES5JgCFd/nnPzZV
-         AP5kEgZ2PYyIGoCLoSvnmuztSFZc9JJiwjpxcPt/aUQvaUxP+z0mzudkxdfuQq7JxHBT
-         NMXPZp63ZyLksJNKqb2txHOiXFIAGIqRWhbEcTg97dzlDBWi1cH5pKULuG+5/VUXRTNM
-         Hbgw==
-X-Gm-Message-State: ABuFfojF/Azm40YgnvBb/rF7AzWBLGsPhsJnJ7yQXFg2E/5wK5/KbhXi
-        Eh1GEPP2NASuzNu4Sl3bHTXYwWZ3kxzvRzNAlDZQ+sRWZAk=
-X-Google-Smtp-Source: ACcGV602BXMMmyF73lECO7ObbgHmECFJCGOzf+DKTy/xNOyJ5zyF8gd5z3KMK3guZ4rA4G+tGkijcEz4fgFsGQgW5lI=
-X-Received: by 2002:a63:a047:: with SMTP id u7-v6mr596498pgn.145.1537827887592;
- Mon, 24 Sep 2018 15:24:47 -0700 (PDT)
+        Tue, 25 Sep 2018 00:29:50 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id w8OMNlHQ010479
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:25:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=HafwVldiCeTtalRuOevPG4AGRHKxCM4JBPwlr2pOZd4=;
+ b=bBL57ewWs5d3eb/SoO+N2TJCneHTzdfr8ymLLW+ylZBdORUNUZ/9Fw+0X4k+yH/ARcu2
+ eOU/RqMZf86L2ga5lvJX+1jNzqKPr+cuoU/DnUGqFKEMUsRjpsdl9chdx6nktnP+GwL0
+ VHe8fpPFuGTjHTkK+KwuEVoFF+a41N9PuFo= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2mq8eg81wj-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:25:24 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.14) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 24 Sep
+ 2018 15:25:23 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)    id
+ 0BC3B62E16C1; Mon, 24 Sep 2018 15:25:19 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>
+CC:     <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
+        Tejun Heo <tj@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v3 0/1] perf: Sharing PMU counters across compatible events
+Date:   Mon, 24 Sep 2018 15:25:16 -0700
+Message-ID: <20180924222517.197296-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <20180924195716.30848-1-natechancellor@gmail.com>
-In-Reply-To: <20180924195716.30848-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Sep 2018 15:24:36 -0700
-Message-ID: <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
-Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_14:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 12:57 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns when one enumerated type is implicitly converted to another.
->
-> drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
-> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> type 'enum ib_qp_create_flags' [-Wenum-conversion]
->                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
->                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
->
-> drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
-> from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
-> type 'enum ib_qp_create_flags' [-Wenum-conversion]
->                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
->                                                     ~ ^~~~~~~~~~~~~~~~~
->
-> The type mlx4_ib_qp_flags explicitly provides supplemental values to the
-> type ib_qp_create_flags. Make that clear to Clang by changing the
-> create_flags type to u32.
->
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  include/rdma/ib_verbs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-> index e463d3007a35..f6f4d9e3c8ed 100644
-> --- a/include/rdma/ib_verbs.h
-> +++ b/include/rdma/ib_verbs.h
-> @@ -1149,7 +1149,7 @@ struct ib_qp_init_attr {
->         struct ib_qp_cap        cap;
->         enum ib_sig_type        sq_sig_type;
->         enum ib_qp_type         qp_type;
-> -       enum ib_qp_create_flags create_flags;
-> +       u32                     create_flags;
+Chnages v2 -> v3:
+  1. Simplified event_pmu_add() as Jiri Olsa suggested
 
-I think it might be better to just have explicit casts at the
-assignment.  What do the maintainers think?
+Changes v1 -> v2:
+  1. Fixed a bug reported by 0day kernel testing robot
 
->
->         /*
->          * Only needed for special QP types, or when using the RW API.
-> --
-> 2.19.0
->
+This is to follow up earlier discussion on sharing hardware PMU counters
+across compatible events:
 
+  https://marc.info/?t=151213803600016
+  https://marc.info/?t=152547569200001
 
--- 
-Thanks,
-~Nick Desaulniers
+This version limits PMU sharing to events within same ctx. As a result,
+compatible events are not evaluated during task schedule. This vesion also
+limits PMU sharing to hardware counting events. From our discussion with
+internal users, this is sufficient for most cases.
+
+This version introduces virtual master event. The virtual master event
+does require careful handling. But it is makes the logic of event add/del
+cleaner.
+
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+
+Song Liu (1):
+  perf: Sharing PMU counters across compatible events
+
+ include/linux/perf_event.h |  61 ++++++++
+ kernel/events/core.c       | 281 +++++++++++++++++++++++++++++++++++--
+ 2 files changed, 332 insertions(+), 10 deletions(-)
+
+--
+2.17.1
