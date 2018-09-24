@@ -2,39 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F43C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08807ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59E5A2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E5A2083A
+	by mail.kernel.org (Postfix) with ESMTP id C0E352083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E352083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388093AbeIXSlb (ORCPT
+        id S2388494AbeIXSlf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:41:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58852 "EHLO
+        Mon, 24 Sep 2018 14:41:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58864 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730892AbeIXSlb (ORCPT
+        with ESMTP id S2387773AbeIXSle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:41:31 -0400
+        Mon, 24 Sep 2018 14:41:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC9091098;
-        Mon, 24 Sep 2018 12:39:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B2691098;
+        Mon, 24 Sep 2018 12:39:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Noa Osherovich <noaos@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 147/235] net/mlx5: Add missing SET_DRIVER_VERSION command translation
-Date:   Mon, 24 Sep 2018 13:52:13 +0200
-Message-Id: <20180924113120.193380061@linuxfoundation.org>
+Subject: [PATCH 4.18 148/235] arm64: dts: uniphier: Add missing cooling device properties for CPUs
+Date:   Mon, 24 Sep 2018 13:52:14 +0200
+Message-Id: <20180924113120.276180382@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,31 +52,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Noa Osherovich <noaos@mellanox.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit 0f4039104ee61e14ac4771a2181c2a20572f4ec9 ]
+[ Upstream commit af0e09d0c6762e486b0eb5cc4737396964c34fad ]
 
-When translating command opcodes to a string, SET_DRIVER_VERSION
-command was missing.
+The cooling device properties, like "#cooling-cells" and
+"dynamic-power-coefficient", should either be present for all the CPUs
+of a cluster or none. If these are present only for a subset of CPUs of
+a cluster then things will start falling apart as soon as the CPUs are
+brought online in a different order. For example, this will happen
+because the operating system looks for such properties in the CPU node
+it is trying to bring up, so that it can register a cooling device.
 
-Fixes: 42ca502e179d0 ('net/mlx5_core: Use a macro in mlx5_command_str()')
-Signed-off-by: Noa Osherovich <noaos@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Add such missing properties.
+
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -452,6 +452,7 @@ const char *mlx5_command_str(int command
- 	MLX5_COMMAND_STR_CASE(SET_HCA_CAP);
- 	MLX5_COMMAND_STR_CASE(QUERY_ISSI);
- 	MLX5_COMMAND_STR_CASE(SET_ISSI);
-+	MLX5_COMMAND_STR_CASE(SET_DRIVER_VERSION);
- 	MLX5_COMMAND_STR_CASE(CREATE_MKEY);
- 	MLX5_COMMAND_STR_CASE(QUERY_MKEY);
- 	MLX5_COMMAND_STR_CASE(DESTROY_MKEY);
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+@@ -58,6 +58,7 @@
+ 			clocks = <&sys_clk 32>;
+ 			enable-method = "psci";
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu2: cpu@100 {
+@@ -77,6 +78,7 @@
+ 			clocks = <&sys_clk 33>;
+ 			enable-method = "psci";
+ 			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 		};
+ 	};
+ 
 
 
