@@ -2,106 +2,106 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D78ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EF2ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 155A92098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 774812145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mct8FZfY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 155A92098A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUxYF95M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774812145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbeIYAJO (ORCPT
+        id S1732075AbeIYAJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 20:09:14 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38678 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbeIYAJO (ORCPT
+        Mon, 24 Sep 2018 20:09:44 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55562 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeIYAJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 20:09:14 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p6-v6so19119030ljc.5;
-        Mon, 24 Sep 2018 11:05:51 -0700 (PDT)
+        Mon, 24 Sep 2018 20:09:44 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 206-v6so2793080wmb.5;
+        Mon, 24 Sep 2018 11:06:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nUkO3oN2psofd495zhdgNG0k7CH8KswwaYCaY4we4CU=;
-        b=Mct8FZfYGPRKpLodfkE408tjj8ZAxRsrWhebGRKdYM2uLQ11NSpRYnBMEX+kwHP13b
-         FGcQF2lltWqI3LRBDFBfpv4TF89U35kWiQLtbaaxEH28f/z9nUe6/FZCUk5Ctb3/Hkxz
-         J/Wq3utjjqfagMuvN0GUOLJwiTREFYLEvAg3IG25bjb1ZuhrJ/P5rScoXHXTUSJEHGQ4
-         axFzmMA2U5j4K2mGTW2XVwnXZEW5BU3EvKfaMVc+b0XAyYewkJ5/Gq0JRzW6wF3G45Cx
-         VNNomW4kIxLSCw5DQQbF4WYlIUkGYAYdZSNJQH07aF47IGW+9xE/g+/OQQAtRJo0U1c3
-         VP9w==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zehZnPhco9VXzlut2NGFLvGXjhHe+Z/VA/YnkOyF56s=;
+        b=YUxYF95MVN9FdGhjXczuHCpbZ6syCVFLtSyxN1y1e6Wjt2zX4ieBnOR5JVWT/Venbc
+         9rMXHSyijxkAcGHEA7LixeU74CDIHQxj9cMGRStbEXIqGKcHCNAWoiCY1bzRgMSI+TTr
+         2L9jAeadUE+wQXVxFbq92bFBwgnxnhMnrXUkt/OTqvy9JMzKJtGbPouMt+o5mmJEP/a6
+         yTcduW1RFAOFtgxEB5z4ZiZ7OiQ8g42izmy5W+FFxxV7yMtlo59P+Y0WY7niv10xnvcm
+         ErIUpyuePh6d8Y/KrLIEMZF9kTbbTTI1Tn8LpQpx7gclH093tN8G16c7i0lcCBrqCw9L
+         Wk9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nUkO3oN2psofd495zhdgNG0k7CH8KswwaYCaY4we4CU=;
-        b=mrb5R66d2tCGFBa/kKDLhi9gqV1QmDoj2lUSGZ9SYLaMa7r4D9a6Dqt+h+S1gCbFQ1
-         ltX6tY3LEJRWx1gqfX4a67sTza1aq3edAuJLj9wwUT8JG6L0mZKahFMevLoN2hA+jVeX
-         EhLDfiZ9vcTzYkgoyhIE4fqB2LY8KTZJQ5SnG+tcmRV7E5J+ufm8xaZqzTl3OI8ZMNIK
-         Xlt/iHwW6zU/O91PpK+twjf1MlCzqjkAKZ7cUeWn/+UrsjM+oOMzZc3qf/Y561MB16L9
-         67Rsbnka8FTI76xyCsIDTctCISLeVA5SxU70VVzVrHDWZvaTgBdjYxNk4bswmoXhkgtk
-         OCKg==
-X-Gm-Message-State: ABuFfogsNJx04vrT+Cw6aUrhDoUgXbntgEp8zK8L2Wj4vOwXGjUUtWEj
-        ZPJZEwxUDZspw25L+T7x3xIRvWn1
-X-Google-Smtp-Source: ACcGV63hBCuBjxEnLj00g6Q7FX9jsYfcvOT0Am8WBdnA39QVM6f483gGFJaY2dAZIu+3R4CCj+FRpg==
-X-Received: by 2002:a2e:8346:: with SMTP id l6-v6mr7921ljh.72.1537812350398;
-        Mon, 24 Sep 2018 11:05:50 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.googlemail.com with ESMTPSA id u2-v6sm6692858ljg.55.2018.09.24.11.05.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 11:05:49 -0700 (PDT)
-Subject: Re: [PATCH v4 18/20] iommu/tegra: gart: Don't detach devices from
- inactive domains
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-19-digetx@gmail.com> <20180924110047.GO21032@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <8be80297-3b13-ece6-a5bf-873cc7877989@gmail.com>
-Date:   Mon, 24 Sep 2018 21:05:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zehZnPhco9VXzlut2NGFLvGXjhHe+Z/VA/YnkOyF56s=;
+        b=BhQJD01hk2ghlSKVTB5MK/GeFBiWDHVxG4TOyHvHcj1vOYXfMlWBpDNly6xHHGpqQX
+         JBNw/xsipYPpiVezvcaUG3gSQ5bnZEcJUSugXuO1zIMLO1sHYnZRD3Zr/j2CV7+A5oFe
+         y0OKsFAj6KZ4+TMLA7VaXfSm6W3cIBubsVJemAgIo/JVNlnu+jk+vj2QUSArobxAKc4w
+         JEmS5SsSxFGPuk0ZFFGydagFT+V59MVLgnPVPZfGkMhyhpY87PAZwosOZT5fWdqxpBh4
+         11/0xK08Ma9PC1iu32b3rmRS6+AGWWxT0qmNQAfAXnR7/yrQc9oK5pUUEF14WzH4y3Qm
+         s+ew==
+X-Gm-Message-State: APzg51BZh1lB6fbM5taLvZbeZgy8h6tJFuuPEpTS/JhJGXfm8Tbv0yfy
+        ORsW2F/K6lbeCe5O0dbcpfiu1Ym4eeE+SA==
+X-Google-Smtp-Source: ACcGV63YbYhd69TDnLDg15y+sirw5KMfIJHyP1s60/qSaNEvIkVs8f3R9p/KwZkpSwAO2gT1HxwjUg==
+X-Received: by 2002:a1c:1745:: with SMTP id 66-v6mr8253582wmx.38.1537812380417;
+        Mon, 24 Sep 2018 11:06:20 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id c19-v6sm39636210wre.86.2018.09.24.11.06.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 11:06:19 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 11:06:17 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/70] 4.4.158-stable review
+Message-ID: <20180924180617.GA4232@flashbox>
+References: <20180924113058.420454070@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180924110047.GO21032@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/18 2:00 PM, Thierry Reding wrote:
-> On Mon, Sep 24, 2018 at 03:41:51AM +0300, Dmitry Osipenko wrote:
->> There could be unlimited number of allocated domains, but only one domain
->> can be active at a time. Hence devices must be detached only from the
->> active domain.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/iommu/tegra-gart.c | 8 +++++---
->>  1 file changed, 5 insertions(+), 3 deletions(-)
+On Mon, Sep 24, 2018 at 01:51:59PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.158 release.
+> There are 70 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Do we have a mechanism of switching out different domains? I don't think
-> we do, so I'm wondering if perhaps a better solution to this would be to
-> just refuse to create more than one domain in the first place. That
-> would also allow us to get rid of the global variable gart_handle.
+> Responses should be made by Wed Sep 26 11:30:25 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.158-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-That's what was done in v1, Robin Murphy suggested that it will be
-better not to restrict allocation of unpopulated domains. It is
-mentioned in the changelog, see comment to v2 changes.
+Merged, compiled with -Werror, and installed onto my Pixel 2 XL.
+
+No initial issues noticed in dmesg or general usage.
+
+Thanks!
+Nathan
