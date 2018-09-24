@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84733ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC5BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A9842148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9842148C
+	by mail.kernel.org (Postfix) with ESMTP id 5583F21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5583F21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388312AbeIXSgT (ORCPT
+        id S2388321AbeIXSgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:36:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58418 "EHLO
+        Mon, 24 Sep 2018 14:36:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58426 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729816AbeIXSgS (ORCPT
+        with ESMTP id S1729816AbeIXSgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:36:18 -0400
+        Mon, 24 Sep 2018 14:36:22 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91E301018;
-        Mon, 24 Sep 2018 12:34:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE6471018;
+        Mon, 24 Sep 2018 12:34:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.18 109/235] vmbus: dont return values for uninitalized channels
-Date:   Mon, 24 Sep 2018 13:51:35 +0200
-Message-Id: <20180924113116.640890602@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 083/235] s390/qeth: reset layer2 attribute on layer switch
+Date:   Mon, 24 Sep 2018 13:51:09 +0200
+Message-Id: <20180924113113.328667386@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -51,36 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-commit 6712cc9c22117a8af9f3df272b4a44fd2e4201cd upstream.
+[ Upstream commit 70551dc46ffa3555a0b5f3545b0cd87ab67fd002 ]
 
-For unsupported device types, the vmbus channel ringbuffer is never
-initialized, and therefore reading the sysfs files will return garbage
-or cause a kernel OOPS.
+After the subdriver's remove() routine has completed, the card's layer
+mode is undetermined again. Reflect this in the layer2 field.
 
-Fixes: c2e5df616e1a ("vmbus: add per-channel sysfs info")
+If qeth_dev_layer2_store() hits an error after remove() was called, the
+card _always_ requires a setup(), even if the previous layer mode is
+requested again.
+But qeth_dev_layer2_store() bails out early if the requested layer mode
+still matches the current one. So unless we reset the layer2 field,
+re-probing the card back to its previous mode is currently not possible.
 
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Cc: <stable@vger.kernel.org> # 4.15
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hv/vmbus_drv.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/s390/net/qeth_core_sys.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -1178,6 +1178,9 @@ static ssize_t vmbus_chan_attr_show(stru
- 	if (!attribute->show)
- 		return -EIO;
+--- a/drivers/s390/net/qeth_core_sys.c
++++ b/drivers/s390/net/qeth_core_sys.c
+@@ -426,6 +426,7 @@ static ssize_t qeth_dev_layer2_store(str
+ 	if (card->discipline) {
+ 		card->discipline->remove(card->gdev);
+ 		qeth_core_free_discipline(card);
++		card->options.layer2 = -1;
+ 	}
  
-+	if (chan->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
-+
- 	return attribute->show(chan, buf);
- }
- 
+ 	rc = qeth_core_load_discipline(card, newdis);
 
 
