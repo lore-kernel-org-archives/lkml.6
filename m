@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C049C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54737ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B6A20877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B6A20877
+	by mail.kernel.org (Postfix) with ESMTP id 1AB2C20877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:02:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB2C20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbeIXSET (ORCPT
+        id S1730920AbeIXSEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:04:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53736 "EHLO
+        Mon, 24 Sep 2018 14:04:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53742 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729639AbeIXSET (ORCPT
+        with ESMTP id S1729639AbeIXSEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:04:19 -0400
+        Mon, 24 Sep 2018 14:04:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13E48D64;
-        Mon, 24 Sep 2018 12:02:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33DB1106D;
+        Mon, 24 Sep 2018 12:02:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 4.9 053/111] misc: hmc6352: fix potential Spectre v1
-Date:   Mon, 24 Sep 2018 13:52:20 +0200
-Message-Id: <20180924113110.242029888@linuxfoundation.org>
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.9 054/111] usb: Dont die twice if PCI xhci host is not responding in resume
+Date:   Mon, 24 Sep 2018 13:52:21 +0200
+Message-Id: <20180924113110.329333176@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -51,51 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit de916736aaaadddbd6061472969f667b14204aa9 upstream.
+commit f3dc41c5d22b2ca14a0802a65d8cdc33a3882d4e upstream.
 
-val is indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+usb_hc_died() should only be called once, and with the primary HCD
+as parameter. It will mark both primary and secondary hcd's dead.
 
-This issue was detected with the help of Smatch:
+Remove the extra call to usb_cd_died with the shared hcd as parameter.
 
-drivers/misc/hmc6352.c:54 compass_store() warn: potential spectre issue
-'map' [r]
-
-Fix this by sanitizing val before using it to index map
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Fixes: ff9d78b36f76 ("USB: Set usb_hcd->state and flags for shared roothubs")
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/hmc6352.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/core/hcd-pci.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/misc/hmc6352.c
-+++ b/drivers/misc/hmc6352.c
-@@ -27,6 +27,7 @@
- #include <linux/err.h>
- #include <linux/delay.h>
- #include <linux/sysfs.h>
-+#include <linux/nospec.h>
- 
- static DEFINE_MUTEX(compass_mutex);
- 
-@@ -50,6 +51,7 @@ static int compass_store(struct device *
- 		return ret;
- 	if (val >= strlen(map))
- 		return -EINVAL;
-+	val = array_index_nospec(val, strlen(map));
- 	mutex_lock(&compass_mutex);
- 	ret = compass_command(c, map[val]);
- 	mutex_unlock(&compass_mutex);
+--- a/drivers/usb/core/hcd-pci.c
++++ b/drivers/usb/core/hcd-pci.c
+@@ -528,8 +528,6 @@ static int resume_common(struct device *
+ 				event == PM_EVENT_RESTORE);
+ 		if (retval) {
+ 			dev_err(dev, "PCI post-resume error %d!\n", retval);
+-			if (hcd->shared_hcd)
+-				usb_hc_died(hcd->shared_hcd);
+ 			usb_hc_died(hcd);
+ 		}
+ 	}
 
 
