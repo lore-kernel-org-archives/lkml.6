@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C19E2ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBF9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82CEA2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CEA2083A
+	by mail.kernel.org (Postfix) with ESMTP id B23C02083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23C02083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388406AbeIXSk7 (ORCPT
+        id S2388420AbeIXSlD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:40:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58798 "EHLO
+        Mon, 24 Sep 2018 14:41:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58804 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730741AbeIXSk6 (ORCPT
+        with ESMTP id S1729740AbeIXSlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:40:58 -0400
+        Mon, 24 Sep 2018 14:41:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC0F71098;
-        Mon, 24 Sep 2018 12:39:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A6B71098;
+        Mon, 24 Sep 2018 12:39:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 4.18 124/235] usb: host: u132-hcd: Fix a sleep-in-atomic-context bug in u132_get_frame()
-Date:   Mon, 24 Sep 2018 13:51:50 +0200
-Message-Id: <20180924113118.472963044@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.18 142/235] NFSv4: Fix a tracepoint Oops in initiate_file_draining()
+Date:   Mon, 24 Sep 2018 13:52:08 +0200
+Message-Id: <20180924113119.806214851@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -50,50 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit 6d4f268fa132742fe96dad22307c68d237356d88 upstream.
+commit 2a534a7473bf4e7f1c12805113f80c795fc8e89a upstream.
 
-i_usX2Y_subs_startup in usbusx2yaudio.c is a completion handler function
-for the USB driver. So it should not sleep, but it is can sleep
-according to the function call paths (from bottom to top) in Linux-4.16.
+Now that the value of 'ino' can be NULL or an ERR_PTR(), we need to
+change the test in the tracepoint.
 
-[FUNC] msleep
-drivers/usb/host/u132-hcd.c, 2558:
-	msleep in u132_get_frame
-drivers/usb/core/hcd.c, 2231:
-	[FUNC_PTR]u132_get_frame in usb_hcd_get_frame_number
-drivers/usb/core/usb.c, 822:
-	usb_hcd_get_frame_number in usb_get_current_frame_number
-sound/usb/usx2y/usbusx2yaudio.c, 303:
-	usb_get_current_frame_number in i_usX2Y_urb_complete
-sound/usb/usx2y/usbusx2yaudio.c, 366:
-	i_usX2Y_urb_complete in i_usX2Y_subs_startup
-
-Note that [FUNC_PTR] means a function pointer call is used.
-
-To fix this bug, msleep() is replaced with mdelay().
-
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: ce5624f7e6675 ("NFSv4: Return NFS4ERR_DELAY when a layout fails...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.17+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/u132-hcd.c |    2 +-
+ fs/nfs/nfs4trace.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/u132-hcd.c
-+++ b/drivers/usb/host/u132-hcd.c
-@@ -2555,7 +2555,7 @@ static int u132_get_frame(struct usb_hcd
- 	} else {
- 		int frame = 0;
- 		dev_err(&u132->platform_dev->dev, "TODO: u132_get_frame\n");
--		msleep(100);
-+		mdelay(100);
- 		return frame;
- 	}
- }
+--- a/fs/nfs/nfs4trace.h
++++ b/fs/nfs/nfs4trace.h
+@@ -1194,7 +1194,7 @@ DECLARE_EVENT_CLASS(nfs4_inode_stateid_c
+ 		TP_fast_assign(
+ 			__entry->error = error;
+ 			__entry->fhandle = nfs_fhandle_hash(fhandle);
+-			if (inode != NULL) {
++			if (!IS_ERR_OR_NULL(inode)) {
+ 				__entry->fileid = NFS_FILEID(inode);
+ 				__entry->dev = inode->i_sb->s_dev;
+ 			} else {
 
 
