@@ -2,185 +2,115 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD22ECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BD6ECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 284D7208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 316942145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:25:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BfmKtwh8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284D7208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v7KQpi+H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316942145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeIYC2t (ORCPT
+        id S1727583AbeIYC3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:28:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37690 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeIYC2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:28:49 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a18-v6so2770947pfo.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 13:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bV0hP9Qc0ekGbCG73pKMXkUUGkTdto1wD0Jzyb8J0WU=;
-        b=BfmKtwh8HHYxsub0dFnpLyWoX/gPjzKKjunNodkRiCJZsr80Po4jmr/IJD1FaSmncM
-         lrRUz7mY+4COH17eFJB5fMKCIQBtKkZccvSzUbVqpu+6+sMPnSWIb/Vycoarm5MKCWbc
-         YMRL6VsnyjXKlPwm/Z7CvDPgb70ks1CXXA++L66/hE7JhsqgCepOixLlXpPZmg2dMWoI
-         T9WhJt8LORNDxeRfgMdLV+zJdfPzllAWYFfySt16+Ss/RrvuzC3BVyOrBfSOisgCS1dO
-         +WWrdGAIBvO0xKKW1wGwgEUTUlEXo3B0c0BGd9R5nwWi6QDY9HJDcog+/gwYp9HtHLEL
-         YHZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bV0hP9Qc0ekGbCG73pKMXkUUGkTdto1wD0Jzyb8J0WU=;
-        b=ClhXBz5WJHjo8SM0p3hDJYlwXGzaJ5yD8kQ48Umwp7TvRKgzIbhxyf6BTJf40a/0t5
-         Ha7o8Q7eEzWikCnbuw/DkHoGLPIwVyR7v4i6NMnFdaywf5boB69p379L4u6tEeB/YCzi
-         pYBEfHRls4nFtyJRl+U4LjGzzUfbJ5uUk1PHD9EJMh7RMTB57Uxul2vOFJ5UV9f8eDMx
-         CBojD5mVIHWhWOP5hUDERaC+kpbugb1y5BfV5Z2LkKIklnuanXx5A5Ovq8SL/MCqCok2
-         M+Qh79ARFkwQuzk7S3WNYylLsqKcUkQuGcEkogRgilzlt0LSOHo3QQIBtg6og/YOye1+
-         sdlQ==
-X-Gm-Message-State: ABuFfojpBD+4OYu4DrqDcPxMeOBwu/PpAselpVsB9DU6/DNsfzHKQcuY
-        k6unWo8VJ57HhB+kUgA+iBrlnGViewhksrbSraymfA==
-X-Google-Smtp-Source: ACcGV62mu4xLDJvnn2K2UpsWkPneaCn1en4mftu07ZULMLXiVmiYapKgB61xgdxjxMJwhBjD/RLbq8RaaimBz7e+rGE=
-X-Received: by 2002:a17:902:561:: with SMTP id 88-v6mr374878plf.320.1537820692127;
- Mon, 24 Sep 2018 13:24:52 -0700 (PDT)
+        Mon, 24 Sep 2018 22:29:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727247AbeIYC3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 22:29:43 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66B7A208D9;
+        Mon, 24 Sep 2018 20:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537820745;
+        bh=y1nI+8+4A6MenaLTIv8naJL/Q9xWX3h7+PzQSMzkmGI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=v7KQpi+Hr3tCO4mp+IaoPicG3Zpkj0499ZtG17AStYZ+TTrdbm1X4vVlvd++0RP0+
+         ygw/4Z8Mb8X55pu3sA72zOKX0DgZvx/2+AvPTeVqGwJRfVFdmhXDBNtq5e6w7OJvUI
+         7sAp4iidir2CszdjIaYdoLuAkqHaqNK+9ORSCx08=
+Date:   Mon, 24 Sep 2018 21:25:41 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Eugen Hristev <eugen.hristev@microchip.com>
+Cc:     <ludovic.desroches@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: at91: fix wrong channel number in
+ triggered buffer mode
+Message-ID: <20180924212541.22c7eec2@archlinux>
+In-Reply-To: <1537775504-7981-2-git-send-email-eugen.hristev@microchip.com>
+References: <1537775504-7981-1-git-send-email-eugen.hristev@microchip.com>
+        <1537775504-7981-2-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180924172615.25591-1-natechancellor@gmail.com> <33c9afa7-ea62-1248-1da4-381f93238627@amd.com>
-In-Reply-To: <33c9afa7-ea62-1248-1da4-381f93238627@amd.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Sep 2018 13:24:40 -0700
-Message-ID: <CAKwvOdkc=OymUoszBR7+QLiOfV2T_GiQ2Oom_C=Ebz76YU_sPw@mail.gmail.com>
-Subject: Re: [PATCH] crypto: ccp: Remove forward declaration
-To:     ghook@amd.com
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Thomas.Lendacky@amd.com, Gary.Hook@amd.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 12:18 PM Gary R Hook <ghook@amd.com> wrote:
->
-> On 09/24/2018 12:26 PM, Nathan Chancellor wrote:
-> > Clang emits a warning about this construct:
-> >
-> > drivers/crypto/ccp/sp-platform.c:36:36: warning: tentative array
-> > definition assumed to have one element
-> > static const struct acpi_device_id sp_acpi_match[];
-> >                                     ^
-> > 1 warning generated.
-> >
-> > Just remove the forward declarations and move the initializations up
-> > so that they can be used in sp_get_of_version and sp_get_acpi_version.
->
-> I'm not going to out and out object to this just yet.
+On Mon, 24 Sep 2018 10:51:44 +0300
+Eugen Hristev <eugen.hristev@microchip.com> wrote:
 
-Tentative array definitions need to have the correct length specified;
-it should either be forward declared as the correct length, or as this
-patch does, skip the forward declare and move up the definition.
-Thanks for this patch Nathan.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> When channels are registered, the hardware channel number is not the
+> actual iio channel number.
+> This is because the driver is probed with a certain number of accessible
+> channels. Some pins are routed and some not, depending on the description of
+> the board in the DT.
+> Because of that, channels 0,1,2,3 can correspond to hardware channels
+> 2,3,4,5 for example.
+> In the buffered triggered case, we need to do the translation accordingly.
+> Fixed the channel number to stop reading the wrong channel.
+> 
+> Fixes 0e589d5fb "ARM: AT91: IIO: Add AT91 ADC driver."
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Again.  Looks entirely sensible to me, but I'd like to leave it
+a little longer for Maxime to have an opportunity to comment.
+(or anyone else for that matter!)
 
->
-> I am not a clang expert. Can you please provide a make command that
-> would explain how you precipitated this complaint?
->
->
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >   drivers/crypto/ccp/sp-platform.c | 53 +++++++++++++++-----------------
-> >   1 file changed, 25 insertions(+), 28 deletions(-)
-> >
-> > diff --git a/drivers/crypto/ccp/sp-platform.c b/drivers/crypto/ccp/sp-platform.c
-> > index 71734f254fd1..b75dc7db2d4a 100644
-> > --- a/drivers/crypto/ccp/sp-platform.c
-> > +++ b/drivers/crypto/ccp/sp-platform.c
-> > @@ -33,8 +33,31 @@ struct sp_platform {
-> >       unsigned int irq_count;
-> >   };
-> >
-> > -static const struct acpi_device_id sp_acpi_match[];
-> > -static const struct of_device_id sp_of_match[];
-> > +static const struct sp_dev_vdata dev_vdata[] = {
-> > +     {
-> > +             .bar = 0,
-> > +#ifdef CONFIG_CRYPTO_DEV_SP_CCP
-> > +             .ccp_vdata = &ccpv3_platform,
-> > +#endif
-> > +     },
-> > +};
-> > +
-> > +#ifdef CONFIG_ACPI
-> > +static const struct acpi_device_id sp_acpi_match[] = {
-> > +     { "AMDI0C00", (kernel_ulong_t)&dev_vdata[0] },
-> > +     { },
-> > +};
-> > +MODULE_DEVICE_TABLE(acpi, sp_acpi_match);
-> > +#endif
-> > +
-> > +#ifdef CONFIG_OF
-> > +static const struct of_device_id sp_of_match[] = {
-> > +     { .compatible = "amd,ccp-seattle-v1a",
-> > +       .data = (const void *)&dev_vdata[0] },
-> > +     { },
-> > +};
-> > +MODULE_DEVICE_TABLE(of, sp_of_match);
-> > +#endif
-> >
-> >   static struct sp_dev_vdata *sp_get_of_version(struct platform_device *pdev)
-> >   {
-> > @@ -201,32 +224,6 @@ static int sp_platform_resume(struct platform_device *pdev)
-> >   }
-> >   #endif
-> >
-> > -static const struct sp_dev_vdata dev_vdata[] = {
-> > -     {
-> > -             .bar = 0,
-> > -#ifdef CONFIG_CRYPTO_DEV_SP_CCP
-> > -             .ccp_vdata = &ccpv3_platform,
-> > -#endif
-> > -     },
-> > -};
-> > -
-> > -#ifdef CONFIG_ACPI
-> > -static const struct acpi_device_id sp_acpi_match[] = {
-> > -     { "AMDI0C00", (kernel_ulong_t)&dev_vdata[0] },
-> > -     { },
-> > -};
-> > -MODULE_DEVICE_TABLE(acpi, sp_acpi_match);
-> > -#endif
-> > -
-> > -#ifdef CONFIG_OF
-> > -static const struct of_device_id sp_of_match[] = {
-> > -     { .compatible = "amd,ccp-seattle-v1a",
-> > -       .data = (const void *)&dev_vdata[0] },
-> > -     { },
-> > -};
-> > -MODULE_DEVICE_TABLE(of, sp_of_match);
-> > -#endif
-> > -
-> >   static struct platform_driver sp_platform_driver = {
-> >       .driver = {
-> >               .name = "ccp",
-> >
->
+Do give me a poke if I seem to have forgotten this in a week or so
+though.
 
-
--- 
 Thanks,
-~Nick Desaulniers
+
+Jonathan
+
+> ---
+> Changes in v2:
+> - Added 'const' spec to the declaration to avoid build warning
+> 
+>  drivers/iio/adc/at91_adc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c
+> index e3be88e..75d2f73 100644
+> --- a/drivers/iio/adc/at91_adc.c
+> +++ b/drivers/iio/adc/at91_adc.c
+> @@ -248,12 +248,14 @@ static irqreturn_t at91_adc_trigger_handler(int irq, void *p)
+>  	struct iio_poll_func *pf = p;
+>  	struct iio_dev *idev = pf->indio_dev;
+>  	struct at91_adc_state *st = iio_priv(idev);
+> +	struct iio_chan_spec const *chan;
+>  	int i, j = 0;
+>  
+>  	for (i = 0; i < idev->masklength; i++) {
+>  		if (!test_bit(i, idev->active_scan_mask))
+>  			continue;
+> -		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
+> +		chan = idev->channels + i;
+> +		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
+>  		j++;
+>  	}
+>  
+
