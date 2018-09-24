@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13476ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E191ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4772145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4772145D
+	by mail.kernel.org (Postfix) with ESMTP id 026D52145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 026D52145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbeIXR7F (ORCPT
+        id S1730213AbeIXR7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:59:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52164 "EHLO
+        Mon, 24 Sep 2018 13:59:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52176 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730163AbeIXR7E (ORCPT
+        with ESMTP id S1729805AbeIXR7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:59:04 -0400
+        Mon, 24 Sep 2018 13:59:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0CBE1071;
-        Mon, 24 Sep 2018 11:57:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CB201071;
+        Mon, 24 Sep 2018 11:57:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 57/70] coresight: tpiu: Fix disabling timeouts
-Date:   Mon, 24 Sep 2018 13:52:56 +0200
-Message-Id: <20180924113106.507965791@linuxfoundation.org>
+Subject: [PATCH 4.4 58/70] gpiolib: Mark gpio_suffixes array with __maybe_unused
+Date:   Mon, 24 Sep 2018 13:52:57 +0200
+Message-Id: <20180924113106.608303591@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -54,65 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit ccff2dfaceaca4517432f5c149594215fe9098cc ]
+[ Upstream commit b23ec59926faf05b0c43680d05671c484e810ac4 ]
 
-Probing the TPIU driver under UBSan triggers an out-of-bounds shift
-warning in coresight_timeout():
+Since we put static variable to a header file it's copied to each module
+that includes the header. But not all of them are actually used it.
 
-...
-[    5.677530] UBSAN: Undefined behaviour in drivers/hwtracing/coresight/coresight.c:929:16
-[    5.685542] shift exponent 64 is too large for 64-bit type 'long unsigned int'
-...
+Mark gpio_suffixes array with __maybe_unused to hide a compiler warning:
 
-On closer inspection things are exponentially out of whack because we're
-passing a bitmask where a bit number should be. Amusingly, it seems that
-both calls will find their expected values by sheer luck and appear to
-succeed: 1 << FFCR_FON_MAN ends up at bit 64 which whilst undefined
-evaluates as zero in practice, while 1 << FFSR_FT_STOPPED finds bit 2
-(TCPresent) which apparently is usually tied high.
+In file included from
+drivers/gpio/gpiolib-legacy.c:6:0:
+drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
+ static const char * const gpio_suffixes[] = { "gpios", "gpio" };
+                           ^~~~~~~~~~~~~
+In file included from drivers/gpio/gpiolib-devprop.c:17:0:
+drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
+ static const char * const gpio_suffixes[] = { "gpios", "gpio" };
+                           ^~~~~~~~~~~~~
 
-Following the examples of other drivers, define separate FOO and FOO_BIT
-macros for masks vs. indices, and put things right.
-
-CC: Robert Walker <robert.walker@arm.com>
-CC: Mike Leach <mike.leach@linaro.org>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>
-Fixes: 11595db8e17f ("coresight: Fix disabling of CoreSight TPIU")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/coresight/coresight-tpiu.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -46,8 +46,9 @@
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -30,7 +30,7 @@ struct acpi_gpio_info {
+ };
  
- /** register definition **/
- /* FFSR - 0x300 */
--#define FFSR_FT_STOPPED		BIT(1)
-+#define FFSR_FT_STOPPED_BIT	1
- /* FFCR - 0x304 */
-+#define FFCR_FON_MAN_BIT	6
- #define FFCR_FON_MAN		BIT(6)
- #define FFCR_STOP_FI		BIT(12)
+ /* gpio suffixes used for ACPI and device tree lookup */
+-static const char * const gpio_suffixes[] = { "gpios", "gpio" };
++static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
  
-@@ -93,9 +94,9 @@ static void tpiu_disable_hw(struct tpiu_
- 	/* Generate manual flush */
- 	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
- 	/* Wait for flush to complete */
--	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
-+	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN_BIT, 0);
- 	/* Wait for formatter to stop */
--	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
-+	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED_BIT, 1);
- 
- 	CS_LOCK(drvdata->base);
- }
+ #ifdef CONFIG_ACPI
+ void acpi_gpiochip_add(struct gpio_chip *chip);
 
 
