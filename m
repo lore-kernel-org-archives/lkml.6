@@ -2,753 +2,176 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C01ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D964ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37592087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B64C320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:04:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3Fa7n2u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37592087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4+v3wSA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64C320C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732079AbeIXVHE (ORCPT
+        id S1732248AbeIXVHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:07:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731935AbeIXVHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:07:03 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A85682086B;
-        Mon, 24 Sep 2018 15:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537801467;
-        bh=RcV6wW08WSWWQBjY6lUSH/FC5xta85T1DtuwiVnAHso=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M3Fa7n2ud3Pat0vZH5VINmHQ1zF3HDuuo81+enHx9n/zXUIa/XoquLdq9jOtH73DC
-         hnPrjsdG0qgTQW7kec9KFvwzDFsf0VRAL801PopazcCLB0ObDIyqqbm41LEWcra5DR
-         g7qG4kh/uUOZY2gTwc0+JahnUfvKcunIdFbqrdiM=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>,
+        Mon, 24 Sep 2018 17:07:09 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43015 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732040AbeIXVHI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:07:08 -0400
+Received: by mail-io1-f68.google.com with SMTP id y10-v6so17819154ioa.10
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 08:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ShTzFkFIAIHHj6y6a7OpO6vxlQgBfu2puoZIc+A7uEI=;
+        b=B4+v3wSAwUOhLTstc8n0h0q1yVJvHJQ2QsnHDo2hLzNznUX9qYOcYZGgQNQvotqzFA
+         tsP2vp+NKE2UTafSYnqq7Ktef64Ao83mZYHnFmjxL2NnWpCjeKoG8phsmF3MRQBcTkPV
+         sjFYeFqR01p+6VJuM5CsPPhsJBiEH0xtHyl7EZbD4DnfHaHBzeZc2Tb8vw8hhhZDDcz3
+         qA5UBJMQCCppzHKsyt+NNIaRT8/n16E5hKTSF8JxYjAwqzwHr108pG6UFotGb7KtJaNj
+         rGRFagwFaGBUpAHsUI2jrzKCHubk38stsIGr/HpAjGlf0LWB4NE5/MFaL6utsHRjt9TN
+         wO/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ShTzFkFIAIHHj6y6a7OpO6vxlQgBfu2puoZIc+A7uEI=;
+        b=Yt99Nca/8whwCUcdWrVmpvmj7n4FtFXsLxGu3zcBS61dIMBWKSiMuTa0k4+rwDuiJi
+         lNWqDjKPLRoOUgSRJ7OqCWmxc6ZvVQ2LSBKmfjAqnP/lnGXuiqu55emCM0qYXnIgFuEf
+         S4NluAQFchCuTjt5xcqEiDoZaT8naJtzhoYTDDNN4EpZxBmu+AfLOAqOSCWShhEvt4nF
+         Cvy6qzpKzZ+NmphrvEdtBQmwQB+Ag954hqgDRYNzpsUGFzS8j4yZgcdM1Q5sgyny+f3v
+         wgi6bbu4bdvbJIw9Ts0pPGwjZPu1srGc+FYMNeGOlHVeW5Y5qlv9Pr1SOze7+O8tKih7
+         XCpw==
+X-Gm-Message-State: ABuFfojMlsZB51zY6mqhM+j6/1IfFtyoNYBCCNIhW1VeBlF3v8BDGHsH
+        OP4EDYtZ+ApdxRnhwruFUWmnQwfzV00Km+z7FAR3lA==
+X-Google-Smtp-Source: ACcGV62QAmMwiIZFtGODMNNB8cOeDT/1Leu/8RZEWSWbbaGqkICePn+BtKP1n+ocgioSaamD7HRJHMSIL39ViX79zVI=
+X-Received: by 2002:a6b:ece:: with SMTP id 197-v6mr8323454ioo.192.1537801472042;
+ Mon, 24 Sep 2018 08:04:32 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:3d47:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 08:04:31
+ -0700 (PDT)
+In-Reply-To: <CAAeHK+z4HOF_PobxSys8svftWt8dhbuUXEpq2sdXBTCXwTEH2g@mail.gmail.com>
+References: <cover.1535629099.git.andreyknvl@google.com> <5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com>
+ <CA+55aFyW9N2tSb2bQvkthbVVyY6nt5yFeWQRLHp1zruBmb5ocw@mail.gmail.com>
+ <CA+55aFy2t_MHgr_CgwbhtFkL+djaCq2qMM1G+f2DwJ0qEr1URQ@mail.gmail.com>
+ <20180907152600.myidisza5o4kdmvf@armageddon.cambridge.arm.com>
+ <CA+55aFzQ+ykLu10q3AdyaaKJx8SDWWL9Qiu6WH2jbN_ugRUTOg@mail.gmail.com>
+ <20180911164152.GA29166@arrakis.emea.arm.com> <CAAeHK+z4HOF_PobxSys8svftWt8dhbuUXEpq2sdXBTCXwTEH2g@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 24 Sep 2018 17:04:31 +0200
+Message-ID: <CAAeHK+z0C+GKK3dEVmtaAiS2koAZ5NDug7-nahUT79y3MX3MLQ@mail.gmail.com>
+Subject: Re: [PATCH v6 11/11] arm64: annotate user pointers casts detected by sparse
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mm <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 14/27] tools lib traceevent: Add prefix tep_ to enums filter_{exp,arg}_type
-Date:   Mon, 24 Sep 2018 12:02:29 -0300
-Message-Id: <20180924150242.14235-15-acme@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180924150242.14235-1-acme@kernel.org>
-References: <20180924150242.14235-1-acme@kernel.org>
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
+On Mon, Sep 17, 2018 at 7:01 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
+> I took another look at the changes this patchset does to the kernel
+> and here are my thoughts:
+>
+> I see two ways how a (potentially tagged) user pointer gets into the kernel:
+>
+> 1. A pointer is passed to a syscall (directly as an argument or
+> indirectly as a struct field).
+> 2. A pointer is extracted from user context (registers, etc.) by some
+> kind of a trap/fault handler.
+> (Is there something else?)
+>
+> In case 1 we also have a special case of a pointer passed to one of
+> the memory syscalls (mmap, mprotect, etc.). These syscalls "are not
+> doing memory accesses but rather dealing with the memory range, hence
+> an untagged pointer is better suited" as pointed out by Catalin (these
+> syscalls do not always use "unsigned long" instead of "void __user *"
+> though, for example shmat uses "void __user *").
+>
+> Looking at patch #8 ("usb, arm64: untag user addresses in devio") in
+> this series, it seems that that devio ioctl actually accepts a pointer
+> into a vma, so we shouldn't actually be untagging its argument and the
+> patch needs to be dropped. Otherwise there's quite a few more cases
+> that needs to be changed (like tcp_zerocopy_receive() for example,
+> more can be found by grepping find_vma() in generic code).
+>
+> Regarding case 2, it seems that analyzing casts of __user pointers
+> won't really help, since the code (arch/arm64/mm/fault.c) doesn't
+> really use them. However all of this code is arch specific, so it
+> shouldn't really change over time (right?). It looks like dealing with
+> tags passed to the kernel through these fault handlers is already
+> resolved with these patches (and therefore patch #6 ("arm64: untag
+> user address in __do_user_fault") in this series is not actually
+> needed and can be dropped (need to test that)):
+>
+> 276e9327 ("arm64: entry: improve data abort handling of tagged pointers"),
+> 81cddd65 ("arm64: traps: fix userspace cache maintenance emulation on
+> a tagged pointer")
+> 7dcd9dd8 ("arm64: hw_breakpoint: fix watchpoint matching for tagged pointers")
+>
+> Now, I also see two cases when kernel behavior changes depending on
+> whether a pointer is tagged:
+>
+> 1. Kernel code checks that a pointer belongs to userspace by comparing
+> it with TASK_SIZE/addr_limit/user_addr_max()/USER_DS/... .
+> 2. A pointer gets passed to find_vma() or similar functions.
+> (Is there something else?)
+>
+> The initial thought that I had here is that the pointers that reach
+> find_vma() must be passed through memory syscalls and therefore
+> shouldn't be untagged and don't require any fixes. There are at least
+> two exceptions to this: 1. get_user_pages() (see patch #4 ("mm, arm64:
+> untag user addresses in mm/gup.c") in this patch series) and 2.
+> __do_page_fault() in arch/arm64/mm/fault.c. Are there any other
+> obvious exceptions? I've tried adding BUG_ON(has_tag(addr)) to
+> find_vma() and running a modified syzkaller version that passes tagged
+> pointers to the kernel and failed to find anything else.
+>
+> As for case 1, the places where pointers are compared with TASK_SIZE
+> and others can be found with grep. Maybe it makes sense to introduce
+> some kind of routine like is_user_pointer() that handles tagged
+> pointers and refactor the existing code to use it? And maybe add a
+> rule to checkpatch.pl that forbids the direct usage of TASK_SIZE and
+> others.
+>
+> So I think detecting direct comparisons with TASK_SIZE and others
+> would more useful than finding __user pointer casts (it seems that the
+> latter requires a lot of annotations to be fixed/added), and I should
+> just drop this patch with annotations.
+>
+> WDYT?
 
-In order to make libtraceevent into a proper library, variables, data
-structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_". This adds prefix tep_ to enums
-filter_exp_type, filter_arg_type and all enum's members
-
-Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Cc: linux-trace-devel@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180919185723.824559046@goodmis.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/lib/traceevent/event-parse.h  |  56 +++++-----
- tools/lib/traceevent/parse-filter.c | 210 ++++++++++++++++++------------------
- 2 files changed, 133 insertions(+), 133 deletions(-)
-
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index c9d7c5376fc2..5e55c83d43fe 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -793,30 +793,30 @@ enum tep_filter_cmp_type {
- 	TEP_FILTER_CMP_NOT_REGEX,
- };
- 
--enum filter_exp_type {
--	FILTER_EXP_NONE,
--	FILTER_EXP_ADD,
--	FILTER_EXP_SUB,
--	FILTER_EXP_MUL,
--	FILTER_EXP_DIV,
--	FILTER_EXP_MOD,
--	FILTER_EXP_RSHIFT,
--	FILTER_EXP_LSHIFT,
--	FILTER_EXP_AND,
--	FILTER_EXP_OR,
--	FILTER_EXP_XOR,
--	FILTER_EXP_NOT,
--};
--
--enum filter_arg_type {
--	FILTER_ARG_NONE,
--	FILTER_ARG_BOOLEAN,
--	FILTER_ARG_VALUE,
--	FILTER_ARG_FIELD,
--	FILTER_ARG_EXP,
--	FILTER_ARG_OP,
--	FILTER_ARG_NUM,
--	FILTER_ARG_STR,
-+enum tep_filter_exp_type {
-+	TEP_FILTER_EXP_NONE,
-+	TEP_FILTER_EXP_ADD,
-+	TEP_FILTER_EXP_SUB,
-+	TEP_FILTER_EXP_MUL,
-+	TEP_FILTER_EXP_DIV,
-+	TEP_FILTER_EXP_MOD,
-+	TEP_FILTER_EXP_RSHIFT,
-+	TEP_FILTER_EXP_LSHIFT,
-+	TEP_FILTER_EXP_AND,
-+	TEP_FILTER_EXP_OR,
-+	TEP_FILTER_EXP_XOR,
-+	TEP_FILTER_EXP_NOT,
-+};
-+
-+enum tep_filter_arg_type {
-+	TEP_FILTER_ARG_NONE,
-+	TEP_FILTER_ARG_BOOLEAN,
-+	TEP_FILTER_ARG_VALUE,
-+	TEP_FILTER_ARG_FIELD,
-+	TEP_FILTER_ARG_EXP,
-+	TEP_FILTER_ARG_OP,
-+	TEP_FILTER_ARG_NUM,
-+	TEP_FILTER_ARG_STR,
- };
- 
- enum filter_value_type {
-@@ -850,9 +850,9 @@ struct filter_arg_op {
- };
- 
- struct filter_arg_exp {
--	enum filter_exp_type	type;
--	struct filter_arg	*left;
--	struct filter_arg	*right;
-+	enum tep_filter_exp_type	type;
-+	struct filter_arg		*left;
-+	struct filter_arg		*right;
- };
- 
- struct filter_arg_num {
-@@ -870,7 +870,7 @@ struct filter_arg_str {
- };
- 
- struct filter_arg {
--	enum filter_arg_type	type;
-+	enum tep_filter_arg_type		type;
- 	union {
- 		struct filter_arg_boolean	boolean;
- 		struct filter_arg_field		field;
-diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
-index 55ce8e603485..d1e0dd5b63ea 100644
---- a/tools/lib/traceevent/parse-filter.c
-+++ b/tools/lib/traceevent/parse-filter.c
-@@ -191,33 +191,33 @@ static void free_arg(struct filter_arg *arg)
- 		return;
- 
- 	switch (arg->type) {
--	case FILTER_ARG_NONE:
--	case FILTER_ARG_BOOLEAN:
-+	case TEP_FILTER_ARG_NONE:
-+	case TEP_FILTER_ARG_BOOLEAN:
- 		break;
- 
--	case FILTER_ARG_NUM:
-+	case TEP_FILTER_ARG_NUM:
- 		free_arg(arg->num.left);
- 		free_arg(arg->num.right);
- 		break;
- 
--	case FILTER_ARG_EXP:
-+	case TEP_FILTER_ARG_EXP:
- 		free_arg(arg->exp.left);
- 		free_arg(arg->exp.right);
- 		break;
- 
--	case FILTER_ARG_STR:
-+	case TEP_FILTER_ARG_STR:
- 		free(arg->str.val);
- 		regfree(&arg->str.reg);
- 		free(arg->str.buffer);
- 		break;
- 
--	case FILTER_ARG_VALUE:
-+	case TEP_FILTER_ARG_VALUE:
- 		if (arg->value.type == FILTER_STRING ||
- 		    arg->value.type == FILTER_CHAR)
- 			free(arg->value.str);
- 		break;
- 
--	case FILTER_ARG_OP:
-+	case TEP_FILTER_ARG_OP:
- 		free_arg(arg->op.left);
- 		free_arg(arg->op.right);
- 	default:
-@@ -349,7 +349,7 @@ create_arg_item(struct tep_event_format *event, const char *token,
- 
- 	case TEP_EVENT_SQUOTE:
- 	case TEP_EVENT_DQUOTE:
--		arg->type = FILTER_ARG_VALUE;
-+		arg->type = TEP_FILTER_ARG_VALUE;
- 		arg->value.type =
- 			type == TEP_EVENT_DQUOTE ? FILTER_STRING : FILTER_CHAR;
- 		arg->value.str = strdup(token);
-@@ -362,7 +362,7 @@ create_arg_item(struct tep_event_format *event, const char *token,
- 	case TEP_EVENT_ITEM:
- 		/* if it is a number, then convert it */
- 		if (isdigit(token[0])) {
--			arg->type = FILTER_ARG_VALUE;
-+			arg->type = TEP_FILTER_ARG_VALUE;
- 			arg->value.type = FILTER_NUMBER;
- 			arg->value.val = strtoull(token, NULL, 0);
- 			break;
-@@ -377,12 +377,12 @@ create_arg_item(struct tep_event_format *event, const char *token,
- 				field = &cpu;
- 			} else {
- 				/* not a field, Make it false */
--				arg->type = FILTER_ARG_BOOLEAN;
-+				arg->type = TEP_FILTER_ARG_BOOLEAN;
- 				arg->boolean.value = TEP_FILTER_FALSE;
- 				break;
- 			}
- 		}
--		arg->type = FILTER_ARG_FIELD;
-+		arg->type = TEP_FILTER_ARG_FIELD;
- 		arg->field.field = field;
- 		break;
- 	default:
-@@ -403,14 +403,14 @@ create_arg_op(enum tep_filter_op_type btype)
- 	if (!arg)
- 		return NULL;
- 
--	arg->type = FILTER_ARG_OP;
-+	arg->type = TEP_FILTER_ARG_OP;
- 	arg->op.type = btype;
- 
- 	return arg;
- }
- 
- static struct filter_arg *
--create_arg_exp(enum filter_exp_type etype)
-+create_arg_exp(enum tep_filter_exp_type etype)
- {
- 	struct filter_arg *arg;
- 
-@@ -418,7 +418,7 @@ create_arg_exp(enum filter_exp_type etype)
- 	if (!arg)
- 		return NULL;
- 
--	arg->type = FILTER_ARG_EXP;
-+	arg->type = TEP_FILTER_ARG_EXP;
- 	arg->exp.type = etype;
- 
- 	return arg;
-@@ -434,7 +434,7 @@ create_arg_cmp(enum tep_filter_cmp_type ctype)
- 		return NULL;
- 
- 	/* Use NUM and change if necessary */
--	arg->type = FILTER_ARG_NUM;
-+	arg->type = TEP_FILTER_ARG_NUM;
- 	arg->num.type = ctype;
- 
- 	return arg;
-@@ -449,27 +449,27 @@ add_right(struct filter_arg *op, struct filter_arg *arg, char *error_str)
- 	int ret;
- 
- 	switch (op->type) {
--	case FILTER_ARG_EXP:
-+	case TEP_FILTER_ARG_EXP:
- 		if (op->exp.right)
- 			goto out_fail;
- 		op->exp.right = arg;
- 		break;
- 
--	case FILTER_ARG_OP:
-+	case TEP_FILTER_ARG_OP:
- 		if (op->op.right)
- 			goto out_fail;
- 		op->op.right = arg;
- 		break;
- 
--	case FILTER_ARG_NUM:
-+	case TEP_FILTER_ARG_NUM:
- 		if (op->op.right)
- 			goto out_fail;
- 		/*
- 		 * The arg must be num, str, or field
- 		 */
- 		switch (arg->type) {
--		case FILTER_ARG_VALUE:
--		case FILTER_ARG_FIELD:
-+		case TEP_FILTER_ARG_VALUE:
-+		case TEP_FILTER_ARG_FIELD:
- 			break;
- 		default:
- 			show_error(error_str, "Illegal rvalue");
-@@ -508,16 +508,16 @@ add_right(struct filter_arg *op, struct filter_arg *arg, char *error_str)
- 			 * If left arg was a field not found then
- 			 * NULL the entire op.
- 			 */
--			if (left->type == FILTER_ARG_BOOLEAN) {
-+			if (left->type == TEP_FILTER_ARG_BOOLEAN) {
- 				free_arg(left);
- 				free_arg(arg);
--				op->type = FILTER_ARG_BOOLEAN;
-+				op->type = TEP_FILTER_ARG_BOOLEAN;
- 				op->boolean.value = TEP_FILTER_FALSE;
- 				break;
- 			}
- 
- 			/* Left arg must be a field */
--			if (left->type != FILTER_ARG_FIELD) {
-+			if (left->type != TEP_FILTER_ARG_FIELD) {
- 				show_error(error_str,
- 					   "Illegal lvalue for string comparison");
- 				return TEP_ERRNO__ILLEGAL_LVALUE;
-@@ -548,7 +548,7 @@ add_right(struct filter_arg *op, struct filter_arg *arg, char *error_str)
- 				return TEP_ERRNO__ILLEGAL_STRING_CMP;
- 			}
- 
--			op->type = FILTER_ARG_STR;
-+			op->type = TEP_FILTER_ARG_STR;
- 			op->str.type = op_type;
- 			op->str.field = left->field.field;
- 			op->str.val = strdup(str);
-@@ -618,22 +618,22 @@ rotate_op_right(struct filter_arg *a, struct filter_arg *b)
- static enum tep_errno add_left(struct filter_arg *op, struct filter_arg *arg)
- {
- 	switch (op->type) {
--	case FILTER_ARG_EXP:
--		if (arg->type == FILTER_ARG_OP)
-+	case TEP_FILTER_ARG_EXP:
-+		if (arg->type == TEP_FILTER_ARG_OP)
- 			arg = rotate_op_right(arg, op);
- 		op->exp.left = arg;
- 		break;
- 
--	case FILTER_ARG_OP:
-+	case TEP_FILTER_ARG_OP:
- 		op->op.left = arg;
- 		break;
--	case FILTER_ARG_NUM:
--		if (arg->type == FILTER_ARG_OP)
-+	case TEP_FILTER_ARG_NUM:
-+		if (arg->type == TEP_FILTER_ARG_OP)
- 			arg = rotate_op_right(arg, op);
- 
- 		/* left arg of compares must be a field */
--		if (arg->type != FILTER_ARG_FIELD &&
--		    arg->type != FILTER_ARG_BOOLEAN)
-+		if (arg->type != TEP_FILTER_ARG_FIELD &&
-+		    arg->type != TEP_FILTER_ARG_BOOLEAN)
- 			return TEP_ERRNO__INVALID_ARG_TYPE;
- 		op->num.left = arg;
- 		break;
-@@ -654,10 +654,10 @@ enum op_type {
- static enum op_type process_op(const char *token,
- 			       enum tep_filter_op_type *btype,
- 			       enum tep_filter_cmp_type *ctype,
--			       enum filter_exp_type *etype)
-+			       enum tep_filter_exp_type *etype)
- {
- 	*btype = TEP_FILTER_OP_NOT;
--	*etype = FILTER_EXP_NONE;
-+	*etype = TEP_FILTER_EXP_NONE;
- 	*ctype = TEP_FILTER_CMP_NONE;
- 
- 	if (strcmp(token, "&&") == 0)
-@@ -672,29 +672,29 @@ static enum op_type process_op(const char *token,
- 
- 	/* Check for value expressions */
- 	if (strcmp(token, "+") == 0) {
--		*etype = FILTER_EXP_ADD;
-+		*etype = TEP_FILTER_EXP_ADD;
- 	} else if (strcmp(token, "-") == 0) {
--		*etype = FILTER_EXP_SUB;
-+		*etype = TEP_FILTER_EXP_SUB;
- 	} else if (strcmp(token, "*") == 0) {
--		*etype = FILTER_EXP_MUL;
-+		*etype = TEP_FILTER_EXP_MUL;
- 	} else if (strcmp(token, "/") == 0) {
--		*etype = FILTER_EXP_DIV;
-+		*etype = TEP_FILTER_EXP_DIV;
- 	} else if (strcmp(token, "%") == 0) {
--		*etype = FILTER_EXP_MOD;
-+		*etype = TEP_FILTER_EXP_MOD;
- 	} else if (strcmp(token, ">>") == 0) {
--		*etype = FILTER_EXP_RSHIFT;
-+		*etype = TEP_FILTER_EXP_RSHIFT;
- 	} else if (strcmp(token, "<<") == 0) {
--		*etype = FILTER_EXP_LSHIFT;
-+		*etype = TEP_FILTER_EXP_LSHIFT;
- 	} else if (strcmp(token, "&") == 0) {
--		*etype = FILTER_EXP_AND;
-+		*etype = TEP_FILTER_EXP_AND;
- 	} else if (strcmp(token, "|") == 0) {
--		*etype = FILTER_EXP_OR;
-+		*etype = TEP_FILTER_EXP_OR;
- 	} else if (strcmp(token, "^") == 0) {
--		*etype = FILTER_EXP_XOR;
-+		*etype = TEP_FILTER_EXP_XOR;
- 	} else if (strcmp(token, "~") == 0)
--		*etype = FILTER_EXP_NOT;
-+		*etype = TEP_FILTER_EXP_NOT;
- 
--	if (*etype != FILTER_EXP_NONE)
-+	if (*etype != TEP_FILTER_EXP_NONE)
- 		return OP_EXP;
- 
- 	/* Check for compares */
-@@ -723,20 +723,20 @@ static enum op_type process_op(const char *token,
- static int check_op_done(struct filter_arg *arg)
- {
- 	switch (arg->type) {
--	case FILTER_ARG_EXP:
-+	case TEP_FILTER_ARG_EXP:
- 		return arg->exp.right != NULL;
- 
--	case FILTER_ARG_OP:
-+	case TEP_FILTER_ARG_OP:
- 		return arg->op.right != NULL;
- 
--	case FILTER_ARG_NUM:
-+	case TEP_FILTER_ARG_NUM:
- 		return arg->num.right != NULL;
- 
--	case FILTER_ARG_STR:
-+	case TEP_FILTER_ARG_STR:
- 		/* A string conversion is always done */
- 		return 1;
- 
--	case FILTER_ARG_BOOLEAN:
-+	case TEP_FILTER_ARG_BOOLEAN:
- 		/* field not found, is ok */
- 		return 1;
- 
-@@ -758,8 +758,8 @@ reparent_op_arg(struct filter_arg *parent, struct filter_arg *old_child,
- 	struct filter_arg *other_child;
- 	struct filter_arg **ptr;
- 
--	if (parent->type != FILTER_ARG_OP &&
--	    arg->type != FILTER_ARG_OP) {
-+	if (parent->type != TEP_FILTER_ARG_OP &&
-+	    arg->type != TEP_FILTER_ARG_OP) {
- 		show_error(error_str, "can not reparent other than OP");
- 		return TEP_ERRNO__REPARENT_NOT_OP;
- 	}
-@@ -812,16 +812,16 @@ static int test_arg(struct filter_arg *parent, struct filter_arg *arg,
- 	switch (arg->type) {
- 
- 		/* bad case */
--	case FILTER_ARG_BOOLEAN:
-+	case TEP_FILTER_ARG_BOOLEAN:
- 		return FILTER_VAL_FALSE + arg->boolean.value;
- 
- 		/* good cases: */
--	case FILTER_ARG_STR:
--	case FILTER_ARG_VALUE:
--	case FILTER_ARG_FIELD:
-+	case TEP_FILTER_ARG_STR:
-+	case TEP_FILTER_ARG_VALUE:
-+	case TEP_FILTER_ARG_FIELD:
- 		return FILTER_VAL_NORM;
- 
--	case FILTER_ARG_EXP:
-+	case TEP_FILTER_ARG_EXP:
- 		lval = test_arg(arg, arg->exp.left, error_str);
- 		if (lval != FILTER_VAL_NORM)
- 			return lval;
-@@ -830,7 +830,7 @@ static int test_arg(struct filter_arg *parent, struct filter_arg *arg,
- 			return rval;
- 		return FILTER_VAL_NORM;
- 
--	case FILTER_ARG_NUM:
-+	case TEP_FILTER_ARG_NUM:
- 		lval = test_arg(arg, arg->num.left, error_str);
- 		if (lval != FILTER_VAL_NORM)
- 			return lval;
-@@ -839,7 +839,7 @@ static int test_arg(struct filter_arg *parent, struct filter_arg *arg,
- 			return rval;
- 		return FILTER_VAL_NORM;
- 
--	case FILTER_ARG_OP:
-+	case TEP_FILTER_ARG_OP:
- 		if (arg->op.type != TEP_FILTER_OP_NOT) {
- 			lval = test_arg(arg, arg->op.left, error_str);
- 			switch (lval) {
-@@ -919,7 +919,7 @@ static int collapse_tree(struct filter_arg *arg,
- 		free_arg(arg);
- 		arg = allocate_arg();
- 		if (arg) {
--			arg->type = FILTER_ARG_BOOLEAN;
-+			arg->type = TEP_FILTER_ARG_BOOLEAN;
- 			arg->boolean.value = ret == FILTER_VAL_TRUE;
- 		} else {
- 			show_error(error_str, "Failed to allocate filter arg");
-@@ -950,7 +950,7 @@ process_filter(struct tep_event_format *event, struct filter_arg **parg,
- 	struct filter_arg *arg = NULL;
- 	enum op_type op_type;
- 	enum tep_filter_op_type btype;
--	enum filter_exp_type etype;
-+	enum tep_filter_exp_type etype;
- 	enum tep_filter_cmp_type ctype;
- 	enum tep_errno ret;
- 
-@@ -1196,7 +1196,7 @@ process_event(struct tep_event_format *event, const char *filter_str,
- 		if (*parg == NULL)
- 			return TEP_ERRNO__MEM_ALLOC_FAILED;
- 
--		(*parg)->type = FILTER_ARG_BOOLEAN;
-+		(*parg)->type = TEP_FILTER_ARG_BOOLEAN;
- 		(*parg)->boolean.value = TEP_FILTER_FALSE;
- 	}
- 
-@@ -1222,7 +1222,7 @@ filter_event(struct event_filter *filter, struct tep_event_format *event,
- 		if (arg == NULL)
- 			return TEP_ERRNO__MEM_ALLOC_FAILED;
- 
--		arg->type = FILTER_ARG_BOOLEAN;
-+		arg->type = TEP_FILTER_ARG_BOOLEAN;
- 		arg->boolean.value = TEP_FILTER_TRUE;
- 	}
- 
-@@ -1478,7 +1478,7 @@ static int copy_filter_type(struct event_filter *filter,
- 		if (arg == NULL)
- 			return -1;
- 
--		arg->type = FILTER_ARG_BOOLEAN;
-+		arg->type = TEP_FILTER_ARG_BOOLEAN;
- 		if (strcmp(str, "TRUE") == 0)
- 			arg->boolean.value = 1;
- 		else
-@@ -1554,7 +1554,7 @@ int tep_update_trivial(struct event_filter *dest, struct event_filter *source,
- 	for (i = 0; i < dest->filters; i++) {
- 		filter_type = &dest->event_filters[i];
- 		arg = filter_type->filter;
--		if (arg->type != FILTER_ARG_BOOLEAN)
-+		if (arg->type != TEP_FILTER_ARG_BOOLEAN)
- 			continue;
- 		if ((arg->boolean.value && type == FILTER_TRIVIAL_FALSE) ||
- 		    (!arg->boolean.value && type == FILTER_TRIVIAL_TRUE))
-@@ -1611,7 +1611,7 @@ int tep_filter_clear_trivial(struct event_filter *filter,
- 		int *new_ids;
- 
- 		filter_type = &filter->event_filters[i];
--		if (filter_type->filter->type != FILTER_ARG_BOOLEAN)
-+		if (filter_type->filter->type != TEP_FILTER_ARG_BOOLEAN)
- 			continue;
- 		switch (type) {
- 		case FILTER_TRIVIAL_FALSE:
-@@ -1668,7 +1668,7 @@ int tep_filter_event_has_trivial(struct event_filter *filter,
- 	if (!filter_type)
- 		return 0;
- 
--	if (filter_type->filter->type != FILTER_ARG_BOOLEAN)
-+	if (filter_type->filter->type != TEP_FILTER_ARG_BOOLEAN)
- 		return 0;
- 
- 	switch (type) {
-@@ -1753,37 +1753,37 @@ get_exp_value(struct tep_event_format *event, struct filter_arg *arg,
- 	}
- 
- 	switch (arg->exp.type) {
--	case FILTER_EXP_ADD:
-+	case TEP_FILTER_EXP_ADD:
- 		return lval + rval;
- 
--	case FILTER_EXP_SUB:
-+	case TEP_FILTER_EXP_SUB:
- 		return lval - rval;
- 
--	case FILTER_EXP_MUL:
-+	case TEP_FILTER_EXP_MUL:
- 		return lval * rval;
- 
--	case FILTER_EXP_DIV:
-+	case TEP_FILTER_EXP_DIV:
- 		return lval / rval;
- 
--	case FILTER_EXP_MOD:
-+	case TEP_FILTER_EXP_MOD:
- 		return lval % rval;
- 
--	case FILTER_EXP_RSHIFT:
-+	case TEP_FILTER_EXP_RSHIFT:
- 		return lval >> rval;
- 
--	case FILTER_EXP_LSHIFT:
-+	case TEP_FILTER_EXP_LSHIFT:
- 		return lval << rval;
- 
--	case FILTER_EXP_AND:
-+	case TEP_FILTER_EXP_AND:
- 		return lval & rval;
- 
--	case FILTER_EXP_OR:
-+	case TEP_FILTER_EXP_OR:
- 		return lval | rval;
- 
--	case FILTER_EXP_XOR:
-+	case TEP_FILTER_EXP_XOR:
- 		return lval ^ rval;
- 
--	case FILTER_EXP_NOT:
-+	case TEP_FILTER_EXP_NOT:
- 	default:
- 		if (!*err)
- 			*err = TEP_ERRNO__INVALID_EXP_TYPE;
-@@ -1796,17 +1796,17 @@ get_arg_value(struct tep_event_format *event, struct filter_arg *arg,
- 	      struct tep_record *record, enum tep_errno *err)
- {
- 	switch (arg->type) {
--	case FILTER_ARG_FIELD:
-+	case TEP_FILTER_ARG_FIELD:
- 		return get_value(event, arg->field.field, record);
- 
--	case FILTER_ARG_VALUE:
-+	case TEP_FILTER_ARG_VALUE:
- 		if (arg->value.type != FILTER_NUMBER) {
- 			if (!*err)
- 				*err = TEP_ERRNO__NOT_A_NUMBER;
- 		}
- 		return arg->value.val;
- 
--	case FILTER_ARG_EXP:
-+	case TEP_FILTER_ARG_EXP:
- 		return get_exp_value(event, arg, record, err);
- 
- 	default:
-@@ -1971,22 +1971,22 @@ static int test_filter(struct tep_event_format *event, struct filter_arg *arg,
- 	}
- 
- 	switch (arg->type) {
--	case FILTER_ARG_BOOLEAN:
-+	case TEP_FILTER_ARG_BOOLEAN:
- 		/* easy case */
- 		return arg->boolean.value;
- 
--	case FILTER_ARG_OP:
-+	case TEP_FILTER_ARG_OP:
- 		return test_op(event, arg, record, err);
- 
--	case FILTER_ARG_NUM:
-+	case TEP_FILTER_ARG_NUM:
- 		return test_num(event, arg, record, err);
- 
--	case FILTER_ARG_STR:
-+	case TEP_FILTER_ARG_STR:
- 		return test_str(event, arg, record, err);
- 
--	case FILTER_ARG_EXP:
--	case FILTER_ARG_VALUE:
--	case FILTER_ARG_FIELD:
-+	case TEP_FILTER_ARG_EXP:
-+	case TEP_FILTER_ARG_VALUE:
-+	case TEP_FILTER_ARG_FIELD:
- 		/*
- 		 * Expressions, fields and values evaluate
- 		 * to true if they return non zero
-@@ -2190,34 +2190,34 @@ static char *exp_to_str(struct event_filter *filter, struct filter_arg *arg)
- 		goto out;
- 
- 	switch (arg->exp.type) {
--	case FILTER_EXP_ADD:
-+	case TEP_FILTER_EXP_ADD:
- 		op = "+";
- 		break;
--	case FILTER_EXP_SUB:
-+	case TEP_FILTER_EXP_SUB:
- 		op = "-";
- 		break;
--	case FILTER_EXP_MUL:
-+	case TEP_FILTER_EXP_MUL:
- 		op = "*";
- 		break;
--	case FILTER_EXP_DIV:
-+	case TEP_FILTER_EXP_DIV:
- 		op = "/";
- 		break;
--	case FILTER_EXP_MOD:
-+	case TEP_FILTER_EXP_MOD:
- 		op = "%";
- 		break;
--	case FILTER_EXP_RSHIFT:
-+	case TEP_FILTER_EXP_RSHIFT:
- 		op = ">>";
- 		break;
--	case FILTER_EXP_LSHIFT:
-+	case TEP_FILTER_EXP_LSHIFT:
- 		op = "<<";
- 		break;
--	case FILTER_EXP_AND:
-+	case TEP_FILTER_EXP_AND:
- 		op = "&";
- 		break;
--	case FILTER_EXP_OR:
-+	case TEP_FILTER_EXP_OR:
- 		op = "|";
- 		break;
--	case FILTER_EXP_XOR:
-+	case TEP_FILTER_EXP_XOR:
- 		op = "^";
- 		break;
- 	default:
-@@ -2320,26 +2320,26 @@ static char *arg_to_str(struct event_filter *filter, struct filter_arg *arg)
- 	char *str = NULL;
- 
- 	switch (arg->type) {
--	case FILTER_ARG_BOOLEAN:
-+	case TEP_FILTER_ARG_BOOLEAN:
- 		asprintf(&str, arg->boolean.value ? "TRUE" : "FALSE");
- 		return str;
- 
--	case FILTER_ARG_OP:
-+	case TEP_FILTER_ARG_OP:
- 		return op_to_str(filter, arg);
- 
--	case FILTER_ARG_NUM:
-+	case TEP_FILTER_ARG_NUM:
- 		return num_to_str(filter, arg);
- 
--	case FILTER_ARG_STR:
-+	case TEP_FILTER_ARG_STR:
- 		return str_to_str(filter, arg);
- 
--	case FILTER_ARG_VALUE:
-+	case TEP_FILTER_ARG_VALUE:
- 		return val_to_str(filter, arg);
- 
--	case FILTER_ARG_FIELD:
-+	case TEP_FILTER_ARG_FIELD:
- 		return field_to_str(filter, arg);
- 
--	case FILTER_ARG_EXP:
-+	case TEP_FILTER_ARG_EXP:
- 		return exp_to_str(filter, arg);
- 
- 	default:
--- 
-2.14.4
-
+ping
