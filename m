@@ -2,83 +2,114 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE92C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C901AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 012F720989
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012F720989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CA7C20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:47:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CA7C20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728276AbeIXPsG (ORCPT
+        id S1728370AbeIXPsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:48:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39028 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727497AbeIXPsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:48:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C15B7AE5E;
-        Mon, 24 Sep 2018 09:46:51 +0000 (UTC)
-Date:   Mon, 24 Sep 2018 11:46:51 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: intel-ish-hid: Enable Ice Lake mobile
-In-Reply-To: <20180911234543.10847-1-srinivas.pandruvada@linux.intel.com>
-Message-ID: <nycvar.YFH.7.76.1809241146210.15880@cbobk.fhfr.pm>
-References: <20180911234543.10847-1-srinivas.pandruvada@linux.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 24 Sep 2018 11:48:53 -0400
+Received: from shell.v3.sk ([90.176.6.54]:58815 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727497AbeIXPsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:48:53 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 2E21EBA289;
+        Mon, 24 Sep 2018 11:47:37 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id NkC8_gqiE1l4; Mon, 24 Sep 2018 11:47:33 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 9A020BA28E;
+        Mon, 24 Sep 2018 11:47:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id OjTGSoHBm3Pd; Mon, 24 Sep 2018 11:47:31 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 874D1BA289;
+        Mon, 24 Sep 2018 11:47:31 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: [PATCH] Revert "uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name"
+Date:   Mon, 24 Sep 2018 11:47:23 +0200
+Message-Id: <20180924094723.487697-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Sep 2018, Srinivas Pandruvada wrote:
+This changes UAPI, breaking iwd and libell:
 
-> Added PCI ID for Ice Lake mobile platform.
-> 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->  drivers/hid/intel-ish-hid/ipc/hw-ish.h  | 1 +
->  drivers/hid/intel-ish-hid/ipc/pci-ish.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/hid/intel-ish-hid/ipc/hw-ish.h b/drivers/hid/intel-ish-hid/ipc/hw-ish.h
-> index 97869b7410eb..1b4e93e19e6b 100644
-> --- a/drivers/hid/intel-ish-hid/ipc/hw-ish.h
-> +++ b/drivers/hid/intel-ish-hid/ipc/hw-ish.h
-> @@ -29,6 +29,7 @@
->  #define CNL_Ax_DEVICE_ID	0x9DFC
->  #define GLK_Ax_DEVICE_ID	0x31A2
->  #define CNL_H_DEVICE_ID		0xA37C
-> +#define ICL_MOBILE_DEVICE_ID	0x34FC
->  
->  #define	REVISION_ID_CHT_A0	0x6
->  #define	REVISION_ID_CHT_Ax_SI	0x0
-> diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> index 09d085946db3..4d78f85021a5 100644
-> --- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> +++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
-> @@ -38,6 +38,7 @@ static const struct pci_device_id ish_pci_tbl[] = {
->  	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, CNL_Ax_DEVICE_ID)},
->  	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, GLK_Ax_DEVICE_ID)},
->  	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, CNL_H_DEVICE_ID)},
-> +	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, ICL_MOBILE_DEVICE_ID)},
->  	{0, }
+  ell/key.c: In function 'kernel_dh_compute':
+  ell/key.c:205:38: error: 'struct keyctl_dh_params' has no member named =
+'private'; did you mean 'dh_private'?
+    struct keyctl_dh_params params =3D { .private =3D private,
+                                        ^~~~~~~
+                                        dh_private
 
-Applied to for-4.19/fixes.
+This reverts commit 8a2336e549d385bb0b46880435b411df8d8200e8.
 
--- 
-Jiri Kosina
-SUSE Labs
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <stable@vger.kernel.org>
+---
+ include/uapi/linux/keyctl.h | 2 +-
+ security/keys/dh.c          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+index 910cc4334b21..7b8c9e19bad1 100644
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,7 @@
+=20
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 dh_private;
++	__s32 private;
+ 	__s32 prime;
+ 	__s32 base;
+ };
+diff --git a/security/keys/dh.c b/security/keys/dh.c
+index 3b602a1e27fa..711e89d8c415 100644
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -300,7 +300,7 @@ long __keyctl_dh_compute(struct keyctl_dh_params __us=
+er *params,
+ 	}
+ 	dh_inputs.g_size =3D dlen;
+=20
+-	dlen =3D dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
++	dlen =3D dh_data_from_key(pcopy.private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret =3D dlen;
+ 		goto out2;
+--=20
+2.19.0
 
