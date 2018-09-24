@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9016C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6F9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE4720C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BE4720C0A
+	by mail.kernel.org (Postfix) with ESMTP id C410D208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:11:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C410D208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730934AbeIXSNh (ORCPT
+        id S1731016AbeIXSNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:13:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54856 "EHLO
+        Mon, 24 Sep 2018 14:13:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54874 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbeIXSNh (ORCPT
+        with ESMTP id S1730490AbeIXSNk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:13:37 -0400
+        Mon, 24 Sep 2018 14:13:40 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1A5671088;
-        Mon, 24 Sep 2018 12:11:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 42C961082;
+        Mon, 24 Sep 2018 12:11:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 076/111] evm: Dont deadlock if a crypto algorithm is unavailable
-Date:   Mon, 24 Sep 2018 13:52:43 +0200
-Message-Id: <20180924113112.489493700@linuxfoundation.org>
+Subject: [PATCH 4.9 077/111] MIPS: loongson64: cs5536: Fix PCI_OHCI_INT_REG reads
+Date:   Mon, 24 Sep 2018 13:52:44 +0200
+Message-Id: <20180924113112.567558869@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -53,66 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthew Garrett <mjg59@google.com>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit e2861fa71641c6414831d628a1f4f793b6562580 ]
+[ Upstream commit cd87668d601f622e0ebcfea4f78d116d5f572f4d ]
 
-When EVM attempts to appraise a file signed with a crypto algorithm the
-kernel doesn't have support for, it will cause the kernel to trigger a
-module load. If the EVM policy includes appraisal of kernel modules this
-will in turn call back into EVM - since EVM is holding a lock until the
-crypto initialisation is complete, this triggers a deadlock. Add a
-CRYPTO_NOLOAD flag and skip module loading if it's set, and add that flag
-in the EVM case in order to fail gracefully with an error message
-instead of deadlocking.
+The PCI_OHCI_INT_REG case in pci_ohci_read_reg() contains the following
+if statement:
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+  if ((lo & 0x00000f00) == CS5536_USB_INTR)
+
+CS5536_USB_INTR expands to the constant 11, which gives us the following
+condition which can never evaluate true:
+
+  if ((lo & 0xf00) == 11)
+
+At least when using GCC 8.1.0 this falls foul of the tautoligcal-compare
+warning, and since the code is built with the -Werror flag the build
+fails.
+
+Fix this by shifting lo right by 8 bits in order to match the
+corresponding PCI_OHCI_INT_REG case in pci_ohci_write_reg().
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19861/
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/api.c                        |    2 +-
- include/linux/crypto.h              |    5 +++++
- security/integrity/evm/evm_crypto.c |    3 ++-
- 3 files changed, 8 insertions(+), 2 deletions(-)
+ arch/mips/loongson64/common/cs5536/cs5536_ohci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/crypto/api.c
-+++ b/crypto/api.c
-@@ -215,7 +215,7 @@ struct crypto_alg *crypto_larval_lookup(
- 	type &= mask;
- 
- 	alg = crypto_alg_lookup(name, type, mask);
--	if (!alg) {
-+	if (!alg && !(mask & CRYPTO_NOLOAD)) {
- 		request_module("crypto-%s", name);
- 
- 		if (!((type ^ CRYPTO_ALG_NEED_FALLBACK) & mask &
---- a/include/linux/crypto.h
-+++ b/include/linux/crypto.h
-@@ -109,6 +109,11 @@
- #define CRYPTO_ALG_OPTIONAL_KEY		0x00004000
- 
- /*
-+ * Don't trigger module loading
-+ */
-+#define CRYPTO_NOLOAD			0x00008000
-+
-+/*
-  * Transform masks and values (for crt_flags).
-  */
- #define CRYPTO_TFM_NEED_KEY		0x00000001
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -94,7 +94,8 @@ static struct shash_desc *init_desc(char
- 		mutex_lock(&mutex);
- 		if (*tfm)
- 			goto out;
--		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_ALG_ASYNC);
-+		*tfm = crypto_alloc_shash(algo, 0,
-+					  CRYPTO_ALG_ASYNC | CRYPTO_NOLOAD);
- 		if (IS_ERR(*tfm)) {
- 			rc = PTR_ERR(*tfm);
- 			pr_err("Can not allocate %s (reason: %ld)\n", algo, rc);
+--- a/arch/mips/loongson64/common/cs5536/cs5536_ohci.c
++++ b/arch/mips/loongson64/common/cs5536/cs5536_ohci.c
+@@ -138,7 +138,7 @@ u32 pci_ohci_read_reg(int reg)
+ 		break;
+ 	case PCI_OHCI_INT_REG:
+ 		_rdmsr(DIVIL_MSR_REG(PIC_YSEL_LOW), &hi, &lo);
+-		if ((lo & 0x00000f00) == CS5536_USB_INTR)
++		if (((lo >> PIC_YSEL_LOW_USB_SHIFT) & 0xf) == CS5536_USB_INTR)
+ 			conf_data = 1;
+ 		break;
+ 	default:
 
 
