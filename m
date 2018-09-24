@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2B9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B0AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 230F92083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 230F92083A
+	by mail.kernel.org (Postfix) with ESMTP id BC0A32083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC0A32083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388069AbeIXSh1 (ORCPT
+        id S2388256AbeIXShc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:37:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58524 "EHLO
+        Mon, 24 Sep 2018 14:37:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58532 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728937AbeIXSh1 (ORCPT
+        with ESMTP id S1728937AbeIXShc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:37:27 -0400
+        Mon, 24 Sep 2018 14:37:32 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73A8D1092;
-        Mon, 24 Sep 2018 12:35:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD9061092;
+        Mon, 24 Sep 2018 12:35:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Xiao, Jin" <jin.xiao@intel.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.18 120/235] dm verity: fix crash on bufio buffer that was allocated with vmalloc
-Date:   Mon, 24 Sep 2018 13:51:46 +0200
-Message-Id: <20180924113118.142173320@linuxfoundation.org>
+        stable@vger.kernel.org, Tim Anderson <tsa@biglakesoftware.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.18 121/235] USB: Add quirk to support DJI CineSSD
+Date:   Mon, 24 Sep 2018 13:51:47 +0200
+Message-Id: <20180924113118.223401340@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,65 +51,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Tim Anderson <tsa@biglakesoftware.com>
 
-commit e4b069e0945fa14c71cf8b5b89f8b1b2aa68dbc2 upstream.
+commit f45681f9becaa65111ed0a691ccf080a0cd5feb8 upstream.
 
-Since commit d1ac3ff008fb ("dm verity: switch to using asynchronous hash
-crypto API") dm-verity uses asynchronous crypto calls for verification,
-so that it can use hardware with asynchronous processing of crypto
-operations.
+This device does not correctly handle the LPM operations.
 
-These asynchronous calls don't support vmalloc memory, but the buffer data
-can be allocated with vmalloc if dm-bufio is short of memory and uses a
-reserved buffer that was preallocated in dm_bufio_client_create().
+Also, the device cannot handle ATA pass-through commands
+and locks up when attempted while running in super speed.
 
-Fix verity_hash_update() so that it deals with vmalloc'd memory
-correctly.
+This patch adds the equivalent quirk logic as found in uas.
 
-Reported-by: "Xiao, Jin" <jin.xiao@intel.com>
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Fixes: d1ac3ff008fb ("dm verity: switch to using asynchronous hash crypto API")
-Cc: stable@vger.kernel.org # 4.12+
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Tim Anderson <tsa@biglakesoftware.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-verity-target.c |   24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ drivers/usb/core/quirks.c          |    3 +++
+ drivers/usb/storage/scsiglue.c     |    9 +++++++++
+ drivers/usb/storage/unusual_devs.h |    7 +++++++
+ 3 files changed, 19 insertions(+)
 
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -99,10 +99,26 @@ static int verity_hash_update(struct dm_
- {
- 	struct scatterlist sg;
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -406,6 +406,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
+ 			USB_QUIRK_CONFIG_INTF_STRINGS },
  
--	sg_init_one(&sg, data, len);
--	ahash_request_set_crypt(req, &sg, NULL, len);
--
--	return crypto_wait_req(crypto_ahash_update(req), wait);
-+	if (likely(!is_vmalloc_addr(data))) {
-+		sg_init_one(&sg, data, len);
-+		ahash_request_set_crypt(req, &sg, NULL, len);
-+		return crypto_wait_req(crypto_ahash_update(req), wait);
-+	} else {
-+		do {
-+			int r;
-+			size_t this_step = min_t(size_t, len, PAGE_SIZE - offset_in_page(data));
-+			flush_kernel_vmap_range((void *)data, this_step);
-+			sg_init_table(&sg, 1);
-+			sg_set_page(&sg, vmalloc_to_page(data), this_step, offset_in_page(data));
-+			ahash_request_set_crypt(req, &sg, NULL, this_step);
-+			r = crypto_wait_req(crypto_ahash_update(req), wait);
-+			if (unlikely(r))
-+				return r;
-+			data += this_step;
-+			len -= this_step;
-+		} while (len);
++	/* DJI CineSSD */
++	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* INTEL VALUE SSD */
+ 	{ USB_DEVICE(0x8086, 0xf1a5), .driver_info = USB_QUIRK_RESET_RESUME },
+ 
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -376,6 +376,15 @@ static int queuecommand_lck(struct scsi_
+ 		return 0;
+ 	}
+ 
++	if ((us->fflags & US_FL_NO_ATA_1X) &&
++			(srb->cmnd[0] == ATA_12 || srb->cmnd[0] == ATA_16)) {
++		memcpy(srb->sense_buffer, usb_stor_sense_invalidCDB,
++		       sizeof(usb_stor_sense_invalidCDB));
++		srb->result = SAM_STAT_CHECK_CONDITION;
++		done(srb);
 +		return 0;
 +	}
- }
++
+ 	/* enqueue the command and wake up the control thread */
+ 	srb->scsi_done = done;
+ 	us->srb = srb;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2288,6 +2288,13 @@ UNUSUAL_DEV(  0x2735, 0x100b, 0x0000, 0x
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_GO_SLOW ),
  
++/* Reported-by: Tim Anderson <tsa@biglakesoftware.com> */
++UNUSUAL_DEV(  0x2ca3, 0x0031, 0x0000, 0x9999,
++		"DJI",
++		"CineSSD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_NO_ATA_1X),
++
  /*
+  * Reported by Frederic Marchal <frederic.marchal@wowcompany.com>
+  * Mio Moov 330
 
 
