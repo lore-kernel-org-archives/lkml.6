@@ -2,127 +2,141 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE699C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA44BC43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF2D2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FDC920C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:43:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxHohLml"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF2D2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ag7C++pz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FDC920C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbeIYDqi (ORCPT
+        id S1728701AbeIYDrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 23:46:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46792 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbeIYDqg (ORCPT
+        Mon, 24 Sep 2018 23:47:23 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33837 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbeIYDrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 23:46:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z3-v6so9343616wrr.13;
-        Mon, 24 Sep 2018 14:42:21 -0700 (PDT)
+        Mon, 24 Sep 2018 23:47:23 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d19-v6so9894253pgv.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 14:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d3/eo3kVoyM1nrOqL0GrHbHasLyt8hucsm7HikPto6c=;
-        b=fxHohLmla585TazWglsH84bVWj2sUZwSIv2nQjziUuVjbnQ49XNKXjQ673AFgy16Jf
-         /50beAYqIzgjBvq0iHZ3Q59irHLsYXZwDlxfCjrVbM9R9YClsN8dydCXG7wWis8aKyca
-         06olvEfYtmCBStg6cxbmYUHwdJqob7CrtN6XZBqaHcY/7qSjMteQpNw8srbq+eQYBHVB
-         bzrdEtQ4ORg27z6O47Ejgy2ZOJ4nuzkoMR1QGvjLbpYN40a8uTaEKLpShKGcqs+0nQVN
-         VCXQWQWhflr1l/2aARLo45gAwPpJDvlSy9zsbvM8iRVmmJpnKV9zISNt+7GjmS9SL4Bq
-         3rkQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MZ/wHdnaPG7c0PMmxvJ1i/rjMvQ196LVFVHt8ececvA=;
+        b=ag7C++pzJCeJm56BYkYS9BdSLIvmJfcTpomaAyJkzhSBp3CNPgb684t6YRk3vIeyWX
+         pS+tfVTPpxyx2881OwmwVkhwH1iayE/YHAMd34TSzgDlTdRE2UjPuveJd04dHoReBNBt
+         L7x3ajSjfiHa7EQ4wek2Nyvd5TNt0SJzXZkuEjULo4qDxN8vm3OdPoiEIhdqEynjkRLJ
+         XncmEh8PiaN8XFV89vDooDhHtjXaKrlRQOhAXMiQXGifdO667aQ/c3oU0N+8NnsrEzTB
+         jRkx1oOrXaYMcdDQNvnsJuvNAOxryQNAPupLgKoip//8T2ad9hlvfNxbrKyH592R4+iQ
+         MVXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d3/eo3kVoyM1nrOqL0GrHbHasLyt8hucsm7HikPto6c=;
-        b=EZpZR/7MaOqeleIBZYD440nh9XljIWlFSKBtnZCRGXoZGxMLqe0jNRMr51SPmiNiug
-         4Y6vXqGIWVNaeISTBrweL+KYYTceVYzNWNOu2caIX86zM7J4VR112otrUlzEeh3XC7E+
-         JckDtqRac3dPp5tavCAOEINlKGut40SlmRYvQYZF8bOuQaY/MfgelLLYipjXsLTjSquJ
-         49m//yg0JckvKXNHZnPXXoy0VeKCX0avThxS67pAXZmqcjaYubb00iI6+jRblm3mRJfZ
-         PV7Zk+yn8DlLn5p5WG53aFndvNDRgaEJrWsyCmYvEUVZ3vzb8vtF+lCbaxEDLeLX8kzH
-         /F+A==
-X-Gm-Message-State: ABuFfohrCEMbY0Qj5NzmyhBPVq2LbLpNnede99W6mVElVFtYZ8Dn2yAU
-        +raiZYJOQuUQWd2MwmQKdR8=
-X-Google-Smtp-Source: ACcGV62hD2NMANzLOt8p8UoSdiJYHF86SkEjjrW8Oy2KMREr6Elv6+f9V6KIRTf2LRN7BVZFBAyhEQ==
-X-Received: by 2002:a5d:6209:: with SMTP id y9-v6mr493915wru.179.1537825340211;
-        Mon, 24 Sep 2018 14:42:20 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id y128-v6sm141125wmy.26.2018.09.24.14.42.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 14:42:19 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] qed: Avoid implicit enum conversion in qed_iwarp_parse_rx_pkt
-Date:   Mon, 24 Sep 2018 14:42:12 -0700
-Message-Id: <20180924214212.22522-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MZ/wHdnaPG7c0PMmxvJ1i/rjMvQ196LVFVHt8ececvA=;
+        b=Hq4tL7iKGt+4u83zPuNl4Z9oa+TPlzJBwqR+4rkv6Vsbcbsm7NFGCxGeoridSMW82I
+         Ul+HnD1Fef90hK39IRNY7eJ64BFRNasagQMxopHyPK7YQah03mLWbGJpBMt4d0Ez/LNp
+         aXCzxbstVODVnKg8OSOJQb3h6MnpQK9hrV30aBLvKbKT2DDa/189mrE17pEpDVnZF2Lt
+         dTTxeDiTDOb7Vx4u5kPFNELBrhF2ZEco8E89s3p+kblFZij2oTvA+QjTv10+LIRm6T2T
+         H9fa42u14EL14qePtfia5TIK9QbasFIoBXQNP+qb0iEpEq8za8+zt4ikGaLJCXlSfevN
+         LgRg==
+X-Gm-Message-State: ABuFfojgYc7n8mbE7s25Yjfo+YCoW2PauGu7ZZNoW31I5LlRNt63cPJQ
+        2YHZW0bjYrVQM8xvmQb25c9gC0TND0zLpCKgZDZOIw==
+X-Google-Smtp-Source: ACcGV63vw8I9d0BxIq/FiCWaRCbaj3HdgRDRHgG6uZAQh1ef+2hyohYI0XWPuzxbRf3HnRIEtQKR/U5Jr/fdTa7gxN0=
+X-Received: by 2002:a62:4b14:: with SMTP id y20-v6mr581091pfa.93.1537825387688;
+ Mon, 24 Sep 2018 14:43:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20180924172615.25591-1-natechancellor@gmail.com>
+ <33c9afa7-ea62-1248-1da4-381f93238627@amd.com> <20180924194040.GA17672@flashbox>
+ <9cbc1f67-719e-de75-8b0c-2de4da71b2f8@amd.com>
+In-Reply-To: <9cbc1f67-719e-de75-8b0c-2de4da71b2f8@amd.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 24 Sep 2018 14:42:56 -0700
+Message-ID: <CAKwvOdkOp5eV-o9++y=5b=5NS4fG_snT3OA8DGBnsZWtD60cUA@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccp: Remove forward declaration
+To:     ghook@amd.com
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Thomas.Lendacky@amd.com, Gary.Hook@amd.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns when one enumerated type is implicitly converted to another.
+On Mon, Sep 24, 2018 at 2:22 PM Gary R Hook <ghook@amd.com> wrote:
+>
+> On 09/24/2018 02:40 PM, Nathan Chancellor wrote:
+> > On Mon, Sep 24, 2018 at 07:18:23PM +0000, Gary R Hook wrote:
+> >> On 09/24/2018 12:26 PM, Nathan Chancellor wrote:
+> >>> Clang emits a warning about this construct:
+> >>>
+> >>> drivers/crypto/ccp/sp-platform.c:36:36: warning: tentative array
+> >>> definition assumed to have one element
+> >>> static const struct acpi_device_id sp_acpi_match[];
+> >>>                                      ^
+> >>> 1 warning generated.
+> >>>
+> >>> Just remove the forward declarations and move the initializations up
+> >>> so that they can be used in sp_get_of_version and sp_get_acpi_version.
+> >>
+> >> I'm not going to out and out object to this just yet.
+> >>
+> >> I am not a clang expert. Can you please provide a make command that
+> >> would explain how you precipitated this complaint?
+> >>
+> >
+> > Hi Gary,
+> >
+> > I can produce the warning with Clang 6.0 using the following set of
+> > commands:
+> >
+> > make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- allyesconfig
+> > ./scripts/config -d CONFIG_CPU_BIG_ENDIAN
+> > make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- olddefconfig
+> > make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- drivers/crypto/ccp/sp-platform.o
+>
+> No, I"m not getting a warning on my system. I get this:
+>
+> ghook@taos:~/src/cryptodev-2.6/src$ make ARCH=arm64 CC=clang
+> CROSS_COMPILE=aarch64-linux-gnu- CFLAGS=-v
+> arch/arm64/Makefile:27: ld does not support --fix-cortex-a53-843419;
+> kernel may be susceptible to erratum
+> arch/arm64/Makefile:40: LSE atomics not supported by binutils
 
-drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1713:25: warning: implicit
-conversion from enumeration type 'enum tcp_ip_version' to different
-enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
-                cm_info->ip_version = TCP_IPV4;
-                                    ~ ^~~~~~~~
-drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1733:25: warning: implicit
-conversion from enumeration type 'enum tcp_ip_version' to different
-enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
-                cm_info->ip_version = TCP_IPV6;
-                                    ~ ^~~~~~~~
-2 warnings generated.
+./scripts/config -d CONFIG_ARM64_LSE_ATOMICS
 
-Use the appropriate values from the expected type, qed_tcp_ip_version:
+> arch/arm64/Makefile:48: Detected assembler with broken .inst;
+> disassembly will be unreliable
+>    CALL    scripts/checksyscalls.sh
+>    VDSOA   arch/arm64/kernel/vdso/gettimeofday.o
+> arch/arm64/kernel/vdso/gettimeofday.S: Assembler messages:
+> arch/arm64/kernel/vdso/gettimeofday.S:28: Error: no such instruction:
+> `vdso_data .req x6'
+> arch/arm64/kernel/vdso/gettimeofday.S:29: Error: no such instruction:
+> `seqcnt .req w7'
+> arch/arm64/kernel/vdso/gettimeofday.S:30: Error: no such instruction:
+> `w_tmp .req w8'
+> ...
+>
+> The only reason I bring this up is that it would be helpful to be able
+> to recreate results. I figure I'm not set up for this.
+>
+> That said... please see my response to Nick.
 
-TCP_IPV4 = QED_TCP_IPV4 = 0
-TCP_IPV6 = QED_TCP_IPV6 = 1
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/125
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-index 17f3dfa2cc94..e860bdf0f752 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
-@@ -1710,7 +1710,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
- 
- 		cm_info->local_ip[0] = ntohl(iph->daddr);
- 		cm_info->remote_ip[0] = ntohl(iph->saddr);
--		cm_info->ip_version = TCP_IPV4;
-+		cm_info->ip_version = QED_TCP_IPV4;
- 
- 		ip_hlen = (iph->ihl) * sizeof(u32);
- 		*payload_len = ntohs(iph->tot_len) - ip_hlen;
-@@ -1730,7 +1730,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
- 			cm_info->remote_ip[i] =
- 			    ntohl(ip6h->saddr.in6_u.u6_addr32[i]);
- 		}
--		cm_info->ip_version = TCP_IPV6;
-+		cm_info->ip_version = QED_TCP_IPV6;
- 
- 		ip_hlen = sizeof(*ip6h);
- 		*payload_len = ntohs(ip6h->payload_len);
 -- 
-2.19.0
-
+Thanks,
+~Nick Desaulniers
