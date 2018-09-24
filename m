@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 776C2ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 877F2C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D72E2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D72E2083A
+	by mail.kernel.org (Postfix) with ESMTP id 4CA2C21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CA2C21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388945AbeIXSo3 (ORCPT
+        id S2388957AbeIXSoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:44:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59342 "EHLO
+        Mon, 24 Sep 2018 14:44:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59350 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731786AbeIXSo2 (ORCPT
+        with ESMTP id S1731786AbeIXSoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:44:28 -0400
+        Mon, 24 Sep 2018 14:44:32 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20779E1C;
-        Mon, 24 Sep 2018 12:42:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 402CAE1C;
+        Mon, 24 Sep 2018 12:42:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
+        stable@vger.kernel.org,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 191/235] coresight: tpiu: Fix disabling timeouts
-Date:   Mon, 24 Sep 2018 13:52:57 +0200
-Message-Id: <20180924113123.490672500@linuxfoundation.org>
+Subject: [PATCH 4.18 192/235] coresight: ETM: Add support for Arm Cortex-A73 and Cortex-A35
+Date:   Mon, 24 Sep 2018 13:52:58 +0200
+Message-Id: <20180924113123.600275477@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,65 +53,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit ccff2dfaceaca4517432f5c149594215fe9098cc ]
+[ Upstream commit 5cedd22370a0a460b663c06de1fc10b4ba3c5d0b ]
 
-Probing the TPIU driver under UBSan triggers an out-of-bounds shift
-warning in coresight_timeout():
+Add ETM PIDs of the Arm cortex-A CPUs to the white list of ETMs.
+While at it add a helper macro to make it easier to add the new
+entries.
 
-...
-[    5.677530] UBSAN: Undefined behaviour in drivers/hwtracing/coresight/coresight.c:929:16
-[    5.685542] shift exponent 64 is too large for 64-bit type 'long unsigned int'
-...
-
-On closer inspection things are exponentially out of whack because we're
-passing a bitmask where a bit number should be. Amusingly, it seems that
-both calls will find their expected values by sheer luck and appear to
-succeed: 1 << FFCR_FON_MAN ends up at bit 64 which whilst undefined
-evaluates as zero in practice, while 1 << FFSR_FT_STOPPED finds bit 2
-(TCPresent) which apparently is usually tied high.
-
-Following the examples of other drivers, define separate FOO and FOO_BIT
-macros for masks vs. indices, and put things right.
-
-CC: Robert Walker <robert.walker@arm.com>
-CC: Mike Leach <mike.leach@linaro.org>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>
-Fixes: 11595db8e17f ("coresight: Fix disabling of CoreSight TPIU")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/coresight/coresight-tpiu.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm4x.c |   31 +++++++++++---------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -40,8 +40,9 @@
+--- a/drivers/hwtracing/coresight/coresight-etm4x.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+@@ -1027,7 +1027,8 @@ static int etm4_probe(struct amba_device
+ 	}
  
- /** register definition **/
- /* FFSR - 0x300 */
--#define FFSR_FT_STOPPED		BIT(1)
-+#define FFSR_FT_STOPPED_BIT	1
- /* FFCR - 0x304 */
-+#define FFCR_FON_MAN_BIT	6
- #define FFCR_FON_MAN		BIT(6)
- #define FFCR_STOP_FI		BIT(12)
+ 	pm_runtime_put(&adev->dev);
+-	dev_info(dev, "%s initialized\n", (char *)id->data);
++	dev_info(dev, "CPU%d: ETM v%d.%d initialized\n",
++		 drvdata->cpu, drvdata->arch >> 4, drvdata->arch & 0xf);
  
-@@ -86,9 +87,9 @@ static void tpiu_disable_hw(struct tpiu_
- 	/* Generate manual flush */
- 	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
- 	/* Wait for flush to complete */
--	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
-+	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN_BIT, 0);
- 	/* Wait for formatter to stop */
--	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
-+	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED_BIT, 1);
- 
- 	CS_LOCK(drvdata->base);
+ 	if (boot_enable) {
+ 		coresight_enable(drvdata->csdev);
+@@ -1045,23 +1046,19 @@ err_arch_supported:
+ 	return ret;
  }
+ 
++#define ETM4x_AMBA_ID(pid)			\
++	{					\
++		.id	= pid,			\
++		.mask	= 0x000fffff,		\
++	}
++
+ static const struct amba_id etm4_ids[] = {
+-	{       /* ETM 4.0 - Cortex-A53  */
+-		.id	= 0x000bb95d,
+-		.mask	= 0x000fffff,
+-		.data	= "ETM 4.0",
+-	},
+-	{       /* ETM 4.0 - Cortex-A57 */
+-		.id	= 0x000bb95e,
+-		.mask	= 0x000fffff,
+-		.data	= "ETM 4.0",
+-	},
+-	{       /* ETM 4.0 - A72, Maia, HiSilicon */
+-		.id = 0x000bb95a,
+-		.mask = 0x000fffff,
+-		.data = "ETM 4.0",
+-	},
+-	{ 0, 0},
++	ETM4x_AMBA_ID(0x000bb95d),		/* Cortex-A53 */
++	ETM4x_AMBA_ID(0x000bb95e),		/* Cortex-A57 */
++	ETM4x_AMBA_ID(0x000bb95a),		/* Cortex-A72 */
++	ETM4x_AMBA_ID(0x000bb959),		/* Cortex-A73 */
++	ETM4x_AMBA_ID(0x000bb9da),		/* Cortex-A35 */
++	{},
+ };
+ 
+ static struct amba_driver etm4x_driver = {
 
 
