@@ -2,124 +2,314 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29F7ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6AEECE567
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7650F208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7650F208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A0041208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0041208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731171AbeIXSN4 (ORCPT
+        id S1731201AbeIXSN4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 24 Sep 2018 14:13:56 -0400
-Received: from mga02.intel.com ([134.134.136.20]:14173 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731118AbeIXSNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from out02.mta.xmission.com ([166.70.13.232]:38869 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730074AbeIXSNz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Sep 2018 14:13:55 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 05:12:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,297,1534834800"; 
-   d="scan'208";a="72420377"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Sep 2018 05:11:41 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1g4PiE-0002Zf-Bl; Mon, 24 Sep 2018 15:11:38 +0300
-Date:   Mon, 24 Sep 2018 15:11:38 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
-Message-ID: <20180924121138.GN15943@smile.fi.intel.com>
-References: <20180924101150.23349-1-brgl@bgdev.pl>
- <20180924101150.23349-5-brgl@bgdev.pl>
- <20180924112303.GM15943@smile.fi.intel.com>
- <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g4Pie-0003qO-H0; Mon, 24 Sep 2018 06:12:04 -0600
+Received: from [105.184.227.67] (helo=x220.Home)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g4Pib-0002Pv-Qz; Mon, 24 Sep 2018 06:12:04 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Mon, 24 Sep 2018 14:11:25 +0200
+Message-Id: <20180924121128.5983-1-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <87pnx32j2p.fsf@xmission.com>
+References: <87pnx32j2p.fsf@xmission.com>
+X-XM-SPF: eid=1g4Pib-0002Pv-Qz;;;mid=<20180924121128.5983-1-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/9p9e0Z72Zb3DJEqWwfbKb6c3ptxU+6EQ=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [REVIEW][PATCH 1/4] signal/arm: Push siginfo generation into arm_notify_die
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 01:44:19PM +0200, Bartosz Golaszewski wrote:
-> pon., 24 wrz 2018 o 13:23 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> napisał(a):
-> >
-> > On Mon, Sep 24, 2018 at 12:11:50PM +0200, Bartosz Golaszewski wrote:
-> > > Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-> > > an example of how to use this new routine to shrink driver code.
-> > >
-> > > While we're at it: replace a call to kcalloc() with devm_kcalloc().
-> >
-> > > @@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
-> > >               goto err_drop_mclk;
-> > >       }
-> > >
-> > > -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> > > -
-> > >       platform_set_drvdata(pdev, data);
-> > >       return 0;
-> >
-> > I don't think this is a good example.
-> >
-> > You changed a behaviour here in the way that you keep all chunks of memory
-> > (even small enough for pointers) during entire life time of the driver, which
-> > pretty likely would be forever till next boot.
-> >
-> > In the original case the memory was freed immediately in probe either it fails
-> > or returns with success.
-> >
-> > NAK, sorry.
-> >
-> >
-> 
-> I see.
-> 
-> I'd like to still merge patches 1-3 and then I'd come up with better
-> examples for the next release cycle once these are in?
+In arm_notify_die call force_sig_fault to let the generic
+code handle siginfo generation.
 
-I'm fine with first three, though I can't come up with better example for you
-now. My previous comment solely to clk-pmc-atom code.
+This removes some boiler plate making the code easier to
+maintain in the long run.
 
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ arch/arm/include/asm/bug.h    |  4 +--
+ arch/arm/kernel/swp_emulate.c | 16 ++++-----
+ arch/arm/kernel/traps.c       | 63 ++++++++++-------------------------
+ arch/arm/mm/fault.c           | 18 +++-------
+ 4 files changed, 30 insertions(+), 71 deletions(-)
+
+diff --git a/arch/arm/include/asm/bug.h b/arch/arm/include/asm/bug.h
+index 237aa52d8733..36c951dd23b8 100644
+--- a/arch/arm/include/asm/bug.h
++++ b/arch/arm/include/asm/bug.h
+@@ -62,8 +62,8 @@ do {								\
+ struct pt_regs;
+ void die(const char *msg, struct pt_regs *regs, int err);
+ 
+-struct siginfo;
+-void arm_notify_die(const char *str, struct pt_regs *regs, struct siginfo *info,
++void arm_notify_die(const char *str, struct pt_regs *regs,
++		int signo, int si_code, void __user *addr,
+ 		unsigned long err, unsigned long trap);
+ 
+ #ifdef CONFIG_ARM_LPAE
+diff --git a/arch/arm/kernel/swp_emulate.c b/arch/arm/kernel/swp_emulate.c
+index 80517f293eb9..a188d5e8ab7f 100644
+--- a/arch/arm/kernel/swp_emulate.c
++++ b/arch/arm/kernel/swp_emulate.c
+@@ -98,22 +98,20 @@ static int proc_status_show(struct seq_file *m, void *v)
+  */
+ static void set_segfault(struct pt_regs *regs, unsigned long addr)
+ {
+-	siginfo_t info;
++	int si_code;
+ 
+-	clear_siginfo(&info);
+ 	down_read(&current->mm->mmap_sem);
+ 	if (find_vma(current->mm, addr) == NULL)
+-		info.si_code = SEGV_MAPERR;
++		si_code = SEGV_MAPERR;
+ 	else
+-		info.si_code = SEGV_ACCERR;
++		si_code = SEGV_ACCERR;
+ 	up_read(&current->mm->mmap_sem);
+ 
+-	info.si_signo = SIGSEGV;
+-	info.si_errno = 0;
+-	info.si_addr  = (void *) instruction_pointer(regs);
+-
+ 	pr_debug("SWP{B} emulation: access caused memory abort!\n");
+-	arm_notify_die("Illegal memory access", regs, &info, 0, 0);
++	arm_notify_die("Illegal memory access", regs,
++		       SIGSEGV, si_code,
++		       (void __user *)instruction_pointer(regs),
++		       0, 0);
+ 
+ 	abtcounter++;
+ }
+diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+index badf02ca3693..2d668cff8ef4 100644
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -365,13 +365,14 @@ void die(const char *str, struct pt_regs *regs, int err)
+ }
+ 
+ void arm_notify_die(const char *str, struct pt_regs *regs,
+-		struct siginfo *info, unsigned long err, unsigned long trap)
++		int signo, int si_code, void __user *addr,
++		unsigned long err, unsigned long trap)
+ {
+ 	if (user_mode(regs)) {
+ 		current->thread.error_code = err;
+ 		current->thread.trap_no = trap;
+ 
+-		force_sig_info(info->si_signo, info, current);
++		force_sig_fault(signo, si_code, addr, current);
+ 	} else {
+ 		die(str, regs, err);
+ 	}
+@@ -438,10 +439,8 @@ int call_undef_hook(struct pt_regs *regs, unsigned int instr)
+ asmlinkage void do_undefinstr(struct pt_regs *regs)
+ {
+ 	unsigned int instr;
+-	siginfo_t info;
+ 	void __user *pc;
+ 
+-	clear_siginfo(&info);
+ 	pc = (void __user *)instruction_pointer(regs);
+ 
+ 	if (processor_mode(regs) == SVC_MODE) {
+@@ -485,13 +484,8 @@ asmlinkage void do_undefinstr(struct pt_regs *regs)
+ 		dump_instr(KERN_INFO, regs);
+ 	}
+ #endif
+-
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code  = ILL_ILLOPC;
+-	info.si_addr  = pc;
+-
+-	arm_notify_die("Oops - undefined instruction", regs, &info, 0, 6);
++	arm_notify_die("Oops - undefined instruction", regs,
++		       SIGILL, ILL_ILLOPC, pc, 0, 6);
+ }
+ NOKPROBE_SYMBOL(do_undefinstr)
+ 
+@@ -539,9 +533,6 @@ asmlinkage void bad_mode(struct pt_regs *regs, int reason)
+ 
+ static int bad_syscall(int n, struct pt_regs *regs)
+ {
+-	siginfo_t info;
+-
+-	clear_siginfo(&info);
+ 	if ((current->personality & PER_MASK) != PER_LINUX) {
+ 		send_sig(SIGSEGV, current, 1);
+ 		return regs->ARM_r0;
+@@ -555,13 +546,10 @@ static int bad_syscall(int n, struct pt_regs *regs)
+ 	}
+ #endif
+ 
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code  = ILL_ILLTRP;
+-	info.si_addr  = (void __user *)instruction_pointer(regs) -
+-			 (thumb_mode(regs) ? 2 : 4);
+-
+-	arm_notify_die("Oops - bad syscall", regs, &info, n, 0);
++	arm_notify_die("Oops - bad syscall", regs, SIGILL, ILL_ILLTRP,
++		       (void __user *)instruction_pointer(regs) -
++			 (thumb_mode(regs) ? 2 : 4),
++		       n, 0);
+ 
+ 	return regs->ARM_r0;
+ }
+@@ -607,20 +595,13 @@ do_cache_op(unsigned long start, unsigned long end, int flags)
+ #define NR(x) ((__ARM_NR_##x) - __ARM_NR_BASE)
+ asmlinkage int arm_syscall(int no, struct pt_regs *regs)
+ {
+-	siginfo_t info;
+-
+-	clear_siginfo(&info);
+ 	if ((no >> 16) != (__ARM_NR_BASE>> 16))
+ 		return bad_syscall(no, regs);
+ 
+ 	switch (no & 0xffff) {
+ 	case 0: /* branch through 0 */
+-		info.si_signo = SIGSEGV;
+-		info.si_errno = 0;
+-		info.si_code  = SEGV_MAPERR;
+-		info.si_addr  = NULL;
+-
+-		arm_notify_die("branch through zero", regs, &info, 0, 0);
++		arm_notify_die("branch through zero", regs,
++			       SIGSEGV, SEGV_MAPERR, NULL, 0, 0);
+ 		return 0;
+ 
+ 	case NR(breakpoint): /* SWI BREAK_POINT */
+@@ -688,13 +669,10 @@ asmlinkage int arm_syscall(int no, struct pt_regs *regs)
+ 		}
+ 	}
+ #endif
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code  = ILL_ILLTRP;
+-	info.si_addr  = (void __user *)instruction_pointer(regs) -
+-			 (thumb_mode(regs) ? 2 : 4);
+-
+-	arm_notify_die("Oops - bad syscall(2)", regs, &info, no, 0);
++	arm_notify_die("Oops - bad syscall(2)", regs, SIGILL, ILL_ILLTRP,
++		       (void __user *)instruction_pointer(regs) -
++			 (thumb_mode(regs) ? 2 : 4),
++		       no, 0);
+ 	return 0;
+ }
+ 
+@@ -744,9 +722,6 @@ asmlinkage void
+ baddataabort(int code, unsigned long instr, struct pt_regs *regs)
+ {
+ 	unsigned long addr = instruction_pointer(regs);
+-	siginfo_t info;
+-
+-	clear_siginfo(&info);
+ 
+ #ifdef CONFIG_DEBUG_USER
+ 	if (user_debug & UDBG_BADABORT) {
+@@ -757,12 +732,8 @@ baddataabort(int code, unsigned long instr, struct pt_regs *regs)
+ 	}
+ #endif
+ 
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code  = ILL_ILLOPC;
+-	info.si_addr  = (void __user *)addr;
+-
+-	arm_notify_die("unknown data abort code", regs, &info, instr, 0);
++	arm_notify_die("unknown data abort code", regs,
++		       SIGILL, ILL_ILLOPC, (void __user *)addr, instr, 0);
+ }
+ 
+ void __readwrite_bug(const char *fn)
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index 3232afb6fdc0..544d2c8c2775 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -554,7 +554,6 @@ asmlinkage void
+ do_DataAbort(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+ 	const struct fsr_info *inf = fsr_info + fsr_fs(fsr);
+-	struct siginfo info;
+ 
+ 	if (!inf->fn(addr, fsr & ~FSR_LNX_PF, regs))
+ 		return;
+@@ -563,12 +562,8 @@ do_DataAbort(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 		inf->name, fsr, addr);
+ 	show_pte(current->mm, addr);
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = inf->sig;
+-	info.si_errno = 0;
+-	info.si_code  = inf->code;
+-	info.si_addr  = (void __user *)addr;
+-	arm_notify_die("", regs, &info, fsr, 0);
++	arm_notify_die("", regs, inf->sig, inf->code, (void __user *)addr,
++		       fsr, 0);
+ }
+ 
+ void __init
+@@ -588,7 +583,6 @@ asmlinkage void
+ do_PrefetchAbort(unsigned long addr, unsigned int ifsr, struct pt_regs *regs)
+ {
+ 	const struct fsr_info *inf = ifsr_info + fsr_fs(ifsr);
+-	struct siginfo info;
+ 
+ 	if (!inf->fn(addr, ifsr | FSR_LNX_PF, regs))
+ 		return;
+@@ -596,12 +590,8 @@ do_PrefetchAbort(unsigned long addr, unsigned int ifsr, struct pt_regs *regs)
+ 	pr_alert("Unhandled prefetch abort: %s (0x%03x) at 0x%08lx\n",
+ 		inf->name, ifsr, addr);
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = inf->sig;
+-	info.si_errno = 0;
+-	info.si_code  = inf->code;
+-	info.si_addr  = (void __user *)addr;
+-	arm_notify_die("", regs, &info, ifsr, 0);
++	arm_notify_die("", regs, inf->sig, inf->code, (void __user *)addr,
++		       ifsr, 0);
+ }
+ 
+ /*
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
