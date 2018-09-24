@@ -2,40 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0502ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02F3ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6334321486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6334321486
+	by mail.kernel.org (Postfix) with ESMTP id 7D7CA2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D7CA2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388053AbeIXSjy (ORCPT
+        id S2388121AbeIXSj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:39:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58642 "EHLO
+        Mon, 24 Sep 2018 14:39:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58650 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728937AbeIXSjy (ORCPT
+        with ESMTP id S1728937AbeIXSj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:39:54 -0400
+        Mon, 24 Sep 2018 14:39:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E2AE21092;
-        Mon, 24 Sep 2018 12:37:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2CB681092;
+        Mon, 24 Sep 2018 12:37:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Rex Zhu <Rex.Zhu@amd.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 088/235] drm/amd/pp: Set Max clock level to display by default
-Date:   Mon, 24 Sep 2018 13:51:14 +0200
-Message-Id: <20180924113113.898793096@linuxfoundation.org>
+Subject: [PATCH 4.18 089/235] regulator: qcom_spmi: Use correct regmap when checking for error
+Date:   Mon, 24 Sep 2018 13:51:15 +0200
+Message-Id: <20180924113114.008977758@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,55 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rex Zhu <rex.zhu@amd.com>
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
-[ Upstream commit 97e8f102f5a9123d30258e196c6c1ea29cf52e83 ]
+[ Upstream commit 85046a15529606466bc778e1205f4cab8e3724d1 ]
 
-avoid the error in dmesg:
-[drm:dm_pp_get_static_clocks]
-*ERROR* DM_PPLIB: invalid powerlevel state: 0!
+Since we have just assigned saw_regmap, and since the error message
+refers to saw_regmap, it feels safe to assume that it is saw_regmap,
+and not regmap, that should be checked for errors.
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 0caecaa87202 ("regulator: qcom_spmi: Add support for SAW")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/powerplay/amd_powerplay.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/regulator/qcom_spmi-regulator.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-+++ b/drivers/gpu/drm/amd/powerplay/amd_powerplay.c
-@@ -1020,7 +1020,7 @@ static int pp_get_display_power_level(vo
- static int pp_get_current_clocks(void *handle,
- 		struct amd_pp_clock_info *clocks)
- {
--	struct amd_pp_simple_clock_info simple_clocks;
-+	struct amd_pp_simple_clock_info simple_clocks = { 0 };
- 	struct pp_clock_info hw_clocks;
- 	struct pp_hwmgr *hwmgr = handle;
- 	int ret = 0;
-@@ -1056,7 +1056,10 @@ static int pp_get_current_clocks(void *h
- 	clocks->max_engine_clock_in_sr = hw_clocks.max_eng_clk;
- 	clocks->min_engine_clock_in_sr = hw_clocks.min_eng_clk;
+--- a/drivers/regulator/qcom_spmi-regulator.c
++++ b/drivers/regulator/qcom_spmi-regulator.c
+@@ -1774,7 +1774,7 @@ static int qcom_spmi_regulator_probe(str
+ 		syscon = of_parse_phandle(node, "qcom,saw-reg", 0);
+ 		saw_regmap = syscon_node_to_regmap(syscon);
+ 		of_node_put(syscon);
+-		if (IS_ERR(regmap))
++		if (IS_ERR(saw_regmap))
+ 			dev_err(dev, "ERROR reading SAW regmap\n");
+ 	}
  
--	clocks->max_clocks_state = simple_clocks.level;
-+	if (simple_clocks.level == 0)
-+		clocks->max_clocks_state = PP_DAL_POWERLEVEL_7;
-+	else
-+		clocks->max_clocks_state = simple_clocks.level;
- 
- 	if (0 == phm_get_current_shallow_sleep_clocks(hwmgr, &hwmgr->current_ps->hardware, &hw_clocks)) {
- 		clocks->max_engine_clock_in_sr = hw_clocks.max_eng_clk;
-@@ -1159,6 +1162,8 @@ static int pp_get_display_mode_validatio
- 	if (!hwmgr || !hwmgr->pm_en ||!clocks)
- 		return -EINVAL;
- 
-+	clocks->level = PP_DAL_POWERLEVEL_7;
-+
- 	mutex_lock(&hwmgr->smu_lock);
- 
- 	if (phm_cap_enabled(hwmgr->platform_descriptor.platformCaps, PHM_PlatformCaps_DynamicPatchPowerState))
 
 
