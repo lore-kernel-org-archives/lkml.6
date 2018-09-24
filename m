@@ -2,95 +2,114 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MIME_QP_LONG_LINE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20E9C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C92B1C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B172087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83BD82087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:02:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cesnet.cz header.i=@cesnet.cz header.b="SaiEXStG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B172087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cesnet.cz
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l6+iNTq5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83BD82087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbeIXQEA (ORCPT
+        id S1728581AbeIXQD7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:04:00 -0400
-Received: from office2.cesnet.cz ([195.113.144.244]:56654 "EHLO
-        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbeIXQD7 (ORCPT
+        Mon, 24 Sep 2018 12:03:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53168 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728562AbeIXQD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Sep 2018 12:03:59 -0400
-Received: from localhost (ip-78-45-154-186.net.upcbroadband.cz [78.45.154.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by office2.cesnet.cz (Postfix) with ESMTPSA id 27531400074;
-        Mon, 24 Sep 2018 12:02:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
-        s=office2; t=1537783361;
-        bh=phMCcRPhiu73eSp4pl4+2N/29MiXHy/zMlDbpY55Hb4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=SaiEXStGVPH3r133hecm1RVve7Lurl+QXRLDZBXhxgT6iZXz1UH7ugTGa3fmDP6P5
-         qD4RQIXRkZh0wYBeGzXC7JlTWNKrA6IyCDCnppppswx57kL15hZ2RD+zYTFXUf7ygs
-         XE3UDec5tG6oHnS8eoWdWbXu/ftlxw4e80Ye+DC8=
-From:   =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Baruch Siach <baruch@tkos.co.il>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since =?iso-8859-1?Q?"PCI:_mvebu:_Only_remap_I/O_space_if_configured"?=
-Date:   Mon, 24 Sep 2018 12:02:33 +0200
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8O9wm3Q040577;
+        Mon, 24 Sep 2018 10:02:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=WxsrZ78j4exAQyijedF75kxkjRPEPcTuiypF1R8Wl2A=;
+ b=l6+iNTq52UfPcNwV74U3sgOMEGiPsM8VsMyhW3Zxn5DIMQuvg2tPG9D512CQA1w0PlN5
+ Og4xCGjNcDt95StvcactpCdBVBe27R/pqK9O1KCjUqiM/nuOfn+oYVIJe1PTTO/tfJK1
+ SGOD+I1LOy5rmAxFoV2xoidlVl3TIYZ2qY4+6B3ao4bLfi3AhE303Ug+/PXlgfhFePlK
+ CV/D4f6G0NdbaCYypqiGBB5ZwjVXW8Pxsn9f+M/XJusy/ltMnO1Z0DaG/LaBmx4kYet7
+ tb9obG5rah0VTvTXNxAc9q8yX3dlkECwX9hiMZ5Btc4JLXi3CR9MVnjwbR/L40oH7MUS uQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2mnvtubdjc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Sep 2018 10:02:15 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8OA2EaE013471
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Sep 2018 10:02:15 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8OA2D39011698;
+        Mon, 24 Sep 2018 10:02:14 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Sep 2018 03:02:13 -0700
+Date:   Mon, 24 Sep 2018 13:02:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Aymen Qader <qader.aymen@gmail.com>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 5/5] staging: vc04_services: Remove spaces after '*'
+Message-ID: <20180924100206.dhbdz4fbrmba3dwh@mwanda>
+References: <20180923140620.14583-1-qader.aymen@gmail.com>
+ <20180923140620.14583-6-qader.aymen@gmail.com>
 MIME-Version: 1.0
-Message-ID: <a3da76eb-7d17-40ba-a98d-c4a743240785@cesnet.cz>
-In-Reply-To: <20180913104241.65db8243@windsurf>
-References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
- <87zhwm4kl6.fsf@tkos.co.il> <20180912231050.GX30658@n2100.armlinux.org.uk>
- <20180913094515.351967bb@windsurf>
- <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
- <20180913104241.65db8243@windsurf>
-Organization: CESNET
-User-Agent: Trojita/v0.7-361-gfee56b6f-dirty; Qt/5.11.0; xcb; Linux; Gentoo Base System release 2.4.1
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180923140620.14583-6-qader.aymen@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9025 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=564
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1809240107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> What about something like the below. I tested it, including the error
->>> case by forcing an -EPROBE_DEFER. The new pci_unmap_io() is modeled
->>> after pci_unmap_iospace(). Actually, I would prefer to use
->>> pci_remap_iospace() and pci_unmap_iospace() but for now this API
->>> doesn't allow overloading the memory type used for the mapping. =20
->>=20
->> Thanks for providing this fix so quickly, Thomas. I can confirm that this=20=
+On Sun, Sep 23, 2018 at 03:06:20PM +0100, Aymen Qader wrote:
+> This patch fixes the checkpatch.pl error:
+> 
+> ERROR: "foo * bar" should be "foo* bar"
+                                ^^^^^^^^
+It should be "foo *bar".
 
->> patch -- tested on top of=20
->> 54eda9df17f3215b9ed16629ee71ea07413efdaf ("Merge=20
->> tag 'pci-v4.19-fixes-1' of=20
->> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci").=20
->> Disclaimer: I=20
->> have zero familiarity with Linux' PCI code.
->>=20
->> Tested-by: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
->
-> Thanks for the testing. I'll wait for Russell to say if he is happy
-> (or not) with the addition of pci_unmap_io() in the ARM code, if that's
-> the case, I'll send a proper patch to fix the issue.
+> 
+> in the interface/vchi directory
+> 
+> Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
+> ---
+>  drivers/staging/vc04_services/interface/vchi/vchi.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/vc04_services/interface/vchi/vchi.h b/drivers/staging/vc04_services/interface/vchi/vchi.h
+> index f818cf2e27e1..77bf92018165 100644
+> --- a/drivers/staging/vc04_services/interface/vchi/vchi.h
+> +++ b/drivers/staging/vc04_services/interface/vchi/vchi.h
+> @@ -154,7 +154,7 @@ typedef struct service_info_tag {
+>  extern "C" {
+>  #endif
+>  
+> -extern /*@observer@*/ VCHI_CONNECTION_T * vchi_create_connection(const VCHI_CONNECTION_API_T * function_table,
+                                                                                                ^^^^^^^^^^^^^^^^^
+> +extern /*@observer@*/ VCHI_CONNECTION_T *vchi_create_connection(const VCHI_CONNECTION_API_T * function_table,
+>  								 const VCHI_MESSAGE_DRIVER_T * low_level);
+                                                                                             ^^^^^^^^^^^
 
-Hi Thomas, Russell,
-is there a proper patch for this? I've just verified that 4.19-rc5 won't=20
-boot for me either. Thomas' quick patch applies and makes the problem go=20
-away.
+Change these as well.
 
-With kind regards,
-Jan
+regards,
+dan carpenter
+
