@@ -2,144 +2,143 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C5EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E0EC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D102F2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 660D521480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:58:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vfeiFda6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D102F2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QsK4/u+g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 660D521480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732877AbeIXW6g (ORCPT
+        id S1732578AbeIXXBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:58:36 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45360 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728436AbeIXW6g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:58:36 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m16so3942418wrx.12;
-        Mon, 24 Sep 2018 09:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:from:to:cc:references:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YjbdMXuqTRmymUQ6JWk1ukOoi/zGmiyiqoqUgglPw5g=;
-        b=vfeiFda6afKNrDr/QVI4ShEKmdEFUlYRep4tFkl3QSz3QBR6Hy3HuLV/BmN5xdU0mO
-         gPeo1eWFTsxbmNUI7O5nUJKK+6my1Q6NcF9K0eernCtVLUJj945NPh4T+zq8vLg3IwPR
-         K6wictSxDDWPTfgFEZKwE7paZabQCi2Y1VWmLMM5bkv0mvN6nmSqzb6Z01bMsG/o7nq0
-         t7md42P8zeAP0LFaIDSOM0aFvTG46bSPRgbsjhToMQOG3X6uK76mFiUx3r/7tE+zk2wJ
-         aWsQ8/TdU3RZFEtoyj0cXYCJMbDD277jY+CUjy9fO0iNIVY1qTKx63CokppUqrgdFPLc
-         9/Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:from:to:cc:references:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=YjbdMXuqTRmymUQ6JWk1ukOoi/zGmiyiqoqUgglPw5g=;
-        b=W+pKilVFAtV4KhQW5ZXcBeE+jEpOwdedcj7Ec4PEjfy1ssWukGkroRmrFBfxPZCyRr
-         Q22yzvM05MPq2cUzvKJVkIgdZ9uESnzzm8JSWtqY/gOtv4wXe0RDAZ0X7xJtlcelAGRe
-         ICgNzuedv1MFm+tQlwG/OegyRhyeGYZvrvnLrwEPmoeYf1sYOqlchdkQlKyxBPawmGGK
-         NEuBJxSurLboTjnczNkagduScHVevUOivECZ+ZFhntQbCXSNPLK/HpkYGuhkxU4lsMFi
-         3TVALMAZ7XbvjM5TYWSNBBZy0yZc8YJ4hZJOiIupc2TQljcDo39CuasK3JbLWtbDfeao
-         sURg==
-X-Gm-Message-State: ABuFfogsYWw97SBNovJCmXBerfL4ykDwtDRc9O160Igeq3FKA90CZI6C
-        fdzcXdAdKMC0fpWch5QqYplivpVb
-X-Google-Smtp-Source: ACcGV61hm1jpZryoFE7OzrRXNrEGn2E2zakwI+dgnTCRghESAwU44nSx4ARlSVkyYuPG2cuYD/JpRw==
-X-Received: by 2002:adf:c845:: with SMTP id e5-v6mr4089185wrh.243.1537808130441;
-        Mon, 24 Sep 2018 09:55:30 -0700 (PDT)
-Received: from [192.168.10.150] (94-36-187-248.adsl-ull.clienti.tiscali.it. [94.36.187.248])
-        by smtp.googlemail.com with ESMTPSA id l8-v6sm5120414wrs.63.2018.09.24.09.55.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 09:55:29 -0700 (PDT)
-Subject: Re: [PATCH v4 RESEND 3/5] KVM: x86: hyperv: use get_vcpu_by_vpidx()
- in kvm_hv_flush_tlb()
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20180822101832.31763-1-vkuznets@redhat.com>
- <20180822101832.31763-4-vkuznets@redhat.com>
- <8da03d2a-5405-f363-f081-e4bc46b106e3@redhat.com>
- <87r2hs7cco.fsf@vitty.brq.redhat.com> <87zhw62797.fsf@vitty.brq.redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-Message-ID: <74055c3b-be66-4ce6-e727-a155f18a0ba1@redhat.com>
-Date:   Mon, 24 Sep 2018 18:55:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <87zhw62797.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 24 Sep 2018 19:01:49 -0400
+Received: from mail-he1eur01on0058.outbound.protection.outlook.com ([104.47.0.58]:30432
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727673AbeIXXBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 19:01:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Suizr1FdIlZNt2Q8rrFZ4+Fr2Nb9+jl7EtKbGhLnX1Q=;
+ b=QsK4/u+g1Gvugdyv18el+qH05mc9jPqbUauCfTZhUWeWSdog9JyJXtIxZiutrAfDiJkTRASfd8/AFTaXlFudJKfIBKlGRM9tcBEd3PJSxLVx7Gzamt9bh4p6MZOikfamXeQfk7RG8rZ2fJqMjy/qUFe1aPhsbglFpZwCj+t+7YA=
+Received: from AMSPR04MB503.eurprd04.prod.outlook.com (10.242.107.152) by
+ AMSPR04MB534.eurprd04.prod.outlook.com (10.242.21.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.18; Mon, 24 Sep 2018 16:58:40 +0000
+Received: from AMSPR04MB503.eurprd04.prod.outlook.com
+ ([fe80::51e3:f249:457e:ae0e]) by AMSPR04MB503.eurprd04.prod.outlook.com
+ ([fe80::51e3:f249:457e:ae0e%5]) with mapi id 15.20.1143.019; Mon, 24 Sep 2018
+ 16:58:40 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     Olof Johansson <olof@lixom.net>
+CC:     "arm@kernel.org" <arm@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+Subject: RE: [GIT PULL] fixes for soc/fsl drivers for v4.19
+Thread-Topic: [GIT PULL] fixes for soc/fsl drivers for v4.19
+Thread-Index: AQHUUz6BpEntji53skSWc3gk15qqhqT/p3/w
+Date:   Mon, 24 Sep 2018 16:58:40 +0000
+Message-ID: <AMSPR04MB503FA6EEF013F8F10D6629F8F170@AMSPR04MB503.eurprd04.prod.outlook.com>
+References: <20180920165656.31902-1-leoyang.li@nxp.com>
+ <20180923123704.r47aywqfhor3ma74@localhost>
+In-Reply-To: <20180923123704.r47aywqfhor3ma74@localhost>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AMSPR04MB534;6:7MmE8fICbuzAAVQDZASaMWaTo2jonpXeD4XfNavA7CmNfdS3reuWMim8lCieP34u8R9FPoH5HmZqLfsGfVolGsFfOHQeESkTvmsdcRDNmWKf5TETvw4wAzveQXopzzbPL7rTRoX8s6+1qya+E8IHR5ZyzVANBsxkf4dKOALuNrllt15jAeY1sMweg9gMPEueSumKUZu0WZis3qE7Iz7H7mO2kSN//HLb7fE2WiSsWP1BH9CX90K6gXzZQcBL+0w/Zkzdv5FdegjuRcwOm4YEDAt0XojRocudPHNl+xR8cCFbf4GwSs1CRVRvcVgZ7i4h12lHM1HJ2E2VQcOO1QsqRNHj4SawfC6jDMeSQWiRu1TN6ut70EXn8xm7FLVaCzLJw7V8GO5Jkoman15fMb5vNESK74aB18Kcmmhgsp1LvEqvvZzVIs2t4XHUbxpidnScfL7fspAbPd2PIs4VRKZvLA==;5:KJuxAQubE+ixerOLW8Djrcd+CYfCeyJwN6WXOju1V6ZfwN+BY9ut2AHBAQbGyKzJ8Sl0nAdpdu6/Whv4FbI3Msk8FWnXleLThRySHdMd6plu64cjNvm47HR2ABPf64XIpE9tZdkCKC9fzkEZUxsYLRqTJU5teNlDU+mlgoIclME=;7:9sML2OZYJa0KxGSmRLtvuhe9bX/9WHGUB3l7AHP5/cj/XQKHv3GFv+UYEXIIcutd65IzR0du1YvlIOAOYMYcuqPkyA8Xu6G6jA4J97jcl3C/7kteZUHg3V4Avt9mL6tyleNUWkj9XBmixNQMULhGdGq8UDz3PgJ6RjRs639tzDswZtEt/PE0TglK0yMlFSNzG8RVSMFCVoflocpMAQCjA2lKI6SyqjcDmpFIrf79NY2Mccs0DkVb872RiRiuw/+6
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3017ddd4-9f55-402b-3633-08d6223efa9e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AMSPR04MB534;
+x-ms-traffictypediagnostic: AMSPR04MB534:
+x-microsoft-antispam-prvs: <AMSPR04MB534B9D06903022AEA23744D8F170@AMSPR04MB534.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(258649278758335)(9452136761055)(84791874153150)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051);SRVR:AMSPR04MB534;BCL:0;PCL:0;RULEID:;SRVR:AMSPR04MB534;
+x-forefront-prvs: 0805EC9467
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(376002)(39860400002)(136003)(13464003)(199004)(189003)(25786009)(2900100001)(4326008)(5250100002)(186003)(6246003)(33656002)(9686003)(476003)(55016002)(53936002)(446003)(6436002)(229853002)(486006)(105586002)(106356001)(14454004)(478600001)(11346002)(6116002)(3846002)(68736007)(102836004)(8676002)(74316002)(53546011)(6506007)(26005)(7736002)(97736004)(8936002)(305945005)(575784001)(86362001)(81166006)(81156014)(14444005)(6916009)(256004)(7696005)(76176011)(66066001)(71200400001)(2906002)(71190400001)(99286004)(5660300001)(316002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:AMSPR04MB534;H:AMSPR04MB503.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uZmkNR5wzHNyXe25xnD5C6dgmw5+o8+4/6J/ea41RItQ4bha6ET44rZIlP1EspomH1axwtdSRxeliFSabByjfp8BK2nO1ZIdjLwPHd3TTaAoFcDxPnr2pJt7p3mp11PLq09AnUnUYhaOJR3JRXA5nsYkx1UKKG16SlRYoA3ouMN0vRE71ifLEWA9MPD+8FtISQdH8EcW0OCPN988MvOuvEcVuJ9/O75t6DzwOytY/igtWc7Ao217RUeRrhKCNIzx8z0M1VP8OWfecXrjCzIDHKoQocvJASn/AfwkNonj903fTdXP8aquRtQMaex4cTZsbIMZAbRi33NiD0+gkVQPj93CABOT61b++iALF7lHK0g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3017ddd4-9f55-402b-3633-08d6223efa9e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 16:58:40.6711
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMSPR04MB534
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/09/2018 18:24, Paolo Bonzini wrote:
-> Hi Paolo,
-> 
-> could you please clarify what needs to be done to get this merged? In
-> particular, are you OK with my comment above or do we need to do
-> something with it (e.g. get back to the 'logarythmic search' from v2)?
-> 
-> In kvm/queue I can see only 'x86/hyper-v: rename ipi_arg_{ex,non_ex}
-> structures' patch from this series applied.
 
-Hi,
 
-my plan was to apply only 1/2/5 for now.  I singled out the rename patch
-because that one could be included in 4.19-rc kernels as a cleanup.
+> -----Original Message-----
+> From: Olof Johansson <olof@lixom.net>
+> Sent: Sunday, September 23, 2018 7:37 AM
+> To: Leo Li <leoyang.li@nxp.com>
+> Cc: arm@kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; shawnguo@kernel.org
+> Subject: Re: [GIT PULL] fixes for soc/fsl drivers for v4.19
+>=20
+> Hi Li,
+>=20
+> On Thu, Sep 20, 2018 at 11:56:56AM -0500, Li Yang wrote:
+> > Hi arm-soc maintainers,
+> >
+> > Please merge the following fixes for soc/fsl drivers.
+> >
+> > Regards,
+> > Leo
+> >
+> > The following changes since commit
+> 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+> >
+> >   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> >
+> > are available in the Git repository at:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git
+> > tags/soc-fsl-fixes-for-4.19
+> >
+> > for you to fetch changes up to
+> 3cb31b634052ed458922e0c8e2b4b093d7fb60b9:
+> >
+> >   soc: fsl: qe: Fix copy/paste bug in ucc_get_tdm_sync_shift()
+> > (2018-09-17 16:01:46 -0500)
+> >
+> > ----------------------------------------------------------------
+> > soc/fsl fixes for 4.19
+>=20
+> Please spend a bit of effort on writing up the tag for all pull requests,=
+ even
+> fixes. For fixes in particular, just as with the patch descriptions we wa=
+nt the
+> pull request to contain some brief information to what the bug is and why
+> the fix is needed.
+>=20
+> Care to give this another go with a new tag description, please?
 
-Paolo
+Sure.  Will send a new version right away.
+
