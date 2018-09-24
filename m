@@ -2,39 +2,46 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45221ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CAFECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2AC2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2AC2083A
+	by mail.kernel.org (Postfix) with ESMTP id 3BA2D2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:44:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BA2D2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389118AbeIXSqJ (ORCPT
+        id S2389129AbeIXSqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:46:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59558 "EHLO
+        Mon, 24 Sep 2018 14:46:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59568 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387512AbeIXSqJ (ORCPT
+        with ESMTP id S2387512AbeIXSqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:46:09 -0400
+        Mon, 24 Sep 2018 14:46:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 22642109A;
-        Mon, 24 Sep 2018 12:44:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 281BC1099;
+        Mon, 24 Sep 2018 12:44:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Wei Xu <xuwei5@hisilicon.com>,
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Christ van Willegen <cvwillegen@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 173/235] ARM: hisi: check of_iomap and fix missing of_node_put
-Date:   Mon, 24 Sep 2018 13:52:39 +0200
-Message-Id: <20180924113122.144624231@linuxfoundation.org>
+Subject: [PATCH 4.18 164/235] pinctrl: pinmux: Return selector to the pinctrl driver
+Date:   Mon, 24 Sep 2018 13:52:30 +0200
+Message-Id: <20180924113121.469295005@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,47 +59,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 81646a3d39ef14749301374a3a0b8311384cd412 ]
+[ Upstream commit f913cfce4ee49a3382a9ff95696f49a46e56e974 ]
 
-of_find_compatible_node() returns a device node with refcount incremented
-and thus needs an explicit of_node_put(). Further relying on an unchecked
-of_iomap() which can return NULL is problematic here, after all ctrl_base
-is critical enough for hix5hd2_set_cpu() to call BUG() if not available
-so a check seems mandated here.
+We must return the selector from pinmux_generic_add_function() so
+pin controller device drivers can remove the right group if needed
+for deferred probe for example. And we now must make sure that a
+proper name is passed so we can use it to check if the entry already
+exists.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-0002 Fixes: commit 06cc5c1d4d73 ("ARM: hisi: enable hix5hd2 SoC")
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
+Note that fixes are also needed for the pin controller drivers to
+use the selector value.
+
+Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
+managing groups")
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: Christ van Willegen <cvwillegen@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Tested-By: H. Nikolaus Schaller <hns@goldelico.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-hisi/hotplug.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/pinctrl/pinmux.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/arch/arm/mach-hisi/hotplug.c
-+++ b/arch/arm/mach-hisi/hotplug.c
-@@ -180,11 +180,15 @@ static bool hix5hd2_hotplug_init(void)
- 	struct device_node *np;
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -308,7 +308,6 @@ static int pinmux_func_name_to_selector(
+ 		selector++;
+ 	}
  
- 	np = of_find_compatible_node(NULL, NULL, "hisilicon,cpuctrl");
--	if (np) {
--		ctrl_base = of_iomap(np, 0);
--		return true;
--	}
--	return false;
-+	if (!np)
-+		return false;
-+
-+	ctrl_base = of_iomap(np, 0);
-+	of_node_put(np);
-+	if (!ctrl_base)
-+		return false;
-+
-+	return true;
+-	dev_err(pctldev->dev, "function '%s' not supported\n", function);
+ 	return -EINVAL;
  }
  
- void hix5hd2_set_cpu(int cpu, bool enable)
+@@ -775,6 +774,16 @@ int pinmux_generic_add_function(struct p
+ 				void *data)
+ {
+ 	struct function_desc *function;
++	int selector;
++
++	if (!name)
++		return -EINVAL;
++
++	selector = pinmux_func_name_to_selector(pctldev, name);
++	if (selector >= 0)
++		return selector;
++
++	selector = pctldev->num_functions;
+ 
+ 	function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
+ 	if (!function)
+@@ -785,12 +794,11 @@ int pinmux_generic_add_function(struct p
+ 	function->num_group_names = num_groups;
+ 	function->data = data;
+ 
+-	radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
+-			  function);
++	radix_tree_insert(&pctldev->pin_function_tree, selector, function);
+ 
+ 	pctldev->num_functions++;
+ 
+-	return 0;
++	return selector;
+ }
+ EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
+ 
 
 
