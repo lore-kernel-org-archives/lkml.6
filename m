@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8ED4ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9BAECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F70320C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F70320C0A
+	by mail.kernel.org (Postfix) with ESMTP id D5C7720C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5C7720C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732272AbeIXSSa (ORCPT
+        id S1732283AbeIXSSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:18:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55814 "EHLO
+        Mon, 24 Sep 2018 14:18:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbeIXSS3 (ORCPT
+        with ESMTP id S1730180AbeIXSSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:18:29 -0400
+        Mon, 24 Sep 2018 14:18:33 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F94410A7;
-        Mon, 24 Sep 2018 12:16:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41F0E10A7;
+        Mon, 24 Sep 2018 12:16:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Knister <aaron.s.knister@nasa.gov>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 078/173] IB/ipoib: Avoid a race condition between start_xmit and cm_rep_handler
-Date:   Mon, 24 Sep 2018 13:51:52 +0200
-Message-Id: <20180924113121.783733621@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.14 079/173] s390/crypto: Fix return code checking in cbc_paes_crypt()
+Date:   Mon, 24 Sep 2018 13:51:53 +0200
+Message-Id: <20180924113121.849688106@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,76 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Knister <aaron.s.knister@nasa.gov>
+From: Ingo Franzki <ifranzki@linux.ibm.com>
 
-commit 816e846c2eb9129a3e0afa5f920c8bbc71efecaa upstream.
+commit b81126e01a8c6048249955feea46c8217ebefa91 upstream.
 
-Inside of start_xmit() the call to check if the connection is up and the
-queueing of the packets for later transmission is not atomic which leaves
-a window where cm_rep_handler can run, set the connection up, dequeue
-pending packets and leave the subsequently queued packets by start_xmit()
-sitting on neigh->queue until they're dropped when the connection is torn
-down. This only applies to connected mode. These dropped packets can
-really upset TCP, for example, and cause multi-minute delays in
-transmission for open connections.
+The return code of cpacf_kmc() is less than the number of
+bytes to process in case of an error, not greater.
+The crypt routines for the other cipher modes already have
+this correctly.
 
-Here's the code in start_xmit where we check to see if the connection is
-up:
-
-       if (ipoib_cm_get(neigh)) {
-               if (ipoib_cm_up(neigh)) {
-                       ipoib_cm_send(dev, skb, ipoib_cm_get(neigh));
-                       goto unref;
-               }
-       }
-
-The race occurs if cm_rep_handler execution occurs after the above
-connection check (specifically if it gets to the point where it acquires
-priv->lock to dequeue pending skb's) but before the below code snippet in
-start_xmit where packets are queued.
-
-       if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
-               push_pseudo_header(skb, phdr->hwaddr);
-               spin_lock_irqsave(&priv->lock, flags);
-               __skb_queue_tail(&neigh->queue, skb);
-               spin_unlock_irqrestore(&priv->lock, flags);
-       } else {
-               ++dev->stats.tx_dropped;
-               dev_kfree_skb_any(skb);
-       }
-
-The patch acquires the netif tx lock in cm_rep_handler for the section
-where it sets the connection up and dequeues and retransmits deferred
-skb's.
-
-Fixes: 839fcaba355a ("IPoIB: Connected mode experimental support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Knister <aaron.s.knister@nasa.gov>
-Tested-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: stable@vger.kernel.org # v4.11+
+Fixes: 279378430768 ("s390/crypt: Add protected key AES module")
+Signed-off-by: Ingo Franzki <ifranzki@linux.ibm.com>
+Acked-by: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/ipoib/ipoib_cm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/s390/crypto/paes_s390.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -1018,12 +1018,14 @@ static int ipoib_cm_rep_handler(struct i
- 
- 	skb_queue_head_init(&skqueue);
- 
-+	netif_tx_lock_bh(p->dev);
- 	spin_lock_irq(&priv->lock);
- 	set_bit(IPOIB_FLAG_OPER_UP, &p->flags);
- 	if (p->neigh)
- 		while ((skb = __skb_dequeue(&p->neigh->queue)))
- 			__skb_queue_tail(&skqueue, skb);
- 	spin_unlock_irq(&priv->lock);
-+	netif_tx_unlock_bh(p->dev);
- 
- 	while ((skb = __skb_dequeue(&skqueue))) {
- 		skb->dev = p->dev;
+--- a/arch/s390/crypto/paes_s390.c
++++ b/arch/s390/crypto/paes_s390.c
+@@ -212,7 +212,7 @@ static int cbc_paes_crypt(struct blkciph
+ 			      walk->dst.virt.addr, walk->src.virt.addr, n);
+ 		if (k)
+ 			ret = blkcipher_walk_done(desc, walk, nbytes - k);
+-		if (n < k) {
++		if (k < n) {
+ 			if (__cbc_paes_set_key(ctx) != 0)
+ 				return blkcipher_walk_done(desc, walk, -EIO);
+ 			memcpy(param.key, ctx->pk.protkey, MAXPROTKEYSIZE);
 
 
