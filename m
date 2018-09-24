@@ -2,130 +2,103 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAD_ENC_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986B3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F039EC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB64208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB64208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id B6AF9208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:36:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6AF9208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbeIXRid (ORCPT
+        id S1728884AbeIXRif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:38:33 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:32791 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728817AbeIXRic (ORCPT
+        Mon, 24 Sep 2018 13:38:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50116 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728817AbeIXRie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:38:32 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8OBXbjm011901;
-        Mon, 24 Sep 2018 13:36:40 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2mnav5arvx-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 24 Sep 2018 13:36:40 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3E3E83D;
-        Mon, 24 Sep 2018 11:36:40 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1EE545650;
-        Mon, 24 Sep 2018 11:36:40 +0000 (GMT)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.44) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 24 Sep
- 2018 13:36:39 +0200
-Received: from localhost (10.201.23.97) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 24 Sep 2018 13:36:39
- +0200
-From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
-To:     Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/2] drm/stm: ltdc: Solve issue on pixel clock & data enable polarity
-Date:   Mon, 24 Sep 2018 13:36:21 +0200
-Message-ID: <1537788981-21479-3-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1537788981-21479-1-git-send-email-yannick.fertre@st.com>
-References: <1537788981-21479-1-git-send-email-yannick.fertre@st.com>
+        Mon, 24 Sep 2018 13:38:34 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 77CFF1061;
+        Mon, 24 Sep 2018 11:36:54 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>,
+        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 002/105] hfsplus: dont return 0 when fill_super() failed
+Date:   Mon, 24 Sep 2018 13:32:48 +0200
+Message-Id: <20180924113113.456720450@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
+References: <20180924113113.268650190@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.201.23.97]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_07:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wrong flags used for set the pixel clock & data enable polarities.
-Add trace for polarities of hsync, vsync, data enabled & pixel clock.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+------------------
+
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+
+[ Upstream commit 7464726cb5998846306ed0a7d6714afb2e37b25d ]
+
+syzbot is reporting NULL pointer dereference at mount_fs() [1].  This is
+because hfsplus_fill_super() is by error returning 0 when
+hfsplus_fill_super() detected invalid filesystem image, and mount_bdev()
+is returning NULL because dget(s->s_root) == NULL if s->s_root == NULL,
+and mount_fs() is accessing root->d_sb because IS_ERR(root) == false if
+root == NULL.  Fix this by returning -EINVAL when hfsplus_fill_super()
+detected invalid filesystem image.
+
+[1] https://syzkaller.appspot.com/bug?id=21acb6850cecbc960c927229e597158cf35f33d0
+
+Link: http://lkml.kernel.org/r/d83ce31a-874c-dd5b-f790-41405983a5be@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+01ffaf5d9568dd1609f7@syzkaller.appspotmail.com>
+Reviewed-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/stm/ltdc.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ fs/hfsplus/super.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 808d9fb..f671abc 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -517,7 +517,7 @@ static void ltdc_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 	struct videomode vm;
- 	u32 hsync, vsync, accum_hbp, accum_vbp, accum_act_w, accum_act_h;
- 	u32 total_width, total_height;
--	u32 val;
-+	u32 val = 0;
- 
- 	drm_display_mode_to_videomode(mode, &vm);
- 
-@@ -538,7 +538,22 @@ static void ltdc_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 	total_height = accum_act_h + vm.vfront_porch;
- 
- 	/* Configures the HS, VS, DE and PC polarities. Default Active Low */
--	val = 0;
-+	if (vm.flags & DISPLAY_FLAGS_HSYNC_LOW)
-+		DRM_DEBUG_DRIVER("Horizontal Synchronization polarity is active low");
-+	if (vm.flags & DISPLAY_FLAGS_HSYNC_HIGH)
-+		DRM_DEBUG_DRIVER("Horizontal Synchronization polarity is active high");
-+	if (vm.flags & DISPLAY_FLAGS_VSYNC_LOW)
-+		DRM_DEBUG_DRIVER("Vertical Synchronization polarity is active low");
-+	if (vm.flags & DISPLAY_FLAGS_VSYNC_HIGH)
-+		DRM_DEBUG_DRIVER("Vertical Synchronization polarity is active high");
-+	if (vm.flags & DISPLAY_FLAGS_DE_LOW)
-+		DRM_DEBUG_DRIVER("Data Enable polarity is active low");
-+	if (vm.flags & DISPLAY_FLAGS_DE_HIGH)
-+		DRM_DEBUG_DRIVER("Data Enable polarity is active high");
-+	if (vm.flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
-+		DRM_DEBUG_DRIVER("Pixel clock polarity is active low");
-+	if (vm.flags & DISPLAY_FLAGS_PIXDATA_POSEDGE)
-+		DRM_DEBUG_DRIVER("Pixel clock polarity is active high");
- 
- 	if (vm.flags & DISPLAY_FLAGS_HSYNC_HIGH)
- 		val |= GCR_HSPOL;
-@@ -546,10 +561,10 @@ static void ltdc_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 	if (vm.flags & DISPLAY_FLAGS_VSYNC_HIGH)
- 		val |= GCR_VSPOL;
- 
--	if (vm.flags & DISPLAY_FLAGS_DE_HIGH)
-+	if (vm.flags & DISPLAY_FLAGS_DE_LOW)
- 		val |= GCR_DEPOL;
- 
--	if (vm.flags & DISPLAY_FLAGS_PIXDATA_NEGEDGE)
-+	if (vm.flags & DISPLAY_FLAGS_PIXDATA_POSEDGE)
- 		val |= GCR_PCPOL;
- 
- 	reg_update_bits(ldev->regs, LTDC_GCR,
--- 
-2.7.4
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -518,8 +518,10 @@ static int hfsplus_fill_super(struct sup
+ 	hfsplus_cat_build_key(sb, fd.search_key, HFSPLUS_ROOT_CNID, &str);
+ 	if (!hfs_brec_read(&fd, &entry, sizeof(entry))) {
+ 		hfs_find_exit(&fd);
+-		if (entry.type != cpu_to_be16(HFSPLUS_FOLDER))
++		if (entry.type != cpu_to_be16(HFSPLUS_FOLDER)) {
++			err = -EINVAL;
+ 			goto out_put_root;
++		}
+ 		inode = hfsplus_iget(sb, be32_to_cpu(entry.folder.id));
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+
 
