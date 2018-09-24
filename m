@@ -2,90 +2,330 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872ACC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0E0ECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF852145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:41:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 630062098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WU5NwCA7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF852145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcT1wtbU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 630062098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeIYCpx (ORCPT
+        id S1728058AbeIYCqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:45:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50474 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbeIYCpx (ORCPT
+        Mon, 24 Sep 2018 22:46:39 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38364 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeIYCqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:45:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1Vo0KjW6VGs6/DmrfMdk/IHKPFRpNMyQxijlBFccuY8=; b=WU5NwCA7xd/smCoc1EctcbO4/
-        77hlH33lwZnOJIlIMbA+XetUagqLkh+8ZInjNJtGHgMUUNaAb3essJoBShsQkjncGSjL//iBsBD5N
-        FBK7zI7F8aRS5e4h7b+182DQ15IFHsoVHcZ8gEgqn8bt/SJc52xUSJkt/yJfDzo1g4ANXMOTwbo2Y
-        Ia3tExGQDviIWBAjRtnCbxz1XroLBeJIqby/b03TM6R62qnXDLYZqov8j1SGqtlVDr85PHakoIH2K
-        F2OMz1HxlwoFOb8nrgX9RktMkgaGpEv7JQfTiI2SbVNrBVHhl//+H4Qkf8v1hn5brDKRX/zglHUmu
-        ovjfzT9Kw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g4Xfx-0001mh-2J; Mon, 24 Sep 2018 20:41:49 +0000
-Date:   Mon, 24 Sep 2018 13:41:48 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ming Lei <tom.leiming@gmail.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Lameter <cl@linux.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: block: DMA alignment of IO buffer allocated from slab
-Message-ID: <20180924204148.GA2542@bombadil.infradead.org>
-References: <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
- <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
- <12eee877-affa-c822-c9d5-fda3aa0a50da@virtuozzo.com>
- <1537801706.195115.7.camel@acm.org>
- <c844c598-be1d-bef4-fb99-09cf99571fd7@virtuozzo.com>
- <1537804720.195115.9.camel@acm.org>
- <10c706fd-2252-f11b-312e-ae0d97d9a538@virtuozzo.com>
- <1537805984.195115.14.camel@acm.org>
- <20180924185753.GA32269@bombadil.infradead.org>
- <1537818978.195115.25.camel@acm.org>
+        Mon, 24 Sep 2018 22:46:38 -0400
+Received: by mail-wm1-f67.google.com with SMTP id z16-v6so4946287wmi.3;
+        Mon, 24 Sep 2018 13:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=sGofNUiTmZom2KfzYhnMvqOPaxJFp7PCC3gi9qTl/0w=;
+        b=IcT1wtbUtuoooF6co6E/wMrcw1P4JdM5wXsrBIjVBqIFFuQqeRxq7ERr4QJ48pyD5k
+         U2wNcDfZE3svaW/TLlYkD4i81eKthZ2FBw8Ldlj/GfvNpQM+zQauN9sNWuSzBTkMT0g+
+         mLODU+V5leBV3VzquPVe5iEJh/WfhH1y49NdoVoH9i7ASnICsewG9K/mJqbwZEb+YQUL
+         UCnFQjo5CcTyjHANobjSrztYRSDFmGbz3Edta3UW3dCUXkv2NrbweMdmeSnucwR3bFhA
+         K3OBDWyVvpTvc1eMv4ptUnAqh0QNR0a6ZWyxSDlkZP9lz7tC35bDv9WAyhPLO16nHExk
+         rpEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=sGofNUiTmZom2KfzYhnMvqOPaxJFp7PCC3gi9qTl/0w=;
+        b=aW8ZmQnrmwfN6R3gEruieEbr5EGJPGQ8a8keG7/AxNN60Bhr5caGxzUWujbYtzM7fp
+         ZEXfE8NBqIqTo1UkFlt3Qu5o7bCbtI6QtVR951hg0h9gLjJ9cZtVJL30W25WcOUuO28G
+         WV53Q/yJsqkLIbCvB0OmoKmQhLccXItUbRq3kNrpwgUfxs2sF8dplLVm8/uYw313Dgr+
+         qscawkmDMyEclNB9bDtoucDnVf7LQAl2ke46ZxxVGkBAFNKOZvNkiSLFD4ne+QhFcUD8
+         GTcfchcflAkksAgfhG98cXiAQlfnL3+29VlHKBkaHuZ2T1frHGLxeidKaqKKm8EDLibR
+         zIcg==
+X-Gm-Message-State: ABuFfogobiY/uo1yEmkfcN7OY6pLBHrZHxDCcV9VONSpmlCWPutdCnLd
+        sLd3DxvwxIlmEC5qKa/XEIV+AFU=
+X-Google-Smtp-Source: ACcGV63CdLrp/6gU65PoeIhX1plYGumr4qSBbaEWFL9wUI50V5F3Xsnexotzlo4pGg3vRyyLZOlhFw==
+X-Received: by 2002:a1c:668b:: with SMTP id a133-v6mr89006wmc.50.1537821755853;
+        Mon, 24 Sep 2018 13:42:35 -0700 (PDT)
+Received: from android-dhcp-8-1-0-d4-38-9c-a2-1f-05.home (host86-147-9-252.range86-147.btcentralplus.com. [86.147.9.252])
+        by smtp.gmail.com with ESMTPSA id 75-v6sm118218wml.21.2018.09.24.13.42.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 13:42:35 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 21:42:29 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180924191929.GQ1367@tuxbook-pro>
+References: <20180811162549.12312-1-ctatlor97@gmail.com> <20180924191929.GQ1367@tuxbook-pro>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1537818978.195115.25.camel@acm.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] arm64: dts: sdm630 SoC and Sony Pioneer (Xperia XA2) support
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+From:   Craig <ctatlor97@gmail.com>
+Message-ID: <18147804-E195-4A4F-B215-77E8E4FF7C88@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 12:56:18PM -0700, Bart Van Assche wrote:
-> On Mon, 2018-09-24 at 11:57 -0700, Matthew Wilcox wrote:
-> > You're not supposed to use kmalloc memory for DMA.  This is why we have
-> > dma_alloc_coherent() and friends.
-> 
-> Are you claiming that all drivers that use DMA should use coherent DMA only? If
-> coherent DMA is the only DMA style that should be used, why do the following
-> function pointers exist in struct dma_map_ops?
 
-Good job snipping the part of my reply which addressed this.  Go read
-DMA-API.txt yourself.  Carefully.
+
+On 24 September 2018 20:19:29 BST, Bjorn Andersson <bjorn=2Eandersson@lina=
+ro=2Eorg> wrote:
+>On Sat 11 Aug 09:25 PDT 2018, Craig Tatlor wrote:
+>
+>> Initial device tree support for Qualcomm SDM630 SoC and
+>> Sony Pioneer (Xperia XA2)=2E
+>>=20
+>> SDM630 is based off of the SDM660 soc and all SDM660 specific drivers
+>are
+>> compatible with it=2E SDM660 is also based off of MSM8998 so it uses
+>some
+>> of its drivers aswell=2E
+>
+>Consider adding both sdm630 and sdm660 compatibles to the bindings and
+>drivers and use the right one in the dts, in case we find details that
+>differs in the future=2E
+
+This includes pinctrl and GCC?
+>
+>>=20
+>> The device tree is based on the CAF 4=2E4 kernel tree=2E
+>>=20
+>> The device can be booted into the initrd with a shell over UART=2E
+>>=20
+>> Signed-off-by: Craig Tatlor <ctatlor97@gmail=2Ecom>
+>[=2E=2E]
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pins=2Edtsi
+>b/arch/arm64/boot/dts/qcom/sdm630-pins=2Edtsi
+>> new file mode 100644
+>> index 000000000000=2E=2E78b79c1076f1
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/sdm630-pins=2Edtsi
+>> @@ -0,0 +1,17 @@
+>> +// SPDX-License-Identifier: GPL-2=2E0
+>> +/* Copyright (c) 2018, Craig Tatlor=2E */
+>> +
+>> +&tlmm {
+>> +	blsp1_uart1_default: blsp1_uart1_default {
+>> +		pinmux {
+>> +			pins =3D "gpio0", "gpio1", "gpio2", "gpio3";
+>> +			function =3D "gpio";
+>
+>Please put these in the sdm630=2Edtsi directly, rather than spreading the
+>pins out in a separate file=2E
+>
+Okay, just followed what 8996 did
+>> +		};
+>> +
+>> +		pinconf {
+>> +			pins =3D "gpio0", "gpio1", "gpio2", "gpio3";
+>> +			drive-strength =3D <2>;
+>> +			bias-disable;
+>
+>Please extend &blsp1_uart1_default in the pioneer dtsi with these
+>"electrical properties"=2E
+Are you meaning to put this in the pioneer DTS or just drive strength and =
+bias?
+>
+>> +		};
+>> +	};
+>> +};
+>[=2E=2E]
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pioneer=2Edtsi
+>b/arch/arm64/boot/dts/qcom/sdm630-pioneer=2Edtsi
+>> new file mode 100644
+>> index 000000000000=2E=2E512792c23369
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/sdm630-pioneer=2Edtsi
+>> @@ -0,0 +1,22 @@
+>> +// SPDX-License-Identifier: GPL-2=2E0
+>> +/* Copyright (c) 2018, Craig Tatlor=2E */
+>> +
+>> +#include "sdm630=2Edtsi"
+>> +
+>> +/ {
+>> +	aliases {
+>> +		serial0 =3D &blsp1_uart1;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path =3D "serial0:115200n8";
+>> +	};
+>> +};
+>> +
+>> +&soc {
+>> +	serial@c170000 {
+>
+>Please reference this by &blsp1_uart1, rather than duplicating the
+>hierarchy=2E
+Okay, should the same still apply once more stuff is in soc? Or should I u=
+se references for them?
+>
+>> +		status =3D "okay";
+>> +		pinctrl-names =3D "default";
+>> +		pinctrl-0 =3D <&blsp1_uart1_default>;
+>> +	};
+>> +};
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm630=2Edtsi
+>b/arch/arm64/boot/dts/qcom/sdm630=2Edtsi
+>> new file mode 100644
+>> index 000000000000=2E=2E8a544979b7c0
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/sdm630=2Edtsi
+>> @@ -0,0 +1,383 @@
+>> +// SPDX-License-Identifier: GPL-2=2E0
+>> +/* Copyright (c) 2018, Craig Tatlor=2E */
+>> +
+>> +#include <dt-bindings/interrupt-controller/arm-gic=2Eh>
+>> +#include <dt-bindings/clock/qcom,gcc-sdm660=2Eh>
+>> +
+>> +/ {
+>> +	model =3D "Qualcomm Technologies, Inc=2E SDM630";
+>
+>We expect the board to always override this, so no need to specify it
+>here=2E
+Yup
+>> +
+>> +	interrupt-parent =3D <&intc>;
+>> +
+>> +	qcom,msm-id =3D <318 0x0>;
+>> +
+>> +	#address-cells =3D <2>;
+>> +	#size-cells =3D <2>;
+>> +
+>> +	chosen { };
+>> +
+>> +	memory {
+>> +		device_type =3D "memory";
+>> +		/* We expect the bootloader to fill in the reg */
+>> +		reg =3D <0 0 0 0>;
+>> +	};
+>> +
+>> +
+>
+>Extra empty line=2E
+Okay
+>> +	cpus {
+>[=2E=2E]
+>> +
+>> +	timer {
+>
+>Please sort these nodes by name, except for "soc" which is convenient
+>to have last=2E
+Okay
+>
+>> +		compatible =3D "arm,armv8-timer";
+>> +		interrupts =3D <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
+>> +			     <GIC_PPI 2 IRQ_TYPE_LEVEL_LOW>,
+>> +			     <GIC_PPI 3 IRQ_TYPE_LEVEL_LOW>,
+>> +			     <GIC_PPI 0 IRQ_TYPE_LEVEL_LOW>;
+>> +	};
+>[=2E=2E]
+>> +	firmware {
+>> +		scm {
+>> +			compatible =3D "qcom,scm-sdm660";
+>> +		};
+>> +	};
+>> +
+>> +
+>
+>Extra empty line=2E
+Okay
+>
+>> +	rpm-glink {
+>> +		compatible =3D "qcom,glink-rpm";
+>> +
+>> +		interrupts =3D <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+>> +
+>> +		qcom,rpm-msg-ram =3D <&rpm_msg_ram>;
+>> +
+>> +		mboxes =3D <&apcs_glb 0>;
+>
+>Remove a few of these extra empty lines and add the rpm_requests
+>channel
+>here while you're at it:
+>
+Sure
+>		rpm_requests: glink-channel {
+>                        compatible =3D "qcom,rpm-sdm660";
+>                        qcom,glink-channels =3D "rpm_requests";
+>                };
+>
+>> +	};
+>> +
+>> +	soc: soc {
+>> +		#address-cells =3D <1>;
+>> +		#size-cells =3D <1>;
+>> +		ranges =3D <0 0 0 0xffffffff>;
+>> +		compatible =3D "simple-bus";
+>> +
+>> +		intc: interrupt-controller@17a00000 {
+>
+>Please sort these nodes by base address=2E
+>
+Will do
+>> +			compatible =3D "arm,gic-v3";
+>> +			reg =3D <0x17a00000 0x10000>,
+>> +			      <0x17b00000 0x100000>;
+>> +			#interrupt-cells =3D <3>;
+>> +			#address-cells =3D <1>;
+>> +			#size-cells =3D <1>;
+>> +			ranges;
+>> +			interrupt-controller;
+>> +			#redistributor-regions =3D <1>;
+>> +			redistributor-stride =3D <0x0 0x20000>;
+>> +			interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>> +		};
+>> +
+>> +		gcc: clock-controller@100000 {
+>> +			compatible =3D "qcom,gcc-sdm660";
+>> +			#clock-cells =3D <1>;
+>> +			#reset-cells =3D <1>;
+>> +			#power-domain-cells =3D <1>;
+>> +			reg =3D <0x100000 0x94000>;
+>
+>Please 0-pad addresses in "reg", makes it easier to sort them as well
+>(but keep the @address after the node name unpadded)
+Sure, how much should I pad up to?
+>
+>> +		};
+>> +
+>[=2E=2E]
+>> +		rpm_msg_ram: memory@778000 {
+>> +			compatible =3D "qcom,rpm-msg-ram";
+>> +			reg =3D <0x778000 0x7000>;
+>> +		};
+>> +
+>> +		apcs_glb: mailbox@17911000 {
+>> +			compatible =3D "qcom,msm8998-apcs-hmss-global";
+>
+>Please update the apcs ipc driver with a sdm660 compatible and update
+>this=2E
+Right
+>
+>> +			reg =3D <0x17911000 0x1000>;
+>> +
+>> +			#mbox-cells =3D <1>;
+>> +		};
+>
+>Regards,
+>Bjorn
