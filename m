@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DF1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC71CECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CBA0208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:36:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6F26208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:36:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tOYCKUmM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CBA0208D9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rTf0ocvW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F26208D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387410AbeIXXjY (ORCPT
+        id S2387516AbeIXXjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 19:39:24 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51843 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733173AbeIXXjX (ORCPT
+        Mon, 24 Sep 2018 19:39:33 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55611 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730136AbeIXXjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 19:39:23 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y25-v6so3178968wmi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:36:08 -0700 (PDT)
+        Mon, 24 Sep 2018 19:39:24 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 206-v6so2703896wmb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=50ttWf6TNwpzVefVWfGj3hW2UTb502fx5iA4gscVRFM=;
-        b=tOYCKUmM9tyTcRIMs8rGniPBuew/+E2H1wuaxcoRr/dwiVP8KVVvSzbJwPf/Kmia+T
-         W2DFNNWKgwHOm7eeNBS/3Oa7kTRq4ygdC8TPzuTG+CCGpQrUsDC0EBJZKINg/iFEy472
-         cUsIcEf7OUdtyJWi1hr/ALUsnbBtuPe4H42WoEUhiu8i6dIZ9iocSN0jRqAVQUQnCZDL
-         Isx/Iy1Y1xJGFHpHWmRRKoQMzpLG9TBqZV59aM8FLZsYGJ+w6vM+URiVUQyF9845a2mJ
-         nBG332VMqztvICdki5A9pcT3zrMxJpbNQpZnE5am0azInsd775LtrXQYPXg0rEEbuJbI
-         kaEg==
+        bh=+6oD/O5d4iP7VBQV58InjYcu3fiSW7q8KW851BwGR5A=;
+        b=rTf0ocvWv8Loz9xWgHJCwSNdUc1N6BztOZkOImMQyL8NxJ+QkT3y+Q3Y1+DmD6v4NQ
+         dnl4MRXmVCG6n1bDoDeyqrG6ylNNma5uNhS5XS5TyIUugBSk+OVD0y3N141J3EcPMZzg
+         sG9UkxPHiEcDuD/IHjW75guR9O9EB/dk0BZYeHrFwty0qcgAEDjihnMmHawFoWuGYWSP
+         nrOHFhhUc5WVqZ4f9Gg3MiQIPjy5wQ8XKW1Jwc+JxuNcjASqFCnjyCO9jsHmSGueGlcR
+         rpqtAd1MStBwy/pcUyecqklQJ4fL1S4EI/Xh9o9JffM50UFoYMKvKPgkUtGKJprG+Odd
+         ycLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=50ttWf6TNwpzVefVWfGj3hW2UTb502fx5iA4gscVRFM=;
-        b=cnHAp23tshmUYTgdVvC/PwrxMMkm2l8Su4db3GZqmfIGqQCdD6rRP6TQyb+1UlsG2R
-         Q4sJd/wfawhs+1gmZUyLv9+i6egDc6R1tv77DJkj7uRskOLvrQBuE7F9uL8zJ4PnQHNf
-         LJg53eoPJ4R9YYASUrDlpFgdRMUPHPzIqYQt2DNlJUYiW1ulponxVhQHiUdBSC3jMcGM
-         qbbwdAMkZX6u59XETZydGckcVH9LzdcM6IH9HBh279+x7G3ye7R6VE49EmGxdQ8AfN0R
-         Zfcp+HauTzR48TwiLUDRBNk91EBXijdcTG8WX7BCr6odxFJTcuv/cLC+a5W/RBN0Gzxn
-         s9rg==
-X-Gm-Message-State: APzg51AfoIvhzpxD75MjgKi6G3mzfwOBhWgrw1oFdsOJLI7/1i8jOdZM
-        OAt3zJNBQ3xfDmE0qpyeQLY=
-X-Google-Smtp-Source: ANB0VdZaenrVYysUUkBecPRioNgD6FyVD3VAdecOzEjjY2tif3AcB5T5ptEnCyBjF9nhL5xAT+LlsA==
-X-Received: by 2002:a1c:1609:: with SMTP id 9-v6mr8630302wmw.12.1537810567281;
-        Mon, 24 Sep 2018 10:36:07 -0700 (PDT)
+        bh=+6oD/O5d4iP7VBQV58InjYcu3fiSW7q8KW851BwGR5A=;
+        b=WVjXqgJdt+xcS8iBlsIp5v8CKM7nF4CNBCuhVALnofMxgRnj+0nnAEuu0ambCQCkC7
+         KEW5szygcnET29dukok2uPzCVUQI3RAvnMYbohv3vB4+EMe5N+7X1saPQETvR3+2Nuot
+         IYxH3ezwBUuAObdp4k3UuyfTLOV5Ze4kUYOSPHhKyolSStDA6wqR0AkXwmxTjejq79W/
+         cPx4kus7u9GpLWIPmvJjm+wBwSfV62jc8D4WqCVGaLYX7KToqU8ekCO+UbnCHOy4ybrI
+         qycn1Vns1qURckg5cEPWruV7DWhd1CJpB5ixCMQGrTzm6vrnFT59CMroYMQtkSPGDwPA
+         qKUA==
+X-Gm-Message-State: APzg51ANmIpSAIo1R4qvDlVYERdz2gHbyA/yS5nPjfkRNHS/K1+fRpe6
+        b2g3lyeUftEMgA1IH1ejJh4=
+X-Google-Smtp-Source: ACcGV60QiwQFpjCZlkQOVv4gVZ9G4x0A0/rCNTBnXLAm0m3PVJ1CCl8z+APRSIvdpu6fMBXCPtlFCQ==
+X-Received: by 2002:a7b:c096:: with SMTP id r22-v6mr8319933wmh.118.1537810568438;
+        Mon, 24 Sep 2018 10:36:08 -0700 (PDT)
 Received: from localhost.co.uk ([2a01:388:3ce:110::1:c])
-        by smtp.gmail.com with ESMTPSA id k34-v6sm52138834wre.18.2018.09.24.10.36.06
+        by smtp.gmail.com with ESMTPSA id k34-v6sm52138834wre.18.2018.09.24.10.36.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 10:36:06 -0700 (PDT)
+        Mon, 24 Sep 2018 10:36:07 -0700 (PDT)
 From:   Aymen Qader <qader.aymen@gmail.com>
 To:     Dan Carpenter <dan.carpenter@oracle.com>
 Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
@@ -67,9 +67,9 @@ Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/4] staging: vc04_services: Remove unused macros
-Date:   Mon, 24 Sep 2018 18:35:46 +0100
-Message-Id: <20180924173547.23393-4-qader.aymen@gmail.com>
+Subject: [PATCH v4 4/4] staging: vc04_services: Remove spaces after '*'
+Date:   Mon, 24 Sep 2018 18:35:47 +0100
+Message-Id: <20180924173547.23393-5-qader.aymen@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180924173547.23393-1-qader.aymen@gmail.com>
 References: <20180924173547.23393-1-qader.aymen@gmail.com>
@@ -78,69 +78,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the macros and structs associated with the
-"vchi_msg_queuev_ex" function, which was previously removed in 49bec49.
-Also fixes the checkpatch.pl errors:
+This patch fixes the checkpatch.pl error:
 
-ERROR: Macros with complex values should be enclosed in parentheses
-ERROR: space required after that ','
+ERROR: "foo * bar" should be "foo *bar"
+
+in the interface/vchi directory
 
 Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
 ---
- .../vc04_services/interface/vchi/vchi.h       | 38 -------------------
- 1 file changed, 38 deletions(-)
+ drivers/staging/vc04_services/interface/vchi/vchi.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchi/vchi.h b/drivers/staging/vc04_services/interface/vchi/vchi.h
-index cb2582a4eb6a..f96676227ddc 100644
+index f96676227ddc..3fe19d72b3ab 100644
 --- a/drivers/staging/vc04_services/interface/vchi/vchi.h
 +++ b/drivers/staging/vc04_services/interface/vchi/vchi.h
-@@ -60,46 +60,8 @@ struct vchi_version {
- #define VCHI_VERSION(v_) { v_, v_ }
- #define VCHI_VERSION_EX(v_, m_) { v_, m_ }
+@@ -116,8 +116,8 @@ typedef struct service_info_tag {
+ extern "C" {
+ #endif
  
--typedef enum {
--   VCHI_VEC_POINTER,
--   VCHI_VEC_HANDLE,
--   VCHI_VEC_LIST
--} VCHI_MSG_VECTOR_TYPE_T;
--
--typedef struct vchi_msg_vector_ex {
--
--   VCHI_MSG_VECTOR_TYPE_T type;
--   union {
--      // a memory handle
--	struct {
--		VCHI_MEM_HANDLE_T handle;
--		uint32_t offset;
--		int32_t vec_len;
--	} handle;
--
--      // an ordinary data pointer
--	struct {
--		const void *vec_base;
--		int32_t vec_len;
--      } ptr;
--
--      // a nested vector list
--	struct {
--		struct vchi_msg_vector_ex *vec;
--		uint32_t vec_len;
--	} list;
--   } u;
--} VCHI_MSG_VECTOR_EX_T;
--
--// Construct an entry in a msg vector for a pointer (p) of length (l)
--#define VCHI_VEC_POINTER(p,l)  VCHI_VEC_POINTER, { { (VCHI_MEM_HANDLE_T)(p), (l) } }
--
--// Construct an entry in a msg vector for a message handle (h), starting at offset (o) of length (l)
--#define VCHI_VEC_HANDLE(h,o,l) VCHI_VEC_HANDLE,  { { (h), (o), (l) } }
--
- // Macros to manipulate 'FOURCC' values
- #define MAKE_FOURCC(x) ((int32_t)((x[0] << 24) | (x[1] << 16) | (x[2] << 8) | x[3]))
--#define FOURCC_TO_CHAR(x) (x >> 24) & 0xFF,(x >> 16) & 0xFF,(x >> 8) & 0xFF, x & 0xFF
+-extern /*@observer@*/ VCHI_CONNECTION_T * vchi_create_connection(const VCHI_CONNECTION_API_T * function_table,
+-								 const VCHI_MESSAGE_DRIVER_T * low_level);
++extern /*@observer@*/ VCHI_CONNECTION_T *vchi_create_connection(const VCHI_CONNECTION_API_T *function_table,
++								 const VCHI_MESSAGE_DRIVER_T *low_level);
  
- // Opaque service information
- struct opaque_vchi_service_t;
+ // Routine used to initialise the vchi on both local + remote connections
+ extern int32_t vchi_initialise(VCHI_INSTANCE_T *instance_handle);
+@@ -137,7 +137,7 @@ extern int32_t vchi_crc_control(VCHI_CONNECTION_T *connection,
+ 				VCHI_CRC_CONTROL_T control);
+ 
+ // helper functions
+-extern void * vchi_allocate_buffer(VCHI_SERVICE_HANDLE_T handle, uint32_t *length);
++extern void *vchi_allocate_buffer(VCHI_SERVICE_HANDLE_T handle, uint32_t *length);
+ extern void vchi_free_buffer(VCHI_SERVICE_HANDLE_T handle, void *address);
+ extern uint32_t vchi_current_time(VCHI_INSTANCE_T instance_handle);
+ 
 -- 
 2.17.1
 
