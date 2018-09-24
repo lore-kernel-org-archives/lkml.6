@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39373ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776C2ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F350A2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F350A2083A
+	by mail.kernel.org (Postfix) with ESMTP id 3D72E2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:42:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D72E2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388934AbeIXSoZ (ORCPT
+        id S2388945AbeIXSo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:44:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59330 "EHLO
+        Mon, 24 Sep 2018 14:44:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59342 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731786AbeIXSoY (ORCPT
+        with ESMTP id S1731786AbeIXSo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:44:24 -0400
+        Mon, 24 Sep 2018 14:44:28 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9CA2BE1C;
-        Mon, 24 Sep 2018 12:42:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20779E1C;
+        Mon, 24 Sep 2018 12:42:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 190/235] coresight: Handle errors in finding input/output ports
-Date:   Mon, 24 Sep 2018 13:52:56 +0200
-Message-Id: <20180924113123.434212039@linuxfoundation.org>
+Subject: [PATCH 4.18 191/235] coresight: tpiu: Fix disabling timeouts
+Date:   Mon, 24 Sep 2018 13:52:57 +0200
+Message-Id: <20180924113123.490672500@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,53 +54,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
 
-[ Upstream commit fe470f5f7f684ed15bc49b6183a64237547910ff ]
+[ Upstream commit ccff2dfaceaca4517432f5c149594215fe9098cc ]
 
-If we fail to find the input / output port for a LINK component
-while enabling a path, we should fail gracefully rather than
-assuming port "0".
+Probing the TPIU driver under UBSan triggers an out-of-bounds shift
+warning in coresight_timeout():
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+...
+[    5.677530] UBSAN: Undefined behaviour in drivers/hwtracing/coresight/coresight.c:929:16
+[    5.685542] shift exponent 64 is too large for 64-bit type 'long unsigned int'
+...
+
+On closer inspection things are exponentially out of whack because we're
+passing a bitmask where a bit number should be. Amusingly, it seems that
+both calls will find their expected values by sheer luck and appear to
+succeed: 1 << FFCR_FON_MAN ends up at bit 64 which whilst undefined
+evaluates as zero in practice, while 1 << FFSR_FT_STOPPED finds bit 2
+(TCPresent) which apparently is usually tied high.
+
+Following the examples of other drivers, define separate FOO and FOO_BIT
+macros for masks vs. indices, and put things right.
+
+CC: Robert Walker <robert.walker@arm.com>
+CC: Mike Leach <mike.leach@linaro.org>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>
+Fixes: 11595db8e17f ("coresight: Fix disabling of CoreSight TPIU")
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/coresight/coresight.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/hwtracing/coresight/coresight-tpiu.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -108,7 +108,7 @@ static int coresight_find_link_inport(st
- 	dev_err(&csdev->dev, "couldn't find inport, parent: %s, child: %s\n",
- 		dev_name(&parent->dev), dev_name(&csdev->dev));
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -40,8 +40,9 @@
  
--	return 0;
-+	return -ENODEV;
+ /** register definition **/
+ /* FFSR - 0x300 */
+-#define FFSR_FT_STOPPED		BIT(1)
++#define FFSR_FT_STOPPED_BIT	1
+ /* FFCR - 0x304 */
++#define FFCR_FON_MAN_BIT	6
+ #define FFCR_FON_MAN		BIT(6)
+ #define FFCR_STOP_FI		BIT(12)
+ 
+@@ -86,9 +87,9 @@ static void tpiu_disable_hw(struct tpiu_
+ 	/* Generate manual flush */
+ 	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
+ 	/* Wait for flush to complete */
+-	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
++	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN_BIT, 0);
+ 	/* Wait for formatter to stop */
+-	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
++	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED_BIT, 1);
+ 
+ 	CS_LOCK(drvdata->base);
  }
- 
- static int coresight_find_link_outport(struct coresight_device *csdev,
-@@ -126,7 +126,7 @@ static int coresight_find_link_outport(s
- 	dev_err(&csdev->dev, "couldn't find outport, parent: %s, child: %s\n",
- 		dev_name(&csdev->dev), dev_name(&child->dev));
- 
--	return 0;
-+	return -ENODEV;
- }
- 
- static int coresight_enable_sink(struct coresight_device *csdev, u32 mode)
-@@ -179,6 +179,9 @@ static int coresight_enable_link(struct
- 	else
- 		refport = 0;
- 
-+	if (refport < 0)
-+		return refport;
-+
- 	if (atomic_inc_return(&csdev->refcnt[refport]) == 1) {
- 		if (link_ops(csdev)->enable) {
- 			ret = link_ops(csdev)->enable(csdev, inport, outport);
 
 
