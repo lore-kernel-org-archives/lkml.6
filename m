@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDB5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1A0ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3398E21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3398E21486
+	by mail.kernel.org (Postfix) with ESMTP id 6E17521486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E17521486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387624AbeIXSaq (ORCPT
+        id S2387636AbeIXSau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:30:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57512 "EHLO
+        Mon, 24 Sep 2018 14:30:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57530 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732275AbeIXSap (ORCPT
+        with ESMTP id S1732275AbeIXSat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:30:45 -0400
+        Mon, 24 Sep 2018 14:30:49 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BF761018;
-        Mon, 24 Sep 2018 12:28:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4125D1094;
+        Mon, 24 Sep 2018 12:28:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        John Crispin <john@phrozen.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 038/235] MIPS: ath79: fix system restart
-Date:   Mon, 24 Sep 2018 13:50:24 +0200
-Message-Id: <20180924113108.866333740@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+93a5839deb355537440f@syzkaller.appspotmail.com,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        rds-devel@oss.oracle.com, Cong Wang <xiyou.wangcong@gmail.com>,
+        Santosh Shilimkar <santosh.shilimkar@oarcle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 004/235] rds: fix two RCU related problems
+Date:   Mon, 24 Sep 2018 13:49:50 +0200
+Message-Id: <20180924113104.696412478@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -55,46 +56,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit f8a7bfe1cb2c1ebfa07775c9c8ac0ad3ba8e5ff5 ]
+[ Upstream commit cc4dfb7f70a344f24c1c71e298deea0771dadcb2 ]
 
-This patch disables irq on reboot to fix hang issues that were observed
-due to pending interrupts.
+When a rds sock is bound, it is inserted into the bind_hash_table
+which is protected by RCU. But when releasing rds sock, after it
+is removed from this hash table, it is freed immediately without
+respecting RCU grace period. This could cause some use-after-free
+as reported by syzbot.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: John Crispin <john@phrozen.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19913/
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Mark the rds sock with SOCK_RCU_FREE before inserting it into the
+bind_hash_table, so that it would be always freed after a RCU grace
+period.
+
+The other problem is in rds_find_bound(), the rds sock could be
+freed in between rhashtable_lookup_fast() and rds_sock_addref(),
+so we need to extend RCU read lock protection in rds_find_bound()
+to close this race condition.
+
+Reported-and-tested-by: syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com
+Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
+Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc: rds-devel@oss.oracle.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oarcle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/ath79/setup.c                  |    1 +
- arch/mips/include/asm/mach-ath79/ath79.h |    1 +
- 2 files changed, 2 insertions(+)
+ net/rds/bind.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/mips/ath79/setup.c
-+++ b/arch/mips/ath79/setup.c
-@@ -40,6 +40,7 @@ static char ath79_sys_type[ATH79_SYS_TYP
+--- a/net/rds/bind.c
++++ b/net/rds/bind.c
+@@ -60,11 +60,13 @@ struct rds_sock *rds_find_bound(__be32 a
+ 	u64 key = ((u64)addr << 32) | port;
+ 	struct rds_sock *rs;
  
- static void ath79_restart(char *command)
- {
-+	local_irq_disable();
- 	ath79_device_reset_set(AR71XX_RESET_FULL_CHIP);
- 	for (;;)
- 		if (cpu_wait)
---- a/arch/mips/include/asm/mach-ath79/ath79.h
-+++ b/arch/mips/include/asm/mach-ath79/ath79.h
-@@ -134,6 +134,7 @@ static inline u32 ath79_pll_rr(unsigned
- static inline void ath79_reset_wr(unsigned reg, u32 val)
- {
- 	__raw_writel(val, ath79_reset_base + reg);
-+	(void) __raw_readl(ath79_reset_base + reg); /* flush */
- }
+-	rs = rhashtable_lookup_fast(&bind_hash_table, &key, ht_parms);
++	rcu_read_lock();
++	rs = rhashtable_lookup(&bind_hash_table, &key, ht_parms);
+ 	if (rs && !sock_flag(rds_rs_to_sk(rs), SOCK_DEAD))
+ 		rds_sock_addref(rs);
+ 	else
+ 		rs = NULL;
++	rcu_read_unlock();
  
- static inline u32 ath79_reset_rr(unsigned reg)
+ 	rdsdebug("returning rs %p for %pI4:%u\n", rs, &addr,
+ 		ntohs(port));
+@@ -157,6 +159,7 @@ int rds_bind(struct socket *sock, struct
+ 		goto out;
+ 	}
+ 
++	sock_set_flag(sk, SOCK_RCU_FREE);
+ 	ret = rds_add_bound(rs, sin->sin_addr.s_addr, &sin->sin_port);
+ 	if (ret)
+ 		goto out;
 
 
