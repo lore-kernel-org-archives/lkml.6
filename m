@@ -2,237 +2,194 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE1CC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0882ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A2F208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:33:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A2F208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 626FE2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:34:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="lULLH9v2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 626FE2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeIXOel (ORCPT
+        id S1727745AbeIXOfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:34:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59516 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbeIXOel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:34:41 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7AF3C89FC;
-        Mon, 24 Sep 2018 08:33:44 +0000 (UTC)
-Received: from [10.36.117.232] (ovpn-117-232.ams2.redhat.com [10.36.117.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E3215C1B4;
-        Mon, 24 Sep 2018 08:33:37 +0000 (UTC)
-Subject: Re: [PATCH v10 25/26] KVM: s390: CPU model support for AP
- virtualization
-To:     Tony Krowiak <akrowiak@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-26-git-send-email-akrowiak@linux.vnet.ibm.com>
- <7868874f-df81-5602-a4c5-a4b58c38d1d3@linux.ibm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <78df86b6-55f9-f67c-d96a-9c287c0248cd@redhat.com>
-Date:   Mon, 24 Sep 2018 10:33:36 +0200
+        Mon, 24 Sep 2018 10:35:07 -0400
+Received: from mail-he1eur01on0133.outbound.protection.outlook.com ([104.47.0.133]:4373
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727463AbeIXOfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 10:35:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P3sY9LGvrOrMy80OvxckvZjXiF8Xoy2iB1GTLowJxlI=;
+ b=lULLH9v2W+aL8Yvh8Z47y9vdO0N9h+h681MFE4+YiHU4MTrK86WpuEDJaNrvaeOeP+/HOHobTZTuUapoNC2K5p/Aotqpm4X6DEwLsskQdtjRcnBd0kwJyJaDNAO/Ve5eBcrMOED66ToLY+2dSw5V4iZ3vkpUQbv2s2hzJgLutrY=
+Received: from DB6PR07CA0121.eurprd07.prod.outlook.com (2603:10a6:6:16::14) by
+ DB6PR07MB4199.eurprd07.prod.outlook.com (2603:10a6:6:50::32) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1185.12; Mon, 24 Sep 2018 08:34:06 +0000
+Received: from VE1EUR03FT037.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::207) by DB6PR07CA0121.outlook.office365.com
+ (2603:10a6:6:16::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1185.13 via Frontend
+ Transport; Mon, 24 Sep 2018 08:34:05 +0000
+Authentication-Results: spf=pass (sender IP is 131.228.2.241)
+ smtp.mailfrom=nokia.com; infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=pass action=none header.from=nokia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nokia.com designates
+ 131.228.2.241 as permitted sender) receiver=protection.outlook.com;
+ client-ip=131.228.2.241; helo=mailrelay.int.nokia.com;
+Received: from mailrelay.int.nokia.com (131.228.2.241) by
+ VE1EUR03FT037.mail.protection.outlook.com (10.152.19.70) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.20.1185.13 via Frontend Transport; Mon, 24 Sep 2018 08:34:05 +0000
+Received: from fihe3nok0735.emea.nsn-net.net (localhost [127.0.0.1])
+        by fihe3nok0735.emea.nsn-net.net (8.14.9/8.14.5) with ESMTP id w8O8XKQl010535
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Sep 2018 11:33:20 +0300
+Received: from [10.151.73.229] ([10.151.73.229])
+        by fihe3nok0735.emea.nsn-net.net (8.14.9/8.14.5) with ESMTP id w8O8XKwo010529;
+        Mon, 24 Sep 2018 11:33:20 +0300
+X-HPESVCS-Source-Ip: 10.151.73.229
+Subject: Re: [PATCH] tools: Remove conflicting BITS_PER_LONG define
+To:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CC:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20180912170232.25258-1-alexander.sverdlin@nokia.com>
+ <20180912190107.GA5502@redhat.com> <20180912192129.GB13738@kernel.org>
+ <562288b4-aac6-182a-6f75-23d32dbdcad5@nokia.com>
+ <20180919130318.GB3717@redhat.com>
+From:   Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Message-ID: <b9a95224-ece8-a23b-e759-48d3f89b3067@nokia.com>
+Date:   Mon, 24 Sep 2018 10:33:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <7868874f-df81-5602-a4c5-a4b58c38d1d3@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180919130318.GB3717@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 24 Sep 2018 08:33:44 +0000 (UTC)
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:131.228.2.241;IPV:CAL;SCL:-1;CTRY:FI;EFV:NLI;SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(396003)(136003)(2980300002)(438002)(189003)(199004)(81156014)(81166006)(8676002)(305945005)(486006)(126002)(106466001)(36756003)(186003)(356003)(476003)(54906003)(26005)(86362001)(47776003)(6916009)(44832011)(64126003)(58126008)(8936002)(316002)(65826007)(31696002)(77096007)(2906002)(229853002)(230700001)(31686004)(106002)(478600001)(446003)(76176011)(26826003)(97736004)(6246003)(4326008)(93886005)(2486003)(14444005)(23676004)(22756006)(53936002)(11346002)(50466002)(65956001)(68736007)(336012)(2616005)(65806001)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR07MB4199;H:mailrelay.int.nokia.com;FPR:;SPF:Pass;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;VE1EUR03FT037;1:io1UQDo+w7ZR+47zbIXm6ZWMsIu7dDhDct52qT43NQsoZFu7bcH//ceyZMCHFE80YkKiAW3NCb5nGKZ9ZM/JdWh5b755IdG/gYAgOytJpAZAxwQARGW8J8wUvJhgPYef
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e789c34d-8bbd-4cb9-af95-08d621f87d54
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328);SRVR:DB6PR07MB4199;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;3:RpOa6wXjqH+I+Rbxuz1WWmtwFyn+44LX8PbF0awQcW3f2sO/NA/8gDiyaAfEvFLAWR9o89yzZ1EbVc1vRtJM6UZd9LXKJwYVjr7nHcff6qlfuB01O73g7OkEEu9+dWrT29Qg5keiDusig8wIKLMbNEo9fAKdWx7UwJTAVyUHbE81rImB/BleaPhVn0Oav2JJOewipFVIfMInqMy5EZmkcSZCkNES79PNWUyVTmm03MJkrH21o46v45TSHJUldmEegJRiLBn4uzFpAV0/FleBmEyaDJDR4iZ7OJAGbtJ4ry51GL8MyvNK/ODkkcTd0toD8+mCmGCOt53+ZzvvXqLHl4ZyEOWOE0Kw+6dseKWhZQk=;25:RbVdVfkvjuGx35qnuNtzn3ziXf4usFOuEC2Dawti9za2lS2UI6jOt8iccYEz5P/6wmBNso+NQ0QKaWmb/peTHVqBtqikA86WlhDloCzUHY/VF1LL3NOiRGk5LPeE5MIrrvh9vOUmuqr4R1nxeCXfNqws9TutboW6pOmDQTcs7DP+//ipCyrITwMoCvAwCVjBXgQf2ij/lgDQyIEN4I947eJnYUfDBRMxKx78b/nVv/0YG9MqiW7qHgRTaeOhjwkROgnn8mahmeuOTieIQoskgCNjrySFO/0lXu0PmCEthx65DmGIOnwKm3uCk/IXLTAHaW82SRtikOtJSH1rADZUyg==
+X-MS-TrafficTypeDiagnostic: DB6PR07MB4199:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;31:HoNEkJ9+/a+n8+yRhypZ3fYoGJLOI2TUNHEII1t5+kxlSnOpeRKaSO92nA/aHruB0VUrukYUYDXb8AH3RUWdDXFJ4mOBJ9uUAMJA0gt0W+zzVLz6Evu00niCaQc2vhLuv84ge34/3JT+XnnkW/2SgxJbpBJ7hBT7ATmnsggkjQNshL1TUGhDcIkBWaTPpRdECjRWX7zwdNiOQGeXrGc/ml67IiXsQTrMnS1OMPjAzUI=;20:UNFZWzrnjaMKfY8wlGZUfOh8mMW4jkRIS+jCWjRnXbJ/TwMK/s5nJNU0z5qiFEKnf4aSkqV3h7+NCKvG7NPfdZy03AX/hBFDy531cJS2N1DJWbvFx3u+Cz4aYw7BoHGjkMgeOxQY/OYJPCSUtVFbYp2kHakT6qD0+5nVZRsM0O66HUxq6/F8S/O1YC/7eRcUIyDbiuN24cmYu2ZMYnjsB9rLYIpT5DgSDr8LZHpRe9KPg17sXjiVE5u+TQtokpZNMlxObyGhrcI9TeFRi2Q+KYvx2chU5HFuTEMKseWc5j8o0DTppduNIaRMFfyKNGgYeEEpCaEHQUxUiatXP6dgn0bRNC0s/Go5IcQZ8EJtY/krUWR7Ui5IRPOxRa1ZB17v3fFKku1af3IebOMy4ZtLGvcwbKGALv8/jUpsonyKk79MmirjOjvLl8tkfk9KHEghcMZfsIQNFEzTjSGHx0aHsgMCM8DF5QTJVfg9EU4/UhgCjRVyBm8XzUiyRx6Qs2QU5zHXxJW86W1DzEuiLkLZQa/IBP35d+xaz9eNfIFsz00Dn+gZk8gl4137g4EGBflttUJ1vN34Jndws70MLrOSJQGo4cGzgTDs4qGZfKIbB68=
+X-Microsoft-Antispam-PRVS: <DB6PR07MB4199B3DCE1D8E7578BFAF7AE88170@DB6PR07MB4199.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231355)(11241501184)(806099)(944501410)(52105095)(93006095)(93004095)(6055026)(149066)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:DB6PR07MB4199;BCL:0;PCL:0;RULEID:;SRVR:DB6PR07MB4199;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;4:dtlZuG7Gu9dDRqg8PiO8CWiq8FgEwA4uYC7hGiuJVbJmT6nN5/lrGmDRyLnFQHLXm3fYI2M1lKcQqGJxFhts7lJmH1qoMSD5aZMkfTK2A/m0ndxnRGLo7JDtD3GNk+2yRFtrjOOfadlp0Q6wbjS8EbvRVsBLuOlFZGwe1ZDGoWVrK1MmXim6l+043SzEXRgLZIRhDj4EmUPn13WHkWBCO9P9iWxdV8p/Qe7mIWTiz26zyJLudhRZ9OuG5YIlzT6e94haiyox3io9ket6yq1v1w==
+X-Forefront-PRVS: 0805EC9467
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA3TUI0MTk5OzIzOk5rU2FzcGhuUEdJcU4vOWdpZjN6VnJiYUUw?=
+ =?utf-8?B?Wk1RVVU5YlJ4aGJKK0UzenA3SHBRek9rZGpGemF5cXZFQ1oxV01kMGFITVhT?=
+ =?utf-8?B?SWRxRWU2NmxhVkM3UlV2d0VSNy9VRy8vMklQUG5MSjN3U0pIQmdxMHpBNEdo?=
+ =?utf-8?B?TXRTQ2g2SEV6WkRmdTBxdXZDYy9VdnZtTFpjRFUrd3BDR2ErbTUwQnFBU01Z?=
+ =?utf-8?B?RVN6bmh1by9yZUhQUTk4QmZnL2YvZGtOanFyNzJVcWhDQ2NkQytvTU1SOE9p?=
+ =?utf-8?B?YklmZDdxZ090dnY3SlJLNzYzZXUyZmdMQ0tzdzhUaWsxb1pkcWZGTTBwQ1hQ?=
+ =?utf-8?B?RVdRM1Z6bFk4LzQ2aDNIcjFERHZNSDh0L0NWMnhMTG41VzFsdWtvY091WnZq?=
+ =?utf-8?B?Zngva3Fkc3RLUWxScmJyU0RheHVxb0IwcktsZHByeFhMcVhCV3hxRHVMYjA3?=
+ =?utf-8?B?UVBqeFo3dWYxNFIwbEoxV0xuT0xKL2h4di9JQ2EzV2k2K2pQdkRXU21Fc1Vu?=
+ =?utf-8?B?emJyUnkxUTJvNFJzL1RVc1hHWGZWeG5DZkFPTiszdXhRNStTWmpoS201YTFE?=
+ =?utf-8?B?UC9HcWpBNEhoMG9BempHNSthQzJvV3p4R2w3djJJU1BUWFByY1pVdXQ4VmUx?=
+ =?utf-8?B?M1I2TkxNU1ovSUhhdklRWDdlZFZabXAxNG5VZVp5QzJiNHlmRWdMdDdvS08z?=
+ =?utf-8?B?NjVqSHRTK1VLL3JacTRGS1pnYldVREc2TGprQjVJcktQd3ZBeTJQTmJNRjRv?=
+ =?utf-8?B?U3Q4clM4anVXSWlZQ2VudDdHZlo3NUtFZU41bGQxMUZxcGh6Rk0xcjlMUlVT?=
+ =?utf-8?B?Z1BPanZzWWwwbTNkcGNiZFZCdGhETTY4RHhVbmdkU1N6UFdabkNhWlU3aXYy?=
+ =?utf-8?B?dmFIZml6TkZHUS9nbmdSclpRYjVlaGgvVVc2aEtGL1JVQjZybFZMMCs3UmtM?=
+ =?utf-8?B?STFpSFBDTkM0NHoyTzc5cUlDOWttRHRPYmtUUWhyeFdNRHhRQmsvOS9TQVRJ?=
+ =?utf-8?B?emc0ZmY0NEpRcVFIV2FUQW5CR1FMc05RYVNsVnpMeVczRFFhWU1iT2dqSlp5?=
+ =?utf-8?B?T2Nld0p6S0JQUHlPb0VqbVpTZzBnMU9SOXFtV3kzK1YxdzE4NUtsVFpwTFpY?=
+ =?utf-8?B?OWZXaHgvWnByR3lDY1hKTFIyNm1jK2RDdVE3UTRqaCtwRDJrOUxlT0VuWnRE?=
+ =?utf-8?B?TzJiTmo2Ym9zMXRoZ1JuWmNVRndabWdxQ3dhdGROdVJkcmh5TklNMmo3MHBh?=
+ =?utf-8?B?SkhsRHBrekp1K2xiWVhkU04wcTNBbUF5Y0g5TlZZYTlSN0ZUNTZyVUZveVlC?=
+ =?utf-8?B?OXFla215SlVkMVVsbEVMQ0I4cWVxRUpZTzNIaEZURmZtSXB2bENvb1MzVldN?=
+ =?utf-8?B?d0FUdG1LT29BTWlwc2czcUpteVNvNTVyVDV2bjR5QUhkdmFiTldOaHFCK0V6?=
+ =?utf-8?B?ajYxOVdtUWRlb2tGaXRnSDhMNjQwcUZzcERXckkySGdQSFdqM2hjemR3T1Jq?=
+ =?utf-8?B?UmJmaUNXVjN2a1NYdENCemdWZ0I4S0ZrWkhNOEoxMjlUU1lhTWdoU3BBckRq?=
+ =?utf-8?B?SWN6bExsNExSMUlHMjZjWjd4V3hIQ3E2bjVzc1dhd2FYUEJNZDQya0VCQUlU?=
+ =?utf-8?B?d25KK1VNdmtKd0hlUkRpUmhXNE9vYVMxcHphTGh6STQ5UVBHR3ZPVVc2WGM2?=
+ =?utf-8?B?eENzajYzeWlJUXlIK3YyS3p0d2E0eXZkSldDU25ZZmJBanJUYk5XeFN6RUZ5?=
+ =?utf-8?Q?jsbjlWiViHhXLIFx1Wrs3NFGOUY2MvyjpI7Cg=3D?=
+X-Microsoft-Antispam-Message-Info: ONXwQjdsJg0MvTITVX7cf6vEH/A/1PCtrMSFrGoHzkqy+kWnFp/bKpoeiIoaRgg1xRpEpi7UolY31J1Wxa8kk7E8VaP/7dOnLb40mv6iFZBxSFH/mDTa73TcNJ6nN8hXId+LOAH9xpTOBK8FqOJIX8b1RyORK1YvT0l2Gwad1ztzEXI1DDgswDwhQf28qdv9rAWg05zoyqWokCHyj2aJbE/rRmRi+AsyDVsxknxawJaq5IwOhlpZb9mUsaFx57qeryySZLJOgHeJDttR4W1nIovpuEvSULmwDEOda68n/1A+/cOOOX4WctnMY81sLkxPx87b1qhZaXbbGHs9rsbZXp1a3jv2iIZnZS0/OQgLg0ujq/CVqirSV/e6kedPlDALBOmhD8EKN3b+N5EJeD0XKj2FcLe2Jthw1b5pr05KSh+H2M1SLx93BOXgEr6k6Hk8
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB4199;6:nLlb5OQ7v6iXbALKvmfQfKsnMDKfJ6Jga/hGM4duxqlKmkFCNNuwwqzUxIY8B5YqYnFIPOd/VoAImeAWX08rbcigU6suzm5fjfYfTmg8dcJ4VZyrJPjcVwGvut33JY7FTpPjCGVIjELFuCnWCGL0XAXQw+c3HxMqpr03mNnJ6FTAe2LocxE6rzNP4w8o0rPFc9F2x9UOV2VebbU2eOGM4nPQlVYecIDkD6IvbSjG1/kXsKJwRpSQusw6f13FT9jzUqO2yNSRV5H61TlsFZbilqYWpr2ox0XzocCdg8p9xOAxaL3NWuUUUpyJ1FW2V1FsRtfQm0w/0/ZBir3YNmSLWw5r4wMZ/o9QxXIvarhkvgZLbNyND1QQuzacdExC7/Wycm0QKOF/6dB2pycmjZawWBEhbM9lh+13HXj43cd7VBNOBH9IWWDbbmhWOFwaFh0k0zBEEw+i5gun9x1CXgNfcg==;5:y36i4sFQDt9bavvykHw4onzg8zOu9CAuPdPnBSMOxUu8P1gGStkQ/79knk4nJxzWMw0vIybR+VOVEby3f/MiNJIk8mTCgFKx7dBl859pci2UY0kRMfJKAxp/itWOfv7vGQtivU67RfNxQOnz/S8QdNiaOQPNO2EA2jrap9sp2kQ=;7:JqWu+ptCgYu834nFCQLLn2x5GovRaXhWYUNeKW1MXVwpGzYSTactk6sB9sojZTQns3n/csiltcn/pwjrxZyo1L/mcmWn5vrBxB3D9xiQQki2ygNMdnB3+5SeKHL1UV3i5tpUlSr8hOWpBeq5LMgoVb1JNfhVrXSOI7xEZnoW68bvylQX2v6rqTygS4p8rBf/fyk48UCjM+UTgFlQWxJRK59EjaWxVWt1BhLROu/fboZizNlDiDRj8SIsZlYCTr/B
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2018 08:34:05.5780
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e789c34d-8bbd-4cb9-af95-08d621f87d54
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5d471751-9675-428d-917b-70f44f9630b0;Ip=[131.228.2.241];Helo=[mailrelay.int.nokia.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR07MB4199
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/09/2018 01:31, Tony Krowiak wrote:
-> On 09/12/2018 03:43 PM, Tony Krowiak wrote:
->> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> Introduces a new CPU model feature and two CPU model
->> facilities to support AP virtualization for KVM guests.
->>
->> CPU model feature:
->>
->> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
->> AP instructions are available on the guest. This
->> feature will be enabled by the kernel only if the AP
->> instructions are installed on the linux host. This feature
->> must be specifically turned on for the KVM guest from
->> userspace to use the VFIO AP device driver for guest
->> access to AP devices.
->>
->> CPU model facilities:
->>
->> 1. AP Query Configuration Information (QCI) facility is installed.
->>
->>     This is indicated by setting facilities bit 12 for
->>     the guest. The kernel will not enable this facility
->>     for the guest if it is not set on the host.
->>
->>     If this facility is not set for the KVM guest, then only
->>     APQNs with an APQI less than 16 will be used by a Linux
->>     guest regardless of the matrix configuration for the virtual
->>     machine. This is a limitation of the Linux AP bus.
->>
->> 2. AP Facilities Test facility (APFT) is installed.
->>
->>     This is indicated by setting facilities bit 15 for
->>     the guest. The kernel will not enable this facility for
->>     the guest if it is not set on the host.
->>
->>     If this facility is not set for the KVM guest, then no
->>     AP devices will be available to the guest regardless of
->>     the guest's matrix configuration for the virtual
->>     machine. This is a limitation of the Linux AP bus.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->> Reviewed-by: David Hildenbrand <david@redhat.com>
->> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->> ---
->>   arch/s390/kvm/kvm-s390.c         |    5 +++++
->>   arch/s390/tools/gen_facilities.c |    2 ++
->>   2 files changed, 7 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->> index 286c2e0..f0b8e2a 100644
->> --- a/arch/s390/kvm/kvm-s390.c
->> +++ b/arch/s390/kvm/kvm-s390.c
->> @@ -371,6 +371,11 @@ static void kvm_s390_cpu_feat_init(void)
->>   
->>   	if (MACHINE_HAS_ESOP)
->>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
->> +
->> +	/* Check if AP instructions installed on host */
->> +	if (ap_instructions_available())
->> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
->> +
->>   	/*
->>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
->> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
->> index 0c85aed..fd788e0 100644
->> --- a/arch/s390/tools/gen_facilities.c
->> +++ b/arch/s390/tools/gen_facilities.c
->> @@ -106,6 +106,8 @@ struct facility_def {
->>   
->>   		.name = "FACILITIES_KVM_CPUMODEL",
->>   		.bits = (int[]){
->> +			12, /* AP Query Configuration Information */
->> +			15, /* AP Facilities Test */
->>   			156, /* etoken facility */
->>   			-1  /* END */
->>   		}
->>
-> 
-> The fixup! patch below modifies this patch (25/26) to illustrate how
-> David's recommendation will be implemented for v11 of the series. It
-> is one of three fixup! patches (the other two are in responses to
-> 03/26 and 11/26) included to generate discussion in v10 rather than
-> waiting until v11 for comments.
-> 
-> -----------------------------------8<-----------------------------------
-> 
-> From: Tony Krowiak <akrowiak@linux.ibm.com>
-> Date: Thu, 20 Sep 2018 13:28:07 -0400
-> Subject: [FIXUP v10] fixup!: KVM: s390: CPU model support for AP 
-> virtualization
-> 
-> ---
->   arch/s390/kvm/kvm-s390.c |    4 ----
->   1 files changed, 0 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index a3a7cd9..ff38251 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -372,10 +372,6 @@ static void kvm_s390_cpu_feat_init(void)
->   	if (MACHINE_HAS_ESOP)
->   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
-> 
-> -	/* Check if AP instructions installed on host */
-> -	if (ap_instructions_available())
-> -		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
-> -
->   	/*
->   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
-> 
+Hello Arnaldo,
 
-Yes, looks sane.
+>>>> Em Wed, Sep 12, 2018 at 07:02:32PM +0200, Alexander Sverdlin escreveu:
+>>>>>   CC       .../tools/objtool/builtin-check.o
+>>>>>   ...
+>>>>> In file included from .../tools/arch/x86/include/uapi/asm/bitsperlong.h:11:0,
+>>>>>                  from .../tools/include/asm-generic/bitops/__ffs.h:6,
+>>>>>                  from .../tools/include/asm-generic/bitops.h:16,
+>>>>>                  from .../tools/include/linux/bitops.h:35,
+>>>>>                  from .../tools/include/linux/hashtable.h:13,
+>>>>>                  from elf.h:24,
+>>>>>                  from check.h:22,
+>>>>>                  from builtin-check.c:30:
+>>>>> .../tools/include/asm-generic/bitsperlong.h:8:0: error: "BITS_PER_LONG" redefined [-Werror]
+>>>>>  #define BITS_PER_LONG (__CHAR_BIT__ * __SIZEOF_LONG__)
+
+[...]
+
+finally I more or less know what happens here. In the actual Linux we have two files defining the
+same define:
+
+>> # 1 ".../tools/include/linux/bitops.h" 1
+
+#ifndef BITS_PER_LONG
+# define BITS_PER_LONG __WORDSIZE
+#endif
+
+>> # 6 ".../tools/include/asm-generic/bitsperlong.h" 2
+
+#ifdef __SIZEOF_LONG__
+#define BITS_PER_LONG (__CHAR_BIT__ * __SIZEOF_LONG__)
+#else
+#define BITS_PER_LONG __WORDSIZE
+#endif
+
+So the two defines only work together if bitsperlong.h is included first.
+In objtool both files are included and for most people bitsperlong.h is indeed
+included first.
+
+> I'll try and get one for building a x86_64 tools/perf,
+> tools/lib/{api,bpf,traceevent} to see if I manage to reproduce the
+> problem you're reporting.
+
+One way to reproduce the reverted include order is to take a HOST compiler
+built against old Linux headers, namely 2.6.30 and older.
+This is because of the changes in asm/types.h.
+
+It would be possible to put a guard into bitsperlong.h (#ifndef BITS_PER_LONG),
+but it just doesn't look correct to me that we have two files defining the same
+thing once quite simple, in the second case even more tricky.
 
 -- 
-
-Thanks,
-
-David / dhildenb
+Best regards,
+Alexander Sverdlin.
