@@ -2,41 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 443B4ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACF6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B28920C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B28920C0A
+	by mail.kernel.org (Postfix) with ESMTP id 8817420877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8817420877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbeIXSC7 (ORCPT
+        id S1730731AbeIXSDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:02:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53560 "EHLO
+        Mon, 24 Sep 2018 14:03:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53576 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730031AbeIXSC7 (ORCPT
+        with ESMTP id S1730031AbeIXSDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:02:59 -0400
+        Mon, 24 Sep 2018 14:03:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB45B1080;
-        Mon, 24 Sep 2018 12:01:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E52AD64;
+        Mon, 24 Sep 2018 12:01:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bhushan Shah <bshah@kde.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 038/111] ARM: dts: qcom: msm8974-hammerhead: increase load on l20 for sdhci
-Date:   Mon, 24 Sep 2018 13:52:05 +0200
-Message-Id: <20180924113108.571220301@linuxfoundation.org>
+Subject: [PATCH 4.9 039/111] s390/qeth: fix race in used-buffer accounting
+Date:   Mon, 24 Sep 2018 13:52:06 +0200
+Message-Id: <20180924113108.709953177@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -54,59 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bhushan Shah <bshah@kde.org>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 03864e57770a9541e7ff3990bacf2d9a2fffcd5d ]
+[ Upstream commit a702349a4099cd5a7bab0904689d8e0bf8dcd622 ]
 
-The kernel would not boot on the hammerhead hardware due to the
-following error:
+By updating q->used_buffers only _after_ do_QDIO() has completed, there
+is a potential race against the buffer's TX completion. In the unlikely
+case that the TX completion path wins, qeth_qdio_output_handler() would
+decrement the counter before qeth_flush_buffers() even incremented it.
 
-mmc0: Timeout waiting for hardware interrupt.
-mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc0: sdhci: Sys addr:  0x00000200 | Version:  0x00003802
-mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  0x00000200
-mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000023
-mmc0: sdhci: Present:   0x03e80000 | Host ctl: 0x00000034
-mmc0: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
-mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000007
-mmc0: sdhci: Timeout:   0x0000000e | Int stat: 0x00000000
-mmc0: sdhci: Int enab:  0x02ff900b | Sig enab: 0x02ff100b
-mmc0: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc0: sdhci: Caps:      0x642dc8b2 | Caps_1:   0x00008007
-mmc0: sdhci: Cmd:       0x00000c1b | Max curr: 0x00000000
-mmc0: sdhci: Resp[0]:   0x00000c00 | Resp[1]:  0x00000000
-mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc0: sdhci: Host ctl2: 0x00000008
-mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x70040220
-mmc0: sdhci: ============================================
-mmc0: Card stuck in wrong state! mmcblk0 card_busy_detect status: 0xe00
-mmc0: cache flush error -110
-mmc0: Reset 0x1 never completed.
-
-This patch increases the load on l20 to 0.2 amps for the sdhci
-and allows the device to boot normally.
-
-Signed-off-by: Bhushan Shah <bshah@kde.org>
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Tested-by: Brian Masney <masneyb@onstation.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/s390/net/qeth_core_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-@@ -188,6 +188,8 @@
- 						regulator-max-microvolt = <2950000>;
- 
- 						regulator-boot-on;
-+						regulator-system-load = <200000>;
-+						regulator-allow-set-load;
- 					};
- 
- 					l21 {
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -3499,13 +3499,14 @@ static void qeth_flush_buffers(struct qe
+ 	qdio_flags = QDIO_FLAG_SYNC_OUTPUT;
+ 	if (atomic_read(&queue->set_pci_flags_count))
+ 		qdio_flags |= QDIO_FLAG_PCI_OUT;
++	atomic_add(count, &queue->used_buffers);
++
+ 	rc = do_QDIO(CARD_DDEV(queue->card), qdio_flags,
+ 		     queue->queue_no, index, count);
+ 	if (queue->card->options.performance_stats)
+ 		queue->card->perf_stats.outbound_do_qdio_time +=
+ 			qeth_get_micros() -
+ 			queue->card->perf_stats.outbound_do_qdio_start_time;
+-	atomic_add(count, &queue->used_buffers);
+ 	if (rc) {
+ 		queue->card->stats.tx_errors += count;
+ 		/* ignore temporary SIGA errors without busy condition */
 
 
