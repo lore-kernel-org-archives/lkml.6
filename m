@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8257FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C23C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4660821486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4660821486
+	by mail.kernel.org (Postfix) with ESMTP id 8914620842
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8914620842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389372AbeIXSrr (ORCPT
+        id S2388963AbeIXSrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59836 "EHLO
+        Mon, 24 Sep 2018 14:47:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730401AbeIXSrr (ORCPT
+        with ESMTP id S1730401AbeIXSru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:47 -0400
+        Mon, 24 Sep 2018 14:47:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBE5E109A;
-        Mon, 24 Sep 2018 12:45:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 326C5109A;
+        Mon, 24 Sep 2018 12:45:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 210/235] rtc: bq4802: add error handling for devm_ioremap
-Date:   Mon, 24 Sep 2018 13:53:16 +0200
-Message-Id: <20180924113124.821758723@linuxfoundation.org>
+Subject: [PATCH 4.18 211/235] selftests: vDSO - fix to return KSFT_SKIP when test couldnt be run
+Date:   Mon, 24 Sep 2018 13:53:17 +0200
+Message-Id: <20180924113124.856557195@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,35 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit 7874b919866ba91bac253fa219d3d4c82bb944df ]
+[ Upstream commit d2d49495b5c0dffee5c4da5ea12ac0da6679bd08 ]
 
-When devm_ioremap fails, the lack of error-handling code may
-cause unexpected results.
+Fix to return KSFT_SKIP when test couldn't be run because AT_SYSINFO_EHDR
+isn't found and gettimeofday isn't defined.
 
-This patch adds error-handling code after calling devm_ioremap.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-bq4802.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ tools/testing/selftests/vDSO/vdso_test.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/rtc/rtc-bq4802.c
-+++ b/drivers/rtc/rtc-bq4802.c
-@@ -162,6 +162,10 @@ static int bq4802_probe(struct platform_
- 	} else if (p->r->flags & IORESOURCE_MEM) {
- 		p->regs = devm_ioremap(&pdev->dev, p->r->start,
- 					resource_size(p->r));
-+		if (!p->regs){
-+			err = -ENOMEM;
-+			goto out;
-+		}
- 		p->read = bq4802_read_mem;
- 		p->write = bq4802_write_mem;
+--- a/tools/testing/selftests/vDSO/vdso_test.c
++++ b/tools/testing/selftests/vDSO/vdso_test.c
+@@ -15,6 +15,8 @@
+ #include <sys/auxv.h>
+ #include <sys/time.h>
+ 
++#include "../kselftest.h"
++
+ extern void *vdso_sym(const char *version, const char *name);
+ extern void vdso_init_from_sysinfo_ehdr(uintptr_t base);
+ extern void vdso_init_from_auxv(void *auxv);
+@@ -37,7 +39,7 @@ int main(int argc, char **argv)
+ 	unsigned long sysinfo_ehdr = getauxval(AT_SYSINFO_EHDR);
+ 	if (!sysinfo_ehdr) {
+ 		printf("AT_SYSINFO_EHDR is not present!\n");
+-		return 0;
++		return KSFT_SKIP;
+ 	}
+ 
+ 	vdso_init_from_sysinfo_ehdr(getauxval(AT_SYSINFO_EHDR));
+@@ -48,7 +50,7 @@ int main(int argc, char **argv)
+ 
+ 	if (!gtod) {
+ 		printf("Could not find %s\n", name);
+-		return 1;
++		return KSFT_SKIP;
+ 	}
+ 
+ 	struct timeval tv;
+@@ -59,6 +61,7 @@ int main(int argc, char **argv)
+ 		       (long long)tv.tv_sec, (long long)tv.tv_usec);
  	} else {
+ 		printf("%s failed\n", name);
++		return KSFT_FAIL;
+ 	}
+ 
+ 	return 0;
 
 
