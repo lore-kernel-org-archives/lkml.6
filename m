@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4ACDECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A1BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9390C2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C938B2087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="fq1gj671"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9390C2087A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Nk6PygwZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C938B2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729630AbeIXVEp (ORCPT
+        id S1729729AbeIXVE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:04:45 -0400
-Received: from mail-eopbgr710132.outbound.protection.outlook.com ([40.107.71.132]:35136
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 24 Sep 2018 17:04:57 -0400
+Received: from mail-eopbgr690129.outbound.protection.outlook.com ([40.107.69.129]:55616
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733216AbeIXUvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729984AbeIXUvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Sep 2018 16:51:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V5b5FR1kBudS19pGBe8woyRUkDaG1vFlBdrni3KmOyo=;
- b=fq1gj671vINAYDmy2NJ2ZVX69AU4ZT1Ib5lMHMwO8OyeszHDDhZ8xSBzs2SjCSw2Fa4n4D6X1Oh3zqBl6Hgo+bysT5mWSZiolw+y83QuRYiQW9Z5ANuiDeqDP08JAVVtGhoNsGfkqdV45imI+wUOLOUDOh/5hfHeQI4AnBOCgx4=
+ bh=j0DImRfd9Qrg6eI03z4TVxYcd7Kd98mH6rBda41Y4+4=;
+ b=Nk6PygwZ853ASo6/YjTQN3USLaoF6Gdt3+/Aw2kYA9dNfk2XeBdkDdRcKCRMm7SkSZwcnccosZv154tidCw6R2IZO6652zgNpSWUObPW7NJWjIKd3DMfvJnJtquMW/clU1ugjBIRPJrQz/P6Zc9ROIui2sgzHcE3wu8UWQVvugU=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
+ CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.5; Mon, 24 Sep 2018 14:48:57 +0000
+ 15.20.1207.2; Mon, 24 Sep 2018 14:49:03 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:48:57 +0000
+ 14:49:03 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Sabrina Dubroca <sd@queasysnail.net>,
-        "David S . Miller" <davem@davemloft.net>,
+CC:     Ilan Peer <ilan.peer@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 48/76] selftests: pmtu: detect correct binary to
- ping ipv6 addresses
-Thread-Topic: [PATCH AUTOSEL 4.18 48/76] selftests: pmtu: detect correct
- binary to ping ipv6 addresses
-Thread-Index: AQHUVBWpKBzO/mcjVUyvq7EphBe8dA==
-Date:   Mon, 24 Sep 2018 14:48:31 +0000
-Message-ID: <20180924144751.164410-47-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 61/76] mac80211: Fix station bandwidth setting
+ after channel switch
+Thread-Topic: [PATCH AUTOSEL 4.18 61/76] mac80211: Fix station bandwidth
+ setting after channel switch
+Thread-Index: AQHUVBWtrDdxhrBvl0qgxxSQHuk5cA==
+Date:   Mon, 24 Sep 2018 14:48:38 +0000
+Message-ID: <20180924144751.164410-60-alexander.levin@microsoft.com>
 References: <20180924144751.164410-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,80 +61,141 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:xYhr2ehl6uW8U2Ec30LbqbNbSGjQMAdZyVlxLUBualqQ/MTFPyAGJpLoQlBHqdvJN2uKtLrfzFlX6vpGB5ebEDiwEtxgw9gpZY11XA488IObl5qtax/LykVZaYNKqycbgaLeOvqaRuRKXXX8g6sTMXkrRUyhORd/mKryyx0IfAlCeyGSUZ+tSH+691fyQ56lOJjnRt3/MJlSkoXNRvgdy8Eq4FgUOni4AaJEonmdc7LAVgb8N8X1dtd+VB2xxinDOkjB4XutzCfqnd2WySBlibLe0F1ymMKJ6Qv4GtPOYzYdyyqQLkSD31f0pOyAr5RF4WzIbV2hai8NANlbklezHdfCBRqUvx5h3Og49eNvaHWnrz1dgK1rhIu6EciuyRnGsbSNQv35g39KRztl3loovLjbHCSf9pmCmd915IUI4d2eH07X+hGqI1w9y1gT6FdSkxoyjelggBTViaEL+SC7EA==;5:8Xtaa/Y78Zl2zAALBp1PUOW/K/5sFnP+ONxnRZREwtxkbeNFxHflrhr00q4XPfzA/9bLK51AtdozevmBxkbT8odg8wFtKr8HZcfoM9O7gat/lqzJm0SoiVOQC6Fw78tBuP6kSOzi9SAPeis9Nn2ohH7VhOkvhoIm9ILdEedU8Z8=;7:lIpj4lTq4uv7RUsGJ8rZmK/IMy8igkq3KQOzzM8y7Zz+DUc+kpmb69W12Aan6HB2dWhgHW5gg6ixnB5X4VIeMrr/2G4dP0y6N/HYrm6Tiur7scBOUNU1DDTQJ0Y37XbQaspAIqUrA+7euG3kcbIWpEmQWZyYAWtUTD/Air1eIqOXxbT2enjuCJu/cSd9zmLk5rwFMGffx6hCuz3N2fBRoRBuNue9oHCUlmj19KOw9c54/J2D815aND4qFRB/ALaI
-x-ms-office365-filtering-correlation-id: 56322f2d-6438-499a-9cba-08d6222cdb92
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:BgHyogU/cOpooBZ9nvH2Jr+dgYrevI4VACntI5ToG2wVeUEPjtu8WPzUGC4jyMgwPo/GPiR+hQ68vyk13WcqCcsOg6n9pKG5p33W9fUgIdHaiQN/Rt2WM7VUdfb9dHBii1FUITAosX64AFCtIA8t3NVCcsD2wA2CI3/bGVMKXNc+z8+dzffQG1pjCnHv7KSn2T5mOnO2rnyIAOf/raqzErRRTxQmy5BTxuGWGU8A7JfJ1PGkIA3PXEGVARLMLFZXSTHy0cSUGx8yKGBXeidib4HNnjVaJ68OSgnKbUI77Pvkv0b16t1nGpcCtYCUVDtJTDIZZ6I19tIkvde2Yz8FgaY0REeYdWcmt3019lGOFeiFPr0uaMaJfUHgGweESd+ZMAr41sF+ZQ/Sp+jNxHNpfUrqj+ogEF+xe5h6/lx/Jfce4AhHPmXYxCndu1sPRYTB9h1fFfmuZomMBsR2Xq9EWw==;5:pyb6X4Av3GLux8DjIpvAeI0Vvw8xSxDTtCMAnz7DlrSfWJwu1WjazRuv6FeUc5u+wWy65qmnLCjzRF1szGMDGCXE4LdTkc7rCJBI89qTjRQmywtviJgEr3xNJTmQ58tyGHx5wEAgIlOQNnj8m3JhyzrrsVoS2UWJDCCE/0v+FCg=;7:LDcHJyoNf/lSYjEZlCepl1IgQywR1+yfRdQ7Ur2peWJZ5vzrfB7e5N7hpEA6BkMaCP2oNfti87gcoXiTwTg5Iovi++HoyrJgEOYWyWSQCO9mI//ytwM4HqEWTbsipTsdTza4O5yntk2tCI+MN5aGgPxhokT0ZhfTEmsaZ6Q3HiHlHzBG+BfBKF3rpkIkldUtlRAMnxRQSJNejHRcVY5YCqwYX5bwSgDugsHbsIMHXD7CVt6IR6d4pPNSj34ylsdS
+x-ms-office365-filtering-correlation-id: f10b07e3-7436-4d0a-bed6-08d6222cdedd
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
-x-ms-traffictypediagnostic: CY4PR21MB0855:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
+x-ms-traffictypediagnostic: CY4PR21MB0744:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB08558B152279165D6EB64B5FFB170@CY4PR21MB0855.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB07443B9D9C2E9A371ABF3488FB170@CY4PR21MB0744.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(486006)(81166006)(6436002)(110136005)(54906003)(10290500003)(6666003)(86362001)(446003)(575784001)(6486002)(68736007)(2900100001)(86612001)(476003)(6512007)(1076002)(2616005)(305945005)(81156014)(105586002)(10090500001)(14454004)(71200400001)(106356001)(316002)(7736002)(71190400001)(478600001)(11346002)(6116002)(8936002)(5660300001)(3846002)(72206003)(97736004)(8676002)(6506007)(25786009)(36756003)(66066001)(2906002)(5250100002)(76176011)(26005)(14444005)(217873002)(107886003)(186003)(256004)(102836004)(22452003)(2501003)(99286004)(53936002)(4326008)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(39860400002)(376002)(366004)(189003)(199004)(11346002)(446003)(476003)(86362001)(186003)(81166006)(6506007)(8676002)(81156014)(6666003)(5660300001)(486006)(99286004)(53936002)(305945005)(6512007)(6436002)(2616005)(71200400001)(71190400001)(68736007)(6486002)(102836004)(10090500001)(7736002)(36756003)(97736004)(86612001)(316002)(3846002)(6116002)(1076002)(217873002)(14444005)(256004)(54906003)(110136005)(107886003)(10290500003)(4326008)(478600001)(22452003)(5250100002)(26005)(8936002)(2906002)(2501003)(2900100001)(66066001)(72206003)(105586002)(14454004)(76176011)(25786009)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: dUSpwPDmWygysT2oFPaKLdHTJttVv62kTMA+ck++DANLjxmftF2EjMarLUPQg0N4NVonnJ1UzMHFBldglEnHtUBNw+ZELfA4mw/VB/xIv38Qu36wtzZOo4Wt09UV7KQ4iX6IDEUrUoot5T0BHFDbcC6hPv00JIUxRISX8uEx5nlSBw1QUmZUxepjp6PxWZgNs68bhyXREucke2ubYyircnMze0y9xdkMolEIQ23IFgo+o4+idrDe7yn06rSlRsQXGGDTvCt4IF+how1ICc/ZACFnXxMLBG9MzIBl+7MBrLQeukopHDH4S+yb0NwQklFyNq8RtPGPqw+znvCkPqD9DXXmaVVsCHXu84bL4TbaMQ0=
+x-microsoft-antispam-message-info: Ak5pM9fO2tXgyyLavdTZeQEHtarTKTehRBND+LzRO4L8VLjYPh8sBFHhvhrK+RaAiqBPTV/jIW4eyTVprpeYKAyZ32wINlcctnd6+xs3R53T8saHIkPbGmchJKpzBwBRdeuX3aHqQe/NWBYGyttC/b6ghqCJd6VhpAbI6KG+UOy6le+/+9bZBg5qgP+7r22Hqj3z2TA6JqDEOCi/3szhIv5ASZxrJo1962v0hE8WsX7t70Z6vALgcsSMOiXKPbYMQS4KVMwPm5snt044TKCQeD39yMD45rSgpXQMph7sqVU0E2RXI+bJzkvSqNh+RbrhUof2OJlIvftYotVAMh6QUD2JfZUt+2mmrIJQuVZbeRQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56322f2d-6438-499a-9cba-08d6222cdb92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:31.1669
+X-MS-Exchange-CrossTenant-Network-Message-Id: f10b07e3-7436-4d0a-bed6-08d6222cdedd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:38.0986
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Ilan Peer <ilan.peer@intel.com>
 
-[ Upstream commit c81c7012e0c769b5704c2b07bd5224965e76fb70 ]
+[ Upstream commit 0007e94355fdb71a1cf5dba0754155cba08f0666 ]
 
-Some systems don't have the ping6 binary anymore, and use ping for
-everything. Detect the absence of ping6 and try to use ping instead.
+When performing a channel switch flow for a managed interface, the
+flow did not update the bandwidth of the AP station and the rate
+scale algorithm. In case of a channel width downgrade, this would
+result with the rate scale algorithm using a bandwidth that does not
+match the interface channel configuration.
 
-Fixes: d1f1b9cbf34c ("selftests: net: Introduce first PMTU test")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Acked-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix this by updating the AP station bandwidth and rate scaling algorithm
+before the actual channel change in case of a bandwidth downgrade, or
+after the actual channel change in case of a bandwidth upgrade.
+
+Signed-off-by: Ilan Peer <ilan.peer@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/testing/selftests/net/pmtu.sh | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/mac80211/mlme.c | 53 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/tools/testing/selftests/net/pmtu.sh b/tools/testing/selftests/=
-net/pmtu.sh
-index 0ecf2609b9a4..32a194e3e07a 100755
---- a/tools/testing/selftests/net/pmtu.sh
-+++ b/tools/testing/selftests/net/pmtu.sh
-@@ -46,6 +46,9 @@
- # Kselftest framework requirement - SKIP code is 4.
- ksft_skip=3D4
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index a59187c016e0..22b699460176 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -978,6 +978,10 @@ static void ieee80211_chswitch_work(struct work_struct=
+ *work)
+ 	 */
 =20
-+# Some systems don't have a ping6 binary anymore
-+which ping6 > /dev/null 2>&1 && ping6=3D$(which ping6) || ping6=3D$(which =
-ping)
+ 	if (sdata->reserved_chanctx) {
++		struct ieee80211_supported_band *sband =3D NULL;
++		struct sta_info *mgd_sta =3D NULL;
++		enum ieee80211_sta_rx_bandwidth bw =3D IEEE80211_STA_RX_BW_20;
 +
- tests=3D"
- 	pmtu_vti6_exception		vti6: PMTU exceptions
- 	pmtu_vti4_exception		vti4: PMTU exceptions
-@@ -274,7 +277,7 @@ test_pmtu_vti6_exception() {
- 	mtu "${ns_b}" veth_b 4000
- 	mtu "${ns_a}" vti6_a 5000
- 	mtu "${ns_b}" vti6_b 5000
--	${ns_a} ping6 -q -i 0.1 -w 2 -s 60000 ${vti6_b_addr} > /dev/null
-+	${ns_a} ${ping6} -q -i 0.1 -w 2 -s 60000 ${vti6_b_addr} > /dev/null
+ 		/*
+ 		 * with multi-vif csa driver may call ieee80211_csa_finish()
+ 		 * many times while waiting for other interfaces to use their
+@@ -986,6 +990,48 @@ static void ieee80211_chswitch_work(struct work_struct=
+ *work)
+ 		if (sdata->reserved_ready)
+ 			goto out;
 =20
- 	# Check that exception was created
- 	if [ "$(route_get_dst_pmtu_from_exception "${ns_a}" ${vti6_b_addr})" =3D =
-"" ]; then
++		if (sdata->vif.bss_conf.chandef.width !=3D
++		    sdata->csa_chandef.width) {
++			/*
++			 * For managed interface, we need to also update the AP
++			 * station bandwidth and align the rate scale algorithm
++			 * on the bandwidth change. Here we only consider the
++			 * bandwidth of the new channel definition (as channel
++			 * switch flow does not have the full HT/VHT/HE
++			 * information), assuming that if additional changes are
++			 * required they would be done as part of the processing
++			 * of the next beacon from the AP.
++			 */
++			switch (sdata->csa_chandef.width) {
++			case NL80211_CHAN_WIDTH_20_NOHT:
++			case NL80211_CHAN_WIDTH_20:
++			default:
++				bw =3D IEEE80211_STA_RX_BW_20;
++				break;
++			case NL80211_CHAN_WIDTH_40:
++				bw =3D IEEE80211_STA_RX_BW_40;
++				break;
++			case NL80211_CHAN_WIDTH_80:
++				bw =3D IEEE80211_STA_RX_BW_80;
++				break;
++			case NL80211_CHAN_WIDTH_80P80:
++			case NL80211_CHAN_WIDTH_160:
++				bw =3D IEEE80211_STA_RX_BW_160;
++				break;
++			}
++
++			mgd_sta =3D sta_info_get(sdata, ifmgd->bssid);
++			sband =3D
++				local->hw.wiphy->bands[sdata->csa_chandef.chan->band];
++		}
++
++		if (sdata->vif.bss_conf.chandef.width >
++		    sdata->csa_chandef.width) {
++			mgd_sta->sta.bandwidth =3D bw;
++			rate_control_rate_update(local, sband, mgd_sta,
++						 IEEE80211_RC_BW_CHANGED);
++		}
++
+ 		ret =3D ieee80211_vif_use_reserved_context(sdata);
+ 		if (ret) {
+ 			sdata_info(sdata,
+@@ -996,6 +1042,13 @@ static void ieee80211_chswitch_work(struct work_struc=
+t *work)
+ 			goto out;
+ 		}
+=20
++		if (sdata->vif.bss_conf.chandef.width <
++		    sdata->csa_chandef.width) {
++			mgd_sta->sta.bandwidth =3D bw;
++			rate_control_rate_update(local, sband, mgd_sta,
++						 IEEE80211_RC_BW_CHANGED);
++		}
++
+ 		goto out;
+ 	}
+=20
 --=20
 2.17.1
