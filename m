@@ -2,126 +2,104 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6377AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D25C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27E332083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E332083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B19D821486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N72Ua5PA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19D821486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388499AbeIXSlj (ORCPT
+        id S2388522AbeIXSlq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:41:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58872 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731070AbeIXSli (ORCPT
+        Mon, 24 Sep 2018 14:41:46 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37770 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731070AbeIXSlp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:41:38 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5123E1099;
-        Mon, 24 Sep 2018 12:39:40 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronny Chevalier <ronny.chevalier@hp.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 149/235] audit: fix use-after-free in audit_add_watch
-Date:   Mon, 24 Sep 2018 13:52:15 +0200
-Message-Id: <20180924113120.346534159@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
-References: <20180924113103.999624566@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 14:41:45 -0400
+Received: by mail-it1-f195.google.com with SMTP id h20-v6so10229590itf.2;
+        Mon, 24 Sep 2018 05:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=n0//hVXTNS1DGJH8wyRgkNyLszpkkaC60IjslwhoXow=;
+        b=N72Ua5PARZtldHI2+Tzs/Xo974oQJMFin1JUubv8E5+iQ2D3TgxjqOOB9q0PsAaFBd
+         9D8tZkJKnakq5KDpVRzp3Futy+x7ciMIax8sQiEU+rfTMXvu8f7OCV27e99iJn0vTKf3
+         4evm3oTH6uFglxuGlmVYWHQp3LOOF851goq22R/MBwWS1Rq9PJiHxFRxft5EywN61iCO
+         x6qqjeRGn12EYRkF2azKN3P357by2dyWorwGnFRn9DvHNmn2qK4DTp/OxqXOAV5yTzVw
+         vnDKjRNhMG1JfM+9p4aafgLeYuncimUHP5TgJkY6B3pu8o+4llgCofgDlkuHFFCjy8i/
+         t3Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=n0//hVXTNS1DGJH8wyRgkNyLszpkkaC60IjslwhoXow=;
+        b=UqUk20wfLcpT30KGJ4FS++XXOzEvuvbffbnorNq1sx5uUa22c2uTpFHEHqzCN+RDeB
+         tzFzkQjW7SPhyDzUq18CnLQfs9oawxhw+gJfBKpixKLtPAzUGPCmJTtkXaHBKp/2OHoI
+         Uo40L27qjCqXU7//jAYnNM1Jd08/khkzy87dHQ2JFjncULm0cL/iO9D8zdt2aecHJm2H
+         coRVUtgNFuUynBnTVUIl3F85ONMa5aUv3sehCAMdh/J7MGjyy1M7F4BnrlVFPFn/DES4
+         XisUnEft1lOZPajzxqljID6kSW9QfSr8u2y0gdFYdWRpzDhrxtBMIxJxneSUrvd4ZSVz
+         jVYA==
+X-Gm-Message-State: APzg51DB1H6CMTVavW4f2zIg7lE434cC+srPLEfUEt8ErxE/LLF/Y7dQ
+        1DQWr9YC/ml/DZwP2VtK41vRKRInDEvWPJGgV1c=
+X-Google-Smtp-Source: ANB0VdbyHF9vrWHOBvKfmRaYkYCMJ09wPmFTHVlj9oLV7M+B7sv0Kd+/lUW2N6uVGpYZih2F7gUBbzX2tF++B7ysK6g=
+X-Received: by 2002:a02:c881:: with SMTP id m1-v6mr5532551jao.43.1537792788386;
+ Mon, 24 Sep 2018 05:39:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:7315:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 05:39:08
+ -0700 (PDT)
+In-Reply-To: <375c389d-f391-5b72-bc52-9a82d61c6bd7@gmail.com>
+References: <1537732141-22468-1-git-send-email-laoar.shao@gmail.com> <375c389d-f391-5b72-bc52-9a82d61c6bd7@gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 24 Sep 2018 20:39:08 +0800
+Message-ID: <CALOAHbD00L_dNTp=ETh26Wi+Mw-dKt3_PYq2Pc2oS0GiGxkOXA@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: expose sk_state in tcp_retransmit_skb tracepoint
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Sep 24, 2018 at 5:42 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+> On 09/23/2018 12:49 PM, Yafang Shao wrote:
+>> With sk_state, we can know whether this connection is in SYN_SENT state
+>> or ESTBLISHED state.
+>> The reason to distinguish between these two scenario is that the
+>> retransmission in ESTABLISHED state always mean network congestion while
+>> in SYN_SENT state it always mean server issue, i.e. the syn packet is
+>> dropped due to syn backlog queue full.
+>
+> You mean, a packet drop on the remote peer ?
+>
 
-------------------
+Yes, I mean drop on the remote peer.
 
-From: Ronny Chevalier <ronny.chevalier@hp.com>
+> It could also be a packet drop in the network.
+>
 
-[ Upstream commit baa2a4fdd525c8c4b0f704d20457195b29437839 ]
+Yes of course.
 
-audit_add_watch stores locally krule->watch without taking a reference
-on watch. Then, it calls audit_add_to_parent, and uses the watch stored
-locally.
+> Your patch is good, but changelog is quite misleading.
 
-Unfortunately, it is possible that audit_add_to_parent updates
-krule->watch.
-When it happens, it also drops a reference of watch which
-could free the watch.
-
-How to reproduce (with KASAN enabled):
-
-    auditctl -w /etc/passwd -F success=0 -k test_passwd
-    auditctl -w /etc/passwd -F success=1 -k test_passwd2
-
-The second call to auditctl triggers the use-after-free, because
-audit_to_parent updates krule->watch to use a previous existing watch
-and drops the reference to the newly created watch.
-
-To fix the issue, we grab a reference of watch and we release it at the
-end of the function.
-
-Signed-off-by: Ronny Chevalier <ronny.chevalier@hp.com>
-Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/audit_watch.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -419,6 +419,13 @@ int audit_add_watch(struct audit_krule *
- 	struct path parent_path;
- 	int h, ret = 0;
- 
-+	/*
-+	 * When we will be calling audit_add_to_parent, krule->watch might have
-+	 * been updated and watch might have been freed.
-+	 * So we need to keep a reference of watch.
-+	 */
-+	audit_get_watch(watch);
-+
- 	mutex_unlock(&audit_filter_mutex);
- 
- 	/* Avoid calling path_lookup under audit_filter_mutex. */
-@@ -427,8 +434,10 @@ int audit_add_watch(struct audit_krule *
- 	/* caller expects mutex locked */
- 	mutex_lock(&audit_filter_mutex);
- 
--	if (ret)
-+	if (ret) {
-+		audit_put_watch(watch);
- 		return ret;
-+	}
- 
- 	/* either find an old parent or attach a new one */
- 	parent = audit_find_parent(d_backing_inode(parent_path.dentry));
-@@ -446,6 +455,7 @@ int audit_add_watch(struct audit_krule *
- 	*list = &audit_inode_hash[h];
- error:
- 	path_put(&parent_path);
-+	audit_put_watch(watch);
- 	return ret;
- }
- 
+Will modify the changelog.
 
 
+Thanks
+Yafang
