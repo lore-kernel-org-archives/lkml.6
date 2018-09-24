@@ -2,120 +2,126 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7097C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26903C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5482098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:46:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5482098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D1FFB2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:47:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i01oxOVN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FFB2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732537AbeIXWtV (ORCPT
+        id S1732454AbeIXWuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:49:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39416 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732001AbeIXWtU (ORCPT
+        Mon, 24 Sep 2018 18:50:00 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33493 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729013AbeIXWuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:49:20 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGdGrM017350
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:46:17 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mq167fs48-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:46:17 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 24 Sep 2018 10:46:16 -0600
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 10:46:13 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OGkAt662390474
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 09:46:10 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54767BE053;
-        Mon, 24 Sep 2018 10:46:10 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E9012BE056;
-        Mon, 24 Sep 2018 10:46:06 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 10:46:06 -0600 (MDT)
-Subject: Re: [PATCH v10 00/26] guest dedicated crypto adapters
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <2d877c7c-1c81-bde7-7582-22feff4759bd@de.ibm.com>
- <20180924135308.3fc89eeb.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 24 Sep 2018 12:46:06 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 24 Sep 2018 18:50:00 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so9273837pfn.0;
+        Mon, 24 Sep 2018 09:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/G07YbdXL8jf30XSPS9sydR4znAKgUtQi9Qnks7eL50=;
+        b=i01oxOVNRnasSKDDcwkJ/t1x1p1U89T0ukL21kzOcwhI1Kv36/RPXXW9SawkZLSCZs
+         T0aHARifyfAA1CSH4HNIUkul8zsDm6R/ba0incRfa7qbG99jgCdEIcocoGWiJhzkijXp
+         prmjhKbwGI5BsfgYDCGhynZ+x3c9aTeg4W+krKKiflQhRPCyGf6R9fbOsKJ6WSfodPuW
+         lqE7vMWbRYBacPlGthhA5LMWKBl+q8HebBdgcUAdFOnjRS/IprMCzuZSPeDCSuqQofpC
+         ZozELp9NyAO6oJoHO2bakPfiNGB7g6JxdXJ4CYRU1f3+MTz7pu/3vlfXMXMsd/gANrXV
+         JTUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/G07YbdXL8jf30XSPS9sydR4znAKgUtQi9Qnks7eL50=;
+        b=SqwldTC9g6zxBGTjWFd9ZsR/F5YNuPNKsZtE7ULjR7sa9r5XZkU9Rrb+CNDU2Wx/zt
+         rffXI55K3sZF/67fC2M7uYGA0qhHg4Jr+pjOIB+HxQJIbTbIENFS3MYjCcFaCyJTB5E4
+         +FXnbMjlqbrg/k6Nez7mWDUybAX7Le8KNmAzzkncyWemP0tlQ1S9SC3IuTOJfg7q3un0
+         0ouJRJteutNdZoE++1m252ZIfunsspgcy+NSD9IkNxz70R6KKEn5eJHmRsIRw253rRtw
+         qN1p/0xL4N/ayYlm6bR3DTs3DB0ER1aJcGyZMtP/Czb541pJ0vKFhDoVoXPXs3R7nRzq
+         OUrA==
+X-Gm-Message-State: APzg51AcuTekdts+RShEG5FWucCUWA/vDk7c4CFP8C4HbQM9KbPpo9IG
+        NWKsxfYGaRLYpfRYytCmSGs=
+X-Google-Smtp-Source: ANB0Vdanuv0PGT+yfkBe/uVppNAyklrWD/eMDSB+gZDSGh9HfpCaZn5XxQobAfJZBgG07Nby1VVGjg==
+X-Received: by 2002:a62:7788:: with SMTP id s130-v6mr7214894pfc.189.1537807617578;
+        Mon, 24 Sep 2018 09:46:57 -0700 (PDT)
+Received: from localhost.localdomain ([2607:fb90:a699:bb10:7256:81ff:febd:926d])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm56337202pfi.24.2018.09.24.09.46.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 09:46:56 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 09:46:53 -0700
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/17] thermal: add thermal_zone_device_toggle() helper
+Message-ID: <20180924164651.GC4988@localhost.localdomain>
+References: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180410124248epcas1p453f74df4e183f9d68de255847c093d4e@epcas1p4.samsung.com>
+ <1523364131-31059-2-git-send-email-b.zolnierkie@samsung.com>
+ <20180910171605.GA4196@localhost.localdomain>
+ <0495124b-9ae8-3b4b-5f0c-208d2e06e5a5@samsung.com>
+ <20180917093401eucas1p1f1e0de762a88b1327ba229971996e5da~VJjFwrEK11702417024eucas1p1m@eucas1p1.samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20180924135308.3fc89eeb.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092416-0004-0000-0000-00001490DEA7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01093032; UDB=6.00564900; IPR=6.00873069;
- MB=3.00023484; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:46:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092416-0005-0000-0000-000088EC84CC
-Message-Id: <f0b1f262-03e4-43a3-da1e-3fa816000def@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240163
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180917093401eucas1p1f1e0de762a88b1327ba229971996e5da~VJjFwrEK11702417024eucas1p1m@eucas1p1.samsung.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 07:53 AM, Cornelia Huck wrote:
-> On Mon, 24 Sep 2018 12:10:37 +0200
-> Christian Borntraeger <borntraeger@de.ibm.com> wrote:
-> 
->> FWIW, assuming that review comments for v10 will be addresses in v11, I plan to
->> add the upcoming v11 to a topic branch and will merge that after 2 or 3 days after
->> v11 in kvms390/next.
-> 
-> As said before, I think this looks sane enough to merge with the
-> requested changes.
-> 
->> In the future the vfio-ap driver will likely be handled by
->> Martins s390 tree, so I guess it makes sense for him to merge the upcoming
->> topic branch as well. I will coordinate with Martin.
-> 
-> I assume future patches will still be posted to kvm + linux-s390 for
-> review?
 
-Affirmative
+On Mon, Sep 17, 2018 at 11:33:59AM +0200, Bartlomiej Zolnierkiewicz wrote:
+> 
+> On 09/14/2018 01:40 PM, Bartlomiej Zolnierkiewicz wrote:
+> 
+> [...]
+> 
+> >>> --- a/include/linux/thermal.h
+> >>> +++ b/include/linux/thermal.h
+> >>> @@ -467,6 +467,7 @@ struct thermal_cooling_device *
+> >>>  int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
+> >>>  int thermal_zone_get_slope(struct thermal_zone_device *tz);
+> >>>  int thermal_zone_get_offset(struct thermal_zone_device *tz);
+> >>> +int thermal_zone_device_toggle(struct thermal_zone_device *tz, bool on);
+> >>>  
+> >>
+> >> You missed the #else section of the #if IS_ENABLED(CONFIG_THERMAL),
+> >> didn't you?
+> > 
+> > No, this function shouldn't be used outside of CONFIG_THERMAL.
+> 
+> Please disregard my previous comment. I see now that the CONFIG_THERMAL=n
+> stub is needed and I will add it in the next patch revision.
+
+Thanks Bartolomiej for keeping this up.
 
 > 
-
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
