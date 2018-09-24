@@ -2,114 +2,93 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A002C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1324EECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA802086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:26:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA802086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id CB9B92086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:26:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9B92086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbeIXV3C (ORCPT
+        id S1730384AbeIXV3F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:29:02 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:35751 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728572AbeIXV3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:29:02 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42Jp2L73r7z9ttFK;
-        Mon, 24 Sep 2018 17:26:18 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 8AcFpZkQvBz5; Mon, 24 Sep 2018 17:26:18 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42Jp2L6T6xz9ttCT;
-        Mon, 24 Sep 2018 17:26:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B29278B7B6;
-        Mon, 24 Sep 2018 17:26:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id TI8r2am50Z6R; Mon, 24 Sep 2018 17:26:19 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 796D48B7B2;
-        Mon, 24 Sep 2018 17:26:19 +0200 (CEST)
-Subject: Re: How to define some additional KBUILD_CFLAGS after building
- include/generated/asm-offsets.h ?
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kbuild@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <e1b65467-7497-5db4-aa93-1ad00d12af3f@c-s.fr>
- <87mus75c5m.fsf@concordia.ellerman.id.au>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <56227965-464a-d972-1c25-d6a4d190e1a1@c-s.fr>
-Date:   Mon, 24 Sep 2018 17:26:18 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <87mus75c5m.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Sep 2018 17:29:05 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:44000 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728572AbeIXV3E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:29:04 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g4Skf-0006jc-G4; Mon, 24 Sep 2018 09:26:21 -0600
+Received: from [105.184.227.67] (helo=x220.Home)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g4SkP-00018i-Jc; Mon, 24 Sep 2018 09:26:21 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arch@vger.kernel.org, Guan Xuetao <gxt@pku.edu.cn>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Mon, 24 Sep 2018 17:25:35 +0200
+Message-Id: <20180924152537.19515-1-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <87lg7q2a2w.fsf@xmission.com>
+References: <87lg7q2a2w.fsf@xmission.com>
+X-XM-SPF: eid=1g4SkP-00018i-Jc;;;mid=<20180924152537.19515-1-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19FaO70DWVOhLQeSnawaeCrPtQg5UyAuIk=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [REVIEW][PATCH 1/3] signal/unicore32: Use send_sig_fault where appropriate
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ arch/unicore32/kernel/fpu-ucf64.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
+diff --git a/arch/unicore32/kernel/fpu-ucf64.c b/arch/unicore32/kernel/fpu-ucf64.c
+index 8594b168f25e..fc5dad32a982 100644
+--- a/arch/unicore32/kernel/fpu-ucf64.c
++++ b/arch/unicore32/kernel/fpu-ucf64.c
+@@ -54,14 +54,6 @@
+  */
+ void ucf64_raise_sigfpe(struct pt_regs *regs)
+ {
+-	siginfo_t info;
+-
+-	clear_siginfo(&info);
+-
+-	info.si_signo = SIGFPE;
+-	info.si_code = FPE_FLTUNK;
+-	info.si_addr = (void __user *)(instruction_pointer(regs) - 4);
+-
+ 	/*
+ 	 * This is the same as NWFPE, because it's not clear what
+ 	 * this is used for
+@@ -69,7 +61,9 @@ void ucf64_raise_sigfpe(struct pt_regs *regs)
+ 	current->thread.error_code = 0;
+ 	current->thread.trap_no = 6;
+ 
+-	send_sig_info(SIGFPE, &info, current);
++	send_sig_fault(SIGFPE, FPE_FLTUNK,
++		       (void __user *)(instruction_pointer(regs) - 4),
++		       current);
+ }
+ 
+ /*
+-- 
+2.17.1
 
-Le 24/09/2018 à 14:10, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> 
->> I'm trying to implement TLS based stack protector in the Linux Kernel.
->> For that I need to give to GCC the offset at which it will find the
->> canary (register r2 is pointing to the current task struct).
->>
->> I have been able to do it with the below patch, but it only works when
->> include/generated/asm-offsets.h already exists from the start of the build.
->>
->> Is there a way to evaluate CANARY_OFFSET and add the stack-protector
->> flags to KBUILD_FLAGS only after include/generated/asm-offsets.h is built ?
->>
->> Or another way of add -mstack-protector-guard-offset=offsetof(struct
->> task_struct, stack_canary) ?
-> 
-> This seems to work, at least I see the value in CFLAGS:
-> 
-> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-> index 07d9dce..39ee113 100644
-> --- a/arch/powerpc/Makefile
-> +++ b/arch/powerpc/Makefile
-> @@ -404,6 +394,11 @@ archclean:
->   
->   archprepare: checkbin
->   
-> +prepare: stack_protector_prepare
-> +
-> +stack_protector_prepare: prepare0
-> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TSK_STACK_CANARY") print $$3;}' include/generated/asm-offsets.h))
-> +
-
-Great, it works !
-Thanks, I have sent v3 of the patches.
-
-Christophe
-
->   # Use the file '.tmp_gas_check' for binutils tests, as gas won't output
->   # to stdout and these checks are run even on install targets.
->   TOUT	:= .tmp_gas_check
-> 
-> 
-> cheers
-> 
