@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A1BC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04574ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C938B2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7CCC2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Nk6PygwZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C938B2087A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="YCgox/hw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7CCC2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbeIXVE5 (ORCPT
+        id S1730302AbeIXVFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:04:57 -0400
-Received: from mail-eopbgr690129.outbound.protection.outlook.com ([40.107.69.129]:55616
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Mon, 24 Sep 2018 17:05:08 -0400
+Received: from mail-eopbgr710090.outbound.protection.outlook.com ([40.107.71.90]:26752
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729984AbeIXUvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:51:42 -0400
+        id S1733152AbeIXUvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:51:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j0DImRfd9Qrg6eI03z4TVxYcd7Kd98mH6rBda41Y4+4=;
- b=Nk6PygwZ853ASo6/YjTQN3USLaoF6Gdt3+/Aw2kYA9dNfk2XeBdkDdRcKCRMm7SkSZwcnccosZv154tidCw6R2IZO6652zgNpSWUObPW7NJWjIKd3DMfvJnJtquMW/clU1ugjBIRPJrQz/P6Zc9ROIui2sgzHcE3wu8UWQVvugU=
+ bh=3Q30DVymhR9erNTTBkeAfqE/vW1MjC4YCr5Z6UuGoHY=;
+ b=YCgox/hw3MiWz6D35mvKqMGeFKsHh9Bkh4UdDuOeLFKrF5TSqAmvbVcfLPd72Wx+Wl6QNsAN0eqeY2wW5b/YrfpGk0pt6MJ17+5hN02muJnTmz7tOH3mXZX966wQEcyBaR64YfA7F5t7Qe28TMN81RNJk19mw2y79f3GHHFecaA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
+ CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.2; Mon, 24 Sep 2018 14:49:03 +0000
+ 15.20.1207.5; Mon, 24 Sep 2018 14:48:56 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:49:03 +0000
+ 14:48:56 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+CC:     Shaohua Li <shli@fb.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 61/76] mac80211: Fix station bandwidth setting
- after channel switch
-Thread-Topic: [PATCH AUTOSEL 4.18 61/76] mac80211: Fix station bandwidth
- setting after channel switch
-Thread-Index: AQHUVBWtrDdxhrBvl0qgxxSQHuk5cA==
-Date:   Mon, 24 Sep 2018 14:48:38 +0000
-Message-ID: <20180924144751.164410-60-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 45/76] md/raid5-cache: disable reshape completely
+Thread-Topic: [PATCH AUTOSEL 4.18 45/76] md/raid5-cache: disable reshape
+ completely
+Thread-Index: AQHUVBWoNI3sQnETBEyeVVCZBMZZTQ==
+Date:   Mon, 24 Sep 2018 14:48:29 +0000
+Message-ID: <20180924144751.164410-44-alexander.levin@microsoft.com>
 References: <20180924144751.164410-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -61,141 +58,109 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:BgHyogU/cOpooBZ9nvH2Jr+dgYrevI4VACntI5ToG2wVeUEPjtu8WPzUGC4jyMgwPo/GPiR+hQ68vyk13WcqCcsOg6n9pKG5p33W9fUgIdHaiQN/Rt2WM7VUdfb9dHBii1FUITAosX64AFCtIA8t3NVCcsD2wA2CI3/bGVMKXNc+z8+dzffQG1pjCnHv7KSn2T5mOnO2rnyIAOf/raqzErRRTxQmy5BTxuGWGU8A7JfJ1PGkIA3PXEGVARLMLFZXSTHy0cSUGx8yKGBXeidib4HNnjVaJ68OSgnKbUI77Pvkv0b16t1nGpcCtYCUVDtJTDIZZ6I19tIkvde2Yz8FgaY0REeYdWcmt3019lGOFeiFPr0uaMaJfUHgGweESd+ZMAr41sF+ZQ/Sp+jNxHNpfUrqj+ogEF+xe5h6/lx/Jfce4AhHPmXYxCndu1sPRYTB9h1fFfmuZomMBsR2Xq9EWw==;5:pyb6X4Av3GLux8DjIpvAeI0Vvw8xSxDTtCMAnz7DlrSfWJwu1WjazRuv6FeUc5u+wWy65qmnLCjzRF1szGMDGCXE4LdTkc7rCJBI89qTjRQmywtviJgEr3xNJTmQ58tyGHx5wEAgIlOQNnj8m3JhyzrrsVoS2UWJDCCE/0v+FCg=;7:LDcHJyoNf/lSYjEZlCepl1IgQywR1+yfRdQ7Ur2peWJZ5vzrfB7e5N7hpEA6BkMaCP2oNfti87gcoXiTwTg5Iovi++HoyrJgEOYWyWSQCO9mI//ytwM4HqEWTbsipTsdTza4O5yntk2tCI+MN5aGgPxhokT0ZhfTEmsaZ6Q3HiHlHzBG+BfBKF3rpkIkldUtlRAMnxRQSJNejHRcVY5YCqwYX5bwSgDugsHbsIMHXD7CVt6IR6d4pPNSj34ylsdS
-x-ms-office365-filtering-correlation-id: f10b07e3-7436-4d0a-bed6-08d6222cdedd
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:v50snfBQSl0qZE9ZGuk2nMUX7o6+ATs2oyt47pc9WkvyBsU39XSePG0jXXakfe+P2w4iLQF6jmAkQwNUgKt4Fns0Y1/L25vgkjMYkCSdKWp/2wSOqeeVJDQA8ppSugh1avRF5hgOZZdOWV/7Rkh2MOd1WLKXoaFt1xca4Yffq/gz6YHz0DYwKf4k1xTTxUlB1DXTC+cBgt/aYcBEB+fMlbDvs+IfBPRofNUmQ3ztwOhuBaPgrOHESZE3fQxM1R2WH1WJlYh7ulMMYZx/M2u98v2SJaupR/D4VdOKoFkyTkDrN/cyE8J5RR+qjvHsSEAXGztsMizJJbqbJMFKaPnoHnrbE1NdwNomJQ8zeUEBXfIefTRsoOzUyIN2oYTN1c0cnwX0GIjL9xdfInNOrTiTIzDx8sqGc/DedeXr7kvhj4krtpZEea4nQMj/rX3RNPClcQvU/LVGwBNU6rU6GtjpWg==;5:bpq9G3PUKDYbdYwI+eATxsF0HBclDrP4rKmikr26NHVa3E8MXGV0pwXBjilz+2LY0rreqZO4V6Sf6rbymSdA30uytxR7EvzNRU6O554Pxf4PnlaznOF3vl+C4LEePRqts2dDuYEV7nsWl+GPd4vT2d8UydXUCBaXKulF7oCK3Pk=;7:OO9UaC+6UA9LIX4+MvyKsRnYyodu5kiBznQRhTLdB8GwrIQhSDoE9Z28PfFGrMyJ6FF7uH7TfZIhD/jj5T/tAmHr83jfgAbV11BdffqtjSIw5eFw4zUE+lpM6gmV9BzWSuE0/DgzCpPX6KdjbTbqrZqenmBjtrdW2dWyKvtWxnd39qa/5Qf8r889z+ffjjQaMTRstAnu/odqt1eYiFPDI3eWjjKb4TtvSSBBtf9lsfj4YAeciHnZKVnBjYzpLKgP
+x-ms-office365-filtering-correlation-id: 919f95e8-65e2-4fd2-9b65-08d6222cdad8
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
-x-ms-traffictypediagnostic: CY4PR21MB0744:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
+x-ms-traffictypediagnostic: CY4PR21MB0855:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB07443B9D9C2E9A371ABF3488FB170@CY4PR21MB0744.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0855FCDC294404861D88F19FFB170@CY4PR21MB0855.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(67672495146484)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(39860400002)(376002)(366004)(189003)(199004)(11346002)(446003)(476003)(86362001)(186003)(81166006)(6506007)(8676002)(81156014)(6666003)(5660300001)(486006)(99286004)(53936002)(305945005)(6512007)(6436002)(2616005)(71200400001)(71190400001)(68736007)(6486002)(102836004)(10090500001)(7736002)(36756003)(97736004)(86612001)(316002)(3846002)(6116002)(1076002)(217873002)(14444005)(256004)(54906003)(110136005)(107886003)(10290500003)(4326008)(478600001)(22452003)(5250100002)(26005)(8936002)(2906002)(2501003)(2900100001)(66066001)(72206003)(105586002)(14454004)(76176011)(25786009)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(486006)(81166006)(6436002)(110136005)(54906003)(10290500003)(6666003)(86362001)(446003)(6486002)(68736007)(2900100001)(86612001)(476003)(6512007)(1076002)(2616005)(305945005)(81156014)(105586002)(10090500001)(14454004)(71200400001)(106356001)(316002)(7736002)(71190400001)(478600001)(11346002)(6116002)(8936002)(5660300001)(3846002)(72206003)(97736004)(8676002)(6506007)(25786009)(36756003)(66066001)(2906002)(5250100002)(76176011)(26005)(14444005)(217873002)(107886003)(186003)(256004)(102836004)(22452003)(2501003)(99286004)(53936002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: Ak5pM9fO2tXgyyLavdTZeQEHtarTKTehRBND+LzRO4L8VLjYPh8sBFHhvhrK+RaAiqBPTV/jIW4eyTVprpeYKAyZ32wINlcctnd6+xs3R53T8saHIkPbGmchJKpzBwBRdeuX3aHqQe/NWBYGyttC/b6ghqCJd6VhpAbI6KG+UOy6le+/+9bZBg5qgP+7r22Hqj3z2TA6JqDEOCi/3szhIv5ASZxrJo1962v0hE8WsX7t70Z6vALgcsSMOiXKPbYMQS4KVMwPm5snt044TKCQeD39yMD45rSgpXQMph7sqVU0E2RXI+bJzkvSqNh+RbrhUof2OJlIvftYotVAMh6QUD2JfZUt+2mmrIJQuVZbeRQ=
+x-microsoft-antispam-message-info: PxbYCZ/Xj0WWizy/Vjy3CJ9OJYEaW3OeGjqwALZBnJGGefTMXblZu+2D+cly2i8T005N6f4x6fV17gHVh0iud5D+H9VZgYluEDydzM+WX3pV3fuAnD0Mmpm3GkqbCavfhG1wc7A9ZxTLQH5QDbmc6t02CMojJ41vITf3EeSwMIwUi9tr4t6daGhwioi1+ZyCoVe5gzz7ZVhXLm9Jglp2RQi0kU0LEYOZm7lqkK7vrwHWICuiQYIut/MmJE8sfWu6DuQ0DZD3udSasdqHrDJMD0ddVHekbTgTmKn+DxqKLZbvJdtA7mxCt0gQvq2xpfYbK8IT7ksWZHflcc54pE+iPTFZn6GmlAgZ32TmOvYFWKY=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f10b07e3-7436-4d0a-bed6-08d6222cdedd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:38.0986
+X-MS-Exchange-CrossTenant-Network-Message-Id: 919f95e8-65e2-4fd2-9b65-08d6222cdad8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:29.6526
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Shaohua Li <shli@fb.com>
 
-[ Upstream commit 0007e94355fdb71a1cf5dba0754155cba08f0666 ]
+[ Upstream commit e254de6bcf3f5b6e78a92ac95fb91acef8adfe1a ]
 
-When performing a channel switch flow for a managed interface, the
-flow did not update the bandwidth of the AP station and the rate
-scale algorithm. In case of a channel width downgrade, this would
-result with the rate scale algorithm using a bandwidth that does not
-match the interface channel configuration.
+We don't support reshape yet if an array supports log device. Previously we
+determine the fact by checking ->log. However, ->log could be NULL after a =
+log
+device is removed, but the array is still marked to support log device. Don=
+'t
+allow reshape in this case too. User can disable log device support by sett=
+ing
+'consistency_policy' to 'resync' then do reshape.
 
-Fix this by updating the AP station bandwidth and rate scaling algorithm
-before the actual channel change in case of a bandwidth downgrade, or
-after the actual channel change in case of a bandwidth upgrade.
-
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reported-by: Xiao Ni <xni@redhat.com>
+Tested-by: Xiao Ni <xni@redhat.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- net/mac80211/mlme.c | 53 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ drivers/md/raid5-log.h | 5 +++++
+ drivers/md/raid5.c     | 6 +++---
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index a59187c016e0..22b699460176 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -978,6 +978,10 @@ static void ieee80211_chswitch_work(struct work_struct=
- *work)
- 	 */
+diff --git a/drivers/md/raid5-log.h b/drivers/md/raid5-log.h
+index a001808a2b77..bfb811407061 100644
+--- a/drivers/md/raid5-log.h
++++ b/drivers/md/raid5-log.h
+@@ -46,6 +46,11 @@ extern int ppl_modify_log(struct r5conf *conf, struct md=
+_rdev *rdev, bool add);
+ extern void ppl_quiesce(struct r5conf *conf, int quiesce);
+ extern int ppl_handle_flush_request(struct r5l_log *log, struct bio *bio);
 =20
- 	if (sdata->reserved_chanctx) {
-+		struct ieee80211_supported_band *sband =3D NULL;
-+		struct sta_info *mgd_sta =3D NULL;
-+		enum ieee80211_sta_rx_bandwidth bw =3D IEEE80211_STA_RX_BW_20;
++static inline bool raid5_has_log(struct r5conf *conf)
++{
++	return test_bit(MD_HAS_JOURNAL, &conf->mddev->flags);
++}
 +
- 		/*
- 		 * with multi-vif csa driver may call ieee80211_csa_finish()
- 		 * many times while waiting for other interfaces to use their
-@@ -986,6 +990,48 @@ static void ieee80211_chswitch_work(struct work_struct=
- *work)
- 		if (sdata->reserved_ready)
- 			goto out;
+ static inline bool raid5_has_ppl(struct r5conf *conf)
+ {
+ 	return test_bit(MD_HAS_PPL, &conf->mddev->flags);
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 49107c52c8e6..9050bfc71309 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -735,7 +735,7 @@ static bool stripe_can_batch(struct stripe_head *sh)
+ {
+ 	struct r5conf *conf =3D sh->raid_conf;
 =20
-+		if (sdata->vif.bss_conf.chandef.width !=3D
-+		    sdata->csa_chandef.width) {
-+			/*
-+			 * For managed interface, we need to also update the AP
-+			 * station bandwidth and align the rate scale algorithm
-+			 * on the bandwidth change. Here we only consider the
-+			 * bandwidth of the new channel definition (as channel
-+			 * switch flow does not have the full HT/VHT/HE
-+			 * information), assuming that if additional changes are
-+			 * required they would be done as part of the processing
-+			 * of the next beacon from the AP.
-+			 */
-+			switch (sdata->csa_chandef.width) {
-+			case NL80211_CHAN_WIDTH_20_NOHT:
-+			case NL80211_CHAN_WIDTH_20:
-+			default:
-+				bw =3D IEEE80211_STA_RX_BW_20;
-+				break;
-+			case NL80211_CHAN_WIDTH_40:
-+				bw =3D IEEE80211_STA_RX_BW_40;
-+				break;
-+			case NL80211_CHAN_WIDTH_80:
-+				bw =3D IEEE80211_STA_RX_BW_80;
-+				break;
-+			case NL80211_CHAN_WIDTH_80P80:
-+			case NL80211_CHAN_WIDTH_160:
-+				bw =3D IEEE80211_STA_RX_BW_160;
-+				break;
-+			}
-+
-+			mgd_sta =3D sta_info_get(sdata, ifmgd->bssid);
-+			sband =3D
-+				local->hw.wiphy->bands[sdata->csa_chandef.chan->band];
-+		}
-+
-+		if (sdata->vif.bss_conf.chandef.width >
-+		    sdata->csa_chandef.width) {
-+			mgd_sta->sta.bandwidth =3D bw;
-+			rate_control_rate_update(local, sband, mgd_sta,
-+						 IEEE80211_RC_BW_CHANGED);
-+		}
-+
- 		ret =3D ieee80211_vif_use_reserved_context(sdata);
- 		if (ret) {
- 			sdata_info(sdata,
-@@ -996,6 +1042,13 @@ static void ieee80211_chswitch_work(struct work_struc=
-t *work)
- 			goto out;
- 		}
+-	if (conf->log || raid5_has_ppl(conf))
++	if (raid5_has_log(conf) || raid5_has_ppl(conf))
+ 		return false;
+ 	return test_bit(STRIPE_BATCH_READY, &sh->state) &&
+ 		!test_bit(STRIPE_BITMAP_PENDING, &sh->state) &&
+@@ -7739,7 +7739,7 @@ static int raid5_resize(struct mddev *mddev, sector_t=
+ sectors)
+ 	sector_t newsize;
+ 	struct r5conf *conf =3D mddev->private;
 =20
-+		if (sdata->vif.bss_conf.chandef.width <
-+		    sdata->csa_chandef.width) {
-+			mgd_sta->sta.bandwidth =3D bw;
-+			rate_control_rate_update(local, sband, mgd_sta,
-+						 IEEE80211_RC_BW_CHANGED);
-+		}
-+
- 		goto out;
- 	}
+-	if (conf->log || raid5_has_ppl(conf))
++	if (raid5_has_log(conf) || raid5_has_ppl(conf))
+ 		return -EINVAL;
+ 	sectors &=3D ~((sector_t)conf->chunk_sectors - 1);
+ 	newsize =3D raid5_size(mddev, sectors, mddev->raid_disks);
+@@ -7790,7 +7790,7 @@ static int check_reshape(struct mddev *mddev)
+ {
+ 	struct r5conf *conf =3D mddev->private;
 =20
+-	if (conf->log || raid5_has_ppl(conf))
++	if (raid5_has_log(conf) || raid5_has_ppl(conf))
+ 		return -EINVAL;
+ 	if (mddev->delta_disks =3D=3D 0 &&
+ 	    mddev->new_layout =3D=3D mddev->layout &&
 --=20
 2.17.1
