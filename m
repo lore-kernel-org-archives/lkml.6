@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC15ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C747ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0363220877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0363220877
+	by mail.kernel.org (Postfix) with ESMTP id 1D7CF20877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D7CF20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731155AbeIXSIX (ORCPT
+        id S1731161AbeIXSI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:08:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54112 "EHLO
+        Mon, 24 Sep 2018 14:08:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730115AbeIXSIX (ORCPT
+        with ESMTP id S1729023AbeIXSI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:08:23 -0400
+        Mon, 24 Sep 2018 14:08:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F56D1084;
-        Mon, 24 Sep 2018 12:06:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A0EB107B;
+        Mon, 24 Sep 2018 12:06:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Lee Jones <lee.jones@linaro.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 091/111] gpiolib: Mark gpio_suffixes array with __maybe_unused
-Date:   Mon, 24 Sep 2018 13:52:58 +0200
-Message-Id: <20180924113113.873195154@linuxfoundation.org>
+Subject: [PATCH 4.9 092/111] mfd: 88pm860x-i2c: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+Date:   Mon, 24 Sep 2018 13:52:59 +0200
+Message-Id: <20180924113113.978570347@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -53,43 +53,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Peter Rosin <peda@axentia.se>
 
-[ Upstream commit b23ec59926faf05b0c43680d05671c484e810ac4 ]
+[ Upstream commit 8c8f74f327a76604a499fad8c54c15e1c0ee8051 ]
 
-Since we put static variable to a header file it's copied to each module
-that includes the header. But not all of them are actually used it.
+Locking the root adapter for __i2c_transfer will deadlock if the
+device sits behind a mux-locked I2C mux. Switch to the finer-grained
+i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
+sit behind a mux-locked mux, the two locking variants are equivalent.
 
-Mark gpio_suffixes array with __maybe_unused to hide a compiler warning:
-
-In file included from
-drivers/gpio/gpiolib-legacy.c:6:0:
-drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
- static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-                           ^~~~~~~~~~~~~
-In file included from drivers/gpio/gpiolib-devprop.c:17:0:
-drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
- static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-                           ^~~~~~~~~~~~~
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpiolib.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/88pm860x-i2c.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -85,7 +85,7 @@ struct acpi_gpio_info {
- };
+--- a/drivers/mfd/88pm860x-i2c.c
++++ b/drivers/mfd/88pm860x-i2c.c
+@@ -146,14 +146,14 @@ int pm860x_page_reg_write(struct i2c_cli
+ 	unsigned char zero;
+ 	int ret;
  
- /* gpio suffixes used for ACPI and device tree lookup */
--static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-+static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
+-	i2c_lock_adapter(i2c->adapter);
++	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
+ 	read_device(i2c, 0xFA, 0, &zero);
+ 	read_device(i2c, 0xFB, 0, &zero);
+ 	read_device(i2c, 0xFF, 0, &zero);
+ 	ret = write_device(i2c, reg, 1, &data);
+ 	read_device(i2c, 0xFE, 0, &zero);
+ 	read_device(i2c, 0xFC, 0, &zero);
+-	i2c_unlock_adapter(i2c->adapter);
++	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(pm860x_page_reg_write);
+@@ -164,14 +164,14 @@ int pm860x_page_bulk_read(struct i2c_cli
+ 	unsigned char zero = 0;
+ 	int ret;
  
- #ifdef CONFIG_OF_GPIO
- struct gpio_desc *of_find_gpio(struct device *dev,
+-	i2c_lock_adapter(i2c->adapter);
++	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
+ 	read_device(i2c, 0xfa, 0, &zero);
+ 	read_device(i2c, 0xfb, 0, &zero);
+ 	read_device(i2c, 0xff, 0, &zero);
+ 	ret = read_device(i2c, reg, count, buf);
+ 	read_device(i2c, 0xFE, 0, &zero);
+ 	read_device(i2c, 0xFC, 0, &zero);
+-	i2c_unlock_adapter(i2c->adapter);
++	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(pm860x_page_bulk_read);
 
 
