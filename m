@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575B7C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E6EECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111EA208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111EA208D9
+	by mail.kernel.org (Postfix) with ESMTP id 45028208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:19:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45028208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732726AbeIXSUx (ORCPT
+        id S1732641AbeIXSUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:20:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56214 "EHLO
+        Mon, 24 Sep 2018 14:20:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730221AbeIXSUw (ORCPT
+        with ESMTP id S1730063AbeIXSU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:20:52 -0400
+        Mon, 24 Sep 2018 14:20:29 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 669E61087;
-        Mon, 24 Sep 2018 12:19:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8BF2E1087;
+        Mon, 24 Sep 2018 12:18:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        James Morris <james.morris@microsoft.com>,
+        stable@vger.kernel.org, Ronny Chevalier <ronny.chevalier@hp.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 116/173] security: check for kstrdup() failure in lsm_append()
-Date:   Mon, 24 Sep 2018 13:52:30 +0200
-Message-Id: <20180924113124.591086636@linuxfoundation.org>
+Subject: [PATCH 4.14 110/173] audit: fix use-after-free in audit_add_watch
+Date:   Mon, 24 Sep 2018 13:52:24 +0200
+Message-Id: <20180924113124.143684211@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,31 +53,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Ronny Chevalier <ronny.chevalier@hp.com>
 
-[ Upstream commit 87ea58433208d17295e200d56be5e2a4fe4ce7d6 ]
+[ Upstream commit baa2a4fdd525c8c4b0f704d20457195b29437839 ]
 
-lsm_append() should return -ENOMEM if memory allocation failed.
+audit_add_watch stores locally krule->watch without taking a reference
+on watch. Then, it calls audit_add_to_parent, and uses the watch stored
+locally.
 
-Fixes: d69dece5f5b6 ("LSM: Add /sys/kernel/security/lsm")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Unfortunately, it is possible that audit_add_to_parent updates
+krule->watch.
+When it happens, it also drops a reference of watch which
+could free the watch.
+
+How to reproduce (with KASAN enabled):
+
+    auditctl -w /etc/passwd -F success=0 -k test_passwd
+    auditctl -w /etc/passwd -F success=1 -k test_passwd2
+
+The second call to auditctl triggers the use-after-free, because
+audit_to_parent updates krule->watch to use a previous existing watch
+and drops the reference to the newly created watch.
+
+To fix the issue, we grab a reference of watch and we release it at the
+end of the function.
+
+Signed-off-by: Ronny Chevalier <ronny.chevalier@hp.com>
+Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/security.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/audit_watch.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/security/security.c
-+++ b/security/security.c
-@@ -111,6 +111,8 @@ static int lsm_append(char *new, char **
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -419,6 +419,13 @@ int audit_add_watch(struct audit_krule *
+ 	struct path parent_path;
+ 	int h, ret = 0;
  
- 	if (*result == NULL) {
- 		*result = kstrdup(new, GFP_KERNEL);
-+		if (*result == NULL)
-+			return -ENOMEM;
- 	} else {
- 		/* Check if it is the last registered name */
- 		if (match_last_lsm(*result, new))
++	/*
++	 * When we will be calling audit_add_to_parent, krule->watch might have
++	 * been updated and watch might have been freed.
++	 * So we need to keep a reference of watch.
++	 */
++	audit_get_watch(watch);
++
+ 	mutex_unlock(&audit_filter_mutex);
+ 
+ 	/* Avoid calling path_lookup under audit_filter_mutex. */
+@@ -427,8 +434,10 @@ int audit_add_watch(struct audit_krule *
+ 	/* caller expects mutex locked */
+ 	mutex_lock(&audit_filter_mutex);
+ 
+-	if (ret)
++	if (ret) {
++		audit_put_watch(watch);
+ 		return ret;
++	}
+ 
+ 	/* either find an old parent or attach a new one */
+ 	parent = audit_find_parent(d_backing_inode(parent_path.dentry));
+@@ -446,6 +455,7 @@ int audit_add_watch(struct audit_krule *
+ 	*list = &audit_inode_hash[h];
+ error:
+ 	path_put(&parent_path);
++	audit_put_watch(watch);
+ 	return ret;
+ }
+ 
 
 
