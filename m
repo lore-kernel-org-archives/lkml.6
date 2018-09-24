@@ -2,113 +2,100 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDC0C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CA4ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F12208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:28:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C280F2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 17:28:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="iX+J+F2t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F12208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKmoLM7M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C280F2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733058AbeIXXbM (ORCPT
+        id S1733099AbeIXXb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 19:31:12 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42601 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730757AbeIXXbM (ORCPT
+        Mon, 24 Sep 2018 19:31:27 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55070 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731112AbeIXXb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 19:31:12 -0400
-Received: by mail-lf1-f66.google.com with SMTP id d7-v6so13666327lfj.9
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:27:59 -0700 (PDT)
+        Mon, 24 Sep 2018 19:31:26 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c14-v6so10569585wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 10:28:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ck+Bs5O5KrPMYTrMeKJvm6RRH1RAHraGf2E2IilE4Ck=;
-        b=iX+J+F2tBCVZXCHbcSwS/7Y+yurCAACgXnw3AQDe+M5uBKa817OkkOfbpaFhvkk8vT
-         WNqSb4O5uV45B0ASHl0+VEgKtPPzhdNjBUh0egiRj2aWlY3osqlgJocIxs3w5853/qgm
-         /5Jyik7eUySRpTDeIOiETxZZffhDN9Zt4itlB0BPEU8mapMezxT3+x/bNDvlo6VfNazH
-         cRTeCLdb/BnNGm4hF3noDfgHgJUWR/eWnCtvAu71lOkFtb3WU8xYIsm1hvSMPmOD0mTw
-         xtDBV5G497JpQUlAk3qtrpFAZ+PUYUS9TtcMFh3HvW1t7LNHCjum74l1K/SO1XbIZfoZ
-         N+Xw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=vj5VqA2W2+hI6VJv2mKddEJ6rEF/4aE/EnvQDnAU2Fw=;
+        b=EKmoLM7MKwSbrY66l80ju9bXu6sRbup9fGkD9/p2qb1hQrJ+vN7fvcFrtVUy1OlFzG
+         4wx9UgXcMsPXP10p7l0opN3ijUEZff3K0jMJFsS+UHNHZmewfiTJZVBhK+KmACeZR8GO
+         4rFkD8Go079uJdNXVwUPH+Q3QNTjEXGjz/3fqWuHTVGp2/nVZML10e/i8NHv+gjUESON
+         lGS1/Qc67pVtpNvmVQ8jakKkWELE1lRy/J1sjcQoYsZI6Le5jSinvU89MnFeihFagm0f
+         sryesvzKo2HaUl1bQKD5aw11FAJZBAvuI5IUUInCzzbOeQoZt7xcVPZScgPBphL/I2j4
+         l9Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ck+Bs5O5KrPMYTrMeKJvm6RRH1RAHraGf2E2IilE4Ck=;
-        b=YCDALJtFHIibAWmfex+VDFpBiQkKjmHqXMSkfMqMZNE5lbuRge6jU2O8dguBzK4bYE
-         IjBBCl3UNtxJDtP2xnQhq2mqWkjYGgKfy12HO4igPbpZB7Xxi88B75w1X+zXWCvfQS9P
-         AJXS87RIAkhBG/UrGVG3uonjMYjjqYOzbeM4R9LNC78SD2YCkUwlRmbdw9pjLgVw1yag
-         rd2p/XyN6eo6aY2p/4y4Sag+smaRR8m4R76qpGzYVmN2AcHBc5ALfNk2Wy2Sa1W9P1/P
-         Aeic8UQlspobsGpjB2tN3MC8uIh+o3PBf5M0GNt8LnsJjH2+e6vyJXBrE5fbcSRDlWg6
-         lDJw==
-X-Gm-Message-State: APzg51ClqC5ffboiD/CzMBoe8JhiZx+WllgS7eoLCVjcIvki8UQSujvE
-        YDJpwfxI6ZhxaiiUIt21vk1sXNzZXjI=
-X-Google-Smtp-Source: ANB0VdZE61eapZZXfgUmNtzQ4zdeCRc0IzkZ6KWQtHJG/tPVSk13WXfGhj/Ie54TAL13DTvBfb6/Tg==
-X-Received: by 2002:a19:c396:: with SMTP id t144-v6mr7375338lff.7.1537810077981;
-        Mon, 24 Sep 2018 10:27:57 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.87.133])
-        by smtp.gmail.com with ESMTPSA id i186-v6sm806153lfe.41.2018.09.24.10.27.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 10:27:56 -0700 (PDT)
-Subject: Re: [PATCH] wimax/i2400m: fix spelling mistake "unitialized" ->
- "uninitialized"
-To:     Colin King <colin.king@canonical.com>,
-        Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
-        linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180924171853.3294-1-colin.king@canonical.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <db8575a7-a4ab-3234-3e59-06cdeffe0f59@cogentembedded.com>
-Date:   Mon, 24 Sep 2018 20:27:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180924171853.3294-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=vj5VqA2W2+hI6VJv2mKddEJ6rEF/4aE/EnvQDnAU2Fw=;
+        b=R8DcNIKCjstFuU69GSufwGP67hrrd/aGM+yAQtgiLG/ixSto+KwdRX5GvwF1+fI5t4
+         cei5sqzRq0ypvKt2jen+33Kj7s6v1SsaoTsePd48Opbi7/Y0uSowrBmG/WzCMfVluwE7
+         J9QPJ7sKBjACNwgSmVoyJhDYuQ/IFxmPEM8oHO1mlxmzAwjf+iUQMmxTBTUgmEC/bSKh
+         mICFh5U7S/asKEdA7HJySVGpunD+pwMbj+jP1G1zd7WHODRzwO4+2RIqPjfW3w89ZNhN
+         8U2imCFY8bzld0ERQKgRcoABfAILgw6WkfMIWgVKyFmefD8uylCj7egdiufPnLGFO46b
+         AhFQ==
+X-Gm-Message-State: ABuFfojQqOCDRDG8nOfvSHX3eZm1yNIu0jkskwYT4d7prd+ndVfBx49e
+        ikcpAaz4ExzvBn5nBvuNlnw=
+X-Google-Smtp-Source: ACcGV60UHyyeE0V+jYOooyaE5ZiJR6tIuQ4tH6Cn5yFgTcePRMl+XxRuSbORHXxCNITicSuV7qjepA==
+X-Received: by 2002:a1c:9816:: with SMTP id a22-v6mr2799148wme.54.1537810092811;
+        Mon, 24 Sep 2018 10:28:12 -0700 (PDT)
+Received: from localhost.co.uk ([2a01:388:3ce:110::1:c])
+        by smtp.gmail.com with ESMTPSA id y206-v6sm15998258wmg.14.2018.09.24.10.28.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 10:28:12 -0700 (PDT)
+From:   Aymen Qader <qader.aymen@gmail.com>
+Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] staging: vc04_services: Fix checkpatch.pl errors
+Date:   Mon, 24 Sep 2018 18:27:39 +0100
+Message-Id: <20180924172743.21153-1-qader.aymen@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180923140620.14583-1-qader.aymen@gmail.com>
+References: <20180923140620.14583-1-qader.aymen@gmail.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 08:18 PM, Colin King wrote:
+This patchset fixes the following checkpatch.pl errors in the
+interface/vchi directory:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in ms_to_errno array of error messages
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wimax/i2400m/control.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wimax/i2400m/control.c b/drivers/net/wimax/i2400m/control.c
-> index 094cea775d0c..0475ad553707 100644
-> --- a/drivers/net/wimax/i2400m/control.c
-> +++ b/drivers/net/wimax/i2400m/control.c
-> @@ -257,7 +257,7 @@ static const struct
->  	[I2400M_MS_ACCESSIBILITY_ERROR] = { "accesibility error", -EIO },
->  	[I2400M_MS_BUSY] = { "busy", -EBUSY },
->  	[I2400M_MS_CORRUPTED_TLV] = { "corrupted TLV", -EILSEQ },
-> -	[I2400M_MS_UNINITIALIZED] = { "not unitialized", -EILSEQ },
-> +	[I2400M_MS_UNINITIALIZED] = { "not uninitialized", -EILSEQ },
+ERROR: space prohibited after/before that open/closed parenthesis
+ERROR: code indent should use tabs where possible
+ERROR: space required after that ','
+ERROR: Macros with complex values should be enclosed in parentheses
+ERROR: "foo * bar" should be "foo* bar"
 
-   I suspect they rather meant "not initialized".
+Aymen Qader (4):
+  staging: vc04_services: Fix "space prohibited"
+  staging: vc04_services: Use tabs instead of spaces
+  staging: vc04_services: Remove unused macros
+  staging: vc04_services: Remove spaces after '*'
 
-[...]
+ .../vc04_services/interface/vchi/vchi.h       | 208 +++++++-----------
+ .../vc04_services/interface/vchi/vchi_cfg.h   |   2 +-
+ 2 files changed, 86 insertions(+), 124 deletions(-)
 
-MBR, Sergei
+-- 
+2.17.1
+
