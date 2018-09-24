@@ -3,229 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9755CECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14849ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42EF3208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:03:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42EF3208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 95A0A208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A0A208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbeIXPED (ORCPT
+        id S1728412AbeIXPGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:04:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41622 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727435AbeIXPEC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:04:02 -0400
-X-UUID: f7b8c71eede244629ddca47a934e8087-20180924
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 617550321; Mon, 24 Sep 2018 17:02:55 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 24 Sep 2018 17:02:53 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 24 Sep 2018 17:02:46 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
-        Daniel Kurtz <djkurtz@google.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
-        <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
-        <youlin.pei@mediatek.com>
-Subject: [PATCH v2 14/14] iommu/mediatek: Switch to SPDX license identifier
-Date:   Mon, 24 Sep 2018 16:58:54 +0800
-Message-ID: <1537779534-23575-15-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1537779534-23575-1-git-send-email-yong.wu@mediatek.com>
-References: <1537779534-23575-1-git-send-email-yong.wu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Mon, 24 Sep 2018 11:06:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55532 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727435AbeIXPGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:06:06 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BB06E208A1; Mon, 24 Sep 2018 11:05:00 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8E48B207CA;
+        Mon, 24 Sep 2018 11:05:00 +0200 (CEST)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     gregory.clement@bootlin.com, andrew@lunn.ch,
+        sebastian.hesselbarth@gmail.com, jason@lakedaemon.net
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com
+Subject: [PATCH 1/2] arm64: dts: marvell: armada-cp110: change the PPv2 IRQ names
+Date:   Mon, 24 Sep 2018 11:00:01 +0200
+Message-Id: <20180924090002.27939-1-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to SPDX license identifier for MediaTek iommu/smi and their
-header files.
+This patch changes the PPv2 IRQ names in the CP110 device tree to match
+a corresponding change in the Marvell PPv2 driver. The reason this was
+updated is the IRQ where names after Tx/Rx interrupts, but this is not
+true and can be configured. A following patch will add more of them and
+the names wouldn't make sense.
 
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/iommu/mtk_iommu.c                     | 10 +---------
- drivers/iommu/mtk_iommu.h                     | 10 +---------
- drivers/iommu/mtk_iommu_v1.c                  | 10 +---------
- drivers/memory/mtk-smi.c                      | 10 +---------
- include/dt-bindings/memory/mt2701-larb-port.h | 10 +---------
- include/dt-bindings/memory/mt8173-larb-port.h | 10 +---------
- include/soc/mediatek/smi.h                    | 10 +---------
- 7 files changed, 7 insertions(+), 63 deletions(-)
+ arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index fb8aefc..ab42b60 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -1,15 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015-2016 MediaTek Inc.
-  * Author: Yong Wu <yong.wu@mediatek.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/bootmem.h>
- #include <linux/bug.h>
-diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
-index dfe9a07..d8bfba5 100644
---- a/drivers/iommu/mtk_iommu.h
-+++ b/drivers/iommu/mtk_iommu.h
-@@ -1,15 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2015-2016 MediaTek Inc.
-  * Author: Honghui Zhang <honghui.zhang@mediatek.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #ifndef _MTK_IOMMU_H_
-diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-index 676c029..f477300 100644
---- a/drivers/iommu/mtk_iommu_v1.c
-+++ b/drivers/iommu/mtk_iommu_v1.c
-@@ -1,17 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015-2016 MediaTek Inc.
-  * Author: Honghui Zhang <honghui.zhang@mediatek.com>
-  *
-  * Based on driver/iommu/mtk_iommu.c
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/bootmem.h>
- #include <linux/bug.h>
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index e0265fe..30a3e00 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -1,15 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015-2016 MediaTek Inc.
-  * Author: Yong Wu <yong.wu@mediatek.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/clk.h>
- #include <linux/component.h>
-diff --git a/include/dt-bindings/memory/mt2701-larb-port.h b/include/dt-bindings/memory/mt2701-larb-port.h
-index 6764d74..c511f0f 100644
---- a/include/dt-bindings/memory/mt2701-larb-port.h
-+++ b/include/dt-bindings/memory/mt2701-larb-port.h
-@@ -1,15 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2015 MediaTek Inc.
-  * Author: Honghui Zhang <honghui.zhang@mediatek.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #ifndef _MT2701_LARB_PORT_H_
-diff --git a/include/dt-bindings/memory/mt8173-larb-port.h b/include/dt-bindings/memory/mt8173-larb-port.h
-index 111b4b0..a62bfeb 100644
---- a/include/dt-bindings/memory/mt8173-larb-port.h
-+++ b/include/dt-bindings/memory/mt8173-larb-port.h
-@@ -1,15 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2015-2016 MediaTek Inc.
-  * Author: Yong Wu <yong.wu@mediatek.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef __DTS_IOMMU_PORT_MT8173_H
- #define __DTS_IOMMU_PORT_MT8173_H
-diff --git a/include/soc/mediatek/smi.h b/include/soc/mediatek/smi.h
-index 5201e90..2b410d2 100644
---- a/include/soc/mediatek/smi.h
-+++ b/include/soc/mediatek/smi.h
-@@ -1,15 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2015-2016 MediaTek Inc.
-  * Author: Yong Wu <yong.wu@mediatek.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #ifndef MTK_IOMMU_SMI_H
- #define MTK_IOMMU_SMI_H
+diff --git a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
+index 840c8454d03e..6a13690cf1e4 100644
+--- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
+@@ -53,8 +53,8 @@
+ 					<ICU_GRP_NSR 51 IRQ_TYPE_LEVEL_HIGH>,
+ 					<ICU_GRP_NSR 55 IRQ_TYPE_LEVEL_HIGH>,
+ 					<ICU_GRP_NSR 129 IRQ_TYPE_LEVEL_HIGH>;
+-				interrupt-names = "tx-cpu0", "tx-cpu1", "tx-cpu2",
+-					"tx-cpu3", "rx-shared", "link";
++				interrupt-names = "hif0", "hif1", "hif2",
++					"hif3", "hif4", "link";
+ 				port-id = <0>;
+ 				gop-port-id = <0>;
+ 				status = "disabled";
+@@ -67,8 +67,8 @@
+ 					<ICU_GRP_NSR 52 IRQ_TYPE_LEVEL_HIGH>,
+ 					<ICU_GRP_NSR 56 IRQ_TYPE_LEVEL_HIGH>,
+ 					<ICU_GRP_NSR 128 IRQ_TYPE_LEVEL_HIGH>;
+-				interrupt-names = "tx-cpu0", "tx-cpu1", "tx-cpu2",
+-					"tx-cpu3", "rx-shared", "link";
++				interrupt-names = "hif0", "hif1", "hif2",
++					"hif3", "hif4", "link";
+ 				port-id = <1>;
+ 				gop-port-id = <2>;
+ 				status = "disabled";
+@@ -81,8 +81,8 @@
+ 					<ICU_GRP_NSR 53 IRQ_TYPE_LEVEL_HIGH>,
+ 					<ICU_GRP_NSR 57 IRQ_TYPE_LEVEL_HIGH>,
+ 					<ICU_GRP_NSR 127 IRQ_TYPE_LEVEL_HIGH>;
+-				interrupt-names = "tx-cpu0", "tx-cpu1", "tx-cpu2",
+-					"tx-cpu3", "rx-shared", "link";
++				interrupt-names = "hif0", "hif1", "hif2",
++					"hif3", "hif4", "link";
+ 				port-id = <2>;
+ 				gop-port-id = <3>;
+ 				status = "disabled";
 -- 
-1.9.1
+2.17.1
 
