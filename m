@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D5DECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15AAC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE9F52083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9F52083A
+	by mail.kernel.org (Postfix) with ESMTP id 822B12083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:37:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 822B12083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387858AbeIXSjr (ORCPT
+        id S2387919AbeIXSjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:39:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58618 "EHLO
+        Mon, 24 Sep 2018 14:39:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58630 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728937AbeIXSjq (ORCPT
+        with ESMTP id S1728937AbeIXSju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:39:46 -0400
+        Mon, 24 Sep 2018 14:39:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 216F6107F;
-        Mon, 24 Sep 2018 12:37:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 55369107F;
+        Mon, 24 Sep 2018 12:37:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
+        stable@vger.kernel.org,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 086/235] drivers/base: stop new probing during shutdown
-Date:   Mon, 24 Sep 2018 13:51:12 +0200
-Message-Id: <20180924113113.625835894@linuxfoundation.org>
+Subject: [PATCH 4.18 087/235] i2c: aspeed: Fix initial values of master and slave state
+Date:   Mon, 24 Sep 2018 13:51:13 +0200
+Message-Id: <20180924113113.770574724@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,55 +54,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pingfan Liu <kernelfans@gmail.com>
+From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
 
-[ Upstream commit 3297c8fc65af5d40501ea7cddff1b195cae57e4e ]
+[ Upstream commit 517fde0eb5a8f46c54ba6e2c36e32563b23cb14f ]
 
-There is a race window in device_shutdown(), which may cause
--1. parent device shut down before child or
--2. no shutdown on a new probing device.
+This patch changes the order of enum aspeed_i2c_master_state and
+enum aspeed_i2c_slave_state defines to make their initial value to
+ASPEED_I2C_MASTER_INACTIVE and ASPEED_I2C_SLAVE_STOP respectively.
+In case of multi-master use, if a slave data comes ahead of the
+first master xfer, master_state starts from an invalid state so
+this change fixes the issue.
 
-For 1st, taking the following scenario:
-         device_shutdown                        new plugin device
-  list_del_init(parent_dev);
-  spin_unlock(list_lock);
-                                                  device_add(child)
-                                                  probe child
-  shutdown parent_dev
-       --> now child is on the tail of devices_kset
-
-For 2nd, taking the following scenario:
-         device_shutdown                        new plugin device
-                                                  device_add(dev)
-  device_lock(dev);
-  ...
-  device_unlock(dev);
-                                                  probe dev
-       --> now, the new occurred dev has no opportunity to shutdown
-
-To fix this race issue, just prevent the new probing request. With this
-logic, device_shutdown() is more similar to dpm_prepare().
-
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/i2c/busses/i2c-aspeed.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2809,6 +2809,9 @@ void device_shutdown(void)
- {
- 	struct device *dev, *parent;
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -111,22 +111,22 @@
+ #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
  
-+	wait_for_device_probe();
-+	device_block_probing();
-+
- 	spin_lock(&devices_kset->list_lock);
- 	/*
- 	 * Walk the devices list backward, shutting down each in turn.
+ enum aspeed_i2c_master_state {
++	ASPEED_I2C_MASTER_INACTIVE,
+ 	ASPEED_I2C_MASTER_START,
+ 	ASPEED_I2C_MASTER_TX_FIRST,
+ 	ASPEED_I2C_MASTER_TX,
+ 	ASPEED_I2C_MASTER_RX_FIRST,
+ 	ASPEED_I2C_MASTER_RX,
+ 	ASPEED_I2C_MASTER_STOP,
+-	ASPEED_I2C_MASTER_INACTIVE,
+ };
+ 
+ enum aspeed_i2c_slave_state {
++	ASPEED_I2C_SLAVE_STOP,
+ 	ASPEED_I2C_SLAVE_START,
+ 	ASPEED_I2C_SLAVE_READ_REQUESTED,
+ 	ASPEED_I2C_SLAVE_READ_PROCESSED,
+ 	ASPEED_I2C_SLAVE_WRITE_REQUESTED,
+ 	ASPEED_I2C_SLAVE_WRITE_RECEIVED,
+-	ASPEED_I2C_SLAVE_STOP,
+ };
+ 
+ struct aspeed_i2c_bus {
 
 
