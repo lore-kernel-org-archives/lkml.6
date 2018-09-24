@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A56C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CF1C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97DDF2148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97DDF2148C
+	by mail.kernel.org (Postfix) with ESMTP id 42AAE21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42AAE21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbeIXRm5 (ORCPT
+        id S1729559AbeIXRnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:42:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50980 "EHLO
+        Mon, 24 Sep 2018 13:43:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50988 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbeIXRm5 (ORCPT
+        with ESMTP id S1727673AbeIXRnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:42:57 -0400
+        Mon, 24 Sep 2018 13:43:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A3FC1070;
-        Mon, 24 Sep 2018 11:41:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DE281074;
+        Mon, 24 Sep 2018 11:41:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
+        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Wayne Porter <wporter82@gmail.com>,
         Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 3.18 037/105] staging: rt5208: Fix a sleep-in-atomic bug in xd_copy_page
-Date:   Mon, 24 Sep 2018 13:33:23 +0200
-Message-Id: <20180924113117.708955691@linuxfoundation.org>
+Subject: [PATCH 3.18 038/105] staging/rts5208: Fix read overflow in memcpy
+Date:   Mon, 24 Sep 2018 13:33:24 +0200
+Message-Id: <20180924113117.864568524@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -51,41 +53,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@163.com>
+From: Daniel Micay <danielmicay@gmail.com>
 
-commit 498c4b4e9c23855d17ecc2a108d949bb68020481 upstream.
+commit 88a5b39b69ab1828fd4130e2baadd184109cea69 upstream.
 
-The driver may sleep under a spin lock, and the function call path is:
-rtsx_exclusive_enter_ss (acquire the lock by spin_lock)
-  rtsx_enter_ss
-    rtsx_power_off_card
-      xd_cleanup_work
-        xd_delay_write
-          xd_finish_write
-            xd_copy_page
-              wait_timeout
-                schedule_timeout --> may sleep
+Noticed by FORTIFY_SOURCE, this swaps memcpy() for strncpy() to zero-value
+fill the end of the buffer instead of over-reading a string from .rodata.
 
-To fix it, "wait_timeout" is replaced with mdelay in xd_copy_page.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Signed-off-by: Daniel Micay <danielmicay@gmail.com>
+[kees: wrote commit log]
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Wayne Porter <wporter82@gmail.com>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rts5208/xd.c |    2 +-
+ drivers/staging/rts5208/rtsx_scsi.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/rts5208/xd.c
-+++ b/drivers/staging/rts5208/xd.c
-@@ -1095,7 +1095,7 @@ static int xd_copy_page(struct rtsx_chip
- 			reg = 0;
- 			rtsx_read_register(chip, XD_CTL, &reg);
- 			if (reg & (XD_ECC1_ERROR | XD_ECC2_ERROR)) {
--				wait_timeout(100);
-+				mdelay(100);
+--- a/drivers/staging/rts5208/rtsx_scsi.c
++++ b/drivers/staging/rts5208/rtsx_scsi.c
+@@ -539,7 +539,7 @@ static int inquiry(struct scsi_cmnd *srb
  
- 				if (detect_card_cd(chip,
- 					XD_CARD) != STATUS_SUCCESS) {
+ 	if (sendbytes > 8) {
+ 		memcpy(buf, inquiry_buf, 8);
+-		memcpy(buf + 8, inquiry_string,	sendbytes - 8);
++		strncpy(buf + 8, inquiry_string, sendbytes - 8);
+ 		if (pro_formatter_flag) {
+ 			/* Additional Length */
+ 			buf[4] = 0x33;
 
 
