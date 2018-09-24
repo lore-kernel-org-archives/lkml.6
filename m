@@ -2,157 +2,140 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE66C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6864AC43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD1220833
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0718520833
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:27:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OfZQ2cWC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD1220833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8yNjF3i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0718520833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeIYEaO (ORCPT
+        id S1726375AbeIYEcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:30:14 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54605 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbeIYEaO (ORCPT
+        Tue, 25 Sep 2018 00:32:07 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54844 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbeIYEcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:30:14 -0400
-Received: by mail-it1-f193.google.com with SMTP id f14-v6so12863847ita.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:25:49 -0700 (PDT)
+        Tue, 25 Sep 2018 00:32:07 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c14-v6so11298799wmb.4;
+        Mon, 24 Sep 2018 15:27:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=oycnvDiRyLGQBbueGxSF8qSD6NUFFDTjApeqPyM/dY0=;
-        b=OfZQ2cWC7+3rrTOEfdVpJVKGXmWDW0577Kw/HOBpjdbUZn/lEI1ARYDU8vJItXs14s
-         UYBEo2gy+Pt/rPcr89ar3cjWVt4L2QtNtvDFTOGbLsv6zTUeIFmOzW7yFZH7mqT6GZAi
-         vLVetEuQuh7vHcJyL0qnay88qPPKtI2HrlAVk=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/zrMmlGmFWUadx/++HaB0FdRzhsq8gaU0CCYWRDLSaw=;
+        b=Y8yNjF3iA7Gl0GOqTKwb3hcNXMyId1RMMvmYhzwrQNfNnlWLjq1FfjQVL7EYmtZkC9
+         AHjpeEAd1iGl0c/8VeMIHm9Z8lnn6eY5WVRvdBThiJaMjFuyLrlvVMdxOEggr/KS4fNb
+         Dtj1sJb9ud+jDRwKoGRx/RlnVoZnUGrOm8H/1zPBTyjoHeTb3pNx+yMj1KA1dl+nz3T/
+         rvGfdJrNxebO4L31sEcgt59i69NRok77YR+u8LQprjs1wm5sn9sVcq+8aHVLSJfWMAEy
+         YnxYsnpOezaWfzgfkxsGKz+Vf5zJpPr/5JAKHXLzCTtCfpCWQXNUjQM3BSgB9XqCPhkY
+         SJAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=oycnvDiRyLGQBbueGxSF8qSD6NUFFDTjApeqPyM/dY0=;
-        b=AxVh0ImBX5HBCiPPcAA4D8/q8BUL95IRc6AAbayV6Nho47YzSf+XRK9HD2lLvChKos
-         htPsVfPTiwax7zJQV/4FpRHyBTtDr0VHupjt5ORIy9kM1b0CN1xZgmKN76XQPijXeCFD
-         LjdtyO7vF3GKyGeu4brocJor8zoJR9v25c36h9YVVJU0WyRmgTOCzaC7zpZTmv3sHz9F
-         iIv6Wt+wHAoAiweMukXjrN/haKMcHaG8t8l8XRUWQzQuw+vthg6DrLiIJS0aCjbYAaV/
-         oEEA/eluTFdob1R8NxD3z1u5pbXHIAJNFlHD8I4U1t71Xc7op+s4/KUaub9vMKPVyGCG
-         P7Fg==
-X-Gm-Message-State: ABuFfoiHP/dfNe2UXiQgsQI9SGG/ukspEzIFuyAqyAyvVKagXCSSRud4
-        01s34fG2ESlqwta1OfvazUnGrw==
-X-Google-Smtp-Source: ACcGV63v6uV+gAizCixIFQnqJRIYFdGDKk6BQEpEdKAquHJLvVTWarcvLJ2AJlp9T5DjXeofdNGytA==
-X-Received: by 2002:a24:9588:: with SMTP id m130-v6mr487778itd.48.1537827948744;
-        Mon, 24 Sep 2018 15:25:48 -0700 (PDT)
-Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id v3-v6sm175516ita.6.2018.09.24.15.25.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/zrMmlGmFWUadx/++HaB0FdRzhsq8gaU0CCYWRDLSaw=;
+        b=KPb5GzvOIIPBFV00qaoYu0ZA9GH8PimPvQrnXDIIelF/iXUXblmkOBdMYmX5TOPVWF
+         Kd8myYcO2xm8wCjb6f7vgmzw/QQ6MYBAPBjU6WCbR7UYQD/Y7lLG/Dd9h3t+Cpt+8VLH
+         uNV0yiObeanO1spvDGiQoHS9ZKsFnZKH2j1OuNC7Ih1dJf7odxpY8UQf8X+hhT7EIdm3
+         Wd5Fl85yz+b/CVwWTrtcHI9yKVzPOe2p1Es6/y6dkvoLuj5qx70rRAjTGFQFOWrSv69o
+         YF7nJLO3NU3Pj3o+zD3l1K+tJ/NdUlHmgW7f1rDL+I1kH16UgtYJvi05xHoK2TKvUKRw
+         FaDg==
+X-Gm-Message-State: ABuFfojFkdrzkF2cpLUgxOMF36CAuhPhuk+ucg57eS5LQo8zISvGUeqN
+        us/ogqKjICKUMSPjjfvz1x0=
+X-Google-Smtp-Source: ACcGV60suw49D9/LrZg+ikTbWCPWIhbaF/a2vCJJufa6cnu9rPERYsbuFYhXquk6zpk4bA7sUvoEVg==
+X-Received: by 2002:a1c:d04c:: with SMTP id h73-v6mr289299wmg.14.1537828059877;
+        Mon, 24 Sep 2018 15:27:39 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id v14-v6sm172604wmh.41.2018.09.24.15.27.39
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 15:25:47 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 17:25:47 -0500
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 000/111] 4.9.129-stable review
-Message-ID: <20180924222547.bs4ffjbo5trglzmz@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20180924113103.337261320@linuxfoundation.org>
+        Mon, 24 Sep 2018 15:27:39 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 15:27:37 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] IB/mlx4: Avoid implicit enumerated type conversion
+Message-ID: <20180924222737.GA26973@flashbox>
+References: <20180924195716.30848-1-natechancellor@gmail.com>
+ <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAKwvOdkr+ovYgmqWENHkCcAWMC+xC6NYne6SBycq_KXscpHxEQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 01:51:27PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.129 release.
-> There are 111 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Sep 24, 2018 at 03:24:36PM -0700, Nick Desaulniers wrote:
+> On Mon, Sep 24, 2018 at 12:57 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Clang warns when one enumerated type is implicitly converted to another.
+> >
+> > drivers/infiniband/hw/mlx4/mad.c:1811:41: warning: implicit conversion
+> > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_TUNNEL_QP;
+> >                                                     ~ ^~~~~~~~~~~~~~~~~~~~~~~
+> >
+> > drivers/infiniband/hw/mlx4/mad.c:1819:41: warning: implicit conversion
+> > from enumeration type 'enum mlx4_ib_qp_flags' to different enumeration
+> > type 'enum ib_qp_create_flags' [-Wenum-conversion]
+> >                 qp_init_attr.init_attr.create_flags = MLX4_IB_SRIOV_SQP;
+> >                                                     ~ ^~~~~~~~~~~~~~~~~
+> >
+> > The type mlx4_ib_qp_flags explicitly provides supplemental values to the
+> > type ib_qp_create_flags. Make that clear to Clang by changing the
+> > create_flags type to u32.
+> >
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  include/rdma/ib_verbs.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+> > index e463d3007a35..f6f4d9e3c8ed 100644
+> > --- a/include/rdma/ib_verbs.h
+> > +++ b/include/rdma/ib_verbs.h
+> > @@ -1149,7 +1149,7 @@ struct ib_qp_init_attr {
+> >         struct ib_qp_cap        cap;
+> >         enum ib_sig_type        sq_sig_type;
+> >         enum ib_qp_type         qp_type;
+> > -       enum ib_qp_create_flags create_flags;
+> > +       u32                     create_flags;
 > 
-> Responses should be made by Wed Sep 26 11:30:16 UTC 2018.
-> Anything received after that time might be too late.
+> I think it might be better to just have explicit casts at the
+> assignment.  What do the maintainers think?
+> 
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+That's fine with me, I tend to explicitly cast if it is only one
+location but it certainly makes sense in this case as well. I'll
+wait for the maintainers to weigh in before sending a v2.
 
-Summary
-------------------------------------------------------------------------
+Thanks for the review,
+Nathan
 
-kernel: 4.9.129-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.9.y
-git commit: fa7826f765a24004014c272daf1a64462966c5ed
-git describe: v4.9.128-112-gfa7826f765a2
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.128-112-gfa7826f765a2
-
-
-No regressions (compared to build v4.9.128)
-
-
-Ran 20268 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
--- 
-Linaro LKFT
-https://lkft.linaro.org
+> >
+> >         /*
+> >          * Only needed for special QP types, or when using the RW API.
+> > --
+> > 2.19.0
+> >
+> 
+> 
+> -- 
+> Thanks,
+> ~Nick Desaulniers
