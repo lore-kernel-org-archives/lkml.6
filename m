@@ -4,154 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC7BECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7C6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEC2B214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15F3F214D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:09:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfT8yeER"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEC2B214D5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7IU5OjV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15F3F214D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733207AbeIYALT (ORCPT
+        id S2387508AbeIYANE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 20:11:19 -0400
-Received: from mail-pf1-f182.google.com ([209.85.210.182]:33353 "EHLO
-        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbeIYALT (ORCPT
+        Mon, 24 Sep 2018 20:13:04 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35734 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731073AbeIYAND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 20:11:19 -0400
-Received: by mail-pf1-f182.google.com with SMTP id d4-v6so9371528pfn.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 11:07:57 -0700 (PDT)
+        Mon, 24 Sep 2018 20:13:03 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p10-v6so19146138ljg.2;
+        Mon, 24 Sep 2018 11:09:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=e+Umfz959IFdfmtQi0UHQSa29vkdmHaWoqpDA1Z99uQ=;
-        b=XfT8yeER34dCd97h7vS2uwmQMNQ0LLDd5twQAb6O+c833gPgSI82JfaIB/RbgJhrY3
-         ybTIDJUTQaAc+J3MrXn3LU/taUWhrUY/OKw9/3TwFZtueL+02IzHH+64fhXIWKX9hXHv
-         S/MDKyGUmd31l/EbJOAu6QcC2N929dGMt72/XZwhT8AkfG4jZ0p5Y8JYohL0FeHUqFcf
-         MONG0NyW1MUZEl+lB8r5tgjJZlH2l13Z+E4bdDkwTtpgbza3DOF8XyAedjfmW2MCs0wV
-         wh9RWAVm1qJsLEzF6SZLbz/Mz8CaWN7+a1+2MOgOW5SPYNdY/8kS060s2uhwQgMXeht/
-         O3WQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CXqqDtaDDY+Z+lOa5rtUPATO7mQEGuwGbwH/RuGTIrw=;
+        b=d7IU5OjVWh0HuZAhfXwD7COkaNG4r79NuchJvNSo2iFuwEwN83+vRkE5WCDwjDbEVj
+         1mk942ovegwFnDnyMFzgQsz4ANX+O9eXt5eCz02Jl9T1jFVr9CQ0bO1hoaxiGssEMJe6
+         phPYXhnzitUSXwO3MOEdK6SgqFuJqB8zYNlB6wJ27rjflH2a42LvJgj+me1zOKJG4MEe
+         YQWvsOBcjvRhm9YOhp81l1d4Sr0q8iqDurGBvK5f7XqFKRn/GNgAeZDN72FTJUsTf7y8
+         c3S9mT+pPjE3I0XW/YeevWruCfEQ+7X7lNhWYRxXEMuxazu5K+gYTHhMDW+6TNh3LMsC
+         Awog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=e+Umfz959IFdfmtQi0UHQSa29vkdmHaWoqpDA1Z99uQ=;
-        b=Sanbuv8RLgwTlPON7bs7lpe1e3rENy5/Esm928yT47h124U14GFY4H4KFWwBsY39aK
-         jqrQBysNhgQlHDz6ZlskhXaaqIjcIYjn1+RUYPMKWrS77sQbOdQp6tVNfhBCWtXLvFH6
-         lyss+GIUHBTk2K8TZU0+aji0U35I2tGtfIuik/aKVK+rIi20snbnlZ4VDv0D01VzeROa
-         0uCmgnDsGzBnqziZ4fw/BvH7/MeYI5TyZ8UyoL6R2OTfNwjq7mqiEA5X6iMnmxv7v568
-         ZkguqR9jtlYnKH/c8xYEYQGLsXTLZRLBSaT4iSw4mpiGegJKub7vW7rP6yVIMOpm1UZq
-         A8VQ==
-X-Gm-Message-State: ABuFfohVt/4B37wBOZCOsVEIAMBV3rQXGQm7dZPzY7F5j2WZ2i+X1dOe
-        EkTH4aAtWqVm4pvMUxDo4oSCj/90gdUJlTZh4f0=
-X-Google-Smtp-Source: ACcGV60MrCCnIX3vfSwv6NCUYTOuTARReOQbQ/UPi/h7uxDah3ReGyX3tzZuiMuY4Gs1rSVr01ImtrGpTW48Wq2CRUE=
-X-Received: by 2002:a63:d309:: with SMTP id b9-v6mr10636427pgg.163.1537812476245;
- Mon, 24 Sep 2018 11:07:56 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CXqqDtaDDY+Z+lOa5rtUPATO7mQEGuwGbwH/RuGTIrw=;
+        b=gjzhLc3IUO3oC6QS/Jih1KNytLMsq4Wy067olplwK3TbeL8XaLcgspU1WC9snLUnsN
+         Sc9itwa5X1iioajXjIRkoRaPLUs68ITZf+eVBDkCVUwgQ5J1uavIWoB74CaMBti/tqkV
+         i5Dlv+raWBYfP1u4jeGirwHn0oENHn07OVJJK3LpJdNzcS+MbhA5NrOjCXsYsSbu2APM
+         K5jbkUUE+b7mWnl6M7HNKZ6uCFkK9OIcvZlvR2m6DQz/rU+J1bLQVV/3PL++IXQ9uT7z
+         EKUIGH8WCYUsfI3cnpNqCV5ZgNeU+NfrChy/UmG1s3X7yCy9mkm01wJM1abixb/ETR14
+         zcMQ==
+X-Gm-Message-State: ABuFfog7DTothxj4ZzOz1aQfO2kElm1VDWMe+yNs8q+NYkwC8YBwt1Ks
+        ji3OWH34PrV9XOVb3b9Hz+EOPlCs
+X-Google-Smtp-Source: ACcGV63RjYsEkgTFNdN8zVyWhWa5uWd3UvgSBIoTke27qOCdop+7brMbaZeMFPs1Sb+epxVE9tlxhw==
+X-Received: by 2002:a2e:4401:: with SMTP id r1-v6mr531lja.21.1537812578336;
+        Mon, 24 Sep 2018 11:09:38 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id a15-v6sm6672463ljf.92.2018.09.24.11.09.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 11:09:37 -0700 (PDT)
+Subject: Re: [PATCH v4 17/20] iommu/tegra: gart: Prepend error/debug messages
+ with "GART:"
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-18-digetx@gmail.com> <20180924105714.GN21032@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <32307503-bbd5-6ccc-39bd-b956465a9977@gmail.com>
+Date:   Mon, 24 Sep 2018 21:09:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
- <20180919081812.020f19e3@lwn.net> <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
- <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
- <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net> <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
- <87zhwbj8xe.fsf@redhat.com> <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
- <20180921231545.GC2966@thunk.org> <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
- <20180922000521.u373eysq6dogcdfo@gmail.com> <CAKON4OxCpCMETfg087wV+ZQ3ssA7eDA8gBSxMYFL9ykVfEGwww@mail.gmail.com>
- <CAMo8Bf+ufr_RFtmKMrkCuvObSeGnU2a6L4sDC_LexRcN_a9xaA@mail.gmail.com>
-In-Reply-To: <CAMo8Bf+ufr_RFtmKMrkCuvObSeGnU2a6L4sDC_LexRcN_a9xaA@mail.gmail.com>
-From:   "jonsmirl@gmail.com" <jonsmirl@gmail.com>
-Date:   Mon, 24 Sep 2018 14:07:43 -0400
-Message-ID: <CAKON4OyAJJrTFihO-1W0uHAYY9ycQyMqMmGqMgEPxqp9EKhiPQ@mail.gmail.com>
-Subject: Re: Code of Conduct: Let's revamp it.
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Mark Rosenblitt-Janssen <dreamingforward@gmail.com>,
-        fche@redhat.com, Rik van Riel <riel@surriel.com>,
-        Edward Cree <ec429@cantab.net>,
-        Olof Johansson <olof@lixom.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180924105714.GN21032@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 1:43 PM Max Filippov <jcmvbkbc@gmail.com> wrote:
->
-> On Fri, Sep 21, 2018 at 5:24 PM, jonsmirl@gmail.com <jonsmirl@gmail.com> =
-wrote:
-> > On Fri, Sep 21, 2018 at 8:05 PM Joey Pabalinas <joeypabalinas@gmail.com=
-> wrote:
-> >> On Fri, Sep 21, 2018 at 07:31:05PM -0400, jonsmirl@gmail.com wrote:
-> >>> How do you reconcile working on a public project while keeping email
-> >>> address secret?
-> >>
-> >> This is a little more delicate, and I admit that I can't really
-> >> think of any real solutions for this part...
-> >
-> > But... it this bothers you, simply don't use your private, personal
-> > email address when working on the kernel. Anyone with the skills to
-> > work on the kernel should know enough to be able to create email
-> > aliases. No rule says you have to use your real name either.
->
-> There is such rule:
->   https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html
->
-> chapter "Developer=E2=80=99s Certificate of Origin 1.1" says
+On 9/24/18 1:57 PM, Thierry Reding wrote:
+> On Mon, Sep 24, 2018 at 03:41:50AM +0300, Dmitry Osipenko wrote:
+>> GART became a part of Memory Controller, hence now the drivers device
+>> is Memory Controller and not GART. As a result all printed messages are
+>> prepended with the "tegra-mc 7000f000.memory-controller:", so let's
+>> prepend GART's messages with "GART:" in order to differentiate them
+>> from the MC.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/iommu/tegra-gart.c | 36 ++++++++++++++++++------------------
+>>  1 file changed, 18 insertions(+), 18 deletions(-)
+> 
+> There's a macro called dev_fmt (similar to pr_fmt) to do this for dev_*
+> printers. Also I think this would be more readable if the prefix was
+> "gart: " rather than "GART: ". At least from my personal experience I
+> get easily distracted by all-caps words in logs, because they usually
+> indicate something that requires immediate attention. I think it's
+> better to leave that up to higher level mechanisms, such as the color
+> keying of messages based on level by tools like dmesg.
 
-So the "Developer=E2=80=99s Certificate of Origin 1.1" appears to require
-permission be given to use the names and email addresses. Those
-anonymous commits in the logs pre-date the Certificate of Origin.
-
-This line in the CoC still looks likely to be a source of future
-conflict.  Say an LWN article reprints a thread on LKML and attributes
-the quotes.  Could the author (a kernel contributor) of the LWN
-article be attacked via the CoC for attributing the quotes? How can
-journalism function if public statements can't be quoted without
-permission? Not everyone participating on LKML has submitted a patch
-under the Certificate of Origin (thus giving permission for use of
-name/email).
-
-It seems inconsistent to me that the name/address you use to publish
-messages to a public email list can be considered private information.
-
-From CoC...
-* Publishing others=E2=80=99 private information, such as a physical or
-electronic address, without explicit permission
-
->
->   then you just add a line saying:
->   Signed-off-by: Random J Developer <random@developer.example.org>
->   using your real name (sorry, no pseudonyms or anonymous contributions.)
->
-> And in general, Developer=E2=80=99s Certificate of Origin
->   https://developercertificate.org/
->
-> says
->
->   By making a contribution to this project, I certify that:
->   ...
-> (d) I understand and agree that this project and the contribution
->     are public and that a record of the contribution (including all
->     personal information I submit with it, including my sign-off) is
->     maintained indefinitely and may be redistributed consistent with
->     this project or the open source license(s) involved.
->
-> --
-> Thanks.
-> -- Max
-
-
-
---=20
-Jon Smirl
-jonsmirl@gmail.com
+The dev_fmt is a new thing, thank you for pointing at it. I'll try to
+switch to dev_fmt and lower the text case.
