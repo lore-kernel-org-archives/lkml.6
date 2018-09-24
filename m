@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D79ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A103AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C04A21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C04A21486
+	by mail.kernel.org (Postfix) with ESMTP id 6610121486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6610121486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbeIXRnQ (ORCPT
+        id S1729605AbeIXRnT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:43:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51024 "EHLO
+        Mon, 24 Sep 2018 13:43:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729250AbeIXRnP (ORCPT
+        with ESMTP id S1728911AbeIXRnS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:43:15 -0400
+        Mon, 24 Sep 2018 13:43:18 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 315411072;
-        Mon, 24 Sep 2018 11:41:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98D331072;
+        Mon, 24 Sep 2018 11:41:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sandipan Das <sandipan@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Maynard Johnson <maynard@us.ibm.com>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 073/105] perf powerpc: Fix callchain ip filtering
-Date:   Mon, 24 Sep 2018 13:33:59 +0200
-Message-Id: <20180924113120.570583711@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Knister <aaron.s.knister@nasa.gov>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 3.18 082/105] IB/ipoib: Avoid a race condition between start_xmit and cm_rep_handler
+Date:   Mon, 24 Sep 2018 13:34:08 +0200
+Message-Id: <20180924113121.256237299@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -57,180 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sandipan Das <sandipan@linux.ibm.com>
+From: Aaron Knister <aaron.s.knister@nasa.gov>
 
-[ Upstream commit c715fcfda5a08edabaa15508742be926b7ee51db ]
+commit 816e846c2eb9129a3e0afa5f920c8bbc71efecaa upstream.
 
-For powerpc64, redundant entries in the callchain are filtered out by
-determining the state of the return address and the stack frame using
-DWARF debug information.
+Inside of start_xmit() the call to check if the connection is up and the
+queueing of the packets for later transmission is not atomic which leaves
+a window where cm_rep_handler can run, set the connection up, dequeue
+pending packets and leave the subsequently queued packets by start_xmit()
+sitting on neigh->queue until they're dropped when the connection is torn
+down. This only applies to connected mode. These dropped packets can
+really upset TCP, for example, and cause multi-minute delays in
+transmission for open connections.
 
-For making these filtering decisions we must analyze the debug
-information for the location corresponding to the program counter value,
-i.e. the first entry in the callchain, and not the LR value; otherwise,
-perf may filter out either the second or the third entry in the
-callchain incorrectly.
+Here's the code in start_xmit where we check to see if the connection is
+up:
 
-This can be observed on a powerpc64le system running Fedora 27 as shown
-below.
+       if (ipoib_cm_get(neigh)) {
+               if (ipoib_cm_up(neigh)) {
+                       ipoib_cm_send(dev, skb, ipoib_cm_get(neigh));
+                       goto unref;
+               }
+       }
 
-Case 1 - Attaching a probe at inet_pton+0x8 (binary offset 0x15af28).
-         Return address is still in LR and a new stack frame is not yet
-         allocated. The LR value, i.e. the second entry, should not be
-	 filtered out.
+The race occurs if cm_rep_handler execution occurs after the above
+connection check (specifically if it gets to the point where it acquires
+priv->lock to dequeue pending skb's) but before the below code snippet in
+start_xmit where packets are queued.
 
-  # objdump -d /usr/lib64/libc-2.26.so | less
-  ...
-  000000000010eb10 <gaih_inet.constprop.7>:
-  ...
-    10fa48:       78 bb e4 7e     mr      r4,r23
-    10fa4c:       0a 00 60 38     li      r3,10
-    10fa50:       d9 b4 04 48     bl      15af28 <inet_pton+0x8>
-    10fa54:       00 00 00 60     nop
-    10fa58:       ac f4 ff 4b     b       10ef04 <gaih_inet.constprop.7+0x3f4>
-  ...
-  0000000000110450 <getaddrinfo>:
-  ...
-    1105a8:       54 00 ff 38     addi    r7,r31,84
-    1105ac:       58 00 df 38     addi    r6,r31,88
-    1105b0:       69 e5 ff 4b     bl      10eb18 <gaih_inet.constprop.7+0x8>
-    1105b4:       78 1b 71 7c     mr      r17,r3
-    1105b8:       50 01 7f e8     ld      r3,336(r31)
-  ...
-  000000000015af20 <inet_pton>:
-    15af20:       0b 00 4c 3c     addis   r2,r12,11
-    15af24:       e0 c1 42 38     addi    r2,r2,-15904
-    15af28:       a6 02 08 7c     mflr    r0
-    15af2c:       f0 ff c1 fb     std     r30,-16(r1)
-    15af30:       f8 ff e1 fb     std     r31,-8(r1)
-  ...
+       if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
+               push_pseudo_header(skb, phdr->hwaddr);
+               spin_lock_irqsave(&priv->lock, flags);
+               __skb_queue_tail(&neigh->queue, skb);
+               spin_unlock_irqrestore(&priv->lock, flags);
+       } else {
+               ++dev->stats.tx_dropped;
+               dev_kfree_skb_any(skb);
+       }
 
-  # perf probe -x /usr/lib64/libc-2.26.so -a inet_pton+0x8
-  # perf record -e probe_libc:inet_pton -g ping -6 -c 1 ::1
-  # perf script
+The patch acquires the netif tx lock in cm_rep_handler for the section
+where it sets the connection up and dequeues and retransmits deferred
+skb's.
 
-Before:
-
-  ping  4507 [002] 514985.546540: probe_libc:inet_pton: (7fffa7dbaf28)
-              7fffa7dbaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
-              7fffa7d705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
-                 13fb52d70 _init+0xbfc (/usr/bin/ping)
-              7fffa7c836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fffa7c83898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-After:
-
-  ping  4507 [002] 514985.546540: probe_libc:inet_pton: (7fffa7dbaf28)
-              7fffa7dbaf28 __GI___inet_pton+0x8 (/usr/lib64/libc-2.26.so)
-              7fffa7d6fa54 gaih_inet.constprop.7+0xf44 (/usr/lib64/libc-2.26.so)
-              7fffa7d705b4 getaddrinfo+0x164 (/usr/lib64/libc-2.26.so)
-                 13fb52d70 _init+0xbfc (/usr/bin/ping)
-              7fffa7c836a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fffa7c83898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-Case 2 - Attaching a probe at _int_malloc+0x180 (binary offset 0x9cf10).
-         Return address in still in LR and a new stack frame has already
-         been allocated but not used. The caller's caller, i.e. the third
-	 entry, is invalid and should be filtered out and not the second
-	 one.
-
-  # objdump -d /usr/lib64/libc-2.26.so | less
-  ...
-  000000000009cd90 <_int_malloc>:
-     9cd90:       17 00 4c 3c     addis   r2,r12,23
-     9cd94:       70 a3 42 38     addi    r2,r2,-23696
-     9cd98:       26 00 80 7d     mfcr    r12
-     9cd9c:       f8 ff e1 fb     std     r31,-8(r1)
-     9cda0:       17 00 e4 3b     addi    r31,r4,23
-     9cda4:       d8 ff 61 fb     std     r27,-40(r1)
-     9cda8:       78 23 9b 7c     mr      r27,r4
-     9cdac:       1f 00 bf 2b     cmpldi  cr7,r31,31
-     9cdb0:       f0 ff c1 fb     std     r30,-16(r1)
-     9cdb4:       b0 ff c1 fa     std     r22,-80(r1)
-     9cdb8:       78 1b 7e 7c     mr      r30,r3
-     9cdbc:       08 00 81 91     stw     r12,8(r1)
-     9cdc0:       11 ff 21 f8     stdu    r1,-240(r1)
-     9cdc4:       4c 01 9d 41     bgt     cr7,9cf10 <_int_malloc+0x180>
-     9cdc8:       20 00 a4 2b     cmpldi  cr7,r4,32
-  ...
-     9cf08:       00 00 00 60     nop
-     9cf0c:       00 00 42 60     ori     r2,r2,0
-     9cf10:       e4 06 ff 7b     rldicr  r31,r31,0,59
-     9cf14:       40 f8 a4 7f     cmpld   cr7,r4,r31
-     9cf18:       68 05 9d 41     bgt     cr7,9d480 <_int_malloc+0x6f0>
-  ...
-  000000000009e3c0 <tcache_init.part.4>:
-  ...
-     9e420:       40 02 80 38     li      r4,576
-     9e424:       78 fb e3 7f     mr      r3,r31
-     9e428:       71 e9 ff 4b     bl      9cd98 <_int_malloc+0x8>
-     9e42c:       00 00 a3 2f     cmpdi   cr7,r3,0
-     9e430:       78 1b 7e 7c     mr      r30,r3
-  ...
-  000000000009f7a0 <__libc_malloc>:
-  ...
-     9f8f8:       00 00 89 2f     cmpwi   cr7,r9,0
-     9f8fc:       1c ff 9e 40     bne     cr7,9f818 <__libc_malloc+0x78>
-     9f900:       c9 ea ff 4b     bl      9e3c8 <tcache_init.part.4+0x8>
-     9f904:       00 00 00 60     nop
-     9f908:       e8 90 22 e9     ld      r9,-28440(r2)
-  ...
-
-  # perf probe -x /usr/lib64/libc-2.26.so -a _int_malloc+0x180
-  # perf record -e probe_libc:_int_malloc -g ./test-malloc
-  # perf script
-
-Before:
-
-  test-malloc  6554 [009] 515975.797403: probe_libc:_int_malloc: (7fffa6e6cf10)
-              7fffa6e6cf10 _int_malloc+0x180 (/usr/lib64/libc-2.26.so)
-              7fffa6dd0000 [unknown] (/usr/lib64/libc-2.26.so)
-              7fffa6e6f904 malloc+0x164 (/usr/lib64/libc-2.26.so)
-              7fffa6e6f9fc malloc+0x25c (/usr/lib64/libc-2.26.so)
-                  100006b4 main+0x38 (/home/testuser/test-malloc)
-              7fffa6df36a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fffa6df3898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-After:
-
-  test-malloc  6554 [009] 515975.797403: probe_libc:_int_malloc: (7fffa6e6cf10)
-              7fffa6e6cf10 _int_malloc+0x180 (/usr/lib64/libc-2.26.so)
-              7fffa6e6e42c tcache_init.part.4+0x6c (/usr/lib64/libc-2.26.so)
-              7fffa6e6f904 malloc+0x164 (/usr/lib64/libc-2.26.so)
-              7fffa6e6f9fc malloc+0x25c (/usr/lib64/libc-2.26.so)
-                  100006b4 main+0x38 (/home/sandipan/test-malloc)
-              7fffa6df36a0 generic_start_main.isra.0+0x140 (/usr/lib64/libc-2.26.so)
-              7fffa6df3898 __libc_start_main+0xb8 (/usr/lib64/libc-2.26.so)
-                         0 [unknown] ([unknown])
-
-Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Maynard Johnson <maynard@us.ibm.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Fixes: a60335ba3298 ("perf tools powerpc: Adjust callchain based on DWARF debug info")
-Link: http://lkml.kernel.org/r/24bb726d91ed173aebc972ec3f41a2ef2249434e.1530724939.git.sandipan@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 839fcaba355a ("IPoIB: Connected mode experimental support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Knister <aaron.s.knister@nasa.gov>
+Tested-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/arch/powerpc/util/skip-callchain-idx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-+++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-@@ -237,7 +237,7 @@ int arch_skip_callchain_idx(struct machi
- 	if (!chain || chain->nr < 3)
- 		return skip_slot;
+---
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -997,12 +997,14 @@ static int ipoib_cm_rep_handler(struct i
  
--	ip = chain->ips[2];
-+	ip = chain->ips[1];
+ 	skb_queue_head_init(&skqueue);
  
- 	thread__find_addr_location(thread, machine, PERF_RECORD_MISC_USER,
- 			MAP__FUNCTION, ip, &al);
++	netif_tx_lock_bh(p->dev);
+ 	spin_lock_irq(&priv->lock);
+ 	set_bit(IPOIB_FLAG_OPER_UP, &p->flags);
+ 	if (p->neigh)
+ 		while ((skb = __skb_dequeue(&p->neigh->queue)))
+ 			__skb_queue_tail(&skqueue, skb);
+ 	spin_unlock_irq(&priv->lock);
++	netif_tx_unlock_bh(p->dev);
+ 
+ 	while ((skb = __skb_dequeue(&skqueue))) {
+ 		skb->dev = p->dev;
 
 
