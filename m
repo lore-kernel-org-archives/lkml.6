@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C23C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2438DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8914620842
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8914620842
+	by mail.kernel.org (Postfix) with ESMTP id DE4A020842
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE4A020842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388963AbeIXSrv (ORCPT
+        id S2389386AbeIXSr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59846 "EHLO
+        Mon, 24 Sep 2018 14:47:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59852 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730401AbeIXSru (ORCPT
+        with ESMTP id S1730401AbeIXSrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:50 -0400
+        Mon, 24 Sep 2018 14:47:55 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 326C5109A;
-        Mon, 24 Sep 2018 12:45:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3F80109A;
+        Mon, 24 Sep 2018 12:45:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Pintu Agarwal <pintu.ping@gmail.com>,
+        Li Zhijian <lizhijian@cn.fujitsu.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 211/235] selftests: vDSO - fix to return KSFT_SKIP when test couldnt be run
-Date:   Mon, 24 Sep 2018 13:53:17 +0200
-Message-Id: <20180924113124.856557195@linuxfoundation.org>
+Subject: [PATCH 4.18 212/235] selftests/android: initialize heap_type to avoid compiling warning
+Date:   Mon, 24 Sep 2018 13:53:18 +0200
+Message-Id: <20180924113124.916353987@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,56 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Li Zhijian <lizhijian@cn.fujitsu.com>
 
-[ Upstream commit d2d49495b5c0dffee5c4da5ea12ac0da6679bd08 ]
+[ Upstream commit cc7c673032fc7427087e74b75f732b43db38a256 ]
 
-Fix to return KSFT_SKIP when test couldn't be run because AT_SYSINFO_EHDR
-isn't found and gettimeofday isn't defined.
+Initialize heap_type to ION_HEAP_TYPE_SYSTEM to avoid "used uninitialized"
+compiler warning. heap_type gets used after initialization, this change is
+to just keep the compiler happy.
 
+root@vm-lkp-nex04-8G-7 ~/linux-v4.18-rc2/tools/testing/selftests/android# make
+make[1]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
+make[1]: Entering directory '/root/linux-v4.18-rc2/tools/testing/selftests/android/ion'
+gcc  -I. -I../../../../../drivers/staging/android/uapi/ -I../../../../../usr/include/ -Wall -O2 -g    ionapp_export.c ipcsocket.c ionutils.c   -o ionapp_export
+ionapp_export.c: In function 'main':
+ionapp_export.c:91:2: warning: 'heap_type' may be used uninitialized in
+this function [-Wmaybe-uninitialized]
+  printf("heap_type: %ld, heap_size: %ld\n", heap_type, heap_size);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CC: Shuah Khan <shuah@kernel.org>
+CC: Pintu Agarwal <pintu.ping@gmail.com>
+Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
 Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/vDSO/vdso_test.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/testing/selftests/android/ion/ionapp_export.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/testing/selftests/vDSO/vdso_test.c
-+++ b/tools/testing/selftests/vDSO/vdso_test.c
-@@ -15,6 +15,8 @@
- #include <sys/auxv.h>
- #include <sys/time.h>
+--- a/tools/testing/selftests/android/ion/ionapp_export.c
++++ b/tools/testing/selftests/android/ion/ionapp_export.c
+@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
  
-+#include "../kselftest.h"
-+
- extern void *vdso_sym(const char *version, const char *name);
- extern void vdso_init_from_sysinfo_ehdr(uintptr_t base);
- extern void vdso_init_from_auxv(void *auxv);
-@@ -37,7 +39,7 @@ int main(int argc, char **argv)
- 	unsigned long sysinfo_ehdr = getauxval(AT_SYSINFO_EHDR);
- 	if (!sysinfo_ehdr) {
- 		printf("AT_SYSINFO_EHDR is not present!\n");
--		return 0;
-+		return KSFT_SKIP;
- 	}
+ 	heap_size = 0;
+ 	flags = 0;
++	heap_type = ION_HEAP_TYPE_SYSTEM;
  
- 	vdso_init_from_sysinfo_ehdr(getauxval(AT_SYSINFO_EHDR));
-@@ -48,7 +50,7 @@ int main(int argc, char **argv)
- 
- 	if (!gtod) {
- 		printf("Could not find %s\n", name);
--		return 1;
-+		return KSFT_SKIP;
- 	}
- 
- 	struct timeval tv;
-@@ -59,6 +61,7 @@ int main(int argc, char **argv)
- 		       (long long)tv.tv_sec, (long long)tv.tv_usec);
- 	} else {
- 		printf("%s failed\n", name);
-+		return KSFT_FAIL;
- 	}
- 
- 	return 0;
+ 	while ((opt = getopt(argc, argv, "hi:s:")) != -1) {
+ 		switch (opt) {
 
 
