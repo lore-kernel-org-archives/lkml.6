@@ -2,39 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF773C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2342C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE432145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACE432145D
+	by mail.kernel.org (Postfix) with ESMTP id B768B21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B768B21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbeIXR7c (ORCPT
+        id S1730308AbeIXR7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:59:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52276 "EHLO
+        Mon, 24 Sep 2018 13:59:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52288 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728835AbeIXR7b (ORCPT
+        with ESMTP id S1728835AbeIXR7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:59:31 -0400
+        Mon, 24 Sep 2018 13:59:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26AF7D64;
-        Mon, 24 Sep 2018 11:57:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 403C41072;
+        Mon, 24 Sep 2018 11:57:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 64/70] IB/nes: Fix a compiler warning
-Date:   Mon, 24 Sep 2018 13:53:03 +0200
-Message-Id: <20180924113107.389905030@linuxfoundation.org>
+Subject: [PATCH 4.4 65/70] pinctrl: qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant
+Date:   Mon, 24 Sep 2018 13:53:04 +0200
+Message-Id: <20180924113107.505820044@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -52,33 +52,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 4c5743bc4fe3233cecc1c184a773c79c8ee45bbe ]
+[ Upstream commit 1cf86bc21257a330e3af51f2a4e885f1a705f6a5 ]
 
-Avoid that the following compiler warning is reported when building with
-W=1:
+If you do this on an sdm845 board:
+  grep "" /sys/kernel/debug/pinctrl/*spmi:pmic*/pinconf-groups
 
-drivers/infiniband/hw/nes/nes_hw.c:646:51: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]
+...it looks like nonsense.  For every pin you see listed:
+  input bias disabled, input bias high impedance, input bias pull down, input bias pull up, ...
 
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+That's because pmic_gpio_config_get() isn't complying with the rules
+that pinconf_generic_dump_one() expects.  Specifically for boolean
+parameters (anything with a "struct pin_config_item" where has_arg is
+false) the function expects that the function should return its value
+not through the "config" parameter but should return "0" if the value
+is set and "-EINVAL" if the value isn't set.
+
+Let's fix this.
+
+>From a quick sample of other pinctrl drivers, it appears to be
+tradition to also return 1 through the config parameter for these
+boolean parameters when they exist.  I'm not one to knock tradition,
+so I'll follow tradition and return 1 in these cases.  While I'm at
+it, I'll also continue searching for four leaf clovers, kocking on
+wood three times, and trying not to break mirrors.
+
+NOTE: This also fixes an apparent typo for reading
+PIN_CONFIG_BIAS_DISABLE where the old driver was accidentally
+using "=" instead of "==" and thus was setting some internal
+state when you tried to query PIN_CONFIG_BIAS_DISABLE.  Oops.
+
+Fixes: eadff3024472 ("pinctrl: Qualcomm SPMI PMIC GPIO pin controller driver")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/nes/nes.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c |   32 +++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/hw/nes/nes.h
-+++ b/drivers/infiniband/hw/nes/nes.h
-@@ -156,7 +156,7 @@ do { \
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -291,31 +291,47 @@ static int pmic_gpio_config_get(struct p
  
- #define NES_EVENT_TIMEOUT   1200000
- #else
--#define nes_debug(level, fmt, args...)
-+#define nes_debug(level, fmt, args...) do {} while (0)
- #define assert(expr)          do {} while (0)
- 
- #define NES_EVENT_TIMEOUT   100000
+ 	switch (param) {
+ 	case PIN_CONFIG_DRIVE_PUSH_PULL:
+-		arg = pad->buffer_type == PMIC_GPIO_OUT_BUF_CMOS;
++		if (pad->buffer_type != PMIC_GPIO_OUT_BUF_CMOS)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+-		arg = pad->buffer_type == PMIC_GPIO_OUT_BUF_OPEN_DRAIN_NMOS;
++		if (pad->buffer_type != PMIC_GPIO_OUT_BUF_OPEN_DRAIN_NMOS)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_SOURCE:
+-		arg = pad->buffer_type == PMIC_GPIO_OUT_BUF_OPEN_DRAIN_PMOS;
++		if (pad->buffer_type != PMIC_GPIO_OUT_BUF_OPEN_DRAIN_PMOS)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		arg = pad->pullup == PMIC_GPIO_PULL_DOWN;
++		if (pad->pullup != PMIC_GPIO_PULL_DOWN)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pad->pullup = PMIC_GPIO_PULL_DISABLE;
++		if (pad->pullup != PMIC_GPIO_PULL_DISABLE)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+-		arg = pad->pullup == PMIC_GPIO_PULL_UP_30;
++		if (pad->pullup != PMIC_GPIO_PULL_UP_30)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = !pad->is_enabled;
++		if (pad->is_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_POWER_SOURCE:
+ 		arg = pad->power_source;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pad->input_enabled;
++		if (!pad->input_enabled)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		arg = pad->out_value;
 
 
