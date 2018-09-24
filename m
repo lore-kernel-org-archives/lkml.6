@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DB1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6395ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C7B521486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C7B521486
+	by mail.kernel.org (Postfix) with ESMTP id 7B6FD2148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B6FD2148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387672AbeIXSa6 (ORCPT
+        id S2387680AbeIXSbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:30:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57552 "EHLO
+        Mon, 24 Sep 2018 14:31:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57558 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733188AbeIXSa5 (ORCPT
+        with ESMTP id S1732800AbeIXSbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:30:57 -0400
+        Mon, 24 Sep 2018 14:31:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEE111018;
-        Mon, 24 Sep 2018 12:29:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A54B91018;
+        Mon, 24 Sep 2018 12:29:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Raed Salem <raeds@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.18 006/235] net/mlx5: E-Switch, Fix memory leak when creating switchdev mode FDB tables
-Date:   Mon, 24 Sep 2018 13:49:52 +0200
-Message-Id: <20180924113104.886724084@linuxfoundation.org>
+        stable@vger.kernel.org, Vakul Garg <vakul.garg@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 007/235] net/tls: Set count of SG entries if sk_alloc_sg returns -ENOSPC
+Date:   Mon, 24 Sep 2018 13:49:53 +0200
+Message-Id: <20180924113105.027790477@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,31 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Raed Salem <raeds@mellanox.com>
+From: Vakul Garg <vakul.garg@nxp.com>
 
-[ Upstream commit c88a026e01219488e745f4f0267fd76c2bb68421 ]
+[ Upstream commit 52ea992cfac357b73180d5c051dca43bc8d20c2a ]
 
-The memory allocated for the slow path table flow group input structure
-was not freed upon successful return, fix that.
+tls_sw_sendmsg() allocates plaintext and encrypted SG entries using
+function sk_alloc_sg(). In case the number of SG entries hit
+MAX_SKB_FRAGS, sk_alloc_sg() returns -ENOSPC and sets the variable for
+current SG index to '0'. This leads to calling of function
+tls_push_record() with 'sg_encrypted_num_elem = 0' and later causes
+kernel crash. To fix this, set the number of SG elements to the number
+of elements in plaintext/encrypted SG arrays in case sk_alloc_sg()
+returns -ENOSPC.
 
-Fixes: 1967ce6ea5c8 ("net/mlx5: E-Switch, Refactor fast path FDB table creation in switchdev mode")
-Signed-off-by: Raed Salem <raeds@mellanox.com>
-Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 3c4d7559159b ("tls: kernel TLS support")
+Signed-off-by: Vakul Garg <vakul.garg@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/tls/tls_sw.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-@@ -658,6 +658,7 @@ static int esw_create_offloads_fdb_table
- 	if (err)
- 		goto miss_rule_err;
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -149,6 +149,9 @@ static int alloc_encrypted_sg(struct soc
+ 			 &ctx->sg_encrypted_num_elem,
+ 			 &ctx->sg_encrypted_size, 0);
  
-+	kvfree(flow_group_in);
- 	return 0;
++	if (rc == -ENOSPC)
++		ctx->sg_encrypted_num_elem = ARRAY_SIZE(ctx->sg_encrypted_data);
++
+ 	return rc;
+ }
  
- miss_rule_err:
+@@ -162,6 +165,9 @@ static int alloc_plaintext_sg(struct soc
+ 			 &ctx->sg_plaintext_num_elem, &ctx->sg_plaintext_size,
+ 			 tls_ctx->pending_open_record_frags);
+ 
++	if (rc == -ENOSPC)
++		ctx->sg_plaintext_num_elem = ARRAY_SIZE(ctx->sg_plaintext_data);
++
+ 	return rc;
+ }
+ 
 
 
