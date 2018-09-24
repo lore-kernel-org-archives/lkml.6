@@ -2,109 +2,111 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5216ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CABC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90660214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32B09208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:16:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Eihb7jRH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90660214D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="fID3/n1o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B09208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387412AbeIYAND (ORCPT
+        id S1732338AbeIYATz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 20:13:03 -0400
-Received: from mail-it1-f170.google.com ([209.85.166.170]:51993 "EHLO
-        mail-it1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731633AbeIYAND (ORCPT
+        Mon, 24 Sep 2018 20:19:55 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45349 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730407AbeIYATy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 20:13:03 -0400
-Received: by mail-it1-f170.google.com with SMTP id e14-v6so11859025itf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 11:09:40 -0700 (PDT)
+        Mon, 24 Sep 2018 20:19:54 -0400
+Received: by mail-pf1-f196.google.com with SMTP id a23-v6so1691706pfi.12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 11:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UHCeYyqZzNK6+M3bf4mg3QpUQh57EyXFgjsqKKsrGCg=;
-        b=Eihb7jRHsFUSBQ7rNZLWVsmUrDeA1VbPk29jqAXyvL7i32hh/aEFfy50fW9Z/Ax6vL
-         wvHcjGSl6FnZbgNGMdhR+r4KtHC1VAU6MH3zHVB/sFTuRjKC1UbUp3vi7298zIGXlIs3
-         dLSXeChXM0oEXn/4ssG5PntyoCKbbw9cmdygg45QOoxR83GRaxc9hJre6vhbriAqygY0
-         yz8/vEbU77LfdanfpZW7+AZZsJZQbekag9taXDkxTBHAJRTJ5m7fzDANi2EazFXPl7HS
-         QQPgkJqEXf2xjE95ix72sbg09bLQnztTdvx6Y+e32SUjXLcRwmuS1jH44EA5V+0UIF/9
-         qyQQ==
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pwPxX45gZm6RhM5vkMPVW/U8WnPtyGy8RjrhrRy6BQg=;
+        b=fID3/n1o/jp9PG1h69DDVj4VLN8kHopsqh78fV9/OyBY/nD//flWC6c2JfjS9Hgth3
+         0NLhjmKoM4amGC5QjfGMwydmgOZxuhAhQsWT3qSjonTobEF5bm6vhl90Ea1vEl7LR/NY
+         FilXtuNJIAfWxOPFxWR08aL5u0lrGF6KqAr57+gi2Ck+BrECzvrteLiGSz7zmCLLsgQc
+         8+RLOiZdP00ytLHbHXK4Ocdq3J5xW0de5Q5C8MSvm1Yusfv61Gz1nzxYPjv6cWMVpRuJ
+         drZZGCJtm88NyaAjTFYKLkUt2ckGPnTKc9tzCDyrAtX/2DW1UZMYx/MX3wReP07BGXCF
+         LvbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=UHCeYyqZzNK6+M3bf4mg3QpUQh57EyXFgjsqKKsrGCg=;
-        b=b4WzeZspAlk7O1Ygv4ZkmiQwH+VqHbRLAuYl7ZJwFapDirWLlLJJK6GCW3tSbj3c8t
-         Nkn8aizTqygT+/E2Ds2Sbp7X383ZuLTIFNdUMUOJILehaYZBg/K/o1VdhxcLlfgjXCdn
-         7H+6dZ5Jxpybd5KYWlvCwmDZ1rRi5wWSvDn5UAsZ1FamAgpULPgZuLBHk7hLoU7Ygpb9
-         JaGN0ayb2d2zEnIQ2oFVJ40tGA53fnWyJoMS8/q3vV1MlQAJ7gpbkkA5Dxy/e+bvrJNx
-         s7+t3YpmH4Itfcr+5oFL/3tkyMmDTTmDXDB9wSBCG3263nWIH/cAkgalzAc/XbyY5wYF
-         Q6qQ==
-X-Gm-Message-State: ABuFfoiWCwVDZDdyuD2wZmzmbtcPTRXhBwi+lTKeomKnwog8AAxnIof/
-        C4KKXb5gdw7DT17tNTiHxBa4+w==
-X-Google-Smtp-Source: ACcGV6354j3hOuH/c3H+IleEzd1hDuPCpe4UWhyHKugMjfk5b6uVOs7jBTdAd00cjLv+Saw8J+yPYA==
-X-Received: by 2002:a02:898d:: with SMTP id p13-v6mr31670jaj.74.1537812579878;
-        Mon, 24 Sep 2018 11:09:39 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id t134-v6sm6846988itb.41.2018.09.24.11.09.37
+        bh=pwPxX45gZm6RhM5vkMPVW/U8WnPtyGy8RjrhrRy6BQg=;
+        b=Mx9CYmYL+0UljgIf8/RIOU9gjXOqmAZZq4rEfMQiw0lvHxgkxjPEhmBWEmplTter9U
+         Xf/f5+eLuwLR7RR+61Q6TDMWSJhSrtm8Xc5XebR0sjol2WhLnji0LpIDhlZIAJh2zn7a
+         Qf627i3H6WPyYnMVBUVqk9zcJwXZaaIn84Ysb9aBM8BUuuV02Rhp9Ssbvf4xDGewymxT
+         Y/XHQ2TkQFv9Sa2eiXj2kO+GHOvHGHOEjVDhcDYQ9nYNa+lFHfMD0EQBJ3rXmYRSno6m
+         JqCebEIttojcedK5kZ+sXxA21QYahxS0gE6xhVEuuCJS6gZDqHamzDVRtmBOTesNYBZu
+         92Wg==
+X-Gm-Message-State: ABuFfojJjeXw5lvjO+oj/Tvor1r4BmN/gWpky2Xq0CS1gPPepG6yxwms
+        ZkFKoGsZAiD1a5r1JDmrHK0EUw==
+X-Google-Smtp-Source: ACcGV63YVLu+VgDntuhrWVQmosW8hgf8RgGvgsvQOMh8Mgs4LplU27l7EBOYYP9l24bp2JRsc4SSuQ==
+X-Received: by 2002:a62:4e0a:: with SMTP id c10-v6mr35131pfb.240.1537812989947;
+        Mon, 24 Sep 2018 11:16:29 -0700 (PDT)
+Received: from hackmann.mtv.corp.google.com ([2620:0:1000:1601:82f7:8f1:8c08:a97a])
+        by smtp.gmail.com with ESMTPSA id 77-v6sm7991149pfw.159.2018.09.24.11.16.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 11:09:38 -0700 (PDT)
-Subject: Re: block: DMA alignment of IO buffer allocated from slab
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ming Lei <tom.leiming@gmail.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
-        Dave Chinner <dchinner@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ming Lei <ming.lei@redhat.com>
-References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
- <20180920063129.GB12913@lst.de> <87h8ij0zot.fsf@vitty.brq.redhat.com>
- <20180921130504.GA22551@lst.de>
- <010001660c54fb65-b9d3a770-6678-40d0-8088-4db20af32280-000000@email.amazonses.com>
- <1f88f59a-2cac-e899-4c2e-402e919b1034@kernel.dk>
- <010001660cbd51ea-56e96208-564d-4f5d-a5fb-119a938762a9-000000@email.amazonses.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1a5b255f-682e-783a-7f99-9d02e39c4af2@kernel.dk>
-Date:   Mon, 24 Sep 2018 12:09:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 24 Sep 2018 11:16:29 -0700 (PDT)
+From:   Greg Hackmann <ghackmann@android.com>
+X-Google-Original-From: Greg Hackmann <ghackmann@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Omer Tripp <trippo@google.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Greg Hackmann <ghackmann@google.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] fs: fix possible Spectre V1 indexing in __close_fd()
+Date:   Mon, 24 Sep 2018 11:15:00 -0700
+Message-Id: <20180924181500.125257-1-ghackmann@google.com>
+X-Mailer: git-send-email 2.19.0.444.g18242da7ef-goog
 MIME-Version: 1.0
-In-Reply-To: <010001660cbd51ea-56e96208-564d-4f5d-a5fb-119a938762a9-000000@email.amazonses.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/18 12:00 PM, Christopher Lameter wrote:
-> On Mon, 24 Sep 2018, Jens Axboe wrote:
-> 
->> The situation is making me a little uncomfortable, though. If we export
->> such a setting, we really should be honoring it...
-> 
-> Various subsystems create custom slab arrays with their particular
-> alignment requirement for these allocations.
+__close_fd() is reachable via the close() syscall with a
+userspace-controlled fd.  Ensure that it can't be used to speculatively
+access past the end of current->fdt.
 
-Oh yeah, I think the solution is basic enough for XFS, for instance.
-They just have to error on the side of being cautious, by going full
-sector alignment for memory...
+Reported-by: Omer Tripp <trippo@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+---
+ fs/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/fs/file.c b/fs/file.c
+index 7ffd6e9d103d..a80cf82be96b 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -18,6 +18,7 @@
+ #include <linux/bitops.h>
+ #include <linux/spinlock.h>
+ #include <linux/rcupdate.h>
++#include <linux/nospec.h>
+ 
+ unsigned int sysctl_nr_open __read_mostly = 1024*1024;
+ unsigned int sysctl_nr_open_min = BITS_PER_LONG;
+@@ -626,6 +627,7 @@ int __close_fd(struct files_struct *files, unsigned fd)
+ 	fdt = files_fdtable(files);
+ 	if (fd >= fdt->max_fds)
+ 		goto out_unlock;
++	fd = array_index_nospec(fd, fdt->max_fds);
+ 	file = fdt->fd[fd];
+ 	if (!file)
+ 		goto out_unlock;
 -- 
-Jens Axboe
+2.19.0.397.gdd90340f6a-goog
 
