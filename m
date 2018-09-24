@@ -2,127 +2,145 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBF7C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76019C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B45D2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:07:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21E062145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:07:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QlKk3krr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B45D2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="OzPLCrO8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21E062145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbeIXQIn (ORCPT
+        id S1728621AbeIXQI4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:08:43 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40904 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbeIXQIn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:08:43 -0400
-Received: by mail-wm1-f67.google.com with SMTP id o2-v6so2807136wmh.5;
-        Mon, 24 Sep 2018 03:07:24 -0700 (PDT)
+        Mon, 24 Sep 2018 12:08:56 -0400
+Received: from mail-eopbgr680043.outbound.protection.outlook.com ([40.107.68.43]:44416
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725982AbeIXQI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 12:08:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O/f1cdohAweW8JJV/Qu9oMTndsAH56yclPGjOOEwzc4=;
-        b=QlKk3krrMxxPDKXSOao1bfnBBdq4c221v7rm6QauHwgh0qB9beYuwbu53/NKiAy1QO
-         +JozLZz7mKjBkj00/M0Unx8ETftuehR3PhohuSk3Fl5GtFQ8nbtLUoja7/z58lgFQ2hJ
-         E/gb0TY+2X6Pr5bnqoQpvhd34PQjxi9TB/rdhX/TE8VeITMrlwJIdZkDOxjRZmqgr8xK
-         ZF0suLwmWP/cXlKbF0+WBzAdMvpRXTC8IXnvZy8MqXiz61BvxKYwhOVWrZ99ri1e9V1O
-         xnynX6T1oZlOKiLeBZrVhYN+M/iRrPwhXUElQfAI2YwCfphcL17g3NxRhTlocpCNORzr
-         NQOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O/f1cdohAweW8JJV/Qu9oMTndsAH56yclPGjOOEwzc4=;
-        b=TYxWrKnLHWFAkZAtre/0UE6PAJhVZ/szbHc2HrkZGhRly4ofO5bA1rAyIVKT0kEKlM
-         +N11Z64Dl+kH1Y59kPjalErLNSyGBuKafMAA/PBJogwifoslrK5HBdFw7g1lyCgke5yg
-         4j0ve8XMKsonQzWHLkj+EebR9o59hSGT9E2v/k3PgnyA6A7+R1r0JTeTklBTkfhIPOUX
-         LMUtFOB5lxwh0c+YjTDXG6Q59jN5c/DVSgiAWS4OWtqzfB9QZ55PnoUhhMiAKYCcQPo0
-         qYwV+xUE2bWcrrhXm3ZkUUVGb8BFijAz9dG3EYlnuSIQMkL0GyhZ3dYgfeSsXamB5RGD
-         6DGg==
-X-Gm-Message-State: APzg51BzxzXK7gXB7Hwmn5FauCbCKlyGvsmLNLDjt69ywe5AUbpRU5bz
-        e/GKDvEwqMddcQNGgBlLaVZ3jtGf
-X-Google-Smtp-Source: ANB0VdYcOu9JP0rH8OpX4YVD6/177e6OOTxWuGw4iSdSQjSWfQ3DwdqUE122A9p8JpbSWU2H3IrOPQ==
-X-Received: by 2002:a1c:398b:: with SMTP id g133-v6mr7100231wma.5.1537783643658;
-        Mon, 24 Sep 2018 03:07:23 -0700 (PDT)
-Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
-        by smtp.gmail.com with ESMTPSA id a126-v6sm14705042wmh.1.2018.09.24.03.07.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 03:07:23 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 12:07:22 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 05/20] iommu/tegra: gart: Optimize mapping / unmapping
- performance
-Message-ID: <20180924100722.GG21032@ulmo>
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-6-digetx@gmail.com>
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l9I3KNNTKx1NVSKeKcB/lHl+KaQRMge3e84kKlLYqpI=;
+ b=OzPLCrO8DkcnStjudYcKt4B6nXJDfY4/ZK+f4VMB86haK24ys/3Ilr3DvcyNM0WV06vwYCZnOvm0R1tTsT03kGO+QRCwMoKeiVuKdBsUlhdre4e+zQCQnaNifC6Iqv9HXK6dnthiWrpfiXvZIXn8OOaKMoCjq0tqacszURJGZb0=
+Received: from DM6PR02MB5227.namprd02.prod.outlook.com (20.176.116.140) by
+ DM6PR02MB4059.namprd02.prod.outlook.com (20.176.75.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1164.20; Mon, 24 Sep 2018 10:07:34 +0000
+Received: from DM6PR02MB5227.namprd02.prod.outlook.com
+ ([fe80::8cc4:fb25:d431:bd00]) by DM6PR02MB5227.namprd02.prod.outlook.com
+ ([fe80::8cc4:fb25:d431:bd00%3]) with mapi id 15.20.1164.024; Mon, 24 Sep 2018
+ 10:07:33 +0000
+From:   Manish Narani <MNARANI@xilinx.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "leoyang.li@nxp.com" <leoyang.li@nxp.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v7 2/7] edac: synps: Add platform specific structures for
+ ddrc controller
+Thread-Topic: [PATCH v7 2/7] edac: synps: Add platform specific structures for
+ ddrc controller
+Thread-Index: AQHUTpJW1XQNYRxn3kWgpPIZoEhCVaT1rMEAgAFj0DCAAGaLgIAAI+zggALc1YCABMdaMA==
+Date:   Mon, 24 Sep 2018 10:07:33 +0000
+Message-ID: <DM6PR02MB5227B76AD2D71C4EABCA48DCC1170@DM6PR02MB5227.namprd02.prod.outlook.com>
+References: <1537194305-9243-1-git-send-email-manish.narani@xilinx.com>
+ <1537194305-9243-3-git-send-email-manish.narani@xilinx.com>
+ <20180918075522.GC22202@nazgul.tnic>
+ <DM6PR02MB5227F5B1B329C903BA64A27CC11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
+ <20180919111553.GA9140@nazgul.tnic>
+ <DM6PR02MB52279753E7FD04587393DC08C11C0@DM6PR02MB5227.namprd02.prod.outlook.com>
+ <20180921090721.GB30439@nazgul.tnic>
+In-Reply-To: <20180921090721.GB30439@nazgul.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=MNARANI@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM6PR02MB4059;6:iJzR8LBfpuyB0rlhlHwxgbyoMW3y7NKsDk/OGRO9algIGvfhsl6z5MX7tpVKgnZXcCeVKY2uEu4Wim/nR7sUz2hx3Vukj8Gqyx//NyMkgTXNH05OZQN+paflDl1iVMKw/uP2kjeG+2snyApF/EH6gWayFgvbNo4s+DXUBmGgsWMsSmlinHHbgH/DL09xDuqzLzauo8a31MKpLuPg7yXqUsADUgHPBH2BNl4hkdbbYl5ZZFB80WSeNUEl5gOjJmJDdIrAxiHAqptk/Xlk9NPI/X73cPLjkX9vxxWEMSq9jznfQ+GdjAjRMnoQYt5wweMtmwALLQx47MxIwzmGFUtKRn7iAh1BepSuAWo/YQF8lMCUhBWBuZR940dCSSuUF2wP7FK63ScQBKPBnAFy0v7NIXuwY6o+iyQqac2pqVgEVdBGynN23unt6A+O1LyZMPJwoRpBSuolNHsCIGd97FXD1w==;5:YchbSg+iW1E7WjdDwZgy9fd6JypHGJHNo8i+n9ZuE7vwhbXYTfNrPRIkMlxa3xsmg/dfZhwNA9ls+E/pLoaHKS0kI8NCgFJoVQDNG1eiyLx4oX9eQP9nU/Uo0nhDCFCZOMIP++5c5C9b31a6ICINolJzpWEhuz6IOkYn7CtzyNs=;7:IMsAEtAUgBKinZ1xOFMYGyBIDR91YvsUqAtrKir756XJHrolZXf1HzNKEobvo7MMvPsRwj7GZ5lkaYvpnBWpECt0rGlbkmhXJ0W+gOh5xtv7YGfzfe7GRrII2JZ7wPCl1pdGXs35o8TgYdZwlVR8K3Lk/vOVuIGOK0jyBTZll28aBFjGQcQ/smjZ0pN2ljuJg24h0CiEPSwU4UgW5hkSchXoz4dBNUX6bkrsIjClJS2lfc7x9R/7gwd+2EOUQYiZ
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(376002)(346002)(396003)(13464003)(189003)(199004)(51914003)(3846002)(478600001)(25786009)(14454004)(72206003)(66066001)(186003)(446003)(11346002)(486006)(476003)(256004)(105586002)(76176011)(106356001)(71200400001)(71190400001)(4326008)(7696005)(54906003)(316002)(93886005)(6436002)(55016002)(68736007)(53936002)(9686003)(97736004)(2900100001)(74316002)(2906002)(305945005)(7736002)(8676002)(8936002)(81166006)(81156014)(6506007)(53546011)(26005)(102836004)(7416002)(33656002)(6246003)(86362001)(229853002)(6116002)(6916009)(5660300001)(5250100002)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4059;H:DM6PR02MB5227.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: b079a25e-987f-4fef-5cba-08d622058b9c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR02MB4059;
+x-ms-traffictypediagnostic: DM6PR02MB4059:
+x-microsoft-antispam-prvs: <DM6PR02MB4059FFC621CF8F439087B170C1170@DM6PR02MB4059.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(185117386973197)(9452136761055)(258649278758335)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(149066)(150027)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051);SRVR:DM6PR02MB4059;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4059;
+x-forefront-prvs: 0805EC9467
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: hJ0S6IXfj+6EOMnn+E9CgMl2gR6wRvdBKEqKF4RnaiDz95/eItMZGtCFYSKgoFUxw4duzf8zUoWjwqvEeq0cXfXmHOFq1rZ1sorpII3Gu8Z64Zk+ueV8txFhyDjOHKQN9jr6ev8IWWJw6GxMhUX1Tnkx9AmKjBee+7pdvpiwa61Ut9MMhwqYPQfich/HvLKvVCyV4UbUlAd9oEFewHLxDul4yROHPh4zLLSae4npVY2n7/la55Jc34V0C08OnwphMWNYb2wBDzCuElpKKNhOiTvq8qbY7JtOMe9a2J+smI2hH0G5IC3jpD+pLzUCQa7glkwZ2uHIWdYVH8BnrxXjU95YQaYXAtU6w6z7ywMlecA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RMedoP2+Pr6Rq0N2"
-Content-Disposition: inline
-In-Reply-To: <20180924004153.8232-6-digetx@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b079a25e-987f-4fef-5cba-08d622058b9c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 10:07:33.1224
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---RMedoP2+Pr6Rq0N2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 24, 2018 at 03:41:38AM +0300, Dmitry Osipenko wrote:
-> Currently GART writes one page entry at a time. More optimal would be to
-> aggregate the writes and flush BUS buffer in the end, this gives map/unmap
-> 10-40% performance boost (depending on size of mapping) in comparison to
-> flushing after each page entry update.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/iommu/tegra-gart.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-
-10-40% sounds really nice, great stuff:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---RMedoP2+Pr6Rq0N2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluot1kACgkQ3SOs138+
-s6GV3RAAp1rhOAm6sQZ32r7t5gQnDun3nb584/yANQ1Tkk/+d6uI4aQOwy09ittA
-NYLbF6UPJLyVA/U2JpOSPu7ZK1trJ3+8gWWdq+33KQv4mb/2xI1wGSEq2OpIs+3D
-hnj5iMP6AHB+EafsNUccvebGmkN1LvAVvK2oPSTDKVtH//0fFdMQqqlWMWKqxtlD
-WtTYKGeMnBwdezhtfS63+83og03QnTb4HLLh8RHZNyJZT7/HpUY5llOQnYy1bae0
-Q/L1jN/NQxekxbe2GtW5pmg6eZa0tW0nnzW2o7yfbB459cxyk8CYta+5JCfd0EEj
-6hBz3akItwNZDQwmLqumDBuaz02LlKDMgan/HWz0ZRxRa2kYqJCKdw10ReU15JWy
-AEWkzzqBVJzVvb1lIXfwl2hpNA2Z+ipkCZ5Atl+ND7C1wPfQQV8ddNblLwgfDYkv
-weopJzt8UwTWhO6TJ7t0HjSNEYpH0mxp7eWh0sYQ2UJaWY+Q25whHJU6tWQu4XWT
-LDHP83dFmjiJ4qkPZvkAjEJUMq7HlEfkDoAzNKM5ps8gjOYrvfaAW7dUy4bPDf6X
-N74+6M9DkgEwSp4yA4+J4/8ZOATDmkPu0MMlJDJe26rFTKLLOcsjr9M7yYrXIeu/
-13FfhXSNXC2V823XNJhLVoP8nQNM1ZRWjlmRqrV4Ka7er+kYwSs=
-=bqRd
------END PGP SIGNATURE-----
-
---RMedoP2+Pr6Rq0N2--
+SGkgQm9yaXMsDQoNClRoYW5rcyBmb3IgdGhlIHJldmlldy4NCg0KDQo+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+IEZyb206IEJvcmlzbGF2IFBldGtvdiBbbWFpbHRvOmJwQGFsaWVuOC5k
+ZV0NCj4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIgMjEsIDIwMTggMjozNyBQTQ0KPiBUbzogTWFu
+aXNoIE5hcmFuaSA8TU5BUkFOSUB4aWxpbnguY29tPg0KPiBDYzogcm9iaCtkdEBrZXJuZWwub3Jn
+OyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbWNoZWhhYkBrZXJuZWwub3JnOw0KPiBNaWNoYWwgU2lt
+ZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47IGxlb3lhbmcubGlAbnhwLmNvbTsNCj4gc3VkZWVwLmhv
+bGxhQGFybS5jb207IGFtaXQua3VjaGVyaWFAbGluYXJvLm9yZzsNCj4gZGV2aWNldHJlZUB2Z2Vy
+Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBlZGFj
+QHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+
+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjcgMi83XSBlZGFjOiBzeW5wczogQWRkIHBsYXRmb3JtIHNw
+ZWNpZmljIHN0cnVjdHVyZXMgZm9yDQo+IGRkcmMgY29udHJvbGxlcg0KPiANCj4gT24gV2VkLCBT
+ZXAgMTksIDIwMTggYXQgMDE6MzM6NThQTSArMDAwMCwgTWFuaXNoIE5hcmFuaSB3cm90ZToNCj4g
+PiBBcGFydCBmcm9tIHRoaXMgb25lLCBJIGhhdmUgY292ZXJlZCBhbGwgdGhlIGNvbW1lbnRzIGZy
+b20gdGhlIHByZXZpb3VzDQo+IHJldmlldy4NCj4gDQo+IEFyZSB5b3Ugc3VyZT8NCj4gDQo+IExl
+dCdzIHNlZS4gSSBzYWlkOg0KPiANCj4gfCBLaWxsIGFsbCB0aGF0ICJmdW5jdGlvbiBwb2ludGVy
+IiBmbHVmZi4gSGVyZSdzIGhvdyBJJ3ZlIGNoYW5nZWQgaXQ6DQo+IHwNCj4gfCAvKioNCj4gfCAg
+KiBzdHJ1Y3Qgc3lucHNfcGxhdGZvcm1fZGF0YSAtICBzeW5wcyBwbGF0Zm9ybSBkYXRhIHN0cnVj
+dHVyZQ0KPiB8ICAqIEBlZGFjX2dldGVycm9yX2luZm86IGVkYWMgZXJyb3IgaW5mbw0KPiB8ICAq
+IEBlZGFjX2dldF9tdHlwZTogICAgIGdldCBtdHlwZQ0KPiB8ICAqIEBlZGFjX2dldF9kdHlwZTog
+ICAgIGdldCBkdHlwZQ0KPiB8ICAqIEBlZGFjX2dldF9lY2NzdGF0ZTogIGdldCBFQ0Mgc3RhdGUN
+Cj4gCQkJICBeXl5eXl5eXl5eXl5eDQo+IA0KPiBUaGlzIGlzIHN1cHBvc2VkIHRvIGRlbm90ZSB0
+aGF0IHRoaXMgZnVuY3Rpb24gcmV0dXJucyB3aGV0aGVyIEVDQyBjaGVja2luZyBpcw0KPiBlbmFi
+bGVkIG9uIHRoZSBjb250cm9sbGVyIG9yIG5vdC4NCj4gDQo+IFlvdXIgcGF0Y2ggaGFzOg0KPiAN
+Cj4gKyAqIHN0cnVjdCBzeW5wc19wbGF0Zm9ybV9kYXRhIC0gIHN5bnBzIHBsYXRmb3JtIGRhdGEg
+c3RydWN0dXJlLg0KPiArICogQGdldGVycm9yX2luZm86ICAgICBHZXQgZXJyb3IgaW5mby4NCj4g
+KyAqIEBnZXRfbXR5cGU6ICAgICAgICAgR2V0IG10eXBlLg0KPiArICogQGdldF9kdHlwZTogICAg
+ICAgICBHZXQgZHR5cGUuDQo+ICsgKiBAZ2V0X2VjY3N0YXRlOiAgICAgIEdldCBlY2NzdGF0ZS4N
+Cj4gDQo+IFNvIHdoYXQgaXMgImVjY3N0YXRlIj8gSXMgaXQgYSBzdHJ1Y3Qgb3IgYSB2YXJpYWJs
+ZSBvciAuLi4/DQo+IA0KPiBEbyB5b3Ugc2VlIG15IHBvaW50Pw0KPiANCj4gSSBrbm93LCBpdCBp
+cyBhIHNtYWxsIHRoaW5nIGJ1dCBkb2N1bWVudGluZyBvdXIgY29kZSBwcm9wZXJseSBpcyBzb21l
+dGhpbmcNCj4gd2hpY2ggcGVvcGxlIHdvdWxkIGJlIHRoYW5raW5nIHVzIGZvci4gRXZlbiB5b3Ug
+d2lsbCBiZSB0aGFua2luZyB5b3Vyc2VsZiB3aGVuDQo+IHlvdSBsb29rIGF0IHRoaXMgbW9udGhz
+IGZyb20gbm93IGFmdGVyIGhhdmluZyBmb3Jnb3R0ZW4gaXQgYWxsLg0KPiANCj4gUGxlYXNlIGNo
+ZWNrIHRoZSByZXN0IG9mIHlvdXIgYWRkaXRpb25zIGZvciBzaW1pbGFyIGRpc2NyZXBhbmNpZXMu
+DQpPa2F5IHN1cmUuIFdpbGwgYmUgcmVjdGlmaWVkIGluIHY4Lg0KDQpUaGFua3MsDQpNYW5pc2gN
+Cg0K
