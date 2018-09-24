@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB89C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2B9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0A62148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0A62148C
+	by mail.kernel.org (Postfix) with ESMTP id 230F92083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 230F92083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388423AbeIXShJ (ORCPT
+        id S2388069AbeIXSh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:37:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58512 "EHLO
+        Mon, 24 Sep 2018 14:37:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58524 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387468AbeIXShI (ORCPT
+        with ESMTP id S1728937AbeIXSh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:37:08 -0400
+        Mon, 24 Sep 2018 14:37:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D71831092;
-        Mon, 24 Sep 2018 12:35:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73A8D1092;
+        Mon, 24 Sep 2018 12:35:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Azael Avalos <coproscefalo@gmail.com>,
-        platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andy@infradead.org>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 084/235] platform/x86: toshiba_acpi: Fix defined but not used build warnings
-Date:   Mon, 24 Sep 2018 13:51:10 +0200
-Message-Id: <20180924113113.427659361@linuxfoundation.org>
+        stable@vger.kernel.org, "Xiao, Jin" <jin.xiao@intel.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.18 120/235] dm verity: fix crash on bufio buffer that was allocated with vmalloc
+Date:   Mon, 24 Sep 2018 13:51:46 +0200
+Message-Id: <20180924113118.142173320@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -55,44 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit c2e2a618eb7104e18fdcf739d4d911563812a81c ]
+commit e4b069e0945fa14c71cf8b5b89f8b1b2aa68dbc2 upstream.
 
-Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
-by marking the unused function as __maybe_unused.
+Since commit d1ac3ff008fb ("dm verity: switch to using asynchronous hash
+crypto API") dm-verity uses asynchronous crypto calls for verification,
+so that it can use hardware with asynchronous processing of crypto
+operations.
 
-../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show' defined but not used [-Wunused-function]
+These asynchronous calls don't support vmalloc memory, but the buffer data
+can be allocated with vmalloc if dm-bufio is short of memory and uses a
+reserved buffer that was preallocated in dm_bufio_client_create().
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Azael Avalos <coproscefalo@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fix verity_hash_update() so that it deals with vmalloc'd memory
+correctly.
+
+Reported-by: "Xiao, Jin" <jin.xiao@intel.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Fixes: d1ac3ff008fb ("dm verity: switch to using asynchronous hash crypto API")
+Cc: stable@vger.kernel.org # 4.12+
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/platform/x86/toshiba_acpi.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/platform/x86/toshiba_acpi.c
-+++ b/drivers/platform/x86/toshiba_acpi.c
-@@ -34,6 +34,7 @@
- #define TOSHIBA_ACPI_VERSION	"0.24"
- #define PROC_INTERFACE_VERSION	1
- 
-+#include <linux/compiler.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-@@ -1682,7 +1683,7 @@ static const struct file_operations keys
- 	.write		= keys_proc_write,
- };
- 
--static int version_proc_show(struct seq_file *m, void *v)
-+static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
+---
+ drivers/md/dm-verity-target.c |   24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -99,10 +99,26 @@ static int verity_hash_update(struct dm_
  {
- 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
- 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
+ 	struct scatterlist sg;
+ 
+-	sg_init_one(&sg, data, len);
+-	ahash_request_set_crypt(req, &sg, NULL, len);
+-
+-	return crypto_wait_req(crypto_ahash_update(req), wait);
++	if (likely(!is_vmalloc_addr(data))) {
++		sg_init_one(&sg, data, len);
++		ahash_request_set_crypt(req, &sg, NULL, len);
++		return crypto_wait_req(crypto_ahash_update(req), wait);
++	} else {
++		do {
++			int r;
++			size_t this_step = min_t(size_t, len, PAGE_SIZE - offset_in_page(data));
++			flush_kernel_vmap_range((void *)data, this_step);
++			sg_init_table(&sg, 1);
++			sg_set_page(&sg, vmalloc_to_page(data), this_step, offset_in_page(data));
++			ahash_request_set_crypt(req, &sg, NULL, this_step);
++			r = crypto_wait_req(crypto_ahash_update(req), wait);
++			if (unlikely(r))
++				return r;
++			data += this_step;
++			len -= this_step;
++		} while (len);
++		return 0;
++	}
+ }
+ 
+ /*
 
 
