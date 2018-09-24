@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FF4ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85008C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B54E20684
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B54E20684
+	by mail.kernel.org (Postfix) with ESMTP id 39B5D20684
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B5D20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387872AbeIXScO (ORCPT
+        id S2387875AbeIXScU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:32:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57790 "EHLO
+        Mon, 24 Sep 2018 14:32:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730321AbeIXScN (ORCPT
+        with ESMTP id S1730321AbeIXScU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:32:13 -0400
+        Mon, 24 Sep 2018 14:32:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38ED81098;
-        Mon, 24 Sep 2018 12:30:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 229321098;
+        Mon, 24 Sep 2018 12:30:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
         Christoph Hellwig <hch@lst.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 061/235] nvmet: fix file discard return status
-Date:   Mon, 24 Sep 2018 13:50:47 +0200
-Message-Id: <20180924113111.166599966@linuxfoundation.org>
+Subject: [PATCH 4.18 062/235] nvme-rdma: unquiesce queues when deleting the controller
+Date:   Mon, 24 Sep 2018 13:50:48 +0200
+Message-Id: <20180924113111.284790108@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -55,55 +54,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sagi Grimberg <sagi@grimberg.me>
 
-[ Upstream commit 1b72b71faccee986e2128a271125177dfe91f7b7 ]
+[ Upstream commit 90140624e8face94207003ac9a9d2a329b309d68 ]
 
-If nvmet_copy_from_sgl failed, we falsly return successful
-completion status.
+If the controller is going away, we need to unquiesce the IO queues so
+that all pending request can fail gracefully before moving forward with
+controller deletion. Do that before we destroy the IO queues so
+blk_cleanup_queue won't block in freeze.
 
-Fixes: d5eff33ee6f8 ("nvmet: add simple file backed ns support")
 Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/target/io-cmd-file.c |   18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/nvme/host/rdma.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/nvme/target/io-cmd-file.c
-+++ b/drivers/nvme/target/io-cmd-file.c
-@@ -209,22 +209,24 @@ static void nvmet_file_execute_discard(s
- {
- 	int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
- 	struct nvme_dsm_range range;
--	loff_t offset;
--	loff_t len;
--	int i, ret;
-+	loff_t offset, len;
-+	u16 ret;
-+	int i;
- 
- 	for (i = 0; i <= le32_to_cpu(req->cmd->dsm.nr); i++) {
--		if (nvmet_copy_from_sgl(req, i * sizeof(range), &range,
--					sizeof(range)))
-+		ret = nvmet_copy_from_sgl(req, i * sizeof(range), &range,
-+					sizeof(range));
-+		if (ret)
- 			break;
- 		offset = le64_to_cpu(range.slba) << req->ns->blksize_shift;
- 		len = le32_to_cpu(range.nlb) << req->ns->blksize_shift;
--		ret = vfs_fallocate(req->ns->file, mode, offset, len);
--		if (ret)
-+		if (vfs_fallocate(req->ns->file, mode, offset, len)) {
-+			ret = NVME_SC_INTERNAL | NVME_SC_DNR;
- 			break;
-+		}
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -1741,6 +1741,8 @@ static void nvme_rdma_shutdown_ctrl(stru
+ 		nvme_rdma_stop_io_queues(ctrl);
+ 		blk_mq_tagset_busy_iter(&ctrl->tag_set,
+ 					nvme_cancel_request, &ctrl->ctrl);
++		if (shutdown)
++			nvme_start_queues(&ctrl->ctrl);
+ 		nvme_rdma_destroy_io_queues(ctrl, shutdown);
  	}
  
--	nvmet_req_complete(req, ret < 0 ? NVME_SC_INTERNAL | NVME_SC_DNR : 0);
-+	nvmet_req_complete(req, ret);
- }
- 
- static void nvmet_file_dsm_work(struct work_struct *w)
 
 
