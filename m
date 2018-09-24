@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE730C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D20ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91685208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91685208E3
+	by mail.kernel.org (Postfix) with ESMTP id C3DB0208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3DB0208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbeIXRjI (ORCPT
+        id S1728987AbeIXRjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:39:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50278 "EHLO
+        Mon, 24 Sep 2018 13:39:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50300 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeIXRjH (ORCPT
+        with ESMTP id S1726241AbeIXRjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:39:07 -0400
+        Mon, 24 Sep 2018 13:39:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF10E1065;
-        Mon, 24 Sep 2018 11:37:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03F15106B;
+        Mon, 24 Sep 2018 11:37:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Waiman Long <longman@redhat.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>, kernel-team@android.com,
-        Arnd Bergmann <arnd@arndb.de>, astrachan@google.com
-Subject: [PATCH 3.18 026/105] debugobjects: Make stack check warning more informative
-Date:   Mon, 24 Sep 2018 13:33:12 +0200
-Message-Id: <20180924113116.316482927@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Maxim Zhukov <mussitantesmortem@gmail.com>
+Subject: [PATCH 3.18 027/105] kbuild: make missing $DEPMOD a Warning instead of an Error
+Date:   Mon, 24 Sep 2018 13:33:13 +0200
+Message-Id: <20180924113116.420213832@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -55,54 +58,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Fernandes (Google) <joel@joelfernandes.org>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit fc91a3c4c27acdca0bc13af6fbb68c35cfd519f2 upstream.
+commit 914b087ff9e0e9a399a4927fa30793064afc0178 upstream.
 
-While debugging an issue debugobject tracking warned about an annotation
-issue of an object on stack. It turned out that the issue was due to the
-object in concern being on a different stack which was due to another
-issue.
+When $DEPMOD is not found, only print a warning instead of exiting
+with an error message and error status:
 
-Thomas suggested to print the pointers and the location of the stack for
-the currently running task. This helped to figure out that the object was
-on the wrong stack.
+Warning: 'make modules_install' requires /sbin/depmod. Please install it.
+This is probably in the kmod package.
 
-As this is general useful information for debugging similar issues, make
-the error message more informative by printing the pointers.
+Change the Error to a Warning because "not all build hosts for cross
+compiling Linux are Linux systems and are able to provide a working
+port of depmod, especially at the file patch /sbin/depmod."
 
-[ tglx: Massaged changelog ]
+I.e., "make modules_install" may be used to copy/install the
+loadable modules files to a target directory on a build system and
+then transferred to an embedded device where /sbin/depmod is run
+instead of it being run on the build system.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Waiman Long <longman@redhat.com>
-Acked-by: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: kernel-team@android.com
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: astrachan@google.com
-Link: https://lkml.kernel.org/r/20180723212531.202328-1-joel@joelfernandes.org
+Fixes: 934193a654c1 ("kbuild: verify that $DEPMOD is installed")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: stable@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Maxim Zhukov <mussitantesmortem@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/debugobjects.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ scripts/depmod.sh |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -295,9 +295,12 @@ static void debug_object_is_on_stack(voi
+--- a/scripts/depmod.sh
++++ b/scripts/depmod.sh
+@@ -15,9 +15,9 @@ if ! test -r System.map ; then
+ fi
  
- 	limit++;
- 	if (is_on_stack)
--		pr_warn("object is on stack, but not annotated\n");
-+		pr_warn("object %p is on stack %p, but NOT annotated.\n", addr,
-+			 task_stack_page(current));
- 	else
--		pr_warn("object is not on stack, but annotated\n");
-+		pr_warn("object %p is NOT on stack %p, but annotated.\n", addr,
-+			 task_stack_page(current));
-+
- 	WARN_ON(1);
- }
+ if [ -z $(command -v $DEPMOD) ]; then
+-	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
++	echo "Warning: 'make modules_install' requires $DEPMOD. Please install it." >&2
+ 	echo "This is probably in the kmod package." >&2
+-	exit 1
++	exit 0
+ fi
  
+ # older versions of depmod don't support -P <symbol-prefix>
 
 
