@@ -2,223 +2,170 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2E9C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D488C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2428320C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:57:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2428320C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B6F6B20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F6B20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbeIXO6D (ORCPT
+        id S1727800AbeIXPAU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:58:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59506 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726269AbeIXO6D (ORCPT
+        Mon, 24 Sep 2018 11:00:20 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:26099 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726350AbeIXPAU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:58:03 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8O8uWFa042166
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 04:57:01 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mpua73hj3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 04:56:57 -0400
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
-        Mon, 24 Sep 2018 02:56:55 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 02:56:51 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8O8uo5819595392
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 01:56:50 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B807078063;
-        Mon, 24 Sep 2018 02:56:50 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A020C7805C;
-        Mon, 24 Sep 2018 02:56:48 -0600 (MDT)
-Received: from [9.124.35.57] (unknown [9.124.35.57])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 02:56:48 -0600 (MDT)
-Subject: [mainline][ppc][bnx2x] watchdog: CPU 80 self-detected hard LOCKUP @
- opal_interrupt+0x28/0x70 when module load/unload
-From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        maurosr <maurosr@linux.vnet.ibm.com>, mpe <mpe@ellerman.id.au>,
-        manvanth <manvanth@linux.vnet.ibm.com>,
-        sim <sim@linux.vnet.ibm.com>
-Date:   Mon, 24 Sep 2018 14:26:48 +0530
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092408-8235-0000-0000-00000E0597C7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009762; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01092879; UDB=6.00564808; IPR=6.00872915;
- MB=3.00023477; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 08:56:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092408-8236-0000-0000-000042C0A104
-Message-Id: <1537779408.26347.9.camel@abdul.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=988 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240097
+        Mon, 24 Sep 2018 11:00:20 -0400
+X-UUID: 4519e54766f6474897a8f2b4d4192e48-20180924
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 386453536; Mon, 24 Sep 2018 16:59:12 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 24 Sep 2018 16:59:11 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 24 Sep 2018 16:59:10 +0800
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
+        Daniel Kurtz <djkurtz@google.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <arnd@arndb.de>,
+        <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
+        <youlin.pei@mediatek.com>
+Subject: [PATCH v2 00/14] MT8183 IOMMU SUPPORT
+Date:   Mon, 24 Sep 2018 16:58:40 +0800
+Message-ID: <1537779534-23575-1-git-send-email-yong.wu@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greeting's
+This patchset mainly adds support for mt8183 IOMMU and SMI.
 
-bnx2x module load/unload test results in continuous hard LOCKUP trace on
-my powerpc bare-metal running mainline 4.19.0-rc4 kernel
+mt8183 has only one M4U like mt8173 and is also MTK IOMMU gen2 which
+uses ARM Short-Descriptor translation table format.
 
-the instruction address points to:
+The mt8183 M4U-SMI HW diagram is as below:
 
-0xc00000000009d048 is in opal_interrupt
-(arch/powerpc/platforms/powernv/opal-irqchip.c:133).
-128	
-129	static irqreturn_t opal_interrupt(int irq, void *data)
-130	{
-131		__be64 events;
-132	
-133		opal_handle_interrupt(virq_to_hw(irq), &events);
-134		last_outstanding_events = be64_to_cpu(events);
-135		if (opal_have_pending_events())
-136			opal_wake_poller();
-137	
+                          EMI
+                           |
+                          M4U
+                           |
+                       ----------
+                       |        |
+                   gals0-rx   gals1-rx
+                       |        |
+                       |        |
+                   gals0-tx   gals1-tx
+                       |        |
+                      ------------
+                       SMI Common
+                      ------------
+                           |
+  +-----+-----+--------+-----+-----+-------+-------+
+  |     |     |        |     |     |       |       |
+  |     |  gals-rx  gals-rx  |   gals-rx gals-rx gals-rx
+  |     |     |        |     |     |       |       |
+  |     |     |        |     |     |       |       |
+  |     |  gals-tx  gals-tx  |   gals-tx gals-tx gals-tx
+  |     |     |        |     |     |       |       |
+larb0 larb1  IPU0    IPU1  larb4  larb5  larb6    CCU
+disp  vdec   img     cam    venc   img    cam
 
-trace:
-bnx2x 0008:01:00.3 enP8p1s0f3: renamed from eth0
-bnx2x 0008:01:00.3 enP8p1s0f3: using MSI-X  IRQs: sp 297  fp[0] 299 ... fp[7] 306
-bnx2x 0008:01:00.2 enP8p1s0f2: NIC Link is Up, 1000 Mbps full duplex, Flow control: none
-bnx2x 0008:01:00.3 enP8p1s0f3: NIC Link is Up, 1000 Mbps full duplex, Flow control: none
-bnx2x: QLogic 5771x/578xx 10/20-Gigabit Ethernet Driver bnx2x 1.712.30-0 (2014/02/10)
-bnx2x 0008:01:00.0: msix capability found
-bnx2x 0008:01:00.0: Using 64-bit DMA iommu bypass
-bnx2x 0008:01:00.0: part number 0-0-0-0
-bnx2x 0008:01:00.0: 32.000 Gb/s available PCIe bandwidth (5 GT/s x8 link)
-bnx2x 0008:01:00.0 enP8p1s0f0: renamed from eth0
-bnx2x 0008:01:00.1: msix capability found
-bnx2x 0008:01:00.1: Using 64-bit DMA iommu bypass
-bnx2x 0008:01:00.1: part number 0-0-0-0
-bnx2x 0008:01:00.0 enP8p1s0f0: using MSI-X  IRQs: sp 267  fp[0] 269 ... fp[7] 276
-bnx2x 0008:01:00.0 enP8p1s0f0: NIC Link is Up, 10000 Mbps full duplex, Flow control: ON - receive & transmit
-bnx2x 0008:01:00.1: 32.000 Gb/s available PCIe bandwidth (5 GT/s x8 link)
-bnx2x 0008:01:00.1 enP8p1s0f1: renamed from eth0
-bnx2x 0008:01:00.2: msix capability found
-bnx2x 0008:01:00.2: Using 64-bit DMA iommu bypass
-bnx2x 0008:01:00.2: part number 0-0-0-0
-bnx2x 0008:01:00.1 enP8p1s0f1: using MSI-X  IRQs: sp 277  fp[0] 279 ... fp[7] 286
-bnx2x 0008:01:00.1 enP8p1s0f1: NIC Link is Up, 10000 Mbps full duplex, Flow control: ON - receive & transmit
-watchdog: CPU 80 self-detected hard LOCKUP @ opal_interrupt+0x28/0x70
-watchdog: CPU 80 TB:980794111093, last heartbeat TB:973959617200 (13348ms ago)
-Modules linked in: bnx2x(+) iptable_mangle ipt_MASQUERADE iptable_nat
-nf_nat_ipv4 nf_nat xt_conntrack nf_conntrack nf_defrag_ipv4 ipt_REJECT
-nf_reject_ipv4 xt_tcpudp tun bridge stp llc iptable_filter dm_mirror
-dm_region_hash dm_log dm_service_time vmx_crypto powernv_rng rng_core
-dm_multipath kvm_hv kvm binfmt_misc nfsd ip_tables x_tables autofs4 xfs
-lpfc crc_t10dif crct10dif_generic nvme_fc nvme_fabrics mdio libcrc32c
-nvme_core crct10dif_common [last unloaded: bnx2x]
-CPU: 80 PID: 0 Comm: swapper/80 Not tainted 4.19.0-rc4-autotest-autotest #1
-NIP:  c00000000009d048 LR: c000000000092fd0 CTR: 0000000030032a00
-REGS: c000003fff493d80 TRAP: 0900   Not tainted  (4.19.0-rc4-autotest-autotest)
-MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 48004042  XER: 00000000
-CFAR: c000000000092fbc IRQMASK: 1 
-GPR00: 0000000030005128 c000003fff70f220 c0000000010ae500 0000000000000000 
-GPR04: 0000000048004042 c00000000009d048 9000000000009033 0000000000000090 
-GPR08: 0000000000000000 0000000000000000 c000000000092fe4 9000000000001003 
-GPR12: c000000000092fbc c000003fff7ff300 c000003c96c80c00 0000000000010000 
-GPR16: 0000000000000000 000000000000003c c000003c96c80800 c000003c96d00700 
-GPR20: 0000000000000001 0000000000000001 0000000000000002 0000000000000014 
-GPR24: c000001fe8741000 c000003fff70f330 0000000000000000 c000003ca947fb40 
-GPR28: 00000000092f47d0 0000000000000014 c000001fe8741000 c000001fe9860200 
-NIP [c00000000009d048] opal_interrupt+0x28/0x70
-LR [c000000000092fd0] opal_return+0x14/0x48
-Call Trace:
-[c000003fff70f220] [c00000000009d048] opal_interrupt+0x28/0x70 (unreliable)
-[c000003fff70f250] [c00000000016d890] __handle_irq_event_percpu+0x90/0x2d0
-[c000003fff70f310] [c00000000016db00] handle_irq_event_percpu+0x30/0x90
-[c000003fff70f350] [c00000000016dbc0] handle_irq_event+0x60/0xc0
-[c000003fff70f380] [c000000000172d2c] handle_fasteoi_irq+0xbc/0x1f0
-[c000003fff70f3b0] [c00000000016c084] generic_handle_irq+0x44/0x70
-[c000003fff70f3d0] [c0000000000193cc] __do_irq+0x8c/0x200
-[c000003fff70f440] [c000000000019640] do_IRQ+0x100/0x110
-[c000003fff70f490] [c000000000008db8] hardware_interrupt_common+0x158/0x160
---- interrupt: 501 at fib_table_lookup+0xfc/0x600
-    LR = fib_validate_source+0x148/0x370
-[c000003fff70f780] [0000000000000000]           (null) (unreliable)
-[c000003fff70f7e0] [c000000000959af8] fib_validate_source+0x148/0x370
-[c000003fff70f8a0] [c0000000008fd664] ip_route_input_rcu+0x214/0x970
-[c000003fff70f990] [c0000000008fdde0] ip_route_input_noref+0x20/0x30
-[c000003fff70f9e0] [c000000000945e28] arp_process.constprop.14+0x3d8/0x8a0
-[c000003fff70faf0] [c00000000089eb20] __netif_receive_skb_one_core+0x60/0x80
-[c000003fff70fb30] [c0000000008a7d00] netif_receive_skb_internal+0x30/0x110
-[c000003fff70fb70] [c0000000008a888c] napi_gro_receive+0x11c/0x1c0
-[c000003fff70fbb0] [c000000000702afc] tg3_poll_work+0x5fc/0x1060
-[c000003fff70fcb0] [c0000000007035b4] tg3_poll_msix+0x54/0x210
-[c000003fff70fd00] [c0000000008a922c] net_rx_action+0x31c/0x470
-[c000003fff70fe10] [c0000000009f5afc] __do_softirq+0x15c/0x3b4
-[c000003fff70ff00] [c0000000000fddf0] irq_exit+0x100/0x120
-[c000003fff70ff20] [c0000000000193d8] __do_irq+0x98/0x200
-[c000003fff70ff90] [c00000000002af24] call_do_irq+0x14/0x24
-[c000003ca947fa80] [c0000000000195d4] do_IRQ+0x94/0x110
-[c000003ca947fad0] [c000000000008db8] hardware_interrupt_common+0x158/0x160
---- interrupt: 501 at replay_interrupt_return+0x0/0x4
-    LR = arch_local_irq_restore+0x84/0x90
-[c000003ca947fdc0] [0000000000080000] 0x80000 (unreliable)
-[c000003ca947fde0] [c000000000181f60] rcu_idle_exit+0xa0/0xd0
-[c000003ca947fe30] [c000000000136d08] do_idle+0x1c8/0x3a0
-[c000003ca947fec0] [c0000000001370b4] cpu_startup_entry+0x34/0x40
-[c000003ca947fef0] [c0000000000467f4] start_secondary+0x4d4/0x520
-[c000003ca947ff90] [c00000000000b270] start_secondary_prolog+0x10/0x14
-Instruction dump:
-60000000 60420000 3c4c0101 384214e0 7c0802a6 78630020 f8010010 f821ffd1 
-4bf7b901 60000000 38810020 4bff657d <60000000> 39010020 3d42ffed e94a5d28 
-watchdog: CPU 80 became unstuck TB:980802789270
-CPU: 80 PID: 412 Comm: ksoftirqd/80 Not tainted 4.19.0-rc4-autotest-autotest #1
-Call Trace:
-[c000003ca96f7910] [c0000000009d4cec] dump_stack+0xb0/0xf4 (unreliable)
-[c000003ca96f7950] [c00000000002f278] wd_smp_clear_cpu_pending+0x368/0x3f0
-[c000003ca96f7a10] [c00000000002fa48] wd_timer_fn+0x78/0x3a0
-[c000003ca96f7ad0] [c00000000018a3c0] call_timer_fn+0x50/0x1b0
-[c000003ca96f7b50] [c00000000018a658] expire_timers+0x138/0x1e0
-[c000003ca96f7bc0] [c00000000018a7c8] run_timer_softirq+0xc8/0x220
-[c000003ca96f7c50] [c0000000009f5afc] __do_softirq+0x15c/0x3b4
-[c000003ca96f7d40] [c0000000000fdab4] run_ksoftirqd+0x54/0x80
-[c000003ca96f7d60] [c000000000126f10] smpboot_thread_fn+0x290/0x2a0
-[c000003ca96f7dc0] [c0000000001215ac] kthread+0x15c/0x1a0
-[c000003ca96f7e30] [c00000000000bdd4] ret_from_kernel_thread+0x5c/0x68
-bnx2x 0008:01:00.2: 32.000 Gb/s available PCIe bandwidth (5 GT/s x8 link)
-bnx2x 0008:01:00.2 enP8p1s0f2: renamed from eth0
-bnx2x 0008:01:00.3: msix capability found
-bnx2x 0008:01:00.3: Using 64-bit DMA iommu bypass
-bnx2x 0008:01:00.3: part number 0-0-0-0
-bnx2x 0008:01:00.3: 32.000 Gb/s available PCIe bandwidth (5 GT/s x8 link)
-bnx2x 0008:01:00.3 enP8p1s0f3: renamed from eth0
+All the connections are HW fixed, SW can NOT adjust it.
+
+Compared with mt8173, we add a GALS(Global Async Local Sync) module
+between SMI-common and M4U, and additional GALS between larb2/3/5/6
+and SMI-common. GALS can help synchronize for the modules in different
+clock frequency, it can be seen as a "asynchronous fifo".
+
+GALS can only help transfer the command/data while it doesn't have
+the configuring register, thus it has the special "smi" clock and it
+doesn't have the "apb" clock. From the diagram above, we add "gals0"
+and "gals1" clocks for smi-common and add a "gals" clock for smi-larb.
+
+From the diagram above, IPU0/IPU1(Image Processor Unit) and CCU(Camera
+Control Unit) is connected with smi-common directly, we can take them
+as "larb2", "larb3" and "larb7", and their register spaces are
+different with the normal larb.
+
+This patchset is based on v4.19-rc1.
+the patch 1/2/3/4/5/6 add the iommu/smi support for mt8183;
+the patch 7/8/9/10 add mmu1 support;
+the last patches contain some minor changes:
+   -patch 11 fix a issue.
+   -patch 12 improve the code flow(add shutdown).
+   -patch 13 cleanup some smi codes(delete need_larbid).
+   -patch 14 switch to SPDX license.
+this patchset don't contain the dtsi part since it need depend on the
+ccf and power-domain nodes which has not been accepted.
+
+change notes:
+v2: 1) Fix typo in the commit message of dt-binding.
+    2) Change larb2/larb3 to the special larbs.
+    3) Refactor the larb-id remapped array(larbid_remapped), then we
+    don't need add the new function(mtk_iommu_get_larbid).
+    4) Add a new patch for v7s two helpers(paddr_to_iopte and
+    iopte_to_paddr).
+    5) Change some comment for MTK 4GB mode.
+
+v1:
+http://lists.infradead.org/pipermail/linux-mediatek/2018-September/014881.html
+
+Yong Wu (14):
+  dt-bindings: mediatek: Add binding for mt8183 IOMMU and SMI
+  iommu/mediatek: Use a struct as the platform data
+  memory: mtk-smi: Use a general config_port interface
+  iommu/io-pgtable-arm-v7s: Add paddr_to_iopte and iopte_to_paddr
+    helpers
+  iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB Mode
+  iommu/mediatek: Add mt8183 IOMMU support
+  iommu/mediatek: Add mmu1 support
+  memory: mtk-smi: Invoke pm runtime_callback to enable clocks
+  memory: mtk-smi: Use a struct for the platform data for smi-common
+  memory: mtk-smi: Add bus_sel for mt8183
+  iommu/mediatek: Add VLD_PA_RANGE register backup when suspend
+  iommu/mediatek: Add shutdown callback
+  memory: mtk-smi: Get rid of need_larbid
+  iommu/mediatek: Switch to SPDX license identifier
+
+ .../devicetree/bindings/iommu/mediatek,iommu.txt   |  15 +-
+ .../memory-controllers/mediatek,smi-common.txt     |  11 +-
+ .../memory-controllers/mediatek,smi-larb.txt       |   3 +
+ drivers/iommu/io-pgtable-arm-v7s.c                 |  75 ++++--
+ drivers/iommu/io-pgtable.h                         |   7 +-
+ drivers/iommu/mtk_iommu.c                          | 133 ++++++----
+ drivers/iommu/mtk_iommu.h                          |  23 +-
+ drivers/iommu/mtk_iommu_v1.c                       |  10 +-
+ drivers/memory/mtk-smi.c                           | 267 ++++++++++++++-------
+ include/dt-bindings/memory/mt2701-larb-port.h      |  10 +-
+ include/dt-bindings/memory/mt8173-larb-port.h      |  10 +-
+ include/dt-bindings/memory/mt8183-larb-port.h      | 130 ++++++++++
+ include/soc/mediatek/smi.h                         |  10 +-
+ 13 files changed, 492 insertions(+), 212 deletions(-)
+ create mode 100644 include/dt-bindings/memory/mt8183-larb-port.h
 
 -- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
-
+1.9.1
 
 
