@@ -2,101 +2,178 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73BAECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384F0ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D75208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:21:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBADC2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:25:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0uHdyuF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D75208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HaPJgwxA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBADC2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeIXOV4 (ORCPT
+        id S1727486AbeIXO0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:21:56 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37045 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbeIXOV4 (ORCPT
+        Mon, 24 Sep 2018 10:26:18 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45574 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeIXO0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:21:56 -0400
-Received: by mail-qk1-f193.google.com with SMTP id c13-v6so10698752qkm.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 01:21:01 -0700 (PDT)
+        Mon, 24 Sep 2018 10:26:18 -0400
+Received: by mail-io1-f65.google.com with SMTP id e12-v6so16899210iok.12
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 01:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=C1gJRhX9kcXYo+qobOGEZNI2c+EQHg1Y8CnwRzwKVVM=;
-        b=B0uHdyuFyqcpqN1uozzGtANtWhdGVuqgSb4G36FRhv+RseAJyeRzpTt55lpReKE6Lz
-         JsJ92+RNjC/ikkI31a56pLvPApRmAIre2UtHJcIL5jqkqPoARw7AkvSZaVQKK2FfO5rO
-         ZfEJWe6KaBIsAW19wQIDM5Au7jUzHTFNDT8D4BkDMpoK/zfrOpx24x3oMThIZTxcrGe6
-         da06u4zXjp7i/M1fKG8DMEvhs2RacEu0fPyCXuPH2FabSvplboSMNaAAWAIT1TbMfB/N
-         014au0PnPlEiAknSIdeEiJLx63R3Es0IJZm00WHtziHOiGJEk85nur8EQp96um3LXTs4
-         Y/zg==
+        bh=2Vd2bcUzLyf63wvNjTIthHSlmHgcL+mKFC6Axx8gjCg=;
+        b=HaPJgwxAnKTnGQgSYc/rtRL3eK1rT94JkqhxBePESFEFcIZqa+QRi0JMXyg0XwTaY6
+         v0yTDEDpjetfnrEHOdarFZ3rxyWuSFXRDJAbw7AcXZrNyb0RLJF33gKkMIhp3VYA/0bN
+         TAWzzQ8VjbtH6VmLYqBa41ovYy8Kk9wZcWwT8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C1gJRhX9kcXYo+qobOGEZNI2c+EQHg1Y8CnwRzwKVVM=;
-        b=JCQo1jpe5t0lMys8KDq9xSnGTD03TJqSHScIaxfai6MXYkqQneOnWDvG68+AchJicQ
-         dCHqF9cRNTiWr/sI7CuiG2zvFxIZOYay9OebjI4tub3wDJl4kHDde6dkWbxEtxCFlAA8
-         GJCfz75/g+Uf6GKJu5cwzwfmB1dtu4wNZC4MxANdLWya5wp2mf0Sg5N/oRcMxlKIdFrj
-         9F6QcS7mANcf5pU+JlCUUf0ZZsgsQgq3C6baYoFvEE5MqBqPM9GG0iyHkPTTO5cu0e01
-         K8khLuX413ecFRh5Jwu8uMQWkj9KDKOlwMLiRQBJQYxhONTkDnsZ8dukLrNHrlIMcPn7
-         MSBQ==
-X-Gm-Message-State: ABuFfoixkooCXG/r1ZwyZ1sMpr3rcRDx3DXMHoarEDnyI4a75Txpix5u
-        Oi1aBcvalULLqbjOwdNlIgcrCWX9jSdSCpqMgNyBRA==
-X-Google-Smtp-Source: ACcGV634+VvDqp/ujEPvvOANCkQFprEuz1g0xV5mX9nTDT1WVL8Bsh0LGfDZ0oyVSoyGzTrf1opnx3cFZHGeSAuxLvU=
-X-Received: by 2002:a37:dc41:: with SMTP id v62-v6mr4020262qki.109.1537777261484;
- Mon, 24 Sep 2018 01:21:01 -0700 (PDT)
+        bh=2Vd2bcUzLyf63wvNjTIthHSlmHgcL+mKFC6Axx8gjCg=;
+        b=pY53ozBdFQrh7sdSw/dM3Qn7mpNkfZuk+eqB8JIxri2slJlx2ZBSbbsi2cpR9dI8Ps
+         VV0WxdkQa0S2B0sOBht5Hglq6JNxcnZSaAhb2XenGYXUVY1ChC0gzzFHIyQxhOFCkT80
+         TpUfJJMnLz00ibVxY2idxlv5IXDdsB4sZ8OvWbnbbf3ZDi4NKnbD2XUql4jaEA3uMK87
+         GELuG9g0c7VKZ2rXtRlcdz+4f9wFSEMjwqI6axQ0ii8tXNez8RemkVG5yfsbhLysrYsJ
+         CU9qR7f2acd9m9rj7kc89e26dUy085OAnf9wBmz8+4XLDztiMcf18xuv2O2W9dTwe59T
+         pBKQ==
+X-Gm-Message-State: ABuFfohi+MDMfEmE0LTkN1w4Nr1JRYHTpk+FK8e5Aa5oaWmfQVqMTiJB
+        O5vUgX/ZNwIEUVjr6OQTkqxZ+wOZgat3WuOwT0E0YA==
+X-Google-Smtp-Source: ACcGV63Kxdn6n0+tDNwN8o/NzoaKKUWW4yUWNOAd3ZfNS/DESS+HlHZiDxSjkyXuIbc4LuJXv1vuHJQXfkM5y0xuELI=
+X-Received: by 2002:a6b:5d12:: with SMTP id r18-v6mr7045182iob.170.1537777522432;
+ Mon, 24 Sep 2018 01:25:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180920144904.24911-1-romain.izard.pro@gmail.com> <1537535934.15252.3.camel@suse.com>
-In-Reply-To: <1537535934.15252.3.camel@suse.com>
-From:   Romain Izard <romain.izard.pro@gmail.com>
-Date:   Mon, 24 Sep 2018 10:20:50 +0200
-Message-ID: <CAGkQfmNfYCObGG+zYmokRDqqKbcjVoaAxrYfnz70moZiyE6qCg@mail.gmail.com>
-Subject: Re: [PATCH] usb: cdc_acm: Do not leak URB buffers
-To:     Oliver Neukum <oneukum@suse.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org
+References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
+ <1537367527-20773-5-git-send-email-jim2101024@gmail.com> <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
+ <7fa897cf-4d58-c63f-afdd-a3ec5a6a56bf@gmail.com> <CAKv+Gu8aJRV4nqq1e-5HRLvbrANQsYuMf-pwWB53BhxLgX7iWg@mail.gmail.com>
+ <b74d3c16-a512-73dc-c94a-ef6adde5f757@gmail.com> <CAKv+Gu8ZbN3BDRyuFzt4o--SSUmhuOh+jnpq8ZR-Ay13DJrAqg@mail.gmail.com>
+ <fa285694-c3e1-adf8-032a-202e7598de41@gmail.com> <CANCKTBsypcVS_iC1+sbW5fMKfj+tTsxbQv9CvDwcO8GV3a8_Yg@mail.gmail.com>
+In-Reply-To: <CANCKTBsypcVS_iC1+sbW5fMKfj+tTsxbQv9CvDwcO8GV3a8_Yg@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 24 Sep 2018 10:25:10 +0200
+Message-ID: <CAKv+Gu-+OjJi8zGLqvnsOJQ9ygMot-O0EbyMKO-yyG-+k-274A@mail.gmail.com>
+Subject: Re: [PATCH v5 04/12] PCI: brcmstb: add dma-range mapping for inbound traffic
+To:     Jim Quinlan <jim2101024@gmail.com>, Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-09-21 15:27 +0200, Oliver Neukum <oneukum@suse.com>:
+On Fri, 21 Sep 2018 at 19:41, Jim Quinlan <jim2101024@gmail.com> wrote:
 >
-> On Do, 2018-09-20 at 16:49 +0200, Romain Izard wrote:
-> > When the ACM TTY port is disconnected, the URBs it uses must be killed,
-> > and then the buffers must be freed. Unfortunately a previous refactor
-> > removed the code freeing the buffers because it looked extremely similar
-> > to the code killing the URBs.
+> On Thu, Sep 20, 2018 at 5:39 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
 > >
-> > As a result, there were many new leaks for each plug/unplug cycle of a
-> > CDC-ACM device, that were detected by kmemleak.
+> > On 09/20/2018 02:33 PM, Ard Biesheuvel wrote:
+> > > On 20 September 2018 at 14:31, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > >> On 09/20/2018 02:04 PM, Ard Biesheuvel wrote:
+> > >>> On 20 September 2018 at 13:55, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > >>>> On 09/19/2018 07:19 PM, Ard Biesheuvel wrote:
+> > >>>>> On 19 September 2018 at 07:31, Jim Quinlan <jim2101024@gmail.com> wrote:
+> > >>>>>> The Broadcom STB PCIe host controller is intimately related to the
+> > >>>>>> memory subsystem.  This close relationship adds complexity to how cpu
+> > >>>>>> system memory is mapped to PCIe memory.  Ideally, this mapping is an
+> > >>>>>> identity mapping, or an identity mapping off by a constant.  Not so in
+> > >>>>>> this case.
+> > >>>>>>
+> > >>>>>> Consider the Broadcom reference board BCM97445LCC_4X8 which has 6 GB
+> > >>>>>> of system memory.  Here is how the PCIe controller maps the
+> > >>>>>> system memory to PCIe memory:
+> > >>>>>>
+> > >>>>>>   memc0-a@[        0....3fffffff] <=> pci@[        0....3fffffff]
+> > >>>>>>   memc0-b@[100000000...13fffffff] <=> pci@[ 40000000....7fffffff]
+> > >>>>>>   memc1-a@[ 40000000....7fffffff] <=> pci@[ 80000000....bfffffff]
+> > >>>>>>   memc1-b@[300000000...33fffffff] <=> pci@[ c0000000....ffffffff]
+> > >>>>>>   memc2-a@[ 80000000....bfffffff] <=> pci@[100000000...13fffffff]
+> > >>>>>>   memc2-b@[c00000000...c3fffffff] <=> pci@[140000000...17fffffff]
+> > >>>>>>
+> > >>>>>
+> > >>>>> So is describing this as
+> > >>>>>
+> > >>>>> dma-ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>,
+> > >>>>>              <0x0 0x40000000 0x1 0x0 0x0 0x40000000>,
+> > >>>>>              <0x0 0x80000000 0x0 0x40000000 0x0 0x40000000>,
+> > >>>>>              <0x0 0xc0000000 0x3 0x0 0x0 0x40000000>,
+> > >>>>>              <0x1 0x0 0x0 0x80000000 0x0 0x40000000>,
+> > >>>>>              <0x1 0x40000000 0x0 0xc0000000 0x0 0x40000000>;
+> > >>>>>
+> > >>>>> not working for you? I haven't tried this myself, but since DT permits
+> > >>>>> describing the inbound mappings this way, we should fix the code if it
+> > >>>>> doesn't work at the moment.
+> > >>>>
+> > >>>> You mean encoding the memory controller index in the first cell? If that
+> > >>>> works, that's indeed a much cleaner solution, though is it standard
+> > >>>> compliant in any form?
+> > >>>
+> > >>> No those are just memory addresses (although I may have screwed up the
+> > >>> order). From Documentation/devicetree/booting-without-of.txt:
+> > >>>
+> > >>> """
+> > >>> Optional property:
+> > >>> - dma-ranges: <prop-encoded-array> encoded as arbitrary number of triplets of
+> > >>>         (child-bus-address, parent-bus-address, length). Each triplet specified
+> > >>>         describes a contiguous DMA address range.
+> > >>> """
+> > >>>
+> > >>
+> > >> Then I am confused by your comment, that's what this patch does, it adds
+> > >> support for reading "dma-ranges" from Device Tree and setting up inbound
+> > >> windows using that. The only caveat is that because the PCIe root
+> > >> complex has some ties with the memory bus architecture it is connected
+> > >> to (SCB in our case) there is still a requirement to know the
+> > >> translation between a given physical address and its backing memory
+> > >> controller/aperture.
+> > >>
+> > >
+> > > Ah ok, apologies for the noise then.
+> > >
+> > > I was hoping that having working support for dma-ranges would remove
+> > > the need for the special phys<->dma conversion routines.
 > >
-> > Restore the missing code, and the memory leak is removed.
+> > What you describe definitively works with platform devices, but I am not
+> > sure this is working for PCIe devices, although, conceptually it should,
+> > yes.
+> Sorry for my delay in responding.  One problem is that
+> of_dma_configure() only looks at the first dma-range given and then
+> converts it to dev->dma_pfn_offset which is respected by the DMA API.
+> However, we often have multiple dma-ranges, not just one.  This is the
+> big issue.
 >
-> Try as i may, I don't see the difference. Could you put a comment exactly
-> describing the issue into the code itself, lest this problem reappear?
+
+Given the recent attention to getting these APIs in shape, this may be
+something Robin or Christoph may care to look into?
+
+In any case, the description of dma-ranges should be in sync with the
+way Linux interprets it, so this is either a documentation bug or a
+DMA layer bug.
+
+> There is another issue with of_dma_configure() being invoked by the EP
+> driver on "bridge->parent->of_node", which is our RC device,
+> Of_dma_configure() calls of_dma_range() on the of_get_next_parent() of
+> our RC's device node and this misses the dma-ranges property which is
+> contained within the RC.  I think I could workaround this but there is
+> no getting around the first problem.
 >
 
-The critical point is that on shutdown, the URBs need to be killed with
-usb_kill_urb, and then released with usb_free_urb.
-
-As the code for iterating on all allocated URBs and the parameters are the
-same for both functions, which also have the same length, the difference is
-visually subtle. But conceptually, it is not subtle at all.
-
-I believe that this does not need a comment.
-
-Best regards,
---
-Romain Izard
+IIUC dma-ranges should be added to the parent bus of a device, which I
+guess is slightly ambiguous for a root complex that incorporates a
+host bridge.
