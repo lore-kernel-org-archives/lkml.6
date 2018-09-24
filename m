@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43570C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEC9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7F5C2148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F5C2148C
+	by mail.kernel.org (Postfix) with ESMTP id 892832145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892832145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729131AbeIXRjz (ORCPT
+        id S1729135AbeIXRkG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:39:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50452 "EHLO
+        Mon, 24 Sep 2018 13:40:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50464 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbeIXRjy (ORCPT
+        with ESMTP id S1726888AbeIXRkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:39:54 -0400
+        Mon, 24 Sep 2018 13:40:05 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 063AC1065;
-        Mon, 24 Sep 2018 11:38:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A506106F;
+        Mon, 24 Sep 2018 11:38:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "natechancellor@gmail.com, mark.rutland@arm.com, will.deacon@arm.com,
-        steve.capper@arm.com, kirill.shutemov@linux.intel.com, vbabka@suse.cz,
-        mgorman@suse.de, Chas Williams" <chas3@att.com>,
-        Chas Williams <chas3@att.com>
-Subject: [PATCH 3.18 031/105] Fixes: Commit 86af955d02bb ("mm: numa: avoid waiting on freed migrated pages")
-Date:   Mon, 24 Sep 2018 13:33:17 +0200
-Message-Id: <20180924113116.897655776@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 040/105] scsi: target: fix __transport_register_session locking
+Date:   Mon, 24 Sep 2018 13:33:26 +0200
+Message-Id: <20180924113118.106699391@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -53,38 +54,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
+From: Mike Christie <mchristi@redhat.com>
 
-From: Chas Williams <chas3@att.com>
+[ Upstream commit 6a64f6e1591322beb8ce16e952a53582caf2a15c ]
 
-Commit 86af955d02bb ("mm: numa: avoid waiting on freed migrated pages")
-was an incomplete backport of the upstream commit.  It is necessary to
-always reset page_nid before attempting any early exit.
+When __transport_register_session is called from transport_register_session
+irqs will already have been disabled, so we do not want the unlock irq call
+to enable them until the higher level has done the final
+spin_unlock_irqrestore/ spin_unlock_irq.
 
-The original commit conflicted due to lack of commit 82b0f8c39a38
-("mm: join struct fault_env and vm_fault") in 4.9 so it wasn't a clean
-application, and the change must have just gotten lost in the noise.
+This has __transport_register_session use the save/restore call.
 
-Signed-off-by: Chas Williams <chas3@att.com>
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/huge_memory.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/target/target_core_transport.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1329,12 +1329,12 @@ int do_huge_pmd_numa_page(struct mm_stru
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -323,6 +323,7 @@ void __transport_register_session(
+ 	void *fabric_sess_ptr)
+ {
+ 	unsigned char buf[PR_REG_ISID_LEN];
++	unsigned long flags;
  
- 	/* Migration could have started since the pmd_trans_migrating check */
- 	if (!page_locked) {
-+		page_nid = -1;
- 		if (!get_page_unless_zero(page))
- 			goto out_unlock;
- 		spin_unlock(ptl);
- 		wait_on_page_locked(page);
- 		put_page(page);
--		page_nid = -1;
- 		goto out;
+ 	se_sess->se_tpg = se_tpg;
+ 	se_sess->fabric_sess_ptr = fabric_sess_ptr;
+@@ -345,7 +346,7 @@ void __transport_register_session(
+ 		}
+ 		kref_get(&se_nacl->acl_kref);
+ 
+-		spin_lock_irq(&se_nacl->nacl_sess_lock);
++		spin_lock_irqsave(&se_nacl->nacl_sess_lock, flags);
+ 		/*
+ 		 * The se_nacl->nacl_sess pointer will be set to the
+ 		 * last active I_T Nexus for each struct se_node_acl.
+@@ -354,7 +355,7 @@ void __transport_register_session(
+ 
+ 		list_add_tail(&se_sess->sess_acl_list,
+ 			      &se_nacl->acl_sess_list);
+-		spin_unlock_irq(&se_nacl->nacl_sess_lock);
++		spin_unlock_irqrestore(&se_nacl->nacl_sess_lock, flags);
  	}
+ 	list_add_tail(&se_sess->sess_list, &se_tpg->tpg_sess_list);
  
 
 
