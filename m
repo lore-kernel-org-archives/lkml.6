@@ -6,77 +6,77 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5C0C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E32ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6F12098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D6F12098A
+	by mail.kernel.org (Postfix) with ESMTP id 2B86D2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:44:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B86D2098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732204AbeIXWrN (ORCPT
+        id S1732148AbeIXWrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:47:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57996 "EHLO
+        Mon, 24 Sep 2018 18:47:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55562 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729788AbeIXWrN (ORCPT
+        by vger.kernel.org with ESMTP id S1728790AbeIXWrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:47:13 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGd25r067309
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:44:11 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mq2mpka92-1
+        Mon, 24 Sep 2018 18:47:51 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGdEhC017272
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:44:48 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mq167fq21-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:44:11 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:44:48 -0400
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 24 Sep 2018 12:44:10 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 24 Sep 2018 12:44:47 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 12:44:08 -0400
+        Mon, 24 Sep 2018 12:44:45 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OGi7nX27394050
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OGii2436700380
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 16:44:07 GMT
+        Mon, 24 Sep 2018 16:44:44 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71666B2066;
-        Mon, 24 Sep 2018 12:42:29 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 5F408B2064;
+        Mon, 24 Sep 2018 12:43:06 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4875EB2065;
-        Mon, 24 Sep 2018 12:42:29 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 2D2A3B205F;
+        Mon, 24 Sep 2018 12:43:06 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.213.95])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 12:42:29 -0400 (EDT)
+        Mon, 24 Sep 2018 12:43:06 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9134D16C0AAB; Mon, 24 Sep 2018 09:44:06 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 09:44:06 -0700
+        id 781EC16C0AAB; Mon, 24 Sep 2018 09:44:43 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 09:44:43 -0700
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: Re: [PATCH 4.18 207/235] rcu: Fix grace-period hangs due to race
+Subject: Re: [PATCH 4.14 146/173] rcu: Fix grace-period hangs due to race
  with CPU offline
 Reply-To: paulmck@linux.ibm.com
-References: <20180924113103.999624566@linuxfoundation.org>
- <20180924113124.637508442@linuxfoundation.org>
+References: <20180924113114.334025954@linuxfoundation.org>
+ <20180924113126.227036880@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924113124.637508442@linuxfoundation.org>
+In-Reply-To: <20180924113126.227036880@linuxfoundation.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18092416-0064-0000-0000-000003543D8B
+x-cbid: 18092416-2213-0000-0000-000002F543B4
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01093031; UDB=6.00564900; IPR=6.00873068;
- MB=3.00023484; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:44:09
+ PH=3.00000004; SC=3.00000267; SDB=6.01093031; UDB=6.00564899; IPR=6.00873069;
+ MB=3.00023484; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:44:46
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092416-0065-0000-0000-00003AC2045C
-Message-Id: <20180924164406.GE4222@linux.ibm.com>
+x-cbparentid: 18092416-2214-0000-0000-00005BAA2AC8
+Message-Id: <20180924164443.GF4222@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -89,8 +89,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 01:53:13PM +0200, Greg Kroah-Hartman wrote:
-> 4.18-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Sep 24, 2018 at 01:53:00PM +0200, Greg Kroah-Hartman wrote:
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+
+As with 4.18-stable...
 
 This should not be needed in 4.18 because of a number of crude but
 effective grace-period forward-progress failsafes.  I have not tested
@@ -173,7 +175,7 @@ I therefore strongly recommend against backporting this one.
 >  }
 > 
 >  RCU_STATE_INITIALIZER(rcu_sched, 's', call_rcu_sched);
-> @@ -1925,11 +1926,13 @@ static bool rcu_gp_init(struct rcu_state
+> @@ -1996,11 +1997,13 @@ static bool rcu_gp_init(struct rcu_state
 >  	 */
 >  	rcu_for_each_leaf_node(rsp, rnp) {
 >  		rcu_gp_slow(rsp, gp_preinit_delay);
@@ -187,7 +189,7 @@ I therefore strongly recommend against backporting this one.
 >  			continue;
 >  		}
 > 
-> @@ -1964,6 +1967,7 @@ static bool rcu_gp_init(struct rcu_state
+> @@ -2035,6 +2038,7 @@ static bool rcu_gp_init(struct rcu_state
 >  		}
 > 
 >  		raw_spin_unlock_irq_rcu_node(rnp);
@@ -195,7 +197,7 @@ I therefore strongly recommend against backporting this one.
 >  	}
 > 
 >  	/*
-> @@ -3725,9 +3729,11 @@ static void rcu_cleanup_dying_idle_cpu(i
+> @@ -3837,9 +3841,11 @@ static void rcu_cleanup_dying_idle_cpu(i
 > 
 >  	/* Remove outgoing CPU from mask in the leaf rcu_node structure. */
 >  	mask = rdp->grpmask;
@@ -209,7 +211,7 @@ I therefore strongly recommend against backporting this one.
 >  /*
 > --- a/kernel/rcu/tree.h
 > +++ b/kernel/rcu/tree.h
-> @@ -384,6 +384,10 @@ struct rcu_state {
+> @@ -389,6 +389,10 @@ struct rcu_state {
 >  	const char *name;			/* Name of structure. */
 >  	char abbr;				/* Abbreviated name. */
 >  	struct list_head flavors;		/* List of RCU flavors. */
