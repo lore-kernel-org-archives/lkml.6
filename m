@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1EBC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53747ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B401E208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B401E208D9
+	by mail.kernel.org (Postfix) with ESMTP id 13E2B20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13E2B20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732107AbeIXSR1 (ORCPT
+        id S1732116AbeIXSRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55594 "EHLO
+        Mon, 24 Sep 2018 14:17:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55602 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSR0 (ORCPT
+        with ESMTP id S1730150AbeIXSRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:26 -0400
+        Mon, 24 Sep 2018 14:17:31 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F57810AA;
-        Mon, 24 Sep 2018 12:15:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCC0C10A5;
+        Mon, 24 Sep 2018 12:15:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 023/173] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of failure
-Date:   Mon, 24 Sep 2018 13:50:57 +0200
-Message-Id: <20180924113117.323578283@linuxfoundation.org>
+Subject: [PATCH 4.14 024/173] kbuild: add .DELETE_ON_ERROR special target
+Date:   Mon, 24 Sep 2018 13:50:58 +0200
+Message-Id: <20180924113117.451547930@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,46 +52,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit f6dab4233d6b64d719109040503b567f71fbfa01 ]
+[ Upstream commit 9c2af1c7377a8a6ef86e5cabf80978f3dbbb25c0 ]
 
-Fixed factor clock has two initializations at of_clk_init() time
-and during platform driver probe. Before of_clk_init() call,
-node is marked as populated and so its probe never gets called.
+If Make gets a fatal signal while a shell is executing, it may delete
+the target file that the recipe was supposed to update.  This is needed
+to make sure that it is remade from scratch when Make is next run; if
+Make is interrupted after the recipe has begun to write the target file,
+it results in an incomplete file whose time stamp is newer than that
+of the prerequisites files.  Make automatically deletes the incomplete
+file on interrupt unless the target is marked .PRECIOUS.
 
-During of_clk_init() fixed factor clock registration may fail if
-any of its parent clock is not registered. In this case, it doesn't
-get chance to retry registration from probe. Clear OF_POPULATED
-flag if fixed factor clock registration fails so that clock
-registration is attempted again from probe.
+The situation is just the same as when the shell fails for some reasons.
+Usually when a recipe line fails, if it has changed the target file at
+all, the file is corrupted, or at least it is not completely updated.
+Yet the file’s time stamp says that it is now up to date, so the next
+time Make runs, it will not try to update that file.
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+However, Make does not cater to delete the incomplete target file in
+this case.  We need to add .DELETE_ON_ERROR somewhere in the Makefile
+to request it.
+
+scripts/Kbuild.include seems a suitable place to add it because it is
+included from almost all sub-makes.
+
+Please note .DELETE_ON_ERROR is not effective for phony targets.
+
+The external module building should never ever touch the kernel tree.
+The following recipe fails if include/generated/autoconf.h is missing.
+However, include/config/auto.conf is not deleted since it is a phony
+target.
+
+ PHONY += include/config/auto.conf
+
+ include/config/auto.conf:
+         $(Q)test -e include/generated/autoconf.h -a -e $@ || (          \
+         echo >&2;                                                       \
+         echo >&2 "  ERROR: Kernel configuration is invalid.";           \
+         echo >&2 "         include/generated/autoconf.h or $@ are missing.";\
+         echo >&2 "         Run 'make oldconfig && make prepare' on kernel src to fix it."; \
+         echo >&2 ;                                                      \
+         /bin/false)
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk-fixed-factor.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ scripts/Kbuild.include |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -177,8 +177,15 @@ static struct clk *_of_fixed_factor_clk_
- 
- 	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
- 					mult, div);
--	if (IS_ERR(clk))
-+	if (IS_ERR(clk)) {
-+		/*
-+		 * If parent clock is not registered, registration would fail.
-+		 * Clear OF_POPULATED flag so that clock registration can be
-+		 * attempted again from probe function.
-+		 */
-+		of_node_clear_flag(node, OF_POPULATED);
- 		return clk;
-+	}
- 
- 	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 	if (ret) {
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -403,3 +403,6 @@ endif
+ endef
+ #
+ ###############################################################################
++
++# delete partially updated (i.e. corrupted) files on error
++.DELETE_ON_ERROR:
 
 
