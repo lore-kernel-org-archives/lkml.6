@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AD5ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90069C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61763208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61763208E3
+	by mail.kernel.org (Postfix) with ESMTP id 51774208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51774208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729084AbeIXRje (ORCPT
+        id S1729097AbeIXRjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:39:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50396 "EHLO
+        Mon, 24 Sep 2018 13:39:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50410 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeIXRjc (ORCPT
+        with ESMTP id S1726241AbeIXRjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:39:32 -0400
+        Mon, 24 Sep 2018 13:39:36 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EC35106D;
-        Mon, 24 Sep 2018 11:37:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7600C106F;
+        Mon, 24 Sep 2018 11:37:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Yuexing Wang <wangyxlandq@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        icytxw@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 007/105] scripts: modpost: check memory allocation results
-Date:   Mon, 24 Sep 2018 13:32:53 +0200
-Message-Id: <20180924113113.997971917@linuxfoundation.org>
+Subject: [PATCH 3.18 008/105] mm/fadvise.c: fix signed overflow UBSAN complaint
+Date:   Mon, 24 Sep 2018 13:32:54 +0200
+Message-Id: <20180924113114.131762375@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -53,62 +55,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-[ Upstream commit 1f3aa9002dc6a0d59a4b599b4fc8f01cf43ef014 ]
+[ Upstream commit a718e28f538441a3b6612da9ff226973376cdf0f ]
 
-Fix missing error check for memory allocation functions in
-scripts/mod/modpost.c.
+Signed integer overflow is undefined according to the C standard.  The
+overflow in ksys_fadvise64_64() is deliberate, but since it is signed
+overflow, UBSAN complains:
 
-Fixes kernel bugzilla #200319:
-https://bugzilla.kernel.org/show_bug.cgi?id=200319
+	UBSAN: Undefined behaviour in mm/fadvise.c:76:10
+	signed integer overflow:
+	4 + 9223372036854775805 cannot be represented in type 'long long int'
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Yuexing Wang <wangyxlandq@gmail.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Use unsigned types to do math.  Unsigned overflow is defined so UBSAN
+will not complain about it.  This patch doesn't change generated code.
+
+[akpm@linux-foundation.org: add comment explaining the casts]
+Link: http://lkml.kernel.org/r/20180629184453.7614-1-aryabinin@virtuozzo.com
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reported-by: <icytxw@gmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/mod/modpost.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ mm/fadvise.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -647,7 +647,7 @@ static void handle_modversions(struct mo
- 			if (ELF_ST_TYPE(sym->st_info) == STT_SPARC_REGISTER)
- 				break;
- 			if (symname[0] == '.') {
--				char *munged = strdup(symname);
-+				char *munged = NOFAIL(strdup(symname));
- 				munged[0] = '_';
- 				munged[1] = toupper(munged[1]);
- 				symname = munged;
-@@ -1248,7 +1248,7 @@ static Elf_Sym *find_elf_symbol2(struct
- static char *sec2annotation(const char *s)
- {
- 	if (match(s, init_exit_sections)) {
--		char *p = malloc(20);
-+		char *p = NOFAIL(malloc(20));
- 		char *r = p;
- 
- 		*p++ = '_';
-@@ -1268,7 +1268,7 @@ static char *sec2annotation(const char *
- 			strcat(p, " ");
- 		return r;
- 	} else {
--		return strdup("");
-+		return NOFAIL(strdup(""));
+--- a/mm/fadvise.c
++++ b/mm/fadvise.c
+@@ -66,8 +66,12 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, l
+ 		goto out;
  	}
- }
  
-@@ -1826,7 +1826,7 @@ void buf_write(struct buffer *buf, const
- {
- 	if (buf->size - buf->pos < len) {
- 		buf->size += len + SZ;
--		buf->p = realloc(buf->p, buf->size);
-+		buf->p = NOFAIL(realloc(buf->p, buf->size));
- 	}
- 	strncpy(buf->p + buf->pos, s, len);
- 	buf->pos += len;
+-	/* Careful about overflows. Len == 0 means "as much as possible" */
+-	endbyte = offset + len;
++	/*
++	 * Careful about overflows. Len == 0 means "as much as possible".  Use
++	 * unsigned math because signed overflows are undefined and UBSan
++	 * complains.
++	 */
++	endbyte = (u64)offset + (u64)len;
+ 	if (!len || endbyte < len)
+ 		endbyte = -1;
+ 	else
 
 
