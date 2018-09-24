@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 684A5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE36C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C88D2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C88D2145D
+	by mail.kernel.org (Postfix) with ESMTP id D3B662145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:57:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B662145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730149AbeIXR6v (ORCPT
+        id S1730162AbeIXR6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:58:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52116 "EHLO
+        Mon, 24 Sep 2018 13:58:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729120AbeIXR6u (ORCPT
+        with ESMTP id S1729106AbeIXR6y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:58:50 -0400
+        Mon, 24 Sep 2018 13:58:54 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58B7B1072;
-        Mon, 24 Sep 2018 11:57:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 801561075;
+        Mon, 24 Sep 2018 11:57:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Wei Xu <xuwei5@hisilicon.com>,
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 53/70] ARM: hisi: check of_iomap and fix missing of_node_put
-Date:   Mon, 24 Sep 2018 13:52:52 +0200
-Message-Id: <20180924113105.990523119@linuxfoundation.org>
+Subject: [PATCH 4.4 54/70] drm/nouveau: tegra: Detach from ARM DMA/IOMMU mapping
+Date:   Mon, 24 Sep 2018 13:52:53 +0200
+Message-Id: <20180924113106.129663968@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -52,47 +55,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 81646a3d39ef14749301374a3a0b8311384cd412 ]
+[ Upstream commit b59fb482b52269977ee5de205308e5b236a03917 ]
 
-of_find_compatible_node() returns a device node with refcount incremented
-and thus needs an explicit of_node_put(). Further relying on an unchecked
-of_iomap() which can return NULL is problematic here, after all ctrl_base
-is critical enough for hix5hd2_set_cpu() to call BUG() if not available
-so a check seems mandated here.
+Depending on the kernel configuration, early ARM architecture setup code
+may have attached the GPU to a DMA/IOMMU mapping that transparently uses
+the IOMMU to back the DMA API. Tegra requires special handling for IOMMU
+backed buffers (a special bit in the GPU's MMU page tables indicates the
+memory path to take: via the SMMU or directly to the memory controller).
+Transparently backing DMA memory with an IOMMU prevents Nouveau from
+properly handling such memory accesses and causes memory access faults.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-0002 Fixes: commit 06cc5c1d4d73 ("ARM: hisi: enable hix5hd2 SoC")
-Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
+As a side-note: buffers other than those allocated in instance memory
+don't need to be physically contiguous from the GPU's perspective since
+the GPU can map them into contiguous buffers using its own MMU. Mapping
+these buffers through the IOMMU is unnecessary and will even lead to
+performance degradation because of the additional translation. One
+exception to this are compressible buffers which need large pages. In
+order to enable these large pages, multiple small pages will have to be
+combined into one large (I/O virtually contiguous) mapping via the
+IOMMU. However, that is a topic outside the scope of this fix and isn't
+currently supported. An implementation will want to explicitly create
+these large pages in the Nouveau driver, so detaching from a DMA/IOMMU
+mapping would still be required.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Tested-by: Nicolas Chauvet <kwizart@gmail.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-hisi/hotplug.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/arm/mach-hisi/hotplug.c
-+++ b/arch/arm/mach-hisi/hotplug.c
-@@ -180,11 +180,15 @@ static bool hix5hd2_hotplug_init(void)
- 	struct device_node *np;
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -23,6 +23,10 @@
+ #ifdef CONFIG_NOUVEAU_PLATFORM_DRIVER
+ #include "priv.h"
  
- 	np = of_find_compatible_node(NULL, NULL, "hisilicon,cpuctrl");
--	if (np) {
--		ctrl_base = of_iomap(np, 0);
--		return true;
--	}
--	return false;
-+	if (!np)
-+		return false;
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++#include <asm/dma-iommu.h>
++#endif
 +
-+	ctrl_base = of_iomap(np, 0);
-+	of_node_put(np);
-+	if (!ctrl_base)
-+		return false;
-+
-+	return true;
- }
+ static int
+ nvkm_device_tegra_power_up(struct nvkm_device_tegra *tdev)
+ {
+@@ -85,6 +89,15 @@ nvkm_device_tegra_probe_iommu(struct nvk
+ 	unsigned long pgsize_bitmap;
+ 	int ret;
  
- void hix5hd2_set_cpu(int cpu, bool enable)
++#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
++	if (dev->archdata.mapping) {
++		struct dma_iommu_mapping *mapping = to_dma_iommu_mapping(dev);
++
++		arm_iommu_detach_device(dev);
++		arm_iommu_release_mapping(mapping);
++	}
++#endif
++
+ 	if (!tdev->func->iommu_bit)
+ 		return;
+ 
 
 
