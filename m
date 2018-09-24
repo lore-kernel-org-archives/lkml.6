@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BC0C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B4AC43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA17D20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:41:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA17D20874
+	by mail.kernel.org (Postfix) with ESMTP id 88EBA20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:41:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88EBA20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbeIYFpk (ORCPT
+        id S1728131AbeIYFpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 01:45:40 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:38922 "EHLO
+        Tue, 25 Sep 2018 01:45:44 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:57708 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727761AbeIYFpk (ORCPT
+        by vger.kernel.org with ESMTP id S1725982AbeIYFpo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 01:45:40 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.7347042|0.7828162;BR=01201311R881S77ruler364_34042_170522;CH=green;FP=3444611447915115991|1|1|14|0|-1|-1|-1;HT=e02c03309;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CvMB1GK_1537832448;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CvMB1GK_1537832448)
-          by smtp.aliyun-inc.com(10.147.41.120);
-          Tue, 25 Sep 2018 07:40:48 +0800
+        Tue, 25 Sep 2018 01:45:44 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07979074|-1;CH=blue;FP=17186617007885452627|1|1|14|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=19;RT=19;SR=0;TI=SMTPD_---.CvM8laM_1537832432;
+Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CvM8laM_1537832432)
+          by smtp.aliyun-inc.com(10.147.42.253);
+          Tue, 25 Sep 2018 07:40:32 +0800
 From:   Guo Ren <ren_guo@c-sky.com>
 To:     akpm@linux-foundation.org, arnd@arndb.de,
         daniel.lezcano@linaro.org, davem@davemloft.net,
@@ -37,9 +37,9 @@ To:     akpm@linux-foundation.org, arnd@arndb.de,
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         devicetree@vger.kernel.org, green.hu@gmail.com, palmer@sifive.com,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V5 19/30] dt-bindings: Add vendor prefix for csky
-Date:   Tue, 25 Sep 2018 07:39:22 +0800
-Message-Id: <da5734d918db4e9159d07bda477f502d1243df10.1537789737.git.ren_guo@c-sky.com>
+Subject: [PATCH V5 18/30] dt-bindings: csky CPU Bindings
+Date:   Tue, 25 Sep 2018 07:39:21 +0800
+Message-Id: <62098e7d0a7fbdd09f44d7e23333dad258a01bd2.1537789737.git.ren_guo@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <a23b652c2ab55b129f729a57ec765550da1d2c16.1537789737.git.ren_guo@c-sky.com>
 References: <a23b652c2ab55b129f729a57ec765550da1d2c16.1537789737.git.ren_guo@c-sky.com>
@@ -50,25 +50,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add csky vendor definition.
+This patch adds the documentation to describe that how to add cpu nodes in
+dts for SMP.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/csky/cpus.txt | 70 +++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/csky/cpus.txt
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 2c3fc51..a728ee3 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -84,6 +84,7 @@ cosmic	Cosmic Circuits
- crane	Crane Connectivity Solutions
- creative	Creative Technology Ltd
- crystalfontz	Crystalfontz America, Inc.
-+csky	Hangzhou C-SKY Microsystems Co., Ltd
- cubietech	Cubietech, Ltd.
- cypress	Cypress Semiconductor Corporation
- cznic	CZ.NIC, z.s.p.o.
+diff --git a/Documentation/devicetree/bindings/csky/cpus.txt b/Documentation/devicetree/bindings/csky/cpus.txt
+new file mode 100644
+index 0000000..ee3901d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/csky/cpus.txt
+@@ -0,0 +1,70 @@
++==================
++C-SKY CPU Bindings
++==================
++
++The device tree allows to describe the layout of CPUs in a system through
++the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
++defining properties for every cpu.
++
++Only SMP system need to care about the cpus node and single processor
++needn't define cpus node at all.
++
++=====================================
++cpus and cpu node bindings definition
++=====================================
++
++- cpus node
++
++        Description: Container of cpu nodes
++
++        The node name must be "cpus".
++
++        A cpus node must define the following properties:
++
++        - #address-cells
++                Usage: required
++                Value type: <u32>
++                Definition: must be set to 1
++        - #size-cells
++                Usage: required
++                Value type: <u32>
++                Definition: must be set to 0
++
++- cpu node
++
++        Description: Describes one of SMP cores
++
++        PROPERTIES
++
++        - device_type
++                Usage: required
++                Value type: <string>
++                Definition: must be "cpu"
++        - reg
++                Usage: required
++                Value type: <u32>
++                Definition: CPU index
++        - status:
++                Usage: required
++                Value type: <string>
++                Definition: "ok"       means enable  the cpu-core
++                            "disabled" means disable the cpu-core
++
++Example:
++--------
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		cpu@0 {
++			device_type = "cpu";
++			reg = <0>;
++			status = "ok";
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			reg = <1>;
++			status = "ok";
++		};
++	};
 -- 
 2.7.4
 
