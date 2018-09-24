@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21485C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8EEBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB61B2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB61B2145D
+	by mail.kernel.org (Postfix) with ESMTP id 9D5902145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5902145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729884AbeIXR5b (ORCPT
+        id S1729894AbeIXR5e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:57:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51910 "EHLO
+        Mon, 24 Sep 2018 13:57:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51922 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728425AbeIXR5a (ORCPT
+        with ESMTP id S1728081AbeIXR5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:57:30 -0400
+        Mon, 24 Sep 2018 13:57:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F1901073;
-        Mon, 24 Sep 2018 11:55:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DED5C1072;
+        Mon, 24 Sep 2018 11:55:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 04/70] xfrm: fix passing zero to ERR_PTR() warning
-Date:   Mon, 24 Sep 2018 13:52:03 +0200
-Message-Id: <20180924113058.890945240@linuxfoundation.org>
+Subject: [PATCH 4.4 05/70] gfs2: Special-case rindex for gfs2_grow
+Date:   Mon, 24 Sep 2018 13:52:04 +0200
+Message-Id: <20180924113058.997615561@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -52,39 +52,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit 934ffce1343f22ed5e2d0bd6da4440f4848074de ]
+[ Upstream commit 776125785a87ff05d49938bd5b9f336f2a05bff6 ]
 
-Fix a static code checker warning:
+To speed up the common case of appending to a file,
+gfs2_write_alloc_required presumes that writing beyond the end of a file
+will always require additional blocks to be allocated.  This assumption
+is incorrect for preallocates files, but there are no negative
+consequences as long as *some* space is still left on the filesystem.
 
-  net/xfrm/xfrm_policy.c:1836 xfrm_resolve_and_create_bundle() warn: passing zero to 'ERR_PTR'
+One special file that always has some space preallocated beyond the end
+of the file is the rindex: when growing a filesystem, gfs2_grow adds one
+or more new resource groups and appends records describing those
+resource groups to the rindex; the preallocated space ensures that this
+is always possible.
 
-xfrm_tmpl_resolve return 0 just means no xdst found, return NULL
-instead of passing zero to ERR_PTR.
+However, when a filesystem is completely full, gfs2_write_alloc_required
+will indicate that an additional allocation is required, and appending
+the next record to the rindex will fail even though space for that
+record has already been preallocated.  To fix that, skip the incorrect
+optimization in gfs2_write_alloc_required, but for the rindex only.
+Other writes to preallocated space beyond the end of the file are still
+allowed to fail on completely full filesystems.
 
-Fixes: d809ec895505 ("xfrm: do not assume that template resolving always returns xfrms")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Reviewed-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_policy.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/gfs2/bmap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1845,7 +1845,10 @@ xfrm_resolve_and_create_bundle(struct xf
- 	/* Try to instantiate a bundle */
- 	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
- 	if (err <= 0) {
--		if (err != 0 && err != -EAGAIN)
-+		if (err == 0)
-+			return NULL;
-+
-+		if (err != -EAGAIN)
- 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
- 		return ERR_PTR(err);
- 	}
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -1476,7 +1476,7 @@ int gfs2_write_alloc_required(struct gfs
+ 	end_of_file = (i_size_read(&ip->i_inode) + sdp->sd_sb.sb_bsize - 1) >> shift;
+ 	lblock = offset >> shift;
+ 	lblock_stop = (offset + len + sdp->sd_sb.sb_bsize - 1) >> shift;
+-	if (lblock_stop > end_of_file)
++	if (lblock_stop > end_of_file && ip != GFS2_I(sdp->sd_rindex))
+ 		return 1;
+ 
+ 	size = (lblock_stop - lblock) << shift;
 
 
