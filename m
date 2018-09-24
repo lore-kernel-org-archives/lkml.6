@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 973DFECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D4FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470E92098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64E542098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="wTz+XBzT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470E92098A
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="W7qIpr5T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E542098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732586AbeIYBWp (ORCPT
+        id S1732708AbeIYBWp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 24 Sep 2018 21:22:45 -0400
-Received: from mail-bn3nam01on0048.outbound.protection.outlook.com ([104.47.33.48]:45925
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr690067.outbound.protection.outlook.com ([40.107.69.67]:62813
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732289AbeIYBWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:22:43 -0400
+        id S1732497AbeIYBWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 21:22:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RFeCzuXF6LRDgQuhPZKKtGwJx4jLxtEH9fm2mYJ9Aqg=;
- b=wTz+XBzTnXr7mawNOeP/J8YLxYcXK6BMiHL9k1LaAiNlnm1ZDWocvH2mTaj4IvqWr2WlYaxfdMsLs5gatD7HoZmjNH8e0ZQ0iSRyhfuCdwW8FgibDFV7gUE+Wry9+R9Q2K8FgxuKra1YfUe687l7MA2ZrD6teGvyA6lNKPKtLA8=
+ bh=6yeiyWFz4+t14IssR+IULHoul0BuHuFxthkiyKm7tZQ=;
+ b=W7qIpr5ThbougNmsYhmWzbgpsyd0pi5BmtBAkSXBpH6p4P1W7PXZWFoskbIPhPJxDKeBJKFRAF7tEYR3812MCvnO6AwQdtsps9YBdQlTgtqgcDD7dxNLCGuibW/2DwudIjuJ3OUF+qJwTVGdnUaxBEegkIbjWlXT4IVMm/zUnCA=
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB2455.namprd12.prod.outlook.com (52.132.141.36) with Microsoft SMTP
+ DM5PR12MB1548.namprd12.prod.outlook.com (10.172.37.23) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Mon, 24 Sep 2018 19:19:00 +0000
+ 15.20.1143.18; Mon, 24 Sep 2018 19:19:02 +0000
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::5c18:7df5:fd4b:9de]) by DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::5c18:7df5:fd4b:9de%5]) with mapi id 15.20.1164.024; Mon, 24 Sep 2018
- 19:19:00 +0000
+ 19:19:02 +0000
 From:   "Moger, Babu" <Babu.Moger@amd.com>
 To:     "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
@@ -70,11 +70,13 @@ CC:     "x86@kernel.org" <x86@kernel.org>,
         "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
         "vkuznets@redhat.com" <vkuznets@redhat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
-Thread-Topic: [RFC PATCH 03/10] arch/x86: Re-arrange RDT init code
-Thread-Index: AQHUVDtyokQlIS2+10uA6u2YvHhBgQ==
-Date:   Mon, 24 Sep 2018 19:19:00 +0000
-Message-ID: <20180924191841.29111-4-babu.moger@amd.com>
+Subject: [RFC PATCH 04/10] arch/x86: Introduce a new config parameter
+ PLATFORM_QOS
+Thread-Topic: [RFC PATCH 04/10] arch/x86: Introduce a new config parameter
+ PLATFORM_QOS
+Thread-Index: AQHUVDtzN9VFbMj450WdafQxmMpopw==
+Date:   Mon, 24 Sep 2018 19:19:02 +0000
+Message-ID: <20180924191841.29111-5-babu.moger@amd.com>
 References: <20180924191841.29111-1-babu.moger@amd.com>
 In-Reply-To: <20180924191841.29111-1-babu.moger@amd.com>
 Accept-Language: en-US
@@ -89,128 +91,65 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [165.204.78.1]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB2455;20:fLm9ojqme5s+SyCLqOoUujeKW/Nq4MCJyN7vM/LAJ+PEA2qn0pCN8ujIaxU4k2/R0k+ejOm6jWtyiZY+EQaNFRwQ2FPKO+kfF1as2BGaVVT9tWIkPNfJ+1geckdRsb7DCrAVM+VzTGAnI+4IHWmNUXcctWzn76T9ZMCCeL/4+zMn2mhcAc2dtNdrR3m3YTeP+yrHXkxfPWvfhxlNbuPc7fHS3GzkLbkg+jdDfgmcKzteyV7gSegMZPY7ag90SdrM
-x-ms-office365-filtering-correlation-id: dd50e52b-70cc-4bb0-af69-08d6225294f6
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1548;20:66z7cgL4BjC+7mJwjRL/BSSLmVxqScO48S7YlloGs5QgXTr+6mnC0BmvoSUX0v7B4Oow/1xHObcApgDgVRup954w8t9K7kES6xBXimoYkP0J4W3VqBO/4x7aF7lc0zDQHa2ExFHTXZ682PvWNi8mIqY06KPeVLYTIbJAj33RFRSV8B08QVd8UQylXpSCDVG3W25LsAtC4WsqK1fEWyfKOS4wT84Pz4ePvgrSitdpZUEvYVRCK2dBkVhmrepePIt5
+x-ms-office365-filtering-correlation-id: 776e3c83-eb7e-4c14-8322-08d622529635
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2455;
-x-ms-traffictypediagnostic: DM5PR12MB2455:
-x-microsoft-antispam-prvs: <DM5PR12MB2455ABF54AA30EC66A3ECF9C95170@DM5PR12MB2455.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(72170088055959)(767451399110);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1548;
+x-ms-traffictypediagnostic: DM5PR12MB1548:
+x-microsoft-antispam-prvs: <DM5PR12MB15484FC7FD260A19E61BAE4295170@DM5PR12MB1548.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(767451399110);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(149066)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051);SRVR:DM5PR12MB2455;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2455;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051);SRVR:DM5PR12MB1548;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1548;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(366004)(396003)(376002)(189003)(199004)(97736004)(217873002)(256004)(14444005)(2501003)(5250100002)(316002)(2900100001)(52116002)(7736002)(68736007)(305945005)(5660300001)(1076002)(76176011)(386003)(66066001)(6506007)(478600001)(72206003)(25786009)(7416002)(14454004)(4326008)(6436002)(106356001)(8936002)(8676002)(81156014)(81166006)(6512007)(36756003)(53936002)(26005)(2906002)(3846002)(6116002)(6486002)(54906003)(86362001)(110136005)(102836004)(186003)(2201001)(486006)(71200400001)(446003)(476003)(11346002)(99286004)(2616005)(71190400001)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2455;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(346002)(366004)(136003)(189003)(199004)(5250100002)(2501003)(186003)(4326008)(2900100001)(14454004)(6506007)(2906002)(386003)(256004)(316002)(53936002)(76176011)(68736007)(102836004)(36756003)(105586002)(99286004)(14444005)(97736004)(106356001)(81156014)(8936002)(5660300001)(476003)(110136005)(81166006)(1076002)(26005)(71190400001)(7416002)(486006)(2201001)(6116002)(3846002)(6512007)(217873002)(478600001)(575784001)(86362001)(305945005)(52116002)(8676002)(25786009)(66066001)(446003)(6436002)(72206003)(54906003)(11346002)(7736002)(6486002)(2616005)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1548;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: XFYjmJ4or9usD6vOavyvZsCOxd+HH07urRaLTPiP3y07raUpXvU1aDJn7YHNk2dpL7Pr8CJqLki/fQWAmg5lkI4qymIzR4p24tAXJY5xa6RsXOHLQbBOvF24h9J/UitY1rWjURGFqqgGPZNI67BhCggGBDlc4LRGKDNcJvU/OXE0wK8OkQxqwMw6YaDXlndmzar+XtzwssPc4Ihm88LjnqjLf7pBwwcbzAZzgb5GkHBUJOSNbaqbWyQJq+PP+vMl53azryIuhABq5jBVAs28nNhLdrSc8nq2iDJsX3rG8FYikOeYfH6ttZ/T247iPtYzwdTlnvTQjl3Vjysofa+j1RTKdRqnCfa9eNljPSncjMU=
+x-microsoft-antispam-message-info: Ha5buBvMzmlMJeH7wS9RyY99C4VNE6plVuwjcfLmfRakfNZ1sZXbJiiayaUKqT/kh8OPaPI36FC4LIrYwv1YQ4jF3l0d3O6i1avacT1MhrXXNJ2mrIoejk2mVfRisIGnAOr7eGkol5i9csNgKDbtgI+DTzTxB28P3XlC/vHcfcebaEkUteZOEufxXiZ1Bar10956xmsm1FExxEROm3EeEsRKFF+6EeOEL1fdDHiqm58rsAb3A6sxNeLBSTfCc2IKH0vW0bEapvOG5/wOU2jSMDvflDAeDxpnDGb04c/BdINp4vBc6GXFe+wwfXAWLjpCotezX8w9/Vq7z9xXomnGdkvo19PXe1aHpcchUvhvi44=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd50e52b-70cc-4bb0-af69-08d6225294f6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 19:19:00.5884
+X-MS-Exchange-CrossTenant-Network-Message-Id: 776e3c83-eb7e-4c14-8322-08d622529635
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 19:19:02.6689
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2455
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1548
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Re-organize the RDT init code. Separate the call sequence for each
-feature. That way, it is easy to call quirks or features separately
-for each vendor if there are differences.
+Introduces a new config parameter PLATFORM_QOS.
+
+This will be used as a common config parameter for both Intel and AMD.
+Each vendor will have their own config parameter to enable RDT feature.
+One for Intel(INTEL_RDT) and one for AMD(AMD_QOS). It can be enabled or
+disabled separately. The new parameter PLATFORM_QOS will be dependent
+on INTEL_RDT or AMD_QOS.
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 ---
- arch/x86/kernel/cpu/rdt.c | 44 ++++++++++++++++++++++++++++-----------
- 1 file changed, 32 insertions(+), 12 deletions(-)
+ arch/x86/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/rdt.c b/arch/x86/kernel/cpu/rdt.c
-index b361c63170d7..736715b81fd8 100644
---- a/arch/x86/kernel/cpu/rdt.c
-+++ b/arch/x86/kernel/cpu/rdt.c
-@@ -813,10 +813,6 @@ static __init bool get_rdt_alloc_resources(void)
- 		ret =3D true;
- 	}
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 1a0be022f91d..7f2da780a327 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -458,6 +458,10 @@ config INTEL_RDT
 =20
--	if (rdt_cpu_has(X86_FEATURE_MBA)) {
--		if (rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]))
--			ret =3D true;
--	}
- 	return ret;
- }
+ 	  Say N if unsure.
 =20
-@@ -831,11 +827,12 @@ static __init bool get_rdt_mon_resources(void)
-=20
- 	if (!rdt_mon_features)
- 		return false;
-+	else
-+		return true;
-=20
--	return !rdt_get_mon_l3_config(&rdt_resources_all[RDT_RESOURCE_L3]);
- }
-=20
--static __init void rdt_quirks(void)
-+static __init void rdt_quirks_intel(void)
- {
- 	switch (boot_cpu_data.x86_model) {
- 	case INTEL_FAM6_HASWELL_X:
-@@ -850,13 +847,22 @@ static __init void rdt_quirks(void)
- 	}
- }
-=20
--static __init bool get_rdt_resources(void)
-+static __init void rdt_quirks(void)
- {
--	rdt_quirks();
--	rdt_alloc_capable =3D get_rdt_alloc_resources();
--	rdt_mon_capable =3D get_rdt_mon_resources();
-+	if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL)
-+		rdt_quirks_intel();
-+}
++config PLATFORM_QOS
++	def_bool y
++	depends on X86 && INTEL_RDT
 +
-+static __init void rdt_detect_l3_mon(void)
-+{
-+	if (rdt_mon_capable)
-+		rdt_get_mon_l3_config(&rdt_resources_all[RDT_RESOURCE_L3]);
-+}
-=20
--	return (rdt_mon_capable || rdt_alloc_capable);
-+static __init void rdt_check_mba(void)
-+{
-+	if (rdt_cpu_has(X86_FEATURE_MBA))
-+		rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
- }
-=20
- static enum cpuhp_state rdt_online;
-@@ -866,8 +872,22 @@ static int __init rdt_late_init(void)
- 	struct rdt_resource *r;
- 	int state, ret;
-=20
--	if (!get_rdt_resources())
-+	/* Run quirks first */
-+	rdt_quirks();
-+
-+	rdt_alloc_capable =3D get_rdt_alloc_resources();
-+	rdt_mon_capable =3D get_rdt_mon_resources();
-+
-+	if (!(rdt_alloc_capable || rdt_mon_capable)) {
-+		pr_info("RDT allocation or monitoring not detected\n");
- 		return -ENODEV;
-+	}
-+
-+	/* Detect l3 monitoring resources */
-+	rdt_detect_l3_mon();
-+
-+	/* Check for Memory Bandwidth Allocation */
-+	rdt_check_mba();
-=20
- 	rdt_init_padding();
-=20
+ if X86_32
+ config X86_BIGSMP
+ 	bool "Support for big SMP systems with more than 8 CPUs"
 --=20
 2.17.1
 
