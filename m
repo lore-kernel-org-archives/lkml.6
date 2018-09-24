@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14849ECE561
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA96C433F4
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A0A208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A0A208E3
+	by mail.kernel.org (Postfix) with ESMTP id B0808208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0808208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbeIXPGG (ORCPT
+        id S1728427AbeIXPGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:06:06 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55532 "EHLO mail.bootlin.com"
+        Mon, 24 Sep 2018 11:06:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55542 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727435AbeIXPGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728271AbeIXPGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 24 Sep 2018 11:06:06 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BB06E208A1; Mon, 24 Sep 2018 11:05:00 +0200 (CEST)
+        id 0F360208B0; Mon, 24 Sep 2018 11:05:01 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8E48B207CA;
+        by mail.bootlin.com (Postfix) with ESMTPSA id D9468207CA;
         Mon, 24 Sep 2018 11:05:00 +0200 (CEST)
 From:   Antoine Tenart <antoine.tenart@bootlin.com>
 To:     gregory.clement@bootlin.com, andrew@lunn.ch,
@@ -34,60 +34,76 @@ Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com
-Subject: [PATCH 1/2] arm64: dts: marvell: armada-cp110: change the PPv2 IRQ names
-Date:   Mon, 24 Sep 2018 11:00:01 +0200
-Message-Id: <20180924090002.27939-1-antoine.tenart@bootlin.com>
+Subject: [PATCH 2/2] arm64: dts: marvell: armada-cp110: describe more PPv2 interrupts
+Date:   Mon, 24 Sep 2018 11:00:02 +0200
+Message-Id: <20180924090002.27939-2-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180924090002.27939-1-antoine.tenart@bootlin.com>
+References: <20180924090002.27939-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes the PPv2 IRQ names in the CP110 device tree to match
-a corresponding change in the Marvell PPv2 driver. The reason this was
-updated is the IRQ where names after Tx/Rx interrupts, but this is not
-true and can be configured. A following patch will add more of them and
-the names wouldn't make sense.
+This patch describes 3 additional interrupts per PPv2 port. Those
+interrupts will be used later in future versions of the Marvell PPv2
+driver, and now the device tree description matches the hardware
+capabilities.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 21 ++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-index 840c8454d03e..6a13690cf1e4 100644
+index 6a13690cf1e4..26d6e602d1ec 100644
 --- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
 +++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-@@ -53,8 +53,8 @@
+@@ -52,9 +52,14 @@
+ 					<ICU_GRP_NSR 47 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 51 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 55 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 59 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 63 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 67 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 71 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 129 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-names = "tx-cpu0", "tx-cpu1", "tx-cpu2",
--					"tx-cpu3", "rx-shared", "link";
-+				interrupt-names = "hif0", "hif1", "hif2",
-+					"hif3", "hif4", "link";
+ 				interrupt-names = "hif0", "hif1", "hif2",
+-					"hif3", "hif4", "link";
++					"hif3", "hif4", "hif5", "hif6", "hif7",
++					"hif8", "link";
  				port-id = <0>;
  				gop-port-id = <0>;
  				status = "disabled";
-@@ -67,8 +67,8 @@
+@@ -66,9 +71,14 @@
+ 					<ICU_GRP_NSR 48 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 52 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 56 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 60 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 64 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 68 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 72 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 128 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-names = "tx-cpu0", "tx-cpu1", "tx-cpu2",
--					"tx-cpu3", "rx-shared", "link";
-+				interrupt-names = "hif0", "hif1", "hif2",
-+					"hif3", "hif4", "link";
+ 				interrupt-names = "hif0", "hif1", "hif2",
+-					"hif3", "hif4", "link";
++					"hif3", "hif4", "hif5", "hif6", "hif7",
++					"hif8", "link";
  				port-id = <1>;
  				gop-port-id = <2>;
  				status = "disabled";
-@@ -81,8 +81,8 @@
+@@ -80,9 +90,14 @@
+ 					<ICU_GRP_NSR 49 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 53 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 57 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 61 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 65 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 69 IRQ_TYPE_LEVEL_HIGH>,
++					<ICU_GRP_NSR 73 IRQ_TYPE_LEVEL_HIGH>,
  					<ICU_GRP_NSR 127 IRQ_TYPE_LEVEL_HIGH>;
--				interrupt-names = "tx-cpu0", "tx-cpu1", "tx-cpu2",
--					"tx-cpu3", "rx-shared", "link";
-+				interrupt-names = "hif0", "hif1", "hif2",
-+					"hif3", "hif4", "link";
+ 				interrupt-names = "hif0", "hif1", "hif2",
+-					"hif3", "hif4", "link";
++					"hif3", "hif4", "hif5", "hif6", "hif7",
++					"hif8", "link";
  				port-id = <2>;
  				gop-port-id = <3>;
  				status = "disabled";
