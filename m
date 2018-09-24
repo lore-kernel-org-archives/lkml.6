@@ -2,1218 +2,258 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D07DCECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9ADC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4344120684
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:20:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1sg8FJZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4344120684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E26B52087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:20:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26B52087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeIXRWN (ORCPT
+        id S1728351AbeIXRWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:22:13 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34496 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeIXRWM (ORCPT
+        Mon, 24 Sep 2018 13:22:18 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:41643 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeIXRWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:22:12 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f8-v6so17858566ljk.1;
-        Mon, 24 Sep 2018 04:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LGRxrXjaT0B3B3kCi4PyidJLxp4RVdi8d+EQr2TVdBc=;
-        b=O1sg8FJZtdI7Wwm3KjzWZVpQJX/RJQ8mY/UujmzrfF5neae7O2c5oQCMsWGLRbLs7b
-         h8gTFxpQ+4dMOqbYmeTg5RCz9r7Xi9H+eh8ZMcysKcxpIO7hUe9b5M/vDDAwKP8uJis0
-         5jlJqaeX6LA7QImu9v2QUy2ZAdVEYCZe5OJGs5AZUHoPWSSxrl7xEFFDwb5MZdHmZPS8
-         /xNpgUZvdsrK31Djujgic1wQkIA2ss/G/VnS6B0MlgmJ1kZn1WoE+K9PODSnpJu5nSzh
-         JkGbAfHI8w6wDSm2enM6OBhCPumyX/YCTb/q2fzkj5OO4LxaoympkFYKnyo4LTp4x1ra
-         TQIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LGRxrXjaT0B3B3kCi4PyidJLxp4RVdi8d+EQr2TVdBc=;
-        b=q0Sdb1r/ZKTsnEG2cQJPhAMnLP1V9iQIcxyONSw1mNGLLDv3vrNZwi+daiQje0a/g/
-         cGoJL4ETb0olK9sVbWA+bqogKJSqOL3nJke78Syz7k/JeSxdobqgpeu3g9BsrgVLtSj0
-         wD2n5nFr7QGKFkpAmvN/kX0tGJ93saIriLPS77n5pwN0l6EnHbWnJ0OzTFU0B+r61jJX
-         WVY0HtkjrtrKZIPwhIrv0fOygG++j0R1eECUzv2GQQc9455evnwRk8QDwXkVZ3WrrNMh
-         Yy2yLuTgmbu4zbWYBG0wgzE4SZrJ+oTwkG13ZL7FH/8YHUIVAe4JOEOuyN0Rf2Y/HIFH
-         ZamA==
-X-Gm-Message-State: ABuFfoh44WQLQhCNr2HajJjUxkWT3GoRML9T82EGZ4sB5wSLoDms05vJ
-        Ytsb1vc9zJgpkLv/YxNPYrPW1P6ENkrXm80pXvM=
-X-Google-Smtp-Source: ACcGV61I48ks1uWbmBdLHV4sf4Jc91EengBD4kMMFcBV2AMmJfP+sA4+rNEadZyUm+GJ1erqXLWKiXW8awJw2dA/3Xc=
-X-Received: by 2002:a2e:2b08:: with SMTP id q8-v6mr3863366lje.128.1537788032857;
- Mon, 24 Sep 2018 04:20:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180921100920.8656-1-ricardo.ribalda@gmail.com>
- <20180921100920.8656-2-ricardo.ribalda@gmail.com> <20180924083527.GA3065@w540>
-In-Reply-To: <20180924083527.GA3065@w540>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Mon, 24 Sep 2018 13:20:15 +0200
-Message-ID: <CAPybu_1xVquN7UEFSZj6Dbj3qwoHwSsVnSfOW3dZCTJZdL00=g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] [media] imx214: Add imx214 camera sensor driver
-To:     jacopo@jmondi.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 24 Sep 2018 13:22:17 -0400
+Received: from stefan-Vostro-260.fritz.box ([109.104.50.131]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MYLqs-1gI8SP3bSk-00VTzi; Mon, 24 Sep 2018 13:20:35 +0200
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Michael Heimpold <michael.heimpold@i2se.com>
+Subject: [PATCH] net: qca_spi: Introduce write register verification
+Date:   Mon, 24 Sep 2018 13:20:10 +0200
+Message-Id: <1537788010-6766-1-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:g+zwHqPjhUhYSXSlgenb+MuHzHrNs+nHt0jna3hKh8djuRJi2WD
+ v1RnNnmE6WPNTDkYSBpNkcWq787r2luuo6IbEL0VmM0js6dz68I8M4InGoNBfuRvj0X7JJK
+ 4zLWohxHcxrMjnqh5Mqdt7zbj+Y9PEHZkhA5qjVENOEVv0KFQ/DeAGyKTpYlG7tBEBrI/Io
+ ww/iX1effxKCRgKYACptw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9LHabaOCFng=:v62Wl+t8yuUI21+KQCr8Cy
+ fAj5nzYGhlRYAYw8rUyOJfwzUMpscnXQmy1qdVnJKIMZEh6/w9VRaqflzINFmFAXn8TtwCRBD
+ kluNjonVKOHGGD7Y8JXkoTBHEJ2T1xq42KcyOmC+3If529S+S1rdSz2BUg38RWEXMb/+OyMPc
+ IfYQMThQV2DLgZpXj2o/yf+dnu44EXsc90iBN8GBDXhK5dsdGHp8dyU/jgG6iVFAICHJGRXN9
+ T9JwPiaeD/CZ1s5aZt0KhFY6RsHgmhlof3kiXpN58pVCfGHKIEngUCYJlc+j7LQdlLlotLsHZ
+ JTKqhZ/YzvVt+oaC6lQe1gntqaT7WGND5lsp3k8ongwSRyor6ptqNB5Tz2zGe0FgNoDWMFUe+
+ cvjlGf34dPS6uP/9PcFzJ0xOMFnaKsG5nrNtp4/WyW8gCrmGN7w7yHUqHPfrUviT+yvBEKyHo
+ Q9oGlnMUwVXQn7QkWDv0kDNI6eDIgmINS6oFjuEObrDzAfHuVJrSKdne68QLNEJUuO0HVGhUs
+ E4KtnjTOz6WpbUJBYHt2MKv6I2XHXzzCpesN6PlWSlK1qP+/GEw6lTYnpzUS/iNCG3m9TF5WP
+ ZVVOUr72NIeAJ1FnFxrBPIIGENYXpJMz2yfvwiEIPGyrFBCI1KebyUVCo93+rnNS4anHznypA
+ cTbFRqdGU2QHcFQRVvmPp3Cms1HyNB1E3qXnmJ53QMRi92INHIjZ7ED+GpEo+50KAL2g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo
+The SPI protocol for the QCA7000 doesn't have any fault detection.
+In order to increase the drivers reliability in noisy environments,
+we could implement a write verification inspired by the enc28j60.
+This should avoid situations were the driver wrongly assumes the
+receive interrupt is enabled and miss all incoming packets.
 
-Thanks a lot for your review. Will push the changes to
-https://github.com/ribalda/linux/tree/imx214-v3 and then to this list
-at the end of this week./beggining of the next
-On Mon, Sep 24, 2018 at 10:35 AM jacopo mondi <jacopo@jmondi.org> wrote:
->
-> Hi Ricardo,
->    thanks for the patch.
->
-> A few comments, please see below.
->
->
-> On Fri, Sep 21, 2018 at 12:09:20PM +0200, Ricardo Ribalda Delgado wrote:
-> > Add a V4L2 sub-device driver for the Sony IMX214 image sensor.
-> > This is a camera sensor using the I2C bus for control and the
-> > CSI-2 bus for data.
-> >
-> > Tested on a DB820c alike board with Intrinsyc Open-Q 13MP camera.
-> >
-> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> > ---
-> > Since v2: Thanks Sakari Ailus <sakari.ailus@linux.intel.com>
-> > - Use regulator_bulk
-> > - Do not set voltages, let the DT do that
-> > - missing consts
-> > - remove i2c_client
-> >
-> >  MAINTAINERS                |   8 +
-> >  drivers/media/i2c/Kconfig  |  12 +
-> >  drivers/media/i2c/Makefile |   1 +
-> >  drivers/media/i2c/imx214.c | 956 +++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 977 insertions(+)
-> >  create mode 100644 drivers/media/i2c/imx214.c
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 9989925f658d..2ae68894e700 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -13521,6 +13521,14 @@ S:   Maintained
-> >  F:   drivers/ssb/
-> >  F:   include/linux/ssb/
-> >
-> > +SONY IMX214 SENSOR DRIVER
-> > +M:   Ricardo Ribalda <ricardo.ribalda@gmail.com>
-> > +L:   linux-media@vger.kernel.org
-> > +T:   git git://linuxtv.org/media_tree.git
-> > +S:   Maintained
-> > +F:   drivers/media/i2c/imx214.c
-> > +F:   Documentation/devicetree/bindings/media/i2c/imx214.txt
-> > +
-> >  SONY IMX258 SENSOR DRIVER
-> >  M:   Sakari Ailus <sakari.ailus@linux.intel.com>
-> >  L:   linux-media@vger.kernel.org
-> > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> > index bfdb494686bf..d9416b3a090c 100644
-> > --- a/drivers/media/i2c/Kconfig
-> > +++ b/drivers/media/i2c/Kconfig
-> > @@ -595,6 +595,18 @@ config VIDEO_APTINA_PLL
-> >  config VIDEO_SMIAPP_PLL
-> >       tristate
-> >
-> > +config VIDEO_IMX214
-> > +     tristate "Sony IMX214 sensor support"
-> > +     depends on GPIOLIB && I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
-> > +     depends on OF
-> > +     depends on MEDIA_CAMERA_SUPPORT
-> > +     help
-> > +       This is a Video4Linux2 sensor driver for the Sony
-> > +       IMX214 camera.
-> > +
-> > +       To compile this driver as a module, choose M here: the
-> > +       module will be called imx214.
-> > +
-> >  config VIDEO_IMX258
-> >       tristate "Sony IMX258 sensor support"
-> >       depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
-> > diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-> > index a94eb03d10d4..61305edc6165 100644
-> > --- a/drivers/media/i2c/Makefile
-> > +++ b/drivers/media/i2c/Makefile
-> > @@ -106,6 +106,7 @@ obj-$(CONFIG_VIDEO_I2C)           += video-i2c.o
-> >  obj-$(CONFIG_VIDEO_ML86V7667)        += ml86v7667.o
-> >  obj-$(CONFIG_VIDEO_OV2659)   += ov2659.o
-> >  obj-$(CONFIG_VIDEO_TC358743) += tc358743.o
-> > +obj-$(CONFIG_VIDEO_IMX214)   += imx214.o
-> >  obj-$(CONFIG_VIDEO_IMX258)   += imx258.o
-> >  obj-$(CONFIG_VIDEO_IMX274)   += imx274.o
-> >
-> > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> > new file mode 100644
-> > index 000000000000..ea5beba13b04
-> > --- /dev/null
-> > +++ b/drivers/media/i2c/imx214.c
-> > @@ -0,0 +1,956 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * imx214.c - imx214 sensor driver
-> > + *
-> > + * Copyright 2018 Qtechnology A/S
-> > + *
-> > + * Ricardo Ribalda <ricardo.ribalda@gmail.com>
-> > + */
-> > +#include <linux/i2c.h>
-> > +#include <linux/module.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/regulator/consumer.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/regmap.h>
-> > +#include <media/media-entity.h>
-> > +#include <media/v4l2-fwnode.h>
-> > +#include <media/v4l2-subdev.h>
-> > +#include <media/v4l2-ctrls.h>
->
-> Nit: could you sort header files please?
->
-> > +
-> > +#define IMX214_DEFAULT_CLK_FREQ      24000000
-> > +#define IMX214_DEFAULT_PIXEL_RATE 384000000
-> > +#define IMX214_WIDTH 4096
-> > +#define IMX214_HEIGHT 2304
->
-> I don't see the two above defines ever used.
->
-> > +#define IMX214_FPS 30
-> > +#define IMX214_MBUS_CODE MEDIA_BUS_FMT_SRGGB10_1X10
-> > +
-> > +static const char * const imx214_supply_name[] = {
-> > +     "vdda",
-> > +     "vddd",
-> > +     "vdddo",
-> > +};
-> > +
-> > +#define IMX214_NUM_SUPPLIES ARRAY_SIZE(imx214_supply_name)
-> > +
-> > +struct imx214 {
-> > +     struct device *dev;
-> > +     struct clk *xclk;
-> > +     struct regmap *regmap;
-> > +
-> > +     struct v4l2_fwnode_endpoint ep;
-> > +     struct v4l2_subdev sd;
-> > +     struct media_pad pad;
-> > +     struct v4l2_mbus_framefmt fmt;
-> > +     struct v4l2_rect crop;
-> > +
-> > +     struct v4l2_ctrl_handler ctrls;
-> > +     struct v4l2_ctrl *pixel_rate;
-> > +     struct v4l2_ctrl *link_freq;
-> > +
-> > +     struct regulator_bulk_data      supplies[IMX214_NUM_SUPPLIES];
-> > +
-> > +     struct gpio_desc *enable_gpio;
-> > +
-> > +     bool power_on;
-> > +};
-> > +
-> > +struct reg_8 {
-> > +     u16 addr;
-> > +     u8 val;
-> > +};
-> > +
-> > +static const struct reg_8 mode_1920x1080[];
-> > +static const struct reg_8 mode_4096x2304[];
->
-> Can you move those regsiter tables here and avoid forward declaring
-> them, or is there a reason I am missing for not doing that?
+This function is disabled per default and can be controlled via module
+parameter wr_verify.
 
-I want the imx214_modes to be on top. They show the capabilities of
-the driver in a fast view.
-So it is more a personal taste. But if it breaks any rule I will
-reoder this, no problem ;)
+Signed-off-by: Michael Heimpold <michael.heimpold@i2se.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/net/ethernet/qualcomm/qca_7k.c    | 34 +++++++++++++++++++++++++++++--
+ drivers/net/ethernet/qualcomm/qca_7k.h    |  2 +-
+ drivers/net/ethernet/qualcomm/qca_debug.c |  1 +
+ drivers/net/ethernet/qualcomm/qca_spi.c   | 28 ++++++++++++++++++-------
+ drivers/net/ethernet/qualcomm/qca_spi.h   |  1 +
+ 5 files changed, 56 insertions(+), 10 deletions(-)
 
->
-> > +
-> > +/*
-> > + * Declare modes in order, from biggest
-> > + * to smallest height.
-> > + */
-> > +static const struct imx214_mode {
-> > +     u32 width;
-> > +     u32 height;
-> > +     const struct reg_8 *reg_table;
-> > +} imx214_modes[] = {
-> > +     {
-> > +             .width = 4096,
-> > +             .height = 2304,
-> > +             .reg_table = mode_4096x2304,
-> > +     },
-> > +     {
-> > +             .width = 1920,
-> > +             .height = 1080,
-> > +             .reg_table = mode_1920x1080,
-> > +     },
-> > +};
-> > +
-> > +static inline struct imx214 *to_imx214(struct v4l2_subdev *sd)
-> > +{
-> > +     return container_of(sd, struct imx214, sd);
-> > +}
-> > +
-> > +static int imx214_set_power_on(struct imx214 *imx214)
-> > +{
-> > +     int ret;
-> > +
-> > +     gpiod_set_value_cansleep(imx214->enable_gpio, 0);
-> > +     usleep_range(10, 20);
-> > +
-> > +     ret = regulator_bulk_enable(IMX214_NUM_SUPPLIES, imx214->supplies);
-> > +     if (ret < 0) {
-> > +             dev_err(imx214->dev, "failed to enable regulators: %d\n", ret);
-> > +             return ret;
-> > +     }
-> > +
-> > +     usleep_range(2000, 3000);
-> > +
-> > +     ret = clk_prepare_enable(imx214->xclk);
-> > +     if (ret < 0) {
-> > +             dev_err(imx214->dev, "clk prepare enable failed\n");
-> > +             return ret;
-> > +     }
-> > +
-> > +
-> > +     gpiod_set_value_cansleep(imx214->enable_gpio, 1);
-> > +     usleep_range(12000, 15000);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void imx214_set_power_off(struct imx214 *imx214)
-> > +{
-> > +     gpiod_set_value_cansleep(imx214->enable_gpio, 0);
-> > +
-> > +     clk_disable_unprepare(imx214->xclk);
-> > +
-> > +     regulator_bulk_disable(IMX214_NUM_SUPPLIES, imx214->supplies);
-> > +}
-> > +
-> > +static int imx214_s_power(struct v4l2_subdev *sd, int on)
-> > +{
-> > +     struct imx214 *imx214 = to_imx214(sd);
-> > +     int ret = 0;
-> > +
-> > +     on = !!on;
-> > +
-> > +     if (imx214->power_on == on)
-> > +             return 0;
-> > +
-> > +     if (on)
-> > +             ret = imx214_set_power_on(imx214);
-> > +     else
-> > +             imx214_set_power_off(imx214);
-> > +
-> > +     imx214->power_on = on;
->
-> Nit: blank line before return, here and in other places in the driver.
->
-> > +     return 0;
-> > +}
-> > +
-> > +static int imx214_enum_mbus_code(struct v4l2_subdev *sd,
-> > +                              struct v4l2_subdev_pad_config *cfg,
-> > +                              struct v4l2_subdev_mbus_code_enum *code)
-> > +{
-> > +     if (code->index > 0)
-> > +             return -EINVAL;
-> > +
-> > +     code->code = IMX214_MBUS_CODE;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int imx214_enum_frame_size(struct v4l2_subdev *subdev,
-> > +                               struct v4l2_subdev_pad_config *cfg,
-> > +                               struct v4l2_subdev_frame_size_enum *fse)
-> > +{
-> > +     if (fse->code != IMX214_MBUS_CODE)
-> > +             return -EINVAL;
-> > +
-> > +     if (fse->index >= ARRAY_SIZE(imx214_modes))
-> > +             return -EINVAL;
-> > +
-> > +     fse->min_width = fse->max_width = imx214_modes[fse->index].width;
-> > +     fse->min_height = fse->max_height = imx214_modes[fse->index].height;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +#ifdef CONFIG_VIDEO_ADV_DEBUG
-> > +static int imx214_s_register(struct v4l2_subdev *subdev,
-> > +                           const struct v4l2_dbg_register *reg)
-> > +{
-> > +     struct imx214 *imx214 = container_of(subdev, struct imx214, sd);
-> > +
-> > +     return regmap_write(imx214->regmap, reg->reg, reg->val);
-> > +}
-> > +
-> > +static int imx214_g_register(struct v4l2_subdev *subdev,
-> > +                           struct v4l2_dbg_register *reg)
-> > +{
-> > +     struct imx214 *imx214 = container_of(subdev, struct imx214, sd);
-> > +     unsigned int aux;
-> > +     int ret;
-> > +
-> > +     reg->size = 1;
-> > +     ret = regmap_read(imx214->regmap, reg->reg, &aux);
-> > +     reg->val = aux;
-> > +     return ret;
-> > +}
-> > +#endif
-> > +
-> > +static const struct v4l2_subdev_core_ops imx214_core_ops = {
-> > +#ifdef CONFIG_VIDEO_ADV_DEBUG
-> > +     .g_register = imx214_g_register,
-> > +     .s_register = imx214_s_register,
-> > +#endif
-> > +     .s_power = imx214_s_power,
-> > +};
-> > +
-> > +static struct v4l2_mbus_framefmt *
-> > +__imx214_get_pad_format(struct imx214 *imx214,
-> > +                     struct v4l2_subdev_pad_config *cfg,
-> > +                     unsigned int pad,
-> > +                     enum v4l2_subdev_format_whence which)
-> > +{
-> > +     switch (which) {
-> > +     case V4L2_SUBDEV_FORMAT_TRY:
-> > +             return v4l2_subdev_get_try_format(&imx214->sd, cfg, pad);
-> > +     case V4L2_SUBDEV_FORMAT_ACTIVE:
-> > +             return &imx214->fmt;
-> > +     default:
-> > +             return NULL;
-> > +     }
-> > +}
-> > +
-> > +static int imx214_get_format(struct v4l2_subdev *sd,
-> > +                          struct v4l2_subdev_pad_config *cfg,
-> > +                          struct v4l2_subdev_format *format)
-> > +{
-> > +     struct imx214 *imx214 = to_imx214(sd);
-> > +
-> > +     format->format = *__imx214_get_pad_format(imx214, cfg, format->pad,
-> > +                                               format->which);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static struct v4l2_rect *
-> > +__imx214_get_pad_crop(struct imx214 *imx214, struct v4l2_subdev_pad_config *cfg,
-> > +                   unsigned int pad, enum v4l2_subdev_format_whence which)
-> > +{
-> > +     switch (which) {
-> > +     case V4L2_SUBDEV_FORMAT_TRY:
-> > +             return v4l2_subdev_get_try_crop(&imx214->sd, cfg, pad);
-> > +     case V4L2_SUBDEV_FORMAT_ACTIVE:
-> > +             return &imx214->crop;
-> > +     default:
-> > +             return NULL;
-> > +     }
-> > +}
-> > +
-> > +static int imx214_find_mode(u32 height)
-> > +{
-> > +     int i;
-> > +
-> > +     for (i = 0; (i < ARRAY_SIZE(imx214_modes) - 1) ; i++)
-> > +             if (height >= imx214_modes[i].width)
->
-> Comparing height and width?
-
-Ups.... at the begiing I was using widht, then I moved to height....
-Great catch!
-
->
-> > +                     return i;
-> > +     return i;
-> > +}
-> > +
-> > +static int imx214_set_format(struct v4l2_subdev *sd,
-> > +                          struct v4l2_subdev_pad_config *cfg,
-> > +                          struct v4l2_subdev_format *format)
-> > +{
-> > +     struct imx214 *imx214 = to_imx214(sd);
-> > +     struct v4l2_mbus_framefmt *__format;
-> > +     struct v4l2_rect *__crop;
-> > +     int mode;
-> > +
-> > +     __crop = __imx214_get_pad_crop(imx214, cfg, format->pad, format->which);
-> > +
-> > +     mode = format ? imx214_find_mode(format->format.height) : 0;
-> > +
-> > +     __crop->width = imx214_modes[mode].width;
-> > +     __crop->height = imx214_modes[mode].height;
-> > +
-> > +     __format = __imx214_get_pad_format(imx214, cfg, format->pad,
-> > +                                        format->which);
-> > +     __format->width = __crop->width;
-> > +     __format->height = __crop->height;
-> > +     __format->code = IMX214_MBUS_CODE;
-> > +     __format->field = V4L2_FIELD_NONE;
-> > +     __format->colorspace = V4L2_COLORSPACE_SRGB;
-> > +     __format->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(__format->colorspace);
-> > +     __format->quantization = V4L2_MAP_QUANTIZATION_DEFAULT(true,
-> > +                             __format->colorspace, __format->ycbcr_enc);
-> > +     __format->xfer_func = V4L2_MAP_XFER_FUNC_DEFAULT(__format->colorspace);
-> > +
-> > +     format->format = *__format;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int imx214_get_selection(struct v4l2_subdev *sd,
-> > +                             struct v4l2_subdev_pad_config *cfg,
-> > +                             struct v4l2_subdev_selection *sel)
-> > +{
-> > +     struct imx214 *imx214 = to_imx214(sd);
-> > +
-> > +     if (sel->target != V4L2_SEL_TGT_CROP)
-> > +             return -EINVAL;
-> > +
-> > +     sel->r = *__imx214_get_pad_crop(imx214, cfg, sel->pad,
-> > +                                     sel->which);
-> > +     return 0;
-> > +}
-> > +
-> > +static int imx214_entity_init_cfg(struct v4l2_subdev *subdev,
-> > +                               struct v4l2_subdev_pad_config *cfg)
-> > +{
-> > +     struct v4l2_subdev_format fmt = { };
-> > +
-> > +     fmt.which = cfg ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_FORMAT_ACTIVE;
-> > +     fmt.format.width = imx214_modes[0].width;
-> > +     fmt.format.height = imx214_modes[0].height;
-> > +
-> > +     imx214_set_format(subdev, cfg, &fmt);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +enum { IMX214_TABLE_WAIT_MS = 0,
-> > +     IMX214_TABLE_END,
-> > +     IMX214_MAX_RETRIES,
-> > +     IMX214_WAIT_MS};
-> > +
-> > +/*From imx214_mode_tbls.h*/
-> > +static const struct reg_8 mode_4096x2304[] = {
-> > +     {0x0114, 0x03},
-> > +     {0x0220, 0x00},
-> > +     {0x0221, 0x11},
-> > +     {0x0222, 0x01},
-> > +     {0x0340, 0x0C},
-> > +     {0x0341, 0x7A},
-> > +     {0x0342, 0x13},
-> > +     {0x0343, 0x90},
-> > +     {0x0344, 0x00},
-> > +     {0x0345, 0x38},
-> > +     {0x0346, 0x01},
-> > +     {0x0347, 0x98},
-> > +     {0x0348, 0x10},
-> > +     {0x0349, 0x37},
-> > +     {0x034A, 0x0A},
-> > +     {0x034B, 0x97},
-> > +     {0x0381, 0x01},
-> > +     {0x0383, 0x01},
-> > +     {0x0385, 0x01},
-> > +     {0x0387, 0x01},
-> > +     {0x0900, 0x00},
-> > +     {0x0901, 0x00},
-> > +     {0x0902, 0x00},
-> > +     {0x3000, 0x35},
-> > +     {0x3054, 0x01},
-> > +     {0x305C, 0x11},
-> > +
-> > +     {0x0112, 0x0A},
-> > +     {0x0113, 0x0A},
-> > +     {0x034C, 0x10},
-> > +     {0x034D, 0x00},
-> > +     {0x034E, 0x09},
-> > +     {0x034F, 0x00},
-> > +     {0x0401, 0x00},
-> > +     {0x0404, 0x00},
-> > +     {0x0405, 0x10},
-> > +     {0x0408, 0x00},
-> > +     {0x0409, 0x00},
-> > +     {0x040A, 0x00},
-> > +     {0x040B, 0x00},
-> > +     {0x040C, 0x10},
-> > +     {0x040D, 0x00},
-> > +     {0x040E, 0x09},
-> > +     {0x040F, 0x00},
-> > +
-> > +     {0x0301, 0x05},
-> > +     {0x0303, 0x02},
-> > +     {0x0305, 0x03},
-> > +     {0x0306, 0x00},
-> > +     {0x0307, 0x96},
-> > +     {0x0309, 0x0A},
-> > +     {0x030B, 0x01},
-> > +     {0x0310, 0x00},
-> > +
-> > +     {0x0820, 0x12},
-> > +     {0x0821, 0xC0},
-> > +     {0x0822, 0x00},
-> > +     {0x0823, 0x00},
-> > +
-> > +     {0x3A03, 0x09},
-> > +     {0x3A04, 0x50},
-> > +     {0x3A05, 0x01},
-> > +
-> > +     {0x0B06, 0x01},
-> > +     {0x30A2, 0x00},
-> > +
-> > +     {0x30B4, 0x00},
-> > +
-> > +     {0x3A02, 0xFF},
-> > +
-> > +     {0x3011, 0x00},
-> > +     {0x3013, 0x01},
-> > +
-> > +     {0x0202, 0x0C},
-> > +     {0x0203, 0x70},
-> > +     {0x0224, 0x01},
-> > +     {0x0225, 0xF4},
-> > +
-> > +     {0x0204, 0x00},
-> > +     {0x0205, 0x00},
-> > +     {0x020E, 0x01},
-> > +     {0x020F, 0x00},
-> > +     {0x0210, 0x01},
-> > +     {0x0211, 0x00},
-> > +     {0x0212, 0x01},
-> > +     {0x0213, 0x00},
-> > +     {0x0214, 0x01},
-> > +     {0x0215, 0x00},
-> > +     {0x0216, 0x00},
-> > +     {0x0217, 0x00},
-> > +
-> > +     {0x4170, 0x00},
-> > +     {0x4171, 0x10},
-> > +     {0x4176, 0x00},
-> > +     {0x4177, 0x3C},
-> > +     {0xAE20, 0x04},
-> > +     {0xAE21, 0x5C},
-> > +
-> > +     {IMX214_TABLE_WAIT_MS, 10},
-> > +     {0x0138, 0x01},
-> > +     {IMX214_TABLE_END, 0x00}
-> > +};
-> > +
-> > +static const struct reg_8 mode_1920x1080[] = {
-> > +     {0x0114, 0x03},
-> > +     {0x0220, 0x00},
-> > +     {0x0221, 0x11},
-> > +     {0x0222, 0x01},
-> > +     {0x0340, 0x0C},
-> > +     {0x0341, 0x7A},
-> > +     {0x0342, 0x13},
-> > +     {0x0343, 0x90},
-> > +     {0x0344, 0x04},
-> > +     {0x0345, 0x78},
-> > +     {0x0346, 0x03},
-> > +     {0x0347, 0xFC},
-> > +     {0x0348, 0x0B},
-> > +     {0x0349, 0xF7},
-> > +     {0x034A, 0x08},
-> > +     {0x034B, 0x33},
-> > +     {0x0381, 0x01},
-> > +     {0x0383, 0x01},
-> > +     {0x0385, 0x01},
-> > +     {0x0387, 0x01},
-> > +     {0x0900, 0x00},
-> > +     {0x0901, 0x00},
-> > +     {0x0902, 0x00},
-> > +     {0x3000, 0x35},
-> > +     {0x3054, 0x01},
-> > +     {0x305C, 0x11},
-> > +
-> > +     {0x0112, 0x0A},
-> > +     {0x0113, 0x0A},
-> > +     {0x034C, 0x07},
-> > +     {0x034D, 0x80},
-> > +     {0x034E, 0x04},
-> > +     {0x034F, 0x38},
-> > +     {0x0401, 0x00},
-> > +     {0x0404, 0x00},
-> > +     {0x0405, 0x10},
-> > +     {0x0408, 0x00},
-> > +     {0x0409, 0x00},
-> > +     {0x040A, 0x00},
-> > +     {0x040B, 0x00},
-> > +     {0x040C, 0x07},
-> > +     {0x040D, 0x80},
-> > +     {0x040E, 0x04},
-> > +     {0x040F, 0x38},
-> > +
-> > +     {0x0301, 0x05},
-> > +     {0x0303, 0x02},
-> > +     {0x0305, 0x03},
-> > +     {0x0306, 0x00},
-> > +     {0x0307, 0x96},
-> > +     {0x0309, 0x0A},
-> > +     {0x030B, 0x01},
-> > +     {0x0310, 0x00},
-> > +
-> > +     {0x0820, 0x12},
-> > +     {0x0821, 0xC0},
-> > +     {0x0822, 0x00},
-> > +     {0x0823, 0x00},
-> > +
-> > +     {0x3A03, 0x04},
-> > +     {0x3A04, 0xF8},
-> > +     {0x3A05, 0x02},
-> > +
-> > +     {0x0B06, 0x01},
-> > +     {0x30A2, 0x00},
-> > +
-> > +     {0x30B4, 0x00},
-> > +
-> > +     {0x3A02, 0xFF},
-> > +
-> > +     {0x3011, 0x00},
-> > +     {0x3013, 0x01},
-> > +
-> > +     {0x0202, 0x0C},
-> > +     {0x0203, 0x70},
-> > +     {0x0224, 0x01},
-> > +     {0x0225, 0xF4},
-> > +
-> > +     {0x0204, 0x00},
-> > +     {0x0205, 0x00},
-> > +     {0x020E, 0x01},
-> > +     {0x020F, 0x00},
-> > +     {0x0210, 0x01},
-> > +     {0x0211, 0x00},
-> > +     {0x0212, 0x01},
-> > +     {0x0213, 0x00},
-> > +     {0x0214, 0x01},
-> > +     {0x0215, 0x00},
-> > +     {0x0216, 0x00},
-> > +     {0x0217, 0x00},
-> > +
-> > +     {0x4170, 0x00},
-> > +     {0x4171, 0x10},
-> > +     {0x4176, 0x00},
-> > +     {0x4177, 0x3C},
-> > +     {0xAE20, 0x04},
-> > +     {0xAE21, 0x5C},
-> > +
-> > +     {IMX214_TABLE_WAIT_MS, 10},
-> > +     {0x0138, 0x01},
-> > +     {IMX214_TABLE_END, 0x00}
-> > +};
-> > +
-> > +static struct reg_8 mode_table_common[] = {
-> > +     /* software reset */
-> > +
-> > +     /* software standby settings */
-> > +     {0x0100, 0x00},
-> > +
-> > +     /* ATR setting */
-> > +     {0x9300, 0x02},
-> > +
-> > +     /* external clock setting */
-> > +     {0x0136, 0x18},
-> > +     {0x0137, 0x00},
-> > +
-> > +     /* global setting */
-> > +     /* basic config */
-> > +     {0x0101, 0x00},
-> > +     {0x0105, 0x01},
-> > +     {0x0106, 0x01},
-> > +     {0x4550, 0x02},
-> > +     {0x4601, 0x00},
-> > +     {0x4642, 0x05},
-> > +     {0x6227, 0x11},
-> > +     {0x6276, 0x00},
-> > +     {0x900E, 0x06},
-> > +     {0xA802, 0x90},
-> > +     {0xA803, 0x11},
-> > +     {0xA804, 0x62},
-> > +     {0xA805, 0x77},
-> > +     {0xA806, 0xAE},
-> > +     {0xA807, 0x34},
-> > +     {0xA808, 0xAE},
-> > +     {0xA809, 0x35},
-> > +     {0xA80A, 0x62},
-> > +     {0xA80B, 0x83},
-> > +     {0xAE33, 0x00},
-> > +
-> > +     /* analog setting */
-> > +     {0x4174, 0x00},
-> > +     {0x4175, 0x11},
-> > +     {0x4612, 0x29},
-> > +     {0x461B, 0x12},
-> > +     {0x461F, 0x06},
-> > +     {0x4635, 0x07},
-> > +     {0x4637, 0x30},
-> > +     {0x463F, 0x18},
-> > +     {0x4641, 0x0D},
-> > +     {0x465B, 0x12},
-> > +     {0x465F, 0x11},
-> > +     {0x4663, 0x11},
-> > +     {0x4667, 0x0F},
-> > +     {0x466F, 0x0F},
-> > +     {0x470E, 0x09},
-> > +     {0x4909, 0xAB},
-> > +     {0x490B, 0x95},
-> > +     {0x4915, 0x5D},
-> > +     {0x4A5F, 0xFF},
-> > +     {0x4A61, 0xFF},
-> > +     {0x4A73, 0x62},
-> > +     {0x4A85, 0x00},
-> > +     {0x4A87, 0xFF},
-> > +
-> > +     /* embedded data */
-> > +     {0x5041, 0x04},
-> > +     {0x583C, 0x04},
-> > +     {0x620E, 0x04},
-> > +     {0x6EB2, 0x01},
-> > +     {0x6EB3, 0x00},
-> > +     {0x9300, 0x02},
-> > +
-> > +     /* imagequality */
-> > +     /* HDR setting */
-> > +     {0x3001, 0x07},
-> > +     {0x6D12, 0x3F},
-> > +     {0x6D13, 0xFF},
-> > +     {0x9344, 0x03},
-> > +     {0x9706, 0x10},
-> > +     {0x9707, 0x03},
-> > +     {0x9708, 0x03},
-> > +     {0x9E04, 0x01},
-> > +     {0x9E05, 0x00},
-> > +     {0x9E0C, 0x01},
-> > +     {0x9E0D, 0x02},
-> > +     {0x9E24, 0x00},
-> > +     {0x9E25, 0x8C},
-> > +     {0x9E26, 0x00},
-> > +     {0x9E27, 0x94},
-> > +     {0x9E28, 0x00},
-> > +     {0x9E29, 0x96},
-> > +
-> > +     /* CNR parameter setting */
-> > +     {0x69DB, 0x01},
-> > +
-> > +     /* Moire reduction */
-> > +     {0x6957, 0x01},
-> > +
-> > +     /* image enhancment */
-> > +     {0x6987, 0x17},
-> > +     {0x698A, 0x03},
-> > +     {0x698B, 0x03},
-> > +
-> > +     /* white balanace */
-> > +     {0x0B8E, 0x01},
-> > +     {0x0B8F, 0x00},
-> > +     {0x0B90, 0x01},
-> > +     {0x0B91, 0x00},
-> > +     {0x0B92, 0x01},
-> > +     {0x0B93, 0x00},
-> > +     {0x0B94, 0x01},
-> > +     {0x0B95, 0x00},
-> > +
-> > +     /* ATR setting */
-> > +     {0x6E50, 0x00},
-> > +     {0x6E51, 0x32},
-> > +     {0x9340, 0x00},
-> > +     {0x9341, 0x3C},
-> > +     {0x9342, 0x03},
-> > +     {0x9343, 0xFF},
-> > +     {IMX214_TABLE_END, 0x00}
-> > +};
-> > +
-> > +#define MAX_CMD 4
-> > +static int imx214_write_table(struct imx214 *imx214,
-> > +                             const struct reg_8 table[])
-> > +{
-> > +     u8 vals[MAX_CMD];
-> > +     int ret;
-> > +     int i;
-> > +
-> > +     for (table = table; table->addr != IMX214_TABLE_END ; table++) {
-> > +             if (table->addr == IMX214_TABLE_WAIT_MS) {
-> > +                     msleep(table->val);
->
-> usleep_range might be better for 10msec sleeps?
->
-> > +                     continue;
-> > +             }
-> > +
-> > +             for (i = 0; i < MAX_CMD; i++) {
-> > +                     if (table[i].addr != (table[0].addr + i))
-> > +                             break;
-> > +                     vals[i] = table[i].val;
-> > +             }
-> > +
-> > +             ret = regmap_bulk_write(imx214->regmap, table->addr, vals, i);
->
-> I'm not saying using regmap is wrong, but makes this function a bit
-> cumbersome. You have delays as part of the command tables, that's
-> fine, and you want to wait everytime you meet one, then proceed to
-> write the rest. If you have your own write functions, this would look
-> simpler, and if regmap helps in anyway in caching writes, you're anyway
-> sending up to 4 entries at a time, which I think makes the regmap caching
-> useless, imho.
-
-I want to follow the pattern in other drivers here.
-
->
-> > +
-> > +             if (ret) {
-> > +                     dev_err(imx214->dev, "write_teable error: %d\n", ret);
-> > +                     return ret;
-> > +             }
-> > +
-> > +             table += i - 1;
-> > +
-> empty new line
->
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
->
-> two empty new lines.
->
-> > +
-> > +static int imx214_s_stream(struct v4l2_subdev *subdev, int enable)
-> > +{
-> > +     struct imx214 *imx214 = to_imx214(subdev);
-> > +     int ret;
-> > +
-> > +     if (enable) {
-> > +             int mode = imx214_find_mode(imx214->fmt.height);
->
-> You're calling this function a few times, could you consider caching
-> mode instead? Or does it make your code mode complex?
-
-I prefer to keep it this way. The mode can be computed with other
-fields of the structure and the computation is really easy. If in the
-future it requires a more complex calculation I will cache the result.
-
->
-> > +
-> > +             ret = imx214_write_table(imx214, mode_table_common);
-> > +             if (ret < 0) {
-> > +                     dev_err(imx214->dev, "could not sent common table %d\n",
-> > +                             ret);
-> > +                     return ret;
-> > +             }
-> > +             ret = imx214_write_table(imx214, imx214_modes[mode].reg_table);
-> > +             if (ret < 0) {
-> > +                     dev_err(imx214->dev, "could not sent mode table %d\n",
-> > +                             ret);
-> > +                     return ret;
-> > +             }
-> > +             ret = v4l2_ctrl_handler_setup(&imx214->ctrls);
->
-> is it fine to call this multiple times, at streamon time?
-
-I guess so, maybe Hans can clarify it. It is used in:
-mt9m111.c,
-ov7740.c
-
-I liked the idea and I copied it. But right now it could be removed completely.
-If/when I add gain/exposure we can rethink about it.
-
->
-> > +             if (ret < 0) {
-> > +                     dev_err(imx214->dev, "could not sync v4l2 controls\n");
-> > +                     return ret;
-> > +             }
-> > +             ret = regmap_write(imx214->regmap, 0x100, 1);
-> > +             if (ret < 0) {
-> > +                     dev_err(imx214->dev, "could not sent start table %d\n",
-> > +                             ret);
-> > +                     return ret;
-> > +             }
-> > +     } else {
-> > +             ret = regmap_write(imx214->regmap, 0x100, 0);
-> > +             if (ret < 0) {
-> > +                     dev_err(imx214->dev, "could not sent stop table %d\n",
-> > +                             ret);
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int imx214_g_frame_interval(struct v4l2_subdev *subdev,
-> > +                                   struct v4l2_subdev_frame_interval *fival)
-> > +{
-> > +     fival->pad = 0;
-> > +     fival->interval.numerator = 1;
-> > +     fival->interval.denominator = IMX214_FPS;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int imx214_enum_frame_interval(struct v4l2_subdev *subdev,
-> > +                             struct v4l2_subdev_pad_config *cfg,
-> > +                             struct v4l2_subdev_frame_interval_enum *fie)
-> > +{
-> > +     int mode;
-> > +
-> > +     if (fie->index != 0)
-> > +             return -EINVAL;
-> > +
-> > +     mode = imx214_find_mode(fie->height);
-> > +
-> > +     fie->code = IMX214_MBUS_CODE;
-> > +     fie->width = imx214_modes[mode].width;
-> > +     fie->height = imx214_modes[mode].height;
-> > +     fie->interval.numerator = 1;
-> > +     fie->interval.denominator = IMX214_MBUS_CODE;
->
-> denominator = MBUS_CODE ?
->
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct v4l2_subdev_video_ops imx214_video_ops = {
-> > +     .s_stream = imx214_s_stream,
-> > +     .g_frame_interval = imx214_g_frame_interval,
-> > +     .s_frame_interval = imx214_g_frame_interval,
-> > +};
-> > +
-> > +static const struct v4l2_subdev_pad_ops imx214_subdev_pad_ops = {
-> > +     .enum_mbus_code = imx214_enum_mbus_code,
-> > +     .enum_frame_size = imx214_enum_frame_size,
-> > +     .enum_frame_interval = imx214_enum_frame_interval,
-> > +     .get_fmt = imx214_get_format,
-> > +     .set_fmt = imx214_set_format,
-> > +     .get_selection = imx214_get_selection,
-> > +     .init_cfg = imx214_entity_init_cfg,
-> > +};
-> > +
-> > +static const struct v4l2_subdev_ops imx214_subdev_ops = {
-> > +     .core = &imx214_core_ops,
-> > +     .video = &imx214_video_ops,
-> > +     .pad = &imx214_subdev_pad_ops,
-> > +};
-> > +
-> > +static const struct regmap_config sensor_regmap_config = {
-> > +     .reg_bits = 16,
-> > +     .val_bits = 8,
-> > +     .cache_type = REGCACHE_RBTREE,
-> > +};
-> > +
-> > +static int imx214_get_regulators(struct device *dev, struct imx214 *imx214)
-> > +{
-> > +     int i;
-> > +
-> > +     for (i = 0; i < IMX214_NUM_SUPPLIES; i++)
-> > +             imx214->supplies[i].supply = imx214_supply_name[i];
-> > +
-> > +     return devm_regulator_bulk_get(dev,
-> > +                                    IMX214_NUM_SUPPLIES,
-> > +                                    imx214->supplies);
-> > +}
-> > +
-> > +static int imx214_probe(struct i2c_client *client)
-> > +{
-> > +     struct device *dev = &client->dev;
-> > +     struct imx214 *imx214;
-> > +     struct fwnode_handle *endpoint;
-> > +     int ret;
-> > +     static const s64 link_freq[] = {
-> > +             (IMX214_DEFAULT_PIXEL_RATE * 10LL) / 8,
-> > +     };
-> > +
-> > +     imx214 = devm_kzalloc(dev, sizeof(*imx214), GFP_KERNEL);
-> > +     if (!imx214)
-> > +             return -ENOMEM;
-> > +
-> > +     imx214->dev = dev;
-> > +
-> > +     endpoint = fwnode_graph_get_next_endpoint(
-> > +             of_fwnode_handle(client->dev.of_node), NULL);
-> > +     if (!endpoint) {
-> > +             dev_err(dev, "endpoint node not found\n");
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     ret = v4l2_fwnode_endpoint_parse(endpoint, &imx214->ep);
->
-> is imx214->ep used anywhere else apart from probe? can it just be a
-> variable local to this function?
->
-> > +     fwnode_handle_put(endpoint);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "parsing endpoint node failed\n");
-> > +             return ret;
-> > +     }
-> > +
-> > +     if (imx214->ep.bus_type != V4L2_MBUS_CSI2) {
-> > +             dev_err(dev, "invalid bus type (%u), must be CSI2 (%u)\n",
-> > +                     imx214->ep.bus_type, V4L2_MBUS_CSI2);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     imx214->xclk = devm_clk_get(dev, "xclk");
-> > +     if (IS_ERR(imx214->xclk)) {
-> > +             dev_err(dev, "could not get xclk");
-> > +             return PTR_ERR(imx214->xclk);
-> > +     }
-> > +
-> > +     ret = clk_set_rate(imx214->xclk, IMX214_DEFAULT_CLK_FREQ);
-> > +     if (ret) {
-> > +             dev_err(dev, "could not set xclk frequency\n");
-> > +             return ret;
-> > +     }
-> > +
-> > +     ret = imx214_get_regulators(dev, imx214);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "cannot get regulators\n");
-> > +             return ret;
-> > +     }
-> > +
-> > +     imx214->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
-> > +     if (IS_ERR(imx214->enable_gpio)) {
-> > +             dev_err(dev, "cannot get enable gpio\n");
-> > +             return PTR_ERR(imx214->enable_gpio);
-> > +     }
-> > +
-> > +     imx214->regmap = devm_regmap_init_i2c(client, &sensor_regmap_config);
-> > +     if (IS_ERR(imx214->regmap)) {
-> > +             dev_err(dev, "regmap init failed\n");
-> > +             return PTR_ERR(imx214->regmap);
-> > +     }
-> > +
-> > +     v4l2_ctrl_handler_init(&imx214->ctrls, 2);
-> > +
-> > +     imx214->pixel_rate = v4l2_ctrl_new_std(&imx214->ctrls, NULL,
-> > +                                            V4L2_CID_PIXEL_RATE, 0,
-> > +                                            IMX214_DEFAULT_PIXEL_RATE, 1,
-> > +                                            IMX214_DEFAULT_PIXEL_RATE);
->
-> Is it fine not to provide a ctrl_ops structure to read/write controls?
-
-I believe so. Hans, is this ok?
-
->
-> Thanks
->    j
->
-> > +     imx214->link_freq = v4l2_ctrl_new_int_menu(&imx214->ctrls, NULL,
-> > +                                                V4L2_CID_LINK_FREQ,
-> > +                                                ARRAY_SIZE(link_freq) - 1,
-> > +                                                0, link_freq);
-> > +     if (imx214->link_freq)
-> > +             imx214->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > +     ret = imx214->ctrls.error;
-> > +     if (ret) {
-> > +             dev_err(&client->dev, "%s control init failed (%d)\n",
-> > +                             __func__, ret);
-> > +             goto free_ctrl;
-> > +     }
-> > +
-> > +     imx214->sd.ctrl_handler = &imx214->ctrls;
-> > +     ret = v4l2_ctrl_handler_setup(imx214->sd.ctrl_handler);
-> > +     if (ret) {
-> > +             dev_err(&client->dev,
-> > +                     "Error %d setting default controls\n", ret);
-> > +             goto free_ctrl;
-> > +     }
-> > +
-> > +     v4l2_i2c_subdev_init(&imx214->sd, client, &imx214_subdev_ops);
-> > +     imx214->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-> > +     imx214->pad.flags = MEDIA_PAD_FL_SOURCE;
-> > +     imx214->sd.dev = &client->dev;
-> > +     imx214->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
-> > +
-> > +     ret = media_entity_pads_init(&imx214->sd.entity, 1, &imx214->pad);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "could not register media entity\n");
-> > +             goto free_ctrl;
-> > +     }
-> > +
-> > +     imx214_entity_init_cfg(&imx214->sd, NULL);
-> > +
-> > +     ret = v4l2_async_register_subdev_sensor_common(&imx214->sd);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "could not register v4l2 device\n");
-> > +             goto free_entity;
-> > +     }
-> > +
-> > +     return 0;
-> > +
-> > +free_entity:
-> > +     media_entity_cleanup(&imx214->sd.entity);
-> > +free_ctrl:
-> > +     v4l2_ctrl_handler_free(&imx214->ctrls);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int imx214_remove(struct i2c_client *client)
-> > +{
-> > +     struct v4l2_subdev *sd = i2c_get_clientdata(client);
-> > +     struct imx214 *imx214 = to_imx214(sd);
-> > +
-> > +     v4l2_async_unregister_subdev(&imx214->sd);
-> > +     media_entity_cleanup(&imx214->sd.entity);
-> > +     v4l2_ctrl_handler_free(&imx214->ctrls);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct of_device_id imx214_of_match[] = {
-> > +     { .compatible = "sony,imx214" },
-> > +     { }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, imx214_of_match);
-> > +
-> > +static struct i2c_driver imx214_i2c_driver = {
-> > +     .driver = {
-> > +             .of_match_table = imx214_of_match,
-> > +             .name  = "imx214",
-> > +     },
-> > +     .probe_new  = imx214_probe,
-> > +     .remove = imx214_remove,
-> > +};
-> > +
-> > +module_i2c_driver(imx214_i2c_driver);
-> > +
-> > +MODULE_DESCRIPTION("Sony IMX214 Camera drier");
-> > +MODULE_AUTHOR("Ricardo Ribalda <ricardo.ribalda@gmail.com>");
-> > +MODULE_LICENSE("GPL v2");
-> > --
-> > 2.18.0
-> >
-
-
-
+diff --git a/drivers/net/ethernet/qualcomm/qca_7k.c b/drivers/net/ethernet/qualcomm/qca_7k.c
+index 6c8543f..4292c89 100644
+--- a/drivers/net/ethernet/qualcomm/qca_7k.c
++++ b/drivers/net/ethernet/qualcomm/qca_7k.c
+@@ -81,8 +81,8 @@ qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result)
+ 	return ret;
+ }
+ 
+-int
+-qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
++static int
++__qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
+ {
+ 	__be16 tx_data[2];
+ 	struct spi_transfer transfer[2];
+@@ -117,3 +117,33 @@ qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value)
+ 
+ 	return ret;
+ }
++
++int
++qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value, int retry)
++{
++	int ret, i = 0;
++	u16 confirmed;
++
++	do {
++		ret = __qcaspi_write_register(qca, reg, value);
++		if (ret)
++			return ret;
++
++		if (!retry)
++			return 0;
++
++		ret = qcaspi_read_register(qca, reg, &confirmed);
++		if (ret)
++			return ret;
++
++		ret = confirmed != value;
++		if (!ret)
++			return 0;
++
++		i++;
++		qca->stats.write_verify_failed++;
++
++	} while (i <= retry);
++
++	return ret;
++}
+diff --git a/drivers/net/ethernet/qualcomm/qca_7k.h b/drivers/net/ethernet/qualcomm/qca_7k.h
+index 27124c2..356de8e 100644
+--- a/drivers/net/ethernet/qualcomm/qca_7k.h
++++ b/drivers/net/ethernet/qualcomm/qca_7k.h
+@@ -66,6 +66,6 @@
+ 
+ void qcaspi_spi_error(struct qcaspi *qca);
+ int qcaspi_read_register(struct qcaspi *qca, u16 reg, u16 *result);
+-int qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value);
++int qcaspi_write_register(struct qcaspi *qca, u16 reg, u16 value, int retry);
+ 
+ #endif /* _QCA_7K_H */
+diff --git a/drivers/net/ethernet/qualcomm/qca_debug.c b/drivers/net/ethernet/qualcomm/qca_debug.c
+index 51d89c8..a9f1bc0 100644
+--- a/drivers/net/ethernet/qualcomm/qca_debug.c
++++ b/drivers/net/ethernet/qualcomm/qca_debug.c
+@@ -60,6 +60,7 @@ static const char qcaspi_gstrings_stats[][ETH_GSTRING_LEN] = {
+ 	"Write buffer misses",
+ 	"Transmit ring full",
+ 	"SPI errors",
++	"Write verify errors",
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
+index 66b775d..d531050 100644
+--- a/drivers/net/ethernet/qualcomm/qca_spi.c
++++ b/drivers/net/ethernet/qualcomm/qca_spi.c
+@@ -69,6 +69,12 @@ static int qcaspi_pluggable = QCASPI_PLUGGABLE_MIN;
+ module_param(qcaspi_pluggable, int, 0);
+ MODULE_PARM_DESC(qcaspi_pluggable, "Pluggable SPI connection (yes/no).");
+ 
++#define QCASPI_WRITE_VERIFY_MIN 0
++#define QCASPI_WRITE_VERIFY_MAX 3
++static int wr_verify = QCASPI_WRITE_VERIFY_MIN;
++module_param(wr_verify, int, 0);
++MODULE_PARM_DESC(wr_verify, "SPI register write verify trails. Use 0-3.");
++
+ #define QCASPI_TX_TIMEOUT (1 * HZ)
+ #define QCASPI_QCA7K_REBOOT_TIME_MS 1000
+ 
+@@ -77,7 +83,7 @@ start_spi_intr_handling(struct qcaspi *qca, u16 *intr_cause)
+ {
+ 	*intr_cause = 0;
+ 
+-	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0);
++	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0, wr_verify);
+ 	qcaspi_read_register(qca, SPI_REG_INTR_CAUSE, intr_cause);
+ 	netdev_dbg(qca->net_dev, "interrupts: 0x%04x\n", *intr_cause);
+ }
+@@ -90,8 +96,8 @@ end_spi_intr_handling(struct qcaspi *qca, u16 intr_cause)
+ 			   SPI_INT_RDBUF_ERR |
+ 			   SPI_INT_WRBUF_ERR);
+ 
+-	qcaspi_write_register(qca, SPI_REG_INTR_CAUSE, intr_cause);
+-	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, intr_enable);
++	qcaspi_write_register(qca, SPI_REG_INTR_CAUSE, intr_cause, 0);
++	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, intr_enable, wr_verify);
+ 	netdev_dbg(qca->net_dev, "acking int: 0x%04x\n", intr_cause);
+ }
+ 
+@@ -239,7 +245,7 @@ qcaspi_tx_frame(struct qcaspi *qca, struct sk_buff *skb)
+ 
+ 	len = skb->len;
+ 
+-	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, len);
++	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, len, wr_verify);
+ 	if (qca->legacy_mode)
+ 		qcaspi_tx_cmd(qca, QCA7K_SPI_WRITE | QCA7K_SPI_EXTERNAL);
+ 
+@@ -345,6 +351,7 @@ qcaspi_receive(struct qcaspi *qca)
+ 
+ 	/* Read the packet size. */
+ 	qcaspi_read_register(qca, SPI_REG_RDBUF_BYTE_AVA, &available);
++
+ 	netdev_dbg(net_dev, "qcaspi_receive: SPI_REG_RDBUF_BYTE_AVA: Value: %08x\n",
+ 		   available);
+ 
+@@ -353,7 +360,7 @@ qcaspi_receive(struct qcaspi *qca)
+ 		return -1;
+ 	}
+ 
+-	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, available);
++	qcaspi_write_register(qca, SPI_REG_BFR_SIZE, available, wr_verify);
+ 
+ 	if (qca->legacy_mode)
+ 		qcaspi_tx_cmd(qca, QCA7K_SPI_READ | QCA7K_SPI_EXTERNAL);
+@@ -524,7 +531,7 @@ qcaspi_qca7k_sync(struct qcaspi *qca, int event)
+ 		netdev_dbg(qca->net_dev, "sync: resetting device.\n");
+ 		qcaspi_read_register(qca, SPI_REG_SPI_CONFIG, &spi_config);
+ 		spi_config |= QCASPI_SLAVE_RESET_BIT;
+-		qcaspi_write_register(qca, SPI_REG_SPI_CONFIG, spi_config);
++		qcaspi_write_register(qca, SPI_REG_SPI_CONFIG, spi_config, 0);
+ 
+ 		qca->sync = QCASPI_SYNC_RESET;
+ 		qca->stats.trig_reset++;
+@@ -684,7 +691,7 @@ qcaspi_netdev_close(struct net_device *dev)
+ 
+ 	netif_stop_queue(dev);
+ 
+-	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0);
++	qcaspi_write_register(qca, SPI_REG_INTR_ENABLE, 0, wr_verify);
+ 	free_irq(qca->spi_dev->irq, qca);
+ 
+ 	kthread_stop(qca->spi_thread);
+@@ -904,6 +911,13 @@ qca_spi_probe(struct spi_device *spi)
+ 		return -EINVAL;
+ 	}
+ 
++	if (wr_verify < QCASPI_WRITE_VERIFY_MIN ||
++	    wr_verify > QCASPI_WRITE_VERIFY_MAX) {
++		dev_err(&spi->dev, "Invalid write verify: %d\n",
++			wr_verify);
++		return -EINVAL;
++	}
++
+ 	dev_info(&spi->dev, "ver=%s, clkspeed=%d, burst_len=%d, pluggable=%d\n",
+ 		 QCASPI_DRV_VERSION,
+ 		 qcaspi_clkspeed,
+diff --git a/drivers/net/ethernet/qualcomm/qca_spi.h b/drivers/net/ethernet/qualcomm/qca_spi.h
+index fc0e987..2d2c497 100644
+--- a/drivers/net/ethernet/qualcomm/qca_spi.h
++++ b/drivers/net/ethernet/qualcomm/qca_spi.h
+@@ -73,6 +73,7 @@ struct qcaspi_stats {
+ 	u64 write_buf_miss;
+ 	u64 ring_full;
+ 	u64 spi_err;
++	u64 write_verify_failed;
+ };
+ 
+ struct qcaspi {
 -- 
-Ricardo Ribalda
+2.7.4
+
