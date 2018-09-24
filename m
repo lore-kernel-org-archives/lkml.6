@@ -1,130 +1,254 @@
 Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A55C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF27C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55ECE20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:54:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ZTAp6Hv4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55ECE20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 90CD12087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:54:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CD12087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732263AbeIXU5F (ORCPT
+        id S1732660AbeIXU5M convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:57:05 -0400
-Received: from mail-eopbgr720095.outbound.protection.outlook.com ([40.107.72.95]:35088
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388764AbeIXUx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:53:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AmnXPVUbIJPIIZiObcZpLHSiWUhLzGu6E22RVCnKFu4=;
- b=ZTAp6Hv4vFB1L5R3aaZzFP4FGj0jCiZeooeKVLd8V8PGDOSwB9uuD0Wz69C7t62SLNaKG1S7gOK6Qhls2sE6o/Ax4GKfr/0I5qPYHXlIlUnS8BP8y+NzerWQvH++HgfVCNMZsvIG5tCtlhdGI4Cw/y3U/3mhUD+CgyKsVICOqpA=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0821.namprd21.prod.outlook.com (10.173.192.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Mon, 24 Sep 2018 14:51:06 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:51:06 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Danek Duvall <duvall@comfychair.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 03/18] mac80211_hwsim: correct use of
- IEEE80211_VHT_CAP_RXSTBC_X
-Thread-Topic: [PATCH AUTOSEL 4.4 03/18] mac80211_hwsim: correct use of
- IEEE80211_VHT_CAP_RXSTBC_X
-Thread-Index: AQHUVBXWH9CnBkQuP0aieHZdpbpScg==
-Date:   Mon, 24 Sep 2018 14:49:46 +0000
-Message-ID: <20180924144942.164688-3-alexander.levin@microsoft.com>
-References: <20180924144942.164688-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144942.164688-1-alexander.levin@microsoft.com>
+        Mon, 24 Sep 2018 16:57:12 -0400
+Received: from mga04.intel.com ([192.55.52.120]:56740 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730426AbeIXU5L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:57:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 07:54:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,298,1534834800"; 
+   d="scan'208";a="266226533"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Sep 2018 07:50:27 -0700
+Received: from fmsmsx101.amr.corp.intel.com (10.18.124.199) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 24 Sep 2018 07:50:27 -0700
+Received: from BGSMSX108.gar.corp.intel.com (10.223.4.192) by
+ fmsmsx101.amr.corp.intel.com (10.18.124.199) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 24 Sep 2018 07:50:26 -0700
+Received: from bgsmsx106.gar.corp.intel.com ([169.254.1.92]) by
+ BGSMSX108.gar.corp.intel.com ([169.254.8.229]) with mapi id 14.03.0319.002;
+ Mon, 24 Sep 2018 20:20:23 +0530
+From:   "Banik, Subrata" <subrata.banik@intel.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rajat Jain <rajatja@google.com>
+CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        "Bohra, Aamir" <aamir.bohra@intel.com>
+Subject: RE: [PATCH] pinctrl: icelake: Fix the resource number for
+ community-4/5
+Thread-Topic: [PATCH] pinctrl: icelake: Fix the resource number for
+ community-4/5
+Thread-Index: AQHUS7Gax6fem7zxmUSF6DZCTbC4SKTvBtIAgADjIICAAAkCgIAJJagAgAYRc4CAAGl+YA==
+Date:   Mon, 24 Sep 2018 14:50:23 +0000
+Message-ID: <70D28D5DAE32E9429B09AA8B7C84AC472C0000CB@BGSMSX106.gar.corp.intel.com>
+References: <20180913223143.12664-1-rajatja@google.com>
+ <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+ <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
+ <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
+ <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
+ <20180924135935.GP15943@smile.fi.intel.com>
+In-Reply-To: <20180924135935.GP15943@smile.fi.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:1i97czu+/6F8B7RNndcR7tR6ErYIpuVIn7epniq2IL6iZXtpmsecJlhzmvMQG+Lz6YlWEOTM+EuYvQK3xzKgA81Af6OSjoRvnBxByscNln46ElobGv0fqKkBYbkMjwgzwQNM9nsQ7zlNk+fL2YEFosLzxW/YQ9LJsf5X2XbQhe/2uCVf1ly9iDPb+9JvHc4LI1EtBgDRvZr+M28sLbwXJgOqojT2BJ8j1dokHiZTyZ7RCIEIIHLcSlqrAF25oCzzWridZaNiAcIC8hnRIyTxNVgix8BHVWbxB2tYNDshIc7FpI+2pP7sqlDjt7+711wKZ/m8mGc+FUeRU1417BMiC6yE20zsJH2u5QBPgD/nnVMuvMmMIGw/mGaTbCO/WkviQzvv5DjXfz69VzbogVMBtKMhD75AkQntgux0GrccftdmZyxDNK8ClJyIkbrlrCm7Fr08eIaBWT3WyGkpEL77FA==;5:pm6RkYDtAq+sdUhXxOszS/i51slBtxL/NfETwtrri/d/ckyb9Dj0PO3ncs391QA9oYV90YAzWt/T1Mr8zxYSmPoHkMMYLkdYilJXArv9PJNWj0a6IGDcuycPJIdc+hIbQab/iczXJj1JPadIG8kTGyMmO3/DWzG8SJWTD7/Gda4=;7:DTVn8y8vMXbWDh0t280NIkq4mFP7d/XdlhWiIHDwq1OxY/96hjifsVqh8iXDApp6p23lSLUmbwR9SEV7pgM10yvLV0/uxgL8KzNLZFmb8hb8ny0FBVZRKjlMw/lHVHLTdmCORJRj/8zZ1By+XhHB+yzl0OYa7FenhQ4bFobyOMZJQgBAMSdT3xnoOOt5IwUO6Yuj52OPPQhjOfed+mfZQ8puDCN0T8fxk9PBeoqAf+vWJ8jgK4UR4JGShYMRfnH4
-x-ms-office365-filtering-correlation-id: efc10dc8-e890-4a98-2078-08d6222d285f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0821;
-x-ms-traffictypediagnostic: CY4PR21MB0821:
-x-microsoft-antispam-prvs: <CY4PR21MB0821C8FBE28A317CB5386621FB170@CY4PR21MB0821.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0821;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0821;
-x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(136003)(396003)(366004)(199004)(189003)(102836004)(5660300001)(53936002)(6512007)(6436002)(256004)(217873002)(6666003)(6486002)(2501003)(10090500001)(2906002)(68736007)(5250100002)(97736004)(107886003)(66066001)(36756003)(4326008)(25786009)(1076002)(3846002)(6116002)(2900100001)(8936002)(81166006)(81156014)(8676002)(86612001)(575784001)(86362001)(7736002)(305945005)(72206003)(186003)(26005)(10290500003)(6506007)(6346003)(478600001)(14454004)(110136005)(2616005)(446003)(11346002)(476003)(76176011)(486006)(54906003)(15760500003)(99286004)(105586002)(106356001)(71190400001)(71200400001)(22452003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: GMUPX47UOH171ZyNOQ75/4+BtV3xVqyuvI39P+mafemy0hL4KNMSPou6UUOtUeEY5/8PTLUVgO2aThtkJzpp5T5NOjn9jh+pWPjZ815WftZufr++TzKyzv6sEHr/wNescIZTqAq9Qrxl7gkJSB2x8g91gFAYwUgR4ZKAN05mmK660K8X09d43F7R6pI2LWRA7qthfugg7Q2PYoz2ELkZdZu8uRBGw19Xx5d1DexBnABHyQ0UcNFH0JGyuARSqowCDgjtFldrkopnOaV633ymwBb2wxvDNlp0tjjnW3PBPeFUH52Kh4VzbKV/niAMgGQnPHYqs4UCCt+IOBI5BLBRCzciv/n3pldR4bcRdmoWIak=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWRjY2I3OWItMzNkMy00YTA4LWI1M2ItMGQxZWJjMTg0NTcxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicUJ0YzRZTXJodGI0Q25nMWJEd2FRT0N2NHZuM3FBUVJiMkdkUU5SbTlQSjljU1llaWtPME9SZ3o3a01OUFo3MiJ9
+x-originating-ip: [10.223.10.10]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efc10dc8-e890-4a98-2078-08d6222d285f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:49:46.8272
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0821
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Danek Duvall <duvall@comfychair.org>
+HI Andy,
 
-[ Upstream commit d7c863a2f65e48f442379f4ee1846d52e0c5d24d ]
+You are right that this ASL code is not same with Intel reference BIOS code because BIOS sources are different between what you are looking vs what Chrome OS is using. In Coreboot BIOS, we are more relying on EDS spec and as COM 3 is dedicated for CPU GPIO hence we are mapping, 0/1/2/4/5 (whatever present in EDS vol 1.1)
 
-The mac80211_hwsim driver intends to say that it supports up to four
-STBC receive streams, but instead it ends up saying something undefined.
-The IEEE80211_VHT_CAP_RXSTBC_X macros aren't independent bits that can
-be ORed together, but values.  In this case, _4 is the appropriate one
-to use.
+We have ensured that PCR ID and offsets are correct in ASL code for respective community, I don't think anything else really matter from BIOS unless you tell me, that you are having any required that your drive code will only probe for 4 COMM for LP and 5 for ICL-H?
 
-Signed-off-by: Danek Duvall <duvall@comfychair.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/net/wireless/mac80211_hwsim.c | 3 ---
- 1 file changed, 3 deletions(-)
+Thanks,
+Subrata
 
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/m=
-ac80211_hwsim.c
-index e8b770a95f7a..c98cb962b454 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -2453,9 +2453,6 @@ static int mac80211_hwsim_new_radio(struct genl_info =
-*info,
- 				IEEE80211_VHT_CAP_SHORT_GI_80 |
- 				IEEE80211_VHT_CAP_SHORT_GI_160 |
- 				IEEE80211_VHT_CAP_TXSTBC |
--				IEEE80211_VHT_CAP_RXSTBC_1 |
--				IEEE80211_VHT_CAP_RXSTBC_2 |
--				IEEE80211_VHT_CAP_RXSTBC_3 |
- 				IEEE80211_VHT_CAP_RXSTBC_4 |
- 				IEEE80211_VHT_CAP_MAX_A_MPDU_LENGTH_EXPONENT_MASK;
- 			sband->vht_cap.vht_mcs.rx_mcs_map =3D
---=20
-2.17.1
+-----Original Message-----
+From: Andy Shevchenko [mailto:andy.shevchenko@gmail.com] 
+Sent: Monday, September 24, 2018 7:30 PM
+To: Rajat Jain <rajatja@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>; Linus Walleij <linus.walleij@linaro.org>; linux-gpio@vger.kernel.org; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Rajat Jain <rajatxjain@gmail.com>; Banik, Subrata <subrata.banik@intel.com>; Bohra, Aamir <aamir.bohra@intel.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
+
+On Thu, Sep 20, 2018 at 10:19:34AM -0700, Rajat Jain wrote:
+> On Fri, Sep 14, 2018 at 2:38 PM Rajat Jain <rajatja@google.com> wrote:
+> > On Fri, Sep 14, 2018 at 2:06 PM Rajat Jain <rajatja@google.com> wrote:
+> > > On Fri, Sep 14, 2018 at 12:41 AM Andy Shevchenko 
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+> > > > >
+> > > > > The Icelake does not have a community-3, and the memory 
+> > > > > resources are laid out in the following order in the ACPI:
+> > > > >
+> > > > > resource-0: community-0 registers
+> > > > > resource-1: community-1 registers
+> > > > > resource-2: community-2 registers
+> > > > > resource-3: community-4 registers
+> > > > > resource-4: community-5 registers
+> > > > >
+> > > > > (EDS also describes the communities in the above order).
+> > > > >
+> > > > > Since the pinctrl driver exposes communities 0, 1, 4, 5, it 
+> > > > > needs to get the corresponding community registers by getting the resourse number right.
+> > > > > Currently the resourse number is not correct for community 4 
+> > > > > and 5, thus fix that.
+> > > > >
+> > > >
+> > > > Can you share link to the ACPI dump of the tables? (you may get 
+> > > > one by running `acpidump -o tables.dat`)
+> 
+> Hello Andy,
+> 
+> Any feedback on this patch? I provided a dump of the ACPI below, 
+> please let me know if you need more info.
+
+Sorry it took a while (I had to get tested on our reference BIOS(es) on Ice Lake platforms we have).
+See my reply below.
+
+> > > I don't have that command on my system, but I took 
+> > > /sys/firmware/acpi/tables/DSDT from the system and disassembled it 
+> > > using Intel disassembler (iasl -d) and here is the relevant 
+> > > portion that describes the GPIO controller. The port IDs for 
+> > > communities can be seen in the below output (i.e. the PCRB()):
+> >
+> > I realized PCRB() is an ACPI method defined in the same disasembly:
+> >
+> >             Method (PCRB, 1, NotSerialized)
+> >             {
+> >                 Return ((0xFD000000 + (Arg0 << 0x10)))
+> >             }
+> >
+> > >
+> > >             Device (GPIO)
+> > >             {
+> > >                 Name (_HID, "INT3455")  // _HID: Hardware ID
+> > >                 Name (_UID, Zero)  // _UID: Unique ID
+> > >                 Name (_DDN, "GPIO Controller")  // _DDN: DOS Device Name
+> > >                 Name (RBUF, ResourceTemplate ()
+> > >                 {
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y06)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y07)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y08)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y09)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y0A)
+> > >                     Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
+> > >                     {
+> > >                         0x0000000E,
+> > >                     }
+> > >                 })
+> > >                 Method (_CRS, 0, NotSerialized)  // _CRS: Current 
+> > > Resource Settings
+> > >                 {
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y06._BAS,
+> > > BAS0)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y06._LEN,
+> > > LEN0)  // _LEN: Length
+> > >                     BAS0 = PCRB (0x6E)
+> > >                     LEN0 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y07._BAS,
+> > > BAS1)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y07._LEN,
+> > > LEN1)  // _LEN: Length
+> > >                     BAS1 = PCRB (0x6D)
+> > >                     LEN1 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y08._BAS,
+> > > BAS2)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y08._LEN,
+> > > LEN2)  // _LEN: Length
+> > >                     BAS2 = PCRB (0x6C)
+> > >                     LEN2 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y09._BAS,
+> > > BAS4)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y09._LEN,
+> > > LEN4)  // _LEN: Length
+> > >                     BAS4 = PCRB (0x6A)
+> > >                     LEN4 = 0x00010000
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y0A._BAS,
+> > > BAS5)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, 
+> > > \_SB.PCI0.GPIO._Y0A._LEN,
+> > > LEN5)  // _LEN: Length
+> > >                     BAS5 = PCRB (0x69)
+> > >                     LEN5 = 0x00010000
+> > >                     Return (RBUF) /* \_SB_.PCI0.GPIO.RBUF */
+> > >                 }
+> > >
+> > >                 Method (_STA, 0, NotSerialized)  // _STA: Status
+> > >                 {
+> > >                     Return (0x0F)
+> > >                 }
+> > >             }
+> > >
+> > > Please let me know if this helps, or if you need more info.
+
+First of all, this is pre-production chip, so, I don't think there is a bug in the driver (yet) discovered.
+
+Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
+I have checked two versions of it and found that in both we have the following mapping:
+for LP variant: there are only 4 communities are exported for H variant: there are only 5 communities are exported
+
+So, I guess the problem is in ASL code you provided. It simple should not export that community at all.
+
+In case you need to do so, there are ways:
+ - contact Intel and ask for a change in reference BIOS
+ - acquire another ACPI ID for the case, or, perhaps use special constants like
+   _HRV for that purpose (also need to contact Intel while doing that)
+
+P.S. I think EDS covers it as it present in HW, though not exported by FW.
+
+--
+With Best Regards,
+Andy Shevchenko
+
+
