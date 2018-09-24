@@ -2,206 +2,188 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89495ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEC8ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42CD22148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42CD22148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CA25F2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:10:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA25F2098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730198AbeIXTLU (ORCPT
+        id S1730286AbeIXTMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 15:11:20 -0400
-Received: from mga14.intel.com ([192.55.52.115]:5229 "EHLO mga14.intel.com"
+        Mon, 24 Sep 2018 15:12:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39811 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeIXTLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 15:11:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 06:09:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,298,1534834800"; 
-   d="scan'208";a="75477804"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 24 Sep 2018 06:09:13 -0700
-Received: from [10.125.252.28] (abudanko-mobl.ccr.corp.intel.com [10.125.252.28])
-        by linux.intel.com (Postfix) with ESMTP id A8B405801CD;
-        Mon, 24 Sep 2018 06:09:11 -0700 (PDT)
-Subject: Re: [RFCv2 00/48] perf tools: Add threads to record command
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <andi@firstfloor.org>
-References: <20180913125450.21342-1-jolsa@kernel.org>
- <cba27d6a-a97b-cbb7-4be8-d1c14fb7dea5@linux.intel.com>
- <20180914082653.GG24224@krava> <20180914082858.GH24224@krava>
- <71153c79-f0b9-4bf7-7491-202f46c6b5ed@linux.intel.com>
- <4f63c3d5-2a33-28ed-4e45-086045e9ab50@linux.intel.com>
- <20180923193001.GD30923@krava>
- <15042139-23ee-3bb7-4307-276e505a4607@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <c37d1c7d-9f98-4aed-e621-6b3b76d3d3d9@linux.intel.com>
-Date:   Mon, 24 Sep 2018 16:09:09 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729307AbeIXTMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 15:12:49 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2C5CF20723; Mon, 24 Sep 2018 15:10:40 +0200 (CEST)
+Received: from windsurf (AAubervilliers-681-1-42-80.w90-88.abo.wanadoo.fr [90.88.160.80])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D4C0D204AE;
+        Mon, 24 Sep 2018 15:10:39 +0200 (CEST)
+Date:   Mon, 24 Sep 2018 15:10:40 +0200
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Jan Kundr??t <jan.kundrat@cesnet.cz>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
+ "PCI: mvebu: Only remap I/O space if configured"
+Message-ID: <20180924151040.5e57462b@windsurf>
+In-Reply-To: <20180924124620.GA10322@e107981-ln.cambridge.arm.com>
+References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
+        <87zhwm4kl6.fsf@tkos.co.il>
+        <20180912231050.GX30658@n2100.armlinux.org.uk>
+        <20180913094515.351967bb@windsurf>
+        <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
+        <20180913104241.65db8243@windsurf>
+        <20180924101213.GO30658@n2100.armlinux.org.uk>
+        <20180924122614.70738b5c@windsurf>
+        <20180924111341.GP30658@n2100.armlinux.org.uk>
+        <20180924141203.3df9707a@windsurf>
+        <20180924124620.GA10322@e107981-ln.cambridge.arm.com>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <15042139-23ee-3bb7-4307-276e505a4607@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello,
 
-On 24.09.2018 10:02, Alexey Budankov wrote:
-> Hi,
+On Mon, 24 Sep 2018 13:46:29 +0100, Lorenzo Pieralisi wrote:
+
+> What I think you can do short term, given that AFAICS MVEBU is not
+> removable, instead of using pci_host_probe() you move part of its code
+> into the driver and make sure that you remap IO as last operation before
+> probe completion (ie after scanning the host bridge) so that you do not
+> need to unmap it on failure; write a commit log summarising/linking this
+> thread please and when v4.20 lands we will give this a more thorough
+> look as Russell requested.
 > 
-> On 23.09.2018 22:30, Jiri Olsa wrote:
->> On Fri, Sep 21, 2018 at 09:13:08AM +0300, Alexey Budankov wrote:
->>
->> SNIP
->>
->>> Events:
->>> cpu/period=P,event=0x3c/Duk;CPU_CLK_UNHALTED.THREAD
->>> cpu/period=P,umask=0x3/Duk;CPU_CLK_UNHALTED.REF_TSC
->>> cpu/period=P,event=0xc0/Duk;INST_RETIRED.ANY
->>> cpu/period=0xaae61,event=0xc2,umask=0x10/uk;UOPS_RETIRED.ALL
->>> cpu/period=0x11171,event=0xc2,umask=0x20/uk;UOPS_RETIRED.SCALAR_SIMD
->>> cpu/period=0x11171,event=0xc2,umask=0x40/uk;UOPS_RETIRED.PACKED_SIMD
->>>
->>> =================================================
->>>
->>> Command:
->>> /usr/bin/time /tmp/vtune_amplifier_2019.574715/bin64/perf.thr record --threads=T \
->>> 	-a -N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
->>>         -e cpu/period=P,event=0x3c/Duk,\
->>>            cpu/period=P,umask=0x3/Duk,\
->>>            cpu/period=P,event=0xc0/Duk,\
->>>            cpu/period=0x30d40,event=0xc2,umask=0x10/uk,\
->>>            cpu/period=0x4e20,event=0xc2,umask=0x20/uk,\
->>>            cpu/period=0x4e20,event=0xc2,umask=0x40/uk \
->>>          --clockid=monotonic_raw -- ./matrix.(icc|gcc)
->>
->> hum, so I guess the results suck because of the -a option,
->> getting extra samples for all the perf record threads
->>
->> could you try without the -a? you monitor only user events,
->> so you're interested only in ./matrix.* samples, right?
-> 
-> Ok, trying without -a, in per-process mode. 
+> How does that sound ?
 
-Command:
+The only thing that can fail in pci_host_probe() is:
 
-/usr/bin/time ./perf.thr record --threads=T \
-	-N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
-	-e cpu/period=P,event=0x3c/Duk,\
-	   cpu/period=P,umask=0x3/Duk,\
-	   cpu/period=P,event=0xc0/Duk,\
-	   cpu/period=0xaae61,event=0xc2,umask=0x10/uk,\
-	   cpu/period=0x11171,event=0xc2,umask=0x20/uk,\
-	   cpu/period=0x11171,event=0xc2,umask=0x40/uk \
-	--clockid=monotonic_raw -- ./matrix.gcc
+	ret = pci_scan_root_bus_bridge(bridge);
+	if (ret < 0) {
+		dev_err(bridge->dev.parent, "Scanning root bridge
+	failed"); return ret;
+	}
 
-Workload: matrix multiplication in 128 threads
+In the pci-mvebu driver prior to the conversion to pci_host_probe(),
+the code flow at the end of ->probe() was:
 
-T : 272
-	P (period, ms)       : 0.35 
-	runtime overhead (%) : 13x ~ 87.73 / 6.81
-	data loss (%)        : 0
-	LOST events          : 36
-	SAMPLE events        : 8048542
-        perf.data size (GiB) : 10
+  mvebu_pcie_enable()
+    pci_common_init_dev()
+      pcibios_init_hw()
 
-T : 128
-	P (period, ms)       : 0.35 
-	runtime overhead (%) : 10x ~ 71.12 / 6.81
-	data loss (%)        : 0
-	LOST events          : 2
-	SAMPLE events        : 6524363
-        perf.data size (GiB) : 8
+and pcibios_init_hw() calls pci_scan_root_bus_bridge(), without doing
+much about the return value other than issuing a warning:
 
-T : 64
-	P (period, ms)       : 0.35 
-	runtime overhead (%) : 10x ~ 71.89 / 6.81
-	data loss (%)        : 0
-	LOST events          : 2
-	SAMPLE events        : 7160623
-        perf.data size (GiB) : 9
+                                ret = pci_scan_root_bus_bridge(bridge);
+                        }
 
-=================================================
+                        if (WARN(ret < 0, "PCI: unable to scan bus!")) {
+                                pci_free_host_bridge(bridge);
+                                break;
+                        }
 
-Command:
+I.e, even before the conversion to pci_host_probe(), in case of
+failure in pci_scan_root_bus_bridge(), we would have the I/O mapping in
+place, but the PCI controller not registered.
 
-/usr/bin/time ./perf.aio record --aio=N \
-	-N -B -T -R --call-graph dwarf,1024 --user-regs=ip,bp,sp \
-	-e cpu/period=P,event=0x3c/Duk,\
-	   cpu/period=P,umask=0x3/Duk,\
-           cpu/period=P,event=0xc0/Duk,\
-           cpu/period=0xaae61,event=0xc2,umask=0x10/uk,\
-           cpu/period=0x11171,event=0xc2,umask=0x20/uk,\
-           cpu/period=0x11171,event=0xc2,umask=0x40/uk \
-        --clockid=monotonic_raw ./matrix.gcc
+We could keep the same (not great) behavior by doing:
 
-Workload: matrix multiplication in 128 threads
-
-N : 512
-        P (period, ms)       : 1.5
- 	runtime overhead (%) : 2.8x ~ 19.20 / 6.81
- 	data loss (%)        : 0
- 	LOST events          : 0
- 	SAMPLE events        : 1094976
-        perf.data size (GiB) : 1.3
-
-N : 272
-  	P (period, ms)       : 1.5
- 	runtime overhead (%) : 3.3x ~ 22.34 / 6.81
- 	data loss (%)        : 0
- 	LOST events          : 0
- 	SAMPLE events        : 1089252
-        perf.data size (GiB) : 1.3
-  
-N : 128
- 	P (period, ms)       : 1.5
- 	runtime overhead (%) : 2.6x ~ 15.15 / 6.81
- 	data loss (%)        : 1
- 	LOST events          : 1
- 	SAMPLE events        : 1094102
-        perf.data size (GiB) : 1.3
+diff --git a/drivers/pci/controller/pci-mvebu.c b/drivers/pci/controller/pci-mvebu.c
+index 50eb0729385b..487492f0c5f7 100644
+--- a/drivers/pci/controller/pci-mvebu.c
++++ b/drivers/pci/controller/pci-mvebu.c
+@@ -1179,9 +1179,6 @@ static int mvebu_pcie_parse_request_resources(struct mvebu_pcie *pcie)
+                                         resource_size(&pcie->io) - 1);
+                pcie->realio.name = "PCI I/O";
  
-N : 64
- 	P (period, ms)       : 1.5
- 	runtime overhead (%) : 2.4x ~ 16.23 / 6.81
- 	data loss (%)        : 2
- 	LOST events          : 18
- 	SAMPLE events        : 1105986
-        perf.data size (GiB) : 1.3
+-               for (i = 0; i < resource_size(&pcie->realio); i += SZ_64K)
+-                       pci_ioremap_io(i, pcie->io.start + i);
+-
+                pci_add_resource(&pcie->resources, &pcie->realio);
+        }
+ 
+@@ -1197,7 +1194,7 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
+        struct device_node *child;
+        int num, i, ret;
+ 
+-       bridge = devm_pci_alloc_host_bridge(dev, sizeof(struct mvebu_pcie));
++       bridge = pci_alloc_host_bridge(sizeof(struct mvebu_pcie));
+        if (!bridge)
+                return -ENOMEM;
+ 
+@@ -1212,8 +1209,10 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
+        num = of_get_available_child_count(np);
+ 
+        pcie->ports = devm_kcalloc(dev, num, sizeof(*pcie->ports), GFP_KERNEL);
+-       if (!pcie->ports)
+-               return -ENOMEM;
++       if (!pcie->ports) {
++               ret = -ENOMEM;
++               goto free_host_bridge;
++       }
+ 
+        i = 0;
+        for_each_available_child_of_node(np, child) {
+@@ -1222,7 +1221,7 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
+                ret = mvebu_pcie_parse_port(pcie, port, child);
+                if (ret < 0) {
+                        of_node_put(child);
+-                       return ret;
++                       goto free_host_bridge;
+                } else if (ret == 0) {
+                        continue;
+                }
+@@ -1268,7 +1267,21 @@ static int mvebu_pcie_probe(struct platform_device *pdev)
+        bridge->align_resource = mvebu_pcie_align_resource;
+        bridge->msi = pcie->msi;
+ 
+-       return pci_host_probe(bridge);
++       if (resource_size(&pcie->io) != 0) {
++               for (i = 0; i < resource_size(&pcie->realio); i += SZ_64K)
++                       pci_ioremap_io(i, pcie->io.start + i);
++       }
++
++       ret = pci_host_probe(bridge);
++       if (ret)
++               pci_free_host_bridge(bridge);
++
++       /* Yes, when pci_host_probe() returns a failure, we don't care */
++       return 0;
++
++free_host_bridge:
++       pci_free_host_bridge(bridge);
++       return ret;
+ }
+ 
+ static const struct of_device_id mvebu_pcie_of_match_table[] = {
 
-Thanks,
-Alexey
+I.e, we simply ignore the failure of pci_host_probe().
 
-> VTune collects as user as kernel mode samples, using /uk modifiers set.
-> The set can be extended to collect in VM host and guests as well.
-> 
-> Thanks,
-> Alexey
-> 
->>
->> thanks,
->> jirka
->>
-> 
+To be honest, I really prefer the option of introducing pci_unmap_io().
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
