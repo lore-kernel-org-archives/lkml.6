@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 957E3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F631C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C20A21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C20A21486
+	by mail.kernel.org (Postfix) with ESMTP id E719F21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E719F21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387444AbeIXS3r (ORCPT
+        id S2387453AbeIXS3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:29:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57356 "EHLO
+        Mon, 24 Sep 2018 14:29:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57364 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbeIXS3q (ORCPT
+        with ESMTP id S1730233AbeIXS3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:29:46 -0400
+        Mon, 24 Sep 2018 14:29:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E938D1018;
-        Mon, 24 Sep 2018 12:27:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5970D1018;
+        Mon, 24 Sep 2018 12:27:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 023/235] xfrm: fix passing zero to ERR_PTR() warning
-Date:   Mon, 24 Sep 2018 13:50:09 +0200
-Message-Id: <20180924113107.006901177@linuxfoundation.org>
+Subject: [PATCH 4.18 024/235] amd-xgbe: use dma_mapping_error to check map errors
+Date:   Mon, 24 Sep 2018 13:50:10 +0200
+Message-Id: <20180924113107.117393431@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,37 +54,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 934ffce1343f22ed5e2d0bd6da4440f4848074de ]
+[ Upstream commit b24dbfe9ce03d9f83306616f22fb0e04e8960abe ]
 
-Fix a static code checker warning:
+The dma_mapping_error() returns true or false, but we want
+to return -ENOMEM if there was an error.
 
-  net/xfrm/xfrm_policy.c:1836 xfrm_resolve_and_create_bundle() warn: passing zero to 'ERR_PTR'
-
-xfrm_tmpl_resolve return 0 just means no xdst found, return NULL
-instead of passing zero to ERR_PTR.
-
-Fixes: d809ec895505 ("xfrm: do not assume that template resolving always returns xfrms")
+Fixes: 174fd2597b0b ("amd-xgbe: Implement split header receive support")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_policy.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/amd/xgbe/xgbe-desc.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1831,7 +1831,10 @@ xfrm_resolve_and_create_bundle(struct xf
- 	/* Try to instantiate a bundle */
- 	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
- 	if (err <= 0) {
--		if (err != 0 && err != -EAGAIN)
-+		if (err == 0)
-+			return NULL;
-+
-+		if (err != -EAGAIN)
- 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
- 		return ERR_PTR(err);
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-desc.c
+@@ -289,7 +289,7 @@ static int xgbe_alloc_pages(struct xgbe_
+ 	struct page *pages = NULL;
+ 	dma_addr_t pages_dma;
+ 	gfp_t gfp;
+-	int order, ret;
++	int order;
+ 
+ again:
+ 	order = alloc_order;
+@@ -316,10 +316,9 @@ again:
+ 	/* Map the pages */
+ 	pages_dma = dma_map_page(pdata->dev, pages, 0,
+ 				 PAGE_SIZE << order, DMA_FROM_DEVICE);
+-	ret = dma_mapping_error(pdata->dev, pages_dma);
+-	if (ret) {
++	if (dma_mapping_error(pdata->dev, pages_dma)) {
+ 		put_page(pages);
+-		return ret;
++		return -ENOMEM;
  	}
+ 
+ 	pa->pages = pages;
 
 
