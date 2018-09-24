@@ -3,392 +3,236 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D48ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE1CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD6C2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:31:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD6C2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 93A2F208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A2F208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeIXOb5 (ORCPT
+        id S1727634AbeIXOel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:31:57 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:52758 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbeIXOb5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:31:57 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42Jcq50vS9z1qvCD;
-        Mon, 24 Sep 2018 10:30:57 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42Jcq46GDFz1qqkp;
-        Mon, 24 Sep 2018 10:30:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id Mgy4kyS7wgqF; Mon, 24 Sep 2018 10:30:54 +0200 (CEST)
-X-Auth-Info: keJ4U9B0H87t4U82vQn8UDjDZwRgK+8u0sT12joMc4g=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 24 Sep 2018 10:34:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59516 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726417AbeIXOel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 10:34:41 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 24 Sep 2018 10:30:54 +0200 (CEST)
-Date:   Mon, 24 Sep 2018 10:30:45 +0200
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH] ARM: dts: Add support for Liebherr's BK4 device (vf610
- based)
-Message-ID: <20180924103045.524c6855@jawa>
-In-Reply-To: <CAOMZO5DPnWNJ_UVdE9Lvh05R84seP8VPP=35eEUaor4-pppXGQ@mail.gmail.com>
-References: <20180921152726.31742-1-lukma@denx.de>
-        <CAOMZO5DPnWNJ_UVdE9Lvh05R84seP8VPP=35eEUaor4-pppXGQ@mail.gmail.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7AF3C89FC;
+        Mon, 24 Sep 2018 08:33:44 +0000 (UTC)
+Received: from [10.36.117.232] (ovpn-117-232.ams2.redhat.com [10.36.117.232])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E3215C1B4;
+        Mon, 24 Sep 2018 08:33:37 +0000 (UTC)
+Subject: Re: [PATCH v10 25/26] KVM: s390: CPU model support for AP
+ virtualization
+To:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1536781396-13601-26-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <7868874f-df81-5602-a4c5-a4b58c38d1d3@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <78df86b6-55f9-f67c-d96a-9c287c0248cd@redhat.com>
+Date:   Mon, 24 Sep 2018 10:33:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5BDm3QG0=cl.1V1CQsGjFCa"; protocol="application/pgp-signature"
+In-Reply-To: <7868874f-df81-5602-a4c5-a4b58c38d1d3@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 24 Sep 2018 08:33:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/5BDm3QG0=cl.1V1CQsGjFCa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 22/09/2018 01:31, Tony Krowiak wrote:
+> On 09/12/2018 03:43 PM, Tony Krowiak wrote:
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> Introduces a new CPU model feature and two CPU model
+>> facilities to support AP virtualization for KVM guests.
+>>
+>> CPU model feature:
+>>
+>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>> AP instructions are available on the guest. This
+>> feature will be enabled by the kernel only if the AP
+>> instructions are installed on the linux host. This feature
+>> must be specifically turned on for the KVM guest from
+>> userspace to use the VFIO AP device driver for guest
+>> access to AP devices.
+>>
+>> CPU model facilities:
+>>
+>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>
+>>     This is indicated by setting facilities bit 12 for
+>>     the guest. The kernel will not enable this facility
+>>     for the guest if it is not set on the host.
+>>
+>>     If this facility is not set for the KVM guest, then only
+>>     APQNs with an APQI less than 16 will be used by a Linux
+>>     guest regardless of the matrix configuration for the virtual
+>>     machine. This is a limitation of the Linux AP bus.
+>>
+>> 2. AP Facilities Test facility (APFT) is installed.
+>>
+>>     This is indicated by setting facilities bit 15 for
+>>     the guest. The kernel will not enable this facility for
+>>     the guest if it is not set on the host.
+>>
+>>     If this facility is not set for the KVM guest, then no
+>>     AP devices will be available to the guest regardless of
+>>     the guest's matrix configuration for the virtual
+>>     machine. This is a limitation of the Linux AP bus.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> Reviewed-by: David Hildenbrand <david@redhat.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>   arch/s390/kvm/kvm-s390.c         |    5 +++++
+>>   arch/s390/tools/gen_facilities.c |    2 ++
+>>   2 files changed, 7 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 286c2e0..f0b8e2a 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -371,6 +371,11 @@ static void kvm_s390_cpu_feat_init(void)
+>>   
+>>   	if (MACHINE_HAS_ESOP)
+>>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>> +
+>> +	/* Check if AP instructions installed on host */
+>> +	if (ap_instructions_available())
+>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>> +
+>>   	/*
+>>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>> index 0c85aed..fd788e0 100644
+>> --- a/arch/s390/tools/gen_facilities.c
+>> +++ b/arch/s390/tools/gen_facilities.c
+>> @@ -106,6 +106,8 @@ struct facility_def {
+>>   
+>>   		.name = "FACILITIES_KVM_CPUMODEL",
+>>   		.bits = (int[]){
+>> +			12, /* AP Query Configuration Information */
+>> +			15, /* AP Facilities Test */
+>>   			156, /* etoken facility */
+>>   			-1  /* END */
+>>   		}
+>>
+> 
+> The fixup! patch below modifies this patch (25/26) to illustrate how
+> David's recommendation will be implemented for v11 of the series. It
+> is one of three fixup! patches (the other two are in responses to
+> 03/26 and 11/26) included to generate discussion in v10 rather than
+> waiting until v11 for comments.
+> 
+> -----------------------------------8<-----------------------------------
+> 
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> Date: Thu, 20 Sep 2018 13:28:07 -0400
+> Subject: [FIXUP v10] fixup!: KVM: s390: CPU model support for AP 
+> virtualization
+> 
+> ---
+>   arch/s390/kvm/kvm-s390.c |    4 ----
+>   1 files changed, 0 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index a3a7cd9..ff38251 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -372,10 +372,6 @@ static void kvm_s390_cpu_feat_init(void)
+>   	if (MACHINE_HAS_ESOP)
+>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+> 
+> -	/* Check if AP instructions installed on host */
+> -	if (ap_instructions_available())
+> -		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+> -
+>   	/*
+>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+> 
 
-Hi Fabio,
+Yes, looks sane.
 
-Thanks for your review.
+-- 
 
-> On Fri, Sep 21, 2018 at 12:27 PM, Lukasz Majewski <lukma@denx.de>
-> wrote:
-> > This commit adds DTS support for BK4 device from Liebherr. It
-> > uses vf610 SoC from NXP.
-> >
-> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> > ---
-> >  arch/arm/boot/dts/Makefile      |   1 +
-> >  arch/arm/boot/dts/vf610-bk4.dts | 504
-> > ++++++++++++++++++++++++++++++++++++++++ 2 files changed, 505
-> > insertions(+) create mode 100644 arch/arm/boot/dts/vf610-bk4.dts
-> >
-> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> > index b5bd3de87c33..e6f159895fa9 100644
-> > --- a/arch/arm/boot/dts/Makefile
-> > +++ b/arch/arm/boot/dts/Makefile
-> > @@ -577,6 +577,7 @@ dtb-$(CONFIG_SOC_LS1021A) +=3D \
-> >         ls1021a-twr.dtb
-> >  dtb-$(CONFIG_SOC_VF610) +=3D \
-> >         vf500-colibri-eval-v3.dtb \
-> > +       vf610-bk4.dtb \
-> >         vf610-colibri-eval-v3.dtb \
-> >         vf610m4-colibri.dtb \
-> >         vf610-cosmic.dtb \
-> > diff --git a/arch/arm/boot/dts/vf610-bk4.dts
-> > b/arch/arm/boot/dts/vf610-bk4.dts new file mode 100644
-> > index 000000000000..4ad7e739a0ad
-> > --- /dev/null
-> > +++ b/arch/arm/boot/dts/vf610-bk4.dts
-> > @@ -0,0 +1,504 @@
-> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > +/*
-> > + * Copyright 2018
-> > + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> > + */
-> > +
-> > +/dts-v1/;
-> > +#include "vf610.dtsi"
-> > +
-> > +/ {
-> > +       model =3D "Liebherr BK4 controller";
-> > +       compatible =3D "lwn,bk4", "fsl,vf610";
-> > +
-> > +       chosen {
-> > +               bootargs =3D "console=3DttyLP1,115200"; =20
->=20
-> You could pass stdout-path instead.
+Thanks,
 
-Ok.
-
->=20
-> > +       };
-> > +
-> > +       memory@80000000 {
-> > +               reg =3D <0x80000000 0x8000000>;
-> > +       };
-> > +
-> > +       audio_ext: mclk_osc {
-> > +               compatible =3D "fixed-clock";
-> > +               #clock-cells =3D <0>;
-> > +               clock-frequency =3D <24576000>;
-> > +       }; =20
->=20
-> This seems to be unused.
-
-The audio_ext label is used (referenced) in the "clks".
-
->=20
-> > +
-> > +       enet_ext: eth_osc {
-> > +               compatible =3D "fixed-clock";
-> > +               #clock-cells =3D <0>;
-> > +               clock-frequency =3D <50000000>;
-> > +       };
-> > +
-> > +       leds {
-> > +               compatible =3D "gpio-leds";
-> > +               pinctrl-names =3D "default";
-> > +               pinctrl-0 =3D <&pinctrl_gpio_leds>;
-> > +
-> > +               /* LED D5 */
-> > +               led0: heartbeat {
-> > +                       label =3D "heartbeat";
-> > +                       gpios =3D <&gpio3 21 GPIO_ACTIVE_HIGH>;
-> > +                       default-state =3D "on";
-> > +                       linux,default-trigger =3D "heartbeat";
-> > +               };
-> > +       };
-> > +
-> > +       regulators {
-> > +               compatible =3D "simple-bus";
-> > +               #address-cells =3D <1>;
-> > +               #size-cells =3D <0>;
-> > +
-> > +               reg_3p3v: regulator@0 { =20
->=20
-> Please move all regulators outside of the simple-bus container and use
-> this naming convention:
->=20
-> reg_3p3v: regulator-3p3v {
-
-Ok.
-
->=20
-> > +&dspi3 {
-> > +       pinctrl-names =3D "default";
-> > +       pinctrl-0 =3D <&pinctrl_dspi3>;
-> > +       bus-num =3D <3>;
-> > +       status =3D "okay";
-> > +
-> > +       spidev3@0 {
-> > +               compatible =3D "fsl,vf610-dspi";
-> > +               spi-max-frequency =3D <30000000>;
-> > +               reg =3D <0>;
-> > +               fsl,spi-slave-mode; =20
->=20
-> Such property does not exist.
-
-It has been added in the other patch sent to ML:
-https://lkml.org/lkml/2018/9/18/792
-
-But till now no comments/reply.
-
->=20
-> I also thought that spidev nodes in dt were not recommended.
-
-This is a bit "unusual" on BK4, as the spidev driver is the only "user"
-of the SPI subsystem on this board. In other words - the /dev/spidevX.Y
-provided by spidev is solely used for communication.
-
-Hence, I would prefer to make it explicit in the DTS.
-
->=20
-> > +&iomuxc { =20
->=20
-> Like Stefan mentioned it is common practice on imx dts files to place
-> the iomuxc node as the last one.
-
-Ok.
-
->=20
->=20
-> > +       pinctrl-names =3D "default";
-> > +       pinctrl-0 =3D <&pinctrl_bk4_common>; =20
->=20
-> This seems to be not called from any driver.
-
-Yes. This is "base" setup for the board. Those configured pins are
-thereafter used by several user space programs.
-
->=20
-> We usually use a hog group for such purpose.
-
-I wanted to name it explicit that we do use it for this controller.
-However, no problem to rename it to hog.
-
->=20
-> > +
-> > +       pinctrl_bk4_common: commongrp {
-> > +               fsl,pins =3D <
-> > +                       /* One_Wire_PSU_EN */
-> > +                       VF610_PAD_PTC29__GPIO_102
-> > 0x1183
-> > +                       /* SPI */
-> > +                       VF610_PAD_PTB26__GPIO_96
-> > 0x1183
-> > +                       VF610_PAD_PTE14__GPIO_119
-> > 0x1183
-> > +                       VF610_PAD_PTE4__GPIO_109
-> > 0x1181
-> > +                       /* Feedback_Lines */
-> > +                       VF610_PAD_PTC31__GPIO_104
-> > 0x1181
-> > +                       VF610_PAD_PTA7__GPIO_134
-> > 0x1181
-> > +                       VF610_PAD_PTD9__GPIO_88         0x1181
-> > +                       VF610_PAD_PTE1__GPIO_106
-> > 0x1183
-> > +                       VF610_PAD_PTB2__GPIO_24         0x1181
-> > +                       VF610_PAD_PTB3__GPIO_25         0x1181
-> > +                       VF610_PAD_PTB1__GPIO_23         0x1181
-> > +                       /* SDHC */
-> > +                       VF610_PAD_PTE19__GPIO_124
-> > 0x1183
-> > +                       VF610_PAD_PTB23__GPIO_93
-> > 0x1181 =20
->=20
-> If they are related to SDHC they should be better placed under the
-> sdhc nodes.
->=20
-
-I will double check this.
-
->=20
-> > +                       /* GPI */
-> > +                       VF610_PAD_PTE2__GPIO_107
-> > 0x1181
-> > +                       VF610_PAD_PTE3__GPIO_108
-> > 0x1181
-> > +                       VF610_PAD_PTE5__GPIO_110
-> > 0x1181
-> > +                       VF610_PAD_PTE6__GPIO_111
-> > 0x1181
-> > +                       /* GPO */
-> > +                       VF610_PAD_PTE0__GPIO_105
-> > 0x1183
-> > +                       VF610_PAD_PTE7__GPIO_112
-> > 0x1183
-> > +                       /* RS485 */
-> > +                       VF610_PAD_PTB8__GPIO_30         0x1183
-> > +                       VF610_PAD_PTB9__GPIO_31         0x1183
-> > +                       VF610_PAD_PTE8__GPIO_113
-> > 0x1183
-> > +                       /* MPBUS MPB_EN */
-> > +                       VF610_PAD_PTE28__GPIO_133
-> > 0x1183
-> > +                       /* LEDS */
-> > +                       VF610_PAD_PTE15__GPIO_120
-> > 0x1183
-> > +                       VF610_PAD_PTA12__GPIO_5         0x1183
-> > +                       VF610_PAD_PTA16__GPIO_6         0x1183
-> > +                       VF610_PAD_PTE9__GPIO_114
-> > 0x1183
-> > +                       VF610_PAD_PTE20__GPIO_125
-> > 0x1183
-> > +                       VF610_PAD_PTE23__GPIO_128
-> > 0x1183
-> > +                       VF610_PAD_PTE16__GPIO_121
-> > 0x1183
-> > +                       /* MISC */
-> > +                       VF610_PAD_PTE10__GPIO_115
-> > 0x1183
-> > +                       VF610_PAD_PTE11__GPIO_116
-> > 0x1183
-> > +                       VF610_PAD_PTE17__GPIO_122
-> > 0x1183
-> > +                       VF610_PAD_PTC30__GPIO_103
-> > 0x1183
-> > +                       VF610_PAD_PTB0__GPIO_22         0x1181
-> > +                       /* RESETINFO */
-> > +                       VF610_PAD_PTE26__GPIO_131
-> > 0x1183
-> > +                       VF610_PAD_PTD6__GPIO_85         0x1181
-> > +                       VF610_PAD_PTE27__GPIO_132
-> > 0x1181
-> > +                       VF610_PAD_PTE13__GPIO_118
-> > 0x1181
-> > +                       VF610_PAD_PTE21__GPIO_126
-> > 0x1181
-> > +                       VF610_PAD_PTE22__GPIO_127
-> > 0x1181
-> > +                       /* EE_5V_EN */
-> > +                       VF610_PAD_PTE18__GPIO_123
-> > 0x1183
-> > +                       /* EE_5V_OC_N */
-> > +                       VF610_PAD_PTE25__GPIO_130
-> > 0x1181 =20
->=20
-> Seems like a long list of pins without any driver associated.
-
-Not kernel driver associated. The user space code uses those pins
-directly.
-
->=20
-> Please review such list carefully and assign to nodes that have a
-> driver associated, such as rs485,LEDS, etc.
-
-For example - the user space is not using in-kernel rs485 driver.
-
-But as said above - I will double check this.
-
->=20
-> > +
-> > +&usbphy0 {
-> > +       status =3D "okay";
-> > +};
-> > +
-> > +&usbphy1 {
-> > +       status =3D "okay";
-> > +};
-> > +
-> > +&qspi0 { =20
->=20
-> This is not placed in alphabetical order.
-
-Ok.=20
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/5BDm3QG0=cl.1V1CQsGjFCa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAluooLUACgkQAR8vZIA0
-zr1uEggA16OlvAYKCEfUrftoxqibHeGUSJexXE2VsEx8M6zBQ5eQ5TFhhkJapZpJ
-7Wtn2V8sI/SsBzOaBjFMIkohc2VRLZo9BRIge2QPlLAnUr9tP6JRjTEFO7WwdAmW
-yY9406YInqdZmpAJsW2eJB+LFQvXXhrQ/5FJJ8Wcw+JEqitqcoBQDWOfj2TCTO+f
-taZ5bI7VquojXV1YKcKR7HixcoY8koHyDaw3OcGd+Zta//U2hiOIB6iak5e2/ZEQ
-6XjE1eOoT09kbU3emqUuZkt+sr6esVIMwTNXOalQxEu1BnPmLMKMR9Gukg17Y6/1
-OqgBDkYK8LJ6RKVolyAjDbBb4OqtJg==
-=HSms
------END PGP SIGNATURE-----
-
---Sig_/5BDm3QG0=cl.1V1CQsGjFCa--
+David / dhildenb
