@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D27ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4977C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F5D2082C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F5D2082C
+	by mail.kernel.org (Postfix) with ESMTP id 708B420842
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:45:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708B420842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389361AbeIXSrl (ORCPT
+        id S2389433AbeIXSro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:47:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59816 "EHLO
+        Mon, 24 Sep 2018 14:47:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59824 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730401AbeIXSrk (ORCPT
+        with ESMTP id S2388898AbeIXSrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:47:40 -0400
+        Mon, 24 Sep 2018 14:47:43 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 244E0109A;
-        Mon, 24 Sep 2018 12:45:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FA14109A;
+        Mon, 24 Sep 2018 12:45:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Gary Hook <Gary.Hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Brijesh Singh <brijesh.singh@amd.com>
-Subject: [PATCH 4.18 235/235] crypto: ccp - add timeout support in the SEV command
-Date:   Mon, 24 Sep 2018 13:53:41 +0200
-Message-Id: <20180924113126.164460105@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Lu <wei.lu2@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 209/235] drm/amdkfd: Fix error codes in kfd_get_process
+Date:   Mon, 24 Sep 2018 13:53:15 +0200
+Message-Id: <20180924113124.753977236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,121 +54,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brijesh Singh <brijesh.singh@amd.com>
+From: Wei Lu <wei.lu2@amd.com>
 
-commit 3702a0585e64d70d5bf73bf3e943b8d6005b72c1 upstream.
+[ Upstream commit e47cb828eb3fca3e8999a0b9aa053dda18552071 ]
 
-Currently, the CCP driver assumes that the SEV command issued to the PSP
-will always return (i.e. it will never hang).  But recently, firmware bugs
-have shown that a command can hang.  Since of the SEV commands are used
-in probe routines, this can cause boot hangs and/or loss of virtualization
-capabilities.
+Return ERR_PTR(-EINVAL) if kfd_get_process fails to find the process.
+This fixes kernel oopses when a child process calls KFD ioctls with
+a file descriptor inherited from the parent process.
 
-To protect against firmware bugs, add a timeout in the SEV command
-execution flow.  If a command does not complete within the specified
-timeout then return -ETIMEOUT and stop the driver from executing any
-further commands since the state of the SEV firmware is unknown.
-
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Gary Hook <Gary.Hook@amd.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-[Brijesh: Backported to 4.18..4.19 - offset change in few hunks]
+Signed-off-by: Wei Lu <wei.lu2@amd.com>
+Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/ccp/psp-dev.c |   46 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/crypto/ccp/psp-dev.c
-+++ b/drivers/crypto/ccp/psp-dev.c
-@@ -38,6 +38,17 @@ static DEFINE_MUTEX(sev_cmd_mutex);
- static struct sev_misc_dev *misc_dev;
- static struct psp_device *psp_master;
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
+@@ -244,6 +244,8 @@ struct kfd_process *kfd_get_process(cons
+ 		return ERR_PTR(-EINVAL);
  
-+static int psp_cmd_timeout = 100;
-+module_param(psp_cmd_timeout, int, 0644);
-+MODULE_PARM_DESC(psp_cmd_timeout, " default timeout value, in seconds, for PSP commands");
-+
-+static int psp_probe_timeout = 5;
-+module_param(psp_probe_timeout, int, 0644);
-+MODULE_PARM_DESC(psp_probe_timeout, " default timeout value, in seconds, during PSP device probe");
-+
-+static bool psp_dead;
-+static int psp_timeout;
-+
- static struct psp_device *psp_alloc_struct(struct sp_device *sp)
- {
- 	struct device *dev = sp->dev;
-@@ -82,10 +93,19 @@ done:
- 	return IRQ_HANDLED;
+ 	process = find_process(thread);
++	if (!process)
++		return ERR_PTR(-EINVAL);
+ 
+ 	return process;
  }
- 
--static void sev_wait_cmd_ioc(struct psp_device *psp, unsigned int *reg)
-+static int sev_wait_cmd_ioc(struct psp_device *psp,
-+			    unsigned int *reg, unsigned int timeout)
- {
--	wait_event(psp->sev_int_queue, psp->sev_int_rcvd);
-+	int ret;
-+
-+	ret = wait_event_timeout(psp->sev_int_queue,
-+			psp->sev_int_rcvd, timeout * HZ);
-+	if (!ret)
-+		return -ETIMEDOUT;
-+
- 	*reg = ioread32(psp->io_regs + PSP_CMDRESP);
-+
-+	return 0;
- }
- 
- static int sev_cmd_buffer_len(int cmd)
-@@ -133,12 +153,15 @@ static int __sev_do_cmd_locked(int cmd,
- 	if (!psp)
- 		return -ENODEV;
- 
-+	if (psp_dead)
-+		return -EBUSY;
-+
- 	/* Get the physical address of the command buffer */
- 	phys_lsb = data ? lower_32_bits(__psp_pa(data)) : 0;
- 	phys_msb = data ? upper_32_bits(__psp_pa(data)) : 0;
- 
--	dev_dbg(psp->dev, "sev command id %#x buffer 0x%08x%08x\n",
--		cmd, phys_msb, phys_lsb);
-+	dev_dbg(psp->dev, "sev command id %#x buffer 0x%08x%08x timeout %us\n",
-+		cmd, phys_msb, phys_lsb, psp_timeout);
- 
- 	print_hex_dump_debug("(in):  ", DUMP_PREFIX_OFFSET, 16, 2, data,
- 			     sev_cmd_buffer_len(cmd), false);
-@@ -154,7 +177,18 @@ static int __sev_do_cmd_locked(int cmd,
- 	iowrite32(reg, psp->io_regs + PSP_CMDRESP);
- 
- 	/* wait for command completion */
--	sev_wait_cmd_ioc(psp, &reg);
-+	ret = sev_wait_cmd_ioc(psp, &reg, psp_timeout);
-+	if (ret) {
-+		if (psp_ret)
-+			*psp_ret = 0;
-+
-+		dev_err(psp->dev, "sev command %#x timed out, disabling PSP \n", cmd);
-+		psp_dead = true;
-+
-+		return ret;
-+	}
-+
-+	psp_timeout = psp_cmd_timeout;
- 
- 	if (psp_ret)
- 		*psp_ret = reg & PSP_CMDRESP_ERR_MASK;
-@@ -886,6 +920,8 @@ void psp_pci_init(void)
- 
- 	psp_master = sp->psp_data;
- 
-+	psp_timeout = psp_probe_timeout;
-+
- 	if (sev_get_api_version())
- 		goto err;
- 
 
 
