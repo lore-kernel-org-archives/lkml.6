@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D210C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5B6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8494208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8494208D9
+	by mail.kernel.org (Postfix) with ESMTP id 1CA6C214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA6C214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731438AbeIXSOU (ORCPT
+        id S1731446AbeIXSOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:14:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55036 "EHLO
+        Mon, 24 Sep 2018 14:14:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55044 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbeIXSOT (ORCPT
+        with ESMTP id S1727822AbeIXSOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:14:19 -0400
+        Mon, 24 Sep 2018 14:14:23 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 86D60107D;
-        Mon, 24 Sep 2018 12:12:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5D94107D;
+        Mon, 24 Sep 2018 12:12:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 015/173] iommu/io-pgtable-arm-v7s: Abort allocation when table address overflows the PTE
-Date:   Mon, 24 Sep 2018 13:50:49 +0200
-Message-Id: <20180924113116.261356111@linuxfoundation.org>
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Feras Daoud <ferasda@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 002/173] net/mlx5: Fix use-after-free in self-healing flow
+Date:   Mon, 24 Sep 2018 13:50:36 +0200
+Message-Id: <20180924113114.625280820@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,57 +53,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
 
-[ Upstream commit 29859aeb8a6ea17ba207933a81b6b77b4d4df81a ]
+[ Upstream commit 76d5581c870454be5f1f1a106c57985902e7ea20 ]
 
-When run on a 64-bit system in selftest, the v7s driver may obtain page
-table with physical addresses larger than 32-bit. Level-2 tables are 1KB
-and are are allocated with slab, which doesn't accept the GFP_DMA32
-flag. Currently map() truncates the address written in the PTE, causing
-iova_to_phys() or unmap() to access invalid memory. Kasan reports it as
-a use-after-free. To avoid any nasty surprise, test if the physical
-address fits in a PTE before returning a new table. 32-bit systems,
-which are the main users of this page table format, shouldn't see any
-difference.
+When the mlx5 health mechanism detects a problem while the driver
+is in the middle of init_one or remove_one, the driver needs to prevent
+the health mechanism from scheduling future work; if future work
+is scheduled, there is a problem with use-after-free: the system WQ
+tries to run the work item (which has been freed) at the scheduled
+future time.
 
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Prevent this by disabling work item scheduling in the health mechanism
+when the driver is in the middle of init_one() or remove_one().
+
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Reviewed-by: Feras Daoud <ferasda@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/io-pgtable-arm-v7s.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/health.c |   10 +++++++++-
+ drivers/net/ethernet/mellanox/mlx5/core/main.c   |    6 +++---
+ include/linux/mlx5/driver.h                      |    2 +-
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
---- a/drivers/iommu/io-pgtable-arm-v7s.c
-+++ b/drivers/iommu/io-pgtable-arm-v7s.c
-@@ -192,6 +192,7 @@ static void *__arm_v7s_alloc_table(int l
+--- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
+@@ -333,9 +333,17 @@ void mlx5_start_health_poll(struct mlx5_
+ 	add_timer(&health->timer);
+ }
+ 
+-void mlx5_stop_health_poll(struct mlx5_core_dev *dev)
++void mlx5_stop_health_poll(struct mlx5_core_dev *dev, bool disable_health)
  {
- 	struct io_pgtable_cfg *cfg = &data->iop.cfg;
- 	struct device *dev = cfg->iommu_dev;
-+	phys_addr_t phys;
- 	dma_addr_t dma;
- 	size_t size = ARM_V7S_TABLE_SIZE(lvl);
- 	void *table = NULL;
-@@ -200,6 +201,10 @@ static void *__arm_v7s_alloc_table(int l
- 		table = (void *)__get_dma_pages(__GFP_ZERO, get_order(size));
- 	else if (lvl == 2)
- 		table = kmem_cache_zalloc(data->l2_tables, gfp | GFP_DMA);
-+	phys = virt_to_phys(table);
-+	if (phys != (arm_v7s_iopte)phys)
-+		/* Doesn't fit in PTE */
-+		goto out_free;
- 	if (table && !(cfg->quirks & IO_PGTABLE_QUIRK_NO_DMA)) {
- 		dma = dma_map_single(dev, table, size, DMA_TO_DEVICE);
- 		if (dma_mapping_error(dev, dma))
-@@ -209,7 +214,7 @@ static void *__arm_v7s_alloc_table(int l
- 		 * address directly, so if the DMA layer suggests otherwise by
- 		 * translating or truncating them, that bodes very badly...
- 		 */
--		if (dma != virt_to_phys(table))
-+		if (dma != phys)
- 			goto out_unmap;
- 	}
- 	kmemleak_ignore(table);
+ 	struct mlx5_core_health *health = &dev->priv.health;
++	unsigned long flags;
++
++	if (disable_health) {
++		spin_lock_irqsave(&health->wq_lock, flags);
++		set_bit(MLX5_DROP_NEW_HEALTH_WORK, &health->flags);
++		set_bit(MLX5_DROP_NEW_RECOVERY_WORK, &health->flags);
++		spin_unlock_irqrestore(&health->wq_lock, flags);
++	}
+ 
+ 	del_timer_sync(&health->timer);
+ }
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1227,7 +1227,7 @@ err_cleanup_once:
+ 		mlx5_cleanup_once(dev);
+ 
+ err_stop_poll:
+-	mlx5_stop_health_poll(dev);
++	mlx5_stop_health_poll(dev, boot);
+ 	if (mlx5_cmd_teardown_hca(dev)) {
+ 		dev_err(&dev->pdev->dev, "tear_down_hca failed, skip cleanup\n");
+ 		goto out_err;
+@@ -1286,7 +1286,7 @@ static int mlx5_unload_one(struct mlx5_c
+ 	mlx5_free_irq_vectors(dev);
+ 	if (cleanup)
+ 		mlx5_cleanup_once(dev);
+-	mlx5_stop_health_poll(dev);
++	mlx5_stop_health_poll(dev, cleanup);
+ 	err = mlx5_cmd_teardown_hca(dev);
+ 	if (err) {
+ 		dev_err(&dev->pdev->dev, "tear_down_hca failed, skip cleanup\n");
+@@ -1548,7 +1548,7 @@ static int mlx5_try_fast_unload(struct m
+ 	 * with the HCA, so the health polll is no longer needed.
+ 	 */
+ 	mlx5_drain_health_wq(dev);
+-	mlx5_stop_health_poll(dev);
++	mlx5_stop_health_poll(dev, false);
+ 
+ 	ret = mlx5_cmd_force_teardown_hca(dev);
+ 	if (ret) {
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -950,7 +950,7 @@ int mlx5_cmd_free_uar(struct mlx5_core_d
+ void mlx5_health_cleanup(struct mlx5_core_dev *dev);
+ int mlx5_health_init(struct mlx5_core_dev *dev);
+ void mlx5_start_health_poll(struct mlx5_core_dev *dev);
+-void mlx5_stop_health_poll(struct mlx5_core_dev *dev);
++void mlx5_stop_health_poll(struct mlx5_core_dev *dev, bool disable_health);
+ void mlx5_drain_health_wq(struct mlx5_core_dev *dev);
+ void mlx5_trigger_health_work(struct mlx5_core_dev *dev);
+ void mlx5_drain_health_recovery(struct mlx5_core_dev *dev);
 
 
