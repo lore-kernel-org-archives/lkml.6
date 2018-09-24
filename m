@@ -2,36 +2,58 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A827AECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82F1ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C6FE2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:49:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C6FE2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 81D9D2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:50:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D9D2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbeIXRvW (ORCPT
+        id S1728737AbeIXRwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:51:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43214 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbeIXRvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:51:21 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D3EB381F09;
-        Mon, 24 Sep 2018 11:49:39 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2922E84967;
-        Mon, 24 Sep 2018 11:49:34 +0000 (UTC)
-Date:   Mon, 24 Sep 2018 13:49:31 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+        Mon, 24 Sep 2018 13:52:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51298 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728007AbeIXRwa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:52:30 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OBdX8M131239
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 07:50:46 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mpw7engdb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 07:50:46 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 24 Sep 2018 12:50:44 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Sep 2018 12:50:39 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OBob6i53608564
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Sep 2018 11:50:37 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8EBF5AE053;
+        Mon, 24 Sep 2018 14:49:39 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FC67AE058;
+        Mon, 24 Sep 2018 14:49:38 +0100 (BST)
+Received: from oc0155643701.ibm.com (unknown [9.152.224.150])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Sep 2018 14:49:38 +0100 (BST)
+Subject: Re: [PATCH v10 10/26] KVM: s390: interfaces to clear CRYCB masks
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>
 Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
         heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
@@ -42,73 +64,154 @@ Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
         fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
         frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: Re: [PATCH v10 00/26] guest dedicated crypto adapters
-Message-ID: <20180924134931.6c67a3d2.cohuck@redhat.com>
-In-Reply-To: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+ <1536781396-13601-11-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <20180924130153.766eaec7.cohuck@redhat.com>
+From:   Halil Pasic <pasic@linux.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pasic@linux.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+Date:   Mon, 24 Sep 2018 13:50:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180924130153.766eaec7.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 24 Sep 2018 11:49:40 +0000 (UTC)
+X-TM-AS-GCONF: 00
+x-cbid: 18092411-4275-0000-0000-000002BED5D3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092411-4276-0000-0000-000037C8E2C4
+Message-Id: <42b23a01-bee1-0c87-3f81-320c40bcb7c9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=932 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809240119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Sep 2018 15:42:50 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-> Abstract:
-> ========
-> 
-> On s390, we have cryptographic coprocessor cards, which are modeled on
-> Linux as devices on the AP bus. Each card can be partitioned into domains
-> which can be thought of as a set of hardware registers for processing 
-> crypto commands. Crypto commands are sent to a specific domain within a
-> card is via a queue which is identified as a (card,domain) tuple. We model 
-> this something like the following (assuming we have access to cards 3 and 
-> 4 and domains 1 and 2):
-> 
-> AP -> card3 -> queue (3,1)
->             -> queue (3,2)
->    -> card4 -> queue (4,1)
->             -> queue (4,2)  
-> 
-> If we want to virtualize this, we can use a feature provided by the
-> hardware. We basically attach a satellite control block to our main
-> hardware virtualization control block and the hardware takes care of
-> most of the rest.
-> 
-> For this control block, we don't specify explicit tuples, but a list of
-> cards and a list of domains. The guest will get access to the cross
-> product.
-> 
-> Because of this, we need to take care that the lists provided to
-> different guests don't overlap; i.e., we need to enforce sane
-> configurations. Otherwise, one guest may get access to things like
-> secret keys for another guest.
-> 
-> The idea of this patch set is to introduce a new device, the matrix
-> device. This matrix device hangs off a different root and acts as the
-> parent node for mdev devices.
-> 
-> If you now want to give the tuples (4,1) and (4,2), you need to do the
-> following:
-> 
-> - Make sure the queues (4,1) and (4,2) belong to vfio_ap (see patches
->   #5 and #6)
-> - Create the mediated device.
-> - Assign card 4 and domains 1 and 2 to the mediated device
-> - Optionally activate the mediated device.
-> 
-> QEMU will now simply consume the mediated device and things should work.
-> 
-> For a complete description of the architecture and concepts underlying
-> the design, see the Documentation/s390/vfio-ap.txt file included with this
-> patch set.
 
-I did not spot anything major, and if v11 addresses the issues raised
-by various reviewers I don't see why it should not be merged (interface
-looks sane). I skipped looking at the vsie stuff, though ;)
+On 09/24/2018 01:01 PM, Cornelia Huck wrote:
+> On Wed, 12 Sep 2018 15:43:00 -0400
+> Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+> 
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> Introduces two new KVM interface to clear the APM, AQM and ADM masks in
+>> the guest's CRYCB.  The VCPUs are taken out of SIE to ensure the VCPUs do
+>> not get out of sync.
+> 
+> Hm, that patch description does not quite match what the patch actually
+> does...
+> 
+
+You mean it is not obvious where the masks get cleared? Well the APCB is
+defined to contain exactly the three masks. As far as I can tell the patch
+description is correct.
+
+Regards,
+Halil
+
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Acked-by: Halil Pasic <pasic@linux.ibm.com>
+>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>  arch/s390/include/asm/kvm_host.h |    2 ++
+>>  arch/s390/kvm/kvm-s390.c         |   15 +++++++++++++++
+>>  2 files changed, 17 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+>> index 423cce7..1e758fe 100644
+>> --- a/arch/s390/include/asm/kvm_host.h
+>> +++ b/arch/s390/include/asm/kvm_host.h
+>> @@ -858,6 +858,8 @@ void kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
+>>  void kvm_arch_async_page_present(struct kvm_vcpu *vcpu,
+>>  				 struct kvm_async_pf *work);
+>>  
+>> +void kvm_arch_crypto_clear_masks(struct kvm *kvm);
+>> +
+>>  extern int sie64a(struct kvm_s390_sie_block *, u64 *);
+>>  extern char sie_exit;
+>>  
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index d717041..ac4c93f 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -2033,6 +2033,21 @@ static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>>  		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>>  }
+>>  
+>> +void kvm_arch_crypto_clear_masks(struct kvm *kvm)
+>> +{
+>> +	mutex_lock(&kvm->lock);
+>> +	kvm_s390_vcpu_block_all(kvm);
+>> +
+>> +	memset(&kvm->arch.crypto.crycb->apcb0, 0,
+>> +	       sizeof(kvm->arch.crypto.crycb->apcb0));
+>> +	memset(&kvm->arch.crypto.crycb->apcb1, 0,
+>> +	       sizeof(kvm->arch.crypto.crycb->apcb1));
+>> +
+>> +	kvm_s390_vcpu_unblock_all(kvm);
+>> +	mutex_unlock(&kvm->lock);
+>> +}
+>> +EXPORT_SYMBOL_GPL(kvm_arch_crypto_clear_masks);
+> 
+> ...although this function looks fine.
+> 
+>> +
+>>  static u64 kvm_s390_get_initial_cpuid(void)
+>>  {
+>>  	struct cpuid cpuid;
+> 
+
