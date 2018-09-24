@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D8AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1EBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF27C208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF27C208D9
+	by mail.kernel.org (Postfix) with ESMTP id B401E208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B401E208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732093AbeIXSRY (ORCPT
+        id S1732107AbeIXSR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55584 "EHLO
+        Mon, 24 Sep 2018 14:17:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55594 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSRX (ORCPT
+        with ESMTP id S1730150AbeIXSR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:23 -0400
+        Mon, 24 Sep 2018 14:17:26 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7B2F310AA;
-        Mon, 24 Sep 2018 12:15:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F57810AA;
+        Mon, 24 Sep 2018 12:15:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
+        stable@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 022/173] clk: core: Potentially free connection id
-Date:   Mon, 24 Sep 2018 13:50:56 +0200
-Message-Id: <20180924113117.169915851@linuxfoundation.org>
+Subject: [PATCH 4.14 023/173] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of failure
+Date:   Mon, 24 Sep 2018 13:50:57 +0200
+Message-Id: <20180924113117.323578283@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,52 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+From: Rajan Vaja <rajan.vaja@xilinx.com>
 
-[ Upstream commit 365f7a89c881e84f1ebc925f65f899d5d7ce547e ]
+[ Upstream commit f6dab4233d6b64d719109040503b567f71fbfa01 ]
 
-Patch "clk: core: Copy connection id" made it so that the connector id
-'con_id' is kstrdup_const()ed to cater to drivers that pass non-constant
-connection ids. The patch added the corresponding kfree_const to
-__clk_free_clk(), but struct clk's can be freed also via __clk_put().
-Add the kfree_const call to __clk_put() and add comments to both
-functions to remind that the logic in them should be kept in sync.
+Fixed factor clock has two initializations at of_clk_init() time
+and during platform driver probe. Before of_clk_init() call,
+node is marked as populated and so its probe never gets called.
 
-Fixes: 253160a8ad06 ("clk: core: Copy connection id")
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+During of_clk_init() fixed factor clock registration may fail if
+any of its parent clock is not registered. In this case, it doesn't
+get chance to retry registration from probe. Clear OF_POPULATED
+flag if fixed factor clock registration fails so that clock
+registration is attempted again from probe.
+
+Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/clk-fixed-factor.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2557,6 +2557,7 @@ struct clk *__clk_create_clk(struct clk_
- 	return clk;
- }
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -177,8 +177,15 @@ static struct clk *_of_fixed_factor_clk_
  
-+/* keep in sync with __clk_put */
- void __clk_free_clk(struct clk *clk)
- {
- 	clk_prepare_lock();
-@@ -2922,6 +2923,7 @@ int __clk_get(struct clk *clk)
- 	return 1;
- }
+ 	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
+ 					mult, div);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		/*
++		 * If parent clock is not registered, registration would fail.
++		 * Clear OF_POPULATED flag so that clock registration can be
++		 * attempted again from probe function.
++		 */
++		of_node_clear_flag(node, OF_POPULATED);
+ 		return clk;
++	}
  
-+/* keep in sync with __clk_free_clk */
- void __clk_put(struct clk *clk)
- {
- 	struct module *owner;
-@@ -2943,6 +2945,7 @@ void __clk_put(struct clk *clk)
- 
- 	module_put(owner);
- 
-+	kfree_const(clk->con_id);
- 	kfree(clk);
- }
- 
+ 	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 	if (ret) {
 
 
