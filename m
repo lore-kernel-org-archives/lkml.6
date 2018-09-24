@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A6DECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7417ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C0021486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C0021486
+	by mail.kernel.org (Postfix) with ESMTP id 9B36421486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B36421486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733218AbeIXS2x (ORCPT
+        id S1733233AbeIXS25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:28:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57202 "EHLO
+        Mon, 24 Sep 2018 14:28:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57210 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732223AbeIXS2w (ORCPT
+        with ESMTP id S1732223AbeIXS24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:28:52 -0400
+        Mon, 24 Sep 2018 14:28:56 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8617E108B;
-        Mon, 24 Sep 2018 12:26:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CAF77108B;
+        Mon, 24 Sep 2018 12:27:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, William Tu <u9012063@gmail.com>,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        stable@vger.kernel.org,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 011/235] erspan: return PACKET_REJECT when the appropriate tunnel is not found
-Date:   Mon, 24 Sep 2018 13:49:57 +0200
-Message-Id: <20180924113105.486122435@linuxfoundation.org>
+Subject: [PATCH 4.18 012/235] tcp: really ignore MSG_ZEROCOPY if no SO_ZEROCOPY
+Date:   Mon, 24 Sep 2018 13:49:58 +0200
+Message-Id: <20180924113105.617367236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,33 +53,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+From: Vincent Whitchurch <vincent.whitchurch@axis.com>
 
-[ Upstream commit 5a64506b5c2c3cdb29d817723205330378075448 ]
+[ Upstream commit 5cf4a8532c992bb22a9ecd5f6d93f873f4eaccc2 ]
 
-If erspan tunnel hasn't been established, we'd better send icmp port
-unreachable message after receive erspan packets.
+According to the documentation in msg_zerocopy.rst, the SO_ZEROCOPY
+flag was introduced because send(2) ignores unknown message flags and
+any legacy application which was accidentally passing the equivalent of
+MSG_ZEROCOPY earlier should not see any new behaviour.
 
-Fixes: 84e54fe0a5ea ("gre: introduce native tunnel support for ERSPAN")
-Cc: William Tu <u9012063@gmail.com>
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Acked-by: William Tu <u9012063@gmail.com>
+Before commit f214f915e7db ("tcp: enable MSG_ZEROCOPY"), a send(2) call
+which passed the equivalent of MSG_ZEROCOPY without setting SO_ZEROCOPY
+would succeed.  However, after that commit, it fails with -ENOBUFS.  So
+it appears that the SO_ZEROCOPY flag fails to fulfill its intended
+purpose.  Fix it.
+
+Fixes: f214f915e7db ("tcp: enable MSG_ZEROCOPY")
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+Acked-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/core/skbuff.c |    3 ---
+ net/ipv4/tcp.c    |    2 +-
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -331,6 +331,8 @@ static int erspan_rcv(struct sk_buff *sk
- 		ip_tunnel_rcv(tunnel, skb, tpi, tun_dst, log_ecn_error);
- 		return PACKET_RCVD;
- 	}
-+	return PACKET_REJECT;
-+
- drop:
- 	kfree_skb(skb);
- 	return PACKET_RCVD;
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -939,9 +939,6 @@ struct ubuf_info *sock_zerocopy_alloc(st
+ 
+ 	WARN_ON_ONCE(!in_task());
+ 
+-	if (!sock_flag(sk, SOCK_ZEROCOPY))
+-		return NULL;
+-
+ 	skb = sock_omalloc(sk, 0, GFP_KERNEL);
+ 	if (!skb)
+ 		return NULL;
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1186,7 +1186,7 @@ int tcp_sendmsg_locked(struct sock *sk,
+ 
+ 	flags = msg->msg_flags;
+ 
+-	if (flags & MSG_ZEROCOPY && size) {
++	if (flags & MSG_ZEROCOPY && size && sock_flag(sk, SOCK_ZEROCOPY)) {
+ 		if (sk->sk_state != TCP_ESTABLISHED) {
+ 			err = -EINVAL;
+ 			goto out_err;
 
 
