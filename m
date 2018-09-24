@@ -2,129 +2,404 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 987EFC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E3CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413CC204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:12:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PJgtRLD9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413CC204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 61805206B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61805206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387480AbeIXVOx (ORCPT
+        id S1730224AbeIXVQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:14:53 -0400
-Received: from mail-eopbgr720093.outbound.protection.outlook.com ([40.107.72.93]:21257
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730417AbeIXUuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:50:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qTFvfuix4yPAxlx93+eKoQMsMDsZA6/2TzT5wWOdS/M=;
- b=PJgtRLD93UL6n79UI+YrZQvsbqyRZZeIOrV0HE8urxhyOqzm8NZn8FhDYS+U7a3XBAG+Do9FprFkZoiZsaROmBacS4beX4Ix+acM7W+jDNp6IWonV2G8xs9ZgxA6t6YbYWxUID8PFJOnyvtv2HDWlCSnrHWSeLtc+ecUHMOawQI=
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0821.namprd21.prod.outlook.com (10.173.192.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Mon, 24 Sep 2018 14:48:09 +0000
-Received: from CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
- ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:48:09 +0000
-From:   Sasha Levin <Alexander.Levin@microsoft.com>
-To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Danek Duvall <duvall@comfychair.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 15/76] mac80211_hwsim: correct use of
- IEEE80211_VHT_CAP_RXSTBC_X
-Thread-Topic: [PATCH AUTOSEL 4.18 15/76] mac80211_hwsim: correct use of
- IEEE80211_VHT_CAP_RXSTBC_X
-Thread-Index: AQHUVBWcLpkItvdqWkeYaKOCIJqHuA==
-Date:   Mon, 24 Sep 2018 14:48:08 +0000
-Message-ID: <20180924144751.164410-15-alexander.levin@microsoft.com>
-References: <20180924144751.164410-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0821;6:LX1s9N+L5e6M3XAbJUY8B5dYBnarmnweT8/49zZn8Hwq9WtgOiElDficDAgHYw/1m5iQk19P1TtOgzQccBuN2s7Ki7gslNfMKQL9dlL8iLMkG1bcLnvDvhhQEl2yeMrTQQBog1JPPfSf6EF5k6vl+3rRCHaGrRp1hgQ11Ujiq6SHcBeHVkVKsTPPPgxfwuCSLzcU6fhK3nty32AZOAVr3nUDq7UKgofzQ8QPHA0TnsIyXY/dN68h035/HCdNG2xtdeou7uP4XAQgSkcOYFn8jb/Z2enTYxWr76U9F4GfxmuLur6kTm+TF9Jm5t1rNIx1yHI+w4yzqpahUmltKnPMe7NN44Dw2l3uVjF4xDbyt7NLaNEqXVChhXl5XpKVle+uCkSWxalJ0Fe8UUB8+ivA6nB+Wxe99KQRawWwwk5tEFlu1RnT4jS00RhzUr84ZdogbnH2u3rGkzc7cDy+dkOJ+g==;5:WE5EhyVIMbDZBnQz0mIDBiS46U0l7zjQmApJ67n/aEi45ps85Zyvd9/wV1MIcArdy8j8p8iOE5vwDPEsuKyLaxZoQ+3wFZOOyw0k8wWS5P3jt6bzYuP/+jb8lxi4kE9bPY1jmkvbc7+UUE7U9SQE+2OdyJkLYpf7Ru5mQsp1H34=;7:r7AQIW2vAj80uOc+m+xgotX3fHWn7eQHoZRYJHhWoRIgeGDy2UMIHam5su3Ftj96RkCdRivS9iqm1c75bB3kWC3/zBvc5Qsz23KkNGWdb6211Mue3liH+jX9KXJUS202wWkOiZUGbb7ibuRBi0SRx7cr/aSWwbng0o26sgZSUcjX41DSNr3LwSufa2rwkwynHWgUA5hLrErOg923hdiBcXEjnSPkzaPFs2L1BHu3PghPWxIRl7HM6JrgyMMBVxiU
-x-ms-office365-filtering-correlation-id: f6cff3e6-114f-424d-0c19-08d6222cbe93
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0821;
-x-ms-traffictypediagnostic: CY4PR21MB0821:
-x-microsoft-antispam-prvs: <CY4PR21MB08216B9D93369E0BFB2EF18CFB170@CY4PR21MB0821.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0821;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0821;
-x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(376002)(346002)(39860400002)(189003)(199004)(2900100001)(86612001)(81166006)(81156014)(8676002)(8936002)(1076002)(4326008)(25786009)(3846002)(6116002)(575784001)(86362001)(15760500003)(99286004)(486006)(76176011)(54906003)(71190400001)(71200400001)(22452003)(316002)(106356001)(105586002)(6346003)(478600001)(10290500003)(6506007)(26005)(7736002)(305945005)(72206003)(186003)(476003)(446003)(11346002)(14454004)(2616005)(110136005)(217873002)(6486002)(53936002)(102836004)(5660300001)(256004)(6512007)(6436002)(107886003)(66066001)(97736004)(36756003)(10090500001)(2501003)(68736007)(5250100002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0821;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: doWtjRewrfV/mbLDg7suCkQ1cZZipYfBgIDVD+F7pG3w8cdjRWNh2D4Y1EW9KoD6PchiQXsU7jos1dZ/31vKY0EaC2xK2Pz/QVSjQA0aoLVM2bVCHK0ACKHsoN+hDIZfHcnzKPxY5obpnaf3Yf3NVVaW9k1+FLVuQYTMC0KbGD6VFdm0KW37pJ0zeFKfC8ZOlJHBEYGrq2wPuY8eCOrmLSSFgPJ65yXELsmN8vltON9+Skg2XsMVbnr6TVyGnhbWqS0QqbwOdvCtjpsjfw2AsO0JiIhnpnt9D5+P6tlawDl9rJURBXE3bjHfMYtf2sXGRSXLY0wuERYIiuvfL6R+XazRl35LTy2KmgTMi+ZGVBA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 24 Sep 2018 17:16:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:37564 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728137AbeIXVQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:16:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BCB580D;
+        Mon, 24 Sep 2018 08:14:05 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DC483F5B7;
+        Mon, 24 Sep 2018 08:14:02 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 16:14:00 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
+ default
+Message-ID: <20180924151400.GT1413@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-15-patrick.bellasi@arm.com>
+ <20180904134748.GA4974@localhost.localdomain>
+ <20180906144053.GD25636@e110439-lin>
+ <20180914111003.GC24082@hirez.programming.kicks-ass.net>
+ <20180914140732.GR1413@e110439-lin>
+ <20180914142813.GM24124@hirez.programming.kicks-ass.net>
+ <20180917122723.GS1413@e110439-lin>
+ <20180921091308.GD24082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6cff3e6-114f-424d-0c19-08d6222cbe93
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:08.9696
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0821
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180921091308.GD24082@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Danek Duvall <duvall@comfychair.org>
+On 21-Sep 11:13, Peter Zijlstra wrote:
+> On Mon, Sep 17, 2018 at 01:27:23PM +0100, Patrick Bellasi wrote:
+> > On 14-Sep 16:28, Peter Zijlstra wrote:
+> 
+> > > The thing is, the values you'd want to use are for example the capacity
+> > > of the little CPUs. or the capacity of the most energy efficient OPP
+> > > (the knee).
+> > 
+> > I don't think so.
+> > 
+> > On the knee topic, we had some thinking and on most platforms it seems
+> > to be a rather arbitrary decision.
+> > 
+> > On sane platforms, the Energy Efficiency (EE) is monotonically
+> > decreasing with frequency increase.  Maybe we can define a threshold
+> > for a "EE derivative ratio", but it will still be quite arbitrary.
+> > Moreover, it could be that in certain use-cases we want to push for
+> > higher energy efficiency (i.e. lower derivatives) then others.
+> 
+> I remember IBM-power folks asking for knee related features a number of
+> years ago (Dusseldorf IIRC) because after some point their chips start
+> to _really_ suck power. Sure, the curve is monotonic, but the perf/watt
+> takes a nose dive.
+> 
+> And given that: P = CfV^2, that seems like a fairly generic observation.
+> 
+> However, maybe, due to the very limited thermal capacity of these mobile
+> things, the issue doesn't really arrise in them.
 
-[ Upstream commit d7c863a2f65e48f442379f4ee1846d52e0c5d24d ]
+The curve is still following the equation above for mobile devices
+too and it's exactly by looking at that curve that's rather arbitrary
+to defined a knee point (more on that later)...
 
-The mac80211_hwsim driver intends to say that it supports up to four
-STBC receive streams, but instead it ends up saying something undefined.
-The IEEE80211_VHT_CAP_RXSTBC_X macros aren't independent bits that can
-be ORed together, but values.  In this case, _4 is the appropriate one
-to use.
+> Laptops with active cooling however...
 
-Signed-off-by: Danek Duvall <duvall@comfychair.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- drivers/net/wireless/mac80211_hwsim.c | 3 ---
- 1 file changed, 3 deletions(-)
+How do you see active cooling playing a role ?
 
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/m=
-ac80211_hwsim.c
-index fe1b0108f06d..7d0b460868f9 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -2699,9 +2699,6 @@ static int mac80211_hwsim_new_radio(struct genl_info =
-*info,
- 				IEEE80211_VHT_CAP_SHORT_GI_80 |
- 				IEEE80211_VHT_CAP_SHORT_GI_160 |
- 				IEEE80211_VHT_CAP_TXSTBC |
--				IEEE80211_VHT_CAP_RXSTBC_1 |
--				IEEE80211_VHT_CAP_RXSTBC_2 |
--				IEEE80211_VHT_CAP_RXSTBC_3 |
- 				IEEE80211_VHT_CAP_RXSTBC_4 |
- 				IEEE80211_VHT_CAP_MAX_A_MPDU_LENGTH_EXPONENT_MASK;
- 			sband->vht_cap.vht_mcs.rx_mcs_map =3D
---=20
-2.17.1
+Are you thinking, for example, at reduced fan noise if we remain below
+a certain OPP ?
+
+Are you factoring fans power consumptions into the overall P consumption ?
+
+> > > Similarly for boosting, how are we 'easily' going to find the values
+> > > that correspond to the various available OPPs.
+> > 
+> > In our experience with SchedTune on Android, we found that we
+> > generally focus on a small set of representative use-cases and then
+> > run an exploration, by tuning the percentage of boost, to identify the
+> > optimal trade-off between Performance and Energy.
+> 
+> So you basically do an automated optimization for a benchmark?
+
+Not on one single benchmark, we consider a set of interesting
+use-cases. We mostly focus on:
+- interactivity: no jank frames while scrolling fast on list/views
+- power efficiency: on common video/audio playback scenarios
+
+The exploration of some optimization parameters can be automated.
+However, at the end there is always a rather arbitrary decision to
+take: you can be slightly more oriented towards interactive
+performance or energy efficient.
+
+Maybe (in the future) you can also see AI/ML, used from user-space, to
+figure out the fine tuning based on user's usage patterns for different
+apps... ;)
+
+> > The value you get could be something which do not match exactly an OPP
+> > but still, since we (will) bias not only OPP selection but also tasks
+> > placement, it's the one which makes most sense.
+> 
+> *groan*, so how exactly does that work? By limiting the task capacity,
+> we allow some stacking on the CPUs before we switch to regular
+> load-balancing?
+
+This is a big topic in itself, one of the reasons why we did not added
+it in this series. We will need dedicated discussions to figure out
+something reasonable.
+
+In principle, however, by capping the utilization of tasks and their
+CPUs we can aim at a way to remain in energy_aware mode, i.e. below
+the tipping point, and thus with load-balancing disabled.
+
+Utilization clamping can be used to bias the CPUs selection from the
+EA code paths. Other mechanisms, e.g. bandwidth control, can also be
+exploited to keep CPU utilization under control.
+
+> > Thus, the capacity of little CPUs, or the exact capacity of an OPP, is
+> > something we don't care to specify exactly, since:
+> > 
+> >  - schedutil will top the util request to the next frequency anyway
+> > 
+> >  - capacity by itself is a loosely defined metric, since it's usually
+> >    measured considering a specific kind of instructions mix, which
+> >    can be very different from the actual instruction mix (e.g. integer
+> >    vs floating point)
+> 
+> Sure, things like pure SIMD workloads can skew things pretty bad, but on
+> average it should not drastically change the overall shape of the curve
+> and the knee point should not move around a lot.
+
+There can be quite consistent skews based not just on instructions
+type but also "app phases", e.g. memory-vs-cpu bound.
+It's also true that's more likely a shift up/down in the capacity axis
+then a change in shape.
+
+However, I think my point here is that the actual capacity of each OPP
+can be very different wrt the one reported by the EM.
+
+> >  - certain platforms don't even expose OPPs, but just "performance
+> >    levels"... which ultimately are a "percentage"
+> 
+> Well, the whole capacity thing is a 'percentage', it's just that 1024 is
+> much nicer to work with (for computers) than 100 is (also it provides a
+> wee bit more resolution).
+
+Right, indeed in kernel-space we still use 1024 based values, we just
+convert them at the syscall interface...
+
+> But even the platforms with hidden OPPs (can) have knee points, and if
+> you measure their power to capacity curve you can place a workload
+> around the knee by capping capacity.
+
+... still it's difficult to give a precise definition of knee point,
+unless you know about platforms which have a sharp change in energy
+efficiency.
+
+The only cases we know about are those where:
+
+A) multiple frequencies uses the same voltage, e.g.
+
+
+     ^                                     *
+     | Energy                              O
+     | efficiency                         O+
+     |                                   O |
+     |                                 O*  |
+     |                              O**    |
+     |   O**                    O***       |
+     |   +  O**            O****           |
+     |   |     O**   O*****                |
+     |   |        O**                      |
+     |   |          +                      |
+     |   |  Same V  |   Increasing V       |
+     +---+----------+----------------------+----------->
+         |          |                      | Frequency
+         L          M                      H
+
+B) there is a big frequency gap between low frequency OPPs and high
+   frequency OPPs, e.g.
+
+                                       O
+    ^                                **+
+    | Energy                       **  |
+    | efficiency                 **    |
+    |                          **      |
+    |                        **        |
+    |                      **          |
+    |                    **            |
+    |                  **              |
+    |               O**                |
+    |        O******+                  |
+    |O*******       |                  |
+    |               |                  |
+    ++--------------+------------------+------>
+     |              |                  |  Frequency
+     L              M                  H
+
+
+In case A, all the OPPs left of M are dominated by M in terms
+of energy efficiency and normally they should be never used.
+Unless you are under thermal constraints and you still want to keep
+your code running even if at a lower rate and energy efficiency.
+At this point, however, you already invalidated all the OPPs right of
+M and, on the remaining, you still struggle do define the knee point.
+
+In case B... I'm wondering it such a conf even makes sense ;)
+Is there really some platform out there with such a "non homogeneously
+distributed" set of available frequencies ?
+
+> But yes, this gets trick real fast :/
+> 
+> >  - there are so many rounding errors around on utilization tracking
+> >    and it aggregation that being exact on an OPP if of "relative"
+> >    importance
+> 
+> I'm not sure I understand that argument; sure the measurement is subject
+> to 'issues', but if we hard clip the result, that will exactly match the
+> fixed points for OPP selection. Any issues on the measurement are lost
+> after clipping.
+
+My point is just that the clipping does not requires to be specified
+as the actual capacity of an OPP.
+
+If we give a "performance level" P then schedutil already knows how to
+translate it into an OPP, it will pick the min capacity OPP which
+capacity is greater then P.
+
+However, given the knee definition is anyway fuzzy, selecting either
+that OPP or the previous one, should almost always not make a big
+difference from a "knee" standpoint, isn't it ?
+
+> > Do you see specific use-cases where an exact OPP capacity is much
+> > better then a percentage value ?
+> 
+> If I don't have algorithmic optimization available, hand selecting an
+> OPP is the 'obvious' thing to do.
+
+Agree, but that's still possible by passing in a percentage value.
+
+> > Of course there can be scenarios in which wa want to clamp to a
+> > specific OPP. But still, why should it be difficult for a platform
+> > integrator to express it as a close enough percentage value ?
+> 
+> But why put him through the trouble of finding the capacity value in the
+> EAS exposed data, converting that to a percentage that will work and
+> then feeding it back in.
+>
+> I don't see the point or benefit of percentages, there's nothing magical
+> about 1/100, _any_ other fraction works exactly the same.
+
+If you wanna pass in an exact capacity data, you still need to look at
+EAS exposed data, don't you?
+
+I think the main problem is picking the right capacity, more then
+converting it to a percentage.
+
+Once you got a capacity, let say 654, it's conversion to percentage is
+as simple as dropping the units, i.e. 654 ~= 65%, that's quite sure to
+pick the 654 capacity OPP anyway.
+
+
+> So why bother changing it around?
+
+For two main reasons:
+
+1) to expose userspace a more generic interface:
+   a "performance percentage" is more generic then a "capacity value"
+   while keep translating and using a 1024 based value in kernel space
+
+2) to reduce the configuration space:
+   it quite likely doesn't make sense to use, in the same system, 100
+   difference clamp values... it makes even more sense to use 1024
+   different clamp values, does it ?
+
+> > > The EAS thing might have these around; but I forgot if/how they're
+> > > exposed to userspace (I'll have to soon look at the latest posting).
+> > 
+> > The new "Energy Model Management" framework can certainly be use to
+> > get the list of OPPs for each frequency domain. IMO this could be
+> > used to identify the maximum number of clamp groups we can have.
+> > In this case, the discretization patch can translate a generic
+> > percentage clamp into the closest OPP capacity... 
+> > 
+> > ... but to me that's an internal detail which I'm not convinced we
+> > don't need to expose to user-space.
+> > 
+> > IMHO we should instead focus just on defining a usable and generic
+> > userspace interface. Then, platform specific tuning is something
+> > user-space can do, either offline or on-line.
+> 
+> The thing I worry about is how do we determine the value to put in in
+> the first place.
+
+I agree that's the main problem, but I also think that's outside of
+the kernel-space mechanism.
+
+Is not all that quite similar to DEADLINE tasks configuration?
+
+Given a DL task solving a certain issue, you can certainly define its
+deadline (or period) on a completely platform independent way, by just
+looking at the problem space. But when it comes to the run-time, we
+always have to profile the task in a platform specific way.
+
+In the DL case from user-space we figure out a bandwidth requirement.
+
+In the clamping case, it's still the user-space that needs to figure
+our an optimal clamp value, while considering your performance and
+energy efficiency goals. This can be based on an automated profiling
+process which comes up with "optimal" clamp values.
+
+In the DL case, we are perfectly fine to have a running time
+parameter, although we don't give any precise and deterministic
+formula to quantify it. It's up to user-space to figure out the
+required running time for a given app and platform.
+It's also not unrealistic the case you need to close a control loop
+with user-space to keep updating this requirement.
+
+Why the same cannot hold for clamp values ?
+
+> How are expecting people to determine what to put into the interface?
+> Knee points, little capacity, those things make 'obvious' sense.
+
+IMHO, they make "obvious" sense from a kernel-space perspective
+exactly because they are implementation details and platform specific
+concepts.
+
+At the same time, I struggle to provide a definition of knee point and
+I struggle to find a use-case where I can certainly say that a task
+should be clamped exactly to the little capacity for example.
+
+I'm more of the idea that the right clamp value is something a bit
+fuzzy and possibly subject to change over time depending on the
+specific application phase (e.g. cpu-vs-memory bounded) and/or
+optimization goals (e.g. performance vs energy efficiency).
+
+Here we are thus at defining and agree about a "generic and abstract"
+interface which allows user-space to feed input to kernel-space.
+To this purpose, I think platform specific details and/or internal
+implementation details are not "a bonus".
+
+> > > But changing the clamp metric to something different than these values
+> > > is going to be pain.
+> > 
+> > Maybe I don't completely get what you mean here... are you saying that
+> > not using exact capacity values to defined clamps is difficult ?
+> > If that's the case why? Can you elaborate with an example ?
+> 
+> I meant changing the unit around, 1/1024 is what we use throughout and
+> is what EAS is also exposing IIRC, so why make things complicated again
+> and use 1/100 (which is a shit fraction for computers).
+
+Internally, in kernel space, we use 1024 units. It's just the
+user-space interface that speaks percentages but, as soon as a
+percentage value is used to configure a clamp, it's translated into a
+[0..1024] range value.
+
+Is this not an acceptable compromise? We have a generic user-space
+interface and an effective/consistent kernel-space implementation.
+
+Cheers,
+Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
