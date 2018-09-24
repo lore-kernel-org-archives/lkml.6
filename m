@@ -2,404 +2,571 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E3CC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD81C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61805206B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61805206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C806B204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:14:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yv4QDbUX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C806B204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbeIXVQo (ORCPT
+        id S1729380AbeIXVRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:16:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:37564 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728137AbeIXVQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:16:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BCB580D;
-        Mon, 24 Sep 2018 08:14:05 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DC483F5B7;
-        Mon, 24 Sep 2018 08:14:02 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 16:14:00 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by
- default
-Message-ID: <20180924151400.GT1413@e110439-lin>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
- <20180828135324.21976-15-patrick.bellasi@arm.com>
- <20180904134748.GA4974@localhost.localdomain>
- <20180906144053.GD25636@e110439-lin>
- <20180914111003.GC24082@hirez.programming.kicks-ass.net>
- <20180914140732.GR1413@e110439-lin>
- <20180914142813.GM24124@hirez.programming.kicks-ass.net>
- <20180917122723.GS1413@e110439-lin>
- <20180921091308.GD24082@hirez.programming.kicks-ass.net>
+        Mon, 24 Sep 2018 17:17:06 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52977 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728448AbeIXVRG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:17:06 -0400
+Received: by mail-it1-f196.google.com with SMTP id h3-v6so11026891ita.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 08:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PsSiXDRS14xSpF950wMfhYCyWIq6rssktgvmMQTvAQs=;
+        b=Yv4QDbUX/ZXkzWg3BGqKPNFL04ZFc3/LrRGaOxLT5hgHgfziH2PwF5+aQUmq3q/W9C
+         PfQaHl/ZhPMpUGwV3Yv4s+cJ1NCPgM1KAI29BhEMX/Sy5XZBWpJ5pFFw45Y8bzYSDxq6
+         0DZgBmtY4Wg9ENfjKoc+07sCwF50CHpYOzBZEe+LGvM/kwYP+rtiVZ6ZY/Fae2V1Tv3L
+         ewKB6PCk5rBOiXSH8E1trQXP1dmnhGwPy8wxxwyeLDXLE0AkiRu9T8Ssg0uBezfXU7xa
+         ZlcWli/O10vmAEBpeRgFg4OF18hCQEmQMwo6LpZMjqRlnQ3FZ9GfkbrIgahbgra5As9n
+         EQ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PsSiXDRS14xSpF950wMfhYCyWIq6rssktgvmMQTvAQs=;
+        b=Voa2lG5MRF0715bWqQOS5ErW2sgdUMYzsahlQh53Ph+Qh8pNSW6rIVBw7tghghEY+B
+         VA3nSrhg5awoy9F48iYj1nvED9RWjrXMJ6WwKH77aOBnDJMUXysBQ/LXdcusmprLRCwa
+         Jq52w8Xf14UUSpDHuf+fGLa9dDmct2Z3EaL7m25+9sroFsKPV/tm1NEDJp91pNAntXNT
+         CWJ2+HQw8NxAwrEvxaurrC6s51MSLWUbH9Z6A9omginQ32q6XLwf4y9yS8Od0jQb0gER
+         WbEuC3f3nnR47fOj/cawNNIHNeo6Gk4O7+QXwfjJQdqiClf+/J6mMjKUY1sMESNzpsoX
+         ef1g==
+X-Gm-Message-State: ABuFfoiXCgOUC/HnWLXXtd/v5KA2ElrmjGCUDPwEb0p7ncvWPbxjpsZu
+        s2Zi+cE76MqeMIV47J5uh3MilNRhlCyWN1E1q4AvBQ==
+X-Google-Smtp-Source: ACcGV6328uFdurt/CtgB/BobXRDWlhQQE63OQCIVASqu0jjnBwwjMbrZ6DS/FXijWMKl7YITOWTi5mPiZ0rBA6fbjLE=
+X-Received: by 2002:a24:e187:: with SMTP id n129-v6mr4814836ith.47.1537802066274;
+ Mon, 24 Sep 2018 08:14:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921091308.GD24082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 08:14:05
+ -0700 (PDT)
+In-Reply-To: <cover.1537542735.git.andreyknvl@google.com>
+References: <cover.1537542735.git.andreyknvl@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 24 Sep 2018 17:14:05 +0200
+Message-ID: <CACT4Y+bvH7WXEgbTWYtzVt93E=fqW69iaXWOs6tVxD=x0vdNGQ@mail.gmail.com>
+Subject: Re: [PATCH v9 00/20] kasan: add software tag-based mode for arm64
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-Sep 11:13, Peter Zijlstra wrote:
-> On Mon, Sep 17, 2018 at 01:27:23PM +0100, Patrick Bellasi wrote:
-> > On 14-Sep 16:28, Peter Zijlstra wrote:
-> 
-> > > The thing is, the values you'd want to use are for example the capacity
-> > > of the little CPUs. or the capacity of the most energy efficient OPP
-> > > (the knee).
-> > 
-> > I don't think so.
-> > 
-> > On the knee topic, we had some thinking and on most platforms it seems
-> > to be a rather arbitrary decision.
-> > 
-> > On sane platforms, the Energy Efficiency (EE) is monotonically
-> > decreasing with frequency increase.  Maybe we can define a threshold
-> > for a "EE derivative ratio", but it will still be quite arbitrary.
-> > Moreover, it could be that in certain use-cases we want to push for
-> > higher energy efficiency (i.e. lower derivatives) then others.
-> 
-> I remember IBM-power folks asking for knee related features a number of
-> years ago (Dusseldorf IIRC) because after some point their chips start
-> to _really_ suck power. Sure, the curve is monotonic, but the perf/watt
-> takes a nose dive.
-> 
-> And given that: P = CfV^2, that seems like a fairly generic observation.
-> 
-> However, maybe, due to the very limited thermal capacity of these mobile
-> things, the issue doesn't really arrise in them.
+On Fri, Sep 21, 2018 at 5:13 PM, Andrey Konovalov <andreyknvl@google.com> w=
+rote:
+> This patchset adds a new software tag-based mode to KASAN [1].
+> (Initially this mode was called KHWASAN, but it got renamed,
+>  see the naming rationale at the end of this section).
 
-The curve is still following the equation above for mobile devices
-too and it's exactly by looking at that curve that's rather arbitrary
-to defined a knee point (more on that later)...
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 
-> Laptops with active cooling however...
-
-How do you see active cooling playing a role ?
-
-Are you thinking, for example, at reduced fan noise if we remain below
-a certain OPP ?
-
-Are you factoring fans power consumptions into the overall P consumption ?
-
-> > > Similarly for boosting, how are we 'easily' going to find the values
-> > > that correspond to the various available OPPs.
-> > 
-> > In our experience with SchedTune on Android, we found that we
-> > generally focus on a small set of representative use-cases and then
-> > run an exploration, by tuning the percentage of boost, to identify the
-> > optimal trade-off between Performance and Energy.
-> 
-> So you basically do an automated optimization for a benchmark?
-
-Not on one single benchmark, we consider a set of interesting
-use-cases. We mostly focus on:
-- interactivity: no jank frames while scrolling fast on list/views
-- power efficiency: on common video/audio playback scenarios
-
-The exploration of some optimization parameters can be automated.
-However, at the end there is always a rather arbitrary decision to
-take: you can be slightly more oriented towards interactive
-performance or energy efficient.
-
-Maybe (in the future) you can also see AI/ML, used from user-space, to
-figure out the fine tuning based on user's usage patterns for different
-apps... ;)
-
-> > The value you get could be something which do not match exactly an OPP
-> > but still, since we (will) bias not only OPP selection but also tasks
-> > placement, it's the one which makes most sense.
-> 
-> *groan*, so how exactly does that work? By limiting the task capacity,
-> we allow some stacking on the CPUs before we switch to regular
-> load-balancing?
-
-This is a big topic in itself, one of the reasons why we did not added
-it in this series. We will need dedicated discussions to figure out
-something reasonable.
-
-In principle, however, by capping the utilization of tasks and their
-CPUs we can aim at a way to remain in energy_aware mode, i.e. below
-the tipping point, and thus with load-balancing disabled.
-
-Utilization clamping can be used to bias the CPUs selection from the
-EA code paths. Other mechanisms, e.g. bandwidth control, can also be
-exploited to keep CPU utilization under control.
-
-> > Thus, the capacity of little CPUs, or the exact capacity of an OPP, is
-> > something we don't care to specify exactly, since:
-> > 
-> >  - schedutil will top the util request to the next frequency anyway
-> > 
-> >  - capacity by itself is a loosely defined metric, since it's usually
-> >    measured considering a specific kind of instructions mix, which
-> >    can be very different from the actual instruction mix (e.g. integer
-> >    vs floating point)
-> 
-> Sure, things like pure SIMD workloads can skew things pretty bad, but on
-> average it should not drastically change the overall shape of the curve
-> and the knee point should not move around a lot.
-
-There can be quite consistent skews based not just on instructions
-type but also "app phases", e.g. memory-vs-cpu bound.
-It's also true that's more likely a shift up/down in the capacity axis
-then a change in shape.
-
-However, I think my point here is that the actual capacity of each OPP
-can be very different wrt the one reported by the EM.
-
-> >  - certain platforms don't even expose OPPs, but just "performance
-> >    levels"... which ultimately are a "percentage"
-> 
-> Well, the whole capacity thing is a 'percentage', it's just that 1024 is
-> much nicer to work with (for computers) than 100 is (also it provides a
-> wee bit more resolution).
-
-Right, indeed in kernel-space we still use 1024 based values, we just
-convert them at the syscall interface...
-
-> But even the platforms with hidden OPPs (can) have knee points, and if
-> you measure their power to capacity curve you can place a workload
-> around the knee by capping capacity.
-
-... still it's difficult to give a precise definition of knee point,
-unless you know about platforms which have a sharp change in energy
-efficiency.
-
-The only cases we know about are those where:
-
-A) multiple frequencies uses the same voltage, e.g.
-
-
-     ^                                     *
-     | Energy                              O
-     | efficiency                         O+
-     |                                   O |
-     |                                 O*  |
-     |                              O**    |
-     |   O**                    O***       |
-     |   +  O**            O****           |
-     |   |     O**   O*****                |
-     |   |        O**                      |
-     |   |          +                      |
-     |   |  Same V  |   Increasing V       |
-     +---+----------+----------------------+----------->
-         |          |                      | Frequency
-         L          M                      H
-
-B) there is a big frequency gap between low frequency OPPs and high
-   frequency OPPs, e.g.
-
-                                       O
-    ^                                **+
-    | Energy                       **  |
-    | efficiency                 **    |
-    |                          **      |
-    |                        **        |
-    |                      **          |
-    |                    **            |
-    |                  **              |
-    |               O**                |
-    |        O******+                  |
-    |O*******       |                  |
-    |               |                  |
-    ++--------------+------------------+------>
-     |              |                  |  Frequency
-     L              M                  H
-
-
-In case A, all the OPPs left of M are dominated by M in terms
-of energy efficiency and normally they should be never used.
-Unless you are under thermal constraints and you still want to keep
-your code running even if at a lower rate and energy efficiency.
-At this point, however, you already invalidated all the OPPs right of
-M and, on the remaining, you still struggle do define the knee point.
-
-In case B... I'm wondering it such a conf even makes sense ;)
-Is there really some platform out there with such a "non homogeneously
-distributed" set of available frequencies ?
-
-> But yes, this gets trick real fast :/
-> 
-> >  - there are so many rounding errors around on utilization tracking
-> >    and it aggregation that being exact on an OPP if of "relative"
-> >    importance
-> 
-> I'm not sure I understand that argument; sure the measurement is subject
-> to 'issues', but if we hard clip the result, that will exactly match the
-> fixed points for OPP selection. Any issues on the measurement are lost
-> after clipping.
-
-My point is just that the clipping does not requires to be specified
-as the actual capacity of an OPP.
-
-If we give a "performance level" P then schedutil already knows how to
-translate it into an OPP, it will pick the min capacity OPP which
-capacity is greater then P.
-
-However, given the knee definition is anyway fuzzy, selecting either
-that OPP or the previous one, should almost always not make a big
-difference from a "knee" standpoint, isn't it ?
-
-> > Do you see specific use-cases where an exact OPP capacity is much
-> > better then a percentage value ?
-> 
-> If I don't have algorithmic optimization available, hand selecting an
-> OPP is the 'obvious' thing to do.
-
-Agree, but that's still possible by passing in a percentage value.
-
-> > Of course there can be scenarios in which wa want to clamp to a
-> > specific OPP. But still, why should it be difficult for a platform
-> > integrator to express it as a close enough percentage value ?
-> 
-> But why put him through the trouble of finding the capacity value in the
-> EAS exposed data, converting that to a percentage that will work and
-> then feeding it back in.
+> The plan is to implement HWASan [2] for the kernel with the incentive,
+> that it's going to have comparable to KASAN performance, but in the same
+> time consume much less memory, trading that off for somewhat imprecise
+> bug detection and being supported only for arm64.
 >
-> I don't see the point or benefit of percentages, there's nothing magical
-> about 1/100, _any_ other fraction works exactly the same.
-
-If you wanna pass in an exact capacity data, you still need to look at
-EAS exposed data, don't you?
-
-I think the main problem is picking the right capacity, more then
-converting it to a percentage.
-
-Once you got a capacity, let say 654, it's conversion to percentage is
-as simple as dropping the units, i.e. 654 ~= 65%, that's quite sure to
-pick the 654 capacity OPP anyway.
-
-
-> So why bother changing it around?
-
-For two main reasons:
-
-1) to expose userspace a more generic interface:
-   a "performance percentage" is more generic then a "capacity value"
-   while keep translating and using a 1024 based value in kernel space
-
-2) to reduce the configuration space:
-   it quite likely doesn't make sense to use, in the same system, 100
-   difference clamp values... it makes even more sense to use 1024
-   different clamp values, does it ?
-
-> > > The EAS thing might have these around; but I forgot if/how they're
-> > > exposed to userspace (I'll have to soon look at the latest posting).
-> > 
-> > The new "Energy Model Management" framework can certainly be use to
-> > get the list of OPPs for each frequency domain. IMO this could be
-> > used to identify the maximum number of clamp groups we can have.
-> > In this case, the discretization patch can translate a generic
-> > percentage clamp into the closest OPP capacity... 
-> > 
-> > ... but to me that's an internal detail which I'm not convinced we
-> > don't need to expose to user-space.
-> > 
-> > IMHO we should instead focus just on defining a usable and generic
-> > userspace interface. Then, platform specific tuning is something
-> > user-space can do, either offline or on-line.
-> 
-> The thing I worry about is how do we determine the value to put in in
-> the first place.
-
-I agree that's the main problem, but I also think that's outside of
-the kernel-space mechanism.
-
-Is not all that quite similar to DEADLINE tasks configuration?
-
-Given a DL task solving a certain issue, you can certainly define its
-deadline (or period) on a completely platform independent way, by just
-looking at the problem space. But when it comes to the run-time, we
-always have to profile the task in a platform specific way.
-
-In the DL case from user-space we figure out a bandwidth requirement.
-
-In the clamping case, it's still the user-space that needs to figure
-our an optimal clamp value, while considering your performance and
-energy efficiency goals. This can be based on an automated profiling
-process which comes up with "optimal" clamp values.
-
-In the DL case, we are perfectly fine to have a running time
-parameter, although we don't give any precise and deterministic
-formula to quantify it. It's up to user-space to figure out the
-required running time for a given app and platform.
-It's also not unrealistic the case you need to close a control loop
-with user-space to keep updating this requirement.
-
-Why the same cannot hold for clamp values ?
-
-> How are expecting people to determine what to put into the interface?
-> Knee points, little capacity, those things make 'obvious' sense.
-
-IMHO, they make "obvious" sense from a kernel-space perspective
-exactly because they are implementation details and platform specific
-concepts.
-
-At the same time, I struggle to provide a definition of knee point and
-I struggle to find a use-case where I can certainly say that a task
-should be clamped exactly to the little capacity for example.
-
-I'm more of the idea that the right clamp value is something a bit
-fuzzy and possibly subject to change over time depending on the
-specific application phase (e.g. cpu-vs-memory bounded) and/or
-optimization goals (e.g. performance vs energy efficiency).
-
-Here we are thus at defining and agree about a "generic and abstract"
-interface which allows user-space to feed input to kernel-space.
-To this purpose, I think platform specific details and/or internal
-implementation details are not "a bonus".
-
-> > > But changing the clamp metric to something different than these values
-> > > is going to be pain.
-> > 
-> > Maybe I don't completely get what you mean here... are you saying that
-> > not using exact capacity values to defined clamps is difficult ?
-> > If that's the case why? Can you elaborate with an example ?
-> 
-> I meant changing the unit around, 1/1024 is what we use throughout and
-> is what EAS is also exposing IIRC, so why make things complicated again
-> and use 1/100 (which is a shit fraction for computers).
-
-Internally, in kernel space, we use 1024 units. It's just the
-user-space interface that speaks percentages but, as soon as a
-percentage value is used to configure a clamp, it's translated into a
-[0..1024] range value.
-
-Is this not an acceptable compromise? We have a generic user-space
-interface and an effective/consistent kernel-space implementation.
-
-Cheers,
-Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+> The underlying ideas of the approach used by software tag-based KASAN are=
+:
+>
+> 1. By using the Top Byte Ignore (TBI) arm64 CPU feature, we can store
+>    pointer tags in the top byte of each kernel pointer.
+>
+> 2. Using shadow memory, we can store memory tags for each chunk of kernel
+>    memory.
+>
+> 3. On each memory allocation, we can generate a random tag, embed it into
+>    the returned pointer and set the memory tags that correspond to this
+>    chunk of memory to the same value.
+>
+> 4. By using compiler instrumentation, before each memory access we can ad=
+d
+>    a check that the pointer tag matches the tag of the memory that is bei=
+ng
+>    accessed.
+>
+> 5. On a tag mismatch we report an error.
+>
+> With this patchset the existing KASAN mode gets renamed to generic KASAN,
+> with the word "generic" meaning that the implementation can be supported
+> by any architecture as it is purely software.
+>
+> The new mode this patchset adds is called software tag-based KASAN. The
+> word "tag-based" refers to the fact that this mode uses tags embedded int=
+o
+> the top byte of kernel pointers and the TBI arm64 CPU feature that allows
+> to dereference such pointers. The word "software" here means that shadow
+> memory manipulation and tag checking on pointer dereference is done in
+> software. As it is the only tag-based implementation right now, "software
+> tag-based" KASAN is sometimes referred to as simply "tag-based" in this
+> patchset.
+>
+> A potential expansion of this mode is a hardware tag-based mode, which wo=
+uld
+> use hardware memory tagging support (announced by Arm [3]) instead of
+> compiler instrumentation and manual shadow memory manipulation.
+>
+> Same as generic KASAN, software tag-based KASAN is strictly a debugging
+> feature.
+>
+> [1] https://www.kernel.org/doc/html/latest/dev-tools/kasan.html
+>
+> [2] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.htm=
+l
+>
+> [3] https://community.arm.com/processors/b/blog/posts/arm-a-profile-archi=
+tecture-2018-developments-armv85a
+>
+>
+> =3D=3D=3D=3D=3D=3D Rationale
+>
+> On mobile devices generic KASAN's memory usage is significant problem. On=
+e
+> of the main reasons to have tag-based KASAN is to be able to perform a
+> similar set of checks as the generic one does, but with lower memory
+> requirements.
+>
+> Comment from Vishwath Mohan <vishwath@google.com>:
+>
+> I don't have data on-hand, but anecdotally both ASAN and KASAN have prove=
+n
+> problematic to enable for environments that don't tolerate the increased
+> memory pressure well. This includes,
+> (a) Low-memory form factors - Wear, TV, Things, lower-tier phones like Go=
+,
+> (c) Connected components like Pixel's visual core [1].
+>
+> These are both places I'd love to have a low(er) memory footprint option =
+at
+> my disposal.
+>
+> Comment from Evgenii Stepanov <eugenis@google.com>:
+>
+> Looking at a live Android device under load, slab (according to
+> /proc/meminfo) + kernel stack take 8-10% available RAM (~350MB). KASAN's
+> overhead of 2x - 3x on top of it is not insignificant.
+>
+> Not having this overhead enables near-production use - ex. running
+> KASAN/KHWASAN kernel on a personal, daily-use device to catch bugs that d=
+o
+> not reproduce in test configuration. These are the ones that often cost
+> the most engineering time to track down.
+>
+> CPU overhead is bad, but generally tolerable. RAM is critical, in our
+> experience. Once it gets low enough, OOM-killer makes your life miserable=
+.
+>
+> [1] https://www.blog.google/products/pixel/pixel-visual-core-image-proces=
+sing-and-machine-learning-pixel-2/
+>
+>
+> =3D=3D=3D=3D=3D=3D Technical details
+>
+> Software tag-based KASAN mode is implemented in a very similar way to the
+> generic one. This patchset essentially does the following:
+>
+> 1. TCR_TBI1 is set to enable Top Byte Ignore.
+>
+> 2. Shadow memory is used (with a different scale, 1:16, so each shadow
+>    byte corresponds to 16 bytes of kernel memory) to store memory tags.
+>
+> 3. All slab objects are aligned to shadow scale, which is 16 bytes.
+>
+> 4. All pointers returned from the slab allocator are tagged with a random
+>    tag and the corresponding shadow memory is poisoned with the same valu=
+e.
+>
+> 5. Compiler instrumentation is used to insert tag checks. Either by
+>    calling callbacks or by inlining them (CONFIG_KASAN_OUTLINE and
+>    CONFIG_KASAN_INLINE flags are reused).
+>
+> 6. When a tag mismatch is detected in callback instrumentation mode
+>    KASAN simply prints a bug report. In case of inline instrumentation,
+>    clang inserts a brk instruction, and KASAN has it's own brk handler,
+>    which reports the bug.
+>
+> 7. The memory in between slab objects is marked with a reserved tag, and
+>    acts as a redzone.
+>
+> 8. When a slab object is freed it's marked with a reserved tag.
+>
+> Bug detection is imprecise for two reasons:
+>
+> 1. We won't catch some small out-of-bounds accesses, that fall into the
+>    same shadow cell, as the last byte of a slab object.
+>
+> 2. We only have 1 byte to store tags, which means we have a 1/256
+>    probability of a tag match for an incorrect access (actually even
+>    slightly less due to reserved tag values).
+>
+> Despite that there's a particular type of bugs that tag-based KASAN can
+> detect compared to generic KASAN: use-after-free after the object has bee=
+n
+> allocated by someone else.
+>
+>
+> =3D=3D=3D=3D=3D=3D Testing
+>
+> Some kernel developers voiced a concern that changing the top byte of
+> kernel pointers may lead to subtle bugs that are difficult to discover.
+> To address this concern deliberate testing has been performed.
+>
+> It doesn't seem feasible to do some kind of static checking to find
+> potential issues with pointer tagging, so a dynamic approach was taken.
+> All pointer comparisons/subtractions have been instrumented in an LLVM
+> compiler pass and a kernel module that would print a bug report whenever
+> two pointers with different tags are being compared/subtracted (ignoring
+> comparisons with NULL pointers and with pointers obtained by casting an
+> error code to a pointer type) has been used. Then the kernel has been
+> booted in QEMU and on an Odroid C2 board and syzkaller has been run.
+>
+> This yielded the following results.
+>
+> The two places that look interesting are:
+>
+> is_vmalloc_addr in include/linux/mm.h
+> is_kernel_rodata in mm/util.c
+>
+> Here we compare a pointer with some fixed untagged values to make sure
+> that the pointer lies in a particular part of the kernel address space.
+> Since tag-based KASAN doesn't add tags to pointers that belong to rodata
+> or vmalloc regions, this should work as is. To make sure debug checks to
+> those two functions that check that the result doesn't change whether
+> we operate on pointers with or without untagging has been added.
+>
+> A few other cases that don't look that interesting:
+>
+> Comparing pointers to achieve unique sorting order of pointee objects
+> (e.g. sorting locks addresses before performing a double lock):
+>
+> tty_ldisc_lock_pair_timeout in drivers/tty/tty_ldisc.c
+> pipe_double_lock in fs/pipe.c
+> unix_state_double_lock in net/unix/af_unix.c
+> lock_two_nondirectories in fs/inode.c
+> mutex_lock_double in kernel/events/core.c
+>
+> ep_cmp_ffd in fs/eventpoll.c
+> fsnotify_compare_groups fs/notify/mark.c
+>
+> Nothing needs to be done here, since the tags embedded into pointers
+> don't change, so the sorting order would still be unique.
+>
+> Checks that a pointer belongs to some particular allocation:
+>
+> is_sibling_entry in lib/radix-tree.c
+> object_is_on_stack in include/linux/sched/task_stack.h
+>
+> Nothing needs to be done here either, since two pointers can only belong
+> to the same allocation if they have the same tag.
+>
+> Overall, since the kernel boots and works, there are no critical bugs.
+> As for the rest, the traditional kernel testing way (use until fails) is
+> the only one that looks feasible.
+>
+> Another point here is that tag-based KASAN is available under a separate
+> config option that needs to be deliberately enabled. Even though it might
+> be used in a "near-production" environment to find bugs that are not foun=
+d
+> during fuzzing or running tests, it is still a debug tool.
+>
+>
+> =3D=3D=3D=3D=3D=3D Benchmarks
+>
+> The following numbers were collected on Odroid C2 board. Both generic and
+> tag-based KASAN were used in inline instrumentation mode.
+>
+> Boot time [1]:
+> * ~1.7 sec for clean kernel
+> * ~5.0 sec for generic KASAN
+> * ~5.0 sec for tag-based KASAN
+>
+> Network performance [2]:
+> * 8.33 Gbits/sec for clean kernel
+> * 3.17 Gbits/sec for generic KASAN
+> * 2.85 Gbits/sec for tag-based KASAN
+>
+> Slab memory usage after boot [3]:
+> * ~40 kb for clean kernel
+> * ~105 kb (~260% overhead) for generic KASAN
+> * ~47 kb (~20% overhead) for tag-based KASAN
+>
+> KASAN memory overhead consists of three main parts:
+> 1. Increased slab memory usage due to redzones.
+> 2. Shadow memory (the whole reserved once during boot).
+> 3. Quaratine (grows gradually until some preset limit; the more the limit=
+,
+>    the more the chance to detect a use-after-free).
+>
+> Comparing tag-based vs generic KASAN for each of these points:
+> 1. 20% vs 260% overhead.
+> 2. 1/16th vs 1/8th of physical memory.
+> 3. Tag-based KASAN doesn't require quarantine.
+>
+> [1] Time before the ext4 driver is initialized.
+> [2] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
+> [3] Measured as `cat /proc/meminfo | grep Slab`.
+>
+>
+> =3D=3D=3D=3D=3D=3D Some notes
+>
+> A few notes:
+>
+> 1. The patchset can be found here:
+>    https://github.com/xairy/kasan-prototype/tree/khwasan
+>
+> 2. Building requires a recent Clang version (7.0.0 or later).
+>
+> 3. Stack instrumentation is not supported yet and will be added later.
+>
+>
+> =3D=3D=3D=3D=3D=3D Changes
+>
+> Changes in v9:
+> - Fixed kasan_init_slab_obj() hook when KASAN is disabled.
+> - Added assign_tag() function that preassigns tags for caches with
+>   constructors.
+> - Fixed KASAN_TAG_MASK redefinition in include/linux/mm.h vs
+>   mm/kasan/kasan.h.
+>
+> Changes in v8:
+> - Rebased onto 7876320f (4.19-rc4).
+> - Renamed KHWASAN to software tag-based KASAN (see the top of the cover
+>   letter for details).
+> - Explicitly called tag-based KASAN a debug tool.
+> - Reused kasan_init_slab_obj() callback to preassign tags to caches
+>   without constructors, remove khwasan_preset_sl(u/a)b_tag().
+> - Moved move obj_to_index to include/linux/slab_def.h from mm/slab.c.
+> - Moved cache->s_mem untagging to alloc_slabmgmt() for SLAB.
+> - Fixed check_memory_region() to correctly handle user memory accesses an=
+d
+>   size =3D=3D 0 case.
+> - Merged __no_sanitize_hwaddress into __no_sanitize_address.
+> - Defined KASAN_SET_TAG and KASAN_RESET_TAG macros for non KASAN builds t=
+o
+>   avoid duplication of __kimg_to_phys, _virt_addr_is_linear and
+>   page_to_virt macros.
+> - Fixed and simplified find_first_bad_addr for generic KASAN.
+> - Use non symbolized example KASAN report in documentation.
+> - Mention clang version requirements for both KASAN modes in the Kconfig
+>   options and in the documentation.
+> - Various small fixes.
+>
+> Version v7 got accidentally skipped.
+>
+> Changes in v6:
+> - Rebased onto 050cdc6c (4.19-rc1+).
+> - Added notes regarding patchset testing into the cover letter.
+>
+> Changes in v5:
+> - Rebased onto 1ffaddd029 (4.18-rc8).
+> - Preassign tags for objects from caches with constructors and
+>   SLAB_TYPESAFE_BY_RCU caches.
+> - Fix SLAB allocator support by untagging page->s_mem in
+>   kasan_poison_slab().
+> - Performed dynamic testing to find potential places where pointer taggin=
+g
+>   might result in bugs [1].
+> - Clarified and fixed memory usage benchmarks in the cover letter.
+> - Added a rationale for having KHWASAN to the cover letter.
+>
+> Changes in v4:
+> - Fixed SPDX comment style in mm/kasan/kasan.h.
+> - Fixed mm/kasan/kasan.h changes being included in a wrong patch.
+> - Swapped "khwasan, arm64: fix up fault handling logic" and "khwasan: add
+>   tag related helper functions" patches order.
+> - Rebased onto 6f0d349d (4.18-rc2+).
+>
+> Changes in v3:
+> - Minor documentation fixes.
+> - Fixed CFLAGS variable name in KASAN makefile.
+> - Added a "SPDX-License-Identifier: GPL-2.0" line to all source files
+>   under mm/kasan.
+> - Rebased onto 81e97f013 (4.18-rc1+).
+>
+> Changes in v2:
+> - Changed kmalloc_large_node_hook to return tagged pointer instead of
+>   using an output argument.
+> - Fix checking whether -fsanitize=3Dhwaddress is supported by the compile=
+r.
+> - Removed duplication of -fno-builtin for KASAN and KHWASAN.
+> - Removed {} block for one line for_each_possible_cpu loop.
+> - Made set_track() static inline as it is used only in common.c.
+> - Moved optimal_redzone() to common.c.
+> - Fixed using tagged pointer for shadow calculation in
+>   kasan_unpoison_shadow().
+> - Restored setting cache->align in kasan_cache_create(), which was
+>   accidentally lost.
+> - Simplified __kasan_slab_free(), kasan_alloc_pages() and kasan_kmalloc()=
+.
+> - Removed tagging from kasan_kmalloc_large().
+> - Added page_kasan_tag_reset() to kasan_poison_slab() and removed
+>   !PageSlab() check from page_to_virt.
+> - Reset pointer tag in _virt_addr_is_linear.
+> - Set page tag for each page when multiple pages are allocated or freed.
+> - Added a comment as to why we ignore cma allocated pages.
+>
+> Changes in v1:
+> - Rebased onto 4.17-rc4.
+> - Updated benchmarking stats.
+> - Documented compiler version requirements, memory usage and slowdown.
+> - Dropped kvm patches, as clang + arm64 + kvm is completely broken [1].
+>
+> Changes in RFC v3:
+> - Renamed CONFIG_KASAN_CLASSIC and CONFIG_KASAN_TAGS to
+>   CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW respectively.
+> - Switch to -fsanitize=3Dkernel-hwaddress instead of -fsanitize=3Dhwaddre=
+ss.
+> - Removed unnecessary excessive shadow initialization.
+> - Removed khwasan_enabled flag (it=E2=80=99s not needed since KHWASAN is
+>   initialized before any slab caches are used).
+> - Split out kasan_report.c and khwasan_report.c from report.c.
+> - Moved more common KASAN and KHWASAN functions to common.c.
+> - Added tagging to pagealloc.
+> - Rebased onto 4.17-rc1.
+> - Temporarily dropped patch that adds kvm support (arm64 + kvm + clang
+>   combo is broken right now [2]).
+>
+> Changes in RFC v2:
+> - Removed explicit casts to u8 * for kasan_mem_to_shadow() calls.
+> - Introduced KASAN_TCR_FLAGS for setting the TCR_TBI1 flag.
+> - Added a comment regarding the non-atomic RMW sequence in
+>   khwasan_random_tag().
+> - Made all tag related functions accept const void *.
+> - Untagged pointers in __kimg_to_phys, which is used by virt_to_phys.
+> - Untagged pointers in show_ptr in fault handling logic.
+> - Untagged pointers passed to KVM.
+> - Added two reserved tag values: 0xFF and 0xFE.
+> - Used the reserved tag 0xFF to disable validity checking (to resolve the
+>   issue with pointer tag being lost after page_address + kmap usage).
+> - Used the reserved tag 0xFE to mark redzones and freed objects.
+> - Added mnemonics for esr manipulation in KHWASAN brk handler.
+> - Added a comment about the -recover flag.
+> - Some minor cleanups and fixes.
+> - Rebased onto 3215b9d5 (4.16-rc6+).
+> - Tested on real hardware (Odroid C2 board).
+> - Added better benchmarks.
+>
+> [1] https://lkml.org/lkml/2018/7/18/765
+> [2] https://lkml.org/lkml/2018/4/19/775
+>
+> Andrey Konovalov (20):
+>   kasan, mm: change hooks signatures
+>   kasan: move common generic and tag-based code to common.c
+>   kasan: rename source files to reflect the new naming scheme
+>   kasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_SW_TAGS
+>   kasan, arm64: adjust shadow size for tag-based mode
+>   kasan: initialize shadow to 0xff for tag-based mode
+>   kasan, arm64: untag address in __kimg_to_phys and _virt_addr_is_linear
+>   kasan: add tag related helper functions
+>   kasan: preassign tags to objects with ctors or SLAB_TYPESAFE_BY_RCU
+>   mm: move obj_to_index to include/linux/slab_def.h
+>   kasan, arm64: fix up fault handling logic
+>   kasan, arm64: enable top byte ignore for the kernel
+>   kasan, mm: perform untagged pointers comparison in krealloc
+>   kasan: split out generic_report.c from report.c
+>   kasan: add bug reporting routines for tag-based mode
+>   kasan: add hooks implementation for tag-based mode
+>   kasan, arm64: add brk handler for inline instrumentation
+>   kasan, mm, arm64: tag non slab memory allocated via pagealloc
+>   kasan: update documentation
+>   kasan: add SPDX-License-Identifier mark to source files
+>
+>  Documentation/dev-tools/kasan.rst      | 232 +++++----
+>  arch/arm64/Kconfig                     |   1 +
+>  arch/arm64/Makefile                    |   2 +-
+>  arch/arm64/include/asm/brk-imm.h       |   2 +
+>  arch/arm64/include/asm/memory.h        |  36 +-
+>  arch/arm64/include/asm/pgtable-hwdef.h |   1 +
+>  arch/arm64/kernel/traps.c              |  68 ++-
+>  arch/arm64/mm/fault.c                  |   3 +
+>  arch/arm64/mm/kasan_init.c             |  18 +-
+>  arch/arm64/mm/proc.S                   |   8 +-
+>  include/linux/compiler-clang.h         |   5 +-
+>  include/linux/kasan.h                  |  83 +++-
+>  include/linux/mm.h                     |  29 ++
+>  include/linux/page-flags-layout.h      |  10 +
+>  include/linux/slab_def.h               |  13 +
+>  lib/Kconfig.kasan                      |  87 +++-
+>  mm/cma.c                               |  11 +
+>  mm/kasan/Makefile                      |  15 +-
+>  mm/kasan/{kasan.c =3D> common.c}         | 651 +++++++++----------------
+>  mm/kasan/generic.c                     | 344 +++++++++++++
+>  mm/kasan/generic_report.c              | 153 ++++++
+>  mm/kasan/{kasan_init.c =3D> init.c}      |   1 +
+>  mm/kasan/kasan.h                       |  83 +++-
+>  mm/kasan/quarantine.c                  |   1 +
+>  mm/kasan/report.c                      | 272 +++--------
+>  mm/kasan/tags.c                        | 161 ++++++
+>  mm/kasan/tags_report.c                 |  58 +++
+>  mm/page_alloc.c                        |   1 +
+>  mm/slab.c                              |  29 +-
+>  mm/slab.h                              |   2 +-
+>  mm/slab_common.c                       |   6 +-
+>  mm/slub.c                              |  41 +-
+>  scripts/Makefile.kasan                 |  27 +-
+>  33 files changed, 1629 insertions(+), 825 deletions(-)
+>  rename mm/kasan/{kasan.c =3D> common.c} (59%)
+>  create mode 100644 mm/kasan/generic.c
+>  create mode 100644 mm/kasan/generic_report.c
+>  rename mm/kasan/{kasan_init.c =3D> init.c} (99%)
+>  create mode 100644 mm/kasan/tags.c
+>  create mode 100644 mm/kasan/tags_report.c
+>
+> --
+> 2.19.0.444.g18242da7ef-goog
+>
