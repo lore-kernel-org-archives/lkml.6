@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC39ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7374ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D486121486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D486121486
+	by mail.kernel.org (Postfix) with ESMTP id 770E3214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:39:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770E3214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbeIXRk6 (ORCPT
+        id S1729246AbeIXRlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:40:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50576 "EHLO
+        Mon, 24 Sep 2018 13:41:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50586 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbeIXRk5 (ORCPT
+        with ESMTP id S1726074AbeIXRlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:40:57 -0400
+        Mon, 24 Sep 2018 13:41:01 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4DB8C106F;
-        Mon, 24 Sep 2018 11:39:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A212106F;
+        Mon, 24 Sep 2018 11:39:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 049/105] Bluetooth: hidp: Fix handling of strncpy for hid->name information
-Date:   Mon, 24 Sep 2018 13:33:35 +0200
-Message-Id: <20180924113118.752994106@linuxfoundation.org>
+        stable@vger.kernel.org, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 3.18 032/105] ASoC: wm8994: Fix missing break in switch
+Date:   Mon, 24 Sep 2018 13:33:18 +0200
+Message-Id: <20180924113117.037911783@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -52,45 +53,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit b3cadaa485f0c20add1644a5c877b0765b285c0c ]
+commit ad0eaee6195db1db1749dd46b9e6f4466793d178 upstream.
 
-This fixes two issues with setting hid->name information.
+Add missing break statement in order to prevent the code from falling
+through to the default case.
 
-  CC      net/bluetooth/hidp/core.o
-In function ‘hidp_setup_hid’,
-    inlined from ‘hidp_session_dev_init’ at net/bluetooth/hidp/core.c:815:9,
-    inlined from ‘hidp_session_new’ at net/bluetooth/hidp/core.c:953:8,
-    inlined from ‘hidp_connection_add’ at net/bluetooth/hidp/core.c:1366:8:
-net/bluetooth/hidp/core.c:778:2: warning: ‘strncpy’ output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
-  strncpy(hid->name, req->name, sizeof(req->name) - 1);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  CC      net/bluetooth/hidp/core.o
-net/bluetooth/hidp/core.c: In function ‘hidp_setup_hid’:
-net/bluetooth/hidp/core.c:778:38: warning: argument to ‘sizeof’ in ‘strncpy’ call is the same expression as the source; did you mean to use the size of the destination? [-Wsizeof-pointer-memaccess]
-  strncpy(hid->name, req->name, sizeof(req->name));
-                                      ^
-
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Addresses-Coverity-ID: 115050 ("Missing break in switch")
+Reported-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+[Gustavo: Backported to 3.16..4.18 - Remove code comment removal]
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bluetooth/hidp/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/wm8994.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/bluetooth/hidp/core.c
-+++ b/net/bluetooth/hidp/core.c
-@@ -763,7 +763,7 @@ static int hidp_setup_hid(struct hidp_se
- 	hid->version = req->version;
- 	hid->country = req->country;
+--- a/sound/soc/codecs/wm8994.c
++++ b/sound/soc/codecs/wm8994.c
+@@ -2427,6 +2427,7 @@ static int wm8994_set_dai_sysclk(struct
+ 			snd_soc_update_bits(codec, WM8994_POWER_MANAGEMENT_2,
+ 					    WM8994_OPCLK_ENA, 0);
+ 		}
++		break;
  
--	strncpy(hid->name, req->name, sizeof(req->name) - 1);
-+	strncpy(hid->name, req->name, sizeof(hid->name));
- 
- 	snprintf(hid->phys, sizeof(hid->phys), "%pMR",
- 		 &l2cap_pi(session->ctrl_sock->sk)->chan->src);
+ 	default:
+ 		return -EINVAL;
 
 
