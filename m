@@ -2,242 +2,257 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D79C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A594C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53FD320874
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07D492086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:39:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="EW2f8KCy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FD320874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="otRFGpEG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07D492086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbeIXPjK (ORCPT
+        id S1728496AbeIXPkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:39:10 -0400
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:48270 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeIXPjK (ORCPT
+        Mon, 24 Sep 2018 11:40:42 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54955 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbeIXPkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:39:10 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 403D724E279F;
-        Mon, 24 Sep 2018 02:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1537781879; bh=fR69evbYKY0nRx0VbdFWLBNuh8q+8tcQCM1+NanWHW0=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=EW2f8KCy71osIAozzpH6IdFuPMIOahpqK2OC/PKbji/xz5h1mrsQq6o36DTSSChwz
-         SPtY0zv9J3bPRMFPfnqFK+fonwI3MVsyKoiPnLNKFI0MqAL44PNITRS1qz+xfvWbqK
-         WkFyo1DIo/+cu9XAbOyoVKfEPMrswI6K68xUad3DrAeDub6FDic/QHQdWppbocUJzx
-         vWqDOKbiB1CFXxPrNgk5gCUoOnJQPtgUR3iyBq2UadBMqu4u+RcHUZSggOXRDUEqp1
-         AE6iNW3PQBERJ8FXn2tM12Mh1W42zRIza3oe4fcWbYBh0XghRijDM+oXRacRQn6OrL
-         7pxIKK0LaVw/Q==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 0813538FF;
-        Mon, 24 Sep 2018 02:37:59 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 24 Sep 2018 02:37:58 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 24 Sep 2018 11:37:55 +0200
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] GPIO: add single-register GPIO via CREG driver
-Thread-Topic: [PATCH v3 1/2] GPIO: add single-register GPIO via CREG driver
-Thread-Index: AQHUSeF2AhBDAki6uU2QgGmRDh989KT/Hz8A
-Date:   Mon, 24 Sep 2018 09:37:55 +0000
-Message-ID: <1537781874.4902.1.camel@synopsys.com>
-References: <20180911150925.19460-1-Eugeniy.Paltsev@synopsys.com>
-         <20180911150925.19460-2-Eugeniy.Paltsev@synopsys.com>
-In-Reply-To: <20180911150925.19460-2-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.38]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D089940FCCE3E043ADE895226096CDFA@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Mon, 24 Sep 2018 11:40:42 -0400
+Received: by mail-it1-f195.google.com with SMTP id f14-v6so9645544ita.4
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 02:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rXSy+f/xFrIW3UekOR/sM4aOb0HGFwzohHwzU029xC0=;
+        b=otRFGpEGX1N0EQTG0XhhtPUtFNf3Hecq0RtQAKkm61avoNDsKhdhCfV3INsqfjyB8k
+         5nqhLa4Iw3QmelD2mp581c5tBv4tOgvndfTCLymo0TM1XkdRBWEoMXMXMWXaTARkZnsw
+         wlZ5cZIU3b2fw7g2NtpeIUlsYZ95T1yH/R/9Q6lZw67U+hSColwvzl5tjcnkQvrlqcFR
+         qqKR/31MO2DwFcloFTA0TppVIjiTELCVBTEDmi2xJQI3lVgKu8Z6v26M2qQQof9n3qwr
+         FYHtSt1bY4XTphRe6dSlcV7TM/443gM1krKJEwt0ax0xclWl0BgfTkmqbc0/TPaChfH2
+         yh4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rXSy+f/xFrIW3UekOR/sM4aOb0HGFwzohHwzU029xC0=;
+        b=K8PBt+SBzcndCry6Tj60eBaOiwiac7ezvpwjt59/1nh45+EYd+eXYfVADF4c5mWHgG
+         lzyWzeZW+ZtL1qWbmRogxIxG3tPzhbp2yY3kd5humbrGlNDCgz9CDo+NOTKdcAT8QPxW
+         cfIab1jYo4114Jpz99wi1H1Ya0MjO7Z4yUEHUxxw9kB4BdouVHlnUg5qXO0+9ch12Wxl
+         2QNFImUSiZlNBY+OT4W9LwNlLR63goYlZMczy9DAAbcGQgMva65csrRAusY9j50zcmZw
+         He8eyXoM/3IPoK/JdLw4CvsAgIKxcPqwN99dqx84fz2a5XxJAlrLTwEUxo7EW1vYgk4g
+         QU+A==
+X-Gm-Message-State: APzg51DneqE0zTw+s5Y4vtjG7gbHTwqGnlSwaPtc+n0J4IKT/Qix2U/G
+        eG2PKR6aY93iJViWkXZCKjR0+UwJQ4Nz0bI5Pm9DMQ==
+X-Google-Smtp-Source: ANB0VdY+hFtb3mxtyw80c0Ub5DlN4mERgA+Dz2DcEC1g2oLLan5/2YSt/jCJEoQh5aBg00Efu1VNAdyiFCQiPFv/gOw=
+X-Received: by 2002:a02:4009:: with SMTP id n9-v6mr8752678jaa.19.1537781969376;
+ Mon, 24 Sep 2018 02:39:29 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a02:ab8c:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 02:39:08
+ -0700 (PDT)
+In-Reply-To: <CAG_fn=WwmJONmipmqdZkNj8K0Z-ZRmEiCvG4qt_fHknGYQe5Cg@mail.gmail.com>
+References: <000000000000565ab805768bf006@google.com> <125732064.15444205.1537718529926.JavaMail.zimbra@redhat.com>
+ <CACT4Y+Z1G_QMG_PQu_ZwHsyhwyh_DBOG4mX9n=va08w3Z7j02Q@mail.gmail.com>
+ <1040580049.15456466.1537740558279.JavaMail.zimbra@redhat.com> <CAG_fn=WwmJONmipmqdZkNj8K0Z-ZRmEiCvG4qt_fHknGYQe5Cg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 24 Sep 2018 11:39:08 +0200
+Message-ID: <CACT4Y+a8_4=dmZavdmZjPOraqYAtjBB228TjurbwLKSgJ9+J7Q@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in memcmp (2)
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Vladis Dronov <vdronov@redhat.com>,
+        syzbot <syzbot+d3402c47f680ff24b29c@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        sunlianwen <sunlw.fnst@cn.fujitsu.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGludXMsDQoNCk1heWJlIHlvdSBoYXZlIGFueSBjb21tZW50cyBvciByZW1hcmtzIGFib3V0
-IHRoaXMgcGF0Y2g/IEFuZCBpZiB5b3UgZG9uJ3QgY291bGQgeW91IHBsZWFzZSBhcHBseSBpdC4N
-ClRoYW5rcyENCg0KT24gVHVlLCAyMDE4LTA5LTExIGF0IDE4OjA5ICswMzAwLCBFdWdlbml5IFBh
-bHRzZXYgd3JvdGU6DQo+IEFkZCBzaW5nbGUtcmVnaXN0ZXIgTU1JTyBHUElPIGRyaXZlciBmb3Ig
-Y29tcGxleCBjYXNlcyB3aGVyZQ0KPiBvbmx5IHNldmVyYWwgZmllbGRzIGluIHJlZ2lzdGVyIGJl
-bG9uZyB0byBHUElPIGxpbmVzIGFuZCBlYWNoIEdQSU8NCj4gbGluZSBvd25zIGEgZmllbGQgd2l0
-aCBkaWZmZXJlbnQgbGVuZ3RoIGFuZCBvbi9vZmYgdmFsdWUuDQo+IA0KPiBTdWNoIENSRUcgR1BJ
-T3MgYXJlIHVzZWQgaW4gU3lub3BzeXMgQVhTMTB4IGFuZCBIU0RLIGJvYXJkcy4NCj4gDQo+IFNp
-Z25lZC1vZmYtYnk6IEV1Z2VuaXkgUGFsdHNldiA8RXVnZW5peS5QYWx0c2V2QHN5bm9wc3lzLmNv
-bT4NCj4gLS0tDQo+IENoYW5nZXMgdjItPnYzOg0KPiAgKiBNb3ZlIHBhcmFtZXRlcnMgaW50byBh
-IGxvb2t1cCB0YWJsZSBpbnN0ZWFkIG9mIGRldmljZSB0cmVlLg0KPiAgKiBVc2UgdGhlIG5ncGlv
-cyBhdHRyaWJ1dGUgZm9yIGluc3RlYWQgb2Ygc25wcyxuZ3Bpb3MuDQo+IA0KPiAgTUFJTlRBSU5F
-UlMgICAgICAgICAgICAgICAgICAgfCAgIDYgKysNCj4gIGRyaXZlcnMvZ3Bpby9LY29uZmlnICAg
-ICAgICAgIHwgIDEwICsrDQo+ICBkcml2ZXJzL2dwaW8vTWFrZWZpbGUgICAgICAgICB8ICAgMSAr
-DQo+ICBkcml2ZXJzL2dwaW8vZ3Bpby1jcmVnLXNucHMuYyB8IDIxMiArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIDQgZmlsZXMgY2hhbmdlZCwgMjI5IGluc2Vy
-dGlvbnMoKykNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwaW8vZ3Bpby1jcmVnLXNu
-cHMuYw0KPiANCj4gZGlmZiAtLWdpdCBhL01BSU5UQUlORVJTIGIvTUFJTlRBSU5FUlMNCj4gaW5k
-ZXggNTQ0Y2FjODI5Y2Y0Li5lNzMxZjJmOTY0OGEgMTAwNjQ0DQo+IC0tLSBhL01BSU5UQUlORVJT
-DQo+ICsrKyBiL01BSU5UQUlORVJTDQo+IEBAIC0xMzczNCw2ICsxMzczNCwxMiBAQCBTOglTdXBw
-b3J0ZWQNCj4gIEY6CWRyaXZlcnMvcmVzZXQvcmVzZXQtYXhzMTB4LmMNCj4gIEY6CURvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZXNldC9zbnBzLGF4czEweC1yZXNldC50eHQNCj4g
-IA0KPiArU1lOT1BTWVMgQ1JFRyBHUElPIERSSVZFUg0KPiArTToJRXVnZW5peSBQYWx0c2V2IDxF
-dWdlbml5LlBhbHRzZXZAc3lub3BzeXMuY29tPg0KPiArUzoJTWFpbnRhaW5lZA0KPiArRjoJZHJp
-dmVycy9ncGlvL2dwaW8tY3JlZy1zbnBzLmMNCj4gK0Y6CURvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9ncGlvL3NucHMsY3JlZy1ncGlvLnR4dA0KPiArDQo+ICBTWU5PUFNZUyBERVNJ
-R05XQVJFIDgyNTAgVUFSVCBEUklWRVINCj4gIFI6CUFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNo
-ZXZjaGVua29AbGludXguaW50ZWwuY29tPg0KPiAgUzoJTWFpbnRhaW5lZA0KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncGlvL0tjb25maWcgYi9kcml2ZXJzL2dwaW8vS2NvbmZpZw0KPiBpbmRleCA3
-MWMwYWI0NmYyMTYuLjc4MTU1YWMyMmIwYyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncGlvL0tj
-b25maWcNCj4gKysrIGIvZHJpdmVycy9ncGlvL0tjb25maWcNCj4gQEAgLTQzMCw2ICs0MzAsMTYg
-QEAgY29uZmlnIEdQSU9fUkVHDQo+ICAJICBBIDMyLWJpdCBzaW5nbGUgcmVnaXN0ZXIgR1BJTyBm
-aXhlZCBpbi9vdXQgaW1wbGVtZW50YXRpb24uICBUaGlzDQo+ICAJICBjYW4gYmUgdXNlZCB0byBy
-ZXByZXNlbnQgYW55IHJlZ2lzdGVyIGFzIGEgc2V0IG9mIEdQSU8gc2lnbmFscy4NCj4gIA0KPiAr
-Y29uZmlnIEdQSU9fU05QU19DUkVHDQo+ICsJYm9vbCAiU3lub3BzeXMgR1BJTyB2aWEgQ1JFRyAo
-Q29udHJvbCBSRUdpc3RlcnMpIGRyaXZlciINCj4gKwlkZXBlbmRzIG9uIEFSQyB8fCBDT01QSUxF
-X1RFU1QNCj4gKwlzZWxlY3QgT0ZfR1BJTw0KPiArCWhlbHANCj4gKwkgIFRoaXMgZHJpdmVyIHN1
-cHBvcnRzIEdQSU9zIHZpYSBDUkVHIG9uIHZhcmlvdXMgU3lub3BzeXMgU29Dcy4NCj4gKwkgIFRo
-aXMgaXMgYSBzaW5nbGUtcmVnaXN0ZXIgTU1JTyBHUElPIGRyaXZlciBmb3IgY29tcGxleCBjYXNl
-cw0KPiArCSAgd2hlcmUgb25seSBzZXZlcmFsIGZpZWxkcyBpbiByZWdpc3RlciBiZWxvbmcgdG8g
-R1BJTyBsaW5lcyBhbmQNCj4gKwkgIGVhY2ggR1BJTyBsaW5lIG93bnMgYSBmaWVsZCB3aXRoIGRp
-ZmZlcmVudCBsZW5ndGggYW5kIG9uL29mZiB2YWx1ZS4NCj4gKw0KPiAgY29uZmlnIEdQSU9fU1BF
-QVJfU1BJQ1MNCj4gIAlib29sICJTVCBTUEVBcjEzeHggU1BJIENoaXAgU2VsZWN0IGFzIEdQSU8g
-c3VwcG9ydCINCj4gIAlkZXBlbmRzIG9uIFBMQVRfU1BFQVINCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3Bpby9NYWtlZmlsZSBiL2RyaXZlcnMvZ3Bpby9NYWtlZmlsZQ0KPiBpbmRleCAxMzI0Yzhm
-OTY2YTcuLjk5M2Y4YWQ1NGExOSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncGlvL01ha2VmaWxl
-DQo+ICsrKyBiL2RyaXZlcnMvZ3Bpby9NYWtlZmlsZQ0KPiBAQCAtMTA5LDYgKzEwOSw3IEBAIG9i
-ai0kKENPTkZJR19HUElPX1JFRykJCSs9IGdwaW8tcmVnLm8NCj4gIG9iai0kKENPTkZJR19BUkNI
-X1NBMTEwMCkJKz0gZ3Bpby1zYTExMDAubw0KPiAgb2JqLSQoQ09ORklHX0dQSU9fU0NIKQkJKz0g
-Z3Bpby1zY2gubw0KPiAgb2JqLSQoQ09ORklHX0dQSU9fU0NIMzExWCkJKz0gZ3Bpby1zY2gzMTF4
-Lm8NCj4gK29iai0kKENPTkZJR19HUElPX1NOUFNfQ1JFRykJKz0gZ3Bpby1jcmVnLXNucHMubw0K
-PiAgb2JqLSQoQ09ORklHX0dQSU9fU09EQVZJTExFKQkrPSBncGlvLXNvZGF2aWxsZS5vDQo+ICBv
-YmotJChDT05GSUdfR1BJT19TUEVBUl9TUElDUykJKz0gZ3Bpby1zcGVhci1zcGljcy5vDQo+ICBv
-YmotJChDT05GSUdfR1BJT19TUFJEKQkJKz0gZ3Bpby1zcHJkLm8NCj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3Bpby9ncGlvLWNyZWctc25wcy5jIGIvZHJpdmVycy9ncGlvL2dwaW8tY3JlZy1zbnBz
-LmMNCj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gaW5kZXggMDAwMDAwMDAwMDAwLi4yNDAwZGVj
-NTI5YjINCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1jcmVnLXNu
-cHMuYw0KPiBAQCAtMCwwICsxLDIxMiBAQA0KPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6
-IEdQTC0yLjArDQo+ICsvLw0KPiArLy8gU3lub3BzeXMgQ1JFRyAoQ29udHJvbCBSRUdpc3RlcnMp
-IEdQSU8gZHJpdmVyDQo+ICsvLw0KPiArLy8gQ29weXJpZ2h0IChDKSAyMDE4IFN5bm9wc3lzDQo+
-ICsvLyBBdXRob3I6IEV1Z2VuaXkgUGFsdHNldiA8RXVnZW5peS5QYWx0c2V2QHN5bm9wc3lzLmNv
-bT4NCj4gKw0KPiArI2luY2x1ZGUgPGxpbnV4L29mLmg+DQo+ICsjaW5jbHVkZSA8bGludXgva2Vy
-bmVsLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L29m
-X2dwaW8uaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9pby5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L29m
-X3BsYXRmb3JtLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQo+ICsNCj4gKyNpbmNs
-dWRlICJncGlvbGliLmgiDQo+ICsNCj4gKyNkZWZpbmUgTUFYX0dQSU8JMzINCj4gKw0KPiArc3Ry
-dWN0IGNyZWdfbGF5b3V0IHsNCj4gKwl1OCBuZ3BpbzsNCj4gKwl1OCBzaGlmdFtNQVhfR1BJT107
-DQo+ICsJdTggb25bTUFYX0dQSU9dOw0KPiArCXU4IG9mZltNQVhfR1BJT107DQo+ICsJdTggYml0
-X3Blcl9ncGlvW01BWF9HUElPXTsNCj4gK307DQo+ICsNCj4gK3N0cnVjdCBjcmVnX2dwaW8gew0K
-PiArCXN0cnVjdCBvZl9tbV9ncGlvX2NoaXAgbW1jaGlwOw0KPiArCXNwaW5sb2NrX3QgbG9jazsN
-Cj4gKwljb25zdCBzdHJ1Y3QgY3JlZ19sYXlvdXQgKmxheW91dDsNCj4gK307DQo+ICsNCj4gK3N0
-YXRpYyB2b2lkIGNyZWdfZ3Bpb19zZXQoc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2lnbmVkIGlu
-dCBncGlvLCBpbnQgdmFsKQ0KPiArew0KPiArCXN0cnVjdCBjcmVnX2dwaW8gKmhjZyA9IGdwaW9j
-aGlwX2dldF9kYXRhKGdjKTsNCj4gKwljb25zdCBzdHJ1Y3QgY3JlZ19sYXlvdXQgKmxheW91dCA9
-IGhjZy0+bGF5b3V0Ow0KPiArCXUzMiByZWcsIHJlZ19zaGlmdCwgdmFsdWU7DQo+ICsJdW5zaWdu
-ZWQgbG9uZyBmbGFnczsNCj4gKwlpbnQgaTsNCj4gKw0KPiArCXZhbHVlID0gdmFsID8gaGNnLT5s
-YXlvdXQtPm9uW2dwaW9dIDogaGNnLT5sYXlvdXQtPm9mZltncGlvXTsNCj4gKw0KPiArCXJlZ19z
-aGlmdCA9IGxheW91dC0+c2hpZnRbZ3Bpb107DQo+ICsJZm9yIChpID0gMDsgaSA8IGdwaW87IGkr
-KykNCj4gKwkJcmVnX3NoaWZ0ICs9IGxheW91dC0+Yml0X3Blcl9ncGlvW2ldICsgbGF5b3V0LT5z
-aGlmdFtpXTsNCj4gKw0KPiArCXNwaW5fbG9ja19pcnFzYXZlKCZoY2ctPmxvY2ssIGZsYWdzKTsN
-Cj4gKwlyZWcgPSByZWFkbChoY2ctPm1tY2hpcC5yZWdzKTsNCj4gKwlyZWcgJj0gfihHRU5NQVNL
-KGxheW91dC0+Yml0X3Blcl9ncGlvW2ldIC0gMSwgMCkgPDwgcmVnX3NoaWZ0KTsNCj4gKwlyZWcg
-fD0gICh2YWx1ZSA8PCByZWdfc2hpZnQpOw0KPiArCXdyaXRlbChyZWcsIGhjZy0+bW1jaGlwLnJl
-Z3MpOw0KPiArCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmhjZy0+bG9jaywgZmxhZ3MpOw0KPiAr
-fQ0KPiArDQo+ICtzdGF0aWMgaW50IGNyZWdfZ3Bpb19kaXJfb3V0KHN0cnVjdCBncGlvX2NoaXAg
-KmdjLCB1bnNpZ25lZCBpbnQgZ3BpbywgaW50IHZhbCkNCj4gK3sNCj4gKwljcmVnX2dwaW9fc2V0
-KGdjLCBncGlvLCB2YWwpOw0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRp
-YyBpbnQgY3JlZ19ncGlvX2dldF9kaXJlY3Rpb24oc3RydWN0IGdwaW9fY2hpcCAqZ2MsIHVuc2ln
-bmVkIGludCBvZmZzZXQpDQo+ICt7DQo+ICsJcmV0dXJuIDA7IC8qIG91dHB1dCAqLw0KPiArfQ0K
-PiArDQo+ICtzdGF0aWMgaW50IGNyZWdfZ3Bpb194bGF0ZShzdHJ1Y3QgZ3Bpb19jaGlwICpnYywN
-Cj4gKwkJCSAgIGNvbnN0IHN0cnVjdCBvZl9waGFuZGxlX2FyZ3MgKmdwaW9zcGVjLCB1MzIgKmZs
-YWdzKQ0KPiArew0KPiArCWlmIChncGlvc3BlYy0+YXJnc19jb3VudCAhPSAxKSB7DQo+ICsJCWRl
-dl9lcnIoJmdjLT5ncGlvZGV2LT5kZXYsICJpbnZhbGlkIGFyZ3NfY291bnQ6ICVkXG4iLA0KPiAr
-CQkJZ3Bpb3NwZWMtPmFyZ3NfY291bnQpOw0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKwl9DQo+
-ICsNCj4gKwlpZiAoZ3Bpb3NwZWMtPmFyZ3NbMF0gPj0gZ2MtPm5ncGlvKSB7DQo+ICsJCWRldl9l
-cnIoJmdjLT5ncGlvZGV2LT5kZXYsICJncGlvIG51bWJlciBpcyB0b28gYmlnOiAlZFxuIiwNCj4g
-KwkJCWdwaW9zcGVjLT5hcmdzWzBdKTsNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsJfQ0KPiAr
-DQo+ICsJcmV0dXJuIGdwaW9zcGVjLT5hcmdzWzBdOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgaW50
-IGNyZWdfZ3Bpb192YWxpZGF0ZV9wZyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBjcmVnX2dw
-aW8gKmhjZywNCj4gKwkJCQkgaW50IGkpDQo+ICt7DQo+ICsJY29uc3Qgc3RydWN0IGNyZWdfbGF5
-b3V0ICpsYXlvdXQgPSBoY2ctPmxheW91dDsNCj4gKw0KPiArCWlmIChsYXlvdXQtPmJpdF9wZXJf
-Z3Bpb1tpXSA8IDEgfHwgbGF5b3V0LT5iaXRfcGVyX2dwaW9baV0gPiA4KQ0KPiArCQlyZXR1cm4g
-LUVJTlZBTDsNCj4gKw0KPiArCS8qIENoZWNrIHRoYXQgb24gdmFsaXVlIHN1aXRzIGl0J3MgcGxh
-Y2Vob2xkZXIgKi8NCj4gKwlpZiAoR0VOTUFTSygzMSwgbGF5b3V0LT5iaXRfcGVyX2dwaW9baV0p
-ICYgbGF5b3V0LT5vbltpXSkNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsNCj4gKwkvKiBDaGVj
-ayB0aGF0IG9mZiB2YWxpdWUgc3VpdHMgaXQncyBwbGFjZWhvbGRlciAqLw0KPiArCWlmIChHRU5N
-QVNLKDMxLCBsYXlvdXQtPmJpdF9wZXJfZ3Bpb1tpXSkgJiBsYXlvdXQtPm9mZltpXSkNCj4gKwkJ
-cmV0dXJuIC1FSU5WQUw7DQo+ICsNCj4gKwlpZiAobGF5b3V0LT5vbltpXSA9PSBsYXlvdXQtPm9m
-ZltpXSkNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4g
-Kw0KPiArc3RhdGljIGludCBjcmVnX2dwaW9fdmFsaWRhdGUoc3RydWN0IGRldmljZSAqZGV2LCBz
-dHJ1Y3QgY3JlZ19ncGlvICpoY2csDQo+ICsJCQkgICAgICB1MzIgbmdwaW9zKQ0KPiArew0KPiAr
-CXUzMiByZWdfbGVuID0gMDsNCj4gKwlpbnQgaTsNCj4gKw0KPiArCWlmIChoY2ctPmxheW91dC0+
-bmdwaW8gPCAxIHx8IGhjZy0+bGF5b3V0LT5uZ3BpbyA+IE1BWF9HUElPKQ0KPiArCQlyZXR1cm4g
-LUVJTlZBTDsNCj4gKw0KPiArCWlmIChuZ3Bpb3MgPCAxIHx8IG5ncGlvcyA+IGhjZy0+bGF5b3V0
-LT5uZ3Bpbykgew0KPiArCQlkZXZfZXJyKGRldiwgIm5ncGlvcyBtdXN0IGJlIGluIFsxOiV1XVxu
-IiwgaGNnLT5sYXlvdXQtPm5ncGlvKTsNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsJfQ0KPiAr
-DQo+ICsJZm9yIChpID0gMDsgaSA8IGhjZy0+bGF5b3V0LT5uZ3BpbzsgaSsrKSB7DQo+ICsJCWlm
-IChjcmVnX2dwaW9fdmFsaWRhdGVfcGcoZGV2LCBoY2csIGkpKQ0KPiArCQkJcmV0dXJuIC1FSU5W
-QUw7DQo+ICsNCj4gKwkJcmVnX2xlbiArPSBoY2ctPmxheW91dC0+c2hpZnRbaV0gKyBoY2ctPmxh
-eW91dC0+Yml0X3Blcl9ncGlvW2ldOw0KPiArCX0NCj4gKw0KPiArCS8qIENoZWNrIHRoYXQgd2Ug
-c3VpdCBpbiAzMiBiaXQgcmVnaXN0ZXIgKi8NCj4gKwlpZiAocmVnX2xlbiA+IDMyKQ0KPiArCQly
-ZXR1cm4gLUVJTlZBTDsNCj4gKw0KPiArCXJldHVybiAwOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMg
-Y29uc3Qgc3RydWN0IGNyZWdfbGF5b3V0IGhzZGtfY3NfY3RsID0gew0KPiArCS5uZ3BpbwkJPSAx
-MCwNCj4gKwkuc2hpZnQJCT0geyAwLCAwLCAwLCAwLCAwLCAwLCAwLCAwLCAwLCAwIH0sDQo+ICsJ
-Lm9mZgkJPSB7IDIsIDIsIDIsIDIsIDIsIDIsIDIsIDIsIDIsIDIgfSwNCj4gKwkub24JCT0geyAz
-LCAzLCAzLCAzLCAzLCAzLCAzLCAzLCAzLCAzIH0sDQo+ICsJLmJpdF9wZXJfZ3Bpbwk9IHsgMiwg
-MiwgMiwgMiwgMiwgMiwgMiwgMiwgMiwgMiB9DQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMgY29uc3Qg
-c3RydWN0IGNyZWdfbGF5b3V0IGF4czEweF9mbHNoX2NzX2N0bCA9IHsNCj4gKwkubmdwaW8JCT0g
-MSwNCj4gKwkuc2hpZnQJCT0geyAwIH0sDQo+ICsJLm9mZgkJPSB7IDEgfSwNCj4gKwkub24JCT0g
-eyAzIH0sDQo+ICsJLmJpdF9wZXJfZ3Bpbwk9IHsgMiB9DQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMg
-Y29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBjcmVnX2dwaW9faWRzW10gPSB7DQo+ICsJew0KPiAr
-CQkuY29tcGF0aWJsZSA9ICJzbnBzLGNyZWctZ3Bpby1heHMxMHgiLA0KPiArCQkuZGF0YSA9ICZh
-eHMxMHhfZmxzaF9jc19jdGwNCj4gKwl9LCB7DQo+ICsJCS5jb21wYXRpYmxlID0gInNucHMsY3Jl
-Zy1ncGlvLWhzZGsiLA0KPiArCQkuZGF0YSA9ICZoc2RrX2NzX2N0bA0KPiArCX0sIHsgLyogc2Vu
-dGluZWwgKi8gfQ0KPiArfTsNCj4gKw0KPiArc3RhdGljIGludCBjcmVnX2dwaW9fcHJvYmUoc3Ry
-dWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gK3sNCj4gKwljb25zdCBzdHJ1Y3Qgb2ZfZGV2
-aWNlX2lkICptYXRjaDsNCj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+ZGV2Ow0KPiAr
-CXN0cnVjdCBjcmVnX2dwaW8gKmhjZzsNCj4gKwl1MzIgbmdwaW9zOw0KPiArCWludCByZXQ7DQo+
-ICsNCj4gKwloY2cgPSBkZXZtX2t6YWxsb2MoZGV2LCBzaXplb2Yoc3RydWN0IGNyZWdfZ3Bpbyks
-IEdGUF9LRVJORUwpOw0KPiArCWlmICghaGNnKQ0KPiArCQlyZXR1cm4gLUVOT01FTTsNCj4gKw0K
-PiArCW1hdGNoID0gb2ZfbWF0Y2hfbm9kZShjcmVnX2dwaW9faWRzLCBwZGV2LT5kZXYub2Zfbm9k
-ZSk7DQo+ICsJaGNnLT5sYXlvdXQgPSBtYXRjaC0+ZGF0YTsNCj4gKwlpZiAoIWhjZy0+bGF5b3V0
-KQ0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKw0KPiArCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRf
-dTMyKGRldi0+b2Zfbm9kZSwgIm5ncGlvcyIsICZuZ3Bpb3MpOw0KPiArCWlmIChyZXQpDQo+ICsJ
-CXJldHVybiByZXQ7DQo+ICsNCj4gKwlyZXQgPSBjcmVnX2dwaW9fdmFsaWRhdGUoZGV2LCBoY2cs
-IG5ncGlvcyk7DQo+ICsJaWYgKHJldCkNCj4gKwkJcmV0dXJuIHJldDsNCj4gKw0KPiArCXNwaW5f
-bG9ja19pbml0KCZoY2ctPmxvY2spOw0KPiArDQo+ICsJaGNnLT5tbWNoaXAuZ2MubmdwaW8gPSBu
-Z3Bpb3M7DQo+ICsJaGNnLT5tbWNoaXAuZ2Muc2V0ID0gY3JlZ19ncGlvX3NldDsNCj4gKwloY2ct
-Pm1tY2hpcC5nYy5nZXRfZGlyZWN0aW9uID0gY3JlZ19ncGlvX2dldF9kaXJlY3Rpb247DQo+ICsJ
-aGNnLT5tbWNoaXAuZ2MuZGlyZWN0aW9uX291dHB1dCA9IGNyZWdfZ3Bpb19kaXJfb3V0Ow0KPiAr
-CWhjZy0+bW1jaGlwLmdjLm9mX3hsYXRlID0gY3JlZ19ncGlvX3hsYXRlOw0KPiArCWhjZy0+bW1j
-aGlwLmdjLm9mX2dwaW9fbl9jZWxscyA9IDE7DQo+ICsNCj4gKwlyZXQgPSBvZl9tbV9ncGlvY2hp
-cF9hZGRfZGF0YShwZGV2LT5kZXYub2Zfbm9kZSwgJmhjZy0+bW1jaGlwLCBoY2cpOw0KPiArCWlm
-IChyZXQpDQo+ICsJCXJldHVybiByZXQ7DQo+ICsNCj4gKwlkZXZfaW5mbyhkZXYsICJHUElPIGNv
-bnRyb2xsZXIgd2l0aCAlZCBncGlvcyBwcm9iZWRcbiIsIG5ncGlvcyk7DQo+ICsNCj4gKwlyZXR1
-cm4gMDsNCj4gK30NCj4gKw0KPiArc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgY3JlZ19n
-cGlvX3NucHNfZHJpdmVyID0gew0KPiArCS5kcml2ZXIgPSB7DQo+ICsJCS5uYW1lID0gInNucHMt
-Y3JlZy1ncGlvIiwNCj4gKwkJLm9mX21hdGNoX3RhYmxlID0gY3JlZ19ncGlvX2lkcywNCj4gKwl9
-LA0KPiArCS5wcm9iZSAgPSBjcmVnX2dwaW9fcHJvYmUsDQo+ICt9Ow0KPiArYnVpbHRpbl9wbGF0
-Zm9ybV9kcml2ZXIoY3JlZ19ncGlvX3NucHNfZHJpdmVyKTsNCi0tIA0KIEV1Z2VuaXkgUGFsdHNl
-dg==
+On Mon, Sep 24, 2018 at 8:53 AM, Alexander Potapenko <glider@google.com> wrote:
+> On Mon, Sep 24, 2018 at 12:09 AM Vladis Dronov <vdronov@redhat.com> wrote:
+>>
+>> Hello, Dmirty,
+>>
+>> Thank you for the reply. Can we please, discuss this further?
+> Hi Vladis,
+>> > You can see on dashboard that the last crash
+>> > for the second version (2) happened just few days ago. So this is a
+>> > different bug.
+> FWIW I've just double-checked that the reproducer provided by
+> syzkaller in the original message still triggers the report from the
+> original message in the latest KMSAN tree (which already contains the
+> __hw_addr_add_ex() fix from April).
+>> Well... yes and no. When I was looking at this bug (bug?id=088efeac32fd) I was looking
+>> at the report at "2018/05/09 18:55" (https://syzkaller.appspot.com/text?tag=CrashReport&x=141b707b800000),
+>> since it was the only report with a reproducer. This was my error.
+>>
+>> The error and the call trace in this report are:
+>>
+>> >>>
+>> BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
+>> CPU: 0 PID: 38 Comm: kworker/0:1 Not tainted 4.17.0-rc3+ #88
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Workqueue: ipv6_addrconf addrconf_dad_work
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+>>  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+>>  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+>>  memcmp+0x119/0x180 lib/string.c:861
+>>  __hw_addr_add_ex net/core/dev_addr_lists.c:61 [inline]
+>>  __dev_mc_add+0x1fc/0x900 net/core/dev_addr_lists.c:670
+>>  dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
+>>  igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
+>>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
+>>  addrconf_join_solict net/ipv6/addrconf.c:2103 [inline]
+>>  addrconf_dad_begin net/ipv6/addrconf.c:3853 [inline]
+>>  addrconf_dad_work+0x462/0x2a20 net/ipv6/addrconf.c:3979
+>>  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+>>  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
+>>  kthread+0x539/0x720 kernel/kthread.c:239
+>>  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
+>>
+>> Local variable description: ----buf@igmp6_group_added
+>> Variable was created at:
+>>  igmp6_group_added+0x4a/0xa00 net/ipv6/mcast.c:650
+>>  ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
+>> <<<
+>>
+>> It is the same like in bug?id=3887c0d99aecb27d085180c5222d245d08a30806
+>> which, after some more test, made me believe these bugs are duplicate
+>> and are fixed by the same commit.
+>>
+>> But let's look at another report at "2018/09/12 21:00"
+>> (https://syzkaller.appspot.com/text?tag=CrashReport&x=14f99b71400000)
+>> at the bug (bug?id=088efeac32fd), the one you've mentioned as
+>> "the last crash for the second version (2) happened just few days ago".
+>>
+>> Its error and the call trace are completely different:
+>>
+>> >>>
+>> BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
+>> CPU: 0 PID: 6107 Comm: syz-executor4 Not tainted 4.19.0-rc3+ #45
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>  dump_stack+0x14b/0x190 lib/dump_stack.c:113
+>>  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+>>  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+>>  memcmp+0x11d/0x180 lib/string.c:863
+>>  dev_uc_add_excl+0x165/0x7b0 net/core/dev_addr_lists.c:464
+>>  ndo_dflt_fdb_add net/core/rtnetlink.c:3463 [inline]
+>>  rtnl_fdb_add+0x1081/0x1270 net/core/rtnetlink.c:3558
+>>  rtnetlink_rcv_msg+0xa0b/0x1530 net/core/rtnetlink.c:4715
+>>  netlink_rcv_skb+0x36e/0x5f0 net/netlink/af_netlink.c:2454
+>>  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4733
+>>  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+>>  netlink_unicast+0x1638/0x1720 net/netlink/af_netlink.c:1343
+>>  netlink_sendmsg+0x1205/0x1290 net/netlink/af_netlink.c:1908
+>>  sock_sendmsg_nosec net/socket.c:621 [inline]
+>>  sock_sendmsg net/socket.c:631 [inline]
+>> ...
+>> Uninit was created at:
+>> ...
+>>  slab_post_alloc_hook mm/slab.h:446 [inline]
+>>  slab_alloc_node mm/slub.c:2718 [inline]
+>>  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4351
+>>  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+>>  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
+>>  alloc_skb include/linux/skbuff.h:996 [inline]
+>>  netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
+>>  netlink_sendmsg+0xb49/0x1290 net/netlink/af_netlink.c:1883
+>>  sock_sendmsg_nosec net/socket.c:621 [inline]
+>>  sock_sendmsg net/socket.c:631 [inline]
+>>  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+>> <<<
+>>
+>> This is a different bug. How come these 2 different reports for 2 different
+>> bugs have ended in the same syzkaller report (bug?id=088efeac32fd) ?
+>
+> I suspect this is because syzbot used the top stack frame as the
+> report signature.
+> There's a mechanism to ignore frames like memcmp() in the reports, not
+> sure why didn't it work in this case (maybe it just wasn't in place at
+> the time the report happened).
+>> One bug is fixed by the "net: fix uninit-value in __hw_addr_add_ex()" commit,
+>> the second one is not, but they are still in the same syzkaller report.
+>>
+>> This was the reason of my confusion. I'm not sure how to fix this. If it is possible,
+>> probably we need to cancel/revoke "#syz fix: net: fix uninit-value in __hw_addr_add_ex()"
+>> for this syzkaller report (bug?id=088efeac32fd). And then "split" it into 2 or
+>> more different reports, but I'm not sure if this is possible.
+>>
+>> Probably, syzkaller needs to look deeper into the KMSAN reports to differentiate
+>> KMSAN errors happening because of different reasons.
+>>
+>> > On Sun, Sep 23, 2018 at 6:02 PM, Vladis Dronov <vdronov@redhat.com> wrote:
+>> > > #syz fix: net: fix uninit-value in __hw_addr_add_ex()
+>> >
+>> > Hi Vladis,
+>> >
+>> > This can be fixed with "net: fix uninit-value in __hw_addr_add_ex()".
+>> > That commit landed in April, syzbot waited till the commit reached all
+>> > tested trees, and then closed the bug.
+>> > But the similar bug continued to happen, so syzbot created second
+>> > version of this bug (2). You can see on dashboard that the last crash
+>> > for the second version (2) happened just few days ago. So this is a
+>> > different bug.
+
+
+Precisely discriminating bugs (root causes) bases on crash text is
+generally undecidable problem, even for humans. We even can have
+literally equal crash texts, which are still different bugs. And we
+can have significantly differently looking crash texts, which are
+actually caused by the same root cause. syzbot extracts some
+"identity" string for each crash and than uses that string to
+discriminate crashes and sort them into bins. This identity string is
+what you see in email subject and bug title on dashboard. This method
+can have both false positives and false negatives, but works
+reasonably well in most cases and looks like the best practical
+option.
+
+For this exact instance (memcmp) we actually improved the analysis
+logic recently:
+https://github.com/google/syzkaller/commit/0e29942f77715486995d996f80f82742812d75a2#diff-abe1515f011fad2659ff218f9eea9ae1
+But this crash was analyzed and reported before the change. So if this
+crash happens again it should be reported as "in __hw_addr_add_ex"
+now.
+
+Re __hw_addr_add_ex bug, as Alex noted the crash was detected _after_
+the fixing commit went in. So it's something new and different and
+can't be fixed by the older commit.
+
+There are no general, single guideline as to what to do when several
+different bugs glued together into a single bug. Fixing at least one
+of them (any) in the context of the bug is good, fixing both is good
+too. When/if a bug is closed, new occurrences of similar crashes (the
+same identity string) will lead to creation of a new bug. So if we fix
+only one and close the bug, eventually the second one will lead to a
+new bug (won't be lost), now dedicated to this second crash.
+
+Now syzbot thinks that this bug is fixed/closed:
+https://syzkaller.appspot.com/bug?extid=d3402c47f680ff24b29c
+There is specifically no "undo" functionality, because it's inherently
+racy with creation of a new version of this bugs by new crashes. So if
+of these crashes will happen again, syzbot will open new bugs (now
+with better discriminated titles). We can wait for that. Or we can
+submit new fixes without waiting for new syzbot bugs (adding
+Reported-by to new commits referencing this bug should not do any
+harm).
+
+Hope this clarifies things a bit.
+
+Thanks
