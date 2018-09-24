@@ -2,129 +2,136 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB15ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE673ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F295B206B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F295B206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E0772086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:50:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXtDF7Pi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E0772086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbeIXQvn (ORCPT
+        id S1728505AbeIXQwP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:51:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60372 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726154AbeIXQvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:51:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE22480D;
-        Mon, 24 Sep 2018 03:50:15 -0700 (PDT)
-Received: from [10.4.13.92] (e112298-lin.Emea.Arm.com [10.4.13.92])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32CB23F5B3;
-        Mon, 24 Sep 2018 03:50:14 -0700 (PDT)
-Subject: Re: [PATCH 02/10] irqchip/gic-v3-its: Consolidate LPI_PENDBASE_SZ
- usage
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20180921195954.21574-1-marc.zyngier@arm.com>
- <20180921195954.21574-3-marc.zyngier@arm.com>
- <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <cab043d8-c9bb-6975-8304-ff80dbe62027@arm.com>
-Date:   Mon, 24 Sep 2018 11:50:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 24 Sep 2018 12:52:15 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39582 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeIXQwP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 12:52:15 -0400
+Received: by mail-wm1-f65.google.com with SMTP id q8-v6so9524459wmq.4;
+        Mon, 24 Sep 2018 03:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nWnGZQn58OvqeGa0ToWAPWW8qPT/181fXPExtXppLz8=;
+        b=DXtDF7PiLUXLiYBztKGlUC1rHLqp8CaM2/SwDos8aVGHOODF0zrTy2m55z9PErxQpM
+         HvxMkMShHflqGElDbivf+auhxg3IGHtOOWzI+pSu5QSqnH6/uwce40LI+A8tmUW4YO5n
+         q3iuJbKeOslxTgmgxsg5FaKyAlvdHeDmtvh1kuYHx9xo6xO7qulklJA4y6R/p5eMjIyS
+         oqeuyDWZh+sbN/CSZQP2+ZSh/a9Gn4FJzn5MN5Hj5tx1kMcD71jBOFw8vspTlZiHT2ps
+         PGLSrn8e/W83Io9cvlsRIcno8J90VqaIojmF4v3J8l/PPerjbcGTB3MYaaB+1zF5DD7p
+         7anw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nWnGZQn58OvqeGa0ToWAPWW8qPT/181fXPExtXppLz8=;
+        b=ayakHFCOoyfpVj0YSHbHPX+Xx6g+8xsmHGTfVLKCWu27gY6KOIZd4GvBg2rj9XU//P
+         j4ao7j+4gsCN/lDa86QiTxOYPEDJMe3LkbV5Nl54JerTWR3KriZpVHIyNMYK/zrvmhzo
+         zagGbsFfxMyF4ZgDHWLjvVeNvZA6/XbyaK8rQ9ckXM3RBdmC6UeHI4271E9bHihDwRu2
+         /QXbyHRoh6csmCqKDV1CJPfzwaN7KGxccJb1z1NjQ/mL5ds8jChhNkkpkSEYC5amAZ5V
+         zy7SkgrB5Sc4FV1V9pCGN1+kqYSldWfXiaH2o/SswNAMhvB+CBBUZVVnnIr4TTnDo42V
+         gIsA==
+X-Gm-Message-State: APzg51DjkSo26FltR/gRgqe9DdFD/gpiNeFKd9HFgilEri8xA5sMjcBV
+        eWjBwcRLsbphJ50xlz/Ohxlg/BAk
+X-Google-Smtp-Source: ANB0VdbB49q3kdDql4IocMWPWslucb1Wa/MSgbmgj/LKG0TtCrlgVzS+Anxega5pGK4R6Eo3R+EaOw==
+X-Received: by 2002:a1c:5fc2:: with SMTP id t185-v6mr1403065wmb.12.1537786245104;
+        Mon, 24 Sep 2018 03:50:45 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id v6-v6sm9912098wmc.43.2018.09.24.03.50.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 03:50:44 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 12:50:43 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 15/20] iommu/tegra: gart: Allow only one active domain
+ at a time
+Message-ID: <20180924105043.GL21032@ulmo>
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-16-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e267123d-af92-0871-455c-cb74a2bc4103@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="00hq2S6J2Jlg6EbK"
+Content-Disposition: inline
+In-Reply-To: <20180924004153.8232-16-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 24/09/18 11:33, Suzuki K Poulose wrote:
-> Hi Marc,
-> 
-> On 21/09/18 20:59, Marc Zyngier wrote:
->> LPI_PENDING_SZ is always used in conjunction with a max(). Let's
->> factor this in the definition of the macro, and simplify the rest
->> of the code.
->>
->> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>   drivers/irqchip/irq-gic-v3-its.c | 12 ++++--------
->>   1 file changed, 4 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index c2df341ff6fa..ed6aab11e019 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -62,7 +62,7 @@ static u32 lpi_id_bits;
->>    */
->>   #define LPI_NRBITS        lpi_id_bits
->>   #define LPI_PROPBASE_SZ        ALIGN(BIT(LPI_NRBITS), SZ_64K)
->> -#define LPI_PENDBASE_SZ        ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K)
->> +#define LPI_PENDBASE_SZ        max_t(u32, SZ_64K, 
->> ALIGN(BIT(LPI_NRBITS) / 8, SZ_64K))
-> 
-> minor nit: The ALIGN() already aligns the given value up to the required
-> alignment. So, if the LPI_NRBITS is guaranteed to be non-zero,
-> we could simply drop the max_t().
-> 
+--00hq2S6J2Jlg6EbK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hmmm, Doesn't ALIGN only aligns down? So if "BIT(LPI_NR_BITS) / 8 < 
-SZ_64K" (i.e. LPI_NRBITS < 20) The ALIGN(..., SZ_64K) would give 0.
+On Mon, Sep 24, 2018 at 03:41:48AM +0300, Dmitry Osipenko wrote:
+> GART has a single address space that is shared by all devices, hence only
+> one domain could be active at a time.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/iommu/tegra-gart.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+> index 1d45b023adea..9f7d3afb686f 100644
+> --- a/drivers/iommu/tegra-gart.c
+> +++ b/drivers/iommu/tegra-gart.c
+> @@ -55,6 +55,7 @@ struct gart_device {
+>  	spinlock_t		pte_lock;	/* for pagetable */
+>  	struct list_head	client;
+>  	spinlock_t		client_lock;	/* for client list */
+> +	struct iommu_domain	*active_domain;	/* current active domain */
 
-Thanks,
+The active_ prefix seems a little unnecessary here, but either way:
 
-> Rest looks good to me.
-> 
-> Suzuki
-> 
->>   #define LPI_PROP_DEFAULT_PRIO    0xa0
->> @@ -1924,12 +1924,9 @@ static int its_alloc_collections(struct 
->> its_node *its)
->>   static struct page *its_allocate_pending_table(gfp_t gfp_flags)
->>   {
->>       struct page *pend_page;
->> -    /*
->> -     * The pending pages have to be at least 64kB aligned,
->> -     * hence the 'max(LPI_PENDBASE_SZ, SZ_64K)' below.
->> -     */
->> +
->>       pend_page = alloc_pages(gfp_flags | __GFP_ZERO,
->> -                get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
->> +                get_order(LPI_PENDBASE_SZ));
->>       if (!pend_page)
->>           return NULL;
->> @@ -1941,8 +1938,7 @@ static struct page 
->> *its_allocate_pending_table(gfp_t gfp_flags)
->>   static void its_free_pending_table(struct page *pt)
->>   {
->> -    free_pages((unsigned long)page_address(pt),
->> -           get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
->> +    free_pages((unsigned long)page_address(pt), 
->> get_order(LPI_PENDBASE_SZ));
->>   }
->>   static void its_cpu_init_lpis(void)
->>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
--- 
-Julien Thierry
+--00hq2S6J2Jlg6EbK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluowYMACgkQ3SOs138+
+s6EwKA//YnbjzmDTEdpchLy7vm5PcbIN2vQ15t394H/pBAqUoUWcqcziaBlJC3a9
+y2Exp0e9z/8thAcITQSn6jq+K1FHCEjtiBZHqZzgOqNQozqk+QaUby4SvOVueGA3
+nfwZVkFpSjcac6JxXtgIkmcaIW1MB3JIZIMMQC7sCW04BINHoKGpcxhCWLRZ5Ma4
+schH+VQ6YWgmyfjDLzHcBqJcJeQGbOs41RO2GDCCBF/xTvtUjiH0fqCtNIM8yQhk
+H7UMBP/xOCp+RnrpAm8wuCupFdkceKbd6EIVzxgz+4JWAdiMefAP38PB8B5ZjJe3
+aDyL7ZYUjr9e8F7mpHRVPkHah8RW3TsxEuc09q3kAYAgSPGown0geAGFgqIsEjQY
+vJPQhR4slYbihcac8Oun/dKDUStg/+pNurDZyemmQ97amjXi66RA2X2234LCSOyH
+6CukFlaHrIYjtwctHmgceT8gsrQFGJuy4Y45fBtzC7cN1IEYAwkA1lPbb7uYU7w4
+qs6dDdR3IN7xS+vUSKEQV5ch2Z/WYqnEf/v2CZHVAqVHmd9OWAMRL1akLqvkVNxd
+qOtELT14EDXZdnZHo8Bs7/LYb7k2eT2+HBoUMKeuR56dfV/LaQKV60kf2D+KYnWT
+P2TOOI80G2Te1oPXjVmtY3YkYqPWZ0AhcSsJc7SvaQAyJL8fK4Y=
+=P3Vx
+-----END PGP SIGNATURE-----
+
+--00hq2S6J2Jlg6EbK--
