@@ -2,136 +2,323 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C51ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD6FECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 021FB20883
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCNSnv+Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021FB20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 941D020883
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941D020883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730695AbeIXV5z (ORCPT
+        id S1730992AbeIXV6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:57:55 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35172 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728312AbeIXV5y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:57:54 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g2-v6so9299538plo.2;
-        Mon, 24 Sep 2018 08:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Csqe0Y2+oowuJwJFhl6JfGwU4IIBJ0vNM6hKyBJNQsM=;
-        b=hCNSnv+QstSPUsyErkEYzixHnbSsJOjHH6xluY9HthFeDh5+ExnIISf2VJDh3qafrr
-         QkPp+ZkzTG9w3R/K8ucAD9szO6e4I76OFnc7LlbaWXRh5nbwVtOUjKwW6GLna5po/ZKj
-         7itcLYyglCsCQpDmecMXcCjTHUC9QBNsTtau0rb0h+fM5+NyKaCcrUAZpKVbVSj8W+xL
-         DSmsZlVQKJfdbNFIRXNxVExZJIBu1srHr/0GSZ7P4+pePKjY2185LNMS20CSzjSepx5R
-         j+ctik52DJcbHykuUe9q6MghO7DETZ28tcKFTbMl/fsclbiI0cgzKVWc5VcGVgswq5TI
-         7W1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Csqe0Y2+oowuJwJFhl6JfGwU4IIBJ0vNM6hKyBJNQsM=;
-        b=GRh9NlHKZUo3364j1OzMmdlp8clwPErOsxD2XVbVCBiSX3ba7hb27SEVcshfDXBNyF
-         FFkguQzqKWCNq7AZFT7gkOM/RacqbMNlE/RsZQ4rvDlwGb1h2xJbaWpa8Usyc7/ptjOL
-         u7rlWPbL3MI555N5xHXVOlCfICPK0zqHG5hj0yGufcWpZxNLVy4VcyMbR+JQdf08uXYX
-         fdPd4tf1M4NZu1dBJycjkaJOE8hFHs7fEkwXFV8U94xeCOBV3XtPvYLO2sOU4a7bTc8W
-         Nkq65/3K6N4N/phYTCcGTCSpvPhyLNmJSKox0PT0++YmZDzpmZMvnw7T130xKGmaM7eq
-         px8w==
-X-Gm-Message-State: ABuFfoi+HiR5JHZ39RLkYjjHIWP+Elkro1FmUW5sfPvVSYb4g8cra9QG
-        xAiHn/6WMuX8wiSEIgqrslk=
-X-Google-Smtp-Source: ACcGV620iTzGYlJqYbfjFojtCoLo9RVNtZ9oCtBNuM5/mqPrZz565AW8BHjsPJCyG75DgAC4VmPhhA==
-X-Received: by 2002:a17:902:4d45:: with SMTP id o5-v6mr11379771plh.78.1537804505258;
-        Mon, 24 Sep 2018 08:55:05 -0700 (PDT)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id y86-v6sm50918925pfk.84.2018.09.24.08.54.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 08:55:04 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 21:24:52 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: Fix potential integer overflow
-Message-ID: <20180924155452.GA7529@himanshu-Vostro-3559>
-References: <20180918125314.GA12752@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180918125314.GA12752@embeddedor.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 24 Sep 2018 17:58:07 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:48010 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727594AbeIXV6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:58:07 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42Jpgl6ygRz9ttRw;
+        Mon, 24 Sep 2018 17:55:15 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Gm8Lfd11t0re; Mon, 24 Sep 2018 17:55:15 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42Jpgl6S5Pz9ttRd;
+        Mon, 24 Sep 2018 17:55:15 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 709CB8B7C0;
+        Mon, 24 Sep 2018 17:55:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id HVAkz-LR-VsP; Mon, 24 Sep 2018 17:55:16 +0200 (CEST)
+Received: from PO15451.localdomain (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A416C8B7B6;
+        Mon, 24 Sep 2018 17:55:15 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id D606B70AD9; Mon, 24 Sep 2018 15:52:31 +0000 (UTC)
+Message-Id: <3a3061a88f1fe00108e5dafac63d443cbb2f2a4d.1537802981.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1537802981.git.christophe.leroy@c-s.fr>
+References: <cover.1537802981.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v1 6/9] powerpc: regain entire stack space
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        aneesh.kumar@linux.vnet.ibm.com, npiggin@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 24 Sep 2018 15:52:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+thread_info is not anymore in the stack, so the entire stack
+can now be used.
 
-On Tue, Sep 18, 2018 at 07:53:14AM -0500, Gustavo A. R. Silva wrote:
-> Cast factor to s64 in order to give the compiler complete information
-> about the proper arithmetic to use and avoid a potential integer
-> overflow. Notice that such variable is being used in a context
-> that expects an expression of type s64 (64 bits, signed).
-> 
-> Addresses-Coverity-ID: 1324146 ("Unintentional integer overflow")
-> Fixes: e13d757279bb ("iio: adc: Add QCOM SPMI PMIC5 ADC driver")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/iio/adc/qcom-vadc-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/qcom-vadc-common.c b/drivers/iio/adc/qcom-vadc-common.c
-> index dcd7fb5..e360e27 100644
-> --- a/drivers/iio/adc/qcom-vadc-common.c
-> +++ b/drivers/iio/adc/qcom-vadc-common.c
-> @@ -282,7 +282,7 @@ static int qcom_vadc_scale_code_voltage_factor(u16 adc_code,
->  	voltage = div64_s64(voltage, data->full_scale_code_volt);
->  	if (voltage > 0) {
->  		voltage *= prescale->den;
-> -		temp = prescale->num * factor;
-> +		temp = prescale->num * (s64)factor;
+In the meantime, all pointers to the stacks are not anymore
+pointers to thread_info so this patch changes them to void*
 
-As Jonathan pointed it is a false positive, let me share some more
-insight on this particular set of warnings.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/irq.h       | 10 +++++-----
+ arch/powerpc/include/asm/processor.h |  3 +--
+ arch/powerpc/kernel/asm-offsets.c    |  1 -
+ arch/powerpc/kernel/entry_32.S       | 14 ++++----------
+ arch/powerpc/kernel/irq.c            | 19 +++++++++----------
+ arch/powerpc/kernel/misc_32.S        |  6 ++----
+ arch/powerpc/kernel/process.c        |  9 +++------
+ arch/powerpc/kernel/setup_64.c       |  8 ++++----
+ 8 files changed, 28 insertions(+), 42 deletions(-)
 
-`num` is u32 and `factor` is unsigned int(u32 on most implementations).
-
-So, if multiplication b/w them exceeds UNIT_MAX then that is perfectly
-defined behavior in C. And often called "wrapping".
-https://port70.net/~nsz/c/c11/n1570.html#6.2.5p9
-
-And *if* it exceeds UNIT_MAX, then it is certainly wrong arthimetic
-implementation by the author.
-
-On the other hand, if it were the case signed int overflow then
-certainly it is undefined behavior and called "overflow".
-
-And here `temp` is guaranteed to not overflow!
-
-But I don't understand what issue are you trying to resolve here and I'm
-interested in this particular set of warnings because I too get coverity
-scan reports on the same although I only search for IIO drivers issues.
-
-
-Thanks
+diff --git a/arch/powerpc/include/asm/irq.h b/arch/powerpc/include/asm/irq.h
+index 8108d1fe33ca..3987929408d3 100644
+--- a/arch/powerpc/include/asm/irq.h
++++ b/arch/powerpc/include/asm/irq.h
+@@ -48,9 +48,9 @@ struct pt_regs;
+  * Per-cpu stacks for handling critical, debug and machine check
+  * level interrupts.
+  */
+-extern struct thread_info *critirq_ctx[NR_CPUS];
+-extern struct thread_info *dbgirq_ctx[NR_CPUS];
+-extern struct thread_info *mcheckirq_ctx[NR_CPUS];
++extern void *critirq_ctx[NR_CPUS];
++extern void *dbgirq_ctx[NR_CPUS];
++extern void *mcheckirq_ctx[NR_CPUS];
+ extern void exc_lvl_ctx_init(void);
+ #else
+ #define exc_lvl_ctx_init()
+@@ -59,8 +59,8 @@ extern void exc_lvl_ctx_init(void);
+ /*
+  * Per-cpu stacks for handling hard and soft interrupts.
+  */
+-extern struct thread_info *hardirq_ctx[NR_CPUS];
+-extern struct thread_info *softirq_ctx[NR_CPUS];
++extern void *hardirq_ctx[NR_CPUS];
++extern void *softirq_ctx[NR_CPUS];
+ 
+ extern void irq_ctx_init(void);
+ extern void call_do_softirq(void *tp);
+diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
+index 31873614392f..834d0d701e19 100644
+--- a/arch/powerpc/include/asm/processor.h
++++ b/arch/powerpc/include/asm/processor.h
+@@ -332,8 +332,7 @@ struct thread_struct {
+ #define ARCH_MIN_TASKALIGN 16
+ 
+ #define INIT_SP		(sizeof(init_stack) + (unsigned long) &init_stack)
+-#define INIT_SP_LIMIT \
+-	(_ALIGN_UP(sizeof(struct thread_info), 16) + (unsigned long) &init_stack)
++#define INIT_SP_LIMIT	((unsigned long) &init_stack)
+ 
+ #ifdef CONFIG_SPE
+ #define SPEFSCR_INIT \
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+index b042d85325f5..ae7eda4ca09e 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -85,7 +85,6 @@ int main(void)
+ 	DEFINE(NMI_MASK, NMI_MASK);
+ 	OFFSET(TASKTHREADPPR, task_struct, thread.ppr);
+ #else
+-	DEFINE(THREAD_INFO_GAP, _ALIGN_UP(sizeof(struct thread_info), 16));
+ 	OFFSET(KSP_LIMIT, thread_struct, ksp_limit);
+ #endif /* CONFIG_PPC64 */
+ 	OFFSET(TASK_STACK, task_struct, stack);
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index a14f9b5f2762..b45da00b01ef 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -97,14 +97,11 @@ crit_transfer_to_handler:
+ 	mfspr	r0,SPRN_SRR1
+ 	stw	r0,_SRR1(r11)
+ 
+-	/* set the stack limit to the current stack
+-	 * and set the limit to protect the thread_info
+-	 * struct
+-	 */
++	/* set the stack limit to the current stack */
+ 	mfspr	r8,SPRN_SPRG_THREAD
+ 	lwz	r0,KSP_LIMIT(r8)
+ 	stw	r0,SAVED_KSP_LIMIT(r11)
+-	rlwimi	r0,r1,0,0,(31-THREAD_SHIFT)
++	rlwinm	r0,r1,0,0,(31 - THREAD_SHIFT)
+ 	stw	r0,KSP_LIMIT(r8)
+ 	/* fall through */
+ #endif
+@@ -121,14 +118,11 @@ crit_transfer_to_handler:
+ 	mfspr	r0,SPRN_SRR1
+ 	stw	r0,crit_srr1@l(0)
+ 
+-	/* set the stack limit to the current stack
+-	 * and set the limit to protect the thread_info
+-	 * struct
+-	 */
++	/* set the stack limit to the current stack */
+ 	mfspr	r8,SPRN_SPRG_THREAD
+ 	lwz	r0,KSP_LIMIT(r8)
+ 	stw	r0,saved_ksp_limit@l(0)
+-	rlwimi	r0,r1,0,0,(31-THREAD_SHIFT)
++	rlwinm	r0,r1,0,0,(31 - THREAD_SHIFT)
+ 	stw	r0,KSP_LIMIT(r8)
+ 	/* fall through */
+ #endif
+diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+index 699f0f816687..00dbee440bc2 100644
+--- a/arch/powerpc/kernel/irq.c
++++ b/arch/powerpc/kernel/irq.c
+@@ -618,9 +618,8 @@ static inline void check_stack_overflow(void)
+ 	sp = current_stack_pointer() & (THREAD_SIZE-1);
+ 
+ 	/* check for stack overflow: is there less than 2KB free? */
+-	if (unlikely(sp < (sizeof(struct thread_info) + 2048))) {
+-		pr_err("do_IRQ: stack overflow: %ld\n",
+-			sp - sizeof(struct thread_info));
++	if (unlikely(sp < 2048)) {
++		pr_err("do_IRQ: stack overflow: %ld\n", sp);
+ 		dump_stack();
+ 	}
+ #endif
+@@ -660,7 +659,7 @@ void __do_irq(struct pt_regs *regs)
+ void do_IRQ(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
+-	struct thread_info *curtp, *irqtp, *sirqtp;
++	void *curtp, *irqtp, *sirqtp;
+ 
+ 	/* Switch to the irq stack to handle this */
+ 	curtp = (void*)(current_stack_pointer() & ~(THREAD_SIZE - 1));
+@@ -690,9 +689,9 @@ void __init init_IRQ(void)
+ }
+ 
+ #if defined(CONFIG_BOOKE) || defined(CONFIG_40x)
+-struct thread_info   *critirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info    *dbgirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info *mcheckirq_ctx[NR_CPUS] __read_mostly;
++void   *critirq_ctx[NR_CPUS] __read_mostly;
++void    *dbgirq_ctx[NR_CPUS] __read_mostly;
++void *mcheckirq_ctx[NR_CPUS] __read_mostly;
+ 
+ void exc_lvl_ctx_init(void)
+ {
+@@ -718,8 +717,8 @@ void exc_lvl_ctx_init(void)
+ }
+ #endif
+ 
+-struct thread_info *softirq_ctx[NR_CPUS] __read_mostly;
+-struct thread_info *hardirq_ctx[NR_CPUS] __read_mostly;
++void *softirq_ctx[NR_CPUS] __read_mostly;
++void *hardirq_ctx[NR_CPUS] __read_mostly;
+ 
+ void irq_ctx_init(void)
+ {
+@@ -733,7 +732,7 @@ void irq_ctx_init(void)
+ 
+ void do_softirq_own_stack(void)
+ {
+-	struct thread_info *irqtp;
++	void *irqtp;
+ 
+ 	irqtp = softirq_ctx[smp_processor_id()];
+ 	call_do_softirq(irqtp);
+diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
+index 24a7f18ea10c..d3ba56307eb4 100644
+--- a/arch/powerpc/kernel/misc_32.S
++++ b/arch/powerpc/kernel/misc_32.S
+@@ -46,11 +46,10 @@ _GLOBAL(call_do_softirq)
+ 	mflr	r0
+ 	stw	r0,4(r1)
+ 	lwz	r10,THREAD+KSP_LIMIT(r2)
+-	addi	r11,r3,THREAD_INFO_GAP
++	stw	r3, THREAD+KSP_LIMIT(r2)
+ 	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r3)
+ 	mr	r1,r3
+ 	stw	r10,8(r1)
+-	stw	r11,THREAD+KSP_LIMIT(r2)
+ 	bl	__do_softirq
+ 	lwz	r10,8(r1)
+ 	lwz	r1,0(r1)
+@@ -66,11 +65,10 @@ _GLOBAL(call_do_irq)
+ 	mflr	r0
+ 	stw	r0,4(r1)
+ 	lwz	r10,THREAD+KSP_LIMIT(r2)
+-	addi	r11,r4,THREAD_INFO_GAP
++	stw	r4, THREAD+KSP_LIMIT(r2)
+ 	stwu	r1,THREAD_SIZE-STACK_FRAME_OVERHEAD(r4)
+ 	mr	r1,r4
+ 	stw	r10,8(r1)
+-	stw	r11,THREAD+KSP_LIMIT(r2)
+ 	bl	__do_irq
+ 	lwz	r10,8(r1)
+ 	lwz	r1,0(r1)
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index 111abb4df2ec..1e01bf42dc82 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -1691,8 +1691,7 @@ int copy_thread(unsigned long clone_flags, unsigned long usp,
+ 	sp -= STACK_FRAME_OVERHEAD;
+ 	p->thread.ksp = sp;
+ #ifdef CONFIG_PPC32
+-	p->thread.ksp_limit = (unsigned long)task_stack_page(p) +
+-				_ALIGN_UP(sizeof(struct thread_info), 16);
++	p->thread.ksp_limit = (unsigned long)task_stack_page(p);
+ #endif
+ #ifdef CONFIG_HAVE_HW_BREAKPOINT
+ 	p->thread.ptrace_bps[0] = NULL;
+@@ -2001,13 +2000,11 @@ static inline int valid_irq_stack(unsigned long sp, struct task_struct *p,
+ 	 */
+ 	if (cpu < NR_CPUS && cpu_possible(cpu)) {
+ 		stack_page = (unsigned long) hardirq_ctx[cpu];
+-		if (sp >= stack_page + sizeof(struct thread_struct)
+-		    && sp <= stack_page + THREAD_SIZE - nbytes)
++		if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
+ 			return 1;
+ 
+ 		stack_page = (unsigned long) softirq_ctx[cpu];
+-		if (sp >= stack_page + sizeof(struct thread_struct)
+-		    && sp <= stack_page + THREAD_SIZE - nbytes)
++		if (sp >= stack_page && sp <= stack_page + THREAD_SIZE - nbytes)
+ 			return 1;
+ 	}
+ 	return 0;
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index 2d682f3e31c6..6792e9c90689 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -717,22 +717,22 @@ void __init emergency_stack_init(void)
+ 	limit = min(ppc64_bolted_size(), ppc64_rma_size);
+ 
+ 	for_each_possible_cpu(i) {
+-		struct thread_info *ti;
++		void *ti;
+ 
+ 		ti = alloc_stack(limit, i);
+ 		memset(ti, 0, THREAD_SIZE);
+-		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->emergency_sp = ti + THREAD_SIZE;
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 		/* emergency stack for NMI exception handling. */
+ 		ti = alloc_stack(limit, i);
+ 		memset(ti, 0, THREAD_SIZE);
+-		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->nmi_emergency_sp = ti + THREAD_SIZE;
+ 
+ 		/* emergency stack for machine check exception handling. */
+ 		ti = alloc_stack(limit, i);
+ 		memset(ti, 0, THREAD_SIZE);
+-		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
++		paca_ptrs[i]->mc_emergency_sp = ti + THREAD_SIZE;
+ #endif
+ 	}
+ }
 -- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+2.13.3
+
