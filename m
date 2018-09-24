@@ -6,101 +6,103 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFD8ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 02:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A94C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 02:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E6D20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 02:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9830D20676
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 02:50:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="V7Wb+hRI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E6D20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nJvmUHFX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9830D20676
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeIXIZu (ORCPT
+        id S1727351AbeIXIuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 04:25:50 -0400
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:41543 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbeIXIZu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 04:25:50 -0400
-Received: by mail-lf1-f43.google.com with SMTP id l26-v6so15311413lfc.8
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Sep 2018 19:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DcGRGJ9NwQK3sueXhQJvkqJ+L4hKV0ez70Jn5RmNtVo=;
-        b=V7Wb+hRI2AsJQYaxouuKRFhz3yJIOCiJcERCzpKbu8BjqXwACSSCyu0Cg6DSMUBQV4
-         Wuo/+VczuV4p9UCqTXdASReiyHU4HSYW0jCMCFCTLX4UABQdk5L640wjB5USV4PNmvuJ
-         aO2Ff4j1smgTpgsiD1JCUcLtwOwPZLcGUtkJw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DcGRGJ9NwQK3sueXhQJvkqJ+L4hKV0ez70Jn5RmNtVo=;
-        b=WMLKwp4j6Bkm4uMw/jVTovV2//v83a/lSBJD7fdEdo8OwiKdxn0oQp8PJN3z4L4UGz
-         yHNLNFwOT33dN7X8EQeUI0x9weCoqNlrjfGYCDuCj8zd8N/pItW6778oVrTZXZA1GnX8
-         NMPTLe+SuTJCdLne7Ev5JEYVgAy8kbdeX0E4FR+5Tc0PykICskmm2OVDhE14CNbG1iu7
-         Cc5eVYvRW6LzbBFgGpwid38hLk/wLsSbyVDaQD0Xg52KW/B0YJ8Ox/fHYHIIiP37j6Sc
-         qIvDZGPZndzRYuxyd5KKX0qu1aDc5RahC+9AVWowALwlkbkHlMTGVPtNIIS26nOdTgml
-         KSFg==
-X-Gm-Message-State: APzg51Bg+jEzIR/69OhZh7UahNsoZ3T2YqJnaHQuDn9uhIfz3r1nWMS7
-        bVF7r5VAZQrzkmRv8hyP2i4afU2nromEUR/zLYlQYg==
-X-Google-Smtp-Source: ANB0VdY9dIHml0OGehngPFiVqPDUNEYczYeww+lXLsHH5eU/Y6f098mDcipzRmp6WSpfKE4QOjuUMgqZy3EhkOJqpjY=
-X-Received: by 2002:a19:e495:: with SMTP id x21-v6mr4598721lfi.29.1537755956700;
- Sun, 23 Sep 2018 19:25:56 -0700 (PDT)
+        Mon, 24 Sep 2018 04:50:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:35957 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbeIXIuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 04:50:17 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42JTG21jQDz9s8F;
+        Mon, 24 Sep 2018 12:50:17 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1537757419;
+        bh=xFtG/z2lwMvx+7+JpbLj3ZSkG8aA87FiIiluJ+QlhsE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=nJvmUHFXdHCvYARVvUJwahCEkoRYJOyLOYo+SWpw96yzd1bphtYjLMiidb/8ZmPOv
+         6cTYm5SfZewZJJDr0nuJH3gCuE41QlBz3K7QXm+iGQo2Acjf37SidT2X6e8sbb6/Dn
+         n+MY7iBKc5B8Up3KMijrYi7BFGdrUB8kZEb0mZRLoIy40Q9k6gYhDdHtjgXh2jIzip
+         7vk64R5D6nDbHiyxMoL7eYm71XWoPtrvY7Ef274JXrpOzt6hEIAIIlAvA9Ji358B5u
+         a+Vy5jT7Kif2xqr0a9HzA1rCJbv/VZw/HcZ04DpZ5Un/XhkRUmHSNvfqXWgjdaRL2k
+         b8e6MfVUmYuWg==
+Date:   Mon, 24 Sep 2018 12:50:16 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Henrik Austad <henrik@austad.us>,
+        Vladimir Zapolskiy <vz@mleia.com>
+Subject: linux-next: manual merge of the staging tree with the jc_docs tree
+Message-ID: <20180924125016.0f813c15@canb.auug.org.au>
 MIME-Version: 1.0
-References: <CAEXW_YQd8s9GP-TACJCbT67ZCy5guTJMW+Jue3VsEX1777UhBQ@mail.gmail.com>
- <20180923235413.GA4222@linux.ibm.com>
-In-Reply-To: <20180923235413.GA4222@linux.ibm.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Sun, 23 Sep 2018 22:25:44 -0400
-Message-ID: <CAEXW_YRTeJHYtoxiTbX+cq3FCRTpigvzRpvApFtUL8HBEozpXA@mail.gmail.com>
-Subject: Re: Question about ->head field of rcu_segcblist
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Nax6AogWKQOopVOtT.+TSns"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 23, 2018 at 7:54 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
->
-> On Sun, Sep 23, 2018 at 07:30:30PM -0400, Joel Fernandes wrote:
-> > Hi Paul,
-> >
-> > I was parsing the Data-Structures document and had a question about
-> > the following "Important note" text.
-> >
-> > Could it be clarified in the below text better why "remaining
-> > callbacks are placed back on the RCU_DONE_TAIL segment", is a reason
-> > for not depending on ->head for determining if no callbacks are
-> > associated with the rcu_segcblist? If callbacks are added back to the
-> > DONE_TAIL segment, then I would think rcu_head should be != NULL.
-> > Infact the "rsclp->head = *rsclp->tails[RCU_DONE_TAIL];" in
-> > rcu_segcblist_extract_done_cbs should set the ->head to  NULL if I
-> > understand correctly.
->
-> The rcu_segcblist_extract_done_cbs() function will set rsclp->head
-> to NULL only if there were no non-done callbacks on the rsclp list.
-> Otherwise, if there are non-done callbacks, then rsclp->head will
-> be set to the first non-done callback.
->
-> Either way, the problem is that the done callbacks can be removed
-> and re-added, but the count is not adjusted until the re-add.  So
-> you have to look at the count to see if there are callbacks.
->
-> Testing rsclp->head fails because it can be temporarily NULL, even
-> though there are callbacks hanging off of a pointer in rcu_do_batch()'s
-> stack frame.
->
-> Or am I misunderstanding your question?
+--Sig_/Nax6AogWKQOopVOtT.+TSns
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks yes that clears it up, I see what you mean that that ->head
-field is temporarily volatile and really the ->len tells the real
-story :-)
+Hi Greg,
 
-- Joel
+Today's linux-next merge of the staging tree got a conflict in:
+
+  Documentation/filesystems/00-INDEX
+
+between commit:
+
+  a7ddcea58ae2 ("Drop all 00-INDEX files from Documentation/")
+
+from the jc_docs tree and commit:
+
+  a779df303b05 ("Documentation: filesystems: remove reminiscences of POHMEL=
+FS")
+
+from the staging tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Nax6AogWKQOopVOtT.+TSns
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluoUOgACgkQAVBC80lX
+0GxdwAf/eiDP/hlxrfhd0FbfGjuwZgVwSO1TwW0DEuDGSqzbA6pU5iocXGLVKd0I
+66nGn57PSU74y4vVvVzJoISdLg0vKbp0DFzX5+NYhOMit7Q3DehEXPfuyJEUus/a
+Z0FYFKR4qazpuxIfZrXEhLDyQGb5fDgLoRGD2Zm5EoBagr7//kU6vScae0MadqgB
+WBHzeuK9lGhTikzJz4Zt8WWSZXPmNlB5CstQqfTzFd6OqW+8LyE7sLo4MxEXrudo
+QQexcCPbYNWfIA62+/hoPYzSTEGC0ykQy3g76TBYn31+QcdWemOaqAcN4ymnV+BC
+SOtyFu2JvIL3YW/l/gIB+aLQEoN2Qg==
+=zv56
+-----END PGP SIGNATURE-----
+
+--Sig_/Nax6AogWKQOopVOtT.+TSns--
