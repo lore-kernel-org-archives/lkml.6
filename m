@@ -2,60 +2,62 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F298DECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC14ECE567
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC87020833
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD73C2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bquvQUQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC87020833
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Uy6pZDm6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD73C2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeIXQNX (ORCPT
+        id S1728518AbeIXQNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:13:23 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39520 "EHLO
+        Mon, 24 Sep 2018 12:13:25 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36992 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeIXQNX (ORCPT
+        with ESMTP id S1728059AbeIXQNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:13:23 -0400
-Received: by mail-wm1-f68.google.com with SMTP id q8-v6so9403232wmq.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
+        Mon, 24 Sep 2018 12:13:24 -0400
+Received: by mail-wm1-f68.google.com with SMTP id n11-v6so9391022wmc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 03:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=imbjK81jVRpEHkR4I0gKczalGuY2afrY9ylxpTqoEdU=;
-        b=bquvQUQKF23S/krIlBtPBfSlm4C5X4X74objq3j8i5yfNZUeE2CQv0sE2IIBIrY6TC
-         b6Bp4MyssApejL0e+XFuVMLyYzz+AIBbk949QfIW95JixLqhLtDjFKgfIDQXlf4IFVwB
-         fmVQKRTClquTOg8ms5HaP43OSDhFifMG328kfAB5/PjZGTNCiQn3+F/vWiJkqIBVUSuY
-         Uc6B/fSpWiCZ8hq50FzshYxVA3Ddia3H98ZoCIASubyP8x/3yL8LTy8ckzgqEiTytm73
-         DudsnN6Pd4ESStRlgCftCpORiXzQz50OpdkJFDReH9B4Kd6Ckl0x3m6lC31BZhcCE0jX
-         OAVA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=38j/leseIFaYyx4yzFjMEUsIrw9mip1Szaiqm4tzm/A=;
+        b=Uy6pZDm6z/fl0jre25cfBjomNanGjgb8D5SlflebK4Dq53aCng4x8B/xsSiEuoljv3
+         101hdyhZJRdiq1/LK2s2DYanexvieCFQqeRwuu5m3dGgKgsSIvaLaJ9FbXuS23DChcPW
+         aDm6egXgtPBVwFwDkSDQTGokT7Umb7qL+Wkt2AWw+Vx87mWsKncg/A43TTnFs7BlHu2H
+         f+AFCKKUZJ/eD5mpxpoIAwgmjfB6WAcqUVHtGVgTlElhqcRjB8HsJ5Y/78uN2J9xQgvL
+         LHgVUwyoSq6yH00fcHDUwjZDzxbVDgVYVhRvJSbr2ctIuIsTIdtQpNX8YuDqVb+KWpUP
+         LVHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=imbjK81jVRpEHkR4I0gKczalGuY2afrY9ylxpTqoEdU=;
-        b=gLMMcFYv/gL4pnwyfIrNbzKKDrxM7PsgyE6717PG2CjwY6BCClyf39WXDZ7YzpShWM
-         BPwa0be0uQaaJPINZaRVeF4Cs4rnl2k90d1O52l5kmkEkI+idy1TlinGqQbIpRovzhnf
-         V7gRi+Wc0ugD1adL2BfiedpZq96yX1l55V//OO5kEoRBq0hf+KgxA8jotaN/MUwM7mfX
-         9GrEjKgWyK20+NPRBuAXgaazPpLo7/x7YNWFQPjyOzZ1CpmxE9fu+eCVgJQMVLhjT6df
-         r/D0D96b/bBpsMkdmKmO1kSvLZrVGRhrwCdMJgs9ia+SHQUOumjNXoaqS6b/feMEMlcM
-         Uv4Q==
-X-Gm-Message-State: APzg51B2M0GQHkpJwN2qMRXvNr0q0wb9UJULJ7VfWM0Z7liF16+e+YDD
-        9xcLN8eTvP9naHesd+LD61ORFg==
-X-Google-Smtp-Source: ACcGV60uNz03eCyjgHIy1QlDYkKGTtTRXyIFjDSlgMLWjEnd2XOXq7chhBkDMGylsoO8SrtVQFzpIQ==
-X-Received: by 2002:a1c:d141:: with SMTP id i62-v6mr6188892wmg.113.1537783922357;
-        Mon, 24 Sep 2018 03:12:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=38j/leseIFaYyx4yzFjMEUsIrw9mip1Szaiqm4tzm/A=;
+        b=UcYLLFh/3ywS98sIzRyn+soxYHxrSrbDEb41ZTOnzeaYYTiNgLaCxhlK0pr8Xgyzdy
+         T0Jxo7Ki80OZqd52uIbRdieMmBLL3UJwrt73o/DzXAR0OduSDTMYCOGKapEyLOs6tD3q
+         wLt6FMNHElxUsc1sTcV9CYecMDCSJ9iLsN2xfMZUDLApXgPlSUCoaq8UmBhG3fLy+nLh
+         Pfm60aCB5VIJ3xkXw8GJLzBvmIMEuHJ/APqEy6fbsDpbgKZRx0uJH0bX2JnkWG6orAPm
+         K00N9uiJJWMi2ZO1Gy8jz2zdZVjXdh3dyxHCEDeM94BUSRyrHOi7OS69O1WicbQSCr0I
+         /Hyw==
+X-Gm-Message-State: ABuFfojnNFNC7I15wpa/kVrgRUdnGA6YQ8afIYSuj73elRryAt7CawGD
+        iJMpHg41KpH9xFcckWfTjKJ8ew==
+X-Google-Smtp-Source: ACcGV605psT+bg6McVRzros1Jf9FORPXMAjXqmI/96ORXIfiqHRHrFOhI/+9JRilgZIocmyDiIQAdQ==
+X-Received: by 2002:a1c:4182:: with SMTP id o124-v6mr6764650wma.101.1537783923860;
+        Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-2-33.w90-86.abo.wanadoo.fr. [90.86.1.33])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.00
+        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 03:12:01 -0700 (PDT)
+        Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -80,42 +82,59 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 0/4] devres: provide and use devm_kstrdup_const()
-Date:   Mon, 24 Sep 2018 12:11:46 +0200
-Message-Id: <20180924101150.23349-1-brgl@bgdev.pl>
+Subject: [PATCH v3 1/4] devres: constify p in devm_kfree()
+Date:   Mon, 24 Sep 2018 12:11:47 +0200
+Message-Id: <20180924101150.23349-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series implements devm_kstrdup_const() together with some
-prerequisite changes and uses it in pmc-atom driver.
+Make devm_kfree() signature uniform with that of kfree(). To avoid
+compiler warnings: cast p to (void *) when calling devres_destroy().
 
-v1 -> v2:
-- fixed the changelog in the patch implementing devm_kstrdup_const()
-- fixed the kernel doc
-- moved is_kernel_rodata() to asm-generic/sections.h
-- fixed constness
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/base/devres.c  | 5 +++--
+ include/linux/device.h | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-v2 -> v3:
-- rebased on top of 4.19-rc5 as there were some conflicts in the
-  pmc-atom driver
-- collected Reviewed-by tags
-
-Bartosz Golaszewski (4):
-  devres: constify p in devm_kfree()
-  mm: move is_kernel_rodata() to asm-generic/sections.h
-  devres: provide devm_kstrdup_const()
-  clk: pmc-atom: use devm_kstrdup_const()
-
- drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
- drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
- include/asm-generic/sections.h | 14 +++++++++++
- include/linux/device.h         |  5 +++-
- mm/util.c                      |  7 ------
- 5 files changed, 63 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index f98a097e73f2..438c91a43508 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -885,11 +885,12 @@ EXPORT_SYMBOL_GPL(devm_kasprintf);
+  *
+  * Free memory allocated with devm_kmalloc().
+  */
+-void devm_kfree(struct device *dev, void *p)
++void devm_kfree(struct device *dev, const void *p)
+ {
+ 	int rc;
+ 
+-	rc = devres_destroy(dev, devm_kmalloc_release, devm_kmalloc_match, p);
++	rc = devres_destroy(dev, devm_kmalloc_release,
++			    devm_kmalloc_match, (void *)p);
+ 	WARN_ON(rc);
+ }
+ EXPORT_SYMBOL_GPL(devm_kfree);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 8f882549edee..33f7cb271fbb 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -692,7 +692,7 @@ static inline void *devm_kcalloc(struct device *dev,
+ {
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
+-extern void devm_kfree(struct device *dev, void *p);
++extern void devm_kfree(struct device *dev, const void *p);
+ extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+ extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+ 			  gfp_t gfp);
 -- 
 2.18.0
 
