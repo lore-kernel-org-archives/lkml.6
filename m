@@ -2,457 +2,302 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE8AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F775ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F5D2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4022098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAFityo7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F5D2098A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cm6rZG0k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4022098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731466AbeIYBRf (ORCPT
+        id S1731395AbeIYBSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:17:35 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53720 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730974AbeIYBRf (ORCPT
+        Mon, 24 Sep 2018 21:18:47 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42487 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730914AbeIYBSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:17:35 -0400
-Received: by mail-it1-f196.google.com with SMTP id q70-v6so3545729itb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:13:57 -0700 (PDT)
+        Mon, 24 Sep 2018 21:18:47 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y4-v6so9621752pgp.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:15:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Eils08hNm8qN1BcWA6gE0Iv+recg4XLxswrA+cMi7CQ=;
-        b=YAFityo7MyG9HiP03smrFb04M8ANJDrFDK4k+7aPkBCx8+DOQB2m758TucE680XsAT
-         cd5nswlvGmFdz/2ucL5po2/A68+CZ63G7c26u9KNYB+EpUkQWsfRZ/ewdxF3HfVx+rOi
-         28kCuMJeG4Rbp3HihjmkNYuBaJH9+LU2+z6HA=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8oKy/FMnmlf4VEFI0GiByfl+vIaUvF0ghpDr8GF9mHU=;
+        b=cm6rZG0ktgaWNezYnEbTDdDN7mP3ntKXwsoUHTjgNsZTwZL6kMa7cpyn5Z5TLdt/wf
+         fsCUgiVURGALPXRF3EZtsNBMrxuQdl7YA55RPpqtx659R9tOt6RJETnC7ObXmFiodjY3
+         Ivov952iviWlZzKaIkrtOG7BWwyEyQDNUyKVs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Eils08hNm8qN1BcWA6gE0Iv+recg4XLxswrA+cMi7CQ=;
-        b=r/FqRvRRGGs+TjSrMtB5Y0hAurVh5+oaS+gLghDlFLXmYyv7IUDkgQhTiHPBHFooqT
-         OXU4Phl1km+7ZZ13FhoIGbFihRaMkWv0nGdj9xhEbLjJ82s4KRzwANJGFfoUfKW8bBp/
-         H9JuGjKzbQ4pB2NFgflv5dpnbT4uGHRd+Wyzev3ot+7ggPfzwx3+7+ZHxm8sDGgMoNUe
-         Wtqnef9YDND3BGkErfM4X3Ds0ZXWfhNo7QXsODmcvm31r3aVbUvsnFvDOo8e52toCHxK
-         ysWedVV4/Bx740uA6Xl1bM1Q1lCuxkINEdGXLuGzlmHA7SYMi8eMkWxL+ZDXi2gyfaUL
-         X4rA==
-X-Gm-Message-State: ABuFfoieI6gFX/WMe4f8rBy+OBLubjK5VbsrobWMfWy/xYFA0fDrHbzq
-        2lFUEttFUukHvAfXiO9o+8umwMqsf1ctjHRxRF9QWdraCok=
-X-Google-Smtp-Source: ACcGV612KpYUyMVJmGr47w1gdE7yu+jlI5R4eDobXclv+w3kscFbZ+NjEn12KZByoQewp/B8F3fo3T1a0kUeK56Kt5s=
-X-Received: by 2002:a02:6a6f:: with SMTP id m47-v6mr224294jaf.121.1537816436780;
- Mon, 24 Sep 2018 12:13:56 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:6a18:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 12:13:16
- -0700 (PDT)
-In-Reply-To: <1537435845-6682-4-git-send-email-manish.narani@xilinx.com>
-References: <1537435845-6682-1-git-send-email-manish.narani@xilinx.com> <1537435845-6682-4-git-send-email-manish.narani@xilinx.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 24 Sep 2018 21:13:16 +0200
-Message-ID: <CAPDyKFpPWuM2so4piKOfmGQgRuXX+jm8yTLFhxkZRuRNQoCAeQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 3/4] sdhci: arasan: Add support to read and set tap
- delays from DT for ZynqMP
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8oKy/FMnmlf4VEFI0GiByfl+vIaUvF0ghpDr8GF9mHU=;
+        b=UkyMB52WAbG0gfkobBWTKcgSifyNuUEX5ZGbILxkF7en4lUYh0MZGyVpPHL6ZhMydk
+         S/tbw4jllmTtRGXRCCMNlfebdz8Z2rp/FskBxjD/APU15PI6vWFkj9A74AdHooTKQDue
+         0LIlWgMmOjyTJBWTz8QVCRnnAvmHi75ONpNmcZnYY9zJo+/1iH3uwuumoCin3PojTEQ+
+         5/F3js90FhJPzj7nxglh0k2+RWpW+LnuCqiZBtbSwkKc3mQnxMUjkjGsHOzHj4hfF4Fq
+         O7LZV9ABPL9hLZdHJ7PFOF7doYtXveUYRsGsPy/6eb4vvXzuKjM/50dpjuWrYhmIoCQl
+         Tfcg==
+X-Gm-Message-State: ABuFfogY1KcIZgaEDdMsccRukRDVpE3GUcGfWhy1dTwe0FK4lslBJ9d3
+        VcSNaroKD6MPtHDGt7p4HJ1WOQ==
+X-Google-Smtp-Source: ACcGV63fzTW9H1A2aIvuDdPyg2QY/eHCoqKLCZBWWPopuSukdzGGA83S0zkz1OIyZDMeR65Se8EKsA==
+X-Received: by 2002:a63:ce14:: with SMTP id y20-v6mr209259pgf.248.1537816509476;
+        Mon, 24 Sep 2018 12:15:09 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p1-v6sm125263pfn.53.2018.09.24.12.15.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 12:15:08 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 12:19:29 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Craig Tatlor <ctatlor97@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Yang-Leo Li <leoyang.li@nxp.com>, jollys@xilinx.com,
-        rajanv@xilinx.com,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: sdm630 SoC and Sony Pioneer (Xperia XA2)
+ support
+Message-ID: <20180924191929.GQ1367@tuxbook-pro>
+References: <20180811162549.12312-1-ctatlor97@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180811162549.12312-1-ctatlor97@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 September 2018 at 11:30, Manish Narani <manish.narani@xilinx.com> wrote:
-> Apart from taps set by auto tuning, ZynqMP platform has feature to set
-> the tap values manually. Add support to read tap delay values from
-> DT and set the same in HW via ZynqMP SoC framework. Reading Tap
-> Delays from DT is optional, if the property is not available in DT the
-> driver will use the pre-defined Tap Delay Values.
+On Sat 11 Aug 09:25 PDT 2018, Craig Tatlor wrote:
 
-As far as I understand the Tap Delay Values are properties of the clock signal.
+> Initial device tree support for Qualcomm SDM630 SoC and
+> Sony Pioneer (Xperia XA2).
+> 
+> SDM630 is based off of the SDM660 soc and all SDM660 specific drivers are
+> compatible with it. SDM660 is also based off of MSM8998 so it uses some
+> of its drivers aswell.
 
-Sounds like the backend part for changing the Tap delay values should
-be implemented in the ZynqMP clock driver. Then the arasan mmc driver
-should call clk_set|get_phase() to change the values.
+Consider adding both sdm630 and sdm660 compatibles to the bindings and
+drivers and use the right one in the dts, in case we find details that
+differs in the future.
 
-Would that work?
-
-Kind regards
-Uffe
-
->
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  drivers/firmware/xilinx/Makefile            |   1 +
->  drivers/firmware/xilinx/zynqmp-tap-delays.c |  39 +++++
->  drivers/mmc/host/sdhci-of-arasan.c          | 215 ++++++++++++++++++++++++++++
->  include/linux/firmware/xlnx-zynqmp.h        |   4 +
->  4 files changed, 259 insertions(+)
->  create mode 100644 drivers/firmware/xilinx/zynqmp-tap-delays.c
->
-> diff --git a/drivers/firmware/xilinx/Makefile b/drivers/firmware/xilinx/Makefile
-> index 875a537..c32b2a3 100644
-> --- a/drivers/firmware/xilinx/Makefile
-> +++ b/drivers/firmware/xilinx/Makefile
-> @@ -2,4 +2,5 @@
->  # Makefile for Xilinx firmwares
->
->  obj-$(CONFIG_ZYNQMP_FIRMWARE) += zynqmp.o
-> +obj-$(CONFIG_ZYNQMP_FIRMWARE) += zynqmp-tap-delays.o
->  obj-$(CONFIG_ZYNQMP_FIRMWARE_DEBUG) += zynqmp-debug.o
-> diff --git a/drivers/firmware/xilinx/zynqmp-tap-delays.c b/drivers/firmware/xilinx/zynqmp-tap-delays.c
+> 
+> The device tree is based on the CAF 4.4 kernel tree.
+> 
+> The device can be booted into the initrd with a shell over UART.
+> 
+> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+[..]
+> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pins.dtsi b/arch/arm64/boot/dts/qcom/sdm630-pins.dtsi
 > new file mode 100644
-> index 0000000..2e5cab3
+> index 000000000000..78b79c1076f1
 > --- /dev/null
-> +++ b/drivers/firmware/xilinx/zynqmp-tap-delays.c
-> @@ -0,0 +1,39 @@
+> +++ b/arch/arm64/boot/dts/qcom/sdm630-pins.dtsi
+> @@ -0,0 +1,17 @@
 > +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Xilinx Zynq MPSoC Tap Delay Programming
-> + *
-> + *  Copyright (C) 2014-2018 Xilinx, Inc.
-> + *
-> + *  Manish Narani <mnarani@xilinx.com>
-> + */
+> +/* Copyright (c) 2018, Craig Tatlor. */
 > +
-> +#include <linux/delay.h>
-> +#include <linux/types.h>
-> +#include <linux/firmware/xlnx-zynqmp.h>
+> +&tlmm {
+> +	blsp1_uart1_default: blsp1_uart1_default {
+> +		pinmux {
+> +			pins = "gpio0", "gpio1", "gpio2", "gpio3";
+> +			function = "gpio";
+
+Please put these in the sdm630.dtsi directly, rather than spreading the
+pins out in a separate file.
+
+> +		};
 > +
-> +/**
-> + * zynqmp_set_tap_delay - Program the tap delays.
-> + * @deviceid:          Unique Id of device
-> + * @itap_delay:                Input Tap Delay
-> + * @oitap_delay:       Output Tap Delay
-> + */
-> +void zynqmp_set_tap_delay(u8 deviceid, u8 itap_delay, u8 otap_delay)
-> +{
-> +       const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-> +       u32 node_id = (deviceid == 0) ? NODE_SD_0 : NODE_SD_1;
+> +		pinconf {
+> +			pins = "gpio0", "gpio1", "gpio2", "gpio3";
+> +			drive-strength = <2>;
+> +			bias-disable;
+
+Please extend &blsp1_uart1_default in the pioneer dtsi with these
+"electrical properties".
+
+> +		};
+> +	};
+> +};
+[..]
+> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pioneer.dtsi b/arch/arm64/boot/dts/qcom/sdm630-pioneer.dtsi
+> new file mode 100644
+> index 000000000000..512792c23369
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sdm630-pioneer.dtsi
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2018, Craig Tatlor. */
 > +
-> +       if (!eemi_ops || !eemi_ops->ioctl)
-> +               return;
+> +#include "sdm630.dtsi"
 > +
-> +       /* Set the Input Tap Delay */
-> +       if (itap_delay)
-> +               eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
-> +                               PM_TAPDELAY_INPUT, itap_delay, NULL);
+> +/ {
+> +	aliases {
+> +		serial0 = &blsp1_uart1;
+> +	};
 > +
-> +       /* Set the Output Tap Delay */
-> +       if (otap_delay)
-> +               eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
-> +                               PM_TAPDELAY_OUTPUT, otap_delay, NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(zynqmp_set_tap_delay);
-> +
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-> index 1a8bbd2..57f89af 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -77,6 +77,18 @@ struct sdhci_arasan_soc_ctl_map {
->  };
->
->  /**
-> + * struct sdhci_arasan_zynqmp_data
-> + * @mio_bank           Memory IO Bank number
-> + * @itapdly            Input Tap Delays array for different host timings
-> + * @otapdly            Output Tap Delays array for different host timings
-> + */
-> +struct sdhci_arasan_zynqmp_data {
-> +       u32 mio_bank;
-> +       u32 itapdly[MMC_TIMING_MMC_HS400 + 1];
-> +       u32 otapdly[MMC_TIMING_MMC_HS400 + 1];
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
 > +};
 > +
-> +/**
->   * struct sdhci_arasan_data
->   * @host:              Pointer to the main SDHCI host structure.
->   * @clk_ahb:           Pointer to the AHB clock
-> @@ -99,6 +111,7 @@ struct sdhci_arasan_data {
->
->         struct regmap   *soc_ctl_base;
->         const struct sdhci_arasan_soc_ctl_map *soc_ctl_map;
-> +       struct sdhci_arasan_zynqmp_data zynqmp_data;
->         unsigned int    device_id;
->         unsigned int    quirks; /* Arasan deviations from spec */
->
-> @@ -235,7 +248,11 @@ static void sdhci_arasan_set_clock(struct sdhci_host *host, unsigned int clock)
->  {
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
-> +       struct device *dev = mmc_dev(host->mmc);
-> +       unsigned int timing = host->timing;
->         bool ctrl_phy = false;
-> +       u8 itap_delay;
-> +       u8 otap_delay;
->
->         if (!IS_ERR(sdhci_arasan->phy)) {
->                 if (!sdhci_arasan->is_phy_on && clock <= PHY_CLK_TOO_SLOW_HZ) {
-> @@ -278,6 +295,17 @@ static void sdhci_arasan_set_clock(struct sdhci_host *host, unsigned int clock)
->
->         sdhci_set_clock(host, clock);
->
-> +       if (of_device_is_compatible(dev->of_node, "xlnx,zynqmp-8.9a")) {
-> +               if ((host->version >= SDHCI_SPEC_300) &&
-> +                   (timing != MMC_TIMING_LEGACY) &&
-> +                   (timing != MMC_TIMING_UHS_SDR12)) {
-> +                       itap_delay = sdhci_arasan->zynqmp_data.itapdly[timing];
-> +                       otap_delay = sdhci_arasan->zynqmp_data.otapdly[timing];
-> +                       zynqmp_set_tap_delay(sdhci_arasan->device_id,
-> +                                            itap_delay, otap_delay);
-> +               }
-> +       }
+> +&soc {
+> +	serial@c170000 {
+
+Please reference this by &blsp1_uart1, rather than duplicating the
+hierarchy.
+
+> +		status = "okay";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&blsp1_uart1_default>;
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+> new file mode 100644
+> index 000000000000..8a544979b7c0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+> @@ -0,0 +1,383 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2018, Craig Tatlor. */
 > +
->         if (sdhci_arasan->quirks & SDHCI_ARASAN_QUIRK_CLOCK_UNSTABLE)
->                 /*
->                  * Some controllers immediately report SDHCI_CLOCK_INT_STABLE
-> @@ -723,6 +751,182 @@ static void sdhci_arasan_unregister_sdclk(struct device *dev)
->         of_clk_del_provider(dev->of_node);
->  }
->
-> +/**
-> + * arasan_zynqmp_dt_parse_tap_delays - Read Tap Delay values from DT
-> + *
-> + * Called at initialization to parse the values of Tap Delays.
-> + *
-> + * @dev:               Pointer to our struct device.
-> + */
-> +static void arasan_zynqmp_dt_parse_tap_delays(struct device *dev)
-> +{
-> +       struct platform_device *pdev = to_platform_device(dev);
-> +       struct sdhci_host *host = platform_get_drvdata(pdev);
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
-> +       u32 mio_bank = sdhci_arasan->zynqmp_data.mio_bank;
-> +       u32 *itapdly = sdhci_arasan->zynqmp_data.itapdly;
-> +       u32 *otapdly = sdhci_arasan->zynqmp_data.otapdly;
-> +       struct device_node *np = dev->of_node;
-> +       int ret;
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/qcom,gcc-sdm660.h>
 > +
-> +       /*
-> +        * Read Tap Delay values from DT, if the DT does not contain the
-> +        * Tap Values then use the pre-defined values
-> +        */
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-sd-hsd",
-> +                                  &itapdly[MMC_TIMING_SD_HS]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_SD_HS\n");
-> +               itapdly[MMC_TIMING_SD_HS] = ZYNQMP_ITAPDLYSEL_SD_HSD;
-> +       }
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. SDM630";
+
+We expect the board to always override this, so no need to specify it
+here.
+
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-sd-hsd",
-> +                                  &otapdly[MMC_TIMING_SD_HS]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_SD_HS\n");
-> +               otapdly[MMC_TIMING_SD_HS] = ZYNQMP_OTAPDLYSEL_SD_HSD;
-> +       }
+> +	interrupt-parent = <&intc>;
 > +
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-sdr25",
-> +                                  &itapdly[MMC_TIMING_UHS_SDR25]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_UHS_SDR25\n");
-> +               itapdly[MMC_TIMING_UHS_SDR25] = ZYNQMP_ITAPDLYSEL_SDR25;
-> +       }
+> +	qcom,msm-id = <318 0x0>;
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-sdr25",
-> +                                  &otapdly[MMC_TIMING_UHS_SDR25]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_UHS_SDR25\n");
-> +               otapdly[MMC_TIMING_UHS_SDR25] = ZYNQMP_OTAPDLYSEL_SDR25;
-> +       }
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
 > +
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-sdr50",
-> +                                  &itapdly[MMC_TIMING_UHS_SDR50]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_UHS_SDR50\n");
-> +               itapdly[MMC_TIMING_UHS_SDR50] = ZYNQMP_ITAPDLYSEL_SDR50;
-> +       }
+> +	chosen { };
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-sdr50",
-> +                                  &otapdly[MMC_TIMING_UHS_SDR50]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_UHS_SDR50\n");
-> +               otapdly[MMC_TIMING_UHS_SDR50] = ZYNQMP_OTAPDLYSEL_SDR50;
-> +       }
+> +	memory {
+> +		device_type = "memory";
+> +		/* We expect the bootloader to fill in the reg */
+> +		reg = <0 0 0 0>;
+> +	};
 > +
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-sd-ddr50",
-> +                                  &itapdly[MMC_TIMING_UHS_DDR50]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_UHS_DDR50\n");
-> +               itapdly[MMC_TIMING_UHS_DDR50] = ZYNQMP_ITAPDLYSEL_SD_DDR50;
-> +       }
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-sd-ddr50",
-> +                                  &otapdly[MMC_TIMING_UHS_DDR50]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_UHS_DDR50\n");
-> +               otapdly[MMC_TIMING_UHS_DDR50] = ZYNQMP_OTAPDLYSEL_SD_DDR50;
-> +       }
+
+Extra empty line.
+
+> +	cpus {
+[..]
 > +
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-mmc-hsd",
-> +                                  &itapdly[MMC_TIMING_MMC_HS]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_MMC_HS\n");
-> +               itapdly[MMC_TIMING_MMC_HS] = ZYNQMP_ITAPDLYSEL_MMC_HSD;
-> +       }
+> +	timer {
+
+Please sort these nodes by name, except for "soc" which is convenient
+to have last.
+
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 2 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 3 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 0 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+[..]
+> +	firmware {
+> +		scm {
+> +			compatible = "qcom,scm-sdm660";
+> +		};
+> +	};
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-mmc-hsd",
-> +                                  &otapdly[MMC_TIMING_MMC_HS]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_MMC_HS\n");
-> +               otapdly[MMC_TIMING_MMC_HS] = ZYNQMP_OTAPDLYSEL_MMC_HSD;
-> +       }
 > +
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-mmc-ddr52",
-> +                                  &itapdly[MMC_TIMING_MMC_DDR52]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_MMC_DDR52\n");
-> +               itapdly[MMC_TIMING_MMC_DDR52] = ZYNQMP_ITAPDLYSEL_MMC_DDR52;
-> +       }
+
+Extra empty line.
+
+> +	rpm-glink {
+> +		compatible = "qcom,glink-rpm";
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-mmc-ddr52",
-> +                                  &otapdly[MMC_TIMING_MMC_DDR52]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_MMC_DDR52\n");
-> +               otapdly[MMC_TIMING_MMC_DDR52] = ZYNQMP_OTAPDLYSEL_MMC_DDR52;
-> +       }
+> +		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
 > +
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-sdr104",
-> +                                  &itapdly[MMC_TIMING_UHS_SDR104]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_UHS_SDR104\n");
-> +               if (mio_bank == 2) {
-> +                       itapdly[MMC_TIMING_UHS_SDR104] =
-> +                               ZYNQMP_ITAPDLYSEL_SDR104_B2;
-> +               } else {
-> +                       itapdly[MMC_TIMING_UHS_SDR104] =
-> +                               ZYNQMP_ITAPDLYSEL_SDR104_B0;
-> +               }
-> +       }
+> +		qcom,rpm-msg-ram = <&rpm_msg_ram>;
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-sdr104",
-> +                                  &otapdly[MMC_TIMING_UHS_SDR104]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_UHS_SDR104\n");
-> +               if (mio_bank == 2) {
-> +                       otapdly[MMC_TIMING_UHS_SDR104] =
-> +                               ZYNQMP_OTAPDLYSEL_SDR104_B2;
-> +               } else {
-> +                       otapdly[MMC_TIMING_UHS_SDR104] =
-> +                               ZYNQMP_OTAPDLYSEL_SDR104_B0;
-> +               }
-> +       }
+> +		mboxes = <&apcs_glb 0>;
+
+Remove a few of these extra empty lines and add the rpm_requests channel
+here while you're at it:
+
+		rpm_requests: glink-channel {
+                        compatible = "qcom,rpm-sdm660";
+                        qcom,glink-channels = "rpm_requests";
+                };
+
+> +	};
 > +
-> +       ret = of_property_read_u32(np, "xlnx,itap-delay-mmc-hs200",
-> +                                  &itapdly[MMC_TIMING_MMC_HS200]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined itapdly for MMC_TIMING_MMC_HS200\n");
-> +               if (mio_bank == 2) {
-> +                       itapdly[MMC_TIMING_MMC_HS200] =
-> +                               ZYNQMP_ITAPDLYSEL_MMC_HS200_B2;
-> +               } else {
-> +                       itapdly[MMC_TIMING_MMC_HS200] =
-> +                               ZYNQMP_ITAPDLYSEL_MMC_HS200_B0;
-> +               }
-> +       }
+> +	soc: soc {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0 0xffffffff>;
+> +		compatible = "simple-bus";
 > +
-> +       ret = of_property_read_u32(np, "xlnx,otap-delay-mmc-hs200",
-> +                                  &otapdly[MMC_TIMING_MMC_HS200]);
-> +       if (ret) {
-> +               dev_dbg(dev,
-> +                       "Using predefined otapdly for MMC_TIMING_MMC_HS200\n");
-> +               if (mio_bank == 2) {
-> +                       otapdly[MMC_TIMING_MMC_HS200] =
-> +                               ZYNQMP_OTAPDLYSEL_MMC_HS200_B2;
-> +               } else {
-> +                       otapdly[MMC_TIMING_MMC_HS200] =
-> +                               ZYNQMP_OTAPDLYSEL_MMC_HS200_B0;
-> +               }
-> +       }
-> +}
+> +		intc: interrupt-controller@17a00000 {
+
+Please sort these nodes by base address.
+
+> +			compatible = "arm,gic-v3";
+> +			reg = <0x17a00000 0x10000>,
+> +			      <0x17b00000 0x100000>;
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +			interrupt-controller;
+> +			#redistributor-regions = <1>;
+> +			redistributor-stride = <0x0 0x20000>;
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
 > +
->  static int sdhci_arasan_add_host(struct sdhci_arasan_data *sdhci_arasan)
->  {
->         struct sdhci_host *host = sdhci_arasan->host;
-> @@ -863,6 +1067,15 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
->
->         if (of_device_is_compatible(pdev->dev.of_node, "xlnx,zynqmp-8.9a")) {
->                 ret = of_property_read_u32(pdev->dev.of_node,
-> +                                          "xlnx,mio-bank",
-> +                                          &sdhci_arasan->zynqmp_data.mio_bank);
-> +               if (ret < 0) {
-> +                       dev_err(&pdev->dev,
-> +                               "\"xlnx,mio-bank \" property is missing.\n");
-> +                       goto unreg_clk;
-> +               }
+> +		gcc: clock-controller@100000 {
+> +			compatible = "qcom,gcc-sdm660";
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +			reg = <0x100000 0x94000>;
+
+Please 0-pad addresses in "reg", makes it easier to sort them as well
+(but keep the @address after the node name unpadded).
+
+> +		};
 > +
-> +               ret = of_property_read_u32(pdev->dev.of_node,
->                                            "xlnx,device_id",
->                                            &sdhci_arasan->device_id);
->                 if (ret < 0) {
-> @@ -871,6 +1084,8 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
->                         goto unreg_clk;
->                 }
->
-> +               arasan_zynqmp_dt_parse_tap_delays(&pdev->dev);
+[..]
+> +		rpm_msg_ram: memory@778000 {
+> +			compatible = "qcom,rpm-msg-ram";
+> +			reg = <0x778000 0x7000>;
+> +		};
 > +
->                 host->mmc_host_ops.execute_tuning =
->                         arasan_zynqmp_execute_tuning;
->         }
-> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-> index 40feebc..b00388f 100644
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@ -144,11 +144,15 @@ struct zynqmp_eemi_ops {
->
->  #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
->  const struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void);
-> +/* API for programming the tap delays */
-> +void zynqmp_set_tap_delay(u8 deviceid, u8 itap_delay, u8 otap_delay);
->  #else
->  static inline struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
->  {
->         return NULL;
->  }
-> +inline void zynqmp_set_tap_delay(u8 deviceid, u8 itap_delay,
-> +                                       u8 otap_delay) {}
->  #endif
->
->  #endif /* __FIRMWARE_ZYNQMP_H__ */
-> --
-> 2.1.1
->
+> +		apcs_glb: mailbox@17911000 {
+> +			compatible = "qcom,msm8998-apcs-hmss-global";
+
+Please update the apcs ipc driver with a sdm660 compatible and update
+this.
+
+> +			reg = <0x17911000 0x1000>;
+> +
+> +			#mbox-cells = <1>;
+> +		};
+
+Regards,
+Bjorn
