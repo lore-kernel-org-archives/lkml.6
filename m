@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 355E0ECE567
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9E7ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED83720877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED83720877
+	by mail.kernel.org (Postfix) with ESMTP id 9316C20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9316C20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbeIXSB3 (ORCPT
+        id S1730543AbeIXSB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:01:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52558 "EHLO
+        Mon, 24 Sep 2018 14:01:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730210AbeIXSB3 (ORCPT
+        with ESMTP id S1730531AbeIXSBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:01:29 -0400
+        Mon, 24 Sep 2018 14:01:25 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 374401076;
-        Mon, 24 Sep 2018 11:59:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B72931075;
+        Mon, 24 Sep 2018 11:59:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 020/111] gfs2: Dont reject a supposedly full bitmap if we have blocks reserved
-Date:   Mon, 24 Sep 2018 13:51:47 +0200
-Message-Id: <20180924113106.368256456@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+93a5839deb355537440f@syzkaller.appspotmail.com,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        rds-devel@oss.oracle.com, Cong Wang <xiyou.wangcong@gmail.com>,
+        Santosh Shilimkar <santosh.shilimkar@oarcle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 002/111] rds: fix two RCU related problems
+Date:   Mon, 24 Sep 2018 13:51:29 +0200
+Message-Id: <20180924113103.949206414@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -52,42 +56,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit e79e0e1428188b24c3b57309ffa54a33c4ae40c4 ]
+[ Upstream commit cc4dfb7f70a344f24c1c71e298deea0771dadcb2 ]
 
-Before this patch, you could get into situations like this:
+When a rds sock is bound, it is inserted into the bind_hash_table
+which is protected by RCU. But when releasing rds sock, after it
+is removed from this hash table, it is freed immediately without
+respecting RCU grace period. This could cause some use-after-free
+as reported by syzbot.
 
-1. Process 1 searches for X free blocks, finds them, makes a reservation
-2. Process 2 searches for free blocks in the same rgrp, but now the
-   bitmap is full because process 1's reservation is skipped over.
-   So it marks the bitmap as GBF_FULL.
-3. Process 1 tries to allocate blocks from its own reservation, but
-   since the GBF_FULL bit is set, it skips over the rgrp and searches
-   elsewhere, thus not using its own reservation.
+Mark the rds sock with SOCK_RCU_FREE before inserting it into the
+bind_hash_table, so that it would be always freed after a RCU grace
+period.
 
-This patch adds an additional check to allow processes to use their
-own reservations.
+The other problem is in rds_find_bound(), the rds sock could be
+freed in between rhashtable_lookup_fast() and rds_sock_addref(),
+so we need to extend RCU read lock protection in rds_find_bound()
+to close this race condition.
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Reported-and-tested-by: syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com
+Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
+Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc: rds-devel@oss.oracle.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oarcle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/gfs2/rgrp.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/rds/bind.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1675,7 +1675,8 @@ static int gfs2_rbm_find(struct gfs2_rbm
+--- a/net/rds/bind.c
++++ b/net/rds/bind.c
+@@ -60,11 +60,13 @@ struct rds_sock *rds_find_bound(__be32 a
+ 	u64 key = ((u64)addr << 32) | port;
+ 	struct rds_sock *rs;
  
- 	while(1) {
- 		bi = rbm_bi(rbm);
--		if (test_bit(GBF_FULL, &bi->bi_flags) &&
-+		if ((ip == NULL || !gfs2_rs_active(&ip->i_res)) &&
-+		    test_bit(GBF_FULL, &bi->bi_flags) &&
- 		    (state == GFS2_BLKST_FREE))
- 			goto next_bitmap;
+-	rs = rhashtable_lookup_fast(&bind_hash_table, &key, ht_parms);
++	rcu_read_lock();
++	rs = rhashtable_lookup(&bind_hash_table, &key, ht_parms);
+ 	if (rs && !sock_flag(rds_rs_to_sk(rs), SOCK_DEAD))
+ 		rds_sock_addref(rs);
+ 	else
+ 		rs = NULL;
++	rcu_read_unlock();
  
+ 	rdsdebug("returning rs %p for %pI4:%u\n", rs, &addr,
+ 		ntohs(port));
+@@ -157,6 +159,7 @@ int rds_bind(struct socket *sock, struct
+ 		goto out;
+ 	}
+ 
++	sock_set_flag(sk, SOCK_RCU_FREE);
+ 	ret = rds_add_bound(rs, sin->sin_addr.s_addr, &sin->sin_port);
+ 	if (ret)
+ 		goto out;
 
 
