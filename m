@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BEEC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69610C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B85082098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B85082098A
+	by mail.kernel.org (Postfix) with ESMTP id 2E16520833
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:55:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E16520833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729860AbeIXR5Y (ORCPT
+        id S1729867AbeIXR51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:57:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51892 "EHLO
+        Mon, 24 Sep 2018 13:57:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728425AbeIXR5X (ORCPT
+        with ESMTP id S1728425AbeIXR51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:57:23 -0400
+        Mon, 24 Sep 2018 13:57:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8C841072;
-        Mon, 24 Sep 2018 11:55:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35FF41072;
+        Mon, 24 Sep 2018 11:55:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 31/70] xen/netfront: fix waiting for xenbus state change
-Date:   Mon, 24 Sep 2018 13:52:30 +0200
-Message-Id: <20180924113102.257241426@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Knister <aaron.s.knister@nasa.gov>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.4 32/70] IB/ipoib: Avoid a race condition between start_xmit and cm_rep_handler
+Date:   Mon, 24 Sep 2018 13:52:31 +0200
+Message-Id: <20180924113102.437212825@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -52,109 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Aaron Knister <aaron.s.knister@nasa.gov>
 
-commit 8edfe2e992b75aee3da9316e9697c531194c2f53 upstream.
+commit 816e846c2eb9129a3e0afa5f920c8bbc71efecaa upstream.
 
-Commit 822fb18a82aba ("xen-netfront: wait xenbus state change when load
-module manually") added a new wait queue to wait on for a state change
-when the module is loaded manually. Unfortunately there is no wakeup
-anywhere to stop that waiting.
+Inside of start_xmit() the call to check if the connection is up and the
+queueing of the packets for later transmission is not atomic which leaves
+a window where cm_rep_handler can run, set the connection up, dequeue
+pending packets and leave the subsequently queued packets by start_xmit()
+sitting on neigh->queue until they're dropped when the connection is torn
+down. This only applies to connected mode. These dropped packets can
+really upset TCP, for example, and cause multi-minute delays in
+transmission for open connections.
 
-Instead of introducing a new wait queue rename the existing
-module_unload_q to module_wq and use it for both purposes (loading and
-unloading).
+Here's the code in start_xmit where we check to see if the connection is
+up:
 
-As any state change of the backend might be intended to stop waiting
-do the wake_up_all() in any case when netback_changed() is called.
+       if (ipoib_cm_get(neigh)) {
+               if (ipoib_cm_up(neigh)) {
+                       ipoib_cm_send(dev, skb, ipoib_cm_get(neigh));
+                       goto unref;
+               }
+       }
 
-Fixes: 822fb18a82aba ("xen-netfront: wait xenbus state change when load module manually")
-Cc: <stable@vger.kernel.org> #4.18
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The race occurs if cm_rep_handler execution occurs after the above
+connection check (specifically if it gets to the point where it acquires
+priv->lock to dequeue pending skb's) but before the below code snippet in
+start_xmit where packets are queued.
+
+       if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
+               push_pseudo_header(skb, phdr->hwaddr);
+               spin_lock_irqsave(&priv->lock, flags);
+               __skb_queue_tail(&neigh->queue, skb);
+               spin_unlock_irqrestore(&priv->lock, flags);
+       } else {
+               ++dev->stats.tx_dropped;
+               dev_kfree_skb_any(skb);
+       }
+
+The patch acquires the netif tx lock in cm_rep_handler for the section
+where it sets the connection up and dequeues and retransmits deferred
+skb's.
+
+Fixes: 839fcaba355a ("IPoIB: Connected mode experimental support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Knister <aaron.s.knister@nasa.gov>
+Tested-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/xen-netfront.c |   24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -86,8 +86,7 @@ struct netfront_cb {
- /* IRQ name is queue name with "-tx" or "-rx" appended */
- #define IRQ_NAME_SIZE (QUEUE_NAME_SIZE + 3)
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -992,12 +992,14 @@ static int ipoib_cm_rep_handler(struct i
  
--static DECLARE_WAIT_QUEUE_HEAD(module_load_q);
--static DECLARE_WAIT_QUEUE_HEAD(module_unload_q);
-+static DECLARE_WAIT_QUEUE_HEAD(module_wq);
+ 	skb_queue_head_init(&skqueue);
  
- struct netfront_stats {
- 	u64			packets;
-@@ -1336,11 +1335,11 @@ static struct net_device *xennet_create_
- 	netif_carrier_off(netdev);
++	netif_tx_lock_bh(p->dev);
+ 	spin_lock_irq(&priv->lock);
+ 	set_bit(IPOIB_FLAG_OPER_UP, &p->flags);
+ 	if (p->neigh)
+ 		while ((skb = __skb_dequeue(&p->neigh->queue)))
+ 			__skb_queue_tail(&skqueue, skb);
+ 	spin_unlock_irq(&priv->lock);
++	netif_tx_unlock_bh(p->dev);
  
- 	xenbus_switch_state(dev, XenbusStateInitialising);
--	wait_event(module_load_q,
--			   xenbus_read_driver_state(dev->otherend) !=
--			   XenbusStateClosed &&
--			   xenbus_read_driver_state(dev->otherend) !=
--			   XenbusStateUnknown);
-+	wait_event(module_wq,
-+		   xenbus_read_driver_state(dev->otherend) !=
-+		   XenbusStateClosed &&
-+		   xenbus_read_driver_state(dev->otherend) !=
-+		   XenbusStateUnknown);
- 	return netdev;
- 
-  exit:
-@@ -2025,15 +2024,14 @@ static void netback_changed(struct xenbu
- 
- 	dev_dbg(&dev->dev, "%s\n", xenbus_strstate(backend_state));
- 
-+	wake_up_all(&module_wq);
-+
- 	switch (backend_state) {
- 	case XenbusStateInitialising:
- 	case XenbusStateInitialised:
- 	case XenbusStateReconfiguring:
- 	case XenbusStateReconfigured:
--		break;
--
- 	case XenbusStateUnknown:
--		wake_up_all(&module_unload_q);
- 		break;
- 
- 	case XenbusStateInitWait:
-@@ -2049,12 +2047,10 @@ static void netback_changed(struct xenbu
- 		break;
- 
- 	case XenbusStateClosed:
--		wake_up_all(&module_unload_q);
- 		if (dev->state == XenbusStateClosed)
- 			break;
- 		/* Missed the backend's CLOSING state -- fallthrough */
- 	case XenbusStateClosing:
--		wake_up_all(&module_unload_q);
- 		xenbus_frontend_closed(dev);
- 		break;
- 	}
-@@ -2162,14 +2158,14 @@ static int xennet_remove(struct xenbus_d
- 
- 	if (xenbus_read_driver_state(dev->otherend) != XenbusStateClosed) {
- 		xenbus_switch_state(dev, XenbusStateClosing);
--		wait_event(module_unload_q,
-+		wait_event(module_wq,
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateClosing ||
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateUnknown);
- 
- 		xenbus_switch_state(dev, XenbusStateClosed);
--		wait_event(module_unload_q,
-+		wait_event(module_wq,
- 			   xenbus_read_driver_state(dev->otherend) ==
- 			   XenbusStateClosed ||
- 			   xenbus_read_driver_state(dev->otherend) ==
+ 	while ((skb = __skb_dequeue(&skqueue))) {
+ 		skb->dev = p->dev;
 
 
