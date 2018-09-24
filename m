@@ -2,120 +2,124 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BACAC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803B3ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C9720671
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BAA52148D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 00:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lfpmewrs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52C9720671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtNLuEC8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BAA52148D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeIXGTv (ORCPT
+        id S1727352AbeIXGpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 02:19:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:37937 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725932AbeIXGTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 02:19:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42JPwv58Vpz9s7T;
-        Mon, 24 Sep 2018 10:20:15 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1537748416;
-        bh=mz7NXfTcVL4Eu5EZ0PNFLeKRdH3+mgwdqFoTr3rj8j8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lfpmewrsrLzKukY0UH++7uMK6aXFnEi6s+NZXQXkqsHkYa2AOPnn0UhgsQfZmJRA/
-         Px02xI4t9k9PbI3vrqYtwNFFjFfygG8KpM2de5xJkSKR6vlsAyevXhCfdVV+A4NbRm
-         e392zfrGDwlX50zmWB2ZoyaBNuATsRfYkXGVXTSGIZ9FBHHIwOlb3ApZMZXdOo2MAA
-         +vETl3Ak8s93vSs9QCEbIJ2QOsf5+08U0Di6k19IxnvuMDFHOzeyFKOW/rbad8B2g8
-         JtcymggnciKB16XiP3aYjHDdqXmGLuOO/2z0RvhJFOA3b8suiocLxM0zlyXNoAUiMZ
-         qA3LcNbHvQm5w==
-Date:   Mon, 24 Sep 2018 10:19:56 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Yonghong Song <yhs@fb.com>
-Subject: linux-next: manual merge of the bpf-next tree with Linus' tree
-Message-ID: <20180924101956.4024470e@canb.auug.org.au>
+        Mon, 24 Sep 2018 02:45:41 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45246 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbeIXGpk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 02:45:40 -0400
+Received: by mail-pl1-f195.google.com with SMTP id j8-v6so8330518pll.12;
+        Sun, 23 Sep 2018 17:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ImtNeDFgwkeNNxKU07DnlmMuPLQIHVyVVmQEszJwKBI=;
+        b=KtNLuEC8GJgiz9sgV7j1aawXwBosKjjRjJSfr4+rHvqjzE9nqrgzpO5BPrsz1CpdB3
+         K0NsEk8o1/7IDIU0FbQe6v/vW0cKmi2pis+ND7GBce34rScELVDye7Fc9vDC3XTrFe6V
+         avW0doSyXI+7BgU+3u01FKrnZ34LvEjraxMF/VyUoTTXPCpmS7I4WrelJRDd/wSTiKQk
+         WZCBKQV5eHomm1e2JEOKxE5TQIN/zVpsD8DIO2T65YOhgOmoTxs8XYqjszuy2QRwUWdC
+         KQnwW34tSPaBK2lATlIUlfOZtn0mu18fmtSLfiZWenX/wwt9ycrMwOnwNO7pMcK7UGt3
+         GEBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ImtNeDFgwkeNNxKU07DnlmMuPLQIHVyVVmQEszJwKBI=;
+        b=WsqFYsfi6Cexn2otSfInP7vcmvEeIkjjKHtaHvufcONC32yV+4hCYBVfk9pF0GmlJB
+         /dSahldEhYj/1NFTtBUQ+XnzlIEwB3o/PeKLkujbU1m72X71rnTNZXVUbTNEZqoVJ+ch
+         M0Qc9Gymgf4u0BcS1m05j++vl4NxXjrz05RzegZXXMUTVUYFDejWamXBjj7c3CPXcmQI
+         XopaHITZw9tz3IENKrFhYw4SrbqxSTOypl10rty1Lzl+tUFqZgvL7sJpfDTFT2ggn0Ok
+         5otXgnYxtogXH1Nyo4aaa6W/HaLJGV4Wn6mkW3B8Zgzo3cs2DHDdP6FXbWjp8amv6WV7
+         ctXQ==
+X-Gm-Message-State: ABuFfojCyv3k2OF6VoxFZEJP5Y6aJwYLxpxOGTR2mgoFuyn1mp/fX2fd
+        2tSmIJw9Kgv68TDTMLJQBU8=
+X-Google-Smtp-Source: ACcGV63Yr3cNdbSY5DTB5GSFKrpdIXCFJ0hEvk1Lo0w06Bgmop3PYJnUzzluery9TKP4Mtfrz/f1/Q==
+X-Received: by 2002:a17:902:2f43:: with SMTP id s61-v6mr8133569plb.176.1537749963644;
+        Sun, 23 Sep 2018 17:46:03 -0700 (PDT)
+Received: from localhost.localdomain (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
+        by smtp.gmail.com with ESMTPSA id 82-v6sm5121839pfr.115.2018.09.23.17.45.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Sep 2018 17:46:03 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 01/20] iommu/tegra: gart: Remove pr_fmt and clean up includes
+Date:   Mon, 24 Sep 2018 03:41:34 +0300
+Message-Id: <20180924004153.8232-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924004153.8232-1-digetx@gmail.com>
+References: <20180924004153.8232-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BenR638O_rk0vljbXVo+1Yz"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BenR638O_rk0vljbXVo+1Yz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Remove unneeded headers inclusion and sort the headers in alphabet order.
+Remove pr_fmt macro since there is no pr_*() in the code and it doesn't
+affect dev_*() functions.
 
-Hi all,
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/iommu/tegra-gart.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 7b1361d57a17..6dda7ee1d36c 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -17,21 +17,14 @@
+  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+  */
+ 
+-#define pr_fmt(fmt)	"%s(): " fmt, __func__
+-
++#include <linux/io.h>
++#include <linux/iommu.h>
++#include <linux/list.h>
+ #include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/spinlock.h>
++#include <linux/of_device.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
+ #include <linux/vmalloc.h>
+-#include <linux/mm.h>
+-#include <linux/list.h>
+-#include <linux/device.h>
+-#include <linux/io.h>
+-#include <linux/iommu.h>
+-#include <linux/of.h>
+-
+-#include <asm/cacheflush.h>
+ 
+ /* bitmap of the page sizes currently supported */
+ #define GART_IOMMU_PGSIZES	(SZ_4K)
+-- 
+2.19.0
 
-  tools/lib/bpf/Build
-
-between commit:
-
-  6d41907c630d ("tools lib bpf: Provide wrapper for strerror_r to build in =
-!_GNU_SOURCE systems")
-
-from Linus' tree and commit:
-
-  f7010770fbac ("tools/bpf: move bpf/lib netlink related functions into a n=
-ew file")
-
-from the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/lib/bpf/Build
-index 6eb9bacd1948,512b2c0ba0d2..000000000000
---- a/tools/lib/bpf/Build
-+++ b/tools/lib/bpf/Build
-@@@ -1,1 -1,1 +1,1 @@@
-- libbpf-y :=3D libbpf.o bpf.o nlattr.o btf.o libbpf_errno.o str_error.o
- -libbpf-y :=3D libbpf.o bpf.o nlattr.o btf.o libbpf_errno.o netlink.o
-++libbpf-y :=3D libbpf.o bpf.o nlattr.o btf.o libbpf_errno.o str_error.o ne=
-tlink.o
-
---Sig_/BenR638O_rk0vljbXVo+1Yz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluoLawACgkQAVBC80lX
-0Gzotwf/V7CQ726XCmE/S04vLxUcCAFZ2c3EQdq7Gv9VxUftcpSObjCYXHUpHsBE
-yuRaP+x/x4x46zWHILRmJtRC8bBiyDd9pT/2SvFSed+mZ3rk1oGneqe5VdnsINXr
-xEXgWB20DhjJCdmT6diwO+2gI791JnxCUVB/STlivEJfDAWAlPOfxi7YjDPoCeJ/
-+wQqpbb/n//zK/u/rM3afIJSEy9kvfBfTIdiI/1PF9tUWc5IA0rbwVGI1CNDH1dq
-JJhhYAC8CMi+854ukLCqNUSEYsN//VClHQRAZT/kGHzJV5GlW9FlaRzCWQypVb0e
-W2hj4eZAQp0XoAtmjk+wUaEsxYsu9w==
-=ODdk
------END PGP SIGNATURE-----
-
---Sig_/BenR638O_rk0vljbXVo+1Yz--
