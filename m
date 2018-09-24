@@ -2,87 +2,85 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45360C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6589ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F134F206B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F134F206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7AF3E20877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:00:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF3E20877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730593AbeIXSCL (ORCPT
+        id S1730609AbeIXSCZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:02:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52954 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729762AbeIXSCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:02:11 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6943D109A;
-        Mon, 24 Sep 2018 12:00:20 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
-        Daniel Mack <daniel@zonque.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 025/111] video: fbdev: pxafb: clear allocated memory for video modes
-Date:   Mon, 24 Sep 2018 13:51:52 +0200
-Message-Id: <20180924113106.977527991@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
-References: <20180924113103.337261320@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 14:02:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58671 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729233AbeIXSCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:02:24 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A5C3430026BF;
+        Mon, 24 Sep 2018 12:00:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-123-84.rdu2.redhat.com [10.10.123.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 05DD430918D4;
+        Mon, 24 Sep 2018 12:00:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180924094723.487697-1-lkundrak@v3.sk>
+References: <20180924094723.487697-1-lkundrak@v3.sk>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] Revert "uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <26183.1537790420.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Mon, 24 Sep 2018 13:00:20 +0100
+Message-ID: <26184.1537790420@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 24 Sep 2018 12:00:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Lubomir Rintel <lkundrak@v3.sk> wrote:
 
-------------------
+> This changes UAPI, breaking iwd and libell:
+> 
+>   ell/key.c: In function 'kernel_dh_compute':
+>   ell/key.c:205:38: error: 'struct keyctl_dh_params' has no member named 'private'; did you mean 'dh_private'?
+>     struct keyctl_dh_params params = { .private = private,
+>                                         ^~~~~~~
+>                                         dh_private
+> 
+> This reverts commit 8a2336e549d385bb0b46880435b411df8d8200e8.
+> 
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: <stable@vger.kernel.org>
 
-From: Daniel Mack <daniel@zonque.org>
+Can I stick your Signed-off-by on it?
 
-[ Upstream commit b951d80aaf224b1f774e10def672f5e37488e4ee ]
-
-When parsing the video modes from DT properties, make sure to zero out
-memory before using it. This is important because not all fields in the mode
-struct are explicitly initialized, even though they are used later on.
-
-Fixes: 420a488278e86 ("video: fbdev: pxafb: initial devicetree conversion")
-Reviewed-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/video/fbdev/pxafb.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -2128,8 +2128,8 @@ static int of_get_pxafb_display(struct d
- 		return -EINVAL;
- 
- 	ret = -ENOMEM;
--	info->modes = kmalloc_array(timings->num_timings,
--				    sizeof(info->modes[0]), GFP_KERNEL);
-+	info->modes = kcalloc(timings->num_timings, sizeof(info->modes[0]),
-+			      GFP_KERNEL);
- 	if (!info->modes)
- 		goto out;
- 	info->num_modes = timings->num_timings;
-
-
+David
