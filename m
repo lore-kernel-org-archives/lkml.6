@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A103AECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6343FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6610121486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6610121486
+	by mail.kernel.org (Postfix) with ESMTP id 28E812148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:41:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E812148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbeIXRnT (ORCPT
+        id S1729612AbeIXRnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:43:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51034 "EHLO
+        Mon, 24 Sep 2018 13:43:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51044 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728911AbeIXRnS (ORCPT
+        with ESMTP id S1728503AbeIXRnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:43:18 -0400
+        Mon, 24 Sep 2018 13:43:22 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98D331072;
-        Mon, 24 Sep 2018 11:41:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2891E1070;
+        Mon, 24 Sep 2018 11:41:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Knister <aaron.s.knister@nasa.gov>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 3.18 082/105] IB/ipoib: Avoid a race condition between start_xmit and cm_rep_handler
-Date:   Mon, 24 Sep 2018 13:34:08 +0200
-Message-Id: <20180924113121.256237299@linuxfoundation.org>
+        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
+        David Binderman <dcb314@hotmail.com>,
+        Michael Kelley <mikelley@microsoft.com>
+Subject: [PATCH 3.18 083/105] Tools: hv: Fix a bug in the key delete code
+Date:   Mon, 24 Sep 2018 13:34:09 +0200
+Message-Id: <20180924113121.355450986@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -52,76 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Knister <aaron.s.knister@nasa.gov>
+From: K. Y. Srinivasan <kys@microsoft.com>
 
-commit 816e846c2eb9129a3e0afa5f920c8bbc71efecaa upstream.
+commit 86503bd35dec0ce363e9fdbf5299927422ed3899 upstream.
 
-Inside of start_xmit() the call to check if the connection is up and the
-queueing of the packets for later transmission is not atomic which leaves
-a window where cm_rep_handler can run, set the connection up, dequeue
-pending packets and leave the subsequently queued packets by start_xmit()
-sitting on neigh->queue until they're dropped when the connection is torn
-down. This only applies to connected mode. These dropped packets can
-really upset TCP, for example, and cause multi-minute delays in
-transmission for open connections.
+Fix a bug in the key delete code - the num_records range
+from 0 to num_records-1.
 
-Here's the code in start_xmit where we check to see if the connection is
-up:
-
-       if (ipoib_cm_get(neigh)) {
-               if (ipoib_cm_up(neigh)) {
-                       ipoib_cm_send(dev, skb, ipoib_cm_get(neigh));
-                       goto unref;
-               }
-       }
-
-The race occurs if cm_rep_handler execution occurs after the above
-connection check (specifically if it gets to the point where it acquires
-priv->lock to dequeue pending skb's) but before the below code snippet in
-start_xmit where packets are queued.
-
-       if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
-               push_pseudo_header(skb, phdr->hwaddr);
-               spin_lock_irqsave(&priv->lock, flags);
-               __skb_queue_tail(&neigh->queue, skb);
-               spin_unlock_irqrestore(&priv->lock, flags);
-       } else {
-               ++dev->stats.tx_dropped;
-               dev_kfree_skb_any(skb);
-       }
-
-The patch acquires the netif tx lock in cm_rep_handler for the section
-where it sets the connection up and dequeues and retransmits deferred
-skb's.
-
-Fixes: 839fcaba355a ("IPoIB: Connected mode experimental support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Knister <aaron.s.knister@nasa.gov>
-Tested-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Reported-by: David Binderman <dcb314@hotmail.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/ipoib/ipoib_cm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/hv/hv_kvp_daemon.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -997,12 +997,14 @@ static int ipoib_cm_rep_handler(struct i
- 
- 	skb_queue_head_init(&skqueue);
- 
-+	netif_tx_lock_bh(p->dev);
- 	spin_lock_irq(&priv->lock);
- 	set_bit(IPOIB_FLAG_OPER_UP, &p->flags);
- 	if (p->neigh)
- 		while ((skb = __skb_dequeue(&p->neigh->queue)))
- 			__skb_queue_tail(&skqueue, skb);
- 	spin_unlock_irq(&priv->lock);
-+	netif_tx_unlock_bh(p->dev);
- 
- 	while ((skb = __skb_dequeue(&skqueue))) {
- 		skb->dev = p->dev;
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -289,7 +289,7 @@ static int kvp_key_delete(int pool, cons
+ 		 * Found a match; just move the remaining
+ 		 * entries up.
+ 		 */
+-		if (i == num_records) {
++		if (i == (num_records - 1)) {
+ 			kvp_file_info[pool].num_records--;
+ 			kvp_update_file(pool);
+ 			return 0;
 
 
