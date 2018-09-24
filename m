@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC72C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796B9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA01C21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:30:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA01C21486
+	by mail.kernel.org (Postfix) with ESMTP id 401532148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 401532148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387938AbeIXScv (ORCPT
+        id S2387400AbeIXScy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:32:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57876 "EHLO
+        Mon, 24 Sep 2018 14:32:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57892 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730894AbeIXScu (ORCPT
+        with ESMTP id S1730258AbeIXScx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:32:50 -0400
+        Mon, 24 Sep 2018 14:32:53 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 280041098;
-        Mon, 24 Sep 2018 12:30:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C19E1098;
+        Mon, 24 Sep 2018 12:30:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 042/235] IB/ipoib: Fix error return code in ipoib_dev_init()
-Date:   Mon, 24 Sep 2018 13:50:28 +0200
-Message-Id: <20180924113109.399161891@linuxfoundation.org>
+Subject: [PATCH 4.18 069/235] MIPS: jz4740: Bump zload address
+Date:   Mon, 24 Sep 2018 13:50:55 +0200
+Message-Id: <20180924113112.129504085@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,34 +54,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 99a7e2bf704d64c966dfacede1ba2d9b47cb676e ]
+[ Upstream commit c6ea7e9747318e5a6774995f4f8e3e0f7c0fa8ba ]
 
-Fix to return a negative error code from the ipoib_neigh_hash_init()
-error handling case instead of 0, as done elsewhere in this function.
+Having the zload address at 0x8060.0000 means the size of the
+uncompressed kernel cannot be bigger than around 6 MiB, as it is
+deflated at address 0x8001.0000.
 
-Fixes: 515ed4f3aab4 ("IB/IPoIB: Separate control and data related initializations")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+This limit is too small; a kernel with some built-in drivers and things
+like debugfs enabled will already be over 6 MiB in size, and so will
+fail to extract properly.
+
+To fix this, we bump the zload address from 0x8060.0000 to 0x8100.0000.
+
+This is fine, as all the boards featuring Ingenic JZ SoCs have at least
+32 MiB of RAM, and use u-boot or compatible bootloaders which won't
+hardcode the load address but read it from the uImage's header.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19787/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/jz4740/Platform |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -1787,7 +1787,8 @@ int ipoib_dev_init(struct net_device *de
- 		goto out_free_pd;
- 	}
- 
--	if (ipoib_neigh_hash_init(priv) < 0) {
-+	ret = ipoib_neigh_hash_init(priv);
-+	if (ret) {
- 		pr_warn("%s failed to init neigh hash\n", dev->name);
- 		goto out_dev_uninit;
- 	}
+--- a/arch/mips/jz4740/Platform
++++ b/arch/mips/jz4740/Platform
+@@ -1,4 +1,4 @@
+ platform-$(CONFIG_MACH_INGENIC)	+= jz4740/
+ cflags-$(CONFIG_MACH_INGENIC)	+= -I$(srctree)/arch/mips/include/asm/mach-jz4740
+ load-$(CONFIG_MACH_INGENIC)	+= 0xffffffff80010000
+-zload-$(CONFIG_MACH_INGENIC)	+= 0xffffffff80600000
++zload-$(CONFIG_MACH_INGENIC)	+= 0xffffffff81000000
 
 
