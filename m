@@ -2,152 +2,169 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43879C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18965ECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0AE72098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA5272098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:35:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BtHfnUjs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0AE72098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="X3UT+glc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5272098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbeIYChz (ORCPT
+        id S1727448AbeIYCjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:37:55 -0400
-Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:34529
-        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727247AbeIYChy (ORCPT
+        Mon, 24 Sep 2018 22:39:06 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37472 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727440AbeIYCjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:37:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1537821234; bh=Rurx9ZHNwhjWBpVfxZu5G9dFBDtm0qr/75sfd+4bDZI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=BtHfnUjsHlCcD5Opu37op/j2byCx4PNMlWYbZXu4yumgJcM2tD+dAXYyXaOIskrhfEQDvNIbUdpTYg8nvntyZenIRSZi5R9yAnYnbyhDP7/cWw9LgJSAFuNqlrqpxa1wtYmSC/6wCCPLR9090UliReKsvjJIKJsMqLV+Kc0K2zhavTzgDKpsCBd/zJWsgGIlUNUD2B3e5XyIptuyADOTAcowWUVmdBMPfZ4Fup9nzLNfuE2jWV3Ggg5boPwHL+Atp231KcmkE/B7ee5pgBvYJllQDbCZNQk9+MzH51FiF9qfoEwzJn+QFLsgK4yQHCJz/oriESJ2zc648/8UJbGeYQ==
-X-YMail-OSG: G938i_kVM1kW33_Gcm8B5Ud5AX03efUvZ3y21eNI_MfjoqjuP7YRKhh1w.ze0Yv
- LiGS1d.WnMhr0KfqLHyle3m7L.HoKQRf7mZ3Lc4CHi4lu6YydwT0R8PmbHhySRUGvwrPRJ_ZQHSH
- vauBvY8Bd1WP1au3ZsPVGXZXPh3XBLylUPdxLzzlOJdhg2IhNNCktId0R0fHnCHAr9UScAUbbTMa
- jC7msDEwWYQFVnFcsPgMBv7TlQZpGupUZ9gzRFqi2vGDMPLgIN_JWYD59lgKJDGojup92wMkuyiu
- 1aIgat43u31dTsRAqzwn1jsHLy2e2wLLgxrTSw4308G6fxIfuT_CDoF3ifV5Tg.uoqaoYkLrHFz3
- Ux6nq4dchTV_l.spmhLsP8eQGMQzDrdJB9actIWApfOrbMmznQqGzLQB09R0sj87EMtIdE5yiKW.
- DWRD_A4n0lwrHqEbGghW3Dh1YWLD9svNnxZZoS9lZ0ZP1u1_EfyBMxOSxDQQYZcKM.77uDgaPQJb
- ccGr1LsWpvsu5N8aX0DZ6q2WFZyezceZx7laz1tNHOgodhFbEtH1ry9DI9VncLqDGYI3dFIW5871
- kUKzjkDhrtzI93oegmEKJVx5rEUZWlijtTF_lUl5B..vdZ.WzJZrVSCNqWxsjb3Zj8mg6LEwTf7T
- lcGuV1g6htm989sE25NL7X1k65IrwofKvlv1EpJtjxoRpIsju8yPmaccjtec5GdenD7l69yvdXlw
- OjR.kkM3i5vq0CTlq_5eiE3e_wTPHX21ljNuSHJBEGmLhqkMicJ_T8yz2PFkA_R87LltyH.DYp_b
- mbjqw5LH00XR83E010LZiGlx9ImIpmcYMlLUk_cvyk0nasxHHlCL3s9l6FnCG9xSHzLF_2wUpmKp
- IiIoxgJLZcgmaVJiZaZVqJi_3rq38eYENFcJvjCdTRUnew5rTpwEAkzJVCXdg9UJ8DaR0PZcfwx9
- ssN90lyzL4yNHZMV1mNRBMhhBl2tJ1viczLlPryqEC2ciPBt2kbl_1n4yngzW7ox_NCMXORitmYT
- DCaxC.rbvwJYC9GNIotcyRK9QSqA-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Mon, 24 Sep 2018 20:33:54 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp422.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c46ebf4d0dddcae4f2722441969ed02b;
-          Mon, 24 Sep 2018 20:33:52 +0000 (UTC)
-Subject: Re: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
- <CAGXu5jK=+FuL+JiSxcHy0i9Ppha=BQYdJW5zvbm1Redbo12wmw@mail.gmail.com>
- <680e6e16-0890-8304-0e8e-6c58966813b5@schaufler-ca.com>
- <CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
- <39457e79-3816-824b-6b4d-89d21b03f9ce@i-love.sakura.ne.jp>
- <b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
- <da179a76-691e-32f5-9391-c432a72fe37e@i-love.sakura.ne.jp>
- <3350edec-c233-9428-73b0-58d582d1e3b9@schaufler-ca.com>
- <eb1525f6-a3f8-4386-778f-8758c42326e5@i-love.sakura.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <28e4ca6d-e86c-ee1f-ead8-f03d1ccd7d54@schaufler-ca.com>
-Date:   Mon, 24 Sep 2018 13:33:51 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 24 Sep 2018 22:39:06 -0400
+Received: by mail-io1-f66.google.com with SMTP id v14-v6so18736926iob.4
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 13:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zGovwL34m3Q5BD9+4dJtUpU8TqZLav+XmYRhRA5U/9M=;
+        b=X3UT+glcIJb5oLsdvNnVZeUDurKxQTpOAFdYnLr3OlV0sBpTq6a94MZoGR8IvcacWi
+         sci5aWT713EV2DJQpkH/xCNeB3usHjcNQyi+ol5GSysPgkHuvYymR4EL6vRQxms5pQMk
+         YRWBxRwX5/6pied75MvOCaYrhRewsOfmKEs+aZtfv+VLzRjXTB/AECC/RfXaG9RfZ4Ce
+         bikpGFk0O6hKxe5Qz4a3h61PGSMngFNyukLb54m3abzgr+7nH70mKxhGwvwbp+3WZiEr
+         VHzMDU9Zh5s2NRqfk5zVX6Aou5/uZPDgAkxDy2/UXnASmwKA8nFZjPeBXGauj+Vp67DV
+         eXJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zGovwL34m3Q5BD9+4dJtUpU8TqZLav+XmYRhRA5U/9M=;
+        b=rwPK9hTp9XoqqZzhAhHNZI3uqqqfEorbAQ2WfaoZICZvHWjLGcG7S9cEnbeNHzfohg
+         Lp39mBn4m8/zjErEigW6k6cM9QMsSeKSu+u5IlhuNx9l/xB9Ajzs5I66G0eQSCRpKvAS
+         uCcqTg2w/4hkkNbuZztS+mmhsUjjGo+CJmXxyoGFsnyq+ibuSMf6AzZ4s4kSWs2i3QEZ
+         DFEsYScVzg/gKBCuv3EhUiIr8GpNC/UZqFfMO/sytfry4NF16whRBlzoyjtrH0wkp+1q
+         d1jvLx8doihOBi4BcmYOPfWtCB//jBA20fI80VOLSmwha/5onJHNWw/amkdX6MSepSdv
+         BECg==
+X-Gm-Message-State: ABuFfohTHF+MUPWQSny6S2d5Ez+WEz9CNd8wwXOlPuNJXAwjsLkrdeM9
+        K7EhyVM/ciIBON5myX3E0f8GrA==
+X-Google-Smtp-Source: ACcGV61ECXbxJxiwQwEyDEDcELQXpE4eIuuZ37a3ZaLiDV+6S+ztWuUYuJIdSoXN7kaQSj+n3ut79A==
+X-Received: by 2002:a6b:5903:: with SMTP id n3-v6mr519122iob.176.1537821306779;
+        Mon, 24 Sep 2018 13:35:06 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id y25-v6sm5740417ita.3.2018.09.24.13.35.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 13:35:06 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1g4XZR-00080t-5a; Mon, 24 Sep 2018 14:35:05 -0600
+Date:   Mon, 24 Sep 2018 14:35:05 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        David Miller <davem@davemloft.net>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        qat-linux@intel.com,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        linux-iio@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-fbdev@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to
+ generic_compat_ioctl_ptrarg
+Message-ID: <20180924203505.GC6008@ziepe.ca>
+References: <20180912150142.157913-1-arnd@arndb.de>
+ <20180912151134.436719-1-arnd@arndb.de>
+ <20180914203506.GE35251@wrath>
+ <20180914205748.GC19965@ZenIV.linux.org.uk>
+ <20180918175108.GF35251@wrath>
+ <20180918175952.GJ11367@ziepe.ca>
+ <CAK8P3a17GY89in7PeLk1F2T-0Xq=sCrwwntM+Y4BCpXheUC+qQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <eb1525f6-a3f8-4386-778f-8758c42326e5@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a17GY89in7PeLk1F2T-0Xq=sCrwwntM+Y4BCpXheUC+qQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/2018 10:53 AM, Tetsuo Handa wrote:
-> On 2018/09/25 2:16, Casey Schaufler wrote:
->>> Not all of LKM-based LSMs use security blobs. And some of LKM-based LSMs
->>> might use security blobs for only a few objects. For example, AKARI uses
->>> inode security blob for remembering whether source address/port of an
->>> accept()ed socket was already checked, only during accept() operation and
->>> first socket operation on the accept()ed socket. Thus, there is no need
->>> to waste memory by assigning blobs for all inode objects.
->> The first question is why use an inode blob? Shouldn't you
->> be using a socket blob for this socket based information?
-> Indeed. AKARI can as well use security_sk_free() using address of
-> "struct sock" as a key.
+On Mon, Sep 24, 2018 at 10:18:52PM +0200, Arnd Bergmann wrote:
+> On Tue, Sep 18, 2018 at 7:59 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Tue, Sep 18, 2018 at 10:51:08AM -0700, Darren Hart wrote:
+> > > On Fri, Sep 14, 2018 at 09:57:48PM +0100, Al Viro wrote:
+> > > > On Fri, Sep 14, 2018 at 01:35:06PM -0700, Darren Hart wrote:
+> > > >
+> > > > > Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
+> > > > >
+> > > > > As for a longer term solution, would it be possible to init fops in such
+> > > > > a way that the compat_ioctl call defaults to generic_compat_ioctl_ptrarg
+> > > > > so we don't have to duplicate this boilerplate for every ioctl fops
+> > > > > structure?
+> > > >
+> > > >     Bad idea, that...  Because several years down the road somebody will add
+> > > > an ioctl that takes an unsigned int for argument.  Without so much as looking
+> > > > at your magical mystery macro being used to initialize file_operations.
+> > >
+> > > Fair, being explicit in the declaration as it is currently may be
+> > > preferable then.
+> >
+> > It would be much cleaner and safer if you could arrange things to add
+> > something like this to struct file_operations:
+> >
+> >   long (*ptr_ioctl) (struct file *, unsigned int, void __user *);
+> >
+> > Where the core code automatically converts the unsigned long to the
+> > void __user * as appropriate.
+> >
+> > Then it just works right always and the compiler will help address
+> > Al's concern down the road.
+> 
+> I think if we wanted to do this with a new file operation, the best
+> way would be to do the copy_from_user()/copy_to_user() in the caller
+> as well.
 >
->> If you only want information part of the time you can declare
->> a pointer sized blob and manage what hangs off that as you will.
->> I personally think that the added complexity of conditional
->> blob management is more pain than it's worth, but if you want
->> a really big blob, but only on occasion, I could see doing it.
-> LKM based LSMs are too late for updating blob_sizes.* fields.
+> We already do this inside of some subsystems, notably drivers/media/,
+> and it simplifies the implementation of the ioctl handler function
+> significantly. We obviously cannot do this in general, both because of
+> traditional drivers that have 16-bit command codes (drivers/tty and others)
+> and also because of drivers that by accident defined the commands
+> incorrectly and use the wrong type or the wrong direction in the
+> definition.
 
-That is true with the code in this patch set. As I mentioned,
-changing the blob handling to include a header with real use
-information would be required.
+That could work well, but the first idea could be done globally and
+mechanically, while this would require very careful per-driver
+investigation. 
 
-> Even if they could, they after all have to somehow check whether
-> corresponding init hook was called. That's checking for NULL.
+Particularly if the core code has worse performance.. ie due to
+kmalloc calls or something.
 
-Right.
+I think it would make more sense to start by having the core do the
+case to __user and then add another entry point to have the core do
+the copy_from_user, and so on.
 
->>>>> @@ -1202,11 +1183,11 @@ void security_file_free(struct file *file)
->>>>>  {
->>>>>  	void *blob;
->>>>>  
->>>>> +	call_void_hook(file_free_security, file);
->>>>> +
->>>>>  	if (!lsm_file_cache)
->>>>>  		return;
->>>>>  
->>>>> -	call_void_hook(file_free_security, file);
->>>>> -
->>>> Why does this make sense? If the lsm_file_cache isn't
->>>> initialized you can't have allocated any file blobs,
->>>> no module can have initialized a file blob, hence there
->>>> can be nothing for the module to do.
->>>>
->>> For modules (not limited to LKM-based LSMs) which want to use
->>> file blobs for only a few objects and avoid wasting memory by
->>> allocating file blobs to all file objects.
->>>
->>> Infrastructure based blob management fits well for LSM modules
->>> which want to assign blobs to all objects (like SELinux). But
->>> forcing infrastructure based blob management can become a huge
->>> waste of memory for LSM modules which want to assign blobs to
->>> only a few objects. Unconditionally calling file_free_security
->>> hook (as with other hooks) preserves a room for allowing the
->>> latter type of LSM modules without using infrastructure based
->>> blob management.
->> There is a hypothetical issue here, but that would require abuse
->> of the infrastructure. Having a file_free_security hook that doesn't
->> free a security blob allocated by file_alloc_security may coincidentaly
->> be useful, but that's not the intent of the hook.
->>
-> The free hook might be used for freeing resources which were not allocated
-> by alloc hook. Yama is using task_free hook without task_alloc hook.
-> Someone might want to use file_free hook without file_alloc hook.
-
-OK, you're correct. Checking for an initialized kmem_cache isn't appropriate.
-
+Jason
