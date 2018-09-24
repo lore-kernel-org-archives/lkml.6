@@ -2,266 +2,84 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED15ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C31AECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F249F2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:25:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F249F2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F3DB620685
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:25:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3DB620685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbeIXW2W (ORCPT
+        id S1732165AbeIXW2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:28:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43008 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726400AbeIXW2W (ORCPT
+        Mon, 24 Sep 2018 18:28:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36372 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbeIXW2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:28:22 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGNfBm043285
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:25:25 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mq202vh6g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:25:24 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 24 Sep 2018 10:25:23 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Sep 2018 10:25:19 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OGPGrw51576958
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 24 Sep 2018 09:25:16 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D51CBE053;
-        Mon, 24 Sep 2018 10:25:16 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1531BE056;
-        Mon, 24 Sep 2018 10:25:12 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Sep 2018 10:25:12 -0600 (MDT)
-Subject: Re: [PATCH v10 24/26] KVM: s390: device attrs to enable/disable AP
- interpretation
-To:     David Hildenbrand <david@redhat.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1536781396-13601-25-git-send-email-akrowiak@linux.vnet.ibm.com>
- <9263b698-1827-1b7f-28bf-75b44657dea2@redhat.com>
- <18a21cda-1da9-3bfb-7b34-80415b5457f9@linux.ibm.com>
- <172560fb-2c54-ea43-3401-f108cf2a0595@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Mon, 24 Sep 2018 12:25:12 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Mon, 24 Sep 2018 18:28:24 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1g4Tfq-0004mb-5D; Mon, 24 Sep 2018 16:25:26 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: fix spelling mistake "toogle" -> "toggle"
+Date:   Mon, 24 Sep 2018 17:25:25 +0100
+Message-Id: <20180924162525.1644-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <172560fb-2c54-ea43-3401-f108cf2a0595@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18092416-0012-0000-0000-000016BADB43
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000267; SDB=6.01093025; UDB=6.00564895; IPR=6.00873062;
- MB=3.00023484; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:25:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18092416-0013-0000-0000-00005484A51C
-Message-Id: <bb2639ac-469a-a71f-8f0a-2df3c12c6ac5@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1809240161
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 07:23 AM, David Hildenbrand wrote:
-> On 22/09/2018 01:40, Tony Krowiak wrote:
->> On 09/17/2018 04:51 AM, David Hildenbrand wrote:
->>> Am 12.09.18 um 21:43 schrieb Tony Krowiak:
->>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
->>>>
->>>> Introduces two new VM crypto device attributes (KVM_S390_VM_CRYPTO)
->>>> to enable or disable AP instruction interpretation from userspace
->>>> via the KVM_SET_DEVICE_ATTR ioctl:
->>>>
->>>> * The KVM_S390_VM_CRYPTO_ENABLE_APIE attribute enables hardware
->>>>     interpretation of AP instructions executed on the guest.
->>>>
->>>> * The KVM_S390_VM_CRYPTO_DISABLE_APIE attribute disables hardware
->>>>     interpretation of AP instructions executed on the guest. In this
->>>>     case the instructions will be intercepted and pass through to
->>>>     the guest.
->>>>
->>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->>>> ---
->>>>    arch/s390/include/asm/kvm_host.h |    1 +
->>>>    arch/s390/include/uapi/asm/kvm.h |    2 ++
->>>>    arch/s390/kvm/kvm-s390.c         |   27 +++++++++++++++++++++++----
->>>>    3 files changed, 26 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
->>>> index b32bd1b..36d3531 100644
->>>> --- a/arch/s390/include/asm/kvm_host.h
->>>> +++ b/arch/s390/include/asm/kvm_host.h
->>>> @@ -719,6 +719,7 @@ struct kvm_s390_crypto {
->>>>    	__u32 crycbd;
->>>>    	__u8 aes_kw;
->>>>    	__u8 dea_kw;
->>>> +	__u8 apie;
->>>>    };
->>>>    
->>>>    #define APCB0_MASK_SIZE 1
->>>> diff --git a/arch/s390/include/uapi/asm/kvm.h b/arch/s390/include/uapi/asm/kvm.h
->>>> index 8c23afc..a8dbd90 100644
->>>> --- a/arch/s390/include/uapi/asm/kvm.h
->>>> +++ b/arch/s390/include/uapi/asm/kvm.h
->>>> @@ -161,6 +161,8 @@ struct kvm_s390_vm_cpu_subfunc {
->>>>    #define KVM_S390_VM_CRYPTO_ENABLE_DEA_KW	1
->>>>    #define KVM_S390_VM_CRYPTO_DISABLE_AES_KW	2
->>>>    #define KVM_S390_VM_CRYPTO_DISABLE_DEA_KW	3
->>>> +#define KVM_S390_VM_CRYPTO_ENABLE_APIE		4
->>>> +#define KVM_S390_VM_CRYPTO_DISABLE_APIE		5
->>>>    
->>>>    /* kvm attributes for migration mode */
->>>>    #define KVM_S390_VM_MIGRATION_STOP	0
->>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>>> index 2cdd980..286c2e0 100644
->>>> --- a/arch/s390/kvm/kvm-s390.c
->>>> +++ b/arch/s390/kvm/kvm-s390.c
->>>> @@ -856,12 +856,11 @@ void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
->>>>    
->>>>    static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
->>>>    {
->>>> -	if (!test_kvm_facility(kvm, 76))
->>>> -		return -EINVAL;
->>>> -
->>>>    	mutex_lock(&kvm->lock);
->>>>    	switch (attr->attr) {
->>>>    	case KVM_S390_VM_CRYPTO_ENABLE_AES_KW:
->>>> +		if (!test_kvm_facility(kvm, 76))
->>>> +			return -EINVAL;
->>>>    		get_random_bytes(
->>>>    			kvm->arch.crypto.crycb->aes_wrapping_key_mask,
->>>>    			sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
->>>> @@ -869,6 +868,8 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
->>>>    		VM_EVENT(kvm, 3, "%s", "ENABLE: AES keywrapping support");
->>>>    		break;
->>>>    	case KVM_S390_VM_CRYPTO_ENABLE_DEA_KW:
->>>> +		if (!test_kvm_facility(kvm, 76))
->>>> +			return -EINVAL;
->>>>    		get_random_bytes(
->>>>    			kvm->arch.crypto.crycb->dea_wrapping_key_mask,
->>>>    			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
->>>> @@ -876,17 +877,31 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
->>>>    		VM_EVENT(kvm, 3, "%s", "ENABLE: DEA keywrapping support");
->>>>    		break;
->>>>    	case KVM_S390_VM_CRYPTO_DISABLE_AES_KW:
->>>> +		if (!test_kvm_facility(kvm, 76))
->>>> +			return -EINVAL;
->>>>    		kvm->arch.crypto.aes_kw = 0;
->>>>    		memset(kvm->arch.crypto.crycb->aes_wrapping_key_mask, 0,
->>>>    			sizeof(kvm->arch.crypto.crycb->aes_wrapping_key_mask));
->>>>    		VM_EVENT(kvm, 3, "%s", "DISABLE: AES keywrapping support");
->>>>    		break;
->>>>    	case KVM_S390_VM_CRYPTO_DISABLE_DEA_KW:
->>>> +		if (!test_kvm_facility(kvm, 76))
->>>> +			return -EINVAL;
->>>>    		kvm->arch.crypto.dea_kw = 0;
->>>>    		memset(kvm->arch.crypto.crycb->dea_wrapping_key_mask, 0,
->>>>    			sizeof(kvm->arch.crypto.crycb->dea_wrapping_key_mask));
->>>>    		VM_EVENT(kvm, 3, "%s", "DISABLE: DEA keywrapping support");
->>>>    		break;
->>>> +	case KVM_S390_VM_CRYPTO_ENABLE_APIE:
->>>> +		if (!ap_instructions_available()) {
->>>> +			mutex_unlock(&kvm->lock);
->>>> +			return -EOPNOTSUPP;
->>>> +		}
->>>> +		kvm->arch.crypto.apie = 1;
->>>> +		break;
->>>> +	case KVM_S390_VM_CRYPTO_DISABLE_APIE:
->>>> +		kvm->arch.crypto.apie = 0;
->>>> +		break;
->>>>    	default:
->>>>    		mutex_unlock(&kvm->lock);
->>>>    		return -ENXIO;
->>>> @@ -1493,6 +1508,8 @@ static int kvm_s390_vm_has_attr(struct kvm *kvm, struct kvm_device_attr *attr)
->>>>    		case KVM_S390_VM_CRYPTO_ENABLE_DEA_KW:
->>>>    		case KVM_S390_VM_CRYPTO_DISABLE_AES_KW:
->>>>    		case KVM_S390_VM_CRYPTO_DISABLE_DEA_KW:
->>>> +		case KVM_S390_VM_CRYPTO_ENABLE_APIE:
->>>> +		case KVM_S390_VM_CRYPTO_DISABLE_APIE:
->>>
->>> As also replied to the QEMU series, could we indicate
->>> KVM_S390_VM_CRYPTO_ENABLE_APIE (and maybe
->>> KVM_S390_VM_CRYPTO_DISABLE_APIE) only with ap_instructions_available(),
->>> so we can avoid the additional KVM_S390_VM_CPU_FEAT_AP?
->>>
->>> KVM_S390_VM_CPU_FEAT_AP is right now completely unused in KVM otherwise
->>> (never checked, we only care about apie).
->>
->> After much discussion with Halil and a few exchanges with you, we
->> decided to go ahead and accept your suggestion to get rid of
->> KVM_S390_VM_CPU_FEAT and keep the VM device attributes to enable/disable
->> apie.
->>
->> To that end, I responded to patches 03/26, 11/26 and 25/26 with fixup!
->> patches that show the KVM/kernel changes that will be necessary to get
->> rid of KVM_S390_VM_CPU_FEAT and use apie to control ECA.28. I did that
->> to generate discussion in v10 rather than waiting until v11 for
->> comments. I make no guarantees that those fixup! patches will
->> successfully apply should you have a v10 branch generated from this
->> patch series you want to update.
->>
-> 
-> Will you also fixup this patch to expose KVM_S390_VM_CRYPTO_ENABLE_APIE
-> only if supported by HW? (ap_instructions_available)
+From: Colin Ian King <colin.king@canonical.com>
 
-Given that this patch DOES expose KVM_S390_VM_CRYPTO_ENABLE_APIE only if 
-supported by HW, I assume you are talking about
-KVM_S390_VM_CRYPTO_DISABLE_APIE. I didn't check 
-ap_instructions_available() for disabling APIE because I didn't
-think it necessary given that ECA.28 will be set to 0 (intercept) by 
-default, whether AP instructions are installed or not; so why not allow 
-disabling apie. I suppose from the perspective of consistency, since the 
-kvm_s390_vm_has_attr() function checks ap_instructions_available() for 
-both attributes, then it probably makes sense to add that check to 
-KVM_S390_VM_CRYPTO_DISABLE_APIE here. Then again, we could make a change 
-in ap_instructions_available() to allow KVM_S390_VM_CRYPTO_DISABLE_APIE 
-regardless of whether AP instructions are available. It boils down to 
-whether APIE needs to be dynamically disabled at some point when it has 
-been enabled. The only case I can think of where that may be necessary 
-is if a guest is migrated to a system without AP instructions. I don't 
-think that can happen and may even be protected against precisely 
-because the VM attributes won't be available on the target system due to 
-no AP instructions. What say you?
+Trivial fix to spelling mistake in struct field name
 
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_debug.c    | 2 +-
+ drivers/staging/rtl8723bs/include/drv_types.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_debug.c b/drivers/staging/rtl8723bs/core/rtw_debug.c
+index f852fde47350..a2a2cefd1786 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_debug.c
++++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
+@@ -657,7 +657,7 @@ int proc_get_suspend_resume_info(struct seq_file *m, void *v)
+ 	DBG_871X_SEL_NL(m, "dbg_enwow_dload_fw_fail_cnt =%d\n", pdbgpriv->dbg_enwow_dload_fw_fail_cnt);
+ 	DBG_871X_SEL_NL(m, "dbg_ips_drvopen_fail_cnt =%d\n", pdbgpriv->dbg_ips_drvopen_fail_cnt);
+ 	DBG_871X_SEL_NL(m, "dbg_poll_fail_cnt =%d\n", pdbgpriv->dbg_poll_fail_cnt);
+-	DBG_871X_SEL_NL(m, "dbg_rpwm_toogle_cnt =%d\n", pdbgpriv->dbg_rpwm_toogle_cnt);
++	DBG_871X_SEL_NL(m, "dbg_rpwm_toggle_cnt =%d\n", pdbgpriv->dbg_rpwm_toggle_cnt);
+ 	DBG_871X_SEL_NL(m, "dbg_rpwm_timeout_fail_cnt =%d\n", pdbgpriv->dbg_rpwm_timeout_fail_cnt);
+ 
+ 	return 0;
+diff --git a/drivers/staging/rtl8723bs/include/drv_types.h b/drivers/staging/rtl8723bs/include/drv_types.h
+index c57f290f605a..062fda9962be 100644
+--- a/drivers/staging/rtl8723bs/include/drv_types.h
++++ b/drivers/staging/rtl8723bs/include/drv_types.h
+@@ -381,7 +381,7 @@ struct debug_priv {
+ 	u32 dbg_enwow_dload_fw_fail_cnt;
+ 	u32 dbg_ips_drvopen_fail_cnt;
+ 	u32 dbg_poll_fail_cnt;
+-	u32 dbg_rpwm_toogle_cnt;
++	u32 dbg_rpwm_toggle_cnt;
+ 	u32 dbg_rpwm_timeout_fail_cnt;
+ 	u64 dbg_rx_fifo_last_overflow;
+ 	u64 dbg_rx_fifo_curr_overflow;
+-- 
+2.17.1
 
