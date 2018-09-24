@@ -2,257 +2,100 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2953AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03DDC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6AFE20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AFE20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 9AEB020989
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:13:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VI3WXrFG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AEB020989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbeIXPNs (ORCPT
+        id S1728453AbeIXPOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:13:48 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:37268 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728179AbeIXPNr (ORCPT
+        Mon, 24 Sep 2018 11:14:30 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42372 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728090AbeIXPOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:13:47 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g4Mv4-0002w2-TX; Mon, 24 Sep 2018 03:12:42 -0600
-Received: from [105.184.227.67] (helo=x220.Home)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g4Mv2-0002zU-QO; Mon, 24 Sep 2018 03:12:42 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon, 24 Sep 2018 11:10:10 +0200
-Message-Id: <20180924091015.4458-10-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <871s9j462u.fsf@xmission.com>
-References: <871s9j462u.fsf@xmission.com>
-X-XM-SPF: eid=1g4Mv2-0002zU-QO;;;mid=<20180924091015.4458-10-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+9FKMxa0cE5RZwvC7P07Q4dOeDrnFWXKI=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [REVIEW][PATCH 10/15] signal/arm64: Add and use arm64_force_sig_fault where appropriate
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Mon, 24 Sep 2018 11:14:30 -0400
+Received: by mail-lf1-f65.google.com with SMTP id d7-v6so12210834lfj.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 02:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kZuhokDD0Jtw3q5m7ByPu+HckcPWo+YoskG84UBh6OQ=;
+        b=VI3WXrFGDXGJ2eQ9Lrk5Z7aqsz3YpozUtHr3sGuyuuYHIIajw636pJNdQk1aQXvfS9
+         MWuMDslBlcL9s2op/HX83/Joqah43F5wUa3X+TbemlwKIKJNyHN3Qxbcp2QpSfEIGFd+
+         6Q3GVWWABuvbQdPxygALdjJFrl4r2ME880sxfwA8kcaqPKPT4Zd61veH6fcBkvLrkojF
+         0acpLL83M/SbacXF9GKeknfsK/+x2ZREHfHuSPWz2W6Ua41E6KDFSNO9HKEgPhVErYO2
+         sa9KzR+QAdic7zpun5CuaqyMFCjYyTC/yPaPiiBV17Ua34w0ApteQ/vJSSJEm1Jciikz
+         95XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kZuhokDD0Jtw3q5m7ByPu+HckcPWo+YoskG84UBh6OQ=;
+        b=WyL1ooKdYAyDgvbzuUrKj7FktqzGf0CZ6Tw08k192MtUx+606QJw8ugrMR7J1njQCh
+         QenqSDEysUzIJjkSSvUcaV/lHm12cWETLUuVgZ6x3Rx2PzB1ghftqLCuN9A7xT4vVD2j
+         /vxMUhKyb2Bgkjtyo9gMYU4/moyb3vn46g7gqw+2wljPTAnNMOOjTxoMNVwQob1SnHvN
+         0lDMRU+Mr08lspcrmRpOVkZ3zltihsSCJW8TSCNWen0qDuKK8UKnlXcfZLyKGm1q+Dsg
+         Zr6Kme7U7VfO0FU9LZrdefiVWWIeoccLemWqsi+dCutIWuGoLskRuidEo0ft7CBGTxJW
+         gApg==
+X-Gm-Message-State: APzg51Cl3y1JwfrVlg6ne+/fetSr0wkcb6AU4nBVbEKYyh5wnHxISVK3
+        VkPCz3JGuRYyLFfHKyAAS8w=
+X-Google-Smtp-Source: ANB0VdYVM1fUWNHaUIUC5yPwDEuEGZsPZUuCVYGq3ICHH87tCr/V7jEDdo5wVpN/vDw8+RNraa0lHg==
+X-Received: by 2002:a19:7709:: with SMTP id s9-v6mr5244870lfc.84.1537780403235;
+        Mon, 24 Sep 2018 02:13:23 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id b90-v6sm762831ljf.94.2018.09.24.02.13.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 02:13:22 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1g4Mvh-0006JY-8O; Mon, 24 Sep 2018 11:13:21 +0200
+Date:   Mon, 24 Sep 2018 11:13:21 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Aaron Williams <zero@zeroaptitude.com>
+Cc:     johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org,
+        greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: control.c: fixed some coding style
+ issues
+Message-ID: <20180924091321.GG5101@localhost>
+References: <20180920123828.22059-1-zero@zeroaptitude.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180920123828.22059-1-zero@zeroaptitude.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wrap force_sig_fault with a helper that calls arm64_show_signal
-and call arm64_force_sig_fault where appropraite.
+On Thu, Sep 20, 2018 at 10:38:28PM +1000, Aaron Williams wrote:
+> fixed some "Alignment should match open parenthesis" checks.
 
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
- arch/arm64/include/asm/traps.h     |  1 +
- arch/arm64/kernel/debug-monitors.c | 11 +++--------
- arch/arm64/kernel/ptrace.c         | 11 +++--------
- arch/arm64/kernel/traps.c          | 27 ++++++++++-----------------
- arch/arm64/mm/fault.c              | 26 ++++++++------------------
- 5 files changed, 25 insertions(+), 51 deletions(-)
+Note that this is not something that is mandated by the kernel coding
+style, but rather a preference of the authors of checkpatch (and the
+check is only enabled when the --strict option is given or when
+checkpatch is run on net and staging code).
 
-diff --git a/arch/arm64/include/asm/traps.h b/arch/arm64/include/asm/traps.h
-index cd3a2ca9c179..08e99901edbc 100644
---- a/arch/arm64/include/asm/traps.h
-+++ b/arch/arm64/include/asm/traps.h
-@@ -37,6 +37,7 @@ void register_undef_hook(struct undef_hook *hook);
- void unregister_undef_hook(struct undef_hook *hook);
- void force_signal_inject(int signal, int code, unsigned long address);
- void arm64_notify_segfault(unsigned long addr);
-+void arm64_force_sig_fault(int signo, int code, void __user *addr, const char *str);
- void arm64_force_sig_info(struct siginfo *info, const char *str);
- 
- /*
-diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
-index e0d9502be5bf..d7bb6aefae0a 100644
---- a/arch/arm64/kernel/debug-monitors.c
-+++ b/arch/arm64/kernel/debug-monitors.c
-@@ -210,13 +210,6 @@ NOKPROBE_SYMBOL(call_step_hook);
- static void send_user_sigtrap(int si_code)
- {
- 	struct pt_regs *regs = current_pt_regs();
--	siginfo_t info;
--
--	clear_siginfo(&info);
--	info.si_signo	= SIGTRAP;
--	info.si_errno	= 0;
--	info.si_code	= si_code;
--	info.si_addr	= (void __user *)instruction_pointer(regs);
- 
- 	if (WARN_ON(!user_mode(regs)))
- 		return;
-@@ -224,7 +217,9 @@ static void send_user_sigtrap(int si_code)
- 	if (interrupts_enabled(regs))
- 		local_irq_enable();
- 
--	arm64_force_sig_info(&info, "User debug trap");
-+	arm64_force_sig_fault(SIGTRAP, si_code,
-+			     (void __user *)instruction_pointer(regs),
-+			     "User debug trap");
- }
- 
- static int single_step_handler(unsigned long addr, unsigned int esr,
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 20b68cb31ecb..7ab75e78aa08 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -182,13 +182,6 @@ static void ptrace_hbptriggered(struct perf_event *bp,
- 				struct pt_regs *regs)
- {
- 	struct arch_hw_breakpoint *bkpt = counter_arch_bp(bp);
--	siginfo_t info;
--
--	clear_siginfo(&info);
--	info.si_signo	= SIGTRAP;
--	info.si_errno	= 0;
--	info.si_code	= TRAP_HWBKPT;
--	info.si_addr	= (void __user *)(bkpt->trigger);
- 
- #ifdef CONFIG_COMPAT
- 	if (is_compat_task()) {
-@@ -211,7 +204,9 @@ static void ptrace_hbptriggered(struct perf_event *bp,
- 		force_sig_ptrace_errno_trap(si_errno, (void __user *)bkpt->trigger);
- 	}
- #endif
--	arm64_force_sig_info(&info, "Hardware breakpoint trap (ptrace)");
-+	arm64_force_sig_fault(SIGTRAP, TRAP_HWBKPT,
-+			      (void __user *)(bkpt->trigger),
-+			      "Hardware breakpoint trap (ptrace)");
- }
- 
- /*
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index daee8c2ca561..37a3309863e0 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -248,6 +248,13 @@ static void arm64_show_signal(int signo, const char *str)
- 	__show_regs(regs);
- }
- 
-+void arm64_force_sig_fault(int signo, int code, void __user *addr,
-+			   const char *str)
-+{
-+	arm64_show_signal(signo, str);
-+	force_sig_fault(signo, code, addr, current);
-+}
-+
- void arm64_force_sig_info(struct siginfo *info, const char *str)
- {
- 	arm64_show_signal(info->si_signo, str);
-@@ -259,19 +266,11 @@ void arm64_notify_die(const char *str, struct pt_regs *regs,
- 		      int err)
- {
- 	if (user_mode(regs)) {
--		struct siginfo info;
--
- 		WARN_ON(regs != current_pt_regs());
- 		current->thread.fault_address = 0;
- 		current->thread.fault_code = err;
- 
--		clear_siginfo(&info);
--		info.si_signo = signo;
--		info.si_errno = 0;
--		info.si_code  = sicode;
--		info.si_addr  = addr;
--
--		arm64_force_sig_info(&info, str);
-+		arm64_force_sig_fault(signo, sicode, addr, str);
- 	} else {
- 		die(str, regs, err);
- 	}
-@@ -616,19 +615,13 @@ asmlinkage void bad_mode(struct pt_regs *regs, int reason, unsigned int esr)
-  */
- asmlinkage void bad_el0_sync(struct pt_regs *regs, int reason, unsigned int esr)
- {
--	siginfo_t info;
- 	void __user *pc = (void __user *)instruction_pointer(regs);
- 
--	clear_siginfo(&info);
--	info.si_signo = SIGILL;
--	info.si_errno = 0;
--	info.si_code  = ILL_ILLOPC;
--	info.si_addr  = pc;
--
- 	current->thread.fault_address = 0;
- 	current->thread.fault_code = esr;
- 
--	arm64_force_sig_info(&info, "Bad EL0 synchronous exception");
-+	arm64_force_sig_fault(SIGILL, ILL_ILLOPC, pc,
-+			      "Bad EL0 synchronous exception");
- }
- 
- #ifdef CONFIG_VMAP_STACK
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 959c4a565c8e..66c295019a9a 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -362,15 +362,10 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
- 	 */
- 	if (user_mode(regs)) {
- 		const struct fault_info *inf = esr_to_fault_info(esr);
--		struct siginfo si;
--
--		clear_siginfo(&si);
--		si.si_signo	= inf->sig;
--		si.si_code	= inf->code;
--		si.si_addr	= (void __user *)addr;
- 
- 		set_thread_esr(addr, esr);
--		arm64_force_sig_info(&si, inf->name);
-+		arm64_force_sig_fault(inf->sig, inf->code, (void __user *)addr,
-+				      inf->name);
- 	} else {
- 		__do_kernel_fault(addr, esr, regs);
- 	}
-@@ -570,11 +565,8 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 		 * We had some memory, but were unable to successfully fix up
- 		 * this page fault.
- 		 */
--		clear_siginfo(&si);
--		si.si_signo	= SIGBUS;
--		si.si_code	= BUS_ADRERR;
--		si.si_addr = (void __user *)addr;
--		arm64_force_sig_info(&si, inf->name);
-+		arm64_force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)addr,
-+				      inf->name);
- 	} else if (fault & (VM_FAULT_HWPOISON_LARGE | VM_FAULT_HWPOISON)) {
- 		unsigned int lsb;
- 
-@@ -593,12 +585,10 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 		 * Something tried to access memory that isn't in our memory
- 		 * map.
- 		 */
--		clear_siginfo(&si);
--		si.si_signo	= SIGSEGV;
--		si.si_code	= fault == VM_FAULT_BADACCESS ?
--				  SEGV_ACCERR : SEGV_MAPERR;
--		si.si_addr = (void __user *)addr;
--		arm64_force_sig_info(&si, inf->name);
-+		arm64_force_sig_fault(SIGSEGV,
-+				      fault == VM_FAULT_BADACCESS ? SEGV_ACCERR : SEGV_MAPERR,
-+				      (void __user *)addr,
-+				      inf->name);
- 	}
- 
- 	return 0;
--- 
-2.17.1
+As the author and maintainer of this particular code, I do not think
+this patch should be applied, but Greg may have a different opinion on
+this as the overall staging maintainer.
 
+> Signing up for the kernel clean up crew while I learn C
+
+I would strongly suggest learning C *before* moving on to do kernel
+work. 
+
+Thanks,
+Johan
