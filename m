@@ -2,40 +2,41 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064ADC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB4CECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B703021486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B703021486
+	by mail.kernel.org (Postfix) with ESMTP id ED4982148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED4982148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733039AbeIXS1z (ORCPT
+        id S1733061AbeIXS17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:27:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57066 "EHLO
+        Mon, 24 Sep 2018 14:27:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730297AbeIXS1y (ORCPT
+        with ESMTP id S1730297AbeIXS16 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:27:54 -0400
+        Mon, 24 Sep 2018 14:27:58 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B33F1094;
-        Mon, 24 Sep 2018 12:26:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 929B01094;
+        Mon, 24 Sep 2018 12:26:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Lee Jones <lee.jones@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 144/173] mfd: 88pm860x-i2c: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Date:   Mon, 24 Sep 2018 13:52:58 +0200
-Message-Id: <20180924113126.121263743@linuxfoundation.org>
+        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.14 171/173] Revert "e1000e: Separate signaling for link check/link up"
+Date:   Mon, 24 Sep 2018 13:53:25 +0200
+Message-Id: <20180924113127.474905208@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,59 +54,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: Benjamin Poirier <bpoirier@suse.com>
 
-[ Upstream commit 8c8f74f327a76604a499fad8c54c15e1c0ee8051 ]
+commit 3016e0a0c91246e55418825ba9aae271be267522 upstream.
 
-Locking the root adapter for __i2c_transfer will deadlock if the
-device sits behind a mux-locked I2C mux. Switch to the finer-grained
-i2c_lock_bus with the I2C_LOCK_SEGMENT flag. If the device does not
-sit behind a mux-locked mux, the two locking variants are equivalent.
+This reverts commit 19110cfbb34d4af0cdfe14cd243f3b09dc95b013.
+This reverts commit 4110e02eb45ea447ec6f5459c9934de0a273fb91.
+This reverts commit d3604515c9eda464a92e8e67aae82dfe07fe3c98.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Commit 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
+changed what happens to the link status when there is an error which
+happens after "get_link_status = false" in the copper check_for_link
+callbacks. Previously, such an error would be ignored and the link
+considered up. After that commit, any error implies that the link is down.
+
+Revert commit 19110cfbb34d ("e1000e: Separate signaling for link check/link
+up") and its followups. After reverting, the race condition described in
+the log of commit 19110cfbb34d is reintroduced. It may still be triggered
+by LSC events but this should keep the link down in case the link is
+electrically unstable, as discussed. The race may no longer be
+triggered by RXO events because commit 4aea7a5c5e94 ("e1000e: Avoid
+receiver overrun interrupt bursts") restored reading icr in the Other
+handler.
+
+Link: https://lkml.org/lkml/2018/3/1/789
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/mfd/88pm860x-i2c.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/mfd/88pm860x-i2c.c
-+++ b/drivers/mfd/88pm860x-i2c.c
-@@ -146,14 +146,14 @@ int pm860x_page_reg_write(struct i2c_cli
- 	unsigned char zero;
- 	int ret;
+---
+ drivers/net/ethernet/intel/e1000e/ich8lan.c |   13 ++++---------
+ drivers/net/ethernet/intel/e1000e/mac.c     |   13 ++++---------
+ drivers/net/ethernet/intel/e1000e/netdev.c  |    2 +-
+ 3 files changed, 9 insertions(+), 19 deletions(-)
+
+--- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
++++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
+@@ -1367,9 +1367,6 @@ out:
+  *  Checks to see of the link status of the hardware has changed.  If a
+  *  change in link status has been detected, then we read the PHY registers
+  *  to get the current speed/duplex if link exists.
+- *
+- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
+- *  up).
+  **/
+ static s32 e1000_check_for_copper_link_ich8lan(struct e1000_hw *hw)
+ {
+@@ -1385,7 +1382,7 @@ static s32 e1000_check_for_copper_link_i
+ 	 * Change or Rx Sequence Error interrupt.
+ 	 */
+ 	if (!mac->get_link_status)
+-		return 1;
++		return 0;
  
--	i2c_lock_adapter(i2c->adapter);
-+	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	read_device(i2c, 0xFA, 0, &zero);
- 	read_device(i2c, 0xFB, 0, &zero);
- 	read_device(i2c, 0xFF, 0, &zero);
- 	ret = write_device(i2c, reg, 1, &data);
- 	read_device(i2c, 0xFE, 0, &zero);
- 	read_device(i2c, 0xFC, 0, &zero);
--	i2c_unlock_adapter(i2c->adapter);
-+	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	return ret;
- }
- EXPORT_SYMBOL(pm860x_page_reg_write);
-@@ -164,14 +164,14 @@ int pm860x_page_bulk_read(struct i2c_cli
- 	unsigned char zero = 0;
- 	int ret;
+ 	/* First we want to see if the MII Status Register reports
+ 	 * link.  If so, then we want to get the current speed/duplex
+@@ -1602,7 +1599,7 @@ static s32 e1000_check_for_copper_link_i
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return 1;
++		return -E1000_ERR_CONFIG;
  
--	i2c_lock_adapter(i2c->adapter);
-+	i2c_lock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	read_device(i2c, 0xfa, 0, &zero);
- 	read_device(i2c, 0xfb, 0, &zero);
- 	read_device(i2c, 0xff, 0, &zero);
- 	ret = read_device(i2c, reg, count, buf);
- 	read_device(i2c, 0xFE, 0, &zero);
- 	read_device(i2c, 0xFC, 0, &zero);
--	i2c_unlock_adapter(i2c->adapter);
-+	i2c_unlock_bus(i2c->adapter, I2C_LOCK_SEGMENT);
- 	return ret;
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
+@@ -1616,12 +1613,10 @@ static s32 e1000_check_for_copper_link_i
+ 	 * different link partner.
+ 	 */
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+-	if (ret_val) {
++	if (ret_val)
+ 		e_dbg("Error configuring flow control\n");
+-		return ret_val;
+-	}
+ 
+-	return 1;
++	return ret_val;
  }
- EXPORT_SYMBOL(pm860x_page_bulk_read);
+ 
+ static s32 e1000_get_variants_ich8lan(struct e1000_adapter *adapter)
+--- a/drivers/net/ethernet/intel/e1000e/mac.c
++++ b/drivers/net/ethernet/intel/e1000e/mac.c
+@@ -410,9 +410,6 @@ void e1000e_clear_hw_cntrs_base(struct e
+  *  Checks to see of the link status of the hardware has changed.  If a
+  *  change in link status has been detected, then we read the PHY registers
+  *  to get the current speed/duplex if link exists.
+- *
+- *  Returns a negative error code (-E1000_ERR_*) or 0 (link down) or 1 (link
+- *  up).
+  **/
+ s32 e1000e_check_for_copper_link(struct e1000_hw *hw)
+ {
+@@ -426,7 +423,7 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * Change or Rx Sequence Error interrupt.
+ 	 */
+ 	if (!mac->get_link_status)
+-		return 1;
++		return 0;
+ 
+ 	/* First we want to see if the MII Status Register reports
+ 	 * link.  If so, then we want to get the current speed/duplex
+@@ -450,7 +447,7 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * we have already determined whether we have link or not.
+ 	 */
+ 	if (!mac->autoneg)
+-		return 1;
++		return -E1000_ERR_CONFIG;
+ 
+ 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
+ 	 * of MAC speed/duplex configuration.  So we only need to
+@@ -464,12 +461,10 @@ s32 e1000e_check_for_copper_link(struct
+ 	 * different link partner.
+ 	 */
+ 	ret_val = e1000e_config_fc_after_link_up(hw);
+-	if (ret_val) {
++	if (ret_val)
+ 		e_dbg("Error configuring flow control\n");
+-		return ret_val;
+-	}
+ 
+-	return 1;
++	return ret_val;
+ }
+ 
+ /**
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -5089,7 +5089,7 @@ static bool e1000e_has_link(struct e1000
+ 	case e1000_media_type_copper:
+ 		if (hw->mac.get_link_status) {
+ 			ret_val = hw->mac.ops.check_for_link(hw);
+-			link_active = ret_val > 0;
++			link_active = !hw->mac.get_link_status;
+ 		} else {
+ 			link_active = true;
+ 		}
 
 
