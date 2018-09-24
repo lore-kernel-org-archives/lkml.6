@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A38A6C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D36C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E5520883
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88DFF20883
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:04:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="DFch6TlW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E5520883
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="sAt12VCA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88DFF20883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388037AbeIYBIG (ORCPT
+        id S2388160AbeIYBIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:08:06 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46460 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731542AbeIYBIF (ORCPT
+        Mon, 24 Sep 2018 21:08:10 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35042 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731577AbeIYBII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:08:05 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z3-v6so8957015wrr.13
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:04:29 -0700 (PDT)
+        Mon, 24 Sep 2018 21:08:08 -0400
+Received: by mail-wm1-f65.google.com with SMTP id o18-v6so11176113wmc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:04:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6E4+VPjtB94gJyVOtzNM+qGka7vvhkBZMLrEEDusNF8=;
-        b=DFch6TlWvHU3BjCFhugwRc0uJ9IFby1P4WNiK8cTIU1UdggWNFcKpuznFtq8NjfW0R
-         ylax0kvSksRMTx3SSnv/Aaozm1tA5sFgtIfcLSi/W5+FlZ25LIspLehEZMEAVOAbcHou
-         WSt96xXlu66XmKc3Em9cQhCzVMEbKpxTOFqB7gAgzPXD3DesLBlat6fmMs6lIFs+FLy2
-         kVDkLSiaJ9oTzoLTAVg6CTcAL5Vj9Xqm2wZm/xUz4Q2Xe+aHb+OyF0L6jmJszHXG98vu
-         stZGI/cEpUev7dtRXjRuuYu6ox5csQPt+S8yvaZ8+stUnd/LO0SyUdgSjm/NbCxdbcFm
-         PHrg==
+        bh=5ovJ89b4f0jIndSx6u2gnoJYN1C5zis8Q20nM2X/nQY=;
+        b=sAt12VCAmFy8D2MjfHDSBJ+EIZUfCBgQ25eJvT6t4fIadfZJvQpl1nZfdCv2+krP0z
+         0xfn+NnWS1u0MWXHPK1+OMqSaMifEva8QjL1TXXzL/+PmVO7yb+gpWIj/9c5V4AzCbTY
+         0WVwwJn8Ckd/qwuqiz/lPH/JVg9wRXTYS4urzPJcXIER+dMxv+eGzNgFSnDjiQXShGX0
+         vN8R8cZzM0913Mvu2QxBFvVzzxvNcVnU/oRUs/S/jOHcjnRsc5S3CEWXOvEH6gHncxsk
+         F42FG1MlX0qLr7/aZRGAXOtRKtLXtFKGdJ+S2Kk6tkWMzO07+JZJMU1WBHkVDqNmJ/y8
+         PZ7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6E4+VPjtB94gJyVOtzNM+qGka7vvhkBZMLrEEDusNF8=;
-        b=iu0+FnEYelZ2OYQbGQBUUBGzflmixM8/uVKsTm9tUXu+qvy9hOdk6uiOkozu2V9YtZ
-         VXI2kBpkluUqggoQhFsECzEMf6GGW4MnK0EKt2seyJAUft+fAEBKYIXt8RGPOvyZbFCe
-         eaJ5Fbvtt9oX2M2FPYhyg+maFPgpV0/p2bLsOB7uah6BJsmC/PU7ehQQpMLoeqrl4zPi
-         fKrRvUycPHmtoKdO3Jnq/qKbi7A9F/kkqW9Fj2DD/3dqpOuBpbwpXwTrwTpi4FDyAEdo
-         cxImJkwToib3FahhFTLyCtV6+xGo13wOeuKeRjOXjzwpDklIAvpFPXVra+l0pJqSViAR
-         qkKQ==
-X-Gm-Message-State: ABuFfoicsSf3kyZUqYThupoXr//2hJ34vaSYi7fnYDCR1Tvh1WCXg19O
-        2ttMpag9sM8ne5lwYTB6npvywg==
-X-Google-Smtp-Source: ACcGV63LfsE3461zNLXOFeDMzsJgBaNQTjjw/sXPLWbNtKpDZCLuC4pwSEfcO96nQKkwH748H0caLw==
-X-Received: by 2002:a5d:61c1:: with SMTP id q1-v6mr150645wrv.33.1537815868736;
-        Mon, 24 Sep 2018 12:04:28 -0700 (PDT)
+        bh=5ovJ89b4f0jIndSx6u2gnoJYN1C5zis8Q20nM2X/nQY=;
+        b=HRqseUpPYT4Tv6MCtHyfkXilP2V6j4gqhcV8y0jMe8Pct6a5BOtUQmxeCrIRi04Bo+
+         SfY9U8kpUWDDHlpfDg9woDNNShwsSyCjpZDufMrf7ee0YIf2lv6HaZPO4PiuoWH0OnHM
+         azxRvHOW2QRqs1o5tZuNzj/0iZy2oNvNoBQ3r2PwHTphTc285kAPsyO3hs2icMEGzcK8
+         3Wo8ng6M4ds8lM39myxKoWkWnpNSPD84Q89DDVtz61uqp9i5kub5F9ByTsvTaVVW/h9b
+         ZmAFPfnZKqNZB88zINx/vKCYlx5VBgxHRsisGWviKGWPbNWXmXHAPlTEfEEtDwn0W7Kb
+         vbAw==
+X-Gm-Message-State: ABuFfohDcyvnLuLY2kendeqElt+hcDhoXh9Hl82N1fkdNnp3BQyaXOvZ
+        6ED8txvRNt0HGt2Ww0SsnlqecA==
+X-Google-Smtp-Source: ACcGV60mh5eBGHuaDzCS9co1quv6trb6fadSI2JQjt8gEX5/GILMOV0RbZqiY8RxsmKXDTCU2dlzuQ==
+X-Received: by 2002:a1c:4857:: with SMTP id v84-v6mr8222775wma.8.1537815871871;
+        Mon, 24 Sep 2018 12:04:31 -0700 (PDT)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id e141-v6sm27721433wmd.32.2018.09.24.12.04.27
+        by smtp.googlemail.com with ESMTPSA id e141-v6sm27721433wmd.32.2018.09.24.12.04.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 24 Sep 2018 12:04:28 -0700 (PDT)
+        Mon, 24 Sep 2018 12:04:31 -0700 (PDT)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     Gilles.Muller@lip6.fr, Julia.Lawall@lip6.fr, agust@denx.de,
         airlied@linux.ie, alexandre.torgue@st.com, alistair@popple.id.au,
@@ -74,9 +74,9 @@ Cc:     cocci@systeme.lip6.fr, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
         linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         netdev@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v2 2/7] include: add setbits32/clrbits32/clrsetbits32/setbits64/clrbits64/clrsetbits64 in linux/setbits.h
-Date:   Mon, 24 Sep 2018 19:04:11 +0000
-Message-Id: <1537815856-31728-3-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH v2 5/7] net: ethernet: stmmac: dwmac-sun8i: use xxxsetbits32
+Date:   Mon, 24 Sep 2018 19:04:14 +0000
+Message-Id: <1537815856-31728-6-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1537815856-31728-1-git-send-email-clabbe@baylibre.com>
 References: <1537815856-31728-1-git-send-email-clabbe@baylibre.com>
@@ -85,109 +85,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds setbits32/clrbits32/clrsetbits32 and
-setbits64/clrbits64/clrsetbits64 in linux/setbits.h header.
+This patch convert dwmac-sun8i driver to use all xxxsetbits32 functions.
 
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- include/linux/setbits.h | 88 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
- create mode 100644 include/linux/setbits.h
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 62 ++++++-----------------
+ 1 file changed, 16 insertions(+), 46 deletions(-)
 
-diff --git a/include/linux/setbits.h b/include/linux/setbits.h
-new file mode 100644
-index 000000000000..6e7e257134ae
---- /dev/null
-+++ b/include/linux/setbits.h
-@@ -0,0 +1,88 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_SETBITS_H
-+#define __LINUX_SETBITS_H
-+
-+#include <linux/io.h>
-+
-+#define __setbits(readfunction, writefunction, addr, set) \
-+	writefunction((readfunction(addr) | (set)), addr)
-+#define __clrbits(readfunction, writefunction, addr, mask) \
-+	writefunction((readfunction(addr) & ~(mask)), addr)
-+#define __clrsetbits(readfunction, writefunction, addr, mask, set) \
-+	writefunction(((readfunction(addr) & ~(mask)) | (set)), addr)
-+#define __setclrbits(readfunction, writefunction, addr, mask, set) \
-+	writefunction(((readfunction(addr) | (set)) & ~(mask)), addr)
-+
-+#ifndef setbits_le32
-+#define setbits_le32(addr, set) __setbits(readl, writel, addr, set)
-+#endif
-+#ifndef setbits_le32_relaxed
-+#define setbits_le32_relaxed(addr, set) __setbits(readl_relaxed, writel_relaxed, \
-+					       addr, set)
-+#endif
-+
-+#ifndef clrbits_le32
-+#define clrbits_le32(addr, mask) __clrbits(readl, writel, addr, mask)
-+#endif
-+#ifndef clrbits_le32_relaxed
-+#define clrbits_le32_relaxed(addr, mask) __clrbits(readl_relaxed, writel_relaxed, \
-+						addr, mask)
-+#endif
-+
-+#ifndef clrsetbits_le32
-+#define clrsetbits_le32(addr, mask, set) __clrsetbits(readl, writel, addr, mask, set)
-+#endif
-+#ifndef clrsetbits_le32_relaxed
-+#define clrsetbits_le32_relaxed(addr, mask, set) __clrsetbits(readl_relaxed, \
-+							   writel_relaxed, \
-+							   addr, mask, set)
-+#endif
-+
-+#ifndef setclrbits_le32
-+#define setclrbits_le32(addr, mask, set) __setclrbits(readl, writel, addr, mask, set)
-+#endif
-+#ifndef setclrbits_le32_relaxed
-+#define setclrbits_le32_relaxed(addr, mask, set) __setclrbits(readl_relaxed, \
-+							   writel_relaxed, \
-+							   addr, mask, set)
-+#endif
-+
-+/* We cannot use CONFIG_64BIT as some x86 drivers use non-atomicwriteq() */
-+#if defined(writeq) && defined(readq)
-+#ifndef setbits_le64
-+#define setbits_le64(addr, set) __setbits(readq, writeq, addr, set)
-+#endif
-+#ifndef setbits_le64_relaxed
-+#define setbits_le64_relaxed(addr, set) __setbits(readq_relaxed, writeq_relaxed, \
-+					       addr, set)
-+#endif
-+
-+#ifndef clrbits_le64
-+#define clrbits_le64(addr, mask) __clrbits(readq, writeq, addr, mask)
-+#endif
-+#ifndef clrbits_le64_relaxed
-+#define clrbits_le64_relaxed(addr, mask) __clrbits(readq_relaxed, writeq_relaxed, \
-+						addr, mask)
-+#endif
-+
-+#ifndef clrsetbits_le64
-+#define clrsetbits_le64(addr, mask, set) __clrsetbits(readq, writeq, addr, mask, set)
-+#endif
-+#ifndef clrsetbits_le64_relaxed
-+#define clrsetbits_le64_relaxed(addr, mask, set) __clrsetbits(readq_relaxed, \
-+							   writeq_relaxed, \
-+							   addr, mask, set)
-+#endif
-+
-+#ifndef setclrbits_le64
-+#define setclrbits_le64(addr, mask, set) __setclrbits(readq, writeq, addr, mask, set)
-+#endif
-+#ifndef setclrbits_le64_relaxed
-+#define setclrbits_le64_relaxed(addr, mask, set) __setclrbits(readq_relaxed, \
-+							   writeq_relaxed, \
-+							   addr, mask, set)
-+#endif
-+
-+#endif /* writeq/readq */
-+
-+#endif /* __LINUX_SETBITS_H */
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index f9a61f90cfbc..74067a59af50 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -28,6 +28,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/regmap.h>
+ #include <linux/stmmac.h>
++#include <linux/setbits.h>
+ 
+ #include "stmmac.h"
+ #include "stmmac_platform.h"
+@@ -342,50 +343,30 @@ static void sun8i_dwmac_disable_dma_irq(void __iomem *ioaddr, u32 chan)
+ 
+ static void sun8i_dwmac_dma_start_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_TX_CTL1);
+-	v |= EMAC_TX_DMA_START;
+-	v |= EMAC_TX_DMA_EN;
+-	writel(v, ioaddr + EMAC_TX_CTL1);
++	setbits_le32(ioaddr + EMAC_TX_CTL1,
++		     EMAC_TX_DMA_START | EMAC_TX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_enable_dma_transmission(void __iomem *ioaddr)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_TX_CTL1);
+-	v |= EMAC_TX_DMA_START;
+-	v |= EMAC_TX_DMA_EN;
+-	writel(v, ioaddr + EMAC_TX_CTL1);
++	setbits_le32(ioaddr + EMAC_TX_CTL1,
++		     EMAC_TX_DMA_START | EMAC_TX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_dma_stop_tx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_TX_CTL1);
+-	v &= ~EMAC_TX_DMA_EN;
+-	writel(v, ioaddr + EMAC_TX_CTL1);
++	clrbits_le32(ioaddr + EMAC_TX_CTL1, EMAC_TX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_dma_start_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_RX_CTL1);
+-	v |= EMAC_RX_DMA_START;
+-	v |= EMAC_RX_DMA_EN;
+-	writel(v, ioaddr + EMAC_RX_CTL1);
++	setbits_le32(ioaddr + EMAC_RX_CTL1,
++		     EMAC_RX_DMA_START | EMAC_RX_DMA_EN);
+ }
+ 
+ static void sun8i_dwmac_dma_stop_rx(void __iomem *ioaddr, u32 chan)
+ {
+-	u32 v;
+-
+-	v = readl(ioaddr + EMAC_RX_CTL1);
+-	v &= ~EMAC_RX_DMA_EN;
+-	writel(v, ioaddr + EMAC_RX_CTL1);
++	clrbits_le32(ioaddr + EMAC_RX_CTL1, EMAC_RX_DMA_EN);
+ }
+ 
+ static int sun8i_dwmac_dma_interrupt(void __iomem *ioaddr,
+@@ -578,7 +559,6 @@ static void sun8i_dwmac_set_umac_addr(struct mac_device_info *hw,
+ 				      unsigned int reg_n)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 v;
+ 
+ 	if (!addr) {
+ 		writel(0, ioaddr + EMAC_MACADDR_HI(reg_n));
+@@ -588,9 +568,8 @@ static void sun8i_dwmac_set_umac_addr(struct mac_device_info *hw,
+ 	stmmac_set_mac_addr(ioaddr, addr, EMAC_MACADDR_HI(reg_n),
+ 			    EMAC_MACADDR_LO(reg_n));
+ 	if (reg_n > 0) {
+-		v = readl(ioaddr + EMAC_MACADDR_HI(reg_n));
+-		v |= MAC_ADDR_TYPE_DST;
+-		writel(v, ioaddr + EMAC_MACADDR_HI(reg_n));
++		setbits_le32(ioaddr + EMAC_MACADDR_HI(reg_n),
++			     MAC_ADDR_TYPE_DST);
+ 	}
+ }
+ 
+@@ -608,11 +587,8 @@ static void sun8i_dwmac_get_umac_addr(struct mac_device_info *hw,
+ static int sun8i_dwmac_rx_ipc_enable(struct mac_device_info *hw)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 v;
+ 
+-	v = readl(ioaddr + EMAC_RX_CTL0);
+-	v |= EMAC_RX_DO_CRC;
+-	writel(v, ioaddr + EMAC_RX_CTL0);
++	setbits_le32(ioaddr + EMAC_RX_CTL0, EMAC_RX_DO_CRC);
+ 
+ 	return 1;
+ }
+@@ -662,21 +638,15 @@ static void sun8i_dwmac_flow_ctrl(struct mac_device_info *hw,
+ 				  unsigned int pause_time, u32 tx_cnt)
+ {
+ 	void __iomem *ioaddr = hw->pcsr;
+-	u32 v;
+ 
+-	v = readl(ioaddr + EMAC_RX_CTL0);
+ 	if (fc == FLOW_AUTO)
+-		v |= EMAC_RX_FLOW_CTL_EN;
++		setbits_le32(ioaddr + EMAC_RX_CTL0, EMAC_RX_FLOW_CTL_EN);
+ 	else
+-		v &= ~EMAC_RX_FLOW_CTL_EN;
+-	writel(v, ioaddr + EMAC_RX_CTL0);
+-
+-	v = readl(ioaddr + EMAC_TX_FLOW_CTL);
++		clrbits_le32(ioaddr + EMAC_RX_CTL0, EMAC_RX_FLOW_CTL_EN);
+ 	if (fc == FLOW_AUTO)
+-		v |= EMAC_TX_FLOW_CTL_EN;
++		setbits_le32(ioaddr + EMAC_TX_FLOW_CTL, EMAC_TX_FLOW_CTL_EN);
+ 	else
+-		v &= ~EMAC_TX_FLOW_CTL_EN;
+-	writel(v, ioaddr + EMAC_TX_FLOW_CTL);
++		clrbits_le32(ioaddr + EMAC_TX_FLOW_CTL, EMAC_TX_FLOW_CTL_EN);
+ }
+ 
+ static int sun8i_dwmac_reset(struct stmmac_priv *priv)
 -- 
 2.16.4
 
