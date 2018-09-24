@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A84C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E82CECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E923F20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E923F20C0A
+	by mail.kernel.org (Postfix) with ESMTP id D88A1208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:14:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D88A1208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731941AbeIXSQn (ORCPT
+        id S1731949AbeIXSQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:16:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55458 "EHLO
+        Mon, 24 Sep 2018 14:16:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55470 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbeIXSQm (ORCPT
+        with ESMTP id S1728081AbeIXSQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:16:42 -0400
+        Mon, 24 Sep 2018 14:16:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78A3D1099;
-        Mon, 24 Sep 2018 12:14:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7A661099;
+        Mon, 24 Sep 2018 12:14:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 048/173] powerpc/powernv: opal_put_chars partial write fix
-Date:   Mon, 24 Sep 2018 13:51:22 +0200
-Message-Id: <20180924113119.517071410@linuxfoundation.org>
+Subject: [PATCH 4.14 049/173] staging: bcm2835-camera: fix timeout handling in wait_for_completion_timeout
+Date:   Mon, 24 Sep 2018 13:51:23 +0200
+Message-Id: <20180924113119.604497011@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,38 +51,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit bd90284cc6c1c9e8e48c8eadd0c79574fcce0b81 ]
+[ Upstream commit b7afce51d95726a619743aaad8870db66dfa1479 ]
 
-The intention here is to consume and discard the remaining buffer
-upon error. This works if there has not been a previous partial write.
-If there has been, then total_len is no longer total number of bytes
-to copy. total_len is always "bytes left to copy", so it should be
-added to written bytes.
+wait_for_completion_timeout returns unsigned long not int so a variable of
+proper type is introduced. Further the check for <= 0 is ambiguous and should
+be == 0 here indicating timeout which is the only error case so no additional
+check needed here.
 
-This code may not be exercised any more if partial writes will not be
-hit, but this is a small bugfix before a larger change.
-
-Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 7b3ad5abf027 ("staging: Import the BCM2835 MMAL-based V4L2 camera driver.")
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/opal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -388,7 +388,7 @@ int opal_put_chars(uint32_t vtermno, con
- 		/* Closed or other error drop */
- 		if (rc != OPAL_SUCCESS && rc != OPAL_BUSY &&
- 		    rc != OPAL_BUSY_EVENT) {
--			written = total_len;
-+			written += total_len;
- 			break;
- 		}
- 		if (rc == OPAL_SUCCESS) {
+--- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+@@ -834,6 +834,7 @@ static int send_synchronous_mmal_msg(str
+ {
+ 	struct mmal_msg_context *msg_context;
+ 	int ret;
++	unsigned long timeout;
+ 
+ 	/* payload size must not cause message to exceed max size */
+ 	if (payload_len >
+@@ -872,11 +873,11 @@ static int send_synchronous_mmal_msg(str
+ 		return ret;
+ 	}
+ 
+-	ret = wait_for_completion_timeout(&msg_context->u.sync.cmplt, 3 * HZ);
+-	if (ret <= 0) {
+-		pr_err("error %d waiting for sync completion\n", ret);
+-		if (ret == 0)
+-			ret = -ETIME;
++	timeout = wait_for_completion_timeout(&msg_context->u.sync.cmplt,
++					      3 * HZ);
++	if (timeout == 0) {
++		pr_err("timed out waiting for sync completion\n");
++		ret = -ETIME;
+ 		/* todo: what happens if the message arrives after aborting */
+ 		release_msg_context(msg_context);
+ 		return ret;
 
 
