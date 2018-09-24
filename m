@@ -2,208 +2,122 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D73AECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C993C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C627E2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:01:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C627E2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B5FD20883
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B5FD20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbeIXTDp (ORCPT
+        id S1729444AbeIXTHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 15:03:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35400 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728425AbeIXTDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 15:03:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3523818A;
-        Mon, 24 Sep 2018 06:01:41 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 029263F5BD;
-        Mon, 24 Sep 2018 06:01:39 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 14:01:37 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jun Yao <yaojun8558363@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, james.morse@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/6] arm64/mm: Introduce the init_pg_dir.
-Message-ID: <20180924130137.re3nftpsi2dx2da2@lakrids.cambridge.arm.com>
-References: <20180917044333.30051-1-yaojun8558363@gmail.com>
- <20180917044333.30051-2-yaojun8558363@gmail.com>
+        Mon, 24 Sep 2018 15:07:31 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:49569 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728917AbeIXTHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 15:07:31 -0400
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w8OD5OBu058976;
+        Mon, 24 Sep 2018 22:05:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Mon, 24 Sep 2018 22:05:24 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w8OD5KRp058821
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 24 Sep 2018 22:05:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v4] block/loop: Serialize ioctl operations.
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        syzbot 
+        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
+        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
+References: <1537009136-4839-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <1af79300-cb04-36e3-a650-168a5942161f@i-love.sakura.ne.jp>
+ <20180923220300.GA12589@ming.t460p>
+ <ba535251-c206-6242-3e6d-a4ed825c8114@i-love.sakura.ne.jp>
+ <20180924123108.GD28775@quack2.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c51b5ce0-befb-5b7f-1aab-588d0f14d7b8@i-love.sakura.ne.jp>
+Date:   Mon, 24 Sep 2018 22:05:20 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180917044333.30051-2-yaojun8558363@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180924123108.GD28775@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 12:43:28PM +0800, Jun Yao wrote:
-> To make the swapper_pg_dir read only, we will move it to the rodata
-> section. And force the kernel to set up the initial page table in
-> the init_pg_dir. After generating all levels page table, we copy
-> only the top level into the swapper_pg_dir during paging_init().
+On 2018/09/24 21:31, Jan Kara wrote:
+> On Mon 24-09-18 19:29:10, Tetsuo Handa wrote:
+>> On 2018/09/24 7:03, Ming Lei wrote:
+>>> On Sat, Sep 22, 2018 at 09:39:02PM +0900, Tetsuo Handa wrote:
+>>>> Hello, Ming Lei.
+>>>>
+>>>> I'd like to hear your comment on this patch regarding the ordering of
+>>>> stopping kernel thread.
+>>>>
+>>>>   > In order to enforce this strategy, this patch inversed
+>>>>   > loop_reread_partitions() and loop_unprepare_queue() in loop_clr_fd().
+>>>>   > I don't know whether it breaks something, but I don't have testcases.
+>>>>
+>>>> Until 3.19, kthread_stop(lo->lo_thread) was called before
+>>>> ioctl_by_bdev(bdev, BLKRRPART, 0) is called.
+>>>> During 4.0 to 4.3, the loop module was using "kloopd" workqueue.
+>>>> But since 4.4, loop_reread_partitions(lo, bdev) is called before
+>>>> loop_unprepare_queue(lo) is called. And this patch is trying to change to
+>>>> call loop_unprepare_queue() before loop_reread_partitions() is called.
+>>>> Is there some reason we need to preserve current ordering?
+>>>
+>>> IMO, both the two orders are fine, and what matters is that 'lo->lo_state'
+>>> is updated before loop_reread_partitions(), then any IO from loop_reread_partitions
+>>> will be failed, so it shouldn't be a big deal wrt. the order between
+>>> loop_reread_partitions() and loop_unprepare_queue().
+>>
+>> OK. Thank you. Here is v4 patch (only changelog was updated).
+>> Andrew, can we test this patch in the -mm tree?
+>>
+>> From 2278250ac8c5b912f7eb7af55e36ed40e2f7116b Mon Sep 17 00:00:00 2001
+>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Date: Mon, 24 Sep 2018 18:58:37 +0900
+>> Subject: [PATCH v4] block/loop: Serialize ioctl operations.
+>>
+>> syzbot is reporting NULL pointer dereference [1] which is caused by
+>> race condition between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
+>> ioctl(other_loop_fd, LOOP_SET_FD, loop_fd) due to traversing other
+>> loop devices without holding corresponding locks.
+>>
+>> syzbot is also reporting circular locking dependency between bdev->bd_mutex
+>> and lo->lo_ctl_mutex [2] which is caused by calling blkdev_reread_part()
+>> with lock held.
 > 
-> In this patch, just add the init_pg_dir to vmlinux.lds.S and
-> boiler-plate clearing/cleaning/invalidating it in head.S.
-
-I don't believe it is necessary to explicitly zero init_pg_dir.
-
-We have to clear swapper_pg_dir and idmap_pg_dir since they're after
-_edata, and the bootloader won't have zeroed the relevant memory (nor
-will it have cleaned that memory to the PoC).
-
-However, anything in .init must have been loaded and cleaned to the PoC
-by the bootloader per the arm64 Linux boot protocol. So as long as
-that's zero in the kernel Image, that must be zero in memory (and any
-caches).
-
+> Thanks for looking into the loop crashes Tetsuo. I was looking into the
+> loop code and trying to understand how your patch fixes them but I've
+> failed. Can you please elaborate a bit on how exactly LOOP_CLR_FD and
+> LOOP_SET_FD race to hit NULL pointer dereference? I don't really see the
+> code traversing other loop devices as you mention in your changelog so I'm
+> probably missing something. Thanks.
 > 
-> Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
-> ---
->  arch/arm64/include/asm/assembler.h | 29 +++++++++++++++++++++++++++++
->  arch/arm64/kernel/head.S           | 22 +++++++++++++++-------
->  arch/arm64/kernel/vmlinux.lds.S    |  8 ++++++++
->  3 files changed, 52 insertions(+), 7 deletions(-)
+> 								Honza
 > 
-> diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-> index 0bcc98dbba56..e7bdc324d538 100644
-> --- a/arch/arm64/include/asm/assembler.h
-> +++ b/arch/arm64/include/asm/assembler.h
-> @@ -456,6 +456,35 @@ USER(\label, ic	ivau, \tmp2)			// invalidate I line PoU
->  	b.ne	9998b
->  	.endm
->  
-> +/*
-> + * clear_page - clear one page
-> + *
-> + *	start:	page aligned virtual address
-> + */
-> +	.macro clear_page, start:req
-> +9996:	stp	xzr, xzr, [\start], #16
-> +	stp	xzr, xzr, [\start], #16
-> +	stp	xzr, xzr, [\start], #16
-> +	stp	xzr, xzr, [\start], #16
-> +	tst	\start, #(PAGE_SIZE - 1)
-> +	b.ne	9996b
-> +	.endm
-> +
-> +/*
-> + * clear_pages - clear contiguous pages
-> + *
-> + *	start, end:	page aligned virtual addresses
-> + */
-> +	.macro clear_pages, start:req, end:req
-> +	sub	\end, \end, \start
-> +	lsr	\end, \end, #(PAGE_SHIFT)
-> +9997:	cbz	\end, 9998f
-> +	clear_page \start
-> +	sub	\end, \end, #1
-> +	b	9997b
-> +9998:
-> +	.endm
 
-Given the above, I don't think that we need these macros. In a
-subsequent patch, we can just limit the range of pages that we zero.
-
-> +
->  /*
->   * Annotate a function as position independent, i.e., safe to be called before
->   * the kernel virtual mapping is activated.
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index b0853069702f..2c83a8c47e3f 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -295,18 +295,21 @@ __create_page_tables:
->  	sub	x1, x1, x0
->  	bl	__inval_dcache_area
->  
-> +	adrp	x0, init_pg_dir
-> +	adrp	x1, init_pg_end
-> +	sub	x1, x1, x0
-> +	bl	__inval_dcache_area
-> +
->  	/*
->  	 * Clear the idmap and swapper page tables.
->  	 */
->  	adrp	x0, idmap_pg_dir
->  	adrp	x1, swapper_pg_end
-> -	sub	x1, x1, x0
-> -1:	stp	xzr, xzr, [x0], #16
-> -	stp	xzr, xzr, [x0], #16
-> -	stp	xzr, xzr, [x0], #16
-> -	stp	xzr, xzr, [x0], #16
-> -	subs	x1, x1, #64
-> -	b.ne	1b
-> +	clear_pages x0, x1
-> +
-> +	adrp	x0, init_pg_dir
-> +	adrp	x1, init_pg_end
-> +	clear_pages x0, x1
->  
->  	mov	x7, SWAPPER_MM_MMUFLAGS
->  
-> @@ -395,6 +398,11 @@ __create_page_tables:
->  	dmb	sy
->  	bl	__inval_dcache_area
->  
-> +	adrp	x0, init_pg_dir
-> +	adrp	x1, init_pg_end
-> +	sub	x1, x1, x0
-> +	bl	__inval_dcache_area
-> +
->  	ret	x28
->  ENDPROC(__create_page_tables)
->  	.ltorg
-> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-> index 605d1b60469c..612ffc0bbe11 100644
-> --- a/arch/arm64/kernel/vmlinux.lds.S
-> +++ b/arch/arm64/kernel/vmlinux.lds.S
-> @@ -68,6 +68,12 @@ jiffies = jiffies_64;
->  #define TRAMP_TEXT
->  #endif
->  
-> +#define INIT_PG_TABLES					\
-> +	. = ALIGN(PAGE_SIZE);				\
-> +	init_pg_dir = .;				\
-> +	. += SWAPPER_DIR_SIZE;				\
-> +	init_pg_end = .;
-
-This will allocate a full set of PGD + PUD + PMD (+ PTE) levels, but the
-commit message says we only copy the top level table.
-
-The memory for otjher levels of table can be re-allocated once the
-kernel init phase is over, so that seems a bit worrying.
-
-Do we switch over to new copies of those levels, or do we continue using
-the entries from INIT_PG_TABLES?
-
-Thanks,
-Mark.
-
-> +
->  /*
->   * The size of the PE/COFF section that covers the kernel image, which
->   * runs from stext to _edata, must be a round multiple of the PE/COFF
-> @@ -161,6 +167,8 @@ SECTIONS
->  	__inittext_end = .;
->  	__initdata_begin = .;
->  
-> +	INIT_PG_TABLES
-> +
->  	.init.data : {
->  		INIT_DATA
->  		INIT_SETUP(16)
-> -- 
-> 2.17.1
-> 
+That is explained in a discussion for [1] at
+https://groups.google.com/forum/#!msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ .
+In the current code, the location of dangerous traversal is in loop_validate_file().
