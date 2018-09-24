@@ -2,124 +2,212 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29421C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD11AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 963D32145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:18:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="s4hNGubZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963D32145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
+	by mail.kernel.org (Postfix) with ESMTP id 88FB421486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 09:19:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88FB421486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeIXPTb (ORCPT
+        id S1728316AbeIXPUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:19:31 -0400
-Received: from mail-eopbgr40117.outbound.protection.outlook.com ([40.107.4.117]:13266
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726127AbeIXPTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 11:19:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vwf9Dhv6x2Lz5nmxtR5gAyJLj6+v1veIRNTfbh+qhYw=;
- b=s4hNGubZMsPQMYu+5c572PKZhtg2fY+BFEoETP9mMQ/7qdK0spnS544vKOLEgu+Pbr/BlhFUX0MkgF+uP9grT9vZxjBOIkJNyPcvNeK/AM6DDyu9acOjJjx+K4JABv1N3aWt2N8ZJ7H8M7vByawsIeEbDXnXY68bZiWXf38MasA=
-Received: from AM0PR07MB3972.eurprd07.prod.outlook.com (52.134.82.156) by
- AM0PR07MB4531.eurprd07.prod.outlook.com (52.135.151.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.10; Mon, 24 Sep 2018 09:18:21 +0000
-Received: from AM0PR07MB3972.eurprd07.prod.outlook.com
- ([fe80::d99e:e77:675a:17f6]) by AM0PR07MB3972.eurprd07.prod.outlook.com
- ([fe80::d99e:e77:675a:17f6%4]) with mapi id 15.20.1122.009; Mon, 24 Sep 2018
- 09:18:21 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH] objtool: Link with -lz
-Thread-Topic: [PATCH] objtool: Link with -lz
-Thread-Index: AQHUU+eJ9RUUDJUE40mGaAzW03CjUQ==
-Date:   Mon, 24 Sep 2018 09:18:21 +0000
-Message-ID: <20180924091740.4914-1-alexander.sverdlin@nokia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.32.181]
-x-mailer: git-send-email 2.18.0
-x-clientproxiedby: VI1PR04CA0100.eurprd04.prod.outlook.com
- (2603:10a6:803:64::35) To AM0PR07MB3972.eurprd07.prod.outlook.com
- (2603:10a6:208:46::28)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR07MB4531;6:DIHlfDWNnMEToN6+bSJhDQelQW+86H3/bvXsZs9Rnp0nZSeHEI0BsoF1aObFsDju1t3jGzCcEoS0VTkbKB+6uMZ6eId2yUU847anx1rrMnjA4fjyz11Tn6vuvyZ85noFAsV/LfMNOmXgyjHIpTmV3SPbWe7x8CrUulJf4dmI3ADAQqaKQOaMAD//4/ggPof+AjElxwSZBFaUuyL/UzZJFIMTtke1WhWs7w1Th7cOWieNNRk4LUz6SQbEg8vrZLn2g/BBAoL3ONopoa3EFafFzNEaDIdZiE3TV09IxD6bLBBCF8DowpT0kZoI530A8rqx6e2Al3pBDMeXX7wpsehf2dYfSnutsNTNox5v+zO0v/dQeq+aDOkURGOM9Nn2HBtXoG23+S1ekniuUqtZtpuPDrPXcsroerVM/v1n4+HkMssoSFwVvVv5ql53FpFUvOOgwzHI1rsOhQloMPXK7ToFPA==;5:rCh4RajXMI0T3Umf46yisxxZGSnFLWCjPJMqjtzzuw5+10nloBv9c9RsI9IFHcu2K5Lj+6TTnHNLHx0uC3zcuXkhOXlpsAgBE3TSb7OJfcW82Exzjt8tOXqNqBk2ayhmLqhgErWdjCYW4N+w/iK/JKrqiItgP3Y1n9jv18mLknQ=;7:PzwCHAwXG0YJe3hTn5ZvFsum4PsqRFnpXG1HH0XTsvItQE3FmeavPkr+mJEuANY/SCXV3KqkXsxlzlfVK+2YbMTEzIPRf5vseHW1m3/1gVkLAOO4SPhbDbt8eJ2kNTxvUAlVTNdqoLbp4SujM4MBns/SVTnzXNFD0azWXPZmiNwfXtFGM3rCZ3wZEtanqLGFxTSH/dST0LnrZ9XuFQdduoL8nDUiUdrvXq5sgwnizEuc7QFxEa6xIIA9ZO0EiPFr
-x-ms-office365-filtering-correlation-id: 36545ab7-2e6d-47d5-af8b-08d621feab40
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:AM0PR07MB4531;
-x-ms-traffictypediagnostic: AM0PR07MB4531:
-x-microsoft-antispam-prvs: <AM0PR07MB453176A0B0F5E0E1BD5B61A288170@AM0PR07MB4531.eurprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(195916259791689)(109105607167333)(82608151540597);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(11241501184)(806099)(944501410)(52105095)(6055026)(149066)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:AM0PR07MB4531;BCL:0;PCL:0;RULEID:;SRVR:AM0PR07MB4531;
-x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(136003)(376002)(366004)(39860400002)(199004)(189003)(478600001)(2616005)(66066001)(476003)(5660300001)(2906002)(2501003)(68736007)(6506007)(14454004)(316002)(6116002)(36756003)(486006)(2351001)(2900100001)(6486002)(81166006)(106356001)(105586002)(1857600001)(97736004)(4326008)(305945005)(6512007)(8676002)(50226002)(1076002)(6916009)(186003)(256004)(3846002)(14444005)(5640700003)(102836004)(6346003)(8936002)(6436002)(53936002)(86362001)(26005)(7736002)(54906003)(99286004)(81156014)(25786009)(52116002)(5250100002)(386003)(71190400001)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM0PR07MB4531;H:AM0PR07MB3972.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-x-microsoft-antispam-message-info: 36ynoDU9/4EJU12JdOE3tyG51LoYpfijarFgdHppPWcZyNFy+6LmamwPJGMl4PQa8AIfStEbdetn5KrLQh0XTAaPhHtmg1ajySWgAzTGaY2P3JH7fNgwdxR2XkPJz0PRidwpAGrfJN8WB+oqrLiBiRXELdDM802WeXRTEJ4BP+q354cCMUqlgc+EKzAgaNHYjEfcVf03wpLpzNs40KMxx8+PoYyTVD0G898HKK1hJXNFdtMz8ccumqlquNebyTwRlRu+USCeIDncjFydJBeXurlELdcxnYEZ3gBwlNrfCLG3K94OHiivREgHJ9O/pUj0682byIFnfwlDXqsbDmzEkLyp2gbUvwbxyFZFM1qyXIouKsssmaWSHEokWqW48WkLzXLC80WLf7ceoJyyBjfeIA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 24 Sep 2018 11:20:30 -0400
+Received: from shell.v3.sk ([90.176.6.54]:58700 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727786AbeIXPU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 11:20:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 717EABA230;
+        Mon, 24 Sep 2018 11:19:19 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id n06MwWgG069I; Mon, 24 Sep 2018 11:19:16 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 6E464BA25C;
+        Mon, 24 Sep 2018 11:19:16 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id abSVPPYozE_a; Mon, 24 Sep 2018 11:19:15 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id AD3C8BA230;
+        Mon, 24 Sep 2018 11:19:15 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     libertas-dev@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] libertas: return errno from lbs_add_card()
+Date:   Mon, 24 Sep 2018 11:18:53 +0200
+Message-Id: <20180924091853.452055-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36545ab7-2e6d-47d5-af8b-08d621feab40
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 09:18:21.2246
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR07MB4531
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This should fix the following when statically linking host tools:
-gcc .../tools/objtool/objtool-in.o  -lelf .../tools/objtool/libsubcmd.a  -s=
-tatic -o .../tools/objtool/objtool
-.../bin/ld: .../sys-root/lib/libelf.a(elf_compress.o): in function `__libel=
-f_compress':
-.../libelf/elf_compress.c:113: undefined reference to `deflateInit_'
+Makes lbs_add_card() longer throw away the errno and lets its callers
+propagate it instead.
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Basicaly a cosmetical thing. Used to be a part of a patchset that I
+discarded, but it still make sense to apply this one, because it makes th=
+e
+error handling somewhat cleaner.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- tools/objtool/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/marvell/libertas/if_cs.c   |  4 ++--
+ drivers/net/wireless/marvell/libertas/if_sdio.c |  4 ++--
+ drivers/net/wireless/marvell/libertas/if_spi.c  |  4 ++--
+ drivers/net/wireless/marvell/libertas/if_usb.c  |  5 ++++-
+ drivers/net/wireless/marvell/libertas/main.c    | 17 ++++++++++-------
+ 5 files changed, 20 insertions(+), 14 deletions(-)
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index c9d038f..d1847e3 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -32,7 +32,7 @@ INCLUDES :=3D -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
- WARNINGS :=3D $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-=
-packed
- CFLAGS   +=3D -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES)
--LDFLAGS  +=3D -lelf $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
-+LDFLAGS  +=3D -lelf -lz $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
+diff --git a/drivers/net/wireless/marvell/libertas/if_cs.c b/drivers/net/=
+wireless/marvell/libertas/if_cs.c
+index 7d88223f890b..cebf03c6a622 100644
+--- a/drivers/net/wireless/marvell/libertas/if_cs.c
++++ b/drivers/net/wireless/marvell/libertas/if_cs.c
+@@ -900,8 +900,8 @@ static int if_cs_probe(struct pcmcia_device *p_dev)
 =20
- # Allow old libelf to be used:
- elfshdr :=3D $(shell echo '$(pound)include <libelf.h>' | $(CC) $(CFLAGS) -=
-x c -E - | grep elf_getshdr)
+ 	/* Make this card known to the libertas driver */
+ 	priv =3D lbs_add_card(card, &p_dev->dev);
+-	if (!priv) {
+-		ret =3D -ENOMEM;
++	if (IS_ERR(priv)) {
++		ret =3D PTR_ERR(priv);
+ 		goto out2;
+ 	}
+=20
+diff --git a/drivers/net/wireless/marvell/libertas/if_sdio.c b/drivers/ne=
+t/wireless/marvell/libertas/if_sdio.c
+index 43743c26c071..2fd54a0aeb5a 100644
+--- a/drivers/net/wireless/marvell/libertas/if_sdio.c
++++ b/drivers/net/wireless/marvell/libertas/if_sdio.c
+@@ -1206,8 +1206,8 @@ static int if_sdio_probe(struct sdio_func *func,
+=20
+=20
+ 	priv =3D lbs_add_card(card, &func->dev);
+-	if (!priv) {
+-		ret =3D -ENOMEM;
++	if (IS_ERR(priv)) {
++		ret =3D PTR_ERR(priv);
+ 		goto free;
+ 	}
+=20
+diff --git a/drivers/net/wireless/marvell/libertas/if_spi.c b/drivers/net=
+/wireless/marvell/libertas/if_spi.c
+index e9aec6cb1105..47cee494eb62 100644
+--- a/drivers/net/wireless/marvell/libertas/if_spi.c
++++ b/drivers/net/wireless/marvell/libertas/if_spi.c
+@@ -1146,8 +1146,8 @@ static int if_spi_probe(struct spi_device *spi)
+ 	 * This will call alloc_etherdev.
+ 	 */
+ 	priv =3D lbs_add_card(card, &spi->dev);
+-	if (!priv) {
+-		err =3D -ENOMEM;
++	if (IS_ERR(priv)) {
++		ret =3D PTR_ERR(priv);
+ 		goto free_card;
+ 	}
+ 	card->priv =3D priv;
+diff --git a/drivers/net/wireless/marvell/libertas/if_usb.c b/drivers/net=
+/wireless/marvell/libertas/if_usb.c
+index c67a8e7be310..66dc6aeeadbc 100644
+--- a/drivers/net/wireless/marvell/libertas/if_usb.c
++++ b/drivers/net/wireless/marvell/libertas/if_usb.c
+@@ -254,8 +254,11 @@ static int if_usb_probe(struct usb_interface *intf,
+ 		goto dealloc;
+ 	}
+=20
+-	if (!(priv =3D lbs_add_card(cardp, &intf->dev)))
++	priv =3D lbs_add_card(cardp, &intf->dev);
++	if (IS_ERR(priv)) {
++		ret =3D PTR_ERR(priv);
+ 		goto err_add_card;
++	}
+=20
+ 	cardp->priv =3D priv;
+=20
+diff --git a/drivers/net/wireless/marvell/libertas/main.c b/drivers/net/w=
+ireless/marvell/libertas/main.c
+index f22e1c220cba..f7db60bc7c7f 100644
+--- a/drivers/net/wireless/marvell/libertas/main.c
++++ b/drivers/net/wireless/marvell/libertas/main.c
+@@ -907,25 +907,29 @@ struct lbs_private *lbs_add_card(void *card, struct=
+ device *dmdev)
+ 	struct net_device *dev;
+ 	struct wireless_dev *wdev;
+ 	struct lbs_private *priv =3D NULL;
++	int err;
+=20
+ 	/* Allocate an Ethernet device and register it */
+ 	wdev =3D lbs_cfg_alloc(dmdev);
+ 	if (IS_ERR(wdev)) {
++		err =3D PTR_ERR(wdev);
+ 		pr_err("cfg80211 init failed\n");
+-		goto done;
++		goto err_cfg;
+ 	}
+=20
+ 	wdev->iftype =3D NL80211_IFTYPE_STATION;
+ 	priv =3D wdev_priv(wdev);
+ 	priv->wdev =3D wdev;
+=20
+-	if (lbs_init_adapter(priv)) {
++	err =3D lbs_init_adapter(priv);
++	if (err) {
+ 		pr_err("failed to initialize adapter structure\n");
+ 		goto err_wdev;
+ 	}
+=20
+ 	dev =3D alloc_netdev(0, "wlan%d", NET_NAME_UNKNOWN, ether_setup);
+ 	if (!dev) {
++		err =3D -ENOMEM;
+ 		dev_err(dmdev, "no memory for network device instance\n");
+ 		goto err_adapter;
+ 	}
+@@ -949,6 +953,7 @@ struct lbs_private *lbs_add_card(void *card, struct d=
+evice *dmdev)
+ 	init_waitqueue_head(&priv->waitq);
+ 	priv->main_thread =3D kthread_run(lbs_thread, dev, "lbs_main");
+ 	if (IS_ERR(priv->main_thread)) {
++		err =3D PTR_ERR(priv->main_thread);
+ 		lbs_deb_thread("Error creating main thread.\n");
+ 		goto err_ndev;
+ 	}
+@@ -961,7 +966,7 @@ struct lbs_private *lbs_add_card(void *card, struct d=
+evice *dmdev)
+ 	priv->wol_gap =3D 20;
+ 	priv->ehs_remove_supported =3D true;
+=20
+-	goto done;
++	return priv;
+=20
+  err_ndev:
+ 	free_netdev(dev);
+@@ -972,10 +977,8 @@ struct lbs_private *lbs_add_card(void *card, struct =
+device *dmdev)
+  err_wdev:
+ 	lbs_cfg_free(priv);
+=20
+-	priv =3D NULL;
+-
+-done:
+-	return priv;
++ err_cfg:
++	return ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(lbs_add_card);
+=20
 --=20
-2.4.6
+2.19.0
 
