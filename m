@@ -2,39 +2,40 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CB4C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6D2C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3EF20685
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3EF20685
+	by mail.kernel.org (Postfix) with ESMTP id 4EA3620685
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA3620685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbeIXRly (ORCPT
+        id S1729363AbeIXRl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:41:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50746 "EHLO
+        Mon, 24 Sep 2018 13:41:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50756 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729053AbeIXRlw (ORCPT
+        with ESMTP id S1728894AbeIXRl4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:41:52 -0400
+        Mon, 24 Sep 2018 13:41:56 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E7D21071;
-        Mon, 24 Sep 2018 11:40:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A69B1070;
+        Mon, 24 Sep 2018 11:40:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 3.18 059/105] xhci: Fix use-after-free in xhci_free_virt_device
-Date:   Mon, 24 Sep 2018 13:33:45 +0200
-Message-Id: <20180924113119.491292892@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 3.18 033/105] i2c: xiic: Make the start and the byte count write atomic
+Date:   Mon, 24 Sep 2018 13:33:19 +0200
+Message-Id: <20180924113117.159587134@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -52,47 +53,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-commit 44a182b9d17765514fa2b1cc911e4e65134eef93 upstream.
+commit ae7304c3ea28a3ba47a7a8312c76c654ef24967e upstream.
 
-KASAN found a use-after-free in xhci_free_virt_device+0x33b/0x38e
-where xhci_free_virt_device() sets slot id to 0 if udev exists:
-if (dev->udev && dev->udev->slot_id)
-	dev->udev->slot_id = 0;
+Disable interrupts while configuring the transfer and enable them back.
 
-dev->udev will be true even if udev is freed because dev->udev is
-not set to NULL.
+We have below as the programming sequence
+1. start and slave address
+2. byte count and stop
 
-set dev->udev pointer to NULL in xhci_free_dev()
+In some customer platform there was a lot of interrupts between 1 and 2
+and after slave address (around 7 clock cyles) if 2 is not executed
+then the transaction is nacked.
 
-The original patch went to stable so this fix needs to be applied
-there as well.
+To fix this case make the 2 writes atomic.
 
-Fixes: a400efe455f7 ("xhci: zero usb device slot_id member when disabling and freeing a xhci slot")
-Cc: <stable@vger.kernel.org>
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+[wsa: added a newline for better readability]
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/i2c/busses/i2c-xiic.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -3630,6 +3630,9 @@ void xhci_free_dev(struct usb_hcd *hcd,
- 	}
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -500,6 +500,7 @@ static void xiic_start_recv(struct xiic_
+ {
+ 	u8 rx_watermark;
+ 	struct i2c_msg *msg = i2c->rx_msg = i2c->tx_msg;
++	unsigned long flags;
  
- 	spin_lock_irqsave(&xhci->lock, flags);
+ 	/* Clear and enable Rx full interrupt. */
+ 	xiic_irq_clr_en(i2c, XIIC_INTR_RX_FULL_MASK | XIIC_INTR_TX_ERROR_MASK);
+@@ -515,6 +516,7 @@ static void xiic_start_recv(struct xiic_
+ 		rx_watermark = IIC_RX_FIFO_DEPTH;
+ 	xiic_setreg8(i2c, XIIC_RFD_REG_OFFSET, rx_watermark - 1);
+ 
++	local_irq_save(flags);
+ 	if (!(msg->flags & I2C_M_NOSTART))
+ 		/* write the address */
+ 		xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
+@@ -525,6 +527,8 @@ static void xiic_start_recv(struct xiic_
+ 
+ 	xiic_setreg16(i2c, XIIC_DTR_REG_OFFSET,
+ 		msg->len | ((i2c->nmsgs == 1) ? XIIC_TX_DYN_STOP_MASK : 0));
++	local_irq_restore(flags);
 +
-+	virt_dev->udev = NULL;
-+
- 	/* Don't disable the slot if the host controller is dead. */
- 	state = readl(&xhci->op_regs->status);
- 	if (state == 0xffffffff || (xhci->xhc_state & XHCI_STATE_DYING) ||
+ 	if (i2c->nmsgs == 1)
+ 		/* very last, enable bus not busy as well */
+ 		xiic_irq_clr_en(i2c, XIIC_INTR_BNB_MASK);
 
 
