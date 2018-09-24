@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A38AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AABECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA8E214C1
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 770202086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:05:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT0SA5n2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA8E214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LU9buA40"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770202086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732538AbeIXVHd (ORCPT
+        id S1732626AbeIXVHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:07:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52924 "EHLO mail.kernel.org"
+        Mon, 24 Sep 2018 17:07:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732449AbeIXVHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:07:33 -0400
+        id S1732554AbeIXVHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:07:38 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED00B20C0A;
-        Mon, 24 Sep 2018 15:04:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 409A62086B;
+        Mon, 24 Sep 2018 15:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1537801497;
-        bh=FhYgl0qqTnmeO/G6u1dQEYfI96sO42ax8nOayWWgveA=;
+        s=default; t=1537801502;
+        bh=0Qp3QDhU2XthjZS03jS8VRpijsLNrHk5DMsdAHR26sA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NT0SA5n2JtlRARmMIhlISlkBJR8XnAIRbhU75a7Cxcb2uH+Rve4s573EoMt8egwXd
-         30E9Guk2wdC/rY4+/WGkkpSrpuNB6qXe5/xCEkFyVp5DeqPQolfRn5B8bIZVo5G8NU
-         bE3dVwu9+Q6ro4RfH+GmLRVlBrSe3+qxJOMc2B7s=
+        b=LU9buA40qtMrRjtBd0Ch2exy4VLT1sAup2lrytCraGQabehzroGPuk+CbOg6aR/NO
+         heBDpRAl7DiYKms/k9K5lNEn/ocwZBb9gFQU9YSB3lKrHHuE677rdmK63VvB7okJ2f
+         zvP9YHT+9A/IDUZpdMSlsoP5bN3UO3ItjQ1K2eCc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -48,9 +48,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-trace-devel@vger.kernel.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 19/27] tools lib traceevent: Rename data2host*() APIs
-Date:   Mon, 24 Sep 2018 12:02:34 -0300
-Message-Id: <20180924150242.14235-20-acme@kernel.org>
+Subject: [PATCH 20/27] tools lib traceevent: Add prefix tep_ to enum filter_trivial_type
+Date:   Mon, 24 Sep 2018 12:02:35 -0300
+Message-Id: <20180924150242.14235-21-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180924150242.14235-1-acme@kernel.org>
 References: <20180924150242.14235-1-acme@kernel.org>
@@ -63,7 +63,8 @@ From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 
 In order to make libtraceevent into a proper library, variables, data
 structures and functions require a unique prefix to prevent name space
-conflicts. That prefix will be "tep_". This renames data2host*() APIs
+conflicts. That prefix will be "tep_". This adds prefix tep_ to
+enum filter_trivial_type and all its members.
 
 Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -71,124 +72,137 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Cc: linux-trace-devel@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180919185724.751088939@goodmis.org
+Link: http://lkml.kernel.org/r/20180919185725.076387655@goodmis.org
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse.c | 10 +++++-----
- tools/lib/traceevent/event-parse.h | 14 +++++++-------
- tools/perf/util/trace-event-read.c |  4 ++--
- 3 files changed, 14 insertions(+), 14 deletions(-)
+ tools/lib/traceevent/event-parse.h  | 14 +++++++-------
+ tools/lib/traceevent/parse-filter.c | 22 +++++++++++-----------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 055bee7b738a..7980fc6c3bac 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -3331,11 +3331,11 @@ unsigned long long tep_read_number(struct tep_handle *pevent,
- 	case 1:
- 		return *(unsigned char *)ptr;
- 	case 2:
--		return data2host2(pevent, ptr);
-+		return tep_data2host2(pevent, ptr);
- 	case 4:
--		return data2host4(pevent, ptr);
-+		return tep_data2host4(pevent, ptr);
- 	case 8:
--		return data2host8(pevent, ptr);
-+		return tep_data2host8(pevent, ptr);
- 	default:
- 		/* BUG! */
- 		return 0;
-@@ -4061,7 +4061,7 @@ static void print_str_arg(struct trace_seq *s, void *data, int size,
- 			f = tep_find_any_field(event, arg->string.string);
- 			arg->string.offset = f->offset;
- 		}
--		str_offset = data2host4(pevent, data + arg->string.offset);
-+		str_offset = tep_data2host4(pevent, data + arg->string.offset);
- 		str_offset &= 0xffff;
- 		print_str_to_seq(s, format, len_arg, ((char *)data) + str_offset);
- 		break;
-@@ -4079,7 +4079,7 @@ static void print_str_arg(struct trace_seq *s, void *data, int size,
- 			f = tep_find_any_field(event, arg->bitmask.bitmask);
- 			arg->bitmask.offset = f->offset;
- 		}
--		bitmask_offset = data2host4(pevent, data + arg->bitmask.offset);
-+		bitmask_offset = tep_data2host4(pevent, data + arg->bitmask.offset);
- 		bitmask_size = bitmask_offset >> 16;
- 		bitmask_offset &= 0xffff;
- 		print_bitmask_to_seq(pevent, s, format, len_arg,
 diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 2a7b0a857f39..830147dc6b21 100644
+index 830147dc6b21..9c29a5f7aa39 100644
 --- a/tools/lib/traceevent/event-parse.h
 +++ b/tools/lib/traceevent/event-parse.h
-@@ -496,7 +496,7 @@ static inline void tep_set_flag(struct tep_handle *pevent, int flag)
- }
+@@ -905,10 +905,10 @@ struct tep_event_filter *tep_filter_alloc(struct tep_handle *pevent);
+ #define FILTER_MISS		TEP_ERRNO__FILTER_MISS
+ #define FILTER_MATCH		TEP_ERRNO__FILTER_MATCH
  
- static inline unsigned short
--__data2host2(struct tep_handle *pevent, unsigned short data)
-+__tep_data2host2(struct tep_handle *pevent, unsigned short data)
+-enum filter_trivial_type {
+-	FILTER_TRIVIAL_FALSE,
+-	FILTER_TRIVIAL_TRUE,
+-	FILTER_TRIVIAL_BOTH,
++enum tep_filter_trivial_type {
++	TEP_FILTER_TRIVIAL_FALSE,
++	TEP_FILTER_TRIVIAL_TRUE,
++	TEP_FILTER_TRIVIAL_BOTH,
+ };
+ 
+ enum tep_errno tep_filter_add_filter_str(struct tep_event_filter *filter,
+@@ -926,7 +926,7 @@ int tep_event_filtered(struct tep_event_filter *filter,
+ void tep_filter_reset(struct tep_event_filter *filter);
+ 
+ int tep_filter_clear_trivial(struct tep_event_filter *filter,
+-			     enum filter_trivial_type type);
++			     enum tep_filter_trivial_type type);
+ 
+ void tep_filter_free(struct tep_event_filter *filter);
+ 
+@@ -937,12 +937,12 @@ int tep_filter_remove_event(struct tep_event_filter *filter,
+ 
+ int tep_filter_event_has_trivial(struct tep_event_filter *filter,
+ 				 int event_id,
+-				 enum filter_trivial_type type);
++				 enum tep_filter_trivial_type type);
+ 
+ int tep_filter_copy(struct tep_event_filter *dest, struct tep_event_filter *source);
+ 
+ int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *source,
+-			enum filter_trivial_type type);
++			enum tep_filter_trivial_type type);
+ 
+ int tep_filter_compare(struct tep_event_filter *filter1, struct tep_event_filter *filter2);
+ 
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index 875bfaf79771..d64b6128fa7d 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -1534,7 +1534,7 @@ int tep_filter_copy(struct tep_event_filter *dest, struct tep_event_filter *sour
+  *   events may have still been updated on error.
+  */
+ int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *source,
+-		       enum filter_trivial_type type)
++		       enum tep_filter_trivial_type type)
  {
- 	unsigned short swap;
+ 	struct tep_handle *src_pevent;
+ 	struct tep_handle *dest_pevent;
+@@ -1556,8 +1556,8 @@ int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *s
+ 		arg = filter_type->filter;
+ 		if (arg->type != TEP_FILTER_ARG_BOOLEAN)
+ 			continue;
+-		if ((arg->boolean.value && type == FILTER_TRIVIAL_FALSE) ||
+-		    (!arg->boolean.value && type == FILTER_TRIVIAL_TRUE))
++		if ((arg->boolean.value && type == TEP_FILTER_TRIVIAL_FALSE) ||
++		    (!arg->boolean.value && type == TEP_FILTER_TRIVIAL_TRUE))
+ 			continue;
  
-@@ -510,7 +510,7 @@ __data2host2(struct tep_handle *pevent, unsigned short data)
- }
- 
- static inline unsigned int
--__data2host4(struct tep_handle *pevent, unsigned int data)
-+__tep_data2host4(struct tep_handle *pevent, unsigned int data)
+ 		event = filter_type->event;
+@@ -1593,7 +1593,7 @@ int tep_update_trivial(struct tep_event_filter *dest, struct tep_event_filter *s
+  * Returns 0 on success and -1 if there was a problem.
+  */
+ int tep_filter_clear_trivial(struct tep_event_filter *filter,
+-			     enum filter_trivial_type type)
++			     enum tep_filter_trivial_type type)
  {
- 	unsigned int swap;
- 
-@@ -526,7 +526,7 @@ __data2host4(struct tep_handle *pevent, unsigned int data)
- }
- 
- static inline unsigned long long
--__data2host8(struct tep_handle *pevent, unsigned long long data)
-+__tep_data2host8(struct tep_handle *pevent, unsigned long long data)
+ 	struct tep_filter_type *filter_type;
+ 	int count = 0;
+@@ -1614,11 +1614,11 @@ int tep_filter_clear_trivial(struct tep_event_filter *filter,
+ 		if (filter_type->filter->type != TEP_FILTER_ARG_BOOLEAN)
+ 			continue;
+ 		switch (type) {
+-		case FILTER_TRIVIAL_FALSE:
++		case TEP_FILTER_TRIVIAL_FALSE:
+ 			if (filter_type->filter->boolean.value)
+ 				continue;
+ 			break;
+-		case FILTER_TRIVIAL_TRUE:
++		case TEP_FILTER_TRIVIAL_TRUE:
+ 			if (!filter_type->filter->boolean.value)
+ 				continue;
+ 		default:
+@@ -1656,7 +1656,7 @@ int tep_filter_clear_trivial(struct tep_event_filter *filter,
+  */
+ int tep_filter_event_has_trivial(struct tep_event_filter *filter,
+ 				 int event_id,
+-				 enum filter_trivial_type type)
++				 enum tep_filter_trivial_type type)
  {
- 	unsigned long long swap;
+ 	struct tep_filter_type *filter_type;
  
-@@ -545,14 +545,14 @@ __data2host8(struct tep_handle *pevent, unsigned long long data)
- 	return swap;
- }
- 
--#define data2host2(pevent, ptr)		__data2host2(pevent, *(unsigned short *)(ptr))
--#define data2host4(pevent, ptr)		__data2host4(pevent, *(unsigned int *)(ptr))
--#define data2host8(pevent, ptr)					\
-+#define tep_data2host2(pevent, ptr)		__tep_data2host2(pevent, *(unsigned short *)(ptr))
-+#define tep_data2host4(pevent, ptr)		__tep_data2host4(pevent, *(unsigned int *)(ptr))
-+#define tep_data2host8(pevent, ptr)					\
- ({								\
- 	unsigned long long __val;				\
- 								\
- 	memcpy(&__val, (ptr), sizeof(unsigned long long));	\
--	__data2host8(pevent, __val);				\
-+	__tep_data2host8(pevent, __val);				\
- })
- 
- static inline int tep_host_bigendian(void)
-diff --git a/tools/perf/util/trace-event-read.c b/tools/perf/util/trace-event-read.c
-index 3dfc1db6b25b..b98ee2a2eb44 100644
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -102,7 +102,7 @@ static unsigned int read4(struct tep_handle *pevent)
- 
- 	if (do_read(&data, 4) < 0)
+@@ -1672,10 +1672,10 @@ int tep_filter_event_has_trivial(struct tep_event_filter *filter,
  		return 0;
--	return __data2host4(pevent, data);
-+	return __tep_data2host4(pevent, data);
- }
  
- static unsigned long long read8(struct tep_handle *pevent)
-@@ -111,7 +111,7 @@ static unsigned long long read8(struct tep_handle *pevent)
+ 	switch (type) {
+-	case FILTER_TRIVIAL_FALSE:
++	case TEP_FILTER_TRIVIAL_FALSE:
+ 		return !filter_type->filter->boolean.value;
  
- 	if (do_read(&data, 8) < 0)
- 		return 0;
--	return __data2host8(pevent, data);
-+	return __tep_data2host8(pevent, data);
- }
- 
- static char *read_string(void)
+-	case FILTER_TRIVIAL_TRUE:
++	case TEP_FILTER_TRIVIAL_TRUE:
+ 		return filter_type->filter->boolean.value;
+ 	default:
+ 		return 1;
+@@ -2409,8 +2409,8 @@ int tep_filter_compare(struct tep_event_filter *filter1, struct tep_event_filter
+ 		if (filter_type1->filter->type != filter_type2->filter->type)
+ 			break;
+ 		switch (filter_type1->filter->type) {
+-		case FILTER_TRIVIAL_FALSE:
+-		case FILTER_TRIVIAL_TRUE:
++		case TEP_FILTER_TRIVIAL_FALSE:
++		case TEP_FILTER_TRIVIAL_TRUE:
+ 			/* trivial types just need the type compared */
+ 			continue;
+ 		default:
 -- 
 2.14.4
 
