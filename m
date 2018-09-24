@@ -2,129 +2,194 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A87DECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1742BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6AD214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:36:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6AD214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id 961E320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:40:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rT7NUroM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 961E320C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbeIYBkI (ORCPT
+        id S1727786AbeIYBoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:40:08 -0400
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:19864 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeIYBkF (ORCPT
+        Mon, 24 Sep 2018 21:44:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40214 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeIYBob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:40:05 -0400
-Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id 4F153FE0;
-        Mon, 24 Sep 2018 19:36:19 +0000 (UTC)
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g4t3425.houston.hpe.com (Postfix) with ESMTP id 86134A8;
-        Mon, 24 Sep 2018 19:36:18 +0000 (UTC)
-Received: from lxbuild.ftc.rdlabs.hpecorp.net (lxbuild.ftc.rdlabs.hpecorp.net [16.78.34.175])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 258F849;
-        Mon, 24 Sep 2018 19:36:18 +0000 (UTC)
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     shuah@kernel.org, erosca@de.adit-jv.com
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jerry Hoemann <jerry.hoemann@hpe.com>
-Subject: [V2 PATCH] selftests: watchdog: Add gettimeout and get|set pretimeout
-Date:   Mon, 24 Sep 2018 13:36:07 -0600
-Message-Id: <1537817767-78918-2-git-send-email-jerry.hoemann@hpe.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1537817767-78918-1-git-send-email-jerry.hoemann@hpe.com>
-References: <1537817767-78918-1-git-send-email-jerry.hoemann@hpe.com>
+        Mon, 24 Sep 2018 21:44:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id o2-v6so4648519wmh.5;
+        Mon, 24 Sep 2018 12:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bu1tGZiAYWThOPGodE/1SWKaK7/sH3GquVcprXHW2no=;
+        b=rT7NUroMWrUciSpYa4Vsjai2TclrLkaCwPW2jAoKfLufa25V0IHsStsWmtYPn7Vs0m
+         smhF2CweRRXHOEDd1T+kI/717VOiuDbck6cEVtGHTVy/d4+0KR0JJAFRTLtVbGgwuQQX
+         ggU5wuH+IiPwLkkVSLcA4GcgC/OgkxMaTx4d7YIk9/dTYHDDmyPTpegfAVGWGOssewna
+         kFwyB+HAdw2N/eezgjbXHWJCnltBok4Z3k985vD3naflnMGU/gTruFV+C3hj6aQAY4q0
+         XoHbAFkEO4qc33F2Cfs+T/HdVn1yq6MjW8mrhqRPb1S/c2JEcCOvSlw1kicubqINNsYj
+         DbqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bu1tGZiAYWThOPGodE/1SWKaK7/sH3GquVcprXHW2no=;
+        b=WHt1x4GJvRfNMqKSHx1kNENj7YYtg47fbYJnnnZfY+ZObtXFuMplzme8nG9jimy0yV
+         2juKEtxZ746jpW+jRbjcy4gT1Pv1F56FC9Zv1h69lr0TL69acGh8/dUHjutglzhuWZmz
+         IwilSfyLLaA7euy0AWAqVFeG5q1HxQBsCvunpR+YVxnkE/a/mEEXEVfAjJOW0HLhGPUG
+         h1sqGXgO5pbk1cuBphFZAW9gyuoj8mYfoNsnNZD85UUCppmWpAEHFC4OqDia1AGYOVWw
+         Q1yOxYjpBuP/mAKObQuXLg00E1JK9tEGBYaF+cED9ejP8DlxKJN5h9LdHqNlGmIZlGWX
+         vFQg==
+X-Gm-Message-State: ABuFfogMMbJLiFw7Vy46s0v7PopYbFt/a4kGduYZLA39tvsgMOal6bvM
+        jVn/v1+IjQAOGvXNvmxFYYyPfCa+NhLirQ==
+X-Google-Smtp-Source: ANB0VdZGgFbMllhFdJzzPZIgQElm06GODDJgrmqvMt/+FS4+4Y8So0HXrk4j4RcNrGTXJezzHTd0RQ==
+X-Received: by 2002:a1c:2384:: with SMTP id j126-v6mr6450153wmj.124.1537818042760;
+        Mon, 24 Sep 2018 12:40:42 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id l10-v6sm267027wrp.40.2018.09.24.12.40.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 12:40:41 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 12:40:40 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Gary R Hook <ghook@amd.com>
+Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "Hook, Gary" <Gary.Hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] crypto: ccp: Remove forward declaration
+Message-ID: <20180924194040.GA17672@flashbox>
+References: <20180924172615.25591-1-natechancellor@gmail.com>
+ <33c9afa7-ea62-1248-1da4-381f93238627@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33c9afa7-ea62-1248-1da4-381f93238627@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add command line arguments to call ioctl WDIOC_GETTIMEOUT,
-WDIOC_GETPRETIMEOUT and WDIOC_SETPRETIMEOUT.
+On Mon, Sep 24, 2018 at 07:18:23PM +0000, Gary R Hook wrote:
+> On 09/24/2018 12:26 PM, Nathan Chancellor wrote:
+> > Clang emits a warning about this construct:
+> > 
+> > drivers/crypto/ccp/sp-platform.c:36:36: warning: tentative array
+> > definition assumed to have one element
+> > static const struct acpi_device_id sp_acpi_match[];
+> >                                     ^
+> > 1 warning generated.
+> > 
+> > Just remove the forward declarations and move the initializations up
+> > so that they can be used in sp_get_of_version and sp_get_acpi_version.
+> 
+> I'm not going to out and out object to this just yet.
+> 
+> I am not a clang expert. Can you please provide a make command that 
+> would explain how you precipitated this complaint?
+> 
 
-Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
----
- tools/testing/selftests/watchdog/watchdog-test.c | 33 +++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+Hi Gary,
 
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index 6e29087..3e8e393 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -19,7 +19,7 @@
- 
- int fd;
- const char v = 'V';
--static const char sopts[] = "bdehp:t:";
-+static const char sopts[] = "bdehp:t:Tn:N";
- static const struct option lopts[] = {
- 	{"bootstatus",          no_argument, NULL, 'b'},
- 	{"disable",             no_argument, NULL, 'd'},
-@@ -27,6 +27,9 @@
- 	{"help",                no_argument, NULL, 'h'},
- 	{"pingrate",      required_argument, NULL, 'p'},
- 	{"timeout",       required_argument, NULL, 't'},
-+	{"gettimeout",          no_argument, NULL, 'T'},
-+	{"pretimeout",    required_argument, NULL, 'n'},
-+	{"getpretimeout",       no_argument, NULL, 'N'},
- 	{NULL,                  no_argument, NULL, 0x0}
- };
- 
-@@ -71,9 +74,13 @@ static void usage(char *progname)
- 	printf(" -h, --help          Print the help message\n");
- 	printf(" -p, --pingrate=P    Set ping rate to P seconds (default %d)\n", DEFAULT_PING_RATE);
- 	printf(" -t, --timeout=T     Set timeout to T seconds\n");
-+	printf(" -T, --gettimeout    Get the timeout\n");
-+	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
-+	printf(" -N, --getpretimeout Get the pretimeout\n");
- 	printf("\n");
- 	printf("Parameters are parsed left-to-right in real-time.\n");
- 	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
-+	printf("Example: %s -t 12 -T -n 7 -N\n", progname);
- }
- 
- int main(int argc, char *argv[])
-@@ -135,6 +142,30 @@ int main(int argc, char *argv[])
- 			else
- 				printf("WDIOC_SETTIMEOUT errno '%s'\n", strerror(errno));
- 			break;
-+		case 'T':
-+			oneshot = 1;
-+			ret = ioctl(fd, WDIOC_GETTIMEOUT, &flags);
-+			if (!ret)
-+				printf("WDIOC_GETTIMEOUT returns %u seconds.\n", flags);
-+			else
-+				printf("WDIOC_GETTIMEOUT errno '%s'\n", strerror(errno));
-+			break;
-+		case 'n':
-+			flags = strtoul(optarg, NULL, 0);
-+			ret = ioctl(fd, WDIOC_SETPRETIMEOUT, &flags);
-+			if (!ret)
-+				printf("Watchdog pretimeout set to %u seconds.\n", flags);
-+			else
-+				printf("WDIOC_SETPRETIMEOUT errno '%s'\n", strerror(errno));
-+			break;
-+		case 'N':
-+			oneshot = 1;
-+			ret = ioctl(fd, WDIOC_GETPRETIMEOUT, &flags);
-+			if (!ret)
-+				printf("WDIOC_GETPRETIMEOUT returns %u seconds.\n", flags);
-+			else
-+				printf("WDIOC_GETPRETIMEOUT errno '%s'\n", strerror(errno));
-+			break;
- 		default:
- 			usage(argv[0]);
- 			goto end;
--- 
-1.8.3.1
+I can produce the warning with Clang 6.0 using the following set of
+commands:
 
+make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- allyesconfig
+./scripts/config -d CONFIG_CPU_BIG_ENDIAN
+make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- olddefconfig
+make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- drivers/crypto/ccp/sp-platform.o
+
+Nathan
+
+> 
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >   drivers/crypto/ccp/sp-platform.c | 53 +++++++++++++++-----------------
+> >   1 file changed, 25 insertions(+), 28 deletions(-)
+> > 
+> > diff --git a/drivers/crypto/ccp/sp-platform.c b/drivers/crypto/ccp/sp-platform.c
+> > index 71734f254fd1..b75dc7db2d4a 100644
+> > --- a/drivers/crypto/ccp/sp-platform.c
+> > +++ b/drivers/crypto/ccp/sp-platform.c
+> > @@ -33,8 +33,31 @@ struct sp_platform {
+> >   	unsigned int irq_count;
+> >   };
+> >   
+> > -static const struct acpi_device_id sp_acpi_match[];
+> > -static const struct of_device_id sp_of_match[];
+> > +static const struct sp_dev_vdata dev_vdata[] = {
+> > +	{
+> > +		.bar = 0,
+> > +#ifdef CONFIG_CRYPTO_DEV_SP_CCP
+> > +		.ccp_vdata = &ccpv3_platform,
+> > +#endif
+> > +	},
+> > +};
+> > +
+> > +#ifdef CONFIG_ACPI
+> > +static const struct acpi_device_id sp_acpi_match[] = {
+> > +	{ "AMDI0C00", (kernel_ulong_t)&dev_vdata[0] },
+> > +	{ },
+> > +};
+> > +MODULE_DEVICE_TABLE(acpi, sp_acpi_match);
+> > +#endif
+> > +
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id sp_of_match[] = {
+> > +	{ .compatible = "amd,ccp-seattle-v1a",
+> > +	  .data = (const void *)&dev_vdata[0] },
+> > +	{ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, sp_of_match);
+> > +#endif
+> >   
+> >   static struct sp_dev_vdata *sp_get_of_version(struct platform_device *pdev)
+> >   {
+> > @@ -201,32 +224,6 @@ static int sp_platform_resume(struct platform_device *pdev)
+> >   }
+> >   #endif
+> >   
+> > -static const struct sp_dev_vdata dev_vdata[] = {
+> > -	{
+> > -		.bar = 0,
+> > -#ifdef CONFIG_CRYPTO_DEV_SP_CCP
+> > -		.ccp_vdata = &ccpv3_platform,
+> > -#endif
+> > -	},
+> > -};
+> > -
+> > -#ifdef CONFIG_ACPI
+> > -static const struct acpi_device_id sp_acpi_match[] = {
+> > -	{ "AMDI0C00", (kernel_ulong_t)&dev_vdata[0] },
+> > -	{ },
+> > -};
+> > -MODULE_DEVICE_TABLE(acpi, sp_acpi_match);
+> > -#endif
+> > -
+> > -#ifdef CONFIG_OF
+> > -static const struct of_device_id sp_of_match[] = {
+> > -	{ .compatible = "amd,ccp-seattle-v1a",
+> > -	  .data = (const void *)&dev_vdata[0] },
+> > -	{ },
+> > -};
+> > -MODULE_DEVICE_TABLE(of, sp_of_match);
+> > -#endif
+> > -
+> >   static struct platform_driver sp_platform_driver = {
+> >   	.driver = {
+> >   		.name = "ccp",
+> > 
+> 
