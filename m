@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C04BEC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E61ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 852D521486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 852D521486
+	by mail.kernel.org (Postfix) with ESMTP id 0EDBC2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EDBC2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388434AbeIXSlH (ORCPT
+        id S2388447AbeIXSlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:41:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58814 "EHLO
+        Mon, 24 Sep 2018 14:41:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58822 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729740AbeIXSlG (ORCPT
+        with ESMTP id S1729740AbeIXSlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:41:06 -0400
+        Mon, 24 Sep 2018 14:41:09 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F5CA1098;
-        Mon, 24 Sep 2018 12:39:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06A001098;
+        Mon, 24 Sep 2018 12:39:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.18 143/235] NFSv4.1 fix infinite loop on I/O.
-Date:   Mon, 24 Sep 2018 13:52:09 +0200
-Message-Id: <20180924113119.890887073@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.18 144/235] of: add helper to lookup compatible child node
+Date:   Mon, 24 Sep 2018 13:52:10 +0200
+Message-Id: <20180924113119.969672702@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,69 +51,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 994b15b983a72e1148a173b61e5b279219bb45ae upstream.
+commit 36156f9241cb0f9e37d998052873ca7501ad4b36 upstream.
 
-The previous fix broke recovery of delegated stateids because it assumes
-that if we did not mark the delegation as suspect, then the delegation has
-effectively been revoked, and so it removes that delegation irrespectively
-of whether or not it is valid and still in use. While this is "mostly
-harmless" for ordinary I/O, we've seen pNFS fail with LAYOUTGET spinning
-in an infinite loop while complaining that we're using an invalid stateid
-(in this case the all-zero stateid).
+Add of_get_compatible_child() helper that can be used to lookup
+compatible child nodes.
 
-What we rather want to do here is ensure that the delegation is always
-correctly marked as needing testing when that is the case. So we want
-to close the loophole offered by nfs4_schedule_stateid_recovery(),
-which marks the state as needing to be reclaimed, but not the
-delegation that may be backing it.
+Several drivers currently use of_find_compatible_node() to lookup child
+nodes while failing to notice that the of_find_ functions search the
+entire tree depth-first (from a given start node) and therefore can
+match unrelated nodes. The fact that these functions also drop a
+reference to the node they start searching from (e.g. the parent node)
+is typically also overlooked, something which can lead to use-after-free
+bugs.
 
-Fixes: 0e3d3e5df07dc ("NFSv4.1 fix infinite loop on IO BAD_STATEID error")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.11+
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4proc.c  |   10 +++++++---
- fs/nfs/nfs4state.c |    2 ++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ drivers/of/base.c  |   25 +++++++++++++++++++++++++
+ include/linux/of.h |    8 ++++++++
+ 2 files changed, 33 insertions(+)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -2642,14 +2642,18 @@ static void nfs41_check_delegation_state
- 	}
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -723,6 +723,31 @@ struct device_node *of_get_next_availabl
+ EXPORT_SYMBOL(of_get_next_available_child);
  
- 	nfs4_stateid_copy(&stateid, &delegation->stateid);
--	if (test_bit(NFS_DELEGATION_REVOKED, &delegation->flags) ||
--		!test_and_clear_bit(NFS_DELEGATION_TEST_EXPIRED,
--			&delegation->flags)) {
-+	if (test_bit(NFS_DELEGATION_REVOKED, &delegation->flags)) {
- 		rcu_read_unlock();
- 		nfs_finish_clear_delegation_stateid(state, &stateid);
- 		return;
- 	}
- 
-+	if (!test_and_clear_bit(NFS_DELEGATION_TEST_EXPIRED,
-+				&delegation->flags)) {
-+		rcu_read_unlock();
-+		return;
+ /**
++ * of_get_compatible_child - Find compatible child node
++ * @parent:	parent node
++ * @compatible:	compatible string
++ *
++ * Lookup child node whose compatible property contains the given compatible
++ * string.
++ *
++ * Returns a node pointer with refcount incremented, use of_node_put() on it
++ * when done; or NULL if not found.
++ */
++struct device_node *of_get_compatible_child(const struct device_node *parent,
++				const char *compatible)
++{
++	struct device_node *child;
++
++	for_each_child_of_node(parent, child) {
++		if (of_device_is_compatible(child, compatible))
++			break;
 +	}
 +
- 	cred = get_rpccred(delegation->cred);
- 	rcu_read_unlock();
- 	status = nfs41_test_and_free_expired_stateid(server, &stateid, cred);
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1390,6 +1390,8 @@ int nfs4_schedule_stateid_recovery(const
++	return child;
++}
++EXPORT_SYMBOL(of_get_compatible_child);
++
++/**
+  *	of_get_child_by_name - Find the child node by name for a given parent
+  *	@node:	parent node
+  *	@name:	child name to look for.
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -290,6 +290,8 @@ extern struct device_node *of_get_next_c
+ extern struct device_node *of_get_next_available_child(
+ 	const struct device_node *node, struct device_node *prev);
  
- 	if (!nfs4_state_mark_reclaim_nograce(clp, state))
- 		return -EBADF;
-+	nfs_inode_find_delegation_state_and_recover(state->inode,
-+			&state->stateid);
- 	dprintk("%s: scheduling stateid recovery for server %s\n", __func__,
- 			clp->cl_hostname);
- 	nfs4_schedule_state_manager(clp);
++extern struct device_node *of_get_compatible_child(const struct device_node *parent,
++					const char *compatible);
+ extern struct device_node *of_get_child_by_name(const struct device_node *node,
+ 					const char *name);
+ 
+@@ -632,6 +634,12 @@ static inline bool of_have_populated_dt(
+ 	return false;
+ }
+ 
++static inline struct device_node *of_get_compatible_child(const struct device_node *parent,
++					const char *compatible)
++{
++	return NULL;
++}
++
+ static inline struct device_node *of_get_child_by_name(
+ 					const struct device_node *node,
+ 					const char *name)
 
 
