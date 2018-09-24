@@ -6,40 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 191F2ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D46ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5DFC2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5DFC2086E
+	by mail.kernel.org (Postfix) with ESMTP id B686D2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:00:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B686D2086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731923AbeIXTCs (ORCPT
+        id S1732442AbeIXTCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 15:02:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33654 "EHLO
+        Mon, 24 Sep 2018 15:02:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33664 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728425AbeIXTCs (ORCPT
+        with ESMTP id S1728425AbeIXTCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 15:02:48 -0400
+        Mon, 24 Sep 2018 15:02:50 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9AC7710B3;
-        Mon, 24 Sep 2018 13:00:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0866710AC;
+        Mon, 24 Sep 2018 13:00:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 117/173] MIPS: loongson64: cs5536: Fix PCI_OHCI_INT_REG reads
-Date:   Mon, 24 Sep 2018 13:52:31 +0200
-Message-Id: <20180924113124.647481921@linuxfoundation.org>
+Subject: [PATCH 4.18 085/235] KVM: arm/arm64: Fix vgic init race
+Date:   Mon, 24 Sep 2018 13:51:11 +0200
+Message-Id: <20180924113113.565913742@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
-References: <20180924113114.334025954@linuxfoundation.org>
+In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
+References: <20180924113103.999624566@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -50,53 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Paul Burton <paul.burton@mips.com>
+From: Christoffer Dall <christoffer.dall@arm.com>
 
-[ Upstream commit cd87668d601f622e0ebcfea4f78d116d5f572f4d ]
+[ Upstream commit 1d47191de7e15900f8fbfe7cccd7c6e1c2d7c31a ]
 
-The PCI_OHCI_INT_REG case in pci_ohci_read_reg() contains the following
-if statement:
+The vgic_init function can race with kvm_arch_vcpu_create() which does
+not hold kvm_lock() and we therefore have no synchronization primitives
+to ensure we're doing the right thing.
 
-  if ((lo & 0x00000f00) == CS5536_USB_INTR)
+As the user is trying to initialize or run the VM while at the same time
+creating more VCPUs, we just have to refuse to initialize the VGIC in
+this case rather than silently failing with a broken VCPU.
 
-CS5536_USB_INTR expands to the constant 11, which gives us the following
-condition which can never evaluate true:
-
-  if ((lo & 0xf00) == 11)
-
-At least when using GCC 8.1.0 this falls foul of the tautoligcal-compare
-warning, and since the code is built with the -Werror flag the build
-fails.
-
-Fix this by shifting lo right by 8 bits in order to match the
-corresponding PCI_OHCI_INT_REG case in pci_ohci_write_reg().
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19861/
-Cc: Huacai Chen <chenhc@lemote.com>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/loongson64/common/cs5536/cs5536_ohci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/arm/vgic/vgic-init.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/mips/loongson64/common/cs5536/cs5536_ohci.c
-+++ b/arch/mips/loongson64/common/cs5536/cs5536_ohci.c
-@@ -138,7 +138,7 @@ u32 pci_ohci_read_reg(int reg)
- 		break;
- 	case PCI_OHCI_INT_REG:
- 		_rdmsr(DIVIL_MSR_REG(PIC_YSEL_LOW), &hi, &lo);
--		if ((lo & 0x00000f00) == CS5536_USB_INTR)
-+		if (((lo >> PIC_YSEL_LOW_USB_SHIFT) & 0xf) == CS5536_USB_INTR)
- 			conf_data = 1;
- 		break;
- 	default:
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -271,6 +271,10 @@ int vgic_init(struct kvm *kvm)
+ 	if (vgic_initialized(kvm))
+ 		return 0;
+ 
++	/* Are we also in the middle of creating a VCPU? */
++	if (kvm->created_vcpus != atomic_read(&kvm->online_vcpus))
++		return -EBUSY;
++
+ 	/* freeze the number of spis */
+ 	if (!dist->nr_spis)
+ 		dist->nr_spis = VGIC_NR_IRQS_LEGACY - VGIC_NR_PRIVATE_IRQS;
 
 
