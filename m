@@ -2,330 +2,307 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0E0ECE568
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483F6ECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 630062098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:42:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcT1wtbU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 630062098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ECE5E2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 20:42:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE5E2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbeIYCqj (ORCPT
+        id S1728106AbeIYCqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 22:46:39 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38364 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbeIYCqi (ORCPT
+        Mon, 24 Sep 2018 22:46:42 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:59286 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeIYCqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 22:46:38 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z16-v6so4946287wmi.3;
-        Mon, 24 Sep 2018 13:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=sGofNUiTmZom2KfzYhnMvqOPaxJFp7PCC3gi9qTl/0w=;
-        b=IcT1wtbUtuoooF6co6E/wMrcw1P4JdM5wXsrBIjVBqIFFuQqeRxq7ERr4QJ48pyD5k
-         U2wNcDfZE3svaW/TLlYkD4i81eKthZ2FBw8Ldlj/GfvNpQM+zQauN9sNWuSzBTkMT0g+
-         mLODU+V5leBV3VzquPVe5iEJh/WfhH1y49NdoVoH9i7ASnICsewG9K/mJqbwZEb+YQUL
-         UCnFQjo5CcTyjHANobjSrztYRSDFmGbz3Edta3UW3dCUXkv2NrbweMdmeSnucwR3bFhA
-         K3OBDWyVvpTvc1eMv4ptUnAqh0QNR0a6ZWyxSDlkZP9lz7tC35bDv9WAyhPLO16nHExk
-         rpEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=sGofNUiTmZom2KfzYhnMvqOPaxJFp7PCC3gi9qTl/0w=;
-        b=aW8ZmQnrmwfN6R3gEruieEbr5EGJPGQ8a8keG7/AxNN60Bhr5caGxzUWujbYtzM7fp
-         ZEXfE8NBqIqTo1UkFlt3Qu5o7bCbtI6QtVR951hg0h9gLjJ9cZtVJL30W25WcOUuO28G
-         WV53Q/yJsqkLIbCvB0OmoKmQhLccXItUbRq3kNrpwgUfxs2sF8dplLVm8/uYw313Dgr+
-         qscawkmDMyEclNB9bDtoucDnVf7LQAl2ke46ZxxVGkBAFNKOZvNkiSLFD4ne+QhFcUD8
-         GTcfchcflAkksAgfhG98cXiAQlfnL3+29VlHKBkaHuZ2T1frHGLxeidKaqKKm8EDLibR
-         zIcg==
-X-Gm-Message-State: ABuFfogobiY/uo1yEmkfcN7OY6pLBHrZHxDCcV9VONSpmlCWPutdCnLd
-        sLd3DxvwxIlmEC5qKa/XEIV+AFU=
-X-Google-Smtp-Source: ACcGV63CdLrp/6gU65PoeIhX1plYGumr4qSBbaEWFL9wUI50V5F3Xsnexotzlo4pGg3vRyyLZOlhFw==
-X-Received: by 2002:a1c:668b:: with SMTP id a133-v6mr89006wmc.50.1537821755853;
-        Mon, 24 Sep 2018 13:42:35 -0700 (PDT)
-Received: from android-dhcp-8-1-0-d4-38-9c-a2-1f-05.home (host86-147-9-252.range86-147.btcentralplus.com. [86.147.9.252])
-        by smtp.gmail.com with ESMTPSA id 75-v6sm118218wml.21.2018.09.24.13.42.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 13:42:35 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 21:42:29 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180924191929.GQ1367@tuxbook-pro>
-References: <20180811162549.12312-1-ctatlor97@gmail.com> <20180924191929.GQ1367@tuxbook-pro>
+        Mon, 24 Sep 2018 22:46:42 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id BDF7C21F0D;
+        Mon, 24 Sep 2018 20:42:40 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id wTkflJbq4N0g; Mon, 24 Sep 2018 20:42:40 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id B221821EA8;
+        Mon, 24 Sep 2018 20:42:34 +0000 (UTC)
+Subject: Re: [PATCH] selftests: watchdog: Add gettimeout and get|set
+ pretimeout
+To:     Jerry.Hoemann@hpe.com
+Cc:     erosca@de.adit-jv.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <1537570526-65241-1-git-send-email-jerry.hoemann@hpe.com>
+ <0c6376ec-a3f4-7798-8f30-829480c41f79@kernel.org>
+ <20180924014750.GA22296@anatevka.americas.hpqcorp.net>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <1c4e6b40-dc4e-5706-0a31-1741ba19ca09@kernel.org>
+Date:   Mon, 24 Sep 2018 14:42:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] arm64: dts: sdm630 SoC and Sony Pioneer (Xperia XA2) support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Craig <ctatlor97@gmail.com>
-Message-ID: <18147804-E195-4A4F-B215-77E8E4FF7C88@gmail.com>
+In-Reply-To: <20180924014750.GA22296@anatevka.americas.hpqcorp.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 09/23/2018 07:47 PM, Jerry Hoemann wrote:
+> On Fri, Sep 21, 2018 at 05:42:00PM -0600, Shuah Khan wrote:
+>> Hi Jerry,
+>>
+>> Thanks for the patch. A few comments below:
+> 
+>   Replies inline.
+> 
+>>
+>> On 09/21/2018 04:55 PM, Jerry Hoemann wrote:
+>>> Add command line arguments to call ioctl WDIOC_GETTIMEOUT,
+>>> WDIOC_GETPRETIMEOUT and WDIOC_SETPRETIMEOUT.
+>>>
+>>> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+>>> ---
+>>>  tools/testing/selftests/watchdog/watchdog-test.c | 30 +++++++++++++++++++++++-
+>>>  1 file changed, 29 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+>>> index 6e29087..4861e2c 100644
+>>> --- a/tools/testing/selftests/watchdog/watchdog-test.c
+>>> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
+>>> @@ -19,7 +19,7 @@
+>>>  
+>>>  int fd;
+>>>  const char v = 'V';
+>>> -static const char sopts[] = "bdehp:t:";
+>>> +static const char sopts[] = "bdehp:t:Tn:N";
+>>>  static const struct option lopts[] = {
+>>>  	{"bootstatus",          no_argument, NULL, 'b'},
+>>>  	{"disable",             no_argument, NULL, 'd'},
+>>> @@ -27,6 +27,9 @@
+>>>  	{"help",                no_argument, NULL, 'h'},
+>>>  	{"pingrate",      required_argument, NULL, 'p'},
+>>>  	{"timeout",       required_argument, NULL, 't'},
+>>> +	{"gettimeout",          no_argument, NULL, 'T'},
+>>> +	{"pretimeout",    required_argument, NULL, 'n'},
+>>> +	{"getpretimeout",       no_argument, NULL, 'N'},
+>>>  	{NULL,                  no_argument, NULL, 0x0}
+>>>  };
+>>>  
+>>> @@ -71,6 +74,9 @@ static void usage(char *progname)
+>>>  	printf(" -h, --help          Print the help message\n");
+>>>  	printf(" -p, --pingrate=P    Set ping rate to P seconds (default %d)\n", DEFAULT_PING_RATE);
+>>>  	printf(" -t, --timeout=T     Set timeout to T seconds\n");
+>>> +	printf(" -T, --gettimeout    Get the timeout\n");
+>>> +	printf(" -n, --pretimeout    Set the pretimeout to T seconds\n");
+>>> +	printf(" -N, --getpretimeout Get the pretimeout\n");
+>>
+>> How are the new arguments used?
+> 
+> I forgot the param.  Should be:
+> 
+>     +	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
+> 
+> 
+> I'll update in v2.
+
+Okay.
+
+> 
+> Is this what you mean?  Or did I misunderstand?
+> > 
+>>
+>>>  	printf("\n");
+>>>  	printf("Parameters are parsed left-to-right in real-time.\n");
+>>>  	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
+>>
+>> Please add an example usage for each of these new arguments.
+> 
+> Will do.
+
+okay.
+
+> 
+>>
+>>> @@ -135,6 +141,28 @@ int main(int argc, char *argv[])
+>>>  			else
+>>>  				printf("WDIOC_SETTIMEOUT errno '%s'\n", strerror(errno));
+>>>  			break;
+>>> +		case 'T':
+>>> +			ret = ioctl(fd, WDIOC_GETTIMEOUT, &flags);
+>>> +			if (!ret)
+>>> +				printf("Watchdog timeout set to %u seconds.\n", flags);
+>>
+>> It would good to make this message different from the WDIOC_SETTIMEOUT message.
+>> Please update it to reflect that this is the result of a WDIOC_GETTIMEOUT.
+> 
+> Will update message to make distinct.
+> 
+>>
+>> What would user intend to do with this GETTIMEOUT? Shouldn't this be the case that it
+>> prints the current value and exits instead of the same logic as SETTIMEOUT option?
+> 
+> Are you suggesting setting the "oneshot" flag so the test app doesn't actually
+> go into the while(1) keep_alive loop?
+> 
+> Watchdog drivers may adjust the requested value to match hardware constraints.
+> Callers of set timeout (and set pretimeout) should call get timeout to see what
+> value was actually set.
+> 
+> B/c of above, I just got into the habit of specifying both flags: first set,
+> then get to make sure value set was what I intended.
+> 
+> But I can make the "Get" a one shot.  Just let me know if this is your preference.
+
+I prefer that both GETs be oneshot. GETs should just print the current value and go
+follow oneshot path. It doesn't make sense for them to do more.
+> 
+> 
+>>
+>>> +			else
+>>> +				printf("WDIOC_GETTIMEOUT errno '%s'\n", strerror(errno))
+>>
+>> Shouldn't this error be an exit condition?
+> 
+> Hmmm, I don't see this error path much different than the error path for the
+> other failing ioctl.  Am I missing something?
+
+Yeah that is what I don't understand with the new code as well as the existing.
+Shouldn't error path be handled differently. What is the point in doing more
+other than gracefully exit closing the file? I don't think existing error paths
+are doing this, probably they should.
+> 
+> 
+> But, If we make the "GET" a one shot, then we wouldn't really need to
+> special case the failure case as we wouldn't go into the keep_alive
+> loop in either case.
+> 
+> 
+
+Right.
+
+> 
+>>
+>>> +			break;
+>>> +		case 'n':
+>>> +			flags = strtoul(optarg, NULL, 0);
+>>> +			ret = ioctl(fd, WDIOC_SETPRETIMEOUT, &flags);
+>>> +			if (!ret)
+>>> +				printf("Watchdog pretimeout set to %u seconds.\n", flags);
+>>> +			else
+>>> +				printf("WDIOC_SETPRETIMEOUT errno '%s'\n", strerror(errno));
+>>> +			break;
+>>> +		case 'N':
+>>> +			ret = ioctl(fd, WDIOC_GETPRETIMEOUT, &flags);
+>>> +			if (!ret)
+>>> +				printf("Watchdog pretimeout set to %u seconds.\n", flags);
+>>
+>> It would good to make this message different from the WDIOC_GETPRETIMEOUT message.
+>> Please update it to reflect that this is the result of a WDIOC_GETPRETIMEOUT
+> 
+> will do.
+> 
+
+Okay.
+
+>>
+>> What would user intend to do with this GETTIMEOUT? Shouldn't this be the case that it
+>> prints the current value and exits instead of the same logic as WDIOC_SETPRETIMEOUT?
+> 
+> I think you're just asking me to set the "oneshot" flag on this,
+> which I can certainly do.
+
+Correct. For couple of reasons. GET/SET_PRETIMEOUG might not be supported on all
+platforms/drivers. It would make sense to handle error paths correctly.
+
+> 
+> But, some background on pretimeout that (I think) is interesting:
+> 
+> The underling HW for the watchdog on proliants allows for the pre-timeout to
+> be enabled or disabled.  But if the pretimeout is enabled, the value of
+> the pretimeout is hard coded by HW (9 seconds.)
+> 
+> The hpwdt driver allows for setting pretimeout by passing in a value
+> 	0 < pretimeout < timeout
+> to enable a pretimeout.  The user then needs to call get pretimeout to
+> determine the actual value.
+> 
+> Failure to take into account the pretimeout when pinging the WD can lead to
+> unexpected system crashes.
+> 
+> I've handled the following issue multiple times:
+> 
+> A user wants to set the timeout to value T and ping the WD every T/2 seconds.
+> He fails to take into account the pretimeout value of P.  The system crashes
+> with the pretimeout NMI when (T/2) < P.
+> 
+> The basic misunderstanding is that to prevent the WD from acting, the WD
+> only needs to be pinged at least once every T seconds, when in actuality the
+> WD needs to be pinged at least once every (T-P) seconds.
+> 
+> Specifically for Proliants, I've seen people set the timeout to 10 seconds
+> thinking they had plenty of time to ping the WD only to be surprised when
+> the pretimeout NMI takes the system down 1 second later.
+
+In this case, this patch really doesn't solve the problem. You will still run
+into this problem if user does a set. You are providing a way to check pretimeout,
+however that is a separate operation. So I am not clear on how this patch solves
+the issue of pretimeout NMI takes the system down.
+
+> 
+> Note: a WD doesn't need to support the pretimeout feature.
+
+It isn't clear what this means?
+
+> 
+>>
+>>> +			else
+>>> +				printf("WDIOC_GETPRETIMEOUT errno '%s'\n", strerror(errno));
+>>
+>> Shouldn't this error be an exit condition?
+> 
+> Similar to above.  I can make GETPRETIMEOUT a "oneshot" to handle both the
+> success/failing case of the ioctl call.
+> 
+>>
+>>> +			break;
+>>>  		default:
+>>>  			usage(argv[0]);
+>>>  			goto end;
+>>>
+>>
+>> Also can you run this test as normal user?
+> 
+> No.  Must be run as root to open /dev/watchdog.  When /dev/watchdog is opened, the
+> WD is started and if not updated properly, the system will crash.
+
+Hmm. I don't understand why the system would panic if non-root user can't open the
+device, at least in the context of this test. 
+
+        fd = open("/dev/watchdog", O_WRONLY);
+
+        if (fd == -1) {
+                printf("Watchdog device not enabled.\n");
+                exit(-1);
+        }
 
 
-On 24 September 2018 20:19:29 BST, Bjorn Andersson <bjorn=2Eandersson@lina=
-ro=2Eorg> wrote:
->On Sat 11 Aug 09:25 PDT 2018, Craig Tatlor wrote:
->
->> Initial device tree support for Qualcomm SDM630 SoC and
->> Sony Pioneer (Xperia XA2)=2E
->>=20
->> SDM630 is based off of the SDM660 soc and all SDM660 specific drivers
->are
->> compatible with it=2E SDM660 is also based off of MSM8998 so it uses
->some
->> of its drivers aswell=2E
->
->Consider adding both sdm630 and sdm660 compatibles to the bindings and
->drivers and use the right one in the dts, in case we find details that
->differs in the future=2E
+Shouldn't it just exit based on the code above?
 
-This includes pinctrl and GCC?
->
->>=20
->> The device tree is based on the CAF 4=2E4 kernel tree=2E
->>=20
->> The device can be booted into the initrd with a shell over UART=2E
->>=20
->> Signed-off-by: Craig Tatlor <ctatlor97@gmail=2Ecom>
->[=2E=2E]
->> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pins=2Edtsi
->b/arch/arm64/boot/dts/qcom/sdm630-pins=2Edtsi
->> new file mode 100644
->> index 000000000000=2E=2E78b79c1076f1
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sdm630-pins=2Edtsi
->> @@ -0,0 +1,17 @@
->> +// SPDX-License-Identifier: GPL-2=2E0
->> +/* Copyright (c) 2018, Craig Tatlor=2E */
->> +
->> +&tlmm {
->> +	blsp1_uart1_default: blsp1_uart1_default {
->> +		pinmux {
->> +			pins =3D "gpio0", "gpio1", "gpio2", "gpio3";
->> +			function =3D "gpio";
->
->Please put these in the sdm630=2Edtsi directly, rather than spreading the
->pins out in a separate file=2E
->
-Okay, just followed what 8996 did
->> +		};
->> +
->> +		pinconf {
->> +			pins =3D "gpio0", "gpio1", "gpio2", "gpio3";
->> +			drive-strength =3D <2>;
->> +			bias-disable;
->
->Please extend &blsp1_uart1_default in the pioneer dtsi with these
->"electrical properties"=2E
-Are you meaning to put this in the pioneer DTS or just drive strength and =
-bias?
->
->> +		};
->> +	};
->> +};
->[=2E=2E]
->> diff --git a/arch/arm64/boot/dts/qcom/sdm630-pioneer=2Edtsi
->b/arch/arm64/boot/dts/qcom/sdm630-pioneer=2Edtsi
->> new file mode 100644
->> index 000000000000=2E=2E512792c23369
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sdm630-pioneer=2Edtsi
->> @@ -0,0 +1,22 @@
->> +// SPDX-License-Identifier: GPL-2=2E0
->> +/* Copyright (c) 2018, Craig Tatlor=2E */
->> +
->> +#include "sdm630=2Edtsi"
->> +
->> +/ {
->> +	aliases {
->> +		serial0 =3D &blsp1_uart1;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path =3D "serial0:115200n8";
->> +	};
->> +};
->> +
->> +&soc {
->> +	serial@c170000 {
->
->Please reference this by &blsp1_uart1, rather than duplicating the
->hierarchy=2E
-Okay, should the same still apply once more stuff is in soc? Or should I u=
-se references for them?
->
->> +		status =3D "okay";
->> +		pinctrl-names =3D "default";
->> +		pinctrl-0 =3D <&blsp1_uart1_default>;
->> +	};
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/sdm630=2Edtsi
->b/arch/arm64/boot/dts/qcom/sdm630=2Edtsi
->> new file mode 100644
->> index 000000000000=2E=2E8a544979b7c0
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sdm630=2Edtsi
->> @@ -0,0 +1,383 @@
->> +// SPDX-License-Identifier: GPL-2=2E0
->> +/* Copyright (c) 2018, Craig Tatlor=2E */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic=2Eh>
->> +#include <dt-bindings/clock/qcom,gcc-sdm660=2Eh>
->> +
->> +/ {
->> +	model =3D "Qualcomm Technologies, Inc=2E SDM630";
->
->We expect the board to always override this, so no need to specify it
->here=2E
-Yup
->> +
->> +	interrupt-parent =3D <&intc>;
->> +
->> +	qcom,msm-id =3D <318 0x0>;
->> +
->> +	#address-cells =3D <2>;
->> +	#size-cells =3D <2>;
->> +
->> +	chosen { };
->> +
->> +	memory {
->> +		device_type =3D "memory";
->> +		/* We expect the bootloader to fill in the reg */
->> +		reg =3D <0 0 0 0>;
->> +	};
->> +
->> +
->
->Extra empty line=2E
-Okay
->> +	cpus {
->[=2E=2E]
->> +
->> +	timer {
->
->Please sort these nodes by name, except for "soc" which is convenient
->to have last=2E
-Okay
->
->> +		compatible =3D "arm,armv8-timer";
->> +		interrupts =3D <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_PPI 2 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_PPI 3 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_PPI 0 IRQ_TYPE_LEVEL_LOW>;
->> +	};
->[=2E=2E]
->> +	firmware {
->> +		scm {
->> +			compatible =3D "qcom,scm-sdm660";
->> +		};
->> +	};
->> +
->> +
->
->Extra empty line=2E
-Okay
->
->> +	rpm-glink {
->> +		compatible =3D "qcom,glink-rpm";
->> +
->> +		interrupts =3D <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
->> +
->> +		qcom,rpm-msg-ram =3D <&rpm_msg_ram>;
->> +
->> +		mboxes =3D <&apcs_glb 0>;
->
->Remove a few of these extra empty lines and add the rpm_requests
->channel
->here while you're at it:
->
-Sure
->		rpm_requests: glink-channel {
->                        compatible =3D "qcom,rpm-sdm660";
->                        qcom,glink-channels =3D "rpm_requests";
->                };
->
->> +	};
->> +
->> +	soc: soc {
->> +		#address-cells =3D <1>;
->> +		#size-cells =3D <1>;
->> +		ranges =3D <0 0 0 0xffffffff>;
->> +		compatible =3D "simple-bus";
->> +
->> +		intc: interrupt-controller@17a00000 {
->
->Please sort these nodes by base address=2E
->
-Will do
->> +			compatible =3D "arm,gic-v3";
->> +			reg =3D <0x17a00000 0x10000>,
->> +			      <0x17b00000 0x100000>;
->> +			#interrupt-cells =3D <3>;
->> +			#address-cells =3D <1>;
->> +			#size-cells =3D <1>;
->> +			ranges;
->> +			interrupt-controller;
->> +			#redistributor-regions =3D <1>;
->> +			redistributor-stride =3D <0x0 0x20000>;
->> +			interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +		};
->> +
->> +		gcc: clock-controller@100000 {
->> +			compatible =3D "qcom,gcc-sdm660";
->> +			#clock-cells =3D <1>;
->> +			#reset-cells =3D <1>;
->> +			#power-domain-cells =3D <1>;
->> +			reg =3D <0x100000 0x94000>;
->
->Please 0-pad addresses in "reg", makes it easier to sort them as well
->(but keep the @address after the node name unpadded)
-Sure, how much should I pad up to?
->
->> +		};
->> +
->[=2E=2E]
->> +		rpm_msg_ram: memory@778000 {
->> +			compatible =3D "qcom,rpm-msg-ram";
->> +			reg =3D <0x778000 0x7000>;
->> +		};
->> +
->> +		apcs_glb: mailbox@17911000 {
->> +			compatible =3D "qcom,msm8998-apcs-hmss-global";
->
->Please update the apcs ipc driver with a sdm660 compatible and update
->this=2E
-Right
->
->> +			reg =3D <0x17911000 0x1000>;
->> +
->> +			#mbox-cells =3D <1>;
->> +		};
->
->Regards,
->Bjorn
+> 
+
+> "cat /dev/watchdog" is one of my favorite ways to crash a system.  :)  :)
+
+That doesn't sound great, if a non-root user can bring the system down!!
+ 
+thanks,
+-- Shuah
