@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DD9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65B9ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8BA21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F8BA21486
+	by mail.kernel.org (Postfix) with ESMTP id 6A03421486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A03421486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387980AbeIXSdE (ORCPT
+        id S2387995AbeIXSdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:33:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57924 "EHLO
+        Mon, 24 Sep 2018 14:33:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730258AbeIXSdE (ORCPT
+        with ESMTP id S1730258AbeIXSdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:33:04 -0400
+        Mon, 24 Sep 2018 14:33:07 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4ED5D1098;
-        Mon, 24 Sep 2018 12:31:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC8DC1098;
+        Mon, 24 Sep 2018 12:31:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 072/235] wan/fsl_ucc_hdlc: use IS_ERR_VALUE() to check return value of qe_muram_alloc
-Date:   Mon, 24 Sep 2018 13:50:58 +0200
-Message-Id: <20180924113112.436435833@linuxfoundation.org>
+Subject: [PATCH 4.18 073/235] arm64: fix possible spectre-v1 write in ptrace_hbp_set_event()
+Date:   Mon, 24 Sep 2018 13:50:59 +0200
+Message-Id: <20180924113112.513448138@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,49 +53,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit fd800f646402c0f85547166b59ca065175928b7b ]
+[ Upstream commit 14d6e289a89780377f8bb09de8926d3c62d763cd ]
 
-qe_muram_alloc return a unsigned long integer,which should not
-compared with zero. check it using IS_ERR_VALUE() to fix this.
+It's possible for userspace to control idx. Sanitize idx when using it
+as an array index, to inhibit the potential spectre-v1 write gadget.
 
-Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Found by smatch.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/ptrace.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -192,7 +192,7 @@ static int uhdlc_init(struct ucc_hdlc_pr
- 	priv->ucc_pram_offset = qe_muram_alloc(sizeof(struct ucc_hdlc_param),
- 				ALIGNMENT_OF_UCC_HDLC_PRAM);
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -277,19 +277,22 @@ static int ptrace_hbp_set_event(unsigned
  
--	if (priv->ucc_pram_offset < 0) {
-+	if (IS_ERR_VALUE(priv->ucc_pram_offset)) {
- 		dev_err(priv->dev, "Can not allocate MURAM for hdlc parameter.\n");
- 		ret = -ENOMEM;
- 		goto free_tx_bd;
-@@ -230,14 +230,14 @@ static int uhdlc_init(struct ucc_hdlc_pr
- 
- 	/* Alloc riptr, tiptr */
- 	riptr = qe_muram_alloc(32, 32);
--	if (riptr < 0) {
-+	if (IS_ERR_VALUE(riptr)) {
- 		dev_err(priv->dev, "Cannot allocate MURAM mem for Receive internal temp data pointer\n");
- 		ret = -ENOMEM;
- 		goto free_tx_skbuff;
+ 	switch (note_type) {
+ 	case NT_ARM_HW_BREAK:
+-		if (idx < ARM_MAX_BRP) {
+-			tsk->thread.debug.hbp_break[idx] = bp;
+-			err = 0;
+-		}
++		if (idx >= ARM_MAX_BRP)
++			goto out;
++		idx = array_index_nospec(idx, ARM_MAX_BRP);
++		tsk->thread.debug.hbp_break[idx] = bp;
++		err = 0;
+ 		break;
+ 	case NT_ARM_HW_WATCH:
+-		if (idx < ARM_MAX_WRP) {
+-			tsk->thread.debug.hbp_watch[idx] = bp;
+-			err = 0;
+-		}
++		if (idx >= ARM_MAX_WRP)
++			goto out;
++		idx = array_index_nospec(idx, ARM_MAX_WRP);
++		tsk->thread.debug.hbp_watch[idx] = bp;
++		err = 0;
+ 		break;
  	}
  
- 	tiptr = qe_muram_alloc(32, 32);
--	if (tiptr < 0) {
-+	if (IS_ERR_VALUE(tiptr)) {
- 		dev_err(priv->dev, "Cannot allocate MURAM mem for Transmit internal temp data pointer\n");
- 		ret = -ENOMEM;
- 		goto free_riptr;
++out:
+ 	return err;
+ }
+ 
 
 
