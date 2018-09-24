@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F72ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE6FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B691521486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B691521486
+	by mail.kernel.org (Postfix) with ESMTP id E4C822083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C822083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388749AbeIXSnN (ORCPT
+        id S2388755AbeIXSnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:43:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59104 "EHLO
+        Mon, 24 Sep 2018 14:43:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59110 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733116AbeIXSnM (ORCPT
+        with ESMTP id S1730507AbeIXSnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:43:12 -0400
+        Mon, 24 Sep 2018 14:43:16 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E57D1109A;
-        Mon, 24 Sep 2018 12:41:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28B15109A;
+        Mon, 24 Sep 2018 12:41:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.18 122/235] usb: uas: add support for more quirk flags
-Date:   Mon, 24 Sep 2018 13:51:48 +0200
-Message-Id: <20180924113118.299274090@linuxfoundation.org>
+        stable@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 165/235] arm64: dts: mt7622: update a clock property for UART0
+Date:   Mon, 24 Sep 2018 13:52:31 +0200
+Message-Id: <20180924113121.540038482@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -50,51 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Ryder Lee <ryder.lee@mediatek.com>
 
-commit 42d1c6d4a06a77b3ab206a919b9050c3080f3a71 upstream.
+[ Upstream commit 2b519747ae4859e886c37834d766fe0c7d8d82e2 ]
 
-The hope that UAS devices would be less broken than old style storage
-devices has turned out to be unfounded. Make UAS support more of the
-quirk flags of the old driver.
+The input clock of UART0 should be CLK_PERI_UART0_PD.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 13f36c326cef ("arm64: dts: mt7622: turn uart0 clock to real ones")
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/storage/uas.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -842,6 +842,27 @@ static int uas_slave_configure(struct sc
- 		sdev->skip_ms_page_8 = 1;
- 		sdev->wce_default_on = 1;
- 	}
-+
-+	/*
-+	 * Some disks return the total number of blocks in response
-+	 * to READ CAPACITY rather than the highest block number.
-+	 * If this device makes that mistake, tell the sd driver.
-+	 */
-+	if (devinfo->flags & US_FL_FIX_CAPACITY)
-+		sdev->fix_capacity = 1;
-+
-+	/*
-+	 * Some devices don't like MODE SENSE with page=0x3f,
-+	 * which is the command used for checking if a device
-+	 * is write-protected.  Now that we tell the sd driver
-+	 * to do a 192-byte transfer with this command the
-+	 * majority of devices work fine, but a few still can't
-+	 * handle it.  The sd driver will simply assume those
-+	 * devices are write-enabled.
-+	 */
-+	if (devinfo->flags & US_FL_NO_WP_DETECT)
-+		sdev->skip_ms_page_3f = 1;
-+
- 	scsi_change_queue_depth(sdev, devinfo->qdepth - 2);
- 	return 0;
- }
+--- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+@@ -331,7 +331,7 @@
+ 		reg = <0 0x11002000 0 0x400>;
+ 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
+ 		clocks = <&topckgen CLK_TOP_UART_SEL>,
+-			 <&pericfg CLK_PERI_UART1_PD>;
++			 <&pericfg CLK_PERI_UART0_PD>;
+ 		clock-names = "baud", "bus";
+ 		status = "disabled";
+ 	};
 
 
