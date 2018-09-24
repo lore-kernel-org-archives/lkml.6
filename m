@@ -2,40 +2,46 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63DDC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A73ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B16720C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B16720C0A
+	by mail.kernel.org (Postfix) with ESMTP id 779DA21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:21:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779DA21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732163AbeIXSXG (ORCPT
+        id S1732267AbeIXSXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:23:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56230 "EHLO
+        Mon, 24 Sep 2018 14:23:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56246 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730815AbeIXSXF (ORCPT
+        with ESMTP id S1732194AbeIXSXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:23:05 -0400
+        Mon, 24 Sep 2018 14:23:10 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F1D81087;
-        Mon, 24 Sep 2018 12:21:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 170D7108A;
+        Mon, 24 Sep 2018 12:21:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Joel Becker <jlbec@evilplan.org>,
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Christ van Willegen <cvwillegen@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 118/173] configfs: fix registered group removal
-Date:   Mon, 24 Sep 2018 13:52:32 +0200
-Message-Id: <20180924113124.695436699@linuxfoundation.org>
+Subject: [PATCH 4.14 119/173] pinctrl: rza1: Fix selector use for groups and functions
+Date:   Mon, 24 Sep 2018 13:52:33 +0200
+Message-Id: <20180924113124.747438971@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,60 +59,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Christie <mchristi@redhat.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit cc57c07343bd071cdf1915a91a24ab7d40c9b590 ]
+[ Upstream commit dc4003d260594aa300028c3c5d040c5719abd19b ]
 
-This patch fixes a bug where configfs_register_group had added
-a group in a tree, and userspace has done a rmdir on a dir somewhere
-above that group and we hit a kernel crash. The problem is configfs_rmdir
-will detach everything under it and unlink groups on the default_groups
-list. It will not unlink groups added with configfs_register_group so when
-configfs_unregister_group is called to drop its references to the group/items
-we crash when we try to access the freed dentrys.
+We must use a mutex around the generic_add functions and save the
+function and group selector in case we need to remove them. Otherwise
+the selector use will be racy for deferred probe at least.
 
-The patch just adds a check for if a rmdir has been done above
-us and if so just does the unlink part of unregistration.
-
-Sorry if you are getting this multiple times. I thouhgt I sent
-this to some of you and lkml, but I do not see it.
-
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Joel Becker <jlbec@evilplan.org>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: Christ van Willegen <cvwillegen@gmail.com>
+Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Sean Wang <sean.wang@mediatek.com>
+Acked-by: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Tested-By: H. Nikolaus Schaller <hns@goldelico.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/configfs/dir.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/pinctrl/pinctrl-rza1.c |   24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
---- a/fs/configfs/dir.c
-+++ b/fs/configfs/dir.c
-@@ -1777,6 +1777,16 @@ void configfs_unregister_group(struct co
- 	struct dentry *dentry = group->cg_item.ci_dentry;
- 	struct dentry *parent = group->cg_item.ci_parent->ci_dentry;
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -878,6 +878,7 @@ static int rza1_dt_node_to_map(struct pi
+ 	const char *grpname;
+ 	const char **fngrps;
+ 	int ret, npins;
++	int gsel, fsel;
  
-+	mutex_lock(&subsys->su_mutex);
-+	if (!group->cg_item.ci_parent->ci_group) {
-+		/*
-+		 * The parent has already been unlinked and detached
-+		 * due to a rmdir.
-+		 */
-+		goto unlink_group;
+ 	npins = rza1_dt_node_pin_count(np);
+ 	if (npins < 0) {
+@@ -927,18 +928,19 @@ static int rza1_dt_node_to_map(struct pi
+ 	fngrps[0] = grpname;
+ 
+ 	mutex_lock(&rza1_pctl->mutex);
+-	ret = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
+-					NULL);
+-	if (ret) {
++	gsel = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
++					 NULL);
++	if (gsel < 0) {
+ 		mutex_unlock(&rza1_pctl->mutex);
+-		return ret;
++		return gsel;
+ 	}
+ 
+-	ret = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
+-					  mux_confs);
+-	if (ret)
++	fsel = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
++					   mux_confs);
++	if (fsel < 0) {
++		ret = fsel;
+ 		goto remove_group;
+-	mutex_unlock(&rza1_pctl->mutex);
 +	}
-+	mutex_unlock(&subsys->su_mutex);
-+
- 	inode_lock_nested(d_inode(parent), I_MUTEX_PARENT);
- 	spin_lock(&configfs_dirent_lock);
- 	configfs_detach_prep(dentry, NULL);
-@@ -1791,6 +1801,7 @@ void configfs_unregister_group(struct co
- 	dput(dentry);
  
- 	mutex_lock(&subsys->su_mutex);
-+unlink_group:
- 	unlink_group(group);
- 	mutex_unlock(&subsys->su_mutex);
- }
+ 	dev_info(rza1_pctl->dev, "Parsed function and group %s with %d pins\n",
+ 				 grpname, npins);
+@@ -955,15 +957,15 @@ static int rza1_dt_node_to_map(struct pi
+ 	(*map)->data.mux.group = np->name;
+ 	(*map)->data.mux.function = np->name;
+ 	*num_maps = 1;
++	mutex_unlock(&rza1_pctl->mutex);
+ 
+ 	return 0;
+ 
+ remove_function:
+-	mutex_lock(&rza1_pctl->mutex);
+-	pinmux_generic_remove_last_function(pctldev);
++	pinmux_generic_remove_function(pctldev, fsel);
+ 
+ remove_group:
+-	pinctrl_generic_remove_last_group(pctldev);
++	pinctrl_generic_remove_group(pctldev, gsel);
+ 	mutex_unlock(&rza1_pctl->mutex);
+ 
+ 	dev_info(rza1_pctl->dev, "Unable to parse function and group %s\n",
 
 
