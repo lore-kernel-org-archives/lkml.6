@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B17ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 206B4C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A8712083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:38:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8712083A
+	by mail.kernel.org (Postfix) with ESMTP id D233821486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:39:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D233821486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387942AbeIXSkv (ORCPT
+        id S2388390AbeIXSkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:40:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58768 "EHLO
+        Mon, 24 Sep 2018 14:40:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58784 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730741AbeIXSku (ORCPT
+        with ESMTP id S2387955AbeIXSky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:40:50 -0400
+        Mon, 24 Sep 2018 14:40:54 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5A657107F;
-        Mon, 24 Sep 2018 12:38:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 992221092;
+        Mon, 24 Sep 2018 12:38:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>,
-        Stan Johnson <userm57@yahoo.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.18 140/235] of: fix phandle cache creation for DTs with no phandles
-Date:   Mon, 24 Sep 2018 13:52:06 +0200
-Message-Id: <20180924113119.652905591@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Smith <andy@strugglers.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        xen-devel@lists.xenproject.org, jgross@suse.com
+Subject: [PATCH 4.18 141/235] x86/EISA: Dont probe EISA bus for Xen PV guests
+Date:   Mon, 24 Sep 2018 13:52:07 +0200
+Message-Id: <20180924113119.736886440@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,42 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rob Herring <robh@kernel.org>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit e54192b48da75f025ae4b277925eaf6aca1d13bd upstream.
+commit 6a92b11169a65b3f8cc512c75a252cbd0d096ba0 upstream.
 
-With commit 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of
-of_find_node_by_phandle()"), a G3 PowerMac fails to boot. The root cause
-is the DT for this system has no phandle properties when booted with
-BootX. of_populate_phandle_cache() does not handle the case of no
-phandles correctly. The problem is roundup_pow_of_two() for 0 is
-undefined. The implementation subtracts 1 underflowing and then things
-are in the weeds.
+For unprivileged Xen PV guests this is normal memory and ioremap will
+not be able to properly map it.
 
-Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
-Cc: stable@vger.kernel.org # 4.17+
-Reported-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+While at it, since ioremap may return NULL, add a test for pointer's
+validity.
+
+Reported-by: Andy Smith <andy@strugglers.net>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: hpa@zytor.com
+Cc: xen-devel@lists.xenproject.org
+Cc: jgross@suse.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180911195538.23289-1-boris.ostrovsky@oracle.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/base.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/eisa.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -118,6 +118,9 @@ void of_populate_phandle_cache(void)
- 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
- 			phandles++;
+--- a/arch/x86/kernel/eisa.c
++++ b/arch/x86/kernel/eisa.c
+@@ -7,11 +7,17 @@
+ #include <linux/eisa.h>
+ #include <linux/io.h>
  
-+	if (!phandles)
-+		goto out;
++#include <xen/xen.h>
 +
- 	cache_entries = roundup_pow_of_two(phandles);
- 	phandle_cache_mask = cache_entries - 1;
+ static __init int eisa_bus_probe(void)
+ {
+-	void __iomem *p = ioremap(0x0FFFD9, 4);
++	void __iomem *p;
++
++	if (xen_pv_domain() && !xen_initial_domain())
++		return 0;
  
+-	if (readl(p) == 'E' + ('I'<<8) + ('S'<<16) + ('A'<<24))
++	p = ioremap(0x0FFFD9, 4);
++	if (p && readl(p) == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
+ 		EISA_bus = 1;
+ 	iounmap(p);
+ 	return 0;
 
 
