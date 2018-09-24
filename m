@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7705ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4A0C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 747D920877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747D920877
+	by mail.kernel.org (Postfix) with ESMTP id DE77E20877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:01:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE77E20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730767AbeIXSDQ (ORCPT
+        id S1730773AbeIXSDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:03:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53594 "EHLO
+        Mon, 24 Sep 2018 14:03:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53610 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730031AbeIXSDP (ORCPT
+        with ESMTP id S1729750AbeIXSDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:03:15 -0400
+        Mon, 24 Sep 2018 14:03:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD519D64;
-        Mon, 24 Sep 2018 12:01:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 022331080;
+        Mon, 24 Sep 2018 12:01:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Azael Avalos <coproscefalo@gmail.com>,
-        platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andy@infradead.org>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        stable@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 041/111] platform/x86: toshiba_acpi: Fix defined but not used build warnings
-Date:   Mon, 24 Sep 2018 13:52:08 +0200
-Message-Id: <20180924113108.968250211@linuxfoundation.org>
+Subject: [PATCH 4.9 042/111] KVM: arm/arm64: Fix vgic init race
+Date:   Mon, 24 Sep 2018 13:52:09 +0200
+Message-Id: <20180924113109.103829074@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -55,44 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Christoffer Dall <christoffer.dall@arm.com>
 
-[ Upstream commit c2e2a618eb7104e18fdcf739d4d911563812a81c ]
+[ Upstream commit 1d47191de7e15900f8fbfe7cccd7c6e1c2d7c31a ]
 
-Fix a build warning in toshiba_acpi.c when CONFIG_PROC_FS is not enabled
-by marking the unused function as __maybe_unused.
+The vgic_init function can race with kvm_arch_vcpu_create() which does
+not hold kvm_lock() and we therefore have no synchronization primitives
+to ensure we're doing the right thing.
 
-../drivers/platform/x86/toshiba_acpi.c:1685:12: warning: 'version_proc_show' defined but not used [-Wunused-function]
+As the user is trying to initialize or run the VM while at the same time
+creating more VCPUs, we just have to refuse to initialize the VGIC in
+this case rather than silently failing with a broken VCPU.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Azael Avalos <coproscefalo@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/toshiba_acpi.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ virt/kvm/arm/vgic/vgic-init.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/platform/x86/toshiba_acpi.c
-+++ b/drivers/platform/x86/toshiba_acpi.c
-@@ -34,6 +34,7 @@
- #define TOSHIBA_ACPI_VERSION	"0.24"
- #define PROC_INTERFACE_VERSION	1
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -241,6 +241,10 @@ int vgic_init(struct kvm *kvm)
+ 	if (vgic_initialized(kvm))
+ 		return 0;
  
-+#include <linux/compiler.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-@@ -1687,7 +1688,7 @@ static const struct file_operations keys
- 	.write		= keys_proc_write,
- };
- 
--static int version_proc_show(struct seq_file *m, void *v)
-+static int __maybe_unused version_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m, "driver:                  %s\n", TOSHIBA_ACPI_VERSION);
- 	seq_printf(m, "proc_interface:          %d\n", PROC_INTERFACE_VERSION);
++	/* Are we also in the middle of creating a VCPU? */
++	if (kvm->created_vcpus != atomic_read(&kvm->online_vcpus))
++		return -EBUSY;
++
+ 	/* freeze the number of spis */
+ 	if (!dist->nr_spis)
+ 		dist->nr_spis = VGIC_NR_IRQS_LEGACY - VGIC_NR_PRIVATE_IRQS;
 
 
