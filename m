@@ -2,119 +2,88 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AF2C43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AE8C43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88FE220843
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:49:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tUZTEV8+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88FE220843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A6AFF20843
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:49:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6AFF20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeIYExc (ORCPT
+        id S1727451AbeIYEx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:53:32 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45634 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbeIYExc (ORCPT
+        Tue, 25 Sep 2018 00:53:57 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35892 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbeIYEx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:53:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m16so4815138wrx.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xlPS3jvGGNsddE6F+jXFhI8iiomJak5fnBdTPWjKO48=;
-        b=tUZTEV8+zCD3ZlWa0E75WrVhtpLa5ndsDKUUnwy3IU0IueJjtGxaO1P5QmFgB3jCKM
-         xI2Qm0MXm349s08yvFHTIFZUmHFzkesxdhN3Xf8aMabi5e65gdE/RXquCMndXk9gVAZg
-         rEFrFEsmU87w3zGXRv5SQ0jRBeookLFyKZC2W/P6tYcbYAYxKbeUHe8rsFzY0X0n5eLE
-         rBYr/ul76VSNJKOdCh2uLL9V+6NfPb4wDdqdBJ3AF3iz137B6Qd4Rmh3IHHb1JfYYNuP
-         6wU+iiaJSBPE85urGOxPmQ90kk1uYXmChIv1jJzKcMXruqowTTlF76hrrSuKpq2kdYMD
-         fT9w==
+        Tue, 25 Sep 2018 00:53:57 -0400
+Received: by mail-ot1-f65.google.com with SMTP id c18-v6so4851663otm.3;
+        Mon, 24 Sep 2018 15:49:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xlPS3jvGGNsddE6F+jXFhI8iiomJak5fnBdTPWjKO48=;
-        b=XAEUyEn+wYRAJTLN62NyORt8KFT0vOwl9Dt0teKXYSHQrhN73921NSBCAdFa3mdFgA
-         2XRuRDeeDaj8mm/7cguE7nrQQ/caQX94hGYR4ut00QTRgixOnC3c0knJk+kVAwTOxUXY
-         kKw1bWiy8GfyImUkEG+ReblS1A3eRNAN3w9WvUEXfe4n9nz1uPmXPCNZ8Dmv3psCHGrY
-         M74wc+272NbwxXSMHBGVtwebfZ7Y90i8mp26t0wEr8Py5Z79nnL4PajPjG2IBTccWg/T
-         11CSARUXgrVvK/YPBhcL0lkrotaoVasLzfon9+uX5q5uQWN1kQZi/REDqWTkiNtYE7tM
-         exjQ==
-X-Gm-Message-State: ABuFfognw/Xia+kg1A7kV8e4hmUhxNn/DQiomOsefh4nks/EsK+B4CZ2
-        uNd79WfBAREossos+sFcRWk=
-X-Google-Smtp-Source: ACcGV62ro8KrIgPUZ8jCvAw033To/zXhi3rZHeJ0rlKTlw4BytHTYJ71HkCQqNeqjUvSWn6IXRak0Q==
-X-Received: by 2002:adf:91a4:: with SMTP id 33-v6mr602173wri.37.1537829341216;
-        Mon, 24 Sep 2018 15:49:01 -0700 (PDT)
-Received: from localhost.co.uk ([2a01:388:3ce:110::1:c])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm521230wmp.32.2018.09.24.15.49.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 15:49:00 -0700 (PDT)
-From:   Aymen Qader <qader.aymen@gmail.com>
-Cc:     Aymen Qader <qader.aymen@gmail.com>, Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: vc04_services: Update TODO re: arm64
-Date:   Mon, 24 Sep 2018 23:48:35 +0100
-Message-Id: <20180924224835.32539-1-qader.aymen@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BfpC3BQJNqmM6dMbQCyGnJNhNPjedBUxGe0kgK+ranU=;
+        b=HycbJ+BNDJlnNs07Lb5LAwSrCWF+hW8Y2LdqxLdkRR9+CXcPZ0G7QZL/xafzK+mKuQ
+         n8WFdOKwXxTcjQT4sydQ5HP6XActVI6uB/OO+HkQYl1w11Fh3MqDFrxNkhKq7rhbSAMM
+         gHRQnGCgs8u/60iTYXncGnHaUQOHgBUqr+KQow5hM9B9zOcGNFESkl7vmvC+rW5GFgt7
+         fbrfz7ehrAgtjXTHYTbJkEYFtaqIjJ2IdCh7BEj4cixNaNyc9hp/7rA0l4fUEoMNNc7Y
+         qoRtKerM9FTEfDf17vULpNekZnUfufKOu017jeqdDd2xkhL5PAzPDVpwE3iTznL81Gzs
+         /wBQ==
+X-Gm-Message-State: ABuFfojqj+E/lsq8WmCHikvtVQskCAPnKa6i3DVv3hLunOp5MudZRL69
+        GR/RGN8N1euS9nkv4jdRJfoxkz4ZRMCqHhWOFmE=
+X-Google-Smtp-Source: ACcGV609oLWZmdRb6hCRzvrDmeCz/FG6I6Dv4I2nEUzLwdfhjV0w4h6lxQUH7X1f2hBuLAZFSRT2IP3bL/xshb6uluw=
+X-Received: by 2002:a9d:2b03:: with SMTP id o3-v6mr782972otb.102.1537829367280;
+ Mon, 24 Sep 2018 15:49:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180912161101.2634-1-vkuznets@redhat.com> <nycvar.YFH.7.76.1809241123040.15880@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1809241123040.15880@cbobk.fhfr.pm>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 25 Sep 2018 00:49:16 +0200
+Message-ID: <CAJZ5v0g10fyZZhvLTz_qSADWQCO==fg=zcFQHD7QLZYwVDOsgA@mail.gmail.com>
+Subject: Re: [PATCH] hyper-v: Fix wakeup from suspend-to-idle
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the TODO item to remove manual cache flushing from b
-ulk_receieve - this was done in 7e8dbea. Also remove the unnecessary
-asm/cacheflush.h header.
+On Mon, Sep 24, 2018 at 11:24 AM Jiri Kosina <jikos@kernel.org> wrote:
+>
+> On Wed, 12 Sep 2018, Vitaly Kuznetsov wrote:
+>
+> > It makes little sense but still possible to put Hyper-V guests into
+> > suspend-to-idle state. To wake them up two wakeup sources were registered
+> > in the past: hyperv-keyboard and hid-hyperv. However, since
+> > commit eed4d47efe95 ("ACPI / sleep: Ignore spurious SCI wakeups from
+> > suspend-to-idle") pm_wakeup_event() from these devices is ignored. Switch
+> > to pm_wakeup_hard_event() API as these devices are actually the only
+> > possible way to wakeup Hyper-V guests.
+> >
+> > Fixes: eed4d47efe95 (ACPI / sleep: Ignore spurious SCI wakeups from suspend-to-idle)
+> > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> > ---
+> >  drivers/hid/hid-hyperv.c              | 2 +-
+>
+>         Acked-by: Jiri Kosina <jkosina@suse.cz>
+>
+> for the above. I guess this'd better go through ACPI tree?
 
-Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
----
- drivers/staging/vc04_services/bcm2835-camera/TODO         | 6 ------
- drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c | 1 -
- 2 files changed, 7 deletions(-)
+No problem with that if you prefer.
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/TODO b/drivers/staging/vc04_services/bcm2835-camera/TODO
-index cefce72d814f..6c2b4ffe4996 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/TODO
-+++ b/drivers/staging/vc04_services/bcm2835-camera/TODO
-@@ -15,9 +15,3 @@ padding in the V4L2 spec, but that padding doesn't match what the
- hardware can do.  If we exposed the native padding requirements
- through the V4L2 "multiplanar" formats, the firmware would have one
- less copy it needed to do.
--
--3) Port to ARM64
--
--The bulk_receive() does some manual cache flushing that are 32-bit ARM
--only, which we should convert to proper cross-platform APIs.
--
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-index 51e5b04ff0f5..6e5c1d4ee122 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -21,7 +21,6 @@
- #include <linux/slab.h>
- #include <linux/completion.h>
- #include <linux/vmalloc.h>
--#include <asm/cacheflush.h>
- #include <media/videobuf2-vmalloc.h>
- 
- #include "mmal-common.h"
--- 
-2.17.1
-
+Cheers,
+Rafael
