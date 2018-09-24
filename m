@@ -2,98 +2,178 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05902ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF0AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A747C2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:48:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5jEU7fEk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A747C2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 3284A21480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3284A21480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732650AbeIXWvU (ORCPT
+        id S1732725AbeIXWvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:51:20 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40738 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731106AbeIXWvU (ORCPT
+        Mon, 24 Sep 2018 18:51:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35178 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732367AbeIXWvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:51:20 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w8OGcslh062127;
-        Mon, 24 Sep 2018 16:48:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=OHGbEi8kZqVQTXbqOzSysyXY24xP8wbm1EOUpLIv3po=;
- b=5jEU7fEk3VTay9zbnAUIDvRLbgeK8LRwHrwcj5T/d97nPi3WeKbV4PU82R26ENkksRKC
- iVCfIW99EeDrkYR2cjdTLi0aVQmZs4FkDtPBwd1PNVQNjK61mLBr43DH3cOYYuHLeBax
- MpIxyYgIdc81d/0VnBeHTEZG93S7GK3LhiJgS7wdUQAa0kd0t/9gVfIILwFEPBtlitNM
- uUal7xYInQ7YGcm1rRFOerxvXYFWuxt4zck0cMCnH+kmiEHtUh+pQ5d4GC7qywNBhyHv
- 8fr4tDfseHSVRIeYzgOyO0FQggt+LKglNqumL3sWEWLA4LfldYJHlsOSM17N74CTMmon jA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2mndpp716h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Sep 2018 16:48:12 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w8OGm7tV013778
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Sep 2018 16:48:07 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w8OGm7RX002736;
-        Mon, 24 Sep 2018 16:48:07 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 24 Sep 2018 09:48:06 -0700
-Subject: Re: [PATCH] mm/hugetlb: Add mmap() encodings for 32MB and 512MB page
- sizes
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     mhocko@kernel.org, punit.agrawal@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org
-References: <1537797985-2406-1-git-send-email-anshuman.khandual@arm.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <541d31f2-b4b7-e401-2fe9-7965d81b2f0a@oracle.com>
-Date:   Mon, 24 Sep 2018 09:48:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 24 Sep 2018 18:51:50 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGe1P3010288
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:48:46 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mq2834jk7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:48:46 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 24 Sep 2018 10:48:45 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Sep 2018 10:48:42 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OGmd1036045012
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Sep 2018 09:48:39 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0EEB1BE051;
+        Mon, 24 Sep 2018 10:48:39 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EADDEBE04F;
+        Mon, 24 Sep 2018 10:48:35 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Sep 2018 10:48:35 -0600 (MDT)
+Subject: Re: [PATCH v10 02/26] KVM: s390: introduce and use
+ KVM_REQ_VSIE_RESTART
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, David Hildenbrand <david@redhat.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1536781396-13601-3-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <cf81913a-ee0a-6507-9c31-b10f66148d41@de.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 24 Sep 2018 12:48:35 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <1537797985-2406-1-git-send-email-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <cf81913a-ee0a-6507-9c31-b10f66148d41@de.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9026 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=929
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1809240163
+X-TM-AS-GCONF: 00
+x-cbid: 18092416-8235-0000-0000-00000E05DD56
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01093033; UDB=6.00564900; IPR=6.00873070;
+ MB=3.00023484; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:48:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092416-8236-0000-0000-000042C1A973
+Message-Id: <dc90c8c6-3de7-8d98-c516-f9c92393af88@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=930 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809240163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/18 7:06 AM, Anshuman Khandual wrote:
-> ARM64 architecture also supports 32MB and 512MB HugeTLB page sizes.
-> This just adds mmap() system call argument encoding for them.
+On 09/24/2018 06:49 AM, Christian Borntraeger wrote:
+> On 09/12/2018 09:42 PM, Tony Krowiak wrote:
+>> From: David Hildenbrand <david@redhat.com>
+>>
+>> When we change the crycb (or execution controls), we also have to make sure
+>> that the vSIE shadow datastructures properly consider the changed
+>> values before rerunning the vSIE. We can achieve that by simply using a
+>> VCPU request now.
+>>
+>> This has to be a synchronous request (== handled before entering the
+>> (v)SIE again).
+>>
+>> The request will make sure that the vSIE handler is left, and that the
+>> request will be processed (NOP), therefore forcing a reload of all
+>> vSIE data (including rebuilding the crycb) when re-entering the vSIE
+>> interception handler the next time.
+>>
+>> Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+>> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+>> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
 > 
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  include/uapi/asm-generic/hugetlb_encode.h | 2 ++
->  include/uapi/linux/mman.h                 | 2 ++
->  2 files changed, 4 insertions(+)
+> 
+> same here? First David then Tomy?
 
-Thanks Anshuman,
+Will do.
 
-However, I think we should also add similar definitions in:
-uapi/linux/memfd.h
-uapi/linux/shm.h
+> 
+> otherwise
+> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> 
+> 
+>> ---
+>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>   arch/s390/kvm/kvm-s390.c         |    7 ++++++-
+>>   2 files changed, 7 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+>> index 29c940b..75d3962 100644
+>> --- a/arch/s390/include/asm/kvm_host.h
+>> +++ b/arch/s390/include/asm/kvm_host.h
+>> @@ -44,6 +44,7 @@
+>>   #define KVM_REQ_ICPT_OPEREXC	KVM_ARCH_REQ(2)
+>>   #define KVM_REQ_START_MIGRATION KVM_ARCH_REQ(3)
+>>   #define KVM_REQ_STOP_MIGRATION  KVM_ARCH_REQ(4)
+>> +#define KVM_REQ_VSIE_RESTART	KVM_ARCH_REQ(5)
+>>   
+>>   #define SIGP_CTRL_C		0x80
+>>   #define SIGP_CTRL_SCN_MASK	0x3f
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index 0b5aff0..876fbb2 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -844,8 +844,11 @@ void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
+>>   
+>>   	kvm_s390_vcpu_block_all(kvm);
+>>   
+>> -	kvm_for_each_vcpu(i, vcpu, kvm)
+>> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+>>   		kvm_s390_vcpu_crypto_setup(vcpu);
+>> +		/* recreate the shadow crycb by leaving the VSIE handler */
+>> +		kvm_s390_sync_request(KVM_REQ_VSIE_RESTART, vcpu);
+>> +	}
+>>   
+>>   	kvm_s390_vcpu_unblock_all(kvm);
+>>   }
+>> @@ -3203,6 +3206,8 @@ static int kvm_s390_handle_requests(struct kvm_vcpu *vcpu)
+>>   
+>>   	/* nothing to do, just clear the request */
+>>   	kvm_clear_request(KVM_REQ_UNHALT, vcpu);
+>> +	/* we left the vsie handler, nothing to do, just clear the request */
+>> +	kvm_clear_request(KVM_REQ_VSIE_RESTART, vcpu);
+>>   
+>>   	return 0;
+>>   }
+>>
 
--- 
-Mike Kravetz
