@@ -2,124 +2,127 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7ABECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDB6ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045352098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9FD62098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:18:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JofwV4XN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045352098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGA1CVwi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9FD62098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731790AbeIYBVR (ORCPT
+        id S1731975AbeIYBVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:21:17 -0400
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:44759 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730681AbeIYBVR (ORCPT
+        Mon, 24 Sep 2018 21:21:47 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46408 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730681AbeIYBVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:21:17 -0400
-Received: by mail-pf1-f172.google.com with SMTP id k21-v6so9457470pff.11
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:17:39 -0700 (PDT)
+        Mon, 24 Sep 2018 21:21:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id y12-v6so18494904ioj.13;
+        Mon, 24 Sep 2018 12:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Lnqm2ju+e2fjoxkQCGuRLd+t9H3PxYAZLcDiILLphMA=;
-        b=JofwV4XNWbpaXzyW1EXAMaYyIrlAKVG5PhRcmeRDy3Sp/QR1RXBkQDkoz67rl/p0XZ
-         0nebwz++m4zgvENlm8JtZipdZTva7pUKg969iFdADVsk9d26TnyGajaNDKifRkhlZ08+
-         +sFxWiXX9CDQ+cuMXFmcqmcBfGwar8RlWI031vHZGbOom/rV6O/0a80o+DUUpPIw6R34
-         UVDsAh/Ew5IqtJ+7W/csrG5ymGxZ5fqbSU+KEoEuS/rW5FqjMnadqsloxSgEns8pHBfE
-         Jm5MNcF9vBgtsKa+a83cXDdHGogNJXLAkQybfaDkjZoc4VxIwnqvYJMPt36QsRx24xoE
-         lXqw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EhO0/3mSuRoG627z5xnGrgaF/Hb/lTjMYfYD0g75Ctg=;
+        b=OGA1CVwi5MLh5ynp02rtK5I3KmZNhfrQlwOR84lNthjcDgQdmiVZmdIup5K9qHozws
+         cHAoHj/995/3Vd+mH/5KqWwZrYxMMPax9jnTrz1Rc14BM1A9d1anyEN5SUWKmsbIqYXb
+         a7l8kYPfyJAr1FSy8FhNK6zhBWT3nseiJJNyv/4l/d+ATq6soG9H2Uw7bYHGYAxIYPHi
+         /MlqShHqVRUT8sEHH+oYmAYZyuudwzXrqhmqaRVwlw9bWn8z3rOTMhacu33tZPfwu0U+
+         xcL/IeEXbn8jFsbKouo+HFyEEXhJ0Z14FoiWyooK7As6NmRG/VQAlLFZkjMD2NEPUErm
+         996g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Lnqm2ju+e2fjoxkQCGuRLd+t9H3PxYAZLcDiILLphMA=;
-        b=TnKZHf0mcA5kqY0hdvaIJwo6kWHGuj2g0RMXHYphyeHh0OeJGfP4LHlNXGgWBkwNWI
-         LpxR8qb11DZUsA279ckqz/TbRWqTTpWSBaGKLelDx0g+eOxuhppsCt6XU9YLpyB5OZ+V
-         9VlKq5jt6li5l/SlHYEhp9RgpDCYyM2utWJEQV0r9W0PuKkBNXFAWN00AYEDqVy3gr+D
-         ++M+CQK1KHpLPi7FhciR3vcnVhAs4KRi6rde78fU3PCxCNj3zpaHxs4/1xWTT4zAkhXv
-         3+jFyUu8P+coOz0Yo/sJXAdlLjoiYy8xoIWYpjPxprTk0M9mQ1xolnRNru3PKvZAAJOI
-         IMhw==
-X-Gm-Message-State: ABuFfogxH0pdj1H24Vfw3j/qqs7nJUJ3r3GtxIreH0rGHaFDWrf2nzzM
-        /g2L/xHZ0qCWPihj3lTI+0YbiA==
-X-Google-Smtp-Source: ACcGV63Njx5S9hZa0umCgdbSw3Xvc896Ow8az2KfvDaEl15czCSEiuQnJZMeQzVMgVEJ77U4K/Ttow==
-X-Received: by 2002:a63:d34f:: with SMTP id u15-v6mr170253pgi.325.1537816658583;
-        Mon, 24 Sep 2018 12:17:38 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id 71-v6sm84051pfx.182.2018.09.24.12.17.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EhO0/3mSuRoG627z5xnGrgaF/Hb/lTjMYfYD0g75Ctg=;
+        b=UHqImH5WP2xJTGqPdJWlEno2BWSOWR+CM/n3DWkg6TYughdVq7Rp0AoHqrvpRArlz/
+         0wrsSOCSp2GLrPEJbOSEVndqethWprcadOMbu02Prr+tmBK1b4RrlFDhIBlOOOJ7ai8Y
+         cfhhVG021wyZbpFUq9Pq2T/HxIEmHBCX3mZsiBIdKdLRbqQ3M+Me51CfAQpvzZMxjKHg
+         mI9aP2aQhZUppzTpgsoFEZJqXWQuaOC49kM8g6w6o70LszUreQLaJyGAmnm/wNAZD6jJ
+         uZ4Kr7YzbFxMsMUM6/CrQQHfNeC2GLjIoR62vG0Gv4Nw3vdVu7x0mHJq8OSjf4yq+7i2
+         ITlQ==
+X-Gm-Message-State: ABuFfojvPpnOnoY2uddyBtnDQVhIft+2tfBbzl5Y1rnPPKJSn9se2OxU
+        RhP/v8EUQdldALnap1wOnA==
+X-Google-Smtp-Source: ACcGV608xHdv4lb81rTCjm8iIulQ5hl9ByRnHT0VjlJkIsE6RrnhWYXTP9DXZG567Sj35HRBvh5Dog==
+X-Received: by 2002:a6b:b955:: with SMTP id j82-v6mr251545iof.158.1537816688484;
+        Mon, 24 Sep 2018 12:18:08 -0700 (PDT)
+Received: from r (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
+        by smtp.gmail.com with ESMTPSA id o127-v6sm2754852itg.24.2018.09.24.12.18.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 12:17:37 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 12:17:34 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Vlastimil Babka <vbabka@suse.cz>
-cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
-        Linux-MM layout <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [patch] mm, thp: always specify ineligible vmas as nh in smaps
-In-Reply-To: <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz>
-Message-ID: <alpine.DEB.2.21.1809241215170.239142@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com> <e2f159f3-5373-dda4-5904-ed24d029de3c@suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 24 Sep 2018 12:18:07 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 15:18:04 -0400
+From:   r yang <decatf@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
+ clk_round_rate
+Message-ID: <20180924191804.GA20060@r>
+References: <20180921220149.17136-1-decatf@gmail.com>
+ <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018, Vlastimil Babka wrote:
-
-> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > --- a/fs/proc/task_mmu.c
-> > +++ b/fs/proc/task_mmu.c
-> > @@ -653,13 +653,23 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> >  #endif
-> >  #endif /* CONFIG_ARCH_HAS_PKEYS */
-> >  	};
-> > +	unsigned long flags = vma->vm_flags;
-> >  	size_t i;
+On Mon, Sep 24, 2018 at 11:08:03AM +0300, Peter De Schrijver wrote:
+> On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
+> > The current behavior is that clk_round_rate would return the same clock
+> > rate passed to it for valid PLL configurations. This change will return
+> > the exact rate the PLL will provide in accordance with clk API.
+> > 
+> > Signed-off-by: ryang <decatf@gmail.com>
+> > ---
+> >  drivers/clk/tegra/clk-pll.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> > index 17a058c3bbc1..36014a6ec42e 100644
+> > --- a/drivers/clk/tegra/clk-pll.c
+> > +++ b/drivers/clk/tegra/clk-pll.c
+> > @@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+> >  		return -EINVAL;
+> >  	}
 > >  
-> > +	/*
-> > +	 * Disabling thp is possible through both MADV_NOHUGEPAGE and
-> > +	 * PR_SET_THP_DISABLE.  Both historically used VM_NOHUGEPAGE.  Since
-> > +	 * the introduction of MMF_DISABLE_THP, however, userspace needs the
-> > +	 * ability to detect vmas where thp is not eligible in the same manner.
-> > +	 */
-> > +	if (vma->vm_mm && test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
-> > +		flags |= VM_NOHUGEPAGE;
+> > -	cfg->output_rate >>= p_div;
+> > +	if (cfg->m == 0) {
+> > +		cfg->output_rate = 0;
 > 
-> Should it also clear VM_HUGEPAGE? In case MMF_DISABLE_THP overrides a
-> madvise(MADV_HUGEPAGE)'d vma? (I expect it does?)
+> I think a WARN_ON() is appropriate here. the input divider should never be 0.
+> 
+> Peter.
 > 
 
-Good point, I think that is should because MMF_DISABLE_THP will override 
-VM_HUGEPAGE.  It looks like the Documentation file is still referencing 
-both as advise flags and doesn't address PR_SET_THP_DISABLE.  Let me send 
-a v2 with a Documentation update and your suggested fix.  Thanks 
-Vlastimil!
+Should it return -EINVAL (or some error) too? _calc_rate is also in the
+clk_set_rate code path. I think we want to avoid programming the
+register to 0 input divider all together?
 
-> > +
-> >  	seq_puts(m, "VmFlags: ");
-> >  	for (i = 0; i < BITS_PER_LONG; i++) {
-> >  		if (!mnemonics[i][0])
-> >  			continue;
-> > -		if (vma->vm_flags & (1UL << i)) {
-> > +		if (flags & (1UL << i)) {
-> >  			seq_putc(m, mnemonics[i][0]);
-> >  			seq_putc(m, mnemonics[i][1]);
-> >  			seq_putc(m, ' ');
+> > +	} else {
+> > +		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
+> > +		cfg->output_rate >>= p_div;
+> > +	}
+> >  
+> >  	if (pll->params->pdiv_tohw) {
+> >  		ret = _p_div_to_hw(hw, 1 << p_div);
+> > -- 
+> > 2.17.1
 > > 
