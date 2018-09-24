@@ -2,171 +2,139 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F49FC43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D252C43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A7E020877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 22:54:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAA8020874
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 23:03:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BW1Mmi2g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A7E020877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Ck+ItWTE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA8020874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeIYE7A (ORCPT
+        id S1727027AbeIYFHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 25 Sep 2018 00:59:00 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38870 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbeIYE7A (ORCPT
+        Tue, 25 Sep 2018 01:07:13 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42496 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbeIYFHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 25 Sep 2018 00:59:00 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z16-v6so5195342wmi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 15:54:27 -0700 (PDT)
+        Tue, 25 Sep 2018 01:07:13 -0400
+Received: by mail-qt1-f195.google.com with SMTP id z8-v6so11392671qto.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 16:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U8sLdqkTKqZHIuee5+IgVnG8a8vdgA11uZG2gCIW8og=;
-        b=BW1Mmi2g4+bX7RMDD5f01RzKgc+KNx7E0O/EEb4Wy/fNqwqBRfxPbg5i7awvZ1UCj/
-         UVcl3jEbJfJ1rc8xRyAVBIxz695GnZpn/lYUunH2p95QGCFB4Nvg4Z1vY0udlBLkAmU5
-         dlguGF8E5PSh49tnCsHWh95ZzbLI0wkbLHSnK+A4q4NzbV86F7lzM1OiwQz6F93a0Z9u
-         mAoqUStlIAvWScUo8PZxk4bH97mA85KnQRmf2CkKwaw73l9JYCdNpkA+cZ2QpsEEIXMn
-         t3uWHc9kDEHAjS5Vj4j1ue9EQfRbNwoLFAGqZGBq5zi2jik5HbUbyY2hzVmJ6N0J5CDJ
-         3EMQ==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=hfPBT0CQIOkxkDtJF6m2WhFu5wIhuuvt3JCAETKqozU=;
+        b=Ck+ItWTEBijcIHeHFF//Fa5XOR5KF2nnZc3kMwN+dXwa9HZx3DnrEOBoAvEXgf1bsz
+         CNuyRX/eG3zGqBSeage020SxMbE0HJrVsvHQcWBuAVuCsu8uE2Wu+GNGhZkMSXXMmtNS
+         b16F18Sl1nUTkIxc/N5Nzr0D93ofXogms91A8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U8sLdqkTKqZHIuee5+IgVnG8a8vdgA11uZG2gCIW8og=;
-        b=X1CrMYGxVnTx3S5qggRkwSx3Awf7d3fj/RDnpy0i8HNoaQ3ZHrYYGkWjquWovOpcPF
-         2qH9Qbd/1H8wtwhP55DOGbKO+W6Y3Njc2mNYQLwttjL6IqaGkYyotEPOZcftAIHPF8iY
-         pDHcd9FgBS2CravYeBqjNSWKDMBlhy9kRiO2anZyMLbvobisxx06ErxIT5MteJWEXS9l
-         y4iEXJRgFbURfUT9P+vp9Fq46U2Mrp0yIurrhJqawDuNhOdMmiAak5ZPByhJPmewr9Ts
-         u+Q6xBeCjWEakgLCk5NAkyxHTNgpr80M+y6V8FnAOUIqS9egZCLJ58N2jnhXRQLZtoHk
-         NllA==
-X-Gm-Message-State: ABuFfogUcDBcS2DVd9xlVC36iA6fO+5rjkYTmqIQjpGKeOb010xRSycR
-        dIjdmp4WQW7tMTTsOv/2czXYSVd3iQV49PFpYGo=
-X-Google-Smtp-Source: ACcGV63rnBPUl2bpOC7C4gcUvOIrBFJqD3tPPTqoPhFIjz66b0nncM9JehG8ULT0QMh8rYzugqu9PoGHHPHPtDZ0DTI=
-X-Received: by 2002:a1c:570a:: with SMTP id l10-v6mr295001wmb.56.1537829667137;
- Mon, 24 Sep 2018 15:54:27 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=hfPBT0CQIOkxkDtJF6m2WhFu5wIhuuvt3JCAETKqozU=;
+        b=X085cm5V3x4p7w+fVm24Re7eAjwBqHdoS3M0y6H0hYfLCj12imK2/90T/k6b/Gu438
+         +QP00ujjMJihaR2gIIONwewfRia/2BExS6BnkTdFGYc1/C+Cqqdn91krfbgzhe6Vx1qC
+         ZSlc5pmQzhDSknfXQPbwnLQ3a71njYGUOqdSkVVCKtpXVk38wpPPFp6UyszDisL0XOpc
+         7fh/z5GKybnP3e8UVYkuii1Kp4UI74tBcQRqznPUDrtnlgM/hw3fNdLrrTu+OuCJo6k7
+         EeVcW1bHUUD/aNxbjlv9/uaS5GGpIwI2QQCiIceuvIdlA7Bf4wp1nBQjcHufrkz6ZSlY
+         IWbw==
+X-Gm-Message-State: ABuFfogPidkD7wrhJRGUFI7R/DugjKSNCowXlz2+LZqwFttYeVfrWagT
+        JmFkx0PTFCyMCeeSfrv2/ziqlp3VEWAXHw==
+X-Google-Smtp-Source: ACcGV63jGkQC0IpEyUOTLShke3bNyGDAA4+HR0bgqtx2tQ1O5ItTt+YskPje9jmLKMLCuETNZCUtjQ==
+X-Received: by 2002:ac8:38e6:: with SMTP id g35-v6mr855541qtc.55.1537830160143;
+        Mon, 24 Sep 2018 16:02:40 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id d83-v6sm472957qkj.24.2018.09.24.16.02.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 16:02:39 -0700 (PDT)
+Subject: Re: [PATCH] staging: vc04_services: Update TODO re: arm64
+To:     Aymen Qader <qader.aymen@gmail.com>
+Cc:     Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+References: <20180924224835.32539-1-qader.aymen@gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <bd51e861-41a6-6cad-c8aa-d56b13aa45c8@broadcom.com>
+Date:   Mon, 24 Sep 2018 16:02:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180921210106.24310-1-natechancellor@gmail.com> <CAKwvOdkVqQN5M05X4_1YxOSi4LAzw=PXuLqVq0z7SXYWoCG2sA@mail.gmail.com>
-In-Reply-To: <CAKwvOdkVqQN5M05X4_1YxOSi4LAzw=PXuLqVq0z7SXYWoCG2sA@mail.gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 24 Sep 2018 18:54:14 -0400
-Message-ID: <CADnq5_OwR8WAztaKgktHc57XtwJtCHcpBbjk9R3ErM1a7Xakdg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/powerplay: Change id parameter type in pp_atomfwctrl_get_clk_information_by_clkid
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
-        "Quan, Evan" <evan.quan@amd.com>, Rex Zhu <rex.zhu@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180924224835.32539-1-qader.aymen@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 6:07 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Fri, Sep 21, 2018 at 2:01 PM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > Clang generates warnings when one enumerated type is implicitly
-> > converted to another.
-> >
-> > drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppatomfwctrl.c:532:57:
-> > warning: implicit conversion from enumeration type 'enum
-> > atom_smu11_syspll0_clock_id' to different enumeration type 'BIOS_CLKID'
-> >       (aka 'enum atom_smu9_syspll0_clock_id') [-Wenum-conversion]
-> >         if (!pp_atomfwctrl_get_clk_information_by_clkid(hwmgr,
-> > SMU11_SYSPLL0_SOCCLK_ID, &frequency))
->
-> Grepping the call sites, via:
-> $ grep -r pp_atomfwctrl_get_clk_information_by_clkid
->
-> shows that sometimes this function is called with instances of:
->
-> enum atom_smu9_syspll0_clock_id
-> enum atom_smu11_syspll0_clock_id
->
-> before your patch, the function defined to take a BIOS_CLKID, which is
-> typedef'd to the *9* enum:
->
-> typedef enum atom_smu9_syspll0_clock_id BIOS_CLKID;
->
-> While the current values are < 256, the enums are not packed, so you
-> should use either int or a union of the two types.
-> Do the maintainers have a preference, before sending a v2?
+Hi Aymen
 
-I think the patch is probably fine as is.  For reference, what this
-function does it look up a value in the vbios based on the id.  So all
-we really need is the numeric value of the id.  The ids are different
-between asic families but the vbios interface is the same.
 
-Alex
+On 18-09-24 03:48 PM, Aymen Qader wrote:
+> This patch removes the TODO item to remove manual cache flushing from b
+Remove the use of "This patch".
+Please read 
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+"Describe your changes in imperative mood"
 
+Also, it looks like you broke "bulk_receive" across 2 lines.
+Please correct and fix receive typo.
+> ulk_receieve - this was done in 7e8dbea. Also remove the unnecessary
+also read in the guidelines:
+If you want to refer to a specific commit, don't just refer to the SHA-1 
+ID of the commit.
+Please also include the oneline summary of the commit, to make it easier 
+for reviewers to know what it is about.
+> asm/cacheflush.h header.
 >
-> >
-> > In this case, that is expected behavior. To make that clear to Clang
-> > without explicitly casting these values, change id's type to uint8_t
-> > in pp_atomfwctrl_get_clk_information_by_clkid so no conversion happens.
-> >
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >  drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c | 3 ++-
-> >  drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h | 2 +-
-> >  2 files changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c
-> > index d27c1c9df286..4588bddf8b33 100644
-> > --- a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c
-> > +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.c
-> > @@ -488,7 +488,8 @@ int pp_atomfwctrl_get_gpio_information(struct pp_hwmgr *hwmgr,
-> >         return 0;
-> >  }
-> >
-> > -int pp_atomfwctrl_get_clk_information_by_clkid(struct pp_hwmgr *hwmgr, BIOS_CLKID id, uint32_t *frequency)
-> > +int pp_atomfwctrl_get_clk_information_by_clkid(struct pp_hwmgr *hwmgr,
-> > +                                              uint8_t id, uint32_t *frequency)
-> >  {
-> >         struct amdgpu_device *adev = hwmgr->adev;
-> >         struct atom_get_smu_clock_info_parameters_v3_1   parameters;
-> > diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h
-> > index 22e21668c93a..fe9e8ceef50e 100644
-> > --- a/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h
-> > +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/ppatomfwctrl.h
-> > @@ -236,7 +236,7 @@ int pp_atomfwctrl_get_vbios_bootup_values(struct pp_hwmgr *hwmgr,
-> >  int pp_atomfwctrl_get_smc_dpm_information(struct pp_hwmgr *hwmgr,
-> >                         struct pp_atomfwctrl_smc_dpm_parameters *param);
-> >  int pp_atomfwctrl_get_clk_information_by_clkid(struct pp_hwmgr *hwmgr,
-> > -                                       BIOS_CLKID id, uint32_t *frequency);
-> > +                                       uint8_t id, uint32_t *frequency);
-> >
-> >  #endif
-> >
-> > --
-> > 2.19.0
-> >
+> Signed-off-by: Aymen Qader <qader.aymen@gmail.com>
+> ---
+>   drivers/staging/vc04_services/bcm2835-camera/TODO         | 6 ------
+>   drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c | 1 -
+>   2 files changed, 7 deletions(-)
 >
->
-> --
-> Thanks,
-> ~Nick Desaulniers
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+> diff --git a/drivers/staging/vc04_services/bcm2835-camera/TODO b/drivers/staging/vc04_services/bcm2835-camera/TODO
+> index cefce72d814f..6c2b4ffe4996 100644
+> --- a/drivers/staging/vc04_services/bcm2835-camera/TODO
+> +++ b/drivers/staging/vc04_services/bcm2835-camera/TODO
+> @@ -15,9 +15,3 @@ padding in the V4L2 spec, but that padding doesn't match what the
+>   hardware can do.  If we exposed the native padding requirements
+>   through the V4L2 "multiplanar" formats, the firmware would have one
+>   less copy it needed to do.
+> -
+> -3) Port to ARM64
+> -
+> -The bulk_receive() does some manual cache flushing that are 32-bit ARM
+> -only, which we should convert to proper cross-platform APIs.
+> -
+> diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+> index 51e5b04ff0f5..6e5c1d4ee122 100644
+> --- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+> +++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+> @@ -21,7 +21,6 @@
+>   #include <linux/slab.h>
+>   #include <linux/completion.h>
+>   #include <linux/vmalloc.h>
+> -#include <asm/cacheflush.h>
+>   #include <media/videobuf2-vmalloc.h>
+>   
+>   #include "mmal-common.h"
+
