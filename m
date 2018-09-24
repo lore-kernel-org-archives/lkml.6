@@ -2,133 +2,212 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA57ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1681AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 130C92098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:59:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 130C92098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id C4FD22098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 13:59:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4FD22098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730926AbeIXUCI (ORCPT
+        id S1731651AbeIXUCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:02:08 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15102 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728809AbeIXUCI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:02:08 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8ODrpGt025143;
-        Mon, 24 Sep 2018 15:59:06 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2mnb6x3jgd-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 24 Sep 2018 15:59:06 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 575FD46;
-        Mon, 24 Sep 2018 13:59:05 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2C362A57D;
-        Mon, 24 Sep 2018 13:59:05 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.45) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 24 Sep
- 2018 15:59:04 +0200
-Subject: Re: [RESEND PATCH] Revert "pwm: Set class for exported channels in
- sysfs"
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <stefan.wahren@i2se.com>, <gohai@sukzessiv.net>,
-        <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
-        <loic.pallardy@st.com>, <broonie@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rpi-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-References: <1537538567-5377-1-git-send-email-fabrice.gasnier@st.com>
- <20180924115301.GV21032@ulmo>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
-Date:   Mon, 24 Sep 2018 15:59:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 24 Sep 2018 16:02:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:40841 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728809AbeIXUCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:02:15 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 06:59:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,298,1534834800"; 
+   d="scan'208";a="75488324"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga007.jf.intel.com with ESMTP; 24 Sep 2018 06:59:36 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1g4ROh-0003Aj-7m; Mon, 24 Sep 2018 16:59:35 +0300
+Date:   Mon, 24 Sep 2018 16:59:35 +0300
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Rajat Jain <rajatja@google.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        "Banik, Subrata" <subrata.banik@intel.com>,
+        "Bohra, Aamir" <aamir.bohra@intel.com>
+Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for
+ community-4/5
+Message-ID: <20180924135935.GP15943@smile.fi.intel.com>
+References: <20180913223143.12664-1-rajatja@google.com>
+ <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
+ <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
+ <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
+ <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180924115301.GV21032@ulmo>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_08:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/24/2018 01:53 PM, Thierry Reding wrote:
-> On Fri, Sep 21, 2018 at 04:02:47PM +0200, Fabrice Gasnier wrote:
->> This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
->> regression with multiple pwm chip. It creates a new entry in
->> '/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
->> - 1st time export will create an entry in /sys/class/pwm/pwmX
->> - when another export happens on another pwmchip, it can't be created
->> (e.g. -EEXIST)
->>
->> This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
->> - pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
->>
->> Example on stm32 (stm32429i-eval) platform:
->> $ ls /sys/class/pwm
->> pwmchip0 pwmchip4
->>
->> $ cd /sys/class/pwm/pwmchip0/
->> $ echo 0 > export
->> $ ls /sys/class/pwm
->> pwm0 pwmchip0 pwmchip4
->>
->> $ cd /sys/class/pwm/pwmchip4/
->> $ echo 0 > export
->> sysfs: cannot create duplicate filename '/class/pwm/pwm0'
->> ...Exception stack follows...
->>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> ---
->>  drivers/pwm/sysfs.c | 1 -
->>  1 file changed, 1 deletion(-)
+On Thu, Sep 20, 2018 at 10:19:34AM -0700, Rajat Jain wrote:
+> On Fri, Sep 14, 2018 at 2:38 PM Rajat Jain <rajatja@google.com> wrote:
+> > On Fri, Sep 14, 2018 at 2:06 PM Rajat Jain <rajatja@google.com> wrote:
+> > > On Fri, Sep 14, 2018 at 12:41 AM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
+> > > > On Fri, Sep 14, 2018 at 1:54 AM Rajat Jain <rajatja@google.com> wrote:
+> > > > >
+> > > > > The Icelake does not have a community-3, and the memory resources are
+> > > > > laid out in the following order in the ACPI:
+> > > > >
+> > > > > resource-0: community-0 registers
+> > > > > resource-1: community-1 registers
+> > > > > resource-2: community-2 registers
+> > > > > resource-3: community-4 registers
+> > > > > resource-4: community-5 registers
+> > > > >
+> > > > > (EDS also describes the communities in the above order).
+> > > > >
+> > > > > Since the pinctrl driver exposes communities 0, 1, 4, 5, it needs to get
+> > > > > the corresponding community registers by getting the resourse number right.
+> > > > > Currently the resourse number is not correct for community 4 and 5, thus
+> > > > > fix that.
+> > > > >
+> > > >
+> > > > Can you share link to the ACPI dump of the tables? (you may get one by
+> > > > running `acpidump -o tables.dat`)
 > 
-> Can we come up with an alternative that allows us to have both? We want
-> uevent and proper sysfs creation, or is that not possible?
-
-Hi Thierry, all,
-
-With current approach:
-- "export->child.class = parent->class"
-- ABI (e.g. "pwm%d") device name isn't unique with multiple pwm chip.
-I think this is not possible.
-
-Trying to think of an alternative... I just did a quick test, by
-changing device name, to take pwmchip into account:
-+       export->child.class = parent->class;
-        export->child.release = pwm_export_release;
-        export->child.parent = parent;
-        export->child.devt = MKDEV(0, 0);
-        export->child.groups = pwm_groups;
--       dev_set_name(&export->child, "pwm%u", pwm->hwpwm);
-+       dev_set_name(&export->child, "pwmchip%d-pwm%u", chip->base,
-pwm->hwpwm);
-
-But this also impacts existing ABI :-(
-Would you have suggestions to send an uevent, without modifying ABI ?
-
-Please advise,
-Best regards,
-Fabrice
-
+> Hello Andy,
 > 
-> Thierry
-> 
+> Any feedback on this patch? I provided a dump of the ACPI below,
+> please let me know if you need more info.
+
+Sorry it took a while (I had to get tested on our reference BIOS(es) on Ice Lake platforms we have).
+See my reply below.
+
+> > > I don't have that command on my system, but I took
+> > > /sys/firmware/acpi/tables/DSDT from the system and disassembled it
+> > > using Intel disassembler (iasl -d) and here is the relevant portion
+> > > that describes the GPIO controller. The port IDs for communities can
+> > > be seen in the below output (i.e. the PCRB()):
+> >
+> > I realized PCRB() is an ACPI method defined in the same disasembly:
+> >
+> >             Method (PCRB, 1, NotSerialized)
+> >             {
+> >                 Return ((0xFD000000 + (Arg0 << 0x10)))
+> >             }
+> >
+> > >
+> > >             Device (GPIO)
+> > >             {
+> > >                 Name (_HID, "INT3455")  // _HID: Hardware ID
+> > >                 Name (_UID, Zero)  // _UID: Unique ID
+> > >                 Name (_DDN, "GPIO Controller")  // _DDN: DOS Device Name
+> > >                 Name (RBUF, ResourceTemplate ()
+> > >                 {
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y06)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y07)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y08)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y09)
+> > >                     Memory32Fixed (ReadWrite,
+> > >                         0x00000000,         // Address Base
+> > >                         0x00000000,         // Address Length
+> > >                         _Y0A)
+> > >                     Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
+> > >                     {
+> > >                         0x0000000E,
+> > >                     }
+> > >                 })
+> > >                 Method (_CRS, 0, NotSerialized)  // _CRS: Current
+> > > Resource Settings
+> > >                 {
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._BAS,
+> > > BAS0)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y06._LEN,
+> > > LEN0)  // _LEN: Length
+> > >                     BAS0 = PCRB (0x6E)
+> > >                     LEN0 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._BAS,
+> > > BAS1)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y07._LEN,
+> > > LEN1)  // _LEN: Length
+> > >                     BAS1 = PCRB (0x6D)
+> > >                     LEN1 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._BAS,
+> > > BAS2)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y08._LEN,
+> > > LEN2)  // _LEN: Length
+> > >                     BAS2 = PCRB (0x6C)
+> > >                     LEN2 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._BAS,
+> > > BAS4)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y09._LEN,
+> > > LEN4)  // _LEN: Length
+> > >                     BAS4 = PCRB (0x6A)
+> > >                     LEN4 = 0x00010000
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._BAS,
+> > > BAS5)  // _BAS: Base Address
+> > >                     CreateDWordField (RBUF, \_SB.PCI0.GPIO._Y0A._LEN,
+> > > LEN5)  // _LEN: Length
+> > >                     BAS5 = PCRB (0x69)
+> > >                     LEN5 = 0x00010000
+> > >                     Return (RBUF) /* \_SB_.PCI0.GPIO.RBUF */
+> > >                 }
+> > >
+> > >                 Method (_STA, 0, NotSerialized)  // _STA: Status
+> > >                 {
+> > >                     Return (0x0F)
+> > >                 }
+> > >             }
+> > >
+> > > Please let me know if this helps, or if you need more info.
+
+First of all, this is pre-production chip, so, I don't think there is a bug in the driver (yet) discovered.
+
+Looking to the above ASL code I may conclude that is definitely is *not* from our reference BIOS.
+I have checked two versions of it and found that in both we have the following mapping:
+for LP variant: there are only 4 communities are exported
+for H variant: there are only 5 communities are exported
+
+So, I guess the problem is in ASL code you provided. It simple should not
+export that community at all.
+
+In case you need to do so, there are ways:
+ - contact Intel and ask for a change in reference BIOS
+ - acquire another ACPI ID for the case, or, perhaps use special constants like
+   _HRV for that purpose (also need to contact Intel while doing that)
+
+P.S. I think EDS covers it as it present in HW, though not exported by FW.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
