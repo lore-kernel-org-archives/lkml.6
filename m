@@ -2,217 +2,139 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27732ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66910ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D862086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:09:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0GdzqyE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D862086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 122A72086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:13:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 122A72086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731618AbeIXWMc (ORCPT
+        id S1731104AbeIXWQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:12:32 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40089 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728976AbeIXWMb (ORCPT
+        Mon, 24 Sep 2018 18:16:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59760 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730364AbeIXWQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:12:31 -0400
-Received: by mail-ed1-f67.google.com with SMTP id j62-v6so16756981edd.7;
-        Mon, 24 Sep 2018 09:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vS8Vu8sOTmIua5LCI+HM1fjrU4yKkBX7F1AoklvK5bw=;
-        b=a0GdzqyEsYmTaf/IWkoswvjgCIm41FwC7EnOtLacoCMsU1r/qgCf74zbW6ReYmiFmV
-         gsTkAtPc6vku761MZuWHXBY3uxGWvERTwFvwt8Ej1nItYUhU3tppdtlBwYtVJgMYn43m
-         /AodPh4kxJNMcVPwOJRagPiM2qrwQUJ6CCL558IHmXXvkhJdjnsQmnHCvwc7og7ZudlT
-         2nO57hK3TbhaCtckvmy4+h1gwhk0CxwVon06vaF6RioloqO4nlcuJKncKm1WBdsRjhpu
-         mOw2WqhJPN8T3Odt2bEA9K68f7ILa0c2i5iHaFRXjv29HX+LoxQsxfPpcIQb5fBtBijS
-         Mz9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=vS8Vu8sOTmIua5LCI+HM1fjrU4yKkBX7F1AoklvK5bw=;
-        b=g48VUXpzxASIjWhru2LzJbjfxBgFx8+QBdEgVPDi8HduEsRNLn4jQfWpST4l79KwGC
-         TeRnknLmv8MloEE9KmyESkxTxu4JBSCptscRywnz5XafGBEj2fsORZyBiAEdDubpyuec
-         X51/H144Ydy7eWUn1ckZo2trclKO6hcJObWgVFTEIva4uqUn06FLT4vTebDjQYobFI6S
-         tE14E+RbgQf6L2nj1Y5F8nzOOhKuXRfQZwcrVoUxFfjmx3u7EZZ/lrIlEWuXgGHqeZLH
-         AwypKuWiUgjM5WnEpgMZcA5rJuk9OZPPOn2G1PQF4PFBArLDVo5eIq3jxfxoqHDEg+43
-         HNTA==
-X-Gm-Message-State: ABuFfog2m+zNKbdZakFP3fRTMXrLlqUsylhUieM1ZTwJdrOcqUgfVkAm
-        E41CGoWWWVKljcHJvJysCq4=
-X-Google-Smtp-Source: ACcGV612tu0mvUzk7pZ5fejf0u1n1kU8XTQEdUGq6EBLOMjp2psgWi9yA0mbRaFUHF6GOzuwLw73BQ==
-X-Received: by 2002:a50:b206:: with SMTP id o6-v6mr17926954edd.160.1537805376853;
-        Mon, 24 Sep 2018 09:09:36 -0700 (PDT)
-Received: from [10.8.0.2] (ec2-52-213-96-211.eu-west-1.compute.amazonaws.com. [52.213.96.211])
-        by smtp.gmail.com with ESMTPSA id z30-v6sm6559438edb.4.2018.09.24.09.09.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 09:09:36 -0700 (PDT)
-Subject: Re: BUG: unable to handle kernel paging request in do_mount
-To:     syzbot <syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000014285d05765bf72a@google.com>
-From:   Sabin Rapan <sabin.rapan@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sabin.rapan@gmail.com; keydata=
- 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
-Message-ID: <93e2ac09-1a8b-4efe-d707-1932278592f9@gmail.com>
-Date:   Mon, 24 Sep 2018 19:09:34 +0300
+        Mon, 24 Sep 2018 18:16:08 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OGCuoq140030
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:13:13 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mq36xr0mg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:13:09 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Mon, 24 Sep 2018 10:07:56 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 24 Sep 2018 10:07:53 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w8OG7oZe33358004
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 24 Sep 2018 09:07:50 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59155BE054;
+        Mon, 24 Sep 2018 10:07:50 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 97C92BE051;
+        Mon, 24 Sep 2018 10:07:47 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.130.123])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 24 Sep 2018 10:07:47 -0600 (MDT)
+Subject: Re: [PATCH v10 11/26] s390: vfio-ap: implement mediated device open
+ callback
+To:     David Hildenbrand <david@redhat.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1536781396-13601-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <e1ff9918-a1ab-31b1-0b32-a3980770d2ac@linux.ibm.com>
+ <09a6b9e5-e335-14cf-debd-de0f92dafd5e@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Mon, 24 Sep 2018 12:07:46 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <00000000000014285d05765bf72a@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <09a6b9e5-e335-14cf-debd-de0f92dafd5e@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18092416-0036-0000-0000-00000A3DD861
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009763; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01093019; UDB=6.00564892; IPR=6.00873056;
+ MB=3.00023483; MTD=3.00000008; XFM=3.00000015; UTC=2018-09-24 16:07:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18092416-0037-0000-0000-0000490D83FB
+Message-Id: <ebe81ebf-9b61-dbf6-743e-6145162cdcfb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1809240158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is fixed by patch vfs: namespace: error pointer dereference in do_remount()
+On 09/24/2018 04:40 AM, David Hildenbrand wrote:
+> 
+>>    /**
+>> - * Verify that the AP instructions are available on the guest. This is
+>> indicated
+>> - * via the  KVM_S390_VM_CPU_FEAT_AP CPU model feature.
+>> + * Verify that the AP instructions are being interpreted by firmware
+>> for the
+>> + * guest. This is indicated by the kvm->arch.crypto.apie flag.
+>>     */
+>>    static int kvm_ap_validate_crypto_setup(struct kvm *kvm)
+>>    {
+>> -	if (test_bit_inv(KVM_S390_VM_CPU_FEAT_AP, kvm->arch.cpu_feat))
+>> +	if (kvm->arch.crypto.apie)
+>>    		return 0;
+> 
+> I wonder if this check makes sense, because apie can be toggled during
+> runtime. I guess it would be sufficient to check if the ap control block
+> is available and apie is supported by the HW.
 
-#syz fix: vfs: namespace: error pointer dereference in do_remount()
+I am not clear about what you are getting at here, but I'll attempt
+to respond. There is no need to check if the AP control block (CRYCB)
+is available as the address is set in the CRYCBD three instructions
+above, even if AP instructions are not available. Regarding whether apie 
+is supported by the hardware, the value of vcpu->kvm->arch.crypto.apie 
+can not be set unless it is supported by the HW. In the patch (24/26) 
+that provides the VM attributes to toggle this value, it can only be 
+turned on if the AP instructions are available. I might also note that 
+the kvm_ap_validate_crypto_setup() function is called whenever one of 
+the VM crypto attributes is changed, so it makes sense that decisions 
+made in this function are based on a change to a VM crypto attribute. In 
+my first pass at changing this function, I checked
+ap_instructions_available() here, but after considering all of the
+above, it made sense to me to check the apie flag.
 
-On 21.09.2018 09:44, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    a0cb0cabe4bb Add linux-next specific files for 20180920
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=164d6511400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=786006c5dafbadf6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=73c7fe4f77776505299b
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13650fae400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118cbf21400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+73c7fe4f77776505299b@syzkaller.appspotmail.com
-> 
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440329
-> RDX: 0000000020000380 RSI: 00000000200002c0 RDI: 0000000000000000
-> RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000034
-> R10: 00000000001800a0 R11: 0000000000000246 R12: 0000000000000003
-> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-> BUG: unable to handle kernel paging request at fffffffffffffff4
-> PGD 966d067 P4D 966d067 PUD 966f067 PMD 0
-> Oops: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 5551 Comm: syz-executor016 Not tainted 4.19.0-rc4-next-20180920+ #76
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:parse_monolithic_mount_data fs/namespace.c:2354 [inline]
-> RIP: 0010:do_remount fs/namespace.c:2387 [inline]
-> RIP: 0010:do_mount+0xb3b/0x1db0 fs/namespace.c:2950
-> Code: 06 00 48 89 c2 48 89 c3 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 24 11 00 00 48 b8 00 00 00 00 00 fc ff df <4c> 8b 33 49 8d 7e 18 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 f8 10
-> RSP: 0018:ffff8801bb99fc28 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: fffffffffffffff4 RCX: 0000000000000000
-> RDX: 1ffffffffffffffe RSI: ffffffff81ddffac RDI: 0000000000000282
-> RBP: ffff8801bb99fdb0 R08: ffff8801d8b0e600 R09: ffffed003b5a5b57
-> R10: ffffed003b5a5b57 R11: ffff8801dad2dabb R12: ffff8801d3666830
-> R13: ffff8801c942cb80 R14: ffff8801c942cb80 R15: 0000000000000000
-> FS:  00000000010de880(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: fffffffffffffff4 CR3: 00000001d84b5000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  ksys_mount+0x12d/0x140 fs/namespace.c:3175
->  __do_sys_mount fs/namespace.c:3189 [inline]
->  __se_sys_mount fs/namespace.c:3186 [inline]
->  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3186
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x440329
-> Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007ffc6e4c9ec8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440329
-> RDX: 0000000020000380 RSI: 00000000200002c0 RDI: 0000000000000000
-> RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000034
-> R10: 00000000001800a0 R11: 0000000000000246 R12: 0000000000000003
-> R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-> Modules linked in:
-> CR2: fffffffffffffff4
-> ---[ end trace 8aa3e592ff591401 ]---
-> RIP: 0010:parse_monolithic_mount_data fs/namespace.c:2354 [inline]
-> RIP: 0010:do_remount fs/namespace.c:2387 [inline]
-> RIP: 0010:do_mount+0xb3b/0x1db0 fs/namespace.c:2950
-> Code: 06 00 48 89 c2 48 89 c3 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 24 11 00 00 48 b8 00 00 00 00 00 fc ff df <4c> 8b 33 49 8d 7e 18 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 f8 10
-> RSP: 0018:ffff8801bb99fc28 EFLAGS: 00010246
-> RAX: dffffc0000000000 RBX: fffffffffffffff4 RCX: 0000000000000000
-> RDX: 1ffffffffffffffe RSI: ffffffff81ddffac RDI: 0000000000000282
-> RBP: ffff8801bb99fdb0 R08: ffff8801d8b0e600 R09: ffffed003b5a5b57
-> R10: ffffed003b5a5b57 R11: ffff8801dad2dabb R12: ffff8801d3666830
-> R13: ffff8801c942cb80 R14: ffff8801c942cb80 R15: 0000000000000000
-> FS:  00000000010de880(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: fffffffffffffff4 CR3: 00000001d84b5000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > 
 > 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-> 
+
