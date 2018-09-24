@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D1FECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8ED4ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC8420C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC8420C0A
+	by mail.kernel.org (Postfix) with ESMTP id 9F70320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F70320C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732261AbeIXSS1 (ORCPT
+        id S1732272AbeIXSSa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:18:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55802 "EHLO
+        Mon, 24 Sep 2018 14:18:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55814 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbeIXSS0 (ORCPT
+        with ESMTP id S1730180AbeIXSS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:18:26 -0400
+        Mon, 24 Sep 2018 14:18:29 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9AE910A5;
-        Mon, 24 Sep 2018 12:16:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F94410A7;
+        Mon, 24 Sep 2018 12:16:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 060/173] xen-netfront: fix queue name setting
-Date:   Mon, 24 Sep 2018 13:51:34 +0200
-Message-Id: <20180924113120.433439519@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Knister <aaron.s.knister@nasa.gov>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 078/173] IB/ipoib: Avoid a race condition between start_xmit and cm_rep_handler
+Date:   Mon, 24 Sep 2018 13:51:52 +0200
+Message-Id: <20180924113121.783733621@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,53 +52,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Aaron Knister <aaron.s.knister@nasa.gov>
 
-[ Upstream commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 ]
+commit 816e846c2eb9129a3e0afa5f920c8bbc71efecaa upstream.
 
-Commit f599c64fdf7d ("xen-netfront: Fix race between device setup and
-open") changed the initialization order: xennet_create_queues() now
-happens before we do register_netdev() so using netdev->name in
-xennet_init_queue() is incorrect, we end up with the following in
-/proc/interrupts:
+Inside of start_xmit() the call to check if the connection is up and the
+queueing of the packets for later transmission is not atomic which leaves
+a window where cm_rep_handler can run, set the connection up, dequeue
+pending packets and leave the subsequently queued packets by start_xmit()
+sitting on neigh->queue until they're dropped when the connection is torn
+down. This only applies to connected mode. These dropped packets can
+really upset TCP, for example, and cause multi-minute delays in
+transmission for open connections.
 
- 60:        139          0   xen-dyn    -event     eth%d-q0-tx
- 61:        265          0   xen-dyn    -event     eth%d-q0-rx
- 62:        234          0   xen-dyn    -event     eth%d-q1-tx
- 63:          1          0   xen-dyn    -event     eth%d-q1-rx
+Here's the code in start_xmit where we check to see if the connection is
+up:
 
-and this looks ugly. Actually, using early netdev name (even when it's
-already set) is also not ideal: nowadays we tend to rename eth devices
-and queue name may end up not corresponding to the netdev name.
+       if (ipoib_cm_get(neigh)) {
+               if (ipoib_cm_up(neigh)) {
+                       ipoib_cm_send(dev, skb, ipoib_cm_get(neigh));
+                       goto unref;
+               }
+       }
 
-Use nodename from xenbus device for queue naming: this can't change in VM's
-lifetime. Now /proc/interrupts looks like
+The race occurs if cm_rep_handler execution occurs after the above
+connection check (specifically if it gets to the point where it acquires
+priv->lock to dequeue pending skb's) but before the below code snippet in
+start_xmit where packets are queued.
 
- 62:        202          0   xen-dyn    -event     device/vif/0-q0-tx
- 63:        317          0   xen-dyn    -event     device/vif/0-q0-rx
- 64:        262          0   xen-dyn    -event     device/vif/0-q1-tx
- 65:         17          0   xen-dyn    -event     device/vif/0-q1-rx
+       if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
+               push_pseudo_header(skb, phdr->hwaddr);
+               spin_lock_irqsave(&priv->lock, flags);
+               __skb_queue_tail(&neigh->queue, skb);
+               spin_unlock_irqrestore(&priv->lock, flags);
+       } else {
+               ++dev->stats.tx_dropped;
+               dev_kfree_skb_any(skb);
+       }
 
-Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+The patch acquires the netif tx lock in cm_rep_handler for the section
+where it sets the connection up and dequeues and retransmits deferred
+skb's.
+
+Fixes: 839fcaba355a ("IPoIB: Connected mode experimental support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaron Knister <aaron.s.knister@nasa.gov>
+Tested-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/xen-netfront.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -1611,7 +1611,7 @@ static int xennet_init_queue(struct netf
- 		    (unsigned long)queue);
+---
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -1018,12 +1018,14 @@ static int ipoib_cm_rep_handler(struct i
  
- 	snprintf(queue->name, sizeof(queue->name), "%s-q%u",
--		 queue->info->netdev->name, queue->id);
-+		 queue->info->xbdev->nodename, queue->id);
+ 	skb_queue_head_init(&skqueue);
  
- 	/* Initialise tx_skbs as a free chain containing every entry. */
- 	queue->tx_skb_freelist = 0;
++	netif_tx_lock_bh(p->dev);
+ 	spin_lock_irq(&priv->lock);
+ 	set_bit(IPOIB_FLAG_OPER_UP, &p->flags);
+ 	if (p->neigh)
+ 		while ((skb = __skb_dequeue(&p->neigh->queue)))
+ 			__skb_queue_tail(&skqueue, skb);
+ 	spin_unlock_irq(&priv->lock);
++	netif_tx_unlock_bh(p->dev);
+ 
+ 	while ((skb = __skb_dequeue(&skqueue))) {
+ 		skb->dev = p->dev;
 
 
