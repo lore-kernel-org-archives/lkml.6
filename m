@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DE7C433F4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAB7ECE561
 	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22E12098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FD7F2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:49:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QUJUSwgD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B22E12098A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Lww3FoOz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FD7F2098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733175AbeIXUvj (ORCPT
+        id S1733209AbeIXUvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:51:39 -0400
-Received: from mail-eopbgr690129.outbound.protection.outlook.com ([40.107.69.129]:55616
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Mon, 24 Sep 2018 16:51:40 -0400
+Received: from mail-eopbgr730114.outbound.protection.outlook.com ([40.107.73.114]:62688
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733009AbeIXUvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:51:37 -0400
+        id S1729984AbeIXUvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:51:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=38ePBoYt0LmN1jhM9rv26rIrhCKdt3Ibrx2fumzgZUY=;
- b=QUJUSwgD90C3Qf4znP4gqgwp0lmBiFm9g2AmCcia07GLxMbzQkur5C313wrFAPoQrXNZeDdXOqSzmw4NUw4fpE4xZylT5F6pNEumrSVj45Ah0QCt86CtECf9ffpHWAc6SKnOndgVRWwMHjo3NDT7zr8A/4V22FMxJMm9yCp4EkI=
+ bh=XGWq+M1RgUtq/QPO7nrd3qsrbTqJEXTtD7ZIcAm/nsM=;
+ b=Lww3FoOzjPiPW18Bx9HSI6ZYDOn6NZMWLB9H+j4RijrhqFBUbVww+oNcay3K5noF1ZtihDIRIb1PjqxsZAiMDgoxB5RG2+F0S7+41Z99M4JHVcA3pQIgjRJRnsTQhGsovuy6Yeszi0wzOENVStnXr8x4I78LLEXcpkLbB1hf+WA=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0744.namprd21.prod.outlook.com (10.173.189.10) with Microsoft SMTP
+ CY4PR21MB0855.namprd21.prod.outlook.com (10.173.192.144) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.2; Mon, 24 Sep 2018 14:49:00 +0000
+ 15.20.1207.5; Mon, 24 Sep 2018 14:48:51 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:49:00 +0000
+ 14:48:51 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+CC:     Baruch Siach <baruch@tkos.co.il>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 54/76] i2c: uniphier-f: issue STOP only for last
- message or I2C_M_STOP
-Thread-Topic: [PATCH AUTOSEL 4.18 54/76] i2c: uniphier-f: issue STOP only for
- last message or I2C_M_STOP
-Thread-Index: AQHUVBWrJYaaelVMBE6nADoYOuhtRQ==
-Date:   Mon, 24 Sep 2018 14:48:34 +0000
-Message-ID: <20180924144751.164410-53-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 34/76] net: mvpp2: initialize port of_node
+ pointer
+Thread-Topic: [PATCH AUTOSEL 4.18 34/76] net: mvpp2: initialize port of_node
+ pointer
+Thread-Index: AQHUVBWjvhdkEQ6fmEa6h3aEGkAarw==
+Date:   Mon, 24 Sep 2018 14:48:22 +0000
+Message-ID: <20180924144751.164410-33-alexander.levin@microsoft.com>
 References: <20180924144751.164410-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,79 +60,94 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0744;6:M2uGOsMRJihf03R5QjzXAAeCALjs4xhVeBi3eOWX591b1BhpMAplO4gIZ/aS9hIM9inzTcJiOBSC6qt/olpAL6CpBvzOpQLKhbNki67pdxEyJEFUeGRnL5ulThpTIDSTmSga+ZoTZ9HX4p3ozz4ArD6Yv1ZE5jh+i7Gwf2iHxNI1/bVWDXGl3lQPqqnlpX8MWImDlc8w6SboLU0tMSs8tY7/QdMKrx2Asqp/mbFHf2ULDQOKyUI9c1i6YmfO9f4EeRSSdklbVYfFXBy6plLHgQjfFYzj4jOHtbAf6mHcX3gVqepVXPyHYNYWB9NplzDQ3a7x9/VzEjwzZje+dilXtr/bCH8vwU7FzbhCeTwQKjV0VYsNBOJGsKUpoCo4HZr5tKChb9uw2YSFGIaxOAcMwdWVS9lh7lcMk2aG5Z/Nrp1X/FsKOJI6kv9fwJHRaFswgOr43qOxH6pOXnQ+3zhL2Q==;5:RfMG8Cmrq1WkPJ3+X4oVn03o9/P/BEDRKoCr/YIspevtBYZOKPlKl+9ZfoAgkn6zYyef9TGLhzvdkhz+oDY3ybY+qHjMbuUEK7CIhm5ckRaqjW2SbNHeMpTPjeRRUn20q32th5leH8LiDJy9+k37O1wLvLqXb6clV3sryndCCFM=;7:sE4V9LsrPRSCNh8ol8cPVJ7uCxX3+wdkmAMkqPMtttxyz7UpSCJm1rGxQ4J8wZ/7R6cxba2tLy73abEAe1JpPNFe4NocK5dwlIe6DYyXA0EebE+opMUF+3gqUoBXKD/LWyoGOyNuz9gsEPdXgYikLaPAisnkwG84dszejyowPlN8KDv9k6mYL1xsQ/+/yd2ekP4woW59QIpE7CFNUf7j20trcV+bqG5Zjyfc6N8gc2D6se1BnogNNVwECK2qpIL4
-x-ms-office365-filtering-correlation-id: ad711d66-3f7d-4fc5-59a9-08d6222cdd5f
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0855;6:ERXHlzeM3OALlLSO5IlA2AA0bS1UtJJS6nudblg/TudPOvKEF/PcVAlxx1hb8Cm/TWkOJu2VlRW6xrUFM1fTOHhRX1kkKBqLIelkn5OkAm6MjDUdcD5OcVRBDSfDXfiMXjt4ar+JUJt7VXWWvDcV59dBbHJ0AESiPjDDIGzRx2Lp61H3mESsEISMe4x2rLGRkTEGYtrzd9zwXkLQCnPBcl0QIX+NQFb2e8LA5UbOCEqT9REBpU3fvOf0dyYxQ6EssJFoaW748E4tF80qhayK8eVauyggH+ynuIWPiSEj/MrO9uJPBdf9kUFLAxkDzWNlIHFgvG+QyLCv/t+B393uKvvrUBWFYx/1jlhbcYg/Z6hEr04g2aJRtc4kIZ7/qBRj8Lt5ur5DSv0v2gbBppRqOFlgrpZCAcT2/awIWiPBh+8CGieciXTy/7w2ga4rBau5+utY84xcq3GKWJjI3ehiSw==;5:31nCwt5OrmI7VWSuAIXteygDPtayd3SmdJYFixE8fmVEJrlruXGrDBNeYx+KTrvWhk7Xr6duBA9rX03gyVP1H3v2KyL4Y7/HBtJRLk4vKWD3pAUp05E80KlZR1qxBLCu8DmpumxpvsaGz3ehHz99rh9X7TLk6f5ZM5owZ7BeuVY=;7:57NM7Fhujnjy1ZEruWyG6Q/uORfHqScGIfJOJidlL+JYL9gTTM+wI3aar/1M54nRKUERRQZS6HX6XYrXKGGNBX3ZpWCjXC2mlgEK5dhWw73k6y1BtlRtATrou8QAR9Kv7ccywTBEdcxaSTgpbb6jOzQJO2njhoy+tlAflK/NCXsSkxplLM5zAdldN8/VNN9lzmikSamKkjEQ3XlJnm/Oq6zR1NV2edfgv6Jtw/TnX4MNxBjOXKEgxIrv9cFD423V
+x-ms-office365-filtering-correlation-id: 9ff954bd-9f2c-48a3-ae01-08d6222cd7f8
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0744;
-x-ms-traffictypediagnostic: CY4PR21MB0744:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0855;
+x-ms-traffictypediagnostic: CY4PR21MB0855:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0744AC44A81BDAE14483FA92FB170@CY4PR21MB0744.namprd21.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR21MB08554BCAADBBF75D91679D01FB170@CY4PR21MB0855.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0744;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0744;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0855;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0855;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(346002)(39860400002)(376002)(366004)(189003)(199004)(11346002)(446003)(476003)(86362001)(575784001)(186003)(81166006)(6506007)(8676002)(81156014)(6666003)(5660300001)(486006)(99286004)(53936002)(305945005)(6512007)(6436002)(2616005)(71200400001)(71190400001)(68736007)(6486002)(102836004)(10090500001)(7736002)(36756003)(97736004)(86612001)(316002)(3846002)(6116002)(1076002)(217873002)(256004)(54906003)(110136005)(107886003)(10290500003)(4326008)(478600001)(22452003)(15650500001)(5250100002)(26005)(8936002)(2906002)(2501003)(2900100001)(66066001)(72206003)(105586002)(14454004)(76176011)(25786009)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0744;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(486006)(81166006)(6436002)(110136005)(54906003)(10290500003)(6666003)(86362001)(446003)(6486002)(68736007)(2900100001)(86612001)(476003)(6512007)(1076002)(2616005)(305945005)(81156014)(105586002)(10090500001)(14454004)(71200400001)(106356001)(316002)(7736002)(71190400001)(478600001)(11346002)(6116002)(8936002)(5660300001)(3846002)(72206003)(97736004)(8676002)(6506007)(25786009)(36756003)(66066001)(2906002)(5250100002)(76176011)(26005)(217873002)(107886003)(186003)(256004)(102836004)(22452003)(2501003)(99286004)(53936002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0855;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: NjVwxmfDgFKvlBSdp1lcG6+2KeLxTarf1WYdROoPgXgMDqOyYWFFybo2pgogvBYAPVG8EAvbmUKk6n7UlppYFOIRgV3sHRuX7c+L/EdDuS8UmPAw7dX4n3DiYHeBlpfY2K+dLHFwvf7KByv8HiamIfZDzs3c7U1Fsj0oGM9lDSxsyqttACdnNv5RynlPYRadXugpEuViBlVIV8MladTZbTN1XkTaqWeGiSjkdYzlPKEiLRIr1nlSehZ+edkNnpI3nIxr7nPDwh1ucc3b8idWYK1HbtAcCzz12id0HNMvQuZhLZIGxaj8aV1F6428YVsZiCK+xsxgQJOf0unyF+raMRU1YGv+Kg8WmQNnnAjimFU=
+x-microsoft-antispam-message-info: 9iPBhbntklEnc9XaRYeVTMF8xUiE0oHnQU76yeq5s+WyFAS/Ak0SVWt7vEFjNKFofmRC2D6gpOF9kABbae35P6ExkbCtau27qxDgbqVR+WbpRen7hxuFXBO3oNQivaiXeqXxL4fOoPFiXNdF2d4QDl3Wa1mYc+IkQuYck7bTTB3J0HIFxQvzW68TVLyO5bljbGmAV0jtykgkWnYTEcbZ1yxO7FkgNjjjBEkd57vnupuSiyOeKWiCTgU4b7bJkV2S/8w6IFs3Ouck7x+x3ccnLDjKXglvD654IAPQO9o0K2PU4h3u/DYuajzHATvSCqpn5OM7Jjyhw2/x3JWdqL53wgc5lOGc0Qdsc0okBYGLEEw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad711d66-3f7d-4fc5-59a9-08d6222cdd5f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:34.6017
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ff954bd-9f2c-48a3-ae01-08d6222cd7f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:22.1785
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0744
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0855
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Baruch Siach <baruch@tkos.co.il>
 
-[ Upstream commit 4c85609b08c4761eca0a40fd7beb06bc650f252d ]
+[ Upstream commit c4053ef322081554765e1b708d6cdd8855e1d72d ]
 
-This driver currently emits a STOP if the next message is not
-I2C_MD_RD.  It should not do it because it disturbs the I2C_RDWR
-ioctl, where read/write transactions are combined without STOP
-between.
+Without a valid of_node in struct device we can't find the mvpp2 port
+device by its DT node. Specifically, this breaks
+of_find_net_device_by_node().
 
-Issue STOP only when the message is the last one _or_ flagged with
-I2C_M_STOP.
+For example, the Armada 8040 based Clearfog GT-8K uses Marvell 88E6141
+switch connected to the &cp1_eth2 port:
 
-Fixes: 6a62974b667f ("i2c: uniphier_f: add UniPhier FIFO-builtin I2C driver=
-")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+&cp1_mdio {
+	...
+
+	switch0: switch0@4 {
+		compatible =3D "marvell,mv88e6085";
+		...
+
+		ports {
+			...
+
+			port@5 {
+				reg =3D <5>;
+				label =3D "cpu";
+				ethernet =3D <&cp1_eth2>;
+			};
+		};
+	};
+};
+
+Without this patch, dsa_register_switch() returns -EPROBE_DEFER because
+of_find_net_device_by_node() can't find the device_node of the &cp1_eth2
+device.
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- drivers/i2c/busses/i2c-uniphier-f.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-u=
-niphier-f.c
-index 9918bdd81619..a403e8579b65 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -401,11 +401,8 @@ static int uniphier_fi2c_master_xfer(struct i2c_adapte=
-r *adap,
- 		return ret;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/=
+ethernet/marvell/mvpp2/mvpp2_main.c
+index 0319ed9ef8b8..189fd1fe4ace 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -4694,6 +4694,7 @@ static int mvpp2_port_probe(struct platform_device *p=
+dev,
+ 	dev->min_mtu =3D ETH_MIN_MTU;
+ 	/* 9704 =3D=3D 9728 - 20 and rounding to 8 */
+ 	dev->max_mtu =3D MVPP2_BM_JUMBO_PKT_SIZE;
++	dev->dev.of_node =3D port_node;
 =20
- 	for (msg =3D msgs; msg < emsg; msg++) {
--		/* If next message is read, skip the stop condition */
--		bool stop =3D !(msg + 1 < emsg && msg[1].flags & I2C_M_RD);
--		/* but, force it if I2C_M_STOP is set */
--		if (msg->flags & I2C_M_STOP)
--			stop =3D true;
-+		/* Emit STOP if it is the last message or I2C_M_STOP is set. */
-+		bool stop =3D (msg + 1 =3D=3D emsg) || (msg->flags & I2C_M_STOP);
-=20
- 		ret =3D uniphier_fi2c_master_xfer_one(adap, msg, stop);
- 		if (ret)
+ 	/* Phylink isn't used w/ ACPI as of now */
+ 	if (port_node) {
 --=20
 2.17.1
