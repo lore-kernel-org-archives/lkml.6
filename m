@@ -2,47 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D64EFECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738E8C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6032148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C6032148C
+	by mail.kernel.org (Postfix) with ESMTP id 31FCF21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31FCF21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388061AbeIXSdd (ORCPT
+        id S2388074AbeIXSdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:33:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58000 "EHLO
+        Mon, 24 Sep 2018 14:33:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58016 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730369AbeIXSdc (ORCPT
+        with ESMTP id S1733197AbeIXSdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:33:32 -0400
+        Mon, 24 Sep 2018 14:33:36 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 057D91098;
-        Mon, 24 Sep 2018 12:31:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A7FC1099;
+        Mon, 24 Sep 2018 12:31:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 043/235] mtd/maps: fix solutionengine.c printk format warnings
-Date:   Mon, 24 Sep 2018 13:50:29 +0200
-Message-Id: <20180924113109.492131457@linuxfoundation.org>
+Subject: [PATCH 4.18 079/235] arm64: dts: qcom: db410c: Fix Bluetooth LED trigger
+Date:   Mon, 24 Sep 2018 13:51:05 +0200
+Message-Id: <20180924113113.006165103@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -60,60 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-[ Upstream commit 1d25e3eeed1d987404e2d2e451eebac8c15cecc1 ]
+[ Upstream commit e53db018315b7660bb7000a29e79faff2496c2c2 ]
 
-Fix 2 printk format warnings (this driver is currently only used by
-arch/sh/) by using "%pap" instead of "%lx".
+Current LED trigger, 'bt', is not known/used by any existing driver.
+Fix this by renaming it to 'bluetooth-power' trigger which is
+controlled by the Bluetooth subsystem.
 
-Fixes these build warnings:
-
-../drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
-../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
-../drivers/mtd/maps/solutionengine.c:62:54: note: format string is defined here
-  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
-                                                  ~~~~^
-                                                  %08x
-../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
-../drivers/mtd/maps/solutionengine.c:62:72: note: format string is defined here
-  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
-                                                                    ~~~~^
-                                                                    %08x
-
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: linux-mtd@lists.infradead.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fixes: 9943230c8860 ("arm64: dts: qcom: Add apq8016-sbc board LED's related device nodes")
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/maps/solutionengine.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/maps/solutionengine.c
-+++ b/drivers/mtd/maps/solutionengine.c
-@@ -59,9 +59,9 @@ static int __init init_soleng_maps(void)
- 			return -ENXIO;
- 		}
- 	}
--	printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
--	       soleng_flash_map.phys & 0x1fffffff,
--	       soleng_eprom_map.phys & 0x1fffffff);
-+	printk(KERN_NOTICE "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
-+	       &soleng_flash_map.phys,
-+	       &soleng_eprom_map.phys);
- 	flash_mtd->owner = THIS_MODULE;
- 
- 	eprom_mtd = do_map_probe("map_rom", &soleng_eprom_map);
+--- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+@@ -338,7 +338,7 @@
+ 			led@6 {
+ 				label = "apq8016-sbc:blue:bt";
+ 				gpios = <&pm8916_mpps 3 GPIO_ACTIVE_HIGH>;
+-				linux,default-trigger = "bt";
++				linux,default-trigger = "bluetooth-power";
+ 				default-state = "off";
+ 			};
+ 		};
 
 
