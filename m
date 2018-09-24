@@ -2,146 +2,156 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164A7C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5B3ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33E42087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:47:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B33E42087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D3A8F20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:51:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A8F20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730475AbeIXVuD (ORCPT
+        id S1730116AbeIXVyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:50:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53776 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729013AbeIXVuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 17:50:03 -0400
-Received: from smtp.corp.redhat.com (int-mx11.intmail.prod.int.phx2.redhat.com [10.5.11.26])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6AF3137E60;
-        Mon, 24 Sep 2018 15:47:15 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 93B483091376;
-        Mon, 24 Sep 2018 15:47:11 +0000 (UTC)
-Subject: Re: [PATCH v12 9/9] cpuset: Support forced turning off of partition
- flag
-From:   Waiman Long <longman@redhat.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1535380884-31308-1-git-send-email-longman@redhat.com>
- <1535380884-31308-10-git-send-email-longman@redhat.com>
- <20180827164004.GE3978217@devbig004.ftw2.facebook.com>
- <0daf1f43-2292-0281-3ab8-aef20d0475dc@redhat.com>
- <7a57412b-ccdd-be20-529b-89f0737ce41d@redhat.com>
-Organization: Red Hat
-Message-ID: <be374350-df64-5685-2802-629d43b0b284@redhat.com>
-Date:   Mon, 24 Sep 2018 11:47:11 -0400
+        Mon, 24 Sep 2018 17:54:20 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:23184 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728280AbeIXVyT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 17:54:19 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w8OFn4Bd027910;
+        Mon, 24 Sep 2018 17:50:51 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2mnav5byjv-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 24 Sep 2018 17:50:50 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F24193A;
+        Mon, 24 Sep 2018 15:50:49 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C761AAA21;
+        Mon, 24 Sep 2018 15:50:49 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.46) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 24 Sep
+ 2018 17:50:48 +0200
+Subject: Re: [RESEND PATCH] Revert "pwm: Set class for exported channels in
+ sysfs"
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <stefan.wahren@i2se.com>, <gohai@sukzessiv.net>,
+        <hsweeten@visionengravers.com>, <gottfried.haider@gmail.com>,
+        <loic.pallardy@st.com>, <broonie@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+References: <1537538567-5377-1-git-send-email-fabrice.gasnier@st.com>
+ <20180924115301.GV21032@ulmo> <fc02ced1-01ba-dde4-95da-285d9351338b@st.com>
+ <20180924142318.GG23547@ulmo>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <c4866533-1c7e-2675-5d80-3b824e32ae9b@st.com>
+Date:   Mon, 24 Sep 2018 17:50:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <7a57412b-ccdd-be20-529b-89f0737ce41d@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180924142318.GG23547@ulmo>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.26
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 24 Sep 2018 15:47:15 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-09-24_09:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/06/2018 05:20 PM, Waiman Long wrote:
-> On 08/27/2018 01:50 PM, Waiman Long wrote:
->> On 08/27/2018 12:40 PM, Tejun Heo wrote:
->>> Hello, Waiman.
->>>
->>> On Mon, Aug 27, 2018 at 10:41:24AM -0400, Waiman Long wrote:
->>>> Cpuset allows arbitrary modification of cpu list in "cpuset.cpus"
->>>> even if the requested CPUs won't be granted in "cpuset.cpus.effective"
->>>> as restricted by its parent. However, the validate_change() function
->>>> will inhibit removal of CPUs that have been used in child cpusets.
+On 09/24/2018 04:23 PM, Thierry Reding wrote:
+> On Mon, Sep 24, 2018 at 03:59:03PM +0200, Fabrice Gasnier wrote:
+>> On 09/24/2018 01:53 PM, Thierry Reding wrote:
+>>> On Fri, Sep 21, 2018 at 04:02:47PM +0200, Fabrice Gasnier wrote:
+>>>> This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 as it causes
+>>>> regression with multiple pwm chip. It creates a new entry in
+>>>> '/sys/class/pwm' every time a 'pwmX' is exported with 'echo X > export':
+>>>> - 1st time export will create an entry in /sys/class/pwm/pwmX
+>>>> - when another export happens on another pwmchip, it can't be created
+>>>> (e.g. -EEXIST)
 >>>>
->>>> Being a partition root, however, limits the kind of cpu list
->>>> modification that is allowed. Adding CPUs is not allowed if the new
->>>> CPUs are not in the parent's effective cpu list that can be put into
->>>> "cpuset.cpus.reserved". In addition, a child partition cannot exhaust
->>>> all the parent's effective CPUs.
+>>>> This also changes existing ABI (Documentation/ABI/testing/sysfs-class-pwm):
+>>>> - pmwX should be there: /sys/class/pwm/pwmchipN/pwmX
 >>>>
->>>> Because of the implicit cpu exclusive nature of the partition root,
->>>> cpu changes that break that cpu exclusivity will not be allowed. Other
->>>> changes that break the conditions of being a partition root is generally
->>>> allowed. However, the partition flag of the cpuset as well those of
->>>> the descendant partitions will be forcefully turned off.
->>> First of all, thanks a lot for your persistence.  I'm not necessarily
->>> against the flag being forced off but wonder whether the same
->>> config/effective approach can be used as in .cpus and .mems.  Can you
->>> elaborate a bit on the choice here?
+>>>> Example on stm32 (stm32429i-eval) platform:
+>>>> $ ls /sys/class/pwm
+>>>> pwmchip0 pwmchip4
+>>>>
+>>>> $ cd /sys/class/pwm/pwmchip0/
+>>>> $ echo 0 > export
+>>>> $ ls /sys/class/pwm
+>>>> pwm0 pwmchip0 pwmchip4
+>>>>
+>>>> $ cd /sys/class/pwm/pwmchip4/
+>>>> $ echo 0 > export
+>>>> sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+>>>> ...Exception stack follows...
+>>>>
+>>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>>>> ---
+>>>>  drivers/pwm/sysfs.c | 1 -
+>>>>  1 file changed, 1 deletion(-)
 >>>
->>> Thank you.
->> My current code has explicitly assumed the following relationship for
->> partition root.
+>>> Can we come up with an alternative that allows us to have both? We want
+>>> uevent and proper sysfs creation, or is that not possible?
 >>
->>     cpus_allowed = effective_cpus + reserved_cpus
+>> Hi Thierry, all,
 >>
->> Also effective_cpus cannot be empty. Specifically, cpus_allowed has to
->> be equal to effective_cpus before a cpuset can be made a partition root.
+>> With current approach:
+>> - "export->child.class = parent->class"
+>> - ABI (e.g. "pwm%d") device name isn't unique with multiple pwm chip.
+>> I think this is not possible.
 >>
->> Any changes that break the above conditions will turn off the partition
->> flag forcefully. The only exception is cpu offlining where cpus_allowed
->>> effective_cpus + reserved_cpus can happen.
->> One reason for doing so is because reserved_cpus is hidden. So the main
->> way to infer that is to do cpus_allowed - effective_cpus.
+>> Trying to think of an alternative... I just did a quick test, by
+>> changing device name, to take pwmchip into account:
+>> +       export->child.class = parent->class;
+>>         export->child.release = pwm_export_release;
+>>         export->child.parent = parent;
+>>         export->child.devt = MKDEV(0, 0);
+>>         export->child.groups = pwm_groups;
+>> -       dev_set_name(&export->child, "pwm%u", pwm->hwpwm);
+>> +       dev_set_name(&export->child, "pwmchip%d-pwm%u", chip->base,
+>> pwm->hwpwm);
 >>
->> It is probably doable to make cpus_allowed >= effective_cpus +
->> reserved_cpus in general, but we may need to expose reserved_cpus as a
->> read-only file, for instance. There may also be other complications that
->> we will need to take care of if this is supported. My current preference
->> is to not doing that unless there is compelling reason to do so.
->>
->> Cheers,
->> Longman
-> For the current patch, one of conditions to allow users to turn on the
-> partition flag is cpus_allowed = effective_cpus. Once the partition flag
-> is on, the twos have to be the same too except with cpu offlining. This
-> patch is added to allow arbitrary modification to the cpuset.cpus file
-> except those that have already been forbidden in the existing code. When
-> the modification violates the rules of being a partition root, the flag
-> will be turned off or we will have to deny the modification request.
->
-> I am admitting that it is an easy way out in term of programming effort
-> as I am not sure how much effort is needed to enable arbitrary
-> modification to cpuset.cpus without force disabling and whether such an
-> effort is even worthwhile to do.
->
-> We can certainly relax the current restrictions in the future.  Any
-> suggestion to improve the patchset is welcome. I would really like to
-> see this merged in 4.20 (or maybe 5.0) kernel.
->
-> Cheers,
-> Longman
->
-Tejun,
+>> But this also impacts existing ABI :-(
+>> Would you have suggestions to send an uevent, without modifying ABI ?
+> 
+> I don't quite understand why, in the example you show in the commit
+> message, the pwmX nodes appear in the top-level /sys/class/pwm
+> directory. According to Documentation/ABI/testing/sysfs-class-pwm they
+> should appear as /sys/class/pwm/pwmchipN/pwmX. I can only imagine that
+> setting the class may have changed that.
 
-Sorry for bothering you again.
+Yes, adding the class makes the link to be created under /sys/class/pwm:
+device_register() -> device_add() -> device_add_class_symlinks()
+In device_add_class_symlinks():
+...
+	if (!dev->class)
+		return 0;
+...
+	/* link in the class directory pointing to the device */
+	error = sysfs_create_link(&dev->class->p->subsys.kobj,
+				  &dev->kobj, dev_name(dev));
+...
 
-I would like to know your assessment of this patchset as to whether it
-is ready or not.
+> If so, perhaps we can
+> workaround that by creating a new class that is not parent->class?
 
-Thanks,
-Longman
+And this link is added using dev_name(). So I doubt adding a new class
+will change the current behavior.
 
+> 
+> Thierry
+> 
