@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F66ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595FCECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED3EE2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:40:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED3EE2083A
+	by mail.kernel.org (Postfix) with ESMTP id 1F6E12083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6E12083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388686AbeIXSmy (ORCPT
+        id S2388698AbeIXSm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:42:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59066 "EHLO
+        Mon, 24 Sep 2018 14:42:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388675AbeIXSmx (ORCPT
+        with ESMTP id S1733116AbeIXSm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:42:53 -0400
+        Mon, 24 Sep 2018 14:42:57 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B488109F;
-        Mon, 24 Sep 2018 12:40:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6AFBD109E;
+        Mon, 24 Sep 2018 12:40:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        "D. Ziesche" <dziesche@zes.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.18 127/235] USB: net2280: Fix erroneous synchronization change
-Date:   Mon, 24 Sep 2018 13:51:53 +0200
-Message-Id: <20180924113118.699783973@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.18 128/235] USB: serial: io_ti: fix array underflow in completion handler
+Date:   Mon, 24 Sep 2018 13:51:54 +0200
+Message-Id: <20180924113118.783684742@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,115 +51,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Johan Hovold <johan@kernel.org>
 
-commit dec3c23c9aa1815f07d98ae0375b4cbc10971e13 upstream.
+commit 691a03cfe8ca483f9c48153b869d354e4ae3abef upstream.
 
-Commit f16443a034c7 ("USB: gadgetfs, dummy-hcd, net2280: fix locking
-for callbacks") was based on a serious misunderstanding.  It
-introduced regressions into both the dummy-hcd and net2280 drivers.
+As reported by Dan Carpenter, a malicious USB device could set
+port_number to a negative value and we would underflow the port array in
+the interrupt completion handler.
 
-The problem in dummy-hcd was fixed by commit 7dbd8f4cabd9 ("USB:
-dummy-hcd: Fix erroneous synchronization change"), but the problem in
-net2280 remains.  Namely: the ->disconnect(), ->suspend(), ->resume(),
-and ->reset() callbacks must be invoked without the private lock held;
-otherwise a deadlock will occur when the callback routine tries to
-interact with the UDC driver.
+As these devices only have one or two ports, fix this by making sure we
+only consider the seventh bit when determining the port number (and
+ignore bits 0xb0 which are typically set to 0x30).
 
-This patch largely is a reversion of the relevant parts of
-f16443a034c7.  It also drops the private lock around the calls to
-->suspend() and ->resume() (something the earlier patch forgot to do).
-This is safe from races with device interrupts because it occurs
-within the interrupt handler.
-
-Finally, the patch changes where the ->disconnect() callback is
-invoked when net2280_pullup() turns the pullup off.  Rather than
-making the callback from within stop_activity() at a time when dropping
-the private lock could be unsafe, the callback is moved to a point
-after the lock has already been dropped.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Fixes: f16443a034c7 ("USB: gadgetfs, dummy-hcd, net2280: fix locking for callbacks")
-Reported-by: D. Ziesche <dziesche@zes.com>
-Tested-by: D. Ziesche <dziesche@zes.com>
-CC: <stable@vger.kernel.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/udc/net2280.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/usb/serial/io_ti.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/gadget/udc/net2280.c
-+++ b/drivers/usb/gadget/udc/net2280.c
-@@ -1545,11 +1545,14 @@ static int net2280_pullup(struct usb_gad
- 		writel(tmp | BIT(USB_DETECT_ENABLE), &dev->usb->usbctl);
- 	} else {
- 		writel(tmp & ~BIT(USB_DETECT_ENABLE), &dev->usb->usbctl);
--		stop_activity(dev, dev->driver);
-+		stop_activity(dev, NULL);
- 	}
+--- a/drivers/usb/serial/io_ti.h
++++ b/drivers/usb/serial/io_ti.h
+@@ -173,7 +173,7 @@ struct ump_interrupt {
+ }  __attribute__((packed));
  
- 	spin_unlock_irqrestore(&dev->lock, flags);
  
-+	if (!is_on && dev->driver)
-+		dev->driver->disconnect(&dev->gadget);
-+
- 	return 0;
- }
- 
-@@ -2466,8 +2469,11 @@ static void stop_activity(struct net2280
- 		nuke(&dev->ep[i]);
- 
- 	/* report disconnect; the driver is already quiesced */
--	if (driver)
-+	if (driver) {
-+		spin_unlock(&dev->lock);
- 		driver->disconnect(&dev->gadget);
-+		spin_lock(&dev->lock);
-+	}
- 
- 	usb_reinit(dev);
- }
-@@ -3341,6 +3347,8 @@ next_endpoints:
- 		BIT(PCI_RETRY_ABORT_INTERRUPT))
- 
- static void handle_stat1_irqs(struct net2280 *dev, u32 stat)
-+__releases(dev->lock)
-+__acquires(dev->lock)
- {
- 	struct net2280_ep	*ep;
- 	u32			tmp, num, mask, scratch;
-@@ -3381,12 +3389,14 @@ static void handle_stat1_irqs(struct net
- 			if (disconnect || reset) {
- 				stop_activity(dev, dev->driver);
- 				ep0_start(dev);
-+				spin_unlock(&dev->lock);
- 				if (reset)
- 					usb_gadget_udc_reset
- 						(&dev->gadget, dev->driver);
- 				else
- 					(dev->driver->disconnect)
- 						(&dev->gadget);
-+				spin_lock(&dev->lock);
- 				return;
- 			}
- 		}
-@@ -3405,6 +3415,7 @@ static void handle_stat1_irqs(struct net
- 	tmp = BIT(SUSPEND_REQUEST_CHANGE_INTERRUPT);
- 	if (stat & tmp) {
- 		writel(tmp, &dev->regs->irqstat1);
-+		spin_unlock(&dev->lock);
- 		if (stat & BIT(SUSPEND_REQUEST_INTERRUPT)) {
- 			if (dev->driver->suspend)
- 				dev->driver->suspend(&dev->gadget);
-@@ -3415,6 +3426,7 @@ static void handle_stat1_irqs(struct net
- 				dev->driver->resume(&dev->gadget);
- 			/* at high speed, note erratum 0133 */
- 		}
-+		spin_lock(&dev->lock);
- 		stat &= ~tmp;
- 	}
- 
+-#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 4) - 3)
++#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 6) & 0x01)
+ #define TIUMP_GET_FUNC_FROM_CODE(c)	((c) & 0x0f)
+ #define TIUMP_INTERRUPT_CODE_LSR	0x03
+ #define TIUMP_INTERRUPT_CODE_MSR	0x04
 
 
