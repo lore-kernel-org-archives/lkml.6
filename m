@@ -7,85 +7,80 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08493C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 486B1ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7E8214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE51320C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:51:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QP0WZ5E1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7E8214D5
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gDCZCrBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE51320C0A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389080AbeIXUyU (ORCPT
+        id S2389194AbeIXUyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:54:20 -0400
-Received: from mail-eopbgr680104.outbound.protection.outlook.com ([40.107.68.104]:38589
+        Mon, 24 Sep 2018 16:54:23 -0400
+Received: from mail-eopbgr680134.outbound.protection.outlook.com ([40.107.68.134]:2178
         "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732020AbeIXUyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:54:19 -0400
+        id S1731884AbeIXUyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:54:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+CA31oncrAU/LPnHfLxpamLXOwfPp+Im5W/lnnM9nKU=;
- b=QP0WZ5E1UUHIKk9MF4/dAS3XiD6bqOSXI4e3nGC6efOUqt6aVuL/mluVnwbhsTtjJpVquGnkCifwTJFE479t1v/FG6padE6ZdVk9sMppMwG8AFVb0Y2hn8Qhx9vK/E8TUNJxrJfcPK5blFVeJ6c+JtBVNL+xePOr1Q/nRIWuMqY=
+ bh=dxkfIFAaCLKAUnSQFrla/o8zNljnWaZuSDNy6m4y4H8=;
+ b=gDCZCrBAuWi1Q9eS3sfZj7Sdq7zp8DZbcGZ8t8XDIVZFWWyD2BxE1aev01BtYKaxWHVh75KjO25Nb59nxgW2q6Jp8U/tOxRBk1E+VObd3g0cPJZAyvwB0ThXulMzwSK1b7U6S3RSuqO0qQs4B+YQGVKuVLuYMki0JbwhnUjCJa0=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0631.namprd21.prod.outlook.com (10.175.115.21) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.2; Mon, 24 Sep 2018 14:51:46 +0000
+ 15.20.1207.2; Mon, 24 Sep 2018 14:51:47 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:51:46 +0000
+ 14:51:47 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+CC:     Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.4 17/18] tools/vm/slabinfo.c: fix sign-compare
- warning
-Thread-Topic: [PATCH AUTOSEL 4.4 17/18] tools/vm/slabinfo.c: fix sign-compare
- warning
-Thread-Index: AQHUVBXabke0dws4MEmsKL85PUulMA==
-Date:   Mon, 24 Sep 2018 14:49:54 +0000
-Message-ID: <20180924144942.164688-17-alexander.levin@microsoft.com>
-References: <20180924144942.164688-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144942.164688-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 3.18 01/13] KVM: PPC: Book3S HV: Don't truncate HPTE
+ index in xlate function
+Thread-Topic: [PATCH AUTOSEL 3.18 01/13] KVM: PPC: Book3S HV: Don't truncate
+ HPTE index in xlate function
+Thread-Index: AQHUVBXjHorlgXk+40aHxySBpnmkyw==
+Date:   Mon, 24 Sep 2018 14:50:08 +0000
+Message-ID: <20180924144959.164754-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0631;6:iIz9NEwM/pnF1tQ4jvyO0OX0c93dh6Pm530HPELIJWxQIk8LXLiNWRPiaMs16vUhfEasERs3TfjIfhZ+Xc+hb5JxRJHu5FBblUg0VpPAUu83Ps9vFGa0AyBl609taOFkFULozDH9xUdnUFwUZkOeFonIuPFEhBLuUKb10HXwKQOjrDijGxaS0GXtCbsl7lua08ZJObfI6ln4YPuEeF5+jF8Jfp6DgqGSqzlF/g9mQFUK/siCv9Ndh5rnJpU066zsW3DFCH85zN2LnNZDvfpdsbmA7jDAdVvb3v2oHEpnsk/CpbxKEAZV3HBegqaVKK53iibCC/tcWrSM/bFTpI1UTztU5yOtRoa/nXML+vf7RX3/69eZFq11u+fylPmArgkityeBhSoVA6Lp/6hz3p0gbyIDJR/HNL7r25RxXVB2Dquplw6CGXn0hDpRivJH1CGIHw1vMAn7lgvX4bXfcB5yAA==;5:imA3FcOQNLNhc4hPmyP9blAZObgW3SWIUgPSW7bkWfkxJwrdEst5f1D0wQ8n1Yb0T+moKoAfjTvkFQ2GFWtpOi4ctui29GqlQw4UtJ6oR4EFJ3KHM6VDdG8FtqhEENK1gdz0CIJfnNnDHFU9sQgpOED903aK6KmGSI/uPRJsD9U=;7:NBRSLBaOdH9Emro7Zbqg4pERV2W2QgNMDteUdgfkqRyPgObUAMtd/xsNY9THCzoWStUJY8g0NYLQfNR/rpIPHwlJOVJkJJQRltUyM/LF9ooWJEh2xR6JMJGjhUgjaq3+7RVtYiI3hpsCaxwpU6Druk36GePL8qv0foVJJ3G/WxooI3u6FN9321pou+XOYxpsCGE1BoB8bEhhhobtQyoy+zynsSUOlMMf7cO+Y2ee0E/ajEARZUb1+M0YCDXqLPzy
-x-ms-office365-filtering-correlation-id: 79b95ac9-d0b2-45d0-261f-08d6222d4059
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0631;6:Iz2FOEj5RVJZyP+9LsovBB8G5um+3f536sbJKm3r9m8hBS18UzJW3rlxggW/H+IfU6efjXzcBc/qO+nPupr49LMuq+6/c/Djbvg7yQ5SqSu1KFDPBSOXwjeQBDL5Ecsu/WUFJO/gFG7UMARU+gQifqLdBBsvT+lnbOshn2N7mUgeT7ZFTxA4/Z5I2mM0Vh2SCfeELr8iK7cqeci3Qp1P/ZNms13BNabfFWnHOqumneDkGj/EXv4GdQsnjOme9DS1ZqMWrocXAJanzUCRMEVFMLSvd4gip5Tad+VZ48096puGJXP/0VLx4VG2nQyLNVWDfVq1yF3y5Vk86AZyaLYjFcErVFN17qc1xslGi8BTo00/2R4hDripjbtejOcDQ7DDqyzrYQE5b6srBhGDH5KeGhlxyCiHk30gCWLvWTADy1XV0xQD8n5X8moG+Q0VnKlHvCHfoD7pvqPAgSGVvF8C9g==;5:gf0JfGacjgmktjYUezVp+w802iaB6tLok0M6ReQ6scjGCHE5fFJSyxGHLlSDSTCPU6DSbJFF4dsFju88LK1u/NcO076R9D229Zz3H280R5kWU7Wgc0ZMRUJNkDD87jlYE6OCtREsJpPa2lREovTtlsCKVCmWevo/l+sZuUMWqlc=;7:7amZJ6HCTf1qnJ7MohbdkmHhjZuz3mQxOi5U1GlcjwXSKX/n+yrQzd836mKZNiGRiJt+7OSU1wnGCRwtJr9fX+MseLYwtRSZCys7SLp6GO/raRGBdfh1e1nu7TW9X5CBgckAulcwbn04Tzu1/WFjai62I4cWJQYAUUz92c4be+b0QM+GnSfuV22ganE+AiDSLFyO4gfXcc4x/87l1Mj0me2dNpbfiGcEOh8pSTpQTui3mlhbeAehFeJzRfebshcg
+x-ms-office365-filtering-correlation-id: 611f6c20-6a84-4d7d-1f3d-08d6222d40ba
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0631;
 x-ms-traffictypediagnostic: CY4PR21MB0631:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB0631DD68E93015FB3010AABFFB170@CY4PR21MB0631.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(42068640409301)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB06310C7FFEE26C91F5993CF2FB170@CY4PR21MB0631.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(2018427008)(3002001)(10201501046)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0631;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0631;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(396003)(346002)(366004)(376002)(199004)(189003)(10290500003)(316002)(8936002)(66066001)(4326008)(107886003)(6666003)(6306002)(22452003)(6512007)(25786009)(110136005)(54906003)(305945005)(68736007)(53936002)(7736002)(99286004)(5660300001)(2900100001)(6486002)(186003)(97736004)(26005)(6436002)(217873002)(71190400001)(10090500001)(1076002)(71200400001)(2616005)(11346002)(446003)(476003)(5250100002)(3846002)(486006)(2501003)(14444005)(256004)(86612001)(105586002)(966005)(14454004)(86362001)(81156014)(81166006)(106356001)(76176011)(72206003)(2906002)(478600001)(36756003)(102836004)(8676002)(6506007)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0631;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(396003)(346002)(366004)(376002)(199004)(189003)(10290500003)(316002)(8936002)(66066001)(4326008)(107886003)(6666003)(22452003)(6512007)(25786009)(110136005)(54906003)(305945005)(68736007)(53936002)(7736002)(99286004)(5660300001)(2900100001)(6486002)(186003)(97736004)(26005)(6436002)(217873002)(71190400001)(10090500001)(1076002)(71200400001)(2616005)(476003)(5250100002)(3846002)(486006)(2501003)(14444005)(256004)(86612001)(105586002)(14454004)(86362001)(575784001)(81156014)(81166006)(106356001)(72206003)(2906002)(478600001)(36756003)(102836004)(8676002)(6506007)(6116002)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0631;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: Ii9zz9oINE5Os/bYhxPLXJNjBEVJkrAVG6YYQ26LTtWAclome6+R6tLgslYz0W6BYrElrH7RL3A5UfLs84IgA1TuOIWN0X6CXuEGfasdLgkccvyEoumUtxOwvjFQAyHkJiEVzOJPlsmclI+iom0e1XOH42GFE4AmpogcJUrpRUlL49QmIjieOFXNlOoS06bo21fFxy/Gq21/uhZ2zJFYECPzOgUZRkin0gDLHEOTr8ip1mKyg5Ef+dYvs9vrAtBNisbqz+szGyYM7rZH+0uyhMFxg87PD2OhtcdqZ3LI3RcP5NkenebBGH2PHBNH5Q/bcOUod7B1RFoooddPh3T0oUFpetNNjw09KniyB7PETzQ=
+x-microsoft-antispam-message-info: 12ITiA7jlIp3F96oRtSs8NmtrOxgHZZVA5x9M31dfWG3Lj/BEG2Lmg0MWl8xQ6Wd702pwC6qPDr4/Nr2iPfJLLOhavq96kZiZGN0z/jWX3sLFp8fsnMeB7X64qZwrjDLsaRy4JZoDvSMPgPwMmTcW8/NsZxJEQmrE7iqk8vHure7OrXdjeKtDFt31WnLGQqbvA8BFUbIRv7w2Fk3LUwDv1zMkHlln3UoeVSKFHcGRAcGmfq6tXLGBrXp10qzhr23hGweArv2IfmpcP5iiHNC9lZH0I4Y9MTPkd5ChKRnnSnxsbcqYJ+F0FRzNLVkGvCH1zh94l+kLiyA90DZx422YCZytc/f5IBzKkR5KDwGBPo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79b95ac9-d0b2-45d0-261f-08d6222d4059
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:49:54.0762
+X-MS-Exchange-CrossTenant-Network-Message-Id: 611f6c20-6a84-4d7d-1f3d-08d6222d40ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:50:08.1007
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -95,51 +90,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-[ Upstream commit 904506562e0856f2535d876407d087c9459d345b ]
+[ Upstream commit 46dec40fb741f00f1864580130779aeeaf24fb3d ]
 
-Currently we get the following compiler warning:
+This fixes a bug which causes guest virtual addresses to get translated
+to guest real addresses incorrectly when the guest is using the HPT MMU
+and has more than 256GB of RAM, or more specifically has a HPT larger
+than 2GB.  This has showed up in testing as a failure of the host to
+emulate doorbell instructions correctly on POWER9 for HPT guests with
+more than 256GB of RAM.
 
-    slabinfo.c:854:22: warning: comparison between signed and unsigned inte=
-ger expressions [-Wsign-compare]
-       if (s->object_size < min_objsize)
-                          ^
+The bug is that the HPTE index in kvmppc_mmu_book3s_64_hv_xlate()
+is stored as an int, and in forming the HPTE address, the index gets
+shifted left 4 bits as an int before being signed-extended to 64 bits.
+The simple fix is to make the variable a long int, matching the
+return type of kvmppc_hv_find_lock_hpte(), which is what calculates
+the index.
 
-due to the mismatch of signed/unsigned comparison.  ->object_size and
-->slab_size are never expected to be negative, so let's define them as
-unsigned int.
-
-[n-horiguchi@ah.jp.nec.com: convert everything - none of these can be negat=
-ive]
-  Link: http://lkml.kernel.org/r/20180826234947.GA9787@hori1.linux.bs1.fc.n=
-ec.co.jp
-Link: http://lkml.kernel.org/r/1535103134-20239-1-git-send-email-n-horiguch=
-i@ah.jp.nec.com
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 697d3899dcb4 ("KVM: PPC: Implement MMIO emulation support for Book3S=
+ HV guests")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- tools/vm/slabinfo.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/kvm/book3s_64_mmu_hv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
-index 499b8819d4c6..5173a191cd03 100644
---- a/tools/vm/slabinfo.c
-+++ b/tools/vm/slabinfo.c
-@@ -29,8 +29,8 @@ struct slabinfo {
- 	int alias;
- 	int refs;
- 	int aliases, align, cache_dma, cpu_slabs, destroy_by_rcu;
--	int hwcache_align, object_size, objs_per_slab;
--	int sanity_checks, slab_size, store_user, trace;
-+	unsigned int hwcache_align, object_size, objs_per_slab;
-+	unsigned int sanity_checks, slab_size, store_user, trace;
- 	int order, poison, reclaim_account, red_zone;
- 	unsigned long partial, objects, slabs, objects_partial, objects_total;
- 	unsigned long alloc_fastpath, alloc_slowpath;
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_=
+64_mmu_hv.c
+index d40770248b6a..191cc3eea0bf 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -449,7 +449,7 @@ static int kvmppc_mmu_book3s_64_hv_xlate(struct kvm_vcp=
+u *vcpu, gva_t eaddr,
+ 	unsigned long pp, key;
+ 	unsigned long v, gr;
+ 	__be64 *hptep;
+-	int index;
++	long int index;
+ 	int virtmode =3D vcpu->arch.shregs.msr & (data ? MSR_DR : MSR_IR);
+=20
+ 	/* Get SLB entry */
 --=20
 2.17.1
