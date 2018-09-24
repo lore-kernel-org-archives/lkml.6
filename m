@@ -2,94 +2,161 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353C7ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B46ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C652145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:19:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67DAC2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 19:21:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="aImLHIow"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C652145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p1lJ790A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67DAC2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733119AbeIYBXg (ORCPT
+        id S1732135AbeIYBZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:23:36 -0400
-Received: from mail-io1-f53.google.com ([209.85.166.53]:35005 "EHLO
-        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733021AbeIYBXe (ORCPT
+        Mon, 24 Sep 2018 21:25:01 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52530 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728480AbeIYBZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:23:34 -0400
-Received: by mail-io1-f53.google.com with SMTP id w11-v6so18567832iob.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 12:19:56 -0700 (PDT)
+        Mon, 24 Sep 2018 21:25:00 -0400
+Received: by mail-it1-f196.google.com with SMTP id h3-v6so12168725ita.2;
+        Mon, 24 Sep 2018 12:21:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=V11HxGJSV4NsfO29qz2DLGMkhXDR/6A+HxNpla8+LJs=;
-        b=aImLHIowLl4LJH/zfiKN6uFXfYWYRoMGVt72XLd8c/G6SY8aY80bzRXWomROCNd2At
-         zoWvUVwPGLMYbEyneHAfah9AcJfWhqbeDt8uF3Y2YE7+CLunToO/XXmBiJZkenC6h561
-         3P563YBWkTTzOOhQDT4bNLMBBd24DRfs8RjD5M+H5dob/WmXB2ifQu69hjRFy91ldvCI
-         O0Q5oC0qCb55XW8sPyWa1ZQAwEkhxpZj65rd+R1kVLIL/Up8nvbDp5lNdDAiuGObNVVr
-         T4OZSdnqE8xvDeK1F+Jx5+Gttm6rrydthExuQ5f9NiaGNXg99XcYc7zkryObwDKABrja
-         rhrA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cvUqa3TPohGPYqnxh6FE0UKZREDWuGizqnxBQq1Ktdc=;
+        b=p1lJ790ABoxf1qaC8yQFtRZe0wP8awEVTdwEIKVNf2p1VDGrbawzpuFMmoze1N097o
+         /Rw9ew0/pDw2wApKAfnlDFQPOKKgcqiVqcFcP8wKtB9X5OsbIcZ7bdQnrDokP3BXFf5T
+         a75siIsu1lPIAYzEy1cEY3+hnHZOXnJKRmlpFWRdl1UrKudItAC3nOTtyuyOhN12NtNW
+         0id32CZDoYC9+17xcwtQC5Yf5aqg/P189Afl3T4ROX+s9stwz4yqH7SdxBzx9gjrXkg2
+         kczR+Mve8h68GWl9Yqhn/SGrxib0sEN32cSmY/m6VFsDKLpylAqnL0Kn4R/Aa//uKZOB
+         ZiZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=V11HxGJSV4NsfO29qz2DLGMkhXDR/6A+HxNpla8+LJs=;
-        b=MSfpM2mgjiAo9gsERcVQe2lzFRcXuIwngHYULKcAyJqiB2hhI0GKYItxzc2nyTFARv
-         tnYIP0xmpcZ1PybZlb8a82+HsU+prpl5xs1fY8/KnPxPIFYqho7b6DP1BQvxExXMiUBC
-         o/YnmSF7Pp6GVGt2Dl2HGCAwJo7LDMl2dVFR0nEzljFn7ynrKYPleI/phRc0MoJtwDqk
-         ANFX5+s1Z8oF0U8uP3DHqpbCCzWsy01y5H1XmKyY2iYEbtgemAgaiWESkOa8PzFpCNR7
-         SL/D0J/wBvnSz7rkJufEQ72oqTCqjXNp1eSJLmFldVyJWOC06/Pj/GwZpCCGtM+w2jjC
-         x8dQ==
-X-Gm-Message-State: ABuFfogcaeAIqSQAmXJ642wt6W774+OYVwBu54sJFaBzzJNQtHZrpw6f
-        3RlfS6DkKIHpjIiTUmmBUcDZdMcla2M=
-X-Google-Smtp-Source: ACcGV61KTg/M1GQ4DUjsYUuvFjhCMiYqNTGlpEtndK14/9rpfp6FY3vV6zJ1Tzpn1SVY5dk1NXeuig==
-X-Received: by 2002:a6b:671c:: with SMTP id b28-v6mr265170ioc.22.1537816795346;
-        Mon, 24 Sep 2018 12:19:55 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id l19-v6sm2734232iti.4.2018.09.24.12.19.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 12:19:54 -0700 (PDT)
-Subject: Re: libata-core WARNING during boot
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-ide@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <b9b55c84-a90c-e7ac-add7-fdf1b7e13dc6@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0d5420a4-dd7c-1810-2fbd-0840372a5ba3@kernel.dk>
-Date:   Mon, 24 Sep 2018 13:19:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cvUqa3TPohGPYqnxh6FE0UKZREDWuGizqnxBQq1Ktdc=;
+        b=Wa3n//wYHcLx/4pK+UTxg88sEeGg9kl/AUg2Vd3jIvr34BiKud5C1TWb3qpzovmtjq
+         Z1O6GHNdfdhHDgGsU3Id4mD+gCDcdzOemdMvtRKSjwb0+LKJjeGOvHo3CpmiGeqIjGzb
+         N1ENy6Ykqnu345ZTyKNQ43HWrmfUlbqZW2P9BKxjAOU3dJGmeo7p7l08d4scV6YjJ96u
+         IYggcOPxmG106IosscfYSfLgF4VGSoOqA+7BkMppjSUk4m8ezdxv1622jbBKHfOVRcCZ
+         zJsOIeuCHdM6f4EXEBrLBq/ZEaF6XzE/DwIVxFfPpl3f7E5q2btOm9WRAhQeEIJ5amLv
+         d+Hw==
+X-Gm-Message-State: ABuFfohsQHV+IJh4F0QMozwESWKPOnhFU5ZyK6muwqUekHj5ADefcQL1
+        yZN65odsTKy7yF58yUGhyHQHVNPkbqTpgSBTNps=
+X-Google-Smtp-Source: ACcGV60bmX5DngUME8Kd+dCbvgauqks2+IfQ7B4u4iCr/fxyO5uPyRDB30/xL9F+ozXDgTjm91j6NRLLfgve6+tygMc=
+X-Received: by 2002:a24:3b0e:: with SMTP id c14-v6mr8658668ita.42.1537816880927;
+ Mon, 24 Sep 2018 12:21:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b9b55c84-a90c-e7ac-add7-fdf1b7e13dc6@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20170309141443.20564-1-george.mccollister@gmail.com>
+In-Reply-To: <20170309141443.20564-1-george.mccollister@gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 24 Sep 2018 14:21:09 -0500
+Message-ID: <CAHCN7xLEHw4vN8gud+vPkVBX3tSsBM1HTnRCi6fF3VxYiQYfmA@mail.gmail.com>
+Subject: Re: [PATCH] regulator: pfuze100-regulator: add coin support
+To:     george.mccollister@gmail.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/23/18 9:34 PM, Randy Dunlap wrote:
-> Hi,
-> 
-> I'm having (repeatable) problems booting 4.18 and 4.18.9 (latest stable):
-> 
-> WARNING: CPU: 1 PID: 1 at ../drivers/ata/libata-core.c:6677 ata_host_detach+0x6e/0x150
-> 
-> 
-> It never completes the boot.  Could that be due to this eh warning?
+On Thu, Mar 9, 2017 at 8:17 AM George McCollister
+<george.mccollister@gmail.com> wrote:
+>
+> Add support for PF0200 coin cell/super capacitor charger which works as
+> a current limited voltage source via the LICELL pin. When VIN goes below
+> a certain threshold LICELL is used to provide power for VSNVS which is
+> usually used to hold up secure non-volatile storage and the real-time
+> clock on the SoC.
+>
 
-Is this a new issue? Not quite clear based on your report.
+I know this is patch is an old thread by now, but is there something
+precluding this from being added the pfuze100 as well?
 
--- 
-Jens Axboe
+[snip]
 
+I am trying to add:
+
+@@ -324,6 +324,7 @@ static struct pfuze_regulator pfuze100_regulators[] =3D=
+ {
+        PFUZE100_VGEN_REG(PFUZE100, VGEN4, PFUZE100_VGEN4VOL, 1800000,
+3300000, 100000),
+        PFUZE100_VGEN_REG(PFUZE100, VGEN5, PFUZE100_VGEN5VOL, 1800000,
+3300000, 100000),
+        PFUZE100_VGEN_REG(PFUZE100, VGEN6, PFUZE100_VGEN6VOL, 1800000,
+3300000, 100000),
++       PFUZE100_COIN_REG(PFUZE100, COIN, PFUZE100_COINVOL, 0x7, pfuze100_c=
+oin),
+ };
+
+ static struct pfuze_regulator pfuze200_regulators[] =3D {
+@@ -377,6 +378,7 @@ static struct of_regulator_match pfuze100_matches[] =3D=
+ {
+        { .name =3D "vgen4",      },
+        { .name =3D "vgen5",      },
+        { .name =3D "vgen6",      },
++       { .name =3D "coin",       },
+ };
+
+but I am getting bulid errors:
+
+drivers/regulator/pfuze100-regulator.c:327:20: error: =E2=80=98PFUZE100_COI=
+N=E2=80=99
+undeclared here (not in a function); did you mean =E2=80=98PFUZE200_COIN=E2=
+=80=99?
+  PFUZE100_COIN_REG(PFUZE100, COIN, PFUZE100_COINVOL, 0x7, pfuze100_coin),
+                    ^~~~~~~~
+drivers/regulator/pfuze100-regulator.c:240:3: note: in definition of
+macro =E2=80=98PFUZE100_COIN_REG=E2=80=99
+  [_chip ## _ ##  _name] =3D { \
+   ^~~~~
+drivers/regulator/pfuze100-regulator.c:327:20: error: array index in
+initializer not of integer type
+  PFUZE100_COIN_REG(PFUZE100, COIN, PFUZE100_COINVOL, 0x7, pfuze100_coin),
+                    ^~~~~~~~
+drivers/regulator/pfuze100-regulator.c:240:3: note: in definition of
+macro =E2=80=98PFUZE100_COIN_REG=E2=80=99
+  [_chip ## _ ##  _name] =3D { \
+   ^~~~~
+drivers/regulator/pfuze100-regulator.c:327:20: note: (near
+initialization for =E2=80=98pfuze100_regulators=E2=80=99)
+  PFUZE100_COIN_REG(PFUZE100, COIN, PFUZE100_COINVOL, 0x7, pfuze100_coin),
+                    ^~~~~~~~
+drivers/regulator/pfuze100-regulator.c:240:3: note: in definition of
+macro =E2=80=98PFUZE100_COIN_REG=E2=80=99
+  [_chip ## _ ##  _name] =3D { \
+   ^~~~~
+
+I am not entirely understanding how the macro is supposed to work.
+Any suggestions?
+
+thanks,
+
+adam
+
+
+> --
+> 2.11.0
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
