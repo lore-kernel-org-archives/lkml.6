@@ -2,113 +2,115 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C024EECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45921ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 836EA2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:58:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 836EA2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 012C02086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:59:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/3/VOMV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012C02086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387929AbeIYBCU (ORCPT
+        id S2388016AbeIYBCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:02:20 -0400
-Received: from mga01.intel.com ([192.55.52.88]:17548 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbeIYBCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:02:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 11:58:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,298,1534834800"; 
-   d="scan'208";a="235549248"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by orsmga004.jf.intel.com with ESMTP; 24 Sep 2018 11:58:44 -0700
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.23]) by
- ORSMSX108.amr.corp.intel.com ([169.254.2.163]) with mapi id 14.03.0319.002;
- Mon, 24 Sep 2018 11:58:44 -0700
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "keescook@chromium.org" <keescook@chromium.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jannh@google.com" <jannh@google.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "alexei.starovoitov@gmail.com" <alexei.starovoitov@gmail.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v6 3/4] vmalloc: Add debugfs modfraginfo
-Thread-Topic: [PATCH v6 3/4] vmalloc: Add debugfs modfraginfo
-Thread-Index: AQHUS6nxBgyNfAhWIEuTl8eC0MDMfaT7l6+AgAS3tAA=
-Date:   Mon, 24 Sep 2018 18:58:44 +0000
-Message-ID: <1537815554.19013.49.camel@intel.com>
-References: <1536874298-23492-1-git-send-email-rick.p.edgecombe@intel.com>
-         <1536874298-23492-4-git-send-email-rick.p.edgecombe@intel.com>
-         <CAGXu5jJj+08J9UeyQs5ku8CziYWA72iJ+hxMR2Z2tLiVwvU8MA@mail.gmail.com>
-In-Reply-To: <CAGXu5jJj+08J9UeyQs5ku8CziYWA72iJ+hxMR2Z2tLiVwvU8MA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.168]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C183D5357C751A439DE80245741D78EA@intel.com>
-Content-Transfer-Encoding: base64
+        Mon, 24 Sep 2018 21:02:42 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:35715 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbeIYBCl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 21:02:41 -0400
+Received: by mail-lj1-f177.google.com with SMTP id p10-v6so19284525ljg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 11:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/A94Ts3MbIRFIPdjR6j7rabHQCsko9Y0DmTiH278bd4=;
+        b=R/3/VOMVmACgpcwZj7UFWURWoLIZ9igeFjvozoSz0q/9NLmurAHSgD9rbndAH+pRux
+         DQvOKZ29A1DIPAkovgS90ileqsoy/b4dQQAhVdV8gnz0ho9NTpc/0dF0vN80+mflB/MT
+         oMl0TA81AT8osu8+PJb7jzSDnpzeXbJZuNRotm62rfrPR5C000imkpMTBmm15yndQdzb
+         CQxX7DdCg2B6ZTvR2WLX6uLeSH/NBnOa0IvPDD5btr6xJB2chV6AZQdykBFgwYm1YeKC
+         oAbayRVyDaUgXz5sKQvzEGvtGyocTrk/AR+Dw+CVqxPRtKj7CrpCMMH9nHHWEu2/cmA+
+         gu7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/A94Ts3MbIRFIPdjR6j7rabHQCsko9Y0DmTiH278bd4=;
+        b=UHBiNxRCh6XNdQYmsSzMKeNeHKCYgjEeHG/6JmTslbW1/p/G+sbENlxmaK/bANhM4D
+         UwxILo1ovJvHWENVdSfcZ6DEji9hG2oBiefL2wypllYgu5BoYs/FDvrj39gC4++GWVuB
+         /c960+gY1ra4uPdMttyX9LQp2KpaiSP1DooIcjLRhvUbnl677ws+zzD3aMWzQ297ZKz7
+         etaUCbeP+OwcKv5a0xPr86XjX4ErY0/41puLTpxqRu/Kws91/IfP0S4EZpbDmsY4BxmH
+         aIBLfA71EnHZDcl2dr+5qL6ccogzle0dt1jvYiCwoW0ngHWuUpnwiFiQOORPk74T/2tF
+         RkTA==
+X-Gm-Message-State: ABuFfohsiSOgZ72Zq4XtHjt35s47cDJSpkO6vlWnROguhh2iW85+liPB
+        hG8FdJt0BRMrn88b3I0B614GG5CLq6gsNL6lgM0=
+X-Google-Smtp-Source: ACcGV61LEya9RuSuQHN+JjYIGNBEJLEkYXuBy0K8Wc3fogee+icqrY0DGQb3dcWfwspaDaey7Rad6PbJd61uTd5lnpY=
+X-Received: by 2002:a2e:82c9:: with SMTP id n9-v6mr112620ljh.111.1537815546235;
+ Mon, 24 Sep 2018 11:59:06 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a19:278e:0:0:0:0:0 with HTTP; Mon, 24 Sep 2018 11:59:05
+ -0700 (PDT)
+In-Reply-To: <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
+References: <e223b198-af0e-123d-49bf-fad7e0f9126e@cantab.net>
+ <20180919081812.020f19e3@lwn.net> <72dadc76-44fe-ecb5-e142-0a9129082c93@cantab.net>
+ <CAOesGMjgo5zwKvsbi8txGQbvFHR2N7xKphzhTSGOrruN3+RC-Q@mail.gmail.com>
+ <93b77a9a-12c3-6f7d-d2c3-0e0d7875a28b@cantab.net> <589966d9cd0ddccc88f33fcb7975bb4464be7696.camel@surriel.com>
+ <87zhwbj8xe.fsf@redhat.com> <CAMjeLr-mWag=iO=CoNHeK9pkCu4y6vZUp03_zpJOG+e=n85j+g@mail.gmail.com>
+ <20180921231545.GC2966@thunk.org> <CAKON4Oy3=7H+9WxzK-xK=T7t7rN7L3_PsJ+cdUWTjiKN=BGSRg@mail.gmail.com>
+ <d364f33b-fbb4-57e0-78f5-302cd5c9050f@petrovitsch.priv.at>
+From:   "\\0xDynamite" <dreamingforward@gmail.com>
+Date:   Mon, 24 Sep 2018 13:59:05 -0500
+Message-ID: <CAMjeLr-a4cCrs0cF0aBRoeeXXLwiM835BXqhP9ZoeLB8=w=YKw@mail.gmail.com>
+Subject: Re: Code of Conduct: Let's revamp it.
+To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Cc:     "jonsmirl@gmail.com" <jonsmirl@gmail.com>,
+        Theodore Tso <tytso@mit.edu>, fche@redhat.com,
+        riel@surriel.com, ec429@cantab.net,
+        Olof Johansson <olof@lixom.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTA5LTIxIGF0IDExOjU2IC0wNzAwLCBLZWVzIENvb2sgd3JvdGU6DQo+IE9u
-IFRodSwgU2VwIDEzLCAyMDE4IGF0IDI6MzEgUE0sIFJpY2sgRWRnZWNvbWJlDQo+IDxyaWNrLnAu
-ZWRnZWNvbWJlQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gK2RvbmU6DQo+ID4gK8KgwqDCoMKgwqDC
-oMKgZ2FwID0gKE1PRFVMRVNfRU5EIC0gbGFzdF9lbmQpOw0KPiA+ICvCoMKgwqDCoMKgwqDCoGlm
-IChnYXAgPiBsYXJnZXN0X2ZyZWUpDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oGxhcmdlc3RfZnJlZSA9IGdhcDsNCj4gPiArwqDCoMKgwqDCoMKgwqB0b3RhbF9mcmVlICs9IGdh
-cDsNCj4gPiArDQo+ID4gK8KgwqDCoMKgwqDCoMKgc3Bpbl91bmxvY2soJnZtYXBfYXJlYV9sb2Nr
-KTsNCj4gPiArDQo+ID4gK8KgwqDCoMKgwqDCoMKgc2VxX3ByaW50ZihtLCAiXHRMYXJnZXN0IGZy
-ZWUgc3BhY2U6XHQlbHUga0JcbiIsIGxhcmdlc3RfZnJlZSAvDQo+ID4gMTAyNCk7DQo+ID4gK8Kg
-wqDCoMKgwqDCoMKgc2VxX3ByaW50ZihtLCAiXHTCoMKgVG90YWwgZnJlZSBzcGFjZTpcdCVsdSBr
-QlxuIiwgdG90YWxfZnJlZSAvIDEwMjQpOw0KPiA+ICsNCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAo
-SVNfRU5BQkxFRChDT05GSUdfUkFORE9NSVpFX0JBU0UpICYmIGthc2xyX2VuYWJsZWQoKSkNCj4g
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2VxX3ByaW50ZihtLCAiQWxsb2NhdGlv
-bnMgaW4gYmFja3VwIGFyZWE6XHQlbHVcbiIsDQo+ID4gYmFja3VwX2NudCk7DQo+IEkgZG9uJ3Qg
-dGhpbmsgdGhlIElTX0VOQUJMRUQgaXMgbmVlZGVkIGhlcmU/DQpUaGUgcmVhc29uIGZvcsKgdGhp
-cyBpcyB0aGF0IGZvciBBUkNIPXVtLCBDT05GSUdfWDg2XzY0IGlzIGRlZmluZWQgYnV0DQprYXNs
-cl9lbmFibGVkIGlzIG5vdC4ga2FzbHJfZW5hYmxlZCBpcyBkZWNsYXJlZCBhYm92ZSB0byBwcm90
-ZWN0IGFnYWluc3QgYQ0KY29tcGlsZXIgZXJyb3IuDQoNClNvIElTX0VOQUJMRUQoQ09ORklHX1JB
-TkRPTUlaRV9CQVNFKSBpcyBwcm90ZWN0aW5nIGthc2xyX2VuYWJsZWQgZnJvbSBjYXVzaW5nIGEN
-CmxpbmtlciBlcnJvci4gSXQgZ2V0cyBjb25zdGFudCBldmFsdWF0ZWQgdG8gMCBhbmQgdGhlIGNv
-bXBpbGVyIG9wdGltaXplcyBvdXQgdGhlDQprYXNscl9lbmFibGVkIGNhbGwuIFRob3VnaHQgaXQg
-d2FzIGJldHRlciB0byBndWFyZCB3aXRoIENPTkZJR19SQU5ET01JWkVfQkFTRQ0KdGhhbiB3aXRo
-IENPTkZJR19VTSwgdG8gdHJ5IHRvIGNhdGNoIHRoZSBicm9hZGVyIHNpdHVhdGlvbi4gSSBndWVz
-cyBJIGNvdWxkIG1vdmUNCml0IHRvIGEgaGVscGVyIGluc2lkZSBpZmRlZnMgaW5zdGVhZC4gV2Fz
-IHRyeWluZyB0byBrZWVwIHRoZSBpZmRlZi1lZCBjb2RlIGRvd24uDQoNCj4gSSB3b25kZXIgaWYg
-dGhlcmUgaXMgYSBiZXR0ZXIgd2F5IHRvIGFycmFuZ2UgdGhpcyBjb2RlIHRoYXQgdXNlcyBmZXdl
-cg0KPiBpZmRlZnMsIGV0Yy4gTWF5YmUgYSBzaW5nbGUgQ09ORklHIHRoYXQgY2FwdHVyZSB3aGV0
-aGVyIG9yIG5vdA0KPiBmaW5lLWdyYWluZWQgbW9kdWxlIHJhbmRvbWl6YXRpb24gaXMgYnVpbHQg
-aW4sIGxpa2U6DQo+IA0KPiBjb25maWcgUkFORE9NSVpFX0ZJTkVfTU9EVUxFDQo+IMKgwqDCoMKg
-ZGVmX2Jvb2wgeSBpZiBSQU5ET01JWkVfQkFTRSAmJiBYODZfNjQNCj4gDQo+ICNpZmRlZiBDT05G
-SUdfUkFORE9NSVpFX0ZJTkVfTU9EVUxFDQo+IC4uLg0KPiAjZW5kaWYNCj4gDQo+IEJ1dCB0aGF0
-IGRvZXNuJ3QgY2FwdHVyZSB0aGUgREVCVUdfRlMgYW5kIFBST0NfRlMgYml0cyAuLi4gc28gLi4u
-DQo+IG1heWJlIG5vdCB3b3J0aCBpdC4gSSBndWVzcywgZWl0aGVyIHdheToNCkhtbW0sIGRpZG4n
-dCBrbm93IGFib3V0IHRoYXQuIFdvdWxkIGNsZWFuIGl0IHVwIHNvbWUgYXQgbGVhc3QuDQoNCkkg
-d2lzaCB0aGUgZGVidWdmcyBpbmZvIGNvdWxkIGJlIGluIG1vZHVsZS5jIHRvIGhlbHAgd2l0aCB0
-aGlzIElGREVGcywgYnV0IGl0DQpuZWVkcyB2bWFsbG9jIGludGVybmFscy4gTU9EVUxFU19WQURE
-UiBpcyBub3Qgc3RhbmRhcmRpemVkIGFjcm9zcyB0aGUgQVJDSCdzIGFzDQp3ZWxsLCBzbyB0aGlz
-IHdhcyBteSBiZXN0IGF0dGVtcHQgdG8gaW1wbGVtZW50IHRoaXMgd2l0aG91dCBoYXZpbmcgdG8g
-bWFrZQ0KY2hhbmdlcyBpbiBvdGhlciBhcmNoaXRlY3R1cmVzLg0KPiBSZXZpZXdlZC1ieTogS2Vl
-cyBDb29rIDxrZWVzY29va0BjaHJvbWl1bS5vcmc+DQo+IA0KPiAtS2Vlcw0KPiA=
+>> * Publishing others=E2=80=99 private information, such as a physical or
+>> electronic
+>> address, without explicit permission
+>
+> I need an (explicit) permission to "publish" an already published email
+> address which is already world-wide known because it can be found by the
+> simplest and worst search engine as the email address is in public
+> mailing list archives and git repos?
+>
+> Sounds pretty absurd as the people themselves already published their
+> email address.
+>
+> IMHO you cannot "publish" already published stuff.
+
+The notion of being "published" means at least these two things:  1)
+you INTEND it to be PUBLIC, 2) you made it available to the PUBLIC.
+
+A semi-private email list is a boundary area of being public.  Just
+like a memo distributed within a university department.  Participants
+in the latter have some reasonable expectation that the material is
+not being published in the larger public sphere beyond actions of the
+trusted participants involved (which might share it in a limited
+fashion as a personal note).
+
+So, is code a *published* item?  Most of the public can't read it.
+It is often not intended for the public, per se, only a specialized
+COMMUNITY.  Because once published, it belongs to copyright and fair
+use (THAT sticky little wicket).
+
+Mark
