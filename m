@@ -7,132 +7,202 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E33C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87598C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC00F20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 321C92087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:59:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ZLKesRwV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC00F20C0A
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PgAUrlkv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321C92087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387819AbeIXUwR (ORCPT
+        id S1730028AbeIXVCN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:52:17 -0400
-Received: from mail-eopbgr710104.outbound.protection.outlook.com ([40.107.71.104]:46976
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 24 Sep 2018 17:02:13 -0400
+Received: from mail-by2nam01on0130.outbound.protection.outlook.com ([104.47.34.130]:30464
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730550AbeIXUwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:52:14 -0400
+        id S2387777AbeIXUwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:52:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c27jE00YUq66LU2+xoCbLqwVW4KSukz+o7XagzCEPJs=;
- b=ZLKesRwVzCAzv0aXdnc78LQLggJQN/OCDS05AmG75ap8CzZUPEeRfJ8EehSWEHv0RM13lT5K2BCJl0ZAfdcBZra2giXuapDIgkc8kiQGH/rcksyMbpx9/lrI2dzGfMooBqlRluX01QHL416uz0eLb5vc2LPQ+NGgyZV5nE2I7Ao=
+ bh=LSSvR6NzT1sGIZ7CB7XYnJFv7pAgeK2BVyIrZr9p1v0=;
+ b=PgAUrlkvGok6EbdfnN5obW+W7s8y7b9YAAU/93sCMJITXTL55szxH9PYXGJXn/aWocLM0z6BvJ0a+TOeBQzf+YIbHTyh+UeIDGx3JS56gRRdVUuPOaiCCnxnudESGKnSO+KMnJ+AVuL6H0atwW0pbKNVE4dNtv3VJP8erVBWUyM=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
- CY4PR21MB0471.namprd21.prod.outlook.com (10.172.121.149) with Microsoft SMTP
+ CY4PR21MB0181.namprd21.prod.outlook.com (10.173.193.7) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.3; Mon, 24 Sep 2018 14:49:36 +0000
+ 15.20.1207.3; Mon, 24 Sep 2018 14:49:42 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:49:36 +0000
+ 14:49:42 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Greentime Hu <greentime@andestech.com>,
+CC:     Sara Sharon <sara.sharon@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 70/76] nds32: fix build error because of wrong
- semicolon
-Thread-Topic: [PATCH AUTOSEL 4.18 70/76] nds32: fix build error because of
- wrong semicolon
-Thread-Index: AQHUVBWwIKwGDFLmhUS9UXtBwj9a/Q==
-Date:   Mon, 24 Sep 2018 14:48:42 +0000
-Message-ID: <20180924144751.164410-69-alexander.levin@microsoft.com>
-References: <20180924144751.164410-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.14 10/36] mac80211: avoid kernel panic when building
+ AMSDU from non-linear SKB
+Thread-Topic: [PATCH AUTOSEL 4.14 10/36] mac80211: avoid kernel panic when
+ building AMSDU from non-linear SKB
+Thread-Index: AQHUVBW5d23qZjYdFUeY/AR9NO0u2Q==
+Date:   Mon, 24 Sep 2018 14:48:59 +0000
+Message-ID: <20180924144851.164533-10-alexander.levin@microsoft.com>
+References: <20180924144851.164533-1-alexander.levin@microsoft.com>
+In-Reply-To: <20180924144851.164533-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0471;6:+J2wc8jJGc7yDhCT1ee6EHbq6FnHu9nUABWcZsvexTPWu6ItRET24AZ6qM9OVmKF9kMwsXl8zwcqPQi96Vg2E3Gm+0gq1GbejBbbUo9vzn2WiburD96QEFT+2vJ5TqhjSrLRfvXF3jgw31Gkg5/+jzb42il5ul78FGoEjD2bAPTdzEqcjd1rUi18tmFLfKSExYFkXQkON8qE/wKMpD2J2D/81KjDEghgr/rOUUicKNqZLBv5IKU9Fignu7UML2lf6I/IWXHuWY0LjpNKVRbcYWtB0rjKTvuSbnRIHCEw7IS3idqTKe7FgH12MMfXVCH7IqrtqBauETPlGpb8cI3JuGq+ppT7iQWd3HG0aO/DADrPN6/k8XkntwgOIBvQ/pPHIBWaWBF+UL60dHKrYzBtmxw6TJom9XGGopKEJtGh6fCiBakwxd6mN9vNf0FdS30dQHUKzvI9gfsxu8d7BG6OoQ==;5:kcJqXLFW9SO+UHc6R0kd1Wg8J+ur0xsJcEpjL9beORe4KqnmZtVIM3oxQPmOX0qPHvmTYvZhSc2GZK0ZweO8j3YbsEBxfZXm04gUo/iVzZFRkpbNGbjlls08wqzPP/L9Y27NrsVmC0dNjDBz4ckauu857zUngmIvVvQ1teob294=;7:T/rhzYeKLSildm5DnXK8RtUB2GELSuE0BH1tsRib5sTIztBkKWwQ7t9kzc07RoL9PYpkHtHp3TIS2uElyIBfZEADGHh8QWrJvQhwtDg4fU37ovLRmIO+p85TvEPvPaqSHhMEIvyGsPWJb3N3SxzZXxh5MmeedVbqxFLhUzq9PMicYOpmZLVSgHPkijytm88JlU+bDK2O83+FYsVHDssK+A3B1h+xOVSfkCTrri0PGfr9dWYBg8NMHx8F4rU36sn+
-x-ms-office365-filtering-correlation-id: 3d9c9c0c-44d0-479e-61ef-08d6222cf2ca
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0181;6:/qS37a6liLjnN+xvlcwv7U46Esoknf3spo0q76YPFFQwQ17hB6kJktZLO0aYQRLr/5D3wFA+g3yx1WSijsztCW0RXqvjA5joOTMLHGq9iHYXGrjvJ/bnZvR/lF/iK7Tsqxa2br4p1nBXuAcl+2ZoB9Z4iyQsuGY4gJ0icCr7PWMNRiQqTjYGf/AK27voQM7cIj/nkdz883J3+ja3vJ9yHugUcDZqSQGr81K70Yd+j/Qh/YEleA61LSimIkEw0oB0NTlzWBCFprGMdUa771Ganv9JTwmLmD6RT9QtgktmDHjKu3Hdma/3d3hkT5WRIsHGBpn0zBFD5zDSZsZ5vSgE2lAPnyc1jYcCWpMWOKH3hBRheRM2sNlPV1mkBvVSDeG6qyVaWGAysShYDKSAkzb+mtBmWgmfF/9kVpA4FM9/RDPtv11HcBSakbreICI9jRBt3anqAjiaTjuSszFOCRkDYg==;5:VaUpE5jPsKaCy2lwjrogUxgm4kGT+Hy9rrFVtkLfIaV70Q2Wd87ItRCpRDV+rYYgA2cectap34VHq1GX9kGULNWMD2P8Nu7fofK2ZWa+NuzNVPYTDv0F7dAixKMqEhsXJFUB9yfrBi2eRg7HXi3KEajYy8l/MZ2Fl1J5vuSMyuU=;7:7i9dzwQyveAHRUOQ2P6/uM7IHu7ABewDNmZWFXltXXui2jgyQpN59uq/kAHHJb77dRV0x6OJEiY+bWBLUnSbUtV1XfmFGQdQuLi4547fv6GpPs4WtXLhCkpf5IVEHMSNuM/lajqCvH1yY7hwEcufhbYa12D09TnDX0y2L0cVft9BYNBK0hk/Bydl35ACyBjF9vvxL62CqIu8XyxTIWUhXo47IaHbAX8glB4yJRcbl0TK98CKf2kH774yROrTli+B
+x-ms-office365-filtering-correlation-id: eaa6958b-cd43-4be3-d26e-08d6222cf653
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0471;
-x-ms-traffictypediagnostic: CY4PR21MB0471:
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR21MB0181;
+x-ms-traffictypediagnostic: CY4PR21MB0181:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-prvs: <CY4PR21MB04714F4A64CAE4D71E581BB1FB170@CY4PR21MB0471.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(163750095850)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB0181565E4C3AFCF493230761FB170@CY4PR21MB0181.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231355)(944501410)(52105095)(2018427008)(6055026)(149066)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0471;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0471;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(2018427008)(10201501046)(93006095)(93001095)(3002001)(6055026)(149066)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0181;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0181;
 x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(366004)(39860400002)(346002)(199004)(189003)(6512007)(105586002)(256004)(53936002)(106356001)(10090500001)(6486002)(217873002)(1076002)(6436002)(71190400001)(97736004)(71200400001)(446003)(476003)(11346002)(54906003)(316002)(2616005)(86362001)(2906002)(86612001)(8676002)(5250100002)(26005)(81166006)(81156014)(36756003)(10290500003)(4326008)(478600001)(2501003)(7736002)(110136005)(2900100001)(186003)(6666003)(22452003)(102836004)(25786009)(305945005)(68736007)(107886003)(76176011)(486006)(6116002)(6506007)(72206003)(3846002)(99286004)(66066001)(8936002)(5660300001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0471;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(136003)(346002)(396003)(189003)(199004)(575784001)(10290500003)(6116002)(26005)(102836004)(3846002)(5660300001)(22452003)(110136005)(10090500001)(8676002)(1076002)(54906003)(105586002)(186003)(316002)(106356001)(2501003)(6436002)(97736004)(6486002)(107886003)(7736002)(36756003)(478600001)(72206003)(14454004)(71200400001)(71190400001)(305945005)(256004)(14444005)(5250100002)(217873002)(6666003)(2616005)(68736007)(53936002)(81166006)(81156014)(2900100001)(476003)(86612001)(4326008)(8936002)(486006)(99286004)(6512007)(86362001)(2906002)(25786009)(66066001)(6506007)(11346002)(446003)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0181;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 6fCLItzhRQxBdOy1oKsGjSkibGeb7/xL4ReK8kXMXwURg+SX3xetLVaf/KZ6j0AOuMGQMA3iGKKloZevfydB3pXPH2NCAykJn+teNMAVFoBO/8V5fHeHx1hkvcakw8pMup67HJoMlPPCYh1GJ3Di+Gm5gXp5UQEuckalxhTa6pOy31svLiGPNbeMKgp3ofSs056yWLkk/58chT+HY8l9qQQiL9inxWLtaDjWTBOSb7Kv7p7t6nHXJAfRI+zqy8pwlzu1A7TttycAWQz24+qukdEJqTqAqsNEOTEuWx1BKDzJP5uBjLVLZajd55KR6mY/QKV5lgLjSOf1na08VfeO2aIQzO8HKJ0JabZ3uMIML/s=
+x-microsoft-antispam-message-info: GnZAo8zPE2WfnYPtIFgbHdc5GKNt2dSICrdutboJ4kkgTyuCVWPKxV3sX+l3C9NTeQhuT1I0A5NmKrObXpTfpluogSUGVI9VBDiat5kFYq/VSJhHmMcTcXvIxRdavSg/AISLInufeJ3pMAeiuxDJ2jiMbqN58PjZYbOZCejVfVqbsrmi5TKXXBh2sxAsHOVs/h9HdN9hcjrDTZUzF2+TcowPiOKj6NniFGQEp4gK6UKxYzBEV92jMg1GzcZUBNcn5VEoh/sl76U8qDFuDUE49hOIAUXXZHUUJTxuJMDeBfz7L2orxqI3E7sjdPZE10reAhbljYZP5LB29waLdcg2DTY3x9f6JjIwXMMteqMyoCs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d9c9c0c-44d0-479e-61ef-08d6222cf2ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:42.7824
+X-MS-Exchange-CrossTenant-Network-Message-Id: eaa6958b-cd43-4be3-d26e-08d6222cf653
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:59.1950
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0471
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greentime Hu <greentime@andestech.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit ec865393292f5ad8d52da20788b3685ebce44c48 ]
+[ Upstream commit 166ac9d55b0ab70b644e429be1f217fe8393cbd7 ]
 
-It shall be removed in the define usage. We shall not put a semicolon there=
-.
+When building building AMSDU from non-linear SKB, we hit a
+kernel panic when trying to push the padding to the tail.
+Instead, put the padding at the head of the next subframe.
+This also fixes the A-MSDU subframes to not have the padding
+accounted in the length field and not have pad at all for
+the last subframe, both required by the spec.
 
-/kisskb/src/arch/nds32/include/asm/elf.h:126:29: error: expected '}' before=
- ';' token
- #define ELF_DATA ELFDATA2LSB;
-                             ^
-/kisskb/src/fs/proc/kcore.c:318:17: note: in expansion of macro 'ELF_DATA'
-     [EI_DATA] =3D ELF_DATA,
-                 ^~~~~~~~
-/kisskb/src/fs/proc/kcore.c:312:15: note: to match this '{'
-    .e_ident =3D {
-               ^
-/kisskb/src/scripts/Makefile.build:307: recipe for target 'fs/proc/kcore.o'=
- failed
-
-Signed-off-by: Greentime Hu <greentime@andestech.com>
+Fixes: 6e0456b54545 ("mac80211: add A-MSDU tx support")
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Reviewed-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/nds32/include/asm/elf.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/mac80211/tx.c | 38 +++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/arch/nds32/include/asm/elf.h b/arch/nds32/include/asm/elf.h
-index 56c479058802..f5f9cf7e0544 100644
---- a/arch/nds32/include/asm/elf.h
-+++ b/arch/nds32/include/asm/elf.h
-@@ -121,9 +121,9 @@ struct elf32_hdr;
-  */
- #define ELF_CLASS	ELFCLASS32
- #ifdef __NDS32_EB__
--#define ELF_DATA	ELFDATA2MSB;
-+#define ELF_DATA	ELFDATA2MSB
- #else
--#define ELF_DATA	ELFDATA2LSB;
-+#define ELF_DATA	ELFDATA2LSB
- #endif
- #define ELF_ARCH	EM_NDS32
- #define USE_ELF_CORE_DUMP
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index ccb65f18df5d..2064234500cf 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -3022,27 +3022,18 @@ void ieee80211_clear_fast_xmit(struct sta_info *sta=
+)
+ }
+=20
+ static bool ieee80211_amsdu_realloc_pad(struct ieee80211_local *local,
+-					struct sk_buff *skb, int headroom,
+-					int *subframe_len)
++					struct sk_buff *skb, int headroom)
+ {
+-	int amsdu_len =3D *subframe_len + sizeof(struct ethhdr);
+-	int padding =3D (4 - amsdu_len) & 3;
+-
+-	if (skb_headroom(skb) < headroom || skb_tailroom(skb) < padding) {
++	if (skb_headroom(skb) < headroom) {
+ 		I802_DEBUG_INC(local->tx_expand_skb_head);
+=20
+-		if (pskb_expand_head(skb, headroom, padding, GFP_ATOMIC)) {
++		if (pskb_expand_head(skb, headroom, 0, GFP_ATOMIC)) {
+ 			wiphy_debug(local->hw.wiphy,
+ 				    "failed to reallocate TX buffer\n");
+ 			return false;
+ 		}
+ 	}
+=20
+-	if (padding) {
+-		*subframe_len +=3D padding;
+-		skb_put_zero(skb, padding);
+-	}
+-
+ 	return true;
+ }
+=20
+@@ -3066,8 +3057,7 @@ static bool ieee80211_amsdu_prepare_head(struct ieee8=
+0211_sub_if_data *sdata,
+ 	if (info->control.flags & IEEE80211_TX_CTRL_AMSDU)
+ 		return true;
+=20
+-	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr),
+-					 &subframe_len))
++	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(*amsdu_hdr)))
+ 		return false;
+=20
+ 	data =3D skb_push(skb, sizeof(*amsdu_hdr));
+@@ -3133,7 +3123,8 @@ static bool ieee80211_amsdu_aggregate(struct ieee8021=
+1_sub_if_data *sdata,
+ 	void *data;
+ 	bool ret =3D false;
+ 	unsigned int orig_len;
+-	int n =3D 1, nfrags;
++	int n =3D 1, nfrags, pad =3D 0;
++	u16 hdrlen;
+=20
+ 	if (!ieee80211_hw_check(&local->hw, TX_AMSDU))
+ 		return false;
+@@ -3184,8 +3175,19 @@ static bool ieee80211_amsdu_aggregate(struct ieee802=
+11_sub_if_data *sdata,
+ 	if (max_frags && nfrags > max_frags)
+ 		goto out;
+=20
+-	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) + 2,
+-					 &subframe_len))
++	/*
++	 * Pad out the previous subframe to a multiple of 4 by adding the
++	 * padding to the next one, that's being added. Note that head->len
++	 * is the length of the full A-MSDU, but that works since each time
++	 * we add a new subframe we pad out the previous one to a multiple
++	 * of 4 and thus it no longer matters in the next round.
++	 */
++	hdrlen =3D fast_tx->hdr_len - sizeof(rfc1042_header);
++	if ((head->len - hdrlen) & 3)
++		pad =3D 4 - ((head->len - hdrlen) & 3);
++
++	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) +
++						     2 + pad))
+ 		goto out;
+=20
+ 	ret =3D true;
+@@ -3197,6 +3199,8 @@ static bool ieee80211_amsdu_aggregate(struct ieee8021=
+1_sub_if_data *sdata,
+ 	memcpy(data, &len, 2);
+ 	memcpy(data + 2, rfc1042_header, sizeof(rfc1042_header));
+=20
++	memset(skb_push(skb, pad), 0, pad);
++
+ 	head->len +=3D skb->len;
+ 	head->data_len +=3D skb->len;
+ 	*frag_tail =3D skb;
 --=20
 2.17.1
