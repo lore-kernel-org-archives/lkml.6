@@ -2,41 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA3BC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0934C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D947120C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D947120C0A
+	by mail.kernel.org (Postfix) with ESMTP id 774AF20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:06:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774AF20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbeIXSIK (ORCPT
+        id S1731138AbeIXSIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:08:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54080 "EHLO
+        Mon, 24 Sep 2018 14:08:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54088 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730438AbeIXSIJ (ORCPT
+        with ESMTP id S1729828AbeIXSIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:08:09 -0400
+        Mon, 24 Sep 2018 14:08:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5A8C1080;
-        Mon, 24 Sep 2018 12:06:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E67EE1080;
+        Mon, 24 Sep 2018 12:06:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 089/111] coresight: tpiu: Fix disabling timeouts
-Date:   Mon, 24 Sep 2018 13:52:56 +0200
-Message-Id: <20180924113113.629916119@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.9 072/111] NFSv4.1 fix infinite loop on I/O.
+Date:   Mon, 24 Sep 2018 13:52:39 +0200
+Message-Id: <20180924113112.131758388@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -54,65 +52,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-[ Upstream commit ccff2dfaceaca4517432f5c149594215fe9098cc ]
+commit 994b15b983a72e1148a173b61e5b279219bb45ae upstream.
 
-Probing the TPIU driver under UBSan triggers an out-of-bounds shift
-warning in coresight_timeout():
+The previous fix broke recovery of delegated stateids because it assumes
+that if we did not mark the delegation as suspect, then the delegation has
+effectively been revoked, and so it removes that delegation irrespectively
+of whether or not it is valid and still in use. While this is "mostly
+harmless" for ordinary I/O, we've seen pNFS fail with LAYOUTGET spinning
+in an infinite loop while complaining that we're using an invalid stateid
+(in this case the all-zero stateid).
 
-...
-[    5.677530] UBSAN: Undefined behaviour in drivers/hwtracing/coresight/coresight.c:929:16
-[    5.685542] shift exponent 64 is too large for 64-bit type 'long unsigned int'
-...
+What we rather want to do here is ensure that the delegation is always
+correctly marked as needing testing when that is the case. So we want
+to close the loophole offered by nfs4_schedule_stateid_recovery(),
+which marks the state as needing to be reclaimed, but not the
+delegation that may be backing it.
 
-On closer inspection things are exponentially out of whack because we're
-passing a bitmask where a bit number should be. Amusingly, it seems that
-both calls will find their expected values by sheer luck and appear to
-succeed: 1 << FFCR_FON_MAN ends up at bit 64 which whilst undefined
-evaluates as zero in practice, while 1 << FFSR_FT_STOPPED finds bit 2
-(TCPresent) which apparently is usually tied high.
-
-Following the examples of other drivers, define separate FOO and FOO_BIT
-macros for masks vs. indices, and put things right.
-
-CC: Robert Walker <robert.walker@arm.com>
-CC: Mike Leach <mike.leach@linaro.org>
-CC: Mathieu Poirier <mathieu.poirier@linaro.org>
-Fixes: 11595db8e17f ("coresight: Fix disabling of CoreSight TPIU")
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Fixes: 0e3d3e5df07dc ("NFSv4.1 fix infinite loop on IO BAD_STATEID error")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hwtracing/coresight/coresight-tpiu.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/nfs/nfs4proc.c  |   10 +++++++---
+ fs/nfs/nfs4state.c |    2 ++
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -47,8 +47,9 @@
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -2539,14 +2539,18 @@ static void nfs41_check_delegation_state
+ 	}
  
- /** register definition **/
- /* FFSR - 0x300 */
--#define FFSR_FT_STOPPED		BIT(1)
-+#define FFSR_FT_STOPPED_BIT	1
- /* FFCR - 0x304 */
-+#define FFCR_FON_MAN_BIT	6
- #define FFCR_FON_MAN		BIT(6)
- #define FFCR_STOP_FI		BIT(12)
+ 	nfs4_stateid_copy(&stateid, &delegation->stateid);
+-	if (test_bit(NFS_DELEGATION_REVOKED, &delegation->flags) ||
+-		!test_and_clear_bit(NFS_DELEGATION_TEST_EXPIRED,
+-			&delegation->flags)) {
++	if (test_bit(NFS_DELEGATION_REVOKED, &delegation->flags)) {
+ 		rcu_read_unlock();
+ 		nfs_finish_clear_delegation_stateid(state, &stateid);
+ 		return;
+ 	}
  
-@@ -93,9 +94,9 @@ static void tpiu_disable_hw(struct tpiu_
- 	/* Generate manual flush */
- 	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
- 	/* Wait for flush to complete */
--	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
-+	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN_BIT, 0);
- 	/* Wait for formatter to stop */
--	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
-+	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED_BIT, 1);
++	if (!test_and_clear_bit(NFS_DELEGATION_TEST_EXPIRED,
++				&delegation->flags)) {
++		rcu_read_unlock();
++		return;
++	}
++
+ 	cred = get_rpccred(delegation->cred);
+ 	rcu_read_unlock();
+ 	status = nfs41_test_and_free_expired_stateid(server, &stateid, cred);
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1336,6 +1336,8 @@ int nfs4_schedule_stateid_recovery(const
  
- 	CS_LOCK(drvdata->base);
- }
+ 	if (!nfs4_state_mark_reclaim_nograce(clp, state))
+ 		return -EBADF;
++	nfs_inode_find_delegation_state_and_recover(state->inode,
++			&state->stateid);
+ 	dprintk("%s: scheduling stateid recovery for server %s\n", __func__,
+ 			clp->cl_hostname);
+ 	nfs4_schedule_state_manager(clp);
 
 
