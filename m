@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD575C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84691ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74AFE208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74AFE208D9
+	by mail.kernel.org (Postfix) with ESMTP id 4617B208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4617B208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732532AbeIXSUC (ORCPT
+        id S1732544AbeIXSUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:20:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56060 "EHLO
+        Mon, 24 Sep 2018 14:20:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56070 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730063AbeIXSUB (ORCPT
+        with ESMTP id S1732053AbeIXSUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:20:01 -0400
+        Mon, 24 Sep 2018 14:20:04 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCAA110AB;
-        Mon, 24 Sep 2018 12:18:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 238B1108A;
+        Mon, 24 Sep 2018 12:18:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 4.14 099/173] usb: cdc-wdm: Fix a sleep-in-atomic-context bug in service_outstanding_interrupt()
-Date:   Mon, 24 Sep 2018 13:52:13 +0200
-Message-Id: <20180924113123.371013467@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 063/173] s390/qeth: fix race in used-buffer accounting
+Date:   Mon, 24 Sep 2018 13:51:37 +0200
+Message-Id: <20180924113120.673150037@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -50,36 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-commit 6e22e3af7bb3a7b9dc53cb4687659f6e63fca427 upstream.
+[ Upstream commit a702349a4099cd5a7bab0904689d8e0bf8dcd622 ]
 
-wdm_in_callback() is a completion handler function for the USB driver.
-So it should not sleep. But it calls service_outstanding_interrupt(),
-which calls usb_submit_urb() with GFP_KERNEL.
+By updating q->used_buffers only _after_ do_QDIO() has completed, there
+is a potential race against the buffer's TX completion. In the unlikely
+case that the TX completion path wins, qeth_qdio_output_handler() would
+decrement the counter before qeth_flush_buffers() even incremented it.
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
-
-This bug is found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/class/cdc-wdm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/net/qeth_core_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/class/cdc-wdm.c
-+++ b/drivers/usb/class/cdc-wdm.c
-@@ -457,7 +457,7 @@ static int service_outstanding_interrupt
- 
- 	set_bit(WDM_RESPONDING, &desc->flags);
- 	spin_unlock_irq(&desc->iuspin);
--	rv = usb_submit_urb(desc->response, GFP_KERNEL);
-+	rv = usb_submit_urb(desc->response, GFP_ATOMIC);
- 	spin_lock_irq(&desc->iuspin);
- 	if (rv) {
- 		dev_err(&desc->intf->dev,
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -3507,13 +3507,14 @@ static void qeth_flush_buffers(struct qe
+ 	qdio_flags = QDIO_FLAG_SYNC_OUTPUT;
+ 	if (atomic_read(&queue->set_pci_flags_count))
+ 		qdio_flags |= QDIO_FLAG_PCI_OUT;
++	atomic_add(count, &queue->used_buffers);
++
+ 	rc = do_QDIO(CARD_DDEV(queue->card), qdio_flags,
+ 		     queue->queue_no, index, count);
+ 	if (queue->card->options.performance_stats)
+ 		queue->card->perf_stats.outbound_do_qdio_time +=
+ 			qeth_get_micros() -
+ 			queue->card->perf_stats.outbound_do_qdio_start_time;
+-	atomic_add(count, &queue->used_buffers);
+ 	if (rc) {
+ 		queue->card->stats.tx_errors += count;
+ 		/* ignore temporary SIGA errors without busy condition */
 
 
