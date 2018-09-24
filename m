@@ -2,105 +2,127 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DACFC43382
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE699C43382
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00DE02098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:42:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00DE02098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6DF2D2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:42:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxHohLml"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF2D2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbeIYDqe (ORCPT
+        id S1728690AbeIYDqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 23:46:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40880 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbeIYDqe (ORCPT
+        Mon, 24 Sep 2018 23:46:38 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46792 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbeIYDqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 23:46:34 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E6B610BB;
-        Mon, 24 Sep 2018 21:42:18 +0000 (UTC)
-Date:   Mon, 24 Sep 2018 14:42:17 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     zhe.he@windriver.com, vbabka@suse.cz, pasha.tatashin@oracle.com,
-        mgorman@techsingularity.net, aaron.lu@intel.com, osalvador@suse.de,
-        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm/page_alloc: Fix panic caused by passing
- debug_guardpage_minorder or kernelcore to command line
-Message-Id: <20180924144217.6cabee9f41d0d0ad1757866a@linux-foundation.org>
-In-Reply-To: <20180924142408.GC18685@dhcp22.suse.cz>
-References: <1537628013-243902-1-git-send-email-zhe.he@windriver.com>
-        <20180924142408.GC18685@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 24 Sep 2018 23:46:36 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z3-v6so9343616wrr.13;
+        Mon, 24 Sep 2018 14:42:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d3/eo3kVoyM1nrOqL0GrHbHasLyt8hucsm7HikPto6c=;
+        b=fxHohLmla585TazWglsH84bVWj2sUZwSIv2nQjziUuVjbnQ49XNKXjQ673AFgy16Jf
+         /50beAYqIzgjBvq0iHZ3Q59irHLsYXZwDlxfCjrVbM9R9YClsN8dydCXG7wWis8aKyca
+         06olvEfYtmCBStg6cxbmYUHwdJqob7CrtN6XZBqaHcY/7qSjMteQpNw8srbq+eQYBHVB
+         bzrdEtQ4ORg27z6O47Ejgy2ZOJ4nuzkoMR1QGvjLbpYN40a8uTaEKLpShKGcqs+0nQVN
+         VCXQWQWhflr1l/2aARLo45gAwPpJDvlSy9zsbvM8iRVmmJpnKV9zISNt+7GjmS9SL4Bq
+         3rkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d3/eo3kVoyM1nrOqL0GrHbHasLyt8hucsm7HikPto6c=;
+        b=EZpZR/7MaOqeleIBZYD440nh9XljIWlFSKBtnZCRGXoZGxMLqe0jNRMr51SPmiNiug
+         4Y6vXqGIWVNaeISTBrweL+KYYTceVYzNWNOu2caIX86zM7J4VR112otrUlzEeh3XC7E+
+         JckDtqRac3dPp5tavCAOEINlKGut40SlmRYvQYZF8bOuQaY/MfgelLLYipjXsLTjSquJ
+         49m//yg0JckvKXNHZnPXXoy0VeKCX0avThxS67pAXZmqcjaYubb00iI6+jRblm3mRJfZ
+         PV7Zk+yn8DlLn5p5WG53aFndvNDRgaEJrWsyCmYvEUVZ3vzb8vtF+lCbaxEDLeLX8kzH
+         /F+A==
+X-Gm-Message-State: ABuFfohrCEMbY0Qj5NzmyhBPVq2LbLpNnede99W6mVElVFtYZ8Dn2yAU
+        +raiZYJOQuUQWd2MwmQKdR8=
+X-Google-Smtp-Source: ACcGV62hD2NMANzLOt8p8UoSdiJYHF86SkEjjrW8Oy2KMREr6Elv6+f9V6KIRTf2LRN7BVZFBAyhEQ==
+X-Received: by 2002:a5d:6209:: with SMTP id y9-v6mr493915wru.179.1537825340211;
+        Mon, 24 Sep 2018 14:42:20 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id y128-v6sm141125wmy.26.2018.09.24.14.42.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 14:42:19 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] qed: Avoid implicit enum conversion in qed_iwarp_parse_rx_pkt
+Date:   Mon, 24 Sep 2018 14:42:12 -0700
+Message-Id: <20180924214212.22522-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Sep 2018 16:24:08 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+Clang warns when one enumerated type is implicitly converted to another.
 
-> On Sat 22-09-18 22:53:32, zhe.he@windriver.com wrote:
-> > From: He Zhe <zhe.he@windriver.com>
-> > 
-> > debug_guardpage_minorder_setup and cmdline_parse_kernelcore do not check
-> > input argument before using it. The argument would be a NULL pointer if
-> > "debug_guardpage_minorder" or "kernelcore", without its value, is set in
-> > command line and thus causes the following panic.
-> > 
-> > PANIC: early exception 0xe3 IP 10:ffffffffa08146f1 error 0 cr2 0x0
-> > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #11
-> > [    0.000000] RIP: 0010:parse_option_str+0x11/0x90
-> > ...
-> > [    0.000000] Call Trace:
-> > [    0.000000]  cmdline_parse_kernelcore+0x19/0x41
-> > [    0.000000]  do_early_param+0x57/0x8e
-> > [    0.000000]  parse_args+0x208/0x320
-> > [    0.000000]  ? rdinit_setup+0x30/0x30
-> > [    0.000000]  parse_early_options+0x29/0x2d
-> > [    0.000000]  ? rdinit_setup+0x30/0x30
-> > [    0.000000]  parse_early_param+0x36/0x4d
-> > [    0.000000]  setup_arch+0x336/0x99e
-> > [    0.000000]  start_kernel+0x6f/0x4ee
-> > [    0.000000]  x86_64_start_reservations+0x24/0x26
-> > [    0.000000]  x86_64_start_kernel+0x6f/0x72
-> > [    0.000000]  secondary_startup_64+0xa4/0xb0
-> > 
-> > This patch adds a check to prevent the panic
-> 
-> Is this something we deeply care about? The kernel command line
-> interface is to be used by admins who know what they are doing.  Using
-> random or wrong values for these parameters can have detrimental effects
-> on the system. This particular case would blow up early, good. At least
-> it is visible immediately. This and many other parameters could have a
-> seemingly valid input (e.g. not a missing value) and subtle runtime
-> effect. You won't blow up immediately but the system is hardly usable
-> and the early checking cannot possible catch all those cases. Take a
-> mem=$N copied from one machine to another with a different memory
-> layout. While 2G can be perfectly fine on one a different machine might
-> result on a completely unusable system because the available RAM is
-> place higher.
-> 
-> So I am really wondering. Do we really want a lot of code to catch
-> kernel command line incorrect inputs? Does it really lead to better
-> quality overall? IMHO, we do have a proper documentation and we should
-> trust those starting the kernel.
+drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1713:25: warning: implicit
+conversion from enumeration type 'enum tcp_ip_version' to different
+enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
+                cm_info->ip_version = TCP_IPV4;
+                                    ~ ^~~~~~~~
+drivers/net/ethernet/qlogic/qed/qed_iwarp.c:1733:25: warning: implicit
+conversion from enumeration type 'enum tcp_ip_version' to different
+enumeration type 'enum qed_tcp_ip_version' [-Wenum-conversion]
+                cm_info->ip_version = TCP_IPV6;
+                                    ~ ^~~~~~~~
+2 warnings generated.
 
-No, it's not very important.  It might help some people understand why
-their kernel went splat in rare circumstances.  And it's __init code so
-the runtime impact is nil.
+Use the appropriate values from the expected type, qed_tcp_ip_version:
 
-It bothers me that there are many other kernel parameters which have
-the same undesirable behaviour.  I'd much prefer a general fixup which
-gave all of them this treatment, but it's unclear how to do this.
+TCP_IPV4 = QED_TCP_IPV4 = 0
+TCP_IPV6 = QED_TCP_IPV6 = 1
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_iwarp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+index 17f3dfa2cc94..e860bdf0f752 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_iwarp.c
+@@ -1710,7 +1710,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
+ 
+ 		cm_info->local_ip[0] = ntohl(iph->daddr);
+ 		cm_info->remote_ip[0] = ntohl(iph->saddr);
+-		cm_info->ip_version = TCP_IPV4;
++		cm_info->ip_version = QED_TCP_IPV4;
+ 
+ 		ip_hlen = (iph->ihl) * sizeof(u32);
+ 		*payload_len = ntohs(iph->tot_len) - ip_hlen;
+@@ -1730,7 +1730,7 @@ qed_iwarp_parse_rx_pkt(struct qed_hwfn *p_hwfn,
+ 			cm_info->remote_ip[i] =
+ 			    ntohl(ip6h->saddr.in6_u.u6_addr32[i]);
+ 		}
+-		cm_info->ip_version = TCP_IPV6;
++		cm_info->ip_version = QED_TCP_IPV6;
+ 
+ 		ip_hlen = sizeof(*ip6h);
+ 		*payload_len = ntohs(ip6h->payload_len);
+-- 
+2.19.0
 
