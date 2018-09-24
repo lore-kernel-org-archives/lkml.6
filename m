@@ -2,39 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A06ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF63C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56F4A21486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F4A21486
+	by mail.kernel.org (Postfix) with ESMTP id 5E7EE21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:31:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7EE21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388027AbeIXSdQ (ORCPT
+        id S2388033AbeIXSdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:33:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57954 "EHLO
+        Mon, 24 Sep 2018 14:33:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57962 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388008AbeIXSdP (ORCPT
+        with ESMTP id S1732138AbeIXSdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:33:15 -0400
+        Mon, 24 Sep 2018 14:33:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6B3631099;
-        Mon, 24 Sep 2018 12:31:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9B47B1099;
+        Mon, 24 Sep 2018 12:31:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Yue Wang <yuleopen@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 075/235] efi/arm: preserve early mapping of UEFI memory map longer for BGRT
-Date:   Mon, 24 Sep 2018 13:51:01 +0200
-Message-Id: <20180924113112.670780213@linuxfoundation.org>
+Subject: [PATCH 4.18 076/235] ALSA: usb-audio: Generic DSD detection for Thesycon-based implementations
+Date:   Mon, 24 Sep 2018 13:51:02 +0200
+Message-Id: <20180924113112.759926861@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,58 +52,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Yue Wang <yuleopen@gmail.com>
 
-[ Upstream commit 3ea86495aef2f6de26b7cb1599ba350dd6a0c521 ]
+[ Upstream commit 1ea0358ecb848058b35b6da13d7f4c08610a73a8 ]
 
-The BGRT code validates the contents of the table against the UEFI
-memory map, and so it expects it to be mapped when the code runs.
+Thesycon provides solutions to XMOS chips, and has its own device
+vendor id.
 
-On ARM, this is currently not the case, since we tear down the early
-mapping after efi_init() completes, and only create the permanent
-mapping in arm_enable_runtime_services(), which executes as an early
-initcall, but still leaves a window where the UEFI memory map is not
-mapped.
+In this patch, we use generic method to detect DSD capability of
+Thesycon-based UAC2 implementations in order to support a wide range
+of current and future devices.
 
-So move the call to efi_memmap_unmap() from efi_init() to
-arm_enable_runtime_services().
+The patch will enable the SNDRV_PCM_FMTBIT_DSD_U32_BE bit for the DAC
+hence enable native DSD playback up to DSD512 format.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-[will: fold in EFI_MEMMAP attribute check from Ard]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Yue Wang <yuleopen@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/efi/arm-init.c    |    1 -
- drivers/firmware/efi/arm-runtime.c |    4 +++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ sound/usb/quirks.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -259,7 +259,6 @@ void __init efi_init(void)
- 
- 	reserve_regions();
- 	efi_esrt_init();
--	efi_memmap_unmap();
- 
- 	memblock_reserve(params.mmap & PAGE_MASK,
- 			 PAGE_ALIGN(params.mmap_size +
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -110,11 +110,13 @@ static int __init arm_enable_runtime_ser
- {
- 	u64 mapsize;
- 
--	if (!efi_enabled(EFI_BOOT)) {
-+	if (!efi_enabled(EFI_BOOT) || !efi_enabled(EFI_MEMMAP)) {
- 		pr_info("EFI services will not be available.\n");
- 		return 0;
- 	}
- 
-+	efi_memmap_unmap();
-+
- 	if (efi_runtime_disabled()) {
- 		pr_info("EFI runtime services will be disabled.\n");
- 		return 0;
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1444,6 +1444,7 @@ u64 snd_usb_interface_dsd_format_quirks(
+ 	 */
+ 	switch (USB_ID_VENDOR(chip->usb_id)) {
+ 	case 0x20b1:  /* XMOS based devices */
++	case 0x152a:  /* Thesycon devices */
+ 	case 0x25ce:  /* Mytek devices */
+ 		if (fp->dsd_raw)
+ 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
 
 
