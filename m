@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AF6ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A6DECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0425921486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:26:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0425921486
+	by mail.kernel.org (Postfix) with ESMTP id 54C0021486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C0021486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733215AbeIXS2u (ORCPT
+        id S1733218AbeIXS2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:28:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57192 "EHLO
+        Mon, 24 Sep 2018 14:28:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57202 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732223AbeIXS2t (ORCPT
+        with ESMTP id S1732223AbeIXS2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:28:49 -0400
+        Mon, 24 Sep 2018 14:28:52 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5017F108B;
-        Mon, 24 Sep 2018 12:26:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8617E108B;
+        Mon, 24 Sep 2018 12:26:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, William Tu <u9012063@gmail.com>,
         Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 010/235] erspan: fix error handling for erspan tunnel
-Date:   Mon, 24 Sep 2018 13:49:56 +0200
-Message-Id: <20180924113105.358629274@linuxfoundation.org>
+Subject: [PATCH 4.18 011/235] erspan: return PACKET_REJECT when the appropriate tunnel is not found
+Date:   Mon, 24 Sep 2018 13:49:57 +0200
+Message-Id: <20180924113105.486122435@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,10 +54,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-[ Upstream commit 51dc63e3911fbb1f0a7a32da2fe56253e2040ea4 ]
+[ Upstream commit 5a64506b5c2c3cdb29d817723205330378075448 ]
 
-When processing icmp unreachable message for erspan tunnel, tunnel id
-should be erspan_net_id instead of ipgre_net_id.
+If erspan tunnel hasn't been established, we'd better send icmp port
+unreachable message after receive erspan packets.
 
 Fixes: 84e54fe0a5ea ("gre: introduce native tunnel support for ERSPAN")
 Cc: William Tu <u9012063@gmail.com>
@@ -66,20 +66,19 @@ Acked-by: William Tu <u9012063@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/ip_gre.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/net/ipv4/ip_gre.c
 +++ b/net/ipv4/ip_gre.c
-@@ -178,6 +178,9 @@ static void ipgre_err(struct sk_buff *sk
- 
- 	if (tpi->proto == htons(ETH_P_TEB))
- 		itn = net_generic(net, gre_tap_net_id);
-+	else if (tpi->proto == htons(ETH_P_ERSPAN) ||
-+		 tpi->proto == htons(ETH_P_ERSPAN2))
-+		itn = net_generic(net, erspan_net_id);
- 	else
- 		itn = net_generic(net, ipgre_net_id);
- 
+@@ -331,6 +331,8 @@ static int erspan_rcv(struct sk_buff *sk
+ 		ip_tunnel_rcv(tunnel, skb, tpi, tun_dst, log_ecn_error);
+ 		return PACKET_RCVD;
+ 	}
++	return PACKET_REJECT;
++
+ drop:
+ 	kfree_skb(skb);
+ 	return PACKET_RCVD;
 
 
