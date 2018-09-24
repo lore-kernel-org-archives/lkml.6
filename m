@@ -2,81 +2,87 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BA6ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2229C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30ED120C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:09:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30ED120C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 7326220877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:09:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7326220877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbeIXSLV (ORCPT
+        id S1730895AbeIXSLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:11:21 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:50437 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728516AbeIXSLU (ORCPT
+        Mon, 24 Sep 2018 14:11:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53824 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729250AbeIXSGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:11:20 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g4Pg9-0006Tr-Fa; Mon, 24 Sep 2018 06:09:29 -0600
-Received: from [105.184.227.67] (helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g4Pg8-0001CO-6z; Mon, 24 Sep 2018 06:09:29 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     <linux-arch@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>
-Date:   Mon, 24 Sep 2018 14:09:18 +0200
-Message-ID: <87pnx32j2p.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 24 Sep 2018 14:06:15 -0400
+Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19EFA107A;
+        Mon, 24 Sep 2018 12:04:27 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 063/111] USB: serial: io_ti: fix array underflow in completion handler
+Date:   Mon, 24 Sep 2018 13:52:30 +0200
+Message-Id: <20180924113111.149387021@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
+References: <20180924113103.337261320@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1g4Pg8-0001CO-6z;;;mid=<87pnx32j2p.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/G6/QdhbzQ92cIMzIFIoE5ul6ApH6SIO4=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [REVIEW][PATCH 0/4] signal/arm: siginfo cleanups
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-This is the latest and hopefully round of siginfo cleanups for arm.
-This replaces the use of siginal sending functions that take siginfo
-with siginfo sending functions that take the values that go in siginfo
-and this is harder to get wrong, and frequently results in cleaner code.
+------------------
 
-I don't think I have made made any mistakes in this coversion but if
-people can look the code over and see if they can spot anything I would
-appreciate it.
+From: Johan Hovold <johan@kernel.org>
 
-Eric W. Biederman (4):
-      signal/arm: Push siginfo generation into arm_notify_die
-      signal/arm: Use force_sig_fault where appropriate
-      signal/arm: Use send_sig_fault where appropriate
-      signal/arm/kvm: Use send_sig_mceerr
+commit 691a03cfe8ca483f9c48153b869d354e4ae3abef upstream.
 
- arch/arm/include/asm/bug.h    |  4 +--
- arch/arm/kernel/ptrace.c      | 11 ++------
- arch/arm/kernel/swp_emulate.c | 16 +++++------
- arch/arm/kernel/traps.c       | 63 ++++++++++++-------------------------------
- arch/arm/mm/alignment.c       | 10 +------
- arch/arm/mm/fault.c           | 28 ++++---------------
- arch/arm/vfp/vfpmodule.c      | 11 +++-----
- virt/kvm/arm/mmu.c            | 14 +++-------
- 8 files changed, 41 insertions(+), 116 deletions(-)
+As reported by Dan Carpenter, a malicious USB device could set
+port_number to a negative value and we would underflow the port array in
+the interrupt completion handler.
 
-Eric
+As these devices only have one or two ports, fix this by making sure we
+only consider the seventh bit when determining the port number (and
+ignore bits 0xb0 which are typically set to 0x30).
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/usb/serial/io_ti.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/usb/serial/io_ti.h
++++ b/drivers/usb/serial/io_ti.h
+@@ -178,7 +178,7 @@ struct ump_interrupt {
+ }  __attribute__((packed));
+ 
+ 
+-#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 4) - 3)
++#define TIUMP_GET_PORT_FROM_CODE(c)	(((c) >> 6) & 0x01)
+ #define TIUMP_GET_FUNC_FROM_CODE(c)	((c) & 0x0f)
+ #define TIUMP_INTERRUPT_CODE_LSR	0x03
+ #define TIUMP_INTERRUPT_CODE_MSR	0x04
+
+
