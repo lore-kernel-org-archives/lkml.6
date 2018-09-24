@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE6FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD34EECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C822083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4C822083A
+	by mail.kernel.org (Postfix) with ESMTP id 91FB92083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:41:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91FB92083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388755AbeIXSnR (ORCPT
+        id S2388767AbeIXSnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:43:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59110 "EHLO
+        Mon, 24 Sep 2018 14:43:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730507AbeIXSnQ (ORCPT
+        with ESMTP id S1730507AbeIXSnU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:43:16 -0400
+        Mon, 24 Sep 2018 14:43:20 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 28B15109A;
-        Mon, 24 Sep 2018 12:41:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5F1FD109A;
+        Mon, 24 Sep 2018 12:41:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        stable@vger.kernel.org,
+        Rick Farrington <ricardo.farrington@cavium.com>,
+        Felix Manlunas <felix.manlunas@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 165/235] arm64: dts: mt7622: update a clock property for UART0
-Date:   Mon, 24 Sep 2018 13:52:31 +0200
-Message-Id: <20180924113121.540038482@linuxfoundation.org>
+Subject: [PATCH 4.18 174/235] liquidio: fix hang when re-binding VF host drv after running DPDK VF driver
+Date:   Mon, 24 Sep 2018 13:52:40 +0200
+Message-Id: <20180924113122.235241184@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -52,31 +54,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ryder Lee <ryder.lee@mediatek.com>
+From: Rick Farrington <ricardo.farrington@cavium.com>
 
-[ Upstream commit 2b519747ae4859e886c37834d766fe0c7d8d82e2 ]
+[ Upstream commit ac13d6d8eaded15c67265eafc32f439ea3a0ac4a ]
 
-The input clock of UART0 should be CLK_PERI_UART0_PD.
+When configuring SLI_PKTn_OUTPUT_CONTROL, VF driver was assuming that IPTR
+mode was disabled by reset, which was not true.  Since DPDK driver had
+set IPTR mode previously, the VF driver (which uses buf-ptr-only mode) was
+not properly handling DROQ packets (i.e. it saw zero-length packets).
 
-Fixes: 13f36c326cef ("arm64: dts: mt7622: turn uart0 clock to real ones")
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+This represented an invalid hardware configuration which the driver could
+not handle.
+
+Signed-off-by: Rick Farrington <ricardo.farrington@cavium.com>
+Signed-off-by: Felix Manlunas <felix.manlunas@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/mediatek/mt7622.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c |    3 +++
+ drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -331,7 +331,7 @@
- 		reg = <0 0x11002000 0 0x400>;
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
- 		clocks = <&topckgen CLK_TOP_UART_SEL>,
--			 <&pericfg CLK_PERI_UART1_PD>;
-+			 <&pericfg CLK_PERI_UART0_PD>;
- 		clock-names = "baud", "bus";
- 		status = "disabled";
- 	};
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
+@@ -493,6 +493,9 @@ static void cn23xx_pf_setup_global_outpu
+ 	for (q_no = srn; q_no < ern; q_no++) {
+ 		reg_val = octeon_read_csr(oct, CN23XX_SLI_OQ_PKT_CONTROL(q_no));
+ 
++		/* clear IPTR */
++		reg_val &= ~CN23XX_PKT_OUTPUT_CTL_IPTR;
++
+ 		/* set DPTR */
+ 		reg_val |= CN23XX_PKT_OUTPUT_CTL_DPTR;
+ 
+--- a/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
++++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_vf_device.c
+@@ -165,6 +165,9 @@ static void cn23xx_vf_setup_global_outpu
+ 		reg_val =
+ 		    octeon_read_csr(oct, CN23XX_VF_SLI_OQ_PKT_CONTROL(q_no));
+ 
++		/* clear IPTR */
++		reg_val &= ~CN23XX_PKT_OUTPUT_CTL_IPTR;
++
+ 		/* set DPTR */
+ 		reg_val |= CN23XX_PKT_OUTPUT_CTL_DPTR;
+ 
 
 
