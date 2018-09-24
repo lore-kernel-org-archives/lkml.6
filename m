@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9E7ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D16C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9316C20C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9316C20C0A
+	by mail.kernel.org (Postfix) with ESMTP id 9E0F720877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E0F720877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730543AbeIXSB0 (ORCPT
+        id S1730563AbeIXSBf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:01:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52552 "EHLO
+        Mon, 24 Sep 2018 14:01:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52564 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730531AbeIXSBZ (ORCPT
+        with ESMTP id S1729489AbeIXSBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:01:25 -0400
+        Mon, 24 Sep 2018 14:01:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B72931075;
-        Mon, 24 Sep 2018 11:59:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE5C11076;
+        Mon, 24 Sep 2018 11:59:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+93a5839deb355537440f@syzkaller.appspotmail.com,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        rds-devel@oss.oracle.com, Cong Wang <xiyou.wangcong@gmail.com>,
-        Santosh Shilimkar <santosh.shilimkar@oarcle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 002/111] rds: fix two RCU related problems
-Date:   Mon, 24 Sep 2018 13:51:29 +0200
-Message-Id: <20180924113103.949206414@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Imre Deak <imre.deak@solidboot.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 021/111] fbdev: omapfb: off by one in omapfb_register_client()
+Date:   Mon, 24 Sep 2018 13:51:48 +0200
+Message-Id: <20180924113106.536323076@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -56,62 +53,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit cc4dfb7f70a344f24c1c71e298deea0771dadcb2 ]
+[ Upstream commit 5ec1ec35b2979b59d0b33381e7c9aac17e159d16 ]
 
-When a rds sock is bound, it is inserted into the bind_hash_table
-which is protected by RCU. But when releasing rds sock, after it
-is removed from this hash table, it is freed immediately without
-respecting RCU grace period. This could cause some use-after-free
-as reported by syzbot.
+The omapfb_register_client[] array has OMAPFB_PLANE_NUM elements so the
+> should be >= or we are one element beyond the end of the array.
 
-Mark the rds sock with SOCK_RCU_FREE before inserting it into the
-bind_hash_table, so that it would be always freed after a RCU grace
-period.
-
-The other problem is in rds_find_bound(), the rds sock could be
-freed in between rhashtable_lookup_fast() and rds_sock_addref(),
-so we need to extend RCU read lock protection in rds_find_bound()
-to close this race condition.
-
-Reported-and-tested-by: syzbot+8967084bcac563795dc6@syzkaller.appspotmail.com
-Reported-by: syzbot+93a5839deb355537440f@syzkaller.appspotmail.com
-Cc: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc: rds-devel@oss.oracle.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oarcle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 8b08cf2b64f5 ("OMAP: add TI OMAP framebuffer driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Imre Deak <imre.deak@solidboot.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rds/bind.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/omap/omapfb_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/rds/bind.c
-+++ b/net/rds/bind.c
-@@ -60,11 +60,13 @@ struct rds_sock *rds_find_bound(__be32 a
- 	u64 key = ((u64)addr << 32) | port;
- 	struct rds_sock *rs;
+--- a/drivers/video/fbdev/omap/omapfb_main.c
++++ b/drivers/video/fbdev/omap/omapfb_main.c
+@@ -956,7 +956,7 @@ int omapfb_register_client(struct omapfb
+ {
+ 	int r;
  
--	rs = rhashtable_lookup_fast(&bind_hash_table, &key, ht_parms);
-+	rcu_read_lock();
-+	rs = rhashtable_lookup(&bind_hash_table, &key, ht_parms);
- 	if (rs && !sock_flag(rds_rs_to_sk(rs), SOCK_DEAD))
- 		rds_sock_addref(rs);
- 	else
- 		rs = NULL;
-+	rcu_read_unlock();
+-	if ((unsigned)omapfb_nb->plane_idx > OMAPFB_PLANE_NUM)
++	if ((unsigned)omapfb_nb->plane_idx >= OMAPFB_PLANE_NUM)
+ 		return -EINVAL;
  
- 	rdsdebug("returning rs %p for %pI4:%u\n", rs, &addr,
- 		ntohs(port));
-@@ -157,6 +159,7 @@ int rds_bind(struct socket *sock, struct
- 		goto out;
- 	}
- 
-+	sock_set_flag(sk, SOCK_RCU_FREE);
- 	ret = rds_add_bound(rs, sin->sin_addr.s_addr, &sin->sin_port);
- 	if (ret)
- 		goto out;
+ 	if (!notifier_inited) {
 
 
