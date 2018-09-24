@@ -2,145 +2,133 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AFAECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B0BECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA6C52086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:21:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6C52086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 998AC2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:23:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXY0Jcra"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998AC2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbeIXQWZ (ORCPT
+        id S1727867AbeIXQYs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:22:25 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60769 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725982AbeIXQWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:22:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 03:21:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,297,1534834800"; 
-   d="scan'208";a="94306177"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 24 Sep 2018 03:20:46 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id B880EB2; Mon, 24 Sep 2018 13:20:45 +0300 (EEST)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] thunderbolt: Do not handle ICM events after domain is stopped
-Date:   Mon, 24 Sep 2018 13:20:44 +0300
-Message-Id: <20180924102045.75807-2-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180924102045.75807-1-mika.westerberg@linux.intel.com>
-References: <20180924102045.75807-1-mika.westerberg@linux.intel.com>
+        Mon, 24 Sep 2018 12:24:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43964 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbeIXQYs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 12:24:48 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z14-v6so1590831wrs.10;
+        Mon, 24 Sep 2018 03:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qiiBGVzqFnlU80bax9OYHWebaw8NjVB7TaaVJNMqFlE=;
+        b=CXY0Jcra9DwzznTnJqMnCdydJ2Bbi46bGiXITHhej0AQjALM9w866Nn0dCVJpm+fce
+         etK8ewirZgc7clSANKJ47p37UZ9pz0CtVSWJl6FUkq7vMuUEIEI1Lk04S38i1SxqUvU2
+         3ofVSXlU4WpqrmJgJgLXVlnlUWzx4rcWs0LBWsYycbRtD7Vkk3iLBgSBYa6aQSiiY9fg
+         5B+jy3aeNcKagH4fO5KLXJvZ8zV6xfgZ/xVzmup6xaPJr8jK48ZCKLB8Q5n4/6GZLb39
+         6EoTbgSqTOUSg9vyq4pMfVvvvztYUBP5KmstGfMaQ8k8JRO+hN598VREeEwa6tyZpLft
+         nOiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qiiBGVzqFnlU80bax9OYHWebaw8NjVB7TaaVJNMqFlE=;
+        b=ZUfe+g67Gg21UYOcWBMDvIeT/XzyZOYOU3eBeugHrDBcwyxshb6FS15fN1dPBy5N+n
+         LwH2vwphf47DI1ETFkh247C1rViflxNVNNiYLBCAqU2p/D1njwIS9M2MLdV06zi4Euv3
+         xX6lsjm5NLgOFOYtmfoQN6HJFWJaXgsBkK8/biDahwU1gztbWxMo5py+/Z3U7oixVXDE
+         4lkI9l07WxaeqIKcsgrGX5ECQwKEQfS5jUiv/JQcjYdpAhgi/kT5bE1Z1GQnnEKh42Wc
+         gAgqs52Dnbry6St0lXgPA1otYWHrKwBxCM0YP4+cRJ1xtT+6qwA5C48OMzJC79kSzg/H
+         LTlQ==
+X-Gm-Message-State: ABuFfojG9xrEVKm3/BH3OdFtwW9jxonT19V6ekrUmgb/+98d9iVr7Jk8
+        yYq0gjGV9BNCT4YRHrlBZhPnq0ad
+X-Google-Smtp-Source: ACcGV61CFGQB/aCcE0V09L4VPZa96rAAxYNa1gpW9UxVlP/1iL2QMaWLNHfTdcrxPZ3XAUgDK/c6tw==
+X-Received: by 2002:a5d:4e44:: with SMTP id r4-v6mr1599762wrt.27.1537784604313;
+        Mon, 24 Sep 2018 03:23:24 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id 144-v6sm28685341wma.45.2018.09.24.03.23.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 03:23:23 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 12:23:22 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 12/20] iommu/tegra: gart: Integrate with Memory
+ Controller driver
+Message-ID: <20180924102322.GI21032@ulmo>
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-13-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="9iyR+p8Z2cn535Lj"
+Content-Disposition: inline
+In-Reply-To: <20180924004153.8232-13-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there is a long chain of devices connected when the driver is loaded
-ICM sends device connected event for each and those are put to tb->wq
-for later processing. Now if the driver gets unloaded in the middle, so
-that the work queue is not yet empty it gets flushed by tb_domain_stop().
-However, by that time the root switch is already removed so the driver
-crashes when it tries to dereference it in ICM event handling callbacks.
 
-Fix this by checking whether the root switch is already removed. If it
-is we know that the domain is stopped and we should merely skip handling
-the event.
+--9iyR+p8Z2cn535Lj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/thunderbolt/icm.c | 49 ++++++++++++++++-----------------------
- 1 file changed, 20 insertions(+), 29 deletions(-)
+On Mon, Sep 24, 2018 at 03:41:45AM +0300, Dmitry Osipenko wrote:
+> The device-tree binding has been changed. There is no separate GART device
+> anymore, it is squashed into the Memory Controller. Integrate GART module
+> with the MC in a way it is done for the SMMU of Tegra30+.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/iommu/Kconfig      |  1 +
+>  drivers/iommu/tegra-gart.c | 98 ++++++++++----------------------------
+>  drivers/memory/tegra/mc.c  | 41 ++++++++++++++++
+>  include/soc/tegra/mc.h     | 27 +++++++++++
+>  4 files changed, 93 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index e1e264a9a4c7..28fc4ce75edb 100644
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -738,14 +738,6 @@ icm_fr_xdomain_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- 	u8 link, depth;
- 	u64 route;
- 
--	/*
--	 * After NVM upgrade adding root switch device fails because we
--	 * initiated reset. During that time ICM might still send
--	 * XDomain connected message which we ignore here.
--	 */
--	if (!tb->root_switch)
--		return;
--
- 	link = pkg->link_info & ICM_LINK_INFO_LINK_MASK;
- 	depth = (pkg->link_info & ICM_LINK_INFO_DEPTH_MASK) >>
- 		ICM_LINK_INFO_DEPTH_SHIFT;
-@@ -1037,14 +1029,6 @@ icm_tr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
- 	if (pkg->hdr.packet_id)
- 		return;
- 
--	/*
--	 * After NVM upgrade adding root switch device fails because we
--	 * initiated reset. During that time ICM might still send device
--	 * connected message which we ignore here.
--	 */
--	if (!tb->root_switch)
--		return;
--
- 	route = get_route(pkg->route_hi, pkg->route_lo);
- 	authorized = pkg->link_info & ICM_LINK_INFO_APPROVED;
- 	security_level = (pkg->hdr.flags & ICM_FLAGS_SLEVEL_MASK) >>
-@@ -1408,19 +1392,26 @@ static void icm_handle_notification(struct work_struct *work)
- 
- 	mutex_lock(&tb->lock);
- 
--	switch (n->pkg->code) {
--	case ICM_EVENT_DEVICE_CONNECTED:
--		icm->device_connected(tb, n->pkg);
--		break;
--	case ICM_EVENT_DEVICE_DISCONNECTED:
--		icm->device_disconnected(tb, n->pkg);
--		break;
--	case ICM_EVENT_XDOMAIN_CONNECTED:
--		icm->xdomain_connected(tb, n->pkg);
--		break;
--	case ICM_EVENT_XDOMAIN_DISCONNECTED:
--		icm->xdomain_disconnected(tb, n->pkg);
--		break;
-+	/*
-+	 * When the domain is stopped we flush its workqueue but before
-+	 * that the root switch is removed. In that case we should treat
-+	 * the queued events as being canceled.
-+	 */
-+	if (tb->root_switch) {
-+		switch (n->pkg->code) {
-+		case ICM_EVENT_DEVICE_CONNECTED:
-+			icm->device_connected(tb, n->pkg);
-+			break;
-+		case ICM_EVENT_DEVICE_DISCONNECTED:
-+			icm->device_disconnected(tb, n->pkg);
-+			break;
-+		case ICM_EVENT_XDOMAIN_CONNECTED:
-+			icm->xdomain_connected(tb, n->pkg);
-+			break;
-+		case ICM_EVENT_XDOMAIN_DISCONNECTED:
-+			icm->xdomain_disconnected(tb, n->pkg);
-+			break;
-+		}
- 	}
- 
- 	mutex_unlock(&tb->lock);
--- 
-2.18.0
+I think this could technically have been two patches, but since they'd
+have a compile-time dependency either way they need to be applied in the
+correct order, so some coordination between IOMMU and Tegra trees is
+going to have to happen anyway and might as well just stick this into a
+single patch.
 
+Thierry
+
+--9iyR+p8Z2cn535Lj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluouxoACgkQ3SOs138+
+s6FIqRAAv1YXOG+5wSjtW+2I5DBn924yW8YAZ9x/j72Pf+1bNLaZ+o/zLBl82aHC
+PVVQMLjOCNSoozNRra27knqbUB/bogRvRQQAyjk01LeQzigTtJx3Gp5I1M+kKrzo
+jvDKUm3roJdHvJrAZewWwM5tEe7ODQhZ6dHW3gk9jBDcen8Qc4gacm4wKlb1z4PS
+LctjQf5QiYvhx6iPgW1pWRQG79TpHuG6SS1jHfVaw5fSGUDbco6asxqTLwdj6ZBc
+fI/k0faAW652NxxoQe7aq11yE41bZu+6oYwWGhT7F/ABwJKdDCBH14Bgwz5Fk5pq
+6onUtt42xw1wR9OwjtGv6zlVcZQcsQ7Fn/X2TQ3M/Fu/aY74u/DsLNeeqEZI0xsL
+I1+F4R8WCTmAqAOgdq7TeCJGUJRg43IykYYeJ9U6nXFyUhhpafza9uZXx/1f9OpF
+ntrM6S+nhRCyccytdYxFq6CKES8O6sPd7ER21a8DqkuIwQoe3/KwovTRoQU5fQrh
+0+XTaGTdo6PbWTxkkl7qJNZO+xcqn/ZickKtCZbbIZ334qxd94g7/R1N9VSIGul7
+IGmgngRQzQcEhCzK6JWClfWMBKnvuuflY6S60j+0o3WJiC6yJzo4pgpVDWqxRsc7
+iAyiVGx0VSzjhciA7VsPT5mwntGloKaUjD4kfO0UzuEeyhjgAt0=
+=wIFq
+-----END PGP SIGNATURE-----
+
+--9iyR+p8Z2cn535Lj--
