@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08016C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB03ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71522145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:58:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71522145D
+	by mail.kernel.org (Postfix) with ESMTP id D8D472145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D472145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730443AbeIXSAm (ORCPT
+        id S1730454AbeIXSAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:00:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52420 "EHLO
+        Mon, 24 Sep 2018 14:00:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52430 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728513AbeIXSAl (ORCPT
+        with ESMTP id S1728530AbeIXSAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:00:41 -0400
+        Mon, 24 Sep 2018 14:00:45 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75BA8D64;
-        Mon, 24 Sep 2018 11:58:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A74641072;
+        Mon, 24 Sep 2018 11:58:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        stable@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 010/111] clk: imx6ul: fix missing of_node_put()
-Date:   Mon, 24 Sep 2018 13:51:37 +0200
-Message-Id: <20180924113105.161852370@linuxfoundation.org>
+Subject: [PATCH 4.9 011/111] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of failure
+Date:   Mon, 24 Sep 2018 13:51:38 +0200
+Message-Id: <20180924113105.306194067@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -52,32 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Rajan Vaja <rajan.vaja@xilinx.com>
 
-[ Upstream commit 11177e7a7aaef95935592072985526ebf0a3df43 ]
+[ Upstream commit f6dab4233d6b64d719109040503b567f71fbfa01 ]
 
-of_find_compatible_node() is returning a device node with refcount
-incremented and must be explicitly decremented after the last use
-which is right after the us in of_iomap() here.
+Fixed factor clock has two initializations at of_clk_init() time
+and during platform driver probe. Before of_clk_init() call,
+node is marked as populated and so its probe never gets called.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
+During of_clk_init() fixed factor clock registration may fail if
+any of its parent clock is not registered. In this case, it doesn't
+get chance to retry registration from probe. Clear OF_POPULATED
+flag if fixed factor clock registration fails so that clock
+registration is attempted again from probe.
+
+Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/imx/clk-imx6ul.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-fixed-factor.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -120,6 +120,7 @@ static void __init imx6ul_clocks_init(st
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -177,8 +177,15 @@ static struct clk *_of_fixed_factor_clk_
  
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-anatop");
- 	base = of_iomap(np, 0);
-+	of_node_put(np);
- 	WARN_ON(!base);
+ 	clk = clk_register_fixed_factor(NULL, clk_name, parent_name, flags,
+ 					mult, div);
+-	if (IS_ERR(clk))
++	if (IS_ERR(clk)) {
++		/*
++		 * If parent clock is not registered, registration would fail.
++		 * Clear OF_POPULATED flag so that clock registration can be
++		 * attempted again from probe function.
++		 */
++		of_node_clear_flag(node, OF_POPULATED);
+ 		return clk;
++	}
  
- 	clks[IMX6UL_PLL1_BYPASS_SRC] = imx_clk_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+ 	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
+ 	if (ret) {
 
 
