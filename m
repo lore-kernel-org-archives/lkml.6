@@ -2,454 +2,115 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA17FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 670E3C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8852B214AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:22:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8852B214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 2315C21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 14:22:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgRvODpX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2315C21486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbeIXUY4 (ORCPT
+        id S1730658AbeIXUZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:24:56 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:33678 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729082AbeIXUYz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:24:55 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g4Rku-00068z-KM; Mon, 24 Sep 2018 08:22:32 -0600
-Received: from [105.184.227.67] (helo=x220.Home)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1g4Rks-000588-Jv; Mon, 24 Sep 2018 08:22:32 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon, 24 Sep 2018 16:21:43 +0200
-Message-Id: <20180924142143.21356-3-ebiederm@xmission.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <87pnx32j2p.fsf@xmission.com>
-References: <87pnx32j2p.fsf@xmission.com>
-X-XM-SPF: eid=1g4Rks-000588-Jv;;;mid=<20180924142143.21356-3-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/cANXSgWYyDZx2qrdqGp7oRW+OK1utMIM=
-X-SA-Exim-Connect-IP: 105.184.227.67
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [REVIEW][PATCH 3/3] signal/ia64: Use force_sig_fault where appropriate
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Mon, 24 Sep 2018 16:25:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727579AbeIXUZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:25:19 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9609C21480;
+        Mon, 24 Sep 2018 14:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1537798976;
+        bh=FDCySySy6uws+LvKwvr0GTdUawPPyUK0nh/GKiIrsiA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tgRvODpXd0sejAbXFPi0Tp6D0cmET5j3IDwLUzdxQ4YwFyuJP98KpPckb8dQ1uT6h
+         G0NnOrWb0Kol1Q+FFpmMzD+MXdGhr2D9KOwUwguVNv1HNpw7U8pVq3KRy/YXdDoJcV
+         UvvR0ukOL4pCRTxV8OZD6D3nArehFyw3Z+bJYwTQ=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 359AD1401A1; Mon, 24 Sep 2018 11:22:54 -0300 (-03)
+Date:   Mon, 24 Sep 2018 11:22:54 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <andi@firstfloor.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        kernel-team@lge.com
+Subject: Re: [PATCH 47/48] perf record: Spread maps for --threads option
+Message-ID: <20180924142254.GB4640@kernel.org>
+References: <20180913125450.21342-1-jolsa@kernel.org>
+ <20180913125450.21342-48-jolsa@kernel.org>
+ <20180917114048.GF18395@sejong>
+ <20180923194432.GH30923@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180923194432.GH30923@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- arch/ia64/kernel/brl_emu.c   |  31 ++------
- arch/ia64/kernel/traps.c     | 144 ++++++++++-------------------------
- arch/ia64/kernel/unaligned.c |  12 +--
- arch/ia64/mm/fault.c         |  12 +--
- 4 files changed, 49 insertions(+), 150 deletions(-)
+Em Sun, Sep 23, 2018 at 09:44:32PM +0200, Jiri Olsa escreveu:
+> On Mon, Sep 17, 2018 at 08:40:48PM +0900, Namhyung Kim wrote:
+> > On Thu, Sep 13, 2018 at 02:54:49PM +0200, Jiri Olsa wrote:
+> > > Currently we assign all maps to main thread. Adding
+> > > code that spreads maps for --threads option.
+> > > 
+> > > For --thread option we create as many threads as there
+> > > are memory maps in evlist, which is the number of CPUs
+> > > in the system or CPUs we monitor. Each thread gets a
+> > > single data mmap to read.
+> > > 
+> > > In addition we have also same amount of tracking mmaps
+> > > for auxiliary events which we don't create special thread
+> > > for. Instead we assign the to the main thread, because
+> > > there's not much traffic expected there.
+> > > 
+> > > The assignment is visible from --thread-stats output:
+> > > 
+> > >           pid      write       poll       skip  maps (size 20K)
+> > >     1s   9770       144B          1          0   19K   19K   19K   18K   19K
+> > >          9772         0B          1          0   18K
+> > >          9773         0B          1          0   19K
+> > >          9774         0B          1          0   19K
+> > > 
+> > > There are 5 maps for thread 9770 (1 data map and 4 auxiliary)
+> > > and one data map for every other thread. Each thread writes
+> > > data to the separate data file.
+> > 
+> > Hmm.. not sure it'll work well for large machines with 1000+ cpus.
+> > What about giving each thread a data mmap and a tracking mmap?
+> 
+> well currently we store the tracking data in single file,
+> thats why we need just one thread to write them down
 
-diff --git a/arch/ia64/kernel/brl_emu.c b/arch/ia64/kernel/brl_emu.c
-index a61f6c6a36f8..c0239bf77a09 100644
---- a/arch/ia64/kernel/brl_emu.c
-+++ b/arch/ia64/kernel/brl_emu.c
-@@ -58,11 +58,9 @@ ia64_emulate_brl (struct pt_regs *regs, unsigned long ar_ec)
- 	unsigned long bundle[2];
- 	unsigned long opcode, btype, qp, offset, cpl;
- 	unsigned long next_ip;
--	struct siginfo siginfo;
- 	struct illegal_op_return rv;
- 	long tmp_taken, unimplemented_address;
+I agree with Namhyung, with a slight difference: perhaps we should set
+perf_event_attr.mmap on one of the events of the per-cpu mmap, that way
+we don't need that dummy event, right?
  
--	clear_siginfo(&siginfo);
- 	rv.fkt = (unsigned long) -1;
- 
- 	/*
-@@ -198,39 +196,22 @@ ia64_emulate_brl (struct pt_regs *regs, unsigned long ar_ec)
- 		 *  The target address contains unimplemented bits.
- 		 */
- 		printk(KERN_DEBUG "Woah! Unimplemented Instruction Address Trap!\n");
--		siginfo.si_signo = SIGILL;
--		siginfo.si_errno = 0;
--		siginfo.si_flags = 0;
--		siginfo.si_isr = 0;
--		siginfo.si_imm = 0;
--		siginfo.si_code = ILL_BADIADDR;
--		force_sig_info(SIGILL, &siginfo, current);
-+		force_sig_fault(SIGILL, ILL_BADIADDR, (void __user *)NULL,
-+				0, 0, 0, current);
- 	} else if (ia64_psr(regs)->tb) {
- 		/*
- 		 *  Branch Tracing is enabled.
- 		 *  Force a taken branch signal.
- 		 */
--		siginfo.si_signo = SIGTRAP;
--		siginfo.si_errno = 0;
--		siginfo.si_code = TRAP_BRANCH;
--		siginfo.si_flags = 0;
--		siginfo.si_isr = 0;
--		siginfo.si_addr = 0;
--		siginfo.si_imm = 0;
--		force_sig_info(SIGTRAP, &siginfo, current);
-+		force_sig_fault(SIGTRAP, TRAP_BRANCH, (void __user *)NULL,
-+				0, 0, 0, current);
- 	} else if (ia64_psr(regs)->ss) {
- 		/*
- 		 *  Single Step is enabled.
- 		 *  Force a trace signal.
- 		 */
--		siginfo.si_signo = SIGTRAP;
--		siginfo.si_errno = 0;
--		siginfo.si_code = TRAP_TRACE;
--		siginfo.si_flags = 0;
--		siginfo.si_isr = 0;
--		siginfo.si_addr = 0;
--		siginfo.si_imm = 0;
--		force_sig_info(SIGTRAP, &siginfo, current);
-+		force_sig_fault(SIGTRAP, TRAP_TRACE, (void __user *)NULL,
-+				0, 0, 0, current);
- 	}
- 	return rv;
- }
-diff --git a/arch/ia64/kernel/traps.c b/arch/ia64/kernel/traps.c
-index c6f4932073a1..85d8616ac4f6 100644
---- a/arch/ia64/kernel/traps.c
-+++ b/arch/ia64/kernel/traps.c
-@@ -100,16 +100,8 @@ die_if_kernel (char *str, struct pt_regs *regs, long err)
- void
- __kprobes ia64_bad_break (unsigned long break_num, struct pt_regs *regs)
- {
--	siginfo_t siginfo;
- 	int sig, code;
- 
--	/* SIGILL, SIGFPE, SIGSEGV, and SIGBUS want these field initialized: */
--	clear_siginfo(&siginfo);
--	siginfo.si_addr = (void __user *) (regs->cr_iip + ia64_psr(regs)->ri);
--	siginfo.si_imm = break_num;
--	siginfo.si_flags = 0;		/* clear __ISR_VALID */
--	siginfo.si_isr = 0;
--
- 	switch (break_num) {
- 	      case 0: /* unknown error (used by GCC for __builtin_abort()) */
- 		if (notify_die(DIE_BREAK, "break 0", regs, break_num, TRAP_BRKPT, SIGTRAP)
-@@ -182,10 +174,9 @@ __kprobes ia64_bad_break (unsigned long break_num, struct pt_regs *regs)
- 			sig = SIGTRAP; code = TRAP_BRKPT;
- 		}
- 	}
--	siginfo.si_signo = sig;
--	siginfo.si_errno = 0;
--	siginfo.si_code = code;
--	force_sig_info(sig, &siginfo, current);
-+	force_sig_fault(sig, code,
-+			(void __user *) (regs->cr_iip + ia64_psr(regs)->ri),
-+			break_num, 0 /* clear __ISR_VALID */, 0, current);
- }
- 
- /*
-@@ -344,30 +335,25 @@ handle_fpu_swa (int fp_fault, struct pt_regs *regs, unsigned long isr)
- 			printk(KERN_ERR "handle_fpu_swa: fp_emulate() returned -1\n");
- 			return -1;
- 		} else {
--			struct siginfo siginfo;
--
- 			/* is next instruction a trap? */
-+			int si_code;
-+
- 			if (exception & 2) {
- 				ia64_increment_ip(regs);
- 			}
--			clear_siginfo(&siginfo);
--			siginfo.si_signo = SIGFPE;
--			siginfo.si_errno = 0;
--			siginfo.si_code = FPE_FLTUNK;	/* default code */
--			siginfo.si_addr = (void __user *) (regs->cr_iip + ia64_psr(regs)->ri);
-+			si_code = FPE_FLTUNK;	/* default code */
- 			if (isr & 0x11) {
--				siginfo.si_code = FPE_FLTINV;
-+				si_code = FPE_FLTINV;
- 			} else if (isr & 0x22) {
- 				/* denormal operand gets the same si_code as underflow 
- 				* see arch/i386/kernel/traps.c:math_error()  */
--				siginfo.si_code = FPE_FLTUND;
-+				si_code = FPE_FLTUND;
- 			} else if (isr & 0x44) {
--				siginfo.si_code = FPE_FLTDIV;
-+				si_code = FPE_FLTDIV;
- 			}
--			siginfo.si_isr = isr;
--			siginfo.si_flags = __ISR_VALID;
--			siginfo.si_imm = 0;
--			force_sig_info(SIGFPE, &siginfo, current);
-+			force_sig_fault(SIGFPE, si_code,
-+					(void __user *) (regs->cr_iip + ia64_psr(regs)->ri),
-+					0, __ISR_VALID, isr, current);
- 		}
- 	} else {
- 		if (exception == -1) {
-@@ -375,24 +361,19 @@ handle_fpu_swa (int fp_fault, struct pt_regs *regs, unsigned long isr)
- 			return -1;
- 		} else if (exception != 0) {
- 			/* raise exception */
--			struct siginfo siginfo;
-+			int si_code;
- 
--			clear_siginfo(&siginfo);
--			siginfo.si_signo = SIGFPE;
--			siginfo.si_errno = 0;
--			siginfo.si_code = FPE_FLTUNK;	/* default code */
--			siginfo.si_addr = (void __user *) (regs->cr_iip + ia64_psr(regs)->ri);
-+			si_code = FPE_FLTUNK;	/* default code */
- 			if (isr & 0x880) {
--				siginfo.si_code = FPE_FLTOVF;
-+				si_code = FPE_FLTOVF;
- 			} else if (isr & 0x1100) {
--				siginfo.si_code = FPE_FLTUND;
-+				si_code = FPE_FLTUND;
- 			} else if (isr & 0x2200) {
--				siginfo.si_code = FPE_FLTRES;
-+				si_code = FPE_FLTRES;
- 			}
--			siginfo.si_isr = isr;
--			siginfo.si_flags = __ISR_VALID;
--			siginfo.si_imm = 0;
--			force_sig_info(SIGFPE, &siginfo, current);
-+			force_sig_fault(SIGFPE, si_code,
-+					(void __user *) (regs->cr_iip + ia64_psr(regs)->ri),
-+					0, __ISR_VALID, isr, current);
- 		}
- 	}
- 	return 0;
-@@ -408,7 +389,6 @@ ia64_illegal_op_fault (unsigned long ec, long arg1, long arg2, long arg3,
- 		       struct pt_regs regs)
- {
- 	struct illegal_op_return rv;
--	struct siginfo si;
- 	char buf[128];
- 
- #ifdef CONFIG_IA64_BRL_EMU
-@@ -426,11 +406,9 @@ ia64_illegal_op_fault (unsigned long ec, long arg1, long arg2, long arg3,
- 	if (die_if_kernel(buf, &regs, 0))
- 		return rv;
- 
--	clear_siginfo(&si);
--	si.si_signo = SIGILL;
--	si.si_code = ILL_ILLOPC;
--	si.si_addr = (void __user *) (regs.cr_iip + ia64_psr(&regs)->ri);
--	force_sig_info(SIGILL, &si, current);
-+	force_sig_fault(SIGILL, ILL_ILLOPC,
-+			(void __user *) (regs.cr_iip + ia64_psr(&regs)->ri),
-+			0, 0, 0, current);
- 	return rv;
- }
- 
-@@ -441,7 +419,7 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- {
- 	unsigned long code, error = isr, iip;
- 	char buf[128];
--	int result, sig;
-+	int result, sig, si_code;
- 	static const char *reason[] = {
- 		"IA-64 Illegal Operation fault",
- 		"IA-64 Privileged Operation fault",
-@@ -490,7 +468,6 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- 
- 	      case 26: /* NaT Consumption */
- 		if (user_mode(&regs)) {
--			struct siginfo siginfo;
- 			void __user *addr;
- 
- 			if (((isr >> 4) & 0xf) == 2) {
-@@ -505,15 +482,8 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- 				addr = (void __user *) (regs.cr_iip
- 							+ ia64_psr(&regs)->ri);
- 			}
--			clear_siginfo(&siginfo);
--			siginfo.si_signo = sig;
--			siginfo.si_code = code;
--			siginfo.si_errno = 0;
--			siginfo.si_addr = addr;
--			siginfo.si_imm = vector;
--			siginfo.si_flags = __ISR_VALID;
--			siginfo.si_isr = isr;
--			force_sig_info(sig, &siginfo, current);
-+			force_sig_fault(sig, code, addr,
-+					vector, __ISR_VALID, isr, current);
- 			return;
- 		} else if (ia64_done_with_exception(&regs))
- 			return;
-@@ -522,17 +492,8 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- 
- 	      case 31: /* Unsupported Data Reference */
- 		if (user_mode(&regs)) {
--			struct siginfo siginfo;
--
--			clear_siginfo(&siginfo);
--			siginfo.si_signo = SIGILL;
--			siginfo.si_code = ILL_ILLOPN;
--			siginfo.si_errno = 0;
--			siginfo.si_addr = (void __user *) iip;
--			siginfo.si_imm = vector;
--			siginfo.si_flags = __ISR_VALID;
--			siginfo.si_isr = isr;
--			force_sig_info(SIGILL, &siginfo, current);
-+			force_sig_fault(SIGILL, ILL_ILLOPN, (void __user *) iip,
-+					vector, __ISR_VALID, isr, current);
- 			return;
- 		}
- 		sprintf(buf, "Unsupported data reference");
-@@ -541,10 +502,6 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- 	      case 29: /* Debug */
- 	      case 35: /* Taken Branch Trap */
- 	      case 36: /* Single Step Trap */
--	      {
--		struct siginfo siginfo;
--
--		clear_siginfo(&siginfo);
- 		if (fsys_mode(current, &regs)) {
- 			extern char __kernel_syscall_via_break[];
- 			/*
-@@ -568,7 +525,7 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- 		switch (vector) {
- 		      default:
- 		      case 29:
--			siginfo.si_code = TRAP_HWBKPT;
-+			si_code = TRAP_HWBKPT;
- #ifdef CONFIG_ITANIUM
- 			/*
- 			 * Erratum 10 (IFA may contain incorrect address) now has
-@@ -578,37 +535,22 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- 			  ifa = regs.cr_iip;
- #endif
- 			break;
--		      case 35: siginfo.si_code = TRAP_BRANCH; ifa = 0; break;
--		      case 36: siginfo.si_code = TRAP_TRACE; ifa = 0; break;
-+		      case 35: si_code = TRAP_BRANCH; ifa = 0; break;
-+		      case 36: si_code = TRAP_TRACE; ifa = 0; break;
- 		}
--		if (notify_die(DIE_FAULT, "ia64_fault", &regs, vector, siginfo.si_code, SIGTRAP)
-+		if (notify_die(DIE_FAULT, "ia64_fault", &regs, vector, si_code, SIGTRAP)
- 			       	== NOTIFY_STOP)
- 			return;
--		siginfo.si_signo = SIGTRAP;
--		siginfo.si_errno = 0;
--		siginfo.si_addr  = (void __user *) ifa;
--		siginfo.si_imm   = 0;
--		siginfo.si_flags = __ISR_VALID;
--		siginfo.si_isr   = isr;
--		force_sig_info(SIGTRAP, &siginfo, current);
-+		force_sig_fault(SIGTRAP, si_code, (void __user *) ifa,
-+				0, __ISR_VALID, isr, current);
- 		return;
--	      }
- 
- 	      case 32: /* fp fault */
- 	      case 33: /* fp trap */
- 		result = handle_fpu_swa((vector == 32) ? 1 : 0, &regs, isr);
- 		if ((result < 0) || (current->thread.flags & IA64_THREAD_FPEMU_SIGFPE)) {
--			struct siginfo siginfo;
--
--			clear_siginfo(&siginfo);
--			siginfo.si_signo = SIGFPE;
--			siginfo.si_errno = 0;
--			siginfo.si_code = FPE_FLTINV;
--			siginfo.si_addr = (void __user *) iip;
--			siginfo.si_flags = __ISR_VALID;
--			siginfo.si_isr = isr;
--			siginfo.si_imm = 0;
--			force_sig_info(SIGFPE, &siginfo, current);
-+			force_sig_fault(SIGFPE, FPE_FLTINV, (void __user *) iip,
-+					0, __ISR_VALID, isr, current);
- 		}
- 		return;
- 
-@@ -634,17 +576,9 @@ ia64_fault (unsigned long vector, unsigned long isr, unsigned long ifa,
- 		} else {
- 			/* Unimplemented Instr. Address Trap */
- 			if (user_mode(&regs)) {
--				struct siginfo siginfo;
--
--				clear_siginfo(&siginfo);
--				siginfo.si_signo = SIGILL;
--				siginfo.si_code = ILL_BADIADDR;
--				siginfo.si_errno = 0;
--				siginfo.si_flags = 0;
--				siginfo.si_isr = 0;
--				siginfo.si_imm = 0;
--				siginfo.si_addr = (void __user *) iip;
--				force_sig_info(SIGILL, &siginfo, current);
-+				force_sig_fault(SIGILL, ILL_BADIADDR,
-+						(void __user *) iip,
-+						0, 0, 0, current);
- 				return;
- 			}
- 			sprintf(buf, "Unimplemented Instruction Address fault");
-diff --git a/arch/ia64/kernel/unaligned.c b/arch/ia64/kernel/unaligned.c
-index e309f9859acc..a167a3824b35 100644
---- a/arch/ia64/kernel/unaligned.c
-+++ b/arch/ia64/kernel/unaligned.c
-@@ -1298,7 +1298,6 @@ ia64_handle_unaligned (unsigned long ifa, struct pt_regs *regs)
- 	mm_segment_t old_fs = get_fs();
- 	unsigned long bundle[2];
- 	unsigned long opcode;
--	struct siginfo si;
- 	const struct exception_table_entry *eh = NULL;
- 	union {
- 		unsigned long l;
-@@ -1537,14 +1536,7 @@ ia64_handle_unaligned (unsigned long ifa, struct pt_regs *regs)
- 		/* NOT_REACHED */
- 	}
-   force_sigbus:
--	clear_siginfo(&si);
--	si.si_signo = SIGBUS;
--	si.si_errno = 0;
--	si.si_code = BUS_ADRALN;
--	si.si_addr = (void __user *) ifa;
--	si.si_flags = 0;
--	si.si_isr = 0;
--	si.si_imm = 0;
--	force_sig_info(SIGBUS, &si, current);
-+	force_sig_fault(SIGBUS, BUS_ADRALN, (void __user *) ifa,
-+			0, 0, 0, current);
- 	goto done;
- }
-diff --git a/arch/ia64/mm/fault.c b/arch/ia64/mm/fault.c
-index a9d55ad8d67b..5baeb022f474 100644
---- a/arch/ia64/mm/fault.c
-+++ b/arch/ia64/mm/fault.c
-@@ -248,16 +248,8 @@ ia64_do_page_fault (unsigned long address, unsigned long isr, struct pt_regs *re
- 		return;
- 	}
- 	if (user_mode(regs)) {
--		struct siginfo si;
--
--		clear_siginfo(&si);
--		si.si_signo = signal;
--		si.si_errno = 0;
--		si.si_code = code;
--		si.si_addr = (void __user *) address;
--		si.si_isr = isr;
--		si.si_flags = __ISR_VALID;
--		force_sig_info(signal, &si, current);
-+		force_sig_fault(signal, code, (void __user *) address,
-+				0, __ISR_VALID, isr, current);
- 		return;
- 	}
- 
--- 
-2.17.1
+> with the *_time API, we should be able to properly read the
+> tracking data separately for each cpu
 
+That may end up making the *_time API not needed (assuming the kernel
+keeps the per-cpu mmap events in order, barring that, using the
+ordered_events in batches, prior to consuming the events) and would help
+with things like 'perf top' and 'perf trace', that want to consume
+events right away.
+
+- Arnaldo
