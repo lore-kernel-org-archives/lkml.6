@@ -6,43 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD9ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A430ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF812145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDF812145D
+	by mail.kernel.org (Postfix) with ESMTP id CA84E2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:54:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA84E2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbeIXRzt (ORCPT
+        id S1729085AbeIXRzw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:55:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51648 "EHLO
+        Mon, 24 Sep 2018 13:55:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51656 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbeIXRzt (ORCPT
+        with ESMTP id S1727290AbeIXRzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:55:49 -0400
+        Mon, 24 Sep 2018 13:55:51 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D85661071;
-        Mon, 24 Sep 2018 11:54:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4389B1072;
+        Mon, 24 Sep 2018 11:54:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Imre Deak <imre.deak@solidboot.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 11/70] mtd/maps: fix solutionengine.c printk format warnings
-Date:   Mon, 24 Sep 2018 13:52:10 +0200
-Message-Id: <20180924113059.619858924@linuxfoundation.org>
+Subject: [PATCH 4.4 12/70] fbdev: omapfb: off by one in omapfb_register_client()
+Date:   Mon, 24 Sep 2018 13:52:11 +0200
+Message-Id: <20180924113059.746387490@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113058.420454070@linuxfoundation.org>
 References: <20180924113058.420454070@linuxfoundation.org>
@@ -60,60 +53,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 1d25e3eeed1d987404e2d2e451eebac8c15cecc1 ]
+[ Upstream commit 5ec1ec35b2979b59d0b33381e7c9aac17e159d16 ]
 
-Fix 2 printk format warnings (this driver is currently only used by
-arch/sh/) by using "%pap" instead of "%lx".
+The omapfb_register_client[] array has OMAPFB_PLANE_NUM elements so the
+> should be >= or we are one element beyond the end of the array.
 
-Fixes these build warnings:
-
-../drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
-../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 2 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
-../drivers/mtd/maps/solutionengine.c:62:54: note: format string is defined here
-  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
-                                                  ~~~~^
-                                                  %08x
-../include/linux/kern_levels.h:5:18: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
-../drivers/mtd/maps/solutionengine.c:62:72: note: format string is defined here
-  printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
-                                                                    ~~~~^
-                                                                    %08x
-
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: linux-mtd@lists.infradead.org
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fixes: 8b08cf2b64f5 ("OMAP: add TI OMAP framebuffer driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Imre Deak <imre.deak@solidboot.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/maps/solutionengine.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/video/fbdev/omap/omapfb_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/maps/solutionengine.c
-+++ b/drivers/mtd/maps/solutionengine.c
-@@ -59,9 +59,9 @@ static int __init init_soleng_maps(void)
- 			return -ENXIO;
- 		}
- 	}
--	printk(KERN_NOTICE "Solution Engine: Flash at 0x%08lx, EPROM at 0x%08lx\n",
--	       soleng_flash_map.phys & 0x1fffffff,
--	       soleng_eprom_map.phys & 0x1fffffff);
-+	printk(KERN_NOTICE "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
-+	       &soleng_flash_map.phys,
-+	       &soleng_eprom_map.phys);
- 	flash_mtd->owner = THIS_MODULE;
+--- a/drivers/video/fbdev/omap/omapfb_main.c
++++ b/drivers/video/fbdev/omap/omapfb_main.c
+@@ -977,7 +977,7 @@ int omapfb_register_client(struct omapfb
+ {
+ 	int r;
  
- 	eprom_mtd = do_map_probe("map_rom", &soleng_eprom_map);
+-	if ((unsigned)omapfb_nb->plane_idx > OMAPFB_PLANE_NUM)
++	if ((unsigned)omapfb_nb->plane_idx >= OMAPFB_PLANE_NUM)
+ 		return -EINVAL;
+ 
+ 	if (!notifier_inited) {
 
 
