@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAF7ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 407C3ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2E5F20877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E5F20877
+	by mail.kernel.org (Postfix) with ESMTP id 02A1E20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A1E20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730642AbeIXSGE (ORCPT
+        id S1730703AbeIXSGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:06:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53798 "EHLO
+        Mon, 24 Sep 2018 14:06:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53808 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727565AbeIXSGE (ORCPT
+        with ESMTP id S1727565AbeIXSGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:06:04 -0400
+        Mon, 24 Sep 2018 14:06:08 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9F63107A;
-        Mon, 24 Sep 2018 12:04:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E7C8107A;
+        Mon, 24 Sep 2018 12:04:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laurent Roux <xpros64@hotmail.fr>
-Subject: [PATCH 4.9 060/111] USB: add quirk for WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
-Date:   Mon, 24 Sep 2018 13:52:27 +0200
-Message-Id: <20180924113110.862280049@linuxfoundation.org>
+        stable@vger.kernel.org, Junki Kato <junki.kato.xk@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.9 061/111] usb: gadget: udc: renesas_usb3: fix maxpacket size of ep0
+Date:   Mon, 24 Sep 2018 13:52:28 +0200
+Message-Id: <20180924113110.940496033@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -50,38 +52,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maxence Duprès <xpros64@hotmail.fr>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 9b83a1c301ad6d24988a128c69b42cbaaf537d82 upstream.
+commit dfe1a51d2a36647f74cbad478801efa7cf394376 upstream.
 
-WORLDE Controller KS49 or Prodipe MIDI 49C USB controller
-cause a -EPROTO error, a communication restart and loop again.
+This patch fixes an issue that maxpacket size of ep0 is incorrect
+for SuperSpeed. Otherwise, CDC NCM class with SuperSpeed doesn't
+work correctly on this driver because its control read data size
+is more than 64 bytes.
 
-This issue has already been fixed for KS25.
-https://lore.kernel.org/patchwork/patch/753077/
-
-I just add device 201 for KS49 in quirks.c to get it works.
-
-Signed-off-by: Laurent Roux <xpros64@hotmail.fr>
-Cc: stable <stable@vger.kernel.org>
+Reported-by: Junki Kato <junki.kato.xk@renesas.com>
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Cc: <stable@vger.kernel.org> # v4.5+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Junki Kato <junki.kato.xk@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/gadget/udc/renesas_usb3.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -37,6 +37,10 @@ static const struct usb_device_id usb_qu
- 	/* CBM - Flash disk */
- 	{ USB_DEVICE(0x0204, 0x6025), .driver_info = USB_QUIRK_RESET_RESUME },
- 
-+	/* WORLDE Controller KS49 or Prodipe MIDI 49C USB controller */
-+	{ USB_DEVICE(0x0218, 0x0201), .driver_info =
-+			USB_QUIRK_CONFIG_INTF_STRINGS },
-+
- 	/* WORLDE easy key (easykey.25) MIDI controller  */
- 	{ USB_DEVICE(0x0218, 0x0401), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -628,12 +628,15 @@ static void usb3_irq_epc_int_1_speed(str
+ 	switch (speed) {
+ 	case USB_STA_SPEED_SS:
+ 		usb3->gadget.speed = USB_SPEED_SUPER;
++		usb3->gadget.ep0->maxpacket = USB3_EP0_SS_MAX_PACKET_SIZE;
+ 		break;
+ 	case USB_STA_SPEED_HS:
+ 		usb3->gadget.speed = USB_SPEED_HIGH;
++		usb3->gadget.ep0->maxpacket = USB3_EP0_HSFS_MAX_PACKET_SIZE;
+ 		break;
+ 	case USB_STA_SPEED_FS:
+ 		usb3->gadget.speed = USB_SPEED_FULL;
++		usb3->gadget.ep0->maxpacket = USB3_EP0_HSFS_MAX_PACKET_SIZE;
+ 		break;
+ 	default:
+ 		usb3->gadget.speed = USB_SPEED_UNKNOWN;
+@@ -1858,7 +1861,7 @@ static int renesas_usb3_init_ep(struct r
+ 			/* for control pipe */
+ 			usb3->gadget.ep0 = &usb3_ep->ep;
+ 			usb_ep_set_maxpacket_limit(&usb3_ep->ep,
+-						USB3_EP0_HSFS_MAX_PACKET_SIZE);
++						USB3_EP0_SS_MAX_PACKET_SIZE);
+ 			usb3_ep->ep.caps.type_control = true;
+ 			usb3_ep->ep.caps.dir_in = true;
+ 			usb3_ep->ep.caps.dir_out = true;
 
 
