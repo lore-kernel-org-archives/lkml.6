@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA0DC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EA3C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DF62145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B5A320883
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JJRM0KSL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DF62145D
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="BDV7axJa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5A320883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbeIXQN1 (ORCPT
+        id S1728641AbeIXQNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:13:27 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36328 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728389AbeIXQN0 (ORCPT
+        Mon, 24 Sep 2018 12:13:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42052 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728624AbeIXQN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:13:26 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y13-v6so4650337wmi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 03:12:06 -0700 (PDT)
+        Mon, 24 Sep 2018 12:13:29 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b11-v6so2857353wru.9
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 03:12:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ig9mBor6Vwwn4DYl4UdniUpV/rwBF8VdzUTE/e7dEs4=;
-        b=JJRM0KSL00sDd4gsBejDecMytRBu57SOdnHmLSJdvSWRrtQmxoD7GlHievO5p22+XF
-         DIwqPilexuKrnMQxg+x7VKNHaqvrxGOciQVt78pq+IiP/07OKF5DIyOMPySo0wVIbCBk
-         GfuMANULQwzE7RboMFugcqwVjxXaP/J1Fb4sosS8406LgoX7Q7qNxyFCG6bsunDtTDL3
-         A1TQsZDYpdt0MvfqEavVlMJW4IsQUCvKcdc4lP6i3R+I3WHjN+c7mKVjxSkPlNPYEahT
-         l4IpY393sTVPuYFHvrHY1fAchqjisT8k0qOuQSNAUkVSQgKfk07YMMMaUkaB3MZ4mTx0
-         pORw==
+        bh=jLISmJc2dPUxbBj3RDyXz5hdQLm9DxNuC15aZU3ms6g=;
+        b=BDV7axJatr4Cp/LBdA1G+Vka0/jKPXb00CWdvOX431pLfQhTXSlFx6jbCOJK3Ajxor
+         Wl9GQa5xgfkoKGBjNNdbYM3/72d+n77JH9SdjDJkKEPrG+f7+SOp8Zr/0Ki/H9YFJ3eT
+         EoPuOWVQbC044VSDjJDLe9cOXRc5aAoF0MkrNyYqVkOTT/JKGmOdqZ9ZdlB6OK4YUknR
+         okBgcDquosDFY3+hUcLNBsDEK5HH9XJdgjApl2acAeurJHFFd7zl2Z1xzn9YBaaYWHj7
+         CTPBqInRbHes4J3J2Kd0+c5iyc0t+tnQ1/UHcyKScX2Lo+6njEHfYSxi7cUg2Ol/xTzk
+         pKOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Ig9mBor6Vwwn4DYl4UdniUpV/rwBF8VdzUTE/e7dEs4=;
-        b=bPOZ02sdzXV/4EdaukjoASEDHG8IrE61jrjR1DBAaO8UlDBGSkFRzCBSM81NGSIw+R
-         gj8tvVpN549+tOKP/hNyrtGEm3fQxEm5Aw1x3vxmWzVskYWucsCFETzC7qJwFA7dRmac
-         kjyXWBviiixdCmi/m3b9VpGdEzr9z2AYJMUHdEToyvXbWUz4cIzBd64Wruznhm8N6Gtf
-         RBpb+s7bljpDT1JY2R2ty9//EtGZSy4qVvjjeu2LGQY64xV3eOFOAGL3+PX2NnrGMyVc
-         Kh0+kVFoutiCMZiFLwyoIy5Ilz5fFhwqMCpbaYMsx/ZsX5WhHBvsQrXkNtTmMliJ6iFo
-         xgbw==
-X-Gm-Message-State: ABuFfoi1hHVyPSmV6lpqf5WdsWKpWXdIN4QFwqKNJF2SGsHDPZ4D8jVs
-        SegGHps6V3y1q4ATzOhz4evubg==
-X-Google-Smtp-Source: ACcGV63UZdxzfT1JG65wI1i05x8zgahoA5qW9lU5GZg5qEmKLT2APagXP/h1Z6esoAJFAh0uHQFlYA==
-X-Received: by 2002:a1c:b20b:: with SMTP id b11-v6mr613454wmf.64.1537783925302;
-        Mon, 24 Sep 2018 03:12:05 -0700 (PDT)
+        bh=jLISmJc2dPUxbBj3RDyXz5hdQLm9DxNuC15aZU3ms6g=;
+        b=tvRg2TLJY2U+iR/QhJ0sGC5uQgExDrgsUJEijdgOx5JpCDZNR/E2k4nbxmwfKYBMmI
+         JeYNb8zkfs5QL3hV+N7e5+aWLmACjjkrbfMruVpIq14WTapfE7IAFClu+tpng6QyhVAp
+         HMFIes8qpmbtrnMiG3ItloSfOldU0HeBfcIng1EznMUuDspL0XjPFFVA4Hj/gdmsMo1y
+         b3r2yvozfvvbc07p50GNiN6b7kzOqv9XC4qstLK5JacTwwxcQovcQmpKUSt7NT2hzGLt
+         ww0icQcTO4SM6kNVJ78stJYu+FO9symFWcgydhC36yBko40fWqdbd7p74jodI1ZRjMDH
+         FncQ==
+X-Gm-Message-State: ABuFfoiviPb/goycMyhS8MgzOkvAiuwbMKq3DpKfeLeXEbYiYOvlsAeL
+        EcDIq16XVl7ZXuSmatIgm8d4fw==
+X-Google-Smtp-Source: ACcGV62gtGp+dWxaEzs3KziqR8iPoDl9Yh84dvTqcMksDb6+DjHYohhyApW0IsrPrgXPyHrMJnIwOw==
+X-Received: by 2002:a5d:5009:: with SMTP id e9-v6mr8199080wrt.18.1537783928856;
+        Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-2-33.w90-86.abo.wanadoo.fr. [90.86.1.33])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.03
+        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 03:12:04 -0700 (PDT)
+        Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -82,9 +82,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 2/4] mm: move is_kernel_rodata() to asm-generic/sections.h
-Date:   Mon, 24 Sep 2018 12:11:48 +0200
-Message-Id: <20180924101150.23349-3-brgl@bgdev.pl>
+Subject: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Date:   Mon, 24 Sep 2018 12:11:50 +0200
+Message-Id: <20180924101150.23349-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
 References: <20180924101150.23349-1-brgl@bgdev.pl>
@@ -93,61 +93,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export this routine so that we can use it later in devm_kstrdup_const()
-and devm_kfree_const().
+Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+an example of how to use this new routine to shrink driver code.
+
+While we're at it: replace a call to kcalloc() with devm_kcalloc().
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- include/asm-generic/sections.h | 14 ++++++++++++++
- mm/util.c                      |  7 -------
- 2 files changed, 14 insertions(+), 7 deletions(-)
+ drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
-index 849cd8eb5ca0..d79abca81a52 100644
---- a/include/asm-generic/sections.h
-+++ b/include/asm-generic/sections.h
-@@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
- 	return memory_intersects(__init_begin, __init_end, virt, size);
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index d977193842df..239197799ea3 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -247,14 +247,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
+ 		plt_clk_unregister_fixed_rate(data->parents[i]);
  }
  
-+/**
-+ * is_kernel_rodata - checks if the pointer address is located in the
-+ *                    .rodata section
-+ *
-+ * @addr: address to check
-+ *
-+ * Returns: true if the address is located in .rodata, false otherwise.
-+ */
-+static inline bool is_kernel_rodata(unsigned long addr)
-+{
-+	return addr >= (unsigned long)__start_rodata &&
-+	       addr < (unsigned long)__end_rodata;
-+}
-+
- #endif /* _ASM_GENERIC_SECTIONS_H_ */
-diff --git a/mm/util.c b/mm/util.c
-index 9e3ebd2ef65f..470f5cd80b64 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -15,17 +15,10 @@
- #include <linux/vmalloc.h>
- #include <linux/userfaultfd_k.h>
- 
--#include <asm/sections.h>
- #include <linux/uaccess.h>
- 
- #include "internal.h"
- 
--static inline int is_kernel_rodata(unsigned long addr)
+-static void plt_clk_free_parent_names_loop(const char **parent_names,
+-					   unsigned int i)
 -{
--	return addr >= (unsigned long)__start_rodata &&
--		addr < (unsigned long)__end_rodata;
+-	while (i--)
+-		kfree_const(parent_names[i]);
+-	kfree(parent_names);
 -}
 -
- /**
-  * kfree_const - conditionally free memory
-  * @x: pointer to the memory
+ static void plt_clk_unregister_loop(struct clk_plt_data *data,
+ 				    unsigned int i)
+ {
+@@ -280,8 +272,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 	if (!data->parents)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	parent_names = kcalloc(nparents, sizeof(*parent_names),
+-			       GFP_KERNEL);
++	parent_names = devm_kcalloc(&pdev->dev, nparents,
++				    sizeof(*parent_names), GFP_KERNEL);
+ 	if (!parent_names)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -294,7 +286,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 			err = PTR_ERR(data->parents[i]);
+ 			goto err_unreg;
+ 		}
+-		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
++		parent_names[i] = devm_kstrdup_const(&pdev->dev,
++						     clks[i].name, GFP_KERNEL);
+ 	}
+ 
+ 	data->nparents = nparents;
+@@ -302,7 +295,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 
+ err_unreg:
+ 	plt_clk_unregister_fixed_rate_loop(data, i);
+-	plt_clk_free_parent_names_loop(parent_names, i);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		goto err_drop_mclk;
+ 	}
+ 
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+-
+ 	platform_set_drvdata(pdev, data);
+ 	return 0;
+ 
+@@ -362,7 +352,6 @@ static int plt_clk_probe(struct platform_device *pdev)
+ err_unreg_clk_plt:
+ 	plt_clk_unregister_loop(data, i);
+ 	plt_clk_unregister_parents(data);
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ 	return err;
+ }
+ 
 -- 
 2.18.0
 
