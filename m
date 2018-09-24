@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF1FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC43ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E65E204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCABC204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:11:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="PnIcDNEZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E65E204EC
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="OyTNxDk8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCABC204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732999AbeIXVNu (ORCPT
+        id S1732656AbeIXVOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 17:13:50 -0400
+        Mon, 24 Sep 2018 17:14:01 -0400
 Received: from mail-eopbgr720121.outbound.protection.outlook.com ([40.107.72.121]:64608
         "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730744AbeIXUut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 16:50:49 -0400
+        id S1730739AbeIXUur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 16:50:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bH6mW216NJ0dOB27gw9AT+McibVTVN75TGOkskf4KRw=;
- b=PnIcDNEZVleCPowGaJvlU6fZIRMYChBtvjG25N5z/2knmSQpECn6RB0BlM9zYpDq6wp2pZ4QffJMcR76GOoA7tZiuM4G+dCt+sxhtojrjy7Rt4xIBr3KIxuJv6AOstF2T6vcltEHMRTWCasx8K6fl/qNWoDaJg2Hp4FBW56IqWk=
+ bh=BnOVArIYGLrKdvLfYobW3lw91dFvK5UcvjRMoByY1Hw=;
+ b=OyTNxDk8i5UbJCwAMBIFLYSVMj8Z1AVyB5/8pT3A8yBrKIXsI+tRnwA5UaHLtjyLFcmUTPg7n3mwAEowCCtRcpdi1fBeJsZxMJw5KLbPMKAaubvloY2mH/k7yzoRWQkOdensmCZ9KZufFwJS2JUy4pnJAQmTGRz3J/QkJ6v1kQ4=
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
  CY4PR21MB0134.namprd21.prod.outlook.com (10.173.189.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.9; Mon, 24 Sep 2018 14:48:07 +0000
+ 15.20.1185.9; Mon, 24 Sep 2018 14:48:06 +0000
 Received: from CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36]) by CY4PR21MB0776.namprd21.prod.outlook.com
  ([fe80::54e2:88e0:b622:b36%5]) with mapi id 15.20.1207.003; Mon, 24 Sep 2018
- 14:48:07 +0000
+ 14:48:06 +0000
 From:   Sasha Levin <Alexander.Levin@microsoft.com>
 To:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
+CC:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL 4.18 11/76] bpf, sockmap: fix potential use after free
- in bpf_tcp_close
-Thread-Topic: [PATCH AUTOSEL 4.18 11/76] bpf, sockmap: fix potential use after
- free in bpf_tcp_close
-Thread-Index: AQHUVBWaAve+Z6LVhkKOYQZV7mKcvA==
-Date:   Mon, 24 Sep 2018 14:48:06 +0000
-Message-ID: <20180924144751.164410-11-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL 4.18 10/76] scsi: aacraid: fix a signedness bug
+Thread-Topic: [PATCH AUTOSEL 4.18 10/76] scsi: aacraid: fix a signedness bug
+Thread-Index: AQHUVBWaJLoBH0y7NUq0a4XJ6gPmEQ==
+Date:   Mon, 24 Sep 2018 14:48:05 +0000
+Message-ID: <20180924144751.164410-10-alexander.levin@microsoft.com>
 References: <20180924144751.164410-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180924144751.164410-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -60,13 +58,13 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0134;6:iPoupT+VXT890EzTMTg3tZD49zdb5M/k5T6tG+os0ZtHqoySaFF0sr9GiMiQHp7fx7ug77xBw04tKr891OvUl4DtuEK7gNJa0AyXxZ16oM5kArmEgXyvPWifrg3Nvf+iPCObaePfG1cMmlPgsVIu1uoYAeGREmU9wKtoI9RH5TcAmE59NKkqdswz8Qe2aU6IM1XoIn01Ji+w5O/rrtTMJkwiktFDk/eG1qxqkqDZ7LqyYnewjbTgYtfKo17h5XDbWKLpddjU5VJ6dxe1vqICn8J7rCw/KMAhdMbamlxtbdwzM40u8a7DDMMZ5WS4Ad9hCsG3nI+0dEJJZgQftyd8NA/7L+ZsH2kvqTems7sC7IBEAO6vuSI7EO73ZhFBtEiQfeEEFE5X25hwfsd+DBQrK+2AkN4v4Zl0eBcJ+Jwg/wklEoCIVrT3IeBz/F4oTgnmG5l/3EpHDg9RywBBJuXyGQ==;5:CqhFiJ4Mv/opseDxldBLc8pgK6qqv4YSCJ0BLiNawXNWDqcTXQeJ5+L5Egg2yc3WzKfbGs+9hr3bOBIWwOhsk2aDG0aq/Qg3ik0m/J63O6uTP0QlQJYPsDOu14Du7YJ5d3iEG8llXtW/J7o5jIkLaitUqzLiJZlZF2TlpgBzQA0=;7:Ycvc5wtr1f0qIL9U9TiSUgI0t72zJf6O8MRiphHcsfIzpdGr6cv7gaysd+M8tIA1EY+AAHbDY0c9OcG/dRZRJJVRvPXqEhbwV4ETkY9yhRJyn2iYKf0+15RfpBqAe9Z5fmzk+Cr+zm1nATQOyETiKeEuZdCe6hk69nlTCDJDj7wFl1bSj/YJSW+mRvzBK3fjDC9vcfeG/Xo250mjFbN0WheC3tNI/QFFo7oIYskEnvd3c+giiz3PjGkM34mkCB84
-x-ms-office365-filtering-correlation-id: a522cedc-6a4b-4d1f-2ff8-08d6222cbd87
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0134;6:RhTzeFEpJbCf6sofBuJTQOqnLCm90jpGKNSGD+jTA5KBtsS7Opx/WUR1yCHoJ8rfRW3faavsjvb8EACgjs/MlJAHf+9HjLD1mOPUjB56d+1gQuoC9DAWtuKmKeBRYJbo5NJjat/KyVSjZmw9Nzmf3eMcCOIeXgM5fS5tDDPXitQ9bOOxmJJjIePNJuvyiIqI6shePhgqCTtOSMJ+uVTgWIApx3QmrNgZ5i1k8ZEcEMQxYIoMPNcJSHbiakt+sqasIXBklZVr50YxztpvUiDxzNNR3+kI2Yh5hTaVJrGOZdPASlHNZA68LaBYBy3t2zjS2F0d9aw7+xgelpHmCy+BLygzwsgT8GK+bGKm6jnLZV33I9iM2MLasdy60Cqgr4cW4CZfrVTOB+w9F8PDDTHUHS1fxj442qdZ+cGqzyTBxdXlBYtcXqTxMJzxVQdyjN5tTpdQwdOdbeFLH7ewoRQaXQ==;5:eWN7GMCRCKPsINEnWY7dSc0BVIB0qZ9OasOJPedLbPBt/6OmrG7EDIEP5q4Ei+eazevBaF17leMWOFvuPEmiUW+GrWbCBYXtoHpsYCip+uiDK7gE4yZ5QDTr2xSY6hVzQgFJNjkIXQqYkaO/M7cHR5imp7VcE3p7WEv5Q1PHlc8=;7:AVXQDThdikwiZTH6LzLS1z0Q2kQKw78D/uoU3m5Is2MdUmHPw+VQAiQf4z5CGE4XcY1dFkSImmE7kMcQhGB6bkNg8KqtwOgJIGoJ4wRQRO+vMhJugS0i2lfLDq4P3G/yEi3z7N/6L0TOiDiHNEdKCzqApcFjm5LpCIIESvEe9ks/viUGOcnlRsqwk6NKzAPXTaB/3l6DDSh9MHs1OW8iXSiH3drJWdyVCPtjIwC+hE78n9p9Umf5UJ+GGA+3CSq7
+x-ms-office365-filtering-correlation-id: 455f5db5-61e0-4464-dd99-08d6222cbd4a
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0134;
 x-ms-traffictypediagnostic: CY4PR21MB0134:
-x-microsoft-antispam-prvs: <CY4PR21MB0134381E2C973637214A725AFB170@CY4PR21MB0134.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(131327999870524)(85827821059158)(28532068793085)(89211679590171);
+x-microsoft-antispam-prvs: <CY4PR21MB01340D3364E65A49D6415F50FB170@CY4PR21MB0134.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(146099531331640)(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231355)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149066)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991041);SRVR:CY4PR21MB0134;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0134;
 x-forefront-prvs: 0805EC9467
@@ -75,15 +73,15 @@ received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com; 
-x-microsoft-antispam-message-info: ak869QH8b6UrCtTVyScHhb5fkrlx0WVqQysFmGWQQwaXfCMWfHE+NHKBINB9bLXZQLPUAhS1Ku9Pqas5+Sb2q3SN+tN9b8dqPYUuDBLSo+payJQQxuB4nbcx/fFzh4W5QecT8yzL9MmVEagxH587/SFclKJOkeiIi+olnSmbj57yXj3uCVxEpsLOMOGqKUTTelSjiSjRFTWt307GnkHzpl+GUpei9zzCP+R62cFdAUlNRZXvux4AAsd01xdZPei3M82JPsoPG4SJ4ekyj5zLYtatyqyAQbuGenHxv/VIBYydPZlnKzdnWxlQCExYGaDEkywJ/rG9eM3ECFe9Pu8kAXoZK4CJSf/SeavJJUc55tI=
+x-microsoft-antispam-message-info: /or4aaepCsFwnvddGKUgzRBYRUrczZxy8fRKrfs8j2WiWik8ASEH82/y87DWTST9oBk4pyJcUgoSxly9RsDgnpyY2HtVGzEMM+4hrmsu5pPa3eYGOLQZpwRARCLgYFkRz2g43R9zZj6slUvP9RcTezdFs8zitX3IzPvPFRRcsX25dzMVAgLblnE3ENzq1NOsji1/o6yT0hh6xQ5REF4+IhQBzTz95/UtYzcq6yWCH9QDNLh9QB3tEP3/3fol+Us9pcYI3Ljl59pIy9XnGN+fkdLdWHNVnPbejzVgVj5RqMDQzu38p+9Rt7c2anrBTPkcU9HqzCJCaJa5DmhKpIqC+Q9uReTzHp3tQwZrCaxavnU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a522cedc-6a4b-4d1f-2ff8-08d6222cbd87
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:06.4455
+X-MS-Exchange-CrossTenant-Network-Message-Id: 455f5db5-61e0-4464-dd99-08d6222cbd4a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 14:48:05.9581
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
@@ -93,53 +91,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit e06fa9c16ce4b740996189fa5610eabcee734e6c ]
+[ Upstream commit b9eb3b14f1dbf16bf27b6c1ffe6b8c00ec945c9b ]
 
-bpf_tcp_close() we pop the psock linkage to a map via psock_map_pop().
-A parallel update on the sock hash map can happen between psock_map_pop()
-and lookup_elem_raw() where we override the element under link->hash /
-link->key. In bpf_tcp_close()'s lookup_elem_raw() we subsequently only
-test whether an element is present, but we do not test whether the
-element is infact the element we were looking for.
+The problem is that ->reset_state is a u8 but it can be set to -1 or -2 in
+aac_tmf_callback() and the error handling in aac_eh_target_reset() relies
+on it to be signed.
 
-We lock the sock in bpf_tcp_close() during that time, so do we hold
-the lock in sock_hash_update_elem(). However, the latter locks the
-sock which is newly updated, not the one we're purging from the hash
-table. This means that while one CPU is doing the lookup from bpf_tcp_close=
-(),
-another CPU is doing the map update in parallel, dropped our sock from
-the hlist and released the psock.
+[mkp: fixed typo]
 
-Subsequently the first CPU will find the new sock and attempts to drop
-and release the old sock yet another time. Fix is that we need to check
-the elements for a match after lookup, similar as we do in the sock map.
-Note that the hash tab elems are freed via RCU, so access to their
-link->hash / link->key is fine since we're under RCU read side there.
-
-Fixes: e9db4ef6bf4c ("bpf: sockhash fix omitted bucket lock in sock_close")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: 0d643ff3c353 ("scsi: aacraid: use aac_tmf_callback for reset fib")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- kernel/bpf/sockmap.c | 2 +-
+ drivers/scsi/aacraid/aacraid.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
-index 58899601fccf..7afa2a54ee34 100644
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -369,7 +369,7 @@ static void bpf_tcp_close(struct sock *sk, long timeout=
-)
- 			/* If another thread deleted this object skip deletion.
- 			 * The refcnt on psock may or may not be zero.
- 			 */
--			if (l) {
-+			if (l && l =3D=3D link) {
- 				hlist_del_rcu(&link->hash_node);
- 				smap_release_sock(psock, link->sk);
- 				free_htab_elem(htab, link);
+diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.=
+h
+index 29bf1e60f542..39eb415987fc 100644
+--- a/drivers/scsi/aacraid/aacraid.h
++++ b/drivers/scsi/aacraid/aacraid.h
+@@ -1346,7 +1346,7 @@ struct fib {
+ struct aac_hba_map_info {
+ 	__le32	rmw_nexus;		/* nexus for native HBA devices */
+ 	u8		devtype;	/* device type */
+-	u8		reset_state;	/* 0 - no reset, 1..x - */
++	s8		reset_state;	/* 0 - no reset, 1..x - */
+ 					/* after xth TM LUN reset */
+ 	u16		qd_limit;
+ 	u32		scan_counter;
 --=20
 2.17.1
