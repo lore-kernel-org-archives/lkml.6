@@ -2,114 +2,223 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE87FECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 102A8C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C5B2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:34:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C5B2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C7DCD2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DCD2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbeIXQfh (ORCPT
+        id S1728615AbeIXQfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:35:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56278 "EHLO mx1.redhat.com"
+        Mon, 24 Sep 2018 12:35:44 -0400
+Received: from mga12.intel.com ([192.55.52.136]:53524 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727730AbeIXQfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:35:37 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B4ABA308FB8F;
-        Mon, 24 Sep 2018 10:34:12 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A0A0C104C529;
-        Mon, 24 Sep 2018 10:34:04 +0000 (UTC)
-Date:   Mon, 24 Sep 2018 12:34:02 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-Subject: Re: [PATCH v10 03/26] KVM: s390: refactor crypto initialization
-Message-ID: <20180924123402.51e231a7.cohuck@redhat.com>
-In-Reply-To: <e340e3ec-4f8f-1f7b-b2f5-6fec77c4c5f9@linux.ibm.com>
-References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1536781396-13601-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <e340e3ec-4f8f-1f7b-b2f5-6fec77c4c5f9@linux.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 24 Sep 2018 10:34:13 +0000 (UTC)
+        id S1728474AbeIXQfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 12:35:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 03:34:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,297,1534834800"; 
+   d="scan'208";a="92721442"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Sep 2018 03:28:27 -0700
+From:   Songjun Wu <songjun.wu@linux.intel.com>
+To:     yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
+        hauke.mehrtens@intel.com
+Cc:     Songjun Wu <songjun.wu@linux.intel.com>,
+        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH 01/14] MIPS: dts: Change upper case to lower case
+Date:   Mon, 24 Sep 2018 18:27:50 +0800
+Message-Id: <20180924102803.30263-2-songjun.wu@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180924102803.30263-1-songjun.wu@linux.intel.com>
+References: <20180924102803.30263-1-songjun.wu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018 19:18:57 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+All the upper case in unit-address and hex constants are
+changed to lower case according to the DT conventions.
 
-> On 09/12/2018 03:42 PM, Tony Krowiak wrote:
-> > From: Tony Krowiak <akrowiak@linux.ibm.com>
-> > 
-> > This patch refactors the code that initializes and sets up the
-> > crypto configuration for a guest. The following changes are
-> > implemented via this patch:
-> > 
-> > 1. Prior to the introduction of AP device virtualization, it
-> >     was not necessary to provide guest access to the CRYCB
-> >     unless the MSA extension 3 (MSAX3) facility was installed
-> >     on the host system. With the introduction of AP device
-> >     virtualization, the CRYCB must be made accessible to the
-> >     guest if the AP instructions are installed on the host
-> >     and are to be provided to the guest.
-> > 
-> > 2. Introduces a flag indicating AP instructions executed on
-> >     the guest shall be interpreted by the firmware. It is
-> >     initialized to indicate AP instructions are to be
-> >     to be interpreted and is used to set the SIE bit for
-> >     each vcpu during vcpu setup.
-> > 
-> > Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> > Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> > Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > Acked-by: Janosch Frank <frankja@linux.ibm.com>
-> > Tested-by: Michael Mueller <mimu@linux.ibm.com>
-> > Tested-by: Farhan Ali <alifm@linux.ibm.com>
-> > Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > ---
-> >   arch/s390/include/asm/kvm_host.h |    2 +
-> >   arch/s390/include/uapi/asm/kvm.h |    1 +
-> >   arch/s390/kvm/kvm-s390.c         |   71 ++++++++++++++++++--------------------
-> >   3 files changed, 37 insertions(+), 37 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-(...)
+ arch/mips/boot/dts/lantiq/danube.dtsi   | 42 ++++++++++++++++-----------------
+ arch/mips/boot/dts/lantiq/easy50712.dts | 14 +++++------
+ 2 files changed, 28 insertions(+), 28 deletions(-)
 
-> The fixup! patch below modifies this patch (03/26) to illustrate how
-> 
-> David's recommendation will be implemented for v11 of the series. It
-> 
-> is one of three fixup! patches (the other two are in responses to
-> 11/26
->   and 25/26) included to generate discussion in v10 rather than
-> 
-> waiting until v11 for comments.
+diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
+index 2dd950181f8a..510be63c8bdf 100644
+--- a/arch/mips/boot/dts/lantiq/danube.dtsi
++++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+@@ -10,12 +10,12 @@
+ 		};
+ 	};
+ 
+-	biu@1F800000 {
++	biu@1f800000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "lantiq,biu", "simple-bus";
+-		reg = <0x1F800000 0x800000>;
+-		ranges = <0x0 0x1F800000 0x7FFFFF>;
++		reg = <0x1f800000 0x800000>;
++		ranges = <0x0 0x1f800000 0x7fffff>;
+ 
+ 		icu0: icu@80200 {
+ 			#interrupt-cells = <1>;
+@@ -24,18 +24,18 @@
+ 			reg = <0x80200 0x120>;
+ 		};
+ 
+-		watchdog@803F0 {
++		watchdog@803f0 {
+ 			compatible = "lantiq,wdt";
+-			reg = <0x803F0 0x10>;
++			reg = <0x803f0 0x10>;
+ 		};
+ 	};
+ 
+-	sram@1F000000 {
++	sram@1f000000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "lantiq,sram";
+-		reg = <0x1F000000 0x800000>;
+-		ranges = <0x0 0x1F000000 0x7FFFFF>;
++		reg = <0x1f000000 0x800000>;
++		ranges = <0x0 0x1f000000 0x7fffff>;
+ 
+ 		eiu0: eiu@101000 {
+ 			#interrupt-cells = <1>;
+@@ -66,41 +66,41 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "lantiq,fpi", "simple-bus";
+-		ranges = <0x0 0x10000000 0xEEFFFFF>;
+-		reg = <0x10000000 0xEF00000>;
++		ranges = <0x0 0x10000000 0xeefffff>;
++		reg = <0x10000000 0xef00000>;
+ 
+-		gptu@E100A00 {
++		gptu@e100a00 {
+ 			compatible = "lantiq,gptu-xway";
+-			reg = <0xE100A00 0x100>;
++			reg = <0xe100a00 0x100>;
+ 		};
+ 
+-		serial@E100C00 {
++		serial@e100c00 {
+ 			compatible = "lantiq,asc";
+-			reg = <0xE100C00 0x400>;
++			reg = <0xe100c00 0x400>;
+ 			interrupt-parent = <&icu0>;
+ 			interrupts = <112 113 114>;
+ 		};
+ 
+-		dma0: dma@E104100 {
++		dma0: dma@e104100 {
+ 			compatible = "lantiq,dma-xway";
+-			reg = <0xE104100 0x800>;
++			reg = <0xe104100 0x800>;
+ 		};
+ 
+-		ebu0: ebu@E105300 {
++		ebu0: ebu@e105300 {
+ 			compatible = "lantiq,ebu-xway";
+-			reg = <0xE105300 0x100>;
++			reg = <0xe105300 0x100>;
+ 		};
+ 
+-		pci0: pci@E105400 {
++		pci0: pci@e105400 {
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			#interrupt-cells = <1>;
+ 			compatible = "lantiq,pci-xway";
+ 			bus-range = <0x0 0x0>;
+ 			ranges = <0x2000000 0 0x8000000 0x8000000 0 0x2000000	/* pci memory */
+-				  0x1000000 0 0x00000000 0xAE00000 0 0x200000>; /* io space */
++				  0x1000000 0 0x00000000 0xae00000 0 0x200000>; /* io space */
+ 			reg = <0x7000000 0x8000		/* config space */
+-				0xE105400 0x400>;	/* pci bridge */
++				0xe105400 0x400>;	/* pci bridge */
+ 		};
+ 	};
+ };
+diff --git a/arch/mips/boot/dts/lantiq/easy50712.dts b/arch/mips/boot/dts/lantiq/easy50712.dts
+index c37a33962f28..1ce20b7d05cb 100644
+--- a/arch/mips/boot/dts/lantiq/easy50712.dts
++++ b/arch/mips/boot/dts/lantiq/easy50712.dts
+@@ -52,14 +52,14 @@
+ 			};
+ 		};
+ 
+-		gpio: pinmux@E100B10 {
++		gpio: pinmux@e100b10 {
+ 			compatible = "lantiq,danube-pinctrl";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&state_default>;
+ 
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
+-			reg = <0xE100B10 0xA0>;
++			reg = <0xe100b10 0xa0>;
+ 
+ 			state_default: pinmux {
+ 				stp {
+@@ -82,26 +82,26 @@
+ 			};
+ 		};
+ 
+-		etop@E180000 {
++		etop@e180000 {
+ 			compatible = "lantiq,etop-xway";
+-			reg = <0xE180000 0x40000>;
++			reg = <0xe180000 0x40000>;
+ 			interrupt-parent = <&icu0>;
+ 			interrupts = <73 78>;
+ 			phy-mode = "rmii";
+ 			mac-address = [ 00 11 22 33 44 55 ];
+ 		};
+ 
+-		stp0: stp@E100BB0 {
++		stp0: stp@e100bb0 {
+ 			#gpio-cells = <2>;
+ 			compatible = "lantiq,gpio-stp-xway";
+ 			gpio-controller;
+-			reg = <0xE100BB0 0x40>;
++			reg = <0xe100bb0 0x40>;
+ 
+ 			lantiq,shadow = <0xfff>;
+ 			lantiq,groups = <0x3>;
+ 		};
+ 
+-		pci@E105400 {
++		pci@e105400 {
+ 			lantiq,bus-clock = <33333333>;
+ 			interrupt-map-mask = <0xf800 0x0 0x0 0x7>;
+ 			interrupt-map = <
+-- 
+2.11.0
 
-(...)
-
-Looks good to me.
