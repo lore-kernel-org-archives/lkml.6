@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B189ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F3CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 030B121486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030B121486
+	by mail.kernel.org (Postfix) with ESMTP id A68262148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:34:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A68262148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388358AbeIXSgl (ORCPT
+        id S2388369AbeIXSgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:36:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58458 "EHLO
+        Mon, 24 Sep 2018 14:36:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58466 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729816AbeIXSgl (ORCPT
+        with ESMTP id S1729816AbeIXSgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:36:41 -0400
+        Mon, 24 Sep 2018 14:36:44 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 712041092;
-        Mon, 24 Sep 2018 12:34:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A28D91092;
+        Mon, 24 Sep 2018 12:34:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 4.18 113/235] xhci: Fix use after free for URB cancellation on a reallocated endpoint
-Date:   Mon, 24 Sep 2018 13:51:39 +0200
-Message-Id: <20180924113117.174484233@linuxfoundation.org>
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.18 114/235] usb: Dont die twice if PCI xhci host is not responding in resume
+Date:   Mon, 24 Sep 2018 13:51:40 +0200
+Message-Id: <20180924113117.326436173@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -54,75 +54,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 4937213ba7fafa13f30496b3965ffe93970d8b53 upstream.
+commit f3dc41c5d22b2ca14a0802a65d8cdc33a3882d4e upstream.
 
-Make sure the cancelled URB is on the current endpoint ring.
+usb_hc_died() should only be called once, and with the primary HCD
+as parameter. It will mark both primary and secondary hcd's dead.
 
-If the endpoint ring has been reallocated since the URB was enqueued
-then the URB may contain TD and TRB pointers to a already freed ring.
-In this the case return the URB without touching any of the freed ring
-structure data.
+Remove the extra call to usb_cd_died with the shared hcd as parameter.
 
-Don't try to stop the ring. It would be useless.
-
-This can occur if endpoint is not flushed before it is dropped and
-re-added, which is the case in usb_set_interface() as xhci does
-things in an odd order.
-
-Cc: <stable@vger.kernel.org>
-Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Fixes: ff9d78b36f76 ("USB: Set usb_hcd->state and flags for shared roothubs")
 Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/usb/core/hcd-pci.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -37,6 +37,21 @@ static unsigned long long quirks;
- module_param(quirks, ullong, S_IRUGO);
- MODULE_PARM_DESC(quirks, "Bit flags for quirks to be enabled as default");
- 
-+static bool td_on_ring(struct xhci_td *td, struct xhci_ring *ring)
-+{
-+	struct xhci_segment *seg = ring->first_seg;
-+
-+	if (!td || !td->start_seg)
-+		return false;
-+	do {
-+		if (seg == td->start_seg)
-+			return true;
-+		seg = seg->next;
-+	} while (seg && seg != ring->first_seg);
-+
-+	return false;
-+}
-+
- /* TODO: copied from ehci-hcd.c - can this be refactored? */
- /*
-  * xhci_handshake - spin reading hc until handshake completes or fails
-@@ -1571,6 +1586,21 @@ static int xhci_urb_dequeue(struct usb_h
- 		goto done;
+--- a/drivers/usb/core/hcd-pci.c
++++ b/drivers/usb/core/hcd-pci.c
+@@ -515,8 +515,6 @@ static int resume_common(struct device *
+ 				event == PM_EVENT_RESTORE);
+ 		if (retval) {
+ 			dev_err(dev, "PCI post-resume error %d!\n", retval);
+-			if (hcd->shared_hcd)
+-				usb_hc_died(hcd->shared_hcd);
+ 			usb_hc_died(hcd);
+ 		}
  	}
- 
-+	/*
-+	 * check ring is not re-allocated since URB was enqueued. If it is, then
-+	 * make sure none of the ring related pointers in this URB private data
-+	 * are touched, such as td_list, otherwise we overwrite freed data
-+	 */
-+	if (!td_on_ring(&urb_priv->td[0], ep_ring)) {
-+		xhci_err(xhci, "Canceled URB td not found on endpoint ring");
-+		for (i = urb_priv->num_tds_done; i < urb_priv->num_tds; i++) {
-+			td = &urb_priv->td[i];
-+			if (!list_empty(&td->cancelled_td_list))
-+				list_del_init(&td->cancelled_td_list);
-+		}
-+		goto err_giveback;
-+	}
-+
- 	if (xhci->xhc_state & XHCI_STATE_HALTED) {
- 		xhci_dbg_trace(xhci, trace_xhci_dbg_cancel_urb,
- 				"HC halted, freeing TD manually.");
 
 
