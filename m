@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14369C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5415ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21DC208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21DC208D9
+	by mail.kernel.org (Postfix) with ESMTP id 6A2B6208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2B6208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731688AbeIXSPg (ORCPT
+        id S1731697AbeIXSPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:15:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55272 "EHLO
+        Mon, 24 Sep 2018 14:15:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729811AbeIXSPg (ORCPT
+        with ESMTP id S1729775AbeIXSPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:15:36 -0400
+        Mon, 24 Sep 2018 14:15:41 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B11021099;
-        Mon, 24 Sep 2018 12:13:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1DA8B1099;
+        Mon, 24 Sep 2018 12:13:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        David Carrillo-Cisneros <davidcc@google.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 018/173] xfrm: fix passing zero to ERR_PTR() warning
-Date:   Mon, 24 Sep 2018 13:50:52 +0200
-Message-Id: <20180924113116.666439734@linuxfoundation.org>
+Subject: [PATCH 4.14 036/173] perf tools: Synthesize GROUP_DESC feature in pipe mode
+Date:   Mon, 24 Sep 2018 13:51:10 +0200
+Message-Id: <20180924113118.620169742@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,39 +58,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 934ffce1343f22ed5e2d0bd6da4440f4848074de ]
+[ Upstream commit e8fedff1cc729fd227924305152ccc6f580e8c83 ]
 
-Fix a static code checker warning:
+Stephan reported, that pipe mode does not carry the group information
+and thus the piped report won't display the grouped output for following
+command:
 
-  net/xfrm/xfrm_policy.c:1836 xfrm_resolve_and_create_bundle() warn: passing zero to 'ERR_PTR'
+  # perf record -e '{cycles,instructions,branches}' -a sleep 4 | perf report
 
-xfrm_tmpl_resolve return 0 just means no xdst found, return NULL
-instead of passing zero to ERR_PTR.
+It has no idea about the group setup, so it will display events
+separately:
 
-Fixes: d809ec895505 ("xfrm: do not assume that template resolving always returns xfrms")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+  # Overhead  Command          Shared Object             ...
+  # ........  ...............  .......................
+  #
+       6.71%  swapper          [kernel.kallsyms]
+       2.28%  offlineimap      libpython2.7.so.1.0
+       0.78%  perf             [kernel.kallsyms]
+  ...
+
+Fix GROUP_DESC feature record to be synthesized in pipe mode, so the
+report output is grouped if there are groups defined in record:
+
+  #                 Overhead  Command          Shared    ...
+  # ........................  ...............  .......
+  #
+       7.57%   0.16%   0.30%  swapper          [kernel
+       1.87%   3.15%   2.46%  offlineimap      libpyth
+       1.33%   0.00%   0.00%  perf             [kernel
+  ...
+
+Reported-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Stephane Eranian <eranian@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180712135202.14774-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_policy.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/util/header.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1831,7 +1831,10 @@ xfrm_resolve_and_create_bundle(struct xf
- 	/* Try to instantiate a bundle */
- 	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
- 	if (err <= 0) {
--		if (err != 0 && err != -EAGAIN)
-+		if (err == 0)
-+			return NULL;
-+
-+		if (err != -EAGAIN)
- 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
- 		return ERR_PTR(err);
- 	}
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2209,7 +2209,7 @@ static const struct feature_ops feat_ops
+ 	FEAT_OPR(NUMA_TOPOLOGY,	numa_topology,	true),
+ 	FEAT_OPN(BRANCH_STACK,	branch_stack,	false),
+ 	FEAT_OPR(PMU_MAPPINGS,	pmu_mappings,	false),
+-	FEAT_OPN(GROUP_DESC,	group_desc,	false),
++	FEAT_OPR(GROUP_DESC,	group_desc,	false),
+ 	FEAT_OPN(AUXTRACE,	auxtrace,	false),
+ 	FEAT_OPN(STAT,		stat,		false),
+ 	FEAT_OPN(CACHE,		cache,		true),
 
 
