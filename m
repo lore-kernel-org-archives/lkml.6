@@ -2,296 +2,134 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248D9C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92EFECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4EA92086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:56:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84E7821480
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 10:57:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GzqnhH0b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4EA92086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ofJxrlIL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E7821480
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbeIXQ5o (ORCPT
+        id S1728606AbeIXQ6r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:57:44 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41588 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeIXQ5o (ORCPT
+        Mon, 24 Sep 2018 12:58:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44927 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbeIXQ6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 12:57:44 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f38-v6so15875064edd.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 03:56:13 -0700 (PDT)
+        Mon, 24 Sep 2018 12:58:47 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v16-v6so19189567wro.11;
+        Mon, 24 Sep 2018 03:57:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=2whNj4RcdK8Wlpanm09DeQRJiaISFPiZtn8l2emuidg=;
-        b=GzqnhH0bLxokhVrH116Y7n8jl2OltzG3f3YhurwUlIMl5c5TisJ7h4rd+jUuaPtwj0
-         8m1O8yjBFH3cKyagMiAjPLWCN88QyNFAYjqEnFBWHP+fh2eIhvUKjM/FWn4ABdwDKZgJ
-         NgzebZZqPBuj48oGR/QqLn1//U55lfkeSn+aU=
+        bh=OtG+ecx3kSb+BXI5IJn+a4PvPYfZl+2G9B8LVftYLmE=;
+        b=ofJxrlILklk4wVZN/nxL47LGTJ0UA5dWBlfhP89nfwN5v2Nw1RlJzUYUclJlGVedWh
+         nAfVn6tU8VrAb2UBEqFVr6msy81SlpkOmvmZ9lKd2K+Ll7P6fPPjpUnhcciKRTepaoGI
+         i8GJa3B6h1C1Us78wLN/08wttEXQlLvLpKkpHUZagN/sAm2xJYKzJSmlqg9aq7XdYFnl
+         mtX187I2P8GaqZ7ERyBIQ5+yb3I1bV6q5IOJhFj1SJhte3/q1MBjuM1hD3ty4N9VDYCM
+         2gunumj1Eh2GZ8jRSfutCtbEUN60zJOrNIYqmtlqQ5QPzr9txF2mERaeVFcu6Aq7HRtx
+         g2PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2whNj4RcdK8Wlpanm09DeQRJiaISFPiZtn8l2emuidg=;
-        b=s05LGBGK+KbUtJHzIdKACetipR19H1ssao2g6BroHiNz/pTnNAOn5cpYc6l4HHgxW/
-         HXG3AvUJU5ifO9F8f19stfpwWXfhFqox2OISDhLaWbrZZz0BnypZa9cN+RnSdNeH6g/l
-         0NZsO029tm1zk/9TZZpiMdNZh3i5Kd+3PoGi8wA842TVaZrnofui12imog70lvSyPZyn
-         Ae9nsxqQfNW+9rMK6hdRJjkbMO3NhXxruhF1lzRrKTR70UQfX2l+10h/eW+RmpP4lMUS
-         HghkLT6tXgaEaklw3M7okxqCkKe2XYUeCAlWIP1WZRWl8IgTqzCebN8C9rNNWnldIWek
-         SHVg==
-X-Gm-Message-State: ABuFfojZFvp7xJOhasG1l3e0gedTZWOeM9KXeAHkv/zskoosE94OAJ7f
-        smflQjJVyIxx4hiOvKAjUoTgkGThAxfMeA==
-X-Google-Smtp-Source: ANB0VdacsXKzJsGoqEjdd4B4HJ7pZJm0mfxmyI9bfF5Sb0R0q1WdljUYy8PnuiLZqHZ8lvvS14oFCg==
-X-Received: by 2002:a50:bf0d:: with SMTP id f13-v6mr15769424edk.157.1537786572173;
-        Mon, 24 Sep 2018 03:56:12 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id r7-v6sm1855295eds.54.2018.09.24.03.56.11
+        bh=OtG+ecx3kSb+BXI5IJn+a4PvPYfZl+2G9B8LVftYLmE=;
+        b=l+wdEcFAZglHshx6eajRyNtjFlp77I8M/O3leGgzEbuvkMZNh2waRKTyyIlk/svfBL
+         DERNGbW1PAT1pSlq1stpHnR49zY7GtDhKkLO4XcL2dq8b7u+YmXw9Ga+TejEB4KvUvbl
+         XcCkfNPjx8ZPbUTleDNeKnwRvSU82Ih4+vZDD9t+p6jZUuBZHhAKmeufsr+31fZY+gBL
+         6ooYDEyNCpgFD6iabKmPkLbfid8jxIWwfyMFnRtEzR714M5vRTZALdtaODPMX/15OZrE
+         pFAj1f8hm1DzhbkxscEMOuM7bQPtNtMKwkl4Tees1xrcbrhFLm4ms3kRCOTKkUU4sAUa
+         BO+A==
+X-Gm-Message-State: ABuFfohoLjDOUMxkopyVD/7UjbZ14c5txADsPHvBJ5sJ1X2z/TdAD24h
+        k/WPuTAwAe8r1c0GEtv+Iz4=
+X-Google-Smtp-Source: ACcGV61FSsobOdiSaJU3VH1/yfuOKxZpP1wgSRblIf79aO0mSoxtn/SjLzQxoCvDm2jX79kwqwjPRg==
+X-Received: by 2002:adf:8141:: with SMTP id 59-v6mr1425817wrm.127.1537786636069;
+        Mon, 24 Sep 2018 03:57:16 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id i12-v6sm659526wmg.39.2018.09.24.03.57.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 03:56:11 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 12:56:05 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>
-Subject: Re: [PATCH] tools/memory-model: Model smp_mb__after_unlock_lock()
-Message-ID: <20180924105605.GA8466@andrea>
-References: <20180924104449.8211-1-andrea.parri@amarulasolutions.com>
+        Mon, 24 Sep 2018 03:57:15 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 12:57:14 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 17/20] iommu/tegra: gart: Prepend error/debug messages
+ with "GART:"
+Message-ID: <20180924105714.GN21032@ulmo>
+References: <20180924004153.8232-1-digetx@gmail.com>
+ <20180924004153.8232-18-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="b/Q3JWIUAuLE0ZFy"
 Content-Disposition: inline
-In-Reply-To: <20180924104449.8211-1-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180924004153.8232-18-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 12:44:49PM +0200, Andrea Parri wrote:
-> From the header comment for smp_mb__after_unlock_lock():
-> 
->   "Place this after a lock-acquisition primitive to guarantee that
->    an UNLOCK+LOCK pair acts as a full barrier.  This guarantee applies
->    if the UNLOCK and LOCK are executed by the same CPU or if the
->    UNLOCK and LOCK operate on the same lock variable."
-> 
-> This formalizes the above guarantee by defining (new) mb-links according
-> to the law:
-> 
->   ([M] ; po ; [UL] ; (co | po) ; [LKW] ;
-> 	fencerel(After-unlock-lock) ; [M])
-> 
-> where the component ([UL] ; co ; [LKW]) identifies "UNLOCK+LOCK pairs on
-> the same lock variable" and the component ([UL] ; po ; [LKW]) identifies
-> "UNLOCK+LOCK pairs executed by the same CPU".
-> 
-> In particular, the LKMM forbids the following two behaviors (the second
-> litmus test below is based on
-> 
->   Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
-> 
-> c.f., Section "Tree RCU Grace Period Memory Ordering Building Blocks"):
-> 
-> C after-unlock-lock-same-cpu
-> 
-> (*
->  * Result: Never
->  *)
-> 
-> {}
-> 
-> P0(spinlock_t *s, spinlock_t *t, int *x, int *y)
-> {
-> 	int r0;
-> 
-> 	spin_lock(s);
-> 	WRITE_ONCE(*x, 1);
-> 	spin_unlock(s);
-> 	spin_lock(t);
-> 	smp_mb__after_unlock_lock();
-> 	r0 = READ_ONCE(*y);
-> 	spin_unlock(t);
-> }
-> 
-> P1(int *x, int *y)
-> {
-> 	int r0;
-> 
-> 	WRITE_ONCE(*y, 1);
-> 	smp_mb();
-> 	r0 = READ_ONCE(*x);
-> }
-> 
-> exists (0:r0=0 /\ 1:r0=0)
-> 
-> C after-unlock-lock-same-lock-variable
-> 
-> (*
->  * Result: Never
->  *)
-> 
-> {}
-> 
-> P0(spinlock_t *s, int *x, int *y)
-> {
-> 	int r0;
-> 
-> 	spin_lock(s);
-> 	WRITE_ONCE(*x, 1);
-> 	r0 = READ_ONCE(*y);
-> 	spin_unlock(s);
-> }
-> 
-> P1(spinlock_t *s, int *y, int *z)
-> {
-> 	int r0;
-> 
-> 	spin_lock(s);
-> 	smp_mb__after_unlock_lock();
-> 	WRITE_ONCE(*y, 1);
-> 	r0 = READ_ONCE(*z);
-> 	spin_unlock(s);
-> }
-> 
-> P2(int *z, int *x)
-> {
-> 	int r0;
-> 
-> 	WRITE_ONCE(*z, 1);
-> 	smp_mb();
-> 	r0 = READ_ONCE(*x);
-> }
-> 
-> exists (0:r0=0 /\ 1:r0=0 /\ 2:r0=0)
-> 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
-> Cc: Daniel Lustig <dlustig@nvidia.com>
+
+--b/Q3JWIUAuLE0ZFy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 24, 2018 at 03:41:50AM +0300, Dmitry Osipenko wrote:
+> GART became a part of Memory Controller, hence now the drivers device
+> is Memory Controller and not GART. As a result all printed messages are
+> prepended with the "tegra-mc 7000f000.memory-controller:", so let's
+> prepend GART's messages with "GART:" in order to differentiate them
+> from the MC.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
-> NOTES.
-> 
-> - A number of equivalent formalizations seems available; for example,
->   we could replace "co" in the law above with "coe" (by "coherence")
->   and we could limit "coe" to "singlestep(coe)" (by the "prop" term).
->   These changes did not show significant performance improvement and
->   they looked slightly less readable to me, hence...
-> 
-> - The mb-links order memory accesses po-_before_ the lock-release to
->   memory accesses po-_after_ the lock-acquire; in part., this forma-
->   lization does _not_ forbid the following behavior (after A. Stern):
-> 
-> C po-in-after-unlock-lock
-> 
-> {}
-> 
-> P0(spinlock_t *s, spinlock_t *t, int *y)
-> {
-> 	int r0;
-> 
-> 	spin_lock(s);
-> 	spin_unlock(s);
-> 
-> 	spin_lock(t);
-> 	smp_mb__after_unlock_lock();
-> 	r0 = READ_ONCE(*y);
-> 	spin_unlock(t);
-> }
-> 
-> P1(spinlock_t *s, int *y)
-> {
-> 	int r0;
-> 
-> 	WRITE_ONCE(*y, 1);
-> 	smp_mb();
-> 	r0 = spin_is_locked(s);
-> }
-> 
-> exists (0:r0=0 /\ 1:r0=0)
+>  drivers/iommu/tegra-gart.c | 36 ++++++++++++++++++------------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
 
-This should have been "exists (0:r0=0 /\ 1:r0=1)".
+There's a macro called dev_fmt (similar to pr_fmt) to do this for dev_*
+printers. Also I think this would be more readable if the prefix was
+"gart: " rather than "GART: ". At least from my personal experience I
+get easily distracted by all-caps words in logs, because they usually
+indicate something that requires immediate attention. I think it's
+better to leave that up to higher level mechanisms, such as the color
+keying of messages based on level by tools like dmesg.
 
-  Andrea
+Thierry
 
+--b/Q3JWIUAuLE0ZFy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> - I'm not aware of currently supported architectures (implementations)
->   of smp_mb__after_unlock_lock() and spin_{lock,unlock}() which would
->   violate the guarantee formalized in this patch.  It is worth noting
->   that the same conclusion does _not_ extend to other locking primiti-
->   ves (e.g., write_{lock,unlock}()), AFAICT: c.f., e.g., riscv.  This
->   "works" considered the callsites for the barrier, but yeah...
-> ---
->  tools/memory-model/linux-kernel.bell | 3 ++-
->  tools/memory-model/linux-kernel.cat  | 4 +++-
->  tools/memory-model/linux-kernel.def  | 1 +
->  3 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-> index b84fb2f67109e..796513362c052 100644
-> --- a/tools/memory-model/linux-kernel.bell
-> +++ b/tools/memory-model/linux-kernel.bell
-> @@ -29,7 +29,8 @@ enum Barriers = 'wmb (*smp_wmb*) ||
->  		'sync-rcu (*synchronize_rcu*) ||
->  		'before-atomic (*smp_mb__before_atomic*) ||
->  		'after-atomic (*smp_mb__after_atomic*) ||
-> -		'after-spinlock (*smp_mb__after_spinlock*)
-> +		'after-spinlock (*smp_mb__after_spinlock*) ||
-> +		'after-unlock-lock (*smp_mb__after_unlock_lock*)
->  instructions F[Barriers]
->  
->  (* Compute matching pairs of nested Rcu-lock and Rcu-unlock *)
-> diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> index 882fc33274ac3..8f23c74a96fdc 100644
-> --- a/tools/memory-model/linux-kernel.cat
-> +++ b/tools/memory-model/linux-kernel.cat
-> @@ -30,7 +30,9 @@ let wmb = [W] ; fencerel(Wmb) ; [W]
->  let mb = ([M] ; fencerel(Mb) ; [M]) |
->  	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
->  	([M] ; po? ; [RMW] ; fencerel(After-atomic) ; [M]) |
-> -	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M])
-> +	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
-> +	([M] ; po ; [UL] ; (co | po) ; [LKW] ;
-> +		fencerel(After-unlock-lock) ; [M])
->  let gp = po ; [Sync-rcu] ; po?
->  
->  let strong-fence = mb | gp
-> diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-> index 6fa3eb28d40b5..b27911cc087d4 100644
-> --- a/tools/memory-model/linux-kernel.def
-> +++ b/tools/memory-model/linux-kernel.def
-> @@ -23,6 +23,7 @@ smp_wmb() { __fence{wmb}; }
->  smp_mb__before_atomic() { __fence{before-atomic}; }
->  smp_mb__after_atomic() { __fence{after-atomic}; }
->  smp_mb__after_spinlock() { __fence{after-spinlock}; }
-> +smp_mb__after_unlock_lock() { __fence{after-unlock-lock}; }
->  
->  // Exchange
->  xchg(X,V)  __xchg{mb}(X,V)
-> -- 
-> 2.17.1
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluowwoACgkQ3SOs138+
+s6F4Ww/+OYHsX2jWHpA4boVmo7Hho/Wg6+os+ELy0AU2+wUZFLqOPJxotod6Xa47
+/j4fX9/3klWk/r1K3pgnfzgVxROcR3uYFTbt7gQL14GY0Q7URN/w4ne1hfMSFuQW
+ycVuApcIJa75YmHPdWx/CfWla16Yg+Fv1024IWMyEVDMYpQMqShecWEdRkQpqXP3
+UigSgEhpMZIinud0IiwsA4vcyJySUV4WSuJ9YjAlJnc0DsH0rZvmCM3oPh0rFpvO
+MAqiNW+A3TxCM/LOwZ73YdCp6rYdypVLiljU4BCc03eLaoXbB1KdM5Z0itOSEQOp
+F8ldbtgrvqoJf7YGXGn7WanKepRqJvoph09x2D2FScxjl90Wh/Ej7msnt6eDpzt9
+pEPSHHcoxlemS2b3+j+PwSPLw4/3hervHNaobnxbu5cceqBPhkiZsUaVvJtJ+1BC
+3a9VOO6wp07tNMbTANyo9WIfxfGflX+h1pH24c05XieGi/3ywHqnimxiHPk0/LNQ
+6bTgHS3Jlvvd9ZnzsB2u7i9IY1mSkWOlucKf0Zdoemr/q5WpdyYCi0MXRPxtuQ66
+6Af5jRTZbyiU0pf0RggWJPIN0XQCzu5HCG62NKvcvXu5e/vpPULLJ95D8pm8wI7j
+4S9wcbXCczVhYCvq5JLNLSaSpgyG/xSdXeRzXw3RDRxiLtM2ie0=
+=tygZ
+-----END PGP SIGNATURE-----
+
+--b/Q3JWIUAuLE0ZFy--
