@@ -2,131 +2,120 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8651C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4FDECE568
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B5020877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF0E720685
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 21:05:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hici0lEA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B5020877
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZM/aExat"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF0E720685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbeIYDJU (ORCPT
+        id S1728281AbeIYDJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 23:09:20 -0400
-Received: from mail-qt1-f171.google.com ([209.85.160.171]:42638 "EHLO
-        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727531AbeIYDJT (ORCPT
+        Mon, 24 Sep 2018 23:09:42 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37696 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728192AbeIYDJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 23:09:19 -0400
-Received: by mail-qt1-f171.google.com with SMTP id z8-v6so11093721qto.9;
-        Mon, 24 Sep 2018 14:05:13 -0700 (PDT)
+        Mon, 24 Sep 2018 23:09:41 -0400
+Received: by mail-wr1-f68.google.com with SMTP id u12-v6so21078076wrr.4;
+        Mon, 24 Sep 2018 14:05:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0iGmRWQN1VPL7Q+N09s9mGLwuclNz8H1GpacCjqkGg4=;
-        b=hici0lEAvV3MJhzPnhGQWtnPulfVdjStS6IRLybIPqqdnns1Zmhs+gCClhuKXPgHbA
-         8xPMagO876sMHgfJfeNG0QRTAyRAdyd6bsVBEj5+2onztkgXiA3qvPaSmWDDTw7jIhdY
-         QvRp3RHoC026Sj1hghxuEuiE4+3Q/AEmr1aIhf+7w/+XkXSv29ogiAN/xZyZ5RYe7a+F
-         m3B2YxvUqV3mmts72VxtuFS9HiYCtHQawGNplzikRzVEZlRCEQvs6QLSHCxkmJYGtboX
-         YLvr7XSlH5btWcESJUFk07vYq1K1NRouf0zGbtNMEKL37n1EKw4k3eRwablgZk4Gr190
-         dzsA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tWP7YNW1h2XecsB2LbVl5rKo0sfwbS52wMoaz/8kqoU=;
+        b=ZM/aExatjNHKbI5wPyBfuPuhOzq9WX4Vlxk+tq6gv22ZSGRBSRd8Grx8PyyhCFaCvk
+         yZlpOXBulPf9jBYHwENR9zlydoIK3jm1pRQQONgf0llAVamwZ9a4yKfCaPkFQHVNscWB
+         zeC9gv6y/v/BCk86BSjniq7Uyr3cNCsn7yOScbJYtGl27pFttbTp8wDiWdV3j/KgOAhC
+         0varbTH8n+ctNgb2HBL3WRR6PSUpxuX7FNUO+rTjwfyBb1WAjMTBSs6Nf3+fVNdGk0QC
+         5LlVKR6R+zCS+DqXFP0iNmN7Wl+G0/55H+Ey05bS1qN8z9BXribG0h7CuVMF7glC8sVt
+         Cl5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0iGmRWQN1VPL7Q+N09s9mGLwuclNz8H1GpacCjqkGg4=;
-        b=gijnTG4f1Q/kTz4PvpS8JAoStmNrsLjS4ObaFZCj2qnvv/CGFOBrdG7g9lXHCBTE3E
-         ZUHT4BnNCUjru+p8OAddcEJjMChePfN7541qx/EEy8t/TC7HKYKB0gtr5j2xnrbymS5t
-         78RQKZt0l688PqxUqKCW8TvFuAPHXGvESklG/OKeIjT1fgFelR8lJypUFy/oFICWc/Pw
-         slJ6CEadwnuSVGhxnR/6Q7riSqRz6fwIZeGMXmb5Cin5zoqUDXh7Qq4/Q6zQnsGbl5/m
-         jlWF9DWsOya0ej0zqgq8RQSybwvd6uoZ1yfXC631GTI5pf0B702xcoYQqgBLegNrso7I
-         c0Wg==
-X-Gm-Message-State: ABuFfohONv9I//vrKV2FTuPCDLJFA2Tp6rIXgm1EKOkrIYicU4Y8hbQs
-        9AafJqi211Ue+7xn+Ki0NbiPt489heZn39YrLJ8=
-X-Google-Smtp-Source: ACcGV62CCn0XEsl3F04z7PCsoh4iQEyaijWEIQ0PlVNspJk1aKwmejT2gB/i0TRVGoHrJjfQs25qRIPMla9aXUpATNw=
-X-Received: by 2002:a0c:9557:: with SMTP id m23-v6mr554907qvm.138.1537823112816;
- Mon, 24 Sep 2018 14:05:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tWP7YNW1h2XecsB2LbVl5rKo0sfwbS52wMoaz/8kqoU=;
+        b=pFT/Xt8DWFN7X+Ukgubx16Ba9nN8KtpB8f9NQJ8cfMpsg75MkgmnrwHNCgAX8Lt6cV
+         qxSUC+Nu8k/x9LJKDRMJqDZhByCw9Oo65BUIfyVXJDM4yRMHnr+QQjQ6pJ+j2QQuQWNa
+         f6jj+ZrAPBTGUavKUbCLK5ZhJVIvz6E7S2ty6wWnEG9rEV8g60/fRafPX5UVqYQHVqyO
+         lGbiVnlidfqW9WS5WMDUYsXDPBjqJkRLiZ+IJZRsgwq0dQMRFBh8AmxokaGIb2PXj6hi
+         jv+e2BBOprvCcZWPf1lWce9IGLmdVs1iVGVqqfiY2Xp5kAHkk9T3XToI15ghNFtMGmso
+         BBUw==
+X-Gm-Message-State: ABuFfohMbXgueQb650jf415XYzZQPFF56YLYaoUq/HDnHeJCXHDfkb+o
+        DSewXFfCykj4PoU6oZMfbewJ/NRd0CUHwQ==
+X-Google-Smtp-Source: ACcGV60JaPB9W1wz3yDkthISTlokutWJVcGLTwrAec5eXGeR7psbWiDtqXDs/7g+mNjrBNt4Hbl56w==
+X-Received: by 2002:adf:e603:: with SMTP id p3-v6mr445243wrm.254.1537823133825;
+        Mon, 24 Sep 2018 14:05:33 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id r13-v6sm81229wmf.35.2018.09.24.14.05.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 14:05:32 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] qed: Fix mask parameter in qed_vf_prep_tunn_req_tlv
+Date:   Mon, 24 Sep 2018 14:05:27 -0700
+Message-Id: <20180924210527.11996-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-References: <20180913223143.12664-1-rajatja@google.com> <CAHp75VcVkp6i_4oNVJvzde13MwaRQge91mvZF2aXgneZC9nzWg@mail.gmail.com>
- <CACK8Z6FhJhhfgk1zPMv5M0oRwz=o75YOKFmU+4Wx-X9-prPnKA@mail.gmail.com>
- <CACK8Z6GeZ+2uRsRDPfdd=i+WrdQwQgEBvEyDxQuKLygXqPp4dw@mail.gmail.com>
- <CACK8Z6FLPVSJpPuAXZsqHV2rY2zy3L-Fvd=QPn=+Ynp3aHyhaQ@mail.gmail.com>
- <20180924135935.GP15943@smile.fi.intel.com> <70D28D5DAE32E9429B09AA8B7C84AC472C0000CB@BGSMSX106.gar.corp.intel.com>
-In-Reply-To: <70D28D5DAE32E9429B09AA8B7C84AC472C0000CB@BGSMSX106.gar.corp.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 25 Sep 2018 00:05:01 +0300
-Message-ID: <CAHp75VdDndQi9nj+hAR6wkFrgkf52QyQ+0iCsBFiJs1PS45iWQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: icelake: Fix the resource number for community-4/5
-To:     subrata.banik@intel.com
-Cc:     Rajat Jain <rajatja@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajat Jain <rajatxjain@gmail.com>, aamir.bohra@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please do not top post in the open source mailing lists.
+Clang complains when one enumerated type is implicitly converted to
+another.
 
-On Mon, Sep 24, 2018 at 5:50 PM Banik, Subrata <subrata.banik@intel.com> wr=
-ote:
+drivers/net/ethernet/qlogic/qed/qed_vf.c:686:6: warning: implicit
+conversion from enumeration type 'enum qed_tunn_mode' to different
+enumeration type 'enum qed_tunn_clss' [-Wenum-conversion]
+                                 QED_MODE_L2GENEVE_TUNN,
+                                 ^~~~~~~~~~~~~~~~~~~~~~
 
-> You are right that this ASL code is not same with Intel reference BIOS co=
-de because BIOS sources are different between what you are looking vs what =
-Chrome OS is using. In Coreboot BIOS, we are more relying on EDS spec and a=
-s COM 3 is dedicated for CPU GPIO hence we are mapping, 0/1/2/4/5 (whatever=
- present in EDS vol 1.1)
+Update mask's parameter to expect qed_tunn_mode, which is what was
+intended.
 
-But how would it possible to make interoperability work if there are
-*different* firmwares for the *same* ACPI HID?
-ACPI table is a part of protocol by which firmware sends data to the
-software. If one breaks this protocol they must use another ACPI HID
-for that kind of device.
+Link: https://github.com/ClangBuiltLinux/linux/issues/125
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_vf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> We have ensured that PCR ID and offsets are correct in ASL code for respe=
-ctive community, I don't think anything else really matter from BIOS unless=
- you tell me, that you are having any required that your drive code will on=
-ly probe for 4 COMM for LP and 5 for ICL-H?
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_vf.c b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+index 3d4269659820..fcd8da08274f 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+@@ -572,7 +572,7 @@ int qed_vf_hw_prepare(struct qed_hwfn *p_hwfn)
+ static void
+ __qed_vf_prep_tunn_req_tlv(struct vfpf_update_tunn_param_tlv *p_req,
+ 			   struct qed_tunn_update_type *p_src,
+-			   enum qed_tunn_clss mask, u8 *p_cls)
++			   enum qed_tunn_mode mask, u8 *p_cls)
+ {
+ 	if (p_src->b_update_mode) {
+ 		p_req->tun_mode_update_mask |= BIT(mask);
+@@ -587,7 +587,7 @@ __qed_vf_prep_tunn_req_tlv(struct vfpf_update_tunn_param_tlv *p_req,
+ static void
+ qed_vf_prep_tunn_req_tlv(struct vfpf_update_tunn_param_tlv *p_req,
+ 			 struct qed_tunn_update_type *p_src,
+-			 enum qed_tunn_clss mask,
++			 enum qed_tunn_mode mask,
+ 			 u8 *p_cls, struct qed_tunn_update_udp_port *p_port,
+ 			 u8 *p_update_port, u16 *p_udp_port)
+ {
+-- 
+2.19.0
 
-See above.
-So, I do not see any bug in the driver, but in firmware. In this case
-FW may not use INT3455 HID.
-This is my understanding, if you would like more details, ask BIOS and
-ACPI teams.
-
-> First of all, this is pre-production chip, so, I don't think there is a b=
-ug in the driver (yet) discovered.
->
-> Looking to the above ASL code I may conclude that is definitely is *not* =
-from our reference BIOS.
-> I have checked two versions of it and found that in both we have the foll=
-owing mapping:
-> for LP variant: there are only 4 communities are exported for H variant: =
-there are only 5 communities are exported
->
-> So, I guess the problem is in ASL code you provided. It simple should not=
- export that community at all.
->
-> In case you need to do so, there are ways:
->  - contact Intel and ask for a change in reference BIOS
->  - acquire another ACPI ID for the case, or, perhaps use special constant=
-s like
->    _HRV for that purpose (also need to contact Intel while doing that)
-
---=20
-With Best Regards,
-Andy Shevchenko
