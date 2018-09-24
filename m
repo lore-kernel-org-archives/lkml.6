@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1B4C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34143ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5302320C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5302320C0A
+	by mail.kernel.org (Postfix) with ESMTP id EF0F221486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:07:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF0F221486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731244AbeIXSJB (ORCPT
+        id S1730975AbeIXSJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:09:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54198 "EHLO
+        Mon, 24 Sep 2018 14:09:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54270 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729339AbeIXSJB (ORCPT
+        with ESMTP id S1728516AbeIXSJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:09:01 -0400
+        Mon, 24 Sep 2018 14:09:13 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BDA11080;
-        Mon, 24 Sep 2018 12:07:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5BAE4107B;
+        Mon, 24 Sep 2018 12:07:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-fsdevel@vger.kernel.org, linux-mips@linux-mips.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 099/111] drm/panel: type promotion bug in s6e8aa0_read_mtp_id()
-Date:   Mon, 24 Sep 2018 13:53:06 +0200
-Message-Id: <20180924113114.886344347@linuxfoundation.org>
+Subject: [PATCH 4.9 073/111] binfmt_elf: Respect error return from `regset->active
+Date:   Mon, 24 Sep 2018 13:52:40 +0200
+Message-Id: <20180924113112.214343805@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -53,35 +56,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: "Maciej W. Rozycki" <macro@mips.com>
 
-[ Upstream commit cd0e0ca69109d025b1a1b6609f70682db62138b0 ]
+[ Upstream commit 2f819db565e82e5f73cd42b39925098986693378 ]
 
-The ARRAY_SIZE() macro is type size_t.  If s6e8aa0_dcs_read() returns a
-negative error code, then "ret < ARRAY_SIZE(id)" is false because the
-negative error code is type promoted to a high positive value.
+The regset API documented in <linux/regset.h> defines -ENODEV as the
+result of the `->active' handler to be used where the feature requested
+is not available on the hardware found.  However code handling core file
+note generation in `fill_thread_core_info' interpretes any non-zero
+result from the `->active' handler as the regset requested being active.
+Consequently processing continues (and hopefully gracefully fails later
+on) rather than being abandoned right away for the regset requested.
 
-Fixes: 02051ca06371 ("drm/panel: add S6E8AA0 driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180704093807.s3lqsb2v6dg2k43d@kili.mountain
+Fix the problem then by making the code proceed only if a positive
+result is returned from the `->active' handler.
+
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 4206d3aa1978 ("elf core dump: notes user_regset")
+Patchwork: https://patchwork.linux-mips.org/patch/19332/
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c |    2 +-
+ fs/binfmt_elf.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
-+++ b/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c
-@@ -823,7 +823,7 @@ static void s6e8aa0_read_mtp_id(struct s
- 	int ret, i;
- 
- 	ret = s6e8aa0_dcs_read(ctx, 0xd1, id, ARRAY_SIZE(id));
--	if (ret < ARRAY_SIZE(id) || id[0] == 0x00) {
-+	if (ret < 0 || ret < ARRAY_SIZE(id) || id[0] == 0x00) {
- 		dev_err(ctx->dev, "read id failed\n");
- 		ctx->error = -EIO;
- 		return;
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1706,7 +1706,7 @@ static int fill_thread_core_info(struct
+ 		const struct user_regset *regset = &view->regsets[i];
+ 		do_thread_regset_writeback(t->task, regset);
+ 		if (regset->core_note_type && regset->get &&
+-		    (!regset->active || regset->active(t->task, regset))) {
++		    (!regset->active || regset->active(t->task, regset) > 0)) {
+ 			int ret;
+ 			size_t size = regset->n * regset->size;
+ 			void *data = kmalloc(size, GFP_KERNEL);
 
 
