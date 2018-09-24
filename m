@@ -2,39 +2,38 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9BAECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2905ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C7720C0A
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5C7720C0A
+	by mail.kernel.org (Postfix) with ESMTP id 96ABC20C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96ABC20C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732283AbeIXSSe (ORCPT
+        id S1732288AbeIXSSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:18:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55824 "EHLO
+        Mon, 24 Sep 2018 14:18:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55834 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbeIXSSd (ORCPT
+        with ESMTP id S1731655AbeIXSSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:18:33 -0400
+        Mon, 24 Sep 2018 14:18:39 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41F0E10A7;
-        Mon, 24 Sep 2018 12:16:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 876C610A7;
+        Mon, 24 Sep 2018 12:16:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 079/173] s390/crypto: Fix return code checking in cbc_paes_crypt()
-Date:   Mon, 24 Sep 2018 13:51:53 +0200
-Message-Id: <20180924113121.849688106@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 080/173] mmc: omap_hsmmc: fix wakeirq handling on removal
+Date:   Mon, 24 Sep 2018 13:51:54 +0200
+Message-Id: <20180924113121.930761607@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,36 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ingo Franzki <ifranzki@linux.ibm.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-commit b81126e01a8c6048249955feea46c8217ebefa91 upstream.
+commit 3c398f3c3bef21961eaaeb93227fa66d440dc83d upstream.
 
-The return code of cpacf_kmc() is less than the number of
-bytes to process in case of an error, not greater.
-The crypt routines for the other cipher modes already have
-this correctly.
+after unbinding mmc I get things like this:
+[  185.294067] mmc1: card 0001 removed
+[  185.305206] omap_hsmmc 480b4000.mmc: wake IRQ with no resume: -13
 
-Cc: stable@vger.kernel.org # v4.11+
-Fixes: 279378430768 ("s390/crypt: Add protected key AES module")
-Signed-off-by: Ingo Franzki <ifranzki@linux.ibm.com>
-Acked-by: Harald Freudenberger <freude@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+The wakeirq stays in /proc-interrupts
+
+rebinding shows this:
+[  289.795959] genirq: Flags mismatch irq 112. 0000200a (480b4000.mmc:wakeup) vs. 0000200a (480b4000.mmc:wakeup)
+[  289.808959] omap_hsmmc 480b4000.mmc: Unable to request wake IRQ
+[  289.815338] omap_hsmmc 480b4000.mmc: no SDIO IRQ support, falling back to polling
+
+That bug seems to be introduced by switching from devm_request_irq()
+to generic wakeirq handling.
+
+So let us cleanup at removal.
+
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Fixes: 5b83b2234be6 ("mmc: omap_hsmmc: Change wake-up interrupt to use generic wakeirq")
+Cc: stable@vger.kernel.org # v4.2+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/crypto/paes_s390.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/omap_hsmmc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/s390/crypto/paes_s390.c
-+++ b/arch/s390/crypto/paes_s390.c
-@@ -212,7 +212,7 @@ static int cbc_paes_crypt(struct blkciph
- 			      walk->dst.virt.addr, walk->src.virt.addr, n);
- 		if (k)
- 			ret = blkcipher_walk_done(desc, walk, nbytes - k);
--		if (n < k) {
-+		if (k < n) {
- 			if (__cbc_paes_set_key(ctx) != 0)
- 				return blkcipher_walk_done(desc, walk, -EIO);
- 			memcpy(param.key, ctx->pk.protkey, MAXPROTKEYSIZE);
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -2194,6 +2194,7 @@ static int omap_hsmmc_remove(struct plat
+ 	dma_release_channel(host->tx_chan);
+ 	dma_release_channel(host->rx_chan);
+ 
++	dev_pm_clear_wake_irq(host->dev);
+ 	pm_runtime_dont_use_autosuspend(host->dev);
+ 	pm_runtime_put_sync(host->dev);
+ 	pm_runtime_disable(host->dev);
 
 
