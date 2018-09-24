@@ -2,126 +2,93 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59202C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD35C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6B421486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:43:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6B421486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 985CF21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985CF21486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbeIXRoy (ORCPT
+        id S1729741AbeIXRo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:44:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51174 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729028AbeIXRoy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:44:54 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 318CE1072;
+        Mon, 24 Sep 2018 13:44:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:63706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728943AbeIXRo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:44:57 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B7456C03D485;
+        Mon, 24 Sep 2018 11:43:16 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9447130B370A;
         Mon, 24 Sep 2018 11:43:12 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronny Chevalier <ronny.chevalier@hp.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 095/105] audit: fix use-after-free in audit_add_watch
-Date:   Mon, 24 Sep 2018 13:34:21 +0200
-Message-Id: <20180924113122.291270269@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
-References: <20180924113113.268650190@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Date:   Mon, 24 Sep 2018 13:43:10 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com, Tony Krowiak <akrowiak@linux.ibm.com>
+Subject: Re: [PATCH v10 12/26] s390: vfio-ap: implement VFIO_DEVICE_GET_INFO
+ ioctl
+Message-ID: <20180924134310.29fb9d1d.cohuck@redhat.com>
+In-Reply-To: <1536781396-13601-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1536781396-13601-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1536781396-13601-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 24 Sep 2018 11:43:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Wed, 12 Sep 2018 15:43:02 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-------------------
+> From: Tony Krowiak <akrowiak@linux.ibm.com>
+> 
+> Introduces ioctl access to the VFIO AP Matrix device driver
+> by implementing the VFIO_DEVICE_GET_INFO ioctl. This ioctl
+> provides the VFIO AP Matrix device driver information to the
+> guest machine.
 
-From: Ronny Chevalier <ronny.chevalier@hp.com>
+What about the following?
 
-[ Upstream commit baa2a4fdd525c8c4b0f704d20457195b29437839 ]
+"Add support for the VFIO_DEVICE_GET_INFO ioctl to the VFIO AP Matrix
+device driver. This is a minimal implementation, as vfio-ap does not
+use I/O regions."
 
-audit_add_watch stores locally krule->watch without taking a reference
-on watch. Then, it calls audit_add_to_parent, and uses the watch stored
-locally.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+> Acked-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+> Tested-by: Pierre Morel <pmorel@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_ops.c |   38 +++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/vfio.h         |    1 +
+>  2 files changed, 39 insertions(+), 0 deletions(-)
 
-Unfortunately, it is possible that audit_add_to_parent updates
-krule->watch.
-When it happens, it also drops a reference of watch which
-could free the watch.
+Anyway,
 
-How to reproduce (with KASAN enabled):
-
-    auditctl -w /etc/passwd -F success=0 -k test_passwd
-    auditctl -w /etc/passwd -F success=1 -k test_passwd2
-
-The second call to auditctl triggers the use-after-free, because
-audit_to_parent updates krule->watch to use a previous existing watch
-and drops the reference to the newly created watch.
-
-To fix the issue, we grab a reference of watch and we release it at the
-end of the function.
-
-Signed-off-by: Ronny Chevalier <ronny.chevalier@hp.com>
-Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- kernel/audit_watch.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -414,6 +414,13 @@ int audit_add_watch(struct audit_krule *
- 	struct path parent_path;
- 	int h, ret = 0;
- 
-+	/*
-+	 * When we will be calling audit_add_to_parent, krule->watch might have
-+	 * been updated and watch might have been freed.
-+	 * So we need to keep a reference of watch.
-+	 */
-+	audit_get_watch(watch);
-+
- 	mutex_unlock(&audit_filter_mutex);
- 
- 	/* Avoid calling path_lookup under audit_filter_mutex. */
-@@ -422,8 +429,10 @@ int audit_add_watch(struct audit_krule *
- 	/* caller expects mutex locked */
- 	mutex_lock(&audit_filter_mutex);
- 
--	if (ret)
-+	if (ret) {
-+		audit_put_watch(watch);
- 		return ret;
-+	}
- 
- 	/* either find an old parent or attach a new one */
- 	parent = audit_find_parent(parent_path.dentry->d_inode);
-@@ -444,6 +453,7 @@ int audit_add_watch(struct audit_krule *
- 	*list = &audit_inode_hash[h];
- error:
- 	path_put(&parent_path);
-+	audit_put_watch(watch);
- 	return ret;
- }
- 
-
-
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
