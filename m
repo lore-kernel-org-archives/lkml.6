@@ -2,40 +2,38 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D45ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05573C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 398B621486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 398B621486
+	by mail.kernel.org (Postfix) with ESMTP id BA1C821486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:25:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1C821486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732937AbeIXS1R (ORCPT
+        id S1732949AbeIXS1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:27:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56954 "EHLO
+        Mon, 24 Sep 2018 14:27:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730683AbeIXS1R (ORCPT
+        with ESMTP id S1730683AbeIXS1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:27:17 -0400
+        Mon, 24 Sep 2018 14:27:19 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 163A7108B;
-        Mon, 24 Sep 2018 12:25:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6AB78108B;
+        Mon, 24 Sep 2018 12:25:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 143/173] gpiolib: Mark gpio_suffixes array with __maybe_unused
-Date:   Mon, 24 Sep 2018 13:52:57 +0200
-Message-Id: <20180924113126.066352097@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: [PATCH 4.14 161/173] earlycon: Initialize port->uartclk based on clock-frequency property
+Date:   Mon, 24 Sep 2018 13:53:15 +0200
+Message-Id: <20180924113126.984379184@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,43 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Michal Simek <michal.simek@xilinx.com>
 
-[ Upstream commit b23ec59926faf05b0c43680d05671c484e810ac4 ]
+commit 814453adea7d081ad8917aa0f32d6a14165a3563 upstream.
 
-Since we put static variable to a header file it's copied to each module
-that includes the header. But not all of them are actually used it.
+On DT based platforms when current-speed property is present baudrate
+is setup. Also port->uartclk is initialized to bogus BASE_BAUD * 16
+value. Drivers like uartps/ns16550 contain logic when baudrate and
+uartclk is used for baudrate calculation.
 
-Mark gpio_suffixes array with __maybe_unused to hide a compiler warning:
+The patch is reading optional clock-frequency property to replace bogus
+BASE_BAUD * 16 calculation to have proper baudrate calculation.
 
-In file included from
-drivers/gpio/gpiolib-legacy.c:6:0:
-drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
- static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-                           ^~~~~~~~~~~~~
-In file included from drivers/gpio/gpiolib-devprop.c:17:0:
-drivers/gpio/gpiolib.h:95:27: warning: ‘gpio_suffixes’ defined but not used [-Wunused-const-variable=]
- static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-                           ^~~~~~~~~~~~~
+[-stable comment: commit 31cb9a8575ca ("earlycon: initialise baud field
+ of earlycon device structure") has changed 8250_early.c behavior which
+ now tries to setup UART speed. Ignoring clock-frequency results in
+ wrong value of calculated divisor & malformed early console output.]
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 31cb9a8575ca ("earlycon: initialise baud field of earlycon device structure")
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+[rmilecki: add -stable comment and Fixes tag]
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpio/gpiolib.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -88,7 +88,7 @@ struct acpi_gpio_info {
- };
+---
+ drivers/tty/serial/earlycon.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -289,6 +289,10 @@ int __init of_setup_earlycon(const struc
+ 	if (val)
+ 		early_console_dev.baud = be32_to_cpu(*val);
  
- /* gpio suffixes used for ACPI and device tree lookup */
--static const char * const gpio_suffixes[] = { "gpios", "gpio" };
-+static __maybe_unused const char * const gpio_suffixes[] = { "gpios", "gpio" };
- 
- #ifdef CONFIG_OF_GPIO
- struct gpio_desc *of_find_gpio(struct device *dev,
++	val = of_get_flat_dt_prop(node, "clock-frequency", NULL);
++	if (val)
++		port->uartclk = be32_to_cpu(*val);
++
+ 	if (options) {
+ 		early_console_dev.baud = simple_strtoul(options, NULL, 0);
+ 		strlcpy(early_console_dev.options, options,
 
 
