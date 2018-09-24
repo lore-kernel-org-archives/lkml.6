@@ -2,149 +2,91 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 941F9ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D496DECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F65E208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:57:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sssD5hjw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F65E208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 8CB9220883
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 15:58:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB9220883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730944AbeIXWAP (ORCPT
+        id S1731120AbeIXWBd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:00:15 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41661 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728280AbeIXWAP (ORCPT
+        Mon, 24 Sep 2018 18:01:33 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38675 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730257AbeIXWBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:00:15 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a7-v6so158629pla.8
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 08:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DX6rTJ0P0f3icnTttKpQ6SjAx2eqre7JFlPIUgZayKc=;
-        b=sssD5hjwnq1zvW/a/ogAYpWbvPZeLNOZcosCEiuTEZskzN99+TH+FrkpLNbqMciihL
-         lQXZm5UlmB8izlMdoZwafLsBJj+fHEiwbpFmWnvwp6wgtxETYt0uhWQRjkAGtbCovrU4
-         RPnGbDwr2KwIjJlkhEpkUVtAwCKcHAXMFgf1B4lK5Nurq5VVli941K8z1IgHd/jGN6Wz
-         OqmCcltHOzjvL1Ie+IgF7mhngA2Z1kCbfWEwbxENqnCB0YbEDpIEE5siHtWCNnyfjkiQ
-         gnEW/mICKx2+T7Mqm9jVlbnyU2Kcq22YDzMxNfYNjsL5PpBqGMpqxz93P3ya0fD5h7t1
-         2I1g==
+        Mon, 24 Sep 2018 18:01:33 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r77-v6so4220789pgr.5;
+        Mon, 24 Sep 2018 08:58:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DX6rTJ0P0f3icnTttKpQ6SjAx2eqre7JFlPIUgZayKc=;
-        b=ck6pvz4Auxh1KEn8VHPS+PXJGNBAC4N8YSmg4moKL87Dl1CpwPE4v8bMujm+hoRAPB
-         2XHSt5FF/1S2mNLEN6prSs6R+eXaTTpG/FO+y5CK5v3sg628AFUI/6iMfODYbsP7aey2
-         3fOGLKvPc+BLo+nhGfKqY4uj/TXyWizTeOMxFekLBUQgavs2objywV50EKIzUAUMUzob
-         +hI1lcBRJm//Y+5ByCzAg0dXGQHh6PRN7A3FBbAGUmI25+oGzIwUEjEv9h2JnKeBC1iu
-         tQbxds0J1N4I4hWoSC3+f0VMRwycfC2ityhvu2OHLd00NW61OjXZGBr6Dd1a+YSqTEWf
-         IdRg==
-X-Gm-Message-State: ABuFfoj+vBSE14FTIR+YqqT9HoosAH+WBo/qECJJjOibym1aaoqbcHmX
-        5Hw70hmZj2AEsPaoeFdV7HzPPv9uV9A=
-X-Google-Smtp-Source: ACcGV61e1YqGUH1BUjpiLjlamTwG9qsILjeIHN76xXNTDA77AAsB14XBq81ZQ0eRDLmjR8ke3bdLkw==
-X-Received: by 2002:a17:902:b7c3:: with SMTP id v3-v6mr10169526plz.182.1537804645322;
-        Mon, 24 Sep 2018 08:57:25 -0700 (PDT)
-Received: from gnomeregan.cam.corp.google.com ([2620:15c:6:14:ad22:1cbb:d8fa:7d55])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm52332755pfd.65.2018.09.24.08.57.24
+        bh=mw36CrvfVrpxzIqWOBQZfvvkpequs5zfefy49OeARZ4=;
+        b=ctQkeY/lrPnK1tVBhY6SC9UZUVOn2COWn6LsMxu3DEmBHV/nvlxsFtCxxJCi82Biry
+         H1yLzZ4CAGrtYrtXx4usLo/ykBTkHFaS7+S4vdAIEqEBQ42aLWeDTY/nvfWRhOwlmFsL
+         ORx8K3kMTlFszRLBtkcvVGChgU7rsIaydHbFqH2nz0kw9itsNokUHgwiNK/0gAPrZzA+
+         ZCKXjRPv7fddF8VRjq8CoONiF7OCF1dlHEdDdZzHfWzy78DOjQRi7mM9X+aAq+pXUvVA
+         dQN5v0s/V30eb0T/NO2pGyqxwfPwh00Wv1phUirZH+KBuIpARcUa65kWc4ZhKLNZEaQx
+         8y8w==
+X-Gm-Message-State: ABuFfogkU3BLnqejVfzRokbndGQRCWpxPZGzz8Rr45ViWJMByeR+KT3n
+        4cXo71x+KjWLydksIzrH6R4=
+X-Google-Smtp-Source: ACcGV61eeotsNE97O6u9qYBCZdAZB8q0HP2yuUnXqihmrReseS3H/c32dI6QsT836BLCBTOCZuAptw==
+X-Received: by 2002:a63:9809:: with SMTP id q9-v6mr9996689pgd.58.1537804722899;
+        Mon, 24 Sep 2018 08:58:42 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id w12-v6sm55026294pfd.110.2018.09.24.08.58.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 08:57:25 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 11:57:21 -0400
-From:   Barret Rhoden <brho@google.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, hch@lst.de,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz,
-        ross.zwisler@linux.intel.com
-Subject: Re: [PATCH v5 07/11] filesystem-dax: Introduce
- dax_lock_mapping_entry()
-Message-ID: <20180924115721.75893931@gnomeregan.cam.corp.google.com>
-In-Reply-To: <153074046078.27838.5465590228767136915.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <153074042316.27838.17319837331947007626.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <153074046078.27838.5465590228767136915.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 24 Sep 2018 08:58:42 -0700 (PDT)
+Message-ID: <1537804720.195115.9.camel@acm.org>
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Lameter <cl@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Mon, 24 Sep 2018 08:58:40 -0700
+In-Reply-To: <c844c598-be1d-bef4-fb99-09cf99571fd7@virtuozzo.com>
+References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
+         <20180920063129.GB12913@lst.de> <87h8ij0zot.fsf@vitty.brq.redhat.com>
+         <20180923224206.GA13618@ming.t460p>
+         <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
+         <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
+         <12eee877-affa-c822-c9d5-fda3aa0a50da@virtuozzo.com>
+         <1537801706.195115.7.camel@acm.org>
+         <c844c598-be1d-bef4-fb99-09cf99571fd7@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan -
+On Mon, 2018-09-24 at 18:52 +-0300, Andrey Ryabinin wrote:
++AD4 Yes, with CONFIG+AF8-DEBUG+AF8-SLAB+AD0-y, CONFIG+AF8-SLUB+AF8-DEBUG+AF8-ON+AD0-y kmalloc() guarantees
++AD4 that result is aligned on ARCH+AF8-KMALLOC+AF8-MINALIGN boundary.
 
-On 2018-07-04 at 14:41 Dan Williams <dan.j.williams@intel.com> wrote:
-[snip]
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 4de11ed463ce..57ec272038da 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-[snip]
-> +bool dax_lock_mapping_entry(struct page *page)
-> +{
-> +	pgoff_t index;
-> +	struct inode *inode;
-> +	bool did_lock = false;
-> +	void *entry = NULL, **slot;
-> +	struct address_space *mapping;
-> +
-> +	rcu_read_lock();
-> +	for (;;) {
-> +		mapping = READ_ONCE(page->mapping);
-> +
-> +		if (!dax_mapping(mapping))
-> +			break;
-> +
-> +		/*
-> +		 * In the device-dax case there's no need to lock, a
-> +		 * struct dev_pagemap pin is sufficient to keep the
-> +		 * inode alive, and we assume we have dev_pagemap pin
-> +		 * otherwise we would not have a valid pfn_to_page()
-> +		 * translation.
-> +		 */
-> +		inode = mapping->host;
-> +		if (S_ISCHR(inode->i_mode)) {
-> +			did_lock = true;
-> +			break;
-> +		}
-> +
-> +		xa_lock_irq(&mapping->i_pages);
-> +		if (mapping != page->mapping) {
-> +			xa_unlock_irq(&mapping->i_pages);
-> +			continue;
-> +		}
-> +		index = page->index;
-> +
-> +		entry = __get_unlocked_mapping_entry(mapping, index, &slot,
-> +				entry_wait_revalidate);
-> +		if (!entry) {
-> +			xa_unlock_irq(&mapping->i_pages);
-> +			break;
-> +		} else if (IS_ERR(entry)) {
-> +			WARN_ON_ONCE(PTR_ERR(entry) != -EAGAIN);
-> +			continue;
+Had you noticed that Vitaly Kuznetsov showed that this is not the case? See
+also https://lore.kernel.org/lkml/87h8ij0zot.fsf+AEA-vitty.brq.redhat.com/.
 
-In the IS_ERR case, do you need to xa_unlock the mapping?  It looks
-like you'll deadlock the next time around the loop.
+Thanks,
 
-> +		}
-> +		lock_slot(mapping, slot);
-> +		did_lock = true;
-> +		xa_unlock_irq(&mapping->i_pages);
-> +		break;
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	return did_lock;
-> +}
+Bart.
 
