@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FEDECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957E3C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371552148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371552148C
+	by mail.kernel.org (Postfix) with ESMTP id 5C20A21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:27:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C20A21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387435AbeIXS3n (ORCPT
+        id S2387444AbeIXS3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:29:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57348 "EHLO
+        Mon, 24 Sep 2018 14:29:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57356 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbeIXS3m (ORCPT
+        with ESMTP id S1730233AbeIXS3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:29:42 -0400
+        Mon, 24 Sep 2018 14:29:46 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B66551018;
-        Mon, 24 Sep 2018 12:27:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E938D1018;
+        Mon, 24 Sep 2018 12:27:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.18 022/235] ALSA: usb-audio: Fix multiple definitions in AU0828_DEVICE() macro
-Date:   Mon, 24 Sep 2018 13:50:08 +0200
-Message-Id: <20180924113106.869698905@linuxfoundation.org>
+Subject: [PATCH 4.18 023/235] xfrm: fix passing zero to ERR_PTR() warning
+Date:   Mon, 24 Sep 2018 13:50:09 +0200
+Message-Id: <20180924113107.006901177@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -51,39 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit bd1cd0eb2ce9141100628d476ead4de485501b29 ]
+[ Upstream commit 934ffce1343f22ed5e2d0bd6da4440f4848074de ]
 
-AU0828_DEVICE() macro in quirks-table.h uses USB_DEVICE_VENDOR_SPEC()
-for expanding idVendor and idProduct fields.  However, the latter
-macro adds also match_flags and bInterfaceClass, which are different
-from the values AU0828_DEVICE() macro sets after that.
+Fix a static code checker warning:
 
-For fixing them, just expand idVendor and idProduct fields manually in
-AU0828_DEVICE().
+  net/xfrm/xfrm_policy.c:1836 xfrm_resolve_and_create_bundle() warn: passing zero to 'ERR_PTR'
 
-This fixes sparse warnings like:
-  sound/usb/quirks-table.h:2892:1: warning: Initializer entry defined twice
+xfrm_tmpl_resolve return 0 just means no xdst found, return NULL
+instead of passing zero to ERR_PTR.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: d809ec895505 ("xfrm: do not assume that template resolving always returns xfrms")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/usb/quirks-table.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/xfrm/xfrm_policy.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -2875,7 +2875,8 @@ YAMAHA_DEVICE(0x7010, "UB99"),
-  */
- 
- #define AU0828_DEVICE(vid, pid, vname, pname) { \
--	USB_DEVICE_VENDOR_SPEC(vid, pid), \
-+	.idVendor = vid, \
-+	.idProduct = pid, \
- 	.match_flags = USB_DEVICE_ID_MATCH_DEVICE | \
- 		       USB_DEVICE_ID_MATCH_INT_CLASS | \
- 		       USB_DEVICE_ID_MATCH_INT_SUBCLASS, \
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1831,7 +1831,10 @@ xfrm_resolve_and_create_bundle(struct xf
+ 	/* Try to instantiate a bundle */
+ 	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
+ 	if (err <= 0) {
+-		if (err != 0 && err != -EAGAIN)
++		if (err == 0)
++			return NULL;
++
++		if (err != -EAGAIN)
+ 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
+ 		return ERR_PTR(err);
+ 	}
 
 
