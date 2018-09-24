@@ -6,36 +6,41 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A43AECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D139AECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C85E621486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85E621486
+	by mail.kernel.org (Postfix) with ESMTP id 96ACF21486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96ACF21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732821AbeIXS0a (ORCPT
+        id S1732831AbeIXS0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:26:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56816 "EHLO
+        Mon, 24 Sep 2018 14:26:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56830 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731585AbeIXS01 (ORCPT
+        with ESMTP id S1728587AbeIXS0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:26:27 -0400
+        Mon, 24 Sep 2018 14:26:34 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C4CA1097;
-        Mon, 24 Sep 2018 12:24:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8E291097;
+        Mon, 24 Sep 2018 12:24:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        John Stultz <john.stultz@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 142/173] gpio: pxa: Fix potential NULL dereference
-Date:   Mon, 24 Sep 2018 13:52:56 +0200
-Message-Id: <20180924113125.999094899@linuxfoundation.org>
+Subject: [PATCH 4.14 151/173] selftest: timers: Tweak raw_skew to SKIP when ADJ_OFFSET/other clock adjustments are in progress
+Date:   Mon, 24 Sep 2018 13:53:05 +0200
+Message-Id: <20180924113126.466853612@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -53,45 +58,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: John Stultz <john.stultz@linaro.org>
 
-[ Upstream commit 9506755633d0b32ef76f67c345000178e9b0dfc4 ]
+[ Upstream commit 1416270f4a1ae83ea84156ceba19a66a8f88be1f ]
 
-platform_get_resource() may fail and return NULL, so we should
-better check it's return value to avoid a NULL pointer dereference
-a bit later in the code.
+In the past we've warned when ADJ_OFFSET was in progress, usually
+caused by ntpd or some other time adjusting daemon running in non
+steady sate, which can cause the skew calculations to be
+incorrect.
 
-This is detected by Coccinelle semantic patch.
+Thus, this patch checks to see if the clock was being adjusted
+when we fail so that we don't cause false negatives.
 
-@@
-expression pdev, res, n, t, e, e1, e2;
-@@
-
-res = platform_get_resource(pdev, t, n);
-+ if (!res)
-+   return -EINVAL;
-... when != res == NULL
-e = devm_ioremap(e1, res->start, e2);
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org
+Suggested-by: Miroslav Lichvar <mlichvar@redhat.com>
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+v2: Widened the checks to look for other clock adjustments that
+    could happen, as suggested by Miroslav
+v3: Fixed up commit message
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-pxa.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/testing/selftests/timers/raw_skew.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -662,6 +662,8 @@ static int pxa_gpio_probe(struct platfor
- 	pchip->irq0 = irq0;
- 	pchip->irq1 = irq1;
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -EINVAL;
- 	gpio_reg_base = devm_ioremap(&pdev->dev, res->start,
- 				     resource_size(res));
- 	if (!gpio_reg_base)
+--- a/tools/testing/selftests/timers/raw_skew.c
++++ b/tools/testing/selftests/timers/raw_skew.c
+@@ -134,6 +134,11 @@ int main(int argv, char **argc)
+ 	printf(" %lld.%i(act)", ppm/1000, abs((int)(ppm%1000)));
+ 
+ 	if (llabs(eppm - ppm) > 1000) {
++		if (tx1.offset || tx2.offset ||
++		    tx1.freq != tx2.freq || tx1.tick != tx2.tick) {
++			printf("	[SKIP]\n");
++			return ksft_exit_skip("The clock was adjusted externally. Shutdown NTPd or other time sync daemons\n");
++		}
+ 		printf("	[FAILED]\n");
+ 		return ksft_exit_fail();
+ 	}
 
 
