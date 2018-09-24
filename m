@@ -2,41 +2,38 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE02FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0991C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94139208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94139208D9
+	by mail.kernel.org (Postfix) with ESMTP id 8578620C0A
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8578620C0A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732507AbeIXSTz (ORCPT
+        id S1732518AbeIXST7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:19:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56044 "EHLO
+        Mon, 24 Sep 2018 14:19:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732043AbeIXSTz (ORCPT
+        with ESMTP id S1730063AbeIXST6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:19:55 -0400
+        Mon, 24 Sep 2018 14:19:58 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7D379108A;
-        Mon, 24 Sep 2018 12:18:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B302B10A7;
+        Mon, 24 Sep 2018 12:18:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bhushan Shah <bshah@kde.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 062/173] ARM: dts: qcom: msm8974-hammerhead: increase load on l20 for sdhci
-Date:   Mon, 24 Sep 2018 13:51:36 +0200
-Message-Id: <20180924113120.589389454@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 098/173] USB: yurex: Fix buffer over-read in yurex_write()
+Date:   Mon, 24 Sep 2018 13:52:12 +0200
+Message-Id: <20180924113123.291872075@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,59 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bhushan Shah <bshah@kde.org>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-[ Upstream commit 03864e57770a9541e7ff3990bacf2d9a2fffcd5d ]
+commit 7e10f14ebface44a48275c8d6dc1caae3668d5a9 upstream.
 
-The kernel would not boot on the hammerhead hardware due to the
-following error:
+If the written data starts with a digit, yurex_write() tries to parse
+it as an integer using simple_strtoull().  This requires a null-
+terminator, and currently there's no guarantee that there is one.
 
-mmc0: Timeout waiting for hardware interrupt.
-mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc0: sdhci: Sys addr:  0x00000200 | Version:  0x00003802
-mmc0: sdhci: Blk size:  0x00000200 | Blk cnt:  0x00000200
-mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000023
-mmc0: sdhci: Present:   0x03e80000 | Host ctl: 0x00000034
-mmc0: sdhci: Power:     0x00000001 | Blk gap:  0x00000000
-mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000007
-mmc0: sdhci: Timeout:   0x0000000e | Int stat: 0x00000000
-mmc0: sdhci: Int enab:  0x02ff900b | Sig enab: 0x02ff100b
-mmc0: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc0: sdhci: Caps:      0x642dc8b2 | Caps_1:   0x00008007
-mmc0: sdhci: Cmd:       0x00000c1b | Max curr: 0x00000000
-mmc0: sdhci: Resp[0]:   0x00000c00 | Resp[1]:  0x00000000
-mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc0: sdhci: Host ctl2: 0x00000008
-mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x70040220
-mmc0: sdhci: ============================================
-mmc0: Card stuck in wrong state! mmcblk0 card_busy_detect status: 0xe00
-mmc0: cache flush error -110
-mmc0: Reset 0x1 never completed.
+(The sample program at
+https://github.com/NeoCat/YUREX-driver-for-Linux/blob/master/sample/yurex_clock.pl
+writes an integer without a null terminator.  It seems like it must
+have worked by chance!)
 
-This patch increases the load on l20 to 0.2 amps for the sdhci
-and allows the device to boot normally.
+Always add a null byte after the written data.  Enlarge the buffer
+to allow for this.
 
-Signed-off-by: Bhushan Shah <bshah@kde.org>
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Tested-by: Brian Masney <masneyb@onstation.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-@@ -189,6 +189,8 @@
- 						regulator-max-microvolt = <2950000>;
+---
+ drivers/usb/misc/yurex.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -425,13 +425,13 @@ static ssize_t yurex_write(struct file *
+ {
+ 	struct usb_yurex *dev;
+ 	int i, set = 0, retval = 0;
+-	char buffer[16];
++	char buffer[16 + 1];
+ 	char *data = buffer;
+ 	unsigned long long c, c2 = 0;
+ 	signed long timeout = 0;
+ 	DEFINE_WAIT(wait);
  
- 						regulator-boot-on;
-+						regulator-system-load = <200000>;
-+						regulator-allow-set-load;
- 					};
+-	count = min(sizeof(buffer), count);
++	count = min(sizeof(buffer) - 1, count);
+ 	dev = file->private_data;
  
- 					l21 {
+ 	/* verify that we actually have some data to write */
+@@ -450,6 +450,7 @@ static ssize_t yurex_write(struct file *
+ 		retval = -EFAULT;
+ 		goto error;
+ 	}
++	buffer[count] = 0;
+ 	memset(dev->cntl_buffer, CMD_PADDING, YUREX_BUF_SIZE);
+ 
+ 	switch (buffer[0]) {
 
 
