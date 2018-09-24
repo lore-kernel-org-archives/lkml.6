@@ -2,126 +2,124 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AE7ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29F7ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8687208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8687208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7650F208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:12:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7650F208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbeIXSNx (ORCPT
+        id S1731171AbeIXSN4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:13:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54914 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730074AbeIXSNw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:13:52 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 960621088;
-        Mon, 24 Sep 2018 12:12:02 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.9 070/111] CIFS: fix wrapping bugs in num_entries()
-Date:   Mon, 24 Sep 2018 13:52:37 +0200
-Message-Id: <20180924113111.974059538@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
-References: <20180924113103.337261320@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 14:13:56 -0400
+Received: from mga02.intel.com ([134.134.136.20]:14173 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731118AbeIXSNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:13:55 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 05:12:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,297,1534834800"; 
+   d="scan'208";a="72420377"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga007.fm.intel.com with ESMTP; 24 Sep 2018 05:11:41 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1g4PiE-0002Zf-Bl; Mon, 24 Sep 2018 15:11:38 +0300
+Date:   Mon, 24 Sep 2018 15:11:38 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Message-ID: <20180924121138.GN15943@smile.fi.intel.com>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
+ <20180924101150.23349-5-brgl@bgdev.pl>
+ <20180924112303.GM15943@smile.fi.intel.com>
+ <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Sep 24, 2018 at 01:44:19PM +0200, Bartosz Golaszewski wrote:
+> pon., 24 wrz 2018 o 13:23 Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> napisał(a):
+> >
+> > On Mon, Sep 24, 2018 at 12:11:50PM +0200, Bartosz Golaszewski wrote:
+> > > Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+> > > an example of how to use this new routine to shrink driver code.
+> > >
+> > > While we're at it: replace a call to kcalloc() with devm_kcalloc().
+> >
+> > > @@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
+> > >               goto err_drop_mclk;
+> > >       }
+> > >
+> > > -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
+> > > -
+> > >       platform_set_drvdata(pdev, data);
+> > >       return 0;
+> >
+> > I don't think this is a good example.
+> >
+> > You changed a behaviour here in the way that you keep all chunks of memory
+> > (even small enough for pointers) during entire life time of the driver, which
+> > pretty likely would be forever till next boot.
+> >
+> > In the original case the memory was freed immediately in probe either it fails
+> > or returns with success.
+> >
+> > NAK, sorry.
+> >
+> >
+> 
+> I see.
+> 
+> I'd like to still merge patches 1-3 and then I'd come up with better
+> examples for the next release cycle once these are in?
 
-------------------
+I'm fine with first three, though I can't come up with better example for you
+now. My previous comment solely to clk-pmc-atom code.
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
-
-commit 56446f218af1133c802dad8e9e116f07f381846c upstream.
-
-The problem is that "entryptr + next_offset" and "entryptr + len + size"
-can wrap.  I ended up changing the type of "entryptr" because it makes
-the math easier when we don't have to do so much casting.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/cifs/smb2pdu.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
-
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2565,33 +2565,38 @@ num_entries(char *bufstart, char *end_of
- 	int len;
- 	unsigned int entrycount = 0;
- 	unsigned int next_offset = 0;
--	FILE_DIRECTORY_INFO *entryptr;
-+	char *entryptr;
-+	FILE_DIRECTORY_INFO *dir_info;
- 
- 	if (bufstart == NULL)
- 		return 0;
- 
--	entryptr = (FILE_DIRECTORY_INFO *)bufstart;
-+	entryptr = bufstart;
- 
- 	while (1) {
--		entryptr = (FILE_DIRECTORY_INFO *)
--					((char *)entryptr + next_offset);
--
--		if ((char *)entryptr + size > end_of_buf) {
-+		if (entryptr + next_offset < entryptr ||
-+		    entryptr + next_offset > end_of_buf ||
-+		    entryptr + next_offset + size > end_of_buf) {
- 			cifs_dbg(VFS, "malformed search entry would overflow\n");
- 			break;
- 		}
- 
--		len = le32_to_cpu(entryptr->FileNameLength);
--		if ((char *)entryptr + len + size > end_of_buf) {
-+		entryptr = entryptr + next_offset;
-+		dir_info = (FILE_DIRECTORY_INFO *)entryptr;
-+
-+		len = le32_to_cpu(dir_info->FileNameLength);
-+		if (entryptr + len < entryptr ||
-+		    entryptr + len > end_of_buf ||
-+		    entryptr + len + size > end_of_buf) {
- 			cifs_dbg(VFS, "directory entry name would overflow frame end of buf %p\n",
- 				 end_of_buf);
- 			break;
- 		}
- 
--		*lastentry = (char *)entryptr;
-+		*lastentry = entryptr;
- 		entrycount++;
- 
--		next_offset = le32_to_cpu(entryptr->NextEntryOffset);
-+		next_offset = le32_to_cpu(dir_info->NextEntryOffset);
- 		if (!next_offset)
- 			break;
- 	}
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
