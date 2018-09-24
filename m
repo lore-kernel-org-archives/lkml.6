@@ -2,101 +2,100 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B62ECE560
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDFFC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E93A9208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DF222086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 18:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s1MC33We"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93A9208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IvcNmsaI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF222086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbeIYBAr (ORCPT
+        id S1730884AbeIYBBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 21:00:47 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36026 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729436AbeIYBAr (ORCPT
+        Mon, 24 Sep 2018 21:01:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58740 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbeIYBBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 21:00:47 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p89-v6so3105963ljb.3;
-        Mon, 24 Sep 2018 11:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0avHkINkq96G2zoDTZhrD+TPLODKfH52jQoiT+v1OVE=;
-        b=s1MC33WeuxFkOdeT5Sep5Vts7/6Ftx76oeIS/rQNTuq2chmi4YjBpu92xcwE82jx4F
-         Om7CpCIrE+K6ltF4qoB+uC5hzFGopWDS6tvQs0MfATCunSJUJJSYNOqKjWhYNhqh2B4R
-         BiRXjwPw0sDCK+CVtzRvgBmY5nQpangMTsUTUzQSRmrY5yZqO4BqE05Np56EVoAaHfSc
-         QJsyjkXrZceEyNYKvqN6pe2C06Opc5kW5TsFnl5/lB5NOZCg9wYbt77jTLYwKuu7P2MP
-         /vpqEoR6sRNRgd19sgeMZEMiLNkMY4Q4ip+HfrVKxck+P+r6JA8vlgMLj0TfbLRdtwzp
-         SXsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0avHkINkq96G2zoDTZhrD+TPLODKfH52jQoiT+v1OVE=;
-        b=i1gSibsyKGWVPkANClv+/iXcDTWkm/qlSAC2kpg16oVQjNTJ5WLR6Aut7CVqaXFJnw
-         0UgzoEb0x/CckuGkZEl4aN1HE5MrpcCW7KsTvnhW3bqD26vDfsPxKO3fWKUAm1MwBURN
-         AbzJ/DLyNQRU/ZRmrUqnr9somC9Zdj+dFfSeC8xONHT6Z1Pys4jZ6WcYb+FnUGOoz9zz
-         3eNpFUu4x7irqTIGSfV7yAeegzn7yGpccwyozoDQkuxltL+Bd93XcXxwyGZGxM38msUc
-         7UY/ImGbH+d5Osv3b7uXKfoKMUvXDgPCdKIe3lcJdzyR/EWU/ItBABkGICQl//9azDUf
-         VODQ==
-X-Gm-Message-State: ABuFfohauUcFhf+/jvHVAXY5Rf7+eODn8CgNoM0i4r42blzqb4HOgEdm
-        2i3A+zODZNKT2FGeZI7qD9DZSd+a
-X-Google-Smtp-Source: ACcGV61lRsZHWP9ZjsJRJ1qVt3HUqyuwwoNu1uv1a79MqZfCTg0XYDRndjq9jdAlfxlNMhkFooMRGw==
-X-Received: by 2002:a2e:2d2:: with SMTP id y79-v6mr122055lje.100.1537815431803;
-        Mon, 24 Sep 2018 11:57:11 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-213.nat.spd-mgts.ru. [109.252.91.213])
-        by smtp.googlemail.com with ESMTPSA id f9-v6sm16584ljf.9.2018.09.24.11.57.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 11:57:11 -0700 (PDT)
-Subject: Re: [PATCH v4 16/20] iommu/tegra: gart: Don't use managed resources
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180924004153.8232-1-digetx@gmail.com>
- <20180924004153.8232-17-digetx@gmail.com> <20180924105246.GM21032@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a9e2943b-1139-8838-5440-bd6cf55e9a55@gmail.com>
-Date:   Mon, 24 Sep 2018 21:57:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 24 Sep 2018 21:01:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=k7iQCXwMvlhTNvfq6aPrxiTLrLx04wD5o2gOyZQCUnI=; b=IvcNmsaIWJB7U+vnVoPprpgaZ
+        Rh+p0blwp3P4hvb+SmnSOmI8TuUd09L9g3D5fmhCNfo0b9o4koeEY3PN+8UizNuYBgTvrQNLHl6ZO
+        IWRXQ0MqHaKq4tvLRbuQaOA07K+B0Ta6LjoEb2idpQMV736CUOznrKzakj1xqXKHcpFJslkKYLS7f
+        +nlMTB8INvmiCWUDBXmjnSsupA+hYQJhE3XEgbUyrRF4mDobuEeCt9Q6sPUHlIjEULe68Ukizr+99
+        YEHbNXmNUXgH0r6TabxeLU5/bc1oksLZxqvSM79yYU6n9fbTNxoXr6Yl4xkSdkVV2bYPnxHeqw0g9
+        9WePqATsA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1g4W3O-0007B1-2b; Mon, 24 Sep 2018 18:57:54 +0000
+Date:   Mon, 24 Sep 2018 11:57:53 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Lameter <cl@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+Message-ID: <20180924185753.GA32269@bombadil.infradead.org>
+References: <87h8ij0zot.fsf@vitty.brq.redhat.com>
+ <20180923224206.GA13618@ming.t460p>
+ <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
+ <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
+ <12eee877-affa-c822-c9d5-fda3aa0a50da@virtuozzo.com>
+ <1537801706.195115.7.camel@acm.org>
+ <c844c598-be1d-bef4-fb99-09cf99571fd7@virtuozzo.com>
+ <1537804720.195115.9.camel@acm.org>
+ <10c706fd-2252-f11b-312e-ae0d97d9a538@virtuozzo.com>
+ <1537805984.195115.14.camel@acm.org>
 MIME-Version: 1.0
-In-Reply-To: <20180924105246.GM21032@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537805984.195115.14.camel@acm.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/18 1:52 PM, Thierry Reding wrote:
-> On Mon, Sep 24, 2018 at 03:41:49AM +0300, Dmitry Osipenko wrote:
->> GART is a part of the Memory Controller driver that is always built-in,
->> hence there is no benefit from the use of managed resources.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/iommu/tegra-gart.c | 12 +++++++-----
->>  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> One benefit would be cleanup on probe error. Also, we may eventually
-> want to make even the memory controller driver buildable as a module.
+On Mon, Sep 24, 2018 at 09:19:44AM -0700, Bart Van Assche wrote:
+> That means that two buffers allocated with kmalloc() may share a cache line on
+> x86-64. Since it is allowed to use a buffer allocated by kmalloc() for DMA, can
+> this lead to data corruption, e.g. if the CPU writes into one buffer allocated
+> with kmalloc() and a device performs a DMA write to another kmalloc() buffer and
+> both write operations affect the same cache line?
 
-Please, let's keep that patch as is and re-introduce devm once it will
-become really relevant.
+You're not supposed to use kmalloc memory for DMA.  This is why we have
+dma_alloc_coherent() and friends.  Also, from DMA-API.txt:
+
+        Memory coherency operates at a granularity called the cache
+        line width.  In order for memory mapped by this API to operate
+        correctly, the mapped region must begin exactly on a cache line
+        boundary and end exactly on one (to prevent two separately mapped
+        regions from sharing a single cache line).  Since the cache line size
+        may not be known at compile time, the API will not enforce this
+        requirement.  Therefore, it is recommended that driver writers who
+        don't take special care to determine the cache line size at run time
+        only map virtual regions that begin and end on page boundaries (which
+        are guaranteed also to be cache line boundaries).
+
