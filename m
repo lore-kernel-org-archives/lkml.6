@@ -2,39 +2,39 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0896DECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A04BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C035520877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C035520877
+	by mail.kernel.org (Postfix) with ESMTP id 11CD6214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11CD6214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730985AbeIXSG7 (ORCPT
+        id S1730999AbeIXSHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:06:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53894 "EHLO
+        Mon, 24 Sep 2018 14:07:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53904 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbeIXSG7 (ORCPT
+        with ESMTP id S1728563AbeIXSHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:06:59 -0400
+        Mon, 24 Sep 2018 14:07:02 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A88D91084;
-        Mon, 24 Sep 2018 12:05:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73D131084;
+        Mon, 24 Sep 2018 12:05:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 033/111] wan/fsl_ucc_hdlc: use IS_ERR_VALUE() to check return value of qe_muram_alloc
-Date:   Mon, 24 Sep 2018 13:52:00 +0200
-Message-Id: <20180924113107.910062697@linuxfoundation.org>
+Subject: [PATCH 4.9 034/111] efi/arm: preserve early mapping of UEFI memory map longer for BGRT
+Date:   Mon, 24 Sep 2018 13:52:01 +0200
+Message-Id: <20180924113108.066301972@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -52,49 +52,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit fd800f646402c0f85547166b59ca065175928b7b ]
+[ Upstream commit 3ea86495aef2f6de26b7cb1599ba350dd6a0c521 ]
 
-qe_muram_alloc return a unsigned long integer,which should not
-compared with zero. check it using IS_ERR_VALUE() to fix this.
+The BGRT code validates the contents of the table against the UEFI
+memory map, and so it expects it to be mapped when the code runs.
 
-Fixes: c19b6d246a35 ("drivers/net: support hdlc function for QE-UCC")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+On ARM, this is currently not the case, since we tear down the early
+mapping after efi_init() completes, and only create the permanent
+mapping in arm_enable_runtime_services(), which executes as an early
+initcall, but still leaves a window where the UEFI memory map is not
+mapped.
+
+So move the call to efi_memmap_unmap() from efi_init() to
+arm_enable_runtime_services().
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[will: fold in EFI_MEMMAP attribute check from Ard]
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/fsl_ucc_hdlc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/firmware/efi/arm-init.c    |    1 -
+ drivers/firmware/efi/arm-runtime.c |    4 +++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wan/fsl_ucc_hdlc.c
-+++ b/drivers/net/wan/fsl_ucc_hdlc.c
-@@ -161,7 +161,7 @@ static int uhdlc_init(struct ucc_hdlc_pr
- 	priv->ucc_pram_offset = qe_muram_alloc(sizeof(struct ucc_hdlc_param),
- 				ALIGNMENT_OF_UCC_HDLC_PRAM);
+--- a/drivers/firmware/efi/arm-init.c
++++ b/drivers/firmware/efi/arm-init.c
+@@ -250,7 +250,6 @@ void __init efi_init(void)
+ 	reserve_regions();
+ 	efi_memattr_init();
+ 	efi_esrt_init();
+-	efi_memmap_unmap();
  
--	if (priv->ucc_pram_offset < 0) {
-+	if (IS_ERR_VALUE(priv->ucc_pram_offset)) {
- 		dev_err(priv->dev, "Can not allocate MURAM for hdlc parameter.\n");
- 		ret = -ENOMEM;
- 		goto free_tx_bd;
-@@ -197,14 +197,14 @@ static int uhdlc_init(struct ucc_hdlc_pr
+ 	memblock_reserve(params.mmap & PAGE_MASK,
+ 			 PAGE_ALIGN(params.mmap_size +
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -118,11 +118,13 @@ static int __init arm_enable_runtime_ser
+ {
+ 	u64 mapsize;
  
- 	/* Alloc riptr, tiptr */
- 	riptr = qe_muram_alloc(32, 32);
--	if (riptr < 0) {
-+	if (IS_ERR_VALUE(riptr)) {
- 		dev_err(priv->dev, "Cannot allocate MURAM mem for Receive internal temp data pointer\n");
- 		ret = -ENOMEM;
- 		goto free_tx_skbuff;
+-	if (!efi_enabled(EFI_BOOT)) {
++	if (!efi_enabled(EFI_BOOT) || !efi_enabled(EFI_MEMMAP)) {
+ 		pr_info("EFI services will not be available.\n");
+ 		return 0;
  	}
  
- 	tiptr = qe_muram_alloc(32, 32);
--	if (tiptr < 0) {
-+	if (IS_ERR_VALUE(tiptr)) {
- 		dev_err(priv->dev, "Cannot allocate MURAM mem for Transmit internal temp data pointer\n");
- 		ret = -ENOMEM;
- 		goto free_riptr;
++	efi_memmap_unmap();
++
+ 	if (efi_runtime_disabled()) {
+ 		pr_info("EFI runtime services will be disabled.\n");
+ 		return 0;
 
 
