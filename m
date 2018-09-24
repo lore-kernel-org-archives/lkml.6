@@ -2,87 +2,105 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092C3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66100ECE560
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7162145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:18:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7162145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 034C8214AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 16:19:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034C8214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731798AbeIXWVl (ORCPT
+        id S1731872AbeIXWWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:21:41 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36133 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728744AbeIXWVl (ORCPT
+        Mon, 24 Sep 2018 18:22:43 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39036 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728846AbeIXWWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 18:21:41 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b7-v6so1813272pfo.3;
-        Mon, 24 Sep 2018 09:18:46 -0700 (PDT)
+        Mon, 24 Sep 2018 18:22:42 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 85-v6so6302386pge.6;
+        Mon, 24 Sep 2018 09:19:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gnBbz8Pjk2ZAawy3AJf5RIjkr5/NQEzBnwhpfoCAwIY=;
-        b=eysEixqyF8CCgg/YomQK+Xlr+c/KJKqgDDQ5R5spuR+7fM/bn1aytzkaoFLZer7tMW
-         sQ/ESHlrCghz9R+sdPimevaK0lv8uqLYYncMq8XVcDBkZ5TK+imfWWAC4D65uX3goVQG
-         r8q/L2vx6Lk92WUA6URVKWL5CR0zMLSJkBWIuBOlVnd6WeTHaRhtjhOanCoR4Odw1FMR
-         BEhSVrpsB26kwWw1k//zC7Oxih3wedUEeIWHVvQA3Yrhg9IQQopkvHsmaVFHg2QLJVGl
-         AcpY0wf/2OfABANTqzOfy0HGNpnJlAdo87WwbF3LX9jjkZmSdM2xOtXz9tm6Kg802185
-         EzKw==
-X-Gm-Message-State: ABuFfoiaZjjngSttKv6w46w9UUvrie9DNrUFdxRWzP+/kLxxJtM8NokW
-        UI4JIEAcfKJuQeAvNyg/DA==
-X-Google-Smtp-Source: ACcGV62JWp58Oou4BN/VHTtwC2L3P2suZ0/eqUsrMpYv2pufp32zZ2vzc1DV8DanBYlhxESct+zKmA==
-X-Received: by 2002:a63:5c10:: with SMTP id q16-v6mr10074507pgb.452.1537805926286;
-        Mon, 24 Sep 2018 09:18:46 -0700 (PDT)
-Received: from localhost (S01069050caa8e733.vc.shawcable.net. [24.85.230.93])
-        by smtp.gmail.com with ESMTPSA id l10-v6sm75470913pfj.179.2018.09.24.09.18.45
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=iPmyPmJL7TCOYkEbDuM0iAYZx60w7EPMEzHCSAkwPyk=;
+        b=rfSuNZkBTGUqqxSn0HAbeFKFawxBcdmzpKn4z6tw1g2ietcQwhlbHpkeNbQnYv1VNR
+         fcwKwcEyALfjphcjEmybt3W940Ax2ErJ/PwrG4+osVV1d9eMaC6qKq3FnuPSXMtdKbYG
+         ZnmykPngsBlmHCXNOl4oa+OOrljt5SPO1OMa8rFzscuy6d5YKoPvJi33EDj9ZzUxAVBo
+         cLdTOkxvv4XYvhV0g683AYjIaZ85pWz1aMyuDZezREXDhLM1Ee8RK4GDDO0MccnyTWCW
+         +wBC+l1djParM7VoQacyg5SJogaJ2yhmNygpHmzdYR1F5NudC0G6gctQwc94L2bHs6EB
+         u9dg==
+X-Gm-Message-State: APzg51CjQM13/gC27eAejzXZn5TRMRN7Uw9PlP+i1XWtBXdooqeyy8c9
+        FyE2dFvISGGUHiLYVNYDkNY=
+X-Google-Smtp-Source: ACcGV62tvuUeTpzkgGI40qoa8pU2FLCNuxLnaom6SkWPnqbtsHVGtuENwgSEAoELneZF/5AZCvwKnQ==
+X-Received: by 2002:a62:2a48:: with SMTP id q69-v6mr11056094pfq.86.1537805986574;
+        Mon, 24 Sep 2018 09:19:46 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id x9-v6sm57204032pfd.31.2018.09.24.09.19.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Sep 2018 09:18:45 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 09:18:44 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lee.jones@linaro.org, linux-omap@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v7 3/6] dt-bindings: leds: Add bindings for lm3697 driver
-Message-ID: <20180924161844.GA29028@bogus>
-References: <20180911170825.17789-1-dmurphy@ti.com>
- <20180911170825.17789-4-dmurphy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180911170825.17789-4-dmurphy@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 24 Sep 2018 09:19:45 -0700 (PDT)
+Message-ID: <1537805984.195115.14.camel@acm.org>
+Subject: Re: block: DMA alignment of IO buffer allocated from slab
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ming Lei <tom.leiming@gmail.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Lameter <cl@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Mon, 24 Sep 2018 09:19:44 -0700
+In-Reply-To: <10c706fd-2252-f11b-312e-ae0d97d9a538@virtuozzo.com>
+References: <CACVXFVOBq3L_EjSTCoiqUL1PH=HMR5EuNNQV0hNndFpGxmUK6g@mail.gmail.com>
+         <20180920063129.GB12913@lst.de> <87h8ij0zot.fsf@vitty.brq.redhat.com>
+         <20180923224206.GA13618@ming.t460p>
+         <38c03920-0fd0-0a39-2a6e-70cd8cb4ef34@virtuozzo.com>
+         <20a20568-5089-541d-3cee-546e549a0bc8@acm.org>
+         <12eee877-affa-c822-c9d5-fda3aa0a50da@virtuozzo.com>
+         <1537801706.195115.7.camel@acm.org>
+         <c844c598-be1d-bef4-fb99-09cf99571fd7@virtuozzo.com>
+         <1537804720.195115.9.camel@acm.org>
+         <10c706fd-2252-f11b-312e-ae0d97d9a538@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 12:08:22PM -0500, Dan Murphy wrote:
-> Add the device tree bindings for the lm3697
-> LED driver for backlighting and display.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v7 - Fix compatible from 3967 to 3697, and other comments. - https://lore.kernel.org/patchwork/patch/982550/
-> 
-> v6 - Fix minor issues - https://lore.kernel.org/patchwork/patch/975387/
-> v5 - Fix the comment for the example - https://lore.kernel.org/patchwork/patch/975060/
-> v4 - Removed HVLED definition in favor of HVLED place definition - https://lore.kernel.org/patchwork/patch/974812/
-> v3 - Updated subject with prefered title - https://lore.kernel.org/patchwork/patch/972337/
-> v2 - Fixed subject and patch commit message - https://lore.kernel.org/patchwork/patch/971326/
-> 
->  .../devicetree/bindings/leds/leds-lm3697.txt  | 86 +++++++++++++++++++
->  1 file changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+On Mon, 2018-09-24 at 19:07 +-0300, Andrey Ryabinin wrote:
++AD4 On 09/24/2018 06:58 PM, Bart Van Assche wrote:
++AD4 +AD4 On Mon, 2018-09-24 at 18:52 +-0300, Andrey Ryabinin wrote:
++AD4 +AD4 +AD4 Yes, with CONFIG+AF8-DEBUG+AF8-SLAB+AD0-y, CONFIG+AF8-SLUB+AF8-DEBUG+AF8-ON+AD0-y kmalloc() guarantees
++AD4 +AD4 +AD4 that result is aligned on ARCH+AF8-KMALLOC+AF8-MINALIGN boundary.
++AD4 +AD4 
++AD4 +AD4 Had you noticed that Vitaly Kuznetsov showed that this is not the case? See
++AD4 +AD4 also https://lore.kernel.org/lkml/87h8ij0zot.fsf+AEA-vitty.brq.redhat.com/.
++AD4 
++AD4 I'm not following. On x86-64 ARCH+AF8-KMALLOC+AF8-MINALIGN is 8, all pointers that
++AD4 Vitaly Kuznetsov showed are 8-byte aligned.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Andrey,
+
+That means that two buffers allocated with kmalloc() may share a cache line on
+x86-64. Since it is allowed to use a buffer allocated by kmalloc() for DMA, can
+this lead to data corruption, e.g. if the CPU writes into one buffer allocated
+with kmalloc() and a device performs a DMA write to another kmalloc() buffer and
+both write operations affect the same cache line?
+
+Thanks,
+
+Bart.
