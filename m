@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2432C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4A0C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97AA3208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97AA3208E3
+	by mail.kernel.org (Postfix) with ESMTP id 10C98208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C98208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbeIXRin (ORCPT
+        id S1728923AbeIXRio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:38:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50136 "EHLO
+        Mon, 24 Sep 2018 13:38:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50148 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728659AbeIXRik (ORCPT
+        with ESMTP id S1728598AbeIXRio (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:38:40 -0400
+        Mon, 24 Sep 2018 13:38:44 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DEE6F1065;
-        Mon, 24 Sep 2018 11:37:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA2A1106B;
+        Mon, 24 Sep 2018 11:37:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
+        stable@vger.kernel.org, Michal Suchanek <msuchanek@suse.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 021/105] SMB3: Number of requests sent should be displayed for SMB3 not just CIFS
-Date:   Mon, 24 Sep 2018 13:33:07 +0200
-Message-Id: <20180924113115.724120154@linuxfoundation.org>
+Subject: [PATCH 3.18 022/105] powerpc/pseries: Avoid using the size greater than RTAS_ERROR_LOG_MAX.
+Date:   Mon, 24 Sep 2018 13:33:08 +0200
+Message-Id: <20180924113115.865638455@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113113.268650190@linuxfoundation.org>
 References: <20180924113113.268650190@linuxfoundation.org>
@@ -53,65 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-[ Upstream commit 289131e1f1e6ad8c661ec05e176b8f0915672059 ]
+[ Upstream commit 74e96bf44f430cf7a01de19ba6cf49b361cdfd6e ]
 
-For SMB2/SMB3 the number of requests sent was not displayed
-in /proc/fs/cifs/Stats unless CONFIG_CIFS_STATS2 was
-enabled (only number of failed requests displayed). As
-with earlier dialects, we should be displaying these
-counters if CONFIG_CIFS_STATS is enabled. They
-are important for debugging.
+The global mce data buffer that used to copy rtas error log is of 2048
+(RTAS_ERROR_LOG_MAX) bytes in size. Before the copy we read
+extended_log_length from rtas error log header, then use max of
+extended_log_length and RTAS_ERROR_LOG_MAX as a size of data to be copied.
+Ideally the platform (phyp) will never send extended error log with
+size > 2048. But if that happens, then we have a risk of buffer overrun
+and corruption. Fix this by using min_t instead.
 
-e.g. when you cat /proc/fs/cifs/Stats (before the patch)
-Resources in use
-CIFS Session: 1
-Share (unique mount targets): 2
-SMB Request/Response Buffer: 1 Pool size: 5
-SMB Small Req/Resp Buffer: 1 Pool size: 30
-Operations (MIDs): 0
-
-0 session 0 share reconnects
-Total vfs operations: 690 maximum at one time: 2
-
-1) \\localhost\test
-SMBs: 975
-Negotiates: 0 sent 0 failed
-SessionSetups: 0 sent 0 failed
-Logoffs: 0 sent 0 failed
-TreeConnects: 0 sent 0 failed
-TreeDisconnects: 0 sent 0 failed
-Creates: 0 sent 2 failed
-Closes: 0 sent 0 failed
-Flushes: 0 sent 0 failed
-Reads: 0 sent 0 failed
-Writes: 0 sent 0 failed
-Locks: 0 sent 0 failed
-IOCTLs: 0 sent 1 failed
-Cancels: 0 sent 0 failed
-Echos: 0 sent 0 failed
-QueryDirectories: 0 sent 63 failed
-
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Fixes: d368514c3097 ("powerpc: Fix corruption when grabbing FWNMI data")
+Reported-by: Michal Suchanek <msuchanek@suse.com>
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/smb2pdu.c |    2 +-
+ arch/powerpc/platforms/pseries/ras.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -301,7 +301,7 @@ small_smb2_init(__le16 smb2_command, str
- 	smb2_hdr_assemble((struct smb2_hdr *) *request_buf, smb2_command, tcon);
+--- a/arch/powerpc/platforms/pseries/ras.c
++++ b/arch/powerpc/platforms/pseries/ras.c
+@@ -309,7 +309,7 @@ static struct rtas_error_log *fwnmi_get_
+ 		int len, error_log_length;
  
- 	if (tcon != NULL) {
--#ifdef CONFIG_CIFS_STATS2
-+#ifdef CONFIG_CIFS_STATS
- 		uint16_t com_code = le16_to_cpu(smb2_command);
- 		cifs_stats_inc(&tcon->stats.smb2_stats.smb2_com_sent[com_code]);
- #endif
+ 		error_log_length = 8 + rtas_error_extended_log_length(h);
+-		len = max_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
++		len = min_t(int, error_log_length, RTAS_ERROR_LOG_MAX);
+ 		memset(global_mce_data_buf, 0, RTAS_ERROR_LOG_MAX);
+ 		memcpy(global_mce_data_buf, h, len);
+ 		errhdr = (struct rtas_error_log *)global_mce_data_buf;
 
 
