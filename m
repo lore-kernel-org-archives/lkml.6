@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09295ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBE6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37DE208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37DE208D9
+	by mail.kernel.org (Postfix) with ESMTP id D85D1208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D85D1208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732664AbeIXSUd (ORCPT
+        id S1732673AbeIXSUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:20:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56158 "EHLO
+        Mon, 24 Sep 2018 14:20:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56168 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730495AbeIXSUc (ORCPT
+        with ESMTP id S1730495AbeIXSUf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:20:32 -0400
+        Mon, 24 Sep 2018 14:20:35 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B2DDE107E;
-        Mon, 24 Sep 2018 12:18:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D54161087;
+        Mon, 24 Sep 2018 12:18:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 111/173] mtdchar: fix overflows in adjustment of `count`
-Date:   Mon, 24 Sep 2018 13:52:25 +0200
-Message-Id: <20180924113124.210874398@linuxfoundation.org>
+Subject: [PATCH 4.14 112/173] vfs: fix freeze protection in mnt_want_write_file() for overlayfs
+Date:   Mon, 24 Sep 2018 13:52:26 +0200
+Message-Id: <20180924113124.279800352@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,53 +53,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-[ Upstream commit 6c6bc9ea84d0008024606bf5ba10519e20d851bf ]
+[ Upstream commit a6795a585929d94ca3e931bc8518f8deb8bbe627 ]
 
-The first checks in mtdchar_read() and mtdchar_write() attempt to limit
-`count` such that `*ppos + count <= mtd->size`. However, they ignore the
-possibility of `*ppos > mtd->size`, allowing the calculation of `count` to
-wrap around. `mtdchar_lseek()` prevents seeking beyond mtd->size, but the
-pread/pwrite syscalls bypass this.
+The underlying real file used by overlayfs still contains the overlay path.
+This results in mnt_want_write_file() calls by the filesystem getting
+freeze protection on the wrong inode (the overlayfs one instead of the real
+one).
 
-I haven't found any codepath on which this actually causes dangerous
-behavior, but it seems like a sensible change anyway.
+Fix by using file_inode(file)->i_sb instead of file->f_path.mnt->mnt_sb.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reported-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/mtdchar.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/namespace.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -160,8 +160,12 @@ static ssize_t mtdchar_read(struct file
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -446,10 +446,10 @@ int mnt_want_write_file_path(struct file
+ {
+ 	int ret;
  
- 	pr_debug("MTD_read\n");
+-	sb_start_write(file->f_path.mnt->mnt_sb);
++	sb_start_write(file_inode(file)->i_sb);
+ 	ret = __mnt_want_write_file(file);
+ 	if (ret)
+-		sb_end_write(file->f_path.mnt->mnt_sb);
++		sb_end_write(file_inode(file)->i_sb);
+ 	return ret;
+ }
  
--	if (*ppos + count > mtd->size)
--		count = mtd->size - *ppos;
-+	if (*ppos + count > mtd->size) {
-+		if (*ppos < mtd->size)
-+			count = mtd->size - *ppos;
-+		else
-+			count = 0;
-+	}
+@@ -540,7 +540,8 @@ void __mnt_drop_write_file(struct file *
  
- 	if (!count)
- 		return 0;
-@@ -246,7 +250,7 @@ static ssize_t mtdchar_write(struct file
+ void mnt_drop_write_file_path(struct file *file)
+ {
+-	mnt_drop_write(file->f_path.mnt);
++	__mnt_drop_write_file(file);
++	sb_end_write(file_inode(file)->i_sb);
+ }
  
- 	pr_debug("MTD_write\n");
- 
--	if (*ppos == mtd->size)
-+	if (*ppos >= mtd->size)
- 		return -ENOSPC;
- 
- 	if (*ppos + count > mtd->size)
+ void mnt_drop_write_file(struct file *file)
 
 
