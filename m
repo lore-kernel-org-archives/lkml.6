@@ -2,85 +2,84 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37670ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9BBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7BB1206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BB1206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B2C4320843
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C4320843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbeIXSCY (ORCPT
+        id S1730912AbeIXSMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:02:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53196 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729233AbeIXSCX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:02:23 -0400
-Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B67031086;
-        Mon, 24 Sep 2018 12:00:27 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 027/111] ARM: exynos: Clear global variable on init error path
-Date:   Mon, 24 Sep 2018 13:51:54 +0200
-Message-Id: <20180924113107.217053027@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
-References: <20180924113103.337261320@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 24 Sep 2018 14:12:24 -0400
+Received: from ozlabs.org ([203.11.71.1]:39527 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729094AbeIXSMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 14:12:24 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42JjhS6Ry8z9s4s;
+        Mon, 24 Sep 2018 22:10:32 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        linuxppc-dev@lists.ozlabs.org, linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: How to define some additional KBUILD_CFLAGS after building include/generated/asm-offsets.h ?
+In-Reply-To: <e1b65467-7497-5db4-aa93-1ad00d12af3f@c-s.fr>
+References: <e1b65467-7497-5db4-aa93-1ad00d12af3f@c-s.fr>
+Date:   Mon, 24 Sep 2018 22:10:29 +1000
+Message-ID: <87mus75c5m.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-------------------
+> I'm trying to implement TLS based stack protector in the Linux Kernel.
+> For that I need to give to GCC the offset at which it will find the 
+> canary (register r2 is pointing to the current task struct).
+>
+> I have been able to do it with the below patch, but it only works when 
+> include/generated/asm-offsets.h already exists from the start of the build.
+>
+> Is there a way to evaluate CANARY_OFFSET and add the stack-protector 
+> flags to KBUILD_FLAGS only after include/generated/asm-offsets.h is built ?
+>
+> Or another way of add -mstack-protector-guard-offset=offsetof(struct 
+> task_struct, stack_canary) ?
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+This seems to work, at least I see the value in CFLAGS:
 
-[ Upstream commit cd4806911cee3901bc2b5eb95603cf1958720b57 ]
-
-For most of Exynos SoCs, Power Management Unit (PMU) address space is
-mapped into global variable 'pmu_base_addr' very early when initializing
-PMU interrupt controller.  A lot of other machine code depends on it so
-when doing iounmap() on this address, clear the global as well to avoid
-usage of invalid value (pointing to unmapped memory region).
-
-Properly mapped PMU address space is a requirement for all other machine
-code so this fix is purely theoretical.  Boot will fail immediately in
-many other places after following this error path.
-
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/mach-exynos/suspend.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -252,6 +252,7 @@ static int __init exynos_pmu_irq_init(st
- 					  NULL);
- 	if (!domain) {
- 		iounmap(pmu_base_addr);
-+		pmu_base_addr = NULL;
- 		return -ENOMEM;
- 	}
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index 07d9dce..39ee113 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -404,6 +394,11 @@ archclean:
  
+ archprepare: checkbin
+ 
++prepare: stack_protector_prepare
++
++stack_protector_prepare: prepare0
++	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TSK_STACK_CANARY") print $$3;}' include/generated/asm-offsets.h))
++
+ # Use the file '.tmp_gas_check' for binutils tests, as gas won't output
+ # to stdout and these checks are run even on install targets.
+ TOUT	:= .tmp_gas_check
 
 
+cheers
