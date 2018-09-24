@@ -2,178 +2,79 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384F0ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7207CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBADC2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:25:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HaPJgwxA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBADC2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B789208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 08:29:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B789208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeIXO0S (ORCPT
+        id S1727532AbeIXOac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:26:18 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45574 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbeIXO0S (ORCPT
+        Mon, 24 Sep 2018 10:30:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44165 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727050AbeIXOac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 10:26:18 -0400
-Received: by mail-io1-f65.google.com with SMTP id e12-v6so16899210iok.12
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Sep 2018 01:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2Vd2bcUzLyf63wvNjTIthHSlmHgcL+mKFC6Axx8gjCg=;
-        b=HaPJgwxAnKTnGQgSYc/rtRL3eK1rT94JkqhxBePESFEFcIZqa+QRi0JMXyg0XwTaY6
-         v0yTDEDpjetfnrEHOdarFZ3rxyWuSFXRDJAbw7AcXZrNyb0RLJF33gKkMIhp3VYA/0bN
-         TAWzzQ8VjbtH6VmLYqBa41ovYy8Kk9wZcWwT8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2Vd2bcUzLyf63wvNjTIthHSlmHgcL+mKFC6Axx8gjCg=;
-        b=pY53ozBdFQrh7sdSw/dM3Qn7mpNkfZuk+eqB8JIxri2slJlx2ZBSbbsi2cpR9dI8Ps
-         VV0WxdkQa0S2B0sOBht5Hglq6JNxcnZSaAhb2XenGYXUVY1ChC0gzzFHIyQxhOFCkT80
-         TpUfJJMnLz00ibVxY2idxlv5IXDdsB4sZ8OvWbnbbf3ZDi4NKnbD2XUql4jaEA3uMK87
-         GELuG9g0c7VKZ2rXtRlcdz+4f9wFSEMjwqI6axQ0ii8tXNez8RemkVG5yfsbhLysrYsJ
-         CU9qR7f2acd9m9rj7kc89e26dUy085OAnf9wBmz8+4XLDztiMcf18xuv2O2W9dTwe59T
-         pBKQ==
-X-Gm-Message-State: ABuFfohi+MDMfEmE0LTkN1w4Nr1JRYHTpk+FK8e5Aa5oaWmfQVqMTiJB
-        O5vUgX/ZNwIEUVjr6OQTkqxZ+wOZgat3WuOwT0E0YA==
-X-Google-Smtp-Source: ACcGV63Kxdn6n0+tDNwN8o/NzoaKKUWW4yUWNOAd3ZfNS/DESS+HlHZiDxSjkyXuIbc4LuJXv1vuHJQXfkM5y0xuELI=
-X-Received: by 2002:a6b:5d12:: with SMTP id r18-v6mr7045182iob.170.1537777522432;
- Mon, 24 Sep 2018 01:25:22 -0700 (PDT)
+        Mon, 24 Sep 2018 10:30:32 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=kurt.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <kurt@linutronix.de>)
+        id 1g4MFK-0001cj-Hy; Mon, 24 Sep 2018 10:29:34 +0200
+From:   Kurt Kanzenbach <kurt@linutronix.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        Kurt Kanzenbach <kurt@linutronix.de>
+Subject: [PATCH RT] tty: serial: pl011: fix warning about uninitialized variable
+Date:   Mon, 24 Sep 2018 10:29:01 +0200
+Message-Id: <20180924082901.21191-1-kurt@linutronix.de>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-References: <1537367527-20773-1-git-send-email-jim2101024@gmail.com>
- <1537367527-20773-5-git-send-email-jim2101024@gmail.com> <CAKv+Gu_d-r0ubyqZcDzERYd5FVTSpjBk++iACHqVgtHrOK0F7A@mail.gmail.com>
- <7fa897cf-4d58-c63f-afdd-a3ec5a6a56bf@gmail.com> <CAKv+Gu8aJRV4nqq1e-5HRLvbrANQsYuMf-pwWB53BhxLgX7iWg@mail.gmail.com>
- <b74d3c16-a512-73dc-c94a-ef6adde5f757@gmail.com> <CAKv+Gu8ZbN3BDRyuFzt4o--SSUmhuOh+jnpq8ZR-Ay13DJrAqg@mail.gmail.com>
- <fa285694-c3e1-adf8-032a-202e7598de41@gmail.com> <CANCKTBsypcVS_iC1+sbW5fMKfj+tTsxbQv9CvDwcO8GV3a8_Yg@mail.gmail.com>
-In-Reply-To: <CANCKTBsypcVS_iC1+sbW5fMKfj+tTsxbQv9CvDwcO8GV3a8_Yg@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 24 Sep 2018 10:25:10 +0200
-Message-ID: <CAKv+Gu-+OjJi8zGLqvnsOJQ9ygMot-O0EbyMKO-yyG-+k-274A@mail.gmail.com>
-Subject: Re: [PATCH v5 04/12] PCI: brcmstb: add dma-range mapping for inbound traffic
-To:     Jim Quinlan <jim2101024@gmail.com>, Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018 at 19:41, Jim Quinlan <jim2101024@gmail.com> wrote:
->
-> On Thu, Sep 20, 2018 at 5:39 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >
-> > On 09/20/2018 02:33 PM, Ard Biesheuvel wrote:
-> > > On 20 September 2018 at 14:31, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > >> On 09/20/2018 02:04 PM, Ard Biesheuvel wrote:
-> > >>> On 20 September 2018 at 13:55, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > >>>> On 09/19/2018 07:19 PM, Ard Biesheuvel wrote:
-> > >>>>> On 19 September 2018 at 07:31, Jim Quinlan <jim2101024@gmail.com> wrote:
-> > >>>>>> The Broadcom STB PCIe host controller is intimately related to the
-> > >>>>>> memory subsystem.  This close relationship adds complexity to how cpu
-> > >>>>>> system memory is mapped to PCIe memory.  Ideally, this mapping is an
-> > >>>>>> identity mapping, or an identity mapping off by a constant.  Not so in
-> > >>>>>> this case.
-> > >>>>>>
-> > >>>>>> Consider the Broadcom reference board BCM97445LCC_4X8 which has 6 GB
-> > >>>>>> of system memory.  Here is how the PCIe controller maps the
-> > >>>>>> system memory to PCIe memory:
-> > >>>>>>
-> > >>>>>>   memc0-a@[        0....3fffffff] <=> pci@[        0....3fffffff]
-> > >>>>>>   memc0-b@[100000000...13fffffff] <=> pci@[ 40000000....7fffffff]
-> > >>>>>>   memc1-a@[ 40000000....7fffffff] <=> pci@[ 80000000....bfffffff]
-> > >>>>>>   memc1-b@[300000000...33fffffff] <=> pci@[ c0000000....ffffffff]
-> > >>>>>>   memc2-a@[ 80000000....bfffffff] <=> pci@[100000000...13fffffff]
-> > >>>>>>   memc2-b@[c00000000...c3fffffff] <=> pci@[140000000...17fffffff]
-> > >>>>>>
-> > >>>>>
-> > >>>>> So is describing this as
-> > >>>>>
-> > >>>>> dma-ranges = <0x0 0x0 0x0 0x0 0x0 0x40000000>,
-> > >>>>>              <0x0 0x40000000 0x1 0x0 0x0 0x40000000>,
-> > >>>>>              <0x0 0x80000000 0x0 0x40000000 0x0 0x40000000>,
-> > >>>>>              <0x0 0xc0000000 0x3 0x0 0x0 0x40000000>,
-> > >>>>>              <0x1 0x0 0x0 0x80000000 0x0 0x40000000>,
-> > >>>>>              <0x1 0x40000000 0x0 0xc0000000 0x0 0x40000000>;
-> > >>>>>
-> > >>>>> not working for you? I haven't tried this myself, but since DT permits
-> > >>>>> describing the inbound mappings this way, we should fix the code if it
-> > >>>>> doesn't work at the moment.
-> > >>>>
-> > >>>> You mean encoding the memory controller index in the first cell? If that
-> > >>>> works, that's indeed a much cleaner solution, though is it standard
-> > >>>> compliant in any form?
-> > >>>
-> > >>> No those are just memory addresses (although I may have screwed up the
-> > >>> order). From Documentation/devicetree/booting-without-of.txt:
-> > >>>
-> > >>> """
-> > >>> Optional property:
-> > >>> - dma-ranges: <prop-encoded-array> encoded as arbitrary number of triplets of
-> > >>>         (child-bus-address, parent-bus-address, length). Each triplet specified
-> > >>>         describes a contiguous DMA address range.
-> > >>> """
-> > >>>
-> > >>
-> > >> Then I am confused by your comment, that's what this patch does, it adds
-> > >> support for reading "dma-ranges" from Device Tree and setting up inbound
-> > >> windows using that. The only caveat is that because the PCIe root
-> > >> complex has some ties with the memory bus architecture it is connected
-> > >> to (SCB in our case) there is still a requirement to know the
-> > >> translation between a given physical address and its backing memory
-> > >> controller/aperture.
-> > >>
-> > >
-> > > Ah ok, apologies for the noise then.
-> > >
-> > > I was hoping that having working support for dma-ranges would remove
-> > > the need for the special phys<->dma conversion routines.
-> >
-> > What you describe definitively works with platform devices, but I am not
-> > sure this is working for PCIe devices, although, conceptually it should,
-> > yes.
-> Sorry for my delay in responding.  One problem is that
-> of_dma_configure() only looks at the first dma-range given and then
-> converts it to dev->dma_pfn_offset which is respected by the DMA API.
-> However, we often have multiple dma-ranges, not just one.  This is the
-> big issue.
->
+Silence the following gcc warning:
 
-Given the recent attention to getting these APIs in shape, this may be
-something Robin or Christoph may care to look into?
+drivers/tty/serial/amba-pl011.c: In function ‘pl011_console_write’:
+./include/linux/spinlock.h:260:3: warning: ‘flags’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   _raw_spin_unlock_irqrestore(lock, flags); \
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/tty/serial/amba-pl011.c:2214:16: note: ‘flags’ was declared here
+  unsigned long flags;
+                ^~~~~
 
-In any case, the description of dma-ranges should be in sync with the
-way Linux interprets it, so this is either a documentation bug or a
-DMA layer bug.
+The code is correct. Thus, initializing flags to zero doesn't change the
+behavior and resolves the warning.
 
-> There is another issue with of_dma_configure() being invoked by the EP
-> driver on "bridge->parent->of_node", which is our RC device,
-> Of_dma_configure() calls of_dma_range() on the of_get_next_parent() of
-> our RC's device node and this misses the dma-ranges property which is
-> contained within the RC.  I think I could workaround this but there is
-> no getting around the first problem.
->
+Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+---
+ drivers/tty/serial/amba-pl011.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-IIUC dma-ranges should be added to the parent bus of a device, which I
-guess is slightly ambiguous for a root complex that incorporates a
-host bridge.
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 484861278e9c..a658214486e7 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -2211,7 +2211,7 @@ pl011_console_write(struct console *co, const char *s, unsigned int count)
+ {
+ 	struct uart_amba_port *uap = amba_ports[co->index];
+ 	unsigned int old_cr = 0, new_cr;
+-	unsigned long flags;
++	unsigned long flags = 0;
+ 	int locked = 1;
+ 
+ 	clk_enable(uap->clk);
+-- 
+2.11.0
+
