@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D69ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96319ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5DE208D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:15:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5DE208D9
+	by mail.kernel.org (Postfix) with ESMTP id 5B531208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B531208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732144AbeIXSRq (ORCPT
+        id S1732155AbeIXSRt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:17:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55646 "EHLO
+        Mon, 24 Sep 2018 14:17:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730150AbeIXSRp (ORCPT
+        with ESMTP id S1730150AbeIXSRt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:17:45 -0400
+        Mon, 24 Sep 2018 14:17:49 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12B9810A7;
-        Mon, 24 Sep 2018 12:15:53 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C24110A5;
+        Mon, 24 Sep 2018 12:15:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Hanna Hawa <hannah@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 068/173] i2c: aspeed: Fix initial values of master and slave state
-Date:   Mon, 24 Sep 2018 13:51:42 +0200
-Message-Id: <20180924113121.043570764@linuxfoundation.org>
+Subject: [PATCH 4.14 069/173] dmaengine: mv_xor_v2: kill the tasklets upon exit
+Date:   Mon, 24 Sep 2018 13:51:43 +0200
+Message-Id: <20180924113121.110757637@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,52 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+From: Hanna Hawa <hannah@marvell.com>
 
-[ Upstream commit 517fde0eb5a8f46c54ba6e2c36e32563b23cb14f ]
+[ Upstream commit 8bbafed8dd5cfa81071b50ead5cb60367fdef3a9 ]
 
-This patch changes the order of enum aspeed_i2c_master_state and
-enum aspeed_i2c_slave_state defines to make their initial value to
-ASPEED_I2C_MASTER_INACTIVE and ASPEED_I2C_SLAVE_STOP respectively.
-In case of multi-master use, if a slave data comes ahead of the
-first master xfer, master_state starts from an invalid state so
-this change fixes the issue.
+The mv_xor_v2 driver uses a tasklet, initialized during the probe()
+routine. However, it forgets to cleanup the tasklet using
+tasklet_kill() function during the remove() routine, which this patch
+fixes. This prevents the tasklet from potentially running after the
+module has been removed.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: 19a340b1a820 ("dmaengine: mv_xor_v2: new driver")
+
+Signed-off-by: Hanna Hawa <hannah@marvell.com>
+Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-aspeed.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/mv_xor_v2.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -110,22 +110,22 @@
- #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
+--- a/drivers/dma/mv_xor_v2.c
++++ b/drivers/dma/mv_xor_v2.c
+@@ -898,6 +898,8 @@ static int mv_xor_v2_remove(struct platf
  
- enum aspeed_i2c_master_state {
-+	ASPEED_I2C_MASTER_INACTIVE,
- 	ASPEED_I2C_MASTER_START,
- 	ASPEED_I2C_MASTER_TX_FIRST,
- 	ASPEED_I2C_MASTER_TX,
- 	ASPEED_I2C_MASTER_RX_FIRST,
- 	ASPEED_I2C_MASTER_RX,
- 	ASPEED_I2C_MASTER_STOP,
--	ASPEED_I2C_MASTER_INACTIVE,
- };
+ 	platform_msi_domain_free_irqs(&pdev->dev);
  
- enum aspeed_i2c_slave_state {
-+	ASPEED_I2C_SLAVE_STOP,
- 	ASPEED_I2C_SLAVE_START,
- 	ASPEED_I2C_SLAVE_READ_REQUESTED,
- 	ASPEED_I2C_SLAVE_READ_PROCESSED,
- 	ASPEED_I2C_SLAVE_WRITE_REQUESTED,
- 	ASPEED_I2C_SLAVE_WRITE_RECEIVED,
--	ASPEED_I2C_SLAVE_STOP,
- };
++	tasklet_kill(&xor_dev->irq_tasklet);
++
+ 	clk_disable_unprepare(xor_dev->clk);
  
- struct aspeed_i2c_bus {
+ 	return 0;
 
 
