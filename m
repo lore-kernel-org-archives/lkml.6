@@ -2,154 +2,114 @@ Return-Path: <SRS0=40Mn=MG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D40ECE567
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 158CCC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 069EB21480
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:13:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KifoXzPN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 069EB21480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id C9FB32145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:16:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FB32145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbeIXRP3 (ORCPT
+        id S1727852AbeIXRSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:15:29 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:42886 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbeIXRP3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:15:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=StR9z8XziZ854Gz49Nwx94jSYQxbm1EuvCMEYM7LdWE=; b=KifoXzPNhYLx6UOknRelFsLSx
-        No1SzRapBqMQbvzcDwVE+rfrtJMinSYPi5ecW9d2VR2HouFP6CyQZhdaZVmboIDrr17y93ks37E+1
-        J3NIzX0XhwsgmelhRv/H0Reskxu0OL0b+c/HzzQbc/nAQbJboebxHJ4hwWnT5abO/apb4=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:43544)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1g4OoF-0002wH-8I; Mon, 24 Sep 2018 12:13:47 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1g4OoB-0006oG-TM; Mon, 24 Sep 2018 12:13:44 +0100
-Date:   Mon, 24 Sep 2018 12:13:41 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [BISECTED] Regression: Solidrun Clearfog Base won't boot since
- "PCI: mvebu: Only remap I/O space if configured"
-Message-ID: <20180924111341.GP30658@n2100.armlinux.org.uk>
-References: <61fdfd69-2bb6-478c-b0d5-69d8744adae3@cesnet.cz>
- <87zhwm4kl6.fsf@tkos.co.il>
- <20180912231050.GX30658@n2100.armlinux.org.uk>
- <20180913094515.351967bb@windsurf>
- <5ad46fec-a71a-477a-b23f-d20aacfb481d@cesnet.cz>
- <20180913104241.65db8243@windsurf>
- <20180924101213.GO30658@n2100.armlinux.org.uk>
- <20180924122614.70738b5c@windsurf>
+        Mon, 24 Sep 2018 13:18:15 -0400
+Received: from mga14.intel.com ([192.55.52.115]:55863 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725982AbeIXRSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:18:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 04:16:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,297,1534834800"; 
+   d="scan'208";a="75727393"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga008.jf.intel.com with ESMTP; 24 Sep 2018 04:16:04 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1g4OqP-0002Em-Qt; Mon, 24 Sep 2018 14:16:01 +0300
+Date:   Mon, 24 Sep 2018 14:16:01 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 0/4] devres: provide and use devm_kstrdup_const()
+Message-ID: <20180924111601.GL15943@smile.fi.intel.com>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180924122614.70738b5c@windsurf>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 24, 2018 at 12:26:14PM +0200, Thomas Petazzoni wrote:
-> Hello,
+On Mon, Sep 24, 2018 at 12:11:46PM +0200, Bartosz Golaszewski wrote:
+> This series implements devm_kstrdup_const() together with some
+> prerequisite changes and uses it in pmc-atom driver.
 > 
-> On Mon, 24 Sep 2018 11:12:13 +0100, Russell King - ARM Linux wrote:
+
+Through which tree you are assuming this would be directed?
+
+> v1 -> v2:
+> - fixed the changelog in the patch implementing devm_kstrdup_const()
+> - fixed the kernel doc
+> - moved is_kernel_rodata() to asm-generic/sections.h
+> - fixed constness
 > 
-> > > Thanks for the testing. I'll wait for Russell to say if he is happy
-> > > (or not) with the addition of pci_unmap_io() in the ARM code, if that's
-> > > the case, I'll send a proper patch to fix the issue.  
-> > 
-> > I'd prefer not to provide an unmapping API, because it gives the
-> > impression that it's okay to unmap the IO space mapping, and we'll
-> > end up with drivers that decide to call it in their cleanup path.
-> > IO space isn't expected to ever go away - eg, on a PC, it's always
-> > present.
+> v2 -> v3:
+> - rebased on top of 4.19-rc5 as there were some conflicts in the
+>   pmc-atom driver
+> - collected Reviewed-by tags
 > 
-> But being able to unmap it would also be needed to be able to remove
-> PCI host controller drivers, and therefore compile them as module, and
-> make them more like any other drivers.
+> Bartosz Golaszewski (4):
+>   devres: constify p in devm_kfree()
+>   mm: move is_kernel_rodata() to asm-generic/sections.h
+>   devres: provide devm_kstrdup_const()
+>   clk: pmc-atom: use devm_kstrdup_const()
 > 
-> I'm not sure why we need to guarantee that the I/O space is always
-> mapped:
+>  drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
+>  drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
+>  include/asm-generic/sections.h | 14 +++++++++++
+>  include/linux/device.h         |  5 +++-
+>  mm/util.c                      |  7 ------
+>  5 files changed, 63 insertions(+), 25 deletions(-)
 > 
->  - It isn't mapped before the PCI controller driver does the mapping.
+> -- 
+> 2.18.0
 > 
->  - There is no reason for it to be accessed when the PCI controller
->    driver is not initialized: PCI devices can only be probed and
->    initialized when the PCI controller driver is probed/initialized.
-
-There are historic reasons.  PCI provides ISA IO space, and when you
-have a machine with ISA peripherals present, the PCI IO space must
-never be unmapped - if it is, ISA drivers will oops the kernel.  There
-is no way for a vanishing PCI controller to cause ISA drivers to be
-unbound.
-
-If you have a host controller that does unmap PCI IO space and you have
-ISA peripherals with drivers present, unbinding the PCI host controller
-will remove the IO space mapping, and next time an ISA peripheral
-touches IO space, the kernel will oops.
-
-> All other drivers, including on ARM, use pci_remap_iospace(), which
-> does provide the pci_unmap_iospace() counter part.
-
-... which has been created in PCI land just to deal with PCI without
-regard for the above issue.
-
-However, there's another issue I missed - if you _do_ have ISA
-peripherals, you likely want the IO space setup from very early on,
-and you won't be using the new fangled PCI host driver support anyway.
-That uses pci_map_io_early() rather than pci_ioremap_io() or
-pci_remap_io().
-
-> But to me, the general direction is that the ARM-specific
-> pci_remap_io() API is fading away, and its replacement already provides
-> an unmapping capability. So why not add the same unmapping capability
-> to pci_remap_io() ?
-
-Yes, that would be a good longer term plan - we don't need three
-different ways to map PCI IO space, but it is development.
-
-> But we have a regression and we need to fix it. Do you suggest to not
-> use the new pci_host_probe() API ?
-
-Well, arguably, the patch that caused the regression is the buggy patch,
-_not_ the lack of unmapping API for pci_ioremap_io().  Trying to address
-a regression with further development means that _that_ development
-needs thought and review, which is a slower process.
-
-I do understand the desire to keep moving forward and never take a step
-backwards, but sometimes backwards steps are the best way to resolve a
-regression.  But I also do appreciate that a simple revert in this case
-is not possible.
-
-I'll accept your patch on the condition that the ARM private
-pci_ioremap_io() will go away in the very near future (please _try_
-to get agreement on that before this patch is merged.)
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+With Best Regards,
+Andy Shevchenko
+
+
