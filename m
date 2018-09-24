@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032C4ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8397FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCD5021486
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCD5021486
+	by mail.kernel.org (Postfix) with ESMTP id 38C4F2148C
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:29:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C4F2148C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387697AbeIXSbK (ORCPT
+        id S2387706AbeIXSbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:31:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57572 "EHLO
+        Mon, 24 Sep 2018 14:31:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57598 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732800AbeIXSbK (ORCPT
+        with ESMTP id S1732866AbeIXSbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:31:10 -0400
+        Mon, 24 Sep 2018 14:31:17 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 210811018;
-        Mon, 24 Sep 2018 12:29:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B5C3F1098;
+        Mon, 24 Sep 2018 12:29:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.18 009/235] net/mlx5: Fix debugfs cleanup in the device init/remove flow
-Date:   Mon, 24 Sep 2018 13:49:55 +0200
-Message-Id: <20180924113105.245339495@linuxfoundation.org>
+        stable@vger.kernel.org, Zhu Yanjun <yanjun.zhu@oracle.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.18 040/235] IB/rxe: Drop QP0 silently
+Date:   Mon, 24 Sep 2018 13:50:26 +0200
+Message-Id: <20180924113109.123648649@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.999624566@linuxfoundation.org>
 References: <20180924113103.999624566@linuxfoundation.org>
@@ -53,55 +54,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Zhu Yanjun <yanjun.zhu@oracle.com>
 
-[ Upstream commit 5df816e7f43f1297c40021ef17ec6e722b45c82f ]
+[ Upstream commit 536ca245c512aedfd84cde072d7b3ca14b6e1792 ]
 
-When initializing the device (procedure init_one), the driver
-calls mlx5_pci_init to perform pci initialization. As part of this
-initialization, mlx5_pci_init creates a debugfs directory.
-If this creation fails, init_one aborts, returning failure to
-the caller (which is the probe method caller).
+According to "Annex A16: RDMA over Converged Ethernet (RoCE)":
 
-The main reason for such a failure to occur is if the debugfs
-directory already exists. This can happen if the last time
-mlx5_pci_close was called, debugfs_remove (silently) failed due
-to the debugfs directory not being empty.
+A16.4.3 MANAGEMENT INTERFACES
 
-Guarantee that such a debugfs_remove failure will not occur by
-instead calling debugfs_remove_recursive in procedure mlx5_pci_close.
+As defined in the base specification, a special Queue Pair, QP0 is defined
+solely for communication between subnet manager(s) and subnet management
+agents. Since such an IB-defined subnet management architecture is outside
+the scope of this annex, it follows that there is also no requirement that
+a port which conforms to this annex be associated with a QP0. Thus, for
+end nodes designed to conform to this annex, the concept of QP0 is
+undefined and unused for any port connected to an Ethernet network.
 
-Fixes: 59211bd3b632 ("net/mlx5: Split the load/unload flow into hardware and software flows")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+CA16-8: A packet arriving at a RoCE port containing a BTH with the
+destination QP field set to QP0 shall be silently dropped.
+
+Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Acked-by: Moni Shoua <monis@mellanox.com>
+Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/main.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_recv.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -874,8 +874,10 @@ static int mlx5_pci_init(struct mlx5_cor
- 	priv->numa_node = dev_to_node(&dev->pdev->dev);
+--- a/drivers/infiniband/sw/rxe/rxe_recv.c
++++ b/drivers/infiniband/sw/rxe/rxe_recv.c
+@@ -225,9 +225,14 @@ static int hdr_check(struct rxe_pkt_info
+ 		goto err1;
+ 	}
  
- 	priv->dbg_root = debugfs_create_dir(dev_name(&pdev->dev), mlx5_debugfs_root);
--	if (!priv->dbg_root)
-+	if (!priv->dbg_root) {
-+		dev_err(&pdev->dev, "Cannot create debugfs dir, aborting\n");
- 		return -ENOMEM;
++	if (unlikely(qpn == 0)) {
++		pr_warn_once("QP 0 not supported");
++		goto err1;
 +	}
- 
- 	err = mlx5_pci_enable_device(dev);
- 	if (err) {
-@@ -924,7 +926,7 @@ static void mlx5_pci_close(struct mlx5_c
- 	pci_clear_master(dev->pdev);
- 	release_bar(dev->pdev);
- 	mlx5_pci_disable_device(dev);
--	debugfs_remove(priv->dbg_root);
-+	debugfs_remove_recursive(priv->dbg_root);
- }
- 
- static int mlx5_init_once(struct mlx5_core_dev *dev, struct mlx5_priv *priv)
++
+ 	if (qpn != IB_MULTICAST_QPN) {
+-		index = (qpn == 0) ? port->qp_smi_index :
+-			((qpn == 1) ? port->qp_gsi_index : qpn);
++		index = (qpn == 1) ? port->qp_gsi_index : qpn;
++
+ 		qp = rxe_pool_get_index(&rxe->qp_pool, index);
+ 		if (unlikely(!qp)) {
+ 			pr_warn_ratelimited("no qp matches qpn 0x%x\n", qpn);
 
 
