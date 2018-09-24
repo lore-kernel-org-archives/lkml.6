@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D24C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7A1ECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A91B2148C
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A91B2148C
+	by mail.kernel.org (Postfix) with ESMTP id 40FF721486
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:22:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40FF721486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732563AbeIXSYR (ORCPT
+        id S1732594AbeIXSYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:24:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56376 "EHLO
+        Mon, 24 Sep 2018 14:24:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56406 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732118AbeIXSYN (ORCPT
+        with ESMTP id S1732118AbeIXSYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:24:13 -0400
+        Mon, 24 Sep 2018 14:24:18 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E91B2107E;
-        Mon, 24 Sep 2018 12:22:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1701D1074;
+        Mon, 24 Sep 2018 12:22:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Enrico Scholz <enrico.scholz@sigma-chemnitz.de>,
-        Jan Luebbe <jlu@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 127/173] gpu: ipu-v3: csi: pass back mbus_code_to_bus_cfg error codes
-Date:   Mon, 24 Sep 2018 13:52:41 +0200
-Message-Id: <20180924113125.190073212@linuxfoundation.org>
+Subject: [PATCH 4.14 128/173] tty: fix termios input-speed encoding when using BOTHER
+Date:   Mon, 24 Sep 2018 13:52:42 +0200
+Message-Id: <20180924113125.249013006@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -54,82 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit d36d0e6309dd8137cf438cbb680e72eb63c81425 ]
+[ Upstream commit 1cee38f0363a88db374e50b232ca17b9a4c12fa0 ]
 
-mbus_code_to_bus_cfg() can fail on unknown mbus codes; pass back the
-error to the caller.
+When the termios CIBAUD bits are left unset (i.e. B0), we use the same
+output and input speed and should leave CIBAUD unchanged.
 
-Signed-off-by: Enrico Scholz <enrico.scholz@sigma-chemnitz.de>
-Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
-[p.zabel@pengutronix.de - renamed rc to ret for consistency]
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+When the user requests a rate using BOTHER and c_ospeed which the driver
+cannot set exactly, the driver can report back the actual baud rate
+using tty_termios_encode_baud_rate(). If this rate is close enough to a
+standard rate however, we could end up setting CIBAUD to a Bfoo value
+despite the user having left it unset.
+
+This in turn could lead to an unexpected input rate being set on
+subsequent termios updates.
+
+Fix this by using a zero tolerance value also for the input rate when
+CIBAUD is clear so that the matching logic works as expected.
+
+Fixes: 78137e3b34e1 ("[PATCH] tty: improve encode_baud_rate logic")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/ipu-v3/ipu-csi.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/tty/tty_baudrate.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/ipu-v3/ipu-csi.c
-+++ b/drivers/gpu/ipu-v3/ipu-csi.c
-@@ -316,13 +316,17 @@ static int mbus_code_to_bus_cfg(struct i
- /*
-  * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
-  */
--static void fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
-+static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
- 				 struct v4l2_mbus_config *mbus_cfg,
- 				 struct v4l2_mbus_framefmt *mbus_fmt)
- {
-+	int ret;
+--- a/drivers/tty/tty_baudrate.c
++++ b/drivers/tty/tty_baudrate.c
+@@ -156,16 +156,20 @@ void tty_termios_encode_baud_rate(struct
+ 	termios->c_ospeed = obaud;
+ 
+ #ifdef BOTHER
++	if ((termios->c_cflag >> IBSHIFT) & CBAUD)
++		ibinput = 1;	/* An input speed was specified */
 +
- 	memset(csicfg, 0, sizeof(*csicfg));
+ 	/* If the user asked for a precise weird speed give a precise weird
+ 	   answer. If they asked for a Bfoo speed they may have problems
+ 	   digesting non-exact replies so fuzz a bit */
  
--	mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
-+	ret = mbus_code_to_bus_cfg(csicfg, mbus_fmt->code);
-+	if (ret < 0)
-+		return ret;
- 
- 	switch (mbus_cfg->type) {
- 	case V4L2_MBUS_PARALLEL:
-@@ -353,6 +357,8 @@ static void fill_csi_bus_cfg(struct ipu_
- 		/* will never get here, keep compiler quiet */
- 		break;
- 	}
-+
-+	return 0;
- }
- 
- int ipu_csi_init_interface(struct ipu_csi *csi,
-@@ -362,8 +368,11 @@ int ipu_csi_init_interface(struct ipu_cs
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 width, height, data = 0;
-+	int ret;
- 
--	fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	if (ret < 0)
-+		return ret;
- 
- 	/* set default sensor frame width and height */
- 	width = mbus_fmt->width;
-@@ -584,11 +593,14 @@ int ipu_csi_set_mipi_datatype(struct ipu
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 temp;
-+	int ret;
- 
- 	if (vc > 3)
- 		return -EINVAL;
- 
--	mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
-+	ret = mbus_code_to_bus_cfg(&cfg, mbus_fmt->code);
-+	if (ret < 0)
-+		return ret;
- 
- 	spin_lock_irqsave(&csi->lock, flags);
+-	if ((termios->c_cflag & CBAUD) == BOTHER)
++	if ((termios->c_cflag & CBAUD) == BOTHER) {
+ 		oclose = 0;
++		if (!ibinput)
++			iclose = 0;
++	}
+ 	if (((termios->c_cflag >> IBSHIFT) & CBAUD) == BOTHER)
+ 		iclose = 0;
+-	if ((termios->c_cflag >> IBSHIFT) & CBAUD)
+-		ibinput = 1;	/* An input speed was specified */
+ #endif
+ 	termios->c_cflag &= ~CBAUD;
  
 
 
