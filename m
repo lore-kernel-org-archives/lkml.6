@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C2EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F86FECE561
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E462145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E462145D
+	by mail.kernel.org (Postfix) with ESMTP id 4FFCE2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 11:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FFCE2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730505AbeIXSBA (ORCPT
+        id S1730514AbeIXSBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:01:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52472 "EHLO
+        Mon, 24 Sep 2018 14:01:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52492 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730083AbeIXSBA (ORCPT
+        with ESMTP id S1728131AbeIXSBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:01:00 -0400
+        Mon, 24 Sep 2018 14:01:03 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F9C4D64;
-        Mon, 24 Sep 2018 11:59:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BFA91072;
+        Mon, 24 Sep 2018 11:59:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        John Crispin <john@phrozen.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 015/111] MIPS: ath79: fix system restart
-Date:   Mon, 24 Sep 2018 13:51:42 +0200
-Message-Id: <20180924113105.772200273@linuxfoundation.org>
+Subject: [PATCH 4.9 016/111] media: videobuf2-core: check for q->error in vb2_core_qbuf()
+Date:   Mon, 24 Sep 2018 13:51:43 +0200
+Message-Id: <20180924113105.879646453@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -55,46 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-[ Upstream commit f8a7bfe1cb2c1ebfa07775c9c8ac0ad3ba8e5ff5 ]
+[ Upstream commit b509d733d337417bcb7fa4a35be3b9a49332b724 ]
 
-This patch disables irq on reboot to fix hang issues that were observed
-due to pending interrupts.
+The vb2_core_qbuf() function didn't check if q->error was set. It is
+checked in __buf_prepare(), but that function isn't called if the buffer
+was already prepared before with VIDIOC_PREPARE_BUF.
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: John Crispin <john@phrozen.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19913/
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+So check it at the start of vb2_core_qbuf() as well.
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/ath79/setup.c                  |    1 +
- arch/mips/include/asm/mach-ath79/ath79.h |    1 +
- 2 files changed, 2 insertions(+)
+ drivers/media/v4l2-core/videobuf2-core.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/mips/ath79/setup.c
-+++ b/arch/mips/ath79/setup.c
-@@ -40,6 +40,7 @@ static char ath79_sys_type[ATH79_SYS_TYP
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -1375,6 +1375,11 @@ int vb2_core_qbuf(struct vb2_queue *q, u
+ 	struct vb2_buffer *vb;
+ 	int ret;
  
- static void ath79_restart(char *command)
- {
-+	local_irq_disable();
- 	ath79_device_reset_set(AR71XX_RESET_FULL_CHIP);
- 	for (;;)
- 		if (cpu_wait)
---- a/arch/mips/include/asm/mach-ath79/ath79.h
-+++ b/arch/mips/include/asm/mach-ath79/ath79.h
-@@ -134,6 +134,7 @@ static inline u32 ath79_pll_rr(unsigned
- static inline void ath79_reset_wr(unsigned reg, u32 val)
- {
- 	__raw_writel(val, ath79_reset_base + reg);
-+	(void) __raw_readl(ath79_reset_base + reg); /* flush */
- }
++	if (q->error) {
++		dprintk(1, "fatal error occurred on queue\n");
++		return -EIO;
++	}
++
+ 	vb = q->bufs[index];
  
- static inline u32 ath79_reset_rr(unsigned reg)
+ 	switch (vb->state) {
 
 
