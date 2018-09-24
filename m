@@ -6,41 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8A8C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC0FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06E820877
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06E820877
+	by mail.kernel.org (Postfix) with ESMTP id 4D54520877
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:05:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D54520877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731045AbeIXSHY (ORCPT
+        id S1731055AbeIXSH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:07:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53962 "EHLO
+        Mon, 24 Sep 2018 14:07:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53978 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728131AbeIXSHY (ORCPT
+        with ESMTP id S1728195AbeIXSH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:07:24 -0400
+        Mon, 24 Sep 2018 14:07:27 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1ABA1084;
-        Mon, 24 Sep 2018 12:05:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43AF9107B;
+        Mon, 24 Sep 2018 12:05:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yabin Cui <yabinc@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 071/111] perf/core: Force USER_DS when recording user stack data
-Date:   Mon, 24 Sep 2018 13:52:38 +0200
-Message-Id: <20180924113112.047783064@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 080/111] ARM: hisi: handle of_iomap and fix missing of_node_put
+Date:   Mon, 24 Sep 2018 13:52:47 +0200
+Message-Id: <20180924113112.814606852@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113103.337261320@linuxfoundation.org>
 References: <20180924113103.337261320@linuxfoundation.org>
@@ -58,58 +52,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yabin Cui <yabinc@google.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-commit 02e184476eff848273826c1d6617bb37e5bcc7ad upstream.
+[ Upstream commit d396cb185c0337aae5664b250cdd9a73f6eb1503 ]
 
-Perf can record user stack data in response to a synchronous request, such
-as a tracepoint firing. If this happens under set_fs(KERNEL_DS), then we
-end up reading user stack data using __copy_from_user_inatomic() under
-set_fs(KERNEL_DS). I think this conflicts with the intention of using
-set_fs(KERNEL_DS). And it is explicitly forbidden by hardware on ARM64
-when both CONFIG_ARM64_UAO and CONFIG_ARM64_PAN are used.
+Relying on an unchecked of_iomap() which can return NULL is problematic
+here, an explicit check seems mandatory. Also the call to
+of_find_compatible_node() returns a device node with refcount incremented
+therefor an explicit of_node_put() is needed here.
 
-So fix this by forcing USER_DS when recording user stack data.
-
-Signed-off-by: Yabin Cui <yabinc@google.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 88b0193d9418 ("perf/callchain: Force USER_DS when invoking perf_callchain_user()")
-Link: http://lkml.kernel.org/r/20180823225935.27035-1-yabinc@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit 22bae4290457 ("ARM: hi3xxx: add hotplug support")
+Signed-off-by: Wei Xu <xuwei5@hisilicon.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/events/core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/mach-hisi/hotplug.c |   19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5563,6 +5563,7 @@ perf_output_sample_ustack(struct perf_ou
- 		unsigned long sp;
- 		unsigned int rem;
- 		u64 dyn_size;
-+		mm_segment_t fs;
+--- a/arch/arm/mach-hisi/hotplug.c
++++ b/arch/arm/mach-hisi/hotplug.c
+@@ -148,13 +148,20 @@ static int hi3xxx_hotplug_init(void)
+ 	struct device_node *node;
  
- 		/*
- 		 * We dump:
-@@ -5580,7 +5581,10 @@ perf_output_sample_ustack(struct perf_ou
+ 	node = of_find_compatible_node(NULL, NULL, "hisilicon,sysctrl");
+-	if (node) {
+-		ctrl_base = of_iomap(node, 0);
+-		id = HI3620_CTRL;
+-		return 0;
++	if (!node) {
++		id = ERROR_CTRL;
++		return -ENOENT;
+ 	}
+-	id = ERROR_CTRL;
+-	return -ENOENT;
++
++	ctrl_base = of_iomap(node, 0);
++	of_node_put(node);
++	if (!ctrl_base) {
++		id = ERROR_CTRL;
++		return -ENOMEM;
++	}
++
++	id = HI3620_CTRL;
++	return 0;
+ }
  
- 		/* Data. */
- 		sp = perf_user_stack_pointer(regs);
-+		fs = get_fs();
-+		set_fs(USER_DS);
- 		rem = __output_copy_user(handle, (void *) sp, dump_size);
-+		set_fs(fs);
- 		dyn_size = dump_size - rem;
- 
- 		perf_output_skip(handle, rem);
+ void hi3xxx_set_cpu(int cpu, bool enable)
 
 
