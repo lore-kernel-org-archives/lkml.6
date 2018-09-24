@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF92ECE561
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14369C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6682F214D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6682F214D5
+	by mail.kernel.org (Postfix) with ESMTP id C21DC208D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 24 Sep 2018 12:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21DC208D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731684AbeIXSPd (ORCPT
+        id S1731688AbeIXSPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 24 Sep 2018 14:15:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55262 "EHLO
+        Mon, 24 Sep 2018 14:15:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55272 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729811AbeIXSPc (ORCPT
+        with ESMTP id S1729811AbeIXSPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Sep 2018 14:15:32 -0400
+        Mon, 24 Sep 2018 14:15:36 -0400
 Received: from localhost (ip-213-127-77-73.ip.prioritytelecom.net [213.127.77.73])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEB641099;
-        Mon, 24 Sep 2018 12:13:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B11021099;
+        Mon, 24 Sep 2018 12:13:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 035/173] gfs2: Dont reject a supposedly full bitmap if we have blocks reserved
-Date:   Mon, 24 Sep 2018 13:51:09 +0200
-Message-Id: <20180924113118.532230927@linuxfoundation.org>
+Subject: [PATCH 4.14 018/173] xfrm: fix passing zero to ERR_PTR() warning
+Date:   Mon, 24 Sep 2018 13:50:52 +0200
+Message-Id: <20180924113116.666439734@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180924113114.334025954@linuxfoundation.org>
 References: <20180924113114.334025954@linuxfoundation.org>
@@ -52,42 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit e79e0e1428188b24c3b57309ffa54a33c4ae40c4 ]
+[ Upstream commit 934ffce1343f22ed5e2d0bd6da4440f4848074de ]
 
-Before this patch, you could get into situations like this:
+Fix a static code checker warning:
 
-1. Process 1 searches for X free blocks, finds them, makes a reservation
-2. Process 2 searches for free blocks in the same rgrp, but now the
-   bitmap is full because process 1's reservation is skipped over.
-   So it marks the bitmap as GBF_FULL.
-3. Process 1 tries to allocate blocks from its own reservation, but
-   since the GBF_FULL bit is set, it skips over the rgrp and searches
-   elsewhere, thus not using its own reservation.
+  net/xfrm/xfrm_policy.c:1836 xfrm_resolve_and_create_bundle() warn: passing zero to 'ERR_PTR'
 
-This patch adds an additional check to allow processes to use their
-own reservations.
+xfrm_tmpl_resolve return 0 just means no xdst found, return NULL
+instead of passing zero to ERR_PTR.
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Fixes: d809ec895505 ("xfrm: do not assume that template resolving always returns xfrms")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/gfs2/rgrp.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/xfrm/xfrm_policy.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1665,7 +1665,8 @@ static int gfs2_rbm_find(struct gfs2_rbm
- 
- 	while(1) {
- 		bi = rbm_bi(rbm);
--		if (test_bit(GBF_FULL, &bi->bi_flags) &&
-+		if ((ip == NULL || !gfs2_rs_active(&ip->i_res)) &&
-+		    test_bit(GBF_FULL, &bi->bi_flags) &&
- 		    (state == GFS2_BLKST_FREE))
- 			goto next_bitmap;
- 
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1831,7 +1831,10 @@ xfrm_resolve_and_create_bundle(struct xf
+ 	/* Try to instantiate a bundle */
+ 	err = xfrm_tmpl_resolve(pols, num_pols, fl, xfrm, family);
+ 	if (err <= 0) {
+-		if (err != 0 && err != -EAGAIN)
++		if (err == 0)
++			return NULL;
++
++		if (err != -EAGAIN)
+ 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTPOLERROR);
+ 		return ERR_PTR(err);
+ 	}
 
 
